@@ -113,7 +113,9 @@ namespace WebAssembly.Net.Debugging {
 		int breakpointIndex = -1;
 		public List<Breakpoint> Breakpoints { get; } = new List<Breakpoint> ();
 
-		public bool RuntimeReady { get; set; }
+		public TaskCompletionSource<DebugStore> ready = null;
+		public bool RuntimeReady => ready.Task.IsCompleted;
+
 		public int Id { get; set; }
 		public object AuxData { get; set; }
 
@@ -193,11 +195,11 @@ namespace WebAssembly.Net.Debugging {
 					switch (url) {
 					case var _ when url == "":
 					case var _ when url.StartsWith ("wasm://", StringComparison.Ordinal): {
-							Log ("info", $"ignoring wasm: Debugger.scriptParsed {url}");
+							Log ("verbose", $"ignoring wasm: Debugger.scriptParsed {url}");
 							return true;
 						}
 					}
-					Log ("info", $"proxying Debugger.scriptParsed ({sessionId.sessionId}) {url} {args}");
+					Log ("verbose", $"proxying Debugger.scriptParsed ({sessionId.sessionId}) {url} {args}");
 					break;
 				}
 			}
@@ -208,7 +210,17 @@ namespace WebAssembly.Net.Debugging {
 		protected override async Task<bool> AcceptCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
 			switch (method) {
+			case "Debugger.enable": {
+					var resp = await SendCommand (id, method, args, token);
+					var res = await SendMonoCommand (id, MonoCommands.IsRuntimeReady (), token);
+					var is_ready = res.Value? ["result"]? ["value"]?.Value<bool> ();
 
+					if (is_ready.HasValue && is_ready.Value == true) {
+						await RuntimeReady (id, token);
+					}
+					SendResponse (id,resp,token);
+					return true;
+				}
 			case "Debugger.getScriptSource": {
 					var script = args? ["scriptId"]?.Value<string> ();
 					return await OnGetScriptSource (id, script, token);
@@ -335,7 +347,7 @@ namespace WebAssembly.Net.Debugging {
 			}
 			var bp = context.Breakpoints.FirstOrDefault (b => b.RemoteId == bp_id.Value);
 
-			var store = context.Store;
+			var store = await LoadStore (sessionId, token);
 			var src = bp == null ? null : store.GetFileById (bp.Location.Id);
 
 			var callFrames = new List<object> ();
@@ -627,21 +639,20 @@ namespace WebAssembly.Net.Debugging {
 
 			if (!context.Source.Task.IsCompleted)
 				context.Source.SetResult (context.store);
-			return await context.Source.Task;
+			return context.store;
 		}
 
-		async Task RuntimeReady (SessionId sessionId, CancellationToken token)
+		async Task<DebugStore> RuntimeReady (SessionId sessionId, CancellationToken token)
 		{
 			var context = GetContext (sessionId);
-			if (context.RuntimeReady)
-				return;
+			if (Interlocked.CompareExchange (ref context.ready, new TaskCompletionSource<DebugStore> (), null) != null)
+				return await context.ready.Task;
 
 			var clear_result = await SendMonoCommand (sessionId, MonoCommands.ClearAllBreakpoints (), token);
 			if (clear_result.IsErr) {
 				Log ("verbose", $"Failed to clear breakpoints due to {clear_result}");
 			}
 
-			context.RuntimeReady = true;
 			var store = await LoadStore (sessionId, token);
 
 			foreach (var s in store.AllSources ()) {
@@ -649,7 +660,7 @@ namespace WebAssembly.Net.Debugging {
 				Log ("verbose", $"\tsending {s.Url} {context.Id} {sessionId.sessionId}");
 				SendEvent (sessionId, "Debugger.scriptParsed", scriptSource, token);
 			}
-
+			context.ready.SetResult (store);
 			foreach (var bp in context.Breakpoints) {
 				if (bp.State != BreakpointState.Pending)
 					continue;
@@ -664,6 +675,8 @@ namespace WebAssembly.Net.Debugging {
 				}
 			}
 			SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
+			//context.ready.SetResult (store);
+			return store;
 		}
 
 		async Task<bool> RemoveBreakpoint(MessageId msg_id, JObject args, CancellationToken token) {
@@ -740,7 +753,7 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task<bool> GetPossibleBreakpoints (MessageId msg_id, SourceLocation start, SourceLocation end, CancellationToken token)
 		{
-			var bps = (await LoadStore (msg_id, token)).FindPossibleBreakpoints (start, end);
+			var bps = (await RuntimeReady (msg_id, token)).FindPossibleBreakpoints (start, end);
 			if (bps == null)
 				return false;
 
