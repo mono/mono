@@ -148,6 +148,10 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 				var streamingEnabled = request.Properties.TryGetValue ("StreamingEnabled", out var streamingEnabledValue) && (bool)streamingEnabledValue;
 
+				if (streamingEnabled && !StreamingSupported) {
+					Console.WriteLine ("Warning: Requested a streamed response, but streaming is not supported on this platform.");
+				}
+
 				httpresponse.Content = StreamingSupported && streamingEnabled
 					? new StreamContent (wasmHttpReadStream = new WasmHttpReadStream (status))
 				    : (HttpContent)new WasmHttpContent (status);
