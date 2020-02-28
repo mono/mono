@@ -669,7 +669,6 @@
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkAddressChange.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInformationException.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInformationPermission.cs" />
-    <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterfaceComponent.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\OperationalStatus.cs" />
     <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\PhysicalAddress.cs" />
@@ -1063,6 +1062,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+        <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1219,6 +1219,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\WebSocketHandle.Managed.cs" />
+        <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1353,6 +1354,7 @@
         <Compile Include="System.Net.NetworkInformation\MacOsIPv4InterfaceStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterface.cs" />
         <Compile Include="System.Net.NetworkInformation\MacOsNetworkInterfaceMarshal.cs" />
+        <Compile Include="System.Net.NetworkInformation\NetworkInterface.platformnotsupported.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixIPGlobalProperties.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixIPGlobalStatistics.cs" />
         <Compile Include="System.Net.NetworkInformation\UnixIPInterfaceProperties.cs" />
@@ -1446,6 +1448,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+        <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1572,6 +1575,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\WebSocketHandle.Managed.cs" />
+        <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -1854,6 +1858,7 @@
             <Compile Include="..\referencesource\System\compmod\system\diagnostics\TypedElement.cs" />
             <Compile Include="..\referencesource\System\compmod\system\diagnostics\XmlWriterTraceListener.cs" />
             <Compile Include="..\referencesource\System\misc\PrivilegedConfigurationManager.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -2327,6 +2332,7 @@
             <Compile Include="..\referencesource\System\compmod\system\diagnostics\TypedElement.cs" />
             <Compile Include="..\referencesource\System\compmod\system\diagnostics\XmlWriterTraceListener.cs" />
             <Compile Include="..\referencesource\System\misc\PrivilegedConfigurationManager.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -2826,6 +2832,7 @@
             <Compile Include="..\referencesource\System\compmod\system\diagnostics\TypedElement.cs" />
             <Compile Include="..\referencesource\System\compmod\system\diagnostics\XmlWriterTraceListener.cs" />
             <Compile Include="..\referencesource\System\misc\PrivilegedConfigurationManager.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -3343,6 +3350,7 @@
             <Compile Include="..\referencesource\System\compmod\system\diagnostics\TypedElement.cs" />
             <Compile Include="..\referencesource\System\compmod\system\diagnostics\XmlWriterTraceListener.cs" />
             <Compile Include="..\referencesource\System\misc\PrivilegedConfigurationManager.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -3710,6 +3718,7 @@
         <Compile Include="..\Mono.Security\Mono.Security.X509\X509Stores.cs" />
         <Compile Include="..\Mono.Security\Mono.Security.X509\X520Attributes.cs" />
         <Compile Include="..\Mono.Security\Mono.Security\PKCS7.cs" />
+        <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
         <Compile Include="Internal.Cryptography\OidLookup.Managed.cs" />
         <Compile Include="Mono.AppleTls\Enums.cs" />
         <Compile Include="Mono.AppleTls\MonoCertificatePal.Mobile.cs" />
@@ -3811,6 +3820,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\WebSocketHandle.Managed.cs" />
+        <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -3950,6 +3960,7 @@
         <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslClientAuthenticationOptions.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.Security\src\System\Net\Security\SslServerAuthenticationOptions.cs" />
         <Compile Include="..\..\..\external\corefx\src\System.Net.WebSockets.Client\src\System\Net\WebSockets\WebSocketHandle.Managed.cs" />
+        <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
         <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -4121,6 +4132,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -4241,6 +4253,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -4384,6 +4397,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
@@ -4527,6 +4541,7 @@
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\CompiledRegexRunnerFactory.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexCompiler.cs" />
             <Compile Include="..\..\..\external\corefx\src\System.Text.RegularExpressions\src\System\Text\RegularExpressions\RegexLWCGCompiler.cs" />
+            <Compile Include="..\referencesource\System\net\System\Net\NetworkInformation\NetworkInterface.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPClient.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\TCPListener.cs" />
             <Compile Include="..\referencesource\System\net\System\Net\Sockets\UDPClient.cs" />
