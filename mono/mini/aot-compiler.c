@@ -216,6 +216,7 @@ typedef struct MonoAotOptions {
 	gboolean try_llvm;
 	gboolean llvm;
 	gboolean llvm_only;
+	gboolean method_table_as_data;
 	int nthreads;
 	int ntrampolines;
 	int nrgctx_trampolines;
@@ -10206,7 +10207,13 @@ emit_code (MonoAotCompile *acfg)
 #endif
 
 	sprintf (symbol, "method_addresses");
-	emit_section_change (acfg, RODATA_REL_SECT, !!is_func);
+	if (acfg->aot_opts.method_table_as_data) {
+		/* Emit the method address table as a table of pointers */
+		emit_section_change (acfg, ".data", 0);
+		acfg->flags = (MonoAotFileFlags)(acfg->flags | MONO_AOT_FILE_FLAG_METHOD_TABLE_AS_DATA);
+	} else {
+		emit_section_change (acfg, RODATA_REL_SECT, !!is_func);
+	}
 	emit_alignment_code (acfg, 8);
 	emit_info_symbol (acfg, symbol, is_func);
 	if (acfg->aot_opts.write_symbols)
@@ -10217,10 +10224,17 @@ emit_code (MonoAotCompile *acfg)
 
 	for (i = 0; i < acfg->nmethods; ++i) {
 #ifdef MONO_ARCH_AOT_SUPPORTED
-		if (!ignore_cfg (acfg->cfgs [i])) {
-			arch_emit_label_address (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &acfg->call_table_entry_size);
+		if (acfg->aot_opts.method_table_as_data) {
+			if (!ignore_cfg (acfg->cfgs [i]))
+				emit_pointer (acfg, acfg->cfgs [i]->asm_symbol);
+			else
+				emit_pointer (acfg, NULL);
 		} else {
-			arch_emit_label_address (acfg, symbol, FALSE, FALSE, NULL, &acfg->call_table_entry_size);
+			if (!ignore_cfg (acfg->cfgs [i])) {
+				arch_emit_label_address (acfg, acfg->cfgs [i]->asm_symbol, FALSE, acfg->thumb_mixed && acfg->cfgs [i]->compile_llvm, NULL, &acfg->call_table_entry_size);
+			} else {
+				arch_emit_label_address (acfg, symbol, FALSE, FALSE, NULL, &acfg->call_table_entry_size);
+			}
 		}
 #endif
 	}
