@@ -370,6 +370,7 @@ class Driver {
 		public bool NativeStrip;
 		public bool Simd;
 		public bool EnableDynamicRuntime;
+		public bool LinkerExcludeDeserialization;
 	}
 
 	int Run (string[] args) {
@@ -429,7 +430,8 @@ class Driver {
 				EnableFS = false,
 				NativeStrip = true,
 				Simd = false,
-				EnableDynamicRuntime = false
+				EnableDynamicRuntime = false,
+				LinkerExcludeDeserialization = true
 			};
 
 		var p = new OptionSet () {
@@ -475,6 +477,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("dynamic-runtime", "enable dynamic runtime (support for Emscripten's dlopen)", opts.EnableDynamicRuntime, b => opts.EnableDynamicRuntime = b));
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
 		AddFlag (p, new BoolFlag ("simd", "enable SIMD support", opts.Simd, b => opts.Simd = b));
+		AddFlag (p, new BoolFlag ("linker-exclude-deserialization", "Link out .NET deserialization support", opts.LinkerExcludeDeserialization, b => opts.LinkerExcludeDeserialization = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -1109,6 +1112,8 @@ class Driver {
 			linker_args += "--used-attrs-only true ";
 			linker_args += "--substitutions linker-subs.xml ";
 			linker_infiles += "| linker-subs.xml";
+			if (opts.LinkerExcludeDeserialization)
+				linker_args += "--exclude-feature deserialization ";
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
 				linker_args += $"-x {linkDescriptor} ";
 				foreach (var assembly in root_assemblies) {
