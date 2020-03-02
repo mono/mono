@@ -250,6 +250,7 @@ mono_save_seq_point_info (MonoCompile *cfg)
 	cfg->seq_points = NULL;
 }
 
+/* LOCKING: Acquires the domain lock */
 MonoSeqPointInfo*
 mono_get_seq_points (MonoDomain *domain, MonoMethod *method)
 {
@@ -261,7 +262,7 @@ mono_get_seq_points (MonoDomain *domain, MonoMethod *method)
 		shared_method = mini_get_shared_method (method);
 	}
 
-	mono_loader_lock ();
+	mono_domain_lock (domain);
 	seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, method);
 	if (!seq_points && method->is_inflated) {
 		/* generic sharing + aot */
@@ -269,7 +270,7 @@ mono_get_seq_points (MonoDomain *domain, MonoMethod *method)
 		if (!seq_points)
 			seq_points = (MonoSeqPointInfo *)g_hash_table_lookup (domain_jit_info (domain)->seq_points, shared_method);
 	}
-	mono_loader_unlock ();
+	mono_domain_unlock (domain);
 
 	return seq_points;
 }
