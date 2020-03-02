@@ -1,8 +1,5 @@
 //
-// RequiredAttributeTest.cs
-//
-// Authors:
-//      Marek Habersack <mhabersack@novell.com>
+// MaxMinLengthAttributeTest.cs
 //
 // Copyright (C) 2010 Novell, Inc. (http://novell.com/)
 //
