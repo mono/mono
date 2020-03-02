@@ -75,10 +75,9 @@ namespace WebAssembly.Net.Debugging {
 
 	class Breakpoint {
 		public SourceLocation Location { get; private set; }
-		public int LocalId { get; private set; }
 		public int RemoteId { get; set; }
 		public BreakpointState State { get; set; }
-		public string StackId => $"dotnet:{LocalId}";
+		public string StackId { get; private set; }
 
 		public static bool TryParseId (string stackId, out int id)
 		{
@@ -89,10 +88,10 @@ namespace WebAssembly.Net.Debugging {
 			return int.TryParse (stackId.Substring ("dotnet:".Length), out id);
 		}
 
-		public Breakpoint (SourceLocation loc, int localId, BreakpointState state)
+		public Breakpoint (string stackId, SourceLocation loc, BreakpointState state)
 		{
+			this.StackId = stackId;
 			this.Location = loc;
-			this.LocalId = localId;
 			this.State = state;
 		}
 	}
@@ -110,8 +109,9 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	internal class ExecutionContext {
+		public string DebuggerId { get; set; }
 		int breakpointIndex = -1;
-		public List<Breakpoint> Breakpoints { get; } = new List<Breakpoint> ();
+		public Dictionary<string,BreakpointRequest> BreakpointRequests { get; } = new Dictionary<string,BreakpointRequest> ();
 
 		public TaskCompletionSource<DebugStore> ready = null;
 		public bool RuntimeReady => ready != null && ready.Task.IsCompleted;
@@ -206,21 +206,27 @@ namespace WebAssembly.Net.Debugging {
 			return false;
 		}
 
+		async Task<bool> IsRuntimeReadyAlready (SessionId sessionId, CancellationToken token)
+		{
+			var res = await SendMonoCommand (sessionId, MonoCommands.IsRuntimeReady (), token);
+			return res.Value? ["result"]? ["value"]?.Value<bool> () ?? false;
+		}
 
 		protected override async Task<bool> AcceptCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
 			switch (method) {
 			case "Debugger.enable": {
 					var resp = await SendCommand (id, method, args, token);
-					var res = await SendMonoCommand (id, MonoCommands.IsRuntimeReady (), token);
-					var is_ready = res.Value? ["result"]? ["value"]?.Value<bool> ();
 
-					if (is_ready.HasValue && is_ready.Value == true) {
+					GetContext (id).DebuggerId = resp.Value ["debuggerId"]?.ToString ();
+
+					if (await IsRuntimeReadyAlready (id, token))
 						await RuntimeReady (id, token);
-					}
+
 					SendResponse (id,resp,token);
 					return true;
 				}
+
 			case "Debugger.getScriptSource": {
 					var script = args? ["scriptId"]?.Value<string> ();
 					return await OnGetScriptSource (id, script, token);
@@ -248,23 +254,39 @@ namespace WebAssembly.Net.Debugging {
 					if (start != null && end != null && await GetPossibleBreakpoints (id, start, end, token))
 							return true;
 
+					if (resp.IsErr) {
+						Log ("error", "sigh");
+					}
+
 					SendResponse (id, resp, token);
 					return true;
 				}
 
+			case "Debugger.setBreakpoint": {
+					break;
+				}
 			case "Debugger.setBreakpointByUrl": {
+					var context = GetContext (id);
 					var resp = await SendCommand (id, method, args, token);
-					if (resp.IsOk && resp.Value ["locations"].HasValues) {
+					if (!resp.IsOk) {
+						SendResponse (id, resp, token);
+						return true;
+					}
+
+					var bpid = resp.Value["breakpointId"]?.ToString ();
+
+					var request = BreakpointRequest.Parse (bpid, args, context.store);
+					context.BreakpointRequests[bpid] = request;
+
+					if (!request.IsResolved || resp.Value["locations"].HasValues) {
 						SendResponse (id, resp, token);
 						return true;
 					}
 
 					Log ("info", $"BP req {args}");
-					var bp_req = BreakpointRequest.Parse (args, GetContext (id).Store);
-					if (bp_req != null && await SetBreakpoint (id, bp_req, token))
-							return true;
+					await SetBreakpoint (id, request, false, token);
 
-					SendResponse (id, resp, token);
+					SendResponse (id, Result.OkFromObject (request.ToObject()), token);
 					return true;
 				}
 
@@ -346,7 +368,7 @@ namespace WebAssembly.Net.Debugging {
 				return false;
 			}
 
-			var bp = context.Breakpoints.FirstOrDefault (b => b.RemoteId == bp_id.Value);
+			var bp = context.BreakpointRequests.Values.SelectMany (v => v.Locations).FirstOrDefault (b => b.RemoteId == bp_id.Value);
 
 			var src = bp == null ? null : (await LoadStore (sessionId, token)).GetFileById (bp.Location.Id);
 
@@ -443,20 +465,21 @@ namespace WebAssembly.Net.Debugging {
 		async Task OnDefaultContext (SessionId sessionId, ExecutionContext context, CancellationToken token)
 		{
 			Log ("verbose", "Default context created, clearing state and sending events");
-
+			if (contexts.TryGetValue (sessionId.sessionId ?? "default", out var oldContext)) {
+				foreach (var bpId in oldContext.BreakpointRequests.Keys) {
+					context.BreakpointRequests[bpId] = oldContext.BreakpointRequests[bpId].Clone();
+				}
+			}
 			contexts[sessionId.sessionId ?? "default"] = context;
-			//reset all bps
-			foreach (var b in context.Breakpoints){
+
+			/*
+			foreach (var b in context.Breakpoint){
 				b.State = BreakpointState.Pending;
 			}
+			*/
 
-			Log ("debug", "checking if the runtime is ready");
-			var res = await SendMonoCommand (sessionId, MonoCommands.IsRuntimeReady (), token);
-			var is_ready = res.Value? ["result"]? ["value"]?.Value<bool> ();
-
-			if (is_ready.HasValue && is_ready.Value == true) {
+			if (await IsRuntimeReadyAlready (sessionId, token))
 				await RuntimeReady (sessionId, token);
-			}
 		}
 
 		async Task OnResume (MessageId msd_id, CancellationToken token)
@@ -500,8 +523,7 @@ namespace WebAssembly.Net.Debugging {
 			var res = await SendMonoCommand(msg_id, cmd, token);
 
 			//if we fail we just buble that to the IDE (and let it panic over it)
-			if (res.IsErr)
-			{
+			if (res.IsErr) {
 				SendResponse(msg_id, res, token);
 				return;
 			}
@@ -557,8 +579,10 @@ namespace WebAssembly.Net.Debugging {
 
 				var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 
-				if(values == null)
+				if(values == null) {
 					SendResponse (msg_id, Result.OkFromObject (new {result = Array.Empty<object> ()}), token);
+					return;
+				}
 
 				var var_list = new List<object> ();
 				int i = 0;
@@ -624,9 +648,8 @@ namespace WebAssembly.Net.Debugging {
 		{
 			var context = GetContext (sessionId);
 
-			if (Interlocked.CompareExchange (ref context.store, new DebugStore (logger), null) != null) {
+			if (Interlocked.CompareExchange (ref context.store, new DebugStore (logger), null) != null)
 				return await context.Source.Task;
-			}
 
 			try {
 				var loaded_pdbs = await SendMonoCommand (sessionId, MonoCommands.GetLoadedFiles(), token);
@@ -659,111 +682,76 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			var store = await LoadStore (sessionId, token);
-			/*
-			foreach (var s in store.AllSources ()) {
-				var scriptSource = JObject.FromObject (s.ToScriptSource (context.Id, context.AuxData));
-				Log ("verbose", $"\tsending {s.Url} {context.Id} {sessionId.sessionId}");
-				SendEvent (sessionId, "Debugger.scriptParsed", scriptSource, token);
-			}
-			*/
-			context.ready.SetResult (store);
-			foreach (var bp in context.Breakpoints) {
-				if (bp.State != BreakpointState.Pending)
-					continue;
-				var res = await EnableBreakpoint (sessionId, bp, token);
-				var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
 
-				//if we fail we just buble that to the IDE (and let it panic over it)
-				if (!ret_code.HasValue) {
-					//FIXME figure out how to inform the IDE of that.
-					Log ("info", $"FAILED TO ENABLE BP {bp.LocalId}");
-					bp.State = BreakpointState.Disabled;
+			///context.ready.SetResult (store);
+			foreach (var breakpointRequest in context.BreakpointRequests.Values) {
+
+				if (breakpointRequest.TryResolve (store)) {
+					await SetBreakpoint (sessionId, breakpointRequest, true, token);
+
+					Log ("info", $"BP request for '{breakpointRequest}' runtime ready {context.RuntimeReady} location '{breakpointRequest.Locations.FirstOrDefault ()}'");
 				}
 			}
+
+			context.ready.SetResult (store);
 			SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
-			//context.ready.SetResult (store);
 			return store;
 		}
 
 		async Task<bool> RemoveBreakpoint(MessageId msg_id, JObject args, CancellationToken token) {
 			var bpid = args? ["breakpointId"]?.Value<string> ();
 
-			if (!Breakpoint.TryParseId (bpid, out var the_id))
-				return false;
-
 			var context = GetContext (msg_id);
-			var bp = context.Breakpoints.FirstOrDefault (b => b.LocalId == the_id);
-			if (bp == null) {
-				Log ("info", $"Could not find dotnet bp with id {the_id}");
+			if (!context.BreakpointRequests.TryGetValue (bpid, out var breakpointRequest))
 				return false;
-			}
 
-			context.Breakpoints.Remove (bp);
-			//FIXME verify result (and log?)
-			var res = await RemoveBreakpoint (msg_id, bp, token);
-
-			return true;
-		}
-
-
-		async Task<Result> RemoveBreakpoint (SessionId sessionId, Breakpoint bp, CancellationToken token)
-		{
-			var res = await SendMonoCommand (sessionId, MonoCommands.RemoveBreakpoint (bp.RemoteId), token);
-			var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
-
-			if (ret_code.HasValue) {
-				bp.RemoteId = -1;
-				bp.State = BreakpointState.Disabled;
-			}
-
-			return res;
-		}
-
-		async Task<bool> SetBreakpoint (MessageId msg_id, BreakpointRequest req, CancellationToken token)
-		{
-			var context = GetContext (msg_id);
-			var bp_loc = context.Store.FindBestBreakpoint (req);
-			Log ("info", $"BP request for '{req}' runtime ready {context.RuntimeReady} location '{bp_loc}'");
-			if (bp_loc == null) {
-				Log ("verbose", $"Could not resolve breakpoint request: {req}");
-				return false;
-			}
-
-			Breakpoint bp = null;
-			if (!context.RuntimeReady) {
-				bp = new Breakpoint (bp_loc, context.NextBreakpointId (), BreakpointState.Pending);
-			} else {
-				bp = new Breakpoint (bp_loc, context.NextBreakpointId (), BreakpointState.Disabled);
-
-				var res = await EnableBreakpoint (msg_id, bp, token);
+			foreach (var bp in breakpointRequest.Locations) {
+				var res = await SendMonoCommand (msg_id, MonoCommands.RemoveBreakpoint (bp.RemoteId), token);
 				var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
 
-				//if we fail we just buble that to the IDE (and let it panic over it)
-				if (!ret_code.HasValue) {
-					return false;
+				if (ret_code.HasValue) {
+					bp.RemoteId = -1;
+					bp.State = BreakpointState.Disabled;
 				}
 			}
-
-			context.Breakpoints.Add (bp);
-
-			var ok = new {
-				breakpointId = bp.StackId,
-				locations = new [] {
-					bp_loc.AsLocation ()
-				},
-			};
-
-			SendResponse (msg_id, Result.OkFromObject (ok), token);
-			return true;
+			breakpointRequest.Locations.Clear ();
+			return false;
 		}
 
-		async Task<bool> GetPossibleBreakpoints (MessageId msg_id, SourceLocation start, SourceLocation end, CancellationToken token)
+		async Task SetBreakpoint (SessionId sessionId, BreakpointRequest req, bool send, CancellationToken token)
 		{
-			var bps = (await RuntimeReady (msg_id, token)).FindPossibleBreakpoints (start, end);
+			var context = GetContext (sessionId);
+			var locations = context.store.FindBestBreakpoint (req).ToList ();
+
+			Log ("info", $"BP request for '{req}' runtime ready {context.RuntimeReady} location '{locations.FirstOrDefault()}'");
+
+			var breakpoints = new List<Breakpoint> ();
+			foreach (var loc in locations) {
+				var bp = new Breakpoint (req.Id, loc, BreakpointState.Disabled);
+				await EnableBreakpoint (sessionId, bp, token);
+				breakpoints.Add (bp);
+
+				var resolution = new {
+					breakpointId = req.Id,
+					location = loc.AsLocation ()
+				};
+
+				//if (send) SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolution), token);
+			}
+
+			req.Locations.AddRange (breakpoints);
+			return;
+		}
+
+		async Task<bool> GetPossibleBreakpoints (MessageId msg, SourceLocation start, SourceLocation end, CancellationToken token)
+		{
+			var context = GetContext (msg);
+			var bps = context.store.FindPossibleBreakpoints (start, end);
+
 			if (bps == null)
 				return false;
 
-			SendResponse (msg_id, Result.OkFromObject (new { locations = bps.Select (b => b.AsLocation ()) }), token);
+			SendResponse (msg, Result.OkFromObject (new { locations = bps.Select (b => b.AsLocation ()) }), token);
 			return true;
 		}
 

@@ -12,28 +12,49 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using System.Runtime.CompilerServices;
 
 namespace WebAssembly.Net.Debugging {
 	internal class BreakpointRequest {
+		public string Id { get; private set; }
 		public string Assembly { get; private set; }
 		public string File { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
 
+		JObject request;
+
+		public bool IsResolved => Assembly != null;
+		public List<Breakpoint> Locations { get; } = new List<Breakpoint> ();
+
 		public override string ToString () {
 			return $"BreakpointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
 		}
 
-		public static BreakpointRequest Parse (JObject args, DebugStore store)
-		{
-			// Events can potentially come out of order, so DebugStore may not be initialized
-			// The BP being set in these cases are JS ones, which we can safely ignore
-			if (args == null || store == null)
-				return null;
+		public object ToObject ()
+			=> new { breakpointId = Id, locations = Locations.Select(l => l.Location.AsLocation ()) };
 
-			var url = args? ["url"]?.Value<string> ();
+		public static BreakpointRequest Parse (string id, JObject args, DebugStore store)
+		{
+			var breakRequest = new BreakpointRequest () {
+				Id = id,
+				request = args
+			};
+			breakRequest.TryResolve (store);
+			return breakRequest;
+		}
+
+		public BreakpointRequest Clone ()
+			=> new BreakpointRequest { request = request };
+
+		public bool TryResolve (DebugStore store)
+		{
+			if (request == null || store == null)
+				return false;
+
+			var url = request? ["url"]?.Value<string> ();
 			if (url == null) {
-				var urlRegex = args?["urlRegex"].Value<string>();
+				var urlRegex = request?["urlRegex"].Value<string>();
 				var sourceFile = store?.GetFileByUrlRegex (urlRegex);
 
 				url = sourceFile?.DotNetUrl;
@@ -45,23 +66,22 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			if (url == null)
-				return null;
+				return false;
 
 			var parts = ParseDocumentUrl (url);
 			if (parts.Assembly == null)
-				return null;
+				return false;
 
-			var line = args? ["lineNumber"]?.Value<int> ();
-			var column = args? ["columnNumber"]?.Value<int> ();
+			var line = request? ["lineNumber"]?.Value<int> ();
+			var column = request? ["columnNumber"]?.Value<int> ();
 			if (line == null || column == null)
-				return null;
+				return false;
 
-			return new BreakpointRequest () {
-				Assembly = parts.Assembly,
-				File = parts.DocumentPath,
-				Line = line.Value,
-				Column = column.Value
-			};
+			Assembly = parts.Assembly;
+			File = parts.DocumentPath;
+			Line = line.Value;
+			Column = column.Value;
+			return true;
 		}
 
 		static (string Assembly, string DocumentPath) ParseDocumentUrl (string url)
@@ -99,7 +119,6 @@ namespace WebAssembly.Net.Debugging {
 		}
 	}
 
-
 	internal class CliLocation {
 		public CliLocation (MethodInfo method, int offset)
 		{
@@ -110,7 +129,6 @@ namespace WebAssembly.Net.Debugging {
 		public MethodInfo Method { get; private set; }
 		public int Offset { get; private set; }
 	}
-
 
 	internal class SourceLocation {
 		SourceId id;
@@ -268,11 +286,26 @@ namespace WebAssembly.Net.Debugging {
 			this.source = source;
 
 			var sps = methodDef.DebugInformation.SequencePoints;
-			if (sps != null && sps.Count > 0) {
-				StartLocation = new SourceLocation (this, sps [0]);
-				EndLocation = new SourceLocation (this, sps [sps.Count - 1]);
+			if (sps == null || sps.Count() < 1)
+				return;
+
+			SequencePoint start = sps [0];
+			SequencePoint end = sps [0];
+
+			foreach (var sp in sps) {
+				if (sp.StartLine < start.StartLine)
+						start = sp;
+				else if (sp.StartLine == start.StartLine && sp.StartColumn < start.StartColumn)
+						start = sp;
+
+				if (sp.EndLine > end.EndLine)
+						end = sp;
+				else if (sp.EndLine == end.EndLine && sp.EndColumn > end.EndColumn)
+						end = sp;
 			}
 
+			StartLocation = new SourceLocation (this, start);
+			EndLocation = new SourceLocation (this, end);
 		}
 
 		public SourceLocation GetLocationByIl (int pos)
@@ -556,7 +589,7 @@ namespace WebAssembly.Net.Debugging {
 			public Task<byte[][]> Data { get; set; }
 		}
 
-		public async IAsyncEnumerable<SourceFile> Load (SessionId sessionId, string [] loaded_files, CancellationToken token)
+		public async IAsyncEnumerable<SourceFile> Load (SessionId sessionId, string [] loaded_files, [EnumeratorCancellation] CancellationToken token)
 		{
 			static bool MatchPdb (string asm, string pdb)
 				=> Path.ChangeExtension (asm, "pdb") == pdb;
@@ -605,7 +638,7 @@ namespace WebAssembly.Net.Debugging {
 			=> assemblies.SelectMany (a => a.Sources);
 
 		public SourceFile GetFileById (SourceId id)
-			=> AllSources ().FirstOrDefault (f => f.SourceId.Equals (id));
+			=> AllSources ().SingleOrDefault (f => f.SourceId.Equals (id));
 
 		public AssemblyInfo GetAssemblyByName (string name)
 			=> assemblies.FirstOrDefault (a => a.Name.Equals (name, StringComparison.InvariantCultureIgnoreCase));
@@ -681,23 +714,21 @@ namespace WebAssembly.Net.Debugging {
 			return true;
 		}
 
-		public SourceLocation FindBestBreakpoint (BreakpointRequest req)
+		public IEnumerable<SourceLocation> FindBestBreakpoint (BreakpointRequest req)
 		{
 			var asm = assemblies.FirstOrDefault (a => a.Name.Equals (req.Assembly, StringComparison.OrdinalIgnoreCase));
-			var src = asm?.Sources?.FirstOrDefault (s => s.DebuggerFileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));
+			var src = asm?.Sources?.SingleOrDefault (s => s.DebuggerFileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));
 
 			if (src == null)
-				return null;
+				yield break;
 
 			foreach (var m in src.Methods) {
 				foreach (var sp in m.methodDef.DebugInformation.SequencePoints) {
 					//FIXME handle multi doc methods
 					if (Match (sp, req.Line, req.Column))
-						return new SourceLocation (m, sp);
+						yield return new SourceLocation (m, sp);
 				}
 			}
-
-			return null;
 		}
 
 		public string ToUrl (SourceLocation location)
