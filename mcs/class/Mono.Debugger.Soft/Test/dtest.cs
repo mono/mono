@@ -65,6 +65,9 @@ public class DebuggerTests
 	Event GetNextEvent () {
 		var es = vm.GetNextEventSet ();
 		Assert.AreEqual (1, es.Events.Length);
+		if (step_req != null && es [0] != null && es [0].Request != null && es [0].Request is StepEventRequest && ((StepEventRequest)es [0].Request).getId() != step_req.getId()) {
+			step_req = ((StepEventRequest)es [0].Request);
+		}
 		return es [0];
 	}
 
@@ -5198,7 +5201,66 @@ public class DebuggerTests
 		}
 	}
 
-
+	[Test]
+	public void InvokeSingleStepMultiThread () {
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("mt_ss");
+		int firstLineFound = m.Locations [0].LineNumber + 1;
+		int line_first_counter = 5;
+		int line_second_counter = 5;
+		int line_third_counter = 3;
+		Event e = run_until ("ss_multi_thread");
+		EventRequest req = create_step (e);
+		req.Disable ();
+		ReusableBreakpoint breakpoint = new ReusableBreakpoint (this, "mt_ss");
+		try {
+			breakpoint.Continue ();
+			e = breakpoint.lastEvent;
+			req = create_step (e);
+			while (line_first_counter > 0 || line_second_counter > 0 || line_third_counter > 0) {
+				if (req.getId() != breakpoint.req.getId())
+					req.Disable ();
+				req = create_step (e);
+				((StepEventRequest)req).Size = StepSize.Line;
+				try {
+					if (e.Thread.GetFrames ()[0].Location.LineNumber == firstLineFound + 1 && (e.Thread.Name.Equals("Thread_0") || e.Thread.Name.Equals("Thread_1")))  {
+						vm.Resume ();
+						e = GetNextEvent ();
+					}
+					else
+						e = step_over_or_breakpoint ();
+					var thread = e.Thread;
+					if (thread.GetFrames().Length > 0) {
+						var frame = thread.GetFrames()[0];
+						var l = e.Thread.GetFrames ()[0].Location;
+						if (l.LineNumber == firstLineFound) {
+							System.Console.WriteLine("parei na linha 1 na thread " + thread.Name);
+							line_first_counter--;
+						}
+						if (l.LineNumber == firstLineFound + 1) {
+							System.Console.WriteLine("parei na linha 2 na thread " + thread.Name);
+							line_second_counter--;
+						}
+						if (l.LineNumber == firstLineFound + 2) {
+							System.Console.WriteLine("parei na linha 3 na thread " + thread.Name);
+							line_third_counter--;				
+						}			
+					}
+					System.Console.WriteLine("Antes - " + req.getId() + " - Depois - " + e.Request.getId());
+					req =  e.Request;					
+				}
+				catch (Exception z){
+					System.Console.WriteLine("cai na Exception");
+					break;
+				}
+			}
+		} finally {
+			req.Disable ();
+			breakpoint.Disable ();
+		}
+		Assert.AreEqual(0, line_first_counter);
+		Assert.AreEqual(0, line_second_counter);
+		Assert.AreEqual(0, line_third_counter);
+	}
 	
 #endif
 } // class DebuggerTests

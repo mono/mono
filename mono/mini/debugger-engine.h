@@ -284,6 +284,7 @@ void mono_de_stop_single_stepping (void);
 void mono_de_process_breakpoint (void *tls, gboolean from_signal);
 void mono_de_process_single_step (void *tls, gboolean from_signal);
 DbgEngineErrorCode mono_de_ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilter filter, EventRequest *req);
-void mono_de_cancel_ss (void);
+void mono_de_cancel_ss (SingleStepReq *req);
 
+SingleStepReq* ss_req_acquire (MonoInternalThread *thread);
 #endif
