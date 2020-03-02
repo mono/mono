@@ -570,6 +570,11 @@ class Driver {
 			return 1;
 		}
 
+		if (enable_simd && !is_netcore) {
+			Console.Error.WriteLine ("--simd is only supported with netcore.");
+			return 1;
+		}
+
 		var tool_prefix = Path.GetDirectoryName (typeof (Driver).Assembly.Location);
 
 		//are we working from the tree?
