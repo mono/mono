@@ -4977,7 +4977,7 @@ ss_args_destroy (SingleStepArgs *ss_args)
 static int
 handle_multiple_ss_requests (void)
 {
-	return DE_ERR_NOT_IMPLEMENTED;
+	return 1;
 }
 
 static int
@@ -6239,7 +6239,7 @@ clear_event_request (int req_id, int etype)
 			if (req->event_kind == EVENT_KIND_BREAKPOINT)
 				mono_de_clear_breakpoint ((MonoBreakpoint *)req->info);
 			if (req->event_kind == EVENT_KIND_STEP) {
-				mono_de_cancel_ss ();
+				mono_de_cancel_ss ((SingleStepReq *)req->info);
 			}
 			if (req->event_kind == EVENT_KIND_METHOD_ENTRY)
 				mono_de_clear_breakpoint ((MonoBreakpoint *)req->info);
