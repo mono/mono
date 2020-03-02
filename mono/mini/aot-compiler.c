@@ -2201,9 +2201,10 @@ arch_emit_specific_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size
 	*tramp_size = 8;
 	/* call *<offset>(%rip) */
 	if (acfg->llvm) {
+		emit_byte (acfg, '\x41');
 		emit_unset_mode (acfg);
 		fprintf (acfg->fp, "call *%s+%d(%%rip)\n", acfg->got_symbol, (int)(offset * sizeof (target_mgreg_t)));
-		emit_zero_bytes (acfg, 2);
+		emit_zero_bytes (acfg, 1);
 	} else {
 		emit_byte (acfg, '\x41');
 		emit_byte (acfg, '\xff');
