@@ -727,7 +727,7 @@ namespace WebAssembly.Net.Debugging {
 				return;
 			}
 
-			var locations = context.store.FindBestBreakpoint (req).ToList ();
+			var locations = store.FindBestBreakpoint (req).ToList ();
 			Log ("info", $"BP request for '{req}' runtime ready {context.RuntimeReady} location '{locations.FirstOrDefault()}'");
 
 			var breakpoints = new List<Breakpoint> ();
