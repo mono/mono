@@ -1509,7 +1509,7 @@ mono_de_ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, S
 		return err;
 
 	// FIXME: Multiple requests
-	if (the_ss_reqs->len > 1) {
+	if (ss_req_count () > 1) {
 		err = rt_callbacks.handle_multiple_ss_requests ();
 
 		if (err == DE_ERR_NOT_IMPLEMENTED) {
