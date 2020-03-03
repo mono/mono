@@ -5233,23 +5233,18 @@ public class DebuggerTests
 						var frame = thread.GetFrames()[0];
 						var l = e.Thread.GetFrames ()[0].Location;
 						if (l.LineNumber == firstLineFound) {
-							System.Console.WriteLine("parei na linha 1 na thread " + thread.Name);
 							line_first_counter--;
 						}
 						if (l.LineNumber == firstLineFound + 1) {
-							System.Console.WriteLine("parei na linha 2 na thread " + thread.Name);
 							line_second_counter--;
 						}
 						if (l.LineNumber == firstLineFound + 2) {
-							System.Console.WriteLine("parei na linha 3 na thread " + thread.Name);
 							line_third_counter--;				
 						}			
 					}
-					System.Console.WriteLine("Antes - " + req.getId() + " - Depois - " + e.Request.getId());
-					req =  e.Request;					
+					req =  e.Request;		
 				}
 				catch (Exception z){
-					System.Console.WriteLine("cai na Exception");
 					break;
 				}
 			}
