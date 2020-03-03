@@ -168,6 +168,7 @@
     <Compile Include="..\referencesource\System.ComponentModel.DataAnnotations\DataAnnotations\Validator.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
     <Compile Include="ReferenceSources\SR.cs" />
+    <Compile Include="corefx\CountPropertyHelper.cs" />
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
       <Name>genconsts</Name>
       <Project>{702AE2C0-71DD-4112-9A06-E4FABCA59986}</Project>
