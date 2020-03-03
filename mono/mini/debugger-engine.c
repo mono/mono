@@ -591,7 +591,7 @@ mono_de_clear_breakpoints_for_domain (MonoDomain *domain)
 /* Number of single stepping operations in progress */
 static int ss_count;
 
-/* The single step request instance */
+/* The single step request instances */
 static GPtrArray *the_ss_reqs;
 
 static void
