@@ -762,7 +762,7 @@ mono_de_ss_req_release (SingleStepReq *req)
 	if (req->refcount <= 0)
 		free = TRUE;
 	if (free) {
-		g_ptr_array_remove(the_ss_reqs, req);
+		g_ptr_array_remove (the_ss_reqs, req);
 		ss_destroy (req);
 	}
 	dbg_unlock ();
