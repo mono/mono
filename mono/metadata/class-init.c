@@ -2955,7 +2955,6 @@ mono_class_setup_vtable_ginst (MonoClass *klass, GList *in_setup)
 	if (mono_print_vtable)
 		print_vtable_layout_result (klass, klass->vtable, gklass->vtable_size);
 
-	return;
 }
 
 /*
