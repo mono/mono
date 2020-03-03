@@ -1898,7 +1898,7 @@ commit_reference:
 				    image->assembly->aname.name, image->assembly, reference->aname.name, reference, reference->ref_count);
 		} else {
 			if (image->assembly)
-				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Failed to load assembly %s[%p].",
+				mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Failed to load assembly %s[%p].",
 				    image->assembly->aname.name, image->assembly);
 		}
 		
@@ -2557,7 +2557,7 @@ mono_assembly_request_open (const char *filename, const MonoAssemblyOpenRequest 
 		ERROR_DECL (error);
 		new_fname = mono_make_shadow_copy (fname, error);
 		if (!is_ok (error)) {
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY,
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY,
 				    "Assembly Loader shadow copy error: %s.", mono_error_get_message (error));
 			mono_error_cleanup (error);
 			*status = MONO_IMAGE_IMAGE_INVALID;
@@ -2884,7 +2884,7 @@ mono_assembly_binding_applies_to_image (MonoAssemblyLoadContext *alc, MonoImage*
 	MonoAssemblyName *result_name = &probed_aname;
 	result_name = mono_assembly_apply_binding (result_name, &dest_name);
 	if (result_name != &probed_aname && !mono_assembly_names_equal (result_name, &probed_aname)) {
-		if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
+		if (mono_trace_is_traced (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY)) {
 			char *probed_fullname = mono_stringify_assembly_name (&probed_aname);
 			char *result_fullname = mono_stringify_assembly_name (result_name);
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Request to load from %s in (%s) remapped to %s", probed_fullname, image->name, result_fullname);
@@ -2944,7 +2944,7 @@ mono_problematic_image_reprobe (MonoAssemblyLoadContext *alc, MonoImage *image, 
 		*status = MONO_IMAGE_IMAGE_INVALID;
 		return NULL;
 	}
-	if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
+	if (mono_trace_is_traced (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY)) {
 		char *probed_fullname = mono_stringify_assembly_name (&probed_aname);
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Requested to load from problematic image %s, probing instead for assembly with name %s", image->name, probed_fullname);
 		g_free (probed_fullname);

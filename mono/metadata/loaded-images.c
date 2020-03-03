@@ -23,7 +23,7 @@ mono_loaded_images_cleanup (MonoLoadedImages *li, gboolean shutdown)
 		// Reflection-only images being still loaded doesn't indicate anything as harmful, so we don't check for it.
 		g_hash_table_iter_init (&iter, mono_loaded_images_get_hash (li, FALSE));
 		while (g_hash_table_iter_next (&iter, NULL, (void**)&image))
-			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Assembly image '%s' [%p] still loaded at shutdown.", image->name, image);
+			mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Assembly image '%s' [%p] still loaded at shutdown.", image->name, image);
 	}
 
 	for (int hash_idx = 0; hash_idx < MONO_LOADED_IMAGES_HASH_COUNT; hash_idx++) {
