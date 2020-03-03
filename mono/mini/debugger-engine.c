@@ -752,7 +752,7 @@ ss_req_acquire (MonoInternalThread *thread)
 }
 
 int 
-ss_req_count()
+ss_req_count ()
 {
 	return the_ss_reqs->len;
 }
