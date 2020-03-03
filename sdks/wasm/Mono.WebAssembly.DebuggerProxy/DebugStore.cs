@@ -654,13 +654,13 @@ namespace WebAssembly.Net.Debugging {
 
 			if (start.Line > spStart.Line)
 				return false;
-			if (start.Column > spStart.Column && start.Line == sp.StartLine)
+			if (start.Column > spEnd.Column && start.Line == spEnd.Line)
 				return false;
 
 			if (end.Line < spEnd.Line)
 				return false;
 
-			if (end.Column < spEnd.Column && end.Line == spEnd.Line)
+			if (end.Column < spStart.Column && end.Line == spStart.Line)
 				return false;
 
 			return true;

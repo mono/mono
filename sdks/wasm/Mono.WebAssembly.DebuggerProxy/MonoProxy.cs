@@ -189,6 +189,10 @@ namespace WebAssembly.Net.Debugging {
 					break;
 				}
 
+			case "Debugger.breakpointResolved": {
+					break;
+				}
+
 			case "Debugger.scriptParsed":{
 					var url = args? ["url"]?.Value<string> () ?? "";
 
@@ -254,10 +258,6 @@ namespace WebAssembly.Net.Debugging {
 					if (start != null && end != null && await GetPossibleBreakpoints (id, start, end, token))
 							return true;
 
-					if (resp.IsErr) {
-						Log ("error", "sigh");
-					}
-
 					SendResponse (id, resp, token);
 					return true;
 				}
@@ -265,6 +265,7 @@ namespace WebAssembly.Net.Debugging {
 			case "Debugger.setBreakpoint": {
 					break;
 				}
+
 			case "Debugger.setBreakpointByUrl": {
 					var context = GetContext (id);
 					var resp = await SendCommand (id, method, args, token);
@@ -656,7 +657,7 @@ namespace WebAssembly.Net.Debugging {
 				var the_value = loaded_pdbs.Value? ["result"]? ["value"];
 				var the_pdbs = the_value?.ToObject<string[]> ();
 
-				await foreach (var source in context.store.Load(sessionId, the_pdbs, token).WithCancellation (token)) { 
+				await foreach (var source in context.store.Load(sessionId, the_pdbs, token).WithCancellation (token)) {
 					var scriptSource = JObject.FromObject (source.ToScriptSource (context.Id, context.AuxData));
 					Log ("verbose", $"\tsending {source.Url} {context.Id} {sessionId.sessionId}");
 					SendEvent (sessionId, "Debugger.scriptParsed", scriptSource, token);
@@ -736,7 +737,7 @@ namespace WebAssembly.Net.Debugging {
 					location = loc.AsLocation ()
 				};
 
-				//if (send) SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolution), token);
+				if (send) SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolution), token);
 			}
 
 			req.Locations.AddRange (breakpoints);
@@ -745,13 +746,14 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task<bool> GetPossibleBreakpoints (MessageId msg, SourceLocation start, SourceLocation end, CancellationToken token)
 		{
-			var context = GetContext (msg);
-			var bps = context.store.FindPossibleBreakpoints (start, end);
+			var bps = (await RuntimeReady (msg, token)).FindPossibleBreakpoints (start, end);
 
 			if (bps == null)
 				return false;
 
-			SendResponse (msg, Result.OkFromObject (new { locations = bps.Select (b => b.AsLocation ()) }), token);
+			var response = new { locations = bps.Select (b => b.AsLocation ()) };
+
+			SendResponse (msg, Result.OkFromObject (response), token);
 			return true;
 		}
 
