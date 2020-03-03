@@ -603,13 +603,13 @@ ss_req_init (void)
 static void
 ss_req_cleanup (void)
 {
-	mono_loader_lock ();
+	dbg_lock ();
 
 	g_ptr_array_free (the_ss_reqs, TRUE);
 
 	the_ss_reqs = NULL;
 
-	mono_loader_unlock ();
+	dbg_unlock ();
 }
 
 /*
@@ -751,6 +751,12 @@ ss_req_acquire (MonoInternalThread *thread)
 	return req;
 }
 
+int 
+ss_req_count()
+{
+	return the_ss_reqs->len;
+}
+
 static void
 mono_de_ss_req_release (SingleStepReq *req)
 {
@@ -759,7 +765,7 @@ mono_de_ss_req_release (SingleStepReq *req)
 	dbg_lock ();
 	g_assert (req->refcount);
 	req->refcount --;
-	if (req->refcount <= 0)
+	if (req->refcount == 0)
 		free = TRUE;
 	if (free) {
 		g_ptr_array_remove (the_ss_reqs, req);
@@ -1036,7 +1042,9 @@ mono_de_process_breakpoint (void *void_tls, gboolean from_signal)
 	MonoSeqPointInfo *info;
 	SeqPoint sp;
 	gboolean found_sp;
-
+	
+	if (rt_callbacks.try_process_suspend (tls, ctx)) 
+		return;
 
 	ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
 

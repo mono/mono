@@ -287,4 +287,5 @@ DbgEngineErrorCode mono_de_ss_create (MonoInternalThread *thread, StepSize size,
 void mono_de_cancel_ss (SingleStepReq *req);
 
 SingleStepReq* ss_req_acquire (MonoInternalThread *thread);
+int ss_req_count(void);
 #endif

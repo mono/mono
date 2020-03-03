@@ -2833,6 +2833,12 @@ try_process_suspend (void *the_tls, MonoContext *ctx)
 			return FALSE;
 		if (tls->invoke)
 			return FALSE;
+		//if the ss_req_count is higher then one the first ss request has already suspended the vm
+		if (ss_req_count() > 1)
+			return FALSE;
+		//if the tls->suspended is true this means that the thread is already suspended and we don't need to suspend it again
+		if (tls->suspended)
+			return FALSE;
 		process_suspend (tls, ctx);
 		return TRUE;
 	}
