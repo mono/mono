@@ -317,7 +317,7 @@ load_image (MonoAotModule *amodule, int index, MonoError *error)
 		assembly = mono_assembly_request_byname (&amodule->image_names [index], &req, &status);
 	}
 	if (!assembly) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_AOT, "AOT: module %s is unusable because dependency %s is not found.", amodule->aot_name, amodule->image_names [index].name);
+		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_AOT, "AOT: module %s is unusable because dependency %s is not found.", amodule->aot_name, amodule->image_names [index].name);
 		mono_error_set_bad_image_by_name (error, amodule->aot_name, "module '%s' is unusable because dependency %s is not found (error %d).\n", amodule->aot_name, amodule->image_names [index].name, status);
 		amodule->out_of_date = TRUE;
 		return NULL;
