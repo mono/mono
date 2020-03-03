@@ -275,17 +275,17 @@ namespace WebAssembly.Net.Debugging {
 					}
 
 					var bpid = resp.Value["breakpointId"]?.ToString ();
-
+					var jsLocations = resp.Value ["locations"];
 					var request = BreakpointRequest.Parse (bpid, args, context.store);
 					context.BreakpointRequests[bpid] = request;
-
-					if (!request.IsResolved || resp.Value["locations"].HasValues) {
+					var store = await RuntimeReady (id, token);
+					if (false && jsLocations.HasValues) {
 						SendResponse (id, resp, token);
 						return true;
 					}
 
 					Log ("info", $"BP req {args}");
-					await SetBreakpoint (id, request, false, token);
+					await SetBreakpoint (id, store, request, false, token);
 
 					SendResponse (id, Result.OkFromObject (request.ToObject()), token);
 					return true;
@@ -688,7 +688,7 @@ namespace WebAssembly.Net.Debugging {
 			foreach (var breakpointRequest in context.BreakpointRequests.Values) {
 
 				if (breakpointRequest.TryResolve (store)) {
-					await SetBreakpoint (sessionId, breakpointRequest, true, token);
+					await SetBreakpoint (sessionId, store, breakpointRequest, true, token);
 
 					Log ("info", $"BP request for '{breakpointRequest}' runtime ready {context.RuntimeReady} location '{breakpointRequest.Locations.FirstOrDefault ()}'");
 				}
@@ -719,11 +719,15 @@ namespace WebAssembly.Net.Debugging {
 			return false;
 		}
 
-		async Task SetBreakpoint (SessionId sessionId, BreakpointRequest req, bool send, CancellationToken token)
+		async Task SetBreakpoint (SessionId sessionId, DebugStore store, BreakpointRequest req, bool send, CancellationToken token)
 		{
 			var context = GetContext (sessionId);
-			var locations = context.store.FindBestBreakpoint (req).ToList ();
+			if (req.Locations.Any ()) {
+				Log ("debug", $"locations already loaded for {req.Id}");
+				return;
+			}
 
+			var locations = context.store.FindBestBreakpoint (req).ToList ();
 			Log ("info", $"BP request for '{req}' runtime ready {context.RuntimeReady} location '{locations.FirstOrDefault()}'");
 
 			var breakpoints = new List<Breakpoint> ();
@@ -737,7 +741,8 @@ namespace WebAssembly.Net.Debugging {
 					location = loc.AsLocation ()
 				};
 
-				if (send) SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolution), token);
+				if (send)
+					SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolution), token);
 			}
 
 			req.Locations.AddRange (breakpoints);

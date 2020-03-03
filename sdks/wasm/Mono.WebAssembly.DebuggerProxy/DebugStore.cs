@@ -45,7 +45,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		public BreakpointRequest Clone ()
-			=> new BreakpointRequest { request = request };
+			=> new BreakpointRequest { Id = Id, request = request };
 
 		public bool TryResolve (DebugStore store)
 		{
