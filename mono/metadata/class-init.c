@@ -3393,7 +3393,7 @@ fail:
 	char *name = mono_type_get_full_name (klass);
 	if (!is_ok (error))
 		mono_class_set_type_load_failure (klass, "VTable setup of type %s failed due to: %s", name, mono_error_get_message (error));
-	elseƒ
+	else
 		mono_class_set_type_load_failure (klass, "VTable setup of type %s failed", name);
 	mono_error_cleanup (error);
 	g_free (name);
