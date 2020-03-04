@@ -77,7 +77,7 @@ namespace DebuggerTests
 
 				var bp1_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
 
-				Assert.EndsWith (bp1_res.Value ["breakpointId"]?.ToString (), bp1_res.Value ["breakpointId"].ToString());
+				Assert.EndsWith ("debugger-test.cs", bp1_res.Value ["breakpointId"].ToString());
 				Assert.Equal (1, bp1_res.Value ["locations"]?.Value<JArray> ()?.Count);
 			
 				var loc = bp1_res.Value ["locations"]?.Value<JArray> ()[0];
