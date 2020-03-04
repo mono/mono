@@ -618,8 +618,9 @@ namespace WebAssembly.Net.Debugging {
 			}
 		}
 
-		async Task<Result> EnableBreakpoint (SessionId sessionId, Breakpoint bp, CancellationToken token)
+		async Task<Breakpoint> SetMonoBreakpoint (SessionId sessionId, BreakpointRequest req, SourceLocation location, CancellationToken token)
 		{
+			var bp = new Breakpoint (req.Id, location, BreakpointState.Pending);
 			var asm_name = bp.Location.CliLocation.Method.Assembly.Name;
 			var method_token = bp.Location.CliLocation.Method.Token;
 			var il_offset = bp.Location.CliLocation.Offset;
@@ -633,7 +634,7 @@ namespace WebAssembly.Net.Debugging {
 				//Log ("verbose", $"BP local id {bp.LocalId} enabled with remote id {bp.RemoteId}");
 			}
 
-			return res;
+			return bp;
 		}
 
 		async Task<DebugStore> LoadStore (SessionId sessionId, CancellationToken token)
@@ -715,13 +716,12 @@ namespace WebAssembly.Net.Debugging {
 				return;
 			}
 
-			var locations = store.FindBestBreakpoint (req).ToList ();
+			var locations = store.FindBreakpointLocations (req).ToList ();
 			logger.LogDebug ("BP request for '{req}' runtime ready {context.RuntimeReady}", req, GetContext (sessionId).IsRuntimeReady);
 
 			var breakpoints = new List<Breakpoint> ();
 			foreach (var loc in locations) {
-				var bp = new Breakpoint (req.Id, loc, BreakpointState.Disabled);
-				await EnableBreakpoint (sessionId, bp, token);
+				var bp = await SetMonoBreakpoint (sessionId, req, loc, token);
 
 				// If we didn't successfully enable the breakpoint
 				// don't add it to the list of locations for this id
@@ -730,12 +730,12 @@ namespace WebAssembly.Net.Debugging {
 
 				breakpoints.Add (bp);
 
-				var resolution = new {
+				var resolvedLocation = new {
 					breakpointId = req.Id,
 					location = loc.AsLocation ()
 				};
 
-				SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolution), token);
+				SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolvedLocation), token);
 			}
 
 			req.Locations.AddRange (breakpoints);

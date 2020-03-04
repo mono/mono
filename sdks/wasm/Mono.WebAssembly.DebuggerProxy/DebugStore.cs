@@ -670,23 +670,25 @@ namespace WebAssembly.Net.Debugging {
 		public List<SourceLocation> FindPossibleBreakpoints (SourceLocation start, SourceLocation end)
 		{
 			//XXX FIXME no idea what todo with locations on different files
-			if (start.Id != end.Id)
+			if (start.Id != end.Id) {
+				logger.LogDebug ($"FindPossibleBreakpoints: documents differ (start: {start.Id}) (end {end.Id}");
 				return null;
+			}
 
-			var src_id = start.Id;
+			var sourceId = start.Id;
 
-			var doc = GetFileById (src_id);
+			var doc = GetFileById (sourceId);
 
 			var res = new List<SourceLocation> ();
 			if (doc == null) {
-				logger.LogDebug ($"Could not find document {src_id}");
+				logger.LogDebug ($"Could not find document {sourceId}");
 				return res;
 			}
 
-			foreach (var m in doc.Methods) {
-				foreach (var sp in m.methodDef.DebugInformation.SequencePoints) {
-					if (Match (sp, start, end))
-						res.Add (new SourceLocation (m, sp));
+			foreach (var method in doc.Methods) {
+				foreach (var sequencePoint in method.methodDef.DebugInformation.SequencePoints) {
+					if (!sequencePoint.IsHidden && Match (sequencePoint, start, end))
+						res.Add (new SourceLocation (method, sequencePoint));
 				}
 			}
 			return res;
@@ -716,21 +718,21 @@ namespace WebAssembly.Net.Debugging {
 			return true;
 		}
 
-		public IEnumerable<SourceLocation> FindBestBreakpoint (BreakpointRequest req)
+		public IEnumerable<SourceLocation> FindBreakpointLocations (BreakpointRequest request)
 		{
-			req.TryResolve (this);
+			request.TryResolve (this);
 
-			var asm = assemblies.FirstOrDefault (a => a.Name.Equals (req.Assembly, StringComparison.OrdinalIgnoreCase));
-			var src = asm?.Sources?.SingleOrDefault (s => s.DebuggerFileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));
+			var asm = assemblies.FirstOrDefault (a => a.Name.Equals (request.Assembly, StringComparison.OrdinalIgnoreCase));
+			var sourceFile = asm?.Sources?.SingleOrDefault (s => s.DebuggerFileName.Equals (request.File, StringComparison.OrdinalIgnoreCase));
 
-			if (src == null)
+			if (sourceFile == null)
 				yield break;
 
-			foreach (var m in src.Methods) {
-				foreach (var sp in m.methodDef.DebugInformation.SequencePoints) {
+			foreach (var method in sourceFile.Methods) {
+				foreach (var sequencePoint in method.methodDef.DebugInformation.SequencePoints) {
 					//FIXME handle multi doc methods
-					if (Match (sp, req.Line, req.Column))
-						yield return new SourceLocation (m, sp);
+					if (!sequencePoint.IsHidden && Match (sequencePoint, request.Line, request.Column))
+						yield return new SourceLocation (method, sequencePoint);
 				}
 			}
 		}
