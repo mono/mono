@@ -101,12 +101,12 @@ endif
 NPM=$(CURDIR)/node_modules/node/bin/node $(CURDIR)/node_modules/npm/bin/npm-cli.js
 
 jsup: .stamp-jsvu
-	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=javascriptcore,spidermonkey,v8
 
 .stamp-jsvu: 
 	npm install npm@^6.13.4
 	node_modules/npm/bin/npm-cli.js install
-	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=chakra,javascriptcore,spidermonkey,v8,xs
+	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=javascriptcore,spidermonkey,v8
 	touch $@
 
 .PHONY: toolchain
@@ -120,7 +120,7 @@ MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmon
 MONO_THREADS_LIBS = $(TOP)/sdks/out/wasm-runtime-threads-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 MONO_DYNAMIC_LIBS = $(TOP)/sdks/out/wasm-runtime-dynamic-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
-EMCC_FLAGS=-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0 -s FORCE_FILESYSTEM=1
+EMCC_FLAGS=--profiling-funcs -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0 -s FORCE_FILESYSTEM=1
 EMCC_DEBUG_FLAGS =-g4 -Os -s ASSERTIONS=1
 EMCC_RELEASE_FLAGS=-Oz --llvm-opts 2 --llvm-lto 1
 EMCC_DYNAMIC_FLAGS=-s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
@@ -366,14 +366,16 @@ Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 packager.exe: packager.cs Mono.Cecil.dll $(OPTIONS_CS) | build-native
 	$(CSC) $(CSC_FLAGS) /out:$@ /r:Mono.Cecil.dll packager.cs $(OPTIONS_CS) /r:$(API_REFS)/mscorlib.dll /r:$(API_REFS)/System.dll /r:$(API_REFS)/System.Core.dll
 
-.stamp-build-debug-sample: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
+debug_sample/dotnet.js: packager.exe $(WASM_FRAMEWORK)/.stamp-framework sample.dll debug.html runtime.js
 	$(PACKAGER) --copy=always -debug -out=debug_sample --asset=debug.html sample.dll
-	touch $@	
+	touch $@
+
+build-debug-sample: debug_sample/dotnet.js
 
 TEST_ASSEMBLIES = $(WASM_BCL_DIR)/nunitlite.dll $(WASM_BCL_DIR)/tests/wasm_corlib_test.dll $(WASM_BCL_DIR)/tests/wasm_System_test.dll $(WASM_BCL_DIR)/tests/wasm_System.Core_test.dll
 
 build-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework binding_tests.dll mini_tests.dll main.exe runtime-tests.js
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --template=runtime-tests.js --appdir=bin/test-suite --builddir=obj/test-suite --asset=tests/runtime/index.html binding_tests.dll mini_tests.dll main.exe $(TEST_ASSEMBLIES) --linker --no-linker-exclude-deserialization
 	ninja -v -C obj/test-suite
 
 XUNIT_DIR = $(TOP)/external/xunit-binaries
@@ -597,8 +599,6 @@ build-aot-all: build
 run-aot-all: build-aot-all
 	for suite in $(AOT_TEST_SUITES); do $(MAKE) run-aot-$$suite || exit 1; done
 
-build-debug-sample: .stamp-build-debug-sample
-
 rebuild-debug-sample: clean-debug-sample build-debug-sample
 
 build-debugger-test-app: .stamp-build-debugger-test-app
@@ -615,15 +615,11 @@ build: build-native build-managed build-debugger-test-app
 gen-pinvoke-tables:
 	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(WASM_BCL_DIR)/mscorlib.dll > src/pinvoke-tables-default.h
 
-CHAKRA=~/.jsvu/ch
 D8=~/.jsvu/v8
 JSC=~/.jsvu/jsc
 SM=~/.jsvu/sm
 
 RUN_V8=$(D8) --stack-trace-limit=1000 --expose_wasm
-
-run-ch-%: toolchain build-test-suite
-	(cd bin/test-suite && $(CHAKRA) runtime.js -args $*)
 
 run-v8-%: toolchain build-test-suite
 	(cd bin/test-suite && $(D8) --stack-trace-limit=1000 --expose_wasm runtime.js -- --enable-gc $*)
@@ -639,7 +635,6 @@ run-chrome-%: build-test-suite
 
 # Leaving JSC for now cuz it aborts when it encounters wasm
 run-all-%:
-	$(MAKE) -C . run-ch-$*
 	$(MAKE) -C . run-v8-$*
 	$(MAKE) -C . run-sm-$*
 	$(MAKE) -C . run-jsc-$*
@@ -665,7 +660,7 @@ clean: clean-browser-tests
 	$(RM) -r *.o
 	$(RM) -r ./obj
 	$(RM) -r ./bin
-	$(RM) -r .stamp-build-debug-sample
+	$(RM) -r debug_sample/dotnet.js
 	$(RM) -r .stamp-build-test-suite
 	$(RM) -r sample.dll
 	$(RM) -r Simple.Dependency.dll
@@ -744,7 +739,7 @@ canary:
 check-aot: do-aot-hello
 
 clean-debug-sample:
-	$(RM) .stamp-build-debug-sample
+	$(RM) debug_sample/dotnet.js
 	$(RM) .stamp-build-debugger-test-app
 
 clean-sdk:

@@ -3543,6 +3543,16 @@ namespace MonoTests.System.Drawing {
 				}
 			}
 		}
+
+		[Test]
+		public void GetHdcWithoutRelease ()
+		{
+			using (Bitmap b = new Bitmap (10, 10)) {
+				using (Graphics g = Graphics.FromImage (b)) {
+					g.GetHdc ();
+				}
+			}
+		}
 	}
 
 	[TestFixture]

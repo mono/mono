@@ -98,9 +98,9 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_runtime_ready: function () {
-			console.log ("MONO-WASM: Runtime is ready.");
 			this.mono_wasm_runtime_is_ready = true;
-			debugger;
+			// DO NOT REMOVE - magic debugger init function
+			console.debug ("mono_wasm_runtime_ready", "fe00e07a-5519-4dfe-b35a-f867dbaf2e28");
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
@@ -261,6 +261,23 @@ var MonoSupportLib = {
 			this.mono_clear_bps ();
 		},
 		
+		mono_wasm_add_null_var: function(className)
+		{
+			fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+			MONO.var_info.push ({value: {
+				type: "object",
+				className: fixed_class_name,
+				description: fixed_class_name,
+				subtype: "null"
+			}});
+		},
+
+		_mono_csharp_fixup_class_name: function(className)
+		{
+			// Fix up generic names like Foo`2<int, string> to Foo<int, string>
+			// and nested class names like Foo/Bar to Foo.Bar
+			return className.replace('/', '.').replace(/`\d+/, '');
+		},
 	},
 
 	mono_wasm_add_bool_var: function(var_value) {
@@ -295,64 +312,67 @@ var MonoSupportLib = {
 
 	mono_wasm_add_string_var: function(var_value) {
 		if (var_value == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "string",
-					value: Module.UTF8ToString (var_value),
-				}
-			});
-		}
+			MONO.mono_wasm_add_null_var ("string");
+			return;
+		} 
+
+		MONO.var_info.push({
+			value: {
+				type: "string",
+				value: Module.UTF8ToString (var_value),
+			}
+		});
 	},
 
 	mono_wasm_add_obj_var: function(className, objectId) {
 		if (objectId == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					objectId: "dotnet:object:"+ objectId,
-				}
-			});
+			MONO.mono_wasm_add_null_var (className);
+			return;
 		}
+
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		MONO.var_info.push({
+			value: {
+				type: "object",
+				className: fixed_class_name,
+				description: fixed_class_name,
+				objectId: "dotnet:object:"+ objectId,
+			}
+		});
 	},
 
 	mono_wasm_add_array_var: function(className, objectId) {
 		if (objectId == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "array",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "array",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					objectId: "dotnet:array:"+ objectId,
-				}
-			});
+			MONO.mono_wasm_add_null_var (className);
+			return;
 		}
+
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		MONO.var_info.push({
+			value: {
+				type: "object",
+				subtype: "array",
+				className: fixed_class_name,
+				description: fixed_class_name,
+				objectId: "dotnet:array:"+ objectId,
+			}
+		});
+	},
+
+	mono_wasm_add_func_var: function(className, objectId) {
+		if (objectId == 0) {
+			MONO.mono_wasm_add_null_var (className);
+			return;
+		}
+
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		MONO.var_info.push({
+			value: {
+				type: "function",
+				description: fixed_class_name,
+				objectId: "dotnet:object:"+ objectId,
+			}
+		});
 	},
 
 	mono_wasm_add_frame: function(il, method, name) {

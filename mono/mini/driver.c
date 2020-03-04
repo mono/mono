@@ -201,6 +201,9 @@ static gboolean
 parse_debug_options (const char* p)
 {
 	MonoDebugOptions *opt = mini_get_debug_options ();
+#ifdef ENABLE_NETCORE
+	opt->enabled = TRUE;
+#endif
 
 	do {
 		if (!*p) {
@@ -217,6 +220,11 @@ parse_debug_options (const char* p)
 		} else if (!strncmp (p, "gdb", 3)) {
 			opt->gdb = TRUE;
 			p += 3;
+#ifdef ENABLE_NETCORE
+		} else if (!strncmp (p, "ignore", 6)) {
+			opt->enabled = FALSE;
+			p += 6;
+#endif
 		} else {
 			fprintf (stderr, "Invalid debug option `%s', use --help-debug for details\n", p);
 			return FALSE;
@@ -235,8 +243,8 @@ parse_debug_options (const char* p)
 }
 
 typedef struct {
-	const char name [6];
-	const char desc [18];
+	char name [6];
+	char desc [18];
 	MonoGraphOptions value;
 } GraphName;
 
@@ -1610,7 +1618,12 @@ mini_usage (void)
 		"\n"
 		"Development:\n"
 		"    --aot[=<options>]      Compiles the assembly to native code\n"
+#ifdef ENABLE_NETCORE
+		"    --debug=ignore         Disable debugging support (on by default)\n"
+		"    --debug=[<options>]    Disable debugging support or enable debugging extras, use --help-debug for details\n"
+#else
 		"    --debug[=<options>]    Enable debugging support, use --help-debug for details\n"
+#endif
  		"    --debugger-agent=options Enable the debugger agent\n"
 		"    --profile[=profiler]   Runs in profiling mode with the specified profiler module\n"
 		"    --trace[=EXPR]         Enable tracing, use --help-trace for details\n"
@@ -1669,10 +1682,17 @@ mini_debug_usage (void)
 {
 	fprintf (stdout,
 		 "Debugging options:\n"
+#ifdef ENABLE_NETCORE
+		 "   --debug[=OPTIONS]     Disable debugging support or enable debugging extras, optional OPTIONS is a comma\n"
+#else
 		 "   --debug[=OPTIONS]     Enable debugging support, optional OPTIONS is a comma\n"
+#endif
 		 "                         separated list of options\n"
 		 "\n"
 		 "OPTIONS is composed of:\n"
+#ifdef ENABLE_NETCORE
+		 "    ignore               Disable debugging support (on by default).\n"
+#endif
 		 "    casts                Enable more detailed InvalidCastException messages.\n"
 		 "    mdb-optimizations    Disable some JIT optimizations which are normally\n"
 		 "                         disabled when running inside the debugger.\n"
@@ -1757,6 +1777,29 @@ mono_get_version_info (void)
 
 static gboolean enable_debugging;
 
+static void
+enable_runtime_stats (void)
+{
+	mono_counters_enable (-1);
+	mono_atomic_store_bool (&mono_stats.enabled, TRUE);
+	mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
+}
+
+static MonoMethodDesc *
+parse_qualified_method_name (char *method_name)
+{
+	if (strlen (method_name) == 0) {
+		g_printerr ("Couldn't parse empty method name.");
+		exit (1);
+	}
+	MonoMethodDesc *result = mono_method_desc_new (method_name, TRUE);
+	if (!result) {
+		g_printerr ("Couldn't parse method name: %s\n", method_name);
+		exit (1);
+	}
+	return result;
+}
+
 /**
  * mono_jit_parse_options:
  *
@@ -1782,7 +1825,7 @@ mono_jit_parse_options (int argc, char * argv[])
 	for (i = 0; i < argc; ++i) {
 		if (argv [i] [0] != '-')
 			break;
- 		if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
+		if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
 			sdb_options = g_strdup (argv [i] + 17);
@@ -1810,9 +1853,12 @@ mono_jit_parse_options (int argc, char * argv[])
 
 			opt->break_on_exc = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
-			mono_counters_enable (-1);
-			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
-			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
+			enable_runtime_stats ();
+		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
+			enable_runtime_stats ();
+			if (mono_stats_method_desc)
+				g_free (mono_stats_method_desc);
+			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
 				fprintf (stderr, "Missing method name in --break command line option\n");
@@ -2104,6 +2150,10 @@ mono_main (int argc, char* argv[])
 
 	opt = mono_parse_default_optimizations (NULL);
 
+#ifdef ENABLE_NETCORE
+	enable_debugging = TRUE;
+#endif
+
 	for (i = 1; i < argc; ++i) {
 		if (argv [i] [0] != '-')
 			break;
@@ -2255,9 +2305,12 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
-			mono_counters_enable (-1);
-			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
-			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
+			enable_runtime_stats ();
+		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
+			enable_runtime_stats ();
+			if (mono_stats_method_desc)
+				g_free (mono_stats_method_desc);
+			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
 #ifndef DISABLE_AOT
 		} else if (strcmp (argv [i], "--aot") == 0) {
 			error_if_aot_unsupported ();
@@ -2336,6 +2389,13 @@ mono_main (int argc, char* argv[])
 			enable_debugging = TRUE;
 			if (!parse_debug_options (argv [i] + 8))
 				return 1;
+#ifdef ENABLE_NETCORE
+			MonoDebugOptions *opt = mini_get_debug_options ();
+
+			if (!opt->enabled) {
+				enable_debugging = FALSE;
+			}
+#endif
  		} else if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 

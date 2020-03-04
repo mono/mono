@@ -97,6 +97,5 @@ AC_DEFUN([AC_MONO_OUTPUT], [
 		tools/mono-hang-watchdog/Makefile
 		runtime/Makefile
 		po/Makefile
-		netcore/corerun/Makefile
 	])
 ])

@@ -124,7 +124,7 @@ endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
 PROFILE_PATH = $(topdir)/class/lib/$(PROFILE_DIRECTORY)
-LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
+LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -o $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
 LINKER_DEFAULT = $(LINKER) -l none $(LINKER_PROFILE_OPTIONS)
 TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot
 

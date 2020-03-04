@@ -342,7 +342,7 @@ namespace WebAssembly.Net.WebSockets {
 		private void AbortRequest ()
 		{
 			if (State == WebSocketState.Open) {
-				var closeResult = CloseAsync (WebSocketCloseStatus.NormalClosure, "Connection was aborted", CancellationToken.None);
+				var closeResult = CloseAsyncCore (WebSocketCloseStatus.NormalClosure, "Connection was aborted", CancellationToken.None);
 			}
 
 		}
@@ -460,6 +460,12 @@ namespace WebAssembly.Net.WebSockets {
 		public override async Task CloseAsync (WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
 		{
 			ThrowIfNotConnected ();
+			
+			await CloseAsyncCore (closeStatus, statusDescription, cancellationToken);
+		}
+
+		private async Task CloseAsyncCore (WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
+		{
 			ThrowOnInvalidState (State,
 			    WebSocketState.Open, WebSocketState.CloseReceived, WebSocketState.CloseSent);
 

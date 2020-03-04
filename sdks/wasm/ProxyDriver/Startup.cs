@@ -7,10 +7,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using System.Linq;
+using System.Text.Json;
 
 namespace WebAssembly.Net.Debugging {
 	internal class Startup {
@@ -102,7 +103,7 @@ namespace WebAssembly.Net.Debugging {
 					var version = await ProxyGetJsonAsync<Dictionary<string, string>> (GetEndpoint (context));
 					context.Response.ContentType = "application/json";
 					await context.Response.WriteAsync (
-						JsonConvert.SerializeObject (mapFunc (version, context, devToolsHost)));
+						JsonSerializer.Serialize (mapFunc (version, context, devToolsHost)));
 				}
 
 				async Task RewriteArray (HttpContext context)
@@ -110,7 +111,7 @@ namespace WebAssembly.Net.Debugging {
 					var tabs = await ProxyGetJsonAsync<Dictionary<string, string> []> (GetEndpoint (context));
 					var alteredTabs = tabs.Select (t => mapFunc (t, context, devToolsHost)).ToArray ();
 					context.Response.ContentType = "application/json";
-					await context.Response.WriteAsync (JsonConvert.SerializeObject (alteredTabs));
+					await context.Response.WriteAsync (JsonSerializer.Serialize (alteredTabs));
 				}
 
 				async Task ConnectProxy (HttpContext context)
@@ -122,7 +123,9 @@ namespace WebAssembly.Net.Debugging {
 
 					var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString ()}");
 					try {
-						var proxy = new MonoProxy ();
+						using var loggerFactory = LoggerFactory.Create(
+							builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+						var proxy = new DebuggerProxy (loggerFactory);
 						var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
 						await proxy.Run (endpoint, ideSocket);
@@ -138,8 +141,7 @@ namespace WebAssembly.Net.Debugging {
 		{
 			using (var httpClient = new HttpClient ()) {
 				var response = await httpClient.GetAsync (url);
-				var jsonResponse = await response.Content.ReadAsStringAsync ();
-				return JsonConvert.DeserializeObject<T> (jsonResponse);
+				return await JsonSerializer.DeserializeAsync<T> (await response.Content.ReadAsStreamAsync ());
 			}
 		}
 	}

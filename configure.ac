@@ -4,7 +4,7 @@
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-AC_INIT(mono, [6.11.0],
+AC_INIT(mono, [6.13.0],
         [https://github.com/mono/mono/issues/new])
 
 AC_CONFIG_SRCDIR([Makefile.am])
@@ -611,7 +611,7 @@ AC_CHECK_TOOL(CC, gcc, gcc)
 AC_PROG_CC
 AC_CHECK_TOOL(CXX, g++, g++)
 AC_PROG_CXX
-AM_PATH_PYTHON
+AM_PATH_PYTHON([3.2])
 AM_PROG_AS
 AC_PROG_INSTALL
 AC_PROG_AWK
@@ -1210,6 +1210,7 @@ if test x$enable_monotouch = xyes; then
 fi
 
 AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
+AM_CONDITIONAL(ENABLE_CXX, test x$enable_cxx = xyes)
 
 # mono/corefx/native has a lot of invalid C++98 in its headers
 # dotnet/corefx/native looks a lot better, i.e. 44e5bdafb8d989a220c9cf1b94f31a64a6e4f052
@@ -1364,7 +1365,9 @@ MONO_LLVM_PATH_OPTION=llvm-path="`pwd`/llvm/usr/bin"
 
 if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    DISABLE_MCS_DOCS_default=yes
-elif test x$with_runtime_preset = xnetcore; then
+fi
+
+if test x$with_runtime_preset = xnetcore; then
    # Keep in sync with winconfig.h netcore configuration.
    DISABLE_MCS_DOCS_default=yes
    BTLS_SUPPORTED=no
@@ -1758,7 +1761,7 @@ AM_CONDITIONAL(ENABLE_STATIC_GCC_LIBS, test "x$enable_static_gcc_libs" = "xyes")
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, dllmap,
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
-	 security, lldb, mdb, assert_messages, cfgdir_config, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads.],
+	 security, lldb, mdb, assert_messages, config, cfgdir_config, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads, processes.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1939,6 +1942,11 @@ if test "x$mono_feature_disable_cfgdir_config" = "xyes"; then
 	AC_MSG_NOTICE([Disabled config directories.])
 fi
 
+if test "x$mono_feature_disable_config" = "xyes"; then
+	AC_DEFINE(DISABLE_CONFIG, 1, [Disable .config file support.])
+	AC_MSG_NOTICE([Disabled .config file support.])
+fi
+
 if test "x$mono_feature_disable_cleanup" = "xyes"; then
 	AC_DEFINE(DISABLE_CLEANUP, 1, [Disable runtime cleanup.])
 	AC_MSG_NOTICE([Disabled runtime cleanup.])
@@ -1983,6 +1991,11 @@ fi
 if test "x$mono_feature_disable_threads" = "xyes"; then
 	AC_DEFINE(DISABLE_THREADS, 1, [Disable Threads])
 	AC_MSG_NOTICE([Disabled threading support])
+fi
+
+if test "x$mono_feature_disable_processes" = "xyes"; then
+	AC_DEFINE(DISABLE_PROCESSES, 1, [Disable process support])
+	AC_MSG_NOTICE([Disabled process support])
 fi
 
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
@@ -2937,6 +2950,23 @@ if test x$host_win32 = xno; then
 				AC_MSG_RESULT(no)
 		])
 	fi
+
+	dnl ********************************
+	dnl *** Checks for sys_signame ***
+	dnl ********************************
+	AC_MSG_CHECKING(for sys_signame)
+		AC_TRY_LINK([
+		#include <signal.h>
+	], [
+		const char *signame = sys_signame[0];
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SYSSIGNAME, 1, [Have sys_signame])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
 
 	dnl ********************************
 	dnl *** Checks for semaphore lib ***
@@ -4187,6 +4217,11 @@ if test "x$enable_llvm" = "xdefault"; then
    enable_llvm=$enable_llvm_default
 fi
 
+if test "x$enable_loadedllvm" = "xyes"; then
+   AC_MSG_WARN("Loadable LLVM is no longer supported. Enabling default LLVM support instead.")
+   enable_llvm=yes
+fi
+
 enable_llvm_msvc_only="no"
 if test "x$enable_llvm" = "xyes"; then
 	if test "x$host_win32" = "xyes"; then
@@ -4200,10 +4235,6 @@ if test "x$enable_llvm" = "xyes"; then
 				AC_MSG_ERROR("LLVM for host=Windows and target=Windows is only supported for x64 builds.")
 				;;
 			esac
-		fi
-		if test "x$enable_loadedllvm" = "xyes"; then
-			AC_MSG_WARN("Loadable LLVM currently not supported on Windows. Disabling feature.")
-			enable_loadedllvm=no
 		fi
 	fi
 fi
@@ -4273,13 +4304,6 @@ if test "x$enable_llvm_asserts" != "xno"; then
 fi
 
 AM_CONDITIONAL(ENABLE_LLVM, [test x$enable_llvm = xyes && test x$enable_llvm_msvc_only != xyes])
-
-AM_CONDITIONAL(LOADED_LLVM, [test x$enable_loadedllvm = xyes && test x$enable_llvm_msvc_only != xyes])
-if test "x$enable_loadedllvm" = "xyes"; then
-	if test "x$enable_llvm_msvc_only" != "xyes"; then
-		AC_DEFINE(MONO_LLVM_LOADED, 1, [The LLVM back end is dynamically loaded])
-	fi
-fi
 
 if test "x$enable_llvm" = "xyes"; then
 	enable_llvm_runtime=yes
@@ -4468,21 +4492,23 @@ case "$host" in
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
 			# mono#18554 - be more robust in testing for -mminimal-toc
-			AC_MSG_NOTICE([Checking PowerPC ABI])
-			if ! (echo $CC | grep -q -- 'clang'); then
-				if ! (echo | cc -dM -E - | awk '/_CALL_ELF/ {print $NF}'); then
-					AX_CHECK_COMPILE_FLAG(
-						[-mminimal-toc],
-						[CFLAGS="$CFLAGS -mminimal-toc"],
-						[CFLAGS="$CFLAGS"]
-					)
-					AC_DEFINE([POWERPC_ELF], 1, [PowerPC ELFv1])
-				else
-					# Do not set -mminimal-toc on ELFv2 systems
-					AC_DEFINE([POWERPC_ELFV2], 1, [PowerPC ELFv2])
-					CFLAGS="$CFLAGS"
-				fi
-			fi
+			AC_MSG_NOTICE([Checking for PowerPC ISA -mminimal-toc support])
+			AX_CHECK_COMPILE_FLAG(
+				[-mminimal-toc],
+				[CFLAGS="$CFLAGS -mminimal-toc"],
+				[CFLAGS="$CFLAGS"]
+			)
+			case "$host" in
+				powerpc*-*-freebsd*)
+					# We need to be aware if we are ELFv1 or v2 here
+					AC_MSG_NOTICE([Checking FreeBSD ELF version])
+					if ! ( echo | cc -dM -E - | awk '/_CALL_ELF/ {print $NF}'); then
+						AC_DEFINE([POWERPC_ELF], 1, [PowerPC ELFv1])
+					else
+						AC_DEFINE([POWERPC_ELFV2], 1, [PowerPC ELFv2])
+					fi
+					;;
+			esac
 		else
 			TARGET=POWERPC;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__"
@@ -6733,6 +6759,7 @@ AC_COMPILE_IFELSE(
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
+AC_SUBST(CCLDFLAGS)
 AC_SUBST(ZLIB_CFLAGS)
 
 # Update all submodules recursively to ensure everything is checked out
@@ -6999,7 +7026,7 @@ echo "
 	Engine:        $jit_status
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
-	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm, built in-tree: $internal_llvm, assertions: $enable_llvm_asserts, msvc only: $enable_llvm_msvc_only)
+	LLVM Back End: $enable_llvm (built in-tree: $internal_llvm, assertions: $enable_llvm_asserts, msvc only: $enable_llvm_msvc_only)
 	Spectre:       $spectre_mitigation_status
 	Mono.Native:   $mono_native_text
 

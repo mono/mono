@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
+using Microsoft.Extensions.Logging;
 using WebAssembly.Net.Debugging;
 using Newtonsoft.Json.Linq;
 using Xunit;
@@ -42,6 +43,12 @@ namespace DebuggerTests
 			eventListeners[evtName] = cb;
 		}
 
+		void FailAllWaitersWithException (JObject exception)
+		{
+			foreach (var tcs in notifications.Values)
+				tcs.SetException (new ArgumentException (exception.ToString ()));
+		}
+
 		async Task OnMessage(string method, JObject args, CancellationToken token)
 		{
 			//System.Console.WriteLine("OnMessage " + method + args);
@@ -58,13 +65,17 @@ namespace DebuggerTests
 			}
 			if (eventListeners.ContainsKey (method))
 				await eventListeners[method](args, token);
+			else if (String.Compare (method, "Runtime.exceptionThrown") == 0)
+				FailAllWaitersWithException (args);
 		}
 
 		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null, TimeSpan? span = null) {
 			using (var cts = new CancellationTokenSource ()) {
 				cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
 				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
-				using (var client = new InspectorClient ()) {
+				using var loggerFactory = LoggerFactory.Create(
+					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
 					await client.Connect (uri, OnMessage, async token => {
 						Task[] init_cmds = {
 							client.SendCommand ("Profiler.enable", null, token),
@@ -112,6 +123,7 @@ namespace DebuggerTests
 		static string[] PROBE_LIST = {
 			"/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
 			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+			"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
 			"/usr/bin/chromium",
 			"/usr/bin/chromium-browser",
 		};
