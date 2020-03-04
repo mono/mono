@@ -287,7 +287,7 @@ namespace WebAssembly.Net.Debugging {
 					Log ("verbose", $"BP req {args}");
 					await SetBreakpoint (id, store, request, token);
 
-					SendResponse (id, Result.OkFromObject (request.ToObject()), token);
+					SendResponse (id, Result.OkFromObject (request.AsSetBreakpointByUrlResponse()), token);
 					return true;
 				}
 

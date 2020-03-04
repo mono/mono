@@ -31,7 +31,7 @@ namespace WebAssembly.Net.Debugging {
 			return $"BreakpointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
 		}
 
-		public object ToObject ()
+		public object AsSetBreakpointByUrlResponse ()
 			=> new { breakpointId = Id, locations = Locations.Select(l => l.Location.AsLocation ()) };
 
 		public static BreakpointRequest Parse (string id, JObject args)
