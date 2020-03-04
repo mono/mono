@@ -214,6 +214,7 @@ namespace Mono.Debugger.Soft
 				//if (threadCache != threads) {//While fetching threads threadCache was invalidated(thread was created/destoyed)
 				//	return GetThreads ();
 				//}
+				Thread.MemoryBarrier ();
 				threadCache = threads;
 				return threads;
 			} else {
