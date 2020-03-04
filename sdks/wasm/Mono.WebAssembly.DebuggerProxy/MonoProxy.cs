@@ -110,19 +110,15 @@ namespace WebAssembly.Net.Debugging {
 
 	internal class ExecutionContext {
 		public string DebuggerId { get; set; }
-		int breakpointIndex = -1;
 		public Dictionary<string,BreakpointRequest> BreakpointRequests { get; } = new Dictionary<string,BreakpointRequest> ();
 
 		public TaskCompletionSource<DebugStore> ready = null;
-		public bool RuntimeReady => ready != null && ready.Task.IsCompleted;
+		public bool IsRuntimeReady => ready != null && ready.Task.IsCompleted;
 
 		public int Id { get; set; }
 		public object AuxData { get; set; }
 
 		public List<Frame> CallStack { get; set; }
-
-		public int NextBreakpointId ()
-			=> Interlocked.Increment (ref breakpointIndex);
 
 		internal DebugStore store;
 		public TaskCompletionSource<DebugStore> Source { get; } = new TaskCompletionSource<DebugStore> ();
@@ -219,7 +215,7 @@ namespace WebAssembly.Net.Debugging {
 			return false;
 		}
 
-		async Task<bool> IsRuntimeReadyAlready (SessionId sessionId, CancellationToken token)
+		async Task<bool> IsRuntimeAlreadyReadyAlready (SessionId sessionId, CancellationToken token)
 		{
 			var res = await SendMonoCommand (sessionId, MonoCommands.IsRuntimeReady (), token);
 			return res.Value? ["result"]? ["value"]?.Value<bool> () ?? false;
@@ -233,7 +229,7 @@ namespace WebAssembly.Net.Debugging {
 
 					GetContext (id).DebuggerId = resp.Value ["debuggerId"]?.ToString ();
 
-					if (await IsRuntimeReadyAlready (id, token))
+					if (await IsRuntimeAlreadyReadyAlready (id, token))
 						await RuntimeReady (id, token);
 
 					SendResponse (id,resp,token);
@@ -289,7 +285,7 @@ namespace WebAssembly.Net.Debugging {
 					var store = await RuntimeReady (id, token);
 
 					Log ("info", $"BP req {args}");
-					await SetBreakpoint (id, store, request, true, token);
+					await SetBreakpoint (id, store, request, token);
 
 					SendResponse (id, Result.OkFromObject (request.ToObject()), token);
 					return true;
@@ -374,8 +370,6 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			var bp = context.BreakpointRequests.Values.SelectMany (v => v.Locations).FirstOrDefault (b => b.RemoteId == bp_id.Value);
-
-			var src = bp == null ? null : (await LoadStore (sessionId, token)).GetFileById (bp.Location.Id);
 
 			var callFrames = new List<object> ();
 			foreach (var frame in orig_callframes) {
@@ -471,12 +465,12 @@ namespace WebAssembly.Net.Debugging {
 		{
 			Log ("verbose", "Default context created, clearing state and sending events");
 			if (SetContext (sessionId, context, out var previousContext)) {
-				foreach (var bpId in previousContext.BreakpointRequests.Keys) {
-					context.BreakpointRequests[bpId] = previousContext.BreakpointRequests[bpId].Clone();
+				foreach (var kvp in previousContext.BreakpointRequests) {
+					context.BreakpointRequests[kvp.Key] = kvp.Value.Clone();
 				}
 			}
 
-			if (await IsRuntimeReadyAlready (sessionId, token))
+			if (await IsRuntimeAlreadyReadyAlready (sessionId, token))
 				await RuntimeReady (sessionId, token);
 		}
 
@@ -661,9 +655,8 @@ namespace WebAssembly.Net.Debugging {
 					SendEvent (sessionId, "Debugger.scriptParsed", scriptSource, token);
 
 					foreach (var req in context.BreakpointRequests.Values) {
-
 						if (req.TryResolve (source)) {
-							await SetBreakpoint (sessionId, context.store, req, true, token);
+							await SetBreakpoint (sessionId, context.store, req, token);
 						}
 					}
 				}
@@ -714,7 +707,7 @@ namespace WebAssembly.Net.Debugging {
 			return false;
 		}
 
-		async Task SetBreakpoint (SessionId sessionId, DebugStore store, BreakpointRequest req, bool send, CancellationToken token)
+		async Task SetBreakpoint (SessionId sessionId, DebugStore store, BreakpointRequest req, CancellationToken token)
 		{
 			var context = GetContext (sessionId);
 			if (req.Locations.Any ()) {
@@ -723,7 +716,7 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			var locations = store.FindBestBreakpoint (req).ToList ();
-			logger.LogDebug ("BP request for '{req}' runtime ready {context.RuntimeReady}", req, GetContext (sessionId).RuntimeReady);
+			logger.LogDebug ("BP request for '{req}' runtime ready {context.RuntimeReady}", req, GetContext (sessionId).IsRuntimeReady);
 
 			var breakpoints = new List<Breakpoint> ();
 			foreach (var loc in locations) {
@@ -742,8 +735,7 @@ namespace WebAssembly.Net.Debugging {
 					location = loc.AsLocation ()
 				};
 
-				if (send)
-					SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolution), token);
+				SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolution), token);
 			}
 
 			req.Locations.AddRange (breakpoints);
