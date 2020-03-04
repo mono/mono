@@ -34,13 +34,12 @@ namespace WebAssembly.Net.Debugging {
 		public object ToObject ()
 			=> new { breakpointId = Id, locations = Locations.Select(l => l.Location.AsLocation ()) };
 
-		public static BreakpointRequest Parse (string id, JObject args, DebugStore store)
+		public static BreakpointRequest Parse (string id, JObject args)
 		{
 			var breakRequest = new BreakpointRequest () {
 				Id = id,
 				request = args
 			};
-			breakRequest.TryResolve (store);
 			return breakRequest;
 		}
 
@@ -49,6 +48,9 @@ namespace WebAssembly.Net.Debugging {
 
 		public bool TryResolve (DebugStore store)
 		{
+			if (IsResolved)
+				return true;
+
 			if (request == null || store == null)
 				return false;
 

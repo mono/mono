@@ -151,6 +151,14 @@ namespace WebAssembly.Net.Debugging {
 			throw new ArgumentException ($"Invalid Session: \"{id}\"", nameof (sessionId));
 		}
 
+		bool SetContext (SessionId sessionId, ExecutionContext executionContext, out ExecutionContext previousExecutionContext)
+		{
+			var id = sessionId?.sessionId ?? "default";
+			var previous = contexts.TryGetValue (id, out previousExecutionContext);
+			contexts[id] = executionContext;
+			return previous;
+		}
+
 		internal Task<Result> SendMonoCommand (SessionId id, MonoCommands cmd, CancellationToken token)
 			=> SendCommand (id, "Runtime.evaluate", JObject.FromObject (cmd), token);
 
@@ -165,6 +173,7 @@ namespace WebAssembly.Net.Debugging {
 					}
 					break;
 				}
+
 			case "Runtime.executionContextCreated": {
 					SendEvent (sessionId, method, args, token);
 					var ctx = args? ["context"];
@@ -275,14 +284,10 @@ namespace WebAssembly.Net.Debugging {
 					}
 
 					var bpid = resp.Value["breakpointId"]?.ToString ();
-					var jsLocations = resp.Value ["locations"];
-					var request = BreakpointRequest.Parse (bpid, args, context.store);
+					var request = BreakpointRequest.Parse (bpid, args);
 					context.BreakpointRequests[bpid] = request;
 					var store = await RuntimeReady (id, token);
-					if (false && jsLocations.HasValues) {
-						SendResponse (id, resp, token);
-						return true;
-					}
+					request.TryResolve (store);
 
 					Log ("info", $"BP req {args}");
 					await SetBreakpoint (id, store, request, false, token);
@@ -466,18 +471,11 @@ namespace WebAssembly.Net.Debugging {
 		async Task OnDefaultContext (SessionId sessionId, ExecutionContext context, CancellationToken token)
 		{
 			Log ("verbose", "Default context created, clearing state and sending events");
-			if (contexts.TryGetValue (sessionId.sessionId ?? "default", out var oldContext)) {
-				foreach (var bpId in oldContext.BreakpointRequests.Keys) {
-					context.BreakpointRequests[bpId] = oldContext.BreakpointRequests[bpId].Clone();
+			if (SetContext (sessionId, context, out var previousContext)) {
+				foreach (var bpId in previousContext.BreakpointRequests.Keys) {
+					context.BreakpointRequests[bpId] = previousContext.BreakpointRequests[bpId].Clone();
 				}
 			}
-			contexts[sessionId.sessionId ?? "default"] = context;
-
-			/*
-			foreach (var b in context.Breakpoint){
-				b.State = BreakpointState.Pending;
-			}
-			*/
 
 			if (await IsRuntimeReadyAlready (sessionId, token))
 				await RuntimeReady (sessionId, token);
@@ -485,7 +483,7 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task OnResume (MessageId msd_id, CancellationToken token)
 		{
-			//discard frames
+			//discard managed frames
 			GetContext (msd_id).CallStack = null;
 			await Task.CompletedTask;
 		}
