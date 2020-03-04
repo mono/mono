@@ -46,44 +46,42 @@ namespace WebAssembly.Net.Debugging {
 		public BreakpointRequest Clone ()
 			=> new BreakpointRequest { Id = Id, request = request };
 
-		public bool TryResolve (DebugStore store)
+		public bool IsMatch (SourceFile sourceFile)
 		{
-			if (IsResolved)
-				return true;
-
-			if (request == null || store == null)
-				return false;
-
 			var url = request? ["url"]?.Value<string> ();
 			if (url == null) {
 				var urlRegex = request?["urlRegex"].Value<string>();
-				var sourceFile = store?.GetFileByUrlRegex (urlRegex);
-
-				url = sourceFile?.DotNetUrl;
+				var regex = new Regex (urlRegex);
+				return regex.IsMatch (sourceFile.Url.ToString ()) || regex.IsMatch (sourceFile.DocUrl);
 			}
 
-			if (url != null && !url.StartsWith ("dotnet://", StringComparison.Ordinal)) {
-				var sourceFile = store.GetFileByUrl (url);
-				url = sourceFile?.DotNetUrl;
-			}
+			return sourceFile.Url.ToString () == url || sourceFile.DotNetUrl == url;
+		}
 
-			if (url == null)
-				return false;
-
-			var parts = ParseDocumentUrl (url);
-			if (parts.Assembly == null)
+		public bool TryResolve (SourceFile sourceFile)
+		{
+			if (!IsMatch (sourceFile))
 				return false;
 
 			var line = request? ["lineNumber"]?.Value<int> ();
 			var column = request? ["columnNumber"]?.Value<int> ();
+
 			if (line == null || column == null)
 				return false;
 
-			Assembly = parts.Assembly;
-			File = parts.DocumentPath;
+			Assembly = sourceFile.AssemblyName;
+			File = sourceFile.DebuggerFileName;
 			Line = line.Value;
 			Column = column.Value;
 			return true;
+		}
+
+		public bool TryResolve (DebugStore store)
+		{
+			if (request == null || store == null)
+				return false;
+
+			return store.AllSources().FirstOrDefault (source => TryResolve (source)) != null;
 		}
 
 		static (string Assembly, string DocumentPath) ParseDocumentUrl (string url)
@@ -674,6 +672,7 @@ namespace WebAssembly.Net.Debugging {
 			//XXX FIXME no idea what todo with locations on different files
 			if (start.Id != end.Id)
 				return null;
+
 			var src_id = start.Id;
 
 			var doc = GetFileById (src_id);
@@ -719,6 +718,8 @@ namespace WebAssembly.Net.Debugging {
 
 		public IEnumerable<SourceLocation> FindBestBreakpoint (BreakpointRequest req)
 		{
+			req.TryResolve (this);
+
 			var asm = assemblies.FirstOrDefault (a => a.Name.Equals (req.Assembly, StringComparison.OrdinalIgnoreCase));
 			var src = asm?.Sources?.SingleOrDefault (s => s.DebuggerFileName.Equals (req.File, StringComparison.OrdinalIgnoreCase));
 
@@ -736,14 +737,5 @@ namespace WebAssembly.Net.Debugging {
 
 		public string ToUrl (SourceLocation location)
 			=> location != null ? GetFileById (location.Id).Url : "";
-
-		public SourceFile GetFileByUrlRegex (string urlRegex)
-		{
-			var regex = new Regex (urlRegex);
-			return AllSources ().FirstOrDefault (file => regex.IsMatch (file.Url.ToString()) || regex.IsMatch (file.DocUrl));
-		}
-
-		public SourceFile GetFileByUrl (string url)
-			=> AllSources ().FirstOrDefault (file => file.Url.ToString() == url);
 	}
 }

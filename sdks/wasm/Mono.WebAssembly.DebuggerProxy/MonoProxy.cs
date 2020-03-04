@@ -287,10 +287,9 @@ namespace WebAssembly.Net.Debugging {
 					var request = BreakpointRequest.Parse (bpid, args);
 					context.BreakpointRequests[bpid] = request;
 					var store = await RuntimeReady (id, token);
-					request.TryResolve (store);
 
 					Log ("info", $"BP req {args}");
-					await SetBreakpoint (id, store, request, false, token);
+					await SetBreakpoint (id, store, request, true, token);
 
 					SendResponse (id, Result.OkFromObject (request.ToObject()), token);
 					return true;
@@ -658,7 +657,15 @@ namespace WebAssembly.Net.Debugging {
 				await foreach (var source in context.store.Load(sessionId, the_pdbs, token).WithCancellation (token)) {
 					var scriptSource = JObject.FromObject (source.ToScriptSource (context.Id, context.AuxData));
 					Log ("verbose", $"\tsending {source.Url} {context.Id} {sessionId.sessionId}");
+
 					SendEvent (sessionId, "Debugger.scriptParsed", scriptSource, token);
+
+					foreach (var req in context.BreakpointRequests.Values) {
+
+						if (req.TryResolve (source)) {
+							await SetBreakpoint (sessionId, context.store, req, true, token);
+						}
+					}
 				}
 			} catch (Exception e) {
 				context.Source.SetException (e);
@@ -681,16 +688,6 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			var store = await LoadStore (sessionId, token);
-
-			///context.ready.SetResult (store);
-			foreach (var breakpointRequest in context.BreakpointRequests.Values) {
-
-				if (breakpointRequest.TryResolve (store)) {
-					await SetBreakpoint (sessionId, store, breakpointRequest, true, token);
-
-					Log ("info", $"BP request for '{breakpointRequest}' runtime ready {context.RuntimeReady} location '{breakpointRequest.Locations.FirstOrDefault ()}'");
-				}
-			}
 
 			context.ready.SetResult (store);
 			SendEvent (sessionId, "Mono.runtimeReady", new JObject (), token);
@@ -726,7 +723,7 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			var locations = store.FindBestBreakpoint (req).ToList ();
-			Log ("info", $"BP request for '{req}' runtime ready {context.RuntimeReady} location '{locations.FirstOrDefault()}'");
+			logger.LogDebug ("BP request for '{req}' runtime ready {context.RuntimeReady}", req, GetContext (sessionId).RuntimeReady);
 
 			var breakpoints = new List<Breakpoint> ();
 			foreach (var loc in locations) {
