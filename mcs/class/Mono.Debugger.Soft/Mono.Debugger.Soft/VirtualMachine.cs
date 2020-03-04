@@ -171,8 +171,7 @@ namespace Mono.Debugger.Soft
 
 		HashSet<ThreadMirror> threadsToInvalidate = new HashSet<ThreadMirror> ();
 		ThreadMirror[] threadCache;
-		object threadCacheLocker = new object ();
-
+		
 		void InvalidateThreadAndFrameCaches () {
 			lock (threadsToInvalidate) {
 				foreach (var thread in threadsToInvalidate)
@@ -194,32 +193,31 @@ namespace Mono.Debugger.Soft
 		}
 
 		public IList<ThreadMirror> GetThreads () {
-			lock (threadCacheLocker) {
-				var threads = threadCache;
-				if (threads == null) {
-					long[] ids = null;
-					var fetchingEvent = new ManualResetEvent (false);
-					vm.conn.VM_GetThreads ((threadsIds) => {
-						ids = threadsIds;
-						threadCache = threads = new ThreadMirror [threadsIds.Length];
-						fetchingEvent.Set ();
-					});
-					if (WaitHandle.WaitAny (new []{ vm.conn.DisconnectedEvent, fetchingEvent }) == 0) {
-						throw new VMDisconnectedException ();
-					}
-					for (int i = 0; i < ids.Length; ++i)
-						threads [i] = GetThread (ids [i]);
-					//Uncomment lines below if you want to re-fetch threads if new threads were started/stopped while
-					//featching threads... This is probably more correct but might cause deadlock of this method if runtime
-					//is starting/stopping threads nonstop, need way to prevent this(counting number of recursions?)
-					//possiblity before uncommenting
-					//if (threadCache != threads) {//While fetching threads threadCache was invalidated(thread was created/destoyed)
-					//	return GetThreads ();
-					//}
-					return threads;
-				} else {
-					return threads;
+			var threads = threadCache;
+			if (threads == null) {
+				long[] ids = null;
+				var fetchingEvent = new ManualResetEvent (false);
+				vm.conn.VM_GetThreads ((threadsIds) => {
+					ids = threadsIds;
+					threads = new ThreadMirror [threadsIds.Length];
+					fetchingEvent.Set ();
+				});
+				if (WaitHandle.WaitAny (new []{ vm.conn.DisconnectedEvent, fetchingEvent }) == 0) {
+					throw new VMDisconnectedException ();
 				}
+				for (int i = 0; i < ids.Length; ++i)
+					threads [i] = GetThread (ids [i]);
+				//Uncomment lines below if you want to re-fetch threads if new threads were started/stopped while
+				//featching threads... This is probably more correct but might cause deadlock of this method if runtime
+				//is starting/stopping threads nonstop, need way to prevent this(counting number of recursions?)
+				//possiblity before uncommenting
+				//if (threadCache != threads) {//While fetching threads threadCache was invalidated(thread was created/destoyed)
+				//	return GetThreads ();
+				//}
+				threadCache = threads;
+				return threads;
+			} else {
+				return threads;
 			}
 		}
 
