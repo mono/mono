@@ -147,7 +147,7 @@ namespace WebAssembly.Net.Debugging {
 			throw new ArgumentException ($"Invalid Session: \"{id}\"", nameof (sessionId));
 		}
 
-		bool SetContext (SessionId sessionId, ExecutionContext executionContext, out ExecutionContext previousExecutionContext)
+		bool UpdateContext (SessionId sessionId, ExecutionContext executionContext, out ExecutionContext previousExecutionContext)
 		{
 			var id = sessionId?.sessionId ?? "default";
 			var previous = contexts.TryGetValue (id, out previousExecutionContext);
@@ -284,7 +284,7 @@ namespace WebAssembly.Net.Debugging {
 					context.BreakpointRequests[bpid] = request;
 					var store = await RuntimeReady (id, token);
 
-					Log ("info", $"BP req {args}");
+					Log ("verbose", $"BP req {args}");
 					await SetBreakpoint (id, store, request, token);
 
 					SendResponse (id, Result.OkFromObject (request.ToObject()), token);
@@ -464,7 +464,7 @@ namespace WebAssembly.Net.Debugging {
 		async Task OnDefaultContext (SessionId sessionId, ExecutionContext context, CancellationToken token)
 		{
 			Log ("verbose", "Default context created, clearing state and sending events");
-			if (SetContext (sessionId, context, out var previousContext)) {
+			if (UpdateContext (sessionId, context, out var previousContext)) {
 				foreach (var kvp in previousContext.BreakpointRequests) {
 					context.BreakpointRequests[kvp.Key] = kvp.Value.Clone();
 				}
