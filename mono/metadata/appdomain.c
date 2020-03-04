@@ -2622,8 +2622,6 @@ unload_thread_main (void *arg)
 
 	mono_domain_free (domain, FALSE);
 
-	mono_gc_collect (mono_gc_max_generation ());
-
 	mono_atomic_store_release (&data->done, TRUE);
 	unload_data_unref (data);
 	return 0;
