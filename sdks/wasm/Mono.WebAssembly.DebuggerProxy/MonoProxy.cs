@@ -732,6 +732,12 @@ namespace WebAssembly.Net.Debugging {
 			foreach (var loc in locations) {
 				var bp = new Breakpoint (req.Id, loc, BreakpointState.Disabled);
 				await EnableBreakpoint (sessionId, bp, token);
+
+				// If we didn't successfully enable the breakpoint
+				// don't add it to the list of locations for this id
+				if (bp.State != BreakpointState.Active)
+					continue;
+
 				breakpoints.Add (bp);
 
 				var resolution = new {

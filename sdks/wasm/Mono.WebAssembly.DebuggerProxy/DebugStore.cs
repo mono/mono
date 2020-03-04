@@ -654,12 +654,13 @@ namespace WebAssembly.Net.Debugging {
 			var spStart = (Line: sp.StartLine - 1, Column: sp.StartColumn - 1);
 			var spEnd = (Line: sp.EndLine - 1, Column: sp.EndColumn - 1);
 
-			if (start.Line > spStart.Line)
+			if (start.Line > spEnd.Line)
 				return false;
+
 			if (start.Column > spEnd.Column && start.Line == spEnd.Line)
 				return false;
 
-			if (end.Line < spEnd.Line)
+			if (end.Line < spStart.Line)
 				return false;
 
 			if (end.Column < spStart.Column && end.Line == spStart.Line)
