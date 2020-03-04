@@ -33,6 +33,4 @@ artifacts:
   stevedore:
     paths:
       - stevedore/MonoBleedingEdge.7z
-  stevedore_artifact_id:
-    paths:
       - stevedore/artifactid.txt
