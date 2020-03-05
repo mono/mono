@@ -257,7 +257,7 @@ namespace WebAssembly.Net.Debugging {
 				task.SetResult (result);
 				return;
 			}
-			logger.LogError ("tried to respond to a {id} with result {result}", id, result);
+			logger.LogError ("Cannot respond to command: {id} with result: {result} - command is not pending", id, result);
 		}
 
 		void ProcessBrowserMessage (string msg, CancellationToken token)
