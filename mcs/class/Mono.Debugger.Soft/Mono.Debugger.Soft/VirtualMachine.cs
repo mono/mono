@@ -171,8 +171,7 @@ namespace Mono.Debugger.Soft
 
 		HashSet<ThreadMirror> threadsToInvalidate = new HashSet<ThreadMirror> ();
 		ThreadMirror[] threadCache;
-		object threadCacheLocker = new object ();
-
+		
 		void InvalidateThreadAndFrameCaches () {
 			lock (threadsToInvalidate) {
 				foreach (var thread in threadsToInvalidate)
@@ -200,7 +199,7 @@ namespace Mono.Debugger.Soft
 				var fetchingEvent = new ManualResetEvent (false);
 				vm.conn.VM_GetThreads ((threadsIds) => {
 					ids = threadsIds;
-					threadCache = threads = new ThreadMirror [threadsIds.Length];
+					threads = new ThreadMirror [threadsIds.Length];
 					fetchingEvent.Set ();
 				});
 				if (WaitHandle.WaitAny (new []{ vm.conn.DisconnectedEvent, fetchingEvent }) == 0) {
@@ -215,6 +214,8 @@ namespace Mono.Debugger.Soft
 				//if (threadCache != threads) {//While fetching threads threadCache was invalidated(thread was created/destoyed)
 				//	return GetThreads ();
 				//}
+				Thread.MemoryBarrier ();
+				threadCache = threads;
 				return threads;
 			} else {
 				return threads;
