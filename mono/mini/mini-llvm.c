@@ -4679,6 +4679,14 @@ get_float_const (MonoCompile *cfg, float val)
 		return LLVMConstFPExt (LLVMConstReal (LLVMFloatType (), val), LLVMDoubleType ());
 }
 
+static LLVMValueRef
+call_intrins (EmitContext *ctx, int id, LLVMValueRef *args, const char *name)
+{
+	LLVMValueRef intrins = get_intrins (ctx, id);
+	int nargs = LLVMCountParamTypes (LLVMGetElementType (LLVMTypeOf (intrins)));
+	return LLVMBuildCall (ctx->builder, intrins, args, nargs, name);
+}
+
 static void
 process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 {
@@ -5171,7 +5179,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			if (likely || unlikely) {
 				args [0] = cmp;
 				args [1] = LLVMConstInt (LLVMInt1Type (), likely ? 1 : 0, FALSE);
-				cmp = LLVMBuildCall (ctx->builder, get_intrins (ctx, INTRINS_EXPECT_I1), args, 2, "");
+				cmp = call_intrins (ctx, INTRINS_EXPECT_I1, args, "");
 			}
 
 			if (MONO_IS_COND_BRANCH_OP (ins->next)) {
@@ -5986,7 +5994,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 #endif
 			args [argn++] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);  // is_volatile
 
-			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMMOVE), args, argn, "");
+			call_intrins (ctx, INTRINS_MEMMOVE, args, "");
 			break;
 		}
 		case OP_NOT_REACHED:
@@ -6024,133 +6032,133 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SIN), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_SIN, args, dname);
 			break;
 		}
 		case OP_SINF: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SINF), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_SINF, args, dname);
 			break;
 		}
 		case OP_EXP: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_EXP), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_EXP, args, dname);
 			break;
 		}
 		case OP_EXPF: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_EXPF), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_EXPF, args, dname);
 			break;
 		}
 		case OP_LOG2: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_LOG2), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_LOG2, args, dname);
 			break;
 		}
 		case OP_LOG2F: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_LOG2F), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_LOG2F, args, dname);
 			break;
 		}
 		case OP_LOG10: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_LOG10), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_LOG10, args, dname);
 			break;
 		}
 		case OP_LOG10F: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_LOG10F), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_LOG10F, args, dname);
 			break;
 		}
 		case OP_LOG: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_LOG), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_LOG, args, dname);
 			break;
 		}
 		case OP_TRUNC: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_TRUNC), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_TRUNC, args, dname);
 			break;
 		}
 		case OP_TRUNCF: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_TRUNCF), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_TRUNCF, args, dname);
 			break;
 		}
 		case OP_COS: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_COS), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_COS, args, dname);
 			break;
 		}
 		case OP_COSF: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_COSF), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_COSF, args, dname);
 			break;
 		}
 		case OP_SQRT: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SQRT), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_SQRT, args, dname);
 			break;
 		}
 		case OP_SQRTF: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SQRTF), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_SQRTF, args, dname);
 			break;
 		}
 		case OP_FLOOR: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_FLOOR), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_FLOOR, args, dname);
 			break;
 		}
 		case OP_FLOORF: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_FLOORF), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_FLOORF, args, dname);
 			break;
 		}
 		case OP_CEIL: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_CEIL), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_CEIL, args, dname);
 			break;
 		}
 		case OP_CEILF: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_CEILF), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_CEILF, args, dname);
 			break;
 		}
 		case OP_FMA: {
@@ -6160,7 +6168,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [1] = convert (ctx, values [ins->sreg2], LLVMDoubleType ());
 			args [2] = convert (ctx, values [ins->sreg3], LLVMDoubleType ());
 			
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_FMA), args, 3, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_FMA, args, dname);
 			break;
 		}
 		case OP_FMAF: {
@@ -6170,14 +6178,14 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [1] = convert (ctx, values [ins->sreg2], LLVMFloatType ());
 			args [2] = convert (ctx, values [ins->sreg3], LLVMFloatType ());
 			
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_FMAF), args, 3, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_FMAF, args, dname);
 			break;
 		}
 		case OP_ABS: {
 			LLVMValueRef args [1];
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_FABS), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_FABS, args, dname);
 			break;
 		}
 		case OP_ABSF: {
@@ -6185,11 +6193,11 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 #ifdef TARGET_AMD64
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_ABSF), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_ABSF, args, dname);
 #else
 			/* llvm.fabs not supported on all platforms */
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_FABS), args, 1, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_FABS, args, dname);
 			values [ins->dreg] = convert (ctx, values [ins->dreg], LLVMFloatType ());
 #endif
 			break;
@@ -6199,7 +6207,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
 			args [1] = convert (ctx, rhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_POWF), args, 2, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_POWF, args, dname);
 			break;
 		}
 		case OP_FPOW: {
@@ -6207,7 +6215,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
 			args [1] = convert (ctx, rhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_POW), args, 2, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_POW, args, dname);
 			break;
 		}
 		case OP_FCOPYSIGN: {
@@ -6215,7 +6223,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 			args [0] = convert (ctx, lhs, LLVMDoubleType ());
 			args [1] = convert (ctx, rhs, LLVMDoubleType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_COPYSIGN), args, 2, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_COPYSIGN, args, dname);
 			break;
 		}
 		case OP_RCOPYSIGN: {
@@ -6223,7 +6231,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 			args [0] = convert (ctx, lhs, LLVMFloatType ());
 			args [1] = convert (ctx, rhs, LLVMFloatType ());
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_COPYSIGNF), args, 2, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_COPYSIGNF, args, dname);
 			break;
 		}
 
@@ -6495,7 +6503,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 			args [0] = cmp;
 			args [1] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
-			cmp = LLVMBuildCall (ctx->builder, get_intrins (ctx, INTRINS_EXPECT_I1), args, 2, "");
+			cmp = call_intrins (ctx, INTRINS_EXPECT_I1, args, "");
 
 			mono_llvm_build_weighted_branch (builder, cmp, cont_bb, poll_bb, 64, 4);
 
@@ -6645,7 +6653,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [aindex ++] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
 #endif
 			args [aindex ++] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);
-			LLVMBuildCall (builder, get_intrins (ctx, INTRINS_MEMCPY), args, aindex, "");
+			call_intrins (ctx, INTRINS_MEMCPY, args, "");
 			break;
 		}
 		case OP_LLVM_OUTARG_VT: {
@@ -7368,13 +7376,13 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [1];
 			if (ins->inst_c1 == MONO_TYPE_R4) {
 				args [0] = lhs;
-				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_MOVMSK_PS), args, 1, dname);
+				values [ins->dreg] = call_intrins (ctx, INTRINS_SSE_MOVMSK_PS, args, dname);
 			} else if (ins->inst_c1 == MONO_TYPE_R8) {
 				args [0] = lhs;
-				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_MOVMSK_PD), args, 1, dname);
+				values [ins->dreg] = call_intrins (ctx, INTRINS_SSE_MOVMSK_PD, args, dname);
 			} else {
 				args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I1));
-				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PMOVMSKB), args, 1, dname);
+				values [ins->dreg] = call_intrins (ctx, INTRINS_SSE_PMOVMSKB, args, dname);
 			}
 			break;
 		}
@@ -7547,15 +7555,15 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		}
 
 		case OP_SSE2_ADDS: {
-			gint32 intrinsicId = 0;
+			gint32 intrinsic = 0;
 			if (ins->inst_c1 == MONO_TYPE_I1)
-				intrinsicId = INTRINS_SSE_SADD_SATI8;
+				intrinsic = INTRINS_SSE_SADD_SATI8;
 			else if (ins->inst_c1 == MONO_TYPE_U1)
-				intrinsicId = INTRINS_SSE_UADD_SATI8;
+				intrinsic = INTRINS_SSE_UADD_SATI8;
 			else if (ins->inst_c1 == MONO_TYPE_I2)
-				intrinsicId = INTRINS_SSE_SADD_SATI16;
+				intrinsic = INTRINS_SSE_SADD_SATI16;
 			else if (ins->inst_c1 == MONO_TYPE_U2)
-				intrinsicId = INTRINS_SSE_UADD_SATI16;
+				intrinsic = INTRINS_SSE_UADD_SATI16;
 			else
 				g_assert_not_reached ();
 
@@ -7563,7 +7571,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [0] = convert (ctx, lhs, type_to_simd_type (ins->inst_c1));
 			args [1] = convert (ctx, rhs, type_to_simd_type (ins->inst_c1));
 			values [ins->dreg] = convert (ctx, 
-				LLVMBuildCall (builder, get_intrins (ctx, intrinsicId), args, 2, dname),
+				call_intrins (ctx, intrinsic, args, dname),
 				type_to_simd_type (ins->inst_c1));
 			break;
 		}
@@ -7573,7 +7581,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I2));
 			args [1] = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I2));
 			values [ins->dreg] = convert (ctx, 
-				LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PACKUSWB), args, 2, dname),
+				call_intrins (ctx, INTRINS_SSE_PACKUSWB, args, dname),
 				type_to_simd_type (ins->inst_c1));
 			break;
 		}
@@ -7581,14 +7589,14 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 		case OP_SSE2_SRLI: {
 			LLVMValueRef args [] = { lhs, rhs };
 			values [ins->dreg] = convert (ctx, 
-				LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PSRLI_W), args, 2, dname), 
+				call_intrins (ctx, INTRINS_SSE_PSRLI_W, args, dname),
 				type_to_simd_type (ins->inst_c1));
 			break;
 		}
 
 		case OP_SSSE3_SHUFFLE: {
 			LLVMValueRef args [] = { lhs, rhs };
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PSHUFB), args, 2, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_SSE_PSHUFB, args, dname);
 			break;
 		}
 
@@ -7617,7 +7625,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [1] = lhs;
 			args [2] = LLVMConstInt (LLVMInt32Type (), ins->inst_c0, FALSE);
 
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_ROUNDSS), args, 3, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_SSE_ROUNDSS, args, dname);
 			break;
 		}
 
@@ -7627,7 +7635,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			args [0] = lhs;
 			args [1] = LLVMConstInt (LLVMInt32Type (), ins->inst_c0, FALSE);
 
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_ROUNDPD), args, 2, dname);
+			values [ins->dreg] = call_intrins (ctx, INTRINS_SSE_ROUNDPD, args, dname);
 			break;
 		}
 
@@ -7638,7 +7646,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 				args [0] = values [ins->sreg1];
 				args [1] = values [ins->sreg2];
 				args [2] = convert (ctx, values [ins->sreg3], LLVMInt8Type ());
-				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_INSERTPS), args, 3, dname);
+				values [ins->dreg] = call_intrins (ctx, INTRINS_SSE_INSERTPS, args, dname);
 			} else {
 				// other overloads are implemented with `insertelement`
 				values [ins->dreg] = LLVMBuildInsertElement (builder, 
@@ -7653,7 +7661,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [2];
 			args [0] = convert (ctx, lhs, type_to_simd_type (MONO_TYPE_I8));
 			args [1] = convert (ctx, rhs, type_to_simd_type (MONO_TYPE_I8));
-			LLVMValueRef call = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_SSE_PTESTZ), args, 2, dname);
+			LLVMValueRef call = call_intrins (ctx, INTRINS_SSE_PTESTZ, args, dname);
 			LLVMValueRef cmp_zero = LLVMBuildICmp (builder, LLVMIntNE, call, LLVMConstInt (LLVMInt32Type (), 0, FALSE), "");
 			values [ins->dreg] = LLVMBuildZExt (builder, cmp_zero, LLVMInt8Type (), "");
 			break;
@@ -7715,7 +7723,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 					g_assert_not_reached ();
 				}
 				/* res = !wasm.anytrue (val) */
-				values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, intrins), &val, 1, "");
+				values [ins->dreg] = call_intrins (ctx, intrins, &val, "");
 				values [ins->dreg] = LLVMBuildZExt (builder, LLVMBuildICmp (builder, LLVMIntEQ, values [ins->dreg], LLVMConstInt (LLVMInt32Type (), 0, FALSE), ""), LLVMInt32Type (), dname);
 				break;
 			}
@@ -7794,9 +7802,9 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 
 				gboolean is_r4 = ins->inst_c1 == MONO_TYPE_R4;
 				if (ins->inst_c0 == OP_FMAX)
-					values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, is_r4 ? INTRINS_SSE_MAXPS : INTRINS_SSE_MAXPD), args, 2, dname);
+					values [ins->dreg] = call_intrins (ctx, is_r4 ? INTRINS_SSE_MAXPS : INTRINS_SSE_MAXPD, args, dname);
 				else
-					values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, is_r4 ? INTRINS_SSE_MINPS : INTRINS_SSE_MINPD), args, 2, dname);
+					values [ins->dreg] = call_intrins (ctx, is_r4 ? INTRINS_SSE_MINPS : INTRINS_SSE_MINPD, args, dname);
 #else
 				NOT_IMPLEMENTED;
 #endif
@@ -7860,17 +7868,17 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			break;
 		}
 		case OP_POPCNT32:
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_CTPOP_I32), &lhs, 1, "");
+			values [ins->dreg] = call_intrins (ctx, INTRINS_CTPOP_I32, &lhs, "");
 			break;
 		case OP_POPCNT64:
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, INTRINS_CTPOP_I64), &lhs, 1, "");
+			values [ins->dreg] = call_intrins (ctx, INTRINS_CTPOP_I64, &lhs, "");
 			break;
 		case OP_LZCNT32:
 		case OP_LZCNT64: {
 			LLVMValueRef args [2];
 			args [0] = lhs;
 			args [1] = LLVMConstInt (LLVMInt1Type (), 1, FALSE);
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_LZCNT32 ? INTRINS_CTLZ_I32 : INTRINS_CTLZ_I64), args, 2, "");
+			values [ins->dreg] = call_intrins (ctx, ins->opcode == OP_LZCNT32 ? INTRINS_CTLZ_I32 : INTRINS_CTLZ_I64, args, "");
 			break;
 		}
 		case OP_CTTZ32:
@@ -7878,7 +7886,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [2];
 			args [0] = lhs;
 			args [1] = LLVMConstInt (LLVMInt1Type (), 0, FALSE);
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_CTTZ32 ? INTRINS_CTTZ_I32 : INTRINS_CTTZ_I64), args, 2, "");
+			values [ins->dreg] = call_intrins (ctx, ins->opcode == OP_CTTZ32 ? INTRINS_CTTZ_I32 : INTRINS_CTTZ_I64, args, "");
 			break;
 		}
 		case OP_BEXTR32:
@@ -7886,7 +7894,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [2];
 			args [0] = lhs;
 			args [1] = convert (ctx, rhs, ins->opcode == OP_BEXTR32 ? LLVMInt32Type () : LLVMInt64Type ()); // cast ushort to u32/u64
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BEXTR32 ? INTRINS_BEXTR_I32 : INTRINS_BEXTR_I64), args, 2, "");
+			values [ins->dreg] = call_intrins (ctx, ins->opcode == OP_BEXTR32 ? INTRINS_BEXTR_I32 : INTRINS_BEXTR_I64, args, "");
 			break;
 		}
 		case OP_BZHI32:
@@ -7894,7 +7902,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [2];
 			args [0] = lhs;
 			args [1] = rhs;
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_BZHI32 ? INTRINS_BZHI_I32 : INTRINS_BZHI_I64), args, 2, "");
+			values [ins->dreg] = call_intrins (ctx, ins->opcode == OP_BZHI32 ? INTRINS_BZHI_I32 : INTRINS_BZHI_I64, args, "");
 			break;
 		}
 		case OP_MULX_H32:
@@ -7920,7 +7928,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [2];
 			args [0] = lhs;
 			args [1] = rhs;
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_PEXT32 ? INTRINS_PEXT_I32 : INTRINS_PEXT_I64), args, 2, "");
+			values [ins->dreg] = call_intrins (ctx, ins->opcode == OP_PEXT32 ? INTRINS_PEXT_I32 : INTRINS_PEXT_I64, args, "");
 			break;
 		}
 		case OP_PDEP32:
@@ -7928,7 +7936,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef args [2];
 			args [0] = lhs;
 			args [1] = rhs;
-			values [ins->dreg] = LLVMBuildCall (builder, get_intrins (ctx, ins->opcode == OP_PDEP32 ? INTRINS_PDEP_I32 : INTRINS_PDEP_I64), args, 2, "");
+			values [ins->dreg] = call_intrins (ctx, ins->opcode == OP_PDEP32 ? INTRINS_PDEP_I32 : INTRINS_PDEP_I64, args, "");
 			break;
 		}
 #endif /* ENABLE_NETCORE */
