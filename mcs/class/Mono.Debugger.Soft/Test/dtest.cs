@@ -65,7 +65,7 @@ public class DebuggerTests
 	Event GetNextEvent () {
 		var es = vm.GetNextEventSet ();
 		Assert.AreEqual (1, es.Events.Length);
-		if (step_req != null && es [0] != null && es [0].Request != null && es [0].Request is StepEventRequest && ((StepEventRequest)es [0].Request).getId() != step_req.getId()) {
+		if (step_req != null && es [0] != null && es [0].Request != null && es [0].Request is StepEventRequest && ((StepEventRequest)es [0].Request).GetId() != step_req.GetId()) {
 			step_req = ((StepEventRequest)es [0].Request);
 		}
 		return es [0];
@@ -5217,7 +5217,7 @@ public class DebuggerTests
 			e = breakpoint.lastEvent;
 			req = create_step (e);
 			while (line_first_counter > 0 || line_second_counter > 0 || line_third_counter > 0) {
-				if (req.getId() != breakpoint.req.getId())
+				if (req.GetId() != breakpoint.req.GetId())
 					req.Disable ();
 				req = create_step (e);
 				((StepEventRequest)req).Size = StepSize.Line;

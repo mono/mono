@@ -34,7 +34,7 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public int getId()
+		public int GetId()
 		{
 			return id;
 		}
