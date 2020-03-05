@@ -783,6 +783,16 @@ mono_de_cancel_ss (SingleStepReq *req)
 }
 
 void
+mono_de_cancel_all_ss ()
+{
+	int i;
+	for (i = 0; i < the_ss_reqs->len; ++i) {
+		SingleStepReq *current_req = (SingleStepReq *)g_ptr_array_index (the_ss_reqs, i);
+		mono_de_ss_req_release (current_req);
+	}
+}
+
+void
 mono_de_process_single_step (void *tls, gboolean from_signal)
 {
 	MonoJitInfo *ji;
