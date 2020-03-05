@@ -2242,6 +2242,9 @@ emit_vector_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		if (COMPILE_LLVM (cfg)) {
 			MonoInst *ins;
 
+			if (!(mini_get_cpu_features (cfg) & MONO_CPU_X86_SSE41))
+				break;
+
 			ins = simd_intrinsic_emit_binary (intrins, cfg, cmethod, args);
 			/* The end result is in the lowest element */
 			return simd_intrinsic_emit_getter_op (cfg, 0, cmethod->klass, mono_method_signature_internal (cmethod)->ret, ins);
