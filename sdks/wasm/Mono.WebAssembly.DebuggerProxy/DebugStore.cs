@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 
 namespace WebAssembly.Net.Debugging {
 	internal class BreakpointRequest {
@@ -28,9 +29,8 @@ namespace WebAssembly.Net.Debugging {
 		public bool IsResolved => Assembly != null;
 		public List<Breakpoint> Locations { get; } = new List<Breakpoint> ();
 
-		public override string ToString () {
-			return $"BreakpointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
-		}
+		public override string ToString ()
+			=> $"BreakpointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
 
 		public object AsSetBreakpointByUrlResponse ()
 			=> new { breakpointId = Id, locations = Locations.Select(l => l.Location.AsLocation ()) };
@@ -93,18 +93,6 @@ namespace WebAssembly.Net.Debugging {
 
 			return store.AllSources().FirstOrDefault (source => TryResolve (source)) != null;
 		}
-
-		static (string Assembly, string DocumentPath) ParseDocumentUrl (string url)
-		{
-			if (Uri.TryCreate (url, UriKind.Absolute, out var docUri) && docUri.Scheme == "dotnet") {
-				return (
-					docUri.Host,
-					docUri.PathAndQuery.Substring (1)
-				);
-			} else {
-				return (null, null);
-			}
-		}
 	}
 
 	internal class VarInfo {
@@ -120,13 +108,11 @@ namespace WebAssembly.Net.Debugging {
 			this.Index = (p.Index + 1) * -1;
 		}
 
-		public string Name { get; private set; }
-		public int Index { get; private set; }
+		public string Name { get;  }
+		public int Index { get; }
 
 		public override string ToString ()
-		{
-			return $"(var-info [{Index}] '{Name}')";
-		}
+			=> $"(var-info [{Index}] '{Name}')";
 	}
 
 	internal class CliLocation {
@@ -136,8 +122,8 @@ namespace WebAssembly.Net.Debugging {
 			Offset = offset;
 		}
 
-		public MethodInfo Method { get; private set; }
-		public int Offset { get; private set; }
+		public MethodInfo Method { get; }
+		public int Offset { get; }
 	}
 
 	internal class SourceLocation {
@@ -167,9 +153,7 @@ namespace WebAssembly.Net.Debugging {
 		public CliLocation CliLocation => this.cliLoc;
 
 		public override string ToString ()
-		{
-			return $"{id}:{Line}:{Column}";
-		}
+			=> $"{id}:{Line}:{Column}";
 
 		public static SourceLocation Parse (JObject obj)
 		{
@@ -245,9 +229,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		public override string ToString ()
-		{
-			return $"{Scheme}{assembly}_{document}";
-		}
+			=> $"{Scheme}{assembly}_{document}";
 
 		public override bool Equals (object obj)
 		{
@@ -258,44 +240,36 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		public override int GetHashCode ()
-		{
-			return this.assembly.GetHashCode () ^ this.document.GetHashCode ();
-		}
+			=> assembly.GetHashCode () ^ document.GetHashCode ();
 
 		public static bool operator == (SourceId a, SourceId b)
-		{
-			if ((object)a == null)
-				return (object)b == null;
-			return a.Equals (b);
-		}
+			=> ((object)a == null) ? (object)b == null : a.Equals (b);
 
 		public static bool operator != (SourceId a, SourceId b)
-		{
-			return !a.Equals (b);
-		}
+			=> !a.Equals (b);
 	}
 
 	internal class MethodInfo {
-		AssemblyInfo assembly;
-		internal MethodDefinition methodDef;
+		MethodDefinition methodDef;
 		SourceFile source;
 
 		public SourceId SourceId => source.SourceId;
 
 		public string Name => methodDef.Name;
+		public MethodDebugInformation DebugInformation => methodDef.DebugInformation;
 
-		public SourceLocation StartLocation { get; private set; }
-		public SourceLocation EndLocation { get; private set; }
-		public AssemblyInfo Assembly => assembly;
+		public SourceLocation StartLocation { get; }
+		public SourceLocation EndLocation { get; }
+		public AssemblyInfo Assembly { get; }
 		public int Token => (int)methodDef.MetadataToken.RID;
 
 		public MethodInfo (AssemblyInfo assembly, MethodDefinition methodDef, SourceFile source)
 		{
-			this.assembly = assembly;
+			this.Assembly = assembly;
 			this.methodDef = methodDef;
 			this.source = source;
 
-			var sps = methodDef.DebugInformation.SequencePoints;
+			var sps = DebugInformation.SequencePoints;
 			if (sps == null || sps.Count() < 1)
 				return;
 
@@ -321,7 +295,7 @@ namespace WebAssembly.Net.Debugging {
 		public SourceLocation GetLocationByIl (int pos)
 		{
 			SequencePoint prev = null;
-			foreach (var sp in methodDef.DebugInformation.SequencePoints) {
+			foreach (var sp in DebugInformation.SequencePoints) {
 				if (sp.Offset > pos)
 					break;
 				prev = sp;
@@ -338,7 +312,6 @@ namespace WebAssembly.Net.Debugging {
 			var res = new List<VarInfo> ();
 
 			res.AddRange (methodDef.Parameters.Select (p => new VarInfo (p)));
-
 			res.AddRange (methodDef.DebugInformation.GetScopes ()
 				.Where (s => s.Start.Offset <= offset && (s.End.IsEndOfMethod || s.End.Offset > offset))
 				.SelectMany (s => s.Variables)
@@ -369,7 +342,7 @@ namespace WebAssembly.Net.Debugging {
 		public override string ToString () => "TypeInfo('" + FullName + "')";
 	}
 
-	internal class AssemblyInfo {
+	class AssemblyInfo {
 		static int next_id;
 		ModuleDefinition image;
 		readonly int id;
@@ -378,7 +351,7 @@ namespace WebAssembly.Net.Debugging {
 		Dictionary<string, string> sourceLinkMappings = new Dictionary<string, string>();
 		Dictionary<string, TypeInfo> typesByName = new Dictionary<string, TypeInfo> ();
 		readonly List<SourceFile> sources = new List<SourceFile>();
-		internal string Url { get; private set; }
+		internal string Url { get; }
 
 		public AssemblyInfo (string url, byte[] assembly, byte[] pdb)
 		{
@@ -426,50 +399,40 @@ namespace WebAssembly.Net.Debugging {
 
 		void Populate ()
 		{
-            ProcessSourceLink();
+			ProcessSourceLink();
 
 			var d2s = new Dictionary<Document, SourceFile> ();
 
-			Func<Document, SourceFile> get_src = (doc) => {
+			SourceFile FindSource (Document doc)
+			{
 				if (doc == null)
 					return null;
-				if (d2s.ContainsKey (doc))
-					return d2s [doc];
+
+				if (d2s.TryGetValue (doc, out var source))
+					return source;
+
 				var src = new SourceFile (this, sources.Count, doc, GetSourceLinkUrl (doc.Url));
 				sources.Add (src);
 				d2s [doc] = src;
 				return src;
 			};
 
+			void AddMethods (SourceFile src, MethodDefinition method)
+			{
+				var methodInfo = new MethodInfo (this, method, src);
+				int rid = (int)method.MetadataToken.RID;
+				this.methods [rid] = methodInfo;
+				if (src != null)
+					src.AddMethod (methodInfo);
+			}
+
 			foreach (var type in image.GetTypes()) {
 				var typeInfo = new TypeInfo (this, type);
 				typesByName [type.FullName] = typeInfo;
 
 				foreach (var m in type.Methods) {
-					Document first_doc = null;
 					foreach (var sp in m.DebugInformation.SequencePoints) {
-						if (first_doc == null && !sp.Document.Url.EndsWith (".g.cs", StringComparison.OrdinalIgnoreCase)) {
-							first_doc = sp.Document;
-						}
-						//  else if (first_doc != sp.Document) {
-						//	//FIXME this is needed for (c)ctors in corlib
-						//	throw new Exception ($"Cant handle multi-doc methods in {m}");
-						//}
-					}
-
-					if (first_doc == null) {
-						// all generated files
-						first_doc = m.DebugInformation.SequencePoints.FirstOrDefault ()?.Document;
-					}
-
-					if (first_doc != null) {
-						var src = get_src (first_doc);
-						var mi = new MethodInfo (this, m, src);
-						int mt = (int)m.MetadataToken.RID;
-						this.methods [mt] = mi;
-						if (src != null)
-							src.AddMethod (mi);
-						typeInfo.Methods.Add (mi);
+						AddMethods (FindSource (sp.Document), m);
 					}
 				}
 			}
@@ -491,9 +454,8 @@ namespace WebAssembly.Net.Debugging {
 
 		private Uri GetSourceLinkUrl (string document)
 		{
-			if (sourceLinkMappings.TryGetValue (document, out string url)) {
+			if (sourceLinkMappings.TryGetValue (document, out string url))
 				return new Uri (url);
-			}
 
 			foreach (var sourceLinkDocument in sourceLinkMappings) {
 				string key = sourceLinkDocument.Key;
@@ -513,7 +475,7 @@ namespace WebAssembly.Net.Debugging {
 			return null;
 		}
 
-		private string GetRelativePath (string relativeTo, string path)
+		private static string GetRelativePath (string relativeTo, string path)
 		{
 			var uri = new Uri (relativeTo, UriKind.RelativeOrAbsolute);
 			var rel = Uri.UnescapeDataString (uri.MakeRelativeUri (new Uri (path, UriKind.RelativeOrAbsolute)).ToString ()).Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
@@ -523,9 +485,8 @@ namespace WebAssembly.Net.Debugging {
 			return rel;
 		}
 
-		public IEnumerable<SourceFile> Sources {
-			get { return this.sources; }
-		}
+		public IEnumerable<SourceFile> Sources
+			=> this.sources;
 
 		public int Id => id;
 		public string Name => image.Name;
@@ -572,9 +533,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		internal void AddMethod (MethodInfo mi)
-		{
-			this.methods.Add (mi);
-		}
+			=> this.methods.Add (mi);
 
 		public string DebuggerFileName { get; }
 		public string Url { get; }
@@ -586,8 +545,11 @@ namespace WebAssembly.Net.Debugging {
 		public Uri SourceUri { get; }
 
 		public IEnumerable<MethodInfo> Methods => this.methods;
+
 		public byte[] EmbeddedSource => doc.EmbeddedSource;
 		public string DocUrl => doc.Url;
+
+		byte[] sourceBytes;
 
 		public (int startLine, int startColumn, int endLine, int endColumn) GetExtents ()
 		{
@@ -596,12 +558,80 @@ namespace WebAssembly.Net.Debugging {
 			return (start.StartLocation.Line, start.StartLocation.Column, end.EndLocation.Line, end.EndLocation.Column);
 		}
 
-		public async Task<byte[]> LoadSource ()
+		async Task<MemoryStream> GetDataAsync (Uri uri, CancellationToken token)
 		{
-			if (EmbeddedSource.Length > 0)
-				return await Task.FromResult (EmbeddedSource);
+			var mem = new MemoryStream ();
+			try {
+				if (uri.IsFile && File.Exists (uri.LocalPath)) {
+					using (var file = File.Open (SourceUri.LocalPath, FileMode.Open)) {
+						await file.CopyToAsync (mem, token);
+					}
+				} else if (uri.Scheme == "http" || uri.Scheme == "https") {
+					var client = new HttpClient ();
+					using (var stream = await client.GetStreamAsync (uri)) {
+						await stream.CopyToAsync (mem, token);
+					}
+				}
+			} catch (Exception) {
+				return null;
+			}
+			return mem;
+		}
 
+		static HashAlgorithm GetHashAlgorithm (DocumentHashAlgorithm algorithm)
+		{
+			switch (algorithm) {
+			case DocumentHashAlgorithm.SHA1: return SHA1.Create ();
+			case DocumentHashAlgorithm.SHA256: return SHA256.Create ();
+			case DocumentHashAlgorithm.MD5: return MD5.Create ();
+			}
 			return null;
+		}
+
+		public bool CheckPdbHash (byte [] computedHash)
+		{
+			if (computedHash.Length != doc.Hash.Length)
+				return false;
+
+			for (var i = 0; i < computedHash.Length; i++)
+				if (computedHash[i] != doc.Hash[i])
+					return false;
+
+			return true;
+		}
+
+		public async Task<byte[]> ComputePdbHash (CancellationToken token = default(CancellationToken))
+		{
+			var algorithm = GetHashAlgorithm (doc.HashAlgorithm);
+			if (algorithm != null)
+				using (algorithm)
+					return algorithm.ComputeHash (await GetSourceAsync (token));
+
+			return Array.Empty<byte> ();
+		}
+
+		public async Task<MemoryStream> GetSourceStreamAsync (CancellationToken token)
+			=> new MemoryStream (await GetSourceAsync (token), false);
+
+		async Task<byte[]> GetSourceAsync (CancellationToken token = default(CancellationToken))
+		{
+			if (sourceBytes != null)
+				return sourceBytes;
+
+			if (doc.EmbeddedSource.Length > 0)
+				return sourceBytes = doc.EmbeddedSource;
+
+			MemoryStream mem;
+
+			mem = await GetDataAsync (SourceUri, token);
+			if (mem != null)
+				return sourceBytes = mem.ToArray ();
+
+			mem = await GetDataAsync (SourceLinkUri, token);
+			if (mem != null)
+				return sourceBytes = mem.ToArray ();
+
+			return sourceBytes = Array.Empty<byte> ();
 		}
 
 		public object ToScriptSource (int executionContextId, object executionContextAuxData)
@@ -619,11 +649,16 @@ namespace WebAssembly.Net.Debugging {
 
 	internal class DebugStore {
 		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
-		HttpClient client = new HttpClient ();
+		readonly HttpClient client;
 		readonly ILogger logger;
 
-		public DebugStore (ILogger logger) {
+		public DebugStore (ILogger logger, HttpClient client) {
+			this.client = client;
 			this.logger = logger;
+		}
+
+		public DebugStore (ILogger logger) : this (logger, new HttpClient ())
+		{
 		}
 
 		class DebugItem {
@@ -729,7 +764,7 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			foreach (var method in doc.Methods) {
-				foreach (var sequencePoint in method.methodDef.DebugInformation.SequencePoints) {
+				foreach (var sequencePoint in method.DebugInformation.SequencePoints) {
 					if (!sequencePoint.IsHidden && Match (sequencePoint, start, end))
 						res.Add (new SourceLocation (method, sequencePoint));
 				}
@@ -772,7 +807,7 @@ namespace WebAssembly.Net.Debugging {
 				yield break;
 
 			foreach (var method in sourceFile.Methods) {
-				foreach (var sequencePoint in method.methodDef.DebugInformation.SequencePoints) {
+				foreach (var sequencePoint in method.DebugInformation.SequencePoints) {
 					//FIXME handle multi doc methods
 					if (!sequencePoint.IsHidden && Match (sequencePoint, request.Line, request.Column))
 						yield return new SourceLocation (method, sequencePoint);

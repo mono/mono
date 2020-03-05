@@ -884,30 +884,14 @@ namespace WebAssembly.Net.Debugging {
 				return false;
 
 			var src_file = (await LoadStore (msg_id, token)).GetFileById (id);
-			var res = new StringWriter ();
 
 			try {
 				var uri = new Uri (src_file.Url);
 				string source = $"// Unable to find document {src_file.SourceUri}";
 
-				if (uri.IsFile && File.Exists(uri.LocalPath)) {
-					using (var f = new StreamReader (File.Open (uri.LocalPath, FileMode.Open))) {
-						await res.WriteAsync (await f.ReadToEndAsync ());
-					}
-
-					source = res.ToString ();
-				} else if (src_file.SourceUri.IsFile && File.Exists(src_file.SourceUri.LocalPath)) {
-					using (var f = new StreamReader (File.Open (src_file.SourceUri.LocalPath, FileMode.Open))) {
-						await res.WriteAsync (await f.ReadToEndAsync ());
-					}
-
-					source = res.ToString ();
-				} else if(src_file.SourceLinkUri != null) {
-					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.SourceLinkUri);
-					await res.WriteAsync (doc);
-
-					source = res.ToString ();
-				}
+				var data = await src_file.GetSourceStreamAsync (token);
+				using (var reader = new StreamReader (data))
+						source = await reader.ReadToEndAsync ();
 
 				SendResponse (msg_id, Result.OkFromObject (new { scriptSource = source }), token);
 			} catch (Exception e) {
