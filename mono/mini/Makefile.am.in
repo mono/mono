@@ -922,7 +922,7 @@ gctest: mono gc-test.exe
 
 LLVM_AOT_RUNTIME_OPTS=$(if $(LLVM),--llvm,)
 if AMD64
-LLVM_AOT_COMPILER_OPTS=$(if $(LLVM),llvmllc=-mattr=+sse3,)
+LLVM_AOT_COMPILER_OPTS=$(if $(LLVM),mcpu=native)
 else
 LLVM_AOT_COMPILER_OPTS=
 endif
