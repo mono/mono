@@ -77,7 +77,7 @@ namespace DebuggerTests
 
 				var bp1_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
 
-				Assert.Equal ("dotnet:0", bp1_res.Value ["breakpointId"]);
+				Assert.EndsWith ("debugger-test.cs", bp1_res.Value ["breakpointId"].ToString());
 				Assert.Equal (1, bp1_res.Value ["locations"]?.Value<JArray> ()?.Count);
 			
 				var loc = bp1_res.Value ["locations"]?.Value<JArray> ()[0];
@@ -123,7 +123,7 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
+				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
 
 				var eval_req = JObject.FromObject(new {
 					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
@@ -135,7 +135,7 @@ namespace DebuggerTests
 					"IntAdd", ctx,
 					wait_for_event_fn: (pause_location) => {
 						Assert.Equal ("other", pause_location ["reason"]?.Value<string> ());
-						Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+						Assert.Equal (bp.Value["breakpointId"]?.ToString(), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
 						var top_frame = pause_location ["callFrames"][0];
 						Assert.Equal ("IntAdd", top_frame ["functionName"].Value<string>());
@@ -347,14 +347,15 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				var ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				await SetBreakpoint (url_key, line, column, ctx);
+				var bp = await SetBreakpoint (url_key, line, column, ctx);
 
 				await EvaluateAndCheck (
 					eval_expression, url_key, line, column,
 					function_name, ctx,
 					wait_for_event_fn: (pause_location) => {
 						//make sure we're on the right bp
-						Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+
+						Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
 						var top_frame = pause_location ["callFrames"][0];
 
@@ -380,7 +381,7 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				var ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 41, 2, ctx);
+				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 41, 2, ctx);
 
 				await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_delegates_test (); }, 1);",
@@ -388,7 +389,7 @@ namespace DebuggerTests
 					"IntAdd", ctx,
 					wait_for_event_fn: async (pause_location) => {
 						//make sure we're on the right bp
-						Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+						Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
 						var top_frame = pause_location ["callFrames"][0];
 
@@ -417,7 +418,7 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
+				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
 
 				await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_add(); }, 1);",
@@ -425,7 +426,7 @@ namespace DebuggerTests
 					"IntAdd", ctx,
 					wait_for_event_fn: (pause_location) => {
 						//make sure we're on the right bp
-						Assert.Equal ("dotnet:0", pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+						Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
 						var top_frame = pause_location ["callFrames"][0];
 						CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame["functionLocation"]);
