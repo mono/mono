@@ -134,24 +134,22 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	internal class MonoProxy : DevToolsProxy {
-		Dictionary<string, ExecutionContext> contexts = new Dictionary<string, ExecutionContext> ();
+		Dictionary<SessionId, ExecutionContext> contexts = new Dictionary<SessionId, ExecutionContext> ();
 
 		public MonoProxy (ILoggerFactory loggerFactory) : base(loggerFactory) { }
 
 		ExecutionContext GetContext (SessionId sessionId)
 		{
-			var id = sessionId?.sessionId ?? "default";
-			if (contexts.TryGetValue (id, out var context))
+			if (contexts.TryGetValue (sessionId, out var context))
 				return context;
 
-			throw new ArgumentException ($"Invalid Session: \"{id}\"", nameof (sessionId));
+			throw new ArgumentException ($"Invalid Session: \"{sessionId}\"", nameof (sessionId));
 		}
 
 		bool UpdateContext (SessionId sessionId, ExecutionContext executionContext, out ExecutionContext previousExecutionContext)
 		{
-			var id = sessionId?.sessionId ?? "default";
-			var previous = contexts.TryGetValue (id, out previousExecutionContext);
-			contexts[id] = executionContext;
+			var previous = contexts.TryGetValue (sessionId, out previousExecutionContext);
+			contexts[sessionId] = executionContext;
 			return previous;
 		}
 
