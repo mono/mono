@@ -303,6 +303,7 @@ namespace System.IO
 			this.owner = ownsHandle;
 			this.async = isAsync;
 			this.anonymous = false;
+			this.isConsoleWrapper = isConsoleWrapper;
 
 			if (canseek) {
 				buf_start = MonoIO.Seek (safeHandle, 0, SeekOrigin.Current, out error);
@@ -905,8 +906,10 @@ namespace System.IO
 				}
 			}
 
-			canseek = false;
-			access = 0;
+			if (!isConsoleWrapper) {
+				canseek = false;
+				access = 0;
+			}
 			
 			if (disposing && buf != null) {
 				if (buf.Length == DefaultBufferSize && buf_recycle == null) {
@@ -1139,6 +1142,7 @@ namespace System.IO
 
 		private SafeFileHandle safeHandle;
 		private bool isExposed;
+		private bool isConsoleWrapper;
 
 		private long append_startpos;
 
