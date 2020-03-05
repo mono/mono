@@ -3284,7 +3284,7 @@ unload_thread_main (void *arg)
 	mono_gchandle_free_domain (domain);
 
 	mono_domain_free (domain, FALSE);
-	
+
 	result = 0; // success
 exit:
 	mono_atomic_store_release (&data->done, TRUE);
