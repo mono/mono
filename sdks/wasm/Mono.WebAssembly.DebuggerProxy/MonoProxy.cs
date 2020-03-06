@@ -133,6 +133,7 @@ namespace WebAssembly.Net.Debugging {
 				return store;
 			}
 		}
+		public Boolean IgnoredWrapper { get; set; }
 	}
 
 	internal class MonoProxy : DevToolsProxy {
@@ -314,6 +315,10 @@ namespace WebAssembly.Net.Debugging {
 			var orig_callframes = args? ["callFrames"]?.Values<JObject> ();
 			var context = GetContext (sessionId);
 
+			if (context.IgnoredWrapper) {
+				context.IgnoredWrapper = false;
+				return false;
+			}
 			if (res.IsErr) {
 				//Give up and send the original call stack
 				return false;
@@ -463,6 +468,14 @@ namespace WebAssembly.Net.Debugging {
 				return false;
 
 			var res = await SendMonoCommand (msg_id, MonoCommands.StartSingleStepping (kind), token);
+
+			var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
+
+			if (ret_code.HasValue && ret_code.Value == 0) {
+				context.CallStack = null;
+				context.IgnoredWrapper = true;
+				return false;
+			} 
 
 			SendResponse (msg_id, Result.Ok (new JObject ()), token);
 
