@@ -660,44 +660,16 @@ mono_llvm_register_intrinsic (LLVMModuleRef module, IntrinsicId id)
  *
  *   Register an overloaded LLVM intrinsic identified by ID using the supplied types.
  */
-
 LLVMValueRef
 mono_llvm_register_overloaded_intrinsic (LLVMModuleRef module, IntrinsicId id, LLVMTypeRef *types, int ntypes)
 {
 	auto intrins_id = get_intrins_id (id);
 
-	// getDeclaration () expects a fixed length fully initialized array
-	Function *f = NULL;
-	switch (ntypes) {
-	case 1: {
-		Type *arr[] = { unwrap (types [0]) };
-		f = Intrinsic::getDeclaration (unwrap (module), intrins_id, arr);
-		break;
-	}
-	case 2: {
-		Type *arr[] = { unwrap (types [0]), unwrap (types [1]) };
-		f = Intrinsic::getDeclaration (unwrap (module), intrins_id, arr);
-		break;
-	}
-	case 3: {
-		Type *arr[] = { unwrap (types [0]), unwrap (types [1]), unwrap (types [2]) };
-		f = Intrinsic::getDeclaration (unwrap (module), intrins_id, arr);
-		break;
-	}
-	case 4: {
-		Type *arr[] = { unwrap (types [0]), unwrap (types [1]), unwrap (types [2]), unwrap (types [3]) };
-		f = Intrinsic::getDeclaration (unwrap (module), intrins_id, arr);
-		break;
-	}
-	case 5: {
-		Type *arr[] = { unwrap (types [0]), unwrap (types [1]), unwrap (types [2]), unwrap (types [3]), unwrap (types [4]) };
-		f = Intrinsic::getDeclaration (unwrap (module), intrins_id, arr);
-		break;
-	}
-	default:
-		g_assert_not_reached ();
-		break;
-	}
-
-	return wrap (f);
+	const int max_types = 5;
+	g_assert (ntypes <= max_types);
+    Type *arr [max_types];
+    for (int i = 0; i < ntypes; ++i)
+		arr [i] = unwrap (types [i]);
+    auto f = Intrinsic::getDeclaration (unwrap (module), intrins_id, { arr, (size_t)ntypes });
+    return wrap (f);
 }
