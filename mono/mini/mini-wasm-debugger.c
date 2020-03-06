@@ -394,7 +394,7 @@ mono_wasm_setup_single_step (int kind)
 		GSList *l;
 
 		for (l = ss_req->bps; l; l = l->next) {
-			if (((MonoBreakpoint *)l->data)->method->wrapper_type != 4)
+			if (((MonoBreakpoint *)l->data)->method->wrapper_type != MONO_WRAPPER_RUNTIME_INVOKE)
 				isBPOnNativeCode = 1;
 		}
 	}
