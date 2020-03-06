@@ -784,12 +784,6 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 	return opts;
 }
 
-guint32
-mono_arch_cpu_enumerate_simd_versions (void)
-{
-	return 0;
-}
-
 MonoCPUFeatures
 mono_arch_get_cpu_features (void)
 {

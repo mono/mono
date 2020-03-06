@@ -79,6 +79,20 @@ mono_simd_intrinsics_init (void)
 
 #define IS_DEBUG_ON(cfg) ((cfg)->verbose_level >= 3)
 #define DEBUG(a) do { if (IS_DEBUG_ON(cfg)) { a; } } while (0)
+
+/*
+This enum MUST be kept in sync with its managed mirror Mono.Simd.AccelMode.
+ */
+enum {
+	SIMD_VERSION_SSE1	= 1 << 0,
+	SIMD_VERSION_SSE2	= 1 << 1,
+	SIMD_VERSION_SSE3	= 1 << 2,
+	SIMD_VERSION_SSSE3	= 1 << 3,
+	SIMD_VERSION_SSE41	= 1 << 4,
+	SIMD_VERSION_SSE42	= 1 << 5,
+	SIMD_VERSION_SSE4a	= 1 << 6,
+};
+
 enum {
 	SIMD_EMIT_BINARY,
 	SIMD_EMIT_UNARY,
