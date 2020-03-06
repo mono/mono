@@ -162,7 +162,7 @@ INTRINS(SSE_SADD_SATI16, x86_sse2_padds_w)
 INTRINS(SSE_UADD_SATI16, x86_sse2_paddus_w)
 #endif
 #endif
-#ifdef TARGET_WASM
+#if defined(TARGET_WASM) && LLVM_API_VERSION >= 800
 INTRINS_OVR(WASM_ANYTRUE_V16, wasm_anytrue)
 INTRINS_OVR(WASM_ANYTRUE_V8, wasm_anytrue)
 INTRINS_OVR(WASM_ANYTRUE_V4, wasm_anytrue)

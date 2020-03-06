@@ -7680,7 +7680,7 @@ process_bb (EmitContext *ctx, MonoBasicBlock *bb)
 			LLVMValueRef cmp, mask [32], shuffle;
 			int nelems;
 
-#ifdef TARGET_WASM
+#if defined(TARGET_WASM) && LLVM_API_VERSION >= 800
 			/* The wasm code generator doesn't understand the shuffle/and code sequence below */
 			LLVMValueRef val;
 			if (LLVMIsNull (lhs) || LLVMIsNull (rhs)) {
@@ -9290,7 +9290,7 @@ add_intrinsic (LLVMModuleRef module, int id)
 		intrins = add_intrins1 (module, id, sse_i2_t);
 		break;
 #endif /* AMD64 || X86 */
-#ifdef TARGET_WASM
+#if defined(TARGET_WASM) && LLVM_API_VERSION >= 800
 	case INTRINS_WASM_ANYTRUE_V16:
 		intrins = add_intrins1 (module, id, sse_i1_t);
 		break;
