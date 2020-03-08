@@ -24,6 +24,38 @@ var MonoSupportLib = {
 			module ["mono_load_runtime_and_bcl"] = MONO.mono_load_runtime_and_bcl;
 		},
 
+		string_decoder: {
+			copy: function (mono_string) {
+				if (mono_string == 0)
+					return null;
+
+				if (!this.mono_wasm_string_convert)
+					this.mono_wasm_string_convert = Module.cwrap ("mono_wasm_string_convert", null, ['number']);
+
+				this.mono_wasm_string_convert (mono_string);
+				var result = this.result;
+				this.result = undefined;
+				return result;
+			},
+			decode: function (start, end, save) {
+				var decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder ('utf-16le') : undefined;
+
+				var str = "";
+				if (decoder)
+					str = decoder.decode(Module.HEAPU8.subarray(start, end));
+				else {
+					for (var i = 0; i < end - start; i+=2) {
+						var char = Module.getValue (start + i, 'i16');
+						str += String.fromCharCode (char);
+					}
+				}
+				if (save)
+					this.result = str;
+
+				return str;
+			},
+		},
+
 		mono_wasm_get_call_stack: function() {
 			if (!this.mono_wasm_current_bp_id)
 				this.mono_wasm_current_bp_id = Module.cwrap ("mono_wasm_current_bp_id", 'number');
