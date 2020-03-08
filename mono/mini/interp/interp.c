@@ -2278,7 +2278,7 @@ jit_call_cb (gpointer arg)
 }
 
 static MONO_NEVER_INLINE void
-do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpFrame *frame, InterpMethod *rmethod, MonoError *error)
+do_jit_call (stackval *sp, guchar *vt_sp, ThreadContext *context, InterpFrame *frame, InterpMethod *rmethod, MonoError *error)
 {
 	MonoMethodSignature *sig;
 	MonoFtnDesc ftndesc;
@@ -3358,7 +3358,7 @@ method_entry (ThreadContext *context, InterpFrame *frame,
 	vt_sp = frame->state.vt_sp; \
 	finally_ips = frame->state.finally_ips; \
 	clause_args = frame->state.clause_args; \
-	locals = (unsigned char *)frame->stack + frame->imethod->stack_size + frame->imethod->vt_stack_size; \
+	locals = (guchar *)frame->stack + frame->imethod->stack_size + frame->imethod->vt_stack_size; \
 	frame->state.ip = NULL; \
 	} while (0)
 
@@ -3366,8 +3366,8 @@ method_entry (ThreadContext *context, InterpFrame *frame,
 #define INIT_INTERP_STATE(frame, _clause_args) do {	 \
 	ip = _clause_args ? (_clause_args)->start_with_ip : (frame)->imethod->code; \
 	sp = (frame)->stack; \
-	vt_sp = (unsigned char *) sp + (frame)->imethod->stack_size; \
-	locals = (unsigned char *) vt_sp + (frame)->imethod->vt_stack_size; \
+	vt_sp = (guchar *) sp + (frame)->imethod->stack_size; \
+	locals = (guchar *) vt_sp + (frame)->imethod->vt_stack_size; \
 	finally_ips = NULL; \
 	} while (0)
 
@@ -3388,13 +3388,13 @@ interp_exec_method (InterpFrame *frame, ThreadContext *context, FrameClauseArgs 
 	/* Interpreter main loop state (InterpState) */
 	const guint16 *ip = NULL;
 	stackval *sp;
-	unsigned char *vt_sp;
-	unsigned char *locals = NULL;
+	guchar *vt_sp;
+	guchar *locals = NULL;
 	GSList *finally_ips = NULL;
 
 #if DEBUG_INTERP
 	int tracing = global_tracing;
-	unsigned char *vtalloc;
+	guchar *vtalloc;
 #endif
 #if USE_COMPUTED_GOTO
 	static void * const in_labels[] = {
@@ -3476,7 +3476,7 @@ main_loop:
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_VTRESULT) {
 			int ret_size = ip [1];
-			unsigned char *ret_vt_sp = vt_sp;
+			guchar *ret_vt_sp = vt_sp;
 			vt_sp -= READ32(ip + 2);
 			if (ret_size > 0) {
 				memmove (vt_sp, ret_vt_sp, ret_size);
@@ -3607,7 +3607,7 @@ main_loop:
 				memset (frame->stack, 0, frame->imethod->alloca_size);
 				sp = frame->stack;
 			}
-			vt_sp = (unsigned char *) sp + frame->imethod->stack_size;
+			vt_sp = (guchar *) sp + frame->imethod->stack_size;
 #if DEBUG_INTERP
 			vtalloc = vt_sp;
 #endif
@@ -6329,7 +6329,7 @@ call_newobj:
 				ip = (const guint16*)finally_ips->data;
 				finally_ips = g_slist_remove (finally_ips, ip);
 				// we set vt_sp later here so we relieve stack pressure
-				vt_sp = (unsigned char*)sp + frame->imethod->stack_size;
+				vt_sp = (guchar*)sp + frame->imethod->stack_size;
 				// goto main_loop instead of MINT_IN_DISPATCH helps the compiler and therefore conserves stack.
 				// This is a slow/rare path and conserving stack is preferred over its performance otherwise.
 				goto main_loop;
