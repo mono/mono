@@ -3476,7 +3476,7 @@ main_loop:
 		MINT_IN_CASE(MINT_VTRESULT) {
 			int ret_size = ip [1];
 			guchar *ret_vt_sp = vt_sp;
-			vt_sp -= READ32(ip + 2);
+			vt_sp -= READ32 (ip + 2);
 			if (ret_size > 0) {
 				memmove (vt_sp, ret_vt_sp, ret_size);
 				sp [-1].data.p = vt_sp;
@@ -3541,7 +3541,7 @@ main_loop:
 		MINT_IN_CASE(MINT_LDC_R4) {
 			guint32 val;
 			++ip;
-			val = READ32(ip);
+			val = READ32 (ip);
 			sp->data.f_r4 = * (float *)&val;
 			ip += 2;
 			++sp;
@@ -3553,7 +3553,7 @@ main_loop:
 			++sp;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_DUP) 
-			sp [0] = sp[-1];
+			sp [0] = sp [-1];
 			++sp;
 			++ip; 
 			MINT_IN_BREAK;
@@ -3961,7 +3961,7 @@ call:;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_BR) {
-			gint32 br_offset = (gint32) READ32(ip + 1);
+			gint32 br_offset = (gint32)READ32 (ip + 1);
 			BACK_BRANCH_PROFILE (br_offset);
 			ip += br_offset;
 			MINT_IN_BREAK;
@@ -3979,7 +3979,7 @@ call:;
 #define ZEROP(datamem, op) \
 	--sp; \
 	if (sp->data.datamem op 0) { \
-		gint32 br_offset = (gint32)READ32(ip + 1); \
+		gint32 br_offset = (gint32)READ32 (ip + 1); \
 		BACK_BRANCH_PROFILE (br_offset); \
 		ip += br_offset; \
 	} else \
@@ -4042,7 +4042,7 @@ call:;
 	} else \
 		ip += 2;
 #define BRELOP_S(datamem, op) \
-	CONDBR_S(sp[0].data.datamem op sp[1].data.datamem)
+	CONDBR_S (sp [0].data.datamem op sp [1].data.datamem)
 
 #define CONDBR(cond) \
 	sp -= 2; \
@@ -4054,7 +4054,7 @@ call:;
 		ip += 3;
 
 #define BRELOP(datamem, op) \
-	CONDBR(sp[0].data.datamem op sp[1].data.datamem)
+	CONDBR(sp [0].data.datamem op sp [1].data.datamem)
 
 		MINT_IN_CASE(MINT_BEQ_I4_S)
 			BRELOP_S(i, ==)
@@ -4063,10 +4063,10 @@ call:;
 			BRELOP_S(l, ==)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_R4_S)
-			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 == sp[1].data.f_r4)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 == sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_R8_S)
-			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f == sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f == sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_I4)
 			BRELOP(i, ==)
@@ -4075,10 +4075,10 @@ call:;
 			BRELOP(l, ==)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_R4)
-			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 == sp[1].data.f_r4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 == sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BEQ_R8)
-			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f == sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f == sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_I4_S)
 			BRELOP_S(i, >=)
@@ -4087,10 +4087,10 @@ call:;
 			BRELOP_S(l, >=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_R4_S)
-			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 >= sp[1].data.f_r4)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 >= sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_R8_S)
-			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f >= sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f >= sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_I4)
 			BRELOP(i, >=)
@@ -4099,10 +4099,10 @@ call:;
 			BRELOP(l, >=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_R4)
-			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 >= sp[1].data.f_r4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 >= sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_R8)
-			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f >= sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f >= sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_I4_S)
 			BRELOP_S(i, >)
@@ -4111,10 +4111,10 @@ call:;
 			BRELOP_S(l, >)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_R4_S)
-			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 > sp[1].data.f_r4)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 > sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_R8_S)
-			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f > sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f > sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_I4)
 			BRELOP(i, >)
@@ -4123,10 +4123,10 @@ call:;
 			BRELOP(l, >)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_R4)
-			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 > sp[1].data.f_r4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 > sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_R8)
-			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f > sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f > sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_I4_S)
 			BRELOP_S(i, <)
@@ -4135,10 +4135,10 @@ call:;
 			BRELOP_S(l, <)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_R4_S)
-			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 < sp[1].data.f_r4)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 < sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_R8_S)
-			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f < sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f < sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_I4)
 			BRELOP(i, <)
@@ -4147,10 +4147,10 @@ call:;
 			BRELOP(l, <)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_R4)
-			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 < sp[1].data.f_r4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 < sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_R8)
-			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f < sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f < sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_I4_S)
 			BRELOP_S(i, <=)
@@ -4159,10 +4159,10 @@ call:;
 			BRELOP_S(l, <=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_R4_S)
-			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 <= sp[1].data.f_r4)
+			CONDBR_S(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 <= sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_R8_S)
-			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f <= sp[1].data.f)
+			CONDBR_S(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f <= sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_I4)
 			BRELOP(i, <=)
@@ -4171,10 +4171,10 @@ call:;
 			BRELOP(l, <=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_R4)
-			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp[0].data.f_r4 <= sp[1].data.f_r4)
+			CONDBR(!isunordered (sp [0].data.f_r4, sp [1].data.f_r4) && sp [0].data.f_r4 <= sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_R8)
-			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp[0].data.f <= sp[1].data.f)
+			CONDBR(!mono_isunordered (sp [0].data.f, sp [1].data.f) && sp [0].data.f <= sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_I4_S)
 			BRELOP_S(i, !=)
@@ -4183,10 +4183,10 @@ call:;
 			BRELOP_S(l, !=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_R4_S)
-			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 != sp[1].data.f_r4)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 != sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_R8_S)
-			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f != sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f != sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_I4)
 			BRELOP(i, !=)
@@ -4195,15 +4195,15 @@ call:;
 			BRELOP(l, !=)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_R4)
-			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 != sp[1].data.f_r4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 != sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BNE_UN_R8)
-			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f != sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f != sp [1].data.f)
 			MINT_IN_BREAK;
 
 #define BRELOP_S_CAST(datamem, op, type) \
 	sp -= 2; \
-	if ((type) sp[0].data.datamem op (type) sp[1].data.datamem) { \
+	if ((type)sp [0].data.datamem op (type)sp [1].data.datamem) { \
 		gint16 br_offset = (gint16) ip [1]; \
 		BACK_BRANCH_PROFILE (br_offset); \
 		ip += br_offset; \
@@ -4212,7 +4212,7 @@ call:;
 
 #define BRELOP_CAST(datamem, op, type) \
 	sp -= 2; \
-	if ((type) sp[0].data.datamem op (type) sp[1].data.datamem) { \
+	if ((type)sp [0].data.datamem op (type)sp [1].data.datamem) { \
 		gint32 br_offset = (gint32) ip [1]; \
 		BACK_BRANCH_PROFILE (br_offset); \
 		ip += br_offset; \
@@ -4226,10 +4226,10 @@ call:;
 			BRELOP_S_CAST(l, >=, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_R4_S)
-			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 >= sp[1].data.f_r4)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 >= sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_R8_S)
-			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f >= sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f >= sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_I4)
 			BRELOP_CAST(i, >=, guint32);
@@ -4238,10 +4238,10 @@ call:;
 			BRELOP_CAST(l, >=, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_R4)
-			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 >= sp[1].data.f_r4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 >= sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGE_UN_R8)
-			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f >= sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f >= sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_I4_S)
 			BRELOP_S_CAST(i, >, guint32);
@@ -4250,10 +4250,10 @@ call:;
 			BRELOP_S_CAST(l, >, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_R4_S)
-			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 > sp[1].data.f_r4)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 > sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_R8_S)
-			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f > sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f > sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_I4)
 			BRELOP_CAST(i, >, guint32);
@@ -4262,10 +4262,10 @@ call:;
 			BRELOP_CAST(l, >, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_R4)
-			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 > sp[1].data.f_r4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 > sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BGT_UN_R8)
-			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f > sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f > sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_I4_S)
 			BRELOP_S_CAST(i, <=, guint32);
@@ -4274,10 +4274,10 @@ call:;
 			BRELOP_S_CAST(l, <=, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_R4_S)
-			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 <= sp[1].data.f_r4)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 <= sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_R8_S)
-			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f <= sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f <= sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_I4)
 			BRELOP_CAST(i, <=, guint32);
@@ -4286,10 +4286,10 @@ call:;
 			BRELOP_CAST(l, <=, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_R4)
-			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 <= sp[1].data.f_r4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 <= sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLE_UN_R8)
-			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f <= sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f <= sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_I4_S)
 			BRELOP_S_CAST(i, <, guint32);
@@ -4298,10 +4298,10 @@ call:;
 			BRELOP_S_CAST(l, <, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_R4_S)
-			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 < sp[1].data.f_r4)
+			CONDBR_S(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 < sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_R8_S)
-			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f < sp[1].data.f)
+			CONDBR_S(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f < sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_I4)
 			BRELOP_CAST(i, <, guint32);
@@ -4310,10 +4310,10 @@ call:;
 			BRELOP_CAST(l, <, guint64);
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_R4)
-			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp[0].data.f_r4 < sp[1].data.f_r4)
+			CONDBR(isunordered (sp [0].data.f_r4, sp [1].data.f_r4) || sp [0].data.f_r4 < sp [1].data.f_r4)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_BLT_UN_R8)
-			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp[0].data.f < sp[1].data.f)
+			CONDBR(mono_isunordered (sp [0].data.f, sp [1].data.f) || sp [0].data.f < sp [1].data.f)
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SWITCH) {
 			guint32 n;
@@ -4336,28 +4336,28 @@ call:;
 		MINT_IN_CASE(MINT_LDIND_I1_CHECK)
 			NULL_CHECK (sp [-1].data.p);
 			++ip;
-			sp[-1].data.i = *(gint8*)sp[-1].data.p;
+			sp [-1].data.i = *(gint8*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_U1_CHECK)
 			NULL_CHECK (sp [-1].data.p);
 			++ip;
-			sp[-1].data.i = *(guint8*)sp[-1].data.p;
+			sp [-1].data.i = *(guint8*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_I2_CHECK)
 			NULL_CHECK (sp [-1].data.p);
 			++ip;
-			sp[-1].data.i = *(gint16*)sp[-1].data.p;
+			sp [-1].data.i = *(gint16*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_U2_CHECK)
 			NULL_CHECK (sp [-1].data.p);
 			++ip;
-			sp[-1].data.i = *(guint16*)sp[-1].data.p;
+			sp [-1].data.i = *(guint16*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_I4_CHECK) /* Fall through */
 		MINT_IN_CASE(MINT_LDIND_U4_CHECK)
 			NULL_CHECK (sp [-1].data.p);
 			++ip;
-			sp[-1].data.i = *(gint32*)sp[-1].data.p;
+			sp [-1].data.i = *(gint32*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_I8_CHECK)
 			NULL_CHECK (sp [-1].data.p);
@@ -4367,11 +4367,11 @@ call:;
 				memcpy (&sp [-1].data.l, sp [-1].data.p, sizeof (gint64));
 			else
 #endif
-			sp[-1].data.l = *(gint64*)sp[-1].data.p;
+			sp [-1].data.l = *(gint64*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_I) {
 			guint16 offset = ip [1];
-			sp[-1 - offset].data.p = *(gpointer*)sp[-1 - offset].data.p;
+			sp [-1 - offset].data.p = *(gpointer*)sp [-1 - offset].data.p;
 			ip += 2;
 			MINT_IN_BREAK;
 		}
@@ -4382,14 +4382,14 @@ call:;
 				memcpy (&sp [-1 - offset].data.l, sp [-1 - offset].data.p, sizeof (gint64));
 			else
 #endif
-			sp[-1 - offset].data.l = *(gint64*)sp[-1 - offset].data.p;
+			sp [-1 - offset].data.l = *(gint64*)sp [-1 - offset].data.p;
 			ip += 2;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDIND_R4_CHECK)
 			NULL_CHECK (sp [-1].data.p);
 			++ip;
-			sp[-1].data.f_r4 = *(gfloat*)sp[-1].data.p;
+			sp [-1].data.f_r4 = *(gfloat*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_R8_CHECK)
 			NULL_CHECK (sp [-1].data.p);
@@ -4399,11 +4399,11 @@ call:;
 				memcpy (&sp [-1].data.f, sp [-1].data.p, sizeof (gdouble));
 			else
 #endif
-			sp[-1].data.f = *(gdouble*)sp[-1].data.p;
+			sp [-1].data.f = *(gdouble*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_REF)
 			++ip;
-			sp[-1].data.p = *(gpointer*)sp[-1].data.p;
+			sp [-1].data.p = *(gpointer*)sp [-1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDIND_REF_CHECK) {
 			NULL_CHECK (sp [-1].data.p);
@@ -4419,22 +4419,22 @@ call:;
 		MINT_IN_CASE(MINT_STIND_I1)
 			++ip;
 			sp -= 2;
-			* (gint8 *) sp->data.p = (gint8)sp[1].data.i;
+			* (gint8 *) sp->data.p = (gint8)sp [1].data.i;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STIND_I2)
 			++ip;
 			sp -= 2;
-			* (gint16 *) sp->data.p = (gint16)sp[1].data.i;
+			* (gint16 *) sp->data.p = (gint16)sp [1].data.i;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STIND_I4)
 			++ip;
 			sp -= 2;
-			* (gint32 *) sp->data.p = sp[1].data.i;
+			* (gint32 *) sp->data.p = sp [1].data.i;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STIND_I)
 			++ip;
 			sp -= 2;
-			* (mono_i *) sp->data.p = (mono_i)sp[1].data.p;
+			* (mono_i *) sp->data.p = (mono_i)sp [1].data.p;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STIND_I8)
 			++ip;
@@ -4444,12 +4444,12 @@ call:;
 				memcpy (sp->data.p, &sp [1].data.l, sizeof (gint64));
 			else
 #endif
-			* (gint64 *) sp->data.p = sp[1].data.l;
+			* (gint64 *) sp->data.p = sp [1].data.l;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STIND_R4)
 			++ip;
 			sp -= 2;
-			* (float *) sp->data.p = sp[1].data.f_r4;
+			* (float *) sp->data.p = sp [1].data.f_r4;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_STIND_R8)
 			++ip;
@@ -4459,7 +4459,7 @@ call:;
 				memcpy (sp->data.p, &sp [1].data.f, sizeof (double));
 			else
 #endif
-			* (double *) sp->data.p = sp[1].data.f;
+			* (double *) sp->data.p = sp [1].data.f;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MONO_ATOMIC_STORE_I4)
 			++ip;
@@ -4864,7 +4864,7 @@ call:;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDOBJ_VT) {
-			int size = READ32(ip + 1);
+			int size = READ32 (ip + 1);
 			ip += 3;
 			memcpy (vt_sp, sp [-1].data.p, size);
 			sp [-1].data.p = vt_sp;
@@ -5210,14 +5210,14 @@ call_newobj:
 			++ip;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_LDFLDA_UNSAFE) {
-			sp[-1].data.p = (char*)sp [-1].data.o + ip [1];
+			sp [-1].data.p = (char*)sp [-1].data.o + ip [1];
 			ip += 2;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDFLDA) {
 			MonoObject* const o = sp [-1].data.o;
 			NULL_CHECK (o);
-			sp[-1].data.p = (char *)o + ip [1];
+			sp [-1].data.p = (char *)o + ip [1];
 			ip += 2;
 			MINT_IN_BREAK;
 		}
@@ -5234,9 +5234,9 @@ call_newobj:
 	MonoObject* const o = sp [-1].data.o; \
 	NULL_CHECK (o); \
 	if (unaligned) \
-		memcpy (&sp[-1].data.datamem, (char *)o + ip [1], sizeof (fieldtype)); \
+		memcpy (&sp [-1].data.datamem, (char *)o + ip [1], sizeof (fieldtype)); \
 	else \
-		sp[-1].data.datamem = * (fieldtype *)((char *)o + ip [1]) ; \
+		sp [-1].data.datamem = * (fieldtype *)((char *)o + ip [1]) ; \
 	ip += 2; \
 } while (0)
 
@@ -5259,7 +5259,7 @@ call_newobj:
 			MonoObject* const o = sp [-1].data.o;
 			NULL_CHECK (o);
 
-			int size = READ32(ip + 2);
+			int size = READ32 (ip + 2);
 			sp [-1].data.p = vt_sp;
 			memcpy (sp [-1].data.p, (char *)o + ip [1], size);
 			vt_sp += ALIGN_TO (size, MINT_VT_ALIGNMENT);
@@ -5324,9 +5324,9 @@ call_newobj:
 	NULL_CHECK (o); \
 	sp -= 2; \
 	if (unaligned) \
-		memcpy ((char *)o + ip [1], &sp[1].data.datamem, sizeof (fieldtype)); \
+		memcpy ((char *)o + ip [1], &sp [1].data.datamem, sizeof (fieldtype)); \
 	else \
-		* (fieldtype *)((char *)o + ip [1]) = sp[1].data.datamem; \
+		* (fieldtype *)((char *)o + ip [1]) = sp [1].data.datamem; \
 	ip += 2; \
 } while (0)
 
@@ -5456,7 +5456,7 @@ call_newobj:
 		}
 
 		MINT_IN_CASE(MINT_LDSSFLDA) {
-			guint32 offset = READ32(ip + 1);
+			guint32 offset = READ32 (ip + 1);
 			sp->data.p = mono_get_special_static_data (offset);
 			ip += 3;
 			++sp;
@@ -5467,7 +5467,7 @@ call_newobj:
 #define LDSFLD(datamem, fieldtype) { \
 	MonoVTable *vtable = (MonoVTable*) frame->imethod->data_items [ip [1]]; \
 	INIT_VTABLE (vtable); \
-	sp[0].data.datamem = * (fieldtype *)(frame->imethod->data_items [ip [2]]) ; \
+	sp [0].data.datamem = * (fieldtype *)(frame->imethod->data_items [ip [2]]) ; \
 	ip += 3; \
 	sp++; \
 	}
@@ -5501,7 +5501,7 @@ call_newobj:
 	MonoInternalThread *thread = mono_thread_internal_current (); \
 	guint32 offset = READ32 (ip + 1); \
 	gpointer addr = ((char*)thread->static_data [offset & 0x3f]) + (offset >> 6); \
-	sp[0].data.datamem = *(fieldtype*)addr; \
+	sp [0].data.datamem = *(fieldtype*)addr; \
 	ip += 3; \
 	++sp; \
 	}
@@ -5517,7 +5517,7 @@ call_newobj:
 		MINT_IN_CASE(MINT_LDTSFLD_P) LDTSFLD(p, gpointer); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_LDSSFLD) {
-			guint32 offset = READ32(ip + 2);
+			guint32 offset = READ32 (ip + 2);
 			gpointer addr = mono_get_special_static_data (offset);
 			MonoClassField *field = (MonoClassField*)frame->imethod->data_items [ip [1]];
 			stackval_from_data (field->type, sp, addr, FALSE);
@@ -5526,7 +5526,7 @@ call_newobj:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDSSFLD_VT) {
-			guint32 offset = READ32(ip + 1);
+			guint32 offset = READ32 (ip + 1);
 			gpointer addr = mono_get_special_static_data (offset);
 
 			int size = READ32 (ip + 3);
@@ -5541,7 +5541,7 @@ call_newobj:
 	MonoVTable *vtable = (MonoVTable*) frame->imethod->data_items [ip [1]]; \
 	INIT_VTABLE (vtable); \
 	sp --; \
-	* (fieldtype *)(frame->imethod->data_items [ip [2]]) = sp[0].data.datamem; \
+	* (fieldtype *)(frame->imethod->data_items [ip [2]]) = sp [0].data.datamem; \
 	ip += 3; \
 	}
 
@@ -5574,7 +5574,7 @@ call_newobj:
 	guint32 offset = READ32 (ip + 1); \
 	gpointer addr = ((char*)thread->static_data [offset & 0x3f]) + (offset >> 6); \
 	sp--; \
-	*(fieldtype*)addr = sp[0].data.datamem; \
+	*(fieldtype*)addr = sp [0].data.datamem; \
 	ip += 3; \
 	}
 
@@ -5590,7 +5590,7 @@ call_newobj:
 		MINT_IN_CASE(MINT_STTSFLD_O) STTSFLD(p, gpointer); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_STSSFLD) {
-			guint32 offset = READ32(ip + 2);
+			guint32 offset = READ32 (ip + 2);
 			gpointer addr = mono_get_special_static_data (offset);
 			MonoClassField *field = (MonoClassField*)frame->imethod->data_items [ip [1]];
 			--sp;
@@ -5599,7 +5599,7 @@ call_newobj:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_STSSFLD_VT) {
-			guint32 offset = READ32(ip + 1);
+			guint32 offset = READ32 (ip + 1);
 			gpointer addr = mono_get_special_static_data (offset);
 			--sp;
 			int size = READ32 (ip + 3);
@@ -6813,7 +6813,7 @@ call_newobj:
 		MINT_IN_CASE(MINT_MOVLOC_8) MOVLOC(guint64); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_MOVLOC_VT) {
-			int const i32 = READ32(ip + 3);
+			int const i32 = READ32 (ip + 3);
 			memcpy (locals + ip [2], locals + ip [1], i32);
 			ip += 5;
 			MINT_IN_BREAK;
@@ -6838,7 +6838,7 @@ call_newobj:
 			goto exit_frame;
 		MINT_IN_CASE(MINT_INITOBJ)
 			--sp;
-			memset (sp->data.vt, 0, READ32(ip + 1));
+			memset (sp->data.vt, 0, READ32 (ip + 1));
 			ip += 3;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CPBLK)
