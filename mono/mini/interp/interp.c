@@ -465,14 +465,14 @@ mono_interp_error_cleanup (MonoError* error)
 
 static MONO_NEVER_INLINE void
 ves_real_abort (int line, MonoMethod *mh,
-		const unsigned short *ip, stackval *stack, stackval *sp)
+		const guint16 *ip, stackval *stack, stackval *sp)
 {
 	ERROR_DECL (error);
 	MonoMethodHeader *header = mono_method_get_header_checked (mh, error);
 	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	g_printerr ("Execution aborted in method: %s::%s\n", m_class_get_name (mh->klass), mh->name);
-	g_printerr ("Line=%d IP=0x%04lx, Aborted execution\n", line, ip-(const unsigned short *) header->code);
-	g_printerr ("0x%04x %02x\n", ip-(const unsigned short *) header->code, *ip);
+	g_printerr ("Line=%d IP=0x%04lx, Aborted execution\n", line, ip-(const guint16 *) header->code);
+	g_printerr ("0x%04x %02x\n", ip-(const guint16 *) header->code, *ip);
 	mono_metadata_free_mh (header);
 	g_assert_not_reached ();
 }
@@ -4318,7 +4318,7 @@ call:;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_SWITCH) {
 			guint32 n;
-			const unsigned short *st;
+			const guint16 *st;
 			++ip;
 			n = READ32 (ip);
 			ip += 2;
@@ -7132,7 +7132,7 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 {
 	InterpFrame *iframe = (InterpFrame*)frame->interp_frame;
 	ThreadContext *context = get_context ();
-	const unsigned short *old_ip = iframe->ip;
+	const guint16 *old_ip = iframe->ip;
 	FrameClauseArgs clause_args;
 	const guint16 *state_ip;
 
