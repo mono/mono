@@ -604,7 +604,7 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
  * MonoContext.
  */
 #define INTERP_PUSH_LMF_WITH_CTX(frame, ext, exit_label) \
-	memset (&(ext), 0, sizeof (MonoLMFExt)); \
+	memset (&(ext), 0, sizeof (ext)); \
 	(ext).interp_exit_data = (frame); \
 	INTERP_PUSH_LMF_WITH_CTX_BODY ((ext), exit_label); \
 	mono_push_lmf (&(ext));
@@ -620,7 +620,7 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 static void
 interp_push_lmf (MonoLMFExt *ext, InterpFrame *frame)
 {
-	memset (ext, 0, sizeof (MonoLMFExt));
+	memset (ext, 0, sizeof (*ext));
 	ext->kind = MONO_LMFEXT_INTERP_EXIT;
 	ext->interp_exit_data = frame;
 
@@ -1090,7 +1090,7 @@ interp_throw (ThreadContext *context, MonoException *ex, InterpFrame *frame, con
 	mono_error_assert_ok (error);
 
 	MonoContext ctx;
-	memset (&ctx, 0, sizeof (MonoContext));
+	memset (&ctx, 0, sizeof (ctx));
 	MONO_CONTEXT_SET_SP (&ctx, frame);
 
 	/*
@@ -7136,7 +7136,7 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 	FrameClauseArgs clause_args;
 	const guint16 *state_ip;
 
-	memset (&clause_args, 0, sizeof (FrameClauseArgs));
+	memset (&clause_args, 0, sizeof (clause_args));
 	clause_args.start_with_ip = (const guint16*)handler_ip;
 	clause_args.end_at_ip = (const guint16*)handler_ip_end;
 	clause_args.exit_clause = clause_index;
@@ -7182,7 +7182,7 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 	 */
 	InterpFrame child_frame = {iframe, iframe->imethod, iframe->stack_args, &retval};
 
-	memset (&clause_args, 0, sizeof (FrameClauseArgs));
+	memset (&clause_args, 0, sizeof (clause_args));
 	clause_args.start_with_ip = (const guint16*)handler_ip;
 	clause_args.end_at_ip = (const guint16*)handler_ip_end;
 	clause_args.filter_exception = ex;
@@ -7223,7 +7223,7 @@ interp_frame_iter_next (MonoInterpStackIter *iter, StackFrameInfo *frame)
 	StackIter *stack_iter = (StackIter*)iter;
 	InterpFrame *iframe = stack_iter->current;
 
-	memset (frame, 0, sizeof (StackFrameInfo));
+	memset (frame, 0, sizeof (*frame));
 	/* pinvoke frames doesn't have imethod set */
 	while (iframe && !(iframe->imethod && iframe->imethod->code && iframe->imethod->jinfo))
 		iframe = iframe->parent;
