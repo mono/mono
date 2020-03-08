@@ -471,8 +471,8 @@ ves_real_abort (int line, MonoMethod *mh,
 	MonoMethodHeader *header = mono_method_get_header_checked (mh, error);
 	mono_error_cleanup (error); /* FIXME: don't swallow the error */
 	g_printerr ("Execution aborted in method: %s::%s\n", m_class_get_name (mh->klass), mh->name);
-	g_printerr ("Line=%d IP=0x%04lx, Aborted execution\n", line, ip-(const guint16 *) header->code);
-	g_printerr ("0x%04x %02x\n", ip-(const guint16 *) header->code, *ip);
+	g_printerr ("Line=%d IP=0x%04lx, Aborted execution\n", line, ip - (const guint16*)header->code);
+	g_printerr ("0x%04x %02x\n", ip - (const guint16*)header->code, *ip);
 	mono_metadata_free_mh (header);
 	g_assert_not_reached ();
 }
@@ -3358,7 +3358,7 @@ method_entry (ThreadContext *context, InterpFrame *frame,
 	vt_sp = frame->state.vt_sp; \
 	finally_ips = frame->state.finally_ips; \
 	clause_args = frame->state.clause_args; \
-	locals = (guchar *)frame->stack + frame->imethod->stack_size + frame->imethod->vt_stack_size; \
+	locals = (guchar*)frame->stack + frame->imethod->stack_size + frame->imethod->vt_stack_size; \
 	frame->state.ip = NULL; \
 	} while (0)
 
@@ -3366,8 +3366,8 @@ method_entry (ThreadContext *context, InterpFrame *frame,
 #define INIT_INTERP_STATE(frame, _clause_args) do {	 \
 	ip = _clause_args ? (_clause_args)->start_with_ip : (frame)->imethod->code; \
 	sp = (frame)->stack; \
-	vt_sp = (guchar *) sp + (frame)->imethod->stack_size; \
-	locals = (guchar *) vt_sp + (frame)->imethod->vt_stack_size; \
+	vt_sp = (guchar*)sp + (frame)->imethod->stack_size; \
+	locals = vt_sp + (frame)->imethod->vt_stack_size; \
 	finally_ips = NULL; \
 	} while (0)
 
@@ -3607,7 +3607,7 @@ main_loop:
 				memset (frame->stack, 0, frame->imethod->alloca_size);
 				sp = frame->stack;
 			}
-			vt_sp = (guchar *) sp + frame->imethod->stack_size;
+			vt_sp = (guchar*)sp + frame->imethod->stack_size;
 #if DEBUG_INTERP
 			vtalloc = vt_sp;
 #endif
