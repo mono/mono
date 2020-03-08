@@ -604,6 +604,7 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
  * MonoContext.
  */
 #define INTERP_PUSH_LMF_WITH_CTX(frame, ext, exit_label) \
+	MonoLMFExt ext; \
 	memset (&(ext), 0, sizeof (ext)); \
 	(ext).interp_exit_data = (frame); \
 	INTERP_PUSH_LMF_WITH_CTX_BODY ((ext), exit_label); \
@@ -1526,7 +1527,6 @@ ves_pinvoke_method (
 {
 	InterpFrame frame = {parent_frame, NULL, sp, retval};
 
-	MonoLMFExt ext;
 	gpointer args;
 
 	g_assert (!frame.imethod);
@@ -2176,7 +2176,6 @@ do_icall (MonoMethodSignature *sig, int op, stackval *sp, gpointer ptr, gboolean
 static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE stackval *
 do_icall_wrapper (InterpFrame *frame, MonoMethodSignature *sig, int op, stackval *sp, gpointer ptr, gboolean save_last_error)
 {
-	MonoLMFExt ext;
 	INTERP_PUSH_LMF_WITH_CTX (frame, ext, exit_icall);
 
 	sp = do_icall (sig, op, sp, ptr, save_last_error);
