@@ -1818,7 +1818,7 @@ mono_assembly_load_reference (MonoImage *image, int index)
 	if (image->assembly) {
 		if (mono_trace_is_traced (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY)) {
 			char *aname_str = mono_stringify_assembly_name (&aname);
-			mono_trace (index == 0 ? G_LOG_LEVEL_INFO : G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Loading reference %d of %s asmctx %s, looking for %s",
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Loading reference %d of %s asmctx %s, looking for %s",
 				    index, image->name, mono_asmctx_get_name (&image->assembly->context),
 				    aname_str);
 			g_free (aname_str);
