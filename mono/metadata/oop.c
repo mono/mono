@@ -187,7 +187,7 @@ mono_unity_unlock_dynamic_function_access_tables64(void)
 #ifdef _M_X64
     ReleaseSRWLockExclusive(&g_dynamic_function_table_lock);
 #else
-    return NULL;
+    return;
 #endif
 }
 

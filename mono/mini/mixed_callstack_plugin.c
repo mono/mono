@@ -12,6 +12,8 @@ int pmipFileNum;
 #define mixed_callstack_plugin_lock() mono_os_mutex_lock (&mutex)
 #define mixed_callstack_plugin_unlock() mono_os_mutex_unlock (&mutex)
 
+static void mixed_callstack_plugin_on_domain_unload_end (MonoProfiler *prof, MonoDomain *domain);
+
 void
 create_next_pmip_file()
 {
@@ -58,7 +60,7 @@ mixed_callstack_plugin_init (const char *options)
 }
 
 void
-mixed_callstack_plugin_on_domain_unload_end()
+mixed_callstack_plugin_on_domain_unload_end(MonoProfiler *prof, MonoDomain *domain)
 {
 	if(!enabled)
 		return;
@@ -128,7 +130,7 @@ mixed_callstack_plugin_init (const char *options)
 }
 
 void
-mixed_callstack_plugin_on_domain_unload_end()
+mixed_callstack_plugin_on_domain_unload_end(MonoProfiler *prof, MonoDomain *domain)
 {
 }
 

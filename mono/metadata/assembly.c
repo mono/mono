@@ -526,7 +526,7 @@ mono_set_assemblies_path_null_separated(const char* path)
         path_count_ptr += strlen(path_count_ptr) + 1;
         numPaths++;
     }
-    dest = g_new(char**, sizeof(char*) * (numPaths + 1));
+    dest = g_new(char*, sizeof(char*) * (numPaths + 1));
 
     if (assemblies_path)
         g_strfreev(assemblies_path);

@@ -157,7 +157,7 @@ mono_custom_attrs_get_attrs (MonoCustomAttrInfo *ainfo, gpointer *iter)
 		return NULL;
 	if (!*iter)
 	{
-		*iter = 1;
+		*iter = (gpointer*)1;
 		return ainfo->attrs[0].ctor->klass;
 	}
 
@@ -511,8 +511,8 @@ static void get_type_hashes(MonoType *type, GList *hashes, gboolean inflate)
 		case MONO_TYPE_ARRAY:
 		{
 			MonoArrayType *atype = type->data.array;
-			g_list_append(hashes, MONO_TOKEN_TYPE_SPEC);
-			g_list_append(hashes, get_array_structure_hash(atype));
+			g_list_append(hashes, GUINT_TO_POINTER(MONO_TOKEN_TYPE_SPEC));
+			g_list_append(hashes, GUINT_TO_POINTER(get_array_structure_hash(atype)));
 			get_type_hashes(&(atype->eklass->this_arg), hashes, inflate);
 			break;
 		}
@@ -572,16 +572,16 @@ static void get_type_hashes(MonoType *type, GList *hashes, gboolean inflate)
 
 		if (klass)
 		{
-			g_list_append(hashes, klass->type_token);
-			g_list_append(hashes, hash_string_djb2(klass->image->module_name));
+			g_list_append(hashes, GUINT_TO_POINTER(klass->type_token));
+			g_list_append(hashes, GUINT_TO_POINTER(hash_string_djb2(klass->image->module_name)));
 		}
 
 		return;
 	}
 	else
 	{
-		g_list_append(hashes, type->data.generic_class->container_class->type_token);
-		g_list_append(hashes, hash_string_djb2(type->data.generic_class->container_class->image->module_name));
+		g_list_append(hashes, GUINT_TO_POINTER(type->data.generic_class->container_class->type_token));
+		g_list_append(hashes, GUINT_TO_POINTER(hash_string_djb2(type->data.generic_class->container_class->image->module_name)));
 
         if (inflate)
 		    get_type_hashes_generic_inst(type->data.generic_class->context.class_inst, hashes, inflate);
@@ -593,12 +593,12 @@ static GList* get_type_hashes_method(MonoMethod *method, gboolean inflate)
 {
 	GList *hashes = monoeg_g_list_alloc();
 
-	hashes->data = method->token;
-	g_list_append(hashes, hash_string_djb2(method->klass->image->module_name));
+	hashes->data = GUINT_TO_POINTER(method->token);
+	g_list_append(hashes, GUINT_TO_POINTER(hash_string_djb2(method->klass->image->module_name)));
 
 	if (inflate && method->klass->class_kind == MONO_CLASS_GINST)
 	{
-		g_list_append(hashes, method->klass->type_token);
+		g_list_append(hashes, GUINT_TO_POINTER(method->klass->type_token));
 		get_type_hashes_generic_inst(mono_class_get_generic_class (method->klass)->context.class_inst, hashes, inflate);
 	}
 
@@ -1119,7 +1119,7 @@ mono_unity_install_memory_callbacks (MonoAllocatorVTable* callbacks)
 	mono_set_allocator_vtable (callbacks);
 }
 
-static char* data_dir = NULL;
+static char** data_dir = NULL;
 MONO_API void
 mono_unity_set_data_dir(const char* dir)
 {
@@ -1127,13 +1127,13 @@ mono_unity_set_data_dir(const char* dir)
         g_free(data_dir);
 
     data_dir = g_new(char*, strlen(dir) + 1);
-    strcpy(data_dir, dir);
+    strcpy(*data_dir, dir);
 }
 
 MONO_API char*
 mono_unity_get_data_dir()
 {
-    return data_dir;
+    return *data_dir;
 }
 
 MONO_API MonoClass*
@@ -1182,7 +1182,7 @@ MONO_API guint32
 mono_unity_class_get_generic_argument_count (MonoClass* klass)
 {
 	if (!mono_class_is_ginst (klass))
-		return NULL;
+		return 0;
 
 	MonoGenericClass* generic_class = mono_class_get_generic_class (klass);
 

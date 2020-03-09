@@ -503,7 +503,7 @@ gpointer mono_unity_liveness_calculation_from_statics_managed(gpointer filter_ha
 {
 	int i = 0;
 	MonoArray *res = NULL;
-	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target_internal (GPOINTER_TO_UINT(filter_handle));
+	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target_internal ((MonoGCHandle)filter_handle);
 	MonoClass* filter = NULL;
 	GPtrArray* objects = NULL;
 	LivenessState* liveness_state = NULL;
@@ -561,8 +561,8 @@ gpointer mono_unity_liveness_calculation_from_root_managed(gpointer root_handle,
 {
 	int i = 0;
 	MonoArray *res = NULL;
-	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target_internal (GPOINTER_TO_UINT(filter_handle));
-	MonoObject* root = mono_gchandle_get_target_internal (GPOINTER_TO_UINT(root_handle));
+	MonoReflectionType* filter_type = (MonoReflectionType*)mono_gchandle_get_target_internal ((MonoGCHandle)filter_handle);
+	MonoObject* root = mono_gchandle_get_target_internal ((MonoGCHandle)root_handle);
 	MonoClass* filter = NULL;
 	GPtrArray* objects = NULL;
 	LivenessState* liveness_state = NULL;
