@@ -68,16 +68,6 @@ void mono_trace_init (void);
 #define g_new(type, size)  ((type *) malloc (sizeof (type) * (size)))
 #define g_new0(type, size) ((type *) calloc (sizeof (type), (size)))
 
-static char*
-m_strdup (const char *str)
-{
-	if (!str)
-		return NULL;
-
-	const size_t len = strlen (str) + 1;
-	return memcpy (g_new (char, len), str, len);
-}
-
 static MonoDomain *root_domain;
 
 static MonoString*
@@ -154,14 +144,14 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 {
 	int len = strlen (name);
 	if (!strcasecmp (".pdb", &name [len - 4])) {
-		char *new_name = m_strdup (name);
+		char *new_name = strdup (name);
 		//FIXME handle debugging assemblies with .exe extension
 		strcpy (&new_name [len - 3], "dll");
 		mono_register_symfile_for_assembly (new_name, data, size);
 		return;
 	}
 	WasmAssembly *entry = g_new0 (WasmAssembly, 1);
-	entry->assembly.name = m_strdup (name);
+	entry->assembly.name = strdup (name);
 	entry->assembly.data = data;
 	entry->assembly.size = size;
 	entry->next = assemblies;
