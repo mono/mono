@@ -824,7 +824,7 @@ var BindingSupportLib = {
 			if (typeof coreType === "undefined") {
 				coreType = this.wasm_get_core_type(obj);
 				if (typeof coreType !== "undefined") {
-					this.mono_wasm_get_global()[obj.constructor.name].prototype[Symbol.for("wasm type")] = coreType;
+					obj.constructor.prototype[Symbol.for("wasm type")] = coreType;
 				}
 		  	}
 			return coreType;
