@@ -102,24 +102,16 @@ var BindingSupportLib = {
 
 			this.object_to_enum = get_method ("ObjectToEnum");
 			this.init = true;
-		},		
+		},
 
 		get_js_obj: function (js_handle) {
 			if (js_handle > 0)
 				return this.mono_wasm_require_handle(js_handle);
 			return null;
 		},
-		
-		//FIXME this is wastefull, we could remove the temp malloc by going the UTF16 route
-		//FIXME this is unsafe, cuz raw objects could be GC'd.
-		conv_string: function (mono_obj) {
-			if (mono_obj == 0)
-				return null;
-			var raw = this.mono_string_get_utf8 (mono_obj);
-			var res = Module.UTF8ToString (raw);
-			Module._free (raw);
 
-			return res;
+		conv_string: function (mono_obj) {
+			return MONO.string_decoder.copy (mono_obj);
 		},
 
 		is_nested_array: function (ele) {
