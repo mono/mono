@@ -3,6 +3,8 @@ set -e
 set -x
 set -u
 
-dotnet build $1
-rm -f $1/bin/Debug/netcoreapp2.1/*.so
-mono --interpreter --interp=interp-only $1/bin/Debug/netcoreapp2.1/$1.dll
+BENCHMARK=$(basename $1)
+
+dotnet build $BENCHMARK
+rm -f $BENCHMARK/bin/Debug/netcoreapp2.1/*.so
+mono --interpreter --interp=interp-only $BENCHMARK/bin/Debug/netcoreapp2.1/$BENCHMARK.dll
