@@ -418,6 +418,7 @@ class Driver {
 		var netcore_sdkdir = "";
 		string coremode, usermode;
 		string aot_profile = null;
+		string wasm_runtime_path = null;
 
 		var opts = new WasmOptions () {
 				AddBinding = true,
@@ -443,6 +444,7 @@ class Driver {
 				{ "emscripten-sdkdir=", s => emscripten_sdkdir = s },
 				{ "netcore-sdkdir=", s => netcore_sdkdir = s },
 				{ "prefix=", s => app_prefix = s },
+				{ "wasm-runtime-path=", s => wasm_runtime_path = s },
 				{ "deploy=", s => deploy_prefix = s },
 				{ "vfs=", s => vfs_prefix = s },
 				{ "aot", s => ee_mode = ExecMode.Aot },
@@ -712,15 +714,19 @@ class Driver {
 		File.Delete (config_js);
 		File.WriteAllText (config_js, config);
 
+
+		if (wasm_runtime_path == null)
+			wasm_runtime_path = Path.Combine (tool_prefix, "builds");
+
 		string wasm_runtime_dir;
 		if (is_netcore)
-			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "netcore-release" : "netcore-debug");
+			wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "netcore-release" : "netcore-debug");
 		else if (enable_threads)
-			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "threads-release" : "threads-debug");
+			wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "threads-release" : "threads-debug");
 		else if (enable_dynamic_runtime)
-			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "dynamic-release" : "dynamic-debug");
+			wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "dynamic-release" : "dynamic-debug");
 		else
-			wasm_runtime_dir = Path.Combine (tool_prefix, "builds", use_release_runtime ? "release" : "debug");
+			wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "release" : "debug");
 		if (!emit_ninja) {
 			var interp_files = new List<string> { "dotnet.js", "dotnet.wasm" };
 			if (enable_threads) {
