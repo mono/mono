@@ -1447,8 +1447,11 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "ByReference`1")) {
 		g_assert (!strcmp (tm, "get_Value"));
 		*op = MINT_INTRINS_BYREFERENCE_GET_VALUE;
-	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "Math")) {
-		if (csignature->param_count == 1 && csignature->params [0]->type == MONO_TYPE_R8) {
+	} else if (in_corlib && !strcmp (klass_name_space, "System") &&
+			(!strcmp (klass_name, "Math") || !strcmp (klass_name, "MathF"))) {
+		gboolean is_float = strcmp (klass_name, "MathF") == 0;
+		int param_type = is_float ? MONO_TYPE_R4 : MONO_TYPE_R8;
+		if (csignature->param_count == 1 && csignature->params [0]->type == param_type) {
 			// unops
 			if (tm [0] == 'A') {
 				if (strcmp (tm, "Abs") == 0) {
@@ -1505,14 +1508,18 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 					*op = MINT_TANH;
 				}
 			}
-		} else if (csignature->param_count == 2 && csignature->params [0]->type == MONO_TYPE_R8 && csignature->params [1]->type == MONO_TYPE_R8) {
+		} else if (csignature->param_count == 2 && csignature->params [0]->type == param_type && csignature->params [1]->type == param_type) {
 			if (strcmp (tm, "Atan2") == 0)
 				*op = MINT_ATAN2;
 			else if (strcmp (tm, "Pow") == 0)
 				*op = MINT_POW;
-		} else if (csignature->param_count == 3 && csignature->params [0]->type == MONO_TYPE_R8 && csignature->params [1]->type == MONO_TYPE_R8 && csignature->params [2]->type == MONO_TYPE_R8) {
+		} else if (csignature->param_count == 3 && csignature->params [0]->type == param_type && csignature->params [1]->type == param_type && csignature->params [2]->type == param_type) {
 			if (strcmp (tm, "FusedMultiplyAdd") == 0)
 				*op = MINT_FMA;
+		}
+
+		if (*op != -1 && is_float) {
+			*op = *op + (MINT_ABSF - MINT_ABS);
 		}
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && (!strcmp (klass_name, "Span`1") || !strcmp (klass_name, "ReadOnlySpan`1"))) {
 		if (!strcmp (tm, "get_Item")) {
