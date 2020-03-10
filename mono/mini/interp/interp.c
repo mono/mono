@@ -6971,6 +6971,24 @@ call_newobj:
 			sp [-1].data.f = fma (sp [-1].data.f, sp [0].data.f, sp [1].data.f);
 			ip++;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_SCALEB)
+			sp--;
+			sp [-1].data.f = scalbn (sp [-1].data.f, sp [0].data.i);
+			ip++;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_ILOGB) {
+			int result;
+			double x = sp [-1].data.f;
+			if (FP_ILOGB0 != INT_MIN && x == 0.0)
+				result = INT_MIN;
+			else if (FP_ILOGBNAN != INT_MAX && isnan(x))
+				result = INT_MAX;
+			else
+				result = ilogb (x);
+			sp [-1].data.i = result;
+			ip++;
+			MINT_IN_BREAK;
+		}
 
 #define MATH_UNOPF(mathfunc) \
 	sp [-1].data.f_r4 = mathfunc (sp [-1].data.f_r4); \
@@ -7010,6 +7028,24 @@ call_newobj:
 			sp [-1].data.f_r4 = fmaf (sp [-1].data.f_r4, sp [0].data.f_r4, sp [1].data.f_r4);
 			ip++;
 			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_SCALEBF)
+			sp--;
+			sp [-1].data.f_r4 = scalbnf (sp [-1].data.f_r4, sp [0].data.i);
+			ip++;
+			MINT_IN_BREAK;
+		MINT_IN_CASE(MINT_ILOGBF) {
+			int result;
+			float x = sp [-1].data.f_r4;
+			if (FP_ILOGB0 != INT_MIN && x == 0.0)
+				result = INT_MIN;
+			else if (FP_ILOGBNAN != INT_MAX && isnan(x))
+				result = INT_MAX;
+			else
+				result = ilogbf (x);
+			sp [-1].data.i = result;
+			ip++;
+			MINT_IN_BREAK;
+		}
 
 		MINT_IN_CASE(MINT_INTRINS_ENUM_HASFLAG) {
 			MonoClass *klass = (MonoClass*)frame->imethod->data_items[ip [1]];
