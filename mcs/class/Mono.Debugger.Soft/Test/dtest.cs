@@ -5203,6 +5203,8 @@ public class DebuggerTests
 
 	[Test]
 	public void InvokeSingleStepMultiThread () {
+		vm.Detach ();
+		Start (dtest_app_path, "ss_multi_thread");
 		MethodMirror m = entry_point.DeclaringType.GetMethod ("mt_ss");
 		int firstLineFound = m.Locations [0].LineNumber + 1;
 		int line_first_counter = 5;
@@ -5217,8 +5219,24 @@ public class DebuggerTests
 			e = breakpoint.lastEvent;
 			req = create_step (e);
 			while (line_first_counter > 0 || line_second_counter > 0 || line_third_counter > 0) {
-				if (req.GetId() != breakpoint.req.GetId())
+
+				var thread = e.Thread;
+				if (thread.GetFrames().Length > 0) {
+					var frame = thread.GetFrames()[0];
+					var l = e.Thread.GetFrames ()[0].Location;
+					if (l.LineNumber == firstLineFound) {
+						line_first_counter--;
+					}
+					if (l.LineNumber == firstLineFound + 1) {
+						line_second_counter--;
+					}
+					if (l.LineNumber == firstLineFound + 2) {
+						line_third_counter--;				
+					}			
+				}
+				if (req.GetId() != breakpoint.req.GetId()) {
 					req.Disable ();
+				}
 				req = create_step (e);
 				((StepEventRequest)req).Size = StepSize.Line;
 				try {
@@ -5228,20 +5246,6 @@ public class DebuggerTests
 					}
 					else
 						e = step_over_or_breakpoint ();
-					var thread = e.Thread;
-					if (thread.GetFrames().Length > 0) {
-						var frame = thread.GetFrames()[0];
-						var l = e.Thread.GetFrames ()[0].Location;
-						if (l.LineNumber == firstLineFound) {
-							line_first_counter--;
-						}
-						if (l.LineNumber == firstLineFound + 1) {
-							line_second_counter--;
-						}
-						if (l.LineNumber == firstLineFound + 2) {
-							line_third_counter--;				
-						}			
-					}
 					req =  e.Request;		
 				}
 				catch (Exception z){

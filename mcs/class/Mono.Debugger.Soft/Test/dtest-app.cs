@@ -607,11 +607,14 @@ public class Tests : TestsBase, ITest2
 		inspect_enumerator_in_generic_struct();
 		if_property_stepping();
 		fixed_size_array();
-		ss_multi_thread();
 		test_new_exception_filter();
 		test_async_debug_generics();
 		if (args.Length >0 && args [0] == "pointer_arguments2") {
 			pointers2 ();
+			return 0;
+		}
+		if (args.Length >0 && args [0] == "ss_multi_thread") {
+			ss_multi_thread ();
 			return 0;
 		}
 		return 3;

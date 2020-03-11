@@ -1053,9 +1053,6 @@ mono_de_process_breakpoint (void *void_tls, gboolean from_signal)
 	SeqPoint sp;
 	gboolean found_sp;
 
-	if (rt_callbacks.try_process_suspend (tls, ctx))
-		return;
-
 	ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
 
 	ji = get_top_method_ji (ip, NULL, (gpointer*)&ip);
