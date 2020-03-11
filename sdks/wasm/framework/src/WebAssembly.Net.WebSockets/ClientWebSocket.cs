@@ -187,6 +187,7 @@ namespace WebAssembly.Net.WebSockets {
 						}
 					}
 					innerWebSocket = new HostObject ("WebSocket", uri.ToString (), subProtocols);
+					innerWebSocket.SetObjectProperty ("binaryType", "arraybuffer");
 
 					subProtocols?.Dispose ();
 
@@ -220,17 +221,17 @@ namespace WebAssembly.Net.WebSockets {
 
 					// Setup the onOpen callback
 					onOpen = new Action<JSObject> ((evt) => {
-						if (!cancellationToken.IsCancellationRequested) {
-							// Change internal state to 'connected' to enable the other methods
-							if (Interlocked.CompareExchange (ref state, connected, connecting) != connecting) {
+						using (evt) {
+							if (!cancellationToken.IsCancellationRequested) {
+								// Change internal state to 'connected' to enable the other methods
+								if (Interlocked.CompareExchange (ref state, connected, connecting) != connecting) {
 								// Aborted/Disposed during connect.
-								throw new ObjectDisposedException (GetType ().FullName);
+									throw new ObjectDisposedException (GetType ().FullName);
+								}
+
+								tcsConnect.SetResult (true);
 							}
-
-							tcsConnect.SetResult (true);
 						}
-
-						evt.Dispose ();
 					});
 
 					// Attach the onOpen callback
@@ -238,22 +239,24 @@ namespace WebAssembly.Net.WebSockets {
 
 					// Setup the onMessage callback
 					onMessage = new Action<JSObject> ((messageEvent) => {
-						ThrowIfNotConnected ();
-
 						// get the events "data"
-						var eventData = messageEvent.GetObjectProperty ("data");
-
-						// If the messageEvent's data property is marshalled as a JSObject then we are dealing with 
-						// binary data
-						if (eventData is JSObject) {
-							// TODO: Handle ArrayBuffer binary type but have only seen 'blob' so far without
-							// changing the default websocket binary type manually.
-							if (innerWebSocket.GetObjectProperty ("binaryType").ToString () == "blob") {
-
+						using (messageEvent) {
+							ThrowIfNotConnected ();
+							// If the messageEvent's data property is marshalled as a JSObject then we are dealing with
+							// binary data
+							var eventData = messageEvent.GetObjectProperty ("data");
+							switch (eventData) {
+							case  ArrayBuffer buffer: using (buffer) {
+								var mess = new ReceivePayload (buffer, WebSocketMessageType.Binary);
+								receiveMessageQueue.BufferPayload (mess);
+								break;
+							}
+							case JSObject blobData: using (blobData) {
 								Action<JSObject> loadend = null;
 								// Create a new "FileReader" object
 								using (var reader = new HostObject("FileReader")) {
 									loadend = new Action<JSObject> ((loadEvent) => {
+										using (loadEvent)
 										using (var target = (JSObject)loadEvent.GetObjectProperty ("target")) {
 											if ((int)target.GetObjectProperty ("readyState") == 2) {
 												using (var binResult = (ArrayBuffer)target.GetObjectProperty ("result")) {
@@ -263,24 +266,22 @@ namespace WebAssembly.Net.WebSockets {
 												}
 											}
 										}
-										loadEvent.Dispose ();
-
 									});
 
 									reader.Invoke ("addEventListener", "loadend", loadend);
-
-									using (var blobData = (JSObject)messageEvent.GetObjectProperty ("data"))
-										reader.Invoke ("readAsArrayBuffer", blobData);
+									reader.Invoke ("readAsArrayBuffer", blobData);
 								}
-							} else
+								break;
+							}
+							case String message: {
+								var mess = new ReceivePayload (Encoding.UTF8.GetBytes (message), WebSocketMessageType.Text);
+								receiveMessageQueue.BufferPayload (mess);
+								break;
+							}
+							default:
 								throw new NotImplementedException ($"WebSocket bynary type '{innerWebSocket.GetObjectProperty ("binaryType").ToString ()}' not supported.");
-						} else if (eventData is string) {
-
-							var mess = new ReceivePayload (Encoding.UTF8.GetBytes (((string)eventData).ToString ()), WebSocketMessageType.Text);
-							receiveMessageQueue.BufferPayload (mess);
+							}
 						}
-						messageEvent.Dispose ();
-
 					});
 
 					// Attach the onMessage callaback
@@ -377,7 +378,7 @@ namespace WebAssembly.Net.WebSockets {
 				writeBuffer.Write (buffer.Array, buffer.Offset, buffer.Count);
 
 				if (!writeBuffer.TryGetBuffer (out buffer))
-					throw new WebSocketException ("Unable to recover writeBuffer data");
+					throw new WebSocketException (WebSocketError.NativeError);
 			}
 
 			var tcsSend = new TaskCompletionSource<bool> ();
@@ -400,8 +401,7 @@ namespace WebAssembly.Net.WebSockets {
 						tcsSend.SetResult (true);
 					}
 				} catch (Exception excb) {
-					tcsSend.TrySetCanceled ();
-					throw new WebSocketException (WebSocketError.NativeError, excb);
+					tcsSend.TrySetException (new WebSocketException (WebSocketError.NativeError, excb));
 				} finally {
 					writtenBuffer?.Dispose ();
 				}
