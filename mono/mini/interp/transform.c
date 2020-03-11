@@ -1451,6 +1451,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			(!strcmp (klass_name, "Math") || !strcmp (klass_name, "MathF"))) {
 		gboolean is_float = strcmp (klass_name, "MathF") == 0;
 		int param_type = is_float ? MONO_TYPE_R4 : MONO_TYPE_R8;
+		// FIXME add also intrinsic for Round
 		if (csignature->param_count == 1 && csignature->params [0]->type == param_type) {
 			// unops
 			if (tm [0] == 'A') {
@@ -1493,8 +1494,6 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				} else if (strcmp (tm, "Log10") == 0) {
 					*op = MINT_LOG10;
 				}
-			} else if (strcmp (tm, "Round") == 0) {
-				*op = MINT_ROUND;
 			} else if (tm [0] == 'S') {
 				if (strcmp (tm, "Sin") == 0) {
 					*op = MINT_SIN;
