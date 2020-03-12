@@ -83,6 +83,38 @@ var MonoSupportLib = {
 			};
 		},
 
+		_merge_name_vals: function (var_list) {
+			var out_list = [];
+
+			var i = 0;
+			while (i < var_list.length) {
+				var o = var_list [i];
+				var name = o.name;
+				if (name == null || name == undefined) {
+					i ++;
+					out_list.push (o);
+					continue;
+				}
+
+				if (i + 1 < var_list.length) {
+					var value = var_list [i+1].value;
+
+					if (value != null && value != undefined) {
+						var descr = value.description;
+						if (descr == null || descr == undefined)
+							value.description = '' + value.value;
+
+						o.value = value;
+					}
+				}
+
+				out_list.push (o);
+				i += 2;
+			}
+
+			return out_list;
+		},
+
 		mono_wasm_get_variables: function(scope, var_list) {
 			if (!this.mono_wasm_get_var_info)
 				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", null, [ 'number', 'number', 'number']);
@@ -96,7 +128,16 @@ var MonoSupportLib = {
 			}
 			this.mono_wasm_get_var_info (scope, heapBytes.byteOffset, var_list.length);
 			Module._free(heapBytes.byteOffset);
-			var res = this.var_info;
+			var res = MONO._merge_name_vals (this.var_info);
+
+			//Async methods are special in the way that local variables can be lifted to generated class fields
+			//value of "this" comes here either
+			for (let i in res) {
+				var name = res [i].name;
+				if (name != undefined && name.indexOf ('>') > 0)
+					res [i].name = name.substring (1, name.indexOf ('>'));
+			}
+
 			this.var_info = []
 
 			return res;
@@ -110,7 +151,7 @@ var MonoSupportLib = {
 			console.log (">> mono_wasm_get_object_properties " + objId);
 			this.mono_wasm_get_object_properties_info (objId);
 
-			var res = this.var_info;
+			var res = MONO._merge_name_vals (this.var_info);
 			this.var_info = [];
 
 			return res;
@@ -124,7 +165,7 @@ var MonoSupportLib = {
 			console.log (">> mono_wasm_get_array_values " + objId);
 			this.mono_wasm_get_array_values_info (objId);
 
-			var res = this.var_info;
+			var res = MONO._merge_name_vals (this.var_info);
 			this.var_info = [];
 
 			return res;

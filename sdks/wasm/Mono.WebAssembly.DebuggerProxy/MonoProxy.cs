@@ -407,25 +407,8 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			try {
-				var values = res.Value?["result"]?["value"]?.Values<JObject>().ToArray() ?? Array.Empty<JObject>();
-				var var_list = new List<JObject>();
+				var var_list = res.Value?["result"]?["value"]?.Values<JObject>().ToArray() ?? Array.Empty<JObject>();
 
-				// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
-				// results in a "Memory access out of bounds", causing 'values' to be null,
-				// so skip returning variable values in that case.
-				for (int i = 0; i < values.Length; i+=2)
-				{
-					string fieldName = FormatFieldName ((string)values[i]["name"]);
-					var value = values [i + 1]? ["value"];
-					if (((string)value ["description"]) == null)
-						value ["description"] = value ["value"]?.ToString ();
-
-					var_list.Add(JObject.FromObject(new {
-						name = fieldName,
-						value
-					}));
-
-				}
 				var response = JObject.FromObject(new
 				{
 					result = var_list
@@ -462,42 +445,10 @@ namespace WebAssembly.Net.Debugging {
 					return;
 				}
 
-				var var_list = new List<object> ();
-				int i = 0;
-				// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
-				// results in a "Memory access out of bounds", causing 'values' to be null,
-				// so skip returning variable values in that case.
-				while (i < vars.Length && i < values.Length) {
-					var value = values [i] ["value"];
-					if (((string)value ["description"]) == null)
-						value ["description"] = value ["value"]?.ToString ();
+				for (int i = 0; i < vars.Length && i < values.Length; i ++)
+					values [i] ["name"] = vars [i].Name;
 
-					var_list.Add (new {
-						name = vars [i].Name,
-						value
-					});
-					i++;
-				}
-				//Async methods are special in the way that local variables can be lifted to generated class fields
-				//value of "this" comes here either
-				while (i < values.Length) {
-					String name = values [i] ["name"].ToString ();
-
-					if (name.IndexOf (">", StringComparison.Ordinal) > 0)
-						name = name.Substring (1, name.IndexOf (">", StringComparison.Ordinal) - 1);
-
-					var value = values [i + 1] ["value"];
-					if (((string)value ["description"]) == null)
-						value ["description"] = value ["value"]?.ToString ();
-
-					var_list.Add (new {
-						name,
-						value
-					});
-					i = i + 2;
-				}
-
-				SendResponse (msg_id, Result.OkFromObject (new { result = var_list }), token);
+				SendResponse (msg_id, Result.OkFromObject (new { result = values }), token);
 			} catch (Exception exception) {
 				Log ("verbose", $"Error resolving scope properties {exception.Message}");
 				SendResponse (msg_id, Result.Exception (exception), token);
