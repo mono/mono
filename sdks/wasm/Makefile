@@ -112,9 +112,34 @@ jsup: .stamp-jsvu
 .PHONY: toolchain
 toolchain: .stamp-jsvu
 
+provision-emsdk:
+	$(MAKE) -C ../builds provision-wasm
+
 # emsdk_env.sh calls emsdk construct_env which is a bit slow so make a copy
-emsdk_env.sh:
+emsdk_env.sh: | provision-emsdk
 	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
+
+# These builds overwrite their installed files
+# forcing everything to be rebuilt so use a stamp file
+.stamp-runtime: | provision-emsdk
+	$(MAKE) -C ../builds package-wasm-runtime
+	touch $@
+
+.stamp-bcl:
+	$(MAKE) -C ../builds package-wasm-bcl
+	touch $@
+
+# Use these targets to rebuild components
+runtime:
+	$(MAKE) -C ../builds package-wasm-runtime
+	touch .stamp-runtime
+
+cross:
+	$(MAKE) -C ../builds package-wasm-cross
+
+bcl:
+	$(MAKE) -C ../builds package-wasm-bcl
+	touch .stamp-bcl
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 MONO_THREADS_LIBS = $(TOP)/sdks/out/wasm-runtime-threads-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
@@ -145,7 +170,7 @@ define InterpBuildTemplate
 builds/$(1)/:
 	mkdir -p $$@
 
-builds/$(1)/dotnet.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
+builds/$(1)/dotnet.js: .stamp-runtime builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
 	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/dotnet.js
 
 builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
@@ -177,15 +202,6 @@ ifdef ENABLE_WASM_NETCORE
 $(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(EMCC_DEBUG_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS),$(MONO_NETCORE_DEPS)))
 $(eval $(call InterpBuildTemplate,netcore-release,wasm-runtime-netcore-release,$(EMCC_RELEASE_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS),$(MONO_NETCORE_DEPS)))
 endif
-
-runtime:
-	$(MAKE) -C ../builds package-wasm-runtime
-
-cross:
-	$(MAKE) -C ../builds package-wasm-cross
-
-bcl:
-	$(MAKE) -C ../builds package-wasm-bcl
 
 #
 # NETCORE TARGETS
@@ -358,6 +374,8 @@ debugger-test.dll: debugger-test.cs debugger-test2.cs Simple.Dependency.dll
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll debugger-test.cs debugger-test2.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
+
+$(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll: .stamp-bcl
 
 Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
