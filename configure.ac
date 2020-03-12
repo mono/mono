@@ -1383,7 +1383,6 @@ if test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_gac='yes'
    mono_feature_disable_perfcounters='yes'
    mono_feature_disable_attach='yes'
-   mono_feature_disable_dllmap='yes'
    if test "x$enable_monodroid" = "x" -a "x$enable_monotouch" = "x"; then
      mono_feature_disable_dllmap='yes' # FIXME: the mobile products use this
    fi
