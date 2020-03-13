@@ -124,9 +124,9 @@ var MonoSupportLib = {
 		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
-				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", null, [ 'number']);
+				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'number', [ 'number']);
 
-			this.mono_wasm_setup_single_step (kind);
+			return this.mono_wasm_setup_single_step (kind);
 		},
 
 		mono_wasm_runtime_ready: function () {
@@ -457,4 +457,3 @@ var MonoSupportLib = {
 
 autoAddDeps(MonoSupportLib, '$MONO')
 mergeInto(LibraryManager.library, MonoSupportLib)
-

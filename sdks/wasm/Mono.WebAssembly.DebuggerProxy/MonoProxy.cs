@@ -492,6 +492,14 @@ namespace WebAssembly.Net.Debugging {
 
 			var res = await SendMonoCommand (msg_id, MonoCommands.StartSingleStepping (kind), token);
 
+			var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
+
+			if (ret_code.HasValue && ret_code.Value == 0) {
+				context.CallStack = null;
+				await SendCommand (msg_id, "Debugger.stepOut", new JObject (), token);
+				return false;
+			} 
+
 			SendResponse (msg_id, Result.Ok (new JObject ()), token);
 
 			context.CallStack = null;
