@@ -814,91 +814,9 @@ var BindingSupportLib = {
 		get_wasm_type: function(obj) {
 			var coreType = obj[Symbol.for("wasm type")];
 			if (typeof coreType === "undefined") {
-				switch (obj.constructor.name) {
-					case "Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "ArrayBuffer":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							ArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int8Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int8Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint8Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint8Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint8ClampedArray":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint8ClampedArray.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int16Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int16Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint16Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint16Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						return coreType;
-					case "Float32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Float32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Float64Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Float64Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Function":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Function.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "SharedArrayBuffer":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							SharedArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "DataView":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							DataView.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
+				coreType = this.wasm_get_core_type(obj);
+				if (typeof coreType !== "undefined") {
+					obj.constructor.prototype[Symbol.for("wasm type")] = coreType;
 				}
 		  	}
 			return coreType;
