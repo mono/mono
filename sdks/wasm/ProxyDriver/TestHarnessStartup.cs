@@ -19,7 +19,7 @@ using Newtonsoft.Json.Linq;
 
 namespace WebAssembly.Net.Debugging {
 	public class TestHarnessStartup {
-		static Regex parseConnection = new Regex (@"listening on (ws?s://.*)");
+		static Regex parseConnection = new Regex (@"listening on (ws?s://[^\s]*)");
 		public TestHarnessStartup (IConfiguration configuration)
 		{
 			Configuration = configuration;
