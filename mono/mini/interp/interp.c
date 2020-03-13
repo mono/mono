@@ -4951,10 +4951,12 @@ call:;
 
 		MINT_IN_CASE(MINT_NEWOBJ_VT_FAST)
 		MINT_IN_CASE(MINT_NEWOBJ_VTST_FAST) {
+			guint16 imethod_index = ip [1];
+			gboolean is_inlined = imethod_index == INLINED_METHOD_FLAG;
+
+			guint16 const param_count = ip [2];
 
 			frame->ip = ip;
-			cmethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
-			guint16 const param_count = ip [2];
 
 			// Make room for extra parameter and result.
 			if (param_count) {
@@ -4978,15 +4980,23 @@ call:;
 				memset (sp, 0, sizeof (*sp));
 				sp [1].data.p = &sp [0].data; // valuetype_this == result
 			}
-			}
-			// call_newobj captures the pattern where the return value is placed
-			// on the stack before the call, instead of the call forming it.
-call_newobj:
-			++sp; // Point sp at added extra param, after return value.
-			is_void = TRUE;
-			retval = NULL;
-			goto call;
 
+			if (!is_inlined) {
+				cmethod = (InterpMethod*)frame->imethod->data_items [imethod_index];
+				// call_newobj captures the pattern where the return value is placed
+				// on the stack before the call, instead of the call forming it.
+call_newobj:
+				++sp; // Point sp at added extra param, after return value.
+				is_void = TRUE;
+				retval = NULL;
+				goto call;
+			} else {
+				if (vtst)
+					vt_sp += ALIGN_TO (ip [-1], MINT_VT_ALIGNMENT);
+				sp += param_count + 2;
+			}
+			MINT_IN_BREAK;
+		}
 		MINT_IN_CASE(MINT_NEWOBJ) {
 
 			frame->ip = ip;
