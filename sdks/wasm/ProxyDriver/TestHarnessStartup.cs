@@ -2,22 +2,24 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json.Linq;
 
 namespace WebAssembly.Net.Debugging {
 	public class TestHarnessStartup {
+		static Regex parseConnection = new Regex (@"listening on (ws?s://[^\s]*)");
 		public TestHarnessStartup (IConfiguration configuration)
 		{
 			Configuration = configuration;
@@ -79,10 +81,12 @@ namespace WebAssembly.Net.Debugging {
 					var str = e.Data;
 					Console.WriteLine ($"stderr: {str}");
 
-					if (str.Contains ("listening on", StringComparison.Ordinal)) {
-						var res = str.Substring (str.IndexOf ("ws://", StringComparison.Ordinal));
-						if (res != null)
-							tcs.TrySetResult (res);
+					if (tcs.Task.IsCompleted)
+						return;
+
+					var match = parseConnection.Match (str);
+					if (match.Success) {
+						tcs.TrySetResult (match.Groups[1].Captures[0].Value);
 					}
 				};
 
@@ -100,7 +104,7 @@ namespace WebAssembly.Net.Debugging {
 				var line = await tcs.Task;
 				var con_str = extract_conn_url != null ? await extract_conn_url (line) : line;
 
-				Console.WriteLine ($"lauching proxy for {con_str}");
+				Console.WriteLine ($"launching proxy for {con_str}");
 
 				using var loggerFactory = LoggerFactory.Create(
 					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
