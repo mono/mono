@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 
 namespace Internal.Runtime.Augments {
 	partial class RuntimeAugments {
@@ -7,7 +8,8 @@ namespace Internal.Runtime.Augments {
 
 		public static void ReportUnhandledException (Exception exception)
 		{
-			throw exception;
+			var edi = ExceptionDispatchInfo.Capture (exception);
+			edi.Throw ();
 		}
 
 		internal static ReflectionExecutionDomainCallbacks Callbacks => s_reflectionExecutionDomainCallbacks;
