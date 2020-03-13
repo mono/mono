@@ -84,7 +84,7 @@ namespace WebAssembly.Net.Debugging {
 					if (tcs.Task.IsCompleted)
 						return;
 
-					var match = parseConnection.Match (str);;
+					var match = parseConnection.Match (str);
 					if (match.Success) {
 						tcs.TrySetResult (match.Groups[1].Captures[0].Value);
 					}
