@@ -4509,6 +4509,9 @@ send_types_for_domain (MonoDomain *domain, void *user_data)
 	MonoDomain* old_domain;
 	AgentDomainInfo *info = NULL;
 
+	if (mono_domain_is_unloading (domain))
+		return;
+
 	info = get_agent_domain_info (domain);
 	g_assert (info);
 
@@ -4528,6 +4531,9 @@ send_assemblies_for_domain (MonoDomain *domain, void *user_data)
 {
 	GSList *tmp;
 	MonoDomain* old_domain;
+
+	if (mono_domain_is_unloading (domain))
+		return;
 
 	old_domain = mono_domain_get ();
 
@@ -4990,6 +4996,8 @@ set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req, MonoError
 #else
 	g_hash_table_iter_init (&iter, domains);
 	while (g_hash_table_iter_next (&iter, (void**)&domain, NULL)) {
+		if (mono_domain_is_unloading (domain))
+			continue;
 		mono_domain_lock (domain);
 		g_hash_table_iter_init (&iter2, domain_jit_info (domain)->seq_points);
 		while (g_hash_table_iter_next (&iter2, (void**)&m, (void**)&seq_points)) {
@@ -9090,6 +9098,8 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_lock ();
 		g_hash_table_iter_init (&iter, domains);
 		while (g_hash_table_iter_next (&iter, NULL, (void**)&domain)) {
+			if (mono_domain_is_unloading (domain))
+				continue;
 			AgentDomainInfo *info = (AgentDomainInfo *)VM_DOMAIN_GET_AGENT_INFO(domain);
 
 			/* Update 'source_file_to_class' cache */
@@ -9190,6 +9200,8 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 			MonoType *t;
 			GSList *tmp;
 
+			if (mono_domain_is_unloading (domain))
+					continue;
 			mono_domain_assemblies_lock (domain);
 			void *iter = NULL;
 			while (ass = mono_domain_get_assemblies_iter (domain, &iter))
