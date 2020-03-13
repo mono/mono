@@ -282,7 +282,7 @@ namespace DebuggerTests
 		[Fact]
 		public async Task InspectLocalsAtBreakpointSite () =>
 			await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-test.cs", 5, 2, "x",
+				"dotnet://debugger-test.dll/debugger-test.cs", 5, 2, "IntAdd",
 				"window.setTimeout(function() { invoke_add(); }, 1);",
 				test_fn: (locals) => {
 					CheckNumber (locals, "a", 10);
@@ -296,7 +296,7 @@ namespace DebuggerTests
 		[Fact]
 		public async Task InspectLocalsWithDelegatesAtBreakpointSite () =>
 			await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-test.cs", 41, 2, "x",
+				"dotnet://debugger-test.dll/debugger-test.cs", 41, 2, "DelegatesTest",
 				"window.setTimeout(function() { invoke_delegates_test (); }, 1);",
 				test_fn: (locals) => {
 					CheckObject (locals, "fn_func", "System.Func<Math, bool>");
@@ -320,7 +320,7 @@ namespace DebuggerTests
 		[Fact]
 		public async Task InspectLocalsWithGenericTypesAtBreakpointSite () =>
 			await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-test.cs", 62, 2, "x",
+				"dotnet://debugger-test.dll/debugger-test.cs", 62, 2, "GenericTypesTest",
 				"window.setTimeout(function() { invoke_generic_types_test (); }, 1);",
 				test_fn: (locals) => {
 					CheckObject (locals, "list", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>");
@@ -386,7 +386,7 @@ namespace DebuggerTests
 				await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_delegates_test (); }, 1);",
 					"dotnet://debugger-test.dll/debugger-test.cs", 41, 2,
-					"IntAdd", ctx,
+					"DelegatesTest", ctx,
 					wait_for_event_fn: async (pause_location) => {
 						//make sure we're on the right bp
 						Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
@@ -734,7 +734,7 @@ namespace DebuggerTests
 
 				// TODO: previous frames have async machinery details, so no point checking that right now
 
-				await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 123, 3, "AsyncMethodNoReturn", ctx,
+				await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 123, 3, /*"AsyncMethodNoReturn"*/"MoveNext", ctx,
 					locals_fn: (locals) => {
 						Assert.Equal (4, locals.Count());
 						CheckString (locals, "str", "AsyncMethodNoReturn's local");
@@ -806,6 +806,9 @@ namespace DebuggerTests
 			}
 
 			var wait_res = await ctx.insp.WaitFor(waitForEvent);
+
+			if (function_name != null)
+				Assert.Equal (function_name, wait_res ["callFrames"]?[0]?["functionName"]?.Value<string> ());
 
 			if (script_loc != null)
 				CheckLocation (script_loc, line, column, ctx.scripts, wait_res ["callFrames"][0]["location"]);
