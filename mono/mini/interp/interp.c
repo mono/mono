@@ -3152,6 +3152,48 @@ g_error_xsx (const char *format, int x1, const char *s, int x2)
 }
 #endif
 
+// In this experimental form, the interpreter can take on various forms:
+//  - full recursive
+//    The entire interpreter in one large recursive function.
+//
+//  - split recursive
+//    Most of the interpreter in one large non-recursive function (except INIT_VTABLE).
+//    When the interpreter need to recurse, it turns to its caller,
+//    and that function recurses.
+//
+//  - Non-recursive form, not here.
+//    This places a burden on JITed (WebAssembly) implementations,
+//    that have tiered codegen, to also have on-stack-replacement or current-function replacement.
+//    Recursive (split or full) do not have this burden.
+//
+// Split recursive is faster for WebAssembly, slower otherwise.
+// Split recursive uses much less stack than full recursive, esp. for historical Apple WebAssebmly,
+//   which generates and fails to optimize away many temporaries.
+// Using less stack is an optimization, but the extra call/return overhead is a slowdown, for non-WebAssembly.
+//
+#define MONO_INTERP_SPLIT_RECURSIVE 0
+
+#if MONO_INTERP_SPLIT_RECURSIVE
+
+#define STATE_DOT (state).
+
+#else
+
+#define STATE_DOT /* nothing */
+
+#endif
+
+// Initialize interpreter state for executing frame.
+#define INIT_INTERP_STATE(state, frame, _clause_args) do {	 \
+	STATE_DOT ip = _clause_args ? (_clause_args)->start_with_ip : (frame)->imethod->code; \
+	STATE_DOT sp = (frame)->stack; \
+	STATE_DOT vt_sp = (guchar*)STATE_DOT sp + (frame)->imethod->stack_size; \
+	IF_DEBUG_INTERP (STATE_DOT vtalloc = STATE_DOT vt_sp;) \
+	} while (0)
+
+
+#if MONO_INTERP_SPLIT_RECURSIVE
+
 // Save the state of the interpeter main loop into state.
 #define INTERP_STATE_LOCALS_TO_STRUCT(state) do { \
 	(state)->ip = ip;  \
@@ -3166,14 +3208,6 @@ g_error_xsx (const char *format, int x1, const char *s, int x2)
 	sp = (state)->sp; \
 	finally_ips = (state)->finally_ips; \
 	vt_sp = (state)->vt_sp; \
-	} while (0)
-
-// Initialize interpreter state for executing frame.
-#define INIT_INTERP_STATE(state, frame, _clause_args) do {	 \
-	(state).ip = _clause_args ? (_clause_args)->start_with_ip : (frame)->imethod->code; \
-	(state).sp = (frame)->stack; \
-	(state).vt_sp = (guchar*)state.sp + (frame)->imethod->stack_size; \
-	IF_DEBUG_INTERP ((state).vtalloc = (state).vt_sp;) \
 	} while (0)
 
 typedef enum MonoInterpInternalResult {
@@ -3193,28 +3227,53 @@ interp_exec_internal (InterpFrame * const frame,
                       FrameClauseArgs const * const clause_args,
                       MonoError * const error);
 
-// This recursive function should remain relatively small, to ease pressure on WebAssembly JIT.
+#endif
+
+#if MONO_INTERP_SPLIT_RECURSIVE
+
+// This recursive function should remain relatively small, to ease pressure on WebAssembly JIT. (comment itself is ifdef'ed, for exposition).
+
+#endif
+
 static MONO_NEVER_INLINE void
 interp_exec_method (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
 {
-	InterpFrame child_frame;
-	memset (&child_frame, 0, sizeof (child_frame));
+	InterpFrame child_frame_value;
+	memset (&child_frame_value, 0, sizeof (child_frame_value));
+	InterpFrame * const child_frame = &child_frame_value;
+
+#if MONO_INTERP_SPLIT_RECURSIVE
 
 	// Interpreter main loop state.
 	InterpState state;
 	memset (&state, 0, sizeof (state));
 
+#else
+
+	// Interpreter main loop state (InterpState).
+	INTERP_STATE;
+	guchar * const locals = frame_locals (frame);
+	finally_ips = NULL;
+
+#endif
+
 #if DEBUG_INTERP
+
 	int tracing = global_tracing;
 	debug_enter (frame, &tracing);
+
 #endif
 
 	if (!G_UNLIKELY (frame->imethod->transformed)) {
+
 #if DEBUG_INTERP
+
 		char *mn = mono_method_full_name (frame->imethod->method, TRUE);
 		g_print ("(%p) Transforming %s\n", mono_thread_internal_current (), mn);
 		g_free (mn);
+
 #endif
+
 		frame->ip = NULL;
 		MonoException *ex = do_transform_method (frame, context);
 		if (ex)
@@ -3233,26 +3292,37 @@ interp_exec_method (InterpFrame *frame, ThreadContext *context, FrameClauseArgs 
 	INIT_INTERP_STATE (state, frame, clause_args);
 
 	if (clause_args && clause_args->filter_exception) {
-		state.sp->data.p = clause_args->filter_exception;
-		++state.sp;
+		STATE_DOT sp->data.p = clause_args->filter_exception;
+		++ STATE_DOT sp;
 	}
 
 #ifdef ENABLE_EXPERIMENT_TIERED
+
 	mini_tiered_inc (frame->imethod->domain, frame->imethod->method, &frame->imethod->tiered_counter, 0);
+
 #endif
 	//g_print ("(%p) Call %s\n", mono_thread_internal_current (), mono_method_get_full_name (frame->imethod->method));
 
 #if defined(ENABLE_HYBRID_SUSPEND) || defined(ENABLE_COOP_SUSPEND)
+
 	mono_threads_safepoint ();
+
 #endif
+
+#if MONO_INTERP_SPLIT_RECURSIVE
 
 	while (1) {
 		// Resume is handled almost immediately in interp_exec_internal, to avoid
 		// duplicating it here.
 resume:
-		switch (interp_exec_internal (frame, &state, &child_frame, context, clause_args, error)) {
+		switch (interp_exec_internal (frame, &state, child_frame, context, clause_args, error)) {
 		case MonoInterp_ExitFrame:
 
+#else
+
+exit_frame:
+
+#endif
 			error_init_reuse (error);
 
 			g_assert (frame->imethod);
@@ -3267,6 +3337,8 @@ resume:
 
 			DEBUG_LEAVE ();
 			return;
+
+#if MONO_INTERP_SPLIT_RECURSIVE // FIXME duplicated code
 
 		case MonoInterp_LocAlloc: {
 			stackval * const sp = state.sp;
@@ -3322,14 +3394,14 @@ resume:
 		}
 		case MonoInterp_Call:
 			// This is multiple forms of call and newobj.
-			interp_exec_method (&child_frame, context, NULL, error);
+			interp_exec_method (child_frame, context, NULL, error);
 			CHECK_RESUME_STATE (context);
 			// need to handle typedbyref
-			*state.sp++ = *child_frame.retval;
+			*state.sp++ = *child_frame->retval;
 			break;
 		case MonoInterp_VoidCall:
 			// This is multiple forms of call and newobj.
-			interp_exec_method (&child_frame, context, NULL, error);
+			interp_exec_method (child_frame, context, NULL, error);
 			break;
 		}
 	}
@@ -3350,14 +3422,8 @@ interp_exec_internal (InterpFrame * const frame,
                       FrameClauseArgs const * const clause_args,
                       MonoError * const error)
 {
-	MonoInterpInternalResult result;
-#if DEBUG_INTERP
-	int tracing = global_tracing;
-#endif
-	InterpMethod *cmethod;
-	MonoException *ex;
-	gboolean is_void;
-	stackval *retval;
+
+#endif // MONO_INTERP_SPLIT_RECURSIVE
 
 #if USE_COMPUTED_GOTO
 	static void * const in_labels[] = {
@@ -3366,11 +3432,22 @@ interp_exec_internal (InterpFrame * const frame,
 	};
 #endif
 
+#if MONO_INTERP_SPLIT_RECURSIVE
+
 	// Interpreter main loop state (InterpState).
 	INTERP_STATE;
+
+	MonoInterpInternalResult result;
+
 	INTERP_STATE_STRUCT_TO_LOCALS (state);
-	unsigned char *locals = frame_locals (frame);
+	guchar * const locals = frame_locals (frame);
 	CHECK_RESUME_STATE (context);
+
+#endif
+
+	InterpMethod *cmethod;
+	gboolean is_void;
+	stackval *retval;
 
 	/*
 	 * using while (ip < end) may result in a 15% performance drop, 
@@ -3517,9 +3594,47 @@ main_loop:
 		}
 
 		MINT_IN_CASE(MINT_JMP)
+#if MONO_INTERP_SPLIT_RECURSIVE
 			result = MonoInterp_Jmp;
 			goto recurse;
+#else // FIXME duplicated code
+			// Some of this code could be in interp_exec_internal.
+			// The alloca must be in this function.
 
+			g_assert (sp == frame->stack);
+			InterpMethod *new_method = (InterpMethod*)frame->imethod->data_items [ip [1]];
+
+			if (frame->imethod->prof_flags & MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL)
+				MONO_PROFILER_RAISE (method_tail_call, (frame->imethod->method, new_method->method));
+
+			if (!new_method->transformed) {
+				error_init_reuse (error);
+				frame->ip = ip;
+				mono_interp_transform_method (new_method, context, error);
+				MonoException *ex = mono_error_convert_to_exception (error);
+				if (ex)
+					THROW_EX (ex, ip);
+				EXCEPTION_CHECKPOINT;
+			}
+			gsize const new_alloca_size = new_method->alloca_size;
+			gboolean const realloc_frame = new_alloca_size > frame->imethod->alloca_size;
+			frame->imethod = new_method;
+			/*
+			 * We allocate the stack frame from scratch and store the arguments in the
+			 * locals again since it's possible for the caller stack frame to be smaller
+			 * than the callee stack frame (at the interp level)
+			 */
+			if (realloc_frame) {
+				stackval * const stack = (stackval*)g_alloca (new_alloca_size);
+				memset (stack, 0, new_alloca_size);
+				frame->stack = stack;
+				sp = stack;
+			}
+			vt_sp = (guchar*)sp + new_method->stack_size;
+			IF_DEBUG_INTERP (vtalloc = vt_sp;)
+			ip = new_method->code;
+			MINT_IN_BREAK;
+#endif
 		MINT_IN_CASE(MINT_CALLI) {
 			MonoMethodSignature *csignature;
 
@@ -3735,8 +3850,23 @@ call:;
 			// FIXME: Add stack overflow checks
 			reinit_frame (child_frame, frame, cmethod, sp, retval);
 
+#if MONO_INTERP_SPLIT_RECURSIVE
+
 			result = is_void ? MonoInterp_VoidCall : MonoInterp_Call;
 			goto recurse;
+
+#else // FIXME duplicated code
+
+			interp_exec_method (child_frame, context, NULL, error);
+			CHECK_RESUME_STATE (context);
+			if (!is_void) {
+				// need to handle typedbyref
+				* STATE_DOT sp++ = *child_frame->retval;
+			}
+			MINT_IN_BREAK;
+
+#endif
+
 		}
 		MINT_IN_CASE(MINT_JIT_CALL) {
 			InterpMethod *rmethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
@@ -6704,8 +6834,23 @@ call_newobj:
 			if (sp != frame->stack + 1) /*FIX?*/
 				goto abort_label;
 
+#if MONO_INTERP_SPLIT_RECURSIVE
+
 			result = MonoInterp_LocAlloc;
 			goto recurse;
+
+#else // FIXME duplicated code
+
+			int const len = sp [-1].data.i;
+			gpointer const p = g_alloca (len);
+			sp [-1].data.p = p;
+
+			if (frame->imethod->init_locals)
+				memset (p, 0, len);
+			++ip;
+			MINT_IN_BREAK;
+
+#endif
 
 		MINT_IN_CASE(MINT_ENDFILTER)
 			/* top of stack is result of filter */
@@ -6888,6 +7033,7 @@ resume:
 		goto main_loop;
 	}
 	// fall through
+#if MONO_INTERP_SPLIT_RECURSIVE
 exit_frame:
 	//INTERP_STATE_LOCALS_TO_STRUCT (state); // not needed
 	return MonoInterp_ExitFrame;
@@ -6895,6 +7041,7 @@ exit_frame:
 recurse:
 	INTERP_STATE_LOCALS_TO_STRUCT (state);
 	return result;
+#endif
 }
 
 static void
