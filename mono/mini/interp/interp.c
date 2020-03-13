@@ -6727,7 +6727,7 @@ call_newobj:
 		}
 		MINT_IN_CASE(MINT_PROF_COVERAGE_STORE) {
 			++ip;
-			guint32 *p = GINT_TO_POINTER (READ64 (ip));
+			guint32 *p = (guint32*)GINT_TO_POINTER (READ64 (ip));
 			*p = 1;
 			ip += 4;
 			MINT_IN_BREAK;
