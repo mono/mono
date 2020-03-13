@@ -426,7 +426,14 @@ namespace WebAssembly.Net.Debugging {
 		{
 
 			try {
-				var scope = GetContext (msg_id).CallStack.FirstOrDefault (s => s.Id == scope_id);
+				var ctx = GetContext (msg_id);
+				var scope = ctx.CallStack.FirstOrDefault (s => s.Id == scope_id);
+				if (scope == null) {
+					SendResponse (msg_id,
+							Result.Err (JObject.FromObject (new { message = $"Could not find scope with id #{scope_id}" })),
+							token);
+					return;
+				}
 				var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 
 				var var_ids = vars.Select (v => v.Index).ToArray ();
