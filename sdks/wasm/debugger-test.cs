@@ -93,9 +93,10 @@ public class Math { //Only append content to this class as the test suite depend
 	{
 		public int InnerMethod (int i)
 		{
+			SimpleStructProperty = new SimpleStruct () { dt = new DateTime (2020, 1, 2, 3, 4, 5) };
 			int j = i + 10;
 			string foo_str = "foo";
-			Console.WriteLine ($"i: {i} and j: {j}, foo_str: {foo_str}");
+			Console.WriteLine ($"i: {i} and j: {j}, foo_str: {foo_str} ");
 			j += 9;
 			Console.WriteLine ($"i: {i} and j: {j}");
 			return j;
@@ -113,13 +114,13 @@ public class Math { //Only append content to this class as the test suite depend
 
 		public async System.Threading.Tasks.Task AsyncMethodNoReturn ()
 		{
-			var ss = new SimpleStruct ();
+			var ss = new SimpleStruct () { dt = new DateTime (2020, 1, 2, 3, 4, 5) };
 			var ss_arr = new SimpleStruct [] {};
-			ss.gs.StringField = "field in GenericStruct";
+			//ss.gs.StringField = "field in GenericStruct";
 
-			Console.WriteLine ($"Using the struct: {ss.dt}, {ss.gs.StringField}, ss_arr: {ss_arr.Length}");
+			//Console.WriteLine ($"Using the struct: {ss.dt}, {ss.gs.StringField}, ss_arr: {ss_arr.Length}");
 			string str = "AsyncMethodNoReturn's local";
-			Console.WriteLine ($"* field m: {m}");
+			//Console.WriteLine ($"* field m: {m}");
 			await System.Threading.Tasks.Task.Delay (1);
 			Console.WriteLine ($"str: {str}");
 		}
@@ -129,16 +130,7 @@ public class Math { //Only append content to this class as the test suite depend
 			return await new NestedInMath().AsyncMethod0 (s, i);
 		}
 
-		public static void MethodWithStructs ()
-		{
-			var ss = new SimpleStruct ();
-			ss.gs.StringField = "field in GenericStruct";
-
-			var ss_arr = new SimpleStruct [] {};
-			var gs = new GenericStruct<Math> ();
-			Math m = new Math ();
-			Console.WriteLine ($"Using the struct: {ss.dt}, {ss.gs.StringField}, ss_arr: {ss_arr.Length}, gs: {gs.StringField}");
-		}
+		public SimpleStruct SimpleStructProperty { get; set; }
 	}
 
 	struct SimpleStruct
@@ -147,7 +139,7 @@ public class Math { //Only append content to this class as the test suite depend
 		public GenericStruct<DateTime> gs;
 	}
 
-	struct GenericStruct<T>
+	public struct GenericStruct<T>
 	{
 		public System.Collections.Generic.List<T> List;
 		public string StringField;

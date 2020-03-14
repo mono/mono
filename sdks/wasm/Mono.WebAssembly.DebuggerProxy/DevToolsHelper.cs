@@ -134,8 +134,8 @@ namespace WebAssembly.Net.Debugging {
 		public static MonoCommands ClearAllBreakpoints ()
 			=> new MonoCommands ("MONO.mono_wasm_clear_all_breakpoints()");
 
-		public static MonoCommands GetObjectProperties (int objectId)
-			=> new MonoCommands ($"MONO.mono_wasm_get_object_properties({objectId})");
+		public static MonoCommands GetObjectProperties (int objectId, bool expandValueTypes)
+			=> new MonoCommands ($"MONO.mono_wasm_get_object_properties({objectId}, { (expandValueTypes ? "true" : "false") })");
 
 		public static MonoCommands GetArrayValues (int objectId)
 			=> new MonoCommands ($"MONO.mono_wasm_get_array_values({objectId})");
@@ -221,6 +221,9 @@ namespace WebAssembly.Net.Debugging {
 		internal DebugStore store;
 		public TaskCompletionSource<DebugStore> Source { get; } = new TaskCompletionSource<DebugStore> ();
 
+		int nextValueTypeId = 0;
+		public Dictionary<string, JToken> ValueTypesCache = new Dictionary<string, JToken> ();
+
 		public DebugStore Store {
 			get {
 				if (store == null || !Source.Task.IsCompleted)
@@ -229,5 +232,15 @@ namespace WebAssembly.Net.Debugging {
 				return store;
 			}
 		}
+
+		public void ClearState ()
+		{
+			CallStack = null;
+			ValueTypesCache.Clear ();
+			nextValueTypeId = 0;
+		}
+
+		public int NextValueTypeId () => Interlocked.Increment (ref nextValueTypeId);
+
 	}
 }
