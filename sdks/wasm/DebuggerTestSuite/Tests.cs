@@ -75,7 +75,7 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp1_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
+				var bp1_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2);
 
 				Assert.EndsWith ("debugger-test.cs", bp1_res.Value ["breakpointId"].ToString());
 				Assert.Equal (1, bp1_res.Value ["locations"]?.Value<JArray> ()?.Count);
@@ -123,7 +123,7 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
+				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2);
 
 				var eval_req = JObject.FromObject(new {
 					expression = "window.setTimeout(function() { invoke_add(); }, 1);",
@@ -132,7 +132,7 @@ namespace DebuggerTests
 				await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_add(); }, 1);",
 					"dotnet://debugger-test.dll/debugger-test.cs", 5, 2,
-					"IntAdd", ctx,
+					"IntAdd",
 					wait_for_event_fn: (pause_location) => {
 						Assert.Equal ("other", pause_location ["reason"]?.Value<string> ());
 						Assert.Equal (bp.Value["breakpointId"]?.ToString(), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
@@ -189,7 +189,7 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				await SetBreakpoint ("/debugger-driver.html", 27, 2, ctx);
+				await SetBreakpoint ("/debugger-driver.html", 27, 2);
 
 				var eval_req = JObject.FromObject(new {
 					expression = "window.setTimeout(function() { invoke_bad_js_test(); }, 1);",
@@ -345,13 +345,13 @@ namespace DebuggerTests
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp = await SetBreakpoint (url_key, line, column, ctx);
+				var bp = await SetBreakpoint (url_key, line, column);
 
 				await EvaluateAndCheck (
 					eval_expression, url_key, line, column,
-					function_name, ctx,
+					function_name,
 					wait_for_event_fn: (pause_location) => {
 						//make sure we're on the right bp
 
@@ -379,14 +379,14 @@ namespace DebuggerTests
 
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
-				var ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 41, 2, ctx);
+				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 41, 2);
 
 				await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_delegates_test (); }, 1);",
 					"dotnet://debugger-test.dll/debugger-test.cs", 41, 2,
-					"DelegatesTest", ctx,
+					"DelegatesTest",
 					wait_for_event_fn: async (pause_location) => {
 						//make sure we're on the right bp
 						Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
@@ -418,12 +418,12 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, ctx);
+				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2);
 
 				await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_add(); }, 1);",
 					"dotnet://debugger-test.dll/debugger-test.cs", 5, 2,
-					"IntAdd", ctx,
+					"IntAdd",
 					wait_for_event_fn: (pause_location) => {
 						//make sure we're on the right bp
 						Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
@@ -434,7 +434,7 @@ namespace DebuggerTests
 					}
 				);
 
-				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 6, 2, "IntAdd", ctx,
+				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 6, 2, "IntAdd",
 						wait_for_event_fn: (pause_location) => {
 							var top_frame = pause_location ["callFrames"][0];
 							CheckLocation ("dotnet://debugger-test.dll/debugger-test.cs", 3, 41, scripts, top_frame["functionLocation"]);
@@ -455,11 +455,11 @@ namespace DebuggerTests
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
-				await SetBreakpoint (debugger_test_loc, 4, 2, ctx);
+				await SetBreakpoint (debugger_test_loc, 4, 2);
 
 				await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_add(); }, 1);",
-					debugger_test_loc, 4, 2, "IntAdd", ctx,
+					debugger_test_loc, 4, 2, "IntAdd",
 					locals_fn: (locals) => {
 						CheckNumber (locals, "a", 10);
 						CheckNumber (locals, "b", 20);
@@ -469,7 +469,7 @@ namespace DebuggerTests
 					}
 				);
 
-				await StepAndCheck (StepKind.Over, debugger_test_loc, 5, 2, "IntAdd", ctx,
+				await StepAndCheck (StepKind.Over, debugger_test_loc, 5, 2, "IntAdd",
 					locals_fn: (locals) => {
 						CheckNumber (locals, "a", 10);
 						CheckNumber (locals, "b", 20);
@@ -480,7 +480,7 @@ namespace DebuggerTests
 				);
 
 				//step and get locals
-				await StepAndCheck (StepKind.Over, debugger_test_loc, 6, 2, "IntAdd", ctx,
+				await StepAndCheck (StepKind.Over, debugger_test_loc, 6, 2, "IntAdd",
 					locals_fn: (locals) => {
 						CheckNumber (locals, "a", 10);
 						CheckNumber (locals, "b", 20);
@@ -503,14 +503,14 @@ namespace DebuggerTests
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
 				var dep_cs_loc = "dotnet://Simple.Dependency.dll/dependency.cs";
-				await SetBreakpoint (dep_cs_loc, 24, 2, ctx);
+				await SetBreakpoint (dep_cs_loc, 24, 2);
 
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 
 				// Will stop in Complex.DoEvenMoreStuff
 				var wait_res = await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_use_complex (); }, 1);",
-					dep_cs_loc, 24, 2, "DoEvenMoreStuff", ctx,
+					dep_cs_loc, 24, 2, "DoEvenMoreStuff",
 					locals_fn: (locals) => {
 						Assert.Equal (1, locals.Count());
 						CheckObject (locals, "this", "Simple.Complex");
@@ -518,7 +518,7 @@ namespace DebuggerTests
 				);
 
 				// Check UseComplex frame
-				await CheckLocalsOnFrame (wait_res ["callFrames"][3], debugger_test_loc, 17, 2, "UseComplex", ctx,
+				await CheckLocalsOnFrame (wait_res ["callFrames"][3], debugger_test_loc, 17, 2, "UseComplex",
 					test_fn: (locals_m1) => {
 						Assert.Equal (7, locals_m1.Count());
 
@@ -532,9 +532,9 @@ namespace DebuggerTests
 					}
 				);
 
-				wait_res = await StepAndCheck (StepKind.Over, dep_cs_loc, 16, 2, "DoStuff", ctx, times: 2);
+				wait_res = await StepAndCheck (StepKind.Over, dep_cs_loc, 16, 2, "DoStuff", times: 2);
 				// Check UseComplex frame again
-				await CheckLocalsOnFrame (wait_res ["callFrames"][1], debugger_test_loc, 17, 2, "UseComplex", ctx,
+				await CheckLocalsOnFrame (wait_res ["callFrames"][1], debugger_test_loc, 17, 2, "UseComplex",
 					test_fn: (locals_m1) => {
 						Assert.Equal (7, locals_m1.Count());
 
@@ -561,12 +561,12 @@ namespace DebuggerTests
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
-				await SetBreakpoint (debugger_test_loc, 100, 3, ctx);
+				await SetBreakpoint (debugger_test_loc, 100, 3);
 
 				// Will stop in InnerMethod
 				var wait_res = await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_outer_method(); }, 1);",
-					debugger_test_loc, 100, 3, "InnerMethod", ctx,
+					debugger_test_loc, 100, 3, "InnerMethod",
 					locals_fn: (locals) => {
 						Assert.Equal (4, locals.Count());
 						CheckNumber (locals, "i", 5);
@@ -577,7 +577,7 @@ namespace DebuggerTests
 				);
 
 				// Check OuterMethod frame
-				await CheckLocalsOnFrame (wait_res ["callFrames"][1], debugger_test_loc, 76, 2, "OuterMethod", ctx,
+				await CheckLocalsOnFrame (wait_res ["callFrames"][1], debugger_test_loc, 76, 2, "OuterMethod",
 					test_fn: (locals_m1) => {
 						Assert.Equal (5, locals_m1.Count());
 						// FIXME: Failing test CheckNumber (locals_m1, "i", 5);
@@ -589,7 +589,7 @@ namespace DebuggerTests
 				);
 
 				// step back into OuterMethod
-				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 80, 2, "OuterMethod", ctx, times: 7,
+				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 80, 2, "OuterMethod", times: 7,
 					locals_fn: (locals) => {
 						Assert.Equal (5, locals.Count());
 
@@ -601,10 +601,10 @@ namespace DebuggerTests
 					}
 				);
 
-				//await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 81, 2, "OuterMethod", ctx, times: 2);
+				//await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 81, 2, "OuterMethod", times: 2);
 
 				// step into InnerMethod2
-				await StepAndCheck (StepKind.Into, "dotnet://debugger-test.dll/debugger-test.cs", 85, 1, "InnerMethod2", ctx,
+				await StepAndCheck (StepKind.Into, "dotnet://debugger-test.dll/debugger-test.cs", 85, 1, "InnerMethod2",
 					locals_fn: (locals) => {
 						// umm use JOBject instead of JToken?
 						Assert.Equal (3, locals.Count());
@@ -615,7 +615,7 @@ namespace DebuggerTests
 					}
 				);
 
-				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 89, 1, "InnerMethod2", ctx, times: 4,
+				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 89, 1, "InnerMethod2", times: 4,
 					locals_fn: (locals) => {
 						// umm use JOBject instead of JToken?
 						Assert.Equal (3, locals.Count());
@@ -626,7 +626,7 @@ namespace DebuggerTests
 					}
 				);
 
-				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 81, 2, "OuterMethod", ctx, times: 2,
+				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 81, 2, "OuterMethod", times: 2,
 					locals_fn: (locals) => {
 						Assert.Equal (5, locals.Count());
 
@@ -650,10 +650,10 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 
-				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 75, 2, ctx);
+				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 75, 2);
 
 				await EvaluateAndCheck ("window.setTimeout(function() { invoke_outer_method(); }, 1);",
-					"dotnet://debugger-test.dll/debugger-test.cs", 75, 2, "OuterMethod", ctx,
+					"dotnet://debugger-test.dll/debugger-test.cs", 75, 2, "OuterMethod",
 					locals_fn: (locals) => {
 						Assert.Equal (5, locals.Count());
 
@@ -665,7 +665,7 @@ namespace DebuggerTests
 					}
 				);
 
-				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 76, 2, "OuterMethod", ctx,
+				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 76, 2, "OuterMethod",
 					locals_fn: (locals) => {
 						Assert.Equal (5, locals.Count());
 
@@ -678,8 +678,8 @@ namespace DebuggerTests
 				);
 
 				// Step into InnerMethod
-				await StepAndCheck (StepKind.Into, "dotnet://debugger-test.dll/debugger-test.cs", 94, 2, "InnerMethod", ctx);
-				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 98, 3, "InnerMethod", ctx, times: 5,
+				await StepAndCheck (StepKind.Into, "dotnet://debugger-test.dll/debugger-test.cs", 94, 2, "InnerMethod");
+				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 98, 3, "InnerMethod", times: 5,
 					locals_fn: (locals) => {
 						Assert.Equal (4, locals.Count());
 
@@ -691,7 +691,7 @@ namespace DebuggerTests
 				);
 
 				// Step back to OuterMethod
-				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 77, 2, "OuterMethod", ctx, times: 5,
+				await StepAndCheck (StepKind.Over, "dotnet://debugger-test.dll/debugger-test.cs", 77, 2, "OuterMethod", times: 5,
 					locals_fn: (locals) => {
 						Assert.Equal (5, locals.Count());
 
@@ -713,16 +713,16 @@ namespace DebuggerTests
 
 			await Ready();
 			await insp.Ready (async (cli, token) => {
-				var ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 
-				await SetBreakpoint (debugger_test_loc, 108, 3, ctx);
-				await SetBreakpoint (debugger_test_loc, 123, 3, ctx);
+				await SetBreakpoint (debugger_test_loc, 108, 3);
+				await SetBreakpoint (debugger_test_loc, 123, 3);
 
 				// Will stop in Asyncmethod0
 				var wait_res = await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_async_method_with_await(); }, 1);",
-					debugger_test_loc, 108, 3, "MoveNext", ctx, //FIXME:
+					debugger_test_loc, 108, 3, "MoveNext", //FIXME:
 					locals_fn: (locals) => {
 						Assert.Equal (4, locals.Count());
 						CheckString (locals, "s", "string from js");
@@ -734,7 +734,7 @@ namespace DebuggerTests
 
 				// TODO: previous frames have async machinery details, so no point checking that right now
 
-				await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 123, 3, /*"AsyncMethodNoReturn"*/"MoveNext", ctx,
+				await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 123, 3, /*"AsyncMethodNoReturn"*/"MoveNext",
 					locals_fn: (locals) => {
 						Assert.Equal (4, locals.Count());
 						CheckString (locals, "str", "AsyncMethodNoReturn's local");
@@ -756,14 +756,14 @@ namespace DebuggerTests
 
 			await Ready();
 			await insp.Ready (async (cli, token) => {
-				var ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx = new DebugTestContext (cli, insp, token, scripts);
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 
-				await SetBreakpoint (debugger_test_loc, 139, 3, ctx);
+				await SetBreakpoint (debugger_test_loc, 139, 3);
 
 				var wait_res = await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_method_with_structs(); }, 1);",
-					debugger_test_loc, 139, 3, "MethodWithStructs", ctx,
+					debugger_test_loc, 139, 3, "MethodWithStructs",
 					locals_fn: (locals) => {
 						Assert.Equal (4, locals.Count());
 						CheckObject (locals, "m", "Math", subtype: "null");
@@ -774,29 +774,29 @@ namespace DebuggerTests
 				);
 			});
 		}
-		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name, DebugTestContext ctx,
+		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
 			for (int i = 0; i < times - 1; i ++) {
-				await SendCommandAndCheck (null, $"Debugger.step{kind.ToString ()}", null, -1, -1, null, ctx);
+				await SendCommandAndCheck (null, $"Debugger.step{kind.ToString ()}", null, -1, -1, null);
 			}
 
 			// Check for method/line etc only at the last step
 			return await SendCommandAndCheck (
-						null, $"Debugger.step{kind.ToString ()}", script_loc, line, column, function_name, ctx,
+						null, $"Debugger.step{kind.ToString ()}", script_loc, line, column, function_name,
 						wait_for_event_fn: wait_for_event_fn,
 						locals_fn: locals_fn);
 		}
 
-		async Task<JObject> EvaluateAndCheck (string expression, string script_loc, int line, int column, string function_name, DebugTestContext ctx,
+		async Task<JObject> EvaluateAndCheck (string expression, string script_loc, int line, int column, string function_name,
 								Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null)
 			=> await SendCommandAndCheck (
 						JObject.FromObject (new { expression = expression }),
-						"Runtime.evaluate", script_loc, line, column, function_name, ctx,
+						"Runtime.evaluate", script_loc, line, column, function_name,
 						wait_for_event_fn: wait_for_event_fn,
 						locals_fn: locals_fn);
 
-		async Task<JObject> SendCommandAndCheck (JObject args, string method, string script_loc, int line, int column, string function_name, DebugTestContext ctx,
+		async Task<JObject> SendCommandAndCheck (JObject args, string method, string script_loc, int line, int column, string function_name,
 								Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, string waitForEvent = Inspector.PAUSE)
 		{
 			var res = await ctx.cli.SendCommand (method, args, ctx.token);
@@ -817,20 +817,20 @@ namespace DebuggerTests
 				await wait_for_event_fn (wait_res);
 
 			if (locals_fn != null)
-				await CheckLocalsOnFrame (wait_res ["callFrames"][0], ctx, locals_fn);
+				await CheckLocalsOnFrame (wait_res ["callFrames"][0], locals_fn);
 
 			return wait_res;
 		}
 
-		async Task CheckLocalsOnFrame (JToken frame, string script_loc, int line, int column, string function_name, DebugTestContext ctx, Action<JToken> test_fn = null)
+		async Task CheckLocalsOnFrame (JToken frame, string script_loc, int line, int column, string function_name, Action<JToken> test_fn = null)
 		{
 			CheckLocation (script_loc, line, column, ctx.scripts, frame ["location"]);
 			Assert.Equal (function_name, frame ["functionName"].Value<string> ());
 
-			await CheckLocalsOnFrame (frame, ctx, test_fn);
+			await CheckLocalsOnFrame (frame, test_fn);
 		}
 
-		async Task CheckLocalsOnFrame (JToken frame, DebugTestContext ctx, Action<JToken> test_fn = null)
+		async Task CheckLocalsOnFrame (JToken frame, Action<JToken> test_fn = null)
 		{
 			var get_prop_req = JObject.FromObject (new {
 				objectId = frame["callFrameId"]
@@ -852,7 +852,7 @@ namespace DebuggerTests
 			}
 		}
 
-		async Task<Result> SetBreakpoint (string url_key, int line, int column, DebugTestContext ctx, bool expect_ok=true)
+		async Task<Result> SetBreakpoint (string url_key, int line, int column, bool expect_ok=true)
 		{
 			var bp1_req = JObject.FromObject(new {
 				lineNumber = line,
