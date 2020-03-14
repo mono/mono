@@ -47,15 +47,17 @@ var BindingSupportLib = {
 
 			var binding_fqn_asm = this.BINDING_ASM.substring(this.BINDING_ASM.indexOf ("[") + 1, this.BINDING_ASM.indexOf ("]")).trim();
 			var binding_fqn_class = this.BINDING_ASM.substring (this.BINDING_ASM.indexOf ("]") + 1).trim();
-			
+
 			this.binding_module = this.assembly_load (binding_fqn_asm);
 			if (!this.binding_module)
 				throw "Can't find bindings module assembly: " + binding_fqn_asm;
 
+			var namespace = "WebAssembly";
+			var classname = "Runtime";
 			if (binding_fqn_class !== null && typeof binding_fqn_class !== "undefined")
 			{
-				var namespace = "WebAssembly";
-				var classname = binding_fqn_class.length > 0 ? binding_fqn_class : "Runtime";
+				namespace = "WebAssembly";
+				classname = binding_fqn_class.length > 0 ? binding_fqn_class : "Runtime";
 				if (binding_fqn_class.indexOf(".") != -1) {
 					var idx = binding_fqn_class.lastIndexOf(".");
 					namespace = binding_fqn_class.substring (0, idx);
@@ -68,17 +70,28 @@ var BindingSupportLib = {
 				throw "Can't find " + binding_fqn_class + " class";
 
 			var get_method = function(method_name) {
-				var res = BINDING.find_method (wasm_runtime_class, method_name, -1)
+				var res = BINDING.find_method (wasm_runtime_class, method_name, -1);
 				if (!res)
 					throw "Can't find method " + namespace + "." + classname + ":" + method_name;
 				return res;
+			};
+
+			function csharpWrap (method_name, signature) {
+				var res = BINDING.find_method (wasm_runtime_class, method_name, -1);
+				var wrapper = function (argThis, args) {
+					return BINDING.call_method (this.method, argThis, this.signature, args);
+				};
+				wrapper.method = res;
+				wrapper.signature = signature;
+				return wrapper.bind (wrapper);
 			}
+
 			this.bind_js_obj = get_method ("BindJSObject");
 			this.bind_core_clr_obj = get_method ("BindCoreCLRObject");
 			this.bind_existing_obj = get_method ("BindExistingObject");
 			this.unbind_js_obj = get_method ("UnBindJSObject");
-			this.unbind_js_obj_and_free = get_method ("UnBindJSObjectAndFree");			
-			this.unbind_raw_obj_and_free = get_method ("UnBindRawJSObjectAndFree");			
+			this.unbind_js_obj_and_free = get_method ("UnBindJSObjectAndFree");
+			this.unbind_raw_obj_and_free = get_method ("UnBindRawJSObjectAndFree");
 			this.get_js_id = get_method ("GetJSObjectId");
 			this.get_raw_mono_obj = get_method ("GetMonoObject");
 
@@ -99,7 +112,7 @@ var BindingSupportLib = {
 			this.get_date_value = get_method ("GetDateValue");
 			this.create_date_time = get_method ("CreateDateTime");
 			this.create_uri = get_method ("CreateUri");
-
+			this.createUri = csharpWrap ("CreateUri", "sm");
 			this.object_to_enum = get_method ("ObjectToEnum");
 			this.init = true;
 		},
@@ -309,24 +322,24 @@ var BindingSupportLib = {
 				case typeof js_obj === "undefined":
 					return 0;
 				case typeof js_obj === "string":
-					return this.call_method(this.create_uri, null, "sm", [ js_obj ])
+					return this.createUri (null, [js_obj]);
 				default:
 					return this.extract_mono_obj (js_obj);
 			}
 		},
 		js_typed_array_to_array : function (js_obj) {
 
-			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
-			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays
 			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
-			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
-			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
-			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer,
+			// you need to use a view. A view provides a context — that is, a data type, starting offset,
 			// and number of elements — that turns the data into an actual typed array.
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
-			if (!!(js_obj.buffer instanceof ArrayBuffer && js_obj.BYTES_PER_ELEMENT)) 
+			if (!!(js_obj.buffer instanceof ArrayBuffer && js_obj.BYTES_PER_ELEMENT))
 			{
-				var arrayType = 0;	
+				var arrayType = 0;
 				if (js_obj instanceof Int8Array)
 					arrayType = 11;
 				if (js_obj instanceof Uint8Array)
