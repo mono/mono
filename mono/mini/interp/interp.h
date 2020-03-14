@@ -42,7 +42,7 @@ typedef struct _InterpMethodArguments InterpMethodArguments;
  */
 MONO_API void mono_ee_interp_init (const char *);
 
-#ifdef HOST_WASM
+#ifdef TARGET_WASM
 
 void
 mono_wasm_interp_to_native_trampoline (void *target_func, InterpMethodArguments *margs);
