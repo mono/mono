@@ -564,6 +564,17 @@ build-aot-profile: packager.exe aot-profile/main.exe
 data.aotprofile: build-aot-profile
 	node aot-profile/gen-profile.js $@ bin/aot-profile
 
+coverage-profile/main.exe: coverage-profile/main.cs
+	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll coverage-profile/main.cs
+
+.PHONY:
+build-coverage: packager.exe coverage-profile/main.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/coverage-profile --builddir=obj/coverage-profile --profile=coverage --template=coverage-profile/runtime.js --asset=coverage-profile/index.html coverage-profile/main.exe
+	ninja -C obj/coverage-profile
+
+coverage.xml: build-coverage
+	node coverage-profile/gen-profile.js $@ bin/coverage-profile
+
 ##
 # Parameters:
 # $(1) - make target suffix
@@ -686,6 +697,7 @@ clean: clean-browser-tests
 	$(RM) -r mini_tests.dll
 	$(RM) -r main.exe
 	$(RM) -r binding-tests.dll
+	$(RM) -r coverage.xml
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
