@@ -608,5 +608,12 @@ namespace WebAssembly {
 				js_dump.SetObjectProperty ("aot_profile_data", WebAssembly.Core.Uint8Array.From (span));
 			}
 		}
+
+		// Called by the coverage profiler to save profile data into Module.coverage_profile_data
+		internal static void DumpCoverageProfileData (string data, string s) {
+			// Send it to JS
+			var js_dump = (JSObject)Runtime.GetGlobalObject ("Module");
+			js_dump.SetObjectProperty ("coverage_profile_data", data);
+		}
 	}
 }
