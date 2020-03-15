@@ -82,7 +82,7 @@
 #include "map.h"
 
 #include <errno.h>    /* errno, EOVERFLOW */
-#include <glib.h>     /* g* types, g_assert_not_reached() */
+#include <mono-glib.h> /* g* types, g_assert_not_reached() */
 
 #if defined (G_MININT8)
 #define CNM_MININT8 G_MININT8

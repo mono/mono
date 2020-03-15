@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <glib.h>
+#include <mono-glib.h>
 #include <math.h>
 #include "meta.h"
 #include "util.h"

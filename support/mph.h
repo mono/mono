@@ -30,7 +30,7 @@
 #include <stddef.h>             /* offsetof */
 #include <limits.h>             /* LONG_MAX, ULONG_MAX */
 #include <errno.h>              /* for ERANGE */
-#include <glib.h>               /* for g* types, etc. */
+#include <mono-glib.h>          /* for g* types, etc. */
 
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>

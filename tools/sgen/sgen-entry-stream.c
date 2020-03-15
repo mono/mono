@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
-#include <glib.h>
+#include <mono-glib.h>
 #include "sgen-entry-stream.h"
 
 #define BUFFER_SIZE (1 << 20)

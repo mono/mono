@@ -25,7 +25,7 @@
 #include <linux/serial.h>
 #endif
 
-#include <glib.h>
+#include <mono-glib.h>
 
 /* This is for FIONREAD on solaris */
 #if defined(sun)

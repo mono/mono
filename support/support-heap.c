@@ -8,7 +8,7 @@
  * (C) 2005 Novell, Inc.
  *
  */
-#include <glib.h>
+#include <mono-glib.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>

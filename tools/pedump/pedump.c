@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mono/metadata/image.h>
-#include <glib.h>
+#include <mono-glib.h>
 #include <mono/metadata/cil-coff.h>
 #include <mono/metadata/mono-endian.h>
 #include <mono/metadata/verify.h>

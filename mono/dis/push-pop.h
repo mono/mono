@@ -39,7 +39,7 @@
  * (C) 2001 Ximian, Inc.
  */
 #include <config.h>
-#include <glib.h>
+#include <mono-glib.h>
 #include <stdio.h>
 #include "meta.h"
 #include "dump.h"

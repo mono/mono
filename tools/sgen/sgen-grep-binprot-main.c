@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <glib.h>
+#include <mono-glib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include "sgen-entry-stream.h"

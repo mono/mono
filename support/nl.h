@@ -1,6 +1,6 @@
 #ifndef NL_H
 #define NL_H
-#include <glib.h>
+#include <mono-glib.h>
 
 G_BEGIN_DECLS
 gpointer CreateNLSocket (void);

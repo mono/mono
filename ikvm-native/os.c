@@ -56,7 +56,7 @@
 #endif
 	}
 #else
-	#include <gmodule.h>
+	#include <mono-gmodule.h>
 	#include <sys/types.h>
 	#include <sys/mman.h>
 	#include "jni.h"

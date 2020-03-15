@@ -7,7 +7,7 @@
 #ifndef INC_Mono_Posix_map_H
 #define INC_Mono_Posix_map_H
 
-#include <glib.h>
+#include <mono-glib.h>
 
 G_BEGIN_DECLS
 

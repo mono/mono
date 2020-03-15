@@ -1,4 +1,4 @@
-#include <glib.h>
+#include <mono-glib.h>
 #include <mono/jit/jit.h>
 #include <mono/metadata/environment.h>
 #include <mono/metadata/profiler.h>

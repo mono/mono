@@ -44,7 +44,7 @@ The source for this generator should be in Mono repository
 #ifndef __UNICODE_DATA_H
 #define __UNICODE_DATA_H
 
-#include <glib.h>
+#include <mono-glib.h>
 
 ", Assembly.GetEntryAssembly ().GetName ().Name);
 			var ud = new UnicodeData5_1_0 ();

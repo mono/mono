@@ -7,7 +7,7 @@
  * (C) 2001 Ximian, Inc.
  */
 #include <config.h>
-#include <glib.h>
+#include <mono-glib.h>
 #include <stdio.h>
 #include <math.h>
 #ifdef	HAVE_WCHAR_H

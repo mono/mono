@@ -1,7 +1,7 @@
 #ifndef SYS_UIO_H
 #define SYS_UIO_H
 
-#include <glib.h>
+#include <mono-glib.h>
 
 #include <sys/uio.h>
 

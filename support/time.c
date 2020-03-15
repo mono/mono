@@ -13,7 +13,7 @@
 
 #include "map.h"
 #include "mph.h"
-#include <glib.h>
+#include <mono-glib.h>
 
 G_BEGIN_DECLS
 

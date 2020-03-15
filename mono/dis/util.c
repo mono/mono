@@ -8,7 +8,7 @@
  * (C) 2001 Ximian, Inc (http://www.ximian.com)
  */
 #include <config.h>
-#include <glib.h>
+#include <mono-glib.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
