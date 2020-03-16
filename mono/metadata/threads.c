@@ -6514,6 +6514,8 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 		mono_get_eh_callbacks ()->mono_summarize_managed_stack (threads [i]);
 	}
 
+	mono_create_crash_hash_breadcrumb (controlling);
+
 	MonoStateWriter writer;
 	memset (&writer, 0, sizeof (writer));
 
