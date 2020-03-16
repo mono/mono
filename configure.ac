@@ -3651,6 +3651,7 @@ if test x$host_win32 = xno; then
 				dnl Needs to be done this way to avoid collision with various 
 				dnl ports including glib and llvm*
 				METADATA_CFLAGS="-I/usr/local/include"
+				AC_SUBST(METADATA_CFLAGS)
 			fi
 			dnl Workaround due to inotify_rm_watch check failing without -I
 			AC_MSG_CHECKING(for inotify_rm_watch with unsigned wd in libinotify)
