@@ -4981,22 +4981,22 @@ call:;
 				sp [1].data.p = &sp [0].data; // valuetype_this == result
 			}
 
-			if (!is_inlined) {
-				cmethod = (InterpMethod*)frame->imethod->data_items [imethod_index];
-				// call_newobj captures the pattern where the return value is placed
-				// on the stack before the call, instead of the call forming it.
-call_newobj:
-				++sp; // Point sp at added extra param, after return value.
-				is_void = TRUE;
-				retval = NULL;
-				goto call;
-			} else {
+			if (is_inlined) {
 				if (vtst)
 					vt_sp += ALIGN_TO (ip [-1], MINT_VT_ALIGNMENT);
 				sp += param_count + 2;
+				MINT_IN_BREAK;
 			}
-			MINT_IN_BREAK;
-		}
+			cmethod = (InterpMethod*)frame->imethod->data_items [imethod_index];
+			}
+			// call_newobj captures the pattern where the return value is placed
+			// on the stack before the call, instead of the call forming it.
+call_newobj:
+			++sp; // Point sp at added extra param, after return value.
+			is_void = TRUE;
+			retval = NULL;
+			goto call;
+
 		MINT_IN_CASE(MINT_NEWOBJ) {
 
 			frame->ip = ip;
