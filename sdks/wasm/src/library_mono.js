@@ -456,6 +456,30 @@ var MonoSupportLib = {
 		});
 	},
 
+	mono_wasm_add_enum_var: function(className, members, value) {
+		// FIXME: flags
+		//
+
+		// group0: Monday:0
+		// group1: Monday
+		// group2: 0
+		var re = new RegExp (`[,]?([^,:]+):(${value}(?=,)|${value}$)`, 'g')
+		var members_str = Module.UTF8ToString (members);
+
+		var match = re.exec(members_str);
+		var member_name = match == null ? ('' + value) : match [1];
+
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		MONO.var_info.push({
+			value: {
+				type: "object",
+				className: fixed_class_name,
+				description: member_name,
+				isEnum: true
+			}
+		});
+	},
+
 	mono_wasm_add_array_item: function(position) {
 		MONO.var_info.push({
 			name: "[" + position + "]",

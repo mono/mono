@@ -11,7 +11,7 @@ namespace DebuggerTests {
 			ValueTypesTest vt_local = new ValueTypesTest {
 				StringField = "string#0",
 				SimpleStructField = new SimpleStruct ("SimpleStructField#string#0", 5, DateTimeKind.Local),
-				SimpleStructProperty = new SimpleStruct ("SimpleStructProperty#string#0", 2, DateTimeKind.Utc), DT = new DateTime (2020, 1, 2, 3, 4, 5)
+				SimpleStructProperty = new SimpleStruct ("SimpleStructProperty#string#0", 2, DateTimeKind.Utc), DT = new DateTime (2020, 1, 2, 3, 4, 5), RGB = RGB.Blue
 			};
 			Console.WriteLine ($"Using the struct: {ss_local.gs.StringField}, gs: {gs_local.StringField}, {vt_local.StringField}");
 		}
@@ -37,7 +37,9 @@ namespace DebuggerTests {
 			var ss_local = new SimpleStruct ("set in AsyncMethodWithLocalStructs", 1, DateTimeKind.Utc);
 			var gs_local = new GenericStruct<int> {
 						StringField = "gs_local#GenericStruct<ValueTypesTest>#StringField",
-						List = new System.Collections.Generic.List<int> { 5, 3 }
+						List = new System.Collections.Generic.List<int> { 5, 3 },
+						Options = Options.Option2
+
 			};
 
 			var result = await ss_local.AsyncMethodWithStructArgs (gs_local);
@@ -63,7 +65,8 @@ namespace DebuggerTests {
 				dt = new DateTime (2020+f, 1+f, 2+f, 3+f, 5+f, 6+f);
 				gs = new GenericStruct<DateTime> {
 					StringField = $"{str}#SimpleStruct#gs#StringField",
-					List = new System.Collections.Generic.List<DateTime> { new DateTime (2010+f, 2+f, 3+f, 10+f, 2+f, 3+f) }
+					List = new System.Collections.Generic.List<DateTime> { new DateTime (2010+f, 2+f, 3+f, 10+f, 2+f, 3+f) },
+					Options = Options.Option1
 				};
 				Kind = kind;
 			}
@@ -82,8 +85,27 @@ namespace DebuggerTests {
 		{
 			public System.Collections.Generic.List<T> List;
 			public string StringField;
+
+			public Options Options { get; set; }
 		}
 
 		public DateTime DT { get; set; }
+		public RGB RGB;
+	}
+
+	public enum RGB
+	{
+		Red, Green, Blue
+	}
+
+	[Flags]
+	public enum Options
+	{
+		None = 0,
+		Option1 = 1,
+		Option2 = 2,
+		Option3 = 4,
+
+		All = Option1 | Option3
 	}
 }

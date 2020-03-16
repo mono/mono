@@ -286,6 +286,16 @@ namespace DebuggerTests
 			return l;
 		}
 
+		JToken CheckEnum (JToken locals, string name, string class_name, string descr) {
+			var l = GetAndAssertObjectWithName (locals, name);
+			var val = l["value"];
+			Assert.Equal ("object", val ["type"]?.Value<string> ());
+			Assert.True (val ["isEnum"] != null && val ["isEnum"].Value<bool> ());
+			Assert.Equal (class_name, val ["className"]?.Value<string> ());
+			Assert.Equal (descr, val ["description"]?.Value<string> ());
+			return l;
+		}
+
 		void CheckArray (JToken locals, string name, string class_name) {
 			foreach (var l in locals) {
 				if (name != l["name"]?.Value<string> ())
@@ -878,7 +888,7 @@ namespace DebuggerTests
 							str_member = TString ("set in MethodWithLocalStructs#SimpleStruct#str_member"),
 							dt = TValueType ("System.DateTime"),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
-							Kind = TValueType ("System.DateTimeKind")
+							Kind = TEnum ("System.DateTimeKind", "Utc")
 						})
 				);
 
@@ -897,23 +907,23 @@ namespace DebuggerTests
 
 				// Check gs_local's properties
 				await CheckObjectOnFrameLocals (pause_location ["callFrames"][0], "gs_local",
-					test_fn: (props) => {
-						Assert.Equal (2, props.Count());
-
-						CheckString (props, "StringField", "gs_local#GenericStruct<ValueTypesTest>#StringField");
-						CheckObject (props, "List", "System.Collections.Generic.List<DebuggerTests.ValueTypesTest>", is_null: true);
-					}
+					test_fn: (props) => CheckProps (props, "gs_local", new {
+						StringField = TString ("gs_local#GenericStruct<ValueTypesTest>#StringField"),
+						List        = TObject ("System.Collections.Generic.List<DebuggerTests.ValueTypesTest>", is_null: true),
+						Options     = TEnum   ("DebuggerTests.Options", "None")
+					})
 				);
 
 				// Check vt_local's properties
 				var vt_local_props = await CheckObjectOnFrameLocals (pause_location ["callFrames"][0], "vt_local",
 					test_fn: async (props) => {
-						Assert.Equal (4, props.Count());
+						Assert.Equal (5, props.Count());
 
 						CheckString (props, "StringField", "string#0");
 						CheckValueType (props, "SimpleStructField", "DebuggerTests.ValueTypesTest.SimpleStruct");
 						CheckValueType (props, "SimpleStructProperty", "DebuggerTests.ValueTypesTest.SimpleStruct");
 						await CheckDateTime (props, "DT", new DateTime (2020, 1, 2, 3, 4, 5));
+						CheckEnum (props, "RGB", "DebuggerTests.RGB", "Blue");
 					}
 				);
 
@@ -923,7 +933,7 @@ namespace DebuggerTests
 							str_member = TString ("SimpleStructProperty#string#0#SimpleStruct#str_member"),
 							dt = TValueType ("System.DateTime"),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
-							Kind = TValueType ("System.DateTimeKind")
+							Kind = TEnum ("System.DateTimeKind", "Utc")
 						})
 					);
 
@@ -932,7 +942,7 @@ namespace DebuggerTests
 							str_member = TString ("SimpleStructField#string#0#SimpleStruct#str_member"),
 							dt = TValueType ("System.DateTime"),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
-							Kind = TValueType ("System.DateTimeKind")
+							Kind = TEnum ("System.DateTimeKind", "Local")
 						})
 					);
 				}
@@ -971,11 +981,12 @@ namespace DebuggerTests
 					str_member = TString    ("ss_local#SimpleStruct#string#0#SimpleStruct#str_member"),
 					dt         = TValueType ("System.DateTime"),
 					gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
-					Kind       = TValueType ("System.DateTimeKind")
+					Kind       = TEnum      ("System.DateTimeKind", "Local")
 				};
 				var ss_local_gs = new {
 					StringField = TString ("ss_local#SimpleStruct#string#0#SimpleStruct#gs#StringField"),
-					List        = TObject ("System.Collections.Generic.List<System.DateTime>")
+					List        = TObject ("System.Collections.Generic.List<System.DateTime>"),
+					Options     = TEnum   ("DebuggerTests.Options", "Option1")
 				};
 
 				// Check ss_arg's properties
@@ -993,7 +1004,6 @@ namespace DebuggerTests
 					// Check ss_local.gs
 					await CheckObjectOnLocals (ss_arg_props, "gs",
 						test_fn: (props) => {
-							Assert.Equal (2, props.Count ());
 							CheckProps (props, "gs", ss_local_gs);
 						}
 					);
@@ -1014,7 +1024,7 @@ namespace DebuggerTests
 					str_member = TString    ("ValueTypesTest#MethodWithStructArgs#updated#ss_arg#str_member"),
 					dt         = TValueType ("System.DateTime"),
 					gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
-					Kind       = TValueType ("System.DateTimeKind")
+					Kind       = TEnum      ("System.DateTimeKind", "Utc")
 				};
 
 				ss_arg_props = await CheckObjectOnFrameLocals (pause_location ["callFrames"][0], "ss_arg",
@@ -1029,7 +1039,8 @@ namespace DebuggerTests
 						test_fn: (props) => {
 							CheckProps (props, "gs", new {
 									StringField = TString ("ValueTypesTest#MethodWithStructArgs#updated#gs#StringField#3"),
-									List        = TObject ("System.Collections.Generic.List<System.DateTime>")
+									List        = TObject ("System.Collections.Generic.List<System.DateTime>"),
+									Options     = TEnum   ("DebuggerTests.Options", "Option1")
 							});
 						}
 					);
@@ -1148,7 +1159,7 @@ namespace DebuggerTests
 				foreach (var jp in exp_val.Values<JProperty> ()) {
 					Console.WriteLine ($"jp: {jp}");
 					var actual_field_val = actual_val.Values<JProperty> ().FirstOrDefault (a_jp => a_jp.Name == jp.Name);
-					Assert.True (actual_field_val != null, $"[{label}] Could not find value field named {jp.Name}");
+					Assert.True (actual_field_val != null, $"[{label}] Could not find value field named {jp.Name}, for property named {exp_name}");
 
 					Assert.True (jp.Value.Value<string> () == actual_field_val.Value.Value<string> (),
 							$"[{label}] Value for field named {exp_name}'s json property named {jp.Name} didn't match.\n" +
@@ -1239,8 +1250,13 @@ namespace DebuggerTests
 		static JObject TValueType (string className, object members = null) =>
 			JObject.FromObject (new { type = "object", isValueType = true, className = className, description = className });
 
-		static JObject TObject (string className) =>
-			JObject.FromObject (new { type = "object", className = className, description = className });
+		static JObject TEnum (string className, string descr, object members = null) =>
+			JObject.FromObject (new { type = "object", isEnum = true, className = className, description = descr });
+
+		static JObject TObject (string className, bool is_null = false) =>
+			is_null
+				? JObject.FromObject (new { type = "object", className = className, description = className, subtype = is_null ? "null" : null })
+				: JObject.FromObject (new { type = "object", className = className, description = className });
 
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}

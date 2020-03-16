@@ -5,6 +5,7 @@
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/metadata-internals.h>
+#include <mono/metadata/mono-endian.h>
 #include <mono/metadata/seq-points-data.h>
 #include <mono/mini/aot-runtime.h>
 #include <mono/mini/seq-points.h>
@@ -46,6 +47,7 @@ extern void mono_wasm_add_obj_var (const char*, guint64);
 extern void mono_wasm_add_value_type_unexpanded_var (const char*);
 extern void mono_wasm_begin_value_type_var (const char*);
 extern void mono_wasm_end_value_type_var (void);
+extern void mono_wasm_add_enum_var (const char*, const char*, guint64);
 extern void mono_wasm_add_func_var (const char*, guint64);
 extern void mono_wasm_add_array_var (const char*, guint64);
 extern void mono_wasm_add_properties_var (const char*, gint32);
@@ -618,6 +620,42 @@ typedef struct {
 	int *pos;
 } FrameDescData;
 
+static guint64
+read_enum_value (const char *mem, int type)
+{
+	switch (type) {
+	case MONO_TYPE_BOOLEAN:
+	case MONO_TYPE_U1:
+		return *(guint8*)mem;
+	case MONO_TYPE_I1:
+		return *(gint8*)mem;
+	case MONO_TYPE_CHAR:
+	case MONO_TYPE_U2:
+		return read16 (mem);
+	case MONO_TYPE_I2:
+		return (gint16) read16 (mem);
+	case MONO_TYPE_U4:
+	case MONO_TYPE_R4:
+		return read32 (mem);
+	case MONO_TYPE_I4:
+		return (gint32) read32 (mem);
+	case MONO_TYPE_U8:
+	case MONO_TYPE_I8:
+	case MONO_TYPE_R8:
+		return read64 (mem);
+	case MONO_TYPE_U:
+	case MONO_TYPE_I:
+#if SIZEOF_REGISTER == 8
+		return read64 (mem);
+#else
+		return read32 (mem);
+#endif
+	default:
+		g_assert_not_reached ();
+	}
+	return 0;
+}
+
 static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandValueType)
 {
 	ERROR_DECL (error);
@@ -705,7 +743,39 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 			MonoClass *klass = mono_class_from_mono_type_internal (type);
 			char *class_name = mono_type_full_name (type);
 
-			if (expandValueType) {
+			if (m_class_is_enumtype (klass)) {
+				MonoClassField *field;
+				gpointer iter = NULL;
+				const char *p;
+				MonoTypeEnum def_type;
+				guint64 field_value;
+				guint64 value__ = 0xDEAD;
+				GString *enum_members = g_string_new ("");
+				int base_type = mono_class_enum_basetype_internal (klass)->type;
+
+				while ((field = mono_class_get_fields_internal (klass, &iter))) {
+					if (strcmp ("value__", mono_field_get_name (field)) == 0) {
+						value__ = read_enum_value (mono_vtype_get_field_addr (addr, field), base_type);
+						continue;
+					}
+
+					if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
+						continue;
+					if (mono_field_is_deleted (field))
+						continue;
+
+					p = mono_class_get_field_default_value (field, &def_type);
+					/* this is to correctly increment `p` in the blob */
+					/* len = */ mono_metadata_decode_blob_size (p, &p);
+
+					field_value = read_enum_value (p, base_type);
+
+					g_string_append_printf (enum_members, ",%s:%llu", mono_field_get_name (field), field_value);
+				}
+
+				mono_wasm_add_enum_var (class_name, enum_members->str, value__);
+				g_string_free (enum_members, TRUE);
+			} else if (expandValueType) {
 				mono_wasm_begin_value_type_var (class_name);
 				// FIXME: isAsyncLocalThis
 				describe_object_properties_for_klass ((MonoObject*)addr, klass, FALSE, expandValueType);
