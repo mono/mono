@@ -159,7 +159,7 @@ file_for_dump_reason_breadcrumb (const char *directory, const char *dump_reason,
 static void
 file_for_hash_breadcrumb (const char *directory, MonoStackHash hashes, gchar *buff, size_t sizeof_buff)
 {
-	g_snprintf (buff, sizeof_buff, "%s%scrash_hash_%llu", directory, G_DIR_SEPARATOR_S, hashes.offset_rich_hash);
+	g_snprintf (buff, sizeof_buff, "%s%scrash_hash_0x%" PRIx64 "", directory, G_DIR_SEPARATOR_S, (uint64_t)hashes.offset_rich_hash);
 }
 
 static void create_breadcrumb (const char *path)
