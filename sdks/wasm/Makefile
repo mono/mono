@@ -98,14 +98,18 @@ ifeq ($(UNAME),Darwin)
 endif
 .PHONY: jsup
 
+NPM_VERSION=@^6.13.4
 NPM=$(CURDIR)/node_modules/node/bin/node $(CURDIR)/node_modules/npm/bin/npm-cli.js
+
+.stamp-npm-$(NPM_VERSION): 
+	npm install npm$(NPM_VERSION)
+	node_modules/npm/bin/npm-cli.js install
+	touch $@
 
 jsup: .stamp-jsvu
 	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=javascriptcore,spidermonkey,v8
 
-.stamp-jsvu: 
-	npm install npm@^6.13.4
-	node_modules/npm/bin/npm-cli.js install
+.stamp-jsvu: .stamp-npm-$(NPM_VERSION)
 	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=javascriptcore,spidermonkey,v8
 	touch $@
 
@@ -438,17 +442,17 @@ $(eval $(call XunitTestTemplate,System.Xml-xunit,System.Xml-xunit,wasm_System.Xm
 $(eval $(call XunitTestTemplate,System.Xml.Linq-xunit,System.Xml.Linq-xunit,wasm_System.Xml.Linq_xunit-test.dll))
 $(eval $(call XunitTestTemplate,corlib-xunit,corlib-xunit,wasm_corlib_xunit-test.dll))
 
-$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
+$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk .stamp-npm-$(NPM_VERSION)
 	$(DOTNET_BUILD) tests/browser/src -v normal
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-$(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+$(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk .stamp-npm-$(NPM_VERSION)
 	$(DOTNET_BUILD) tests/browser/src -v normal -c DebugThreads
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-$(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+$(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk  .stamp-npm-$(NPM_VERSION)
 	echo BROWSER_TEST_SOURCES: $(BROWSER_TEST_SOURCES)
 	$(DOTNET_BUILD) tests/browser/src -v normal -p:EnableMonoWasmDynamic=true
 	(cd $(BROWSER_TEST) && $(NPM) install)
