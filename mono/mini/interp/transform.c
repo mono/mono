@@ -4504,6 +4504,17 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				goto_if_nok (error, exit);
 
 				PUSH_TYPE (td, stack_type [mint_type (m_class_get_byval_arg (klass))], klass);
+			} else if (klass == mono_defaults.int_class && csignature->param_count == 1)  {
+				td->sp--;
+#if SIZEOF_VOID_P == 8
+				if (td->sp [0].type == STACK_TYPE_I4)
+					interp_add_ins (td, MINT_CONV_I8_I4);
+#else
+				if (td->sp [0].type == STACK_TYPE_I8)
+					interp_add_ins (td, MINT_CONV_OVF_I4_I8);
+#endif
+
+				PUSH_TYPE (td, stack_type [mint_type (m_class_get_byval_arg (klass))], klass);
 			} else {
 				if (m_class_get_parent (klass) == mono_defaults.array_class) {
 					interp_add_ins (td, MINT_NEWOBJ_ARRAY);
