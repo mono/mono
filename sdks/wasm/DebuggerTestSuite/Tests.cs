@@ -254,12 +254,21 @@ namespace DebuggerTests
 			=> await CheckObjectOnLocals (locals, name,
 				test_fn: (members) => {
 					// not checking everything
+#if false
 					CheckNumber (members, "Year", expected.Year);
 					CheckNumber (members, "Month", expected.Month);
 					CheckNumber (members, "Day", expected.Day);
 					CheckNumber (members, "Hour", expected.Hour);
 					CheckNumber (members, "Minute", expected.Minute);
 					CheckNumber (members, "Second", expected.Second);
+#endif
+
+					CheckString (members, "Year", "int");
+					CheckString (members, "Month", "int");
+					CheckString (members, "Day", "int");
+					CheckString (members, "Hour", "int");
+					CheckString (members, "Minute", "int");
+					CheckString (members, "Second", "int");
 
 					// FIXME: check some float properties too
 				}

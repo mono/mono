@@ -828,8 +828,6 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 			continue;
 		if (mono_field_is_deleted (f))
 			continue;
-		if (g_str_has_suffix (f->name, "k__BackingField"))
-			continue;
 
 		mono_wasm_add_properties_var (f->name, f->offset);
 
@@ -847,11 +845,19 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 	while ((p = mono_class_get_properties (klass, &iter))) {
 		DEBUG_PRINTF (2, "mono_class_get_properties - %s - %s\n", p->name, p->get->name);
 		if (p->get->name) { //if get doesn't have name means that doesn't have a getter implemented and we don't want to show value, like VS debug
+			char *class_name;
 			if (isAsyncLocalThis && (p->name[0] != '<' || (p->name[0] == '<' &&  p->name[1] == '>')))
 				continue;
 
 			mono_wasm_add_properties_var (p->name, pnum);
 			sig = mono_method_signature_internal (p->get);
+
+			// automatic properties will get skipped
+			class_name = mono_class_full_name (mono_class_from_mono_type_internal (sig->ret));
+			mono_wasm_add_string_var (class_name);
+			g_free (class_name);
+
+#if false // Disabled for now, as we don't want to invoke getters
 			if (is_valuetype && mono_class_from_mono_type_internal (sig->ret) == klass) {
 				// Property of the same valuetype, avoid endlessly recursion!
 				mono_wasm_add_string_var (mono_class_full_name (klass));
@@ -867,6 +873,7 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 				describe_value (sig->ret, &res, TRUE);
 			else
 				describe_value (sig->ret, mono_object_unbox_internal (res), TRUE);
+#endif
 		}
 		pnum ++;
 	}

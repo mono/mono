@@ -116,6 +116,27 @@ var MonoSupportLib = {
 			return out_list;
 		},
 
+		_filter_automatic_properties: function (props) {
+			var names_found = {};
+			var final_var_list = [];
+
+			for (var i in props) {
+				var p = props [i];
+				if (p.name in names_found)
+					continue;
+
+				if (p.name.endsWith ("k__BackingField"))
+					p.name = p.name.replace ("k__BackingField", "")
+							.replace ('<', '')
+							.replace ('>', '');
+
+				names_found [p.name] = p.name;
+				final_var_list.push (p);
+			}
+
+			return final_var_list;
+		},
+
 		mono_wasm_get_variables: function(scope, var_list) {
 			if (!this.mono_wasm_get_var_info)
 				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", null, [ 'number', 'number', 'number']);
@@ -151,7 +172,7 @@ var MonoSupportLib = {
 			this.var_info = [];
 			this.mono_wasm_get_object_properties_info (objId, expandValueTypes);
 
-			var res = MONO._fixup_name_value_objects (this.var_info);
+			var res = MONO._filter_automatic_properties (MONO._fixup_name_value_objects (this.var_info));
 			for (var i = 0; i < res.length; i++) {
 				if (res [i].value.isValueType != undefined && res [i].value.isValueType)
 					res [i].value.objectId = `dotnet:valuetype:${objId}:${res [i].fieldOffset}`;
@@ -430,7 +451,8 @@ var MonoSupportLib = {
 
 	mono_wasm_end_value_type_var: function() {
 		var top_vt_obj_popped = MONO._vt_stack.pop ();
-		top_vt_obj_popped.value.members = MONO._fixup_name_value_objects (top_vt_obj_popped.value.members);
+		top_vt_obj_popped.value.members = MONO._filter_automatic_properties (
+							MONO._fixup_name_value_objects (top_vt_obj_popped.value.members));
 
 		if (MONO._vt_stack.length == 0) {
 			MONO.var_info = MONO._old_var_info;
