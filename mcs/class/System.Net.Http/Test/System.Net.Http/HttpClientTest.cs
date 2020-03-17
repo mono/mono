@@ -175,7 +175,7 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
-		const int WaitTimeout = 5000;
+		const int WaitTimeout = 10000;
 
 		[Test]
 		public void Ctor ()

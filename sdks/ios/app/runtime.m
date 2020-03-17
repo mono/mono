@@ -304,11 +304,13 @@ mono_ios_runtime_init (void)
 		}
 		aindex ++;
 	}
+
 	if (aindex == nargs) {
 		os_log_info (OS_LOG_DEFAULT, "Executable argument missing.");
 		exit (1);
 	}
-    executable = args [aindex];
+
+	executable = args [aindex];
 	aindex ++;
 
 	const char *bundle = get_bundle_path ();
@@ -369,13 +371,15 @@ mono_ios_runtime_init (void)
 }
 
 static int *testPassed, *testSkipped, *testFailed;
+static char **testSummaryMessage;
 
 void
-mono_sdks_ui_register_testcase_result_fields (int *passed, int *skipped, int *failed)
+mono_sdks_ui_register_test_result_fields (int *passed, int *skipped, int *failed, char **summaryMessage)
 {
 	testPassed = passed;
 	testSkipped = skipped;
 	testFailed = failed;
+	testSummaryMessage = summaryMessage;
 }
 
 void
@@ -386,6 +390,12 @@ mono_sdks_ui_increment_testcase_result (int type)
 		case 1: (*testSkipped)++; break;
 		case 2: (*testFailed)++; break;
 	}
+}
+
+void
+mono_sdks_ui_set_test_summary_message (const char *summaryMessage)
+{
+	*testSummaryMessage = strdup (summaryMessage);
 }
 
 //
@@ -451,6 +461,12 @@ xamarin_GetFolderPath (int folder)
 	return strdup ([path UTF8String]);
 }
 
+// mcs/class/System/System.Net/WebConnection.cs
+void
+xamarin_start_wwan (const char *uri)
+{
+	// let's ignore this
+}
 
 // mcs/class/corlib/System/Console.iOS.cs
 void
