@@ -107,6 +107,11 @@ namespace WebAssembly.Net.Debugging {
 				});
 			}
 		}
+
+		public override string ToString ()
+		{
+			return $"[Result: IsOk: {IsOk}, IsErr: {IsErr}, Value: {Value?.ToString ()}, Error: {Error?.ToString ()} ]";
+		}
 	}
 
 	internal class MonoCommands {
