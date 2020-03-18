@@ -5206,7 +5206,7 @@ public class DebuggerTests
 			var type = assembly.GetType ("System.Collections.Generic.Dictionary<double, float>.Main");
 		}
 		catch (CommandException ex) {
-			Assert.AreEqual(ex.ErrorMessage, "Invalid type name \"System.Collections.Generic.Dictionary<double, float>.Main\"");
+			Assert.AreEqual(ex.ErrorMessage, "Unexpected assembly-qualified type \"System.Collections.Generic.Dictionary<double, float>.Main\" was provided");
 		}
 	}
 

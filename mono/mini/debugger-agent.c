@@ -7740,7 +7740,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_ASSEMBLY_GET_TYPE: {
 		ERROR_DECL (error);
 		char *s = decode_string (p, &p, end);
-		char* error_msg = g_strdup_printf ("Invalid type name \"%s\"", s);
+		char* original_s = g_strdup_printf ("\"%s\"", s);
 
 		gboolean ignorecase = decode_byte (p, &p, end);
 		MonoTypeNameParse info;
@@ -7761,8 +7761,10 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				mono_reflection_free_type_info (&info);
 				g_free (s);
 				mono_domain_set_fast (d, TRUE);
+				char* error_msg =  g_strdup_printf ("Unexpected assembly-qualified type %s was provided", original_s);
 				buffer_add_string (buf, error_msg);
 				g_free (error_msg);
+				g_free (original_s);
 				return ERR_INVALID_ARGUMENT;
 			}
 			t = mono_reflection_get_type_checked (alc, ass->image, ass->image, &info, ignorecase, TRUE, &type_resolve, error);
@@ -7771,15 +7773,17 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				mono_reflection_free_type_info (&info);
 				g_free (s);
 				mono_domain_set_fast (d, TRUE);
+				char* error_msg =  g_strdup_printf ("Invalid type name %s", original_s);
 				buffer_add_string (buf, error_msg);
 				g_free (error_msg);
+				g_free (original_s);
 				return ERR_INVALID_ARGUMENT;
 			}
 		}
 		buffer_add_typeid (buf, domain, t ? mono_class_from_mono_type_internal (t) : NULL);
 		mono_reflection_free_type_info (&info);
 		g_free (s);
-		g_free (error_msg);
+		g_free (original_s);
 		mono_domain_set_fast (d, TRUE);
 
 		break;
