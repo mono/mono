@@ -7841,7 +7841,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
         error_init (error);
         MonoClass* mono_class = mono_class_get_checked (ass->image, token, error);
         if (!is_ok (error)) {
-			buffer_add_string (buf, error->full_message);
+            buffer_add_string (buf, error->full_message);
             mono_error_cleanup (error);
             return ERR_INVALID_ARGUMENT;
         }
@@ -7858,7 +7858,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
         error_init (error);
         MonoMethod* mono_method = mono_get_method_checked (ass->image, token, NULL, NULL, error);
         if (!is_ok (error)) {
-			buffer_add_string (buf, error->full_message);
+            buffer_add_string (buf, error->full_message);
             mono_error_cleanup (error);
             return ERR_INVALID_ARGUMENT;
         }
