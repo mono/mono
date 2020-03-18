@@ -7740,7 +7740,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_ASSEMBLY_GET_TYPE: {
 		ERROR_DECL (error);
 		char *s = decode_string (p, &p, end);
-		char* error_msg = g_strdup_printf ("Invalid assembly name \"%s\"", s);
+		char* error_msg = g_strdup_printf ("Invalid type name \"%s\"", s);
 
 		gboolean ignorecase = decode_byte (p, &p, end);
 		MonoTypeNameParse info;
