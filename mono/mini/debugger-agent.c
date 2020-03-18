@@ -7755,13 +7755,18 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			mono_error_cleanup (error);
 			t = NULL;
 		} else {
-			if (info.assembly.name)
-				NOT_IMPLEMENTED;
+			if (info.assembly.name) {
+				mono_reflection_free_type_info (&info);
+				g_free (s);
+				mono_domain_set_fast (d, TRUE);
+				return ERR_INVALID_ARGUMENT;
+			}
 			t = mono_reflection_get_type_checked (alc, ass->image, ass->image, &info, ignorecase, TRUE, &type_resolve, error);
 			if (!is_ok (error)) {
 				mono_error_cleanup (error); /* FIXME don't swallow the error */
 				mono_reflection_free_type_info (&info);
 				g_free (s);
+				mono_domain_set_fast (d, TRUE);
 				return ERR_INVALID_ARGUMENT;
 			}
 		}
