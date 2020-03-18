@@ -816,7 +816,7 @@ namespace Mono.Debugger.Soft
 			}
 
 			public string ErrorMsg {
-				get; set;
+				get; internal set;
 			}
 
 			public int Offset {
