@@ -1651,7 +1651,7 @@ _mono_reflection_parse_type (char *name, char **endptr, gboolean is_recursed,
 		case '&':
 		case '*':
 		case '[':
-		case ',':		
+		case ',':
 		case ']':
 			in_modifiers = 1;
 			break;
