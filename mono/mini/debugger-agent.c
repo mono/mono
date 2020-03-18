@@ -9543,7 +9543,7 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			if (!is_ok (error)) {
 				if (s)
 					g_free (s);
-				buffer_add_string (buf, error->full_message);
+				buffer_add_string (buf, mono_error_get_message (error));
 				return ERR_INVALID_ARGUMENT;
 			}
 			buffer_add_string (buf, s);
