@@ -896,7 +896,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		public string ErrorMessage {
-			get; set;
+			get; internal set;
 		}
 	}
 
