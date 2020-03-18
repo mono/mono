@@ -8711,7 +8711,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 
 		header = mono_method_get_header_checked (method, error);
 		if (!header) {
-			buffer_add_string (buf, error->full_message);
+			buffer_add_string (buf, mono_error_get_message (error));
 			mono_error_cleanup (error); /* FIXME don't swallow the error */
 			return ERR_INVALID_ARGUMENT;
 		}
