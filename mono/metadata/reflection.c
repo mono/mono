@@ -1614,7 +1614,7 @@ _mono_reflection_parse_type (char *name, char **endptr, gboolean is_recursed,
 	char *start, *p, *w, *last_point, *startn;
 	int in_modifiers = 0;
 	int isbyref = 0, rank = 0, isptr = 0;
-	int in_generics = 0;
+
 	start = p = w = name;
 
 	memset (info, 0, sizeof (MonoTypeNameParse));
@@ -1648,19 +1648,10 @@ _mono_reflection_parse_type (char *name, char **endptr, gboolean is_recursed,
 		case '\\':
 			++p;
 			break;
-		case '<':
-			in_generics++;
-			break;
-		case '>':
-			in_generics--;
-			break;
-		case ',':
-			if (!in_generics)
-				in_modifiers = 1;
-			break;
 		case '&':
 		case '*':
 		case '[':
+		case ',':		
 		case ']':
 			in_modifiers = 1;
 			break;
