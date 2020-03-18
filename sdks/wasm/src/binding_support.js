@@ -951,6 +951,8 @@ var BindingSupportLib = {
 			var m = obj [js_name];
 			if (typeof m === "undefined")
 				throw new Error("Method: '" + js_name + "' not found for: '" + Object.prototype.toString.call(obj) + "'");
+			if (MONO.mono_is_global_ss ())
+				debugger;
 			var res = m.apply (obj, js_args);
 			return BINDING.js_to_mono_obj (res);
 		} catch (e) {

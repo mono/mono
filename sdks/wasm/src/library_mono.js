@@ -18,6 +18,12 @@ var MonoSupportLib = {
 				this.mono_background_exec ();
 			}
 		},
+		
+		mono_is_global_ss: function () {
+			var ret = this.is_global_ss;
+			this.is_global_ss = false;
+			return ret;
+		},
 
 		export_functions: function (module) {
 			module ["pump_message"] = MONO.pump_message;
@@ -125,8 +131,10 @@ var MonoSupportLib = {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
 				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'number', [ 'number']);
-
-			return this.mono_wasm_setup_single_step (kind);
+			var ret = this.mono_wasm_setup_single_step (kind);
+			if (ret == 2)
+				this.is_global_ss = true;
+			return ret;
 		},
 
 		mono_wasm_runtime_ready: function () {
