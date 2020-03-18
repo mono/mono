@@ -1714,6 +1714,7 @@ static char*
 get_aotconst_name (MonoJumpInfoType type, gconstpointer data, int got_offset)
 {
 	char *name;
+	int len;
 
 	switch (type) {
 	case MONO_PATCH_INFO_JIT_ICALL_ID:
@@ -1721,11 +1722,24 @@ get_aotconst_name (MonoJumpInfoType type, gconstpointer data, int got_offset)
 		break;
 	case MONO_PATCH_INFO_RGCTX_SLOT_INDEX: {
 		MonoJumpInfoRgctxEntry *entry = (MonoJumpInfoRgctxEntry*)data;
-		name = g_strdup_printf ("RGCTX_SLOT_INDEX_%s", mono_rgctx_info_type_to_str (entry->info_type));
+		name = g_strdup_printf ("rgctx_slot_index_%s", mono_rgctx_info_type_to_str (entry->info_type));
 		break;
 	}
+	case MONO_PATCH_INFO_GC_SAFE_POINT_FLAG:
+	case MONO_PATCH_INFO_GC_CARD_TABLE_ADDR:
+	case MONO_PATCH_INFO_GC_NURSERY_START:
+	case MONO_PATCH_INFO_GC_NURSERY_BITS:
+	case MONO_PATCH_INFO_INTERRUPTION_REQUEST_FLAG:
+		name = g_strdup_printf ("%s", mono_ji_type_to_string (type));
+		len = strlen (name);
+		for (int i = 0; i < len; ++i)
+			name [i] = tolower (name [i]);
+		break;
 	default:
 		name = g_strdup_printf ("%s_%d", mono_ji_type_to_string (type), got_offset);
+		len = strlen (name);
+		for (int i = 0; i < len; ++i)
+			name [i] = tolower (name [i]);
 		break;
 	}
 
@@ -1753,7 +1767,7 @@ compute_aot_got_offset (MonoLLVMModule *module, MonoJumpInfo *ji, LLVMTypeRef ll
 
 /* Allocate a GOT slot for TYPE/DATA, and emit IR to load it */
 static LLVMValueRef
-get_aotconst_typed_module (MonoLLVMModule *module, LLVMBuilderRef builder, MonoJumpInfoType type, gconstpointer data, LLVMTypeRef llvm_type)
+get_aotconst_module (MonoLLVMModule *module, LLVMBuilderRef builder, MonoJumpInfoType type, gconstpointer data, LLVMTypeRef llvm_type)
 {
 	guint32 got_offset;
 	LLVMValueRef indexes [2];
@@ -1787,7 +1801,7 @@ get_aotconst_typed_module (MonoLLVMModule *module, LLVMBuilderRef builder, MonoJ
 }
 
 static LLVMValueRef
-get_aotconst_typed (EmitContext *ctx, MonoJumpInfoType type, gconstpointer data, LLVMTypeRef llvm_type)
+get_aotconst (EmitContext *ctx, MonoJumpInfoType type, gconstpointer data, LLVMTypeRef llvm_type)
 {
 	MonoCompile *cfg;
 	guint32 got_offset;
@@ -1835,12 +1849,6 @@ get_aotconst_typed (EmitContext *ctx, MonoJumpInfoType type, gconstpointer data,
 	//set_invariant_load_flag (load);
 
 	return load;
-}
-
-static LLVMValueRef
-get_aotconst (EmitContext *ctx, MonoJumpInfoType type, gconstpointer data)
-{
-	return get_aotconst_typed (ctx, type, data, NULL);
 }
 
 typedef struct {
@@ -1963,7 +1971,7 @@ get_callee_llvmonly (EmitContext *ctx, LLVMTypeRef llvm_sig, MonoJumpInfoType ty
 	/*
 	 * All other calls are made through the GOT.
 	 */
-	callee = get_aotconst_typed (ctx, type, data, LLVMPointerType (llvm_sig, 0));
+	callee = get_aotconst (ctx, type, data, LLVMPointerType (llvm_sig, 0));
 
 	return callee;
 }
@@ -3068,7 +3076,7 @@ emit_icall_cold_wrapper (MonoLLVMModule *module, LLVMModuleRef lmodule, MonoJitI
 	LLVMPositionBuilderAtEnd (builder, entry_bb);
 
 	if (aot) {
-		callee = get_aotconst_typed_module (module, builder, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (icall_id), LLVMPointerType (sig, 0));
+		callee = get_aotconst_module (module, builder, MONO_PATCH_INFO_JIT_ICALL_ID, GUINT_TO_POINTER (icall_id), LLVMPointerType (sig, 0));
 	} else {
 		MonoJitICallInfo * const info = mono_find_jit_icall_info (icall_id);
 		gpointer target = (gpointer)mono_icall_get_wrapper_full (info, TRUE);
@@ -3147,7 +3155,7 @@ emit_gc_safepoint_poll (MonoLLVMModule *module, LLVMModuleRef lmodule, MonoCompi
 	LLVMPositionBuilderAtEnd (builder, entry_bb);
 	LLVMValueRef poll_val_ptr;
 	if (is_aot) {
-		poll_val_ptr = get_aotconst_typed_module (module, builder, MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, NULL, ptr_type);
+		poll_val_ptr = get_aotconst_module (module, builder, MONO_PATCH_INFO_GC_SAFE_POINT_FLAG, NULL, ptr_type);
 	} else {
 		LLVMValueRef poll_val_int = LLVMConstInt (IntPtrType (), (guint64) &mono_polling_required, FALSE);
 		poll_val_ptr = LLVMBuildIntToPtr (builder, poll_val_int, ptr_type, "");
@@ -4047,7 +4055,6 @@ process_call (EmitContext *ctx, MonoBasicBlock *bb, LLVMBuilderRef *builder_ref,
 		l = l->next;
 	}
 
-
 	if (call->cinfo->dummy_arg) {
 		g_assert (call->cinfo->dummy_arg_pindex < nargs);
 		args [call->cinfo->dummy_arg_pindex] = LLVMConstNull (ctx->module->ptr_type);
@@ -4306,7 +4313,7 @@ mono_llvm_emit_match_exception_call (EmitContext *ctx, LLVMBuilderRef builder, g
 	LLVMValueRef args[5];
 	const int num_args = G_N_ELEMENTS (args);
 
-	args [0] = convert (ctx, get_aotconst (ctx, MONO_PATCH_INFO_AOT_JIT_INFO, GINT_TO_POINTER (ctx->cfg->method_index)), IntPtrType ());
+	args [0] = get_aotconst (ctx, MONO_PATCH_INFO_AOT_JIT_INFO, GINT_TO_POINTER (ctx->cfg->method_index), IntPtrType ());
 	args [1] = LLVMConstInt (LLVMInt32Type (), region_start, 0);
 	args [2] = LLVMConstInt (LLVMInt32Type (), region_end, 0);
 	if (ctx->cfg->rgctx_var) {
