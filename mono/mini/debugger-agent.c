@@ -7252,7 +7252,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		ignore_case = decode_byte (p, &p, end);
 
 		if (!mono_reflection_parse_type_checked (name, &info, error)) {
-			buffer_add_string (buf, error->full_message);
+			buffer_add_string (buf, mono_error_get_message (error));
 			mono_error_cleanup (error);
 			g_free (name);
 			mono_reflection_free_type_info (&info);
