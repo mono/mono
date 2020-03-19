@@ -510,11 +510,73 @@ void mono_enable_jit_map (void);
 void mono_emit_jit_map   (MonoJitInfo *jinfo);
 void mono_emit_jit_tramp (void *start, int size, const char *desc);
 gboolean mono_jit_map_is_enabled (void);
+#define ENABLE_JIT_DUMP 1
+#include <sys/mman.h>
+#include <sys/syscall.h>
+#include "/usr/include/elf.h"
+enum {
+	JIT_DUMP_MAGIC = 0x4A695444,
+	JIT_DUMP_VERSION = 2,
+#if defined(_x86_)
+	ELF_MACHINE = EM_386,
+#elif defined(__x86_64__)
+	ELF_MACHINE = EM_X86_64,
+#elif defined(_ARM_)
+	ELF_MACHINE = EM_ARM,
+#elif defined(_AMD64_)
+	ELF_MACHINE = EM_X86_64,
+#elif defined(_ARM64_)
+	ELF_MACHINE = EM_AARCH64,
+#endif
+	JIT_CODE_LOAD = 0
+};
+typedef struct
+{
+	guint32 magic;
+	guint32 version;
+	guint32 total_size;
+	guint32 elf_mach;
+	guint32 pad1;
+	guint32 pid;
+	guint64 timestamp;
+	guint64 flags;
+}FileHeader;
+typedef struct
+{
+	guint32 id;
+	guint32 total_size;
+	guint64 timestamp;
+}RecordHeader;
+typedef struct
+{
+	RecordHeader header;
+	guint32 pid;
+	guint32 tid;
+	guint64 vma;
+	guint64 code_addr;
+	guint64 code_size;
+	guint64 code_index;
+	// Null terminated function name
+	// Native code
+}JitCodeLoadRecord;
+
+void mono_enable_jit_dump (void);
+void add_file_header_info (FileHeader *header);
+guint64 getTimeStampNS (void);
+void mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code);
+void add_basic_JitCodeLoadRecord_info (JitCodeLoadRecord *record);
+
 #else
 #define mono_enable_jit_map()
 #define mono_emit_jit_map(ji)
 #define mono_emit_jit_tramp(s,z,d) do { } while (0) /* non-empty to avoid warning */
 #define mono_jit_map_is_enabled() (0)
+
+#define mono_enable_jit_dump()
+#define add_file_header_info(header)
+#define getTimeStampNS()
+#define mono_emit_jit_dump(jinfo, code)
+#define add_basic_JitCodeLoadRecord_info(record)
 #endif
 
 /*

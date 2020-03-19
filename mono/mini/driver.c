@@ -1623,6 +1623,7 @@ mini_usage (void)
 		"    --profile[=profiler]   Runs in profiling mode with the specified profiler module\n"
 		"    --trace[=EXPR]         Enable tracing, use --help-trace for details\n"
 		"    --jitmap               Output a jit method map to /tmp/perf-PID.map\n"
+		"    --jitdump              Output a jitdump file to /tmp/jit-PID.dump\n"
 		"    --help-devel           Shows more options available to developers\n"
 		"\n"
 		"Runtime:\n"
@@ -2342,6 +2343,8 @@ mono_main (int argc, char* argv[])
 			forced_version = &argv [i][10];
 		} else if (strcmp (argv [i], "--jitmap") == 0) {
 			mono_enable_jit_map ();
+		} else if (strcmp (argv [i], "--jitdump") == 0) {
+			mono_enable_jit_dump ();
 		} else if (strcmp (argv [i], "--profile") == 0) {
 			mini_add_profiler_argument (NULL);
 		} else if (strncmp (argv [i], "--profile=", 10) == 0) {
