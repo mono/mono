@@ -2944,6 +2944,13 @@ emit_llvm_code_start (MonoLLVMModule *module)
 	LLVMDisposeBuilder (builder);
 }
 
+/*
+ * emit_init_icall_wrapper:
+ *
+ *   Emit wrappers around the mini_llvm_init_method () JIT icall.
+ * The wrappers handle adding the 'amodule' argument, loading the vtable from different locations, and they have
+ * a cold calling convention.
+ */
 static LLVMValueRef
 emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 {
@@ -2951,36 +2958,31 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	LLVMValueRef func, indexes [2], args [16], callee, inited_var, cmp;
 	LLVMBasicBlockRef entry_bb, inited_bb, notinited_bb;
 	LLVMBuilderRef builder;
-	LLVMTypeRef sig;
+	LLVMTypeRef icall_sig;
 	const char *wrapper_name = mono_marshal_get_aot_init_wrapper_name (subtype);
+	LLVMTypeRef func_type = NULL;
+
 	char *name = g_strdup_printf ("%s_%s", module->global_prefix, wrapper_name);
-	MonoJitICallId icall_id = MONO_JIT_ICALL_ZeroIsReserved;
 
 	switch (subtype) {
 	case AOT_INIT_METHOD:
-		icall_id = MONO_JIT_ICALL_mini_llvm_init_method;
-		func = LLVMAddFunction (lmodule, name, LLVMFunctionType1 (LLVMVoidType (), LLVMInt32Type (), FALSE));
-		sig = LLVMFunctionType3 (LLVMVoidType (), IntPtrType (), IntPtrType (), LLVMInt32Type (), FALSE);
+		func_type = LLVMFunctionType1 (LLVMVoidType (), LLVMInt32Type (), FALSE);
 		break;
 	case AOT_INIT_METHOD_GSHARED_MRGCTX:
-		icall_id = MONO_JIT_ICALL_mini_llvm_init_gshared_method_mrgctx; // Deliberate fall-through
+		func_type = LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), IntPtrType (), FALSE);
+		break;
 	case AOT_INIT_METHOD_GSHARED_VTABLE:
-		/* mrgctx/vtable */
-		if (!icall_id)
-			icall_id = MONO_JIT_ICALL_mini_llvm_init_gshared_method_vtable;
-		func = LLVMAddFunction (lmodule, name, LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), IntPtrType (), FALSE));
-		sig = LLVMFunctionType4 (LLVMVoidType (), IntPtrType (), IntPtrType (), LLVMInt32Type (), IntPtrType (), FALSE);
+		func_type = LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), IntPtrType (), FALSE);
 		break;
 	case AOT_INIT_METHOD_GSHARED_THIS:
-		icall_id = MONO_JIT_ICALL_mini_llvm_init_gshared_method_this;
-		func = LLVMAddFunction (lmodule, name, LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), ObjRefType (), FALSE));
-		sig = LLVMFunctionType4 (LLVMVoidType (), IntPtrType (), IntPtrType (), LLVMInt32Type (), ObjRefType (), FALSE);
+		func_type = LLVMFunctionType2 (LLVMVoidType (), LLVMInt32Type (), ObjRefType (), FALSE);
 		break;
 	default:
 		g_assert_not_reached ();
 	}
 
-	g_assert (icall_id);
+	func = LLVMAddFunction (lmodule, name, func_type);
+
 	LLVMSetLinkage (func, LLVMInternalLinkage);
 
 	mono_llvm_add_func_attr (func, LLVM_ATTR_NO_INLINE);
@@ -3011,12 +3013,34 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	args [0] = LLVMBuildPtrToInt (builder, module->info_var, IntPtrType (), "");
 	args [1] = LLVMBuildPtrToInt (builder, amodule_var, IntPtrType (), "");
 	args [2] = LLVMGetParam (func, 0);
-	if (subtype)
-		args [3] = LLVMGetParam (func, 1);
 
-	callee = get_aotconst_module (module, builder, MONO_PATCH_INFO_JIT_ICALL_ID, GINT_TO_POINTER (icall_id), LLVMPointerType (IntPtrType (), 0), NULL, NULL);
-	callee = LLVMBuildBitCast (builder, callee, LLVMPointerType (sig, 0), "");
-	LLVMBuildCall (builder, callee, args, LLVMCountParamTypes (sig), "");
+	switch (subtype) {
+	case AOT_INIT_METHOD:
+		args [3] = LLVMConstNull (IntPtrType ());
+		break;
+	case AOT_INIT_METHOD_GSHARED_VTABLE:
+		args [3] = LLVMGetParam (func, 1);
+		break;
+	case AOT_INIT_METHOD_GSHARED_THIS:
+		/* Load this->vtable */
+		args [3] = LLVMBuildBitCast (builder, LLVMGetParam (func, 1), LLVMPointerType (IntPtrType (), 0), "");
+		indexes [0] = const_int32 (MONO_STRUCT_OFFSET (MonoObject, vtable) / SIZEOF_VOID_P);
+		args [3] = LLVMBuildLoad (builder, LLVMBuildGEP (builder, args [3], indexes, 1, ""), "vtable");
+		break;
+	case AOT_INIT_METHOD_GSHARED_MRGCTX:
+		/* Load mrgctx->vtable */
+		args [3] = LLVMBuildIntToPtr (builder, LLVMGetParam (func, 1), LLVMPointerType (IntPtrType (), 0), "");
+		indexes [0] = const_int32 (MONO_STRUCT_OFFSET (MonoMethodRuntimeGenericContext, class_vtable) / SIZEOF_VOID_P);
+		args [3] = LLVMBuildLoad (builder, LLVMBuildGEP (builder, args [3], indexes, 1, ""), "vtable");
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
+
+	icall_sig = LLVMFunctionType4 (LLVMVoidType (), IntPtrType (), IntPtrType (), LLVMInt32Type (), IntPtrType (), FALSE);
+	callee = get_aotconst_module (module, builder, MONO_PATCH_INFO_JIT_ICALL_ID, GINT_TO_POINTER (MONO_JIT_ICALL_mini_llvm_init_method), LLVMPointerType (icall_sig, 0), NULL, NULL);
+	LLVMBuildCall (builder, callee, args, LLVMCountParamTypes (icall_sig), "");
 
 	// Set the inited flag
 	indexes [0] = LLVMConstInt (LLVMInt32Type (), 0, FALSE);
@@ -3030,6 +3054,8 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 
 	LLVMVerifyFunction(func, LLVMAbortProcessAction);
 	LLVMDisposeBuilder (builder);
+	g_free (name);
+
 	return func;
 }
 
