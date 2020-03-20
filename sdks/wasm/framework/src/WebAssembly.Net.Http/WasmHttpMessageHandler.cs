@@ -123,25 +123,21 @@ namespace WebAssembly.Net.Http.HttpClient {
 					requestObject.SetObjectProperty ("headers", jsHeaders);
 				}
 
-				JSObject abortController = null;
-				JSObject signal = null;
 				WasmHttpReadStream wasmHttpReadStream = null;
 
-				CancellationTokenRegistration abortRegistration = default (CancellationTokenRegistration);
-				if (cancellationToken.CanBeCanceled) {
+				JSObject abortController = new HostObject ("AbortController");
+				JSObject signal = (JSObject)abortController.GetObjectProperty ("signal");
+				requestObject.SetObjectProperty ("signal", signal);
+				signal.Dispose ();
 
-					abortController = new HostObject ("AbortController");
-
-					signal = (JSObject)abortController.GetObjectProperty ("signal");
-					requestObject.SetObjectProperty ("signal", signal);
-					abortRegistration = cancellationToken.Register ((Action)(() => {
-						if (abortController.JSHandle != -1) {
-							abortController.Invoke ((string)"abort");
-							abortController?.Dispose ();
-						}
-						wasmHttpReadStream?.Dispose ();
-					}));
-				}
+				CancellationTokenSource abortCts = CancellationTokenSource.CreateLinkedTokenSource (cancellationToken);
+				CancellationTokenRegistration abortRegistration = abortCts.Token.Register ((Action)(() => {
+					if (abortController.JSHandle != -1) {
+						abortController.Invoke ("abort");
+						abortController?.Dispose ();
+					}
+					wasmHttpReadStream?.Dispose ();
+				}));
 
 				var args = new Core.Array();
 				args.Push (request.RequestUri.ToString ());
@@ -156,7 +152,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 				var t = await response;
 
-				var status = new WasmFetchResponse ((JSObject)t, abortController, abortRegistration);
+				var status = new WasmFetchResponse ((JSObject)t, abortController, abortCts, abortRegistration);
 
 				//Console.WriteLine($"bodyUsed: {status.IsBodyUsed}");
 				//Console.WriteLine($"ok: {status.IsOK}");
@@ -206,8 +202,6 @@ namespace WebAssembly.Net.Http.HttpClient {
 				}
 
 				tcs.SetResult (httpresponse);
-
-				signal?.Dispose ();
 			} catch (Exception exception) {
 				tcs.SetException (exception);
 			}
@@ -216,12 +210,14 @@ namespace WebAssembly.Net.Http.HttpClient {
 		class WasmFetchResponse : IDisposable {
 			private JSObject fetchResponse;
 			private JSObject abortController;
+			private readonly CancellationTokenSource abortCts;
 			private readonly CancellationTokenRegistration abortRegistration;
 
-			public WasmFetchResponse (JSObject fetchResponse, JSObject abortController, CancellationTokenRegistration abortRegistration)
+			public WasmFetchResponse (JSObject fetchResponse, JSObject abortController, CancellationTokenSource abortCts, CancellationTokenRegistration abortRegistration)
 			{
 				this.fetchResponse = fetchResponse;
 				this.abortController = abortController;
+				this.abortCts = abortCts;
 				this.abortRegistration = abortRegistration;
 			}
 
@@ -254,6 +250,8 @@ namespace WebAssembly.Net.Http.HttpClient {
 				if (disposing) {
 					// Free any other managed objects here.
 					//
+					abortCts.Cancel ();
+
 					abortRegistration.Dispose ();
 				}
 
@@ -364,8 +362,13 @@ namespace WebAssembly.Net.Http.HttpClient {
 						return 0;
 					}
 
-					using (var body = _status.Body) {
-						_reader = (JSObject)body.Invoke ("getReader");
+					try { 
+						using (var body = _status.Body) {
+							_reader = (JSObject)body.Invoke ("getReader");
+						}
+					} catch (JSException) {
+						cancellationToken.ThrowIfCancellationRequested ();
+						throw;
 					}
 				}
 
@@ -373,21 +376,26 @@ namespace WebAssembly.Net.Http.HttpClient {
 					return ReadBuffered ();
 				}
 
-				var t = (Task<object>)_reader.Invoke ("read");
-				using (var read = (JSObject)await t) {
-					if ((bool)read.GetObjectProperty ("done")) {
-						_reader.Dispose ();
-						_reader = null;
+				try {
+					var t = (Task<object>)_reader.Invoke ("read");
+					using (var read = (JSObject)await t) {
+						if ((bool)read.GetObjectProperty ("done")) {
+							_reader.Dispose ();
+							_reader = null;
 
-						_status.Dispose ();
-						_status = null;
-						return 0;
+							_status.Dispose ();
+							_status = null;
+							return 0;
+						}
+
+						_position = 0;
+						// value for fetch streams is a Uint8Array
+						using (Uint8Array binValue = (Uint8Array)read.GetObjectProperty("value"))
+							_bufferedBytes = binValue.ToArray ();
 					}
-
-					_position = 0;
-					// value for fetch streams is a Uint8Array
-					using (Uint8Array binValue = (Uint8Array)read.GetObjectProperty ("value"))
-						_bufferedBytes = binValue.ToArray ();
+				} catch (JSException) {
+					cancellationToken.ThrowIfCancellationRequested ();
+					throw;
 				}
 
 				return ReadBuffered ();
