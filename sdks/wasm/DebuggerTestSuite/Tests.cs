@@ -1213,7 +1213,150 @@ namespace DebuggerTests
 			});
 		}
 
+		// TODO: Check previous frame too
+		[Fact]
+		public async Task InspectValueTypeArrayLocalsInstanceAsync ()
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 155;
+			int col = 3;
+			string entry_method_name = "[debugger-test] DebuggerTests.ArrayTestsClass:ValueTypeLocalsAsync";
+			int frame_idx = 0;
 
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}', true"
+						+ "); }, 1);";
+
+				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
+				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
+
+				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
+					new {
+						t1 = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
+						@this = TObject ("DebuggerTests.ArrayTestsClass"),
+						point_arr = TArray ("DebuggerTests.Point[]"),
+						point = TValueType ("DebuggerTests.Point")
+					},
+					"InspectValueTypeArrayLocalsInstanceAsync#locals"
+				);
+
+				await CompareObjectPropertiesFor (frame_locals, "t1",
+					new {
+						Id = TString ("gvclass_arr#1#Id"),
+						Color = TEnum ("DebuggerTests.RGB", "Red"),
+						Value = TPoint (100, 200, "gvclass_arr#1#Value#Id", "Red")
+					});
+
+#if false // FIXME
+				await CompareObjectPropertiesFor (frame_locals, "point_arr",
+					new [] {
+						TPoint (5, -2, "point_arr#Id#0", "Red"),
+						TPoint (123, 0, "point_arr#Id#1", "Blue"),
+					}
+				);
+#endif
+
+				await CompareObjectPropertiesFor (frame_locals, "point",
+						TPoint (45, 51, "point#Id", "Green"));
+			});
+		}
+
+		[Fact]
+		public async Task InspectValueTypeArrayLocalsInAsyncStaticStructMethod ()
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 222;
+			int col = 3;
+			string entry_method_name = "[debugger-test] DebuggerTests.ArrayTestsClass:EntryPointForStructMethod";
+			int frame_idx = 0;
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+				//await SetBreakpoint (debugger_test_loc, 143, 3);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}', false"
+						+ "); }, 1);";
+
+				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
+				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
+
+				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
+					new {
+						call_other = TBool (false),
+						local_i  = TNumber (5),
+						sc = TSimpleClass (10, 45, "sc#Id", "Blue")
+					},
+					"InspectValueTypeArrayLocalsInAsyncStaticStructMethod#locals"
+				);
+			});
+		}
+
+		[Fact]
+		public async Task InspectValueTypeArrayLocalsInAsyncInstanceStructMethod ()
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 229;
+			int col = 3;
+			string entry_method_name = "[debugger-test] DebuggerTests.ArrayTestsClass:EntryPointForStructMethod";
+			int frame_idx = 0;
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}', true"
+						+ "); }, 1);";
+
+				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
+				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
+
+				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
+					new {
+						sc_arg = TObject ("DebuggerTests.SimpleClass"),
+						@this = TValueType ("DebuggerTests.Point"),
+						local_gs = TValueType ("DebuggerTests.SimpleGenericStruct<int>")
+					},
+					"locals#0");
+
+				await CompareObjectPropertiesFor (frame_locals, "local_gs",
+					new {
+						Id = TString ("local_gs#Id"),
+						Color = TEnum ("DebuggerTests.RGB", "Green"),
+						Value = TNumber (4)
+					},
+					label: "local_gs#0");
+
+				await CompareObjectPropertiesFor (frame_locals, "sc_arg",
+						TSimpleClass (10, 45, "sc_arg#Id", "Blue"),
+						label: "sc_arg#0");
+
+				await CompareObjectPropertiesFor (frame_locals, "this",
+						TPoint (90, -4, "point#Id", "Green"),
+						label: "this#0");
+			});
+		}
 
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)

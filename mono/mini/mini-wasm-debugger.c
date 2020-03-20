@@ -52,6 +52,7 @@ extern void mono_wasm_add_func_var (const char*, guint64);
 extern void mono_wasm_add_array_var (const char*, guint64);
 extern void mono_wasm_add_properties_var (const char*, gint32);
 extern void mono_wasm_add_array_item (int);
+extern void mono_wasm_set_is_async_method (guint64);
 
 G_END_DECLS
 
@@ -930,7 +931,9 @@ describe_async_method_locals (InterpFrame *frame, MonoMethod *method)
 	if (mono_debug_lookup_method_async_debug_info (method)) {
 		addr = mini_get_interp_callbacks ()->frame_get_this (frame);
 		MonoObject *obj = *(MonoObject**)addr;
-		describe_object_properties (get_object_id(obj), TRUE, FALSE);
+		int objId = get_object_id (obj);
+		mono_wasm_set_is_async_method (objId);
+		describe_object_properties (objId, TRUE, FALSE);
 	}
 }
 

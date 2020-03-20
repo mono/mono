@@ -148,6 +148,8 @@ var MonoSupportLib = {
 			for (let i=0; i<var_list.length; i++) {
 				heapBytes[i] = var_list[i]
 			}
+
+			this._async_method_objectId = 0;
 			this.mono_wasm_get_var_info (scope, heapBytes.byteOffset, var_list.length);
 			Module._free(heapBytes.byteOffset);
 			var res = MONO._fixup_name_value_objects (this.var_info);
@@ -158,6 +160,13 @@ var MonoSupportLib = {
 				var name = res [i].name;
 				if (name != undefined && name.indexOf ('>') > 0)
 					res [i].name = name.substring (1, name.indexOf ('>'));
+			}
+
+			if (this._async_method_objectId != 0) {
+				for (let i in res) {
+					if (res [i].value.isValueType != undefined && res [i].value.isValueType)
+						res [i].value.objectId = `dotnet:valuetype:${this._async_method_objectId}:${res [i].fieldOffset}`;
+				}
 			}
 
 			this.var_info = []
@@ -427,6 +436,10 @@ var MonoSupportLib = {
 			name: Module.UTF8ToString (name),
 			fieldOffset: field_offset
 		});
+	},
+
+	mono_wasm_set_is_async_method: function(objectId) {
+		MONO._async_method_objectId = objectId;
 	},
 
 	mono_wasm_begin_value_type_var: function(className) {
