@@ -613,6 +613,7 @@ public class Tests : TestsBase, ITest2
 			pointers2 ();
 			return 0;
 		}
+		test_invalid_argument_assembly_get_type ();
 		return 3;
 	}
 
@@ -639,6 +640,10 @@ public class Tests : TestsBase, ITest2
 	public static void local_reflect () {
 		//Breakpoint line below, and reflect someField via ObjectMirror;
 		LocalReflectClass.RunMe ();
+	}
+
+	public static void test_invalid_argument_assembly_get_type () {
+
 	}
 
 	public static void breakpoints () {
