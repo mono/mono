@@ -155,7 +155,7 @@ tls_get_restore_state (void *tls)
 }
 
 static gboolean
-try_process_suspend (void *tls, MonoContext *ctx)
+try_process_suspend (void *tls, MonoContext *ctx, gboolean from_breakpoint)
 {
 	return FALSE;
 }

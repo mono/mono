@@ -5214,51 +5214,45 @@ public class DebuggerTests
 		EventRequest req = create_step (e);
 		req.Disable ();
 		ReusableBreakpoint breakpoint = new ReusableBreakpoint (this, "mt_ss");
-		try {
-			breakpoint.Continue ();
-			e = breakpoint.lastEvent;
-			req = create_step (e);
-			while (line_first_counter > 0 || line_second_counter > 0 || line_third_counter > 0) {
+		breakpoint.Continue ();
+		e = breakpoint.lastEvent;
+		req = create_step (e);
+		while (line_first_counter > 0 || line_second_counter > 0 || line_third_counter > 0) {
 
-				var thread = e.Thread;
-				if (thread.GetFrames().Length > 0) {
-					var frame = thread.GetFrames()[0];
-					var l = e.Thread.GetFrames ()[0].Location;
-					if (l.LineNumber == firstLineFound) {
-						line_first_counter--;
-					}
-					if (l.LineNumber == firstLineFound + 1) {
-						line_second_counter--;
-					}
-					if (l.LineNumber == firstLineFound + 2) {
-						line_third_counter--;				
-					}			
+			var thread = e.Thread;
+			var l = thread.GetFrames ()[0].Location;
+			var frame = thread.GetFrames()[0];
+
+			if (l.LineNumber == firstLineFound)
+				line_first_counter--;
+			if (l.LineNumber == firstLineFound + 1)
+				line_second_counter--;
+			if (l.LineNumber == firstLineFound + 2)
+				line_third_counter--;				
+
+			if (req.GetId() != breakpoint.req.GetId()) 
+				req.Disable ();
+			
+			req = create_step (e);
+			((StepEventRequest)req).Size = StepSize.Line;
+			try {
+				if ((e.Thread.GetFrames ()[0].Location.LineNumber == firstLineFound + 1 && (e.Thread.Name.Equals("Thread_0") || e.Thread.Name.Equals("Thread_1"))) || l.LineNumber == firstLineFound + 2) {
+					vm.Resume ();
+					e = GetNextEvent ();
 				}
-				if (req.GetId() != breakpoint.req.GetId()) {
-					req.Disable ();
-				}
-				req = create_step (e);
-				((StepEventRequest)req).Size = StepSize.Line;
-				try {
-					if (e.Thread.GetFrames ()[0].Location.LineNumber == firstLineFound + 1 && (e.Thread.Name.Equals("Thread_0") || e.Thread.Name.Equals("Thread_1")))  {
-						vm.Resume ();
-						e = GetNextEvent ();
-					}
-					else
-						e = step_over_or_breakpoint ();
-					req =  e.Request;		
-				}
-				catch (Exception z){
-					break;
-				}
+				else
+					e = step_over_or_breakpoint ();
+				req =  e.Request;		
 			}
-		} finally {
-			req.Disable ();
-			breakpoint.Disable ();
+			catch (Exception z){
+				//expected vmdeath
+				break;
+			}
 		}
 		Assert.AreEqual(0, line_first_counter);
 		Assert.AreEqual(0, line_second_counter);
 		Assert.AreEqual(0, line_third_counter);
+		vm = null;
 	}
 	
 #endif

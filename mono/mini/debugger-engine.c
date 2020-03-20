@@ -809,7 +809,7 @@ mono_de_process_single_step (void *tls, gboolean from_signal)
 	/* Skip the instruction causing the single step */
 	rt_callbacks.begin_single_step_processing (ctx, from_signal);
 
-	if (rt_callbacks.try_process_suspend (tls, ctx))
+	if (rt_callbacks.try_process_suspend (tls, ctx, FALSE))
 		return;
 
 	/*
@@ -1052,6 +1052,9 @@ mono_de_process_breakpoint (void *void_tls, gboolean from_signal)
 	MonoSeqPointInfo *info;
 	SeqPoint sp;
 	gboolean found_sp;
+
+	if (rt_callbacks.try_process_suspend (tls, ctx, TRUE))
+		return;
 
 	ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
 

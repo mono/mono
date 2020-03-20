@@ -230,6 +230,8 @@ struct _DebuggerTlsData {
 	 * Number of times this thread has been resumed using resume_thread ().
 	 */
 	guint32 resume_count;
+	guint32 resume_count_internal;
+	guint32 suspend_count;
 
 	MonoInternalThread *thread;
 	intptr_t thread_id;
@@ -730,7 +732,7 @@ static void invalidate_frames (DebuggerTlsData *tls);
 
 /* Callbacks used by debugger-engine */
 static MonoContext* tls_get_restore_state (void *the_tls);
-static gboolean try_process_suspend (void *tls, MonoContext *ctx);
+static gboolean try_process_suspend (void *tls, MonoContext *ctx, gboolean from_breakpoint);
 static gboolean begin_breakpoint_processing (void *tls, MonoContext *ctx, MonoJitInfo *ji, gboolean from_signal);
 static void begin_single_step_processing (MonoContext *ctx, gboolean from_signal);
 static void ss_discard_frame_context (void *the_tls);
@@ -2719,6 +2721,8 @@ reset_native_thread_suspend_state (gpointer key, gpointer value, gpointer user_d
 		tls->async_state.valid = FALSE;
 		invalidate_frames (tls);
 	}
+	tls->resume_count_internal++;
+
 }
 
 typedef struct {
@@ -2827,19 +2831,21 @@ process_suspend (DebuggerTlsData *tls, MonoContext *ctx)
 
 /* Conditionally call process_suspend depending oh the current state */
 static gboolean
-try_process_suspend (void *the_tls, MonoContext *ctx)
+try_process_suspend (void *the_tls, MonoContext *ctx, gboolean from_breakpoint)
 {
 	DebuggerTlsData *tls = (DebuggerTlsData*)the_tls;
 
-	if (suspend_count > 0) {
+	if (suspend_count > 0) { //se ja tem um pedido pra suspender tudo
 		/* Fastpath during invokes, see in process_suspend () */
-		if (suspend_count - tls->resume_count == 0)
+		if (suspend_count - tls->resume_count == 0) //mas eu ja me resumi ta ok, vou retornar false
 			return FALSE;
-		if (tls->invoke)
+		if (tls->invoke) //se está num invoke está ok tb vai poder suspender
+			return FALSE;
+		if (from_breakpoint && tls->suspend_count <= tls->resume_count_internal)
 			return FALSE;
 		process_suspend (tls, ctx);
 		return TRUE;
-	}
+	}//se nao está suspenso eu retorno falso e ta tudo certo pq vou suspender quando processar o evento
 	return FALSE;
 }
 
@@ -2949,6 +2955,8 @@ resume_thread (MonoInternalThread *thread)
 	DEBUG_PRINTF (1, "[sdb] Resuming thread %p...\n", (gpointer)(gssize)thread->tid);
 
 	tls->resume_count += suspend_count;
+	tls->resume_count_internal += tls->suspend_count;
+	tls->suspend_count = 0;
 
 	/* 
 	 * Signal suspend_count without decreasing suspend_count, the threads will wake up
@@ -4039,6 +4047,8 @@ process_event (EventKind event, gpointer arg, gint32 il_offset, MonoContext *ctx
 		 * returns.
 		 */
 		save_thread_context (ctx);
+		DebuggerTlsData *tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls,  mono_thread_internal_current ());
+		tls->suspend_count++;
 		suspend_vm ();
 
 		if (keepalive_obj)
