@@ -1076,6 +1076,68 @@ namespace DebuggerTests
 			});
 		}
 
+		[Fact]
+		public async Task InspectLocalsWithStructsStaticAsync () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-valuetypes-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, 47, 3);
+
+				var pause_location = await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_static_method_async ("
+						+ "'[debugger-test] DebuggerTests.ValueTypesTest:MethodWithLocalStructsStaticAsync'"
+					+ "); }, 1);",
+					debugger_test_loc, 47, 3, "MoveNext"); //BUG: method name
+
+				await CheckLocalsOnFrame (pause_location ["callFrames"][0],
+						new {
+							ss_local = TObject ("DebuggerTests.ValueTypesTest.SimpleStruct"),
+							gs_local = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<int>"),
+							result   = TBool (true)
+						},
+						"locals#0");
+
+				// Check ss_local's properties
+				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
+					new {
+						str_member = TString ("set in MethodWithLocalStructsStaticAsync#SimpleStruct#str_member"),
+						dt         = TValueType ("System.DateTime"),
+						gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
+						Kind       = TEnum ("System.DateTimeKind", "Utc")
+					});
+
+				{
+					// Check ss_local.dt
+					await CheckDateTime (ss_local_props, "dt", new DateTime (2021, 2, 3, 4, 6, 7));
+
+					// Check ss_local.gs
+					await CompareObjectPropertiesFor (ss_local_props, "gs",
+						new {
+							StringField = TString ("set in MethodWithLocalStructsStaticAsync#SimpleStruct#gs#StringField"),
+							List        = TObject ("System.Collections.Generic.List<System.DateTime>"),
+							Options     = TEnum   ("DebuggerTests.Options", "Option1")
+						}
+					);
+				}
+
+				// Check gs_local's properties
+				await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "gs_local",
+					new {
+						StringField = TString ("gs_local#GenericStruct<ValueTypesTest>#StringField"),
+						List        = TObject ("System.Collections.Generic.List<int>"),
+						Options     = TEnum   ("DebuggerTests.Options", "Option2")
+					});
+
+				// FIXME: check ss_local.gs.List's members
+			});
+		}
+
 		[Theory]
 		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
