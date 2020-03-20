@@ -7302,10 +7302,44 @@ retry:
 		} else if (MINT_IS_BINOP (ins->opcode)) {
 			ins = interp_fold_binop (td, sp, ins);
 			sp--;
-		} else if (ins->opcode >= MINT_STFLD_I1 && ins->opcode <= MINT_STFLD_O && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
+		} else if (ins->opcode == MINT_LDLOCA_S && MINT_IS_LDFLD (ins->next->opcode) &&
+				td->locals [ins->data [0]].mt == (ins->next->opcode - MINT_LDFLD_I1) &&
+				ins->next->data [0] == 0) {
+			int mt = ins->next->opcode - MINT_LDFLD_I1;
+			int local = ins->data [0];
+			// Replace LDLOCA + LDFLD with LDLOC, when the storing field represents
+			// the entire local. This is the case with storing to the only field of
+			// an IntPtr. We don't handle value type loads.
+			ins->next->opcode = MINT_LDLOC_I1 + mt;
+			ins->next->data [0] = local;
+			td->locals [local].indirects--;
+			interp_clear_ins (td, ins);
+			mono_interp_stats.killed_instructions++;
+			if (td->verbose_level) {
+				g_print ("Replace ldloca/ldfld pair :\n\t");
+				dump_interp_inst_newline (ins->next);
+			}
+		} else if (ins->opcode >= MINT_STFLD_I1 && ins->opcode <= MINT_STFLD_O) {
 			StackContentInfo *src = &sp [-2];
 			if (src->ins) {
-				if (src->val.type == STACK_VALUE_LOCAL) {
+				if (src->ins->opcode == MINT_LDLOCA_S && td->locals [src->ins->data [0]].mt == (ins->opcode - MINT_STFLD_I1) &&
+						ins->data [0] == 0) {
+					int mt = ins->opcode - MINT_STFLD_I1;
+					int local = src->ins->data [0];
+					interp_clear_ins (td, src->ins);
+					ins->opcode = MINT_STLOC_I1 + mt;
+					ins->data [0] = local;
+					td->locals [local].indirects--;
+					mono_interp_stats.killed_instructions++;
+					// FIXME Update stack contents for stloc, we currently rely on cprop running again.
+					clear_stack_content_info_for_local (stack, sp, local);
+					clear_local_content_info_for_local (locals, locals + td->locals_size, local);
+
+					if (td->verbose_level) {
+						g_print ("Replace ldloca/stfld pair (off %p) :\n\t", src->ins->il_offset);
+						dump_interp_inst_newline (ins);
+					}
+				} else if (src->val.type == STACK_VALUE_LOCAL && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
 					int loc_index = src->val.local;
 					int fld_offset = ins->data [0];
 					int mt = ins->opcode - MINT_STFLD_I1;
@@ -7317,7 +7351,7 @@ retry:
 					interp_clear_ins (td, src->ins);
 					mono_interp_stats.super_instructions++;
 					mono_interp_stats.killed_instructions++;
-				} else if (src->val.type == STACK_VALUE_ARG) {
+				} else if (src->val.type == STACK_VALUE_ARG && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
 					int arg_index = src->val.arg;
 					int fld_offset = ins->data [0];
 					int mt = ins->opcode - MINT_STFLD_I1;
