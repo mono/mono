@@ -5200,7 +5200,19 @@ public class DebuggerTests
 			Assert.IsInstanceOfType (typeof (ArgumentException), ex);
 		}
 	}
-
+  
+	[Test]
+  public void InvalidArgumentAssemblyGetType () {
+		Event e = run_until ("test_invalid_argument_assembly_get_type");
+		var assembly = entry_point.DeclaringType.Assembly;
+		try {
+			var type = assembly.GetType ("System.Collections.Generic.Dictionary<double, float>.Main");
+		}
+		catch (CommandException ex) {
+			Assert.AreEqual(ex.ErrorMessage, "Unexpected assembly-qualified type \"System.Collections.Generic.Dictionary<double, float>.Main\" was provided");
+		}
+	}
+  
 	[Test]
 	public void InvokeSingleStepMultiThread () {
 		vm.Detach ();
@@ -5218,12 +5230,11 @@ public class DebuggerTests
 		e = breakpoint.lastEvent;
 		req = create_step (e);
 		while (line_first_counter > 0 || line_second_counter > 0 || line_third_counter > 0) {
-
 			var thread = e.Thread;
 			var l = thread.GetFrames ()[0].Location;
 			var frame = thread.GetFrames()[0];
 
-			if (l.LineNumber == firstLineFound)
+      if (l.LineNumber == firstLineFound)
 				line_first_counter--;
 			if (l.LineNumber == firstLineFound + 1)
 				line_second_counter--;

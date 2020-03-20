@@ -30,13 +30,11 @@ if (typeof console === "undefined") {
 }
 
 if (typeof console !== "undefined") {
-	var has_console_warn = false;
-	try {
-		if (typeof console.warn !== "undefined")
-			has_console_warn = true;
-	} catch(e) {}
-
-	if (!has_console_warn)
+	if (!console.debug)
+		console.debug = console.log;
+	if (!console.trace)
+		console.trace = console.log;
+	if (!console.warn)
 		console.warn = console.log;
 }
 

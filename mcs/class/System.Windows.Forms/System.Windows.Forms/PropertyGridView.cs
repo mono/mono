@@ -598,7 +598,7 @@ namespace System.Windows.Forms.PropertyGridInternal {
 
 			if (grid_item.GridItemType == GridItemType.Category) {
 				font = bold_font;
-				brush = SystemBrushes.ControlText;
+				brush = ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.CategoryForeColor);
 
 				pevent.Graphics.DrawString (grid_item.Label, font, brush, rect.X + 1, rect.Y + ENTRY_SPACING);
 				if (grid_item == this.SelectedGridItem) {
@@ -667,11 +667,11 @@ namespace System.Windows.Forms.PropertyGridInternal {
 							       0, yLoc, V_INDENT, row_height);
 			
 				if (grid_item.GridItemType == GridItemType.Category) {
-					pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.CategoryForeColor), depth*V_INDENT,yLoc,ClientRectangle.Width-(depth*V_INDENT), row_height);
+					pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor), depth*V_INDENT,yLoc,ClientRectangle.Width-(depth*V_INDENT), row_height);
 				}
 
 				DrawGridItemLabel (grid_item, pevent,
-						   depth,
+						  depth,
 						  new Rectangle (depth * V_INDENT, yLoc, SplitterLocation - depth * V_INDENT, row_height));
 				DrawGridItemValue (grid_item, pevent,
 						  depth,

@@ -1077,27 +1077,32 @@ debugger_agent_init (void)
 static void
 finish_agent_init (gboolean on_startup)
 {
-	int res;
-
 	if (mono_atomic_cas_i32 (&inited, 1, 0) == 1)
 		return;
 
 	if (agent_config.launch) {
-		char *argv [16];
 
 		// FIXME: Generated address
 		// FIXME: Races with transport_connect ()
 
-		argv [0] = agent_config.launch;
-		argv [1] = agent_config.transport;
-		argv [2] = agent_config.address;
-		argv [3] = NULL;
-
-		res = g_spawn_async_with_pipes (NULL, argv, NULL, (GSpawnFlags)0, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		char *argv [ ] = {
+			agent_config.launch,
+			agent_config.transport,
+			agent_config.address,
+			NULL
+		};
+#ifdef G_OS_WIN32
+		// Nothing. FIXME? g_spawn_async_with_pipes is easy enough to provide for Windows if needed.
+#elif !HAVE_G_SPAWN
+		g_printerr ("g_spawn_async_with_pipes not supported on this platform\n");
+		exit (1);
+#else
+		int res = g_spawn_async_with_pipes (NULL, argv, NULL, (GSpawnFlags)0, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		if (!res) {
 			g_printerr ("Failed to execute '%s'.\n", agent_config.launch);
 			exit (1);
 		}
+#endif
 	}
 
 	transport_connect (agent_config.address);
@@ -5139,6 +5144,7 @@ ss_clear_for_assembly (SingleStepReq *req, MonoAssembly *assembly)
 static void
 mono_debugger_agent_send_crash (char *json_dump, MonoStackHash *hashes, int pause)
 {
+	MONO_ENTER_GC_UNSAFE;
 #ifndef DISABLE_CRASH_REPORTING
 	int suspend_policy;
 	GSList *events;
@@ -5181,6 +5187,7 @@ mono_debugger_agent_send_crash (char *json_dump, MonoStackHash *hashes, int paus
 	// Don't die before it is sent.
 	sleep (4);
 #endif
+	MONO_EXIT_GC_UNSAFE;
 }
 
 /*
@@ -7255,6 +7262,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		ignore_case = decode_byte (p, &p, end);
 
 		if (!mono_reflection_parse_type_checked (name, &info, error)) {
+			buffer_add_string (buf, mono_error_get_message (error));
 			mono_error_cleanup (error);
 			g_free (name);
 			mono_reflection_free_type_info (&info);
@@ -7743,6 +7751,8 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_ASSEMBLY_GET_TYPE: {
 		ERROR_DECL (error);
 		char *s = decode_string (p, &p, end);
+		char* original_s = g_strdup_printf ("\"%s\"", s);
+
 		gboolean ignorecase = decode_byte (p, &p, end);
 		MonoTypeNameParse info;
 		MonoType *t;
@@ -7758,20 +7768,33 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			mono_error_cleanup (error);
 			t = NULL;
 		} else {
-			if (info.assembly.name)
-				NOT_IMPLEMENTED;
+			if (info.assembly.name) {
+				mono_reflection_free_type_info (&info);
+				g_free (s);
+				mono_domain_set_fast (d, TRUE);
+				char* error_msg =  g_strdup_printf ("Unexpected assembly-qualified type %s was provided", original_s);
+				buffer_add_string (buf, error_msg);
+				g_free (error_msg);
+				g_free (original_s);
+				return ERR_INVALID_ARGUMENT;
+			}
 			t = mono_reflection_get_type_checked (alc, ass->image, ass->image, &info, ignorecase, TRUE, &type_resolve, error);
 			if (!is_ok (error)) {
 				mono_error_cleanup (error); /* FIXME don't swallow the error */
 				mono_reflection_free_type_info (&info);
 				g_free (s);
+				mono_domain_set_fast (d, TRUE);
+				char* error_msg =  g_strdup_printf ("Invalid type name %s", original_s);
+				buffer_add_string (buf, error_msg);
+				g_free (error_msg);
+				g_free (original_s);
 				return ERR_INVALID_ARGUMENT;
 			}
 		}
 		buffer_add_typeid (buf, domain, t ? mono_class_from_mono_type_internal (t) : NULL);
 		mono_reflection_free_type_info (&info);
 		g_free (s);
-
+		g_free (original_s);
 		mono_domain_set_fast (d, TRUE);
 
 		break;
@@ -7828,6 +7851,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
         error_init (error);
         MonoClass* mono_class = mono_class_get_checked (ass->image, token, error);
         if (!is_ok (error)) {
+            buffer_add_string (buf, mono_error_get_message (error));
             mono_error_cleanup (error);
             return ERR_INVALID_ARGUMENT;
         }
@@ -7844,6 +7868,7 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
         error_init (error);
         MonoMethod* mono_method = mono_get_method_checked (ass->image, token, NULL, NULL, error);
         if (!is_ok (error)) {
+            buffer_add_string (buf, mono_error_get_message (error));
             mono_error_cleanup (error);
             return ERR_INVALID_ARGUMENT;
         }
@@ -8696,6 +8721,7 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 
 		header = mono_method_get_header_checked (method, error);
 		if (!header) {
+			buffer_add_string (buf, mono_error_get_message (error));
 			mono_error_cleanup (error); /* FIXME don't swallow the error */
 			return ERR_INVALID_ARGUMENT;
 		}
@@ -9527,7 +9553,7 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			if (!is_ok (error)) {
 				if (s)
 					g_free (s);
-
+				buffer_add_string (buf, mono_error_get_message (error));
 				return ERR_INVALID_ARGUMENT;
 			}
 			buffer_add_string (buf, s);

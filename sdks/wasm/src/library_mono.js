@@ -24,6 +24,38 @@ var MonoSupportLib = {
 			module ["mono_load_runtime_and_bcl"] = MONO.mono_load_runtime_and_bcl;
 		},
 
+		string_decoder: {
+			copy: function (mono_string) {
+				if (mono_string == 0)
+					return null;
+
+				if (!this.mono_wasm_string_convert)
+					this.mono_wasm_string_convert = Module.cwrap ("mono_wasm_string_convert", null, ['number']);
+
+				this.mono_wasm_string_convert (mono_string);
+				var result = this.result;
+				this.result = undefined;
+				return result;
+			},
+			decode: function (start, end, save) {
+				var decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder ('utf-16le') : undefined;
+
+				var str = "";
+				if (decoder)
+					str = decoder.decode(Module.HEAPU8.subarray(start, end));
+				else {
+					for (var i = 0; i < end - start; i+=2) {
+						var char = Module.getValue (start + i, 'i16');
+						str += String.fromCharCode (char);
+					}
+				}
+				if (save)
+					this.result = str;
+
+				return str;
+			},
+		},
+
 		mono_wasm_get_call_stack: function() {
 			if (!this.mono_wasm_current_bp_id)
 				this.mono_wasm_current_bp_id = Module.cwrap ("mono_wasm_current_bp_id", 'number');
@@ -92,15 +124,15 @@ var MonoSupportLib = {
 		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
-				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", null, [ 'number']);
+				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'number', [ 'number']);
 
-			this.mono_wasm_setup_single_step (kind);
+			return this.mono_wasm_setup_single_step (kind);
 		},
 
 		mono_wasm_runtime_ready: function () {
-			console.log ("MONO-WASM: Runtime is ready.");
 			this.mono_wasm_runtime_is_ready = true;
-			debugger;
+			// DO NOT REMOVE - magic debugger init function
+			console.debug ("mono_wasm_runtime_ready", "fe00e07a-5519-4dfe-b35a-f867dbaf2e28");
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
@@ -156,6 +188,22 @@ var MonoSupportLib = {
 				options.send_to = 'WebAssembly.Runtime::DumpAotProfileData';
 			var arg = "aot:write-at-method=" + options.write_at + ",send-to-method=" + options.send_to;
 			Module.ccall ('mono_wasm_load_profiler_aot', null, ['string'], [arg]);
+		},
+
+		// options = { write_at: "<METHODNAME>", send_to: "<METHODNAME>" }
+		// <METHODNAME> should be in the format <CLASS>::<METHODNAME>.
+		// write_at defaults to 'WebAssembly.Runtime::StopProfile'.
+		// send_to defaults to 'WebAssembly.Runtime::DumpCoverageProfileData'.
+		// DumpCoverageProfileData stores the data into Module.coverage_profile_data.
+		mono_wasm_init_coverage_profiler: function (options) {
+			if (options == null)
+				options = {}
+			if (!('write_at' in options))
+				options.write_at = 'WebAssembly.Runtime::StopProfile';
+			if (!('send_to' in options))
+				options.send_to = 'WebAssembly.Runtime::DumpCoverageProfileData';
+			var arg = "coverage:write-at-method=" + options.write_at + ",send-to-method=" + options.send_to;
+			Module.ccall ('mono_wasm_load_profiler_coverage', null, ['string'], [arg]);
 		},
 
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
@@ -425,4 +473,3 @@ var MonoSupportLib = {
 
 autoAddDeps(MonoSupportLib, '$MONO')
 mergeInto(LibraryManager.library, MonoSupportLib)
-
