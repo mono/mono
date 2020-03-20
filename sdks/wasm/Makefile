@@ -673,7 +673,11 @@ run-all-%:
 	$(MAKE) -C . run-jsc-$*
 
 run-debugger-tests: build-debugger-test-app build-dbg-testsuite
-	dotnet test DebuggerTestSuite $(TEST_ARGS)
+	if [ ! -z "$(TEST_FILTER)" ]; then \
+		dotnet test DebuggerTestSuite --filter FullyQualifiedName~$(TEST_FILTER); \
+	else \
+		dotnet test DebuggerTestSuite $(TEST_ARGS); \
+	fi
 
 run-browser-tests: build-browser-test-suite
 	(cd $(BROWSER_TEST) && $(NPM) test)
