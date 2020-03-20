@@ -419,6 +419,11 @@ var MonoSupportLib = {
 		mono_wasm_add_null_var: function(className)
 		{
 			fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+			if (!fixed_class_name) {
+				// Eg, when a @className is passed from js itself, like
+				// mono_wasm_add_null_var ("string")
+				fixed_class_name = className;
+			}
 			MONO.var_info.push ({value: {
 				type: "object",
 				className: fixed_class_name,

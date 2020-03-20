@@ -1408,13 +1408,11 @@ namespace DebuggerTests
 				);
 
 				var local_var_name_prefix = "gvclass";
-#if false
 				await CompareObjectPropertiesFor (frame_locals, local_var_name_prefix, new {
 						Id = TString (null),
 						Color = TEnum ("DebuggerTests.RGB", "Red"),
 						Value = TPoint (0, 0, null, "Red")
 					});
-#endif
 
 				await CompareObjectPropertiesFor (frame_locals, $"{local_var_name_prefix}_arr",
 					new [] {
