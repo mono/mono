@@ -5202,7 +5202,7 @@ public class DebuggerTests
 	}
   
 	[Test]
-  public void InvalidArgumentAssemblyGetType () {
+	public void InvalidArgumentAssemblyGetType () {
 		Event e = run_until ("test_invalid_argument_assembly_get_type");
 		var assembly = entry_point.DeclaringType.Assembly;
 		try {
