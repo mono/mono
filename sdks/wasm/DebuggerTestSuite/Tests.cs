@@ -1076,6 +1076,145 @@ namespace DebuggerTests
 			});
 		}
 
+		[Theory]
+		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
+		public async Task InspectPrimitiveTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+			=> await TestSimpleArrayLocals (
+				line, col,
+				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:PrimitiveTypeLocals",
+				method_name: method_name,
+				etype_name: "int",
+				local_var_name_prefix: "int",
+				array: new [] { TNumber (4), TNumber (70), TNumber (1) },
+				array_elements: null,
+				test_prev_frame: test_prev_frame,
+				frame_idx: frame_idx);
+
+		static Func<int, int, string, string, object> TSimpleClass = (X, Y, Id, Color) => new {
+			X =     TNumber (X),
+			Y =     TNumber (Y),
+			Id =    TString (Id),
+			Color = TEnum ("DebuggerTests.RGB", Color),
+			//PointWithCustomGetter = TValueType ("DebuggerTests.Point")
+			// only automatic properties are supported currently!
+			PointWithCustomGetter = TString ("DebuggerTests.Point")
+		};
+
+		static Func<int, int, string, string, object> TPoint = (X, Y, Id, Color) => new {
+			X =     TNumber (X),
+			Y =     TNumber (Y),
+			Id =    TString (Id),
+			Color = TEnum ("DebuggerTests.RGB", Color),
+		};
+
+		[Theory]
+		[InlineData (49, 2, "ObjectTypeLocals", false, 0)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
+		public async Task InspectObjectArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+			=> await TestSimpleArrayLocals (
+				line, col,
+				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:ObjectTypeLocals",
+				method_name: method_name,
+				etype_name: "DebuggerTests.SimpleClass",
+				local_var_name_prefix: "class",
+				array: new [] {
+					TObject ("DebuggerTests.SimpleClass"),
+					TObject ("DebuggerTests.SimpleClass", is_null: true),
+					TObject ("DebuggerTests.SimpleClass")
+				},
+				array_elements: new [] {
+					TSimpleClass (5, -2, "class_arr#Id#0", "Green"),
+					null, // Element is null
+					TSimpleClass (123, 0, "class_arr#Id#2", "Blue") },
+				test_prev_frame: test_prev_frame,
+				frame_idx: frame_idx);
+
+		[Theory]
+		[InlineData (66, 2, "GenericTypeLocals", false, 0)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
+		public async Task InspectGenericTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+			=> await TestSimpleArrayLocals (
+				line, col,
+				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:GenericTypeLocals",
+				method_name: method_name,
+				etype_name: "DebuggerTests.GenericClass<int>",
+				local_var_name_prefix: "gclass",
+				array: new [] {
+					TObject ("DebuggerTests.GenericClass<int>", is_null: true),
+					TObject ("DebuggerTests.GenericClass<int>"),
+					TObject ("DebuggerTests.GenericClass<int>")
+				},
+				array_elements: new [] {
+					null, // Element is null
+					new {
+						Id = TString ("gclass_arr#1#Id"),
+						Color = TEnum ("DebuggerTests.RGB", "Red"),
+						Value = TNumber (5)
+					},
+					new {
+						Id = TString ("gclass_arr#2#Id"),
+						Color = TEnum ("DebuggerTests.RGB", "Blue"),
+						Value = TNumber (-12)
+					}
+				},
+				test_prev_frame: test_prev_frame,
+				frame_idx: frame_idx);
+
+		async Task TestSimpleArrayLocals (int line, int col, string entry_method_name, string method_name, string etype_name,
+							string local_var_name_prefix, object[] array, object[] array_elements,
+							bool test_prev_frame=false, int frame_idx=0)
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method ("
+							+ $"'{entry_method_name}', { (test_prev_frame ? "true" : "false") }"
+						+ "); }, 1);";
+
+				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, method_name);
+				await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
+					test_fn: (locals) => {
+						Assert.Equal (4, locals.Count ());
+						CheckArray (locals, $"{local_var_name_prefix}_arr", $"{etype_name}[]");
+						CheckArray (locals, $"{local_var_name_prefix}_arr_empty", $"{etype_name}[]");
+						CheckObject (locals, $"{local_var_name_prefix}_arr_null", $"{etype_name}[]", is_null: true);
+						CheckBool (locals, "call_other", test_prev_frame);
+				});
+
+				var prefix_arr = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
+							$"{local_var_name_prefix}_arr", array);
+
+				if (array_elements?.Length > 0) {
+					for (int i = 0; i < array_elements.Length; i ++) {
+						var i_str = $"[{i}]";
+						var label = $"{local_var_name_prefix}_arr[{i}]";
+						if (array_elements [i] == null) {
+							var act_i = prefix_arr.FirstOrDefault (jt => jt ["name"]?.Value<string> () == i_str);
+							Assert.True (act_i != null, $"[{label}] Couldn't find array element {i_str}");
+
+							await CheckValue (act_i ["value"], label, TObject (etype_name, is_null: true));
+						} else {
+							await CompareObjectPropertiesFor (prefix_arr, i_str, array_elements [i], label: label);
+						}
+					}
+				}
+
+				await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
+						$"{local_var_name_prefix}_arr_empty", new object[0]);
+			});
+		}
+
+
+
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
@@ -1124,51 +1263,98 @@ namespace DebuggerTests
 			return wait_res;
 		}
 
-		void CheckProps (JToken actual, string label, object exp_o, int num_fields=-1)
+		async Task CheckProps (JToken actual, string label, object exp_o, int num_fields=-1)
 		{
+			if (exp_o.GetType ().IsArray || exp_o is JArray) {
+				if (! (actual is JArray actual_arr)) {
+					Assert.True (false, $"[{label}] Expected to get an array here but got {actual}");
+					return;
+				}
+
+				var exp_v_arr = JArray.FromObject (exp_o);
+				Assert.Equal (exp_v_arr.Count, actual_arr.Count ());
+
+				for (int i = 0; i < exp_v_arr.Count; i ++) {
+					var exp_i = exp_v_arr [i];
+					var act_i = actual_arr [i];
+
+					Assert.True (act_i ["name"]?.Value<string> () == $"[{i}]", $"{label}-[{i}].name");
+
+					await CheckValue (act_i ["value"], $"{label}-{i}th value", exp_i);
+				}
+
+				return;
+			}
+
+			// Not an array
 			var exp = exp_o as JObject;
 			if (exp == null)
-				exp = JObject.FromObject (exp_o);
+				exp = JObject.FromObject(exp_o);
 
-			num_fields = num_fields < 0 ? exp.Values<JToken> ().Count () : num_fields;
-			Assert.True (num_fields == actual.Count (), $"[{label}] Number of fields don't match, Expected: {num_fields}, Actual: {actual.Count ()}");
+			num_fields = num_fields < 0 ? exp.Values<JToken>().Count() : num_fields;
+			Assert.True(num_fields == actual.Count(), $"[{label}] Number of fields don't match, Expected: {num_fields}, Actual: {actual.Count()}");
 
 			foreach (var kvp in exp) {
 				var exp_name = kvp.Key;
 				var exp_val = kvp.Value;
 
-				var actual_obj = actual.FirstOrDefault (jt => jt ["name"]?.Value<string> () == exp_name);
-				Assert.True (actual_obj != null, $"[{label}] Could not find property named '{exp_name}");
+				var actual_obj = actual.FirstOrDefault(jt => jt["name"]?.Value<string>() == exp_name);
+				if (actual_obj == null) {
+					Console.WriteLine($"actual: {actual}, exp_name: {exp_name}, exp_val: {exp_val}");
+					Assert.True(actual_obj != null, $"[{label}] Could not find property named '{exp_name}'");
+				}
 
-				var actual_val = actual_obj ["value"];
-				Assert.True (actual_obj != null, $"[{label}] not value found for property named '{exp_name}'");
+				var actual_val = actual_obj["value"];
+				Assert.True(actual_obj != null, $"[{label}] not value found for property named '{exp_name}'");
 
-				foreach (var jp in exp_val.Values<JProperty> ()) {
-					Console.WriteLine ($"jp: {jp}");
-					var actual_field_val = actual_val.Values<JProperty> ().FirstOrDefault (a_jp => a_jp.Name == jp.Name);
-					Assert.True (actual_field_val != null, $"[{label}] Could not find value field named {jp.Name}, for property named {exp_name}");
-
-					Assert.True (jp.Value.Value<string> () == actual_field_val.Value.Value<string> (),
-							$"[{label}] Value for field named {exp_name}'s json property named {jp.Name} didn't match.\n" +
-							$"Expected: {jp.Value.Value<string> ()}\n" +
-							$"Actual:   {actual_field_val.Value.Value<string> ()}");
+				if (exp_val.Type == JTokenType.Array) {
+					var actual_props = await GetProperties(actual_val["objectId"]?.Value<string>());
+					await CheckProps(actual_props, $"{label}-{exp_name}", exp_val);
+				} else {
+					await CheckValue(actual_val, $"{label}#{exp_name}", exp_val);
 				}
 			}
 		}
 
-		async Task CheckLocalsOnFrame (JToken frame, string script_loc, int line, int column, string function_name, Action<JToken> test_fn = null)
+		async Task CheckValue (JToken actual_val, string label, JToken exp_val)
+		{
+			if (exp_val ["type"] == null && actual_val ["objectId"] != null) {
+				var new_val = await GetProperties (actual_val ["objectId"].Value<string> ());
+				await CheckProps (new_val, $"{label}-{actual_val ["objectId"]?.Value<string> ()}", exp_val);
+				return;
+			}
+
+			foreach (var jp in exp_val.Values<JProperty> ()) {
+				var exp_val_str = jp.Value.Value<string> ();
+				bool null_or_empty_exp_val = String.IsNullOrEmpty (exp_val_str);
+
+				var actual_field_val = actual_val.Values<JProperty> ().FirstOrDefault (a_jp => a_jp.Name == jp.Name);
+				var actual_field_val_str = actual_field_val?.Value?.Value<string> ();
+				if (null_or_empty_exp_val && String.IsNullOrEmpty (actual_field_val_str))
+					continue;
+
+				Assert.True (actual_field_val != null, $"[{label}] Could not find value field named {jp.Name}");
+
+				Assert.True (exp_val_str == actual_field_val_str,
+						$"[{label}] Value for json property named {jp.Name} didn't match.\n" +
+						$"Expected: {jp.Value.Value<string> ()}\n" +
+						$"Actual:   {actual_field_val.Value.Value<string> ()}");
+			}
+		}
+
+		async Task<JToken> CheckLocalsOnFrame (JToken frame, string script_loc, int line, int column, string function_name, Action<JToken> test_fn = null)
 		{
 			CheckLocation (script_loc, line, column, ctx.scripts, frame ["location"]);
 			Assert.Equal (function_name, frame ["functionName"].Value<string> ());
 
-			await CheckLocalsOnFrame (frame, test_fn);
+			return await CheckLocalsOnFrame (frame, test_fn);
 		}
 
 		async Task<JToken> CheckLocalsOnFrame (JToken frame, object expected, string label)
 		{
 			var locals = await GetProperties (frame ["callFrameId"].Value<string> ());
 			try {
-				CheckProps (locals, label, expected);
+				await CheckProps (locals, label, expected);
 				return locals;
 			} catch {
 				Console.WriteLine ($"CheckLocalsOnFrame failed for locals: {locals}");
@@ -1193,7 +1379,7 @@ namespace DebuggerTests
 			var obj_props = await CheckObjectOnFrameLocals (locals, name, (jt) => {});
 			try {
 				if (o != null)
-					CheckProps (obj_props, label, o);
+					await CheckProps (obj_props, label, o);
 			} catch {
 				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {obj_props}");
 				throw;
@@ -1215,7 +1401,7 @@ namespace DebuggerTests
 			var props = await CheckObjectOnLocals (locals, name, (jt) => {});
 			try {
 				if (o != null)
-					CheckProps (props, label, o);
+					await CheckProps (props, label, o);
 				return props;
 			} catch {
 				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {props}");
@@ -1276,8 +1462,14 @@ namespace DebuggerTests
 			return bp1_res;
 		}
 
+		//FIXME: um maybe we don't need to convert jobject right here!
 		static JObject TString (string value) =>
-			JObject.FromObject (new { type = "string", value = @value, description = @value });
+			value == null
+				? TObject ("string", is_null: true)
+				: JObject.FromObject (new { type = "string", value = @value, description = @value });
+
+		static JObject TNumber (int value) =>
+			JObject.FromObject (new { type = "number", value = @value.ToString (), description = value.ToString () });
 
 		static JObject TValueType (string className, object members = null) =>
 			JObject.FromObject (new { type = "object", isValueType = true, className = className, description = className });
@@ -1289,6 +1481,12 @@ namespace DebuggerTests
 			is_null
 				? JObject.FromObject (new { type = "object", className = className, description = className, subtype = is_null ? "null" : null })
 				: JObject.FromObject (new { type = "object", className = className, description = className });
+
+		static JObject TArray (string className)
+			=> JObject.FromObject (new { type = "object", className = className, description = className, subtype = "array" });
+
+		static JObject TBool (bool value)
+			=> JObject.FromObject (new { type = "boolean", value = @value, description = @value ? "true" : "false" });
 
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
