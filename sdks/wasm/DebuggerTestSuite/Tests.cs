@@ -1348,7 +1348,7 @@ namespace DebuggerTests
 							var act_i = prefix_arr.FirstOrDefault (jt => jt ["name"]?.Value<string> () == i_str);
 							Assert.True (act_i != null, $"[{label}] Couldn't find array element {i_str}");
 
-							await CheckValue (act_i ["value"], label, TObject (etype_name, is_null: true));
+							await CheckValue (act_i ["value"], TObject (etype_name, is_null: true), label);
 						} else {
 							await CompareObjectPropertiesFor (prefix_arr, i_str, array_elements [i], label: label);
 						}
@@ -1686,7 +1686,7 @@ namespace DebuggerTests
 			return wait_res;
 		}
 
-		async Task CheckProps (JToken actual, string label, object exp_o, int num_fields=-1)
+		async Task CheckProps (JToken actual, object exp_o, string label, int num_fields=-1)
 		{
 			if (exp_o.GetType ().IsArray || exp_o is JArray) {
 				if (! (actual is JArray actual_arr)) {
@@ -1703,7 +1703,7 @@ namespace DebuggerTests
 
 					Assert.True (act_i ["name"]?.Value<string> () == $"[{i}]", $"{label}-[{i}].name");
 
-					await CheckValue (act_i ["value"], $"{label}-{i}th value", exp_i);
+					await CheckValue (act_i["value"], exp_i, $"{label}-{i}th value");
 				}
 
 				return;
@@ -1732,18 +1732,18 @@ namespace DebuggerTests
 
 				if (exp_val.Type == JTokenType.Array) {
 					var actual_props = await GetProperties(actual_val["objectId"]?.Value<string>());
-					await CheckProps(actual_props, $"{label}-{exp_name}", exp_val);
+					await CheckProps (actual_props, exp_val, $"{label}-{exp_name}");
 				} else {
-					await CheckValue(actual_val, $"{label}#{exp_name}", exp_val);
+					await CheckValue (actual_val, exp_val, $"{label}#{exp_name}");
 				}
 			}
 		}
 
-		async Task CheckValue (JToken actual_val, string label, JToken exp_val)
+		async Task CheckValue (JToken actual_val, JToken exp_val, string label)
 		{
 			if (exp_val ["type"] == null && actual_val ["objectId"] != null) {
 				var new_val = await GetProperties (actual_val ["objectId"].Value<string> ());
-				await CheckProps (new_val, $"{label}-{actual_val ["objectId"]?.Value<string> ()}", exp_val);
+				await CheckProps (new_val, exp_val, $"{label}-{actual_val["objectId"]?.Value<string>()}");
 				return;
 			}
 
@@ -1777,7 +1777,7 @@ namespace DebuggerTests
 		{
 			var locals = await GetProperties (frame ["callFrameId"].Value<string> ());
 			try {
-				await CheckProps (locals, label, expected);
+				await CheckProps (locals, expected, label);
 				return locals;
 			} catch {
 				Console.WriteLine ($"CheckLocalsOnFrame failed for locals: {locals}");
@@ -1802,7 +1802,7 @@ namespace DebuggerTests
 			var obj_props = await CheckObjectOnFrameLocals (locals, name, (jt) => {});
 			try {
 				if (o != null)
-					await CheckProps (obj_props, label, o);
+					await CheckProps (obj_props, o, label);
 			} catch {
 				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {obj_props}");
 				throw;
@@ -1824,7 +1824,7 @@ namespace DebuggerTests
 			var props = await CheckObjectOnLocals (locals, name, (jt) => {});
 			try {
 				if (o != null)
-					await CheckProps (props, label, o);
+					await CheckProps (props, o, label);
 				return props;
 			} catch {
 				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {props}");
