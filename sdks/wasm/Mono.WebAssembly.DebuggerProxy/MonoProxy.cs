@@ -206,7 +206,25 @@ namespace WebAssembly.Net.Debugging {
 							break;
 							}
 						case "array": {
-							await GetDetails (id, MonoCommands.GetArrayValues (int.Parse (parts [2])), token);
+							switch (parts.Length) {
+							case 3: {
+								await GetDetails (id, MonoCommands.GetArrayValues (int.Parse (parts [2])), token);
+								break;
+							}
+							case 4: {
+								// This form of the id is being used only for valuetypes right now
+								if (!IsValueTypeCached (id, objId)) {
+									var arrayObjectId = int.Parse (parts [2]);
+									var idx = int.Parse (parts [3]);
+									await GetDetails (id, MonoCommands.GetArrayValueExpanded (arrayObjectId, idx), token, send_response: false);
+								}
+								GetDetailsForValueType (id, objId, token);
+								break;
+							}
+							default:
+								throw new ArgumentException ($"Unknown objectId format for array: {objId}");
+							}
+
 							break;
 							}
 						case "valuetype": {
@@ -390,7 +408,7 @@ namespace WebAssembly.Net.Debugging {
 				context.ClearState ();
 				await SendCommand (msg_id, "Debugger.stepOut", new JObject (), token);
 				return false;
-			} 
+			}
 
 			SendResponse (msg_id, Result.Ok (new JObject ()), token);
 

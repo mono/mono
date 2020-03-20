@@ -36,6 +36,7 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_clear_all_breakpoints (void);
 EMSCRIPTEN_KEEPALIVE int mono_wasm_setup_single_step (int kind);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_object_properties (int object_id, gboolean expand_value_types);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_values (int object_id);
+EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_value_expanded (int object_id, int idx);
 
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
@@ -803,8 +804,6 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 {
 	MonoClassField *f;
 	MonoProperty *p;
-	MonoObject *exc;
-	MonoObject *res;
 	MonoMethodSignature *sig;
 	gpointer iter = NULL;
 	ERROR_DECL (error);
@@ -920,6 +919,31 @@ describe_array_values (guint64 objectId)
 		elem = (gpointer*)((char*)arr->vector + (i * esize));
 		describe_value (m_class_get_byval_arg (m_class_get_element_class (arr->obj.vtable->klass)), elem, FALSE);
 	}
+	return TRUE;
+}
+
+/* Expands valuetypes */
+static gboolean
+describe_array_value_expanded (guint64 objectId, guint64 idx)
+{
+	int esize;
+	gpointer elem;
+	ObjRef *ref = (ObjRef *)g_hash_table_lookup (objrefs, GINT_TO_POINTER (objectId));
+	if (!ref) {
+		return FALSE;
+	}
+	MonoArray *arr = (MonoArray *)mono_gchandle_get_target_internal (ref->handle);
+	MonoObject *obj = &arr->obj;
+	if (!obj) {
+		return FALSE;
+	}
+	if (idx >= arr->max_length)
+		return FALSE;
+
+	esize = mono_array_element_size (obj->vtable->klass);
+	elem = (gpointer*)((char*)arr->vector + (idx * esize));
+	describe_value (m_class_get_byval_arg (m_class_get_element_class (arr->obj.vtable->klass)), elem, TRUE);
+
 	return TRUE;
 }
 
@@ -1042,6 +1066,14 @@ mono_wasm_get_array_values (int object_id)
 	DEBUG_PRINTF (2, "getting array values %d\n", object_id);
 
 	describe_array_values(object_id);
+}
+
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_get_array_value_expanded (int object_id, int idx)
+{
+	DEBUG_PRINTF (2, "getting array value %d for idx %d\n", object_id, idx);
+
+	describe_array_value_expanded (object_id, idx);
 }
 
 // Functions required by debugger-state-machine.

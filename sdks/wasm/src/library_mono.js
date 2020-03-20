@@ -201,6 +201,28 @@ var MonoSupportLib = {
 			this.mono_wasm_get_array_values_info (objId);
 
 			var res = MONO._fixup_name_value_objects (this.var_info);
+			for (var i = 0; i < res.length; i++) {
+				if (res [i].value.isValueType != undefined && res [i].value.isValueType)
+					res [i].value.objectId = `dotnet:array:${objId}:${i}`;
+			}
+
+			this.var_info = [];
+
+			return res;
+		},
+
+		mono_wasm_get_array_value_expanded: function(objId, idx) {
+			if (!this.mono_wasm_get_array_value_expanded_info)
+				this.mono_wasm_get_array_value_expanded_info = Module.cwrap ("mono_wasm_get_array_value_expanded", null, [ 'number', 'number' ]);
+
+			this.var_info = [];
+			this.mono_wasm_get_array_value_expanded_info (objId, idx);
+
+			var res = MONO._fixup_name_value_objects (this.var_info);
+			// length should be exactly one!
+			if (res [0].value.isValueType != undefined && res [0].value.isValueType)
+				res [0].value.objectId = `dotnet:array:${objId}:${idx}`;
+
 			this.var_info = [];
 
 			return res;
