@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IssuesTestSuite", "IssuesTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZipTestSuite", "ZipTestSuite\ZipTestSuite.csproj", "{3653FD3C-A796-4BAB-9545-C0B8A9057DD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpStreamingTestSuite", "HttpStreamingTestSuite\HttpStreamingTestSuite.csproj", "{7E035B0D-F5F1-4432-84D0-4034079B1E0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,5 +71,13 @@ Global
 		{3653FD3C-A796-4BAB-9545-C0B8A9057DD0}.DebugThreads|Any CPU.Build.0 = DebugThreads|Any CPU
 		{3653FD3C-A796-4BAB-9545-C0B8A9057DD0}.ReleaseThreads|Any CPU.ActiveCfg = ReleaseThreads|Any CPU
 		{3653FD3C-A796-4BAB-9545-C0B8A9057DD0}.ReleaseThreads|Any CPU.Build.0 = ReleaseThreads|Any CPU
+		{7E035B0D-F5F1-4432-84D0-4034079B1E0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E035B0D-F5F1-4432-84D0-4034079B1E0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E035B0D-F5F1-4432-84D0-4034079B1E0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E035B0D-F5F1-4432-84D0-4034079B1E0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E035B0D-F5F1-4432-84D0-4034079B1E0A}.DebugThreads|Any CPU.ActiveCfg = DebugThreads|Any CPU
+		{7E035B0D-F5F1-4432-84D0-4034079B1E0A}.DebugThreads|Any CPU.Build.0 = DebugThreads|Any CPU
+		{7E035B0D-F5F1-4432-84D0-4034079B1E0A}.ReleaseThreads|Any CPU.ActiveCfg = ReleaseThreads|Any CPU
+		{7E035B0D-F5F1-4432-84D0-4034079B1E0A}.ReleaseThreads|Any CPU.Build.0 = ReleaseThreads|Any CPU
 	EndGlobalSection
 EndGlobal

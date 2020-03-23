@@ -5,5 +5,9 @@
     <PackageReference Update="WebAssembly.Net.Http" Version="0.2.2" />
     <PackageReference Update="WebAssembly.Net.WebSockets" Version="0.2.2" />  
     <PackageReference Update="System.Memory" Version="4.5.3" />
+    <PackageReference Update="Grpc.Net.Client" Version="2.28.0-pre2" />
+    <PackageReference Update="Grpc.Tools" Version="2.28.0-pre3" />
+    <PackageReference Update="Google.Protobuf" Version="3.11.4" />
+    <PackageReference Update="Grpc.Net.Client.Web" Version="2.28.0-pre2" />
   </ItemGroup>
 </Project>
