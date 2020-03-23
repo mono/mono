@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "BrowserGrpcTestsService": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50051;http://localhost:50052"
+    }
+  }
+}
