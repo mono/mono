@@ -2839,18 +2839,21 @@ static gboolean
 try_process_suspend (void *the_tls, MonoContext *ctx, gboolean from_breakpoint)
 {
 	DebuggerTlsData *tls = (DebuggerTlsData*)the_tls;
-
-	if (suspend_count > 0) { //se ja tem um pedido pra suspender tudo
+	/* if there is a suspend pending that is not executed yes */
+	if (suspend_count > 0) { 
 		/* Fastpath during invokes, see in process_suspend () */
-		if (suspend_count - tls->resume_count == 0) //mas eu ja me resumi ta ok, vou retornar false
+		/* if there is a suspend pending but this thread is already resumed, we shouldn't suspend it again and the breakpoint/ss can run */
+		if (suspend_count - tls->resume_count == 0) 
 			return FALSE;
-		if (tls->invoke) //se está num invoke está ok tb vai poder suspender
+		/* if there is in a invoke the breakpoint/step should be executed even with the suspend pending */
+		if (tls->invoke) 
 			return FALSE;
+		/* with the multithreaded single step check if there is a suspend_count pending in the current thread and not in the vm */
 		if (from_breakpoint && tls->suspend_count <= tls->resume_count_internal)
 			return FALSE;
 		process_suspend (tls, ctx);
 		return TRUE;
-	}//se nao está suspenso eu retorno falso e ta tudo certo pq vou suspender quando processar o evento
+	} /* if there isn't any suspend pending, the breakpoint/ss will be executed and will suspend then vm when the event is sent */
 	return FALSE;
 }
 
