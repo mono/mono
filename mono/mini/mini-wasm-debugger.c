@@ -399,7 +399,7 @@ mono_wasm_setup_single_step (int kind)
 		}
 	}
 	if (!isBPOnNativeCode) {
-		mono_de_cancel_ss ();
+		mono_de_cancel_all_ss ();
 	}
 	return isBPOnNativeCode;
 }
