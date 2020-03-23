@@ -15,9 +15,21 @@ namespace HttpStreamingTestSuite
 {
     public class Program
     {
-        private static GrpcChannel Channel { get; set; }
+        static GrpcChannel Channel { get; set; }
 
         const string target = "http://localhost:50051";
+
+        public static bool IsStreamingSupported()
+        {
+            using (HttpClient httpClient = CreateHttpClient())
+                return WasmHttpMessageHandler.StreamingSupported;
+        }
+
+        public static bool IsStreamingEnabled()
+        {
+            using (HttpClient httpClient = CreateHttpClient())
+                return WasmHttpMessageHandler.StreamingEnabled;
+        }
         public static void SetupGrpcChannel ()
         {
             var wasmHttpMessageHandlerType = System.Reflection.Assembly.Load("WebAssembly.Net.Http").GetType("WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
@@ -35,10 +47,10 @@ namespace HttpStreamingTestSuite
 
         }
 
-        private static int currentCount = 0;
-        private static CancellationTokenSource? cts;
+        static int currentCount = 0;
+        static CancellationTokenSource? cts;
 
-        private async Task<object> StartCancelTest()
+        public static async Task<object> StartCancelTest()
         {
             var requestTcs = new TaskCompletionSource<object>();
 
@@ -76,7 +88,7 @@ namespace HttpStreamingTestSuite
 
         }
 
-        public async Task<int> StopAndTestIfCancelled ()
+        public static async Task<int> StopAndTestIfCancelled ()
         {
             cts?.Cancel();
             cts = null;
@@ -85,6 +97,19 @@ namespace HttpStreamingTestSuite
             var call = await client.IsTestCancelledAsync(new Empty());
             Console.WriteLine(call.Count);
             return call.Count;
+        }
+
+        static HttpClient CreateHttpClient()
+        {
+            //Console.WriteLine("Create  HttpClient");
+            string BaseApiUrl = string.Empty;
+            var window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
+            using (var location = (JSObject)window.GetObjectProperty("location"))
+            {
+                BaseApiUrl = (string)location.GetObjectProperty("origin");
+            }
+            WasmHttpMessageHandler.StreamingEnabled = true;
+            return new HttpClient() { BaseAddress = new Uri(BaseApiUrl) };
         }
     }
 }
