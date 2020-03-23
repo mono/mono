@@ -17,15 +17,15 @@
     <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Memory" />
+    <PackageReference Include="System.Memory"  />
     <PackageReference Include="WebAssembly.Bindings"  />
-    <PackageReference Include="WebAssembly.Net.Http" />
+    <PackageReference Include="WebAssembly.Net.Http"  />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" />
-    <PackageReference Include="Grpc.Net.Client" />
-    <PackageReference Include="Grpc.Net.Client.Web" />
-    <PackageReference Include="Grpc.Tools">
+    <PackageReference Include="Google.Protobuf"  />
+    <PackageReference Include="Grpc.Net.Client"  />
+    <PackageReference Include="Grpc.Net.Client.Web"  />
+    <PackageReference Include="Grpc.Tools" >
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

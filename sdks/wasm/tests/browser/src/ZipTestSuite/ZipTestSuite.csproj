@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DebugThreads|AnyCPU' ">
@@ -19,10 +19,10 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseThreads|AnyCPU' ">
     <IntermediateOutputPath>obj\Release\netstandard2.0</IntermediateOutputPath>
     <Optimize>true</Optimize>
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD;NETSTANDARD2_1</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="WebAssembly.Bindings" />
+    <PackageReference Include="WebAssembly.Bindings"  />
   </ItemGroup>
 
 </Project>
