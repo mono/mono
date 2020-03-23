@@ -87,7 +87,7 @@ namespace TestSuite
         private static async Task Fetch()
         {
             var client = CreateHttpClient();
-            var response = await client.GetStringAsync("base/publish/netstandard2.0/NowIsTheTime.txt");
+            var response = await client.GetStringAsync("base/publish/NowIsTheTime.txt");
             fetchResponse.Push(response);
         }   
 
@@ -103,7 +103,7 @@ namespace TestSuite
         private static async Task FetchHeaders()
         {
             var client = CreateHttpClient();
-            var response = await client.GetAsync("base/publish/netstandard2.0/NowIsTheTime.txt");
+            var response = await client.GetAsync("base/publish/NowIsTheTime.txt");
             // Raise exception if fails
             response.EnsureSuccessStatusCode();
             // On success, return sign in results from the server response packet

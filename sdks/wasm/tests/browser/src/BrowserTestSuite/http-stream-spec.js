@@ -38,7 +38,7 @@ describe("The WebAssembly Http Streaming Test Suite",function(){
       //karmaHTML.httpstreamspec.document gives the access to the Document object of 'http-stream-spec.html' file
       var _document = karmaHTML.httpstreamspec.document;
 
-      assert.equal(_document.Module.BINDING.call_static_method("[HttpStreamingTestSuite]TestSuite.Program:IsStreamingSupported", []), true);
+      assert.equal(_document.Module.BINDING.call_static_method("[HttpStreamingTestSuite]HttpStreamingTestSuite.Program:IsStreamingSupported", []), true);
     });    
 
 
@@ -46,7 +46,7 @@ describe("The WebAssembly Http Streaming Test Suite",function(){
       //karmaHTML.httpstreamspec.document gives the access to the Document object of 'http-stream-spec.html' file
       var _document = karmaHTML.httpstreamspec.document;
 
-      assert.equal(_document.Module.BINDING.call_static_method("[HttpStreamingTestSuite]TestSuite.Program:IsStreamingEnabled", []), true);
+      assert.equal(_document.Module.BINDING.call_static_method("[HttpStreamingTestSuite]HttpStreamingTestSuite.Program:IsStreamingEnabled", []), true);
     });    
 
  

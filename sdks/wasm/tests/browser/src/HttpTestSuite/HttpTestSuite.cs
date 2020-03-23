@@ -88,7 +88,7 @@ namespace TestSuite
             var requestTcs = new TaskCompletionSource<object>();
 
             using (HttpClient client = CreateHttpClient())
-            using (Stream stream = await client.GetStreamAsync("base/publish/netstandard2.0/NowIsTheTime.txt"))
+            using (Stream stream = await client.GetStreamAsync("base/publish/NowIsTheTime.txt"))
             {
                 requestTcs.SetResult(await stream.ReadAsync(new byte[1], 0, 0));
             }
