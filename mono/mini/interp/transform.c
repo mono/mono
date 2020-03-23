@@ -7315,6 +7315,7 @@ retry:
 			td->locals [local].indirects--;
 			interp_clear_ins (td, ins);
 			mono_interp_stats.killed_instructions++;
+			mono_interp_stats.ldlocas_removed++;
 			if (td->verbose_level) {
 				g_print ("Replace ldloca/ldfld pair :\n\t");
 				dump_interp_inst_newline (ins->next);
@@ -7331,6 +7332,7 @@ retry:
 					ins->data [0] = local;
 					td->locals [local].indirects--;
 					mono_interp_stats.killed_instructions++;
+					mono_interp_stats.ldlocas_removed++;
 					// FIXME Update stack contents for stloc, we currently rely on cprop running again.
 					clear_stack_content_info_for_local (stack, sp, local);
 					clear_local_content_info_for_local (locals, locals + td->locals_size, local);
