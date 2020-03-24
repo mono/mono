@@ -6865,6 +6865,9 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 		flags |= MONO_AOT_METHOD_FLAG_HAS_PATCHES;
 	if (needs_ctx && ctx)
 		flags |= MONO_AOT_METHOD_FLAG_HAS_CTX;
+
+	/* FIXME: Encode the flags into the upper byte, so in the ideal case, the info is 4 bytes */
+	encode_int (cfg->method_index, p, &p);
 	encode_value (flags, p, &p);
 	if (flags & MONO_AOT_METHOD_FLAG_HAS_CCTOR)
 		encode_klass_ref (acfg, method->klass, p, &p);
@@ -6884,7 +6887,15 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 
 	g_assert (p - buf < buf_size);
 
-	cfg->method_info_offset = add_to_blob (acfg, buf, p - buf);
+	if (cfg->compile_llvm) {
+		char *symbol = g_strdup_printf ("info_%s", cfg->llvm_method_name);
+		cfg->llvm_info_var = mono_llvm_emit_aot_data_aligned (symbol, buf, p - buf, 1);
+		g_free (symbol);
+		/* aot-runtime.c will use this to check whenever this is an llvm method */
+		cfg->method_info_offset = 0;
+	} else {
+		cfg->method_info_offset = add_to_blob (acfg, buf, p - buf);
+	}
 	g_free (buf);
 }
 

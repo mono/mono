@@ -1542,6 +1542,7 @@ typedef struct {
 	/* For llvm */
 	guint32 got_access_count;
 	gpointer llvmonly_init_cond;
+	gpointer llvm_dummy_info_var, llvm_info_var;
 	/* Symbol used to refer to this method in generated assembly */
 	char *asm_symbol;
 	char *asm_debug_symbol;
