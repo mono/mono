@@ -1,5 +1,7 @@
 TOP=$(realpath $(CURDIR)/../../..)
 -include $(TOP)/sdks/Make.config
+include $(TOP)/sdks/versions.mk
+include $(TOP)/sdks/paths.mk
 
 ifndef DISABLE_CLASSIC
 ALL_TARGETS += app-simulator app-device.a
@@ -13,8 +15,6 @@ all: $(ALL_TARGETS)
 
 CONFIGURATION?=release
 
-XCODE_ROOT=$(shell xcode-select -p)
-
 UNREFERENCED_SYMBOLS_COMMON = \
         _xamarin_log \
         _xamarin_timezone_get_data \
@@ -27,8 +27,8 @@ UNREFERENCED_SYMBOLS_CLASSIC = \
         _ReadZStream \
         _WriteZStream
 
-CC = $(XCODE_ROOT)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
-SIM_SYSROOT = $(XCODE_ROOT)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
+CC = $(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
+SIM_SYSROOT = $(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
 SIM_ARCH = x86_64
 SIM_CLASSIC_SDK_DIR = ../../out/ios-sim64-$(CONFIGURATION)
 SIM_NETCORE_SDK_DIR = ../../out/ios-netcore_sim64-$(CONFIGURATION)
@@ -80,7 +80,7 @@ endif
 DEV_ARCH = arm64
 DEV_CLASSIC_SDK_DIR = ../../out/ios-target64-$(CONFIGURATION)
 DEV_NETCORE_SDK_DIR = ../../out/ios-netcore_target64-$(CONFIGURATION)
-DEV_SYSROOT = $(XCODE_ROOT)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/
+DEV_SYSROOT = $(XCODE_DIR)/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/
 DEV_CFLAGS = \
 	-isysroot $(DEV_SYSROOT) \
 	-std=gnu11 \
