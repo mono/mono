@@ -365,12 +365,19 @@ public class Tests : TestsBase, ITest2
 		if (args.Length > 0 && args [0] == "invoke-abort")
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
+
+		test_invalid_argument_assembly_get_type ();
+
 		return 3;
 	}
 
 	public static void local_reflect () {
 		//Breakpoint line below, and reflect someField via ObjectMirror;
 		LocalReflectClass.RunMe ();
+	}
+
+	public static void test_invalid_argument_assembly_get_type () {
+
 	}
 
 	public static void breakpoints () {

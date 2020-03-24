@@ -347,7 +347,7 @@ namespace Mono.Debugger.Soft
 			case ErrorCode.NO_SEQ_POINT_AT_IL_OFFSET:
 				throw new ArgumentException ("Cannot set breakpoint on the specified IL offset.");
 			default:
-				throw new CommandException (args.ErrorCode);
+				throw new CommandException (args.ErrorCode, args.ErrorMessage);
 			}
 		}
 
@@ -792,12 +792,17 @@ namespace Mono.Debugger.Soft
 
 	public class CommandException : Exception {
 
-		internal CommandException (ErrorCode error_code) : base ("Debuggee returned error code " + error_code + ".") {
+		internal CommandException (ErrorCode error_code, string error_message) : base ("Debuggee returned error code " + error_code + (error_message == null || error_message.Length == 0 ? "." : " - " + error_message + ".")) {
 			ErrorCode = error_code;
+			ErrorMessage = error_message;
 		}
 
 		public ErrorCode ErrorCode {
 			get; set;
+		}
+
+		public string ErrorMessage {
+			get; internal set;
 		}
 	}
 
