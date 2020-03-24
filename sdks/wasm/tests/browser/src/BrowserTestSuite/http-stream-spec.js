@@ -4,7 +4,7 @@
 describe("The WebAssembly Http Streaming Test Suite",function(){
     
     const DEFAULT_TIMEOUT = 1000;
-    const DEFAULT_WS_TIMEOUT = 5000;
+    const DEFAULT_STREAMING_TIMEOUT = 5000;
 
     beforeAll(function(done){
       //load DOM custom matchers from karma-jasmine-dom package
@@ -47,7 +47,35 @@ describe("The WebAssembly Http Streaming Test Suite",function(){
       var _document = karmaHTML.httpstreamspec.document;
 
       assert.equal(_document.Module.BINDING.call_static_method("[HttpStreamingTestSuite]HttpStreamingTestSuite.Program:IsStreamingEnabled", []), true);
-    });    
+    });   
+    
+    it('StartCancelTest: should tear down fetch connection on cancel', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-stream-spec.html' file
+      var _document = karmaHTML.httpstreamspec.document;
+      
+      try {
+      _document.Module.BINDING.call_static_method("[HttpStreamingTestSuite]HttpStreamingTestSuite.Program:StartCancelTest").then(
+        (result) => 
+        {
+            //console.log("we are here: " + result);
+            var isCancelled = BINDING.call_static_method("[TestStaticWasm]TestStaticWasm.Program:StopAndTestIfCancelled").then(
+              (isCancelled) => {
+                  console.log(isCancelled);
+                  //console.log("Total Memory: " + Module.HEAPU8.byteLength);
+                  assert.equal(isCancelled, 1, "result doesn't match cancelled");
+                  done()
+              },
+              (error) => done.fail(error))
+        },
+        (error) => done.fail(error)
 
- 
+      );
+      }
+      catch (errrrr) 
+      {
+        done.fail(errrrr);
+      }
+      
+    }, DEFAULT_STREAMING_TIMEOUT);
+
   });
