@@ -8,6 +8,7 @@ dependencies:
   - .yamato/Publish To Stevedore.yml
   - .yamato/Update Il2cpp-deps.yml
 commands:
+  - choco install python3 --pre
   - |
     git clone git@github.cds.internal.unity3d.com:unity/prtools.git
     cd prtools
@@ -21,5 +22,8 @@ commands:
       echo "PRTools failed"
       EXIT /B %errorlevel%
     )
+    cd %YAMATO_SOURCE_DIR%
+    py -m pip install requests
+    py prtools/katana-ci/katana_launcher.py --verbose --dontwait --project="proj0-ABuildVerification" --repo=unity --branch=scripting/mbe/staging --user="ashwini ashwini@unity3d.com" 
 timeout: 1
 
