@@ -6865,10 +6865,10 @@ emit_method_info (MonoAotCompile *acfg, MonoCompile *cfg)
 		flags |= MONO_AOT_METHOD_FLAG_HAS_PATCHES;
 	if (needs_ctx && ctx)
 		flags |= MONO_AOT_METHOD_FLAG_HAS_CTX;
+	/* Saved into another table so it can be accessed without having access to this data */
+	cfg->aot_method_flags = flags;
 
-	/* FIXME: Encode the flags into the upper byte, so in the ideal case, the info is 4 bytes */
 	encode_int (cfg->method_index, p, &p);
-	encode_value (flags, p, &p);
 	if (flags & MONO_AOT_METHOD_FLAG_HAS_CCTOR)
 		encode_klass_ref (acfg, method->klass, p, &p);
 	if (needs_ctx && ctx)
@@ -10367,10 +10367,11 @@ emit_code (MonoAotCompile *acfg)
 }
 
 static void
-emit_info (MonoAotCompile *acfg)
+emit_method_info_table (MonoAotCompile *acfg)
 {
 	int oindex, i;
 	gint32 *offsets;
+	guint8 *method_flags;
 
 	offsets = g_new0 (gint32, acfg->nmethods);
 
@@ -10388,6 +10389,14 @@ emit_info (MonoAotCompile *acfg)
 	acfg->stats.offsets_size += emit_offset_table (acfg, "method_info_offsets", MONO_AOT_TABLE_METHOD_INFO_OFFSETS, acfg->nmethods, 10, offsets);
 
 	g_free (offsets);
+
+	/* Emit a separate table for method flags, its needed at runtime */
+	method_flags = g_new0 (guint8, acfg->nmethods);
+	for (i = 0; i < acfg->nmethods; ++i) {
+		if (acfg->cfgs [i])
+			method_flags [acfg->cfgs [i]->method_index] = acfg->cfgs [i]->aot_method_flags;
+	}
+	emit_aot_data (acfg, MONO_AOT_TABLE_FLAGS_TABLE, "method_flags_table", method_flags, acfg->nmethods);
 }
 
 #endif /* #if !defined(DISABLE_AOT) && !defined(DISABLE_JIT) */
@@ -11408,6 +11417,7 @@ emit_aot_file_info (MonoAotCompile *acfg, MonoAotFileInfo *info)
 			symbols [sindex ++] = NULL;
 		symbols [sindex ++] = "image_table";
 		symbols [sindex ++] = "weak_field_indexes";
+		symbols [sindex ++] = "method_flags_table";
 	}
 
 	symbols [sindex ++] = "mem_end";
@@ -14172,7 +14182,7 @@ emit_aot_image (MonoAotCompile *acfg)
 
 	emit_code (acfg);
 
-	emit_info (acfg);
+	emit_method_info_table (acfg);
 
 	emit_extra_methods (acfg);
 

@@ -97,6 +97,7 @@ typedef enum {
 	MONO_AOT_TABLE_EXTRA_METHOD_INFO_OFFSETS,
 	MONO_AOT_TABLE_EXTRA_METHOD_TABLE,
 	MONO_AOT_TABLE_WEAK_FIELD_INDEXES,
+	MONO_AOT_TABLE_FLAGS_TABLE,
 	MONO_AOT_TABLE_NUM
 } MonoAotFileTable;
 
@@ -144,6 +145,7 @@ typedef struct MonoAotFileInfo
 	gpointer image_table;
 	/* Points to an array of weak field indexes */
 	gpointer weak_field_indexes;
+	guint8 *method_flags_table;
 
 	gpointer mem_end;
 	/* The GUID of the assembly which the AOT image was generated from */

@@ -1539,6 +1539,7 @@ typedef struct {
 
 	/* Used by AOT */
 	guint32 got_offset, ex_info_offset, method_info_offset, method_index;
+	guint32 aot_method_flags;
 	/* For llvm */
 	guint32 got_access_count;
 	gpointer llvmonly_init_cond;

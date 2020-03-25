@@ -10728,6 +10728,7 @@ emit_aot_file_info (MonoLLVMModule *module)
 		fields [tindex ++] = LLVMGetNamedGlobal (lmodule, "llvm_got_info_offsets");
 		fields [tindex ++] = LLVMGetNamedGlobal (lmodule, "image_table");
 		fields [tindex ++] = LLVMGetNamedGlobal (lmodule, "weak_field_indexes");
+		fields [tindex ++] = LLVMGetNamedGlobal (lmodule, "method_flags_table");
 	}
 	/* Not needed (mem_end) */
 	fields [tindex ++] = LLVMConstNull (eltype);

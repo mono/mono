@@ -4348,11 +4348,7 @@ load_method (MonoDomain *domain, MonoAotModule *amodule, MonoImage *image, MonoM
 	}
 
 	if (mono_llvm_only) {
-		guint8 *info, *p;
-
-		info = &amodule->blob [mono_aot_get_offset (amodule->method_info_offsets, method_index)];
-		p = info;
-		guint8 flags = decode_value (p, &p);
+		guint8 flags = amodule->info.method_flags_table [method_index];
 		/* The caller needs to looks this up, but its hard to do without constructing the full MonoJitInfo, so save it here */
 		if (flags & MONO_AOT_METHOD_FLAG_GSHAREDVT_VARIABLE) {
 			mono_aot_lock ();
@@ -4637,8 +4633,8 @@ init_method (MonoAotModule *amodule, gpointer info, guint32 method_index, MonoMe
 	p += 4;
 
 	code = (guint8 *)amodule->methods [method_index];
+	guint8 flags = amodule->info.method_flags_table [method_index];
 
-	guint8 flags = decode_value (p, &p);
 	if (flags & MONO_AOT_METHOD_FLAG_HAS_CCTOR)
 		klass_to_run_ctor = decode_klass_ref (amodule, p, &p, error);
 	if (!is_ok (error))
