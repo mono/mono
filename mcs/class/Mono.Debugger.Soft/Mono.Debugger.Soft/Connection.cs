@@ -439,7 +439,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 54;
+		internal const int MINOR_VERSION = 56;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -799,7 +799,7 @@ namespace Mono.Debugger.Soft
 				ReadInt (); // id
 				ReadByte (); // flags
 				ErrorCode = ReadShort ();
-				if (ErrorCode == (int)Mono.Debugger.Soft.ErrorCode.INVALID_ARGUMENT && len > offset)
+				if (ErrorCode == (int)Mono.Debugger.Soft.ErrorCode.INVALID_ARGUMENT && connection.Version.AtLeast (2, 56) && len > offset)
 					ErrorMsg = ReadString ();
 			}
 
