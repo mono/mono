@@ -112,6 +112,7 @@
 			Debug="$(_DebugSymbolsProduced)"
 			I18n="$(MonoWasmI18n)"
 			LinkDescriptions="@(LinkDescription)"
+			BindingsDir="$(MonoWasmBindingsPath)"
 		/>
 
 		<PropertyGroup>
