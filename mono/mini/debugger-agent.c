@@ -6961,7 +6961,8 @@ get_types_for_source_file (gpointer key, gpointer value, gpointer user_data)
 	}
 }
 
-static void add_error_string (Buffer *buf, const char *str) {
+static void add_error_string (Buffer *buf, const char *str) 
+{
 	if (CHECK_PROTOCOL_VERSION (2, 56)) 
 		buffer_add_string (buf, str);
 }
