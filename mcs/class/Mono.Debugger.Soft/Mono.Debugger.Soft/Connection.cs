@@ -799,7 +799,7 @@ namespace Mono.Debugger.Soft
 				ReadInt (); // id
 				ReadByte (); // flags
 				ErrorCode = ReadShort ();
-				if (ErrorCode == (int)Mono.Debugger.Soft.ErrorCode.INVALID_ARGUMENT && connection.Version.AtLeast (2, 55) && len > offset)
+				if (ErrorCode == (int)Mono.Debugger.Soft.ErrorCode.INVALID_ARGUMENT && len > offset)
 					ErrorMsg = ReadString ();
 			}
 
