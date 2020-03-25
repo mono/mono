@@ -218,7 +218,7 @@ namespace WebAssembly.Core {
 		protected static void ValidateFromSource (ReadOnlySpan<U> source)
 		{
 			// target array has to be instantiated.
-			if (source == null ) {
+			if (source == null) {
 				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null.");
 			}
 
