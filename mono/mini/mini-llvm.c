@@ -3000,14 +3000,15 @@ emit_llvm_code_start (MonoLLVMModule *module)
 }
 
 /*
- * emit_init_icall_wrapper:
+ * emit_init_func:
  *
- *   Emit wrappers around the mini_llvm_init_method () JIT icall.
+ *   Emit functions to initialize LLVM methods.
+ * These are wrappers around the mini_llvm_init_method () JIT icall.
  * The wrappers handle adding the 'amodule' argument, loading the vtable from different locations, and they have
  * a cold calling convention.
  */
 static LLVMValueRef
-emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
+emit_init_func (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 {
 	LLVMModuleRef lmodule = module->lmodule;
 	LLVMValueRef func, indexes [2], args [16], callee, info_var, index_var, inited_var, cmp;
@@ -3105,7 +3106,10 @@ emit_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 	callee = get_aotconst_module (module, builder, MONO_PATCH_INFO_JIT_ICALL_ID, GINT_TO_POINTER (MONO_JIT_ICALL_mini_llvm_init_method), LLVMPointerType (icall_sig, 0), NULL, NULL);
 	LLVMBuildCall (builder, callee, args, LLVMCountParamTypes (icall_sig), "");
 
-	// Set the inited flag
+	/*
+	 * Set the inited flag
+	 * This is already done by the LLVM methods themselves, but its needed by JITted methods.
+	 */
 	indexes [0] = const_int32 (0);
 	indexes [1] = index_var;
 	LLVMBuildStore (builder, LLVMConstInt (LLVMInt8Type (), 1, FALSE), LLVMBuildGEP (builder, module->inited_var, indexes, 2, ""));
@@ -3170,16 +3174,16 @@ emit_icall_cold_wrapper (MonoLLVMModule *module, LLVMModuleRef lmodule, MonoJitI
  * cold calling convention.
  */
 static void
-emit_init_icall_wrappers (MonoLLVMModule *module)
+emit_init_funcs (MonoLLVMModule *module)
 {
-	module->init_method = emit_init_icall_wrapper (module, AOT_INIT_METHOD);
-	module->init_method_gshared_mrgctx = emit_init_icall_wrapper (module, AOT_INIT_METHOD_GSHARED_MRGCTX);
-	module->init_method_gshared_this = emit_init_icall_wrapper (module, AOT_INIT_METHOD_GSHARED_THIS);
-	module->init_method_gshared_vtable = emit_init_icall_wrapper (module, AOT_INIT_METHOD_GSHARED_VTABLE);
+	module->init_method = emit_init_func (module, AOT_INIT_METHOD);
+	module->init_method_gshared_mrgctx = emit_init_func (module, AOT_INIT_METHOD_GSHARED_MRGCTX);
+	module->init_method_gshared_this = emit_init_func (module, AOT_INIT_METHOD_GSHARED_THIS);
+	module->init_method_gshared_vtable = emit_init_func (module, AOT_INIT_METHOD_GSHARED_VTABLE);
 }
 
 static LLVMValueRef
-get_init_icall_wrapper (MonoLLVMModule *module, MonoAotInitSubtype subtype)
+get_init_func (MonoLLVMModule *module, MonoAotInitSubtype subtype)
 {
 	switch (subtype) {
 	case AOT_INIT_METHOD:
@@ -3343,12 +3347,12 @@ emit_div_check (EmitContext *ctx, LLVMBuilderRef builder, MonoBasicBlock *bb, Mo
 }
 
 /*
- * emit_init_method:
+ * emit_method_init:
  *
  *   Emit code to initialize the GOT slots used by the method.
  */
 static void
-emit_init_method (EmitContext *ctx)
+emit_method_init (EmitContext *ctx)
 {
 	LLVMValueRef indexes [16], args [16], callee;
 	LLVMValueRef inited_var, cmp, call;
@@ -3409,6 +3413,11 @@ emit_init_method (EmitContext *ctx)
 	 * scratch registers, since the call will not clobber them.
 	 */
 	set_call_cold_cconv (call);
+
+	// Set the inited flag
+	indexes [0] = const_int32 (0);
+	indexes [1] = const_int32 (cfg->method_index);
+	LLVMBuildStore (builder, LLVMConstInt (LLVMInt8Type (), 1, FALSE), LLVMBuildGEP (builder, ctx->module->inited_var, indexes, 2, ""));
 
 	LLVMBuildBr (builder, inited_bb);
 	ctx->bblocks [cfg->bb_entry->block_num].end_bblock = inited_bb;
@@ -9226,7 +9235,7 @@ emit_method_inner (EmitContext *ctx)
 	if (cfg->method->wrapper_type == MONO_WRAPPER_OTHER) {
 		WrapperInfo *info = mono_marshal_get_wrapper_info (cfg->method);
 		if (info->subtype == WRAPPER_SUBTYPE_AOT_INIT) {
-			method = get_init_icall_wrapper (ctx->module, info->d.aot_init.subtype);
+			method = get_init_func (ctx->module, info->d.aot_init.subtype);
 			ctx->lmethod = method;
 			ctx->module->max_method_idx = MAX (ctx->module->max_method_idx, cfg->method_index);
 
@@ -9766,7 +9775,7 @@ after_codegen_1:
 		if (cfg->method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED)
 			needs_init = FALSE;
 		if (needs_init)
-			emit_init_method (ctx);
+			emit_method_init (ctx);
 		else
 			LLVMBuildBr (ctx->builder, ctx->inited_bb);
 
@@ -10391,7 +10400,7 @@ mono_llvm_create_aot_module (MonoAssembly *assembly, const char *global_prefix, 
 	emit_llvm_code_start (module);
 
 	// Needs idx_to_lmethod
-	emit_init_icall_wrappers (module);
+	emit_init_funcs (module);
 
 	/* Add a dummy personality function */
 	if (!use_mono_personality_debug) {
