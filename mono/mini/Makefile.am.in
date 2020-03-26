@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 ## Set the C++ linker based on configure settings, see comment in configure.ac
 ## about why we need to do this.
@@ -23,8 +23,8 @@ if SUPPORT_NULLGC
 libgc_libs=
 libgc_static_libs=
 else
-libgc_libs=$(monodir)/libgc/libmonogc.la
-libgc_static_libs=$(monodir)/libgc/libmonogc-static.la
+libgc_libs=$(monodir)/external/bdwgc/libgc.la
+libgc_static_libs=$(monodir)/external/bdwgc/libgc-static.la
 endif
 
 glib_libs = $(monodir)/mono/eglib/libeglib.la
@@ -74,7 +74,7 @@ TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/
 INTERP_RUNTIME = $(MINI_RUNTIME) --interpreter
 RUNTIME_AOTCHECK = MONO_PATH="$(CLASS)$(PLATFORM_PATH_SEPARATOR)." $(RUNTIME_EXECUTABLE)
 
-MCS = CSC_SDK_PATH_DISABLED= $(TOOLS_RUNTIME) $(CSC) -langversion:7.2 -nostdlib -unsafe -nowarn:0162 -nologo -noconfig -r:$(CLASS)/mscorlib.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Core.dll
+MCS = CSC_SDK_PATH_DISABLED= $(TOOLS_RUNTIME) $(CSC) -langversion:8.0 -nostdlib -unsafe -nowarn:0162 -nologo -noconfig -r:$(CLASS)/mscorlib.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Core.dll
 ILASM = $(TOOLS_RUNTIME) $(mcs_topdir)/class/lib/build/ilasm.exe
 
 if !ENABLE_MSVC_ONLY
@@ -210,16 +210,6 @@ libmain_a_SOURCES += main.c
 endif
 libmain_a_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 
-if LOADED_LLVM
-lib_LTLIBRARIES += libmono-llvm.la
-libmono_llvm_la_SOURCES = mini-llvm.c mini-llvm-cpp.cpp llvm-jit.cpp
-libmono_llvm_la_LIBADD = $(glib_libs) $(LLVM_LIBS) $(LLVM_LDFLAGS)
-
-if HOST_DARWIN
-libmono_llvm_la_LDFLAGS=-Wl,-undefined -Wl,suppress -Wl,-flat_namespace 
-endif
-endif
-
 # we need this to prevent automake from generating a default mono_SOURCES = mono.c
 mono_SOURCES =
 
@@ -266,11 +256,7 @@ MONO_LIB=libmonoboehm-2.0.la
 MONO_SGEN_LIB=libmonosgen-2.0.la
 endif
 
-if LOADED_LLVM
-LLVMMONOF=
-else
 LLVMMONOF=$(LLVM_LIBS) $(LLVM_LDFLAGS)
-endif
 
 mono_boehm_LDADD = \
 	libmain_a-main.$(OBJEXT) \
@@ -426,16 +412,10 @@ posix_sources = \
 	mini-posix.c
 
 if ENABLE_LLVM
-if LOADED_LLVM
-llvm_sources = \
-	mini-llvm-loaded.c
-else
 llvm_sources = \
 	mini-llvm.c		\
-	mini-llvm-loaded.c \
 	mini-llvm-cpp.cpp \
 	llvm-jit.cpp
-endif
 endif
 
 interp_sources =	\
@@ -445,6 +425,7 @@ interp_sources =	\
 	interp/mintops.h	\
 	interp/mintops.def	\
 	interp/mintops.c	\
+	interp/transform.h	\
 	interp/transform.c
 
 interp_libs = libmono-ee-interp.la
@@ -538,6 +519,7 @@ common_sources = \
 	mini-cross-helpers.c \
 	arch-stubs.c		\
 	llvm-runtime.h	\
+	llvm-intrinsics.h	\
 	type-checking.c \
 	calls.c			\
 	lldb.h			\
@@ -550,7 +532,11 @@ common_sources = \
 	llvmonly-runtime.c \
 	aot-runtime.h	\
 	ee.h \
-	mini-runtime.h
+	tiered.h \
+	tiered.c \
+	mini-runtime.h \
+	monovm.h \
+	monovm.c
 
 endif # !ENABLE_MSVC_ONLY
 
@@ -768,13 +754,27 @@ libmonoboehm_2_0_la_SOURCES =
 libmonoboehm_2_0_la_CFLAGS = $(mono_boehm_CFLAGS) @CXX_ADD_CFLAGS@
 
 libmonoboehm_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(boehm_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
-libmonoboehm_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) 
+libmonoboehm_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) $(CCLDFLAGS)
 
 libmonosgen_2_0_la_SOURCES =
 libmonosgen_2_0_la_CFLAGS = $(mono_sgen_CFLAGS) @CXX_ADD_CFLAGS@
 
 libmonosgen_2_0_la_LIBADD = libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs) $(LIBMONO_DTRACE_OBJECT) $(LLVMMONOF)
-libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) 
+libmonosgen_2_0_la_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags) $(CCLDFLAGS)
+
+noinst_LIBRARIES += libmaintest.a
+
+libmaintest_a_SOURCES = interp/whitebox.c
+libmaintest_a_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
+
+WHITEBOX_ASSEMBLY=interp/whitebox-snippets.exe
+test_mono_interp_whitebox_SOURCES =
+test_mono_interp_whitebox_CFLAGS = $(AM_CFLAGS) @CXX_REMOVE_CFLAGS@
+test_mono_interp_whitebox_LDADD = interp/libmaintest_a-whitebox.$(OBJEXT) libmini.la $(interp_libs_with_mini) $(dbg_libs_with_mini) $(sgen_libs)
+test_mono_interp_whitebox_LDFLAGS = $(libmonoldflags) $(monobin_platform_ldflags)
+test_mono_interp_whitebox_DEPENDENCIES = $(WHITEBOX_ASSEMBLY)
+
+check_PROGRAMS = test-mono-interp-whitebox
 
 endif # !ENABLE_MSVC_ONLY
 
@@ -783,7 +783,9 @@ libmonoincludedir = $(includedir)/mono-$(API_VER)/mono/jit
 # These are public headers.
 # They should not use glib.h, G_BEGIN_DECLS, guint, etc.
 # They should be wrapped in MONO_BEGIN_DECLS / MONO_END_DECLS.
-libmonoinclude_HEADERS = jit.h
+libmonoinclude_HEADERS = \
+	jit.h		\
+	mono-private-unstable.h
 
 CSFLAGS = -unsafe -nowarn:0219,0169,0414,0649,0618
 
@@ -808,7 +810,7 @@ unaligned.exe: unaligned.cs TestDriver.dll MemoryIntrinsics.dll
 %.exe: %.cs TestDriver.dll
 	$(MCS) -out:$@ $(CSFLAGS) $< -r:TestDriver.dll
 
-%.exe: %.il
+%.exe: %.il TestDriver.dll
 	$(ILASM) -output=$@ $<
 
 TestDriver.dll: $(srcdir)/TestDriver.cs $(srcdir)/TestHelpers.cs
@@ -822,7 +824,7 @@ MemoryIntrinsics.dll: MemoryIntrinsics.il
 
 GENMDESC_OPTS=
 
-GENMDESC_PRG=python $(srcdir)/genmdesc.py $(target_define) $(srcdir)
+GENMDESC_PRG=$(PYTHON) $(srcdir)/genmdesc.py $(target_define) $(srcdir)
 
 cpu-wasm.h: mini-ops.h cpu-wasm.md $(srcdir)/genmdesc.py
 	$(GENMDESC_PRG) cpu-wasm.h wasm_desc $(srcdir)/cpu-wasm.md
@@ -897,6 +899,9 @@ rcheck: mono $(regtests)
 richeck: mono $(regtests)
 	$(INTERP_RUNTIME) --regression $(regtests)
 
+interp-whitebox: test-mono-interp-whitebox
+	MONO_PATH=$(CLASS) ./$< $(WHITEBOX_ASSEMBLY)
+
 mixedcheck: mono mixed.exe
 	$(MINI_RUNTIME) --interp=jit=JitClass mixed.exe
 
@@ -918,11 +923,7 @@ gctest: mono gc-test.exe
 	MONO_DEBUG_OPTIONS=clear-nursery-at-gc $(MINI_RUNTIME) --regression gc-test.exe
 
 LLVM_AOT_RUNTIME_OPTS=$(if $(LLVM),--llvm,)
-if AMD64
-LLVM_AOT_COMPILER_OPTS=$(if $(LLVM),llvmllc=-mattr=+sse3,)
-else
-LLVM_AOT_COMPILER_OPTS=
-endif
+LLVM_AOT_COMPILER_OPTS=mcpu=native
 GSHAREDVT_RUNTIME_OPTS=$(if $(GSHAREDVT),-O=gsharedvt,)
 
 aotcheck: mono $(regtests)
@@ -1083,8 +1084,13 @@ EXTRA_DIST = TestDriver.cs \
 	$(posix_sources)					\
 	test_op_il_seq_point.sh			\
 	test_op_il_seq_point_headerfooter.sh	\
+	interp/whitebox-snippets.il		\
 	Makefile.am.in
 
+if ENABLE_NETCORE
+version.h: Makefile
+	echo "#define FULL_VERSION \"netcore\"" > version.h
+else
 version.h: Makefile
 	if test -e $(top_srcdir)/.git; then \
 		(cd $(top_srcdir); \
@@ -1104,6 +1110,7 @@ version.h: Makefile
 			echo "#define FULL_VERSION \"$$MONO_BRANCH/$$MONO_BUILD_REVISION\""; \
 		fi \
 	fi > version.h
+endif
 
 # Utility target for patching libtool to speed up linking
 patch-libtool:

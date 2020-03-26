@@ -76,10 +76,6 @@ struct _GCMemSection {
 /*
  * Recursion is not allowed for the thread lock.
  */
-#define LOCK_DECLARE(name) mono_mutex_t name
-/* if changing LOCK_INIT to something that isn't idempotent, look at
-   its use in mono_gc_base_init in sgen-gc.c */
-#define LOCK_INIT(name)	mono_os_mutex_init (&(name))
 #define LOCK_GC do { sgen_gc_lock (); } while (0)
 #define UNLOCK_GC do { sgen_gc_unlock (); } while (0)
 
@@ -103,6 +99,19 @@ extern MonoCoopMutex sgen_interruption_mutex;
 			__old_x = (x);                                  \
 		} while (mono_atomic_cas_ptr ((void**)&(x), (void*)(__old_x + (i)), (void*)__old_x) != (void*)__old_x); \
 	} while (0)
+
+#ifndef MONO_ATOMIC_USES_LOCK
+#define SGEN_ATOMIC_ADD_I64(x,i) do { \
+		mono_atomic_add_i64 ((volatile gint64 *)&x, i); \
+	} while (0)
+#else
+#define SGEN_ATOMIC_ADD_I64(x,i) do { \
+		gint64 __old_x; \
+		do { \
+			__old_x = (x); \
+		} while (mono_sgen_atomic_cas_i64 ((volatile gint64 *)&(x), __old_x + (i), __old_x) != __old_x); \
+	} while (0)
+#endif /* BROKEN_64BIT_ATOMICS_INTRINSIC */
 
 #ifdef HEAVY_STATISTICS
 extern guint64 stat_objects_alloced_degraded;
@@ -401,6 +410,7 @@ void sgen_deregister_root (char* addr)
 	MONO_PERMIT (need (sgen_lock_gc));
 
 typedef void (*IterateObjectCallbackFunc) (GCObject*, size_t, void*);
+typedef gboolean (*IterateObjectResultCallbackFunc) (GCObject*, size_t, void*);
 
 void sgen_scan_area_with_callback (char *start, char *end, IterateObjectCallbackFunc callback, void *data, gboolean allow_flags, gboolean fail_on_canaries);
 
@@ -537,7 +547,7 @@ sgen_nursery_is_to_space (void *object)
 	size_t bit = idx & 0x7;
 
 	SGEN_ASSERT (4, sgen_ptr_in_nursery (object), "object %p is not in nursery [%p - %p]", object, sgen_get_nursery_start (), sgen_get_nursery_end ());
-	SGEN_ASSERT (4, byte < sgen_space_bitmap_size, "byte index %zd out of range (%zd)", byte, sgen_space_bitmap_size);
+	SGEN_ASSERT (4, byte < sgen_space_bitmap_size, "byte index %" G_GSIZE_FORMAT "d out of range (%" G_GSIZE_FORMAT "d)", byte, sgen_space_bitmap_size);
 
 	return (sgen_space_bitmap [byte] & (1 << bit)) != 0;
 }
@@ -729,6 +739,16 @@ typedef struct _SgenRememberedSet {
 	gboolean (*find_address_with_cards) (char *cards_start, guint8 *cards, char *addr);
 } SgenRememberedSet;
 
+typedef struct _SgenGCInfo {
+	guint64 fragmented_bytes;
+	guint64 heap_size_bytes;
+	guint64 high_memory_load_threshold_bytes;
+	guint64 memory_load_bytes;
+	guint64 total_available_memory_bytes;
+} SgenGCInfo;
+
+extern SgenGCInfo sgen_gc_info;
+
 SgenRememberedSet *sgen_get_remset (void);
 
 /*
@@ -900,16 +920,11 @@ gboolean sgen_set_allow_synchronous_major (gboolean flag);
 
 typedef struct _LOSObject LOSObject;
 struct _LOSObject {
-	LOSObject *next;
 	mword size; /* this is the object size, lowest bit used for pin/mark */
 	guint8 * volatile cardtable_mod_union; /* only used by the concurrent collector */
-#if SIZEOF_VOID_P < 8
-	mword dummy;		/* to align object to sizeof (double) */
-#endif
 	GCObject data [MONO_ZERO_LEN_ARRAY];
 };
 
-extern LOSObject *sgen_los_object_list;
 extern mword sgen_los_memory_usage;
 extern mword sgen_los_memory_usage_total;
 
@@ -919,6 +934,7 @@ void* sgen_los_alloc_large_inner (GCVTable vtable, size_t size)
 void sgen_los_sweep (void);
 gboolean sgen_ptr_is_in_los (char *ptr, char **start);
 void sgen_los_iterate_objects (IterateObjectCallbackFunc cb, void *user_data);
+void sgen_los_iterate_objects_free (IterateObjectResultCallbackFunc cb, void *user_data);
 void sgen_los_iterate_live_block_ranges (sgen_cardtable_block_callback callback);
 void sgen_los_scan_card_table (CardTableScanType scan_type, ScanCopyContext ctx, int job_index, int job_split_count);
 void sgen_los_update_cardtable_mod_union (void);
@@ -928,6 +944,7 @@ gboolean mono_sgen_los_describe_pointer (char *ptr);
 LOSObject* sgen_los_header_for_object (GCObject *data);
 mword sgen_los_object_size (LOSObject *obj);
 void sgen_los_pin_object (GCObject *obj);
+void sgen_los_pin_objects (SgenGrayQueue *gray_queue, gboolean finish_concurrent_mode);
 gboolean sgen_los_pin_object_par (GCObject *obj);
 gboolean sgen_los_object_is_pinned (GCObject *obj);
 void sgen_los_mark_mod_union_card (GCObject *mono_obj, void **ptr);

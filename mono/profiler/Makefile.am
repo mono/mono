@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 AM_CPPFLAGS = \
 	-DSUPPRESSION_DIR=\""$(datadir)/mono-$(API_VER)/mono/profiler"\" \
@@ -7,6 +7,8 @@ AM_CPPFLAGS = \
 	$(SHARED_CFLAGS)
 
 glib_libs = $(top_builddir)/mono/eglib/libeglib.la
+
+prof_ldflags = $(CCLDFLAGS)
 
 if !HOST_WIN32
 if !DISABLE_LIBRARIES
@@ -52,9 +54,9 @@ endif
 # shared libraries, so we want errors if the profiler modules contain any.
 if HOST_DARWIN
 if BITCODE
-prof_ldflags = -no-undefined
+prof_ldflags += -no-undefined
 else
-prof_ldflags = -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
+prof_ldflags += -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
 endif
 endif
 
@@ -63,7 +65,7 @@ endif
 # profiler modules contain versioned sonames, things will fail to resolve
 # at runtime.
 if HOST_ANDROID
-prof_ldflags = -avoid-version
+prof_ldflags += -avoid-version
 endif
 
 # Linking to libmono on desktop can cause problems when loading a profiler
@@ -147,12 +149,26 @@ mprof_report_SOURCES = mprof-report.c
 mprof_report_LDADD = $(glib_libs) $(zlib_dep)
 mprof_report_LDFLAGS = -no-undefined
 
+noinst_LTLIBRARIES = libproftest_pinvokes.la
+
+libproftest_pinvokes_la_SOURCES = proftest-pinvokes.c
+if HOST_WIN32
+# (borrowed from mono/tests/Makefile.am libtest_la_LDFLAGS)
+# the exported names created by gcc for stdcall functions are missing the leading _, so MS.NET
+# can't find them. So we use --kill-at to remove the @ suffix as well.
+libproftest_pinvokes_la_LDFLAGS = -no-undefined -rpath `pwd` $(CCLDFLAGS) -Wl,--kill-at
+else
+libproftest_pinvokes_la_LDFLAGS = -no-undefined -rpath `pwd` $(CCLDFLAGS)
+endif
+
+
 PLOG_TESTS_SRC = \
 	test-alloc.cs \
 	test-busy.cs \
 	test-monitor.cs \
 	test-excleave.cs \
 	test-heapshot.cs \
+	test-pinvokes.cs \
 	test-traces.cs
 
 PLOG_TESTS = $(PLOG_TESTS_SRC:.cs=.exe)
@@ -164,12 +180,15 @@ MCS = $(TOOLS_RUNTIME) $(CSC) -lib:$(CLASS) -unsafe -nologo -noconfig -nowarn:01
 %.exe: %.cs
 	$(MCS) -out:$@ $<
 
+test-pinvokes.exe: libproftest_pinvokes.la
+
 test-local: $(PLOG_TESTS)
 
 test-bundle-local:
 	mkdir -p $(TEST_BUNDLE_PATH)/tests/profiler/
 	cp -L .libs/libmono-profiler-log$(libsuffix) $(TEST_BUNDLE_PATH)/
 	cp -L $(PLOG_TESTS) $(TEST_BUNDLE_PATH)/tests/profiler/
+	cp -L .libs/libproftest_pinvokes$(libsuffix) $(TEST_BUNDLE_PATH)/tests/profiler/
 	cp -L ptestrunner.pl $(TEST_BUNDLE_PATH)/tests/profiler/
 	cp -L mprof-report $(TEST_BUNDLE_PATH)/
 	chmod +x $(TEST_BUNDLE_PATH)/mprof-report

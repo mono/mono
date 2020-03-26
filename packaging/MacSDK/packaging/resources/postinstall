@@ -60,16 +60,24 @@ if [ -d ${FW_CURRENT} ]; then
     cd ${FW_CURRENT}/etc
     # Make sure we run the files we lay down, and not other stuff installed on the system
     export PATH="${FW_CURRENT}/bin:$PATH"
+    LOG_DIR=/Library/Logs/Mono.framework
+    mkdir ${LOG_DIR}
+
+    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-gdk-pixbuf-query-loaders.log"
+    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-pango-querymodules.log"
+    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-fc-cache.log"
+    echo ======= `date` ===== >> "${LOG_DIR}/gtk-query-immodules-2.0.log"
+
     # gtk+ setup
-    gdk-pixbuf-query-loaders --update-cache > "${FW_CURRENT}/postinstall-gdk-pixbuf-query-loaders.log" 2>&1 || true
+    gdk-pixbuf-query-loaders --update-cache >> "${LOG_DIR}/postinstall-gdk-pixbuf-query-loaders.log" 2>&1 || true
     # pango setup
     mkdir -p pango
-    pango-querymodules > pango/pango.modules 2> "${FW_CURRENT}/postinstall-pango-querymodules.log" || true
-    pango-querymodules --update-cache >> "${FW_CURRENT}/postinstall-pango-querymodules.log" 2>&1 || true
-    fc-cache > "${FW_CURRENT}/postinstall-fc-cache.log" 2>&1 || true
+    pango-querymodules > pango/pango.modules 2>> "${LOG_DIR}/postinstall-pango-querymodules.log" || true
+    pango-querymodules --update-cache >> "${LOG_DIR}/postinstall-pango-querymodules.log" 2>&1 || true
+    fc-cache -v >> "${LOG_DIR}/postinstall-fc-cache.log" 2>&1 || true
 
     cd ${FW_CURRENT}/lib/gtk-2.0/2.10.0
-    gtk-query-immodules-2.0 > immodules.cache 2> "${FW_CURRENT}/gtk-query-immodules-2.0.log" || true
+    gtk-query-immodules-2.0 > immodules.cache 2>> "${LOG_DIR}/gtk-query-immodules-2.0.log" || true
 fi
 
 # Delete older Monos

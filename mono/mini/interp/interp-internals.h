@@ -19,10 +19,11 @@
 #define MINT_TYPE_R4 6
 #define MINT_TYPE_R8 7
 #define MINT_TYPE_O  8
-#define MINT_TYPE_P  9
-#define MINT_TYPE_VT 10
+#define MINT_TYPE_VT 9
 
 #define INLINED_METHOD_FLAG 0xffff
+#define TRACING_FLAG 0x1
+#define PROFILING_FLAG 0x2
 
 #define MINT_VT_ALIGNMENT 8
 
@@ -38,18 +39,14 @@ enum {
 	VAL_OBJ     = 3 + VAL_POINTER
 };
 
-enum {
-	INTERP_OPT_INLINE = 1,
-	INTERP_OPT_CPROP = 2,
-	INTERP_OPT_DEFAULT = INTERP_OPT_INLINE | INTERP_OPT_CPROP
-};
-
 #if SIZEOF_VOID_P == 4
 typedef guint32 mono_u;
 typedef gint32  mono_i;
+#define MINT_TYPE_I MINT_TYPE_I4
 #elif SIZEOF_VOID_P == 8
 typedef guint64 mono_u;
 typedef gint64  mono_i;
+#define MINT_TYPE_I MINT_TYPE_I8
 #endif
 
 
@@ -98,8 +95,7 @@ mono_interp_objref (MonoObject **o)
 
 /*
  * Value types are represented on the eval stack as pointers to the
- * actual storage. The size field tells how much storage is allocated.
- * A value type can't be larger than 16 MB.
+ * actual storage. A value type cannot be larger than 16 MB.
  */
 typedef struct {
 	union {
@@ -117,46 +113,41 @@ typedef struct {
 		mono_u nati;
 		gpointer vt;
 	} data;
-#if defined(__ppc__) || defined(__powerpc__)
-	int pad;
-#endif
 } stackval;
 
-typedef struct _InterpFrame InterpFrame;
+typedef struct InterpFrame InterpFrame;
 
 typedef void (*MonoFuncV) (void);
 typedef void (*MonoPIFunc) (void *callme, void *margs);
+
+
+typedef enum {
+	IMETHOD_CODE_INTERP,
+	IMETHOD_CODE_COMPILED,
+	IMETHOD_CODE_UNKNOWN
+} InterpMethodCodeType;
 
 /* 
  * Structure representing a method transformed for the interpreter 
  * This is domain specific
  */
-typedef struct _InterpMethod
-{
+typedef struct InterpMethod InterpMethod;
+struct InterpMethod {
 	/* NOTE: These first two elements (method and
 	   next_jit_code_hash) must be in the same order and at the
 	   same offset as in MonoJitInfo, because of the jit_code_hash
 	   internal hash table in MonoDomain. */
 	MonoMethod *method;
-	struct _InterpMethod *next_jit_code_hash;
-	guint32 locals_size;
-	guint32 total_locals_size;
-	guint32 stack_size;
-	guint32 vt_stack_size;
-	guint32 alloca_size;
-	unsigned int init_locals : 1;
-	unsigned int vararg : 1;
-	unsigned int needs_thread_attach : 1;
+	InterpMethod *next_jit_code_hash;
+
+	// Sort pointers ahead of integers to minimize padding for alignment.
+
 	unsigned short *code;
 	MonoPIFunc func;
-	int num_clauses;
-	MonoExceptionClause *clauses;
+	MonoExceptionClause *clauses; // num_clauses
 	void **data_items;
-	int transformed;
 	guint32 *local_offsets;
 	guint32 *exvar_offsets;
-	unsigned int param_count;
-	unsigned int hasthis;
 	gpointer jit_wrapper;
 	gpointer jit_addr;
 	MonoMethodSignature *jit_sig;
@@ -166,17 +157,67 @@ typedef struct _InterpMethod
 	MonoType **param_types;
 	MonoJitInfo *jinfo;
 	MonoDomain *domain;
-	MonoProfilerCallInstrumentationFlags prof_flags;
-} InterpMethod;
 
-struct _InterpFrame {
+	guint32 locals_size;
+	guint32 total_locals_size;
+	guint32 stack_size;
+	guint32 vt_stack_size;
+	guint32 alloca_size;
+	int num_clauses; // clauses
+	int transformed; // boolean
+	unsigned int param_count;
+	unsigned int hasthis; // boolean
+	MonoProfilerCallInstrumentationFlags prof_flags;
+	InterpMethodCodeType code_type;
+#ifdef ENABLE_EXPERIMENT_TIERED
+	MiniTieredCounter tiered_counter;
+#endif
+	unsigned int init_locals : 1;
+	unsigned int vararg : 1;
+	unsigned int needs_thread_attach : 1;
+};
+
+typedef struct _StackFragment StackFragment;
+struct _StackFragment {
+	guint8 *pos, *end;
+	struct _StackFragment *next;
+	double data [1];
+};
+
+typedef struct {
+	StackFragment *first, *current;
+	/* For GC sync */
+	int inited;
+} FrameStack;
+
+
+/* Arguments that are passed when invoking only a finally/filter clause from the frame */
+typedef struct FrameClauseArgs FrameClauseArgs;
+
+/* State of the interpreter main loop */
+typedef struct {
+	stackval *sp;
+	unsigned char *vt_sp;
+	const unsigned short  *ip;
+	GSList *finally_ips;
+	FrameClauseArgs *clause_args;
+	gboolean is_void : 1;
+} InterpState;
+
+struct InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
-	stackval       *retval; /* parent */
 	stackval       *stack_args; /* parent */
+	stackval       *retval; /* parent */
 	stackval       *stack;
+	InterpFrame    *next_free;
+	/* Stack fragments this frame was allocated from */
+	StackFragment *data_frag;
 	/* exception info */
 	const unsigned short  *ip;
+	/* State saved before calls */
+	/* This is valid if state.ip != NULL */
+	InterpState state;
 };
 
 #define frame_locals(frame) (((guchar*)((frame)->stack)) + (frame)->imethod->stack_size + (frame)->imethod->vt_stack_size)
@@ -191,16 +232,24 @@ typedef struct {
 	/* Clause that we are resuming to */
 	MonoJitExceptionInfo *handler_ei;
 	/* Exception that is being thrown. Set with rest of resume state */
-	guint32 exc_gchandle;
+	MonoGCHandle exc_gchandle;
+	/* Stack of frame data */
+	FrameStack data_stack;
 } ThreadContext;
 
 typedef struct {
 	gint64 transform_time;
+	gint64 methods_transformed;
 	gint64 cprop_time;
+	gint64 super_instructions_time;
 	gint32 stloc_nps;
 	gint32 movlocs;
 	gint32 copy_propagations;
+	gint32 constant_folds;
+	gint32 ldlocas_removed;
 	gint32 killed_instructions;
+	gint32 emitted_instructions;
+	gint32 super_instructions;
 	gint32 added_pop_count;
 	gint32 inlined_methods;
 	gint32 inline_failures;
@@ -224,12 +273,15 @@ mono_interp_get_imethod (MonoDomain *domain, MonoMethod *method, MonoError *erro
 void
 mono_interp_print_code (InterpMethod *imethod);
 
+gboolean
+mono_interp_jit_call_supported (MonoMethod *method, MonoMethodSignature *sig);
+
 static inline int
 mint_type(MonoType *type_)
 {
 	MonoType *type = mini_native_type_replace_type (type_);
 	if (type->byref)
-		return MINT_TYPE_P;
+		return MINT_TYPE_I;
 enum_type:
 	switch (type->type) {
 	case MONO_TYPE_I1:
@@ -247,13 +299,8 @@ enum_type:
 		return MINT_TYPE_I4;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
-#if SIZEOF_VOID_P == 4
-		return MINT_TYPE_I4;
-#else
-		return MINT_TYPE_I8;
-#endif
 	case MONO_TYPE_PTR:
-		return MINT_TYPE_P;
+		return MINT_TYPE_I;
 	case MONO_TYPE_R4:
 		return MINT_TYPE_R4;
 	case MONO_TYPE_I8:

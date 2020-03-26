@@ -7,14 +7,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Net.Http;
-using System.IO;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 using System.Linq;
-using System.Net;
+using System.Text.Json;
 
-namespace WsProxy {
+namespace WebAssembly.Net.Debugging {
 	internal class Startup {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -28,7 +27,7 @@ namespace WsProxy {
 		public IConfiguration Configuration { get; }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure (IApplicationBuilder app, IOptionsMonitor<ProxyOptions> optionsAccessor, IHostingEnvironment env)
+		public void Configure (IApplicationBuilder app, IOptionsMonitor<ProxyOptions> optionsAccessor, IWebHostEnvironment env)
 		{
 			var options  = 	optionsAccessor.CurrentValue;
 			app.UseDeveloperExceptionPage ()
@@ -71,6 +70,15 @@ namespace WsProxy {
 		{
 			var devToolsHost = options.DevToolsUrl;
 			app.UseRouter (router => {
+				router.MapGet ("/", Copy);
+				router.MapGet ("/favicon.ico", Copy);
+				router.MapGet ("json", RewriteArray);
+				router.MapGet ("json/list", RewriteArray);
+				router.MapGet ("json/version", RewriteSingle);
+				router.MapGet ("json/new", RewriteSingle);
+				router.MapGet ("devtools/page/{pageId}", ConnectProxy);
+				router.MapGet ("devtools/browser/{pageId}", ConnectProxy);
+
 				string GetEndpoint (HttpContext context)
 				{
 					var request = context.Request;
@@ -95,7 +103,7 @@ namespace WsProxy {
 					var version = await ProxyGetJsonAsync<Dictionary<string, string>> (GetEndpoint (context));
 					context.Response.ContentType = "application/json";
 					await context.Response.WriteAsync (
-						JsonConvert.SerializeObject (mapFunc (version, context, devToolsHost)));
+						JsonSerializer.Serialize (mapFunc (version, context, devToolsHost)));
 				}
 
 				async Task RewriteArray (HttpContext context)
@@ -103,41 +111,37 @@ namespace WsProxy {
 					var tabs = await ProxyGetJsonAsync<Dictionary<string, string> []> (GetEndpoint (context));
 					var alteredTabs = tabs.Select (t => mapFunc (t, context, devToolsHost)).ToArray ();
 					context.Response.ContentType = "application/json";
-					await context.Response.WriteAsync (JsonConvert.SerializeObject (alteredTabs));
+					await context.Response.WriteAsync (JsonSerializer.Serialize (alteredTabs));
 				}
 
-				router.MapGet ("/", Copy);
-				router.MapGet ("/favicon.ico", Copy);
-				router.MapGet ("json", RewriteArray);
-				router.MapGet ("json/list", RewriteArray);
-				router.MapGet ("json/version", RewriteSingle);
-				router.MapGet ("json/new", RewriteSingle);
-				router.MapGet ("devtools/page/{pageId}", async context => {
-						if (!context.WebSockets.IsWebSocketRequest) {
-							context.Response.StatusCode = 400;
-							return;
-						}
+				async Task ConnectProxy (HttpContext context)
+				{
+					if (!context.WebSockets.IsWebSocketRequest) {
+						context.Response.StatusCode = 400;
+						return;
+					}
 
-						var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString()}");
-						try {
-							var proxy = new MonoProxy ();
-							var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
+					var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString ()}");
+					try {
+						using var loggerFactory = LoggerFactory.Create(
+							builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+						var proxy = new DebuggerProxy (loggerFactory);
+						var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
-							await proxy.Run (endpoint, ideSocket);
-						} catch (Exception e) {
-							Console.WriteLine ("got exception {0}", e);
-						}
-					});
-				});
+						await proxy.Run (endpoint, ideSocket);
+					} catch (Exception e) {
+						Console.WriteLine ("got exception {0}", e);
+					}
+				}
+			});
 			return app;
 		}
 
-		private static async Task<T> ProxyGetJsonAsync<T> (string url)
+		static async Task<T> ProxyGetJsonAsync<T> (string url)
 		{
 			using (var httpClient = new HttpClient ()) {
 				var response = await httpClient.GetAsync (url);
-				var jsonResponse = await response.Content.ReadAsStringAsync ();
-				return JsonConvert.DeserializeObject<T> (jsonResponse);
+				return await JsonSerializer.DeserializeAsync<T> (await response.Content.ReadAsStreamAsync ());
 			}
 		}
 	}

@@ -243,7 +243,16 @@ const static unsigned char TableSchemas [] = {
 	MONO_MT_TABLE_IDX,  /* "Field:Field" }, */
 	MONO_MT_END,
 
-#define FIELD_POINTER_SCHEMA_OFFSET FIELD_RVA_SCHEMA_OFFSET + 3
+#define ENCLOG_SCHEMA_OFFSET FIELD_RVA_SCHEMA_OFFSET + 3
+	MONO_MT_UINT32,    /* "Token" }, */
+	MONO_MT_UINT32,    /* "FuncCode" }, */
+	MONO_MT_END,
+
+#define ENCMAP_SCHEMA_OFFSET ENCLOG_SCHEMA_OFFSET + 3
+	MONO_MT_UINT32,    /* "Token" }, */
+	MONO_MT_END,
+
+#define FIELD_POINTER_SCHEMA_OFFSET ENCMAP_SCHEMA_OFFSET + 2
 	MONO_MT_TABLE_IDX,  /* "Field" }, */
 	MONO_MT_END,
 
@@ -470,8 +479,8 @@ table_description [] = {
 	TYPESPEC_SCHEMA_OFFSET,
 	IMPLMAP_SCHEMA_OFFSET,
 	FIELD_RVA_SCHEMA_OFFSET,
-	NULL_SCHEMA_OFFSET,
-	NULL_SCHEMA_OFFSET,
+	ENCLOG_SCHEMA_OFFSET,
+	ENCMAP_SCHEMA_OFFSET,
 	ASSEMBLY_SCHEMA_OFFSET, /* 0x20 */
 	ASSEMBLYPROC_SCHEMA_OFFSET,
 	ASSEMBLYOS_SCHEMA_OFFSET,
@@ -516,12 +525,12 @@ static const gint16 tableidx [] = {
 #undef TABLEDEF
 };
 
-/* If TRUE (but also see DISABLE_STICT_STRONG_NAMES #define), Mono will check
+/* On legacy, if TRUE (but also see DISABLE_DESKTOP_LOADER #define), Mono will check
  * that the public key token, culture and version of a candidate assembly matches
- * the requested strong name.  If FALSE, as long as the name matches, the candidate
- * will be allowed.
+ * the requested strong name. On netcore, it will check the culture and version.
+ * If FALSE, as long as the name matches, the candidate will be allowed.
  */
-static gboolean check_strong_names_strictly = FALSE;
+static gboolean check_assembly_names_strictly = FALSE;
 
 // Amount initially reserved in each imageset's mempool.
 // FIXME: This number is arbitrary, a more practical number should be found
@@ -1049,7 +1058,8 @@ const char *
 mono_metadata_string_heap_checked (MonoImage *meta, guint32 index, MonoError *error)
 {
 	if (G_UNLIKELY (!(index < meta->heap_strings.size))) {
-		mono_error_set_bad_image_by_name (error, meta->name ? meta->name : "unknown image", "string heap index %ud out bounds %u", index, meta->heap_strings.size);
+		const char *image_name = meta && meta->name ? meta->name : "unknown image";
+		mono_error_set_bad_image_by_name (error, image_name, "string heap index %ud out bounds %u: %s", index, meta->heap_strings.size, image_name);
 		return NULL;
 	}
 	return meta->heap_strings.data + index;
@@ -1078,9 +1088,29 @@ mono_metadata_user_string (MonoImage *meta, guint32 index)
 const char *
 mono_metadata_blob_heap (MonoImage *meta, guint32 index)
 {
+	/* Some tools can produce assemblies with a size 0 Blob stream. If a
+	 * blob value is optional, if the index == 0 and heap_blob.size == 0
+	 * assertion is hit, consider updating caller to use
+	 * mono_metadata_blob_heap_null_ok and handling a null return value. */
+	g_assert (!(index == 0 && meta->heap_blob.size == 0));
 	g_assert (index < meta->heap_blob.size);
-	g_return_val_if_fail (index < meta->heap_blob.size, "");/*FIXME shouldn't we return NULL and check for index == 0?*/
 	return meta->heap_blob.data + index;
+}
+
+/**
+ * mono_metadata_blob_heap_null_ok:
+ * \param meta metadata context
+ * \param index index into the blob.
+ * \return an in-memory pointer to the \p index in the Blob heap.
+ * If the Blob heap is empty or missing and index is 0 returns NULL, instead of asserting.
+ */
+const char *
+mono_metadata_blob_heap_null_ok (MonoImage *meta, guint32 index)
+{
+	if (G_UNLIKELY (index == 0 && meta->heap_blob.size == 0))
+		return NULL;
+	else
+		return mono_metadata_blob_heap (meta, index);
 }
 
 /**
@@ -1089,13 +1119,17 @@ mono_metadata_blob_heap (MonoImage *meta, guint32 index)
  * \param index index into the blob.
  * \param error set on error
  * \returns an in-memory pointer to the \p index in the Blob heap.  On failure sets \p error and returns NULL;
+ * If the Blob heap is empty or missing and \p index is 0 returns NULL, without setting error.
  *
  */
 const char *
 mono_metadata_blob_heap_checked (MonoImage *meta, guint32 index, MonoError *error)
 {
+	if (G_UNLIKELY (index == 0 && meta->heap_blob.size == 0))
+		return NULL;
 	if (G_UNLIKELY (!(index < meta->heap_blob.size))) {
-		mono_error_set_bad_image_by_name (error, meta->name ? meta->name : "unknown image", "blob heap index %u out of bounds %u", index, meta->heap_blob.size);
+		const char *image_name = meta && meta->name ? meta->name : "unknown image";
+		mono_error_set_bad_image_by_name (error, image_name, "blob heap index %u out of bounds %u: %s", index, meta->heap_blob.size, image_name);
 		return NULL;
 	}
 	return meta->heap_blob.data + index;
@@ -1184,13 +1218,13 @@ mono_metadata_decode_row_checked (const MonoImage *image, const MonoTableInfo *t
 	const char *image_name = image && image->name ? image->name : "unknown image";
 
 	if (G_UNLIKELY (! (idx < t->rows && idx >= 0))) {
-		mono_error_set_bad_image_by_name (error, image_name, "row index %d out of bounds: %d rows", idx, t->rows);
+		mono_error_set_bad_image_by_name (error, image_name, "row index %d out of bounds: %d rows: %s", idx, t->rows, image_name);
 		return FALSE;
 	}
 	const char *data = t->base + idx * t->row_size;
 
 	if (G_UNLIKELY (res_size != count)) {
-		mono_error_set_bad_image_by_name (error, image_name, "res_size %d != count %d", res_size, count);
+		mono_error_set_bad_image_by_name (error, image_name, "res_size %d != count %d: %s", res_size, count, image_name);
 		return FALSE;
 	}
 
@@ -1205,7 +1239,7 @@ mono_metadata_decode_row_checked (const MonoImage *image, const MonoTableInfo *t
 		case 4:
 			res [i] = read32 (data); break;
 		default:
-			mono_error_set_bad_image_by_name (error, image_name, "unexpected table [%d] size %d", i, n);
+			mono_error_set_bad_image_by_name (error, image_name, "unexpected table [%d] size %d: %s", i, n, image_name);
 			return FALSE;
 		}
 		data += n;
@@ -2485,11 +2519,11 @@ signature_in_image (MonoMethodSignature *sig, MonoImage *image)
 	gpointer iter = NULL;
 	MonoType *p;
 
-	while ((p = mono_signature_get_params (sig, &iter)) != NULL)
+	while ((p = mono_signature_get_params_internal (sig, &iter)) != NULL)
 		if (type_in_image (p, image))
 			return TRUE;
 
-	return type_in_image (mono_signature_get_return_type (sig), image);
+	return type_in_image (mono_signature_get_return_type_internal (sig), image);
 }
 
 static gboolean
@@ -2947,8 +2981,8 @@ collect_signature_images (MonoMethodSignature *sig, CollectData *data)
 	gpointer iter = NULL;
 	MonoType *p;
 
-	collect_type_images (mono_signature_get_return_type (sig), data);
-	while ((p = mono_signature_get_params (sig, &iter)) != NULL)
+	collect_type_images (mono_signature_get_return_type_internal (sig), data);
+	while ((p = mono_signature_get_params_internal (sig, &iter)) != NULL)
 		collect_type_images (p, data);
 }
 
@@ -3363,7 +3397,7 @@ mono_metadata_get_generic_inst (int type_argc, MonoType **type_argv)
 	is_open = (i < type_argc);
 
 	ginst = (MonoGenericInst *)g_alloca (size);
-	memset (ginst, 0, sizeof (MonoGenericInst));
+	memset (ginst, 0, MONO_SIZEOF_GENERIC_INST);
 	ginst->is_open = is_open;
 	ginst->type_argc = type_argc;
 	memcpy (ginst->type_argv, type_argv, type_argc * sizeof (MonoType *));
@@ -5625,8 +5659,8 @@ mono_metadata_fnptr_equal (MonoMethodSignature *s1, MonoMethodSignature *s2, gbo
 		return FALSE;
 
 	while (TRUE) {
-		MonoType *t1 = mono_signature_get_params (s1, &iter1);
-		MonoType *t2 = mono_signature_get_params (s2, &iter2);
+		MonoType *t1 = mono_signature_get_params_internal (s1, &iter1);
+		MonoType *t2 = mono_signature_get_params_internal (s2, &iter2);
 
 		if (t1 == NULL || t2 == NULL)
 			return (t1 == t2);
@@ -7563,15 +7597,19 @@ mono_find_image_set_owner (void *ptr)
 }
 
 void
-mono_loader_set_strict_strong_names (gboolean enabled)
+mono_loader_set_strict_assembly_name_check (gboolean enabled)
 {
-	check_strong_names_strictly = enabled;
+	check_assembly_names_strictly = enabled;
 }
 
 gboolean
-mono_loader_get_strict_strong_names (void)
+mono_loader_get_strict_assembly_name_check (void)
 {
-	return check_strong_names_strictly;
+#if !defined(DISABLE_DESKTOP_LOADER) || defined(ENABLE_NETCORE)
+	return check_assembly_names_strictly;
+#else
+	return FALSE;
+#endif
 }
 
 

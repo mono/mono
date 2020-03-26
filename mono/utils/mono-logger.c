@@ -314,6 +314,7 @@ mono_trace_set_mask_string (const char *value)
 		{ "w32handle", MONO_TRACE_IO_LAYER_HANDLE },
 		{ "tailcall", MONO_TRACE_TAILCALL },
 		{ "profiler", MONO_TRACE_PROFILER },
+		{ "tiered", MONO_TRACE_TIERED },
 		{ "all", (MonoTraceMask)~0 }, // FIXMEcxx there is a better way -- operator overloads of enums
 		{ NULL, (MonoTraceMask)0 },
 	};
@@ -448,6 +449,9 @@ mono_trace_set_log_handler (MonoLogCallback callback, void *user_data)
 {
 	g_assert (callback);
 
+	if (level_stack == NULL)
+		mono_trace_init ();
+
 	if (logCallback.closer != NULL)
 		logCallback.closer();
 	UserSuppliedLoggerUserData *ll = (UserSuppliedLoggerUserData*)g_malloc (sizeof (UserSuppliedLoggerUserData));
@@ -513,6 +517,8 @@ void
 mono_trace_set_print_handler (MonoPrintCallback callback)
 {
 	g_assert (callback);
+	if (level_stack == NULL)
+		mono_trace_init ();
 	print_callback = callback;
 	g_set_print_handler (print_handler);
 }
@@ -526,6 +532,8 @@ void
 mono_trace_set_printerr_handler (MonoPrintCallback callback)
 {
 	g_assert (callback);
+	if (level_stack == NULL)
+		mono_trace_init ();
 	printerr_callback = callback;
 	g_set_printerr_handler (printerr_handler);
 }

@@ -3,6 +3,10 @@
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 export TEST_WITH_INTERPRETER=1
 
+if [[ ${CI_TAGS} == *'win-'* ]]
+then ${TESTCMD} --label=interpreter-whitebox --skip;
+else ${TESTCMD} --label=interpreter-whitebox --timeout=10m make -C mono/mini interp-whitebox;
+fi
 ${TESTCMD} --label=interpreter-regression --timeout=10m make -C mono/mini richeck
 ${TESTCMD} --label=mixedmode-regression --timeout=10m make -C mono/mini mixedcheck
 ${TESTCMD} --label=fullaotmixed-regression --timeout=20m make -C mono/mini fullaotmixedcheck

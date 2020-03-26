@@ -65,6 +65,9 @@ public class DebuggerTests
 	Event GetNextEvent () {
 		var es = vm.GetNextEventSet ();
 		Assert.AreEqual (1, es.Events.Length);
+		if (step_req != null && es [0] != null && es [0].Request != null && es [0].Request is StepEventRequest && ((StepEventRequest)es [0].Request).GetId() != step_req.GetId()) {
+			step_req = ((StepEventRequest)es [0].Request);
+		}
 		return es [0];
 	}
 
@@ -470,7 +473,6 @@ public class DebuggerTests
 			
 			var pdbFromMemory = assemblyMirror.GetPdbBlob ();
 			if (!File.Exists (pdbPath)) {
-				Assert.IsFalse (assemblyMirror.HasPdb);
 				Assert.IsTrue (assemblyMirror.HasFetchedPdb);
 				continue;
 			}
@@ -5139,7 +5141,131 @@ public class DebuggerTests
 		ev = GetNextEvent ();
 	}
 
+	[Test]
+	public void TestRuntimeInvokeHybridSuspendExceptions () {
+		TearDown ();
+		Start (dtest_app_path, "runtime_invoke_hybrid_exceptions", forceExit: true);
+		var req2 = vm.CreateExceptionRequest (null, false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		var ev = GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		vm.Exit (0);
+		vm = null;
+	}
 
+	[Test]
+	public void TestNewThreadHybridSuspendException () {
+		TearDown ();
+		Start (dtest_app_path, "new_thread_hybrid_exception", forceExit: true);
+		var req2 = vm.CreateExceptionRequest (null, false, true, false);
+		req2.Enable ();
+		vm.Resume ();
+		var ev = GetNextEvent ();
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
+		vm.Exit (0);
+		vm = null;
+	}
+	
+	[Test]
+	public void TestAsyncDebugGenerics () {
+		Event e = run_until ("test_async_debug_generics");
+		e = step_in_await ("test_async_debug_generics", e);
+		e = step_in_await ("MoveNext", e);
+		e = step_in_await ("MoveNext", e);
+		e = step_in_await ("MoveNext", e);
+		e = step_in_await ("MoveNext", e);
+	}
+
+	[Test]
+	public void InvalidPointer_GetValue () {
+		vm.Detach ();
+		Start (dtest_app_path, "pointer_arguments2");
+		Event e = run_until ("pointer_arguments2");
+		var frame = e.Thread.GetFrames () [0];
+
+		var param = frame.Method.GetParameters()[0];
+		Assert.AreEqual("Int32*", param.ParameterType.Name);
+
+		var pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("Int32*", pointerValue.Type.Name);
+
+
+		var pointerValue2 = new PointerValue (pointerValue.VirtualMachine, pointerValue.Type, 200);
+
+		try {
+			var val = pointerValue2.Value;
+		}
+		catch (ArgumentException ex) {
+			Assert.IsInstanceOfType (typeof (ArgumentException), ex);
+		}
+	}
+  
+	[Test]
+	public void InvalidArgumentAssemblyGetType () {
+		Event e = run_until ("test_invalid_argument_assembly_get_type");
+		var assembly = entry_point.DeclaringType.Assembly;
+		try {
+			var type = assembly.GetType ("System.Collections.Generic.Dictionary<double, float>.Main");
+		}
+		catch (CommandException ex) {
+			Assert.AreEqual(ex.ErrorMessage, "Unexpected assembly-qualified type \"System.Collections.Generic.Dictionary<double, float>.Main\" was provided");
+		}
+	}
+  
+	[Test]
+	public void InvokeSingleStepMultiThread () {
+		vm.Detach ();
+		Start (dtest_app_path, "ss_multi_thread");
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("mt_ss");
+		int firstLineFound = m.Locations [0].LineNumber + 1;
+		int line_first_counter = 5;
+		int line_second_counter = 5;
+		int line_third_counter = 3;
+		Event e = run_until ("ss_multi_thread");
+		EventRequest req = create_step (e);
+		req.Disable ();
+		ReusableBreakpoint breakpoint = new ReusableBreakpoint (this, "mt_ss");
+		breakpoint.Continue ();
+		e = breakpoint.lastEvent;
+		req = create_step (e);
+		while (line_first_counter > 0 || line_second_counter > 0 || line_third_counter > 0) {
+			var thread = e.Thread;
+			var l = thread.GetFrames ()[0].Location;
+			var frame = thread.GetFrames()[0];
+
+      if (l.LineNumber == firstLineFound)
+				line_first_counter--;
+			if (l.LineNumber == firstLineFound + 1)
+				line_second_counter--;
+			if (l.LineNumber == firstLineFound + 2)
+				line_third_counter--;				
+
+			if (req.GetId() != breakpoint.req.GetId()) 
+				req.Disable ();
+			
+			req = create_step (e);
+			((StepEventRequest)req).Size = StepSize.Line;
+			try {
+				if ((e.Thread.GetFrames ()[0].Location.LineNumber == firstLineFound + 1 && (e.Thread.Name.Equals("Thread_0") || e.Thread.Name.Equals("Thread_1"))) || l.LineNumber == firstLineFound + 2) {
+					vm.Resume ();
+					e = GetNextEvent ();
+				}
+				else
+					e = step_over_or_breakpoint ();
+				req =  e.Request;		
+			}
+			catch (Exception z){
+				//expected vmdeath
+				break;
+			}
+		}
+		Assert.AreEqual(0, line_first_counter);
+		Assert.AreEqual(0, line_second_counter);
+		Assert.AreEqual(0, line_third_counter);
+		vm = null;
+	}
+	
 #endif
 } // class DebuggerTests
 } // namespace

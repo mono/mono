@@ -25,6 +25,47 @@ extern MonoObject* mono_wasm_typed_array_copy_to (int js_handle, int ptr, int be
 extern MonoObject* mono_wasm_typed_array_from (int ptr, int begin, int end, int bytes_per_element, int type, int *is_exception);
 extern MonoObject* mono_wasm_typed_array_copy_from (int js_handle, int ptr, int begin, int end, int bytes_per_element, int *is_exception);
 
+// Compiles a JavaScript function from the function data passed.
+// Note: code snippet is not a function definition. Instead it must create and return a function instance.
+EM_JS(MonoObject*, compile_function, (int snippet_ptr, int len, int *is_exception), {
+	try {
+		var data = MONO.string_decoder.decode (snippet_ptr, snippet_ptr + len);
+		var wrapper = '(function () { ' + data + ' })';
+		var funcFactory = eval(wrapper);
+		var func = funcFactory();
+		if (typeof func !== 'function') {
+			throw new Error('Code must return an instance of a JavaScript function. '
+				+ 'Please use `return` statement to return a function.');
+		}
+		setValue (is_exception, 0, "i32");
+		return BINDING.js_to_mono_obj (func);	
+	}
+	catch (e)
+	{
+		res = e.toString ();
+		setValue (is_exception, 1, "i32");
+		if (res === null || res === undefined)
+			res = "unknown exception";
+		return BINDING.js_to_mono_obj (res);		
+	}
+});
+
+static MonoObject*
+mono_wasm_compile_function (MonoString *str, int *is_exception)
+{
+	if (str == NULL)
+	 	return NULL;
+	//char *native_val = mono_string_to_utf8 (str);
+	mono_unichar2 *native_val = mono_string_chars (str);
+	int native_len = mono_string_length (str) * 2;
+
+	MonoObject* native_res =  compile_function((int)native_val, native_len, is_exception);
+	mono_free (native_val);
+	if (native_res == NULL)
+	 	return NULL;
+	return native_res;
+}
+
 void core_initialize_internals ()
 {
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJSWithArgs", mono_wasm_invoke_js_with_args);
@@ -43,6 +84,7 @@ void core_initialize_internals ()
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyTo", mono_wasm_typed_array_copy_to);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayFrom", mono_wasm_typed_array_from);
 	mono_add_internal_call ("WebAssembly.Runtime::TypedArrayCopyFrom", mono_wasm_typed_array_copy_from);
+	mono_add_internal_call ("WebAssembly.Runtime::CompileFunction", mono_wasm_compile_function);
 
 }
 

@@ -528,7 +528,7 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 void
 mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 {
-	os_ucontext *uc = sigctx;
+	os_ucontext *uc = (os_ucontext*)sigctx;
 
 	mctx->sc_ir = UCONTEXT_REG_NIP(uc);
 	mctx->sc_sp = UCONTEXT_REG_Rn(uc, 1);
@@ -540,7 +540,7 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 void
 mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 {
-	os_ucontext *uc = sigctx;
+	os_ucontext *uc = (os_ucontext*)sigctx;
 
 	memcpy (&UCONTEXT_REG_Rn(uc, 0), &mctx->regs, sizeof (host_mgreg_t) * MONO_MAX_IREGS);
 	memcpy (&UCONTEXT_REG_FPRn(uc, 0), &mctx->fregs, sizeof (double) * MONO_MAX_FREGS);
@@ -578,8 +578,8 @@ mono_sigctx_to_monoctx (void *sigctx, MonoContext *mctx)
 #else
 	ucontext_t *uctx = sigctx;
 
-	memcpy (&mctx->gregs, &uctx->uc_mcontext.gregs, sizeof (host_mgreg_t) * G_N_ELEMENTS (mctx->gregs));
-	memcpy (&mctx->fregs, &uctx->uc_mcontext.fpregs, sizeof (double) * G_N_ELEMENTS (mctx->fregs));
+	memcpy (&mctx->gregs, &uctx->uc_mcontext.__gregs, sizeof (host_mgreg_t) * G_N_ELEMENTS (mctx->gregs));
+	memcpy (&mctx->fregs, &uctx->uc_mcontext.__fpregs, sizeof (double) * G_N_ELEMENTS (mctx->fregs));
 #endif
 }
 
@@ -591,8 +591,8 @@ mono_monoctx_to_sigctx (MonoContext *mctx, void *sigctx)
 #else
 	ucontext_t *uctx = sigctx;
 
-	memcpy (&uctx->uc_mcontext.gregs, &mctx->gregs, sizeof (host_mgreg_t) * G_N_ELEMENTS (mctx->gregs));
-	memcpy (&uctx->uc_mcontext.fpregs, &mctx->fregs, sizeof (double) * G_N_ELEMENTS (mctx->fregs));
+	memcpy (&uctx->uc_mcontext.__gregs, &mctx->gregs, sizeof (host_mgreg_t) * G_N_ELEMENTS (mctx->gregs));
+	memcpy (&uctx->uc_mcontext.__fpregs, &mctx->fregs, sizeof (double) * G_N_ELEMENTS (mctx->fregs));
 #endif
 }
 

@@ -8,6 +8,7 @@
 
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/tokentype.h>
+#include <mono/metadata/threads.h>
 #include <mono/utils/mono-logger.h>
 #include <mono/utils/mono-dl-fallback.h>
 #include <mono/jit/jit.h>
@@ -41,9 +42,11 @@ void mono_aot_register_module (void **aot_info);
 char *monoeg_g_getenv(const char *variable);
 int monoeg_g_setenv(const char *variable, const char *value, int overwrite);
 void mono_free (void*);
+int32_t mini_parse_debug_option (const char *option);
 
 static MonoClass* datetime_class;
 static MonoClass* datetimeoffset_class;
+static MonoClass* uri_class;
 
 int mono_wasm_enable_gc;
 
@@ -65,16 +68,6 @@ void mono_trace_init (void);
 #define g_new(type, size)  ((type *) malloc (sizeof (type) * (size)))
 #define g_new0(type, size) ((type *) calloc (sizeof (type), (size)))
 
-static char*
-m_strdup (const char *str)
-{
-	if (!str)
-		return NULL;
-
-	const size_t len = strlen (str) + 1;
-	return memcpy (g_new (char, len), str, len);
-}
-
 static MonoDomain *root_domain;
 
 static MonoString*
@@ -83,27 +76,27 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	if (str == NULL)
 		return NULL;
 
-	char *native_val = mono_string_to_utf8 (str);
+	mono_unichar2 *native_val = mono_string_chars (str);
+	int native_len = mono_string_length (str) * 2;
+
 	mono_unichar2 *native_res = (mono_unichar2*)EM_ASM_INT ({
-		var str = UTF8ToString ($0);
+		var str = MONO.string_decoder.decode ($0, $0 + $1);
 		try {
 			var res = eval (str);
 			if (res === null || res == undefined)
 				return 0;
 			res = res.toString ();
-			setValue ($1, 0, "i32");
+			setValue ($2, 0, "i32");
 		} catch (e) {
 			res = e.toString ();
-			setValue ($1, 1, "i32");
+			setValue ($2, 1, "i32");
 			if (res === null || res === undefined)
 				res = "unknown exception";
 		}
 		var buff = Module._malloc((res.length + 1) * 2);
 		stringToUTF16 (res, buff, (res.length + 1) * 2);
 		return buff;
-	}, (int)native_val, is_exception);
-
-	mono_free (native_val);
+	}, (int)native_val, native_len, is_exception);
 
 	if (native_res == NULL)
 		return NULL;
@@ -123,11 +116,12 @@ wasm_logger (const char *log_domain, const char *log_level, const char *message,
 			   console.log (err.stack);
 			   );
 
-		fprintf (stderr, "%s", message);
+		fprintf (stderr, "%s\n", message);
+		fflush (stderr);
 
 		abort ();
 	} else {
-		fprintf (stdout, "%s\n", message);
+		fprintf (stdout, "L: %s\n", message);
 	}
 }
 
@@ -150,14 +144,14 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 {
 	int len = strlen (name);
 	if (!strcasecmp (".pdb", &name [len - 4])) {
-		char *new_name = m_strdup (name);
+		char *new_name = strdup (name);
 		//FIXME handle debugging assemblies with .exe extension
 		strcpy (&new_name [len - 3], "dll");
 		mono_register_symfile_for_assembly (new_name, data, size);
 		return;
 	}
 	WasmAssembly *entry = g_new0 (WasmAssembly, 1);
-	entry->assembly.name = m_strdup (name);
+	entry->assembly.name = strdup (name);
 	entry->assembly.data = data;
 	entry->assembly.size = size;
 	entry->next = assemblies;
@@ -171,6 +165,10 @@ mono_wasm_setenv (const char *name, const char *value)
 	monoeg_g_setenv (strdup (name), strdup (value), 1);
 }
 
+#ifdef ENABLE_NETCORE
+static void *sysglobal_native_handle;
+#endif
+
 static void*
 wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 {
@@ -178,6 +176,11 @@ wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 		if (!strcmp (name, pinvoke_names [i]))
 			return pinvoke_tables [i];
 	}
+
+#ifdef ENABLE_NETCORE
+	if (!strcmp (name, "System.Globalization.Native"))
+		return sysglobal_native_handle;
+#endif
 
 #if WASM_SUPPORTS_DLOPEN
 	return dlopen(name, flags);
@@ -187,7 +190,8 @@ wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 }
 
 static mono_bool
-wasm_dl_is_pinvoke_tables (void* handle) {
+wasm_dl_is_pinvoke_tables (void* handle)
+{
 	for (int i = 0; i < sizeof (pinvoke_tables) / sizeof (void*); ++i) {
 		if (pinvoke_tables [i] == handle) {
 			return 1;
@@ -199,6 +203,11 @@ wasm_dl_is_pinvoke_tables (void* handle) {
 static void*
 wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 {
+#ifdef ENABLE_NETCORE
+	if (handle == sysglobal_native_handle)
+		assert (0);
+#endif
+
 #if WASM_SUPPORTS_DLOPEN
 	if (!wasm_dl_is_pinvoke_tables (handle)) {
 		return dlsym (handle, name);
@@ -212,6 +221,16 @@ wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 	}
 	return NULL;
 }
+
+#ifdef ENABLE_NETCORE
+/* Missing System.Native symbols */
+int SystemNative_CloseNetworkChangeListenerSocket (int a) { return 0; }
+int SystemNative_CreateNetworkChangeListenerSocket (int a) { return 0; }
+void SystemNative_ReadEvents (int a,int b) {}
+int SystemNative_SchedGetAffinity (int a,int b) { return 0; }
+int SystemNative_SchedSetAffinity (int a,int b) { return 0; }
+int getgrouplist (int a,int b,int c,int d) { return 0; }
+#endif
 
 #if !defined(ENABLE_AOT) || defined(EE_MODE_LLVMONLY_INTERP)
 #define NEED_INTERP 1
@@ -249,7 +268,7 @@ icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char 
 	const char *image_name = mono_image_get_name (mono_class_get_image (mono_method_get_class (method)));
 
 #ifdef ICALL_TABLE_mscorlib
-	if (!strcmp (image_name, "mscorlib")) {
+	if (!strcmp (image_name, "mscorlib") || !strcmp (image_name, "System.Private.CoreLib")) {
 		indexes = mscorlib_icall_indexes;
 		indexes_size = sizeof (mscorlib_icall_indexes) / 4;
 		handles = mscorlib_icall_handles;
@@ -295,11 +314,11 @@ void mono_initialize_internals ()
 {
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
 
-	// Blazor specific custom routines - see dotnet_support.js for backing code		
+	// Blazor specific custom routines - see dotnet_support.js for backing code
 	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
 	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSUnmarshalled", mono_wasm_invoke_js_unmarshalled);
 
-#ifdef CORE_BINDINGS	
+#ifdef CORE_BINDINGS
 	core_initialize_internals();
 #endif
 
@@ -313,6 +332,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #ifdef ENABLE_NETCORE
 	monoeg_g_setenv ("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "1", 0);
 #endif
+
+	mini_parse_debug_option ("top-runtime-invoke-unhandled");
 
 	mono_dl_fallback_register (wasm_dl_load, wasm_dl_symbol, NULL, NULL);
 
@@ -368,6 +389,8 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	root_domain = mono_jit_init_version ("mono", "v4.0.30319");
 
 	mono_initialize_internals();
+
+	mono_thread_set_main (mono_thread_current ());
 }
 
 EMSCRIPTEN_KEEPALIVE MonoAssembly*
@@ -397,17 +420,20 @@ mono_wasm_assembly_find_method (MonoClass *klass, const char *name, int argument
 }
 
 EMSCRIPTEN_KEEPALIVE MonoObject*
-mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[], int* got_exception)
+mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[], MonoObject **out_exc)
 {
 	MonoObject *exc = NULL;
-	MonoObject *res = mono_runtime_invoke (method, this_arg, params, &exc);
-	*got_exception = 0;
+	MonoObject *res;
 
+	if (out_exc)
+		*out_exc = NULL;
+	res = mono_runtime_invoke (method, this_arg, params, &exc);
 	if (exc) {
-		*got_exception = 1;
+		if (out_exc)
+			*out_exc = exc;
 
 		MonoObject *exc2 = NULL;
-		res = (MonoObject*)mono_object_to_string (exc, &exc2); 
+		res = (MonoObject*)mono_object_to_string (exc, &exc2);
 		if (exc2)
 			res = (MonoObject*) mono_string_new (root_domain, "Exception Double Fault");
 		return res;
@@ -444,20 +470,46 @@ mono_wasm_string_get_utf8 (MonoString *str)
 	return mono_string_to_utf8 (str); //XXX JS is responsible for freeing this
 }
 
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_string_convert (MonoString *str)
+{
+	if (str == NULL)
+		return;
+
+	mono_unichar2 *native_val = mono_string_chars (str);
+	int native_len = mono_string_length (str) * 2;
+
+	EM_ASM ({
+		MONO.string_decoder.decode($0, $0 + $1, true);
+	}, (int)native_val, native_len);
+}
+
 EMSCRIPTEN_KEEPALIVE MonoString *
 mono_wasm_string_from_js (const char *str)
 {
-	return mono_string_new (root_domain, str);
+	if (str)
+		return mono_string_new (root_domain, str);
+	else
+		return NULL;
 }
 
 static int
 class_is_task (MonoClass *klass)
 {
-	if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && 
+	if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) &&
 		(!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
 		return 1;
 
 	return 0;
+}
+
+MonoClass* mono_get_uri_class(MonoException** exc)
+{
+	MonoAssembly* assembly = mono_wasm_assembly_load ("System");
+	if (!assembly)
+		return NULL;
+	MonoClass* klass = mono_wasm_assembly_find_class(assembly, "System", "Uri");
+	return klass;
 }
 
 #define MARSHAL_TYPE_INT 1
@@ -471,6 +523,7 @@ class_is_task (MonoClass *klass)
 #define MARSHAL_TYPE_ENUM 9
 #define MARSHAL_TYPE_DATE 20
 #define MARSHAL_TYPE_DATEOFFSET 21
+#define MARSHAL_TYPE_URI 22
 
 // typed array marshalling
 #define MARSHAL_ARRAY_BYTE 11
@@ -492,6 +545,10 @@ mono_wasm_get_obj_type (MonoObject *obj)
 		datetime_class = mono_class_from_name (mono_get_corlib(), "System", "DateTime");
 	if (!datetimeoffset_class)
 		datetimeoffset_class = mono_class_from_name (mono_get_corlib(), "System", "DateTimeOffset");
+	if (!uri_class) {
+		MonoException** exc = NULL;
+		uri_class = mono_get_uri_class(exc);
+	}
 
 	MonoClass *klass = mono_object_get_class (obj);
 	MonoType *type = mono_class_get_type (klass);
@@ -525,26 +582,28 @@ mono_wasm_get_obj_type (MonoObject *obj)
 			case MONO_TYPE_I1:
 				return MARSHAL_ARRAY_BYTE;
 			case MONO_TYPE_U2:
-				return MARSHAL_ARRAY_USHORT;			
+				return MARSHAL_ARRAY_USHORT;
 			case MONO_TYPE_I2:
-				return MARSHAL_ARRAY_SHORT;			
+				return MARSHAL_ARRAY_SHORT;
 			case MONO_TYPE_U4:
-				return MARSHAL_ARRAY_UINT;			
+				return MARSHAL_ARRAY_UINT;
 			case MONO_TYPE_I4:
-				return MARSHAL_ARRAY_INT;			
+				return MARSHAL_ARRAY_INT;
 			case MONO_TYPE_R4:
 				return MARSHAL_ARRAY_FLOAT;
 			case MONO_TYPE_R8:
 				return MARSHAL_ARRAY_DOUBLE;
 			default:
 				return MARSHAL_TYPE_OBJECT;
-		}		
+		}
 	}
 	default:
 		if (klass == datetime_class)
 			return MARSHAL_TYPE_DATE;
 		if (klass == datetimeoffset_class)
 			return MARSHAL_TYPE_DATEOFFSET;
+		if (uri_class && mono_class_is_assignable_from(uri_class, klass))
+			return MARSHAL_TYPE_URI;
 		if (mono_class_is_enum (klass))
 			return MARSHAL_TYPE_ENUM;
 		if (!mono_type_is_reference (type)) //vt

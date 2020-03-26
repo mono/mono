@@ -22,9 +22,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 #include <sys/time.h>
 #include <fcntl.h>
 #ifdef HAVE_SYS_PARAM_H
@@ -92,7 +90,7 @@
 #include "object-internals.h"
 #include "icall-decl.h"
 
-#ifndef ENABLE_NETCORE
+#if !defined(ENABLE_NETCORE) && !defined(DISABLE_PROCESSES)
 
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 242
@@ -939,6 +937,7 @@ mono_w32process_module_get_filename (gpointer handle, gpointer module, gunichar2
 		return FALSE;
 
 	proc_path = mono_unicode_from_external (path, &bytes);
+
 	if (proc_path == NULL) {
 		g_free (path);
 		return FALSE;
@@ -1815,7 +1814,7 @@ process_create (const gunichar2 *appname, const gunichar2 *cmdline,
 		/* Copy each environ string into 'strings' turning it into utf8 (or the requested encoding) at the same time */
 		for (gsize i = 0; i < array_length; ++i) {
 			MONO_HANDLE_ARRAY_GETREF (var, array, i);
-			gchandle_t gchandle = 0;
+			MonoGCHandle gchandle = NULL;
 			env_strings [i] = mono_unicode_to_external (mono_string_handle_pin_chars (var, &gchandle));
 			mono_gchandle_free_internal (gchandle);
 		}
@@ -2260,13 +2259,13 @@ mono_w32process_set_cli_launcher (gchar *path)
 }
 
 gpointer
-ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetCurrentProcess (void)
 {
 	return current_process;
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetExitCodeProcess (gpointer handle, gint32 *exitcode)
 {
 	return mono_get_exit_code_process (handle, exitcode);
 }
@@ -2315,13 +2314,13 @@ mono_get_exit_code_process (gpointer handle, gint32 *exitcode)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_CloseProcess (gpointer handle)
 {
 	return mono_w32handle_close (handle);
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint32 exitcode)
 {
 #ifdef HAVE_KILL
 	MonoW32Handle *handle_data;
@@ -2364,7 +2363,7 @@ ves_icall_Microsoft_Win32_NativeMethods_TerminateProcess (gpointer handle, gint3
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handle, gsize *min, gsize *max)
 {
 	MonoW32Handle *handle_data;
 	MonoW32HandleProcess *process_handle;
@@ -2400,7 +2399,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetProcessWorkingSetSize (gpointer handl
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handle, gsize min, gsize max)
 {
 	MonoW32Handle *handle_data;
 	MonoW32HandleProcess *process_handle;
@@ -2433,7 +2432,7 @@ ves_icall_Microsoft_Win32_NativeMethods_SetProcessWorkingSetSize (gpointer handl
 }
 
 gint32
-ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle)
 {
 #ifdef HAVE_GETPRIORITY
 	MonoW32Handle *handle_data;
@@ -2499,7 +2498,7 @@ ves_icall_Microsoft_Win32_NativeMethods_GetPriorityClass (gpointer handle, MonoE
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_SetPriorityClass (gpointer handle, gint32 priorityClass)
 {
 #ifdef HAVE_SETPRIORITY
 	MonoW32Handle *handle_data;
@@ -2578,7 +2577,7 @@ ticks_to_processtime (guint64 ticks, ProcessTime *processtime)
 }
 
 MonoBoolean
-ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creation_time, gint64 *exit_time, gint64 *kernel_time, gint64 *user_time, MonoError *error)
+ves_icall_Microsoft_Win32_NativeMethods_GetProcessTimes (gpointer handle, gint64 *creation_time, gint64 *exit_time, gint64 *kernel_time, gint64 *user_time)
 {
 	MonoW32Handle *handle_data;
 	MonoW32HandleProcess *process_handle;
@@ -3193,7 +3192,7 @@ big_up_string_block (gconstpointer data_ptr, version_data *block)
 		g_free (big_value);
 
 		big_value = g_convert ((gchar *)data_ptr,
-				       unicode_chars (data_ptr) * 2,
+				       unicode_chars ((const gunichar2*)data_ptr) * 2,
 				       "UTF-16BE", "UTF-16LE", NULL, NULL,
 				       NULL);
 		if (big_value == NULL) {
@@ -3201,7 +3200,7 @@ big_up_string_block (gconstpointer data_ptr, version_data *block)
 			return(NULL);
 		}
 		memcpy ((gpointer)data_ptr, big_value,
-			unicode_chars (data_ptr) * 2);
+			unicode_chars ((const gunichar2*)data_ptr) * sizeof(gunichar2));
 		g_free (big_value);
 
 		data_ptr = ((gunichar2 *)data_ptr) + block->value_len;
@@ -4271,7 +4270,7 @@ mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 la
 	return copy_lang (lang_out, lang_len, name);
 }
 
-#else /* ENABLE_NETCORE */
+#else /* ENABLE_NETCORE && DISABLE_PROCESSES */
 
 void
 mono_w32process_init (void)
@@ -4317,4 +4316,4 @@ mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subbl
 	return FALSE;
 }
 
-#endif /* ENABLE_NETCORE */
+#endif /* ENABLE_NETCORE && DISABLE_PROCESSES */

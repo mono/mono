@@ -175,7 +175,7 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
-		const int WaitTimeout = 5000;
+		const int WaitTimeout = 10000;
 
 		[Test]
 		public void Ctor ()
@@ -189,7 +189,9 @@ namespace MonoTests.System.Net.Http
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
+#if !MONOTOUCH_WATCH			
 		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif		
 #endif
 		public void Ctor_HttpClientHandler ()
 		{
@@ -1109,7 +1111,9 @@ namespace MonoTests.System.Net.Http
 
 		[Test]
 #if FEATURE_NO_BSD_SOCKETS
+#if !MONOTOUCH_WATCH			
 		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif		
 #endif
 		public void Send_Invalid ()
 		{

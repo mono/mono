@@ -86,14 +86,14 @@ namespace System
 
 			var src = (byte*)source;
 			var dst = (byte*)destination;
-			while (sourceBytesToCopy > int.MaxValue) {
-				Memcpy (dst, src, int.MaxValue);
-				sourceBytesToCopy -= int.MaxValue;
-				src += int.MaxValue;
-				dst += int.MaxValue;
+			while (sourceBytesToCopy > uint.MaxValue) {
+				Memmove (dst, src, uint.MaxValue);
+				sourceBytesToCopy -= uint.MaxValue;
+				src += uint.MaxValue;
+				dst += uint.MaxValue;
 			}
 
-			Memcpy (dst, src, (int) sourceBytesToCopy);
+			Memmove (dst, src, (uint) sourceBytesToCopy);
 		}
 
 		[CLSCompliantAttribute (false)]
@@ -105,14 +105,14 @@ namespace System
 
 			var src = (byte*)source;
 			var dst = (byte*)destination;
-			while (sourceBytesToCopy > int.MaxValue) {
-				Memcpy (dst, src, int.MaxValue);
-				sourceBytesToCopy -= int.MaxValue;
-				src += int.MaxValue;
-				dst += int.MaxValue;
+			while (sourceBytesToCopy > uint.MaxValue) {
+				Memmove (dst, src, uint.MaxValue);
+				sourceBytesToCopy -= uint.MaxValue;
+				src += uint.MaxValue;
+				dst += uint.MaxValue;
 			}
 
-			Memcpy (dst, src, (int) sourceBytesToCopy);
+			Memmove (dst, src, (uint) sourceBytesToCopy);
 		}
 
 		internal static unsafe void memcpy4 (byte *dest, byte *src, int size) {

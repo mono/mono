@@ -11,7 +11,7 @@ using static System.Console;
 
 namespace aotprofiletool {
 	class MainClass {
-		static readonly string Name = "aotprofile-tool";
+		static readonly string Name = "aprofutil";
 
 		static bool AdbForward;
 		static bool Methods;

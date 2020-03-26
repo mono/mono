@@ -52,6 +52,7 @@
 #include <mono/metadata/coree.h>
 #include <mono/utils/mono-experiments.h>
 #include "external-only.h"
+#include "mono/utils/mono-tls-inline.h"
 
 //#define DEBUG_DOMAIN_UNLOAD 1
 
@@ -130,6 +131,7 @@ get_runtime_by_version (const char *version);
 static void
 mono_domain_alcs_destroy (MonoDomain *domain);
 
+#ifdef ENABLE_NETCORE
 static void
 mono_domain_alcs_lock (MonoDomain *domain);
 
@@ -138,6 +140,7 @@ mono_domain_alcs_unlock (MonoDomain *domain);
 
 static void
 mono_domain_create_default_alc (MonoDomain *domain);
+#endif
 
 static LockFreeMempool*
 lock_free_mempool_new (void)
@@ -462,7 +465,7 @@ mono_domain_create (void)
 
 	mono_coop_mutex_init_recursive (&domain->lock);
 
-	mono_os_mutex_init_recursive (&domain->assemblies_lock);
+	mono_coop_mutex_init_recursive (&domain->assemblies_lock);
 	mono_os_mutex_init_recursive (&domain->jit_code_hash_lock);
 	mono_os_mutex_init_recursive (&domain->finalizable_objects_hash_lock);
 
@@ -589,20 +592,27 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 		mono_fixup_exe_image (exe_image);
 #endif
 	} else if (runtime_version != NULL) {
-		runtimes = g_slist_prepend (runtimes, (gpointer)get_runtime_by_version (runtime_version));
+		const MonoRuntimeInfo* rt = get_runtime_by_version (runtime_version);
+		if (rt != NULL)
+			runtimes = g_slist_prepend (runtimes, (gpointer)rt);
 	}
 
 	if (runtimes == NULL) {
 		const MonoRuntimeInfo *default_runtime = get_runtime_by_version (DEFAULT_RUNTIME_VERSION);
+		g_assert (default_runtime);
 		runtimes = g_slist_prepend (runtimes, (gpointer)default_runtime);
-		g_print ("WARNING: The runtime version supported by this application is unavailable.\n");
+		if (runtime_version != NULL)
+			g_print ("WARNING: The requested runtime version \"%s\" is unavailable.\n", runtime_version);
+		else
+			g_print ("WARNING: The runtime version supported by this application is unavailable.\n");
 		g_print ("Using default runtime: %s\n", default_runtime->runtime_version); 
 	}
 
 	/* The selected runtime will be the first one for which there is a mscrolib.dll */
 	GSList *tmp = runtimes;
 	while (tmp != NULL) {
-		current_runtime = (MonoRuntimeInfo*)runtimes->data;
+		current_runtime = (MonoRuntimeInfo*)tmp->data;
+		g_assert (current_runtime);
 		ass = mono_assembly_load_corlib (current_runtime, &status);
 		if (status != MONO_IMAGE_OK && status != MONO_IMAGE_ERROR_ERRNO)
 			break;
@@ -700,8 +710,10 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.multicastdelegate_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System", "MulticastDelegate");
 
+#ifndef ENABLE_NETCORE
 	mono_defaults.manualresetevent_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "ManualResetEvent");
+#endif
 
 	mono_defaults.typehandle_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System", "RuntimeTypeHandle");
@@ -721,9 +733,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.exception_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System", "Exception");
 
-	mono_defaults.threadabortexception_class = mono_class_load_from_name (
-                mono_defaults.corlib, "System.Threading", "ThreadAbortException");
-
 	mono_defaults.thread_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System.Threading", "Thread");
 
@@ -733,6 +742,9 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 #else
 	mono_defaults.internal_thread_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System.Threading", "InternalThread");
+
+	mono_defaults.threadabortexception_class = mono_class_load_from_name (
+                mono_defaults.corlib, "System.Threading", "ThreadAbortException");
 #endif
 
 	mono_defaults.appdomain_class = mono_class_get_appdomain_class ();
@@ -804,14 +816,15 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.generic_ienumerator_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Collections.Generic", "IEnumerator`1");
 
-	ERROR_DECL (error);
-
+#ifndef ENABLE_NETCORE
 	MonoClass *threadpool_wait_callback_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "_ThreadPoolWaitCallback");
 
+	ERROR_DECL (error);
 	mono_defaults.threadpool_perform_wait_callback_method = mono_class_get_method_from_name_checked (
 		threadpool_wait_callback_class, "PerformWaitCallback", 0, 0, error);
 	mono_error_assert_ok (error);
+#endif
 
 	domain->friendly_name = g_path_get_basename (filename);
 
@@ -1010,7 +1023,32 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 	MONO_EXIT_GC_UNSAFE;
 }
 
-/* FIXME: maybe we should integrate this with mono_assembly_open? */
+void
+mono_domain_ensure_entry_assembly (MonoDomain *domain, MonoAssembly *assembly)
+{
+	if (!mono_runtime_get_no_exec () && !domain->entry_assembly && assembly) {
+		gchar *str;
+		ERROR_DECL (error);
+
+		domain->entry_assembly = assembly;
+		/* Domains created from another domain already have application_base and configuration_file set */
+		if (domain->setup->application_base == NULL) {
+			MonoString *basedir = mono_string_new_checked (domain, assembly->basedir, error);
+			mono_error_assert_ok (error);
+			MONO_OBJECT_SETREF_INTERNAL (domain->setup, application_base, basedir);
+		}
+
+		if (domain->setup->configuration_file == NULL) {
+			str = g_strconcat (assembly->image->name, ".config", (const char*)NULL);
+			MonoString *config_file = mono_string_new_checked (domain, str, error);
+			mono_error_assert_ok (error);
+			MONO_OBJECT_SETREF_INTERNAL (domain->setup, configuration_file, config_file);
+			g_free (str);
+			mono_domain_set_options_from_config (domain);
+		}
+	}
+}
+
 /**
  * mono_domain_assembly_open:
  * \param domain the application domain
@@ -1027,36 +1065,14 @@ mono_domain_assembly_open (MonoDomain *domain, const char *name)
 }
 
 // Uses the domain on legacy mono and the ALC on current
+// Intended only for loading the main assembly
 MonoAssembly *
 mono_domain_assembly_open_internal (MonoDomain *domain, MonoAssemblyLoadContext *alc, const char *name)
 {
 	MonoDomain *current;
 	MonoAssembly *ass;
-	GSList *tmp;
 
 	MONO_REQ_GC_UNSAFE_MODE;
-
-#ifdef ENABLE_NETCORE
-	mono_alc_assemblies_lock (alc);
-	for (tmp = alc->loaded_assemblies; tmp; tmp = tmp->next) {
-		ass = (MonoAssembly *)tmp->data;
-		if (strcmp (name, ass->aname.name) == 0) {
-			mono_alc_assemblies_unlock (alc);
-			return ass;
-		}
-	}
-	mono_alc_assemblies_unlock (alc);
-#else
-	mono_domain_assemblies_lock (domain);
-	for (tmp = domain->domain_assemblies; tmp; tmp = tmp->next) {
-		ass = (MonoAssembly *)tmp->data;
-		if (strcmp (name, ass->aname.name) == 0) {
-			mono_domain_assemblies_unlock (domain);
-			return ass;
-		}
-	}
-	mono_domain_assemblies_unlock (domain);
-#endif
 
 	MonoAssemblyOpenRequest req;
 	mono_assembly_request_prepare_open (&req, MONO_ASMCTX_DEFAULT, alc);
@@ -1069,6 +1085,12 @@ mono_domain_assembly_open_internal (MonoDomain *domain, MonoAssemblyLoadContext 
 	} else {
 		ass = mono_assembly_request_open (name, &req, NULL);
 	}
+
+	// On netcore, this is necessary because we check the AppContext.BaseDirectory property as part of the assembly lookup algorithm
+	// AppContext.BaseDirectory can sometimes fall back to checking the location of the entry_assembly, which should be non-null
+#ifdef ENABLE_NETCORE
+	mono_domain_ensure_entry_assembly (domain, ass);
+#endif
 
 	return ass;
 }
@@ -1167,7 +1189,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		MonoAssembly *ass = (MonoAssembly *)tmp->data;
 		if (!ass->image || !image_is_dynamic (ass->image))
 			continue;
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
 		if (!mono_assembly_close_except_image_pools (ass))
 			tmp->data = NULL;
 	}
@@ -1178,7 +1200,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 			continue;
 		if (!ass->image || image_is_dynamic (ass->image))
 			continue;
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Unloading domain %s[%p], assembly %s[%p], ref_count=%d", domain->friendly_name, domain, ass->aname.name, ass, ass->ref_count);
 		if (!mono_assembly_close_except_image_pools (ass))
 			tmp->data = NULL;
 	}
@@ -1279,7 +1301,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 #endif
 
 	mono_os_mutex_destroy (&domain->finalizable_objects_hash_lock);
-	mono_os_mutex_destroy (&domain->assemblies_lock);
+	mono_coop_mutex_destroy (&domain->assemblies_lock);
 	mono_os_mutex_destroy (&domain->jit_code_hash_lock);
 
 	mono_coop_mutex_destroy (&domain->lock);
@@ -2069,10 +2091,10 @@ mono_domain_alcs_unlock (MonoDomain *domain)
 #endif
 
 
+#ifdef ENABLE_NETCORE
 static MonoAssemblyLoadContext *
 create_alc (MonoDomain *domain, gboolean is_default)
 {
-#ifdef ENABLE_NETCORE
 	MonoAssemblyLoadContext *alc = NULL;
 
 	mono_domain_alcs_lock (domain);
@@ -2088,22 +2110,18 @@ create_alc (MonoDomain *domain, gboolean is_default)
 leave:
 	mono_domain_alcs_unlock (domain);
 	return alc;
-#else
-	return NULL;
-#endif
 }
+#endif
 
+#ifdef ENABLE_NETCORE
 void
 mono_domain_create_default_alc (MonoDomain *domain)
 {
-#ifdef ENABLE_NETCORE
 	if (domain->default_alc)
 		return;
 	create_alc (domain, TRUE);
-#endif
 }
 
-#ifdef ENABLE_NETCORE
 MonoAssemblyLoadContext *
 mono_domain_create_individual_alc (MonoDomain *domain, uint32_t this_gchandle, gboolean collectible, MonoError *error)
 {
@@ -2112,16 +2130,14 @@ mono_domain_create_individual_alc (MonoDomain *domain, uint32_t this_gchandle, g
 	alc->gchandle = this_gchandle;
 	return alc;
 }
-#endif
 
 static void
 mono_alc_free (MonoAssemblyLoadContext *alc)
 {
-#ifdef ENABLE_NETCORE
 	mono_alc_cleanup (alc);
 	g_free (alc);
-#endif
 }
+#endif
 
 void
 mono_domain_alcs_destroy (MonoDomain *domain)

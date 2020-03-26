@@ -1,6 +1,6 @@
 
 var MonoSupportLib = {
-	$MONO__postset: 'Module["pump_message"] = MONO.pump_message',
+	$MONO__postset: 'MONO.export_functions (Module);',
 	$MONO: {
 		pump_count: 0,
 		timeout_queue: [],
@@ -8,7 +8,7 @@ var MonoSupportLib = {
 		mono_wasm_ignore_pdb_load_errors: true,
 		pump_message: function () {
 			if (!this.mono_background_exec)
-				this.mono_background_exec = Module.cwrap ("mono_background_exec", 'void', [ ]);
+				this.mono_background_exec = Module.cwrap ("mono_background_exec", null);
 			while (MONO.timeout_queue.length > 0) {
 				--MONO.pump_count;
 				MONO.timeout_queue.shift()();
@@ -19,11 +19,48 @@ var MonoSupportLib = {
 			}
 		},
 
+		export_functions: function (module) {
+			module ["pump_message"] = MONO.pump_message;
+			module ["mono_load_runtime_and_bcl"] = MONO.mono_load_runtime_and_bcl;
+		},
+
+		string_decoder: {
+			copy: function (mono_string) {
+				if (mono_string == 0)
+					return null;
+
+				if (!this.mono_wasm_string_convert)
+					this.mono_wasm_string_convert = Module.cwrap ("mono_wasm_string_convert", null, ['number']);
+
+				this.mono_wasm_string_convert (mono_string);
+				var result = this.result;
+				this.result = undefined;
+				return result;
+			},
+			decode: function (start, end, save) {
+				var decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder ('utf-16le') : undefined;
+
+				var str = "";
+				if (decoder)
+					str = decoder.decode(Module.HEAPU8.subarray(start, end));
+				else {
+					for (var i = 0; i < end - start; i+=2) {
+						var char = Module.getValue (start + i, 'i16');
+						str += String.fromCharCode (char);
+					}
+				}
+				if (save)
+					this.result = str;
+
+				return str;
+			},
+		},
+
 		mono_wasm_get_call_stack: function() {
 			if (!this.mono_wasm_current_bp_id)
-				this.mono_wasm_current_bp_id = Module.cwrap ("mono_wasm_current_bp_id", 'number', [ ]);
+				this.mono_wasm_current_bp_id = Module.cwrap ("mono_wasm_current_bp_id", 'number');
 			if (!this.mono_wasm_enum_frames)
-				this.mono_wasm_enum_frames = Module.cwrap ("mono_wasm_enum_frames", 'void', [ ]);
+				this.mono_wasm_enum_frames = Module.cwrap ("mono_wasm_enum_frames", null);
 
 			var bp_id = this.mono_wasm_current_bp_id ();
 			this.active_frames = [];
@@ -39,7 +76,7 @@ var MonoSupportLib = {
 
 		mono_wasm_get_variables: function(scope, var_list) {
 			if (!this.mono_wasm_get_var_info)
-				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", 'void', [ 'number', 'number', 'number']);
+				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", null, [ 'number', 'number', 'number']);
 
 			this.var_info = [];
 			var numBytes = var_list.length * Int32Array.BYTES_PER_ELEMENT;
@@ -58,28 +95,28 @@ var MonoSupportLib = {
 
 		mono_wasm_get_object_properties: function(objId) {
 			if (!this.mono_wasm_get_object_properties_info)
-				this.mono_wasm_get_object_properties_info = Module.cwrap ("mono_wasm_get_object_properties", 'void', [ 'number' ]);
+				this.mono_wasm_get_object_properties_info = Module.cwrap ("mono_wasm_get_object_properties", null, [ 'number' ]);
 
 			this.var_info = [];
 			console.log (">> mono_wasm_get_object_properties " + objId);
 			this.mono_wasm_get_object_properties_info (objId);
 
 			var res = this.var_info;
-			this.var_info = []
+			this.var_info = [];
 
 			return res;
 		},
 
 		mono_wasm_get_array_values: function(objId) {
 			if (!this.mono_wasm_get_array_values_info)
-				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", 'void', [ 'number' ]);
+				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", null, [ 'number' ]);
 
 			this.var_info = [];
 			console.log (">> mono_wasm_get_array_values " + objId);
 			this.mono_wasm_get_array_values_info (objId);
 
 			var res = this.var_info;
-			this.var_info = []
+			this.var_info = [];
 
 			return res;
 		},
@@ -87,15 +124,15 @@ var MonoSupportLib = {
 		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
-				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'void', [ 'number']);
+				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'number', [ 'number']);
 
-			this.mono_wasm_setup_single_step (kind);
+			return this.mono_wasm_setup_single_step (kind);
 		},
 
 		mono_wasm_runtime_ready: function () {
-			console.log (">>mono_wasm_runtime_ready");
 			this.mono_wasm_runtime_is_ready = true;
-			debugger;
+			// DO NOT REMOVE - magic debugger init function
+			console.debug ("mono_wasm_runtime_ready", "fe00e07a-5519-4dfe-b35a-f867dbaf2e28");
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
@@ -116,13 +153,13 @@ var MonoSupportLib = {
 		// Should be called before mono_load_runtime_and_bcl () in most cases 
 		mono_wasm_setenv: function (name, value) {
 			if (!this.wasm_setenv)
-				this.wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
+				this.wasm_setenv = Module.cwrap ('mono_wasm_setenv', null, ['string', 'string']);
 			this.wasm_setenv (name, value);
 		},
 
 		mono_wasm_set_runtime_options: function (options) {
 			if (!this.wasm_parse_runtime_options)
-				this.wasm_parse_runtime_options = Module.cwrap ('mono_wasm_parse_runtime_options', 'void', ['number', 'number']);
+				this.wasm_parse_runtime_options = Module.cwrap ('mono_wasm_parse_runtime_options', null, ['number', 'number']);
 			var argv = Module._malloc (options.length * 4);
 			var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string']);
 			aindex = 0;
@@ -150,7 +187,23 @@ var MonoSupportLib = {
 			if (!('send_to' in options))
 				options.send_to = 'WebAssembly.Runtime::DumpAotProfileData';
 			var arg = "aot:write-at-method=" + options.write_at + ",send-to-method=" + options.send_to;
-			Module.ccall ('mono_wasm_load_profiler_aot', 'void', ['string'], [arg]);
+			Module.ccall ('mono_wasm_load_profiler_aot', null, ['string'], [arg]);
+		},
+
+		// options = { write_at: "<METHODNAME>", send_to: "<METHODNAME>" }
+		// <METHODNAME> should be in the format <CLASS>::<METHODNAME>.
+		// write_at defaults to 'WebAssembly.Runtime::StopProfile'.
+		// send_to defaults to 'WebAssembly.Runtime::DumpCoverageProfileData'.
+		// DumpCoverageProfileData stores the data into Module.coverage_profile_data.
+		mono_wasm_init_coverage_profiler: function (options) {
+			if (options == null)
+				options = {}
+			if (!('write_at' in options))
+				options.write_at = 'WebAssembly.Runtime::StopProfile';
+			if (!('send_to' in options))
+				options.send_to = 'WebAssembly.Runtime::DumpCoverageProfileData';
+			var arg = "coverage:write-at-method=" + options.write_at + ",send-to-method=" + options.send_to;
+			Module.ccall ('mono_wasm_load_profiler_coverage', null, ['string'], [arg]);
 		},
 
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
@@ -162,7 +215,7 @@ var MonoSupportLib = {
 				if (ENVIRONMENT_IS_NODE) {
 					var fs = require('fs');
 					fetch_file_cb = function (asset) {
-						console.log("Loading... " + asset);
+						console.log("MONO_WASM: Loading... " + asset);
 						var binary = fs.readFileSync (asset);
 						var resolve_func2 = function(resolve, reject) {
 							resolve(new Uint8Array (binary));
@@ -195,7 +248,7 @@ var MonoSupportLib = {
 				fetch_promise.then (function (response) {
 					if (!response.ok) {
 						// If it's a 404 on a .pdb, we don't want to block the app from starting up.
-          					// We'll just skip that file and continue (though the 404 is logged in the console).
+						// We'll just skip that file and continue (though the 404 is logged in the console).
 						if (response.status === 404 && file_name.match(/\.pdb$/) && MONO.mono_wasm_ignore_pdb_load_errors) {
 							--pending;
 							throw "MONO-WASM: Skipping failed load for .pdb file: '" + file_name + "'";
@@ -221,17 +274,17 @@ var MonoSupportLib = {
 						MONO.loaded_files = loaded_files;
 						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 
-						console.log ("initializing mono runtime");
-						if (ENVIRONMENT_IS_SHELL) {
+						console.log ("MONO_WASM: Initializing mono runtime");
+						if (ENVIRONMENT_IS_SHELL || ENVIRONMENT_IS_NODE) {
 							try {
 								load_runtime (vfs_prefix, enable_debugging);
 							} catch (ex) {
-								print ("load_runtime () failed: " + ex);
+								print ("MONO_WASM: load_runtime () failed: " + ex);
 								var err = new Error();
-								print ("Stacktrace: \n");
+								print ("MONO_WASM: Stacktrace: \n");
 								print (err.stack);
 
-								var wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
+								var wasm_exit = Module.cwrap ('mono_wasm_exit', null, ['number']);
 								wasm_exit (1);
 							}
 						} else {
@@ -250,11 +303,29 @@ var MonoSupportLib = {
 		},
 		
 		mono_wasm_clear_all_breakpoints: function() {
-			if (this.mono_clear_bps)
-				this.mono_clear_bps = Module.cwrap ('mono_wasm_clear_all_breakpoints', 'void', [ ]);
+			if (!this.mono_clear_bps)
+				this.mono_clear_bps = Module.cwrap ('mono_wasm_clear_all_breakpoints', null);
+
 			this.mono_clear_bps ();
 		},
 		
+		mono_wasm_add_null_var: function(className)
+		{
+			fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+			MONO.var_info.push ({value: {
+				type: "object",
+				className: fixed_class_name,
+				description: fixed_class_name,
+				subtype: "null"
+			}});
+		},
+
+		_mono_csharp_fixup_class_name: function(className)
+		{
+			// Fix up generic names like Foo`2<int, string> to Foo<int, string>
+			// and nested class names like Foo/Bar to Foo.Bar
+			return className.replace('/', '.').replace(/`\d+/, '');
+		},
 	},
 
 	mono_wasm_add_bool_var: function(var_value) {
@@ -289,64 +360,67 @@ var MonoSupportLib = {
 
 	mono_wasm_add_string_var: function(var_value) {
 		if (var_value == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "string",
-					value: Module.UTF8ToString (var_value),
-				}
-			});
-		}
+			MONO.mono_wasm_add_null_var ("string");
+			return;
+		} 
+
+		MONO.var_info.push({
+			value: {
+				type: "string",
+				value: Module.UTF8ToString (var_value),
+			}
+		});
 	},
 
 	mono_wasm_add_obj_var: function(className, objectId) {
 		if (objectId == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "object",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					objectId: "dotnet:object:"+ objectId,
-				}
-			});
+			MONO.mono_wasm_add_null_var (className);
+			return;
 		}
+
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		MONO.var_info.push({
+			value: {
+				type: "object",
+				className: fixed_class_name,
+				description: fixed_class_name,
+				objectId: "dotnet:object:"+ objectId,
+			}
+		});
 	},
 
 	mono_wasm_add_array_var: function(className, objectId) {
 		if (objectId == 0) {
-			MONO.var_info.push({
-				value: {
-					type: "array",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					subtype: "null"
-				}
-			});
-		} else {
-			MONO.var_info.push({
-				value: {
-					type: "array",
-					className: Module.UTF8ToString (className),
-					description: Module.UTF8ToString (className),
-					objectId: "dotnet:array:"+ objectId,
-				}
-			});
+			MONO.mono_wasm_add_null_var (className);
+			return;
 		}
+
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		MONO.var_info.push({
+			value: {
+				type: "object",
+				subtype: "array",
+				className: fixed_class_name,
+				description: fixed_class_name,
+				objectId: "dotnet:array:"+ objectId,
+			}
+		});
+	},
+
+	mono_wasm_add_func_var: function(className, objectId) {
+		if (objectId == 0) {
+			MONO.mono_wasm_add_null_var (className);
+			return;
+		}
+
+		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		MONO.var_info.push({
+			value: {
+				type: "function",
+				description: fixed_class_name,
+				objectId: "dotnet:object:"+ objectId,
+			}
+		});
 	},
 
 	mono_wasm_add_frame: function(il, method, name) {
@@ -363,12 +437,14 @@ var MonoSupportLib = {
 			window.setTimeout (MONO.pump_message, 0);
 		} else if (ENVIRONMENT_IS_WORKER) {
 			self.setTimeout (MONO.pump_message, 0);
+		} else if (ENVIRONMENT_IS_NODE) {
+			global.setTimeout (MONO.pump_message, 0);
 		}
 	},
 
 	mono_set_timeout: function (timeout, id) {
 		if (!this.mono_set_timeout_exec)
-			this.mono_set_timeout_exec = Module.cwrap ("mono_set_timeout_exec", 'void', [ 'number' ]);
+			this.mono_set_timeout_exec = Module.cwrap ("mono_set_timeout_exec", null, [ 'number' ]);
 		if (ENVIRONMENT_IS_WEB) {
 			window.setTimeout (function () {
 				this.mono_set_timeout_exec (id);
@@ -376,6 +452,10 @@ var MonoSupportLib = {
 		} else if (ENVIRONMENT_IS_WORKER) {
 			self.setTimeout (function () {
 				this.mono_set_timeout_exec (id);
+			}, timeout);
+		} else if (ENVIRONMENT_IS_NODE) {
+			global.setTimeout (function () {
+				global.mono_set_timeout_exec (id);
 			}, timeout);
 		} else {
 			++MONO.pump_count;
@@ -393,4 +473,3 @@ var MonoSupportLib = {
 
 autoAddDeps(MonoSupportLib, '$MONO')
 mergeInto(LibraryManager.library, MonoSupportLib)
-

@@ -100,9 +100,7 @@
     <Compile Include="System.Windows.Forms.Layout\TableLayout.cs" />
     <Compile Include="System.Windows.Forms.Layout\TableLayoutSettingsTypeConverter.cs" />
     <Compile Include="System.Windows.Forms.PropertyGridInternal\PropertiesTab.cs" />
-    <Compile Include="System.Windows.Forms.RTF\Charcode.cs" />
-    <Compile Include="System.Windows.Forms.RTF\Charset.cs" />
-    <Compile Include="System.Windows.Forms.RTF\CharsetFlags.cs" />
+    <Compile Include="System.Windows.Forms.RTF\CharsetToCodepage.cs" />
     <Compile Include="System.Windows.Forms.RTF\CharsetType.cs" />
     <Compile Include="System.Windows.Forms.RTF\ClassDelegate.cs" />
     <Compile Include="System.Windows.Forms.RTF\Color.cs" />
@@ -115,12 +113,9 @@
     <Compile Include="System.Windows.Forms.RTF\Picture.cs" />
     <Compile Include="System.Windows.Forms.RTF\RTF.cs" />
     <Compile Include="System.Windows.Forms.RTF\RTFException.cs" />
-    <Compile Include="System.Windows.Forms.RTF\StandardCharCode.cs" />
-    <Compile Include="System.Windows.Forms.RTF\StandardCharName.cs" />
     <Compile Include="System.Windows.Forms.RTF\Style.cs" />
     <Compile Include="System.Windows.Forms.RTF\StyleElement.cs" />
     <Compile Include="System.Windows.Forms.RTF\StyleType.cs" />
-    <Compile Include="System.Windows.Forms.RTF\TextMap.cs" />
     <Compile Include="System.Windows.Forms.RTF\TokenClass.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\ButtonPainter.cs" />
     <Compile Include="System.Windows.Forms.Theming\Default\CheckBoxPainter.cs" />
@@ -787,6 +782,7 @@
     <Compile Include="System.Windows.Forms\TabPage.cs" />
     <Compile Include="System.Windows.Forms\TabRenderer.cs" />
     <Compile Include="System.Windows.Forms\TabSizeMode.cs" />
+    <Compile Include="System.Windows.Forms\TabStops.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventArgs.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutCellPaintEventHandler.cs" />
     <Compile Include="System.Windows.Forms\TableLayoutColumnStyleCollection.cs" />

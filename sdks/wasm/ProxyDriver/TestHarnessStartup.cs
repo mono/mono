@@ -2,23 +2,24 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json.Linq;
-using WsProxy;
 
-
-namespace WsProxy {
+namespace WebAssembly.Net.Debugging {
 	public class TestHarnessStartup {
+		static Regex parseConnection = new Regex (@"listening on (ws?s://[^\s]*)");
 		public TestHarnessStartup (IConfiguration configuration)
 		{
 			Configuration = configuration;
@@ -64,8 +65,9 @@ namespace WsProxy {
 			} catch (Exception e) { Console.WriteLine (e); }
 		}
 
-		public async Task LaunchAndServe (ProcessStartInfo psi, HttpContext context, Func<string, string> extract_conn_url)
+		public async Task LaunchAndServe (ProcessStartInfo psi, HttpContext context, Func<string, Task<string>> extract_conn_url)
 		{
+
 			if (!context.WebSockets.IsWebSocketRequest) {
 				context.Response.StatusCode = 400;
 				return;
@@ -76,14 +78,22 @@ namespace WsProxy {
 			var proc = Process.Start (psi);
 			try {
 				proc.ErrorDataReceived += (sender, e) => {
-					Console.WriteLine ($"stderr: {e.Data}");
-					var res = extract_conn_url (e.Data);
-					if (res != null)
-						tcs.TrySetResult (res);
+					var str = e.Data;
+					Console.WriteLine ($"stderr: {str}");
+
+					if (tcs.Task.IsCompleted)
+						return;
+
+					var match = parseConnection.Match (str);
+					if (match.Success) {
+						tcs.TrySetResult (match.Groups[1].Captures[0].Value);
+					}
 				};
+
 				proc.OutputDataReceived += (sender, e) => {
 					Console.WriteLine ($"stdout: {e.Data}");
 				};
+
 				proc.BeginErrorReadLine ();
 				proc.BeginOutputReadLine ();
 
@@ -91,17 +101,21 @@ namespace WsProxy {
 					Console.WriteLine ("Didnt get the con string after 2s.");
 					throw new Exception ("node.js timedout");
 				}
-				var con_str = await tcs.Task;
-				Console.WriteLine ($"lauching proxy for {con_str}");
+				var line = await tcs.Task;
+				var con_str = extract_conn_url != null ? await extract_conn_url (line) : line;
 
-				var proxy = new MonoProxy ();
+				Console.WriteLine ($"launching proxy for {con_str}");
+
+				using var loggerFactory = LoggerFactory.Create(
+					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+				var proxy = new DebuggerProxy (loggerFactory);
 				var browserUri = new Uri (con_str);
 				var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 
 				await proxy.Run (browserUri, ideSocket);
 				Console.WriteLine("Proxy done");
 			} catch (Exception e) {
-				Console.WriteLine ("got exception {0}", e.GetType ().FullName);
+				Console.WriteLine ("got exception {0}", e);
 			} finally {
 				proc.CancelErrorRead ();
 				proc.CancelOutputRead ();
@@ -110,8 +124,9 @@ namespace WsProxy {
 				proc.Close ();
 			}
 		}
+
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure (IApplicationBuilder app, IOptionsMonitor<TestHarnessOptions> optionsAccessor, IHostingEnvironment env)
+		public void Configure (IApplicationBuilder app, IOptionsMonitor<TestHarnessOptions> optionsAccessor, IWebHostEnvironment env)
 		{
 			app.UseWebSockets ();
 			app.UseStaticFiles ();
@@ -133,7 +148,8 @@ namespace WsProxy {
 
 			var devToolsUrl = options.DevToolsUrl;
 			var psi = new ProcessStartInfo ();
-			psi.Arguments = $"--headless --disable-gpu --remote-debugging-port={devToolsUrl.Port} http://localhost:9300/{options.PagePath}";
+
+			psi.Arguments = $"--headless --disable-gpu --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
 			psi.UseShellExecute = false;
 			psi.FileName = options.ChromePath;
 			psi.RedirectStandardError = true;
@@ -142,16 +158,27 @@ namespace WsProxy {
 			app.UseRouter (router => {
 				router.MapGet ("launch-chrome-and-connect", async context => {
 					Console.WriteLine ("New test request");
-					await LaunchAndServe (psi, context, str => {
-						//We wait for it as a signal that chrome finished launching
-						if (!str.StartsWith ("DevTools listening on ", StringComparison.Ordinal))
-							return null;
+					var client = new HttpClient ();
+					await LaunchAndServe (psi, context, async (str) => {
+						string res = null;
+						var start = DateTime.Now;
 
-						var client = new HttpClient ();
-						var res = client.GetStringAsync (new Uri (devToolsUrl, "/json/list")).Result;
-						Console.WriteLine ("res is {0}", res);
-						if (res == null)
-							return null;
+						while (res == null) {
+							// Unfortunately it does look like we have to wait
+							// for a bit after getting the response but before
+							// making the list request.  We get an empty result
+							// if we make the request too soon.
+							await Task.Delay (100);
+
+							res = await client.GetStringAsync (new Uri (new Uri (str), "/json/list"));
+							Console.WriteLine ("res is {0}", res);
+
+							var elapsed = DateTime.Now - start;
+							if (res == null && elapsed.Milliseconds > 2000) {
+								Console.WriteLine ($"Unable to get DevTools /json/list response in {elapsed.Seconds} seconds, stopping");
+								return null;
+							}
+						}
 
 						var obj = JArray.Parse (res);
 						if (obj == null || obj.Count < 1)
@@ -179,11 +206,7 @@ namespace WsProxy {
 					router.MapGet ("json/list", SendNodeList);
 					router.MapGet ("json/version", SendNodeVersion);
 					router.MapGet ("launch-done-and-connect", async context => {
-						await LaunchAndServe (psi, context, str => {
-							if (str.StartsWith ("Debugger listening on", StringComparison.Ordinal))
-								return str.Substring (str.IndexOf ("ws://", StringComparison.Ordinal));
-							return null;
-						});
+						await LaunchAndServe (psi, context, null);
 					});
 				});
 			}

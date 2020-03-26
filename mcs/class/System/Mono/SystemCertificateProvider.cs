@@ -89,7 +89,7 @@ namespace Mono
 					return;
 
 #if MONO_FEATURE_BTLS || MONO_FEATURE_APPLETLS
-			provider = MonoTlsProviderFactory.GetProvider ();
+				provider = MonoTlsProviderFactory.GetProvider ();
 #endif
 				x509pal = GetX509Pal ();
 			}

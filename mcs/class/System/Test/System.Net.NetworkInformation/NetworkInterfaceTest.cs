@@ -19,18 +19,27 @@ namespace MonoTests.System.Net.NetworkInformation
 	public class NetworkInterfaceTest
 	{
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void IsNetworkAvailable ()
 		{
 			Assert.IsTrue (NetworkInterface.GetIsNetworkAvailable ());
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void LoopbackInterfaceIndex ()
 		{
 			Assert.IsTrue (NetworkInterface.LoopbackInterfaceIndex > 0);
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AtLeastOneInterface ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
@@ -38,6 +47,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void FirstInterfaceId ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
@@ -45,6 +57,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void FirstInterfaceName ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
@@ -52,6 +67,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void FirstInterfaceType ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
@@ -59,6 +77,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void FirstInterfaceOperationalStatus ()
 		{
 			var adapter = NetworkInterface.GetAllNetworkInterfaces ()[0];
@@ -68,6 +89,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void FirstInterfaceSpeed ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
@@ -75,6 +99,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void IPv4Mask ()
 		{
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();

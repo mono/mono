@@ -1467,45 +1467,28 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 	return opts;
 }
 
-/*
- * This function test for all SSE functions supported.
- *
- * Returns a bitmask corresponding to all supported versions.
- * 
- */
-guint32
-mono_arch_cpu_enumerate_simd_versions (void)
-{
-	guint32 sse_opts = 0;
-
-	if (mono_hwcap_x86_has_sse1)
-		sse_opts |= SIMD_VERSION_SSE1;
-
-	if (mono_hwcap_x86_has_sse2)
-		sse_opts |= SIMD_VERSION_SSE2;
-
-	if (mono_hwcap_x86_has_sse3)
-		sse_opts |= SIMD_VERSION_SSE3;
-
-	if (mono_hwcap_x86_has_ssse3)
-		sse_opts |= SIMD_VERSION_SSSE3;
-
-	if (mono_hwcap_x86_has_sse41)
-		sse_opts |= SIMD_VERSION_SSE41;
-
-	if (mono_hwcap_x86_has_sse42)
-		sse_opts |= SIMD_VERSION_SSE42;
-
-	if (mono_hwcap_x86_has_sse4a)
-		sse_opts |= SIMD_VERSION_SSE4a;
-
-	return sse_opts;
-}
-
 MonoCPUFeatures
 mono_arch_get_cpu_features (void)
 {
 	guint64 features = MONO_CPU_INITED;
+
+	if (mono_hwcap_x86_has_sse1)
+		features |= MONO_CPU_X86_SSE;
+
+	if (mono_hwcap_x86_has_sse2)
+		features |= MONO_CPU_X86_SSE2;
+
+	if (mono_hwcap_x86_has_sse3)
+		features |= MONO_CPU_X86_SSE3;
+
+	if (mono_hwcap_x86_has_ssse3)
+		features |= MONO_CPU_X86_SSSE3;
+
+	if (mono_hwcap_x86_has_sse41)
+		features |= MONO_CPU_X86_SSE41;
+
+	if (mono_hwcap_x86_has_sse42)
+		features |= MONO_CPU_X86_SSE42;
 
 	if (mono_hwcap_x86_has_popcnt)
 		features |= MONO_CPU_X86_POPCNT;
@@ -3524,6 +3507,54 @@ simd_type_to_add_op (int t)
 	}
 }
 
+static int
+simd_type_to_min_op (int t)
+{
+	switch (t) {
+	case MONO_TYPE_I1:
+		return OP_PMINB; // SSE 4.1
+	case MONO_TYPE_U1:
+		return OP_PMINB_UN; // SSE 4.1
+	case MONO_TYPE_I2:
+		return OP_PMINW;
+	case MONO_TYPE_U2:
+		return OP_PMINW_UN;
+	case MONO_TYPE_I4:
+		return OP_PMIND; // SSE 4.1
+	case MONO_TYPE_U4:
+		return OP_PMIND_UN; // SSE 4.1
+	// case MONO_TYPE_I8: // AVX
+	// case MONO_TYPE_U8:
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
+static int
+simd_type_to_max_op (int t)
+{
+	switch (t) {
+	case MONO_TYPE_I1:
+		return OP_PMAXB; // SSE 4.1
+	case MONO_TYPE_U1:
+		return OP_PMAXB_UN; // SSE 4.1
+	case MONO_TYPE_I2:
+		return OP_PMAXW;
+	case MONO_TYPE_U2:
+		return OP_PMAXW_UN;
+	case MONO_TYPE_I4:
+		return OP_PMAXD; // SSE 4.1
+	case MONO_TYPE_U4:
+		return OP_PMAXD_UN; // SSE 4.1
+	// case MONO_TYPE_I8: // AVX
+	// case MONO_TYPE_U8:
+	default:
+		g_assert_not_reached ();
+		return -1;
+	}
+}
+
 static void
 emit_simd_comp_op (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int type, int dreg, int sreg1, int sreg2)
 {
@@ -3632,6 +3663,58 @@ emit_simd_gt_op (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int type, 
 		NEW_SIMD_INS (cfg, ins, temp, OP_ORPD, dreg, temp_z, temp_w);
 	} else {
 		NEW_SIMD_INS (cfg, ins, temp, simd_type_to_gt_op (type), dreg, sreg1, sreg2);
+	}
+}
+
+static void
+emit_simd_min_op (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int type, int dreg, int sreg1, int sreg2)
+{
+	MonoInst *temp;
+
+	if (type == MONO_TYPE_I2 || type == MONO_TYPE_U2) {
+		// SSE2, so always available
+		NEW_SIMD_INS (cfg, ins, temp, simd_type_to_min_op (type), dreg, sreg1, sreg2);
+	} else if (!mono_hwcap_x86_has_sse41 || type == MONO_TYPE_I8 || type == MONO_TYPE_U8) {
+		// Decompose to t = (s1 > s2), d = (s1 & !t) | (s2 & t)
+		int temp_t = mono_alloc_ireg (cfg);
+		int temp_d1 = mono_alloc_ireg (cfg);
+		int temp_d2 = mono_alloc_ireg (cfg);
+		if (type == MONO_TYPE_U8 || type == MONO_TYPE_U4 || type == MONO_TYPE_U1)
+			emit_simd_gt_un_op (cfg, bb, ins, type, temp_t, sreg1, sreg2);
+		else
+			emit_simd_gt_op (cfg, bb, ins, type, temp_t, sreg1, sreg2);
+		NEW_SIMD_INS (cfg, ins, temp, OP_PANDN, temp_d1, temp_t, sreg1);
+		NEW_SIMD_INS (cfg, ins, temp, OP_PAND, temp_d2, temp_t, sreg2);
+		NEW_SIMD_INS (cfg, ins, temp, OP_POR, dreg, temp_d1, temp_d2);
+	} else {
+		// SSE 4.1 has byte- and dword- operations
+		NEW_SIMD_INS (cfg, ins, temp, simd_type_to_min_op (type), dreg, sreg1, sreg2);
+	}
+}
+
+static void
+emit_simd_max_op (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, int type, int dreg, int sreg1, int sreg2)
+{
+	MonoInst *temp;
+
+	if (type == MONO_TYPE_I2 || type == MONO_TYPE_U2) {
+		// SSE2, so always available
+		NEW_SIMD_INS (cfg, ins, temp, simd_type_to_max_op (type), dreg, sreg1, sreg2);
+	} else if (!mono_hwcap_x86_has_sse41 || type == MONO_TYPE_I8 || type == MONO_TYPE_U8) {
+		// Decompose to t = (s1 > s2), d = (s1 & t) | (s2 & !t)
+		int temp_t = mono_alloc_ireg (cfg);
+		int temp_d1 = mono_alloc_ireg (cfg);
+		int temp_d2 = mono_alloc_ireg (cfg);
+		if (type == MONO_TYPE_U8 || type == MONO_TYPE_U4 || type == MONO_TYPE_U1)
+			emit_simd_gt_un_op (cfg, bb, ins, type, temp_t, sreg1, sreg2);
+		else
+			emit_simd_gt_op (cfg, bb, ins, type, temp_t, sreg1, sreg2);
+		NEW_SIMD_INS (cfg, ins, temp, OP_PAND, temp_d1, temp_t, sreg1);
+		NEW_SIMD_INS (cfg, ins, temp, OP_PANDN, temp_d2, temp_t, sreg2);
+		NEW_SIMD_INS (cfg, ins, temp, OP_POR, dreg, temp_d1, temp_d2);
+	} else {
+		// SSE 4.1 has byte- and dword- operations
+		NEW_SIMD_INS (cfg, ins, temp, simd_type_to_max_op (type), dreg, sreg1, sreg2);
 	}
 }
 
@@ -3871,6 +3954,14 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 			case OP_IOR:
 				ins->opcode = OP_ORPD;
 				break;
+			case OP_IMIN:
+				emit_simd_min_op (cfg, bb, ins, ins->inst_c1, ins->dreg, ins->sreg1, ins->sreg2);
+				NULLIFY_INS (ins);
+				break;
+			case OP_IMAX:
+				emit_simd_max_op (cfg, bb, ins, ins->inst_c1, ins->dreg, ins->sreg1, ins->sreg2);
+				NULLIFY_INS (ins);
+				break;
 			case OP_FSUB:
 				ins->opcode = ins->inst_c1 == MONO_TYPE_R8 ? OP_SUBPD : OP_SUBPS;
 				break;
@@ -3882,6 +3973,12 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				break;
 			case OP_FMUL:
 				ins->opcode = ins->inst_c1 == MONO_TYPE_R8 ? OP_MULPD : OP_MULPS;
+				break;
+			case OP_FMIN:
+				ins->opcode = ins->inst_c1 == MONO_TYPE_R8 ? OP_MINPD : OP_MINPS;
+				break;
+			case OP_FMAX:
+				ins->opcode = ins->inst_c1 == MONO_TYPE_R8 ? OP_MAXPD : OP_MAXPS;
 				break;
 			default:
 				g_assert_not_reached();
@@ -5726,8 +5823,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			if ((d == 0.0) && (mono_signbit (d) == 0)) {
 				amd64_sse_xorpd_reg_reg (code, ins->dreg, ins->dreg);
-			}
-			else {
+			} else if (cfg->compile_aot && cfg->code_exec_only) {
+				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8_GOT, ins->inst_p0);
+				amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, sizeof(gpointer));
+				amd64_sse_movsd_reg_membase (code, ins->dreg, AMD64_R11, 0);
+			} else {
 				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8, ins->inst_p0);
 				amd64_sse_movsd_reg_membase (code, ins->dreg, AMD64_RIP, 0);
 			}
@@ -5741,10 +5841,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					amd64_sse_xorps_reg_reg (code, ins->dreg, ins->dreg);
 				else
 					amd64_sse_xorpd_reg_reg (code, ins->dreg, ins->dreg);
-			}
-			else {
-				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R4, ins->inst_p0);
-				amd64_sse_movss_reg_membase (code, ins->dreg, AMD64_RIP, 0);
+			} else {
+				if (cfg->compile_aot && cfg->code_exec_only) {
+					mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R4_GOT, ins->inst_p0);
+					amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, sizeof(gpointer));
+					amd64_sse_movss_reg_membase (code, ins->dreg, AMD64_R11, 0);
+				} else {
+					mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R4, ins->inst_p0);
+					amd64_sse_movss_reg_membase (code, ins->dreg, AMD64_RIP, 0);
+				}
 				if (!cfg->r4fp)
 					amd64_sse_cvtss2sd_reg_reg (code, ins->dreg, ins->dreg);
 			}
@@ -5943,19 +6048,33 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			static double r8_0 = -0.0;
 
 			g_assert (ins->sreg1 == ins->dreg);
-					
-			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8, &r8_0);
-			amd64_sse_xorpd_reg_membase (code, ins->dreg, AMD64_RIP, 0);
+
+			if (cfg->compile_aot && cfg->code_exec_only) {
+				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8_GOT, &r8_0);
+				amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, sizeof (target_mgreg_t));
+				amd64_sse_movsd_reg_membase (code, MONO_ARCH_FP_SCRATCH_REG, AMD64_R11, 0);
+				amd64_sse_xorpd_reg_reg (code, ins->dreg, MONO_ARCH_FP_SCRATCH_REG);
+			} else {
+				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8, &r8_0);
+				amd64_sse_xorpd_reg_membase (code, ins->dreg, AMD64_RIP, 0);
+			}
 			break;
 		}
 		case OP_ABS: {
 			static guint64 d = 0x7fffffffffffffffUL;
 
 			g_assert (ins->sreg1 == ins->dreg);
-					
-			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8, &d);
-			amd64_sse_andpd_reg_membase (code, ins->dreg, AMD64_RIP, 0);
-			break;		
+
+			if (cfg->compile_aot && cfg->code_exec_only) {
+				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8_GOT, &d);
+				amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, sizeof (target_mgreg_t));
+				amd64_sse_movsd_reg_membase (code, MONO_ARCH_FP_SCRATCH_REG, AMD64_R11, 0);
+				amd64_sse_andpd_reg_reg (code, ins->dreg, MONO_ARCH_FP_SCRATCH_REG);
+			} else {
+				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R8, &d);
+				amd64_sse_andpd_reg_membase (code, ins->dreg, AMD64_RIP, 0);
+			}
+			break;
 		}
 		case OP_SQRT:
 			EMIT_SSE2_FPFUNC (code, fsqrt, ins->dreg, ins->sreg1);
@@ -5978,8 +6097,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			g_assert (ins->sreg1 == ins->dreg);
 
-			mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R4, &r4_0);
-			amd64_sse_movss_reg_membase (code, MONO_ARCH_FP_SCRATCH_REG, AMD64_RIP, 0);
+			if (cfg->compile_aot && cfg->code_exec_only) {
+				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R4_GOT, &r4_0);
+				amd64_mov_reg_membase (code, AMD64_R11, AMD64_RIP, 0, sizeof (target_mgreg_t));
+				amd64_sse_movss_reg_membase (code, MONO_ARCH_FP_SCRATCH_REG, AMD64_R11, 0);
+			} else {
+				mono_add_patch_info (cfg, offset, MONO_PATCH_INFO_R4, &r4_0);
+				amd64_sse_movss_reg_membase (code, MONO_ARCH_FP_SCRATCH_REG, AMD64_RIP, 0);
+			}
+
 			amd64_sse_xorps_reg_reg (code, ins->dreg, MONO_ARCH_FP_SCRATCH_REG);
 			break;
 		}
@@ -6711,6 +6837,9 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 		case OP_PAND:
 			amd64_sse_pand_reg_reg (code, ins->sreg1, ins->sreg2);
+			break;
+		case OP_PANDN:
+			amd64_sse_pandn_reg_reg (code, ins->sreg1, ins->sreg2);
 			break;
 		case OP_POR:
 			amd64_sse_por_reg_reg (code, ins->sreg1, ins->sreg2);

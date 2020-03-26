@@ -28,10 +28,13 @@ typedef enum {
 	MONO_TRACE_IO_LAYER_HANDLE    = 1 << 15,
 	MONO_TRACE_TAILCALL           = 1 << 16,
 	MONO_TRACE_PROFILER           = 1 << 17,
+	MONO_TRACE_TIERED             = 1 << 18,
 } MonoTraceMask;
 
+MONO_BEGIN_DECLS
 MONO_API_DATA GLogLevelFlags mono_internal_current_level;
 MONO_API_DATA MonoTraceMask mono_internal_current_mask;
+MONO_END_DECLS
 
 MONO_API void
 mono_trace_init (void);

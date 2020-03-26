@@ -82,12 +82,22 @@ stub_stop_single_stepping (void)
 }
 
 static void
+stub_set_optimizations (guint32 i)
+{
+}
+
+static void
+stub_invalidate_transformed (MonoDomain *domain)
+{
+}
+
+static void
 stub_cleanup (void)
 {
 }
 
 static void
-stub_set_resume_state (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
+stub_set_resume_state (MonoJitTlsData *jit_tls, MonoObject *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip)
 {
 	g_assert_not_reached ();
 }
@@ -136,6 +146,12 @@ stub_create_method_pointer_llvmonly (MonoMethod *method, gboolean compile, MonoE
 {
 	g_assert_not_reached ();
 	return NULL;
+}
+
+static void
+stub_free_method (MonoDomain *domain, MonoMethod *method)
+{
+	g_assert_not_reached ();
 }
 
 static MonoObject*
@@ -199,6 +215,17 @@ static void
 stub_frame_arg_set_storage (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gpointer storage)
 {
 	g_assert_not_reached ();
+}
+
+static void
+stub_free_context (gpointer context)
+{
+	g_assert_not_reached ();
+}
+
+static void
+stub_mark_stack (gpointer thread_data, GcScanFunc func, gpointer gc_data, gboolean precise)
+{
 }
 
 #undef MONO_EE_CALLBACK

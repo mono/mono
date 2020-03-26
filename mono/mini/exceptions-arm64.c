@@ -20,6 +20,7 @@
 
 #include <mono/arch/arm64/arm64-codegen.h>
 #include <mono/metadata/abi-details.h>
+#include "mono/utils/mono-tls-inline.h"
 
 #ifndef DISABLE_JIT
 
@@ -138,7 +139,7 @@ mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 	/* Load ctx */
 	arm_ldrx (code, ARMREG_IP0, ARMREG_FP, ctx_offset);
 	/* Save registers back to ctx */
-	/* This isn't strictly neccessary since we don't allocate variables used in eh clauses to registers */
+	/* This isn't strictly necessary since we don't allocate variables used in eh clauses to registers */
 	code = mono_arm_emit_store_regarray (code, MONO_ARCH_CALLEE_SAVED_REGS, ARMREG_IP0, MONO_STRUCT_OFFSET (MonoContext, regs));
 
 	/* Restore regs */
@@ -386,7 +387,7 @@ mono_arm_throw_exception (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_regs,
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow) {
+		if (!rethrow && !mono_ex->caught_in_unmanaged) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		} else if (preserve_ips) {

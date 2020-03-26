@@ -28,6 +28,7 @@
             <method name="ObjectToString" />
             <method name="GetDateValue" />
             <method name="CreateDateTime" />
+            <method name="CreateUri" />
             <method name="ObjectToEnum" />
             <method name="DumpAotProfileData" />            
         </type>

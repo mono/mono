@@ -175,7 +175,7 @@ struct _MonoArray {
 	mono_64bitaligned_t vector [MONO_ZERO_LEN_ARRAY];
 };
 
-#define MONO_SIZEOF_MONO_ARRAY (MONO_STRUCT_OFFSET (MonoArray, vector))
+#define MONO_SIZEOF_MONO_ARRAY (MONO_STRUCT_OFFSET_CONSTANT (MonoArray, vector))
 
 struct _MonoString {
 	MonoObject object;
@@ -438,14 +438,6 @@ struct _MonoReflectionType {
 /* Safely access System.Type from native code */
 TYPED_HANDLE_DECL (MonoReflectionType);
 
-/* This corresponds to System.RuntimeType */
-typedef struct {
-	MonoReflectionType type;
-	MonoObject *type_info;
-} MonoReflectionMonoType;
-
-TYPED_HANDLE_DECL (MonoReflectionMonoType);
-
 typedef struct {
 	MonoObject  object;
 	MonoReflectionType *class_to_proxy;	
@@ -572,8 +564,7 @@ struct _MonoThreadInfo;
 
 typedef struct MonoThreadName {
 	char* volatile chars;      // null check outside of lock
-	gsize volatile generation; // read outside of lock
-	gint32 free;
+	gint32 free; // bool
 	gint32 length;
 } MonoThreadName;
 
@@ -581,15 +572,11 @@ void
 mono_gstring_append_thread_name (GString*, MonoInternalThread*);
 
 
-#ifdef ENABLE_NETCORE
 /*
- * There is only one thread object, MonoInternalThread is aliased to MonoThread,
+ * NETCORE: There is only one thread object,
  * thread->internal_thread points to itself.
  */
-struct _MonoThread {
-#else
 struct _MonoInternalThread {
-#endif
 	// FIXME: Mechanize keeping this in sync with managed.
 	MonoObject  obj;
 	volatile int lock_thread_id; /* to be used as the pre-shifted thread id in thin locks. Used for appdomain_ref push/pop */
@@ -598,7 +585,7 @@ struct _MonoInternalThread {
 	MonoThreadName name;
 	guint32	    state;      /* must be accessed while longlived->synch_cs is locked */
 	MonoException *abort_exc;
-	int abort_state_handle;
+	MonoGCHandle abort_state_handle;
 	guint64 tid;	/* This is accessed as a gsize in the code (so it can hold a 64bit pointer on systems that need it), but needs to reserve 64 bits of space on all machines as it corresponds to a field in managed code */
 	gsize debugger_thread; // FIXME switch to bool as soon as CI testing with corlib version bump works
 	gpointer *static_data;
@@ -632,7 +619,7 @@ struct _MonoInternalThread {
 	gsize thread_state;
 
 #ifdef ENABLE_NETCORE
-	struct _MonoThread *internal_thread;
+	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
 #else
@@ -645,9 +632,7 @@ struct _MonoInternalThread {
 	gpointer last;
 };
 
-#ifdef ENABLE_NETCORE
-#define _MonoInternalThread _MonoThread
-#else
+#ifndef ENABLE_NETCORE
 struct _MonoThread {
 	MonoObject obj;
 	MonoInternalThread *internal_thread;
@@ -833,7 +818,7 @@ typedef struct {
 	gpointer (*get_imt_trampoline) (MonoVTable *vtable, int imt_slot_index);
 	gboolean (*imt_entry_inited) (MonoVTable *vtable, int imt_slot_index);
 	void     (*set_cast_details) (MonoClass *from, MonoClass *to);
-	void     (*debug_log) (int level, MonoStringHandle category, MonoStringHandle message);
+	void     (*debug_log) (int level, MonoString *category, MonoString *message);
 	gboolean (*debug_log_is_enabled) (void);
 	void     (*init_delegate) (MonoDelegateHandle delegate, MonoError *error);
 	MonoObject* (*runtime_invoke) (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error);
@@ -1130,16 +1115,6 @@ typedef struct {
 	guint32 attrs;
 	MonoArray *other_methods;
 } MonoEventInfo;
-
-typedef struct {
-	MonoString *name;
-	MonoString *name_space;
-	MonoReflectionType *etype;
-	MonoReflectionType *nested_in;
-	MonoReflectionAssembly *assembly;
-	guint32 rank;
-	MonoBoolean isprimitive;
-} MonoTypeInfo;
 
 typedef struct {
 	MonoObject *member;
@@ -1514,25 +1489,6 @@ struct _MonoReflectionGenericClass {
 
 /* Safely access System.Reflection.Emit.TypeBuilderInstantiation from native code */
 TYPED_HANDLE_DECL (MonoReflectionGenericClass);
-
-typedef struct {
-	MonoObject  obj;
-	MonoString *name;
-	MonoString *codebase;
-	gint32 major, minor, build, revision;
-	MonoObject  *cultureInfo;
-	guint32     flags;
-	guint32     hashalg;
-	MonoObject  *keypair;
-	MonoArray   *publicKey;
-	MonoArray   *keyToken;
-	guint32     versioncompat;
-	MonoObject *version;
-	guint32     processor_architecture;
-} MonoReflectionAssemblyName;
-
-/* Safely access System.Reflection.AssemblyName from native code */
-TYPED_HANDLE_DECL (MonoReflectionAssemblyName);
 
 typedef struct {
 	MonoObject  obj;
@@ -2292,6 +2248,7 @@ mono_string_hash_internal (MonoString *s);
 int
 mono_object_hash_internal (MonoObject* obj);
 
+ICALL_EXTERN_C
 void
 mono_value_copy_internal (void* dest, const void* src, MonoClass *klass);
 
@@ -2370,16 +2327,17 @@ mono_runtime_get_aotid_arr (void);
  * mono_gchandle_get_target () can be used to get the object referenced by both kinds
  * of handle: for a weakref handle, if an object has been collected, it will return NULL.
  */
-uint32_t
+MonoGCHandle
 mono_gchandle_new_internal (MonoObject *obj, mono_bool pinned);
 
-uint32_t
+MonoGCHandle
 mono_gchandle_new_weakref_internal (MonoObject *obj, mono_bool track_resurrection);
 
+ICALL_EXTERN_C
 MonoObject*
-mono_gchandle_get_target_internal (uint32_t gchandle);
+mono_gchandle_get_target_internal (MonoGCHandle gchandle);
 
-void mono_gchandle_free_internal (uint32_t gchandle);
+void mono_gchandle_free_internal (MonoGCHandle gchandle);
 
 /* Reference queue support
  *
@@ -2417,6 +2375,7 @@ mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value);
 void
 mono_gc_wbarrier_generic_store_atomic_internal (void *ptr, MonoObject *value);
 
+ICALL_EXTERN_C
 void
 mono_gc_wbarrier_generic_nostore_internal (void* ptr);
 

@@ -1029,7 +1029,7 @@ mono_image_insert_string (MonoReflectionModuleBuilderHandle ref_module, MonoStri
 		mono_metadata_encode_value (1 | (length * 2), b, &b);
 		idx = mono_image_add_stream_data (&assembly->us, buf, b-buf);
 		/* pinned */
-		uint32_t gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, str), TRUE);
+		MonoGCHandle gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, str), TRUE);
 		const char *p = (const char*)mono_string_chars_internal (MONO_HANDLE_RAW (str));
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	{
@@ -1650,15 +1650,16 @@ mono_is_sre_ctor_on_tb_inst (MonoClass *klass)
 static MonoReflectionTypeHandle
 mono_reflection_type_get_underlying_system_type (MonoReflectionTypeHandle t, MonoError *error)
 {
-	static MonoMethod *method_get_underlying_system_type = NULL;
 	HANDLE_FUNCTION_ENTER ();
 
 	error_init (error);
 
-	if (!method_get_underlying_system_type) {
+	MONO_STATIC_POINTER_INIT (MonoMethod, method_get_underlying_system_type)
+
 		method_get_underlying_system_type = mono_class_get_method_from_name_checked (mono_defaults.systemtype_class, "get_UnderlyingSystemType", 0, 0, error);
 		mono_error_assert_ok (error);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, method_get_underlying_system_type)
 
 	MonoReflectionTypeHandle rt = MONO_HANDLE_NEW (MonoReflectionType, NULL);
 
@@ -2175,7 +2176,9 @@ handle_enum:
 		char *str;
 		guint32 slen;
 		if (!arg) {
+MONO_DISABLE_WARNING(4309) // truncation of constant
 			*p++ = 0xFF;
+MONO_RESTORE_WARNING
 			break;
 		}
 		str = mono_string_to_utf8_checked_internal ((MonoString*)arg, error);
@@ -2200,7 +2203,9 @@ handle_enum:
 		guint32 slen;
 		MonoType *arg_type;
 		if (!arg) {
+MONO_DISABLE_WARNING(4309) // truncation of constant
 			*p++ = 0xFF;
+MONO_RESTORE_WARNING
 			break;
 		}
 handle_type:
@@ -2228,7 +2233,9 @@ handle_type:
 		MonoClass *eclass, *arg_eclass;
 
 		if (!arg) {
+MONO_DISABLE_WARNING(4309) // truncation of constant
 			*p++ = 0xff; *p++ = 0xff; *p++ = 0xff; *p++ = 0xff;
+MONO_RESTORE_WARNING
 			break;
 		}
 		len = mono_array_length_internal ((MonoArray*)arg);
@@ -2282,7 +2289,9 @@ handle_type:
 
 		if (arg == NULL) {
 			*p++ = MONO_TYPE_STRING;	// It's same hack as MS uses
+MONO_DISABLE_WARNING(4309) // truncation of constant
 			*p++ = 0xFF;
+MONO_RESTORE_WARNING
 			break;
 		}
 		
@@ -2913,6 +2922,7 @@ mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, Mono
 {
 	error_init (error);
 	
+	MonoAssemblyLoadContext *alc = mono_domain_ambient_alc (domain);
 	MonoReflectionMarshalAsAttributeHandle minfo = MONO_HANDLE_CAST (MonoReflectionMarshalAsAttribute, mono_object_new_handle (domain, mono_class_get_marshal_as_attribute_class (), error));
 	goto_if_nok (error, fail);
 	guint32 utype;
@@ -2936,7 +2946,7 @@ mono_reflection_marshal_as_attribute_from_marshal_spec (MonoDomain *domain, Mono
 
 	case MONO_NATIVE_CUSTOM:
 		if (spec->data.custom_data.custom_name) {
-			MonoType *mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, klass->image, error);
+			MonoType *mtype = mono_reflection_type_from_name_checked (spec->data.custom_data.custom_name, alc, klass->image, error);
 			goto_if_nok (error, fail);
 
 			if (mtype) {
@@ -4077,10 +4087,10 @@ free_dynamic_method (void *dynamic_method)
 	DynamicMethodReleaseData *data = (DynamicMethodReleaseData *)dynamic_method;
 	MonoDomain *domain = data->domain;
 	MonoMethod *method = data->handle;
-	guint32 dis_link;
+	MonoGCHandle dis_link;
 
 	mono_domain_lock (domain);
-	dis_link = (guint32)(size_t)g_hash_table_lookup (domain->method_to_dyn_method, method);
+	dis_link = g_hash_table_lookup (domain->method_to_dyn_method, method);
 	g_hash_table_remove (domain->method_to_dyn_method, method);
 	mono_domain_unlock (domain);
 	g_assert (dis_link);
@@ -4218,7 +4228,7 @@ reflection_create_dynamic_method (MonoReflectionDynamicMethodHandle ref_mb, Mono
 	mono_domain_lock (domain);
 	if (!domain->method_to_dyn_method)
 		domain->method_to_dyn_method = g_hash_table_new (NULL, NULL);
-	g_hash_table_insert (domain->method_to_dyn_method, handle, (gpointer)(size_t)mono_gchandle_new_weakref_internal ((MonoObject *)mb, TRUE));
+	g_hash_table_insert (domain->method_to_dyn_method, handle, mono_gchandle_new_weakref_internal ((MonoObject *)mb, TRUE));
 	mono_domain_unlock (domain);
 
 	return TRUE;
@@ -4263,6 +4273,7 @@ ensure_complete_type (MonoClass *klass, MonoError *error)
 	error_init (error);
 
 	if (image_is_dynamic (klass->image) && !klass->wastypebuilder && mono_class_has_ref_info (klass)) {
+#ifndef ENABLE_NETCORE
 		MonoReflectionTypeBuilderHandle tb = mono_class_get_ref_info (klass);
 
 		mono_domain_try_type_resolve_typebuilder (mono_domain_get (), tb, error);
@@ -4270,6 +4281,10 @@ ensure_complete_type (MonoClass *klass, MonoError *error)
 
 		// Asserting here could break a lot of code
 		//g_assert (klass->wastypebuilder);
+#else
+		// TODO: make this work on netcore when working on SRE.TypeBuilder
+		g_assert_not_reached ();
+#endif
 	}
 
 	if (mono_class_is_ginst (klass)) {
@@ -4366,13 +4381,18 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 		if (klass->wastypebuilder) {
 			/* Already created */
 			result = klass;
-		}
-		else {
+		} else {
+#ifndef ENABLE_NETCORE
 			mono_domain_try_type_resolve_typebuilder (mono_domain_get (), tb, error);
 			goto_if_nok (error, return_null);
 			result = type->data.klass;
 			g_assert (result);
+#else
+			// TODO: make this work on netcore when working on SRE.TypeBuilder
+			g_assert_not_reached();
+#endif
 		}
+
 		*handle_class = mono_defaults.typehandle_class;
 	} else if (strcmp (oklass->name, "SignatureHelper") == 0) {
 		MonoReflectionSigHelper *helper = (MonoReflectionSigHelper*)obj;
@@ -4464,8 +4484,7 @@ mono_reflection_resolve_object (MonoImage *image, MonoObject *obj, MonoClass **h
 			mono_memory_barrier ();
 			resolve_method = m;
 		}
-		void *args [16];
-		args [0] = obj;
+		void *args [ ] = { obj };
 		obj = mono_runtime_invoke_checked (resolve_method, NULL, args, error);
 		goto_if_nok (error, return_null);
 		g_assert (obj);
@@ -4655,7 +4674,7 @@ ves_icall_CustomAttributeBuilder_GetBlob (MonoReflectionAssemblyHandle assembly,
 void
 ves_icall_AssemblyBuilder_basic_init (MonoReflectionAssemblyBuilderHandle assemblyb, MonoError *error)
 {
-	uint32_t gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, assemblyb), TRUE);
+	MonoGCHandle gchandle = mono_gchandle_from_handle (MONO_HANDLE_CAST (MonoObject, assemblyb), TRUE);
 	mono_reflection_dynimage_basic_init (MONO_HANDLE_RAW (assemblyb), error);
 	mono_gchandle_free_internal (gchandle);
 }

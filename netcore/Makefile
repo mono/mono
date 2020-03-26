@@ -19,8 +19,8 @@ ifeq ($(HOST_PLATFORM),win32)
 PLATFORM_AOT_SUFFIX := .dll
 PLATFORM_AOT_PREFIX :=
 NETCORESDK_EXT = zip
-UNZIPCMD = python -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
-XUNIT_FLAGS = -notrait category=nonwindowstests @../../../../CoreFX.issues_windows.rsp
+UNZIPCMD = $(PYTHON) -c "import zipfile,sys; zipfile.ZipFile(sys.argv[1], 'r').extractall()"
+XUNIT_INNER_ARGS = -notrait category=nonwindowstests @../../../../CoreFX.issues_windows.rsp
 TESTS_PLATFORM = Windows_NT.x64
 ON_RUNTIME_EXTRACT = chmod -R 755 {host,shared,./dotnet}
 DOTNET := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
@@ -30,9 +30,10 @@ endif
 ifeq ($(HOST_PLATFORM),macos)
 PLATFORM_AOT_SUFFIX := .dylib
 PLATFORM_AOT_PREFIX := lib
+OBJDUMP = objdump -x86-asm-syntax=intel --no-show-raw-insn -no-leading-addr -no-leading-headers -d
 NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
-XUNIT_FLAGS = -notrait category=nonosxtests
+XUNIT_INNER_ARGS = -notrait category=nonosxtests @../../../../CoreFX.issues_mac.rsp
 TESTS_PLATFORM = OSX.x64
 DOTNET := $(shell ./init-tools.sh | tail -1)
 endif
@@ -40,11 +41,12 @@ endif
 ifeq ($(HOST_PLATFORM),linux)
 PLATFORM_AOT_SUFFIX := .so
 PLATFORM_AOT_PREFIX := lib
+OBJDUMP = objdump -M intel --no-show-raw-insn -d
 NETCORESDK_EXT = tar.gz
 UNZIPCMD = tar -xvf
-XUNIT_FLAGS = -notrait category=nonlinuxtests @../../../../CoreFX.issues_linux.rsp
+XUNIT_INNER_ARGS = -notrait category=nonlinuxtests @../../../../CoreFX.issues_linux.rsp
 ifeq ($(COREARCH), arm64)
-XUNIT_FLAGS += @../../../../CoreFX.issues_linux_arm64.rsp
+XUNIT_INNER_ARGS += @../../../../CoreFX.issues_linux_arm64.rsp
 endif
 TESTS_PLATFORM = Linux.x64
 DOTNET := $(shell ./init-tools.sh | tail -1)
@@ -70,13 +72,13 @@ $(NETCORESDK_FILE):
 update-corefx: corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION)
 
 corefx/.stamp-dl-corefx-$(NETCORETESTS_VERSION): corefx-restore.csproj
-	$(DOTNET) build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/
+	$(DOTNET) build corefx-restore.csproj --runtime $(RID) --packages corefx/packages -p:MicrosoftPrivateCoreFxNETCoreAppVersion=$(NETCORETESTS_VERSION) -p:OutputPath=corefx/restore/ -p:UseSharedCompilation=false
 	touch $@
 
 update-roslyn: roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/microsoft.net.compilers.toolset.nuspec
 
 roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/microsoft.net.compilers.toolset.nuspec:
-	$(DOTNET) restore roslyn-restore.csproj -p:RoslynVersion=$(ROSLYN_VERSION) --packages roslyn/packages -p:OutputPath=roslyn/restore/
+	$(DOTNET) restore roslyn-restore.csproj -p:RoslynVersion=$(ROSLYN_VERSION) --packages roslyn/packages -p:OutputPath=roslyn/restore/ -p:UseSharedCompilation=false
 
 run-sample: prepare
 	$(DOTNET) build sample/HelloWorld
@@ -110,7 +112,7 @@ patch-local-dotnet-aot-llvm: patch-local-dotnet
 	for assembly in ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)/*.dll; do \
 		echo "[AOT] $$assembly"; \
 		PATH="../llvm/usr/bin/:$(PATH)" \
-		MONO_ENV_OPTIONS="--aot=llvm,llvmllc=\"-mcpu=native\"" \
+		MONO_ENV_OPTIONS="--aot=llvm,mcpu=native" \
 		$(DOTNET) $$assembly ; \
 	done; \
 
@@ -145,7 +147,7 @@ System.Private.CoreLib/src/System/Environment.Mono.cs: System.Private.CoreLib/sr
 CORLIB_BUILD_FLAGS?=-c Release
 
 bcl: update-roslyn System.Private.CoreLib/src/System/Environment.Mono.cs
-	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:BuildArch=$(COREARCH) \
+	$(DOTNET) build $(CORETARGETS) $(CORLIB_BUILD_FLAGS) -p:UseSharedCompilation=false -p:BuildArch=$(COREARCH) \
 	-p:OutputPath=bin/$(COREARCH) \
 	-p:RoslynPropsFile="../roslyn/packages/microsoft.net.compilers.toolset/$(ROSLYN_VERSION)/build/Microsoft.Net.Compilers.Toolset.props" \
 	System.Private.CoreLib/System.Private.CoreLib.csproj
@@ -203,7 +205,7 @@ run-tests-corefx: prepare update-tests-corefx
 		counter=$$((counter+1)); \
 		testname=$$(basename $$testdir); \
 		if [ -n "$$USE_TIMEOUT" ]; then timeoutcmd="../scripts/ci/run-step.sh --label=$$testname --timeout=10m --fatal"; fi; \
-		$$timeoutcmd $(MAKE) run-tests-corefx-$$testname TEST_COUNTER="($$counter / $$tests_count) " || echo $$testname >> .failures; \
+		$$timeoutcmd $(MAKE) run-tests-corefx-$$testname XUNIT_MONO_ENV_OPTIONS="$(XUNIT_MONO_ENV_OPTIONS)" XUNIT_ARGS="$(XUNIT_ARGS)" TEST_COUNTER="($$counter / $$tests_count) " || echo $$testname >> .failures; \
 	done; \
 	$(MAKE) xunit-summary; \
 	if [ -e ".failures" ]; then \
@@ -222,12 +224,12 @@ run-tests-corefx-%: prepare update-tests-corefx
 	@cp corefx/restore/corefx-restore.dll corefx/tests/extracted/$*/corefx-restore.dll
 	@sed -i -e 's/5.0.0\"/$(NETCOREAPP_VERSION)\"/g' corefx/tests/extracted/$*/*.runtimeconfig.json
 	cd corefx/tests/extracted/$* && \
-	MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
+	MONO_ENV_OPTIONS="--debug $(XUNIT_MONO_ENV_OPTIONS)" COMPlus_DebugWriteToStdErr=1 $(CURDIR)/./dotnet exec \
 		--runtimeconfig $*.runtimeconfig.json --additional-deps $*.deps.json \
 		--fx-version "$(NETCOREAPP_VERSION)" xunit.console.dll $*.dll \
 		-html ../../TestResult-$*.html -xml ../../TestResult-$*-netcore-xunit.xml \
-		$(XUNIT_FLAGS) @../../../../CoreFX.issues.rsp \
-		$(FIXTURE)
+		$(XUNIT_INNER_ARGS) @../../../../CoreFX.issues.rsp \
+		$(XUNIT_ARGS)
 
 # build a test assembly in COREFX_ROOT (path to a fully built corefx repo) and copy it to corefx/tests/extracted
 # e.g. `make build-test-corefx-System.Runtime COREFX_ROOT=/prj/corefx-master`
@@ -252,6 +254,7 @@ coreclr/.stamp-tests:
 
 .PHONY: corerun
 corerun:
+	$(MAKE) -C corerun
 	cp corerun/corerun $(SHAREDRUNTIME)
 
 run-tests-coreclr: prepare update-tests-coreclr corerun
@@ -270,6 +273,73 @@ run-tests-coreclr: prepare update-tests-coreclr corerun
 	echo "Tests Count: $$counter"; \
 	echo "Failed: $$failures"
 endif
+
+run-tests-mono: prepare
+	failures=0; \
+	counter=0; \
+	test_prj_dir=''; \
+	test_prj_name=''; \
+	test_projects=$$(find tests -type f -name "*.csproj"); \
+	for test_prj in $$test_projects; do \
+		counter=$$((counter+1)); \
+		echo "Running $$test_prj_dir"; \
+		test_prj_dir=$$(dirname $$test_prj); \
+		test_prj_name=$$(basename $$test_prj); \
+		test_prj_name=$${test_prj_name%.*}; \
+		$(DOTNET) build -c Release $$test_prj; \
+		MONO_ENV_OPTIONS="--debug $(MONO_ENV_OPTIONS)" COMPlus_DebugWriteToStdErr=1 ./dotnet --fx-version "$(NETCOREAPP_VERSION)" $$test_prj_dir/bin/netcoreapp3.0/$$test_prj_name.dll; \
+		if [ $$? -ne 0 ]; then \
+			failures=$$((failures+1)); \
+		fi; \
+	done; \
+	echo "======================"; \
+	echo "Tests Count: $$counter"; \
+	echo "Failed: $$failures"
+
+run-tests-coreclr-%: prepare update-tests-coreclr
+	@echo ""
+	@echo "***************** $* *********************"
+	@test_sh=$$(find . -type f -name "$*.sh" | head -n 1); \
+	if [ ! -z "$$test_sh" ]; then \
+		MONO_ENV_OPTIONS="--debug" COMPlus_DebugWriteToStdErr=1 sh $$test_sh -coreroot="$(realpath $(SHAREDRUNTIME))"; \
+	else \
+		echo "Test file $*.sh not found"; \
+	fi
+
+# dump asm for all methods in BCL using LLVM AOT, e.g.:
+#   make dump-asm-bcl DUMPASM_OUT=dumps/before-my-jit-fix
+dump-asm-bcl: patch-local-dotnet
+	@if test -z "$(DUMPASM_OUT)"; then echo "DUMPASM_OUT is not set"; exit 1; fi
+	mkdir -p $(DUMPASM_OUT)
+	for assembly in ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME)/*.dll; do \
+		printf  "\n[AOT] $$(basename $$assembly):\n\n"; \
+		$(MAKE) dump-asm-lib DUMPASM_LIB=$$assembly ; \
+	done; \
+	cd ../.dotnet/shared/Microsoft.NETCore.App/$(BOOTSTRAP_RUNTIME) && rm *.dll$(PLATFORM_AOT_SUFFIX)
+
+# dump asm for a specific assembly using LLVM AOT, e.g.:
+#   make dump-asm-lib DUMPASM_OUT=dumps/before-my-jit-fix DUMPASM_LIB=/path/to/System.Private.CoreLib.dll
+dump-asm-lib: patch-local-dotnet
+	@if test -z "$(DUMPASM_LIB)"; then echo "DUMPASM_LIB is not set"; exit 1; fi
+	@if test -z "$(DUMPASM_OUT)"; then echo "DUMPASM_OUT is not set"; exit 1; fi
+	mkdir -p $(DUMPASM_OUT)
+	PATH="../llvm/usr/bin/:$(PATH)" \
+	MONO_ENV_OPTIONS="--aot=llvm,mcpu=native" \
+	$(DOTNET) $(DUMPASM_LIB)
+	$(OBJDUMP) "$(DUMPASM_LIB)$(PLATFORM_AOT_SUFFIX)" > "$(DUMPASM_OUT)/$(notdir $(DUMPASM_LIB))$(PLATFORM_AOT_SUFFIX).dasm"
+
+# Generate asm diffs, a typical workflow may look like this:
+# 
+#   make dump-asm-bcl DUMPASM_OUT=dumps/before-my-jit-fix
+# (apply some runtime changes)
+#   make runtime
+#   make dump-asm-bcl DUMPASM_OUT=dumps/after-my-jit-fix
+#   make jitdiff BEFORE=dumps/before-my-jit-fix AFTER=dumps/after-my-jit-fix
+#
+jitdiff:
+	@if test -z "$(BEFORE)"; then echo "BEFORE is not set"; exit 1; fi
+	@if test -z "$(AFTER)"; then echo "AFTER is not set"; exit 1; fi
+	cd tools/jitdiff && $(DOTNET) run -c Release -- "$(BEFORE)" "$(AFTER)"
 
 distdir:
 distclean:

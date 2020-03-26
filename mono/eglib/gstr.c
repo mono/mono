@@ -611,19 +611,6 @@ g_strchomp (gchar *str)
 }
 
 gint
-g_printf(gchar const *format, ...)
-{
-	va_list args;
-	gint ret;
-
-	va_start(args, format);
-	ret = vprintf(format, args);
-	va_end(args);
-
-	return ret;
-}
-
-gint
 g_fprintf(FILE *file, gchar const *format, ...)
 {
 	va_list args;
@@ -981,6 +968,9 @@ g_strdelimit (gchar *string, gchar delimiter, gchar new_delimiter)
 gsize 
 g_strlcpy (gchar *dest, const gchar *src, gsize dest_size)
 {
+	g_assert (src);
+	g_assert (dest);
+
 #ifdef HAVE_STRLCPY
 	return strlcpy (dest, src, dest_size);
 #else
@@ -988,9 +978,6 @@ g_strlcpy (gchar *dest, const gchar *src, gsize dest_size)
 	const gchar *s;
 	gchar c;
 	gsize len;
-	
-	g_return_val_if_fail (src != NULL, 0);
-	g_return_val_if_fail (dest != NULL, 0);
 
 	len = dest_size;
 	if (len == 0)
@@ -1127,4 +1114,36 @@ g_strnlen (const char* s, gsize n)
 	gsize i;
 	for (i = 0; i < n && s [i]; ++i) ;
 	return i;
+}
+
+/**
+ * Loads a chunk of data from the file pointed to by the
+ * @fd starting at the file offset @offset for @size bytes
+ * and returns an allocated version of that string, or NULL
+ * on error.
+ */
+char *
+g_str_from_file_region (int fd, guint64 offset, gsize size)
+{
+	char *buffer;
+	off_t loc;
+	int status;
+	
+	do {
+		loc = lseek (fd, offset, SEEK_SET);
+	} while (loc == -1 && errno == EINTR);
+	if (loc == -1)
+		return NULL;
+	buffer = (char *)g_malloc (size + 1);
+	if (buffer == NULL)
+		return NULL;
+	buffer [size] = 0;
+	do {
+		status = read (fd, buffer, size);
+	} while (status == -1 && errno == EINTR);
+	if (status == -1){
+		g_free (buffer);
+		return NULL;
+	}
+	return buffer;
 }

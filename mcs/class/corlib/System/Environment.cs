@@ -612,8 +612,7 @@ namespace System {
 						}
 					}
 				}
-			} catch (FileNotFoundException) {
-			}
+			} catch {}
 
 			return Path.Combine (home_dir, fallback);
 		}

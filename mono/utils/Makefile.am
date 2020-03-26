@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 if !ENABLE_MSVC_ONLY
 
@@ -161,6 +161,8 @@ monoutils_sources = \
 	mono-stack-unwinding.h	\
 	hazard-pointer.c	\
 	hazard-pointer.h	\
+	lifo-semaphore.c	\
+	lifo-semaphore.h	\
 	lock-free-queue.c	\
 	lock-free-queue.h	\
 	lock-free-alloc.c	\
@@ -192,6 +194,7 @@ monoutils_sources = \
 	mono-utility-thread.c	\
 	mono-utility-thread.h	\
 	mono-tls.h	\
+	mono-tls-inline.h	\
 	mono-tls.c	\
 	mono-utils-debug.c \
 	mono-utils-debug.h \
@@ -205,6 +208,7 @@ monoutils_sources = \
 	bsearch.h	\
 	bsearch.c	\
 	mono-signal-handler.h	\
+	mono-signal-handler.c	\
 	mono-conc-hashtable.h	\
 	mono-conc-hashtable.c	\
 	json.h	\
@@ -339,6 +343,7 @@ libmonoutilsinclude_HEADERS = 	\
 	mono-publib.h		\
 	mono-jemalloc.h		\
 	mono-dl-fallback.h	\
+	mono-private-unstable.h	\
 	mono-counters.h
 
 EXTRA_DIST = mono-errno.h mono-embed.h mono-embed.c ../../support/libm/complex.c mono-experiments.def

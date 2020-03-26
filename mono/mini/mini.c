@@ -1082,7 +1082,7 @@ compare_by_interval_start_pos_func (gconstpointer a, gconstpointer b)
 #if 0
 #define LSCAN_DEBUG(a) do { a; } while (0)
 #else
-#define LSCAN_DEBUG(a)
+#define LSCAN_DEBUG(a) do { } while (0) /* non-empty to avoid warning */
 #endif
 
 static gint32*
@@ -2844,7 +2844,6 @@ insert_safepoint (MonoCompile *cfg, MonoBasicBlock *bblock)
 	} else if (bblock == cfg->bb_entry) {
 		mono_bblock_insert_after_ins (bblock, bblock->last_ins, poll_addr);
 		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
-
 	} else {
 		mono_bblock_insert_before_ins (bblock, NULL, poll_addr);
 		mono_bblock_insert_after_ins (bblock, poll_addr, ins);
@@ -2868,7 +2867,7 @@ insert_safepoints (MonoCompile *cfg)
 	g_assert (mini_safepoints_enabled ());
 
 	if (COMPILE_LLVM (cfg)) {
-		if (!cfg->llvm_only && cfg->compile_aot) {
+		if (!cfg->llvm_only) {
 			/* We rely on LLVM's safepoints insertion capabilities. */
 			if (cfg->verbose_level > 1)
 				printf ("SKIPPING SAFEPOINTS for code compiled with LLVM\n");
@@ -3047,6 +3046,23 @@ init_backend (MonoBackend *backend)
 #endif
 }
 
+static gboolean
+is_simd_supported (MonoCompile *cfg)
+{
+#ifdef DISABLE_SIMD
+    return FALSE;
+#endif
+	// FIXME: Clean this up
+#ifdef TARGET_WASM
+	if ((mini_get_cpu_features (cfg) & MONO_CPU_WASM_SIMD) == 0)
+		return FALSE;
+#else
+	if (cfg->llvm_only)
+		return FALSE;
+#endif
+	return TRUE;
+}
+
 /*
  * mini_method_compile:
  * @method: the method to compile
@@ -3161,6 +3177,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	cfg->llvm_only = (flags & JIT_FLAG_LLVM_ONLY) != 0;
 	cfg->interp = (flags & JIT_FLAG_INTERP) != 0;
 	cfg->use_current_cpu = (flags & JIT_FLAG_USE_CURRENT_CPU) != 0;
+	cfg->self_init = (flags & JIT_FLAG_SELF_INIT) != 0;
+	cfg->code_exec_only = (flags & JIT_FLAG_CODE_EXEC_ONLY) != 0;
 	cfg->backend = current_backend;
 
 	if (cfg->method->wrapper_type == MONO_WRAPPER_ALLOC) {
@@ -3171,11 +3189,13 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	/* coop requires loop detection to happen */
 	if (mini_safepoints_enabled ())
 		cfg->opt |= MONO_OPT_LOOP;
-	if (cfg->backend->explicit_null_checks) {
+	cfg->disable_llvm_implicit_null_checks = mini_debug_options.llvm_disable_implicit_null_checks;
+	if (cfg->backend->explicit_null_checks || mini_debug_options.explicit_null_checks) {
 		/* some platforms have null pages, so we can't SIGSEGV */
 		cfg->explicit_null_checks = TRUE;
+		cfg->disable_llvm_implicit_null_checks = TRUE;
 	} else {
-		cfg->explicit_null_checks = mini_debug_options.explicit_null_checks || (flags & JIT_FLAG_EXPLICIT_NULL_CHECKS);
+		cfg->explicit_null_checks = flags & JIT_FLAG_EXPLICIT_NULL_CHECKS;
 	}
 	cfg->soft_breakpoints = mini_debug_options.soft_breakpoints;
 	cfg->check_pinvoke_callconv = mini_debug_options.check_pinvoke_callconv;
@@ -3188,11 +3208,14 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 	if (cfg->compile_aot)
 		cfg->method_index = aot_method_index;
 
+	if (cfg->compile_llvm)
+		cfg->explicit_null_checks = TRUE;
+
 	/*
 	if (!mono_debug_count ())
 		cfg->opt &= ~MONO_OPT_FLOAT32;
 	*/
-	if (cfg->llvm_only)
+	if (!is_simd_supported (cfg))
 		cfg->opt &= ~MONO_OPT_SIMD;
 	cfg->r4fp = (cfg->opt & MONO_OPT_FLOAT32) ? 1 : 0;
 	cfg->r4_stack_type = cfg->r4fp ? STACK_R4 : STACK_R8;
@@ -4104,6 +4127,11 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	mono_domain_lock (target_domain);
 
+	if (mono_stats_method_desc && mono_method_desc_full_match (mono_stats_method_desc, method)) {
+		g_printf ("Printing runtime stats at method: %s\n", mono_method_get_full_name (method));
+		mono_runtime_print_stats ();
+	}
+
 	/* Check if some other thread already did the job. In this case, we can
        discard the code this thread generated. */
 
@@ -4309,17 +4337,14 @@ mini_get_cpu_features (MonoCompile* cfg)
 #if !defined(MONO_CROSS_COMPILE)
 	if (!cfg->compile_aot || cfg->use_current_cpu) {
 		// detect current CPU features if we are in JIT mode or AOT with use_current_cpu flag.
-#if defined(ENABLE_LLVM) && !defined(MONO_LLVM_LOADED)
+#if defined(ENABLE_LLVM)
 		features = mono_llvm_get_cpu_features (); // llvm has a nice built-in API to detect features
-#elif defined(TARGET_AMD64)
+#elif defined(TARGET_AMD64) || defined(TARGET_X86)
 		features = mono_arch_get_cpu_features ();
 #endif
 	}
 #endif
-	MonoCPUFeatures features_ = features;
 
 	// apply parameters passed via -mattr
-	features = (MonoCPUFeatures) (features | mono_cpu_features_enabled);
-	features = (MonoCPUFeatures) (features & ~mono_cpu_features_disabled);
-	return features;
+	return (features | mono_cpu_features_enabled) & ~mono_cpu_features_disabled;
 }

@@ -80,7 +80,7 @@ fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 	if (delegate == NULL)
 		return;
 
-	pa [0] = domain;
+	pa [0] = domain->domain;
 	pa [1] = NULL;
 	mono_runtime_delegate_try_invoke (delegate, pa, &exc, error);
 	mono_error_cleanup (error);
@@ -121,7 +121,7 @@ mono_runtime_try_shutdown (void)
 	/*TODO move the follow to here:
 	mono_thread_suspend_all_other_threads (); OR  mono_thread_wait_all_other_threads
 
-	mono_runtime_quit ();
+	mono_runtime_quit_internal ();
 	*/
 
 	return TRUE;

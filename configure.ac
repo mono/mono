@@ -4,10 +4,10 @@
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-AC_INIT(mono, [6.9.0],
+AC_INIT(mono, [6.13.0],
         [https://github.com/mono/mono/issues/new])
 
-AC_CONFIG_SRCDIR([README.md])
+AC_CONFIG_SRCDIR([Makefile.am])
 AC_CONFIG_MACRO_DIR([m4])
 
 AC_CANONICAL_SYSTEM
@@ -17,7 +17,7 @@ AC_CANONICAL_HOST
 # The extra brackets are to foil regex-based scans.
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
-AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign]
+AM_INIT_AUTOMAKE([1.9 dist-xz tar-ustar no-dist-gzip foreign subdir-objects]
                  m4_esyscmd([case `automake --version | head -n 1` in    # parallel-tests is default in automake 1.13+, we need to explicitly enable it
                              *1.11*|*1.12*) echo parallel-tests;;        # for 1.11 and 1.12 but not below as those versions don't recognize the flag
                              esac]))                                     # TODO: remove this hack once we require automake 1.11+
@@ -63,7 +63,7 @@ MONO_VERSION_BUILD=`echo $VERSION | cut -d . -f 3`
 # This line is parsed by tools besides autoconf, such as msvc/mono.winconfig.targets.
 # It should remain in the format they expect.
 #
-MONO_CORLIB_VERSION=077A060C-749A-4634-B364-B50171A66C6B
+MONO_CORLIB_VERSION=1A5E0066-58DC-428A-B21C-0AD6CDAE2789
 
 #
 # Put a quoted #define in config.h.
@@ -148,7 +148,7 @@ case "$host" in
 		platform_wasm=yes
 		# FIXME:
 		RID="osx-x64"
-		COREARCH="x64"
+		COREARCH="wasm32"
 		CORETARGETS="-p:TargetsUnix=true -p:TargetsOSX=true"
 		build_darwin=yes
 		;;
@@ -173,7 +173,6 @@ case "$host" in
 		# Boehm not supported on 64-bit Windows.
 		case "$host" in
 		x86_64-*-* | amd64-*-*)
-			support_boehm=no
 			with_gc=sgen
 			RID="win-x64"
 			COREARCH="x64"
@@ -192,9 +191,6 @@ case "$host" in
 		with_tls=pthread
 		with_sgen_default_concurrent=yes
 		LN_S=cp
-
-		# This forces libgc to use the DllMain based thread registration code on win32
-		libgc_configure_args="$libgc_configure_args --enable-win32-dllmain=yes"
 		;;
 	*-*-*netbsd*)
 		CPPFLAGS="$CPPFLAGS -D_REENTRANT -DGC_NETBSD_THREADS -D_GNU_SOURCE"
@@ -362,6 +358,10 @@ case "$host" in
 			# https://bugzilla.novell.com/show_bug.cgi?id=504411
 			disable_munmap=yes
 			;;
+		powerpc*-*-freebsd*)
+			# https://bugzilla.novell.com/show_bug.cgi?id=504411
+			disable_munmap=yes
+			;;
 		riscv*)
 			support_boehm=no
 			with_gc=sgen
@@ -473,6 +473,8 @@ case "$host" in
 		mono_cv_clang=no
 		;;
 	*-*-aix*|*-*-os400*)
+		AC_DEFINE(HOST_AIX,1,[Targeting the AIX and PASE platforms])
+		host_aix=yes
 		dnl IMPORTANT: For svr4 sonames on AIX, you should set
 		dnl `OBJECT_MODE=64` when configuring.
 		dnl libtool cannot generate functioning svr4 sonames on
@@ -512,8 +514,8 @@ case "$host" in
 		dnl We still set this for *FLAGS, however, because we may not
 		dnl be setting OBJECT_MODE.
 		LDFLAGS="$LDFLAGS -maix64"
-		CPPFLAGS="$CPPFLAGS -maix64 -DGC_AIX_THREADS -D_ALL_SOURCE -D_THREAD_SAFE -D_LARGE_FILES -D_REENTRANT"
-		libmono_cflags="-D_THREAD_SAFE -D_REENTRANT"
+		CPPFLAGS="$CPPFLAGS -maix64 -DGC_AIX_THREADS -D_ALL_SOURCE -pthread -D_THREAD_SAFE -D_LARGE_FILES -D_REENTRANT"
+		libmono_cflags="-pthread -D_THREAD_SAFE -D_REENTRANT"
 		dnl Would you believe GNU nm doesn't know how to process AIX libraries?
 		dnl Hardcode IBM binutils in case GNU ones end up on our path. Also
 		dnl specifiy 64-bit mode for tools. (OBJECT_MODE is finicky with cmake.)
@@ -576,6 +578,7 @@ AM_CONDITIONAL(HOST_ANDROID, test x$platform_android = xyes)
 AM_CONDITIONAL(HOST_TIZEN, test x$platform_tizen = xyes)
 AM_CONDITIONAL(HOST_IOS, test x$platform_ios = xyes)
 AM_CONDITIONAL(HOST_WASM, test x$platform_wasm = xyes)
+AM_CONDITIONAL(HOST_AIX, test x$host_aix = xyes)
 
 if test -z "$HOST_DARWIN_TRUE"; then :
 PLATFORM_AOT_SUFFIX=.dylib
@@ -606,6 +609,7 @@ AC_CHECK_TOOL(CC, gcc, gcc)
 AC_PROG_CC
 AC_CHECK_TOOL(CXX, g++, g++)
 AC_PROG_CXX
+AM_PATH_PYTHON([3.2])
 AM_PROG_AS
 AC_PROG_INSTALL
 AC_PROG_AWK
@@ -673,7 +677,7 @@ AC_PROG_LD_GNU
 AC_CHECK_HEADERS(sys/filio.h sys/sockio.h netdb.h utime.h sys/utime.h semaphore.h sys/un.h linux/rtc.h sys/syscall.h sys/mkdev.h sys/uio.h sys/param.h sys/sysctl.h libproc.h sys/prctl.h copyfile.h gnu/lib-names.h)
 AC_CHECK_HEADERS(sys/param.h sys/socket.h sys/ipc.h sys/utsname.h alloca.h ucontext.h pwd.h sys/select.h netinet/tcp.h netinet/in.h unistd.h sys/types.h link.h asm/sigcontext.h sys/inotify.h arpa/inet.h complex.h unwind.h)
 
-# zlib/configure checks for unistd.h existance and defines HAVE_UNISTD_H on the compiler
+# zlib/configure checks for unistd.h existence and defines HAVE_UNISTD_H on the compiler
 # command line (not config.h) if it is present.
 AC_CHECK_HEADER(unistd.h,
     [HAVE_UNISTD_H=1
@@ -699,6 +703,11 @@ AC_CHECK_HEADERS(linux/serial.h)
 case "$host" in
 	# Use bundled zlib on Windows to be sure it is static.
 	*-mingw*|*-cygwin*)
+		have_sys_zlib=no
+		zlib_msg="bundled zlib"
+		;;
+	# Use bundled zlib on RISC-V for now to make cross-compiling easier.
+	riscv*)
 		have_sys_zlib=no
 		zlib_msg="bundled zlib"
 		;;
@@ -1199,11 +1208,14 @@ if test x$enable_monotouch = xyes; then
 fi
 
 AC_ARG_ENABLE(cxx, [  --enable-cxx   compile some code as C++])
+AM_CONDITIONAL(ENABLE_CXX, test x$enable_cxx = xyes)
 
 # mono/corefx/native has a lot of invalid C++98 in its headers
 # dotnet/corefx/native looks a lot better, i.e. 44e5bdafb8d989a220c9cf1b94f31a64a6e4f052
+# use these C99 print macros in the command line, since glib may not win first inttypes include
 #CXXFLAGS_COMMON=' -std=gnu++98 -fno-exceptions -fno-rtti '
 CXXFLAGS_COMMON=' -std=gnu++0x -fno-exceptions -fno-rtti '
+CXXFLAGS_COMMON="$CXXFLAGS_COMMON -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS"
 # "c++0x" instead of C++11, for compat with Centos6/gcc4.4
 
 # -stdlib=libc++ is needed by clang for iOS 6.0 (-miphoneos-version-min=6.0)
@@ -1343,7 +1355,7 @@ enable_cooperative_suspend_default=no
 enable_hybrid_suspend_default=no
 
 # For the sake of clearer error messages, these numbers should all be different from each other.
-INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4400,nftnptr-arg-trampolines=4000
+INVARIANT_AOT_OPTIONS=nimt-trampolines=2000,ntrampolines=10000,nrgctx-fetch-trampolines=256,ngsharedvt-trampolines=4400,nftnptr-arg-trampolines=4000,nrgctx-trampolines=21000
 
 AOT_BUILD_ATTRS=$INVARIANT_AOT_OPTIONS
 
@@ -1351,7 +1363,10 @@ MONO_LLVM_PATH_OPTION=llvm-path="`pwd`/llvm/usr/bin"
 
 if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    DISABLE_MCS_DOCS_default=yes
-elif test x$with_runtime_preset = xnetcore; then
+fi
+
+if test x$with_runtime_preset = xnetcore; then
+   # Keep in sync with winconfig.h netcore configuration.
    DISABLE_MCS_DOCS_default=yes
    BTLS_SUPPORTED=no
    enable_mcs_build=no
@@ -1368,7 +1383,9 @@ elif test x$with_runtime_preset = xnetcore; then
    mono_feature_disable_gac='yes'
    mono_feature_disable_perfcounters='yes'
    mono_feature_disable_attach='yes'
-   mono_feature_disable_dllmap='yes'
+   if test "x$enable_monodroid" = "x" -a "x$enable_monotouch" = "x"; then
+     mono_feature_disable_dllmap='yes' # FIXME: the mobile products use this
+   fi
    disable_mono_native=yes
    support_boehm=no
 elif test x$with_runtime_preset = xnet_4_x; then
@@ -1744,7 +1761,7 @@ AM_CONDITIONAL(ENABLE_STATIC_GCC_LIBS, test "x$enable_static_gcc_libs" = "xyes")
 AC_ARG_ENABLE(minimal, [  --enable-minimal=LIST      drop support for LIST subsystems.
      LIST is a comma-separated list from: aot, profiler, decimal, pinvoke, debug, appdomains, verifier, dllmap,
      reflection_emit, reflection_emit_save, large_code, logging, com, ssa, generics, attach, jit, interpreter, simd, soft_debug, perfcounters, normalization, desktop_loader, shared_perfcounters, remoting,
-	 security, lldb, mdb, assert_messages, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac.],
+	 security, lldb, mdb, assert_messages, config, cfgdir_config, cleanup, sgen_marksweep_conc, sgen_split_nursery, sgen_gc_bridge, sgen_debug_helpers, sockets, gac, threads, processes.],
 [
 	for feature in `echo "$enable_minimal" | sed -e "s/,/ /g"`; do
 		eval "mono_feature_disable_$feature='yes'"
@@ -1920,6 +1937,16 @@ if test "x$mono_feature_disable_assert_messages" = "xyes"; then
 	AC_MSG_NOTICE([Disabled assertion messages.])
 fi
 
+if test "x$mono_feature_disable_cfgdir_config" = "xyes"; then
+	AC_DEFINE(DISABLE_CFGDIR_CONFIG, 1, [Disable config directories.])
+	AC_MSG_NOTICE([Disabled config directories.])
+fi
+
+if test "x$mono_feature_disable_config" = "xyes"; then
+	AC_DEFINE(DISABLE_CONFIG, 1, [Disable .config file support.])
+	AC_MSG_NOTICE([Disabled .config file support.])
+fi
+
 if test "x$mono_feature_disable_cleanup" = "xyes"; then
 	AC_DEFINE(DISABLE_CLEANUP, 1, [Disable runtime cleanup.])
 	AC_MSG_NOTICE([Disabled runtime cleanup.])
@@ -1959,6 +1986,16 @@ fi
 if test "x$mono_feature_disable_dllmap" = "xyes"; then
     AC_DEFINE(DISABLE_DLLMAP,1,[Disables use of DllMaps in MonoVM])
     AC_MSG_NOTICE([Disabled DllMap in the loader.])
+fi
+
+if test "x$mono_feature_disable_threads" = "xyes"; then
+	AC_DEFINE(DISABLE_THREADS, 1, [Disable Threads])
+	AC_MSG_NOTICE([Disabled threading support])
+fi
+
+if test "x$mono_feature_disable_processes" = "xyes"; then
+	AC_DEFINE(DISABLE_PROCESSES, 1, [Disable process support])
+	AC_MSG_NOTICE([Disabled process support])
 fi
 
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
@@ -2021,18 +2058,13 @@ if test "x$support_boehm" = "xyes"; then
 	LIBGC_CPPFLAGS=
 	LIBGC_LIBS=
 	LIBGC_STATIC_LIBS=
-	libgc_dir=
 	case "x$libgc" in
 		xincluded)
-			if test "x$support_boehm" = "xyes"; then
-				libgc_dir=libgc
-			fi
+			LIBGC_CPPFLAGS='-I$(top_srcdir)/external/bdwgc/include -I$(top_srcdir)/external/bdwgc/libatomic_ops/src'
+			LIBGC_LIBS='$(top_builddir)/external/bdwgc/libgc.la'
+			LIBGC_STATIC_LIBS='$(top_builddir)/external/bdwgc/libgc-static.la'
 
-			LIBGC_CPPFLAGS='-I$(top_srcdir)/libgc/include'
-			LIBGC_LIBS='$(top_builddir)/libgc/libmonogc.la'
-			LIBGC_STATIC_LIBS='$(top_builddir)/libgc/libmonogc-static.la'
-
-			BOEHM_DEFINES="-DHAVE_BOEHM_GC"
+			BOEHM_DEFINES="-DHAVE_BOEHM_GC -DGC_THREADS"
 
 			if test x$target_win32 = xyes; then
 				BOEHM_DEFINES="$BOEHM_DEFINES -DGC_NOT_DLL"
@@ -2075,7 +2107,6 @@ if test "x$support_boehm" = "xyes"; then
 	AC_SUBST(LIBGC_CPPFLAGS)
 	AC_SUBST(LIBGC_LIBS)
 	AC_SUBST(LIBGC_STATIC_LIBS)
-	AC_SUBST(libgc_dir)
 	AC_SUBST(BOEHM_DEFINES)
 
 fi
@@ -2206,13 +2237,9 @@ if test x$host_win32 = xno; then
 	dnl ******************************************************************
 	AC_ARG_WITH(ikvm-native, [  --with-ikvm-native=yes,no      build the IKVM JNI interface library (defaults to yes)],[with_ikvm_native=$withval],[with_ikvm_native=$ikvm_native])
 
-	ikvm_native_dir=
 	if test x$with_ikvm_native = xyes; then
-		ikvm_native_dir=ikvm-native
 		jdk_headers_found="IKVM Native"
 	fi
-
-	AC_SUBST(ikvm_native_dir)
 
 	AC_CHECK_HEADERS(execinfo.h)
 
@@ -2344,29 +2371,6 @@ if test x$host_win32 = xno; then
 	dnl *** Checks for libsocket  ***
 	dnl *****************************
 	AC_CHECK_LIB(socket, socket, LIBS="$LIBS -lsocket")
-
-	case "$host" in
-		*-*-*freebsd*)
-			dnl *****************************
-			dnl *** Checks for libinotify ***
-			dnl *****************************
-			AC_CHECK_LIB(inotify, inotify_init, LIBS="$LIBS -linotify")
-	esac
-
-	dnl *******************************
-	dnl *** Checks for MSG_NOSIGNAL ***
-	dnl *******************************
-	AC_MSG_CHECKING(for MSG_NOSIGNAL)
-	AC_TRY_COMPILE([#include <sys/socket.h>], [
-		int f = MSG_NOSIGNAL;
-	], [
-		# Yes, we have it...
-		AC_MSG_RESULT(yes)
-		AC_DEFINE(HAVE_MSG_NOSIGNAL, 1, [Have MSG_NOSIGNAL])
-	], [
-		# We'll have to use signals
-		AC_MSG_RESULT(no)
-	])
 
 	dnl *****************************
 	dnl *** Checks for IPPROTO_IP ***
@@ -2940,6 +2944,23 @@ if test x$host_win32 = xno; then
 	fi
 
 	dnl ********************************
+	dnl *** Checks for sys_signame ***
+	dnl ********************************
+	AC_MSG_CHECKING(for sys_signame)
+		AC_TRY_LINK([
+		#include <signal.h>
+	], [
+		const char *signame = sys_signame[0];
+	], [
+		# Yes, we have it...
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SYSSIGNAME, 1, [Have sys_signame])
+	], [
+		AC_MSG_RESULT(no)
+	])
+
+
+	dnl ********************************
 	dnl *** Checks for semaphore lib ***
 	dnl ********************************
 	# 'Real Time' functions on Solaris
@@ -2949,13 +2970,6 @@ if test x$host_win32 = xno; then
 
 	AC_SEARCH_LIBS(shm_open, pthread rt posix4) 
 	AC_CHECK_FUNCS(shm_open)
-
-	dnl ********************************
-	dnl ***  Checks for gettext lib  ***
-	dnl ********************************
-	# This is needed for some hackery for AIX;
-	# Mono itself doesn't use it, but DllMap includes it
-	AC_SEARCH_LIBS([gettext], [intl])
 
 	dnl ********************************
 	dnl *** Checks for timezone stuff **
@@ -3410,6 +3424,15 @@ if test x$host_win32 = xno; then
 	AC_CHECK_DECL(ICANON,            [AC_DEFINE(HAVE_ICANON, 1, [ICANON])], [], [[#include <termios.h>]])
 	AC_CHECK_DECL(TCSANOW,           [AC_DEFINE(HAVE_TCSANOW, 1, [TCSANOW])], [], [[#include <termios.h>]])
 
+	AC_CHECK_DECL(lchflags,          [AC_DEFINE(HAVE_LCHFLAGS, 1, [lchflags])], [], 
+		[[#include <sys/types.h> 
+		#include <sys/stat.h>]])
+	AC_CHECK_MEMBER(struct stat.st_flags,
+		[AC_DEFINE(HAVE_STAT_FLAGS, 1, [struct stat.st_flags])],
+		[],
+		[#include <sys/types.h>
+		#include <sys/stat.h>])
+
 	AC_CHECK_MEMBER(struct stat.st_birthtimespec,
 		[AC_DEFINE(HAVE_STAT_BIRTHTIME, 1, [struct stat.st_birthtimespec])],
 		[],
@@ -3617,6 +3640,35 @@ if test x$host_win32 = xno; then
 		AC_MSG_RESULT(no)
 	])
 
+	case "$host" in
+		*-*-*freebsd*)
+			dnl *****************************
+			dnl *** Checks for libinotify ***
+			dnl *****************************
+			AC_CHECK_LIB(inotify, inotify_init, LIBS="$LIBS -linotify")
+			if test "x$ac_cv_lib_inotify_inotify_init" = "xyes" ; then
+				AC_DEFINE(HAVE_LIBINOTIFY, 1, [FreeBSD libinotify kqueue shim])
+				dnl Needs to be done this way to avoid collision with various 
+				dnl ports including glib and llvm*
+				METADATA_CFLAGS="-I/usr/local/include"
+				AC_SUBST(METADATA_CFLAGS)
+			fi
+			dnl Workaround due to inotify_rm_watch check failing without -I
+			AC_MSG_CHECKING(for inotify_rm_watch with unsigned wd in libinotify)
+			AC_TRY_LINK([
+				#include </usr/local/include/sys/inotify.h>
+			], [
+				intptr_t fd;
+				uint32_t wd;
+				int result = inotify_rm_watch(fd, wd);
+			],[
+			   AC_MSG_RESULT(yes)
+			   AC_DEFINE(INOTIFY_RM_WATCH_WD_UNSIGNED, 1, [inotify_rm_watch with unsigned wd])
+			], [
+				AC_MSG_RESULT(no)
+			])
+	esac
+
 	CFLAGS="$ORIG_CFLAGS"
 
 	AC_MSG_CHECKING(for shm_open that works well enough with mmap)
@@ -3797,6 +3849,7 @@ if test x$host_win32 = xno; then
 			AC_DEFINE(HAVE_GSSFW_HEADERS, 1, [GSS/GSS.h])
 			AC_DEFINE(HAVE_GSS_SPNEGO_MECHANISM, 1, [GSS_SPNEGO_MECHANISM])
 			enable_gss=yes
+			AC_DEFINE(ENABLE_GSS, 1, [ENABLE_GSS])
 	], [
 			AC_MSG_RESULT(no)
 	])
@@ -3808,6 +3861,7 @@ if test x$host_win32 = xno; then
 	],[
 			AC_MSG_RESULT(yes)
 			enable_gss=yes
+			AC_DEFINE(ENABLE_GSS, 1, [ENABLE_GSS])
 	], [
 			AC_MSG_RESULT(no)
 	])
@@ -4184,6 +4238,11 @@ if test "x$enable_llvm" = "xdefault"; then
    enable_llvm=$enable_llvm_default
 fi
 
+if test "x$enable_loadedllvm" = "xyes"; then
+   AC_MSG_WARN("Loadable LLVM is no longer supported. Enabling default LLVM support instead.")
+   enable_llvm=yes
+fi
+
 enable_llvm_msvc_only="no"
 if test "x$enable_llvm" = "xyes"; then
 	if test "x$host_win32" = "xyes"; then
@@ -4197,10 +4256,6 @@ if test "x$enable_llvm" = "xyes"; then
 				AC_MSG_ERROR("LLVM for host=Windows and target=Windows is only supported for x64 builds.")
 				;;
 			esac
-		fi
-		if test "x$enable_loadedllvm" = "xyes"; then
-			AC_MSG_WARN("Loadable LLVM currently not supported on Windows. Disabling feature.")
-			enable_loadedllvm=no
 		fi
 	fi
 fi
@@ -4270,13 +4325,6 @@ if test "x$enable_llvm_asserts" != "xno"; then
 fi
 
 AM_CONDITIONAL(ENABLE_LLVM, [test x$enable_llvm = xyes && test x$enable_llvm_msvc_only != xyes])
-
-AM_CONDITIONAL(LOADED_LLVM, [test x$enable_loadedllvm = xyes && test x$enable_llvm_msvc_only != xyes])
-if test "x$enable_loadedllvm" = "xyes"; then
-	if test "x$enable_llvm_msvc_only" != "xyes"; then
-		AC_DEFINE(MONO_LLVM_LOADED, 1, [The LLVM back end is dynamically loaded])
-	fi
-fi
 
 if test "x$enable_llvm" = "xyes"; then
 	enable_llvm_runtime=yes
@@ -4460,13 +4508,28 @@ case "$host" in
 		;;
 	macppc-*-openbsd* | powerpc*-*-linux* | powerpc-*-openbsd* | \
         powerpc-*-sysv* | powerpc-*-darwin* | powerpc-*-netbsd* | \
-        powerpc-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
+        powerpc*-*-freebsd* | powerpc*-*-aix* | powerpc*-*-os400* )
 		if test "x$ac_cv_sizeof_void_p" = "x8"; then
 			TARGET=POWERPC64;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__ -D__mono_ppc64__"
-			if ! (echo $CC | grep -q -- 'clang'); then
-				CFLAGS="$CFLAGS -mminimal-toc"
-			fi
+			# mono#18554 - be more robust in testing for -mminimal-toc
+			AC_MSG_NOTICE([Checking for PowerPC ISA -mminimal-toc support])
+			AX_CHECK_COMPILE_FLAG(
+				[-mminimal-toc],
+				[CFLAGS="$CFLAGS -mminimal-toc"],
+				[CFLAGS="$CFLAGS"]
+			)
+			case "$host" in
+				powerpc*-*-freebsd*)
+					# We need to be aware if we are ELFv1 or v2 here
+					AC_MSG_NOTICE([Checking FreeBSD ELF version])
+					if ! ( echo | cc -dM -E - | awk '/_CALL_ELF/ {print $NF}'); then
+						AC_DEFINE([POWERPC_ELF], 1, [PowerPC ELFv1])
+					else
+						AC_DEFINE([POWERPC_ELFV2], 1, [PowerPC ELFv2])
+					fi
+					;;
+			esac
 		else
 			TARGET=POWERPC;
 			CPPFLAGS="$CPPFLAGS -D__mono_ppc__"
@@ -4478,6 +4541,10 @@ case "$host" in
 			BTLS_PLATFORM=powerpc
 			;;
 		  linux*)
+			BTLS_SUPPORTED=yes
+			BTLS_PLATFORM=powerpc
+			;;
+		  freebsd*)
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=powerpc
 			;;
@@ -5016,21 +5083,23 @@ case "$host" in
         SQLITE3="libsqlite3.so"
 	;;
     *-*-*linux*)
-	AC_PATH_X
-	dlsearch_path=`(libtool --config ; echo eval echo \\$sys_lib_dlsearch_path_spec) | sh`
-	AC_MSG_CHECKING(for the soname of libX11.so)
-	for i in $x_libraries $dlsearch_path; do
-		for r in 4 5 6; do
-			if test -f $i/libX11.so.$r; then
-				X11=libX11.so.$r
-				AC_MSG_RESULT($X11)
-			fi
+	if test "x$with_core" != "xonly"; then
+		AC_PATH_X
+		dlsearch_path=`(libtool --config ; echo eval echo \\$sys_lib_dlsearch_path_spec) | sh`
+		AC_MSG_CHECKING(for the soname of libX11.so)
+		for i in $x_libraries $dlsearch_path; do
+			for r in 4 5 6; do
+				if test -f $i/libX11.so.$r; then
+					X11=libX11.so.$r
+					AC_MSG_RESULT($X11)
+				fi
+			done
 		done
-	done
-	
-	if test "x$X11" = "xlibX11.so"; then
-		AC_MSG_WARN([Could not find libX11.so. Do you have X.org or XFree86 installed? Assuming libX11.so.6...]);
-		X11=libX11.so.6
+		
+		if test "x$X11" = "xlibX11.so"; then
+			AC_MSG_WARN([Could not find libX11.so. Do you have X.org or XFree86 installed? Assuming libX11.so.6...]);
+			X11=libX11.so.6
+		fi
 	fi
 	;;
 esac
@@ -5143,7 +5212,16 @@ AC_SEARCH_LIBS(dlopen, dl)
 # Apple -bind_at_load
 # The rest GNU.
 #
-AX_APPEND_LINK_FLAGS([-Wl,--export-dynamic -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
+export_link_flags=--export-dynamic
+case $host_os in
+mingw*|cygwin*)
+	export_link_flags=--export-all-symbols
+	;;
+*-*-darwin*)
+	export_link_flags=--export_dynamic
+	;;
+esac
+AX_APPEND_LINK_FLAGS([-Wl,$export_link_flags -Wl,-Bsymbolic -bsymbolic -Wl,-z,now -Wl,-bind_at_load])
 
 AC_CHECK_HEADERS(getopt.h sys/select.h sys/time.h sys/wait.h pwd.h iconv.h sys/types.h sys/resource.h)
 dnl giconv.c will check on HAVE_ICONV_H but we need this for link time
@@ -5595,9 +5673,9 @@ case "x$libgc" in
 		# if these are instrumented it will be very bad news 
 		# (infinite recursion, undefined parking behavior, etc)
 		TMP_CPPFLAGS=`echo $TMP_CPPFLAGS | sed -e 's/-finstrument-for-thread-suspension//g'`
-		ac_configure_args="$ac_configure_args --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS_FOR_LIBGC=$TMP_CPPFLAGS\" \"CFLAGS_FOR_LIBGC=$CFLAGS_FOR_LIBGC\""
+		ac_configure_args="$ac_configure_args --enable-single-obj-compilation --disable-embed-check --with-libgc-threads=$libgc_threads $libgc_configure_args \"CPPFLAGS_FOR_LIBGC=$TMP_CPPFLAGS\" \"CFLAGS_FOR_LIBGC=$CFLAGS_FOR_LIBGC\""
 		if test "x$support_boehm" = "xyes"; then
-			AC_CONFIG_SUBDIRS(libgc)
+			AC_CONFIG_SUBDIRS(external/bdwgc)
 		fi
 		;;
 esac
@@ -5696,7 +5774,7 @@ dnl *** feature experiments ***
 dnl ***************************
 
 dnl When adding experiments, also add to mono/utils/mono-experiments.def
-AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental fatures from the comma-separate LIST.  Available experiments: null],[
+AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental fatures from the comma-separate LIST.  Available experiments: null,tiered],[
 
 	if test x$enable_experiment != x ; then
 		AC_DEFINE(ENABLE_EXPERIMENTS,1,[Enable feature experiments])
@@ -5707,13 +5785,19 @@ AC_ARG_ENABLE(experiment, [ --enable-experiment=LIST       Enable experimental f
 
 	if test "x$mono_experiment_test_enable_all" = "xyes"; then
 		eval "mono_experiment_test_enable_null='yes'"
+		eval "mono_experiment_test_enable_tiered='yes'"
 		true
 	fi
 
 	if test "x$mono_experiment_test_enable_null" = "xyes"; then
 		AC_DEFINE(ENABLE_EXPERIMENT_null, 1, [Enable experiment 'null'])
 	fi
+	if test "x$mono_experiment_test_enable_tiered" = "xyes"; then
+		AC_DEFINE(ENABLE_EXPERIMENT_TIERED, 1, [Enable experiment 'Tiered Compilation'])
+	fi
 ],[])
+
+AM_CONDITIONAL(ENABLE_EXPERIMENT_TIERED, test x$mono_experiment_test_enable_tiered = xyes)
 
 dnl **********************
 dnl *** checked builds ***
@@ -5947,13 +6031,6 @@ fi
 
 AM_CONDITIONAL(BTLS_ANDROID, test x$btls_android = xyes)
 
-if test x$DISABLE_MCS_DOCS = xyes; then
-   docs_dir=""
-else
-   docs_dir=docs
-fi
-AC_SUBST(docs_dir)
-
 ## Maybe should also disable if mcsdir is invalid.  Let's punt the issue for now.
 AM_CONDITIONAL(BUILD_MCS, [test x$cross_compiling = xno && test x$enable_mcs_build != xno])
 AM_CONDITIONAL(BUILD_SUPPORT, [test x$enable_support_build != xno])
@@ -6027,10 +6104,6 @@ fi
 AM_CONDITIONAL(ENABLE_MSVC, test x$enable_msvc = xyes)
 
 if test "x$enable_msvc" = "xyes"; then
-	if test "x$support_boehm" = "xyes"; then
-		echo "Error, Boehm GC is not supported when using --enable-msvc."
-		exit 1
-	fi
 	mono_msvc_build_dir='$(top_srcdir)'/msvc/build/sgen
 	if test "x$host_cpu" = "xi686"; then
 		mono_msvc_build_lib_dir='$(mono_msvc_build_dir)'/Win32/lib/Release
@@ -6054,8 +6127,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/csc.exe
-VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.3.0/VBCSCompiler.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe
@@ -6087,166 +6160,194 @@ AC_SUBST(mono_cfg_dir)
 
 AC_SUBST(CSC)
 
-AC_CONFIG_FILES([po/mcs/Makefile.in])
+if test "x$with_core" != "xonly"; then
 
-AC_CONFIG_FILES([acceptance-tests/microbench-perf.sh],[chmod +x acceptance-tests/microbench-perf.sh])
-AC_CONFIG_FILES([runtime/mono-wrapper],[chmod +x runtime/mono-wrapper])
-AC_CONFIG_FILES([runtime/monodis-wrapper],[chmod +x runtime/monodis-wrapper])
-AC_CONFIG_FILES([runtime/bin/mono-hang-watchdog],[chmod +x runtime/bin/mono-hang-watchdog])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/1.0/machine.config],
+	[   depth=../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/1.0
+		cd runtime/etc/mono/1.0
+		rm -f machine.config
+		$LN_S $reldir/data/net_1_1/machine.config machine.config
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/1.0/machine.config],
-[   depth=../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/1.0
-    cd runtime/etc/mono/1.0
-    rm -f machine.config
-    $LN_S $reldir/data/net_1_1/machine.config machine.config
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/machine.config],
+	[   depth=../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/2.0
+		cd runtime/etc/mono/2.0
+		rm -f machine.config
+		$LN_S $reldir/data/net_2_0/machine.config machine.config
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/machine.config],
-[   depth=../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/2.0
-    cd runtime/etc/mono/2.0
-    rm -f machine.config
-    $LN_S $reldir/data/net_2_0/machine.config machine.config
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/web.config],
+	[   depth=../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/2.0
+		cd runtime/etc/mono/2.0
+		rm -f web.config
+		$LN_S $reldir/data/net_2_0/web.config web.config
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/web.config],
-[   depth=../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/2.0
-    cd runtime/etc/mono/2.0
-    rm -f web.config
-    $LN_S $reldir/data/net_2_0/web.config web.config
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/browscap.ini],
+	[   depth=../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/
+		cd runtime/etc/mono/
+		rm -f browscap.ini
+		$LN_S $reldir/data/browscap.ini browscap.ini
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/browscap.ini],
-[   depth=../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/
-    cd runtime/etc/mono/
-    rm -f browscap.ini
-    $LN_S $reldir/data/browscap.ini browscap.ini
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/Browsers/Compat.browser],
+	[   depth=../../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/2.0/Browsers/
+		cd runtime/etc/mono/2.0/Browsers
+		rm -f Compat.browser
+		$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/Browsers/Compat.browser],
-[   depth=../../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/2.0/Browsers/
-    cd runtime/etc/mono/2.0/Browsers
-    rm -f Compat.browser
-    $LN_S $reldir/data/Browsers/Compat.browser Compat.browser
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/Browsers/Compat.browser],
+	[   depth=../../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/4.0/Browsers/
+		cd runtime/etc/mono/4.0/Browsers
+		rm -f Compat.browser
+		$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/Browsers/Compat.browser],
-[   depth=../../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/4.0/Browsers/
-    cd runtime/etc/mono/4.0/Browsers
-    rm -f Compat.browser
-    $LN_S $reldir/data/Browsers/Compat.browser Compat.browser
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/Browsers/Compat.browser],
+	[   depth=../../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/4.5/Browsers/
+		cd runtime/etc/mono/4.5/Browsers
+		rm -f Compat.browser
+		$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/Browsers/Compat.browser],
-[   depth=../../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/4.5/Browsers/
-    cd runtime/etc/mono/4.5/Browsers
-    rm -f Compat.browser
-    $LN_S $reldir/data/Browsers/Compat.browser Compat.browser
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/machine.config],
+	[   depth=../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/4.0
+		cd runtime/etc/mono/4.0
+		rm -f machine.config
+		$LN_S $reldir/data/net_4_0/machine.config machine.config
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/machine.config],
-[   depth=../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/4.0
-    cd runtime/etc/mono/4.0
-    rm -f machine.config
-    $LN_S $reldir/data/net_4_0/machine.config machine.config
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/web.config],
+	[   depth=../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/4.0
+		cd runtime/etc/mono/4.0
+		rm -f web.config
+		$LN_S $reldir/data/net_4_0/web.config web.config
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/web.config],
-[   depth=../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/4.0
-    cd runtime/etc/mono/4.0
-    rm -f web.config
-    $LN_S $reldir/data/net_4_0/web.config web.config
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/machine.config],
+	[   depth=../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/4.5
+		cd runtime/etc/mono/4.5
+		rm -f machine.config
+		$LN_S $reldir/data/net_4_5/machine.config machine.config
+		cd $depth
+	],[LN_S='$LN_S'])
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/machine.config],
-[   depth=../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/4.5
-    cd runtime/etc/mono/4.5
-    rm -f machine.config
-    $LN_S $reldir/data/net_4_5/machine.config machine.config
-    cd $depth
-],[LN_S='$LN_S'])
+	AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/web.config],
+	[   depth=../../../..
+		case $srcdir in
+		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+		.) reldir=$depth ;;
+		*) reldir=$depth/$srcdir ;;
+		esac
+		$ac_aux_dir/install-sh -d runtime/etc/mono/4.5
+		cd runtime/etc/mono/4.5
+		rm -f web.config
+		$LN_S $reldir/data/net_4_5/web.config web.config
+		cd $depth
+	],[LN_S='$LN_S'])
+fi
 
-AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/web.config],
-[   depth=../../../..
-    case $srcdir in
-    [[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-    .) reldir=$depth ;;
-    *) reldir=$depth/$srcdir ;;
-    esac
-    $ac_aux_dir/install-sh -d runtime/etc/mono/4.5
-    cd runtime/etc/mono/4.5
-    rm -f web.config
-    $LN_S $reldir/data/net_4_5/web.config web.config
-    cd $depth
-],[LN_S='$LN_S'])
+# Top level Makefile.am subdirs
+if test "x$with_core" = "xonly"; then
+	MONO_SUBDIRS="llvm mono"
+else
+	if test "x$support_boehm" = "xyes" -a "x$libgc" = "xincluded"; then
+		mono_subdirs_libgc=external/bdwgc
+	fi
+
+	if test x$enable_support_build != xno; then
+		mono_subdirs_support=support
+	fi
+
+	if test x$cross_compiling = xno; then
+		# Some tools might not build when cross-compiling
+		mono_subdirs_tools=tools
+	fi
+
+	if test x$DISABLE_MCS_DOCS != xyes; then
+		mono_subdirs_docs=docs
+	fi
+
+	if test x$with_ikvm_native = xyes; then
+		mono_subdirs_ikvm_native=ikvm-native
+	fi
+
+	MONO_SUBDIRS="po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
+	MONO_NOINST_SUBDIRS="$mono_subdirs_libgc"
+fi
+
+AC_SUBST(MONO_SUBDIRS)
+AC_SUBST(MONO_NOINST_SUBDIRS)
 
 AC_CONFIG_COMMANDS([quiet-libtool], [sed -e 's/echo "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool; sed -e 's/$ECHO "copying selected/# "copying selected/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
 AC_CONFIG_COMMANDS([nolock-libtool], [sed -e 's/lock_old_archive_extraction=yes/lock_old_archive_extraction=no/g' < libtool > libtool.tmp && mv libtool.tmp libtool && chmod a+x libtool])
@@ -6421,7 +6522,11 @@ elif test x$host_linux = xyes; then
 	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
 	MONO_NATIVE_CFLAGS=$CFLAGS
 	MONO_NATIVE_LDFLAGS=$LDFLAGS
-
+	if test x$enable_gss = xyes; then
+		MONO_NATIVE_LDFLAGS="$MONO_NATIVE_LDFLAGS -lgssapi_krb5"
+	else
+		AC_MSG_WARN([GSS is not enabled, it requires libkrb5-dev package])
+	fi
 	mono_native=yes
 	mono_native_compat=no
 	MONO_NATIVE_PLATFORM=linux
@@ -6481,7 +6586,7 @@ elif case $host_os in freebsd*) true;; *) false;; esac; then
 	MONO_NATIVE_CXX=$CXX
 	MONO_NATIVE_CPPFLAGS=$CPPFLAGS
 	MONO_NATIVE_CXXFLAGS=$CXXFLAGS
-	MONO_NATIVE_CFLAGS=$CFLAGS
+	MONO_NATIVE_CFLAGS="$CFLAGS -I/usr/local/include"
 	MONO_NATIVE_LDFLAGS=$LDFLAGS
 
 	mono_native=yes
@@ -6675,6 +6780,7 @@ AC_COMPILE_IFELSE(
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
+AC_SUBST(CCLDFLAGS)
 AC_SUBST(ZLIB_CFLAGS)
 
 # Update all submodules recursively to ensure everything is checked out
@@ -6682,94 +6788,7 @@ if test "x$with_core" != "xonly"; then
 	(cd $srcdir && scripts/update_submodules.sh)
 fi
 
-AC_OUTPUT([
-Makefile
-mono-uninstalled.pc
-acceptance-tests/Makefile
-llvm/Makefile
-scripts/mono-find-provides
-scripts/mono-find-requires
-mk/Makefile
-mono/Makefile
-mono/btls/Makefile
-mono/native/Makefile
-mono/utils/Makefile
-mono/utils/jemalloc/Makefile
-mono/metadata/Makefile
-mono/dis/Makefile
-mono/cil/Makefile
-mono/arch/Makefile
-mono/arch/x86/Makefile
-mono/arch/amd64/Makefile
-mono/arch/ppc/Makefile
-mono/arch/sparc/Makefile
-mono/arch/s390x/Makefile
-mono/arch/arm/Makefile
-mono/arch/arm64/Makefile
-mono/arch/mips/Makefile
-mono/arch/riscv/Makefile
-mono/sgen/Makefile
-mono/native/platform-type.c
-mono/native/platform-type-compat.c
-mono/native/platform-type-unified.c
-mono/tests/Makefile
-mono/tests/assembly-load-reference/Makefile
-mono/tests/tests-config
-mono/tests/gc-descriptors/Makefile
-mono/tests/testing_gac/Makefile
-mono/tests/fullaot-mixed/Makefile
-mono/tests/llvmonly-mixed/Makefile
-mono/unit-tests/Makefile
-mono/benchmark/Makefile
-mono/mini/Makefile
-mono/profiler/Makefile
-mono/eglib/Makefile
-mono/eglib/eglib-config.h
-mono/eglib/test/Makefile
-m4/Makefile
-ikvm-native/Makefile
-scripts/Makefile
-man/Makefile
-docs/Makefile
-data/Makefile
-data/net_2_0/Makefile
-data/net_4_0/Makefile
-data/net_4_5/Makefile
-data/net_2_0/Browsers/Makefile
-data/net_4_0/Browsers/Makefile
-data/net_4_5/Browsers/Makefile
-data/mint.pc
-data/mono-2.pc
-data/monosgen-2.pc
-data/mono.pc
-data/mono-cairo.pc
-data/mono-options.pc
-data/mono-lineeditor.pc
-data/monodoc.pc
-data/dotnet.pc
-data/dotnet35.pc
-data/wcf.pc
-data/cecil.pc
-data/system.web.extensions_1.0.pc
-data/system.web.extensions.design_1.0.pc
-data/system.web.mvc.pc
-data/system.web.mvc2.pc
-data/system.web.mvc3.pc
-data/aspnetwebstack.pc
-data/reactive.pc
-samples/Makefile
-support/Makefile
-data/config
-tools/Makefile
-tools/locale-builder/Makefile
-tools/sgen/Makefile
-tools/pedump/Makefile
-tools/mono-hang-watchdog/Makefile
-runtime/Makefile
-msvc/Makefile
-po/Makefile
-netcore/corerun/Makefile
-])
+AC_MONO_OUTPUT()
 
 if test x$host_win32 = xyes; then
    # Get rid of 'cyg' prefixes in library names
@@ -6783,40 +6802,6 @@ fi
 if test x$host_darwin = xyes; then
    # This doesn't seem to be required and it slows down parallel builds
    sed -e 's,lock_old_archive_extraction=yes,lock_old_archive_extraction=no,g' < libtool > libtool.new && mv libtool.new libtool && chmod +x libtool
-fi
-
-force_enable_compiler_server=no;
-
-AC_MSG_CHECKING([compiler server])
-AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default,force      Enables or disables compiler server],[
-   if test x$withval = xyes; then
-       enable_compiler_server=yes;
-   # force will bypass any automatic disables to allow you to test the compiler server
-   #  in scenarios where it is disabled
-   elif test x$withval = xforce; then
-       enable_compiler_server=yes;
-       force_enable_compiler_server=yes;
-   elif test x$withval = xno; then
-       enable_compiler_server=no;
-   elif test x$withval = xdefault; then
-       enable_compiler_server=yes;
-   else
-       AC_MSG_ERROR([You must supply one of "yes", "no", "default" or "force" to the --with-compiler-server option])
-   fi
-],[enable_compiler_server=yes])
-
-AC_MSG_RESULT($enable_compiler_server)
-
-if test x$enable_compiler_server = xyes; then
-   if test x$force_enable_compiler_server = xyes; then
-       AC_MSG_WARN([forcing compiler server to stay enabled])
-   elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
-       AC_MSG_WARN([compiler server temporarily disabled on darwin and win32])
-       enable_compiler_server=no;
-   elif test x$csc_compiler = xmcs; then
-       AC_MSG_WARN([mcs does not support the compiler server])
-       enable_compiler_server=no;
-   fi
 fi
 
 (
@@ -6948,6 +6933,40 @@ fi
       echo "MONO_NATIVE_USING_COMPAT=false" >> $srcdir/$mcsdir/build/config.make
     fi
 
+    force_enable_compiler_server=no;
+
+    AC_MSG_CHECKING([compiler server])
+    AC_ARG_WITH(compiler-server, [  --with-compiler-server=yes,no,default,force      Enables or disables compiler server],[
+       if test x$withval = xyes; then
+           enable_compiler_server=yes;
+       # force will bypass any automatic disables to allow you to test the compiler server
+       #  in scenarios where it is disabled
+       elif test x$withval = xforce; then
+           enable_compiler_server=yes;
+           force_enable_compiler_server=yes;
+       elif test x$withval = xno; then
+           enable_compiler_server=no;
+       elif test x$withval = xdefault; then
+           enable_compiler_server=yes;
+       else
+           AC_MSG_ERROR([You must supply one of "yes", "no", "default" or "force" to the --with-compiler-server option])
+       fi
+    ],[enable_compiler_server=yes])
+
+    AC_MSG_RESULT($enable_compiler_server)
+
+    if test x$enable_compiler_server = xyes; then
+       if test x$force_enable_compiler_server = xyes; then
+           AC_MSG_WARN([forcing compiler server to stay enabled])
+       elif test x$host_darwin = xyes || test x$host_win32 = xyes; then
+           AC_MSG_WARN([compiler server temporarily disabled on darwin and win32])
+           enable_compiler_server=no;
+       elif test x$csc_compiler = xmcs; then
+           AC_MSG_WARN([mcs does not support the compiler server])
+           enable_compiler_server=no;
+       fi
+    fi
+
     echo "MONO_NATIVE_PLATFORM_TYPE=$MONO_NATIVE_PLATFORM_TYPE" >> $srcdir/$mcsdir/build/config.make
     echo "MONO_NATIVE_PLATFORM=$MONO_NATIVE_PLATFORM" >> $srcdir/$mcsdir/build/config.make
     if test x$enable_compiler_server = xyes; then
@@ -6988,7 +7007,7 @@ if test x$buildsgen = xyes; then
 fi
 
 if test "x$with_core" = "xonly"; then
-  if test ! -d netcore; then
+  if test ! -e netcore/Makefile; then
     # Out of tree builds
     mkdir -p netcore
     echo "all:" > netcore/Makefile
@@ -7028,7 +7047,7 @@ echo "
 	Engine:        $jit_status
 	BigArrays:     $enable_big_arrays
 	DTrace:        $enable_dtrace
-	LLVM Back End: $enable_llvm (dynamically loaded: $enable_loadedllvm, built in-tree: $internal_llvm, assertions: $enable_llvm_asserts, msvc only: $enable_llvm_msvc_only)
+	LLVM Back End: $enable_llvm (built in-tree: $internal_llvm, assertions: $enable_llvm_asserts, msvc only: $enable_llvm_msvc_only)
 	Spectre:       $spectre_mitigation_status
 	Mono.Native:   $mono_native_text
 

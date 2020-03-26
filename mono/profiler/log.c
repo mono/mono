@@ -649,11 +649,21 @@ buffer_lock (void)
 		 */
 		MonoThreadInfo *info = mono_thread_info_current_unchecked ();
 		if (info) {
+			/* Why do we enter Unsafe and then Safe?  Because we
+			 * might be called from a native-to-managed wrapper
+			 * from a P/Invoke.  In that case the thread is already
+			 * in GC Safe, and the state machine doesn't allow
+			 * recursive GC Safe transitions.  (On the other hand
+			 * it's ok to enter GC Unsafe multiple times - the
+			 * state machine will tell us it's a noop.).
+			 */
+			MONO_ENTER_GC_UNSAFE_WITH_INFO (info);
 			MONO_ENTER_GC_SAFE_WITH_INFO (info);
 
 			buffer_lock_helper ();
 
 			MONO_EXIT_GC_SAFE_WITH_INFO;
+			MONO_EXIT_GC_UNSAFE_WITH_INFO;
 		} else
 			buffer_lock_helper ();
 	}
@@ -4073,7 +4083,7 @@ create_profiler (const char *args, const char *filename, GPtrArray *filters)
 
 	//If filename begin with +, append the pid at the end
 	if (filename && *filename == '+')
-		filename = g_strdup_printf ("%s.%d", filename + 1, getpid ());
+		filename = g_strdup_printf ("%s.%d", filename + 1, (int)process_id ());
 
 	if (!filename) {
 		if (log_config.do_report)

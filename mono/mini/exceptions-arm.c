@@ -40,6 +40,7 @@
 #include "aot-runtime.h"
 #include "mono/utils/mono-sigcontext.h"
 #include "mono/utils/mono-compiler.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #ifndef DISABLE_JIT
 
@@ -168,7 +169,7 @@ mono_arm_throw_exception (MonoObject *exc, host_mgreg_t pc, host_mgreg_t sp, hos
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow) {
+		if (!rethrow && !mono_ex->caught_in_unmanaged) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		} else if (preserve_ips) {
@@ -391,7 +392,7 @@ mono_arm_get_exception_trampolines (gboolean aot)
 	MonoTrampInfo *info;
 	GSList *tramps = NULL;
 
-	// FIXME Macro to make one line per trampoline and less repitition of names.
+	// FIXME Macro to make one line per trampoline and less repetition of names.
 
 	/* LLVM uses the normal trampolines, but with a different name */
 	get_throw_trampoline (168, TRUE, FALSE, FALSE, FALSE, "llvm_throw_corlib_exception_trampoline", &info, aot, FALSE);

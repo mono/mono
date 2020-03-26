@@ -31,6 +31,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+// FIXME This does not work because it guards config.h include.
 /* In case by some miracle, IBM implements this */
 #if defined(_AIX) && !defined(HAVE_DLADDR)
 #include <config.h>
@@ -219,15 +220,31 @@ g_module_address (void *addr, char *file_name, size_t file_name_len,
 	/* This zero-on-failure is unlike other Unix APIs. */
 	if (ret == 0)
 		return FALSE;
-	if (file_name != NULL && file_name_len >= 1)
-		g_strlcpy(file_name, dli.dli_fname, file_name_len);
+	if (file_name != NULL && file_name_len >= 1) {
+		if (dli.dli_fname != NULL)
+			g_strlcpy(file_name, dli.dli_fname, file_name_len);
+		else
+			file_name [0] = '\0';
+	}
 	if (file_base != NULL)
 		*file_base = dli.dli_fbase;
-	if (sym_name != NULL && sym_name_len >= 1)
-		g_strlcpy(sym_name, dli.dli_sname, sym_name_len);
+	if (sym_name != NULL && sym_name_len >= 1) {
+		if (dli.dli_sname != NULL)
+			g_strlcpy(sym_name, dli.dli_sname, sym_name_len);
+		else
+			sym_name [0] = '\0';
+	}
 	if (sym_addr != NULL)
 		*sym_addr = dli.dli_saddr;
 	return TRUE;
 }
+
+#else
+
+#define MONO_EMPTY_SOURCE_FILE(x) extern const char mono_quash_linker_empty_file_warning_ ## x; \
+				  const char mono_quash_linker_empty_file_warning_ ## x = 0;
+
+MONO_EMPTY_SOURCE_FILE (gmodule_aix);
+
 #endif
 

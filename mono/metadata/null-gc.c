@@ -315,6 +315,11 @@ mono_gc_thread_attach (MonoThreadInfo* info)
 }
 
 void
+mono_gc_thread_detach (MonoThreadInfo *p)
+{
+}
+
+void
 mono_gc_thread_detach_with_lock (MonoThreadInfo *p)
 {
 	mono_handle_stack_free (p->handle_stack);
@@ -609,6 +614,20 @@ mono_gc_ephemeron_array_add (MonoObject *obj)
 guint64 mono_gc_get_total_allocated_bytes (MonoBoolean precise) 
 {
 	return 0;
+}
+
+void
+mono_gc_get_gcmemoryinfo (gint64* high_memory_load_threshold_bytes,
+						  gint64* memory_load_bytes,
+						  gint64* total_available_memory_bytes,
+						  gint64* heap_size_bytes,
+						  gint64* fragmented_bytes)
+{
+	*high_memory_load_threshold_bytes = 0;
+	*memory_load_bytes = 0;
+	*total_available_memory_bytes = 0;
+	*heap_size_bytes = 0;
+	*fragmented_bytes = 0;
 }
 
 #else

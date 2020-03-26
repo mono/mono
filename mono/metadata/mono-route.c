@@ -36,7 +36,7 @@ gateway_from_rtm (struct rt_msghdr *rtm);
 #include "icall-decl.h"
 
 MonoBoolean
-ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo_internal (MonoStringHandle iface_handle, MonoArrayHandleOut gw_addr_list_handle, MonoError *error)
+ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo (MonoStringHandle iface_handle, MonoArrayHandleOut gw_addr_list_handle, MonoError *error)
 {
 	MonoString *iface = MONO_HANDLE_RAW (iface_handle);
 	MONO_HANDLE_ASSIGN_RAW (gw_addr_list_handle, NULL);
@@ -154,7 +154,20 @@ gateway_from_rtm(struct rt_msghdr *rtm)
 	return 0;
 }
 
+#else
+
+#include "object.h"
+#include "icall-decl.h"
+
+MonoBoolean
+ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo (MonoStringHandle iface_handle, MonoArrayHandleOut gw_addr_list_handle, MonoError *error)
+{
+	mono_error_set_not_implemented (error, "");
+	return FALSE;
+}
+
 #endif
+
 #endif
 
 extern const char mono_route_empty_file_no_warning;

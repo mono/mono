@@ -106,19 +106,23 @@ mono_monitor_init (void);
 void
 mono_monitor_cleanup (void);
 
+ICALL_EXTERN_C
 MonoBoolean
 mono_monitor_enter_internal (MonoObject *obj);
 
+ICALL_EXTERN_C
 void
 mono_monitor_enter_v4_internal (MonoObject *obj, MonoBoolean *lock_taken);
 
+ICALL_EXTERN_C
 guint32
 mono_monitor_enter_fast (MonoObject *obj);
 
+ICALL_EXTERN_C
 guint32
 mono_monitor_enter_v4_fast (MonoObject *obj, MonoBoolean *lock_taken);
 
-guint32
+MonoGCHandle
 mono_monitor_get_object_monitor_gchandle (MonoObject *object);
 
 void

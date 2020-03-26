@@ -20,10 +20,7 @@
 
 #include <glib.h>
 #include <string.h>
-
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 #ifdef HAVE_UCONTEXT_H
 #include <ucontext.h>
 #endif
@@ -39,12 +36,14 @@
 #include <mono/metadata/gc-internals.h>
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-state.h>
 
 #include "mini.h"
 #include "mini-amd64.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
 #include "tasklets.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #ifdef TARGET_WIN32
 static void (*restore_stack) (void);
@@ -66,7 +65,8 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 	}
 #endif
 
-	mono_handle_native_crash ("SIGSEGV", NULL, NULL);
+	if (mono_dump_start ())
+		mono_handle_native_crash (mono_get_signame (SIGSEGV), NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -97,7 +97,7 @@ get_win32_restore_stack (void)
 	amd64_call_reg (code, AMD64_R11);
 
 	/* get jit_tls with context to restore */
-	amd64_mov_reg_imm (code, AMD64_R11, mono_tls_get_jit_tls);
+	amd64_mov_reg_imm (code, AMD64_R11, mono_tls_get_jit_tls_extern);
 	amd64_call_reg (code, AMD64_R11);
 
 	/* move jit_tls from return reg to arg reg */
@@ -394,7 +394,7 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow) {
+		if (!rethrow && !mono_ex->caught_in_unmanaged) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		} else if (preserve_ips) {
@@ -867,13 +867,19 @@ prepare_for_guard_pages (MonoContext *mctx)
 }
 
 static void
-altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, gboolean stack_ovf)
+altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, guint32 flags)
 {
 	MonoContext mctx;
 	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), MONO_CONTEXT_GET_IP (ctx), NULL);
+	gboolean stack_ovf = (flags & 1) != 0;
+	gboolean nullref = (flags & 2) != 0;
 
-	if (!ji)
-		mono_handle_native_crash ("SIGSEGV", ctx, NULL);
+	if (!ji || (!stack_ovf && !nullref)) {
+		if (mono_dump_start ())
+			mono_handle_native_crash (mono_get_signame (SIGSEGV), ctx, NULL);
+		// if couldn't dump or if mono_handle_native_crash returns, abort
+		abort ();
+	}
 
 	mctx = *ctx;
 
@@ -892,35 +898,43 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 #if defined(MONO_ARCH_USE_SIGACTION)
 	MonoException *exc = NULL;
 	gpointer *sp;
-	int frame_size;
-	MonoContext *copied_ctx;
+	MonoJitTlsData *jit_tls = NULL;
+	MonoContext *copied_ctx = NULL;
+	gboolean nullref = TRUE;
+
+	jit_tls = mono_tls_get_jit_tls ();
+	g_assert (jit_tls);
+
+	/* use TLS as temporary storage as we want to avoid
+	 * (1) stack allocation on the application stack
+	 * (2) calling malloc, because it is not async-safe
+	 * (3) using a global storage, because this function is not reentrant
+	 *
+	 * tls->orig_ex_ctx is used by the stack walker, which shouldn't be running at this point.
+	 */
+	copied_ctx = &jit_tls->orig_ex_ctx;
+
+	if (!mono_is_addr_implicit_null_check (fault_addr))
+		nullref = FALSE;
 
 	if (stack_ovf)
 		exc = mono_domain_get ()->stack_overflow_ex;
 
-	/* setup a call frame on the real stack so that control is returned there
-	 * and exception handling can continue.
-	 * The frame looks like:
-	 *   ucontext struct
-	 *   ...
-	 *   return ip
-	 * 128 is the size of the red zone
+	/* setup the call frame on the application stack so that control is
+	 * returned there and exception handling can continue. we want the call
+	 * frame to be minimal as possible, for example no argument passing that
+	 * requires allocation on the stack, as this wouldn't be encoded in unwind
+	 * information for the caller frame.
 	 */
-	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 4 + 128;
-	frame_size += 15;
-	frame_size &= ~15;
-	sp = (gpointer *)(UCONTEXT_REG_RSP (sigctx) & ~15);
-	sp = (gpointer *)((char*)sp - frame_size);
-	copied_ctx = (MonoContext*)(sp + 4);
-	/* the arguments must be aligned */
+	sp = (gpointer *) ALIGN_DOWN_TO (UCONTEXT_REG_RSP (sigctx), 16);
 	sp [-1] = (gpointer)UCONTEXT_REG_RIP (sigctx);
 	mono_sigctx_to_monoctx (sigctx, copied_ctx);
-	/* at the return form the signal handler execution starts in altstack_handle_and_restore() */
+	/* at the return from the signal handler execution starts in altstack_handle_and_restore() */
 	UCONTEXT_REG_RIP (sigctx) = (unsigned long)altstack_handle_and_restore;
 	UCONTEXT_REG_RSP (sigctx) = (unsigned long)(sp - 1);
 	UCONTEXT_REG_RDI (sigctx) = (unsigned long)(copied_ctx);
 	UCONTEXT_REG_RSI (sigctx) = (guint64)exc;
-	UCONTEXT_REG_RDX (sigctx) = stack_ovf;
+	UCONTEXT_REG_RDX (sigctx) = (stack_ovf ? 1 : 0) | (nullref ? 2 : 0);
 #endif
 }
 
@@ -1091,7 +1105,7 @@ mono_arch_unwindinfo_add_alloc_stack (PUNWIND_INFO unwindinfo, MonoUnwindOp *unw
 		if (codesneeded == 3) {
 			/*the unscaled size of the allocation is recorded
 			  in the next two slots in little-endian format.
-			  NOTE, unwind codes are allocated from end to begining of list so
+			  NOTE, unwind codes are allocated from end to beginning of list so
 			  unwind code will have right execution order. List is sorted on CodeOffset
 			  using descending sort order.*/
 			unwindcode->UnwindOp = UWOP_ALLOC_LARGE;
@@ -1101,7 +1115,7 @@ mono_arch_unwindinfo_add_alloc_stack (PUNWIND_INFO unwindinfo, MonoUnwindOp *unw
 		else {
 			/*the size of the allocation divided by 8
 			  is recorded in the next slot.
-			  NOTE, unwind codes are allocated from end to begining of list so
+			  NOTE, unwind codes are allocated from end to beginning of list so
 			  unwind code will have right execution order. List is sorted on CodeOffset
 			  using descending sort order.*/
 			unwindcode->UnwindOp = UWOP_ALLOC_LARGE;
@@ -1393,7 +1407,7 @@ mono_arch_unwindinfo_insert_range_in_table (const gpointer code_block, gsize blo
 	AcquireSRWLockExclusive (&g_dynamic_function_table_lock);
 	init_table_no_lock ();
 	new_entry = find_range_in_table_no_lock (code_block, block_size);
-	if (new_entry == NULL) {
+	if (new_entry == NULL && block_size != 0) {
 		// Allocate new entry.
 		new_entry = g_new0 (DynamicFunctionTableEntry, 1);
 		if (new_entry != NULL) {

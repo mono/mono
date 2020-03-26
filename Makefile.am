@@ -2,33 +2,11 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_CFLAGS = $(WERROR_CFLAGS)
 
-MONOTOUCH_SUBDIRS = $(libgc_dir) mono
+SUBDIRS = @MONO_SUBDIRS@
+noinst_SUBDIRS = @MONO_NOINST_SUBDIRS@
+DIST_SUBDIRS = $(SUBDIRS) m4 netcore
 
-# Some tools might not build when cross-compiling
-if CROSS_COMPILING
-tools_dir =
-else
-tools_dir = tools
-endif
-
-if ENABLE_MSVC
-build_with_msvc = msvc
-build_without_msvc =
-else
-build_with_msvc =
-build_without_msvc = msvc
-endif
-
-if ENABLE_NETCORE
-update_submodules = 
-SUBDIRS = mk llvm mono runtime netcore netcore/corerun
-else
-update_submodules = update_submodules
-SUBDIRS = $(build_with_msvc) mk po $(libgc_dir) llvm mono $(ikvm_native_dir) support data runtime scripts man samples $(tools_dir) $(build_without_msvc) $(docs_dir) acceptance-tests
-endif
-
-# Keep in sync with SUBDIRS
-DIST_SUBDIRS = $(build_with_msvc) m4 mk po $(libgc_dir) llvm mono ikvm-native support data runtime scripts man samples tools $(build_without_msvc) docs acceptance-tests netcore netcore/corerun
+if !ENABLE_NETCORE
 
 all: $(update_submodules)
 
@@ -67,6 +45,9 @@ dist-hook:
 	rm -f `find $(top_distdir)/external -path '*\.exe' -not -path '*/roslyn-binaries/*'`
 	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*' -not -path '*/helix-binaries/*'`
 	rm -rf "$(top_distdir)/external/linker/test"
+	rm -rf "$(top_distdir)/external/llvm-project/lldb/test"
+	rm -rf "$(top_distdir)/external/llvm-project/libcxx/test"
+	rm -rf "$(top_distdir)/external/llvm-project/clang/test"
 
 pkgconfigdir = $(libdir)/pkgconfig
 noinst_DATA = mono-uninstalled.pc
@@ -113,30 +94,10 @@ mcs-do-compiler-tests:
 bootstrap-world: compiler-tests
 	$(MAKE) install
 
-if INSTALL_MONOTOUCH
-monotouch-do-build: config.h
-	@list='$(MONOTOUCH_SUBDIRS)'; for subdir in $$list; do \
-	  case "x$$subdir" in \
-		xmono ) target="monotouch-do-build";; \
-		* ) target="all";; \
-	  esac; \
-	  echo "Making $$target in $$subdir"; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
-        done;
-	(cd runtime && $(MAKE) $(AM_MAKEFLAGS) monotouch-do-build)
-
-monotouch-do-clean:
-	@list='$(MONOTOUCH_SUBDIRS)'; for subdir in $$list; do \
-	  case "x$$subdir" in \
-		xmono ) target="monotouch-do-clean";; \
-		* ) target="clean";; \
-	  esac; \
-	  echo "Making $$target in $$subdir"; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
-        done;
-	(cd runtime && $(MAKE) $(AM_MAKEFLAGS) monotouch-do-clean)
-
-endif
+install:
+	for mydir in $(filter-out $(noinst_SUBDIRS),$(SUBDIRS)); do \
+	  (cd $${mydir} && ${MAKE} install) \
+	done
 
 update-csproj:
 	-rm msvc/scripts/order 
@@ -180,3 +141,5 @@ update-solution-files:
 
 update-solution-files-with-tests:
 	$(MAKE) "GENPROJ_ARGS=2012 true true" update-solution-files
+
+endif

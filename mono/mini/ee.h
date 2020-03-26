@@ -15,7 +15,7 @@
 #ifndef __MONO_EE_H__
 #define __MONO_EE_H__
 
-#define MONO_EE_API_VERSION 0xd
+#define MONO_EE_API_VERSION 0xf
 
 typedef struct _MonoInterpStackIter MonoInterpStackIter;
 
@@ -31,11 +31,12 @@ typedef gpointer MonoInterpFrameHandle;
 	MONO_EE_CALLBACK (void, to_native_trampoline, (gpointer addr, gpointer ccontext)) \
 	MONO_EE_CALLBACK (gpointer, create_method_pointer, (MonoMethod *method, gboolean compile, MonoError *error)) \
 	MONO_EE_CALLBACK (MonoFtnDesc*, create_method_pointer_llvmonly, (MonoMethod *method, gboolean unbox, MonoError *error)) \
+	MONO_EE_CALLBACK (void, free_method, (MonoDomain *domain, MonoMethod *method)) \
 	MONO_EE_CALLBACK (MonoObject*, runtime_invoke, (MonoMethod *method, void *obj, void **params, MonoObject **exc, MonoError *error)) \
 	MONO_EE_CALLBACK (void, init_delegate, (MonoDelegate *del, MonoError *error)) \
 	MONO_EE_CALLBACK (void, delegate_ctor, (MonoObjectHandle this_obj, MonoObjectHandle target, gpointer addr, MonoError *error)) \
 	MONO_EE_CALLBACK (gpointer, get_remoting_invoke, (MonoMethod *method, gpointer imethod, MonoError *error)) \
-	MONO_EE_CALLBACK (void, set_resume_state, (MonoJitTlsData *jit_tls, MonoException *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip)) \
+	MONO_EE_CALLBACK (void, set_resume_state, (MonoJitTlsData *jit_tls, MonoObject *ex, MonoJitExceptionInfo *ei, MonoInterpFrameHandle interp_frame, gpointer handler_ip)) \
 	MONO_EE_CALLBACK (void, get_resume_state, (const MonoJitTlsData *jit_tls, gboolean *has_resume_state, MonoInterpFrameHandle *interp_frame, gpointer *handler_ip)) \
 	MONO_EE_CALLBACK (gboolean, run_finally, (StackFrameInfo *frame, int clause_index, gpointer handler_ip, gpointer handler_ip_end)) \
 	MONO_EE_CALLBACK (gboolean, run_filter, (StackFrameInfo *frame, MonoException *ex, int clause_index, gpointer handler_ip, gpointer handler_ip_end)) \
@@ -57,7 +58,11 @@ typedef gpointer MonoInterpFrameHandle;
 	MONO_EE_CALLBACK (MonoInterpFrameHandle, frame_get_parent, (MonoInterpFrameHandle frame)) \
 	MONO_EE_CALLBACK (void, start_single_stepping, (void)) \
 	MONO_EE_CALLBACK (void, stop_single_stepping, (void)) \
+	MONO_EE_CALLBACK (void, free_context, (gpointer)) \
+	MONO_EE_CALLBACK (void, set_optimizations, (guint32)) \
+	MONO_EE_CALLBACK (void, invalidate_transformed, (MonoDomain *domain)) \
 	MONO_EE_CALLBACK (void, cleanup, (void)) \
+	MONO_EE_CALLBACK (void, mark_stack, (gpointer thread_info, GcScanFunc func, gpointer gc_data, gboolean precise)) \
 
 typedef struct _MonoEECallbacks {
 

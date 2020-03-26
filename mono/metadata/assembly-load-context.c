@@ -22,7 +22,9 @@ mono_alc_init (MonoAssemblyLoadContext *alc, MonoDomain *domain)
 	alc->domain = domain;
 	alc->loaded_images = li;
 	alc->loaded_assemblies = NULL;
+	alc->pinvoke_scopes = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 	mono_coop_mutex_init (&alc->assemblies_lock);
+	mono_coop_mutex_init (&alc->pinvoke_lock);
 }
 
 void
@@ -53,7 +55,9 @@ mono_alc_cleanup (MonoAssemblyLoadContext *alc)
 	 */
 
 	alc->loaded_assemblies = NULL;
+	g_hash_table_destroy (alc->pinvoke_scopes);
 	mono_coop_mutex_destroy (&alc->assemblies_lock);
+	mono_coop_mutex_destroy (&alc->pinvoke_lock);
 
 	mono_loaded_images_free (alc->loaded_images);
 
@@ -129,7 +133,8 @@ invoke_resolve_method (MonoMethod *resolve_method, MonoAssemblyLoadContext *alc,
 	goto_if_nok (error, leave);
 
 	MonoReflectionAssemblyHandle assm;
-	gpointer gchandle = GUINT_TO_POINTER (alc->gchandle);
+	gpointer gchandle;
+	gchandle = GUINT_TO_POINTER (alc->gchandle);
 	gpointer args [2];
 	args [0] = &gchandle;
 	args [1] = MONO_HANDLE_RAW (aname_obj);
@@ -147,16 +152,16 @@ leave:
 static MonoAssembly*
 mono_alc_invoke_resolve_using_load (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	static MonoMethod *resolve;
+	MONO_STATIC_POINTER_INIT (MonoMethod, resolve)
 
-	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingLoad", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingLoad", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, resolve)
+
 	g_assert (resolve);
 
 	return invoke_resolve_method (resolve, alc, aname, error);
@@ -170,7 +175,7 @@ mono_alc_invoke_resolve_using_load_nofail (MonoAssemblyLoadContext *alc, MonoAss
 
 	result = mono_alc_invoke_resolve_using_load (alc, aname, error);
 	if (!is_ok (error))
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Error while invoking ALC Load(\"%s\") method: '%s'", aname->name, mono_error_get_message (error));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Error while invoking ALC Load(\"%s\") method: '%s'", aname->name, mono_error_get_message (error));
 
 	mono_error_cleanup (error);
 
@@ -180,16 +185,16 @@ mono_alc_invoke_resolve_using_load_nofail (MonoAssemblyLoadContext *alc, MonoAss
 static MonoAssembly*
 mono_alc_invoke_resolve_using_resolving_event (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	static MonoMethod *resolve;
+	MONO_STATIC_POINTER_INIT (MonoMethod, resolve)
 
-	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolvingEvent", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolvingEvent", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, resolve)
+
 	g_assert (resolve);
 
 	return invoke_resolve_method (resolve, alc, aname, error);
@@ -203,7 +208,7 @@ mono_alc_invoke_resolve_using_resolving_event_nofail (MonoAssemblyLoadContext *a
 
 	result = mono_alc_invoke_resolve_using_resolving_event (alc, aname, error);
 	if (!is_ok (error))
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Error while invoking ALC Resolving(\"%s\") event: '%s'", aname->name, mono_error_get_message (error));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Error while invoking ALC Resolving(\"%s\") event: '%s'", aname->name, mono_error_get_message (error));
 
 	mono_error_cleanup (error);
 
@@ -213,16 +218,16 @@ mono_alc_invoke_resolve_using_resolving_event_nofail (MonoAssemblyLoadContext *a
 static MonoAssembly*
 mono_alc_invoke_resolve_using_resolve_satellite (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, MonoError *error)
 {
-	static MonoMethod *resolve;
+	MONO_STATIC_POINTER_INIT (MonoMethod, resolve)
 
-	if (!resolve) {
 		ERROR_DECL (local_error);
 		MonoClass *alc_class = mono_class_get_assembly_load_context_class ();
 		g_assert (alc_class);
-		MonoMethod *m = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolveSatelliteAssembly", -1, 0, local_error);
+		resolve = mono_class_get_method_from_name_checked (alc_class, "MonoResolveUsingResolveSatelliteAssembly", -1, 0, local_error);
 		mono_error_assert_ok (local_error);
-		resolve = m;
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, resolve)
+
 	g_assert (resolve);
 
 	return invoke_resolve_method (resolve, alc, aname, error);
@@ -236,7 +241,7 @@ mono_alc_invoke_resolve_using_resolve_satellite_nofail (MonoAssemblyLoadContext 
 
 	result = mono_alc_invoke_resolve_using_resolve_satellite (alc, aname, error);
 	if (!is_ok (error))
-		mono_trace (G_LOG_LEVEL_INFO, MONO_TRACE_ASSEMBLY, "Error while invoking ALC ResolveSatelliteAssembly(\"%s\") method: '%s'", aname->name, mono_error_get_message (error));
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Error while invoking ALC ResolveSatelliteAssembly(\"%s\") method: '%s'", aname->name, mono_error_get_message (error));
 
 	mono_error_cleanup (error);
 

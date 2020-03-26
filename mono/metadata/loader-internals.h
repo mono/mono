@@ -33,11 +33,17 @@ struct _MonoAssemblyLoadContext {
 	MonoDomain *domain;
 	MonoLoadedImages *loaded_images;
 	GSList *loaded_assemblies;
+	// If taking this with the domain assemblies_lock, always take this second
 	MonoCoopMutex assemblies_lock;
 	/* Handle of the corresponding managed object.  If the ALC is
 	 * collectible, the handle is weak, otherwise it's strong.
 	 */
 	uint32_t gchandle;
+
+	// Used in native-library.c for the hash table below; do not access anywhere else
+	MonoCoopMutex pinvoke_lock;
+	// Maps malloc-ed char* pinvoke scope -> MonoDl*
+	GHashTable *pinvoke_scopes;
 };
 #endif /* ENABLE_NETCORE */
 
@@ -59,7 +65,10 @@ mono_global_dllmap_cleanup (void);
 #endif
 
 void
-mono_cached_module_cleanup (void);
+mono_global_loader_cache_init (void);
+
+void
+mono_global_loader_cache_cleanup (void);
 
 #ifdef ENABLE_NETCORE
 void
@@ -103,5 +112,8 @@ mono_alc_domain (MonoAssemblyLoadContext *alc)
 
 MonoLoadedImages *
 mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc);
+
+MONO_API void
+mono_loader_save_bundled_library (int fd, uint64_t offset, uint64_t size, const char *destfname);
 
 #endif

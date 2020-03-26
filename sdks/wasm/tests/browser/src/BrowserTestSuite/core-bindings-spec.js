@@ -773,6 +773,83 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       var pop = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ArrayPop", []);
       assert.equal(pop, undefined, "result does not match expected value unidentified.");
       assert.equal(pop, null, "result does not match expected value null.");
-    }, DEFAULT_TIMEOUT);  
+    }, DEFAULT_TIMEOUT); 
 
+    it('BindingTestSuite: Should error with Parameter count mismatch #1.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      try {
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest", ["hello"]);
+        assert.equal(result, 0, "result should have been Parameter count mismatch.");
+      } catch (e) {
+      }
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should error with Parameter count mismatch #2.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      try {
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest2", []);
+        assert.equal(result, 0, "result should have been Parameter count mismatch.");
+      } catch (e) {
+      }
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should error with Parameter count mismatch #3.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      try {
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest2");
+        assert.equal(result, 0, "result should have been Parameter count mismatch.");
+      } catch (e) {
+      }
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should NOT error with Parameter count mismatch #1.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest", []);
+        assert.equal(result, -1, "result does not match expected result.");
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should NOT error with Parameter count mismatch #2.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest");
+        assert.equal(result, -1, "result does not match expected result.");
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should NOT error with Parameter count mismatch #3.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest2", [null]);
+        assert.equal(result, -1, "result does not match expected result.");
+    }, DEFAULT_TIMEOUT);
+
+    it('BindingTestSuite: Should marshal null string argument as null.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringIsNull", [null]);
+        assert.isTrue(result);
+    }, DEFAULT_TIMEOUT);     
+
+    it('BindingTestSuite: Should return true for string.IsNullOrEmpty.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringIsNullOrEmpty", [null]);
+        assert.isTrue(result);
+    }, DEFAULT_TIMEOUT);     
+
+    it('BindingTestSuite: Should return true for null string[].', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringArrayIsNull", [null]);
+        assert.isTrue(result);
+    }, DEFAULT_TIMEOUT);     
+    it('BindingTestSuite: Should return Uri as string.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringToUri", ["ws://localhost"]);
+        assert.equal(result, "ws://localhost/", "result does not match value ws://localhost/.");
+    }, DEFAULT_TIMEOUT);     
   });

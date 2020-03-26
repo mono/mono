@@ -31,7 +31,7 @@ typedef enum {
 	MONO_ANAME_EQ_MASK = 0x7
 } MonoAssemblyNameEqFlags;
 
-G_ENUM_FUNCTIONS (MonoAssemblyNameEqFlags);
+G_ENUM_FUNCTIONS (MonoAssemblyNameEqFlags)
 
 void
 mono_assembly_name_free_internal (MonoAssemblyName *aname);
@@ -134,11 +134,11 @@ MonoAssembly*          mono_assembly_request_byname (MonoAssemblyName *aname,
 gboolean
 mono_assembly_candidate_predicate_sn_same_name (MonoAssembly *candidate, gpointer wanted_name);
 
-MonoAssembly*
-mono_assembly_binding_applies_to_image (MonoAssemblyLoadContext *alc, MonoImage* image, MonoImageOpenStatus *status);
+gboolean
+mono_assembly_check_name_match (MonoAssemblyName *wanted_name, MonoAssemblyName *candidate_name);
 
 MonoAssembly*
-mono_assembly_load_from_assemblies_path (gchar **assemblies_path, MonoAssemblyName *aname, MonoAssemblyContextKind asmctx);
+mono_assembly_binding_applies_to_image (MonoAssemblyLoadContext *alc, MonoImage* image, MonoImageOpenStatus *status);
 
 MonoAssembly *
 mono_assembly_loaded_internal (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname, gboolean refonly);
@@ -148,5 +148,8 @@ mono_assembly_get_name_internal (MonoAssembly *assembly);
 
 MONO_PROFILER_API MonoImage*
 mono_assembly_get_image_internal (MonoAssembly *assembly);
+
+void
+mono_set_assemblies_path_direct (char **path);
 
 #endif /* __MONO_METADATA_ASSEMBLY_INTERNALS_H__ */

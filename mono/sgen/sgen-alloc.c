@@ -36,6 +36,7 @@
 #include "mono/sgen/sgen-memory-governor.h"
 #include "mono/sgen/sgen-client.h"
 #include "mono/utils/mono-memory-model.h"
+#include "mono/utils/mono-tls-inline.h"
 
 #define ALIGN_UP		SGEN_ALIGN_UP
 #define ALLOC_ALIGN		SGEN_ALLOC_ALIGN
@@ -196,7 +197,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 			/* Fast path */
 
 			CANARIFY_ALLOC(p,real_size);
-			SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
+			SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %" G_GSIZE_FORMAT "d", p, vtable, sgen_client_vtable_get_name (vtable), size);
 			sgen_binary_protocol_alloc (p , vtable, size, sgen_client_get_provenance ());
 			g_assert (*p == NULL);
 			mono_atomic_store_seq (p, vtable);
@@ -310,7 +311,7 @@ sgen_alloc_obj_nolock (GCVTable vtable, size_t size)
 	}
 
 	if (G_LIKELY (p)) {
-		SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
+		SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %" G_GSIZE_FORMAT "d", p, vtable, sgen_client_vtable_get_name (vtable), size);
 		sgen_binary_protocol_alloc (p, vtable, size, sgen_client_get_provenance ());
 		mono_atomic_store_seq (p, vtable);
 	}
@@ -403,7 +404,7 @@ sgen_try_alloc_obj_nolock (GCVTable vtable, size_t size)
 	HEAVY_STAT (stat_bytes_alloced += size);
 
 	CANARIFY_ALLOC(p,real_size);
-	SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
+	SGEN_LOG (6, "Allocated object %p, vtable: %p (%s), size: %" G_GSIZE_FORMAT "d", p, vtable, sgen_client_vtable_get_name (vtable), size);
 	sgen_binary_protocol_alloc (p, vtable, size, sgen_client_get_provenance ());
 	g_assert (*p == NULL); /* FIXME disable this in non debug builds */
 
@@ -480,7 +481,7 @@ sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
 		p = sgen_major_collector.alloc_small_pinned_obj (vtable, size, SGEN_VTABLE_HAS_REFERENCES (vtable));
 	}
 	if (G_LIKELY (p)) {
-		SGEN_LOG (6, "Allocated pinned object %p, vtable: %p (%s), size: %zd", p, vtable, sgen_client_vtable_get_name (vtable), size);
+		SGEN_LOG (6, "Allocated pinned object %p, vtable: %p (%s), size: %" G_GSIZE_FORMAT "d", p, vtable, sgen_client_vtable_get_name (vtable), size);
 		increment_thread_allocation_counter (size);
 		sgen_binary_protocol_alloc_pinned (p, vtable, size, sgen_client_get_provenance ());
 	}
@@ -488,6 +489,10 @@ sgen_alloc_obj_pinned (GCVTable vtable, size_t size)
 	return p;
 }
 
+/*
+ * Used to allocate thread objects during attach. Doesn't trigger collections since
+ * the thread is not yet attached.
+ */
 GCObject*
 sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 {
@@ -498,7 +503,7 @@ sgen_alloc_obj_mature (GCVTable vtable, size_t size)
 	size = ALIGN_UP (size);
 
 	LOCK_GC;
-	res = alloc_degraded (vtable, size, TRUE);
+	res = sgen_major_collector.alloc_degraded (vtable, size);
 	UNLOCK_GC;
 
 	if (res) {

@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=â€™Microsoft Corporationâ€™>
+//   Copyright Â© Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -161,7 +161,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 		virtual public bool ZeroCrossing { get{ return false;} }
 
 		/// <summary>
-		/// True if palette colors should be applied for each data paoint.
+		/// True if palette colors should be applied for each data point.
 		/// Otherwise the color is applied to the series.
 		/// </summary>
 		virtual public bool ApplyPaletteColorsToPoints	{ get { return false; } }
@@ -351,7 +351,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 					double yValue1 = vAxis.GetLogValue( point.YValues[1] );
 					xValue = hAxis.GetLogValue(xValue);
 					
-					// Check if chart is completly out of the data scaleView
+					// Check if chart is completely out of the data scaleView
 					if(xValue < hAxis.ViewMinimum || 
 						xValue > hAxis.ViewMaximum ||
 						(yValue0 < vAxis.ViewMinimum && yValue1 < vAxis.ViewMinimum) ||
@@ -386,13 +386,13 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 					}
 					low = vAxis.GetLinearPosition(low);
 
-					// Remeber pre-calculated point position
+					// Remember pre-calculated point position
 					point.positionRel = new PointF((float)xPosition, (float)Math.Min(high, low));
 
 					if( common.ProcessModePaint )
 					{
 
-						// Check if chart is partialy in the data scaleView
+						// Check if chart is partially in the data scaleView
 						bool	clipRegionSet = false;
 						if(xValue == hAxis.ViewMinimum || xValue == hAxis.ViewMaximum )
 						{
@@ -613,7 +613,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 						double yValue1 = vAxis.GetLogValue( point.YValues[1] );
 						xValue = hAxis.GetLogValue(xValue);
 					
-						// Check if chart is completly out of the data scaleView
+						// Check if chart is completely out of the data scaleView
 						if(xValue < hAxis.ViewMinimum || 
 							xValue > hAxis.ViewMaximum ||
 							(yValue0 < vAxis.ViewMinimum && yValue1 < vAxis.ViewMinimum) ||
@@ -908,7 +908,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 					text = point.ReplaceKeywords(point.Label);
 				}
 
-                    // Adjust label positio to the marker size
+                    // Adjust label position to the marker size
                     SizeF markerSizes = new SizeF(0f, 0f);
                     if (point.MarkerStyle != MarkerStyle.None)
                     {
@@ -1131,7 +1131,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 					double yValue1 = vAxis.GetLogValue( point.YValues[1] );
 					xValue = hAxis.GetLogValue(xValue);
 					
-					// Check if chart is completly out of the data scaleView
+					// Check if chart is completely out of the data scaleView
 					if(xValue < hAxis.ViewMinimum || 
 						xValue > hAxis.ViewMaximum ||
 						(yValue0 < vAxis.ViewMinimum && yValue1 < vAxis.ViewMinimum) ||
@@ -1165,7 +1165,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 					}
 					low = vAxis.GetLinearPosition(low);
 
-					// Remeber pre-calculated point position
+					// Remember pre-calculated point position
 					point.positionRel = new PointF((float)xPosition, (float)Math.Min(high, low));
 						
 					// 3D Transform coordinates
@@ -1180,7 +1180,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 
 					if( common.ProcessModePaint )
 					{
-						// Check if chart is partialy in the data scaleView
+						// Check if chart is partially in the data scaleView
 						bool	clipRegionSet = false;
 						if(xValue == hAxis.ViewMinimum || xValue == hAxis.ViewMaximum )
 						{
@@ -1402,7 +1402,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 						double yValue1 = vAxis.GetLogValue( point.YValues[1] );
 						xValue = hAxis.GetLogValue(xValue);
 					
-						// Check if chart is completly out of the data scaleView
+						// Check if chart is completely out of the data scaleView
 						if(xValue < hAxis.ViewMinimum || 
 							xValue > hAxis.ViewMaximum ||
 							(yValue0 < vAxis.ViewMinimum && yValue1 < vAxis.ViewMinimum) ||
@@ -1521,7 +1521,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 		/// </summary>
 		/// <param name="common">Chart common elements.</param>
 		/// <param name="area">Chart area the series belongs to.</param>
-		/// <param name="series">Sereis of the point.</param>
+		/// <param name="series">Series of the point.</param>
 		/// <param name="point">Point object.</param>
 		/// <param name="pointIndex">Index of the point.</param>
 		/// <param name="yValueIndex">Index of the Y value to get.</param>
@@ -1589,7 +1589,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
                     Chart control = boxPlotSeries.Chart;
 					if(control != null)
 					{
-						// Get linked series and check existance
+						// Get linked series and check existence
 						if(control.Series.IndexOf(linkedSeriesName) == -1)
 						{
 							throw(new InvalidOperationException(SR.ExceptionCustomAttributeSeriesNameNotFound("BoxPlotSeries", linkedSeriesName) ));
@@ -1692,7 +1692,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
                 requiredPercentile[1] = 100.0 - requiredPercentile[0];
             }
 			
-			// Calculate 5 recured percentile values
+			// Calculate 5 recurred percentile values
 			double[]	percentileValues = CalculatePercentileValues(yValues, requiredPercentile);
 						
 			// Set data points values
@@ -1753,7 +1753,7 @@ namespace System.Web.UI.DataVisualization.Charting.ChartTypes
 			// Update point's values
 			if(unusualValuesList.Count > 0)
 			{
-				// Create new arry of values for the data pont
+				// Create new array of values for the data pont
 				double[]	newYValues = new double[6 + unusualValuesList.Count];
 
 				// Copy original data

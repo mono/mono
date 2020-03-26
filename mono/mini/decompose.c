@@ -1250,12 +1250,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, m_class_get_byval_arg (ins->klass));
 
-					if (m_class_get_image (ins->klass) == mono_defaults.corlib && !strcmp (m_class_get_name (ins->klass), "MonoError")) {
-						// Used in icall wrappers, optimize initialization
-						MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI4_MEMBASE_IMM, dest->dreg, MONO_STRUCT_OFFSET (MonoErrorExternal, init), 0);
-					} else {
-						mini_emit_initobj (cfg, dest, NULL, ins->klass);
-					}
+					mini_emit_initobj (cfg, dest, NULL, ins->klass);
 					
 					if (cfg->compute_gc_maps) {
 						MonoInst *tmp;
@@ -1278,7 +1273,9 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 				case OP_STOREV_MEMBASE: {
 					src_var = get_vreg_to_inst (cfg, ins->sreg1);
 
-					if (COMPILE_LLVM (cfg) && !mini_is_gsharedvt_klass (ins->klass) && !cfg->gen_write_barriers)
+					mono_class_init_sizes (ins->klass);
+
+					if (COMPILE_LLVM (cfg) && !mini_is_gsharedvt_klass (ins->klass) && !(cfg->gen_write_barriers && m_class_has_references (ins->klass)))
 						break;
 
 					if (!src_var) {
@@ -1290,7 +1287,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
-					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, 0);
+					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, ins->flags);
 					break;
 				}
 				case OP_LOADV_MEMBASE: {
@@ -1350,6 +1347,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					if (call->vret_in_reg) {
 						MonoCallInst *call2;
+						int align;
 
 						/* Replace the vcall with a scalar call */
 						MONO_INST_NEW_CALL (cfg, call2, OP_NOP);
@@ -1378,7 +1376,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 						if (dest_var->backend.is_pinvoke)
 							size = mono_class_native_size (mono_class_from_mono_type_internal (dest_var->inst_vtype), NULL);
 						else
-							size = mono_type_size (dest_var->inst_vtype, NULL);
+							size = mono_type_size (dest_var->inst_vtype, &align);
 						switch (size) {
 						case 1:
 							MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI1_MEMBASE_REG, dest->dreg, 0, call2->inst.dreg);
