@@ -1194,7 +1194,10 @@ mono_image_load_names (MonoImage *image)
 	}
 
 	/* Portable pdb images don't have a MODULE row */
-	if (image->tables [MONO_TABLE_MODULE].rows) {
+	/* Minimal ENC delta images index the combined string heap of the base and delta image,
+	 * so the module index is out of bounds here.
+	 */
+	if (image->tables [MONO_TABLE_MODULE].rows && !image->minimal_delta) {
 		image->module_name = mono_metadata_string_heap (image,
 			mono_metadata_decode_row_col (&image->tables [MONO_TABLE_MODULE],
 					0, MONO_MODULE_NAME));
