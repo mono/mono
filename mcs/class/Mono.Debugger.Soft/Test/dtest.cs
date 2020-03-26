@@ -5205,7 +5205,8 @@ public class DebuggerTests
 	public void CheckSuspendPolicySentWhenLaunchSuspendYes () {
 		vm.Exit (0);
 		var port = GetFreePort ();
-// Launch the app using server=y,suspend=y
+
+		// Launch the app using server=y,suspend=y
 		var pi = CreateStartInfo (dtest_app_path, "attach", $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=y");
 		pi.UseShellExecute = false;
 		var process = Diag.Process.Start (pi);
