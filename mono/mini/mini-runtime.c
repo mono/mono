@@ -1905,36 +1905,87 @@ mono_jit_map_is_enabled (void)
 
 #endif
 
-#if ENABLE_JIT_DUMP
+#if defined(ENABLE_JIT_DUMP)
 static FILE* perf_dump_file;
-uint64_t codeIndex = 0;
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-void *mmapAddr = MAP_FAILED;
+static mono_mutex_t perf_dump_mutex;
+static guint32 perf_dump_pid;
+
+enum {
+	JIT_DUMP_MAGIC = 0x4A695444,
+	JIT_DUMP_VERSION = 2,
+#if HOST_X86
+	ELF_MACHINE = EM_386,
+#elif HOST_AMD64
+	ELF_MACHINE = EM_X86_64,
+#elif HOST_ARM
+	ELF_MACHINE = EM_ARM,
+#elif HOST_ARM64
+	ELF_MACHINE = EM_AARCH64,
+#endif
+	JIT_CODE_LOAD = 0
+};
+typedef struct
+{
+	guint32 magic;
+	guint32 version;
+	guint32 total_size;
+	guint32 elf_mach;
+	guint32 pad1;
+	guint32 pid;
+	guint64 timestamp;
+	guint64 flags;
+}FileHeader;
+typedef struct
+{
+	guint32 id;
+	guint32 total_size;
+	guint64 timestamp;
+}RecordHeader;
+typedef struct
+{
+	RecordHeader header;
+	guint32 pid;
+	guint32 tid;
+	guint64 vma;
+	guint64 code_addr;
+	guint64 code_size;
+	guint64 code_index;
+	// Null terminated function name
+	// Native code
+}JitCodeLoadRecord;
+
+static void add_file_header_info (FileHeader *header);
+static guint64 get_time_stamp_ns (void);
+static void add_basic_JitCodeLoadRecord_info (JitCodeLoadRecord *record);
 
 void
 mono_enable_jit_dump (void)
 {
-        if (!perf_dump_file) {
+	if (perf_dump_pid == 0)
+		perf_dump_pid = getpid();
+	
+	if (!perf_dump_file) {
 		char name [64];
-		FileHeader * header = malloc (sizeof (FileHeader));
-		int result = 0;
+		FileHeader header;
+		memset (&header, 0, sizeof (FileHeader));
+
+		mono_os_mutex_init (&perf_dump_mutex);
+		mono_os_mutex_lock (&perf_dump_mutex);
 		
-		result = pthread_mutex_lock (&mutex);
-		
-		g_snprintf (name, sizeof (name), "/tmp/jit-%d.dump", getpid ());
+		g_snprintf (name, sizeof (name), "/tmp/jit-%d.dump", perf_dump_pid);
 		unlink (name);
 		perf_dump_file = fopen (name, "w");
 		
-		add_file_header_info (header);
-		fwrite (header, sizeof (FileHeader), 1, perf_dump_file);
+		add_file_header_info (&header);
+		fwrite (&header, sizeof (FileHeader), 1, perf_dump_file);
 		
-		mmapAddr = mmap(NULL, sizeof (FileHeader), PROT_READ | PROT_EXEC, MAP_PRIVATE, 1, 0);
+		mmap (NULL, sizeof (FileHeader), PROT_READ | PROT_EXEC, MAP_PRIVATE, 1, 0);
 		
-		result = pthread_mutex_unlock (&mutex);
+		mono_os_mutex_unlock (&perf_dump_mutex);
 	}
 }
 
-void
+static void
 add_file_header_info (FileHeader *header)
 {
 	header->magic = JIT_DUMP_MAGIC;
@@ -1942,13 +1993,13 @@ add_file_header_info (FileHeader *header)
 	header->total_size = sizeof (FileHeader);
 	header->elf_mach = ELF_MACHINE;
 	header->pad1 = 0;
-	header->pid = getpid ();
-	header->timestamp = getTimeStampNS ();
+	header->pid = perf_dump_pid;
+	header->timestamp = get_time_stamp_ns ();
 	header->flags = 0;
 }
 
-guint64
-getTimeStampNS (void)
+static guint64
+get_time_stamp_ns (void)
 {
 	struct timespec ts;
 	int result = clock_gettime (CLOCK_MONOTONIC, &ts);
@@ -1958,40 +2009,49 @@ getTimeStampNS (void)
 void
 mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code)
 {
-	int result = 0;
+	static uint64_t code_index = 0;
 	
 	if (perf_dump_file) {
-		JitCodeLoadRecord *record = malloc (sizeof (JitCodeLoadRecord));
+		JitCodeLoadRecord record;
 		size_t nameLen = strlen (jinfo->d.method->name);
+		memset (&record, 0, sizeof (JitCodeLoadRecord));
 		
-		add_basic_JitCodeLoadRecord_info (record);
-		record->header.total_size = sizeof (JitCodeLoadRecord) + nameLen + 1 + jinfo->code_size;
-		record->vma = (guint64)jinfo->code_start;
-		record->code_addr = (guint64)jinfo->code_start;
-		record->code_size = (guint64)jinfo->code_size;
-		record->code_index = ++codeIndex;
+		add_basic_JitCodeLoadRecord_info (&record);
+		record.header.total_size = sizeof (JitCodeLoadRecord) + nameLen + 1 + jinfo->code_size;
+		record.vma = (guint64)jinfo->code_start;
+		record.code_addr = (guint64)jinfo->code_start;
+		record.code_size = (guint64)jinfo->code_size;
+
+	        mono_os_mutex_lock (&perf_dump_mutex);
 		
-		result = pthread_mutex_lock (&mutex);
+		record.code_index = ++code_index;
 		
-		// ToDo write debugInfo and unwindInfo immediately before the JitCodeLoadRecord (while lock is held).
+		// TODO: write debugInfo and unwindInfo immediately before the JitCodeLoadRecord (while lock is held).
 		
-		record->header.timestamp = getTimeStampNS ();
+		record.header.timestamp = get_time_stamp_ns ();
 		
-		fwrite (record, sizeof (JitCodeLoadRecord), 1, perf_dump_file);
+		fwrite (&record, sizeof (JitCodeLoadRecord), 1, perf_dump_file);
 		fwrite (jinfo->d.method->name, nameLen + 1, 1, perf_dump_file);
 		fwrite (code, jinfo->code_size, 1, perf_dump_file);
 		
-		result = pthread_mutex_unlock(&mutex);
+	        mono_os_mutex_unlock (&perf_dump_mutex);
 	}
 }
 
-void
+static void
 add_basic_JitCodeLoadRecord_info (JitCodeLoadRecord *record)
 {
 	record->header.id = JIT_CODE_LOAD;
-	record->header.timestamp = getTimeStampNS ();
-	record->pid = getpid ();
+	record->header.timestamp = get_time_stamp_ns ();
+	record->pid = perf_dump_pid;
 	record->tid = syscall (SYS_gettid);
+}
+
+void
+mono_jit_dump_cleanup (void)
+{
+	if (perf_dump_file)
+		fclose (perf_dump_file);
 }
 
 #endif
@@ -4858,6 +4918,7 @@ mini_cleanup (MonoDomain *domain)
 		g_printf ("Printing runtime stats at shutdown\n");
 	mono_runtime_print_stats ();
 	jit_stats_cleanup ();
+	mono_jit_dump_cleanup ();
 }
 #else
 void
