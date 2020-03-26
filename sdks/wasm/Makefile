@@ -794,3 +794,10 @@ clean-browser-tests: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
 	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish
+
+clean-framework:
+	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
+	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
