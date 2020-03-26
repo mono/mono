@@ -186,7 +186,11 @@ namespace System
 		{
 			try {
 				// TODO: Should use __ConsoleStream from reference sources
-				return new FileStream (handle, access, false, bufferSize, false, true);
+				var stream = new FileStream (handle, access, false, bufferSize, false, true);
+				// Don't run the finalizer on the underlying stream so that System.WriteLine can be
+				// called inside a finalizer during shutdown or domain unload.
+				GC.SuppressFinalize (stream);
+				return stream;
 			} catch (IOException) {
 				return Stream.Null;
 			}
