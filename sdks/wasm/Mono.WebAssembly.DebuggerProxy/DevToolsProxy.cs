@@ -196,11 +196,12 @@ namespace WebAssembly.Net.Debugging {
 			int id = Interlocked.Increment (ref next_cmd_id);
 
 			var o = JObject.FromObject (new {
-				sessionId.sessionId,
 				id,
 				method,
 				@params = args
 			});
+			if (sessionId.sessionId != null)
+				o["sessionId"] = sessionId.sessionId;
 			var tcs = new TaskCompletionSource<Result> ();
 
 			var msgId = new MessageId (sessionId.sessionId, id);
@@ -220,10 +221,11 @@ namespace WebAssembly.Net.Debugging {
 		void SendEventInternal (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			var o = JObject.FromObject (new {
-				sessionId.sessionId,
 				method,
 				@params = args
 			});
+			if (sessionId.sessionId != null)
+				o["sessionId"] = sessionId.sessionId;
 
 			Send (this.ide, o, token);
 		}
