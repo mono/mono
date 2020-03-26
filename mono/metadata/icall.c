@@ -7643,8 +7643,15 @@ gchar ***_NSGetEnviron(void);
 G_END_DECLS
 #define environ (*_NSGetEnviron())
 #else
+#ifdef ENABLE_NETCORE
+G_BEGIN_DECLS
+extern
+char **environ;
+G_END_DECLS
+#else
 static char *mono_environ[1] = { NULL };
 #define environ mono_environ
+#endif
 #endif /* defined (TARGET_OSX) */
 #else
 G_BEGIN_DECLS
