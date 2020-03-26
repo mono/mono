@@ -5233,8 +5233,8 @@ public class DebuggerTests
 			var thread = e.Thread;
 			var l = thread.GetFrames ()[0].Location;
 			var frame = thread.GetFrames()[0];
-
-      if (l.LineNumber == firstLineFound)
+			
+			if (l.LineNumber == firstLineFound)
 				line_first_counter--;
 			if (l.LineNumber == firstLineFound + 1)
 				line_second_counter--;
@@ -5266,6 +5266,35 @@ public class DebuggerTests
 		vm = null;
 	}
 	
+	[Test]
+	public void CheckSuspendPolicySentWhenLaunchSuspendYes () {
+		vm.Exit (0);
+		var port = GetFreePort ();
+
+		// Launch the app using server=y,suspend=y
+		var pi = CreateStartInfo (dtest_app_path, "attach", $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=y");
+		pi.UseShellExecute = false;
+		var process = Diag.Process.Start (pi);
+
+		string failMessage = null;
+		try {
+			vm = ConnectToPort (port);
+
+			vm.EnableEvents (EventType.AssemblyLoad, EventType.ThreadStart);
+			var es =  vm.GetNextEventSet ();
+			Assert.AreEqual (es.SuspendPolicy, SuspendPolicy.All);
+			Assert.AreEqual (EventType.VMStart, es[0].EventType);
+		}
+		catch (Exception ex) {
+			failMessage = ex.Message;
+		}
+		finally {
+			vm.Exit (0);
+			vm = null;
+		}
+		if (failMessage != null)
+			Assert.Fail (failMessage);
+	}
 #endif
 } // class DebuggerTests
 } // namespace
