@@ -1906,6 +1906,10 @@ mono_jit_map_is_enabled (void)
 #endif
 
 #if defined(ENABLE_JIT_DUMP)
+#include <sys/mman.h>
+#include <sys/syscall.h>
+#include <elf.h>
+
 static FILE* perf_dump_file;
 static mono_mutex_t perf_dump_mutex;
 static guint32 perf_dump_pid;
@@ -1934,13 +1938,13 @@ typedef struct
 	guint32 pid;
 	guint64 timestamp;
 	guint64 flags;
-}FileHeader;
+} FileHeader;
 typedef struct
 {
 	guint32 id;
 	guint32 total_size;
 	guint64 timestamp;
-}RecordHeader;
+} RecordHeader;
 typedef struct
 {
 	RecordHeader header;
@@ -1952,7 +1956,7 @@ typedef struct
 	guint64 code_index;
 	// Null terminated function name
 	// Native code
-}JitCodeLoadRecord;
+} JitCodeLoadRecord;
 
 static void add_file_header_info (FileHeader *header);
 static guint64 get_time_stamp_ns (void);
@@ -1977,7 +1981,8 @@ mono_enable_jit_dump (void)
 		perf_dump_file = fopen (name, "w");
 		
 		add_file_header_info (&header);
-		fwrite (&header, sizeof (FileHeader), 1, perf_dump_file);
+		if (perf_dump_file)
+			fwrite (&header, sizeof (FileHeader), 1, perf_dump_file);
 		
 		mmap (NULL, sizeof (FileHeader), PROT_READ | PROT_EXEC, MAP_PRIVATE, 1, 0);
 		
@@ -2009,7 +2014,7 @@ get_time_stamp_ns (void)
 void
 mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code)
 {
-	static uint64_t code_index = 0;
+	static uint64_t code_index;
 	
 	if (perf_dump_file) {
 		JitCodeLoadRecord record;

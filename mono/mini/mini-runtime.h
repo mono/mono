@@ -510,20 +510,18 @@ void mono_enable_jit_map (void);
 void mono_emit_jit_map   (MonoJitInfo *jinfo);
 void mono_emit_jit_tramp (void *start, int size, const char *desc);
 gboolean mono_jit_map_is_enabled (void);
-#if defined(ENABLE_JIT_DUMP)
-#include <sys/mman.h>
-#include <sys/syscall.h>
-#include "/usr/include/elf.h"
-void mono_enable_jit_dump (void);
-void mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code);
-void mono_jit_dump_cleanup (void);
-#endif
 #else
 #define mono_enable_jit_map()
 #define mono_emit_jit_map(ji)
 #define mono_emit_jit_tramp(s,z,d) do { } while (0) /* non-empty to avoid warning */
 #define mono_jit_map_is_enabled() (0)
+#endif
 
+#if defined(ENABLE_JIT_DUMP)
+void mono_enable_jit_dump (void);
+void mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code);
+void mono_jit_dump_cleanup (void);
+#else
 #define mono_enable_jit_dump()
 #define mono_emit_jit_dump(jinfo, code)
 #define mono_jit_dump_cleanup()
