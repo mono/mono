@@ -30,13 +30,11 @@ if (typeof console === "undefined") {
 }
 
 if (typeof console !== "undefined") {
-	var has_console_warn = false;
-	try {
-		if (typeof console.warn !== "undefined")
-			has_console_warn = true;
-	} catch(e) {}
-
-	if (!has_console_warn)
+	if (!console.debug)
+		console.debug = console.log;
+	if (!console.trace)
+		console.trace = console.log;
+	if (!console.warn)
 		console.warn = console.log;
 }
 
@@ -136,7 +134,7 @@ if (typeof window == "undefined")
   load ("mono-config.js");
 
 var Module = { 
-	mainScriptUrlOrBlob: "mono.js",
+	mainScriptUrlOrBlob: "dotnet.js",
 
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
@@ -229,7 +227,7 @@ var Module = {
 };
 
 if (typeof window == "undefined")
-  load ("mono.js");
+  load ("dotnet.js");
 
 const IGNORE_PARAM_COUNT = -1;
 
@@ -313,11 +311,11 @@ var App = {
 			try {
 				var invoke_args = Module._malloc (4);
 				Module.setValue (invoke_args, app_args, "i32");
-				var eh_throw = Module._malloc (4);
-				Module.setValue (eh_throw, 0, "i32");
-				var res = runtime_invoke (main_method, 0, invoke_args, eh_throw);
-				var eh_res = Module.getValue (eh_throw, "i32");
-				if (eh_res == 1) {
+				var eh_exc = Module._malloc (4);
+				Module.setValue (eh_exc, 0, "i32");
+				var res = runtime_invoke (main_method, 0, invoke_args, eh_exc);
+				var eh_res = Module.getValue (eh_exc, "i32");
+				if (eh_res != 0) {
 					print ("Exception:" + string_get_utf8 (res));
 					test_exit (1);
 				}

@@ -620,7 +620,7 @@ handle_enum:
 	mono_metadata_encode_value (len, b, &b);
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
 	idx = mono_image_add_stream_data (&assembly->blob, blob_size, b-blob_size);
-	swap_with_size (blob_size, box_val, len, 1);
+	swap_with_size (blob_size, (const char*)box_val, len, 1);
 	mono_image_add_stream_data (&assembly->blob, blob_size, len);
 #else
 	idx = mono_dynamic_image_add_to_blob_cached (assembly, blob_size, b-blob_size, box_val, len);
@@ -1007,7 +1007,7 @@ reflection_sighelper_get_signature_local (MonoReflectionSigHelperHandle sig, Mon
 	MonoArrayHandle result;
 	result = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, buflen, error);
 	goto_if_nok (error, fail);
-	uint32_t gchandle;
+	MonoGCHandle gchandle;
 	void *base;
 	base = MONO_ARRAY_HANDLE_PIN (result, char, 0, &gchandle);
 	memcpy (base, buf.buf, buflen);
@@ -1043,7 +1043,7 @@ reflection_sighelper_get_signature_field (MonoReflectionSigHelperHandle sig, Mon
 	MonoArrayHandle result;
 	result = mono_array_new_handle (mono_domain_get (), mono_defaults.byte_class, buflen, error);
 	goto_if_nok (error, fail);
-	uint32_t gchandle;
+	MonoGCHandle gchandle;
 	void *base;
 	base = MONO_ARRAY_HANDLE_PIN (result, char, 0, &gchandle);
 	memcpy (base, buf.buf, buflen);

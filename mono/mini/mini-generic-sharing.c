@@ -905,6 +905,7 @@ class_get_rgctx_template_oti (MonoClass *klass, int type_argc, guint32 slot, gbo
 	}
 }
 
+// FIXME Consolidate the multiple functions named get_method_nofail.
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
 {
@@ -1178,6 +1179,9 @@ get_wrapper_shared_vtype (MonoType *t)
 		if (field->type->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA))
 			continue;
 		MonoType *ftype = get_wrapper_shared_type_full (field->type, TRUE);
+		if (m_class_is_byreflike (mono_class_from_mono_type_internal (ftype)))
+			/* Cannot inflate generic params with byreflike types */
+			return NULL;
 		args [findex ++] = ftype;
 		if (findex >= 16)
 			break;
@@ -1411,7 +1415,6 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	WrapperInfo *info;
 	MonoMethodSignature *csig, *gsharedvt_sig;
 	int i, pindex;
-	char **param_names;
 	static GHashTable *cache;
 
 	// FIXME: Memory management
@@ -1435,7 +1438,7 @@ mini_get_gsharedvt_in_sig_wrapper (MonoMethodSignature *sig)
 	csig->param_count ++;
 	csig->params [sig->param_count] = mono_get_int_type ();
 #ifdef ENABLE_ILGEN
-	param_names = g_new0 (char*, csig->param_count);
+	char ** const param_names = g_new0 (char*, csig->param_count);
 	for (int i = 0; i < sig->param_count; ++i)
 		param_names [i] = g_strdup_printf ("%d", i);
 	param_names [sig->param_count] = g_strdup ("ftndesc");
@@ -1531,7 +1534,6 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	WrapperInfo *info;
 	MonoMethodSignature *normal_sig, *csig;
 	int i, pindex, args_start;
-	char **param_names;
 	static GHashTable *cache;
 
 	// FIXME: Memory management
@@ -1553,7 +1555,7 @@ mini_get_gsharedvt_out_sig_wrapper (MonoMethodSignature *sig)
 	csig = g_malloc0 (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
 	memcpy (csig, sig, mono_metadata_signature_size (sig));
 	pindex = 0;
-	param_names = g_new0 (char*, sig->param_count + 2);
+	char ** const param_names = g_new0 (char*, sig->param_count + 2);
 	/* The return value is returned using an explicit vret argument */
 	if (sig->ret->type != MONO_TYPE_VOID) {
 		csig->params [pindex] = mono_get_int_type ();
@@ -2253,6 +2255,21 @@ instantiate_info (MonoDomain *domain, MonoRuntimeGenericContextInfoTemplate *oti
 		return data;
 	case MONO_RGCTX_INFO_FIELD_OFFSET: {
 		MonoClassField *field = (MonoClassField *)data;
+
+		if (mono_class_field_is_special_static (field)) {
+			gpointer addr;
+
+			mono_class_vtable_checked (domain, field->parent, error);
+			mono_error_assert_ok (error);
+
+			/* Return the TLS offset */
+			g_assert (domain->special_static_fields);
+			mono_domain_lock (domain);
+			addr = g_hash_table_lookup (domain->special_static_fields, field);
+			mono_domain_unlock (domain);
+			g_assert (addr);
+			return (guint8*)addr + 1;
+		}
 
 		/* The value is offset by 1 */
 		if (m_class_is_valuetype (field->parent) && !(field->type->attrs & FIELD_ATTRIBUTE_STATIC))

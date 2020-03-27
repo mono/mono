@@ -419,10 +419,8 @@ namespace System.Windows.Forms
 			if (item.Owner == null)
 				return null;
 
-			if (item.Owner is ContextMenuStrip) {
-				Control container = ((ContextMenuStrip)item.Owner).container;
-				return container == null ? null : container.TopLevelControl;
-			}
+			if (item.Owner is ContextMenuStrip ownerContextMenuStrip) 
+				return ownerContextMenuStrip.SourceControl?.TopLevelControl;
 
 			// MainMenuStrip
 			return item.Owner.TopLevelControl;

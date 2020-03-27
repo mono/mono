@@ -51,10 +51,19 @@ namespace Mono.Debugger.Soft
 		// Since protocol version 2.46
 		public Value Value {
 			get {
+				ValueImpl value;
 				if (Address == 0)
 					return null;
-
-				return vm.DecodeValue (vm.conn.Pointer_GetValue (Address, Type));
+				try {
+					value = vm.conn.Pointer_GetValue (Address, Type);
+				}
+				catch (CommandException ex) {
+				if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
+					throw new ArgumentException ("Invalid pointer address.");
+				else
+					throw;
+				}
+				return vm.DecodeValue (value);
 			}
 		}
 

@@ -272,7 +272,6 @@ mono_win32_abort_blocking_io_call (MonoThreadInfo *info)
 gboolean
 mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 {
-	DWORD id = mono_thread_info_get_tid (info);
 	HANDLE handle;
 	DWORD result;
 
@@ -293,7 +292,7 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 
 		if (!GetThreadContext (handle, &context)) {
-			THREADS_SUSPEND_DEBUG ("RESUME FAILED (GetThreadContext), id=%p, err=%u\n", GUINT_TO_POINTER (id), GetLastError ());
+			THREADS_SUSPEND_DEBUG ("RESUME FAILED (GetThreadContext), id=%p, err=%u\n", GUINT_TO_POINTER (mono_thread_info_get_tid (info)), GetLastError ());
 			return FALSE;
 		}
 
@@ -305,7 +304,7 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
 		res = SetThreadContext (handle, &context);
 		if (!res) {
-			THREADS_SUSPEND_DEBUG ("RESUME FAILED (SetThreadContext), id=%p, err=%u\n", GUINT_TO_POINTER (id), GetLastError ());
+			THREADS_SUSPEND_DEBUG ("RESUME FAILED (SetThreadContext), id=%p, err=%u\n", GUINT_TO_POINTER (mono_thread_info_get_tid (info)), GetLastError ());
 			return FALSE;
 		}
 #else
@@ -314,11 +313,10 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 	}
 
 	result = ResumeThread (handle);
-	THREADS_SUSPEND_DEBUG ("RESUME %p -> %u\n", GUINT_TO_POINTER (id), result);
+	THREADS_SUSPEND_DEBUG ("RESUME %p -> %u\n", GUINT_TO_POINTER (mono_thread_info_get_tid (info)), result);
 
 	return result != (DWORD)-1;
 }
-
 
 void
 mono_threads_suspend_register (MonoThreadInfo *info)
@@ -367,7 +365,12 @@ mono_threads_suspend_get_abort_signal (void)
 
 #if defined (HOST_WIN32)
 
+#ifndef ENABLE_NETCORE
 #define MONO_WIN32_DEFAULT_NATIVE_STACK_SIZE (1024 * 1024)
+#else
+// Use default stack size on netcore.
+#define MONO_WIN32_DEFAULT_NATIVE_STACK_SIZE 0
+#endif
 
 gboolean
 mono_thread_platform_create_thread (MonoThreadStart thread_fn, gpointer thread_data, gsize* const stack_size, MonoNativeThreadId *tid)
@@ -410,6 +413,14 @@ guint64
 mono_native_thread_os_id_get (void)
 {
 	return (guint64)GetCurrentThreadId ();
+}
+
+gint32
+mono_native_thread_processor_id_get (void)
+{
+	PROCESSOR_NUMBER proc_num;
+	GetCurrentProcessorNumberEx (&proc_num);
+	return ((proc_num.Group << 6) | proc_num.Number);
 }
 
 gboolean

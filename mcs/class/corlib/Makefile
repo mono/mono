@@ -88,8 +88,14 @@ MANAGED_COLLATOR_RESOURCES_FILES = \
 	resources/collation.cjkKOlv2.bin
 endif
 
+ifdef MCS_MODE
+	UNICODECHARINFO = resources/charinfo.nlp
+else
+	UNICODECHARINFO =
+endif
+
 RESOURCE_FILES = \
-	resources/charinfo.nlp \
+	$(UNICODECHARINFO) \
 	$(MANAGED_COLLATOR_RESOURCES_FILES) \
 	LinkerDescriptor/mscorlib.xml
 
@@ -173,6 +179,7 @@ LIB_MCS_FLAGS += -d:FEATURE_CRYPTO_CONFIGURABLE
 TEST_MCS_FLAGS += -d:FEATURE_CRYPTO_CONFIGURABLE
 endif
 
+XTEST_SPLIT_ASSEMBLIES := $(filter monotouch%, $(PROFILE))
 
 CC_PROFILE := $(filter monotouch% xammac, $(PROFILE))
 ifdef CC_PROFILE

@@ -558,6 +558,10 @@ public class Tests : TestsBase, ITest2
 			runtime_invoke_hybrid_exceptions();
 			return 0;
 		}
+		if (args.Length > 0 && args [0] == "new_thread_hybrid_exception") {
+			new_thread_hybrid_exception();
+			return 0;
+		}
 		assembly_load ();
 		breakpoints ();
 		single_stepping ();
@@ -605,6 +609,15 @@ public class Tests : TestsBase, ITest2
 		fixed_size_array();
 		test_new_exception_filter();
 		test_async_debug_generics();
+		if (args.Length >0 && args [0] == "pointer_arguments2") {
+			pointers2 ();
+			return 0;
+		}
+		if (args.Length >0 && args [0] == "ss_multi_thread") {
+			ss_multi_thread ();
+			return 0;
+		}
+		test_invalid_argument_assembly_get_type ();
 		return 3;
 	}
 
@@ -631,6 +644,10 @@ public class Tests : TestsBase, ITest2
 	public static void local_reflect () {
 		//Breakpoint line below, and reflect someField via ObjectMirror;
 		LocalReflectClass.RunMe ();
+	}
+
+	public static void test_invalid_argument_assembly_get_type () {
+
 	}
 
 	public static void breakpoints () {
@@ -851,6 +868,24 @@ public class Tests : TestsBase, ITest2
 		var n = new NodeTestFixedArray();
 		n.Buffer = new int4(1, 2, 3, 4);
 		n.Buffer2 = new char4('a', 'b', 'c', 'd');
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void ss_multi_thread () {
+		for (int i = 0; i < 5; i++)
+		{
+			var t = new Thread(mt_ss);
+			t.Name = "Thread_" + i;
+			t.Start();
+		}
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void mt_ss()
+	{
+		int a = 12;
+		int b = 13;
+		int c = 13;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -2222,12 +2257,38 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void runtime_invoke_hybrid_exceptions () {
 		Type rtType = Type.GetType("RuntimeInvokeWithThrowClass");
-        ConstructorInfo rtConstructor = rtType.GetConstructor(Type.EmptyTypes);
-        object rtObject = rtConstructor.Invoke(new object[] { });
-        MethodInfo rtMethod = rtType.GetMethod("RuntimeInvokeThrowMethod");
-        rtMethod.Invoke(rtObject, new object[] { });
+		ConstructorInfo rtConstructor = rtType.GetConstructor(Type.EmptyTypes);
+		object rtObject = rtConstructor.Invoke(new object[] { });
+		MethodInfo rtMethod = rtType.GetMethod("RuntimeInvokeThrowMethod");
+		rtMethod.Invoke(rtObject, new object[] { });
+	}
+	
+	public static unsafe void pointer_arguments2 (int* a) {
+		*a = 0;
 	}
 
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static unsafe void pointers2 () {
+		int[] a = new [] {1,2,3};
+		fixed (int* pa = a)
+			pointer_arguments2 (pa);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void new_thread_hybrid_exception() {
+		try
+           {
+               Thread thread = new Thread(new_thread_hybrid_exception2);
+               thread.Start();
+           }
+           catch (Exception sockEx)
+           {
+           }
+	}
+	public static void new_thread_hybrid_exception2()
+	{
+		throw new Exception("Error");
+	}
 }
 
 public class SentinelClass : MarshalByRefObject {

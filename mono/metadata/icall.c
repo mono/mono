@@ -118,8 +118,23 @@
 #include "icall-decl.h"
 #include "mono/utils/mono-threads-coop.h"
 #include "mono/metadata/icall-signatures.h"
+#include "mono/utils/mono-signal-handler.h"
+
+#if _MSC_VER
+#pragma warning(disable:4047) // FIXME differs in levels of indirection
+#endif
 
 //#define MONO_DEBUG_ICALLARRAY
+
+// Inline with CoreCLR heuristics, https://github.com/dotnet/runtime/blob/385b4d4296f9c5cb82363565aa210a1a37f92d90/src/coreclr/src/vm/threads.cpp#L6344.
+// Minimum stack size should be sufficient to allow a typical non-recursive call chain to execute,
+// including potential exception handling and garbage collection. Used for probing for available
+// stack space through RuntimeHelpers.EnsureSufficientExecutionStack.
+#if TARGET_SIZEOF_VOID_P == 8
+#define MONO_MIN_EXECUTION_STACK_SIZE (128 * 1024)
+#else
+#define MONO_MIN_EXECUTION_STACK_SIZE (64 * 1024)
+#endif
 
 #ifdef MONO_DEBUG_ICALLARRAY
 
@@ -178,22 +193,7 @@ mono_icall_get_file_path_prefix (const gchar *path)
 }
 #endif /* HOST_WIN32 */
 
-#if MONO_LLVM_LOADED
-
-static
 MonoJitICallInfos mono_jit_icall_info;
-
-MonoJitICallInfos*
-mono_get_jit_icall_info (void)
-{
-	return &mono_jit_icall_info;
-}
-
-#else
-
-MonoJitICallInfos mono_jit_icall_info;
-
-#endif
 
 MonoObjectHandle
 ves_icall_System_Array_GetValueImpl (MonoArrayHandle array, guint32 pos, MonoError *error)
@@ -841,7 +841,8 @@ ves_icall_System_Array_InternalCreate (MonoArray *volatile* result, MonoType* ty
 		goto exit;
 	}
 
-	MonoGenericClass *gklass = mono_class_try_get_generic_class (klass);
+	MonoGenericClass *gklass;
+	gklass = mono_class_try_get_generic_class (klass);
 	if (is_generic_parameter (type) || mono_class_is_gtd (klass) || (gklass && gklass->context.class_inst->is_open)) {
 		mono_error_set_not_supported (error, NULL);
 		goto exit;
@@ -943,7 +944,6 @@ ves_icall_System_Array_CreateInstanceImpl (MonoReflectionTypeHandle type, MonoAr
 
 	return mono_array_new_full_handle (MONO_HANDLE_DOMAIN (type), aklass, sizes, lower_bounds, error);
 }
-#endif
 
 gint32
 ves_icall_System_Array_GetRank (MonoObjectHandle arr, MonoError *error)
@@ -954,6 +954,7 @@ ves_icall_System_Array_GetRank (MonoObjectHandle arr, MonoError *error)
 
 	return result;
 }
+#endif
 
 #ifdef ENABLE_NETCORE
 gint32
@@ -995,6 +996,7 @@ ves_icall_System_Array_GetLength (MonoArrayHandle arr, gint32 dimension, MonoErr
 	return (gint32)length;
 }
 
+#ifndef ENABLE_NETCORE
 gint64
 ves_icall_System_Array_GetLongLength (MonoArrayHandle arr, gint32 dimension, MonoError *error)
 {
@@ -1002,6 +1004,7 @@ ves_icall_System_Array_GetLongLength (MonoArrayHandle arr, gint32 dimension, Mon
 
 	return (gint64)mono_array_get_length (arr, dimension, error);
 }
+#endif
 
 gint32
 ves_icall_System_Array_GetLowerBound (MonoArrayHandle arr, gint32 dimension, MonoError *error)
@@ -1300,6 +1303,27 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_RunModuleConstructor (M
 	mono_runtime_class_init_full (vtable, error);
 }
 
+#ifdef ENABLE_NETCORE
+MonoBoolean
+ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStack (void)
+{
+	MonoThreadInfo *thread = mono_thread_info_current ();
+	void *current = &thread;
+
+	// Stack upper/lower bound should have been calculated and set as part of register_thread.
+	// If not, we are optimistic and assume there is enough room.
+	if (!thread->stack_start_limit || !thread->stack_end)
+		return TRUE;
+
+	// Stack start limit is stack lower bound. Make sure there is enough room left.
+	void *limit = ((uint8_t *)thread->stack_start_limit) + ALIGN_TO (MONO_STACK_OVERFLOW_GUARD_SIZE + MONO_MIN_EXECUTION_STACK_SIZE, ((gssize)mono_pagesize ()));
+
+	if (current < limit)
+		return FALSE;
+
+	return TRUE;
+}
+#else
 MonoBoolean
 ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStack (void)
 {
@@ -1338,6 +1362,7 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 #endif
 	return TRUE;
 }
+#endif
 
 #ifdef ENABLE_NETCORE
 MonoObjectHandle
@@ -1639,6 +1664,7 @@ ves_icall_System_ValueType_Equals (MonoObjectHandle this_obj, MonoObjectHandle t
 	}
 }
 
+#ifndef ENABLE_NETCORE
 MonoReflectionTypeHandle
 ves_icall_System_Object_GetType (MonoObjectHandle obj, MonoError *error)
 {
@@ -1660,6 +1686,7 @@ ves_icall_System_Object_GetType (MonoObjectHandle obj, MonoError *error)
 #endif
 		return mono_type_get_object_handle (domain, m_class_get_byval_arg (klass), error);
 }
+#endif
 
 static gboolean
 get_executing (MonoMethod *m, gint32 no, gint32 ilo, gboolean managed, gpointer data)
@@ -1920,27 +1947,30 @@ ves_icall_System_Type_internal_from_handle (MonoType *handle, MonoError *error)
 }
 
 MonoType*
-ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass, MonoError *error)
+ves_icall_Mono_RuntimeClassHandle_GetTypeFromClass (MonoClass *klass)
 {
 	return m_class_get_byval_arg (klass);
 }
 
 void
-ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array, MonoError *error)
+ves_icall_Mono_RuntimeGPtrArrayHandle_GPtrArrayFree (GPtrArray *ptr_array)
 {
 	g_ptr_array_free (ptr_array, TRUE);
 }
 
 void
-ves_icall_Mono_SafeStringMarshal_GFree (void *c_str, MonoError *error)
+ves_icall_Mono_SafeStringMarshal_GFree (void *c_str)
 {
 	g_free (c_str);
 }
 
 char*
-ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoStringHandle s, MonoError *error)
+ves_icall_Mono_SafeStringMarshal_StringToUtf8 (MonoString *volatile* s)
 {
-	return mono_string_handle_to_utf8 (s, error);
+	ERROR_DECL (error);
+	char *result = mono_string_to_utf8_checked_internal (*s, error);
+	mono_error_set_pending_exception (error);
+	return result;
 }
 
 /* System.TypeCode */
@@ -2456,7 +2486,7 @@ ves_icall_RuntimeFieldInfo_SetValueInternal (MonoReflectionFieldHandle field, Mo
 	return_if_nok (error);
 
 	gboolean isref = FALSE;
-	uint32_t value_gchandle = 0;
+	MonoGCHandle value_gchandle = 0;
 	gchar *v = NULL;
 	if (!type->byref) {
 		switch (type->type) {
@@ -2503,7 +2533,7 @@ ves_icall_RuntimeFieldInfo_SetValueInternal (MonoReflectionFieldHandle field, Mo
 				MonoObjectHandle nullable = mono_object_new_handle (mono_domain_get (), nklass, error);
 				return_if_nok (error);
 
-				uint32_t nullable_gchandle = 0;
+				MonoGCHandle nullable_gchandle = 0;
 				guint8 *nval = (guint8*)mono_object_handle_pin_unbox (nullable, &nullable_gchandle);
 				mono_nullable_init_from_handle (nval, value, nklass);
 
@@ -2596,16 +2626,18 @@ ves_icall_System_RuntimeFieldHandle_SetValueDirect (MonoReflectionFieldHandle fi
 
 	g_assert (obj);
 
+	mono_class_setup_fields (f->parent);
+
 	if (!MONO_TYPE_ISSTRUCT (m_class_get_byval_arg (f->parent))) {
 		MonoObjectHandle objHandle = typed_reference_to_object (obj, error);
 		return_if_nok (error);
 		ves_icall_RuntimeFieldInfo_SetValueInternal (field_h, objHandle, value_h, error);
 	} else if (MONO_TYPE_IS_REFERENCE (f->type)) {
-		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), MONO_HANDLE_RAW (value_h), FALSE);
+		mono_copy_value (f->type, (guint8*)obj->value + m_field_get_offset (f) - sizeof (MonoObject), MONO_HANDLE_RAW (value_h), FALSE);
 	} else {
-		guint gchandle = 0;
+		MonoGCHandle gchandle = NULL;
 		g_assert (MONO_HANDLE_RAW (value_h));
-		mono_copy_value (f->type, (guint8*)obj->value + f->offset - sizeof (MonoObject), mono_object_handle_pin_unbox (value_h, &gchandle), FALSE);
+		mono_copy_value (f->type, (guint8*)obj->value + m_field_get_offset (f) - sizeof (MonoObject), mono_object_handle_pin_unbox (value_h, &gchandle), FALSE);
 		mono_gchandle_free_internal (gchandle);
 	}
 }
@@ -3339,7 +3371,7 @@ ves_icall_RuntimeTypeHandle_GetGenericTypeDefinition_impl (MonoReflectionTypeHan
 	if (mono_class_is_ginst (klass)) {
 		MonoClass *generic_class = mono_class_get_generic_class (klass)->container_class;
 
-		guint32 ref_info_handle = mono_class_get_ref_info_handle (generic_class);
+		MonoGCHandle ref_info_handle = mono_class_get_ref_info_handle (generic_class);
 		
 		if (m_class_was_typebuilder (generic_class) && ref_info_handle) {
 			MonoObjectHandle tb = mono_gchandle_get_target_handle (ref_info_handle);
@@ -3623,7 +3655,7 @@ init_io_stream_slots (void)
 	int methods_found = 0;
 	for (int i = 0; i < method_count; i++) {
 		// find slots for Begin(End)Read and Begin(End)Write
-		MonoMethod* m = klass->methods [i];
+		MonoMethod* m = klass_methods [i];
 		if (m->slot == -1)
 			continue;
 
@@ -3657,8 +3689,9 @@ ves_icall_System_IO_Stream_HasOverriddenBeginEndRead (MonoObjectHandle stream, M
 	// slots can still be -1 and it means Linker removed the methods from the base class (Stream)
 	// in this case we can safely assume the methods are not overridden
 	// otherwise - check vtable
-	gboolean begin_read_is_overriden = io_stream_begin_read_slot != -1 && curr_klass->vtable [io_stream_begin_read_slot]->klass != base_klass;
-	gboolean end_read_is_overriden = io_stream_end_read_slot != -1 && curr_klass->vtable [io_stream_end_read_slot]->klass != base_klass;
+	MonoMethod **curr_klass_vtable = m_class_get_vtable (curr_klass);
+	gboolean begin_read_is_overriden = io_stream_begin_read_slot != -1 && curr_klass_vtable [io_stream_begin_read_slot]->klass != base_klass;
+	gboolean end_read_is_overriden = io_stream_end_read_slot != -1 && curr_klass_vtable [io_stream_end_read_slot]->klass != base_klass;
 
 	// return true if BeginRead or EndRead were overriden
 	return begin_read_is_overriden || end_read_is_overriden;
@@ -3673,8 +3706,9 @@ ves_icall_System_IO_Stream_HasOverriddenBeginEndWrite (MonoObjectHandle stream, 
 	if (!io_stream_slots_set)
 		init_io_stream_slots ();
 
-	gboolean begin_write_is_overriden = curr_klass->vtable [io_stream_begin_write_slot]->klass != base_klass;
-	gboolean end_write_is_overriden = curr_klass->vtable [io_stream_end_write_slot]->klass != base_klass;
+	MonoMethod **curr_klass_vtable = m_class_get_vtable (curr_klass);
+	gboolean begin_write_is_overriden = curr_klass_vtable [io_stream_begin_write_slot]->klass != base_klass;
+	gboolean end_write_is_overriden = curr_klass_vtable [io_stream_end_write_slot]->klass != base_klass;
 
 	// return true if BeginWrite or EndWrite were overriden
 	return begin_write_is_overriden || end_write_is_overriden;
@@ -5726,7 +5760,10 @@ add_file_to_modules_array (MonoDomain *domain, MonoArrayHandle dest, int dest_id
 		goto_if_nok (error, leave);
 		if (!m) {
 			const char *filename = mono_metadata_string_heap (image, cols [MONO_FILE_NAME]);
-			mono_error_set_file_not_found (error, filename, "%s", "");
+			gboolean refonly = FALSE;
+			if (image->assembly)
+				refonly = mono_asmctx_get_kind (&image->assembly->context) == MONO_ASMCTX_REFONLY;
+			mono_error_set_simple_file_not_found (error, filename, refonly);
 			goto leave;
 		}
 		MonoReflectionModuleHandle rm = mono_module_get_object_handle (domain, m, error);
@@ -6028,9 +6065,9 @@ ves_icall_System_Reflection_Assembly_InternalGetAssemblyName (MonoStringHandle f
 
 	if (!image){
 		if (status == MONO_IMAGE_IMAGE_INVALID)
-			mono_error_set_bad_image_by_name (error, filename, "Invalid Image");
+			mono_error_set_bad_image_by_name (error, filename, "Invalid Image: %s", filename);
 		else
-			mono_error_set_file_not_found (error, filename, "%s", "");
+			mono_error_set_simple_file_not_found (error, filename, FALSE);
 		g_free (filename);
 		return;
 	}
@@ -6408,7 +6445,7 @@ ves_icall_System_Reflection_RuntimeAssembly_GetTopLevelForwardedTypes (MonoRefle
 #endif
 
 void
-ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct, MonoError *error)
+ves_icall_Mono_RuntimeMarshal_FreeAssemblyName (MonoAssemblyName *aname, MonoBoolean free_struct)
 {
 	mono_assembly_name_free_internal (aname);
 	if (free_struct)
@@ -6467,7 +6504,11 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 		// FIXME: Push handles down into mini/mini-exceptions.c
 		MonoException *exc = MONO_HANDLE_RAW (exc_handle);
 		MonoThreadSummary out;
+		mono_summarize_timeline_start ("ExceptionToState");
+		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
+		mono_summarize_timeline_phase_log (MonoSummaryUnmanagedStacks);
 		mono_get_eh_callbacks ()->mono_summarize_exception (exc, &out);
+		mono_summarize_timeline_phase_log (MonoSummaryManagedStacks);
 
 		*portable_hash_out = (guint64) out.hashes.offset_free_hash;
 		*unportable_hash_out = (guint64) out.hashes.offset_rich_hash;
@@ -6476,9 +6517,11 @@ ves_icall_Mono_Runtime_ExceptionToState (MonoExceptionHandle exc_handle, guint64
 		char *scratch = g_new0 (gchar, MONO_MAX_SUMMARY_LEN_ICALL);
 		mono_state_writer_init (&writer, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
 		mono_native_state_init (&writer);
+		mono_summarize_timeline_phase_log (MonoSummaryStateWriter);
 		gboolean first_thread_added = TRUE;
 		mono_native_state_add_thread (&writer, &out, NULL, first_thread_added, TRUE);
 		char *output = mono_native_state_free (&writer, FALSE);
+		mono_summarize_timeline_phase_log (MonoSummaryStateWriterDone);
 		result = mono_string_new_handle (mono_domain_get (), output, error);
 		g_free (output);
 		g_free (scratch);
@@ -6506,8 +6549,7 @@ ves_icall_Mono_Runtime_SendMicrosoftTelemetry (const char *payload, guint64 port
 	hashes.offset_free_hash = portable_hash;
 	hashes.offset_rich_hash = unportable_hash;
 
-	// Tells mono that we want to send the HANG EXC_TYPE.
-	const char *signal = "SIGTERM";
+	const char *signal = "MANAGED_EXCEPTION";
 
 	gboolean success = mono_merp_invoke (crashed_pid, signal, payload, &hashes);
 	if (!success) {
@@ -6625,7 +6667,7 @@ ves_icall_Mono_Runtime_DumpStateTotal (guint64 *portable_hash, guint64 *unportab
 
 	mono_get_runtime_callbacks ()->install_state_summarizer ();
 
-	mono_summarize_timeline_start ();
+	mono_summarize_timeline_start ("DumpStateTotal");
 
 	gboolean success = mono_threads_summarize (ctx, &out, &hashes, TRUE, FALSE, scratch, MONO_MAX_SUMMARY_LEN_ICALL);
 	mono_summarize_timeline_phase_log (MonoSummaryCleanup);
@@ -6805,7 +6847,7 @@ get_generic_inst_from_array_handle (MonoArrayHandle type_args)
 	int size = MONO_SIZEOF_GENERIC_INST + type_argc * sizeof (MonoType *);
 
 	MonoGenericInst *ginst = (MonoGenericInst *)g_alloca (size);
-	memset (ginst, 0, sizeof (MonoGenericInst));
+	memset (ginst, 0, MONO_SIZEOF_GENERIC_INST);
 	ginst->type_argc = type_argc;
 	for (int i = 0; i < type_argc; i++) {
 		MONO_HANDLE_ARRAY_GETVAL (ginst->type_argv[i], type_args, MonoType*, i);
@@ -7140,7 +7182,7 @@ ves_icall_System_Reflection_RuntimeModule_ResolveSignature (MonoImage *image, gu
 
 	// FIXME MONO_ENTER_NO_SAFEPOINTS instead of pin/gchandle.
 
-	uint32_t h;
+	MonoGCHandle h;
 	gpointer array_base = MONO_ARRAY_HANDLE_PIN (res, guint8, 0, &h);
 	memcpy (array_base, ptr, len);
 	mono_gchandle_free_internal (h);
@@ -7727,7 +7769,12 @@ ves_icall_System_Environment_FailFast (MonoStringHandle message, MonoExceptionHa
 	} else {
 		char *msg = mono_string_handle_to_utf8 (message, error);
 		g_warning ("CLR: Managed code called FailFast, saying \"%s\"", msg);
+#ifndef DISABLE_CRASH_REPORTING
+		char *old_msg = mono_crash_save_failfast_msg (msg);
+		g_free (old_msg);
+#else
 		g_free (msg);
+#endif
 	}
 
 	if (!MONO_HANDLE_IS_NULL (exception)) {
@@ -8101,8 +8148,6 @@ ves_icall_System_IO_get_temp_path (MonoError *error)
 	return mono_string_new_handle (mono_domain_get (), g_get_tmp_dir (), error);
 }
 
-#endif /* ENABLE_NETCORE */
-
 #if defined(ENABLE_MONODROID) || defined(ENABLE_MONOTOUCH) || defined(TARGET_WASM)
 
 // FIXME? Names should start "mono"?
@@ -8163,18 +8208,7 @@ ves_icall_System_IO_Compression_DeflateStreamNative_WriteZStream (gpointer strea
 }
 
 #endif
-#if defined(TARGET_WASM)
-G_EXTERN_C void mono_timezone_get_local_name (MonoString *volatile*result);
-void
-ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (MonoString *volatile*result)
-{
-	// MONO_CROSS_COMPILE returns undefined symbol "_mono_timezone_get_local_name"
-	// The icall offsets will be generated and linked at build time
-#ifndef MONO_CROSS_COMPILE
-	return mono_timezone_get_local_name (result);
-#endif
-}
-#endif
+#endif /* ENABLE_NETCORE */
 
 #ifndef PLATFORM_NO_DRIVEINFO
 MonoBoolean
@@ -8374,6 +8408,115 @@ ves_icall_System_Diagnostics_Debugger_Log (int level, MonoString *volatile* cate
 	if (mono_get_runtime_callbacks ()->debug_log)
 		mono_get_runtime_callbacks ()->debug_log (level, *category, *message);
 }
+
+#ifdef ENABLE_NETCORE
+#define EVENT_PIPE_DUMMY_PROVIDER_ID 1
+#define EVENT_PIPE_DUMMY_SESSION_ID 1
+#define EVENT_PIPE_DUMMY_EVENT_ID 1
+#define EVENT_PIPE_ERROR_SUCCESS 0
+#define EVENT_PIPE_INVALID_WAIT_HANDLE 0
+
+typedef enum _EventPipeSerializationFormat{
+	NetPerf,
+	NetTrace
+} EventPipeSerializationFormat;
+
+typedef struct _EventPipeProviderConfigurationNative {
+    gunichar2 *provider_name;
+    uint64_t keywords;
+    uint32_t logging_level;
+    gunichar2 *filter_data;
+} EventPipeProviderConfigurationNative;
+
+typedef struct _EventProviderEventData {
+    uint64_t ptr;
+    uint32_t size;
+    uint32_t reserved;
+} EventProviderEventData;
+
+typedef struct _EventPipeSessionInfo {
+    int64_t starttime_as_utc_filetime;
+    int64_t start_timestamp;
+    int64_t timestamp_frequency;
+} EventPipeSessionInfo;
+
+typedef struct _EventPipeEventInstanceData {
+    intptr_t provider_id;
+    uint32_t event_id;
+    uint32_t thread_id;
+    int64_t timestamp;
+    uint8_t activity_id[16];
+    uint8_t related_activity_id[16];
+    const uint8_t *payload;
+    uint32_t payload_length;
+} EventPipeEventInstanceData;
+
+gconstpointer
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_CreateProvider (MonoStringHandle provider_name, MonoDelegateHandle callback_func, MonoError *error)
+{
+	return GUINT_TO_POINTER (EVENT_PIPE_DUMMY_PROVIDER_ID);
+}
+
+intptr_t
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_DefineEvent (intptr_t prov_handle, uint32_t event_id, int64_t keywords, uint32_t event_version, uint32_t level, const uint8_t *metadata, uint32_t metadata_len)
+{
+	return EVENT_PIPE_DUMMY_EVENT_ID;
+}
+
+void
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_DeleteProvider (intptr_t prov_handle)
+{
+	;
+}
+
+void
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_Disable (uint64_t session_id)
+{
+	;
+}
+
+uint64_t
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_Enable (const_gunichar2_ptr output_file, /* EventPipeSerializationFormat */int32_t format, uint32_t circular_buffer_size_mb, /* EventPipeProviderConfigurationNative[] */const void *providers, uint32_t num_providers)
+{
+	return EVENT_PIPE_DUMMY_SESSION_ID;
+}
+
+int32_t
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_EventActivityIdControl (uint32_t control_code, /* GUID * */uint8_t *activity_id)
+{
+	return EVENT_PIPE_ERROR_SUCCESS;
+}
+
+MonoBoolean
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_GetNextEvent (uint64_t session_id, /* EventPipeEventInstanceData * */void *instance)
+{
+	return FALSE;
+}
+
+intptr_t
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_GetProvider (const_gunichar2_ptr provider_name)
+{
+	return EVENT_PIPE_DUMMY_PROVIDER_ID;
+}
+
+MonoBoolean
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_GetSessionInfo (uint64_t session_id, /* EventPipeSessionInfo * */void *session_info)
+{
+	return FALSE;
+}
+
+intptr_t
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_GetWaitHandle (uint64_t session_id)
+{
+	return EVENT_PIPE_INVALID_WAIT_HANDLE;
+}
+
+void
+ves_icall_System_Diagnostics_Tracing_EventPipeInternal_WriteEventData (intptr_t event_handle, /* EventProviderEventData[] */const void *event_data, uint32_t data_count, /* GUID * */const uint8_t *activity_id, /* GUID * */const uint8_t *related_activity_id)
+{
+	;
+}
+#endif /* ENABLE_NETCORE */
 
 #ifndef HOST_WIN32
 static inline void
@@ -8594,8 +8737,13 @@ ves_icall_System_Runtime_InteropServices_Marshal_Prelink (MonoReflectionMethodHa
 }
 
 void
+ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeHandle type, MonoError *error);
+
+void
 ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll (MonoReflectionTypeHandle type, MonoError *error)
 {
+	g_assert_not_netcore ();
+
 	error_init (error);
 	MonoClass *klass = mono_class_from_mono_type_internal (MONO_HANDLE_GETVAL (type, type));
 	MonoMethod* m;
@@ -9393,7 +9541,6 @@ mono_lookup_icall_symbol (MonoMethod *m)
 // Storage for these enums is pointer-sized as it gets replaced with MonoType*.
 //
 // mono_create_icall_signatures depends on this order. Handle with care.
-// It is alphabetical.
 typedef enum ICallSigType {
 	ICALL_SIG_TYPE_bool     = 0x00,
 	ICALL_SIG_TYPE_boolean  = ICALL_SIG_TYPE_bool,
@@ -9401,12 +9548,12 @@ typedef enum ICallSigType {
 	ICALL_SIG_TYPE_float    = 0x02,
 	ICALL_SIG_TYPE_int      = 0x03,
 	ICALL_SIG_TYPE_int16    = 0x04,
-	ICALL_SIG_TYPE_int32    = 0x05,
-	ICALL_SIG_TYPE_int8     = 0x06,
-	ICALL_SIG_TYPE_long     = 0x07,
-	ICALL_SIG_TYPE_obj      = 0x08,
+	ICALL_SIG_TYPE_int32    = ICALL_SIG_TYPE_int,
+	ICALL_SIG_TYPE_int8     = 0x05,
+	ICALL_SIG_TYPE_long     = 0x06,
+	ICALL_SIG_TYPE_obj      = 0x07,
 	ICALL_SIG_TYPE_object   = ICALL_SIG_TYPE_obj,
-	ICALL_SIG_TYPE_ptr      = ICALL_SIG_TYPE_int,
+	ICALL_SIG_TYPE_ptr      = 0x08,
 	ICALL_SIG_TYPE_ptrref   = 0x09,
 	ICALL_SIG_TYPE_string   = 0x0A,
 	ICALL_SIG_TYPE_uint16   = 0x0B,
@@ -9414,6 +9561,7 @@ typedef enum ICallSigType {
 	ICALL_SIG_TYPE_uint8    = 0x0D,
 	ICALL_SIG_TYPE_ulong    = 0x0E,
 	ICALL_SIG_TYPE_void     = 0x0F,
+	ICALL_SIG_TYPE_sizet    = 0x10
 } ICallSigType;
 
 #define ICALL_SIG_TYPES_1(a) 		  	ICALL_SIG_TYPE_ ## a,
@@ -9476,12 +9624,12 @@ mono_create_icall_signatures (void)
 		m_class_get_byval_arg (mono_defaults.boolean_class), // ICALL_SIG_TYPE_bool
 		m_class_get_byval_arg (mono_defaults.double_class),	 // ICALL_SIG_TYPE_double
 		m_class_get_byval_arg (mono_defaults.single_class),  // ICALL_SIG_TYPE_float
-		m_class_get_byval_arg (mono_defaults.int_class),	 // ICALL_SIG_TYPE_int
+		m_class_get_byval_arg (mono_defaults.int32_class),	 // ICALL_SIG_TYPE_int
 		m_class_get_byval_arg (mono_defaults.int16_class),	 // ICALL_SIG_TYPE_int16
-		m_class_get_byval_arg (mono_defaults.int32_class),	 // ICALL_SIG_TYPE_int32
 		m_class_get_byval_arg (mono_defaults.sbyte_class),	 // ICALL_SIG_TYPE_int8
 		m_class_get_byval_arg (mono_defaults.int64_class),	 // ICALL_SIG_TYPE_long
 		m_class_get_byval_arg (mono_defaults.object_class),	 // ICALL_SIG_TYPE_obj
+		m_class_get_byval_arg (mono_defaults.int_class),	 // ICALL_SIG_TYPE_ptr
 		mono_class_get_byref_type (mono_defaults.int_class), // ICALL_SIG_TYPE_ptrref
 		m_class_get_byval_arg (mono_defaults.string_class),	 // ICALL_SIG_TYPE_string
 		m_class_get_byval_arg (mono_defaults.uint16_class),	 // ICALL_SIG_TYPE_uint16
@@ -9489,6 +9637,7 @@ mono_create_icall_signatures (void)
 		m_class_get_byval_arg (mono_defaults.byte_class),	 // ICALL_SIG_TYPE_uint8
 		m_class_get_byval_arg (mono_defaults.uint64_class),	 // ICALL_SIG_TYPE_ulong
 		m_class_get_byval_arg (mono_defaults.void_class),	 // ICALL_SIG_TYPE_void
+		m_class_get_byval_arg (mono_defaults.int_class),	 // ICALL_SIG_TYPE_sizet
 	};
 
 	MonoMethodSignature_a *sig = (MonoMethodSignature*)&mono_icall_signatures;
@@ -9602,6 +9751,7 @@ ves_icall_System_Environment_get_ProcessorCount (void)
 	return mono_cpu_count ();
 }
 
+#if !defined(ENABLE_NETCORE)
 #if defined(ENABLE_MONODROID)
 
 G_EXTERN_C gpointer CreateNLSocket (void);
@@ -9626,6 +9776,7 @@ ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpoint
 	return CloseNLSocket (sock);
 }
 
+#endif
 #endif
 
 // Generate wrappers.

@@ -116,9 +116,6 @@ public static class Program {
             if (SourcesParser.TraceLevel > 0)
                 Console.Error.WriteLine ($"// Writing sources from {sourcesFile} minus {excludesFile}, to {outFile}.");
         } else if (args.Count == 4) {
-            if (baseDir != null)
-                Console.Error.WriteLine ($"// WARNING: baseDir has no effect in this mode");
-
             var libraryFullName = Path.GetFullPath (args[1]);
             var platformName = args[2].Trim ();
             var profileName = args[3].Trim ();
@@ -135,13 +132,12 @@ public static class Program {
             throw new Exception ();
         }
 
-        var fileNames = result.GetMatches ()
+        var files = result.GetMatches ()
             .OrderBy (e => e.RelativePath, StringComparer.Ordinal)
-            .Select (e => e.RelativePath)
-            .Distinct ()
+            .Distinct (new MatchEntryEqualityComparer ())
             .ToList ();
 
-        var unexpectedEmptyResult = (fileNames.Count == 0);
+        var unexpectedEmptyResult = (files.Count == 0);
 
         // HACK: We have sources files that are literally empty, so as long as *some* sources files were
         //  parsed during this invocation and they are all empty, producing no matching file names is not
@@ -150,7 +146,7 @@ public static class Program {
             unexpectedEmptyResult = false;
 
         if ((result.ErrorCount > 0) || unexpectedEmptyResult) {
-            Console.Error.WriteLine ($"// gensources produced {result.ErrorCount} error(s) and a set of {fileNames.Count} filename(s)");
+            Console.Error.WriteLine ($"// gensources produced {result.ErrorCount} error(s) and a set of {files.Count} filename(s)");
             Console.Error.WriteLine ($"// Invoked with '{Environment.CommandLine}'");
             Console.Error.WriteLine ($"// Working directory was '{Environment.CurrentDirectory}'");
 
@@ -163,16 +159,28 @@ public static class Program {
             }
         }
 
-        TextWriter output;
-        if (useStdout)
-            output = Console.Out;
-        else
-            output = new StreamWriter (outFile);
+        int parts = files.Count == 0 ? 0 : files.Max (f => f.SplitNumber);
+        if (useStdout && parts > 0)
+            throw new InvalidOperationException ("useStdout can't be used together with assembly splitting");
 
-        using (output) {
-            foreach (var fileName in fileNames)
-                output.WriteLine (fileName);
+        TextWriter[] outputs = new TextWriter[parts + 1];
+        for (int i = 0; i < parts + 1; i++) { // we create one file with all sources and part assemblies with only common+specific ones
+            outputs[i] = useStdout ? Console.Out : new StreamWriter (i == 0 ? outFile : $"{outFile}.part{i}");
         }
+
+        foreach (var fileName in files) {
+            if (fileName.SplitNumber == 0) { // split number 0 is the special case: common files that should be included in all output parts
+                foreach (var output in outputs)
+                    output.WriteLine (fileName.RelativePath);
+            }
+            else { // all other split numbers should only be included in the full assembly and the specific part assembly
+                outputs[0].WriteLine (fileName.RelativePath);
+                outputs[fileName.SplitNumber].WriteLine (fileName.RelativePath);
+            }
+        }
+
+        foreach (var output in outputs)
+            output.Dispose();
 
         return 0;
     }
@@ -195,11 +203,25 @@ public class SourcesFile {
 public struct ParseEntry {
     public string Directory;
     public string Pattern;
+    public int SplitNumber;
 }
 
 public struct MatchEntry {
     public SourcesFile SourcesFile;
     public string RelativePath;
+    public int SplitNumber;
+}
+
+public class MatchEntryEqualityComparer : IEqualityComparer<MatchEntry> {
+    public bool Equals (MatchEntry x, MatchEntry y)
+    {
+        return (x.RelativePath == y.RelativePath);
+    }
+
+    public int GetHashCode (MatchEntry obj)
+    {
+        return obj.RelativePath?.GetHashCode() ?? 0;
+    }
 }
 
 public class TargetParseResult {
@@ -309,6 +331,7 @@ public class ParseResult {
                     yield return new MatchEntry {
                         SourcesFile = sourcesFile,
                         RelativePath = relativePath,
+                        SplitNumber = entry.SplitNumber
                     };
                 }
             } else {
@@ -329,6 +352,7 @@ public class ParseResult {
                     yield return new MatchEntry {
                         SourcesFile = sourcesFile,
                         RelativePath = relativePath,
+                        SplitNumber = entry.SplitNumber
                     };
                 }
             }
@@ -403,6 +427,7 @@ public class SourcesParser {
         public string HostPlatform;
         public string ProfileName;
         public string ExclusionsFileName;
+        public int CurrentSplitNumber;
 
         public int SourcesFilesParsed, ExclusionsFilesParsed;
     }
@@ -413,6 +438,7 @@ public class SourcesParser {
     public readonly string BaseDirectory;
 
     private int ParseDepth = 0;
+    private string TargetProfileName = "";
 
     public SourcesParser (
         string platformsFolder, string profilesFolder, string baseDir
@@ -442,6 +468,7 @@ public class SourcesParser {
     }
 
     public ParseResult Parse (string libraryDirectory, string libraryName, string hostPlatform, string profile) {
+        TargetProfileName = profile;
         var state = new State {
             Result = new ParseResult (libraryDirectory),
             ProfileName = profile,
@@ -581,6 +608,7 @@ public class SourcesParser {
         bool asExclusionsList, string directive
     ) {
         var include = "#include ";
+        var split = "#split ";
         if (directive.StartsWith (include)) {
             var includeName = directive.Substring (include.Length).Trim ();
             var fileName = Path.Combine (includeDirectory, includeName);
@@ -598,6 +626,14 @@ public class SourcesParser {
             }
 
             file.Includes.Add (newFile);
+        } else if (directive.StartsWith (split)) {
+            if (asExclusionsList) throw new InvalidOperationException ("split directive is not valid for exclusion lists");
+
+            var profileName = directive.Substring (split.Length).Trim ();
+
+            if (profileName == TargetProfileName) {
+                state.CurrentSplitNumber++;
+            }
         }
     }
 
@@ -715,7 +751,8 @@ public class SourcesParser {
                     foreach (var pattern in explicitExclusions) {
                         result.Exclusions.Add (new ParseEntry {
                             Directory = pathDirectory,
-                            Pattern = Path.Combine (mainPatternDirectory, pattern)
+                            Pattern = Path.Combine (mainPatternDirectory, pattern),
+                            SplitNumber = state.CurrentSplitNumber
                         });
                     }
                 }
@@ -723,7 +760,8 @@ public class SourcesParser {
                 (asExclusionsList ? result.Exclusions : result.Sources)
                     .Add (new ParseEntry {
                         Directory = pathDirectory,
-                        Pattern = parts[0]
+                        Pattern = parts[0],
+                        SplitNumber = state.CurrentSplitNumber
                     });
             }
         }

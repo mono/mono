@@ -76,10 +76,6 @@ struct _GCMemSection {
 /*
  * Recursion is not allowed for the thread lock.
  */
-#define LOCK_DECLARE(name) mono_mutex_t name
-/* if changing LOCK_INIT to something that isn't idempotent, look at
-   its use in mono_gc_base_init in sgen-gc.c */
-#define LOCK_INIT(name)	mono_os_mutex_init (&(name))
 #define LOCK_GC do { sgen_gc_lock (); } while (0)
 #define UNLOCK_GC do { sgen_gc_unlock (); } while (0)
 
@@ -551,7 +547,7 @@ sgen_nursery_is_to_space (void *object)
 	size_t bit = idx & 0x7;
 
 	SGEN_ASSERT (4, sgen_ptr_in_nursery (object), "object %p is not in nursery [%p - %p]", object, sgen_get_nursery_start (), sgen_get_nursery_end ());
-	SGEN_ASSERT (4, byte < sgen_space_bitmap_size, "byte index %zd out of range (%zd)", byte, sgen_space_bitmap_size);
+	SGEN_ASSERT (4, byte < sgen_space_bitmap_size, "byte index %" G_GSIZE_FORMAT "d out of range (%" G_GSIZE_FORMAT "d)", byte, sgen_space_bitmap_size);
 
 	return (sgen_space_bitmap [byte] & (1 << bit)) != 0;
 }

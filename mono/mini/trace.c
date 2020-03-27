@@ -27,6 +27,10 @@
 #include "trace.h"
 #include <mono/metadata/callspec.h>
 
+#if _MSC_VER
+#pragma warning(disable:4312) // FIXME pointer cast to different size
+#endif
+
 #if defined (HOST_ANDROID) || (defined (TARGET_IOS) && defined (TARGET_IOS))
 #  undef printf
 #  define printf(...) g_log("mono", G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
@@ -282,7 +286,7 @@ mono_trace_enter_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 			break;
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
-			printf ("0x%016llx", (long long)*arg_in_stack_slot(buf, gint64));
+			printf ("0x%016" PRIx64, (gint64)*arg_in_stack_slot(buf, gint64));
 			break;
 		case MONO_TYPE_R4:
 			printf ("%f", *arg_in_stack_slot(buf, float));
@@ -387,7 +391,7 @@ mono_trace_leave_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 			} else if  (o->vtable->klass == mono_defaults.int32_class) {
 				printf ("[INT32:%p:%d]", o, *(gint32 *)data);
 			} else if  (o->vtable->klass == mono_defaults.int64_class) {
-				printf ("[INT64:%p:%lld]", o, (long long)*(gint64 *)data);
+				printf ("[INT64:%p:%" PRId64 "]", o, *(gint64 *)data);
 			} else if (o->vtable->klass == mono_defaults.string_class) {
 				char *as;
 				as = string_to_utf8 ((MonoString*)o);
@@ -402,12 +406,12 @@ mono_trace_leave_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 	}
 	case MONO_TYPE_I8: {
 		gint64 l =  *arg_in_stack_slot (buf, gint64);
-		printf ("lresult=0x%16llx", (long long)l);
+		printf ("lresult=0x%16" PRIx64, l);
 		break;
 	}
 	case MONO_TYPE_U8: {
 		gint64 l =  *arg_in_stack_slot (buf, gint64);
-		printf ("lresult=0x%16llx", (long long)l);
+		printf ("lresult=0x%16" PRIx64, l);
 		break;
 	}
 	case MONO_TYPE_R4:

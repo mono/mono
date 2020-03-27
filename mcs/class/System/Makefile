@@ -116,6 +116,10 @@ API_BIN_REFS += System.Configuration
 LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
 
+ifeq (wasm,$(PROFILE))
+API_BIN_REFS += WebAssembly.Net.WebSockets
+endif
+
 EXTRA_DISTFILES = \
 	Test/test-config-file				\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\

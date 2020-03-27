@@ -97,6 +97,7 @@ public class WasmTuner
 		Console.WriteLine ("Arguments:");
 		Console.WriteLine ("--gen-icall-table icall-table.json <assemblies>.");
 		Console.WriteLine ("--gen-pinvoke-table <list of native library names separated by commas> <assemblies>.");
+		Console.WriteLine ("--gen-empty-assemblies <filenames>.");
 	}
 
 	int Run (String[] args) {
@@ -113,6 +114,8 @@ public class WasmTuner
 			return GenIcallTable (args);
 		} else if (cmd == "--gen-pinvoke-table") {
 			return GenPinvokeTable (args);
+		} else if (cmd == "--gen-empty-assemblies") {
+			return GenEmptyAssemblies (args);
 		} else {
 			Usage ();
 			return 1;
@@ -410,5 +413,17 @@ public class WasmTuner
 			icall.Assembly = method.DeclaringType.Module.Assembly.Name.Name;
 			icalls.Add (icall);
 		}
+	}
+
+	// Generate empty assemblies for the filenames in ARGS if they don't exist
+	int GenEmptyAssemblies (String[] args) {
+		foreach (var fname in args) {
+			if (File.Exists (fname))
+				continue;
+			var basename = Path.GetFileName (fname).Replace (".exe", "").Replace (".dll", "");
+			var assembly = AssemblyDefinition.CreateAssembly (new AssemblyNameDefinition (basename, new Version (0, 0, 0, 0)), basename, ModuleKind.Dll);
+			assembly.Write (fname);
+		}
+		return 0;
 	}
 }

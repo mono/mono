@@ -66,7 +66,7 @@ static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 #endif
 
 	if (mono_dump_start ())
-		mono_handle_native_crash ("SIGSEGV", NULL, NULL);
+		mono_handle_native_crash (mono_get_signame (SIGSEGV), NULL, NULL);
 
 	return EXCEPTION_CONTINUE_SEARCH;
 }
@@ -876,7 +876,7 @@ altstack_handle_and_restore (MonoContext *ctx, MonoObject *obj, guint32 flags)
 
 	if (!ji || (!stack_ovf && !nullref)) {
 		if (mono_dump_start ())
-			mono_handle_native_crash ("SIGSEGV", ctx, NULL);
+			mono_handle_native_crash (mono_get_signame (SIGSEGV), ctx, NULL);
 		// if couldn't dump or if mono_handle_native_crash returns, abort
 		abort ();
 	}
@@ -898,9 +898,21 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 #if defined(MONO_ARCH_USE_SIGACTION)
 	MonoException *exc = NULL;
 	gpointer *sp;
-	int frame_size;
-	MonoContext *copied_ctx;
+	MonoJitTlsData *jit_tls = NULL;
+	MonoContext *copied_ctx = NULL;
 	gboolean nullref = TRUE;
+
+	jit_tls = mono_tls_get_jit_tls ();
+	g_assert (jit_tls);
+
+	/* use TLS as temporary storage as we want to avoid
+	 * (1) stack allocation on the application stack
+	 * (2) calling malloc, because it is not async-safe
+	 * (3) using a global storage, because this function is not reentrant
+	 *
+	 * tls->orig_ex_ctx is used by the stack walker, which shouldn't be running at this point.
+	 */
+	copied_ctx = &jit_tls->orig_ex_ctx;
 
 	if (!mono_is_addr_implicit_null_check (fault_addr))
 		nullref = FALSE;
@@ -908,24 +920,16 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	if (stack_ovf)
 		exc = mono_domain_get ()->stack_overflow_ex;
 
-	/* setup a call frame on the real stack so that control is returned there
-	 * and exception handling can continue.
-	 * The frame looks like:
-	 *   ucontext struct
-	 *   ...
-	 *   return ip
-	 * 128 is the size of the red zone
+	/* setup the call frame on the application stack so that control is
+	 * returned there and exception handling can continue. we want the call
+	 * frame to be minimal as possible, for example no argument passing that
+	 * requires allocation on the stack, as this wouldn't be encoded in unwind
+	 * information for the caller frame.
 	 */
-	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 4 + 128;
-	frame_size += 15;
-	frame_size &= ~15;
-	sp = (gpointer *)(UCONTEXT_REG_RSP (sigctx) & ~15);
-	sp = (gpointer *)((char*)sp - frame_size);
-	copied_ctx = (MonoContext*)(sp + 4);
-	/* the arguments must be aligned */
+	sp = (gpointer *) ALIGN_DOWN_TO (UCONTEXT_REG_RSP (sigctx), 16);
 	sp [-1] = (gpointer)UCONTEXT_REG_RIP (sigctx);
 	mono_sigctx_to_monoctx (sigctx, copied_ctx);
-	/* at the return form the signal handler execution starts in altstack_handle_and_restore() */
+	/* at the return from the signal handler execution starts in altstack_handle_and_restore() */
 	UCONTEXT_REG_RIP (sigctx) = (unsigned long)altstack_handle_and_restore;
 	UCONTEXT_REG_RSP (sigctx) = (unsigned long)(sp - 1);
 	UCONTEXT_REG_RDI (sigctx) = (unsigned long)(copied_ctx);
@@ -1101,7 +1105,7 @@ mono_arch_unwindinfo_add_alloc_stack (PUNWIND_INFO unwindinfo, MonoUnwindOp *unw
 		if (codesneeded == 3) {
 			/*the unscaled size of the allocation is recorded
 			  in the next two slots in little-endian format.
-			  NOTE, unwind codes are allocated from end to begining of list so
+			  NOTE, unwind codes are allocated from end to beginning of list so
 			  unwind code will have right execution order. List is sorted on CodeOffset
 			  using descending sort order.*/
 			unwindcode->UnwindOp = UWOP_ALLOC_LARGE;
@@ -1111,7 +1115,7 @@ mono_arch_unwindinfo_add_alloc_stack (PUNWIND_INFO unwindinfo, MonoUnwindOp *unw
 		else {
 			/*the size of the allocation divided by 8
 			  is recorded in the next slot.
-			  NOTE, unwind codes are allocated from end to begining of list so
+			  NOTE, unwind codes are allocated from end to beginning of list so
 			  unwind code will have right execution order. List is sorted on CodeOffset
 			  using descending sort order.*/
 			unwindcode->UnwindOp = UWOP_ALLOC_LARGE;
@@ -1403,7 +1407,7 @@ mono_arch_unwindinfo_insert_range_in_table (const gpointer code_block, gsize blo
 	AcquireSRWLockExclusive (&g_dynamic_function_table_lock);
 	init_table_no_lock ();
 	new_entry = find_range_in_table_no_lock (code_block, block_size);
-	if (new_entry == NULL) {
+	if (new_entry == NULL && block_size != 0) {
 		// Allocate new entry.
 		new_entry = g_new0 (DynamicFunctionTableEntry, 1);
 		if (new_entry != NULL) {

@@ -23,6 +23,8 @@ else ifeq ($(UNAME),Linux)
 ANDROID_LIBCLANG = $(ANDROID_TOOLCHAIN_DIR)/ndk/toolchains/llvm/prebuilt/linux-x86_64/lib64/libclang.so.8svn
 endif
 
+COMMA := ,
+
 ##
 # Parameters:
 #  $(1): target
@@ -86,54 +88,54 @@ endif
 #  $(2): arch
 #  $(3): abi_name
 #  $(4): host_triple
+#  $(5): interpreter (either '-interpreter' or empty)
 #
 # Flags:
 #  android-$(1)_CFLAGS
 #  android-$(1)_CXXFLAGS
 #  android-$(1)_LDFLAGS
 define AndroidTargetTemplate
+_android$(5)-$(1)_AR=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ar
+_android$(5)-$(1)_AS=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-as
+_android$(5)-$(1)_CC=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-clang
+_android$(5)-$(1)_CXX=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-clang++
+_android$(5)-$(1)_CPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-$$(if $(wildcard $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-cpp),cpp,clang -E)
+_android$(5)-$(1)_CXXCPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-$$(if $(wildcard $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-cpp),cpp,clang++ -E)
+_android$(5)-$(1)_DLLTOOL=
+_android$(5)-$(1)_LD=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ld
+_android$(5)-$(1)_OBJDUMP="$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-objdump"
+_android$(5)-$(1)_RANLIB=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ranlib
+_android$(5)-$(1)_CMAKE=$$(ANDROID_SDK_PREFIX)/cmake/$(ANDROID_CMAKE_VERSION)/bin/cmake
+_android$(5)-$(1)_STRIP=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-strip
 
-_android-$(1)_AR=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ar
-_android-$(1)_AS=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-as
-_android-$(1)_CC=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-clang
-_android-$(1)_CXX=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-clang++
-_android-$(1)_CPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-$$(if $(wildcard $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-cpp),cpp,clang -E)
-_android-$(1)_CXXCPP=$$(CCACHE) $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-$$(if $(wildcard $$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-cpp),cpp,clang++ -E)
-_android-$(1)_DLLTOOL=
-_android-$(1)_LD=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ld
-_android-$(1)_OBJDUMP="$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-objdump"
-_android-$(1)_RANLIB=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-ranlib
-_android-$(1)_CMAKE=$$(ANDROID_SDK_PREFIX)/cmake/$(ANDROID_CMAKE_VERSION)/bin/cmake
-_android-$(1)_STRIP=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/bin/$(3)-strip
-
-_android-$(1)_AC_VARS= \
+_android$(5)-$(1)_AC_VARS= \
 	mono_cv_uscore=yes \
 	ac_cv_func_sched_getaffinity=no \
 	ac_cv_func_sched_setaffinity=no \
 	ac_cv_func_shm_open_working_with_mmap=no
 
-_android-$(1)_CFLAGS= \
+_android$(5)-$(1)_CFLAGS= \
 	-fstack-protector \
 	-DMONODROID=1 $$(if $$(filter $$(ANDROID_NEW_NDK),yes),-D__ANDROID_API__=$$(ANDROID_SDK_VERSION_$(1)))
 
-_android-$(1)_CXXFLAGS= \
+_android$(5)-$(1)_CXXFLAGS= \
 	-fstack-protector \
 	-DMONODROID=1 $$(if $$(filter $$(ANDROID_NEW_NDK),yes),-D__ANDROID_API__=$$(ANDROID_SDK_VERSION_$(1)))
 
 
-_android-$(1)_CPPFLAGS= \
+_android$(5)-$(1)_CPPFLAGS= \
 	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/sysroot/usr/include
 
-_android-$(1)_CXXCPPFLAGS= \
+_android$(5)-$(1)_CXXCPPFLAGS= \
 	-I$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang/sysroot/usr/include
 
-_android-$(1)_LDFLAGS= \
+_android$(5)-$(1)_LDFLAGS= \
 	-z now -z relro -z noexecstack \
 	-ldl -lm -llog -lc -lgcc \
 	-Wl,-rpath-link=$$(ANDROID_TOOLCHAIN_DIR)/ndk/platforms/android-$$(ANDROID_SDK_VERSION_$(1))/arch-$(2)/usr/lib,-dynamic-linker=/system/bin/linker \
 	-L$$(ANDROID_TOOLCHAIN_DIR)/ndk/platforms/android-$$(ANDROID_SDK_VERSION_$(1))/arch-$(2)/usr/lib
 
-_android-$(1)_CONFIGURE_FLAGS= \
+_android$(5)-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
 	--disable-executables \
 	--disable-iconv \
@@ -141,7 +143,7 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-nls \
 	--enable-dynamic-btls \
 	--enable-maintainer-mode \
-	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,interpreter,gac \
+	--enable-minimal=ssa,portability,attach,verifier,full_messages,sgen_remset,sgen_marksweep_par,sgen_marksweep_fixed,sgen_marksweep_fixed_par,sgen_copying,logging,security,shared_handles,$$(if $(5),,interpreter$$(COMMA)),gac,cfgdir_config \
 	--enable-monodroid \
 	--with-btls-android-ndk=$$(ANDROID_TOOLCHAIN_DIR)/ndk \
 	--with-btls-android-api=$$(ANDROID_SDK_VERSION_$(1)) \
@@ -154,11 +156,15 @@ _android-$(1)_CONFIGURE_FLAGS= \
 	--disable-hybrid-suspend \
 	--disable-crash-reporting
 
+ifeq ($(5),-interpreter)
+.stamp-android$(5)-$(1)-toolchain: .stamp-android-$(1)-toolchain
+else
 .stamp-android-$(1)-toolchain: | $$(if $$(IGNORE_PROVISION_ANDROID),,provision-android)
-	python "$$(ANDROID_TOOLCHAIN_DIR)/ndk/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_SDK_VERSION_$(1)) --arch=$(2) --install-dir=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang
+	$(PYTHON) "$$(ANDROID_TOOLCHAIN_DIR)/ndk/build/tools/make_standalone_toolchain.py" --verbose --force --api=$$(ANDROID_SDK_VERSION_$(1)) --arch=$(2) --install-dir=$$(ANDROID_TOOLCHAIN_PREFIX)/$(1)-clang
 	touch $$@
+endif
 
-$$(eval $$(call RuntimeTemplate,android,$(1),$(4)))
+$$(eval $$(call RuntimeTemplate,android,$(1),$(4),,$(5)))
 
 endef
 
@@ -190,6 +196,7 @@ ifeq ($(UNAME),Windows)
 $(eval $(call AndroidTargetTemplateStub,armeabi-v7a,arm,arm-linux-androideabi,armv5-linux-androideabi))
 else
 $(eval $(call AndroidTargetTemplate,armeabi-v7a,arm,arm-linux-androideabi,armv5-linux-androideabi))
+$(eval $(call AndroidTargetTemplate,armeabi-v7a,arm,arm-linux-androideabi,armv5-linux-androideabi,-interpreter))
 endif
 
 ## android-arm64-v8a
@@ -199,6 +206,7 @@ ifeq ($(UNAME),Windows)
 $(eval $(call AndroidTargetTemplateStub,arm64-v8a,arm64,aarch64-linux-android,aarch64-linux-android))
 else
 $(eval $(call AndroidTargetTemplate,arm64-v8a,arm64,aarch64-linux-android,aarch64-linux-android))
+$(eval $(call AndroidTargetTemplate,arm64-v8a,arm64,aarch64-linux-android,aarch64-linux-android,-interpreter))
 endif
 
 ## android-x86
@@ -206,6 +214,7 @@ ifeq ($(UNAME),Windows)
 $(eval $(call AndroidTargetTemplateStub,x86,x86,i686-linux-android,i686-linux-android))
 else
 $(eval $(call AndroidTargetTemplate,x86,x86,i686-linux-android,i686-linux-android))
+$(eval $(call AndroidTargetTemplate,x86,x86,i686-linux-android,i686-linux-android,-interpreter))
 endif
 
 ## android-x86_64
@@ -215,6 +224,7 @@ ifeq ($(UNAME),Windows)
 $(eval $(call AndroidTargetTemplateStub,x86_64,x86_64,x86_64-linux-android,x86_64-linux-android))
 else
 $(eval $(call AndroidTargetTemplate,x86_64,x86_64,x86_64-linux-android,x86_64-linux-android))
+$(eval $(call AndroidTargetTemplate,x86_64,x86_64,x86_64-linux-android,x86_64-linux-android,-interpreter))
 endif
 
 ##

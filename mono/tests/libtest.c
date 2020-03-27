@@ -8,6 +8,7 @@
 #include <time.h>
 #include <math.h>
 #include <setjmp.h>
+#include <signal.h>
 #include "../utils/mono-errno.h"
 #include "../utils/mono-compiler.h"
 
@@ -699,16 +700,6 @@ mono_test_marshal_delegate_struct (DelegateStruct ds)
 	return res;
 }
 
-LIBTEST_API int STDCALL  
-mono_test_marshal_struct (simplestruct ss)
-{
-	if (ss.a == 0 && ss.b == 1 && ss.c == 0 &&
-	    !strcmp (ss.d, "TEST"))
-		return 0;
-
-	return 1;
-}
-
 LIBTEST_API int STDCALL 
 mono_test_marshal_byref_struct (simplestruct *ss, int a, int b, int c, char *d)
 {
@@ -847,6 +838,8 @@ mono_test_marshal_byref_class (simplestruct2 **ssp)
 	return 0;
 }
 
+MONO_DISABLE_WARNING (4172) // returning address of local
+
 static void *
 get_sp (void)
 {
@@ -857,6 +850,8 @@ get_sp (void)
 	p = &i;
 	return p;
 }
+
+MONO_RESTORE_WARNING
 
 LIBTEST_API int STDCALL 
 reliable_delegate (int a)
@@ -951,6 +946,16 @@ is_utf16_equals (gunichar2 *s1, const char *s2)
 	g_free (s);
 
 	return res == 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_struct (simplestruct ss)
+{
+	if (ss.a == 0 && ss.b == 1 && ss.c == 0 &&
+	    !strcmp (ss.d, "TEST") && is_utf16_equals (ss.d2, "OK"))
+		return 0;
+
+	return 1;
 }
 
 LIBTEST_API int STDCALL 
@@ -1833,6 +1838,9 @@ mono_test_asany (void *ptr, int what)
 			g_free (s);
 			return 1;
 		}
+	}
+	case 5: {
+		return (*(intptr_t*)ptr == 5) ? 0 : 1;
 	}
 	default:
 		g_assert_not_reached ();
@@ -3798,7 +3806,9 @@ static gpointer
 lookup_mono_symbol (const char *symbol_name)
 {
 	gpointer symbol = NULL;
-	const gboolean success = g_module_symbol (g_module_open (NULL, G_MODULE_BIND_LAZY), symbol_name, &symbol);
+	GModule *mod = g_module_open (NULL, G_MODULE_BIND_LAZY);
+	g_assert (mod != NULL);
+	const gboolean success = g_module_symbol (mod, symbol_name, &symbol);
 	g_assertf (success, "%s", symbol_name);
 	return success ? symbol : NULL;
 }
@@ -3806,7 +3816,12 @@ lookup_mono_symbol (const char *symbol_name)
 LIBTEST_API gpointer STDCALL
 mono_test_marshal_lookup_symbol (const char *symbol_name)
 {
+#ifndef HOST_WIN32
+	return dlsym (RTLD_DEFAULT, symbol_name);
+#else
+	// This isn't really proper, but it should work
 	return lookup_mono_symbol (symbol_name);
+#endif
 }
 
 
@@ -7874,6 +7889,76 @@ mono_test_cominterop_ccw_queryinterface (MonoComObject *pUnk)
 	return pUnk == NULL && hr == S_OK;
 }
 
+typedef struct ccw_qi_shared_data {
+	MonoComObject *pUnk;
+	int i;
+} ccw_qi_shared_data;
+
+static void*
+ccw_qi_foreign_thread (void *arg)
+{
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)arg;
+	void *pp;
+	MonoComObject *pUnk = shared->pUnk;
+	int hr = pUnk->vtbl->QueryInterface (pUnk, &IID_ITest, &pp);
+
+	shared->i = (hr == S_OK) ? 0 : 43;
+	return NULL;
+}
+
+LIBTEST_API int STDCALL
+mono_test_cominterop_ccw_queryinterface_foreign_thread (MonoComObject *pUnk)
+{
+#ifdef WIN32
+	return 0;
+#else
+	pthread_t t;
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)malloc (sizeof (ccw_qi_shared_data));
+	if (!shared)
+		abort ();
+	shared->pUnk = pUnk;
+	shared->i = 1;
+	int res = pthread_create (&t, NULL, ccw_qi_foreign_thread, (void*)shared);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+	int result = shared->i;
+	free (shared);
+	return result;
+#endif
+}
+
+static void*
+ccw_itest_foreign_thread (void *arg)
+{
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)arg;
+	MonoComObject *pUnk = shared->pUnk;
+	int hr = pUnk->vtbl->SByteIn (pUnk, -100);
+	shared->i = (hr == S_OK) ? 0 : 12;
+	return NULL;
+}
+
+LIBTEST_API int STDCALL
+mono_test_cominterop_ccw_itest_foreign_thread (MonoComObject *pUnk)
+{
+#ifdef WIN32
+	return 0;
+#else
+	pthread_t t;
+	ccw_qi_shared_data *shared = (ccw_qi_shared_data *)malloc (sizeof (ccw_qi_shared_data));
+	if (!shared)
+		abort ();
+	shared->pUnk = pUnk;
+	shared->i = 1;
+	int res = pthread_create (&t, NULL, ccw_itest_foreign_thread, (void*)shared);
+	g_assert (res == 0);
+	pthread_join (t, NULL);
+	int result = shared->i;
+	free (shared);
+	return result;
+#endif
+}
+
+
 LIBTEST_API void STDCALL
 mono_test_MerpCrashSnprintf (void)
 {
@@ -7929,6 +8014,64 @@ LIBTEST_API void STDCALL
 mono_test_MerpCrashUnhandledExceptionHook (void)
 {
 	g_assert_not_reached ();
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashSignalTerm (void)
+{
+	raise (SIGTERM);
+}
+
+// for the rest of the signal tests, we use SIGTERM as a fallback
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashSignalAbrt (void)
+{
+#if defined (SIGABRT)
+	raise (SIGABRT);
+#else
+	raise (SIGTERM);
+#endif
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashSignalFpe (void)
+{
+#if defined (SIGFPE)
+	raise (SIGFPE);
+#else
+	raise (SIGTERM);
+#endif
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashSignalBus (void)
+{
+#if defined (SIGBUS)
+	raise (SIGBUS);
+#else
+	raise (SIGTERM);
+#endif
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashSignalSegv (void)
+{
+#if defined (SIGSEGV)
+	raise (SIGSEGV);
+#else
+	raise (SIGTERM);
+#endif
+}
+
+LIBTEST_API void STDCALL
+mono_test_MerpCrashSignalIll (void)
+{
+#if defined (SIGILL)
+	raise (SIGILL);
+#else
+	raise (SIGTERM);
+#endif
 }
 
 #ifdef __cplusplus

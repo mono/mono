@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 SUBDIRS = gc-descriptors . testing_gac assembly-load-reference llvmonly-mixed fullaot-mixed
 
@@ -287,6 +287,7 @@ TESTS_CS_SRC=		\
 	assembly-loadfile-bindingredirect.cs	\
 	assembly-loadfrom-bindingredirect.cs	\
 	assembly-loadfrom-simplename.cs	\
+	assembly-refonly-load-bytes-bindingredirect.cs \
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
@@ -384,6 +385,8 @@ TESTS_CS_SRC=		\
 	reflection.cs		\
 	interface.cs		\
 	interface-2.cs		\
+	dim-generic.cs		\
+	dim-issue-18917.cs		\
 	iface.cs		\
 	iface2.cs		\
 	iface3.cs		\
@@ -420,6 +423,8 @@ TESTS_CS_SRC=		\
 	delegate14.cs		\
 	delegate15.cs		\
 	delegate16.cs		\
+	delegate17.cs		\
+	delegate18.cs		\
 	largeexp.cs		\
 	largeexp2.cs		\
 	marshalbyref1.cs	\
@@ -685,6 +690,7 @@ TESTS_CS_SRC=		\
 	monitor.cs	\
 	generic-xdomain.2.cs	\
 	threadpool-exceptions7.cs	\
+	threadpool-exceptions8.cs \
 	cross-domain.cs	\
 	generic-unloading.2.cs	\
 	namedmutex-destroy-race.cs	\
@@ -719,7 +725,10 @@ TESTS_CS_SRC=		\
 	bug-10837.cs	\
 	bug-gh-9507.cs	\
 	async-generic-enum.cs \
-	last-error.cs
+	null-blob-main.cs \
+	last-error.cs \
+	rgctx-thread-static.cs \
+	bug-gh-17285.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1103,6 +1112,12 @@ PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw
 
 # see https://github.com/mono/mono/issues/9739
 PLATFORM_DISABLED_TESTS += verbose.exe
+
+if ENABLE_CXX
+# see https://github.com/mono/mono/issues/18827
+PLATFORM_DISABLED_TESTS += bug-10127.exe
+endif
+
 endif
 
 
@@ -1381,6 +1396,7 @@ PROFILE_DISABLED_TESTS += \
 	monitor.exe	\
 	generic-xdomain.2.exe	\
 	threadpool-exceptions7.exe	\
+	threadpool-exceptions8.exe	\
 	cross-domain.exe	\
 	generic-unloading.2.exe	\
 	appdomain-threadpool-unload.exe
@@ -1594,6 +1610,7 @@ PROFILE_DISABLED_TESTS += \
 	suspend-stress-test.exe \
 	thread6.exe \
 	threadpool-exceptions7.exe \
+	threadpool-exceptions8.exe	\
 	unhandled-exception-7.exe \
 	unhandled-exception-test-case.2.exe \
 	unload-appdomain-on-shutdown.exe \
@@ -2795,11 +2812,17 @@ safehandle.2.exe winx64structs.exe thunks.exe pinvoke3.exe pinvoke2.exe pinvoke-
 	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe bug-Xamarin-5278.exe \
 	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe install_eh_callback.exe: libtest.la
 
+EXTRA_DIST += event-il.il
+
 event-get.2.exe$(PLATFORM_AOT_SUFFIX): event-il.exe$(PLATFORM_AOT_SUFFIX)
 event-get.2.exe: event-il.exe
 
+EXTRA_DIST += module-cctor.il
+
 module-cctor-loader.2.exe$(PLATFORM_AOT_SUFFIX): module-cctor.exe$(PLATFORM_AOT_SUFFIX)
 module-cctor-loader.2.exe: module-cctor.exe
+
+EXTRA_DIST += TestingReferenceAssembly.cs TestingReferenceReferenceAssembly.cs
 
 reference-loader.exe$(PLATFORM_AOT_SUFFIX): TestingReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX) TestingReferenceReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX)
 reference-loader.exe: TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll
@@ -2987,8 +3010,11 @@ assembly-loadfile-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll asse
 
 assembly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-load-bytes-bindingredirect.exe.config
 
-EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
+assembly-refonly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-refonly-load-bytes-bindingredirect.exe.config
 
+
+EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
+EXTRA_DIST += assembly-refonly-load-bytes-bindingredirect.exe.config
 
 assembly-load-dir1/LibSimpleName.dll: assembly-load-dir1/LibSimpleName.cs
 	$(MKDIR_P) $(dir $@)
@@ -3081,6 +3107,8 @@ TESTS_UNHANDLED_EXCEPTION_255_SRC =	\
 	threadpool-exceptions2.cs	\
 	threadpool-exceptions5.cs
 
+EXTRA_DIST += $(TESTS_UNHANDLED_EXCEPTION_1_SRC) $(TESTS_UNHANDLED_EXCEPTION_255_SRC)
+
 TESTS_UNHANDLED_EXCEPTION_1=$(filter-out $(DISABLED_TESTS),$(TESTS_UNHANDLED_EXCEPTION_1_SRC:.cs=.exe))
 TESTS_UNHANDLED_EXCEPTION_255=$(filter-out $(DISABLED_TESTS),$(TESTS_UNHANDLED_EXCEPTION_255_SRC:.cs=.exe))
 
@@ -3156,6 +3184,8 @@ TESTS_STRESS_PROCESS_SRC=	\
 		process-stress-3.cs	\
 		process-leak.cs
 
+EXTRA_DIST += $(TESTS_STRESS_PROCESS_SRC)
+
 TESTS_STRESS_PROCESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_PROCESS_SRC:.cs=.exe))
 
 if FULL_AOT_TESTS
@@ -3175,7 +3205,7 @@ coreclr-gcstress:
 # Tests for the Mono lldb plugin
 EXTRA_DIST += test_lldb.py test-lldb.cs
 test-lldb: test-lldb.exe
-	python test_lldb.py $(JITTEST_PROG)
+	$(PYTHON) test_lldb.py $(JITTEST_PROG)
 
 if !ENABLE_MSVC_ONLY
 
@@ -3266,6 +3296,16 @@ internalsvisibleto-correctcase-2-sign2048.dll internalsvisibleto-wrongcase-2-sig
 EXTRA_DIST += internalsvisibleto-runtimetest.cs internalsvisibleto-compilertest.cs internalsvisibleto-library.cs internalsvisibleto-2048.snk
 
 EXTRA_DIST += weakattribute.cs
+
+EXTRA_DIST += null-blob-null-blob-assm.il null-blob-ref.il null-blob-tgt.cs
+
+null-blob-tgt.dll: null-blob-tgt.cs
+	$(MCS) -target:library -out:$@ $<
+
+null-blob-main.exe: null-blob-main.cs null-blob-tgt.dll null-blob-ref.dll null-blob-null-blob-assm.dll
+	$(MCS) -target:exe -out:$@ $<
+
+null-blob-main.exe$(PLATFORM_AOT_SUFFIX): null-blob-tgt.dll$(PLATFORM_AOT_SUFFIX) null-blob-ref.dll$(PLATFORM_AOT_SUFFIX) null-blob-null-blob-assm.dll$(PLATFORM_AOT_SUFFIX)
 
 # Contains copies of types which don't exist in the desktop profile so tests can use them
 Mono.Runtime.Testing.dll: weakattribute.cs

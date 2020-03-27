@@ -1719,7 +1719,7 @@ mono_create_tls_get (MonoCompile *cfg, MonoTlsKey key)
 
 	const MonoJitICallId jit_icall_id = mono_get_tls_key_to_jit_icall_id (key);
 
-	if (cfg->compile_aot) {
+	if (cfg->compile_aot && !cfg->llvm_only) {
 		MonoInst *addr;
 		/*
 		 * tls getters are critical pieces of code and we don't want to resolve them
@@ -2175,7 +2175,7 @@ direct_icalls_enabled (MonoCompile *cfg, MonoMethod *method)
 	if (cfg->gen_sdb_seq_points || cfg->disable_direct_icalls)
 		return FALSE;
 
-	if (method && mono_aot_direct_icalls_enabled_for_method (cfg, method))
+	if (method && cfg->compile_aot && mono_aot_direct_icalls_enabled_for_method (cfg, method))
 		return TRUE;
 
 	/* LLVM on amd64 can't handle calls to non-32 bit addresses */
@@ -2278,6 +2278,7 @@ emit_bad_image_failure (MonoCompile *cfg, MonoMethod *caller, MonoMethod *callee
 	mono_emit_jit_icall (cfg, mono_throw_bad_image, NULL);
 }
 
+// FIXME Consolidate the multiple functions named get_method_nofail.
 static MonoMethod*
 get_method_nofail (MonoClass *klass, const char *method_name, int num_params, int flags)
 {
@@ -2518,11 +2519,10 @@ mono_patch_info_rgctx_entry_new (MonoMemPool *mp, MonoMethod *method, gboolean i
 static MonoInst*
 emit_rgctx_fetch_inline (MonoCompile *cfg, MonoInst *rgctx, MonoJumpInfoRgctxEntry *entry)
 {
-	MonoInst *args [16];
 	MonoInst *call;
 
 	// FIXME: No fastpath since the slot is not a compile time constant
-	args [0] = rgctx;
+	MonoInst *args [2] = { rgctx };
 	EMIT_NEW_AOTCONST (cfg, args [1], MONO_PATCH_INFO_RGCTX_SLOT_INDEX, entry);
 	if (entry->in_mrgctx)
 		call = mono_emit_jit_icall (cfg, mono_fill_method_rgctx, args);
@@ -2893,6 +2893,7 @@ emit_class_init (MonoCompile *cfg, MonoClass *klass)
 		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, inited_reg, 0);
 		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBNE_UN, inited_bb);
 
+		cfg->cbb->out_of_line = TRUE;
 		mono_emit_jit_icall (cfg, mono_generic_class_init, &vtable_arg);
 
 		MONO_START_BB (cfg, inited_bb);
@@ -3215,7 +3216,6 @@ handle_alloc (MonoCompile *cfg, MonoClass *klass, gboolean for_box, int context_
 	if (context_used) {
 		MonoInst *data;
 		MonoRgctxInfoType rgctx_info;
-		MonoInst *iargs [2];
 		gboolean known_instance_size = !mini_is_gsharedvt_klass (klass);
 
 		MonoMethod *managed_alloc = mono_gc_get_managed_allocator (klass, for_box, known_instance_size);
@@ -3672,7 +3672,7 @@ handle_constrained_gsharedvt_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMe
 		}
 	}
 	if (supported) {
-		MonoInst *args [16];
+		MonoInst *args [5];
 
 		/*
 		 * This case handles calls to
@@ -4300,7 +4300,7 @@ mono_save_args (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **sp)
 		 */
 		temp = mono_compile_create_var (cfg, argtype, OP_LOCAL);
 		cfg->args [i] = temp;
-		/* This uses cfg->args [i] which is set by the preceeding line */
+		/* This uses cfg->args [i] which is set by the preceding line */
 		EMIT_NEW_ARGSTORE (cfg, store, i, *sp);
 		store->cil_code = sp [0]->cil_code;
 		sp++;
@@ -5249,12 +5249,11 @@ handle_call_res_devirt (MonoCompile *cfg, MonoMethod *cmethod, MonoInst *call_re
 		MonoType *param_type = mono_class_get_generic_class (cmethod->klass)->context.class_inst->type_argv [0];
 		MonoClass *inst;
 		MonoGenericContext ctx;
-		MonoType *args [16];
 		ERROR_DECL (error);
 
 		memset (&ctx, 0, sizeof (ctx));
 
-		args [0] = param_type;
+		MonoType *args [ ] = { param_type };
 		ctx.class_inst = mono_metadata_get_generic_inst (1, args);
 
 		inst = mono_class_inflate_generic_class_checked (mono_class_get_iequatable_class (), &ctx, error);
@@ -5692,7 +5691,7 @@ handle_constrained_call (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignat
 		if (mono_class_is_interface (cmethod->klass) && mono_class_is_ginst (cmethod->klass) &&
 		    (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT)) {
 			/*
-			 * The parent classes implement no generic interfaces, so the called method will be a vtype method, so no boxing neccessary.
+			 * The parent classes implement no generic interfaces, so the called method will be a vtype method, so no boxing necessary.
 			 */
 			/* If the method is not abstract, it's a default interface method, and we need to box */
 			need_box = FALSE;
@@ -5824,10 +5823,9 @@ emit_setret (MonoCompile *cfg, MonoInst *val)
 	} else {
 #ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 		if (COMPILE_SOFT_FLOAT (cfg) && !ret_type->byref && ret_type->type == MONO_TYPE_R4) {
-			MonoInst *iargs [1];
 			MonoInst *conv;
 
-			iargs [0] = val;
+			MonoInst *iargs [ ] = { val };
 			conv = mono_emit_jit_icall (cfg, mono_fload_r4_arg, iargs);
 			mono_arch_emit_setret (cfg, cfg->method, conv);
 		} else {
@@ -6005,6 +6003,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	gboolean emitted_funccall_seq_point = FALSE;
 
 	cfg->disable_inline = is_jit_optimizer_disabled (method);
+	cfg->current_method = method;
 
 	image = m_class_get_image (method->klass);
 
@@ -6048,6 +6047,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	if (cfg->prof_coverage) {
 		if (cfg->compile_aot)
 			g_error ("Coverage profiling is not supported with AOT.");
+
+		INLINE_FAILURE ("coverage profiling");
 
 		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
 	}
@@ -6132,8 +6133,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	cfg->cil_offset_to_bb = (MonoBasicBlock **)mono_mempool_alloc0 (cfg->mempool, sizeof (MonoBasicBlock*) * header->code_size);
 	cfg->cil_offset_to_bb_len = header->code_size;
-
-	cfg->current_method = method;
 
 	if (cfg->verbose_level > 2)
 		printf ("method to IR %s\n", mono_method_full_name (method, TRUE));
@@ -6291,6 +6290,28 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		cfg->cbb = start_bblock;
 		cfg->args = arg_array;
 		mono_save_args (cfg, sig, inline_args);
+	}
+
+	if (cfg->method == method && cfg->self_init && cfg->compile_aot && !COMPILE_LLVM (cfg)) {
+		MonoMethod *wrapper;
+		MonoInst *args [2];
+		int idx;
+
+		/*
+		 * Emit code to initialize this method by calling the init wrapper emitted by LLVM.
+		 * This is not efficient right now, but its only used for the methods which fail
+		 * LLVM compilation.
+		 * FIXME: Optimize this
+		 */
+		g_assert (!cfg->gshared);
+		wrapper = mono_marshal_get_aot_init_wrapper (AOT_INIT_METHOD);
+		/* Emit this into the entry bb so it comes before the GC safe point which depends on an inited GOT */
+		cfg->cbb = cfg->bb_entry;
+		idx = mono_aot_get_method_index (cfg->method);
+		EMIT_NEW_ICONST (cfg, args [0], idx);
+		/* Dummy */
+		EMIT_NEW_ICONST (cfg, args [1], 0);
+		mono_emit_method_call (cfg, wrapper, args, NULL);
 	}
 
 	/* FIRST CODE BLOCK */
@@ -6493,6 +6514,14 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				g_slist_free (class_inits);
 				class_inits = NULL;
 			}
+		}
+
+		/*
+		 * Methods with AggressiveInline flag could be inlined even if the class has a cctor.
+		 * This might create a branch so emit it in the first code bblock instead of into initlocals_bb.
+		 */
+		if (ip - header->code == 0 && cfg->method != method && cfg->compile_aot && (method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING) && mono_class_needs_cctor_run (method->klass, method)) {
+			emit_class_init (cfg, method->klass);
 		}
 
 		if (skip_dead_blocks) {
@@ -7303,6 +7332,49 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_TYPELOAD (cmethod->klass);
 			}
 
+			/* Inlining */
+			if ((cfg->opt & MONO_OPT_INLINE) && !inst_tailcall &&
+				(!virtual_ || !(cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) || MONO_METHOD_IS_FINAL (cmethod)) &&
+			    mono_method_check_inlining (cfg, cmethod)) {
+				int costs;
+				gboolean always = FALSE;
+
+				if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
+					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
+					/* Prevent inlining of methods that call wrappers */
+					INLINE_FAILURE ("wrapper call");
+					// FIXME? Does this write to cmethod impact tailcall_supported? Probably not.
+					// Neither pinvoke or icall are likely to be tailcalled.
+					cmethod = mono_marshal_get_native_wrapper (cmethod, TRUE, FALSE);
+					always = TRUE;
+				}
+
+				costs = inline_method (cfg, cmethod, fsig, sp, ip, cfg->real_offset, always);
+				if (costs) {
+					cfg->real_offset += 5;
+
+					if (!MONO_TYPE_IS_VOID (fsig->ret))
+						/* *sp is already set by inline_method */
+						ins = *sp;
+
+					inline_costs += costs;
+					// FIXME This is missed if the inlinee contains tail calls that
+					// would work, but not once inlined into caller.
+					// This matchingness could be a factor in inlining.
+					// i.e. Do not inline if it hurts tailcall, do inline
+					// if it helps and/or or is neutral, and helps performance
+					// using usual heuristics.
+					// Note that inlining will expose multiple tailcall opportunities
+					// so the tradeoff is not obvious. If we can tailcall anything
+					// like desktop, then this factor mostly falls away, except
+					// that inlining can affect tailcall performance due to
+					// signature match/mismatch.
+					if (inst_tailcall) // FIXME
+						mono_tailcall_print ("missed tailcall inline %s -> %s\n", method->name, cmethod->name);
+					goto call_end;
+				}
+			}
+
 			check_method_sharing (cfg, cmethod, &pass_vtable, &pass_mrgctx);
 
 			if (cfg->gshared) {
@@ -7510,49 +7582,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				goto call_end;
 			}
 			CHECK_CFG_ERROR;
-			
-			/* Inlining */
-			if ((cfg->opt & MONO_OPT_INLINE) &&
-				(!virtual_ || !(cmethod->flags & METHOD_ATTRIBUTE_VIRTUAL) || MONO_METHOD_IS_FINAL (cmethod)) &&
-			    mono_method_check_inlining (cfg, cmethod)) {
-				int costs;
-				gboolean always = FALSE;
-
-				if ((cmethod->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
-					(cmethod->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)) {
-					/* Prevent inlining of methods that call wrappers */
-					INLINE_FAILURE ("wrapper call");
-					// FIXME? Does this write to cmethod impact tailcall_supported? Probably not.
-					// Neither pinvoke or icall are likely to be tailcalled.
-					cmethod = mono_marshal_get_native_wrapper (cmethod, TRUE, FALSE);
-					always = TRUE;
-				}
-
-				costs = inline_method (cfg, cmethod, fsig, sp, ip, cfg->real_offset, always);
-				if (costs) {
-					cfg->real_offset += 5;
-
-					if (!MONO_TYPE_IS_VOID (fsig->ret))
-						/* *sp is already set by inline_method */
-						ins = *sp;
-
-					inline_costs += costs;
-					// FIXME This is missed if the inlinee contains tail calls that
-					// would work, but not once inlined into caller.
-					// This matchingness could be a factor in inlining.
-					// i.e. Do not inline if it hurts tailcall, do inline
-					// if it helps and/or or is neutral, and helps performance
-					// using usual heuristics.
-					// Note that inlining will expose multiple tailcall opportunities
-					// so the tradeoff is not obvious. If we can tailcall anything
-					// like desktop, then this factor mostly falls away, except
-					// that inlining can affect tailcall performance due to
-					// signature match/mismatch.
-					if (inst_tailcall) // FIXME
-						mono_tailcall_print ("missed tailcall inline %s -> %s\n", method->name, cmethod->name);
-					goto call_end;
-				}
-			}
 
 			/* Tail recursion elimination */
 			if (((cfg->opt & MONO_OPT_TAILCALL) || inst_tailcall) && il_op == MONO_CEE_CALL && cmethod == method && next_ip < end && next_ip [0] == CEE_RET && !vtable_arg) {
@@ -7630,16 +7659,15 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
 						g_assert (imt_arg);
-						/* This is not needed, as the trampoline code will pass one, and it might be passed in the same reg as the imt arg */
-						vtable_arg = NULL;
 					} else if (mono_class_is_interface (cmethod->klass) && !imt_arg) {
 						/* This can happen when we call a fully instantiated iface method */
 						g_assert (will_have_imt_arg);
 						imt_arg = emit_get_rgctx_method (cfg, context_used,
 														 cmethod, MONO_RGCTX_INFO_METHOD);
 						g_assert (imt_arg);
-						vtable_arg = NULL;
 					}
+					/* This is not needed, as the trampoline code will pass one, and it might be passed in the same reg as the imt arg */
+					vtable_arg = NULL;
 				}
 
 				if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && (!strcmp (cmethod->name, "Invoke")))
@@ -7744,11 +7772,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					MonoInst *val = sp [fsig->param_count];
 
 					if (val->type == STACK_OBJ) {
-						MonoInst *iargs [2];
-
-						iargs [0] = sp [0];
-						iargs [1] = val;
-
+						MonoInst *iargs [ ] = { sp [0], val };
 						mono_emit_jit_icall (cfg, mono_helper_stelem_ref_check, iargs);
 					}
 
@@ -7931,7 +7955,7 @@ calli_end:
 				/* return from inlined method */
 				/* 
 				 * If in_count == 0, that means the ret is unreachable due to
-				 * being preceeded by a throw. In that case, inline_method () will
+				 * being preceded by a throw. In that case, inline_method () will
 				 * handle setting the return value 
 				 * (test case: test_0_inline_throw ()).
 				 */
@@ -8938,6 +8962,157 @@ calli_end:
 				}
 			}
 
+			// Optimize
+			// 
+			//   box 
+			//   call object::GetType()
+			//
+			guint32 gettype_token;
+			if ((ip = il_read_call(next_ip, end, &gettype_token)) && ip_in_bb (cfg, cfg->cbb, ip)) {
+				MonoMethod* gettype_method = mini_get_method (cfg, method, gettype_token, NULL, generic_context);
+				if (!strcmp (gettype_method->name, "GetType") && gettype_method->klass == mono_defaults.object_class) {
+					mono_class_init_internal(klass);
+					if (mono_class_get_checked (m_class_get_image (klass), m_class_get_type_token (klass), error) == klass) {
+						if (cfg->compile_aot) {
+							EMIT_NEW_TYPE_FROM_HANDLE_CONST (cfg, ins, m_class_get_image (klass), m_class_get_type_token (klass), generic_context);
+						} else {
+							MonoType *klass_type = m_class_get_byval_arg (klass);
+							MonoReflectionType* reflection_type = mono_type_get_object_checked (cfg->domain, klass_type, cfg->error);
+							EMIT_NEW_PCONST (cfg, ins, reflection_type);
+						}
+						ins->type = STACK_OBJ;
+						ins->klass = mono_defaults.systemtype_class;
+						*sp++ = ins;					
+						next_ip = ip;
+						break;
+					}
+				}
+			}
+
+#ifdef ENABLE_NETCORE
+			// Optimize
+			// 
+			//    box
+			//    ldnull
+			//    ceq (or cgt.un)
+			//    
+			// to just
+			// 
+			//    ldc.i4.0 (or 1)
+			guchar* ldnull_ip;
+			if ((ldnull_ip = il_read_op (next_ip, end, CEE_LDNULL, MONO_CEE_LDNULL)) && ip_in_bb (cfg, cfg->cbb, ldnull_ip)) {
+				gboolean is_eq = FALSE, is_neq = FALSE;
+				if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CEQ)))
+					is_eq = TRUE;
+				else if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CGT_UN)))
+					is_neq = TRUE;
+
+				if ((is_eq || is_neq) && ip_in_bb (cfg, cfg->cbb, ip) && 
+					!mono_class_is_nullable (klass) && !mini_is_gsharedvt_klass (klass)) {
+					next_ip = ip;
+					il_op = (MonoOpcodeEnum) (is_eq ? CEE_LDC_I4_0 : CEE_LDC_I4_1);
+					EMIT_NEW_ICONST (cfg, ins, is_eq ? 0 : 1);
+					ins->type = STACK_I4;
+					*sp++ = ins;
+					break;
+				}
+			}
+			
+			guint32 isinst_tk = 0;
+			if ((ip = il_read_op_and_token (next_ip, end, CEE_ISINST, MONO_CEE_ISINST, &isinst_tk)) &&
+				ip_in_bb (cfg, cfg->cbb, ip)) {
+				MonoClass *isinst_class = mini_get_class (method, isinst_tk, generic_context);
+				if (!mono_class_is_nullable (klass) && !mono_class_is_nullable (isinst_class) &&
+					!mini_is_gsharedvt_variable_klass (klass) && !mini_is_gsharedvt_variable_klass (isinst_class) &&
+					!mono_class_is_open_constructed_type (m_class_get_byval_arg (klass)) &&
+					!mono_class_is_open_constructed_type (m_class_get_byval_arg (isinst_class))) {
+
+					// Optimize
+					// 
+					//    box
+					//    isinst [Type]
+					//    brfalse/brtrue
+					//    
+					// to
+					// 
+					//    ldc.i4.0 (or 1)
+					//    brfalse/brtrue
+					//
+					guchar* br_ip = NULL;
+					if ((br_ip = il_read_brtrue (ip, end, &target)) || (br_ip = il_read_brtrue_s (ip, end, &target)) ||
+						(br_ip = il_read_brfalse (ip, end, &target)) || (br_ip = il_read_brfalse_s (ip, end, &target))) {
+
+						gboolean isinst = mono_class_is_assignable_from_internal (isinst_class, klass);
+						next_ip = ip;
+						il_op = (MonoOpcodeEnum) (isinst ? CEE_LDC_I4_1 : CEE_LDC_I4_0);
+						EMIT_NEW_ICONST (cfg, ins, isinst ? 1 : 0);
+						ins->type = STACK_I4;
+						*sp++ = ins;
+						break;
+					}
+
+					// Optimize
+					// 
+					//    box
+					//    isinst [Type]
+					//    ldnull
+					//    ceq/cgt.un
+					//    
+					// to
+					// 
+					//    ldc.i4.0 (or 1)
+					//
+					guchar* ldnull_ip = NULL;
+					if ((ldnull_ip = il_read_op (ip, end, CEE_LDNULL, MONO_CEE_LDNULL)) && ip_in_bb (cfg, cfg->cbb, ldnull_ip)) {
+						gboolean is_eq = FALSE, is_neq = FALSE;
+						if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CEQ)))
+							is_eq = TRUE;
+						else if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CGT_UN)))
+							is_neq = TRUE;
+
+						if ((is_eq || is_neq) && ip_in_bb (cfg, cfg->cbb, ip) && 
+							!mono_class_is_nullable (klass) && !mini_is_gsharedvt_klass (klass)) {
+							gboolean isinst = mono_class_is_assignable_from_internal (isinst_class, klass);
+							next_ip = ip;
+							if (is_eq)
+								isinst = !isinst;
+							il_op = (MonoOpcodeEnum) (isinst ? CEE_LDC_I4_1 : CEE_LDC_I4_0);
+							EMIT_NEW_ICONST (cfg, ins, isinst ? 1 : 0);
+							ins->type = STACK_I4;
+							*sp++ = ins;
+							break;
+						}
+					}
+
+					// Optimize
+					// 
+					//    box
+					//    isinst [Type]
+					//    unbox.any
+					//    
+					// to
+					// 
+					//    nop
+					//
+					guchar* unbox_ip = NULL;
+					guint32 unbox_token = 0;
+					if ((unbox_ip = il_read_unbox_any (ip, end, &unbox_token)) && ip_in_bb (cfg, cfg->cbb, unbox_ip)) {
+						MonoClass *unbox_klass = mini_get_class (method, unbox_token, generic_context);
+						CHECK_TYPELOAD (unbox_klass);
+						if (!mono_class_is_nullable (unbox_klass) &&
+							!mini_is_gsharedvt_klass (unbox_klass) &&
+							klass == isinst_class &&
+							klass == unbox_klass)
+						{
+							*sp++ = val;
+							next_ip = unbox_ip;
+							break;
+						}
+					}
+				}
+			}
+#endif
+
 			gboolean is_true;
 
 			// FIXME: LLVM can't handle the inconsistent bb linking
@@ -9354,7 +9529,8 @@ calli_end:
 				thread_ins = NULL;
 
 			/* Generate IR to compute the field address */
-			if (is_special_static && ((gsize)addr & 0x80000000) == 0 && thread_ins && !(cfg->opt & MONO_OPT_SHARED) && !context_used) {
+			if (is_special_static && ((gsize)addr & 0x80000000) == 0 && thread_ins && !(cfg->opt & MONO_OPT_SHARED) &&
+				!(context_used && cfg->gsharedvt && mini_is_gsharedvt_klass (klass))) {
 				/*
 				 * Fast access to TLS data
 				 * Inline version of get_thread_static_data () in
@@ -9363,17 +9539,20 @@ calli_end:
 				guint32 offset;
 				int idx, static_data_reg, array_reg, dreg;
 
-				if (context_used && cfg->gsharedvt && mini_is_gsharedvt_klass (klass))
-					GSHAREDVT_FAILURE (il_op);
-
 				static_data_reg = alloc_ireg (cfg);
 				MONO_EMIT_NEW_LOAD_MEMBASE (cfg, static_data_reg, thread_ins->dreg, MONO_STRUCT_OFFSET (MonoInternalThread, static_data));
 
-				if (cfg->compile_aot) {
+				if (cfg->compile_aot || context_used) {
 					int offset_reg, offset2_reg, idx_reg;
 
 					/* For TLS variables, this will return the TLS offset */
-					EMIT_NEW_SFLDACONST (cfg, ins, field);
+					if (context_used) {
+						MonoInst *addr_ins = emit_get_rgctx_field (cfg, context_used, field, MONO_RGCTX_INFO_FIELD_OFFSET);
+						/* The value is offset by 1 */
+						EMIT_NEW_BIALU_IMM (cfg, ins, OP_PSUB_IMM, addr_ins->dreg, addr_ins->dreg, 1);
+					} else {
+						EMIT_NEW_SFLDACONST (cfg, ins, field);
+					}
 					offset_reg = ins->dreg;
 					MONO_EMIT_NEW_BIALU_IMM (cfg, OP_IAND_IMM, offset_reg, offset_reg, 0x7fffffff);
 					idx_reg = alloc_ireg (cfg);
@@ -10023,6 +10202,24 @@ field_access_end:
 					MonoClass *tclass = mono_class_from_mono_type_internal ((MonoType *)handle);
 
 					mono_class_init_internal (tclass);
+
+					// Optimize to true/false if next instruction is `call instance bool Type::get_IsValueType()`
+					guchar *is_vt_ip;
+					guint32 is_vt_token;
+					if ((is_vt_ip = il_read_call (next_ip + 5, end, &is_vt_token)) && ip_in_bb (cfg, cfg->cbb, is_vt_ip)) {
+						MonoMethod *is_vt_method = mini_get_method (cfg, method, is_vt_token, NULL, generic_context);
+						if (is_vt_method->klass == mono_defaults.systemtype_class &&
+							!mini_is_gsharedvt_variable_klass (tclass) &&
+							!mono_class_is_open_constructed_type (m_class_get_byval_arg (tclass)) &&
+							!strcmp ("get_IsValueType", is_vt_method->name)) {
+							next_ip = is_vt_ip;
+							EMIT_NEW_ICONST (cfg, ins, m_class_is_valuetype (tclass) ? 1 : 0);
+							ins->type = STACK_I4;
+							*sp++ = ins;
+							break;
+						}
+					}
+
 					if (context_used) {
 						ins = mini_emit_get_rgctx_klass (cfg, context_used,
 							tclass, MONO_RGCTX_INFO_REFLECTION_TYPE);
@@ -10705,6 +10902,13 @@ mono_ldptr:
 
 			*sp++ = ins;
 			break;
+		case MONO_CEE_MONO_GET_SP: {
+			/* Used by COOP only, so this is good enough */
+			MonoInst *var = mono_compile_create_var (cfg, mono_get_int_type (), OP_LOCAL);
+			EMIT_NEW_VARLOADA (cfg, ins, var, NULL);
+			*sp++ = ins;
+			break;
+		}
 
 		case MONO_CEE_ARGLIST: {
 			/* somewhat similar to LDTOKEN */
@@ -11713,6 +11917,7 @@ op_to_op_src2_membase (MonoCompile *cfg, int load_opcode, int opcode)
 int
 mono_op_to_op_imm_noemul (int opcode)
 {
+MONO_DISABLE_WARNING(4065) // switch with default but no case
 	switch (opcode) {
 #if SIZEOF_REGISTER == 4 && !defined(MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS)
 	case OP_LSHR:
@@ -11734,6 +11939,7 @@ mono_op_to_op_imm_noemul (int opcode)
 	default:
 		return mono_op_to_op_imm (opcode);
 	}
+MONO_RESTORE_WARNING
 }
 
 /**
@@ -12736,7 +12942,7 @@ NOTES
 
 - When to decompose opcodes:
   - earlier: this makes some optimizations hard to implement, since the low level IR
-  no longer contains the neccessary information. But it is easier to do.
+  no longer contains the necessary information. But it is easier to do.
   - later: harder to implement, enables more optimizations.
 - Branches inside bblocks:
   - created when decomposing complex opcodes. 

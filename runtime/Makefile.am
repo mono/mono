@@ -195,7 +195,7 @@ PLATFORM_PATH_SEPARATOR = :
 endif
 
 # assemblies which are excluded from testing in mcs-compileall below
-VERIFY_TESTS_FILTER = System.Runtime.CompilerServices.Unsafe.dll
+VERIFY_TESTS_FILTER = System.Runtime.CompilerServices.Unsafe.dll nunitlite.dll
 
 if HOST_WIN32
 # Mono.WebBrowser.dll fails to verify on Windows

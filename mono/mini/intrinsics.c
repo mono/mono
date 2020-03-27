@@ -295,6 +295,13 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 
 	if (in_corlib && !strcmp (m_class_get_name (cmethod->klass), "Buffer")) {
 		if (!strcmp (cmethod->name, "Memmove") && fsig->param_count == 3 && fsig->params [0]->type == MONO_TYPE_PTR && fsig->params [1]->type == MONO_TYPE_PTR) {
+			MonoBasicBlock *end_bb;
+			NEW_BBLOCK (cfg, end_bb);
+
+			// do nothing if len == 0 (even if src or dst are nulls)
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [2]->dreg, 0);
+			MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, end_bb);
+
 			// throw NRE if src or dst are nulls
 			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_COMPARE_IMM, -1, args [0]->dreg, 0);
 			MONO_EMIT_NEW_COND_EXC (cfg, EQ, "NullReferenceException");
@@ -306,6 +313,7 @@ llvm_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			ins->sreg2 = args [1]->dreg; // i1* src
 			ins->sreg3 = args [2]->dreg; // i32/i64 len
 			MONO_ADD_INS (cfg->cbb, ins);
+			MONO_START_BB (cfg, end_bb);
 		}
 	}
 
@@ -658,7 +666,12 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	MonoInst *ins = NULL;
 	MonoClass *runtime_helpers_class = mono_class_get_runtime_helpers_class ();
 
-	const char* cmethod_klass_name_space = m_class_get_name_space (cmethod->klass);
+	const char* cmethod_klass_name_space;
+	if (m_class_get_nested_in (cmethod->klass))
+		cmethod_klass_name_space = m_class_get_name_space (m_class_get_nested_in (cmethod->klass));
+	else
+		cmethod_klass_name_space = m_class_get_name_space (cmethod->klass);
+
 	const char* cmethod_klass_name = m_class_get_name (cmethod->klass);
 	MonoImage *cmethod_klass_image = m_class_get_image (cmethod->klass);
 	gboolean in_corlib = cmethod_klass_image == mono_defaults.corlib;
@@ -741,7 +754,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 			int dreg = alloc_ireg (cfg);
 			int t1 = alloc_ireg (cfg);
 	
-			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHL_IMM, t1, args [0]->dreg, 3);
+			MONO_EMIT_NEW_BIALU_IMM (cfg, OP_SHR_IMM, t1, args [0]->dreg, 3);
 			EMIT_NEW_BIALU_IMM (cfg, ins, OP_MUL_IMM, dreg, t1, 2654435761u);
 			ins->type = STACK_I4;
 
@@ -1036,7 +1049,7 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 					ins->type = STACK_R8;
 					break;
 				default:
-					g_assert (mini_type_is_reference (fsig->params [0]));
+					g_assert (is_ref);
 					ins->dreg = mono_alloc_ireg_ref (cfg);
 					ins->type = STACK_OBJ;
 					break;
@@ -1173,26 +1186,42 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 				ins->type = (opcode == OP_ATOMIC_ADD_I4) ? STACK_I4 : STACK_I8;
 				MONO_ADD_INS (cfg->cbb, ins);
 			}
-		} else if (strcmp (cmethod->name, "Add") == 0 && fsig->param_count == 2) {
+		} else if (fsig->param_count == 2 &&
+					((strcmp (cmethod->name, "Add") == 0) ||
+					 (strcmp (cmethod->name, "And") == 0) ||
+					 (strcmp (cmethod->name, "Or") == 0))) {
 			guint32 opcode = 0;
+			guint32 opcode_i4 = 0;
+			guint32 opcode_i8 = 0;
+
+			if (strcmp (cmethod->name, "Add") == 0) {
+				opcode_i4 = OP_ATOMIC_ADD_I4;
+				opcode_i8 = OP_ATOMIC_ADD_I8;
+			} else if (strcmp (cmethod->name, "And") == 0) {
+				opcode_i4 = OP_ATOMIC_AND_I4;
+				opcode_i8 = OP_ATOMIC_AND_I8;
+			} else if (strcmp (cmethod->name, "Or") == 0) {
+				opcode_i4 = OP_ATOMIC_OR_I4;
+				opcode_i8 = OP_ATOMIC_OR_I8;
+			} else {
+				g_assert_not_reached ();
+			}
 
 			if (fsig->params [0]->type == MONO_TYPE_I4) {
-				opcode = OP_ATOMIC_ADD_I4;
+				opcode = opcode_i4;
 				cfg->has_atomic_add_i4 = TRUE;
+			} else if (fsig->params [0]->type == MONO_TYPE_I8 && SIZEOF_REGISTER == 8) {
+				opcode = opcode_i8;
 			}
-#if SIZEOF_REGISTER == 8
-			else if (fsig->params [0]->type == MONO_TYPE_I8)
-				opcode = OP_ATOMIC_ADD_I8;
-#endif
-			if (opcode) {
-				if (!mono_arch_opcode_supported (opcode))
-					return NULL;
+
+			// For now, only Add is supported in non-LLVM back-ends
+			if (opcode && (COMPILE_LLVM (cfg) || mono_arch_opcode_supported (opcode))) {
 				MONO_INST_NEW (cfg, ins, opcode);
 				ins->dreg = mono_alloc_ireg (cfg);
 				ins->inst_basereg = args [0]->dreg;
 				ins->inst_offset = 0;
 				ins->sreg2 = args [1]->dreg;
-				ins->type = (opcode == OP_ATOMIC_ADD_I4) ? STACK_I4 : STACK_I8;
+				ins->type = (opcode == opcode_i4) ? STACK_I4 : STACK_I8;
 				MONO_ADD_INS (cfg->cbb, ins);
 			}
 		}
@@ -1898,10 +1927,10 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	}
 
 #ifdef ENABLE_NETCORE
-	// Return false for IsSupported for all types in System.Runtime.Intrinsics.X86 
-	// as we don't support them now
+	// Return false for IsSupported for all types in System.Runtime.Intrinsics.* 
+	// if it's not handled in mono_emit_simd_intrinsics
 	if (in_corlib && 
-		!strcmp ("System.Runtime.Intrinsics.X86", cmethod_klass_name_space) && 
+		!strncmp ("System.Runtime.Intrinsics", cmethod_klass_name_space, 25) && 
 		!strcmp (cmethod->name, "get_IsSupported")) {
 		EMIT_NEW_ICONST (cfg, ins, 0);
 		ins->type = STACK_I4;

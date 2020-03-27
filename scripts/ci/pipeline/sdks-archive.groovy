@@ -50,21 +50,25 @@ parallel (
             }
         }
     },
-    "iOS (Xcode 11.2)": {
+    "iOS (Xcode 11.3)": {
         throttle(['provisions-ios-toolchain']) {
-            node ("xcode112") {
-                archive ("ios", "release", "Darwin", "", "", "", "xcode112")
+            node ("xcode113") {
+                archive ("ios", "release", "Darwin", "", "", "", "xcode113")
             }
         }
     },
-    "Mac (Xcode 11.2)": {
+    "Mac (Xcode 11.3)": {
         throttle(['provisions-mac-toolchain']) {
-            node ("xcode112") {
-                archive ("mac", "release", "Darwin", "", "", "", "xcode112")
+            node ("xcode113") {
+                archive ("mac", "release", "Darwin", "", "", "", "xcode113")
             }
         }
     },
     "WASM Linux": {
+        if (monoBranch != 'master') {
+            echo "Skipping WASM build on non-master branch."
+            return
+        }
         throttle(['provisions-wasm-toolchain']) {
             node ("ubuntu-1804-amd64") {
                 archive ("wasm", "release", "Linux", "ubuntu-1804-amd64-preview", "npm dotnet-sdk-2.1 nuget openjdk-8-jre python3-pip")

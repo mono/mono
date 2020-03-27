@@ -8,7 +8,8 @@ using System.IO;
 using System.Text;
 using System.Collections.Generic;
 
-using WsProxy;
+using Microsoft.Extensions.Logging;
+using WebAssembly.Net.Debugging;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -42,6 +43,12 @@ namespace DebuggerTests
 			eventListeners[evtName] = cb;
 		}
 
+		void FailAllWaitersWithException (JObject exception)
+		{
+			foreach (var tcs in notifications.Values)
+				tcs.SetException (new ArgumentException (exception.ToString ()));
+		}
+
 		async Task OnMessage(string method, JObject args, CancellationToken token)
 		{
 			//System.Console.WriteLine("OnMessage " + method + args);
@@ -58,15 +65,19 @@ namespace DebuggerTests
 			}
 			if (eventListeners.ContainsKey (method))
 				await eventListeners[method](args, token);
+			else if (String.Compare (method, "Runtime.exceptionThrown") == 0)
+				FailAllWaitersWithException (args);
 		}
 
-		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null) {
+		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null, TimeSpan? span = null) {
 			using (var cts = new CancellationTokenSource ()) {
-				cts.CancelAfter (60 * 1000); //tests have 1 minute to complete
-				var uri = new Uri ("ws://localhost:9300/launch-chrome-and-connect");
-				using (var client = new InspectorClient ()) {
+				cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
+				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
+				using var loggerFactory = LoggerFactory.Create(
+					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
 					await client.Connect (uri, OnMessage, async token => {
-						Task[] init_cmds = new Task [] {
+						Task[] init_cmds = {
 							client.SendCommand ("Profiler.enable", null, token),
 							client.SendCommand ("Runtime.enable", null, token),
 							client.SendCommand ("Debugger.enable", null, token),
@@ -81,13 +92,17 @@ namespace DebuggerTests
 							Console.WriteLine("await cb(client, token)");
 							await cb(client, token);
 						}
+
 					}, cts.Token);
+					await client.Close (cts.Token);
 				}
 			}
 		}
 	}
 
 	public class DebuggerTestBase {
+		protected Task startTask;
+
 		static string FindTestPath () {
 			//FIXME how would I locate it otherwise?
 			var test_path = Environment.GetEnvironmentVariable ("TEST_SUITE_PATH");
@@ -105,19 +120,20 @@ namespace DebuggerTests
 			throw new Exception ("Missing TEST_SUITE_PATH env var and could not guess path from CWD");
 		}
 
-		static string[] PROBE_LIST = new[] {
+		static string[] PROBE_LIST = {
 			"/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
 			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+			"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
 			"/usr/bin/chromium",
 			"/usr/bin/chromium-browser",
 		};
 		static string chrome_path;
 
-
-		static String FindChromePath ()
+		static string FindChromePath ()
 		{
 			if (chrome_path != null)
 				return chrome_path;
+
 			foreach (var s in PROBE_LIST){
 				if (File.Exists (s)) {
 					chrome_path = s;
@@ -128,8 +144,11 @@ namespace DebuggerTests
 			throw new Exception ("Could not find an installed Chrome to use");
 		}
 
-		public DebuggerTestBase () {
-			WsProxy.TestHarnessProxy.Start (FindChromePath (), FindTestPath (), "debugger-driver.html");
+		public DebuggerTestBase (string driver = "debugger-driver.html") {
+			startTask = TestHarnessProxy.Start (FindChromePath (), FindTestPath (), driver);
 		}
+
+		public Task Ready ()
+			=> startTask;
 	}
 } 

@@ -307,28 +307,12 @@ namespace System.Windows.Forms
 		#region Internal Methods
 		internal override Size GetPreferredSizeCore (Size proposedSize)
 		{
-			Size retsize = new Size (Padding.Left, Padding.Top);
-
-			foreach (Control child in Controls) {
-				if (child.Dock == DockStyle.Fill) {
-					if (child.Bounds.Right > retsize.Width)
-						retsize.Width = child.Bounds.Right;
-				} else if (child.Dock != DockStyle.Top && child.Dock != DockStyle.Bottom && (child.Bounds.Right + child.Margin.Right) > retsize.Width)
-					retsize.Width = child.Bounds.Right + child.Margin.Right;
-
-				if (child.Dock == DockStyle.Fill) {
-					if (child.Bounds.Bottom > retsize.Height)
-						retsize.Height = child.Bounds.Bottom;
-				} else if (child.Dock != DockStyle.Left && child.Dock != DockStyle.Right && (child.Bounds.Bottom + child.Margin.Bottom) > retsize.Height)
-					retsize.Height = child.Bounds.Bottom + child.Margin.Bottom;
-			}
-
-			retsize.Width += Padding.Right;
-			retsize.Height += Padding.Bottom;
-			
-			retsize.Height += this.Font.Height;
-			
-			return retsize;
+			// (Copied from Panel)
+			// Translating 0, 0 from ClientSize to actual Size tells us how much space
+			// is required for the borders.
+			Size borderSize = SizeFromClientSize(Size.Empty);
+			Size totalPadding = borderSize + Padding.Size;
+			return LayoutEngine.GetPreferredSize(this, proposedSize - totalPadding) + totalPadding;
 		}
 		#endregion
 

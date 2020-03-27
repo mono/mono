@@ -40,6 +40,8 @@ namespace System.Windows.Forms.Theming.Default
 
 			label.DrawImage (dc, label.Image, rect, label.ImageAlign);
 
+			rect.Height = Math.Max(rect.Height, label.Font.Height);
+
 			if (label.Enabled) {
 				dc.DrawString (label.Text, label.Font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (label.ForeColor),

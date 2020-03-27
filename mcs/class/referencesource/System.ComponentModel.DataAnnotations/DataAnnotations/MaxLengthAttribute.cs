@@ -60,15 +60,15 @@ namespace System.ComponentModel.DataAnnotations {
             if (value == null) {
                 return true;
             }
+
+            if (value is string str) {
+                length = str.Length;
+            }
+            else if (CountPropertyHelper.TryGetCount(value, out var count)) {
+                length = count;
+            }
             else {
-                var str = value as string;
-                if (str != null) {
-                    length = str.Length;
-                }
-                else {
-                    // We expect a cast exception if a non-{string|array} property was passed in.
-                    length = ((Array)value).Length;
-                }
+                throw new InvalidCastException(String.Format(DataAnnotationsResources.LengthAttribute_InvalidValueType, value.GetType()));
             }
 
             return MaxAllowableLength == Length || length <= Length;

@@ -434,7 +434,6 @@ Disables compilation for the SSA optimization
 framework, and the various SSA-based optimizations.
 
 * `--enable-llvm`
-* `--enable-loadedllvm`
 
   * This enables the use of LLVM as a code generation engine
 for Mono.  The LLVM code generator and optimizer will be 
@@ -446,10 +445,6 @@ full details and up-to-date information on this feature.
 
   * You will need to have an LLVM built that Mono can link
 against.
-
-  * The `--enable-loadedllvm` variant will make the LLVM backend
-into a runtime-loadable module instead of linking it directly
-into the main mono binary.
 
 * `--enable-big-arrays` - Enable use of arrays with indexes larger
 than Int32.MaxValue.

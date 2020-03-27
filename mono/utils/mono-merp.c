@@ -40,6 +40,7 @@
 #include <mono/utils/json.h>
 #include <mono/utils/mono-state.h>
 #include <utils/mono-threads-debug.h>
+#include <utils/mono-signal-handler.h>
 
 static const char *
 kernel_version_string (void)
@@ -144,7 +145,8 @@ typedef enum
 	MERP_EXC_SIGFPE = 7 ,
 	MERP_EXC_SIGTRAP = 8,
 	MERP_EXC_SIGKILL = 9,
-	MERP_EXC_HANG  = 10
+	MERP_EXC_HANG  = 10,
+	MERP_EXC_MANAGED_EXCEPTION = 11
 } MERPExcType;
 
 typedef struct {
@@ -261,6 +263,8 @@ get_merp_exctype (MERPExcType exc)
 			return "0x04000000";
 		case MERP_EXC_HANG: 
 			return "0x02000000";
+		case MERP_EXC_MANAGED_EXCEPTION:
+			return "0x05000000";
 		case MERP_EXC_NONE:
 			// Exception type documented as optional, not optional
 			g_assert_not_reached ();
@@ -272,22 +276,31 @@ get_merp_exctype (MERPExcType exc)
 static MERPExcType
 parse_exception_type (const char *signal)
 {
-	if (!strcmp (signal, "SIGSEGV"))
+	if (!strcmp (signal, mono_get_signame (SIGSEGV)))
 		return MERP_EXC_SIGSEGV;
 
-	if (!strcmp (signal, "SIGFPE"))
+	if (!strcmp (signal, mono_get_signame (SIGFPE)))
 		return MERP_EXC_SIGFPE;
 
-	if (!strcmp (signal, "SIGILL"))
+	if (!strcmp (signal, mono_get_signame (SIGILL)))
 		return MERP_EXC_SIGILL;
 
-	if (!strcmp (signal, "SIGABRT"))
+	if (!strcmp (signal, mono_get_signame (SIGABRT)))
 		return MERP_EXC_SIGABRT;
+
+	if (!strcmp (signal, mono_get_signame (SIGTRAP)))
+		return MERP_EXC_SIGTRAP;
+
+	if (!strcmp (signal, mono_get_signame (SIGSYS)))
+		return MERP_EXC_SIGSYS;
 
 	// Force quit == hang?
 	// We need a default for this
-	if (!strcmp (signal, "SIGTERM"))
+	if (!strcmp (signal, mono_get_signame (SIGTERM)))
 		return MERP_EXC_HANG;
+
+	if (!strcmp (signal, "MANAGED_EXCEPTION"))
+		return MERP_EXC_MANAGED_EXCEPTION;
 
 	// FIXME: There are no other such signal
 	// strings passed to mono_handle_native_crash at the
@@ -311,10 +324,10 @@ mono_merp_write_params (MERPStruct *merp)
 	g_async_safe_fprintf(handle, "ApplicationPath: %s\n", merp->servicePathArg);
 	g_async_safe_fprintf(handle, "BlameModuleName: %s\n", merp->moduleName);
 	g_async_safe_fprintf(handle, "BlameModuleVersion: %s\n", merp->moduleVersion);
-	g_async_safe_fprintf(handle, "BlameModuleOffset: 0x%llx\n", (unsigned long long)merp->moduleOffset);
+	g_async_safe_fprintf(handle, "BlameModuleOffset: 0x%" PRIx64 "\n", (guint64)merp->moduleOffset);
 	g_async_safe_fprintf(handle, "ExceptionType: %s\n", get_merp_exctype (merp->exceptionArg));
-	g_async_safe_fprintf(handle, "StackChecksum: 0x%llx\n", merp->hashes.offset_free_hash);
-	g_async_safe_fprintf(handle, "StackHash: 0x%llx\n", merp->hashes.offset_rich_hash);
+	g_async_safe_fprintf(handle, "StackChecksum: 0x%" PRIx64 "\n", (guint64)merp->hashes.offset_free_hash);
+	g_async_safe_fprintf(handle, "StackHash: 0x%" PRIx64 "\n", (guint64)merp->hashes.offset_rich_hash);
 
 	// Provided by icall
 	g_async_safe_fprintf(handle, "OSVersion: %s\n", merp->osVersion);
@@ -447,8 +460,8 @@ mono_merp_write_fingerprint_payload (const char *non_param_data, const MERPStruc
 	g_async_safe_fprintf(handle, "\t\t\"BlameModuleVersion\" : \"%s\",\n", merp->moduleVersion);
 	g_async_safe_fprintf(handle, "\t\t\"BlameModuleOffset\" : \"0x%lx\",\n", merp->moduleOffset);
 	g_async_safe_fprintf(handle, "\t\t\"ExceptionType\" : \"%s\",\n", get_merp_exctype (merp->exceptionArg));
-	g_async_safe_fprintf(handle, "\t\t\"StackChecksum\" : \"0x%llx\",\n", merp->hashes.offset_free_hash);
-	g_async_safe_fprintf(handle, "\t\t\"StackHash\" : \"0x%llx\",\n", merp->hashes.offset_rich_hash);
+	g_async_safe_fprintf(handle, "\t\t\"StackChecksum\" : \"0x%" PRIx64 "\",\n", (guint64)merp->hashes.offset_free_hash);
+	g_async_safe_fprintf(handle, "\t\t\"StackHash\" : \"0x%" PRIx64 "\",\n", (guint64)merp->hashes.offset_rich_hash);
 	g_async_safe_fprintf(handle, "\t\t\"Extra\" : \n\t\t{\n");
 
 	for (GSList *cursor = merp->annotations; cursor; cursor = cursor->next) {
@@ -505,13 +518,13 @@ mono_write_wer_template (MERPStruct *merp)
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->moduleVersion, i);
 	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>0x%zx</Parameter%d>\n", i, merp->moduleOffset, i);
+	g_async_safe_fprintf(handle, "<Parameter%d>0x%" G_GSIZE_FORMAT "x</Parameter%d>\n", i, merp->moduleOffset, i);
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, get_merp_exctype (merp->exceptionArg), i);
 	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>0x%llx</Parameter%d>\n", i, merp->hashes.offset_free_hash, i);
+	g_async_safe_fprintf(handle, "<Parameter%d>0x%" PRIx64 "</Parameter%d>\n", i, merp->hashes.offset_free_hash, i);
 	i++;
-	g_async_safe_fprintf(handle, "<Parameter%d>0x%llx</Parameter%d>\n", i, merp->hashes.offset_rich_hash, i);
+	g_async_safe_fprintf(handle, "<Parameter%d>0x%" PRIx64 "</Parameter%d>\n", i, merp->hashes.offset_rich_hash, i);
 	i++;
 	g_async_safe_fprintf(handle, "<Parameter%d>%s</Parameter%d>\n", i, merp->osVersion, i);
 	i++;

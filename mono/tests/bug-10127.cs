@@ -37,7 +37,7 @@ namespace WeakReferenceTest
 
 		Random rand = new Random(seed);
 
-		bool alive;
+		volatile bool alive;
 		Thread thread;
 
 		public void Start()
@@ -70,17 +70,6 @@ namespace WeakReferenceTest
 			alive = false;
 		}
 
-	}
-
-	static class RandHelper {
-		public static string RandString(this Random rand, int len)
-		{
-			char[] table = new char[len];
-			for (int idx = 0; idx < len; idx++) {
-				table[idx] = (char) ('a' + idx);
-			}
-			return new string(table, 0, len);
-		}
 	}
 
 	class MainClass

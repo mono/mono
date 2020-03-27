@@ -427,6 +427,8 @@ struct _MonoImage {
 	 * references is initialized only by using the mono_assembly_open
 	 * function, and not by using the lowlevel mono_image_open.
 	 *
+	 * Protected by the image lock.
+	 *
 	 * It is NULL terminated.
 	 */
 	MonoAssembly **references;
@@ -907,6 +909,8 @@ mono_image_load_metadata (MonoImage *image, MonoCLIImageInfo *iinfo);
 
 const char*
 mono_metadata_string_heap_checked (MonoImage *meta, uint32_t table_index, MonoError *error);
+const char *
+mono_metadata_blob_heap_null_ok (MonoImage *meta, guint32 index);
 const char*
 mono_metadata_blob_heap_checked (MonoImage *meta, uint32_t table_index, MonoError *error);
 gboolean
@@ -1133,7 +1137,7 @@ mono_image_set_description (MonoImageSet *);
 MonoImageSet *
 mono_find_image_set_owner (void *ptr);
 
-MONO_API void
+void
 mono_loader_register_module (const char *name, MonoDl *module);
 
 gboolean
@@ -1143,10 +1147,10 @@ void
 mono_ginst_get_desc (GString *str, MonoGenericInst *ginst);
 
 void
-mono_loader_set_strict_strong_names (gboolean enabled);
+mono_loader_set_strict_assembly_name_check (gboolean enabled);
 
 gboolean
-mono_loader_get_strict_strong_names (void);
+mono_loader_get_strict_assembly_name_check (void);
 
 gboolean
 mono_type_in_image (MonoType *type, MonoImage *image);
@@ -1219,6 +1223,12 @@ MonoAssemblyLoadContext *
 mono_assembly_get_alc (MonoAssembly *assm)
 {
 	return mono_image_get_alc (assm->image);
+}
+
+static inline MonoType*
+mono_signature_get_return_type_internal (MonoMethodSignature *sig)
+{
+	return sig->ret;
 }
 
 /**

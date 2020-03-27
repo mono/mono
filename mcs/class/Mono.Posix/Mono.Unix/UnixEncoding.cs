@@ -311,8 +311,8 @@ public class UnixEncoding : Encoding
 
 	public unsafe override int GetBytes(char* chars, int charCount, byte* bytes, int byteCount)
 	{
-		if (bytes == null || chars == null)
-			throw new ArgumentNullException (bytes == null ? "bytes" : "chars");
+		if ((bytes == null && byteCount != 0) || (chars == null && charCount != 0))
+			throw new ArgumentNullException ((bytes == null && byteCount != 0) ? "bytes" : "chars");
 
 		if (charCount < 0 || byteCount < 0)
 			throw new ArgumentOutOfRangeException (charCount < 0 ? "charCount" : "byteCount");

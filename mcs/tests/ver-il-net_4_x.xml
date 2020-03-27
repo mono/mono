@@ -53205,7 +53205,7 @@
   <test name="test-950.cs">
     <type name="B">
       <method name="Void Main()" attrs="150">
-        <size>26</size>
+        <size>23</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -73855,7 +73855,7 @@
   <test name="test-ref-07.cs">
     <type name="TestMain">
       <method name="Void Main()" attrs="150">
-        <size>7</size>
+        <size>6</size>
       </method>
     </type>
     <type name="Test">
@@ -74509,13 +74509,13 @@
   </test>
   <test name="test-tuple-11.cs">
     <type name="Program">
-	  <method name="Int32 Main()" attrs="150">
-	    <size>70</size>
-	  </method>
-	  <method name="Void .ctor()" attrs="6278">
+      <method name="Int32 Main()" attrs="150">
+        <size>70</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
         <size>7</size>
-	  </method>
-	</type>
+      </method>
+    </type>
   </test>
   <test name="test-var-01.cs">
     <type name="Test">

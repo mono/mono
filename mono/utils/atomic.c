@@ -13,7 +13,6 @@
 #include <glib.h>
 
 #include <mono/utils/atomic.h>
-#include <mono/utils/mono-compiler.h>
 
 #if defined (WAPI_NO_ATOMIC_ASM) || defined (BROKEN_64BIT_ATOMICS_INTRINSIC)
 #define NEED_64BIT_CMPXCHG_FALLBACK
@@ -509,7 +508,7 @@ void mono_atomic_store_ptr(volatile gpointer *dst, gpointer val)
 gint64
 mono_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp)
 {
-	return __sync_val_compare_and_swap (dest, comp, exch);
+	return gcc_sync_val_compare_and_swap (dest, comp, exch);
 }
 
 #elif defined (__arm__) && defined (HAVE_ARMV7) && (defined(TARGET_IOS) || defined(TARGET_WATCHOS) || defined(TARGET_ANDROID))
@@ -527,7 +526,7 @@ mono_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp)
 gint64
 mono_atomic_cas_i64(volatile gint64 *dest, gint64 exch, gint64 comp)
 {
-	return  __sync_val_compare_and_swap (dest, comp, exch);
+	return  gcc_sync_val_compare_and_swap (dest, comp, exch);
 }
 
 #elif defined (TARGET_ANDROID)

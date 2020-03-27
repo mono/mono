@@ -125,7 +125,7 @@ if [ "$test" = "true" ]; then
   make run-all-System.Core
   for suite in ${xunit_test_suites}; do make run-${suite}-xunit; done
   # disable for now until https://github.com/mono/mono/pull/13622 goes in
-  #make test-debugger
+  #make run-debugger-tests
   make run-browser-tests
   #make run-browser-threads-tests
   make -j ${CPU_COUNT} run-aot-mini
