@@ -20,6 +20,12 @@ namespace System.Runtime.Serialization
 
         public static void SetSerializationSurrogateProvider(this DataContractSerializer serializer, ISerializationSurrogateProvider provider)
         {
+            // Prevent NullReferenceException in SurrogateProviderAdapter 
+            if (provider == null) {
+                adapter = null;
+                return;
+            }
+            
             // allocate every time, expectation is that this won't happen enough to warrant maintaining a CondtionalWeakTable.
             IDataContractSurrogate adapter = new SurrogateProviderAdapter(provider);
 
