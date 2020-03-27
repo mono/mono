@@ -404,7 +404,7 @@ namespace TestSuite {
 		{
 			MemoryStream archiveStream = new MemoryStream ();
 			using (HttpClient client = CreateHttpClient ())
-			using (Stream stream = await client.GetStreamAsync ("base/publish/netstandard2.0/archive.zip")) {
+			using (Stream stream = await client.GetStreamAsync ("base/publish/archive.zip")) {
 				await stream.CopyToAsync (archiveStream);
 			}
 			return archiveStream;
@@ -413,7 +413,7 @@ namespace TestSuite {
 		{
 			MemoryStream archiveStream = new MemoryStream ();
 			using (HttpClient client = CreateHttpClient ())
-			using (Stream stream = await client.GetStreamAsync ("base/publish/netstandard2.0/test.nupkg")) {
+			using (Stream stream = await client.GetStreamAsync ("base/publish/test.nupkg")) {
 				await stream.CopyToAsync (archiveStream);
 			}
 			return archiveStream;

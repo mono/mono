@@ -1,7 +1,8 @@
 <Project Sdk="Mono.WebAssembly.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\..\publish</OutputPath>
@@ -14,10 +15,10 @@
     <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\publish</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_0</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD;NETSTANDARD2_1</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile></DocumentationFile>
-    <IntermediateOutputPath>obj\Debug\netstandard2.0</IntermediateOutputPath>
+    <IntermediateOutputPath>obj\Debug\netstandard2.1</IntermediateOutputPath>
     <NoWarn>1701;1702</NoWarn>
     <NoStdLib>true</NoStdLib>
   </PropertyGroup>
@@ -43,6 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="NowIsTheTime.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="**/*" />
+    <None Include="**/*" />
   </ItemGroup>
   <ItemGroup>
     <None Update="NowIsTheTime.txt">

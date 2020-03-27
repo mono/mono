@@ -793,7 +793,7 @@ clean-browser-tests: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-threads-suite
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
-	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish
+	$(RM) -r $(BROWSER_TEST)/src/**/bin $(BROWSER_TEST)/src/**/**/bin $(BROWSER_TEST)/src/**/obj $(BROWSER_TEST)/src/**/**/obj publish
 
 clean-framework:
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
