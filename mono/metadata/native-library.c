@@ -1200,6 +1200,19 @@ legacy_probe_for_module (MonoImage *image, const char *new_scope)
 		return module;
 	}
 
+	if (mono_get_find_plugin_callback ())
+	{
+		const char* unity_new_scope = mono_get_find_plugin_callback () (new_scope);
+		if (unity_new_scope == NULL)
+		{
+			mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_DLLIMPORT,
+				"DllImport unable to load unity mapped library '%s'.",
+				unity_new_scope);
+		}
+
+		new_scope = g_strdup (unity_new_scope);
+	}
+
 	/*
 	 * Try loading the module using a variety of names
 	 */
@@ -1426,22 +1439,6 @@ retry_with_libcoreclr:
 		goto exit;
 	}
 
-	if (mono_get_find_plugin_callback ())
-	{
-		const char* unity_new_scope = mono_get_find_plugin_callback () (new_scope);
-		if (unity_new_scope == NULL)
-		{
-			mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_DLLIMPORT,
-				"DllImport unable to load unity mapped library '%s'.",
-				unity_new_scope);
-			status_out->err_code = LOOKUP_PINVOKE_ERR_NO_LIB;
-			status_out->err_arg = g_strdup (new_scope);
-			goto exit;
-		}
-
-		new_scope = g_strdup (unity_new_scope);
-	}
-
 	mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_DLLIMPORT,
 				"DllImport searching in: '%s' ('%s').", new_scope, module->full_name);
 
@@ -1493,6 +1490,7 @@ pinvoke_probe_for_symbol (MonoDl *module, MonoMethodPInvoke *piinfo, const char 
 	if (piinfo->piflags & PINVOKE_ATTRIBUTE_NO_MANGLE)
 		error_msg = mono_dl_symbol (module, import, &addr);
 	else {
+
 		/*
 		 * Search using a variety of mangled names
 		 */
