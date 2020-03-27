@@ -657,19 +657,6 @@ namespace WebAssembly.Net.Debugging {
 			return;
 		}
 
-		async Task<bool> GetPossibleBreakpoints (MessageId msg, SourceLocation start, SourceLocation end, CancellationToken token)
-		{
-			var bps = (await RuntimeReady (msg, token)).FindPossibleBreakpoints (start, end);
-
-			if (bps == null)
-				return false;
-
-			var response = new { locations = bps.Select (b => b.AsLocation ()) };
-
-			SendResponse (msg, Result.OkFromObject (response), token);
-			return true;
-		}
-
 		void OnCompileDotnetScript (MessageId msg_id, CancellationToken token)
 		{
 			SendResponse (msg_id, Result.OkFromObject (new { }), token);
