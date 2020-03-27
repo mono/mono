@@ -73,7 +73,6 @@ namespace Mono.WebAssembly.Build
 		/// <summary>
 		/// The directory containing the bindings assemblies.
 		/// </summary>
-		[Required]
 		public string BindingsDir { get; set; }
 
 
