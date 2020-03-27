@@ -1622,8 +1622,12 @@ mini_usage (void)
  		"    --debugger-agent=options Enable the debugger agent\n"
 		"    --profile[=profiler]   Runs in profiling mode with the specified profiler module\n"
 		"    --trace[=EXPR]         Enable tracing, use --help-trace for details\n"
+#ifdef __linux__		
 		"    --jitmap               Output a jit method map to /tmp/perf-PID.map\n"
+#endif
+#ifdef ENABLE_JIT_DUMP
 		"    --jitdump              Output a jitdump file to /tmp/jit-PID.dump\n"
+#endif
 		"    --help-devel           Shows more options available to developers\n"
 		"\n"
 		"Runtime:\n"

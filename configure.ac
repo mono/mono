@@ -757,7 +757,7 @@ AC_CHECK_HEADERS(elf.h)
 
 # for perf jit dump support
 AC_CHECK_HEADERS(sys/mman.h)
-if test x$ac_cv_header_sys_mman_h = xyes -a  x$ac_cv_header_elf_h = xyes -a x$ac_cv_header_sys_syscall_h = xyes; then
+if test "x$host_linux" = "xyes" -a x$ac_cv_header_sys_mman_h = xyes -a  x$ac_cv_header_elf_h = xyes -a x$ac_cv_header_sys_syscall_h = xyes; then
    AC_DEFINE(ENABLE_JIT_DUMP, 1, [Enable jit dump support on Linux])
 fi
 

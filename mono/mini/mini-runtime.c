@@ -1905,13 +1905,14 @@ mono_jit_map_is_enabled (void)
 
 #endif
 
-#if defined(ENABLE_JIT_DUMP)
+#ifdef ENABLE_JIT_DUMP
 #include <sys/mman.h>
 #include <sys/syscall.h>
 #include <elf.h>
 
 static FILE* perf_dump_file;
 static mono_mutex_t perf_dump_mutex;
+static void *mmapAddr = MAP_FAILED;
 static guint32 perf_dump_pid;
 
 enum {
@@ -1971,7 +1972,7 @@ mono_enable_jit_dump (void)
 	if (!perf_dump_file) {
 		char name [64];
 		FileHeader header;
-		memset (&header, 0, sizeof (FileHeader));
+		memset (&header, 0, sizeof (header));
 
 		mono_os_mutex_init (&perf_dump_mutex);
 		mono_os_mutex_lock (&perf_dump_mutex);
@@ -1982,9 +1983,10 @@ mono_enable_jit_dump (void)
 		
 		add_file_header_info (&header);
 		if (perf_dump_file)
-			fwrite (&header, sizeof (FileHeader), 1, perf_dump_file);
-		
-		mmap (NULL, sizeof (FileHeader), PROT_READ | PROT_EXEC, MAP_PRIVATE, 1, 0);
+			fwrite (&header, sizeof (header), 1, perf_dump_file);
+
+		//This informs perf of the presence of the jitdump file and support for the feature.​
+		mmapAddr = mmap (NULL, sizeof (header), PROT_READ | PROT_EXEC, MAP_PRIVATE, fileno (perf_dump_file), 0);
 		
 		mono_os_mutex_unlock (&perf_dump_mutex);
 	}
@@ -1995,7 +1997,7 @@ add_file_header_info (FileHeader *header)
 {
 	header->magic = JIT_DUMP_MAGIC;
 	header->version = JIT_DUMP_VERSION;
-	header->total_size = sizeof (FileHeader);
+	header->total_size = sizeof (header);
 	header->elf_mach = ELF_MACHINE;
 	header->pad1 = 0;
 	header->pid = perf_dump_pid;
@@ -2019,10 +2021,10 @@ mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code)
 	if (perf_dump_file) {
 		JitCodeLoadRecord record;
 		size_t nameLen = strlen (jinfo->d.method->name);
-		memset (&record, 0, sizeof (JitCodeLoadRecord));
+		memset (&record, 0, sizeof (record));
 		
 		add_basic_JitCodeLoadRecord_info (&record);
-		record.header.total_size = sizeof (JitCodeLoadRecord) + nameLen + 1 + jinfo->code_size;
+		record.header.total_size = sizeof (record) + nameLen + 1 + jinfo->code_size;
 		record.vma = (guint64)jinfo->code_start;
 		record.code_addr = (guint64)jinfo->code_start;
 		record.code_size = (guint64)jinfo->code_size;
@@ -2035,7 +2037,7 @@ mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code)
 		
 		record.header.timestamp = get_time_stamp_ns ();
 		
-		fwrite (&record, sizeof (JitCodeLoadRecord), 1, perf_dump_file);
+		fwrite (&record, sizeof (record), 1, perf_dump_file);
 		fwrite (jinfo->d.method->name, nameLen + 1, 1, perf_dump_file);
 		fwrite (code, jinfo->code_size, 1, perf_dump_file);
 		
@@ -2057,6 +2059,23 @@ mono_jit_dump_cleanup (void)
 {
 	if (perf_dump_file)
 		fclose (perf_dump_file);
+	if (mmapAddr != MAP_FAILED)
+		munmap (mmapAddr, sizeof(FileHeader));
+}
+
+#else
+
+void
+mono_enable_jit_dump (void)
+{
+}
+void
+mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code)
+{
+}
+void
+mono_jit_dump_cleanup (void)
+{
 }
 
 #endif

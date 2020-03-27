@@ -517,15 +517,9 @@ gboolean mono_jit_map_is_enabled (void);
 #define mono_jit_map_is_enabled() (0)
 #endif
 
-#if defined(ENABLE_JIT_DUMP)
 void mono_enable_jit_dump (void);
 void mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code);
 void mono_jit_dump_cleanup (void);
-#else
-#define mono_enable_jit_dump()
-#define mono_emit_jit_dump(jinfo, code)
-#define mono_jit_dump_cleanup()
-#endif
 
 /*
  * Per-OS implementation functions.
