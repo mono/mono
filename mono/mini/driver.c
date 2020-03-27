@@ -2347,8 +2347,10 @@ mono_main (int argc, char* argv[])
 			forced_version = &argv [i][10];
 		} else if (strcmp (argv [i], "--jitmap") == 0) {
 			mono_enable_jit_map ();
+#ifdef ENABLE_JIT_DUMP
 		} else if (strcmp (argv [i], "--jitdump") == 0) {
 			mono_enable_jit_dump ();
+#endif
 		} else if (strcmp (argv [i], "--profile") == 0) {
 			mini_add_profiler_argument (NULL);
 		} else if (strncmp (argv [i], "--profile=", 10) == 0) {

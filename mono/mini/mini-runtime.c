@@ -2057,10 +2057,10 @@ add_basic_JitCodeLoadRecord_info (JitCodeLoadRecord *record)
 void
 mono_jit_dump_cleanup (void)
 {
-	if (perf_dump_file)
-		fclose (perf_dump_file);
 	if (mmapAddr != MAP_FAILED)
 		munmap (mmapAddr, sizeof(FileHeader));
+	if (perf_dump_file)
+		fclose (perf_dump_file);
 }
 
 #else
