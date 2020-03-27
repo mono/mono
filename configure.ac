@@ -5804,7 +5804,7 @@ dnl Set a default hybrid or cooperative suspend on some platforms
 dnl Coop default is set by the bitcode preset.
 
 dnl If coop isn't on by default, maybe hybrid should be?
-if test x$enable_cooperative_suspend_default != xyes; then
+if test x$enable_cooperative_suspend_default != xyes -a x$support_boehm != xyes ; then
 	case $HOST in
 	X86 | AMD64)
 		dnl Some host/target confusion, there's no host_osx (and
