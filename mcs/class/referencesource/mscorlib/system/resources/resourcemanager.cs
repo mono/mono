@@ -278,7 +278,10 @@ namespace System.Resources {
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         private void Init()
         {
-            m_callingAssembly = (RuntimeAssembly)Assembly.GetCallingAssembly();
+            try {
+                m_callingAssembly = (RuntimeAssembly)Assembly.GetCallingAssembly();
+            } catch {
+            }
         }
 
         protected ResourceManager() 
@@ -296,7 +299,7 @@ namespace System.Resources {
             ResourceManagerMediator mediator = new ResourceManagerMediator(this);
             resourceGroveler = new ManifestBasedResourceGroveler(mediator);
         }
-	
+    
         // Constructs a Resource Manager for files beginning with 
         // baseName in the directory specified by resourceDir
         // or in the current directory.  This Assembly-ignorant constructor is 
@@ -372,14 +375,16 @@ namespace System.Resources {
 
             CommonAssemblyInit();
 
-            m_callingAssembly = (RuntimeAssembly)Assembly.GetCallingAssembly();
-            // Special case for mscorlib - protect mscorlib's private resources.
-            // This isn't for security reasons, but to ensure we can make
-            // breaking changes to mscorlib's internal resources without 
-            // assuming users may have taken a dependency on them.
-            if (assembly == typeof(Object).Assembly && m_callingAssembly != assembly)
-            {
-                m_callingAssembly = null;
+            // GetCallingAssembly might not work on some platforms
+            try {
+                m_callingAssembly = (RuntimeAssembly)Assembly.GetCallingAssembly();
+                // Special case for mscorlib - protect mscorlib's private resources.
+                // This isn't for security reasons, but to ensure we can make
+                // breaking changes to mscorlib's internal resources without 
+                // assuming users may have taken a dependency on them.
+                if (assembly == typeof(Object).Assembly && m_callingAssembly != assembly)
+                    m_callingAssembly = null;
+            } catch {
             }
         }
 
@@ -410,13 +415,16 @@ namespace System.Resources {
             _userResourceSet = usingResourceSet;
 
             CommonAssemblyInit();
-            m_callingAssembly = (RuntimeAssembly)Assembly.GetCallingAssembly();
-            // Special case for mscorlib - protect mscorlib's private resources.
-            // This isn't for security reasons, but to ensure we can make
-            // breaking changes to mscorlib's internal resources without 
-            // assuming users may have taken a dependency on them.
-            if (assembly == typeof(Object).Assembly && m_callingAssembly != assembly)
-                m_callingAssembly = null;
+            try {
+                m_callingAssembly = (RuntimeAssembly)Assembly.GetCallingAssembly();
+                // Special case for mscorlib - protect mscorlib's private resources.
+                // This isn't for security reasons, but to ensure we can make
+                // breaking changes to mscorlib's internal resources without 
+                // assuming users may have taken a dependency on them.
+                if (assembly == typeof(Object).Assembly && m_callingAssembly != assembly)
+                    m_callingAssembly = null;
+            } catch {
+            }
         }
         
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
@@ -437,11 +445,12 @@ namespace System.Resources {
 
             CommonAssemblyInit();
 
-            m_callingAssembly = (RuntimeAssembly)Assembly.GetCallingAssembly();
-            // Special case for mscorlib - protect mscorlib's private resources.
-            if (MainAssembly == typeof(Object).Assembly && m_callingAssembly != MainAssembly)
-            {
-                m_callingAssembly = null;
+            try {
+                m_callingAssembly = (RuntimeAssembly)Assembly.GetCallingAssembly();
+                // Special case for mscorlib - protect mscorlib's private resources.
+                if (MainAssembly == typeof(Object).Assembly && m_callingAssembly != MainAssembly)
+                    m_callingAssembly = null;
+            } catch {
             }
         }
 
