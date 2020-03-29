@@ -24,6 +24,7 @@ var MonoSupportLib = {
 			module ["mono_load_runtime_and_bcl"] = MONO.mono_load_runtime_and_bcl;
 		},
 
+		mono_text_decoder: undefined,
 		string_decoder: {
 			copy: function (mono_string) {
 				if (mono_string == 0)
@@ -38,17 +39,19 @@ var MonoSupportLib = {
 				return result;
 			},
 			decode: function (start, end, save) {
-				var decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder ('utf-16le') : undefined;
+				if (!MONO.mono_text_decoder) {
+					MONO.mono_text_decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder('utf-16le') : undefined;
+                }
 
 				var str = "";
-				if (decoder) {
+				if (MONO.mono_text_decoder) {
 					// When threading is enabled, TextDecoder does not accept a view of a 
 					// SharedArrayBuffer, we must make a copy of the array first.
 					var subArray = Module.HEAPU8.buffer instanceof SharedArrayBuffer
 						? Module.HEAPU8.slice(start, end)
 						: Module.HEAPU8.subarray(start, end);
 
-					str = decoder.decode(subArray);
+					str = MONO.mono_text_decoder.decode(subArray);
 				} else {
 					for (var i = 0; i < end - start; i+=2) {
 						var char = Module.getValue (start + i, 'i16');
