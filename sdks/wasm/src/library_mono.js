@@ -41,9 +41,15 @@ var MonoSupportLib = {
 				var decoder = typeof TextDecoder !== 'undefined' ? new TextDecoder ('utf-16le') : undefined;
 
 				var str = "";
-				if (decoder)
-					str = decoder.decode(Module.HEAPU8.subarray(start, end));
-				else {
+				if (decoder) {
+					// When threading is enabled, TextDecoder does not accept a view of a 
+					// SharedArrayBuffer, we must make a copy of the array first.
+					var subArray = Module.HEAPU8.buffer instanceof SharedArrayBuffer
+						? Module.HEAPU8.slice(start, end)
+						: Module.HEAPU8.subarray(start, end);
+
+					str = decoder.decode(subArray);
+				} else {
 					for (var i = 0; i < end - start; i+=2) {
 						var char = Module.getValue (start + i, 'i16');
 						str += String.fromCharCode (char);
