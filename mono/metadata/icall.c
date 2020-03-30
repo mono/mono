@@ -8220,6 +8220,8 @@ ves_icall_System_TimeZoneInfo_mono_timezone_get_local_name (MonoString *volatile
 	return mono_timezone_get_local_name (result);
 #endif
 }
+#endif
+
 #endif /* ENABLE_NETCORE */
 
 #ifndef PLATFORM_NO_DRIVEINFO
