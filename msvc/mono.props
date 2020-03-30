@@ -137,7 +137,7 @@
       <AdditionalDependencies>bcrypt.lib;Mswsock.lib;ws2_32.lib;ole32.lib;oleaut32.lib;psapi.lib;version.lib;advapi32.lib;winmm.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MONO_BUILD_DIR_PREFIX)$(Platform)/lib/$(Configuration)</AdditionalLibraryDirectories>
       <!-- Matching CoreCLR Release build configuration, https://github.com/dotnet/runtime/blob/ef718368e970fe05b2f0e121a066aef56fed6bad/src/coreclr/configurecompiler.cmake#L487 -->
-      <AdditionalOptions Condition="'$(MONO_ENABLE_NETCORE)'=='true' and '$(MONO_USE_STATIC_C_RUNTIME)'=='true' and '$(Configuration)'=='Release'">/NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib %(AdditionalOptions)</AdditionalOptions>
+      <!-- <AdditionalOptions Condition="'$(MONO_ENABLE_NETCORE)'=='true' and '$(MONO_USE_STATIC_C_RUNTIME)'=='true' and '$(Configuration)'=='Release'">/NODEFAULTLIB:libucrt.lib /DEFAULTLIB:ucrt.lib %(AdditionalOptions)</AdditionalOptions> -->
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(MONO_BUILD_DIR_PREFIX)$(Platform)/lib/$(Configuration)</AdditionalLibraryDirectories>
