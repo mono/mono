@@ -1910,9 +1910,9 @@ mono_jit_map_is_enabled (void)
 #include <sys/syscall.h>
 #include <elf.h>
 
-static FILE* perf_dump_file;
+static FILE *perf_dump_file;
 static mono_mutex_t perf_dump_mutex;
-static void *mmapAddr = MAP_FAILED;
+static void *perf_dump_mmap_addr = MAP_FAILED;
 static guint32 perf_dump_pid;
 
 enum {
@@ -1982,11 +1982,11 @@ mono_enable_jit_dump (void)
 		perf_dump_file = fopen (name, "w");
 		
 		add_file_header_info (&header);
-		if (perf_dump_file)
+		if (perf_dump_file) {
 			fwrite (&header, sizeof (header), 1, perf_dump_file);
-
-		//This informs perf of the presence of the jitdump file and support for the feature.​
-		mmapAddr = mmap (NULL, sizeof (header), PROT_READ | PROT_EXEC, MAP_PRIVATE, fileno (perf_dump_file), 0);
+			//This informs perf of the presence of the jitdump file and support for the feature.​
+			perf_dump_mmap_addr = mmap (NULL, sizeof (header), PROT_READ | PROT_EXEC, MAP_PRIVATE, fileno (perf_dump_file), 0);
+		}
 		
 		mono_os_mutex_unlock (&perf_dump_mutex);
 	}
@@ -2029,7 +2029,7 @@ mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code)
 		record.code_addr = (guint64)jinfo->code_start;
 		record.code_size = (guint64)jinfo->code_size;
 
-	        mono_os_mutex_lock (&perf_dump_mutex);
+		mono_os_mutex_lock (&perf_dump_mutex);
 		
 		record.code_index = ++code_index;
 		
@@ -2040,8 +2040,8 @@ mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code)
 		fwrite (&record, sizeof (record), 1, perf_dump_file);
 		fwrite (jinfo->d.method->name, nameLen + 1, 1, perf_dump_file);
 		fwrite (code, jinfo->code_size, 1, perf_dump_file);
-		
-	        mono_os_mutex_unlock (&perf_dump_mutex);
+
+		mono_os_mutex_unlock (&perf_dump_mutex);
 	}
 }
 
@@ -2057,8 +2057,8 @@ add_basic_JitCodeLoadRecord_info (JitCodeLoadRecord *record)
 void
 mono_jit_dump_cleanup (void)
 {
-	if (mmapAddr != MAP_FAILED)
-		munmap (mmapAddr, sizeof(FileHeader));
+	if (perf_dump_mmap_addr != MAP_FAILED)
+		munmap (perf_dump_mmap_addr, sizeof(FileHeader));
 	if (perf_dump_file)
 		fclose (perf_dump_file);
 }
@@ -2069,10 +2069,12 @@ void
 mono_enable_jit_dump (void)
 {
 }
+
 void
 mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code)
 {
 }
+
 void
 mono_jit_dump_cleanup (void)
 {
