@@ -5310,7 +5310,6 @@ public class DebuggerTests
 		e = step_over ();				
 		e = step_over ();				
 			
-		System.Console.WriteLine(e.Thread.GetFrames ()[0].Location.LineNumber);
 		StackFrame frame = e.Thread.GetFrames () [0];
 		var l = frame.Method.GetLocal ("someLocalString");
 		var l1 = frame.Method.GetLocal ("aList");
@@ -5321,13 +5320,12 @@ public class DebuggerTests
 		var contentOrig1 =  frame.GetValue (l1);	
 		var v = (contentOrig1 as ObjectMirror).InvokeMethod (e.Thread, m, null);
 		var contentOrig =  frame.GetValue (l);					
-		var str = vm.RootDomain.CreateString ("thays");
+		var str = vm.RootDomain.CreateString ("test1");
 		frame.SetValue (l, str);
 		contentOrig =  frame.GetValue (l);		
 		e.Thread.GetFrames ();
 		contentOrig =  frame.GetValue (l);		
-		System.Console.WriteLine("valor retornado - " +  (contentOrig as StringMirror).Value);
-		AssertValue ("thays", contentOrig);
+		AssertValue ("test1", contentOrig);
 	}
 
 #endif
