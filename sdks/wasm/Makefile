@@ -89,6 +89,8 @@ BROWSER_TEST_ASSETS = \
 WASM_TESTS_SRC=$(TOP)/sdks/wasm/tests/src
 WASM_TESTS_BIN=$(TOP)/sdks/wasm/bin
 
+TEST_SOURCE_DIR=$(TOP)/sdks/wasm/tests/src/
+
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
 	JSVU_OS=linux64
@@ -496,6 +498,34 @@ build-zlib-aot-hello: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
 
 run-zlib-aot-hello: build-zlib-aot-hello
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
+
+# TimeZoneInfo tests
+
+$(TEST_SOURCE_DIR)/tzdtest.exe: $(TEST_SOURCE_DIR)/tzdtest.cs
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) $(TEST_SOURCE_DIR)/tzdtest.cs
+
+run-tzd-sample: build-tzd-sample
+	(cd bin/tzdtest-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
+
+build-tzd-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
+	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/tzdtest-sample --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata $(TEST_SOURCE_DIR)/tzdtest.exe
+	cp -r /usr/share/zoneinfo ./bin/tzdtest-sample/zoneinfo
+
+build-tzd-interp-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata -appdir=bin/interp-tzd-sample --nobinding --builddir=obj/interp-tzd-sample --template=runtime-tests.js $(TEST_SOURCE_DIR)/tzdtest.exe --linker --link-icalls
+	ninja -v -C obj/interp-tzd-sample
+
+run-tzd-interp-sample: build-tzd-interp-sample
+	(cd bin/interp-tzd-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
+
+build-tzd-aot-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-tzd-sample --nobinding --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata --builddir=obj/aot-tzd-sample --aot --template=runtime-tests.js tzdtest.exe
+	ninja -v -C obj/aot-tzd-sample
+
+run-tzd-aot-sample: build-tzd-aot-sample
+	(cd bin/aot-tzd-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
+
+# end TimeZoneInfo tests
 
 build-mixed-sample: packager.exe hello.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --aot-interp --aot-assemblies=mscorlib --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/mixed-sample --nobinding --builddir=obj/mixed-sample --template=runtime-tests.js hello.exe
