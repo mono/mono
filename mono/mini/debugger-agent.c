@@ -9339,8 +9339,10 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					buffer_add_value_full (buf, header->locals [pos], addr, frame->de.domain, FALSE, NULL, 1);
 				} else {
 					g_assert (pos >= 0 && pos < jit->num_locals);
-
-					add_var (buf, jit, header->locals [pos], &jit->locals [pos], &frame->ctx, frame->de.domain, FALSE);
+					if (tls->restore_state.valid)
+						add_var (buf, jit, header->locals [pos], &jit->locals [pos], &tls->restore_state.ctx, frame->de.domain, FALSE);
+					else
+						add_var (buf, jit, header->locals [pos], &jit->locals [pos], &frame->ctx, frame->de.domain, FALSE);
 				}
 			}
 		}
