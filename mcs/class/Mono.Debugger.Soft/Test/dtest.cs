@@ -5314,8 +5314,6 @@ public class DebuggerTests
 		var l = frame.Method.GetLocal ("someLocalString");
 		var l1 = frame.Method.GetLocal ("aList");
 		TypeMirror t = l1.Type;
-
-		// return void
 		var m = t.GetMethod ("get_Count");
 		var contentOrig1 =  frame.GetValue (l1);	
 		var v = (contentOrig1 as ObjectMirror).InvokeMethod (e.Thread, m, null);
