@@ -406,11 +406,6 @@ struct _MonoImage {
 	/* Maps malloc-ed char* pinvoke scope -> malloced-ed char* filename */
 	GHashTable *pinvoke_scope_filenames;
 
-	/* Indexed by MonoGenericParam pointers */
-	GHashTable **gshared_types;
-	/* The length of the above array */
-	int gshared_types_len;
-
 	/* The loader used to load this image */
 	MonoImageLoader *loader;
 
@@ -449,6 +444,11 @@ typedef struct {
 	GHashTable *szarray_cache, *array_cache, *ptr_cache;
 
 	MonoWrapperCaches wrapper_caches;
+
+	/* Indexed by MonoGenericParam pointers */
+	GHashTable **gshared_types;
+	/* The length of the above array */
+	int gshared_types_len;
 
 	mono_mutex_t    lock;
 
@@ -728,6 +728,12 @@ char*
 mono_image_set_strdup (MonoImageSet *set, const char *s);
 
 void mono_metadata_image_set_foreach(MonoImageSetFunc func, gpointer user_data);
+
+MonoImageSet *
+mono_metadata_get_image_set_for_type (MonoType *type);
+
+MonoImageSet *
+mono_metadata_merge_image_sets (MonoImageSet *set1, MonoImageSet *set2);
 
 #define mono_image_set_new0(image,type,size) ((type *) mono_image_set_alloc0 (image, sizeof (type)* (size)))
 
