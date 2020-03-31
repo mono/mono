@@ -109,6 +109,20 @@ WebAssembly builds require Ninja in addition to the standard Mono dependencies. 
 
 This raises the process limit high enough for the runtime to successfully build.
 
+## Setup for WebAssembly only build
+
+To build WebAssembly, it needs to be activated in the `mono/sdks/Make.config`. 
+
+```
+echo "ENABLE_WASM=1" > ../Make.config
+```
+
+If building threads you will also need:
+
+```
+echo "ENABLE_WASM_THREADS=1" >> ../Make.config
+```
+
 ## Building mono components
 
 ```make -j -C sdks/builds provision-wasm```
@@ -194,6 +208,12 @@ Beware that the debugger is in active development so bugs and missing features w
 Read usage information about the utility see [WebAssembly packager.exe](./docs/packager.md)
 
 # Threading support
+
+Make sure the flag ```ENABLE_WASM_THREADS=1``` is set.  See Setup above.
+
+```
+echo "ENABLE_WASM_THREADS=1" >> ../Make.config
+```
 
 To build the runtime with pthreads support use the following make target:
 
