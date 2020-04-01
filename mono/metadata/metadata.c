@@ -2394,7 +2394,13 @@ retry:
 		return signature_in_image (type->data.method, image);
 	case MONO_TYPE_VAR:
 	case MONO_TYPE_MVAR:
-		return image == get_image_for_generic_param (type->data.generic_param);
+		if (image == get_image_for_generic_param (type->data.generic_param))
+			return TRUE;
+		else if (type->data.generic_param->gshared_constraint) {
+			type = type->data.generic_param->gshared_constraint;
+			goto retry;
+		}
+		return FALSE;
 	default:
 		/* At this point, we should've avoided all potential allocations in mono_class_from_mono_type () */
 		return image == mono_class_from_mono_type (type)->image;
@@ -2623,6 +2629,12 @@ delete_image_set (MonoImageSet *set)
 	g_hash_table_destroy (set->array_cache);
 	if (set->ptr_cache)
 		g_hash_table_destroy (set->ptr_cache);
+
+	for (i = 0; i < set->gshared_types_len; ++i) {
+		if (set->gshared_types [i])
+			g_hash_table_destroy (set->gshared_types [i]);
+	}
+	g_free (set->gshared_types);
 
 	mono_wrapper_caches_free (&set->wrapper_caches);
 
@@ -2855,6 +2867,9 @@ retry:
 	{
 		MonoImage *image = get_image_for_generic_param (type->data.generic_param);
 		add_image (image, data);
+		type = type->data.generic_param->gshared_constraint;
+		if (type)
+			goto retry;
 		break;
 	}
 	case MONO_TYPE_CLASS:
@@ -3102,17 +3117,23 @@ mono_metadata_get_inflated_signature (MonoMethodSignature *sig, MonoGenericConte
 }
 
 MonoImageSet *
-mono_metadata_get_image_set_for_class (MonoClass *klass)
+mono_metadata_get_image_set_for_type (MonoType *type)
 {
 	MonoImageSet *set;
 	CollectData image_set_data;
 
 	collect_data_init (&image_set_data);
-	collect_type_images (&klass->byval_arg, &image_set_data);
+	collect_type_images (type, &image_set_data);
 	set = get_image_set (image_set_data.images, image_set_data.nimages);
 	collect_data_free (&image_set_data);
 
 	return set;
+}
+
+MonoImageSet *
+mono_metadata_get_image_set_for_class (MonoClass *klass)
+{
+	return mono_metadata_get_image_set_for_type (&klass->byval_arg);
 }
 
 MonoImageSet *
@@ -3127,6 +3148,29 @@ mono_metadata_get_image_set_for_method (MonoMethodInflated *method)
 	collect_data_free (&image_set_data);
 
 	return set;
+}
+
+MonoImageSet *
+mono_metadata_merge_image_sets (MonoImageSet *set1, MonoImageSet *set2)
+{
+	MonoImage **images = g_newa (MonoImage*, set1->nimages + set2->nimages);
+
+	/* Add images from set1 */
+	memcpy (images, set1->images, sizeof (MonoImage*) * set1->nimages);
+
+	int nimages = set1->nimages;
+	// FIXME: Quaratic
+	/* Add images from set2 */
+	for (int i = 0; i < set2->nimages; ++i) {
+		int j;
+		for (j = 0; j < set1->nimages; ++j) {
+			if (set2->images [i] == set1->images [j])
+				break;
+		}
+		if (j == set1->nimages)
+			images [nimages ++] = set2->images [i];
+	}
+	return get_image_set (images, nimages);
 }
 
 static gboolean
