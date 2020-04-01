@@ -50,6 +50,8 @@ build()
 		mkdir -p xar
 		tar xf xar.tar.gz -C xar/ --strip-components=1
 		pushd xar/
+		report "Patching xar configure for compatibility with openssl 1.1"
+		sed -i 's/OpenSSL_add_all_ciphers/OPENSSL_init_crypto/g' configure
 		./configure
 		make
 		popd
