@@ -337,7 +337,9 @@ mono_ios_runtime_init (void)
 	mono_jit_init_version ("Mono.ios", "mobile");
 
 #ifdef DEVICE // device runtimes are configured to use lazy gc thread creation
+	MONO_ENTER_GC_UNSAFE;
 	mono_gc_init_finalizer_thread ();
+	MONO_EXIT_GC_UNSAFE;
 #endif
 
 	MonoAssembly *assembly = load_assembly (executable, NULL);
