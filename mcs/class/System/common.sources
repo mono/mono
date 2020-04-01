@@ -905,7 +905,7 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/StackDebugView.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/BlockingCollection.cs
-../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentBag.cs
+../../../external/corefx-bugfix/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentBag.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
 
 ../../../external/corefx/src/System.IO.Compression/src/System/IO/Compression/CompressionLevel.cs
