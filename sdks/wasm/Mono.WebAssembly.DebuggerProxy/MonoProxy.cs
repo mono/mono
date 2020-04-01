@@ -127,19 +127,7 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 			case "Debugger.getPossibleBreakpoints": {
-					var resp = await SendCommand (id, method, args, token);
-					if (resp.IsOk && resp.Value["locations"].HasValues) {
-						SendResponse (id, resp, token);
-						return true;
-					}
-
-					var start = SourceLocation.Parse (args? ["start"] as JObject);
-					//FIXME support variant where restrictToFunction=true and end is omitted
-					var end = SourceLocation.Parse (args? ["end"] as JObject);
-					if (start != null && end != null && await GetPossibleBreakpoints (id, start, end, token))
-							return true;
-
-					SendResponse (id, resp, token);
+					await OnGetPossibleBreakpoints (id, method, args, token);
 					return true;
 				}
 
@@ -217,6 +205,47 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			return false;
+		}
+
+		async Task OnGetPossibleBreakpoints (MessageId id, string method, JObject args, CancellationToken token)
+		{
+			var startArg = args? ["start"] as JObject;
+			if (startArg == null) {
+				var err = Result.Err ("Protocol error: 'start' parameter missing.");
+				SendResponse (id, err, token);
+				return;
+			}
+
+			var start = SourceLocation.Parse (startArg);
+			if (start == null) {
+				// Not a dotnet:// location.
+				var resp = await SendCommand (id, method, args, token);
+				SendResponse (id, resp, token);
+				return;
+			}
+
+			//FIXME support variant where restrictToFunction=true and end is omitted
+			var end = SourceLocation.Parse (args? ["end"] as JObject);
+
+			var store = await RuntimeReady (id, token).ConfigureAwait (false);
+
+			List<SourceLocation> bps;
+			try {
+				bps = store.FindPossibleBreakpoints (start, end);
+				if (bps == null) {
+					var err = Result.Err ("Protocol error: cannot find any breakpoints.");
+					SendResponse (id, err, token);
+					return;
+				}
+			} catch (Exception ex) {
+				var err = Result.Exception (ex);
+				SendResponse (id, err, token);
+				return;
+			}
+
+			var response = new { locations = bps.Select (b => b.AsLocation ()) };
+			SendResponse (id, Result.OkFromObject (response), token);
+			return;
 		}
 
 		//static int frame_id=0;
@@ -626,19 +655,6 @@ namespace WebAssembly.Net.Debugging {
 
 			req.Locations.AddRange (breakpoints);
 			return;
-		}
-
-		async Task<bool> GetPossibleBreakpoints (MessageId msg, SourceLocation start, SourceLocation end, CancellationToken token)
-		{
-			var bps = (await RuntimeReady (msg, token)).FindPossibleBreakpoints (start, end);
-
-			if (bps == null)
-				return false;
-
-			var response = new { locations = bps.Select (b => b.AsLocation ()) };
-
-			SendResponse (msg, Result.OkFromObject (response), token);
-			return true;
 		}
 
 		void OnCompileDotnetScript (MessageId msg_id, CancellationToken token)

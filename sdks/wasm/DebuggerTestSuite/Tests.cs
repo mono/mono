@@ -863,6 +863,74 @@ namespace DebuggerTests
 			return bp1_res;
 		}
 
+		[Fact]
+		public async Task GetPossibleBreakpoints ()
+		{
+			var insp = new Inspector ();
+
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+
+				var url = "dotnet://debugger-test.dll/debugger-test.cs";
+				var scriptId = scripts.First (entry => entry.Value == url).Key;
+
+				var req = JObject.FromObject (new {
+					start = JObject.FromObject (new {
+						scriptId = scriptId,
+						lineNumber = 0,
+						columnNumber = 0
+					}),
+					end = JObject.FromObject (new {
+						scriptId = scriptId,
+						lineNumber = 10,
+						columnNumber = 0
+					})
+				});
+
+				var res = await cli.SendCommand ("Debugger.getPossibleBreakpoints", req, token);
+				Assert.True (res.IsOk);
+
+				var result = res.Value["locations"]?.Value<JArray> ();
+				Assert.NotNull (result);
+				Assert.True (result.Count > 0);
+			});
+		}
+
+		[Fact]
+		public async Task GetPossibleBreakpoints2 ()
+		{
+			var insp = new Inspector ();
+
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+
+				var url = "dotnet://debugger-test.dll/debugger-test.cs";
+				var scriptId = scripts.First (entry => entry.Value == url).Key;
+
+				var req = JObject.FromObject (new {
+					start = JObject.FromObject (new {
+						scriptId = scriptId,
+						lineNumber = 0
+					}),
+				});
+
+				var res = await cli.SendCommand ("Debugger.getPossibleBreakpoints", req, token);
+				Assert.True (res.IsOk);
+
+				var result = res.Value["locations"]?.Value<JArray> ();
+				Assert.NotNull (result);
+				Assert.True (result.Count > 0);
+			});
+		}
+
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
 
