@@ -1732,8 +1732,8 @@ namespace System.Windows.Forms {
 				lines, document_x, document_y, owner.Width, owner.Height);
 			for (int i = 1; i <= lines ; i++) {
 				Line line = GetLine (i);
-				Console.WriteLine ("<line no='{0}' ending='{1}' x='{2}' y='{3}' width='{4}' height='{5}' indent='{6}' hanging-indent='{7}' right-indent='{8}'>",
-					line.line_no, line.ending, line.X, line.Y, line.Width, line.Height, line.Indent, line.HangingIndent, line.RightIndent);
+				Console.WriteLine ("<line no='{0}' ending='{1}' x='{2}' y='{3}' width='{4}' height='{5}' indent='{6}' hanging-indent='{7}' right-indent='{8}' spacing-before='{9}' spacing-after='{10}'>",
+					line.line_no, line.ending, line.X, line.Y, line.Width, line.Height, line.Indent, line.HangingIndent, line.RightIndent, line.SpacingBefore, line.SpacingAfter);
 
 				LineTag tag = line.tags;
 				while (tag != null) {
@@ -1794,7 +1794,7 @@ namespace System.Windows.Forms {
 
 			/// Make sure that we aren't drawing one more line then we need to
 			line = GetLine (end - 1);
-			if (line != null && clip.Bottom == offset_y + line.Y + (int)line.SpacingBefore + line.height - viewport_y)
+			if (line != null && clip.Bottom == offset_y + line.Y + line.height - viewport_y)
 				end--;
 
 			line_no = start;
