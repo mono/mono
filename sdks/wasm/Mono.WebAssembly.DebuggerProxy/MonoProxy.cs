@@ -99,11 +99,14 @@ namespace WebAssembly.Net.Debugging {
 
 		protected override async Task<bool> AcceptCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
+			if (!contexts.TryGetValue (id, out var context))
+				return false;
+
 			switch (method) {
 			case "Debugger.enable": {
 					var resp = await SendCommand (id, method, args, token);
 
-					GetContext (id).DebuggerId = resp.Value ["debuggerId"]?.ToString ();
+					context.DebuggerId = resp.Value ["debuggerId"]?.ToString ();
 
 					if (await IsRuntimeAlreadyReadyAlready (id, token))
 						await RuntimeReady (id, token);
@@ -148,7 +151,6 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 			case "Debugger.setBreakpointByUrl": {
-					var context = GetContext (id);
 					var resp = await SendCommand (id, method, args, token);
 					if (!resp.IsOk) {
 						SendResponse (id, resp, token);
