@@ -12,10 +12,19 @@
 				this.generic_types_test = Module.mono_bind_static_method ("[debugger-test] Math:GenericTypesTest");
 				this.outer_method = Module.mono_bind_static_method ("[debugger-test] Math:OuterMethod");
 				this.async_method = Module.mono_bind_static_method ("[debugger-test] Math/NestedInMath:AsyncTest");
-				this.method_with_structs = Module.mono_bind_static_method ("[debugger-test] Math/NestedInMath:MethodWithStructs");
+				this.method_with_structs = Module.mono_bind_static_method ("[debugger-test] DebuggerTests.ValueTypesTest:MethodWithLocalStructs");
+				this.static_method_table = {};
 				console.log ("ready");
 			},
 		};
+		function invoke_static_method (method_name) {
+			var method = App.static_method_table [method_name];
+			if (method == undefined)
+				method = App.static_method_table [method_name] = Module.mono_bind_static_method (method_name);
+
+			return method ();
+		}
+
 		function invoke_add () {
 			return App.int_add (10, 20);
 		}

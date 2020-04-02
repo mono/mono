@@ -202,14 +202,28 @@ namespace WebAssembly.Net.Debugging {
 							break;
 							}
 						case "object": {
-							await GetDetails (id, MonoCommands.GetObjectProperties (int.Parse (parts[2])), token);
+							await GetDetails (id, MonoCommands.GetObjectProperties (int.Parse (parts[2]), expandValueTypes: false), token);
 							break;
 							}
 						case "array": {
 							await GetDetails (id, MonoCommands.GetArrayValues (int.Parse (parts [2])), token);
 							break;
 							}
+						case "valuetype": {
+							if (!IsValueTypeCached (id, objId)) {
+								if (parts.Length < 4)
+									// FIXME: ShouldNotReachException?!
+									throw new ArgumentException ("Could not find a cached value for {objId}, and this isn't a valuetype in an object, so can't expand it now!");
+
+								var containerObjId = int.Parse (parts [2]);
+								await GetDetails (id, MonoCommands.GetObjectProperties (containerObjId, expandValueTypes: true), token: token, send_response: false);
+							}
+
+							GetDetailsForValueType (id, objId, token);
+							break;
+							}
 						}
+
 						return true;
 					}
 					break;
@@ -355,7 +369,7 @@ namespace WebAssembly.Net.Debugging {
 		async Task OnResume (MessageId msd_id, CancellationToken token)
 		{
 			//discard managed frames
-			GetContext (msd_id).CallStack = null;
+			GetContext (msd_id).ClearState ();
 			await Task.CompletedTask;
 		}
 
@@ -373,30 +387,20 @@ namespace WebAssembly.Net.Debugging {
 			var ret_code = res.Value? ["result"]? ["value"]?.Value<int> ();
 
 			if (ret_code.HasValue && ret_code.Value == 0) {
-				context.CallStack = null;
+				context.ClearState ();
 				await SendCommand (msg_id, "Debugger.stepOut", new JObject (), token);
 				return false;
 			} 
 
 			SendResponse (msg_id, Result.Ok (new JObject ()), token);
 
-			context.CallStack = null;
+			context.ClearState ();
 
 			await SendCommand (msg_id, "Debugger.resume", new JObject (), token);
 			return true;
 		}
 
-		static string FormatFieldName (string name)
-		{
-			if (name.Contains("k__BackingField", StringComparison.Ordinal)) {
-				return name.Replace("k__BackingField", "", StringComparison.Ordinal)
-					.Replace("<", "", StringComparison.Ordinal)
-					.Replace(">", "", StringComparison.Ordinal);
-			}
-			return name;
-		}
-
-		async Task GetDetails(MessageId msg_id, MonoCommands cmd, CancellationToken token)
+		async Task GetDetails(MessageId msg_id, MonoCommands cmd, CancellationToken token, bool send_response = true)
 		{
 			var res = await SendMonoCommand(msg_id, cmd, token);
 
@@ -407,32 +411,20 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			try {
-				var values = res.Value?["result"]?["value"]?.Values<JObject>().ToArray() ?? Array.Empty<JObject>();
-				var var_list = new List<JObject>();
+				var var_list = res.Value?["result"]?["value"]?.Values<JObject>().ToArray() ?? Array.Empty<JObject>();
+				if (var_list.Length > 0)
+					ExtractAndCacheValueTypes (GetContext (msg_id), var_list);
 
-				// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
-				// results in a "Memory access out of bounds", causing 'values' to be null,
-				// so skip returning variable values in that case.
-				for (int i = 0; i < values.Length; i+=2)
-				{
-					string fieldName = FormatFieldName ((string)values[i]["name"]);
-					var value = values [i + 1]? ["value"];
-					if (((string)value ["description"]) == null)
-						value ["description"] = value ["value"]?.ToString ();
+				if (!send_response)
+					return;
 
-					var_list.Add(JObject.FromObject(new {
-						name = fieldName,
-						value
-					}));
-
-				}
 				var response = JObject.FromObject(new
 				{
 					result = var_list
 				});
 
 				SendResponse(msg_id, Result.Ok(response), token);
-			} catch (Exception e) {
+			} catch (Exception e) when (send_response) {
 				Log ("verbose", $"failed to parse {res.Value} - {e.Message}");
 				SendResponse(msg_id, Result.Exception(e), token);
 			}
@@ -443,7 +435,14 @@ namespace WebAssembly.Net.Debugging {
 		{
 
 			try {
-				var scope = GetContext (msg_id).CallStack.FirstOrDefault (s => s.Id == scope_id);
+				var ctx = GetContext (msg_id);
+				var scope = ctx.CallStack.FirstOrDefault (s => s.Id == scope_id);
+				if (scope == null) {
+					SendResponse (msg_id,
+							Result.Err (JObject.FromObject (new { message = $"Could not find scope with id #{scope_id}" })),
+							token);
+					return;
+				}
 				var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 
 				var var_ids = vars.Select (v => v.Index).ToArray ();
@@ -462,45 +461,70 @@ namespace WebAssembly.Net.Debugging {
 					return;
 				}
 
+				ExtractAndCacheValueTypes (ctx, values);
+
 				var var_list = new List<object> ();
 				int i = 0;
-				// Trying to inspect the stack frame for DotNetDispatcher::InvokeSynchronously
-				// results in a "Memory access out of bounds", causing 'values' to be null,
-				// so skip returning variable values in that case.
-				while (i < vars.Length && i < values.Length) {
-					var value = values [i] ["value"];
-					if (((string)value ["description"]) == null)
-						value ["description"] = value ["value"]?.ToString ();
-
-					var_list.Add (new {
-						name = vars [i].Name,
-						value
-					});
-					i++;
-				}
-				//Async methods are special in the way that local variables can be lifted to generated class fields
-				//value of "this" comes here either
-				while (i < values.Length) {
-					String name = values [i] ["name"].ToString ();
-
-					if (name.IndexOf (">", StringComparison.Ordinal) > 0)
-						name = name.Substring (1, name.IndexOf (">", StringComparison.Ordinal) - 1);
-
-					var value = values [i + 1] ["value"];
-					if (((string)value ["description"]) == null)
-						value ["description"] = value ["value"]?.ToString ();
-
-					var_list.Add (new {
-						name,
-						value
-					});
-					i = i + 2;
-				}
+				for (; i < vars.Length && i < values.Length; i ++)
+					var_list.Add (new { name = vars [i].Name, value = values [i]["value"] });
+				for (; i < values.Length; i ++)
+					var_list.Add (values [i]);
 
 				SendResponse (msg_id, Result.OkFromObject (new { result = var_list }), token);
 			} catch (Exception exception) {
 				Log ("verbose", $"Error resolving scope properties {exception.Message}");
 				SendResponse (msg_id, Result.Exception (exception), token);
+			}
+		}
+
+		IEnumerable<JObject> ExtractAndCacheValueTypes (ExecutionContext ctx, IEnumerable<JObject> var_list)
+		{
+			foreach (var jo in var_list) {
+				var value = jo["value"]?.Value<JObject> ();
+				if (value ["type"]?.Value<string> () != "object")
+					continue;
+
+				if (!(value ["isValueType"]?.Value<bool> () ?? false) || // not a valuetype
+					!(value ["expanded"]?.Value<bool> () ?? false))  // not expanded
+					continue;
+
+				// Expanded ValueType
+				var members = value ["members"]?.Values<JObject>().ToArray() ?? Array.Empty<JObject>();
+				var objectId = value ["objectId"]?.Value<string> () ?? $"dotnet:valuetype:{ctx.NextValueTypeId ()}";
+
+				value ["objectId"] = objectId;
+
+				ExtractAndCacheValueTypes (ctx, members);
+
+				ctx.ValueTypesCache [objectId] = JArray.FromObject (members);
+				value.Remove ("members");
+			}
+
+			return var_list;
+		}
+
+		bool IsValueTypeCached (MessageId msg_id, string object_id)
+			=> GetContext (msg_id).ValueTypesCache.ContainsKey (object_id);
+
+		bool GetDetailsForValueType (MessageId msg_id, string object_id, CancellationToken token)
+		{
+			var ctx = GetContext (msg_id);
+			if (ctx.ValueTypesCache.TryGetValue (object_id, out var var_list)) {
+				var response = JObject.FromObject(new
+				{
+					result = var_list
+				});
+
+				SendResponse(msg_id, Result.Ok(response), token);
+				return true;
+			} else {
+				var response = JObject.FromObject(new
+				{
+					result = $"Unable to get details for {object_id}"
+				});
+
+				SendResponse(msg_id, Result.Err(response), token);
+				return false;
 			}
 		}
 
