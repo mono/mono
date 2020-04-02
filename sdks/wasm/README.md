@@ -218,13 +218,7 @@ echo "ENABLE_WASM_THREADS=1" >> ../Make.config
 To build the runtime with pthreads support use the following make target:
 
 ``` bash
-make -j -C sdks/wasm runtime-threads
-```
-
--- or --
-
-```bash
-make -j -C sdks/builds package-wasm-runtime-threads
+make -j -C sdks/wasm
 ```
 
 During the main build two directories will be created:
@@ -257,16 +251,16 @@ _Note:_ The **`dotnet.worker.js`** and **`dotnet.js.mem`** files  must be deploy
 
 # Dynamic Linking support
 
+Make sure the flag ```ENABLE_WASM_DYNAMIC_RUNTIME=1``` is set.  See Setup above.
+
+```
+echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> ../Make.config
+```
+
 To build the runtime with WebAssembly dynamic linking support use the following make target:
 
 ``` bash
-make -j -C sdks/wasm runtime-dynamic
-```
-
--- or --
-
-```bash
-make -j -C sdks/builds package-wasm-runtime-dynamic
+make -j -C sdks/wasm
 ```
 
 During the main build one directory will be created:
@@ -274,7 +268,15 @@ During the main build one directory will be created:
 ```
     .
     |--- sdk/wasm/builds                           
-        |--- release-dynamic        - Release build that includes dynamic linking support.
+        |--- dynamic-debug          - Debug build that includes dynamic linking support.
+            |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
+            |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
+            |--- dotnet.js                - Mono WebAssembly implementations
+            |--- dotnet.wasm              - Mono WebAssembly implementations
+            |--- dotnet.wasm.map          - Mono WebAssembly implementations
+            |--- dotnet.js.mem            - Mono WebAssembly implementations
+            |--- zlib-helper.o          - Runtime linked lib - NOT DISTRIBUTED
+        |--- dynamic-release        - Release build that includes dynamic linking support.
             |--- corebindings.o         - Runtime linked lib - NOT DISTRIBUTED
             |--- driver.o               - Runtime linked lib - NOT DISTRIBUTED
             |--- dotnet.js                - Mono WebAssembly implementations
