@@ -365,7 +365,7 @@ void mono_handle_verify (MonoRawHandle handle);
 
 #define MONO_HANDLE_CAST(TYPE, VALUE) (TYPED_HANDLE_NAME(TYPE))( VALUE )
 
-#define MONO_HANDLE_IS_NULL(HANDLE) (MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW(HANDLE) == NULL))
+#define MONO_HANDLE_IS_NULL(HANDLE) (mono_handle_is_null (HANDLE))
 
 
 /*
@@ -490,6 +490,13 @@ This is the constant for a handle that points nowhere.
 Init values to it.
 */
 extern const MonoObjectHandle mono_null_value_handle;
+
+static inline gboolean
+mono_handle_is_null (MonoRawHandle handle)
+{
+	// Double NULL check is required for this to work with NULL_HANDLE.
+	return !(handle && MONO_HANDLE_SUPPRESS (MONO_HANDLE_RAW((MonoObjectHandle)handle)));
+}
 
 static inline void
 mono_handle_assign (MonoObjectHandleOut dest, MonoObjectHandle src)
