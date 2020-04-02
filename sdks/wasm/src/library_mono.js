@@ -47,7 +47,7 @@ var MonoSupportLib = {
 				if (MONO.mono_text_decoder) {
 					// When threading is enabled, TextDecoder does not accept a view of a 
 					// SharedArrayBuffer, we must make a copy of the array first.
-					var subArray = Module.HEAPU8.buffer instanceof SharedArrayBuffer
+					var subArray = typeof SharedArrayBuffer !== 'undefined' && Module.HEAPU8.buffer instanceof SharedArrayBuffer
 						? Module.HEAPU8.slice(start, end)
 						: Module.HEAPU8.subarray(start, end);
 
