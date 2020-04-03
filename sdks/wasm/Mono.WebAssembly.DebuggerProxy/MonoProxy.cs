@@ -453,7 +453,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 		
 		
-		public async Task<JObject> TryGetVariableValue (MessageId msg_id, int scope_id, string expression, CancellationToken token)
+		internal async Task<JObject> TryGetVariableValue (MessageId msg_id, int scope_id, string expression, CancellationToken token)
 		{
 			JObject thisValue = null;
 			var context = GetContext (msg_id);

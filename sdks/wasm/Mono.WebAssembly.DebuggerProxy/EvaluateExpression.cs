@@ -31,9 +31,12 @@ namespace WebAssembly.Net.Debugging {
 					throw new Exception ("Assignment is not implemented yet");
 				base.Visit (node);
 			}
-			public async Task<SyntaxTree> ReplaceVars (SyntaxTree syntaxTree, CompilationUnitSyntax root, MethodDeclarationSyntax method, MonoProxy proxy, MessageId msg_id, int scope_id, CancellationToken token)
+			public async Task<SyntaxTree> ReplaceVars (SyntaxTree syntaxTree, MonoProxy proxy, MessageId msg_id, int scope_id, CancellationToken token)
 			{
 				foreach (var var in variables) {
+					CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot ();
+					ClassDeclarationSyntax classDeclaration = root.Members.ElementAt (0) as ClassDeclarationSyntax;
+					MethodDeclarationSyntax method = classDeclaration.Members.ElementAt (0) as MethodDeclarationSyntax;
 
 					JObject value = await proxy.TryGetVariableValue (msg_id, scope_id, var.Identifier.Text, token);
 
@@ -48,11 +51,6 @@ namespace WebAssembly.Net.Debugging {
 							.WithType (SyntaxFactory.ParseTypeName (GetTypeFullName(value["value"]["type"].ToString()))));
 					var newRoot = root.ReplaceNode (method, updatedMethod);
 					syntaxTree = syntaxTree.WithRootAndOptions (newRoot, syntaxTree.Options);
-
-					//get method again in case of having more than one variable
-					root = syntaxTree.GetCompilationUnitRoot ();
-					ClassDeclarationSyntax classDeclaration = root.Members.ElementAt (0) as ClassDeclarationSyntax;
-					method = classDeclaration.Members.ElementAt (0) as MethodDeclarationSyntax;
 				}
 				return syntaxTree;
 			}
@@ -95,6 +93,7 @@ namespace WebAssembly.Net.Debugging {
 						return (" + expression + @").ToString(); 
 					}
 				}");
+
 			CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot ();
 			ClassDeclarationSyntax classDeclaration = root.Members.ElementAt (0) as ClassDeclarationSyntax;
 			MethodDeclarationSyntax methodDeclaration = classDeclaration.Members.ElementAt (0) as MethodDeclarationSyntax;
@@ -107,7 +106,7 @@ namespace WebAssembly.Net.Debugging {
 
 			findVarNMethodCall.Visit (expressionTree);
 
-			syntaxTree = await findVarNMethodCall.ReplaceVars (syntaxTree, root, methodDeclaration, proxy, msg_id, scope_id, token);
+			syntaxTree = await findVarNMethodCall.ReplaceVars (syntaxTree, proxy, msg_id, scope_id, token);
 
 			MetadataReference [] references = new MetadataReference []
 			{
