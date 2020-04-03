@@ -1,6 +1,5 @@
 TOP=$(realpath $(CURDIR)/../..)
 -include $(TOP)/sdks/Make.config
--include $(TOP)/mcs/build/config.make
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
@@ -13,7 +12,9 @@ SHELL:=/bin/bash
 #Use either 'release' or 'debug' depending on what you need
 DRIVER_CONF=release
 
-CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
+# This is duplicated from configure.ac but we can't include config.make as
+# it might not be generated yet
+CSC_LOCATION=$(TOP)/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/csc.exe
 
 EMSCRIPTEN_SDK_DIR?=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(CURDIR)/emsdk_env.sh && emcc
