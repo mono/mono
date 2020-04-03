@@ -121,6 +121,10 @@ static void on_gc_heap_resize (size_t new_size);
 #define ELEMENT_CHUNK_SIZE 256
 #define VECTOR_PROC_INDEX 6
 
+static unsigned GC_roots_proc_index;
+
+static mse*
+GC_roots_proc (word* addr, mse* mark_stack_ptr, mse* mark_stack_limit, word env);
 
 static mse * GC_gcj_vector_proc (word * addr, mse * mark_stack_ptr,
 	mse * mark_stack_limit, word env)
@@ -268,6 +272,7 @@ mono_gc_base_init (void)
 	GC_init_gcj_malloc (5, NULL);
 #if HAVE_BDWGC_GC
 	GC_init_gcj_vector (VECTOR_PROC_INDEX, GC_gcj_vector_proc);
+	GC_roots_proc_index = GC_new_proc (GC_roots_proc);
 #endif
 	GC_allow_register_threads ();
 
@@ -736,12 +741,6 @@ mono_gc_deregister_root (char* addr)
 }
 
 static void
-push_root (gpointer key, gpointer value, gpointer user_data)
-{
-	GC_push_all (key, value);
-}
-
-static void
 push_handle_stack (HandleStack* stack)
 {
 	HandleChunk *cur = stack->bottom;
@@ -759,10 +758,82 @@ push_handle_stack (HandleStack* stack)
 	}
 }
 
+#ifdef HAVE_BDWGC_GC
+
+static mse*
+GC_roots_proc (word* addr, mse* mark_stack_ptr,	mse* mark_stack_limit, word env)
+{
+	GHashTableIter iter;
+	guint size = g_hash_table_size (roots);
+	g_hash_table_iter_init (&iter, roots);
+	char* start;
+	char* end;
+
+	word capacity = (word)(mark_stack_limit - mark_stack_ptr) - 1;
+	word start_index = env;
+	word remaining = size - start_index;
+	word skip = start_index;
+
+	/* if we have more items than capacity, push remaining immediately. This allows pushed
+	 * items to be processed on top of stack before we process remainder. If we push remainder
+	 * at top, we have no mark stack space.
+	 */
+	if (remaining > capacity) {
+		capacity--;
+		mark_stack_ptr++;
+		mark_stack_ptr->mse_descr.w = GC_MAKE_PROC (GC_roots_proc_index, (start_index + capacity) /* continue processing */);
+		mark_stack_ptr->mse_start = (ptr_t)0;
+	}
+
+	while (g_hash_table_iter_next (&iter, (void**)&start, (void**)&end) && capacity > 0) {
+		void* bottom;
+		void* top;
+
+		if (skip) {
+			skip--;
+			continue;
+		}
+
+		/* taken from GC_push_all */
+		bottom = (void*)(((word)start + ALIGNMENT - 1) & ~(ALIGNMENT - 1));
+		top = (void*)((word)end & ~(ALIGNMENT - 1));
+
+		g_assert ((word)bottom < (word)top);
+
+		mark_stack_ptr++;
+
+		if ((word)mark_stack_ptr >= (word)mark_stack_limit) {
+			g_error ("Unexpected mark stack overflow\n");
+		}
+		mark_stack_ptr->mse_start = (ptr_t)bottom;
+		mark_stack_ptr->mse_descr.w = (word)top - (word)bottom;
+		capacity--;
+	}
+	return mark_stack_ptr;
+}
+
+#else
+
+static void	
+push_root (gpointer key, gpointer value, gpointer user_data)	
+{	
+	GC_push_all (key, value);	
+}
+
+#endif
+
 static void
 mono_push_other_roots (void)
 {
+#ifdef HAVE_BDWGC_GC
+	if (GC_roots_proc_index) {
+		GC_mark_stack_top++;
+		GC_mark_stack_top->mse_descr.w = GC_MAKE_PROC (GC_roots_proc_index, 0 /* continue processing */);
+		GC_mark_stack_top->mse_start = (ptr_t)0;
+	}
+#else
 	g_hash_table_foreach (roots, push_root, NULL);
+#endif
 	FOREACH_THREAD (info) {
 		HandleStack* stack = (HandleStack*)info->handle_stack;
 		if (stack)
