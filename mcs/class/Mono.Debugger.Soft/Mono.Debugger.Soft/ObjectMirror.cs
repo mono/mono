@@ -367,7 +367,10 @@ namespace Mono.Debugger.Soft
 			} else {
 				if (r.Exception != null)
 					throw new InvocationException ((ObjectMirror)r.VM.DecodeValue (r.Exception));
-
+				
+				//refresh frames from thread after running an invoke
+				r.Thread.GetFrames();
+				
 				Value out_this = null;
 				if (r.OutThis != null)
 					out_this = r.VM.DecodeValue (r.OutThis);
