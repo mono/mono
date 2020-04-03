@@ -20,8 +20,9 @@ foreach my $arg (@ARGV)
 	}
 }
 
-print(">>> Building i386\n");
-system("perl", "$buildscriptsdir/build.pl", "--arch32=1", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ('failing building i386');
+# We are not longer building 32bit mono for linux
+#print(">>> Building i386\n");
+#system("perl", "$buildscriptsdir/build.pl", "--arch32=1", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ('failing building i386');
 
 print(">>> Building x86_64\n");
 system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ('failing building x86_64');

@@ -1150,14 +1150,22 @@ if ($build)
 			$ENV{CFLAGS} = "$archflags -Os";  #optimize for size
 		}		
 
-		my $linuxSysroot = "$externalBuildDeps/sysroot-gcc-glibc-x64/";
-		if (!(-d $linuxSysroot))
+		if($ENV{UNITY_THISISABUILDMACHINE} || $ENV{UNITY_USE_LINUX_SDK})
 		{
-			die("mono linux builds require a sysroot and the directory was not found : $linuxSysroot\n");
-		}
+			my $linuxSysroot = "$externalBuildDeps/sysroot-gcc-glibc-x64/";
+			if (!(-d $linuxSysroot))
+			{
+				die("mono linux builds require a sysroot and the directory was not found : $linuxSysroot\n");
+			}
 
-		print(">>> Linux Sysroot Root = $linuxSysroot\n");		
-		$ENV{CFLAGS} = "$ENV{CFLAGS} --sysroot=$linuxSysroot";		
+			if($arch32)
+			{
+				die("You are trying to build 32bit mono with a 64bit only sysroot, this is not supported!");
+			}
+
+			print(">>> Linux Sysroot = $linuxSysroot\n");		
+			$ENV{CFLAGS} = "$ENV{CFLAGS} --sysroot=$linuxSysroot";
+		}
 	}
 	elsif($^O eq 'darwin')
 	{
