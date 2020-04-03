@@ -17,13 +17,16 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 
+// no-op for iOS and tvOS.
+// watchOS is not supported yet.
+#define MONO_ENTER_GC_UNSAFE
+#define MONO_EXIT_GC_UNSAFE
+
 #include "runtime.h"
 
 //
 // Based on runtime/ in xamarin-macios
 //
-
-#define PRINT(...) do { printf (__VA_ARGS__); } while (0);
 
 static os_log_t stdout_log;
 
@@ -168,7 +171,7 @@ fetch_exception_property (MonoObject *obj, const char *name, bool is_virtual)
 
 		return (MonoObject *) mono_runtime_invoke (get, obj, NULL, &exc);
 	} else {
-		PRINT ("Could not find the property System.Exception.%s", name);
+		os_log_error (OS_LOG_DEFAULT, "Could not find the property System.Exception.%{public}s.", name);
 	}
 
 	return NULL;
