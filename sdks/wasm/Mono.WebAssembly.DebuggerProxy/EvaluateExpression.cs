@@ -146,7 +146,6 @@ namespace WebAssembly.Net.Debugging {
 						value = e.Message
 					}
 				}), token);
-				;
 			}
 		}
 	}
