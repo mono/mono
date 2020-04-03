@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter, MinuteLocator, SecondLocator
 import numpy as np

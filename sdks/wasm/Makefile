@@ -491,7 +491,7 @@ build-interp-sample: packager.exe hello.exe
 build-io-sample: packager.exe hello-io.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/io-sample --builddir=obj/io-sample --template=runtime.js --asset=hello-io.html --enable-fs hello-io.exe
 	ninja -v -C obj/io-sample
-	(cd bin/io-sample && python $(EMSCRIPTEN_SDK_DIR)/upstream/emscripten/tools/file_packager.py mono.dat --js-output=mono-loader.js --preload ../../hello-io.cs@/)
+	(cd bin/io-sample && $(PYTHON) $(EMSCRIPTEN_SDK_DIR)/upstream/emscripten/tools/file_packager.py mono.dat --js-output=mono-loader.js --preload ../../hello-io.cs@/)
 
 run-interp-sample: build-interp-sample
 	(cd bin/interp-sample && $(SM) runtime.js --run hello.exe)
@@ -722,7 +722,7 @@ package: build build-sdk build-dbg-proxy
 	rm -rf tmp
 
 serve:
-	python server.py
+	$(PYTHON) server.py
 
 canary:
 	/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary --remote-debugging-port=9222
