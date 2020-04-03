@@ -1127,52 +1127,6 @@ if ($build)
 			die("mono build deps are required and the directory was not found : $externalBuildDeps\n");
 		}
 
-		if($ENV{UNITY_THISISABUILDMACHINE} || $ENV{UNITY_USE_LINUX_SDK})
-		{
-			my $sdkVersion = '20170609';
-			my $schroot = "LinuxBuildEnvironment-$sdkVersion";
-			my @linuxToolchain = ('schroot', '-c', $schroot, '--');
-
-			print "\n";
-			print(">>> Linux SDK Version = $sdkVersion\n");
-
-			my $sdkName = "linux-sdk-$sdkVersion.tar.bz2";
-			my $depsSdkArchive = "$externalBuildDeps/linux-sdk-$sdkVersion/$sdkName";
-			my $depsSdkFinal = "$externalBuildDeps/linux-sdk-$sdkVersion/linux-sdk-$sdkVersion";
-
-			print(">>> Linux SDK Archive = $depsSdkArchive\n");
-			print(">>> Linux SDK Extraction Destination = $depsSdkFinal\n");
-			print("\n");
-
-			my $linuxSdkRoot = $depsSdkFinal;
-
-			if (-d $depsSdkFinal)
-			{
-				print(">>> Linux SDK already extracted\n");
-			}
-			else
-			{
-				print(">>> Linux SDK needs to be extracted\n");
-				system('mkdir', '-p', $depsSdkFinal) eq 0 or die ("failed to create directory $depsSdkFinal\n");
-				system('tar', 'xaf', $depsSdkArchive, '-C', $depsSdkFinal) eq 0 or die ("failed to extract Linux SDK\n");
-				system('sudo', 'cp', '-R', "$depsSdkFinal/linux-sdk-$sdkVersion", '/etc/schroot') eq 0 or die ("failed to copy SDK\n");
-				
-				if($ENV{YAMATO_PROJECT_ID})
-				{
-					system('sudo', 'cp', "$monoroot/.yamato/config/LinuxBuildEnvironment-20170609.conf", '/etc/schroot/chroot.d/') eq 0 or die ("failed to copy conf file\n");
-					system('sudo', 'cat', '/etc/schroot/chroot.d/LinuxBuildEnvironment-20170609.conf') eq 0 or die ("failed to list contents on /etc/schroot/chroot.d\n");					
-				}
-				else
-				{
-					system("sed 's,^directory=.*,directory=$depsSdkFinal/$schroot,' \"$depsSdkFinal/$schroot.conf\" | sudo tee /etc/schroot/chroot.d/$schroot.conf") eq 0 or die ("failed to deploy Linux SDK\n");
-				}	
-			}
-
-			@commandPrefix = @linuxToolchain;
-			print(">>> Linux SDK Root = $linuxSdkRoot\n");
-			print(">>> Linux Toolchain Command Prefix = " . join(' ', @commandPrefix) . "\n");
-		}
-
 		push @configureparams, "--host=$monoHostArch-pc-linux-gnu";
 
 		push @configureparams, "--disable-parallel-mark";  #this causes crashes
@@ -1194,7 +1148,16 @@ if ($build)
 		else
 		{
 			$ENV{CFLAGS} = "$archflags -Os";  #optimize for size
+		}		
+
+		my $linuxSysroot = "$externalBuildDeps/sysroot-gcc-glibc-x64/";
+		if (!(-d $linuxSysroot))
+		{
+			die("mono linux builds require a sysroot and the directory was not found : $linuxSysroot\n");
 		}
+
+		print(">>> Linux Sysroot Root = $linuxSysroot\n");		
+		$ENV{CFLAGS} = "$ENV{CFLAGS} --sysroot=$linuxSysroot";		
 	}
 	elsif($^O eq 'darwin')
 	{

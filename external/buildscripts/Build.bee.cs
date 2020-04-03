@@ -96,9 +96,9 @@ namespace BuildProgram
 					"android-ndk-r16b-linux/9df1e3b3b120_fbabd18208d82cbc810266e8b566bb0ea4e1e438de38d450a92deaa3e23757b6.7z",
 					"testing"));
 
-			Artifacts.Add("linux-sdk-20170609",
+			Artifacts.Add("sysroot-gcc-glibc-x64",
 				new Tuple<string, string>(
-					"linux-sdk-20170609/9df1e3b3b120_9a3a0847d5b3767579e908b5a9ce050936617b1b9275a79a8b71bb3229998957.7z",
+					"sysroot-gcc-glibc-x64/9.1.0-2.17-v0_608efc24a3b402ec57809211b16a6d32d519f891d4038e1fc8509fe300c395b2.7z",
 					"testing"));
 		}
 

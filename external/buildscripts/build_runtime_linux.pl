@@ -15,7 +15,7 @@ GetOptions(
    "stevedorebuilddeps=i"=>\$stevedoreBuildDeps,
 ) or die ("illegal cmdline options");
 
-my $arch32 = 1;
+my $arch32 = 0;
 if ($build64)
 {
 	$arch32 = 0;
