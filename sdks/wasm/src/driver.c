@@ -748,7 +748,7 @@ EM_JS(size_t, mono_wasm_timezone_get_local_name, (),
 })
 
 void
-mono_timezone_get_local_name (MonoString *volatile*result)
+mono_timezone_get_local_name (MonoString result)
 {
 	// WASM returns back an int pointer to a string UTF16 buffer.
 	// We then cast to `mono_unichar2*`.  Returning `mono_unichar2*` from the JavaScript call will
