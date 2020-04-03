@@ -8,6 +8,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Net;
 using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis;
+
 
 namespace WebAssembly.Net.Debugging {
 
@@ -190,6 +192,23 @@ namespace WebAssembly.Net.Debugging {
 
 			case "Debugger.stepOver": {
 					return await Step (id, StepKind.Over, token);
+				}
+
+			case "Debugger.evaluateOnCallFrame": {
+					var objId = args? ["callFrameId"]?.Value<string> ();
+					if (objId.StartsWith ("dotnet:", StringComparison.Ordinal)) {
+						var parts = objId.Split (new char [] { ':' });
+						if (parts.Length < 3)
+							return true;
+						switch (parts [1]) {
+						case "scope": {
+								await GetEvaluateOnCallFrame (id, int.Parse (parts [2]), args? ["expression"]?.Value<string> (), token);
+								break;
+							}
+						}
+						return true;
+					}
+					return false;
 				}
 
 			case "Runtime.getProperties": {
@@ -431,6 +450,70 @@ namespace WebAssembly.Net.Debugging {
 				SendResponse(msg_id, Result.Exception(e), token);
 			}
 
+		}
+		
+		
+		public async Task<JObject> GetVariableValue (MessageId msg_id, int scope_id, string expression, CancellationToken token)
+		{
+			JObject thisValue = null;
+			var context = GetContext (msg_id);
+			if (context.CallStack == null)
+				return null;
+			var scope = context.CallStack.FirstOrDefault (s => s.Id == scope_id);
+			var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
+			//get_this
+			int i = 0;
+			int [] var_ids = { };
+			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
+			var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
+			for (; i < values.Length; i++) {
+				if (values [i] ["name"].Value<string> () == "this") {
+					thisValue = values [i];
+				}
+			}
+
+			if (thisValue != null && expression == "this") {
+				return thisValue;
+			}
+			//search in locals
+			var_ids = vars.Where (v => v.Name == expression).Select (v => v.Index).ToArray ();
+			if (var_ids.Length > 0) {
+				res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
+				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
+				return values [0];
+			}
+			//search in scope
+			if (thisValue != null) {
+				var objectId = thisValue ["value"] ["objectId"].Value<string> ();
+				var parts = objectId.Split (new char [] { ':' });
+				res = await SendMonoCommand (msg_id, MonoCommands.GetObjectProperties (int.Parse (parts [2]), expandValueTypes: false), token);
+				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
+				for (i = 0; i < values.Length; i++) {
+					if (values [i] ["name"].Value<string> () == expression) {
+						return values [i];
+					}
+				}
+			}
+			return null;
+		}
+
+		async Task GetEvaluateOnCallFrame (MessageId msg_id, int scope_id, string expression, CancellationToken token)
+		{
+			JObject thisValue = null;
+			var context = GetContext (msg_id);
+			if (context.CallStack == null)
+				return;
+
+			var varValue = await GetVariableValue (msg_id, scope_id, expression, token);
+
+			if (varValue != null) {
+				varValue ["value"] ["description"] = varValue ["value"] ["className"];
+				SendResponse (msg_id, Result.OkFromObject (new {
+					result = varValue ["value"]
+				}), token);
+			}
+
+			await EvaluateExpression.CompileAndRunTheExpression (this, msg_id, scope_id, expression, token);
 		}
 
 		async Task GetScopeProperties (MessageId msg_id, int scope_id, CancellationToken token)
