@@ -66,7 +66,7 @@ namespace WebAssembly.Net.Debugging {
 					return v;
 				}
 
-				throw new Exception ("Evaluate of this datatype " + type + "not implemented yet");
+				throw new Exception ($"Evaluate of this datatype {type} not implemented yet");
 			}
 
 			private string GetTypeFullName (string type)
@@ -78,7 +78,7 @@ namespace WebAssembly.Net.Debugging {
 						return typeof (string).FullName;
 				}
 
-				throw new Exception ("Evaluate of this datatype " + type + "not implemented yet");
+				throw new Exception ($"Evaluate of this datatype {type} not implemented yet");
 			}
 		}
 
