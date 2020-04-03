@@ -117,10 +117,10 @@ namespace WebAssembly.Net.Debugging {
 				};
 
 				CSharpCompilation compilation = CSharpCompilation.Create (
-				"compileAndRunTheExpression",
-				syntaxTrees: new [] { syntaxTree },
-				references: references,
-				options: new CSharpCompilationOptions (OutputKind.DynamicallyLinkedLibrary));
+					"compileAndRunTheExpression",
+					syntaxTrees: new [] { syntaxTree },
+					references: references,
+					options: new CSharpCompilationOptions (OutputKind.DynamicallyLinkedLibrary));
 				using (var ms = new MemoryStream ()) {
 					EmitResult result = compilation.Emit (ms);
 					ms.Seek (0, SeekOrigin.Begin);
