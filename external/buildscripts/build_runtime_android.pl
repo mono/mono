@@ -25,6 +25,7 @@ if ($androidArch eq "")
 {
 	system("perl", "$buildScriptsRoot/build.pl", "--build=1", "--clean=1", "--artifact=1", "--arch32=1", "--androidarch=armv7a", "--forcedefaultbuilddeps=1", "--windowssubsystemforlinux=$windowsSubsystemForLinux", "--stevedorebuilddeps=$stevedoreBuildDeps") eq 0 or die ("Failed building mono for armv7a\n");
 	system("perl", "$buildScriptsRoot/build.pl", "--build=1", "--clean=1", "--artifact=1", "--arch32=1", "--androidarch=x86", "--forcedefaultbuilddeps=1", "--windowssubsystemforlinux=$windowsSubsystemForLinux", "--stevedorebuilddeps=$stevedoreBuildDeps") eq 0 or die ("Failed building mono for x86\n");
+	system("perl", "$buildScriptsRoot/build.pl", "--build=1", "--clean=1", "--artifact=1", "--androidarch=aarch64", "--forcedefaultbuilddeps=1", "--windowssubsystemforlinux=$windowsSubsystemForLinux", "--stevedorebuilddeps=$stevedoreBuildDeps") eq 0 or die ("Failed building mono for aarch64\n");
 }
 else
 {

@@ -685,31 +685,46 @@ if ($build)
 			die("mono build deps are required and the directory was not found : $externalBuildDeps\n");
 		}
 
-		my $ndkVersion = "r16b";
-		my $apiLevel = 16;
+		my $ndkVersion = "r19c";
+		my $apiLevel = 19;
 		my $hostTriple = "";
 		my $platformRootPostfix = "";
 		my $useKraitPatch = 1;
 		my $kraitPatchPath = "$monoroot/../../android_krait_signal_handler/build";
 		my $toolChainExtension = "";
+		my $binUtilsPrefix = "";
 
 		$ENV{ANDROID_PLATFORM} = "android-$apiLevel";
 
 		if ($androidArch eq "armv7a")
 		{
-			$hostTriple = "arm-linux-androideabi";
+			$clangPrefix = "armv7a";
+			# armv7a is a special case where the binutils don't use the clang prefix for some reason
+			$binUtilsPrefix = "arm-linux-androideabi";
+			$hostTriple = "armv7a-linux-androideabi";
 			$platformRootPostfix = "arm";
 		}
 		elsif ($androidArch eq "x86")
 		{
 			$hostTriple = "i686-linux-android";
+			$binUtilsPrefix = $hostTriple;
 			$platformRootPostfix = "x86";
 			$useKraitPatch = 0;
+		}
+		elsif ($androidArch eq "aarch64")
+		{
+			$hostTriple = "aarch64-linux-android";
+			$binUtilsPrefix = $hostTriple;
+			$platformRootPostfix = "arm";
+			$useKraitPatch = 0; # TODO Maybe need this?
+			$apiLevel = 21;
 		}
 		else
 		{
 			die("Unsupported android architecture: $androidArch\n");
 		}
+
+		$ENV{API} = $apiLevel;
 
 		if ($^O eq "linux")
 		{
@@ -729,16 +744,20 @@ if ($build)
 		print(">>> Android NDK Version = $ndkVersion\n");
 
 		my $ndkName = "";
+		my $hostTag;
 		if($^O eq "linux")
 		{
-			$ndkName = "android-ndk-$ndkVersion-linux/android-ndk-$ndkVersion-linux-x86_64.zip";
+			$hostTag = "linux-x86_64";
+			$ndkName = "android-ndk-$ndkVersion-linux/android-ndk-$ndkVersion-$hostTag.zip";
 		}
 		elsif($^O eq "darwin")
 		{
-			$ndkName = "android-ndk-$ndkVersion-darwin/android-ndk-$ndkVersion-darwin-x86_64.zip";
+			$hostTag = "darwin-x86_64";
+			$ndkName = "android-ndk-$ndkVersion-darwin/android-ndk-$ndkVersion-$hostTag.zip";
 		}
 		else
 		{
+			$hostTag = "windows";
 			$ndkName = "android-$ndkVersion-r16b-windows/android-ndk-$ndkVersion-windows-x86.zip";
 		}
 
@@ -801,13 +820,11 @@ if ($build)
 		}
 
 		my $androidNdkRoot = $ENV{ANDROID_NDK_ROOT};
-		my $androidPlatformRoot = "$androidNdkRoot/platforms/$ENV{ANDROID_PLATFORM}/arch-$platformRootPostfix";
 
-		my $androidToolchain = "$androidNdkRoot/toolchains/$hostTriple-clang";
+		my $androidToolchain = "$androidNdkRoot/toolchains/llvm/prebuilt/$hostTag";
+		my $androidPlatformRoot = "$androidToolchain/sysroot";
 
-		print(">>> Generating android toolchain\n");
-		system("$androidNdkRoot/build/tools/make_standalone_toolchain.py --arch $platformRootPostfix --api $apiLevel --install-dir $androidToolchain");
-
+		# TODO: No idea if we can build android 19 on windows yet
 		if ($runningOnWindows)
 		{
 			$toolChainExtension = ".exe";
@@ -828,6 +845,7 @@ if ($build)
 		print(">>> Android NDK Root = $androidNdkRoot\n");
 		print(">>> Android Platform Root = $androidPlatformRoot\n");
 		print(">>> Android Toolchain = $androidToolchain\n");
+		print(">>> Android Target = $hostTriple\n");
 
 		if (!(-d "$androidToolchain"))
 		{
@@ -839,30 +857,20 @@ if ($build)
 			die("Failed to locate android platform root\n");
 		}
 
-		if ($androidArch eq "armv7a")
-		{
-			$ENV{CFLAGS} = "-DARM_FPU_VFP=1  -march=armv7-a -target armv7-none-linux-androideabi -DHAVE_ARMV6=1 -funwind-tables $ENV{CFLAGS}";
-			$ENV{LDFLAGS} = "-Wl,--fix-cortex-a8 -Wl,-rpath-link=$androidPlatformRoot/usr/lib $ENV{LDFLAGS}";
-		}
+		$ENV{CC} = "$androidToolchain/bin/$hostTriple$apiLevel-clang";
+		$ENV{CXX} = "$androidToolchain/bin/$hostTriple$apiLevel-clang++";
+		$ENV{CPP} = "$androidToolchain/bin/$hostTriple$apiLevel-clang -E";
+		$ENV{CXXCPP} = "$androidToolchain/bin/$hostTriple$apiLevel-clang++ -E";
 
-		my $compilerSysroot = "$androidNdkRoot/sysroot";
-		my $archISystem = "$compilerSysroot/usr/include/$hostTriple";
-		my $unifiedISystem = "$compilerSysroot/usr/include";
+		$ENV{CPATH} = "$androidPlatformRoot/usr/include/$binUtilsPrefix";
 
-		$ENV{CC} = "$androidToolchain/bin/clang -v -isystem $archISystem -isystem $unifiedISystem";
-		$ENV{CXX} = "$androidToolchain/bin/clang++ -isystem $archISystem -isystem $unifiedISystem";
-		$ENV{CPP} = "$androidToolchain/bin/clang -E -isystem $archISystem -isystem $unifiedISystem";
-		$ENV{CXXCPP} = "$androidToolchain/bin/clang++ -E -isystem $archISystem -isystem $unifiedISystem";
+		$ENV{LD} = "$androidToolchain/bin/$binUtilsPrefix-ld";
+		$ENV{AS} = "$androidToolchain/bin/$binUtilsPrefix-as";
+		$ENV{AR} = "$androidToolchain/bin/$binUtilsPrefix-ar";
+		$ENV{RANLIB} = "$androidToolchain/bin/$binUtilsPrefix-ranlib";
+		$ENV{STRIP} = "$androidToolchain/bin/$binUtilsPrefix-strip";
 
-		$ENV{CPATH} = "$androidPlatformRoot/usr/include";
-
-		$ENV{LD} = "$androidToolchain/bin/$hostTriple-ld";
-		$ENV{AS} = "$androidToolchain/bin/$hostTriple-as";
-		$ENV{AR} = "$androidToolchain/bin/$hostTriple-ar";
-		$ENV{RANLIB} = "$androidToolchain/bin/$hostTriple-ranlib";
-		$ENV{STRIP} = "$androidToolchain/bin/$hostTriple-strip";
-
-		$ENV{CFLAGS} = "-DANDROID -D__ANDROID_API__=16 -DPLATFORM_ANDROID -DLINUX -D__linux__ -DHAVE_USR_INCLUDE_MALLOC_H -D_POSIX_PATH_MAX=256 -DS_IWRITE=S_IWUSR -DHAVE_PTHREAD_MUTEX_TIMEDLOCK -fpic -g -ffunction-sections -fdata-sections $ENV{CFLAGS}";
+		$ENV{CFLAGS} = "-DANDROID -DPLATFORM_ANDROID -DLINUX -D__linux__ -DHAVE_USR_INCLUDE_MALLOC_H -D_POSIX_PATH_MAX=256 -DS_IWRITE=S_IWUSR -DHAVE_PTHREAD_MUTEX_TIMEDLOCK -fpic -g -ffunction-sections -fdata-sections $ENV{CFLAGS}";
 		$ENV{CXXFLAGS} = $ENV{CFLAGS};
 		$ENV{CPPFLAGS} = $ENV{CFLAGS};
 
@@ -871,7 +879,7 @@ if ($build)
 			$ENV{LDFLAGS} = "-Wl,--wrap,sigaction -L$kraitPatchPath/obj/local/armeabi-v7a -lkrait-signal-handler $ENV{LDFLAGS}";
 		}
 
-		$ENV{LDFLAGS} = "--sysroot=$androidPlatformRoot -Wl,--no-undefined -Wl,--gc-sections -ldl -lm -llog -lc $ENV{LDFLAGS}";
+		$ENV{LDFLAGS} = "-Wl,--no-undefined -Wl,--gc-sections -ldl -lm -llog -lc $ENV{LDFLAGS}";
 
 		print "\n";
 		print ">>> Environment:\n";
@@ -1673,11 +1681,8 @@ if ($artifact)
 		}
 		elsif ($android)
 		{
-			for my $file ('libmonosgen-2.0.so','libmonobdwgc-2.0.so')
-			{
-				print ">>> Copying $file\n";
-				system("cp", "$monoroot/mono/mini/.libs/$file","$embedDirArchDestination/$file") eq 0 or die ("failed copying $file\n");
-			}
+			system("cp", "$monoroot/mono/mini/.libs/libmonosgen-2.0.so","$embedDirArchDestination/libmonosgen-2.0.so") eq 0 or die ("failed copying $file\n");
+			system("cp", "$monoroot/mono/mini/.libs/libmonoboehm-2.0.so","$embedDirArchDestination/libmonobdwgc-2.0.so") eq 0 or die ("failed copying $file\n");
 			print ">>> Copying libMonoPosixHelper.so\n";
 			system("cp", "$monoroot/support/.libs/libMonoPosixHelper.so","$embedDirArchDestination/libMonoPosixHelper.so") eq 0 or die ("failed copying libMonoPosixHelper.so\n");
 		}

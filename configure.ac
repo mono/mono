@@ -283,10 +283,6 @@ case "$host" in
 		with_sigaltstack=no
 		with_static_mono=no
 
-		# Android doesn't support boehm, as it's missing <link.h>
-		support_boehm=no
-		with_gc=sgen
-
 		# isinf(3) requires -lm
 		LDFLAGS="$LDFLAGS -lm"
 
@@ -2092,6 +2088,11 @@ if test "x$support_boehm" = "xyes"; then
 	if test x$enable_parallel_mark = xyes; then
 		libgc_configure_args="$libgc_configure_args --enable-parallel-mark"
 	fi
+
+	# TODO: How much of this do we want?
+	#		ac_configure_args="$ac_configure_args --enable-thread-local-alloc=no --enable-parallel-mark=no --enable-verify-defines=yes --enable-gc-threads=yes --with-libatomic-ops=no --enable-no-threads-discovery=yes --enable-single-obj-compilation=yes --enable-gcj-support=yes --enable-threads=$libgc_threads --enable-munmap=yes --enable-mmap=yes --enable-ignore-dynamic-loading=yes --enable-dont-register-main-static-data=yes"
+
+	ac_configure_args="$ac_configure_args --with-libatomic-ops=no"
 
 	gc_msg=""
 	LIBGC_CPPFLAGS=
