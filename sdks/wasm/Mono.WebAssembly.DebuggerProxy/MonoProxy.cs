@@ -462,16 +462,11 @@ namespace WebAssembly.Net.Debugging {
 			var scope = context.CallStack.FirstOrDefault (s => s.Id == scope_id);
 			var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 			//get_this
-			int i = 0;
 			int [] var_ids = { };
 			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
 			var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
-			for (; i < values.Length; i++) {
-				if (values [i] ["name"].Value<string> () == "this") {
-					thisValue = values [i];
-				}
-			}
-
+			thisValue = values.Where (v => v ["name"].Value<string> () == "this").FirstOrDefault ();
+			
 			if (thisValue != null && expression == "this") {
 				return thisValue;
 			}
@@ -488,33 +483,44 @@ namespace WebAssembly.Net.Debugging {
 				var parts = objectId.Split (new char [] { ':' });
 				res = await SendMonoCommand (msg_id, MonoCommands.GetObjectProperties (int.Parse (parts [2]), expandValueTypes: false), token);
 				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
-				for (i = 0; i < values.Length; i++) {
-					if (values [i] ["name"].Value<string> () == expression) {
-						return values [i];
-					}
-				}
+				var foundValue = values.Where (v => v ["name"].Value<string> () == expression).FirstOrDefault ();
+				if (foundValue != null)
+					return foundValue;
 			}
 			return null;
 		}
 
 		async Task GetEvaluateOnCallFrame (MessageId msg_id, int scope_id, string expression, CancellationToken token)
 		{
-			JObject thisValue = null;
-			var context = GetContext (msg_id);
-			if (context.CallStack == null)
-				return;
+			try {
+				var context = GetContext (msg_id);
+				if (context.CallStack == null)
+					return;
 
-			var varValue = await TryGetVariableValue (msg_id, scope_id, expression, token);
+				var varValue = await TryGetVariableValue (msg_id, scope_id, expression, token);
 
-			if (varValue != null) {
-				varValue ["value"] ["description"] = varValue ["value"] ["className"];
+				if (varValue != null) {
+					varValue ["value"] ["description"] = varValue ["value"] ["className"];
+					SendResponse (msg_id, Result.OkFromObject (new {
+						result = varValue ["value"]
+					}), token);
+					return;
+				}
+
+				string retValue = await EvaluateExpression.CompileAndRunTheExpression (this, msg_id, scope_id, expression, token);
 				SendResponse (msg_id, Result.OkFromObject (new {
-					result = varValue ["value"]
+					result = new {
+						value = retValue
+					}
 				}), token);
-				return;
 			}
-
-			await EvaluateExpression.CompileAndRunTheExpression (this, msg_id, scope_id, expression, token);
+			catch (Exception e) {
+				SendResponse (msg_id, Result.OkFromObject (new {
+					result = new {
+						value = e.Message
+					}
+				}), token);
+			}
 		}
 
 		async Task GetScopeProperties (MessageId msg_id, int scope_id, CancellationToken token)

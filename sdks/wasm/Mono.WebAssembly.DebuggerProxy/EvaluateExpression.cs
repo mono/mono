@@ -40,12 +40,12 @@ namespace WebAssembly.Net.Debugging {
 					if (value == null)
 						throw new Exception ("The name \"" + var.Identifier.Text + "\" does not exist in the current context");
 
-					values.Add (GetValueWithCorrectDatatype(value ["value"] ["value"].ToString (), value ["value"] ["type"].ToString ()));
+					values.Add (ConvertJSToCSharpType (value ["value"] ["value"].ToString (), value ["value"] ["type"].ToString ()));
 
 					var updatedMethod = method.AddParameterListParameters (
-					SyntaxFactory.Parameter (
-						SyntaxFactory.Identifier (var.Identifier.Text))
-						.WithType (SyntaxFactory.ParseTypeName (GetTypeFullName(value["value"]["type"].ToString())))); //get var type
+						SyntaxFactory.Parameter (
+							SyntaxFactory.Identifier (var.Identifier.Text))
+							.WithType (SyntaxFactory.ParseTypeName (GetTypeFullName(value["value"]["type"].ToString()))));
 					var newRoot = root.ReplaceNode (method, updatedMethod);
 					syntaxTree = syntaxTree.WithRootAndOptions (newRoot, syntaxTree.Options);
 
@@ -57,7 +57,7 @@ namespace WebAssembly.Net.Debugging {
 				return syntaxTree;
 			}
 
-			private object GetValueWithCorrectDatatype (string v, string type)
+			private object ConvertJSToCSharpType (string v, string type)
 			{
 				switch (type) {
 				case "number":
@@ -82,71 +82,59 @@ namespace WebAssembly.Net.Debugging {
 			}
 		}
 
-		public static async Task CompileAndRunTheExpression (MonoProxy proxy, MessageId msg_id, int scope_id, string expression, CancellationToken token)
+		public static async Task<string> CompileAndRunTheExpression (MonoProxy proxy, MessageId msg_id, int scope_id, string expression, CancellationToken token)
 		{
-			try {
-				FindVariableNMethodCall findVarNMethodCall = new FindVariableNMethodCall ();
-				string retString;
-				SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText (@"
-					using System;
-					public class CompileAndRunTheExpression
-					{
-						public string Evaluate()
-						{
-							return (" + expression + @").ToString(); 
-						}
-					}");
-				CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot ();
-				ClassDeclarationSyntax classDeclaration = root.Members.ElementAt (0) as ClassDeclarationSyntax;
-				MethodDeclarationSyntax methodDeclaration = classDeclaration.Members.ElementAt (0) as MethodDeclarationSyntax;
-				BlockSyntax blockValue = methodDeclaration.Body;
-				ReturnStatementSyntax returnValue = blockValue.Statements.ElementAt (0) as ReturnStatementSyntax;
-				InvocationExpressionSyntax expressionInvocation = returnValue.Expression as InvocationExpressionSyntax;
-				MemberAccessExpressionSyntax expressionMember = expressionInvocation.Expression as MemberAccessExpressionSyntax;
-				ParenthesizedExpressionSyntax expressionParenthesized = expressionMember.Expression as ParenthesizedExpressionSyntax;
-				var expressionTree = expressionParenthesized.Expression;
-
-				findVarNMethodCall.Visit (expressionTree);
-
-				syntaxTree = await findVarNMethodCall.ReplaceVars (syntaxTree, root, methodDeclaration, proxy, msg_id, scope_id, token);
-
-				MetadataReference [] references = new MetadataReference []
+			FindVariableNMethodCall findVarNMethodCall = new FindVariableNMethodCall ();
+			string retString;
+			SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText (@"
+				using System;
+				public class CompileAndRunTheExpression
 				{
-					MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-					MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location)
-				};
+					public string Evaluate()
+					{
+						return (" + expression + @").ToString(); 
+					}
+				}");
+			CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot ();
+			ClassDeclarationSyntax classDeclaration = root.Members.ElementAt (0) as ClassDeclarationSyntax;
+			MethodDeclarationSyntax methodDeclaration = classDeclaration.Members.ElementAt (0) as MethodDeclarationSyntax;
+			BlockSyntax blockValue = methodDeclaration.Body;
+			ReturnStatementSyntax returnValue = blockValue.Statements.ElementAt (0) as ReturnStatementSyntax;
+			InvocationExpressionSyntax expressionInvocation = returnValue.Expression as InvocationExpressionSyntax;
+			MemberAccessExpressionSyntax expressionMember = expressionInvocation.Expression as MemberAccessExpressionSyntax;
+			ParenthesizedExpressionSyntax expressionParenthesized = expressionMember.Expression as ParenthesizedExpressionSyntax;
+			var expressionTree = expressionParenthesized.Expression;
 
-				CSharpCompilation compilation = CSharpCompilation.Create (
-					"compileAndRunTheExpression",
-					syntaxTrees: new [] { syntaxTree },
-					references: references,
-					options: new CSharpCompilationOptions (OutputKind.DynamicallyLinkedLibrary));
-				using (var ms = new MemoryStream ()) {
-					EmitResult result = compilation.Emit (ms);
-					ms.Seek (0, SeekOrigin.Begin);
-					Assembly assembly = Assembly.Load (ms.ToArray ());
-					Type type = assembly.GetType ("CompileAndRunTheExpression");
-					object obj = Activator.CreateInstance (type);
-					var ret = type.InvokeMember ("Evaluate",
-						BindingFlags.Default | BindingFlags.InvokeMethod,
-						null,
-						obj,
-						//new object [] { 10 }
-						findVarNMethodCall.values.ToArray ());
-					retString = ret.ToString ();
-				}
-				proxy.SendResponse (msg_id, Result.OkFromObject (new {
-					result = new {
-						value = retString
-					}
-				}), token);
-			} catch (Exception e) {
-				proxy.SendResponse (msg_id, Result.OkFromObject (new {
-					result = new {
-						value = e.Message
-					}
-				}), token);
+			findVarNMethodCall.Visit (expressionTree);
+
+			syntaxTree = await findVarNMethodCall.ReplaceVars (syntaxTree, root, methodDeclaration, proxy, msg_id, scope_id, token);
+
+			MetadataReference [] references = new MetadataReference []
+			{
+				MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+				MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location)
+			};
+
+			CSharpCompilation compilation = CSharpCompilation.Create (
+				"compileAndRunTheExpression",
+				syntaxTrees: new [] { syntaxTree },
+				references: references,
+				options: new CSharpCompilationOptions (OutputKind.DynamicallyLinkedLibrary));
+			using (var ms = new MemoryStream ()) {
+				EmitResult result = compilation.Emit (ms);
+				ms.Seek (0, SeekOrigin.Begin);
+				Assembly assembly = Assembly.Load (ms.ToArray ());
+				Type type = assembly.GetType ("CompileAndRunTheExpression");
+				object obj = Activator.CreateInstance (type);
+				var ret = type.InvokeMember ("Evaluate",
+					BindingFlags.Default | BindingFlags.InvokeMethod,
+					null,
+					obj,
+					//new object [] { 10 }
+					findVarNMethodCall.values.ToArray ());
+				retString = ret.ToString ();
 			}
+			return retString;
 		}
 	}
 }
