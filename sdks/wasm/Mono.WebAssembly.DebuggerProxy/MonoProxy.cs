@@ -453,7 +453,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 		
 		
-		public async Task<JObject> GetVariableValue (MessageId msg_id, int scope_id, string expression, CancellationToken token)
+		public async Task<JObject> TryGetVariableValue (MessageId msg_id, int scope_id, string expression, CancellationToken token)
 		{
 			JObject thisValue = null;
 			var context = GetContext (msg_id);
@@ -476,9 +476,9 @@ namespace WebAssembly.Net.Debugging {
 				return thisValue;
 			}
 			//search in locals
-			var_ids = vars.Where (v => v.Name == expression).Select (v => v.Index).ToArray ();
-			if (var_ids.Length > 0) {
-				res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
+			var var_id = vars.SingleOrDefault (v => v.Name == expression);
+			if (var_id != null) {
+				res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, new int [] { var_id.Index }), token);
 				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 				return values [0];
 			}
@@ -504,13 +504,14 @@ namespace WebAssembly.Net.Debugging {
 			if (context.CallStack == null)
 				return;
 
-			var varValue = await GetVariableValue (msg_id, scope_id, expression, token);
+			var varValue = await TryGetVariableValue (msg_id, scope_id, expression, token);
 
 			if (varValue != null) {
 				varValue ["value"] ["description"] = varValue ["value"] ["className"];
 				SendResponse (msg_id, Result.OkFromObject (new {
 					result = varValue ["value"]
 				}), token);
+				return;
 			}
 
 			await EvaluateExpression.CompileAndRunTheExpression (this, msg_id, scope_id, expression, token);
