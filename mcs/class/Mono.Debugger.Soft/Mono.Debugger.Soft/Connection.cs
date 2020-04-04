@@ -439,7 +439,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 56;
+		internal const int MINOR_VERSION = 57;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
