@@ -294,7 +294,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 56
+#define MINOR_VERSION 57
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -4983,7 +4983,6 @@ debugger_agent_breakpoint_from_context (MonoContext *ctx)
 	if (MONO_CONTEXT_GET_IP (ctx) == orig_ip - 1)
 		MONO_CONTEXT_SET_IP (ctx, orig_ip);
 }
-
 static void
 ss_args_destroy (SingleStepArgs *ss_args)
 {
@@ -4994,6 +4993,8 @@ ss_args_destroy (SingleStepArgs *ss_args)
 static int
 handle_multiple_ss_requests (void)
 {
+	if (!CHECK_PROTOCOL_VERSION (2, 57))
+		return DE_ERR_NOT_IMPLEMENTED;
 	return 1;
 }
 

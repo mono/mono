@@ -65,9 +65,6 @@ public class DebuggerTests
 	Event GetNextEvent () {
 		var es = vm.GetNextEventSet ();
 		Assert.AreEqual (1, es.Events.Length);
-		if (step_req != null && es [0] != null && es [0].Request != null && es [0].Request is StepEventRequest && ((StepEventRequest)es [0].Request).GetId() != step_req.GetId()) {
-			step_req = ((StepEventRequest)es [0].Request);
-		}
 		return es [0];
 	}
 
