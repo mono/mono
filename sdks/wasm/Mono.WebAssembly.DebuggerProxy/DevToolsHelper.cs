@@ -145,6 +145,9 @@ namespace WebAssembly.Net.Debugging {
 		public static MonoCommands GetArrayValues (int objectId)
 			=> new MonoCommands ($"MONO.mono_wasm_get_array_values({objectId})");
 
+		public static MonoCommands GetArrayValueExpanded (int objectId, int idx)
+			=> new MonoCommands ($"MONO.mono_wasm_get_array_value_expanded({objectId}, {idx})");
+
 		public static MonoCommands GetScopeVariables (int scopeId, params int[] vars)
 			=> new MonoCommands ($"MONO.mono_wasm_get_variables({scopeId}, [ {string.Join (",", vars)} ])");
 

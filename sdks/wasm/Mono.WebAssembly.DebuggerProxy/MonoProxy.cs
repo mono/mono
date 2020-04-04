@@ -227,20 +227,18 @@ namespace WebAssembly.Net.Debugging {
 							break;
 							}
 						case "array": {
-							await GetDetails (id, MonoCommands.GetArrayValues (int.Parse (parts [2])), token);
+							await GetArrayDetails (id, objId, parts, token);
 							break;
 							}
 						case "valuetype": {
-							if (!IsValueTypeCached (id, objId)) {
-								if (parts.Length < 4)
-									// FIXME: ShouldNotReachException?!
-									throw new ArgumentException ("Could not find a cached value for {objId}, and this isn't a valuetype in an object, so can't expand it now!");
+							await GetDetailsForValueType (id, objId,
+									get_props_cmd_fn: () => {
+										if (parts.Length < 4)
+											return null;
 
-								var containerObjId = int.Parse (parts [2]);
-								await GetDetails (id, MonoCommands.GetObjectProperties (containerObjId, expandValueTypes: true), token: token, send_response: false);
-							}
-
-							GetDetailsForValueType (id, objId, token);
+										var containerObjId = int.Parse (parts[2]);
+										return MonoCommands.GetObjectProperties (containerObjId, expandValueTypes: true);
+									}, token);
 							break;
 							}
 						}
@@ -252,6 +250,30 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			return false;
+		}
+
+		async Task GetArrayDetails (MessageId id, string objId, string[] objIdParts, CancellationToken token)
+		{
+			switch (objIdParts.Length)
+			{
+				case 3: {
+					await GetDetails (id, MonoCommands.GetArrayValues (int.Parse (objIdParts [2])), token);
+					break;
+					}
+				case 4: {
+					// This form of the id is being used only for valuetypes right now
+					await GetDetailsForValueType(id, objId,
+							get_props_cmd_fn: () => {
+								var arrayObjectId = int.Parse (objIdParts [2]);
+								var idx = int.Parse (objIdParts [3]);
+								return MonoCommands.GetArrayValueExpanded (arrayObjectId, idx);
+							}, token);
+					break;
+					}
+				default:
+					SendResponse (id, Result.Exception (new ArgumentException ($"Unknown objectId format for array: {objId}")), token);
+					break;
+			}
 		}
 
 		//static int frame_id=0;
@@ -411,7 +433,7 @@ namespace WebAssembly.Net.Debugging {
 				context.ClearState ();
 				await SendCommand (msg_id, "Debugger.stepOut", new JObject (), token);
 				return false;
-			} 
+			}
 
 			SendResponse (msg_id, Result.Ok (new JObject ()), token);
 
@@ -595,12 +617,23 @@ namespace WebAssembly.Net.Debugging {
 			return var_list;
 		}
 
-		bool IsValueTypeCached (MessageId msg_id, string object_id)
-			=> GetContext (msg_id).ValueTypesCache.ContainsKey (object_id);
-
-		bool GetDetailsForValueType (MessageId msg_id, string object_id, CancellationToken token)
+		async Task<bool> GetDetailsForValueType (MessageId msg_id, string object_id, Func<MonoCommands> get_props_cmd_fn, CancellationToken token)
 		{
 			var ctx = GetContext (msg_id);
+
+			if (!ctx.ValueTypesCache.ContainsKey (object_id)) {
+				var cmd = get_props_cmd_fn ();
+				if (cmd == null) {
+					SendResponse (msg_id, Result.Exception (new ArgumentException (
+									"Could not find a cached value for {object_id}, and cant' expand it.")),
+									token);
+
+					return false;
+				} else {
+					await GetDetails (msg_id, cmd, token, send_response: false);
+				}
+			}
+
 			if (ctx.ValueTypesCache.TryGetValue (object_id, out var var_list)) {
 				var response = JObject.FromObject(new
 				{

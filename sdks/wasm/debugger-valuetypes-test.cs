@@ -32,9 +32,9 @@ namespace DebuggerTests {
 			return ss_arg;
 		}
 
-		public static async Task<bool> AsyncMethodWithLocalStructs ()
+		public static async Task<bool> MethodWithLocalStructsStaticAsync ()
 		{
-			var ss_local = new SimpleStruct ("set in AsyncMethodWithLocalStructs", 1, DateTimeKind.Utc);
+			var ss_local = new SimpleStruct ("set in MethodWithLocalStructsStaticAsync", 1, DateTimeKind.Utc);
 			var gs_local = new GenericStruct<int> {
 						StringField = "gs_local#GenericStruct<ValueTypesTest>#StringField",
 						List = new System.Collections.Generic.List<int> { 5, 3 },

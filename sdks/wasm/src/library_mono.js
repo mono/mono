@@ -148,6 +148,8 @@ var MonoSupportLib = {
 			for (let i=0; i<var_list.length; i++) {
 				heapBytes[i] = var_list[i]
 			}
+
+			this._async_method_objectId = 0;
 			this.mono_wasm_get_var_info (scope, heapBytes.byteOffset, var_list.length);
 			Module._free(heapBytes.byteOffset);
 			var res = MONO._fixup_name_value_objects (this.var_info);
@@ -158,6 +160,13 @@ var MonoSupportLib = {
 				var name = res [i].name;
 				if (name != undefined && name.indexOf ('>') > 0)
 					res [i].name = name.substring (1, name.indexOf ('>'));
+			}
+
+			if (this._async_method_objectId != 0) {
+				for (let i in res) {
+					if (res [i].value.isValueType != undefined && res [i].value.isValueType)
+						res [i].value.objectId = `dotnet:valuetype:${this._async_method_objectId}:${res [i].fieldOffset}`;
+				}
 			}
 
 			this.var_info = []
@@ -192,6 +201,28 @@ var MonoSupportLib = {
 			this.mono_wasm_get_array_values_info (objId);
 
 			var res = MONO._fixup_name_value_objects (this.var_info);
+			for (var i = 0; i < res.length; i++) {
+				if (res [i].value.isValueType != undefined && res [i].value.isValueType)
+					res [i].value.objectId = `dotnet:array:${objId}:${i}`;
+			}
+
+			this.var_info = [];
+
+			return res;
+		},
+
+		mono_wasm_get_array_value_expanded: function(objId, idx) {
+			if (!this.mono_wasm_get_array_value_expanded_info)
+				this.mono_wasm_get_array_value_expanded_info = Module.cwrap ("mono_wasm_get_array_value_expanded", null, [ 'number', 'number' ]);
+
+			this.var_info = [];
+			this.mono_wasm_get_array_value_expanded_info (objId, idx);
+
+			var res = MONO._fixup_name_value_objects (this.var_info);
+			// length should be exactly one!
+			if (res [0].value.isValueType != undefined && res [0].value.isValueType)
+				res [0].value.objectId = `dotnet:array:${objId}:${idx}`;
+
 			this.var_info = [];
 
 			return res;
@@ -388,6 +419,11 @@ var MonoSupportLib = {
 		mono_wasm_add_null_var: function(className)
 		{
 			fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+			if (!fixed_class_name) {
+				// Eg, when a @className is passed from js itself, like
+				// mono_wasm_add_null_var ("string")
+				fixed_class_name = className;
+			}
 			MONO.var_info.push ({value: {
 				type: "object",
 				className: fixed_class_name,
@@ -427,6 +463,10 @@ var MonoSupportLib = {
 			name: Module.UTF8ToString (name),
 			fieldOffset: field_offset
 		});
+	},
+
+	mono_wasm_set_is_async_method: function(objectId) {
+		MONO._async_method_objectId = objectId;
 	},
 
 	mono_wasm_begin_value_type_var: function(className) {
