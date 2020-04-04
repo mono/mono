@@ -136,7 +136,6 @@ corefx/TimeZoneInfo.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.Android.cs
 System/TimeZoneInfo.MonoTouch.cs
-System/TimeZoneInfo.WebAssembly.cs
 System/TimeZoneInfo.Serialization.cs
 System/TimeZoneInfo.WinRT.cs
 ../../build/common/MonoTODOAttribute.cs
