@@ -473,8 +473,7 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 		}
-		
-		
+
 		internal async Task<JObject> TryGetVariableValue (MessageId msg_id, int scope_id, string expression, CancellationToken token)
 		{
 			JObject thisValue = null;
@@ -487,7 +486,7 @@ namespace WebAssembly.Net.Debugging {
 			int [] var_ids = { };
 			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
 			var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
-			thisValue = values.Where (v => v ["name"].Value<string> () == "this").FirstOrDefault ();
+			thisValue = values.FirstOrDefault (v => v ["name"].Value<string> () == "this");
 			
 			if (thisValue != null && expression == "this") {
 				return thisValue;
@@ -505,7 +504,7 @@ namespace WebAssembly.Net.Debugging {
 				var parts = objectId.Split (new char [] { ':' });
 				res = await SendMonoCommand (msg_id, MonoCommands.GetObjectProperties (int.Parse (parts [2]), expandValueTypes: false), token);
 				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
-				var foundValue = values.Where (v => v ["name"].Value<string> () == expression).FirstOrDefault ();
+				var foundValue = values.FirstOrDefault (v => v ["name"].Value<string> () == expression);
 				if (foundValue != null)
 					return foundValue;
 			}
@@ -535,13 +534,9 @@ namespace WebAssembly.Net.Debugging {
 						value = retValue
 					}
 				}), token);
-			}
-			catch (Exception e) {
-				SendResponse (msg_id, Result.OkFromObject (new {
-					result = new {
-						value = e.Message
-					}
-				}), token);
+			} catch (Exception e) {
+				logger.LogTrace (e.Message, expression);
+				SendResponse (msg_id, Result.OkFromObject (new {}), token);
 			}
 		}
 
