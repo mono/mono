@@ -87,27 +87,28 @@ var MonoSupportLib = {
 		_fixup_name_value_objects: function (var_list) {
 			var out_list = [];
 
+			var _fixup_value = function (value) {
+				if (value != null && value != undefined) {
+					var descr = value.description;
+					if (descr == null || descr == undefined)
+						value.description = '' + value.value;
+				}
+				return value;
+			};
+
 			var i = 0;
 			while (i < var_list.length) {
 				var o = var_list [i];
 				var name = o.name;
 				if (name == null || name == undefined) {
 					i ++;
+					o.value = _fixup_value(o.value);
 					out_list.push (o);
 					continue;
 				}
 
-				if (i + 1 < var_list.length) {
-					var value = var_list [i+1].value;
-
-					if (value != null && value != undefined) {
-						var descr = value.description;
-						if (descr == null || descr == undefined)
-							value.description = '' + value.value;
-
-						o.value = value;
-					}
-				}
+				if (i + 1 < var_list.length)
+					o.value = _fixup_value(var_list[i + 1].value);
 
 				out_list.push (o);
 				i += 2;
