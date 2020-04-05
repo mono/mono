@@ -291,7 +291,6 @@ namespace DebuggerTests
 			Assert.Equal (value, val);
 		}
 
-
 		JToken CheckValueType (JToken locals, string name, string class_name) {
 			var l = GetAndAssertObjectWithName (locals, name);
 			var val = l["value"];
