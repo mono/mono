@@ -1874,8 +1874,9 @@ namespace DebuggerTests
 				Console.WriteLine ($"Failed to run command {method} with args: {args?.ToString ()}\nresult: {res.Error.ToString ()}");
 				Assert.True (false, $"SendCommand for {method} failed with {res.Error.ToString ()}");
 			}
+
 			var wait_res = await ctx.insp.WaitFor(waitForEvent);
-			
+
 			if (function_name != null)
 				Assert.Equal (function_name, wait_res ["callFrames"]?[0]?["functionName"]?.Value<string> ());
 
