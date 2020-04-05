@@ -22,12 +22,12 @@ namespace DebuggerTests
             }
         }    
 
-		public static void EvaluateLocals ()
-		{
-			TestEvaluate f = new TestEvaluate();
-            f.run(100, 200, "test");
+	public static void EvaluateLocals ()
+	{
+		TestEvaluate f = new TestEvaluate();
+		f.run(100, 200, "test");
 
-			Console.WriteLine ($"a: {f.a}, b: {f.b}, c: {f.c}");
-		}
+		Console.WriteLine ($"a: {f.a}, b: {f.b}, c: {f.c}");
+	}
     }
 }
