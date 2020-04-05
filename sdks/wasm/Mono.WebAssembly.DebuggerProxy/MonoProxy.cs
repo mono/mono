@@ -316,6 +316,7 @@ namespace WebAssembly.Net.Debugging {
 					var the_mono_frames = res.Value? ["result"]? ["value"]? ["frames"]?.Values<JObject> ();
 
 					foreach (var mono_frame in the_mono_frames) {
+						++frame_id;
 						var il_pos = mono_frame ["il_pos"].Value<int> ();
 						var method_token = mono_frame ["method_token"].Value<int> ();
 						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
@@ -346,11 +347,11 @@ namespace WebAssembly.Net.Debugging {
 
 						Log ("info", $"frame il offset: {il_pos} method token: {method_token} assembly name: {assembly_name}");
 						Log ("info", $"\tmethod {method.Name} location: {location}");
-						frames.Add (new Frame (method, location, frame_id));
+						frames.Add (new Frame (method, location, frame_id-1));
 
 						callFrames.Add (new {
 							functionName = method.Name,
-							callFrameId = $"dotnet:scope:{frame_id}",
+							callFrameId = $"dotnet:scope:{frame_id-1}",
 							functionLocation = method.StartLocation.AsLocation (),
 
 							location = location.AsLocation (),
@@ -364,7 +365,7 @@ namespace WebAssembly.Net.Debugging {
 										@type = "object",
 										className = "Object",
 										description = "Object",
-										objectId = $"dotnet:scope:{frame_id}",
+										objectId = $"dotnet:scope:{frame_id-1}",
 									},
 									name = method.Name,
 									startLocation = method.StartLocation.AsLocation (),
@@ -372,7 +373,6 @@ namespace WebAssembly.Net.Debugging {
 								}}
 						});
 
-						++frame_id;
 						context.CallStack = frames;
 
 					}

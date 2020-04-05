@@ -839,6 +839,13 @@ namespace DebuggerTests
 						CheckObject (locals, "this", "Math.NestedInMath");
 					}
 				);
+				
+				await CheckLocalsOnFrame (wait_res ["callFrames"][2],
+					test_fn: (locals) => {
+						Assert.Equal (4, locals.Count());
+						CheckString (locals, "ls", "string from jstest");
+						CheckNumber (locals, "li", 52);
+				});
 
 				// TODO: previous frames have async machinery details, so no point checking that right now
 

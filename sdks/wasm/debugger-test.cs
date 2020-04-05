@@ -127,6 +127,8 @@ public class Math { //Only append content to this class as the test suite depend
 
 		public static async System.Threading.Tasks.Task<bool> AsyncTest (string s, int i)
 		{
+			var li = 10 + i;
+			var ls = s + "test";
 			return await new NestedInMath().AsyncMethod0 (s, i);
 		}
 
