@@ -1837,10 +1837,6 @@ namespace DebuggerTests
 											CheckContentValue (evaluate, "2");
 											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.c");
 											CheckContentValue (evaluate, "3");
-											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.d");
-											CheckContentValue (evaluate, "The property d does not exist in the current context");
-											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.d");
-											CheckContentValue (evaluate, "The property d does not exist in the current context");
 										});
 			});
 		}
