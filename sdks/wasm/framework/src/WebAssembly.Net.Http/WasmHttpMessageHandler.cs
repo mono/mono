@@ -202,7 +202,10 @@ namespace WebAssembly.Net.Http.HttpClient {
 				}
 
 				tcs.SetResult (httpresponse);
-			} catch (Exception exception) {
+			} catch (WebAssembly.JSException jsExc)  {
+				var httpExc = new System.Net.Http.HttpRequestException (jsExc.Message);
+				tcs.SetException (httpExc);
+			} catch (Exception exception)  {
 				tcs.SetException (exception);
 			}
 		}
