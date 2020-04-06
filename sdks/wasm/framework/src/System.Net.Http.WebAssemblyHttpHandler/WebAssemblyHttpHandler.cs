@@ -146,7 +146,7 @@ namespace System.Net.Http
 
 				HttpResponseMessage httpresponse = new HttpResponseMessage ((HttpStatusCode)Enum.Parse (typeof (HttpStatusCode), status.Status.ToString ()));
 
-				var streamingEnabled = request.Properties.TryGetValue("WebAssemblyReadResponseAsStream", out var streamingEnabledValue) && (bool)streamingEnabledValue;
+				var streamingEnabled = request.Properties.TryGetValue("WebAssemblyEnableStreamingResponse", out var streamingEnabledValue) && (bool)streamingEnabledValue;
 
 				httpresponse.Content = StreamingSupported && streamingEnabled
 					? new StreamContent (wasmHttpReadStream = new WasmHttpReadStream (status))
@@ -349,7 +349,7 @@ namespace System.Net.Http
 						return 0;
 					}
 
-					try { 
+					try {
 						using (var body = _status.Body) {
 							_reader = (JSObject)body.Invoke ("getReader");
 						}
