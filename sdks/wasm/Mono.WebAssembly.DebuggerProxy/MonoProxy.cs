@@ -18,7 +18,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public MonoProxy (ILoggerFactory loggerFactory) : base(loggerFactory) { }
 
-		ExecutionContext GetContext (SessionId sessionId)
+		internal ExecutionContext GetContext (SessionId sessionId)
 		{
 			if (contexts.TryGetValue (sessionId, out var context))
 				return context;
@@ -474,12 +474,26 @@ namespace WebAssembly.Net.Debugging {
 
 		}
 
-		internal async Task<JObject> TryGetVariableValue (MessageId msg_id, int scope_id, string expression, CancellationToken token)
+		internal bool TryFindVariableValueInCache(ExecutionContext ctx, string expression, bool only_search_on_this, out JToken obj)
 		{
-			JObject thisValue = null;
+			if (ctx.LocalsCache.TryGetValue (expression, out obj)) {
+				if (only_search_on_this && obj["fromThis"] == null)
+					return false;
+				return true;
+			}
+			return false;
+		}
+
+		internal async Task<JToken> TryGetVariableValue (MessageId msg_id, int scope_id, string expression, bool only_search_on_this, CancellationToken token)
+		{
+			JToken thisValue = null;
 			var context = GetContext (msg_id);
 			if (context.CallStack == null)
 				return null;
+			
+			if (TryFindVariableValueInCache(context, expression, only_search_on_this, out JToken obj))
+				return obj;				
+
 			var scope = context.CallStack.FirstOrDefault (s => s.Id == scope_id);
 			var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 			//get_this
@@ -488,16 +502,19 @@ namespace WebAssembly.Net.Debugging {
 			var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 			thisValue = values.FirstOrDefault (v => v ["name"].Value<string> () == "this");
 			
-			if (thisValue != null && expression == "this") {
-				return thisValue;
+			if (!only_search_on_this) {
+				if (thisValue != null && expression == "this") {
+					return thisValue;
+				}
+				//search in locals
+				var var_id = vars.SingleOrDefault (v => v.Name == expression);
+				if (var_id != null) {
+					res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, new int [] { var_id.Index }), token);
+					values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
+					return values [0];
+				}
 			}
-			//search in locals
-			var var_id = vars.SingleOrDefault (v => v.Name == expression);
-			if (var_id != null) {
-				res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, new int [] { var_id.Index }), token);
-				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
-				return values [0];
-			}
+
 			//search in scope
 			if (thisValue != null) {
 				var objectId = thisValue ["value"] ["objectId"].Value<string> ();
@@ -505,8 +522,11 @@ namespace WebAssembly.Net.Debugging {
 				res = await SendMonoCommand (msg_id, MonoCommands.GetObjectProperties (int.Parse (parts [2]), expandValueTypes: false), token);
 				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 				var foundValue = values.FirstOrDefault (v => v ["name"].Value<string> () == expression);
-				if (foundValue != null)
+				if (foundValue != null) {
+					foundValue["fromThis"] = true;
+					context.LocalsCache[foundValue ["name"].Value<string> ()] = foundValue;
 					return foundValue;
+				}
 			}
 			return null;
 		}
@@ -518,7 +538,7 @@ namespace WebAssembly.Net.Debugging {
 				if (context.CallStack == null)
 					return;
 
-				var varValue = await TryGetVariableValue (msg_id, scope_id, expression, token);
+				var varValue = await TryGetVariableValue (msg_id, scope_id, expression, false, token);
 
 				if (varValue != null) {
 					varValue ["value"] ["description"] = varValue ["value"] ["className"];
@@ -574,10 +594,14 @@ namespace WebAssembly.Net.Debugging {
 
 				var var_list = new List<object> ();
 				int i = 0;
-				for (; i < vars.Length && i < values.Length; i ++)
+				for (; i < vars.Length && i < values.Length; i ++) {
+					ctx.LocalsCache[vars [i].Name] = values [i];
 					var_list.Add (new { name = vars [i].Name, value = values [i]["value"] });
-				for (; i < values.Length; i ++)
+				}
+				for (; i < values.Length; i ++) {
+					ctx.LocalsCache[values [i]["name"].ToString()] = values [i]["value"];
 					var_list.Add (values [i]);
+				}
 
 				SendResponse (msg_id, Result.OkFromObject (new { result = var_list }), token);
 			} catch (Exception exception) {

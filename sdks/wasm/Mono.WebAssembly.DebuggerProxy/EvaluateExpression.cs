@@ -15,14 +15,49 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace WebAssembly.Net.Debugging {
 
 	internal class EvaluateExpression {
-		class FindVariableNMethodCall : CSharpSyntaxWalker {
-			public List<IdentifierNameSyntax> variables = new List<IdentifierNameSyntax> ();
-			public List<InvocationExpressionSyntax> methodCall = new List<InvocationExpressionSyntax> ();
-			public List<object> values = new List<Object> ();
+
+		class FindThisExpression : CSharpSyntaxWalker {
+			public List<string> thisExpressions = new List<string> ();
+			public SyntaxTree syntaxTree;
+			public FindThisExpression (SyntaxTree syntax)
+			{
+				syntaxTree = syntax;
+			}
 			public override void Visit (SyntaxNode node)
 			{
-				if (node is IdentifierNameSyntax)
-					variables.Add (node as IdentifierNameSyntax);
+				if (node is ThisExpressionSyntax) {
+					if (node.Parent is MemberAccessExpressionSyntax thisParent && thisParent.Name is IdentifierNameSyntax) {
+						IdentifierNameSyntax var = thisParent.Name as IdentifierNameSyntax;
+						thisExpressions.Add(var.Identifier.Text);
+						var newRoot = syntaxTree.GetRoot ().ReplaceNode (node.Parent, thisParent.Name);
+						syntaxTree = syntaxTree.WithRootAndOptions (newRoot, syntaxTree.Options);
+						this.Visit (GetExpressionFromSyntaxTree(syntaxTree));
+					}
+				}
+				else
+					base.Visit (node);
+			}
+
+			public async Task CheckIfIsProperty (MonoProxy proxy, MessageId msg_id, int scope_id, CancellationToken token) 
+			{
+				foreach (var var in thisExpressions) {
+					JToken value = await proxy.TryGetVariableValue (msg_id, scope_id, var, true, token);
+					if (value == null)
+						throw new Exception ($"The property {var} does not exist in the current context");
+				}
+			}
+		}
+
+		class FindVariableNMethodCall : CSharpSyntaxWalker {
+			public List<IdentifierNameSyntax> variables = new List<IdentifierNameSyntax> ();
+			public List<ThisExpressionSyntax> thisList = new List<ThisExpressionSyntax> ();
+			public List<InvocationExpressionSyntax> methodCall = new List<InvocationExpressionSyntax> ();
+			public List<object> values = new List<Object> ();
+
+			public override void Visit (SyntaxNode node)
+			{
+				if (node is IdentifierNameSyntax identifier && !variables.Any (x => x.Identifier.Text == identifier.Identifier.Text))
+					variables.Add (identifier);
 				if (node is InvocationExpressionSyntax) {
 					methodCall.Add (node as InvocationExpressionSyntax);
 					throw new Exception ("Method Call is not implemented yet");
@@ -33,15 +68,15 @@ namespace WebAssembly.Net.Debugging {
 			}
 			public async Task<SyntaxTree> ReplaceVars (SyntaxTree syntaxTree, MonoProxy proxy, MessageId msg_id, int scope_id, CancellationToken token)
 			{
+				CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot ();
 				foreach (var var in variables) {
-					CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot ();
 					ClassDeclarationSyntax classDeclaration = root.Members.ElementAt (0) as ClassDeclarationSyntax;
 					MethodDeclarationSyntax method = classDeclaration.Members.ElementAt (0) as MethodDeclarationSyntax;
 
-					JObject value = await proxy.TryGetVariableValue (msg_id, scope_id, var.Identifier.Text, token);
+					JToken value = await proxy.TryGetVariableValue (msg_id, scope_id, var.Identifier.Text, false, token);
 
 					if (value == null)
-						throw new Exception ("The name \"" + var.Identifier.Text + "\" does not exist in the current context");
+						throw new Exception ($"The name {var.Identifier.Text} does not exist in the current context");
 
 					values.Add (ConvertJSToCSharpType (value ["value"] ["value"].ToString (), value ["value"] ["type"].ToString ()));
 
@@ -49,9 +84,9 @@ namespace WebAssembly.Net.Debugging {
 						SyntaxFactory.Parameter (
 							SyntaxFactory.Identifier (var.Identifier.Text))
 							.WithType (SyntaxFactory.ParseTypeName (GetTypeFullName(value["value"]["type"].ToString()))));
-					var newRoot = root.ReplaceNode (method, updatedMethod);
-					syntaxTree = syntaxTree.WithRootAndOptions (newRoot, syntaxTree.Options);
+					root = root.ReplaceNode (method, updatedMethod);
 				}
+				syntaxTree = syntaxTree.WithRootAndOptions (root, syntaxTree.Options);
 				return syntaxTree;
 			}
 
@@ -79,8 +114,19 @@ namespace WebAssembly.Net.Debugging {
 				throw new Exception ($"Evaluate of this datatype {type} not implemented yet");
 			}
 		}
-
-		public static async Task<string> CompileAndRunTheExpression (MonoProxy proxy, MessageId msg_id, int scope_id, string expression, CancellationToken token)
+		static SyntaxNode GetExpressionFromSyntaxTree (SyntaxTree syntaxTree)
+		{
+			CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot ();
+			ClassDeclarationSyntax classDeclaration = root.Members.ElementAt (0) as ClassDeclarationSyntax;
+			MethodDeclarationSyntax methodDeclaration = classDeclaration.Members.ElementAt (0) as MethodDeclarationSyntax;
+			BlockSyntax blockValue = methodDeclaration.Body;
+			ReturnStatementSyntax returnValue = blockValue.Statements.ElementAt (0) as ReturnStatementSyntax;
+			InvocationExpressionSyntax expressionInvocation = returnValue.Expression as InvocationExpressionSyntax;
+			MemberAccessExpressionSyntax expressionMember = expressionInvocation.Expression as MemberAccessExpressionSyntax;
+			ParenthesizedExpressionSyntax expressionParenthesized = expressionMember.Expression as ParenthesizedExpressionSyntax;
+			return expressionParenthesized.Expression;
+		}
+		internal static async Task<string> CompileAndRunTheExpression (MonoProxy proxy, MessageId msg_id, int scope_id, string expression, CancellationToken token)
 		{
 			FindVariableNMethodCall findVarNMethodCall = new FindVariableNMethodCall ();
 			string retString;
@@ -94,16 +140,13 @@ namespace WebAssembly.Net.Debugging {
 					}
 				}");
 
-			CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot ();
-			ClassDeclarationSyntax classDeclaration = root.Members.ElementAt (0) as ClassDeclarationSyntax;
-			MethodDeclarationSyntax methodDeclaration = classDeclaration.Members.ElementAt (0) as MethodDeclarationSyntax;
-			BlockSyntax blockValue = methodDeclaration.Body;
-			ReturnStatementSyntax returnValue = blockValue.Statements.ElementAt (0) as ReturnStatementSyntax;
-			InvocationExpressionSyntax expressionInvocation = returnValue.Expression as InvocationExpressionSyntax;
-			MemberAccessExpressionSyntax expressionMember = expressionInvocation.Expression as MemberAccessExpressionSyntax;
-			ParenthesizedExpressionSyntax expressionParenthesized = expressionMember.Expression as ParenthesizedExpressionSyntax;
-			var expressionTree = expressionParenthesized.Expression;
+			FindThisExpression findThisExpression = new FindThisExpression (syntaxTree);
+			var expressionTree = GetExpressionFromSyntaxTree(syntaxTree);
+			findThisExpression.Visit (expressionTree);
+			await findThisExpression.CheckIfIsProperty (proxy, msg_id, scope_id, token);
+			syntaxTree = findThisExpression.syntaxTree;
 
+			expressionTree = GetExpressionFromSyntaxTree (syntaxTree);
 			findVarNMethodCall.Visit (expressionTree);
 
 			syntaxTree = await findVarNMethodCall.ReplaceVars (syntaxTree, proxy, msg_id, scope_id, token);
