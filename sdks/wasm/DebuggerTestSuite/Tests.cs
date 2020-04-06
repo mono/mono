@@ -286,6 +286,11 @@ namespace DebuggerTests
 			return l;
 		}
 
+		void CheckContentValue (JToken token, string value) {
+			var val = token["value"].Value<string> ();
+			Assert.Equal (value, val);
+		}
+
 		JToken CheckValueType (JToken locals, string name, string class_name) {
 			var l = GetAndAssertObjectWithName (locals, name);
 			var val = l["value"];
@@ -1645,6 +1650,206 @@ namespace DebuggerTests
 			});
 		}
 
+		[Fact]
+		public async Task EvaluateThisProperties ()
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 18;
+			int col = 16;
+			string entry_method_name = "[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals";
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-evaluate-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}'"
+						+ "); }, 1);";
+
+				var pause_location = await EvaluateAndCheck (eval_expr, 
+										debugger_test_loc, 
+										line, 
+										col, 
+										"run",
+										wait_for_event_fn: async (pause_location) => {
+											var locals = await GetProperties (pause_location ["callFrames"][0] ["callFrameId"].Value<string> ());
+											var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "a");
+											CheckContentValue (evaluate, "1");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "b");
+											CheckContentValue (evaluate, "2");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "c");
+											CheckContentValue (evaluate, "3");
+										});
+			});
+		}
+
+		[Fact]
+		public async Task EvaluateParameters ()
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 18;
+			int col = 16;
+			string entry_method_name = "[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals";
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-evaluate-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}'"
+						+ "); }, 1);";
+
+				var pause_location = await EvaluateAndCheck (eval_expr, 
+										debugger_test_loc, 
+										line, 
+										col, 
+										"run",
+										wait_for_event_fn: async (pause_location) => {
+											var locals = await GetProperties (pause_location ["callFrames"][0] ["callFrameId"].Value<string> ());
+											var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "g");
+											CheckContentValue (evaluate, "100");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "h");
+											CheckContentValue (evaluate, "200");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "valString");
+											CheckContentValue (evaluate, "test");
+										});
+			});
+		}
+
+		[Fact]
+		public async Task EvaluateLocals ()
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 18;
+			int col = 16;
+			string entry_method_name = "[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals";
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-evaluate-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}'"
+						+ "); }, 1);";
+
+				var pause_location = await EvaluateAndCheck (eval_expr, 
+										debugger_test_loc, 
+										line, 
+										col, 
+										"run",
+										wait_for_event_fn: async (pause_location) => {
+											var locals = await GetProperties (pause_location ["callFrames"][0] ["callFrameId"].Value<string> ());
+											var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "d");
+											CheckContentValue (evaluate, "101");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "e");
+											CheckContentValue (evaluate, "102");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "f");
+											CheckContentValue (evaluate, "103");
+										});
+			});
+		}
+
+
+		[Fact]
+		public async Task EvaluateExpressions ()
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 18;
+			int col = 16;
+			string entry_method_name = "[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals";
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-evaluate-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}'"
+						+ "); }, 1);";
+
+				var pause_location = await EvaluateAndCheck (eval_expr, 
+										debugger_test_loc, 
+										line, 
+										col, 
+										"run",
+										wait_for_event_fn: async (pause_location) => {
+											var locals = await GetProperties (pause_location ["callFrames"][0] ["callFrameId"].Value<string> ());
+											var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "d + e");
+											CheckContentValue (evaluate, "203");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "e + 10");
+											CheckContentValue (evaluate, "112");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "a + a");
+											CheckContentValue (evaluate, "2");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.a + this.b");
+											CheckContentValue (evaluate, "3");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "\"test\" + \"test\"");
+											CheckContentValue (evaluate, "testtest");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "5 + 5");
+											CheckContentValue (evaluate, "10");
+										});
+			});
+		}
+
+		[Fact]
+		public async Task EvaluateThisExpressions ()
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 18;
+			int col = 16;
+			string entry_method_name = "[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals";
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-evaluate-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}'"
+						+ "); }, 1);";
+
+				var pause_location = await EvaluateAndCheck (eval_expr, 
+										debugger_test_loc, 
+										line, 
+										col, 
+										"run",
+										wait_for_event_fn: async (pause_location) => {
+											var locals = await GetProperties (pause_location ["callFrames"][0] ["callFrameId"].Value<string> ());
+											var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.a");
+											CheckContentValue (evaluate, "1");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.b");
+											CheckContentValue (evaluate, "2");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.c");
+											CheckContentValue (evaluate, "3");
+										});
+			});
+		}
+		
+		
+		
+
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
@@ -1876,6 +2081,21 @@ namespace DebuggerTests
 
 			var locals = frame_props.Value ["result"];
 			return locals;
+		}
+
+		async Task<JToken> EvaluateOnCallFrame (string id, string expression)
+		{
+			var evaluate_req = JObject.FromObject (new {
+				callFrameId = id,
+				expression = expression
+			});
+
+			var frame_evaluate = await ctx.cli.SendCommand ("Debugger.evaluateOnCallFrame", evaluate_req, ctx.token);
+			if (!frame_evaluate.IsOk)
+				Assert.True (false, $"Debugger.evaluateOnCallFrame failed for {evaluate_req.ToString ()}, with Result: {frame_evaluate}");
+
+			var evaluate_result = frame_evaluate.Value ["result"];
+			return evaluate_result;
 		}
 
 		async Task<Result> SetBreakpoint (string url_key, int line, int column, bool expect_ok=true)

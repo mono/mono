@@ -231,6 +231,7 @@ namespace WebAssembly.Net.Debugging {
 
 		int nextValueTypeId = 0;
 		public Dictionary<string, JToken> ValueTypesCache = new Dictionary<string, JToken> ();
+		public Dictionary<string, JToken> LocalsCache = new Dictionary<string, JToken> ();
 
 		public DebugStore Store {
 			get {
@@ -245,6 +246,7 @@ namespace WebAssembly.Net.Debugging {
 		{
 			CallStack = null;
 			ValueTypesCache.Clear ();
+			LocalsCache.Clear ();
 			nextValueTypeId = 0;
 		}
 
