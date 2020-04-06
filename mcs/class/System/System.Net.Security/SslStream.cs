@@ -488,24 +488,24 @@ namespace System.Net.Security
 			return Impl.WriteAsync (buffer, offset, count, cancellationToken);
 		}
 
-		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
 		{
-			return Impl.BeginRead (buffer, offset, count, asyncCallback, asyncState);
+			return TaskToApm.Begin (Impl.ReadAsync (buffer, offset, count), callback, state);
 		}
 
 		public override int EndRead (IAsyncResult asyncResult)
 		{
-			return Impl.EndRead (asyncResult);
+			return TaskToApm.End<int> (asyncResult);
 		}
 
-		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback asyncCallback, object asyncState)
+		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
 		{
-			return Impl.BeginWrite (buffer, offset, count, asyncCallback, asyncState);
+			return TaskToApm.Begin (Impl.WriteAsync (buffer, offset, count), callback, state);
 		}
 
 		public override void EndWrite (IAsyncResult asyncResult)
 		{
-			Impl.EndWrite (asyncResult);
+			TaskToApm.End (asyncResult);
 		}
 
 #else // !SECURITY_DEP
