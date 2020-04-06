@@ -25,6 +25,7 @@
 #include <sys/time.h>
 #else
 #include <process.h>
+#include <Windows.h>
 #endif
 #include "mono-logger-internals.h"
 #include "mono-proclib.h"
@@ -132,8 +133,13 @@ mono_log_write_logfile (const char *log_domain, GLogLevelFlags level, mono_bool 
 
 	fflush(logFile);
 
-	if (level & G_LOG_LEVEL_ERROR)
+	if (level & G_LOG_LEVEL_ERROR) {
+#ifdef HOST_WIN32
+		RaiseException (0xE0000001, EXCEPTION_NONCONTINUABLE, 0, NULL);
+#else
 		g_assert_abort ();
+#endif
+	}
 }
 
 /**

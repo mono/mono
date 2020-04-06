@@ -31,6 +31,10 @@
 #include <stdlib.h>
 #include <glib.h>
 
+#ifdef G_OS_WIN32
+#include <windows.h>
+#endif
+
 /* The current fatal levels, error is always fatal */
 static GLogLevelFlags fatal = G_LOG_LEVEL_ERROR;
 static GLogFunc default_log_func;
@@ -376,7 +380,11 @@ g_log_default_handler (const gchar *log_domain, GLogLevelFlags log_level, const 
 	if (log_level & fatal) {
 		fflush (stdout);
 		fflush (stderr);
+#ifdef G_OS_WIN32
+		RaiseException (0xE0000001, EXCEPTION_NONCONTINUABLE, 0, NULL);
+#else
 		g_assert_abort ();
+#endif
 	}
 }
 
