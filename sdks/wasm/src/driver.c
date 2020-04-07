@@ -332,7 +332,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #ifdef ENABLE_NETCORE
 	monoeg_g_setenv ("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "1", 0);
 #endif
-
+	monoeg_g_setenv ("MONO_IOMAP", "drive", 0);
 	mini_parse_debug_option ("top-runtime-invoke-unhandled");
 
 	mono_dl_fallback_register (wasm_dl_load, wasm_dl_symbol, NULL, NULL);
