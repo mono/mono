@@ -45,7 +45,7 @@ WASM_RUNTIME_AC_VARS= \
 WASM_RUNTIME_BASE_CFLAGS=-fexceptions $(if $(RELEASE),-Os -g,-O0 -ggdb3 -fno-omit-frame-pointer)
 WASM_RUNTIME_BASE_CXXFLAGS=$(WASM_RUNTIME_BASE_CFLAGS) -s DISABLE_EXCEPTION_CATCHING=0
 
-WASM_DISABLED_FEATURES=ssa,com,jit,reflection_emit_save,portability,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb,gac
+WASM_DISABLED_FEATURES=ssa,com,jit,reflection_emit_save,assembly_remapping,attach,verifier,full_messages,appdomains,security,sgen_marksweep_conc,sgen_split_nursery,sgen_gc_bridge,logging,remoting,shared_perfcounters,sgen_debug_helpers,soft_debug,interpreter,assert_messages,cleanup,mdb,gac
 
 WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-mcs-build \
