@@ -60,7 +60,9 @@ namespace Microsoft.Build.Utilities
 			lib_mono_dir = t2.FullName;
 
 			var windowsPath = Environment.GetFolderPath (Environment.SpecialFolder.Windows);
-			runningOnDotNet = !string.IsNullOrEmpty (windowsPath) && lib_mono_dir.StartsWith (windowsPath);
+			// WINE MONO HACK: This test breaks if wine-mono is installed via msi.
+			// runningOnDotNet = !string.IsNullOrEmpty (windowsPath) && lib_mono_dir.StartsWith (windowsPath);
+			runningOnDotNet = false;
 
 			if (Environment.GetEnvironmentVariable ("TESTING_MONO") != null) {
 				mono_dir = new string [] {                   // TargetDotNetFrameworkVersion:
