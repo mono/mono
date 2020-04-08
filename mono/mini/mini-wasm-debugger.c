@@ -119,7 +119,7 @@ collect_frames (MonoStackFrameInfo *info, MonoContext *ctx, gpointer data)
 	DEBUG_PRINTF (2, "Reporting method %s native_offset %d\n", method->name, info->native_offset);
 
 	if (!mono_find_prev_seq_point_for_native_offset (mono_get_root_domain (), method, info->native_offset, NULL, &sp))
-		DEBUG_PRINTF (1, "Failed to lookup sequence point\n");
+		DEBUG_PRINTF (2, "Failed to lookup sequence point\n");
 
 	DbgEngineStackFrame *frame = g_new0 (DbgEngineStackFrame, 1);
 
