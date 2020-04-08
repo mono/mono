@@ -2006,22 +2006,22 @@ namespace System.Windows.Forms {
 				}
 
 				case RTF.Minor.LQuote: {
-					Console.Write("\u2018");
+					rtf_line.Append ("\u2018");
 					break;
 				}
 
 				case RTF.Minor.RQuote: {
-					Console.Write("\u2019");
+					rtf_line.Append ("\u2019");
 					break;
 				}
 
 				case RTF.Minor.LDblQuote: {
-					Console.Write("\u201C");
+					rtf_line.Append ("\u201C");
 					break;
 				}
 
 				case RTF.Minor.RDblQuote: {
-					Console.Write("\u201D");
+					rtf_line.Append ("\u201D");
 					break;
 				}
 
