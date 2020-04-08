@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using WebAssembly;
-using WebAssembly.Net.Http.HttpClient;
 
 public class Math {
 	public static int IntAdd (int a, int b) {

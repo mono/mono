@@ -1,48 +1,34 @@
-using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using WebAssembly;
 using WebAssembly.Core;
 using WebAssembly.Host;
 
-namespace WebAssembly.Net.Http.HttpClient {
-	public class WasmHttpMessageHandler : HttpMessageHandler {
+namespace System.Net.Http
+{
+	/// <summary>
+	/// <see cref="WebAssemblyHttpHandler" /> is a specialty message handler based on the
+	/// Fetch API for use in WebAssembly environments.
+	/// </summary>
+	/// <remarks>See https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API</remarks>
+	public class WebAssemblyHttpHandler : HttpMessageHandler {
 		static JSObject fetch;
 		static JSObject window;
 
 		/// <summary>
-		/// Gets or sets the default value of the 'credentials' option on outbound HTTP requests.
-		/// Defaults to <see cref="FetchCredentialsOption.SameOrigin"/>.
-		/// </summary>
-		public static FetchCredentialsOption DefaultCredentials { get; set; }
-		    = FetchCredentialsOption.SameOrigin;
-
-		public static RequestCache Cache { get; set; }
-		    = RequestCache.Default;
-
-		public static RequestMode Mode { get; set; }
-		    = RequestMode.Cors;
-
-
-		/// <summary>
 		/// Gets whether the current Browser supports streaming responses
 		/// </summary>
-		public static bool StreamingSupported { get; }
+		private static bool StreamingSupported { get; }
 
-		/// <summary>
-		/// Gets or sets whether responses should be streamed if supported
-		/// </summary>
-		public static bool StreamingEnabled { get; set; } = false;
-
-		static WasmHttpMessageHandler ()
+		static WebAssemblyHttpHandler()
 		{
 			using (var streamingSupported = new Function ("return typeof Response !== 'undefined' && 'body' in Response.prototype && typeof ReadableStream === 'function'"))
 				StreamingSupported = (bool)streamingSupported.Call ();
 		}
 
-		public WasmHttpMessageHandler ()
+		public WebAssemblyHttpHandler()
 		{
 			handlerInit ();
 		}
@@ -72,19 +58,15 @@ namespace WebAssembly.Net.Http.HttpClient {
 		{
 			try {
 				var requestObject = new JSObject ();
+
+				if (request.Properties.TryGetValue("WebAssemblyFetchOptions", out var fetchOoptionsValue) &&
+					fetchOoptionsValue is IDictionary<string, object> fetchOptions) {
+					foreach (var item in fetchOptions) {
+						requestObject.SetObjectProperty(item.Key, item.Value);
+					}
+				}
+
 				requestObject.SetObjectProperty ("method", request.Method.Method);
-
-				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials for
-				// standard values and meanings
-				requestObject.SetObjectProperty ("credentials", DefaultCredentials);
-
-				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/cache for
-				// standard values and meanings
-				requestObject.SetObjectProperty ("cache", Cache);
-
-				// See https://developer.mozilla.org/en-US/docs/Web/API/Request/mode for
-				// standard values and meanings
-				requestObject.SetObjectProperty ("mode", Mode);
 
 				// We need to check for body content
 				if (request.Content != null) {
@@ -139,7 +121,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 					wasmHttpReadStream?.Dispose ();
 				}));
 
-				var args = new Core.Array();
+				var args = new WebAssembly.Core.Array();
 				args.Push (request.RequestUri.ToString ());
 				args.Push (requestObject);
 
@@ -164,9 +146,11 @@ namespace WebAssembly.Net.Http.HttpClient {
 
 				HttpResponseMessage httpresponse = new HttpResponseMessage ((HttpStatusCode)Enum.Parse (typeof (HttpStatusCode), status.Status.ToString ()));
 
-				httpresponse.Content = StreamingSupported && StreamingEnabled
-				    ? new StreamContent (wasmHttpReadStream = new WasmHttpReadStream (status))
-				    : (HttpContent)new WasmHttpContent (status);
+				var streamingEnabled = request.Properties.TryGetValue("WebAssemblyEnableStreamingResponse", out var streamingEnabledValue) && (bool)streamingEnabledValue;
+
+				httpresponse.Content = StreamingSupported && streamingEnabled
+					? new StreamContent (wasmHttpReadStream = new WasmHttpReadStream (status))
+					: (HttpContent)new WasmHttpContent (status);
 
 				// Fill the response headers
 				// CORS will only allow access to certain headers.
@@ -362,7 +346,7 @@ namespace WebAssembly.Net.Http.HttpClient {
 						return 0;
 					}
 
-					try { 
+					try {
 						using (var body = _status.Body) {
 							_reader = (JSObject)body.Invoke ("getReader");
 						}
@@ -446,105 +430,4 @@ namespace WebAssembly.Net.Http.HttpClient {
 			}
 		}
 	}
-
-	/// <summary>
-	/// Specifies a value for the 'credentials' option on outbound HTTP requests.
-	/// </summary>
-	public enum FetchCredentialsOption {
-		/// <summary>
-		/// Advises the browser never to send credentials (such as cookies or HTTP auth headers).
-		/// </summary>
-		[Export (EnumValue = ConvertEnum.ToLower)]
-		Omit,
-
-		/// <summary>
-		/// Advises the browser to send credentials (such as cookies or HTTP auth headers)
-		/// only if the target URL is on the same origin as the calling application.
-		/// </summary>
-		[Export ("same-origin")]
-		SameOrigin,
-
-		/// <summary>
-		/// Advises the browser to send credentials (such as cookies or HTTP auth headers)
-		/// even for cross-origin requests.
-		/// </summary>
-		[Export (EnumValue = ConvertEnum.ToLower)]
-		Include,
-	}
-
-
-	/// <summary>
-	/// The cache mode of the request. It controls how the request will interact with the browser's HTTP cache.
-	/// </summary>
-	public enum RequestCache {
-		/// <summary>
-		/// The browser looks for a matching request in its HTTP cache.
-		/// </summary>
-		[Export (EnumValue = ConvertEnum.ToLower)]
-		Default,
-
-		/// <summary>
-		/// The browser fetches the resource from the remote server without first looking in the cache,
-		/// and will not update the cache with the downloaded resource.
-		/// </summary>
-		[Export ("no-store")]
-		NoStore,
-
-		/// <summary>
-		/// The browser fetches the resource from the remote server without first looking in the cache,
-		/// but then will update the cache with the downloaded resource.
-		/// </summary>
-		[Export (EnumValue = ConvertEnum.ToLower)]
-		Reload,
-
-		/// <summary>
-		/// The browser looks for a matching request in its HTTP cache.
-		/// </summary>
-		[Export ("no-cache")]
-		NoCache,
-
-		/// <summary>
-		/// The browser looks for a matching request in its HTTP cache.
-		/// </summary>
-		[Export ("force-cache")]
-		ForceCache,
-
-		/// <summary>
-		/// The browser looks for a matching request in its HTTP cache.
-		/// Mode can only be used if the request's mode is "same-origin"
-		/// </summary>
-		[Export ("only-if-cached")]
-		OnlyIfCached,
-	}
-
-	/// <summary>
-	/// The mode of the request. This is used to determine if cross-origin requests lead to valid responses
-	/// </summary>
-	public enum RequestMode {
-		/// <summary>
-		/// If a request is made to another origin with this mode set, the result is simply an error
-		/// </summary>
-		[Export ("same-origin")]
-		SameOrigin,
-
-		/// <summary>
-		/// Prevents the method from being anything other than HEAD, GET or POST, and the headers from
-		/// being anything other than simple headers.
-		/// </summary>
-		[Export ("no-cors")]
-		NoCors,
-
-		/// <summary>
-		/// Allows cross-origin requests, for example to access various APIs offered by 3rd party vendors.
-		/// </summary>
-		[Export (EnumValue = ConvertEnum.ToLower)]
-		Cors,
-
-		/// <summary>
-		/// A mode for supporting navigation.
-		/// </summary>
-		[Export (EnumValue = ConvertEnum.ToLower)]
-		Navigate,
-	}
-	
 }
