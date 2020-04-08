@@ -5202,6 +5202,18 @@ public class DebuggerTests
 	}
 	
 	[Test]
+	public void InvalidArgumentAssemblyGetType () {
+		Event e = run_until ("test_invalid_argument_assembly_get_type");
+		var assembly = entry_point.DeclaringType.Assembly;
+		try {
+			var type = assembly.GetType ("System.Collections.Generic.Dictionary<double, float>.Main");
+		}
+		catch (CommandException ex) {
+			Assert.AreEqual(ex.ErrorMessage, "Unexpected assembly-qualified type \"System.Collections.Generic.Dictionary<double, float>.Main\" was provided");
+		}
+	}
+	
+	[Test]
 	public void CheckSuspendPolicySentWhenLaunchSuspendYes () {
 		vm.Exit (0);
 		var port = GetFreePort ();
