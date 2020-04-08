@@ -1576,7 +1576,7 @@ namespace System.Windows.Forms
 					if (categoryName == null)
 						categoryName = UNCATEGORIZED_CATEGORY_LABEL;
 					GridItem category_item = rootItem.GridItems [categoryName];
-					if (category_item == null)
+					if (category_item == null || !(category_item is CategoryGridEntry))
 						category_item = categories [categoryName];
 
 					if (category_item == null) {
