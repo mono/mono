@@ -335,7 +335,7 @@ mono_wasm_debugger_init (void)
 
 	mono_debug_init (MONO_DEBUG_FORMAT_MONO);
 	mono_de_init (&cbs);
-	mono_de_set_log_level (1, stdout);
+	mono_de_set_log_level (log_level, stdout);
 
 	mini_debug_options.gen_sdb_seq_points = TRUE;
 	mini_debug_options.mdb_optimizations = TRUE;
@@ -352,10 +352,11 @@ mono_wasm_debugger_init (void)
 }
 
 MONO_API void
-mono_wasm_enable_debugging (void)
+mono_wasm_enable_debugging (int debug_level)
 {
 	DEBUG_PRINTF (1, "DEBUGGING ENABLED\n");
 	debugger_enabled = TRUE;
+	log_level = debug_level;
 }
 
 EMSCRIPTEN_KEEPALIVE int
@@ -363,7 +364,7 @@ mono_wasm_setup_single_step (int kind)
 {
 	int nmodifiers = 1;
 
-	printf (">>>> mono_wasm_setup_single_step %d\n", kind);
+	DEBUG_PRINTF (2, ">>>> mono_wasm_setup_single_step %d\n", kind);
 	EventRequest *req = (EventRequest *)g_malloc0 (sizeof (EventRequest) + (nmodifiers * sizeof (Modifier)));
 	req->id = ++event_request_id;
 	req->event_kind = EVENT_KIND_STEP;
