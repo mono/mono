@@ -47,6 +47,8 @@ if ! pkg info > /dev/null; then
 fi
 ## As of 2020Q1, need to update pkg itself due to pkg itself being upgraded.
 if [ $(date +%s) -gt 158625000 ]; then
+	sed -i '' -E '/.?IGNORE_OSVERSION.*/d' /usr/local/etc/pkg.conf
+	echo 'IGNORE_OSVERSION = true;' >> /usr/local/etc/pkg.conf
 	/usr/bin/env ASSUME_ALWAYS_YES=1 /usr/sbin/pkg bootstrap -f
 	pkg update
 	pkg upgrade -y
