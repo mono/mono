@@ -61,6 +61,11 @@ namespace MonoTests.System
 		C
 	};
 
+	class GenericEnum<T>
+	{
+		public enum TheEnum { A, B };
+	}
+
 	class SampleGeneric<T> where T : IFace1
 	{
 	}
@@ -2935,6 +2940,7 @@ namespace MonoTests.System
 			Assert.AreEqual (TypeCode.UInt16, Type.GetTypeCode (typeof (ushort)), "#16");
 			Assert.AreEqual (TypeCode.UInt32, Type.GetTypeCode (typeof (uint)), "#17");
 			Assert.AreEqual (TypeCode.UInt64, Type.GetTypeCode (typeof (ulong)), "#18");
+			Assert.AreEqual (TypeCode.Int32, Type.GetTypeCode (typeof (GenericEnum<int>.TheEnum)));
 		}
 
 		[Test]
