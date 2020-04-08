@@ -488,6 +488,26 @@ namespace System.Net.Security
 			return Impl.WriteAsync (buffer, offset, count, cancellationToken);
 		}
 
+		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+		{
+			return TaskToApm.Begin (Impl.ReadAsync (buffer, offset, count), callback, state);
+		}
+
+		public override int EndRead (IAsyncResult asyncResult)
+		{
+			return TaskToApm.End<int> (asyncResult);
+		}
+
+		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+		{
+			return TaskToApm.Begin (Impl.WriteAsync (buffer, offset, count), callback, state);
+		}
+
+		public override void EndWrite (IAsyncResult asyncResult)
+		{
+			TaskToApm.End (asyncResult);
+		}
+
 #else // !SECURITY_DEP
 		const string EXCEPTION_MESSAGE = "System.Net.Security.SslStream is not supported on the current platform.";
 
