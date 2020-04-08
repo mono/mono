@@ -334,8 +334,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (value is string)
 				return (string)value;
 
-			if (PropertyDescriptor != null && PropertyDescriptor.Converter != null &&
-			    PropertyDescriptor.Converter.CanConvertTo ((ITypeDescriptorContext)this, typeof (string))) {
+			if (PropertyDescriptor != null && PropertyDescriptor.Converter != null) {
 				try {
 					return PropertyDescriptor.Converter.ConvertToString ((ITypeDescriptorContext)this, value);
 				} catch {
