@@ -20,7 +20,7 @@
   <ItemGroup>
     <PackageReference Include="System.Memory" />
     <PackageReference Include="WebAssembly.Bindings" />
-    <PackageReference Include="WebAssembly.Net.Http" />
+    <PackageReference Include="System.Net.Http.WebAssemblyHttpHandler" />
     <PackageReference Include="WebAssembly.Net.WebSockets" />
   </ItemGroup>
 
