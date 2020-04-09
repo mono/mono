@@ -42,6 +42,7 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_value_expanded (int object_id, int
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
 extern void mono_wasm_fire_bp (void);
 extern void mono_wasm_add_bool_var (gint8);
+extern void mono_wasm_add_char_var (double);
 extern void mono_wasm_add_number_var (double);
 extern void mono_wasm_add_string_var (const char*);
 extern void mono_wasm_add_getter_var (const char*);
@@ -744,6 +745,8 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 			mono_wasm_add_number_var (*(guint8*)addr);
 			break;
 		case MONO_TYPE_CHAR:
+			mono_wasm_add_char_var (*(guint16*)addr);
+			break;
 		case MONO_TYPE_U2:
 			mono_wasm_add_number_var (*(guint16*)addr);
 			break;

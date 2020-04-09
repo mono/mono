@@ -235,6 +235,15 @@ namespace DebuggerTests
 			Assert.True(false, $"Could not find variable '{name}'");
 		}
 
+		JToken CheckSymbol (JToken locals, string name, string value)
+		{
+			var l = GetAndAssertObjectWithName (locals, name);
+			var val = l["value"];
+			Assert.Equal ("symbol", val ["type"]?.Value<string> ());
+			Assert.Equal (value, val ["value"]?.Value<string> ());
+			return l;
+		}
+
 		JToken CheckObject (JToken locals, string name, string class_name, string subtype=null, bool is_null=false) {
 			var l = GetAndAssertObjectWithName (locals, name);
 			var val = l["value"];
@@ -357,6 +366,17 @@ namespace DebuggerTests
 					CheckNumber (locals, "c", 30);
 					CheckNumber (locals, "d", 0);
 					CheckNumber (locals, "e", 0);
+				}
+			);
+
+		[Fact]
+		public async Task InspectPrimitiveTypeLocalsAtBreakpointSite () =>
+			await CheckInspectLocalsAtBreakpointSite (
+				"dotnet://debugger-test.dll/debugger-test.cs", 143, 2, "PrimitiveTypesTest",
+				"window.setTimeout(function() { invoke_static_method ('[debugger-test] Math:PrimitiveTypesTest'); }, 1);",
+				test_fn: (locals) => {
+					CheckSymbol (locals, "c0", "8364 '€'");
+					CheckSymbol (locals, "c1", "65 'A'");
 				}
 			);
 

@@ -450,6 +450,15 @@ var MonoSupportLib = {
 		});
 	},
 
+	mono_wasm_add_char_var: function(var_value) {
+		MONO.var_info.push({
+			value: {
+				type: "symbol",
+				value: `${var_value} '${String.fromCharCode (var_value)}'`
+			}
+		});
+	},
+
 	mono_wasm_add_number_var: function(var_value) {
 		MONO.var_info.push({
 			value: {
