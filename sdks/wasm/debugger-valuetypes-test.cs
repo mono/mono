@@ -91,6 +91,109 @@ namespace DebuggerTests {
 
 		public DateTime DT { get; set; }
 		public RGB RGB;
+
+		public static void MethodWithLocalsForToStringTest (bool call_other)
+		{
+			var dt0 = new DateTime (2020, 1, 2, 3, 4, 5);
+			var dt1 = new DateTime (2010, 5, 4, 3, 2, 1);
+			var ts = dt0 - dt1;
+			var dto = new DateTimeOffset (dt0, new TimeSpan(4, 5, 0));
+			decimal dec = 123987123;
+			var guid = new Guid ("3d36e07e-ac90-48c6-b7ec-a481e289d014");
+
+			var dts = new DateTime [] {
+				new DateTime (1983, 6, 7, 5, 6, 10),
+				new DateTime (1999, 10, 15, 1, 2, 3)
+			};
+
+			var obj = new ClassForToStringTests {
+				DT = new DateTime (2004, 10, 15, 1, 2, 3),
+				DTO = new DateTimeOffset (dt0, new TimeSpan(2, 14, 0)),
+				TS = ts,
+				Dec = 1239871,
+				Guid = guid
+			};
+
+			var sst = new StructForToStringTests {
+				DT = new DateTime (2004, 10, 15, 1, 2, 3),
+				DTO = new DateTimeOffset (dt0, new TimeSpan (3, 15, 0)),
+				TS = ts,
+				Dec = 1239871,
+				Guid = guid
+			};
+			Console.WriteLine ($"MethodWithLocalsForToStringTest: {dt0}, {dt1}, {ts}, {dec}, {guid}, {dts[0]}, {obj.DT}, {sst.DT}");
+			if (call_other)
+				MethodWithArgumentsForToStringTest (call_other, dt0, dt1, ts, dto, dec, guid, dts, obj, sst);
+		}
+
+		static void MethodWithArgumentsForToStringTest (
+			bool call_other, // not really used, just to help with using common code in the tests
+			DateTime dt0, DateTime dt1, TimeSpan ts, DateTimeOffset dto, decimal dec,
+			Guid guid, DateTime[] dts, ClassForToStringTests obj, StructForToStringTests sst)
+		{
+			Console.WriteLine ($"MethodWithArgumentsForToStringTest: {dt0}, {dt1}, {ts}, {dec}, {guid}, {dts[0]}, {obj.DT}, {sst.DT}");
+		}
+
+		public static async Task MethodWithLocalsForToStringTestAsync (bool call_other)
+		{
+			var dt0 = new DateTime (2020, 1, 2, 3, 4, 5);
+			var dt1 = new DateTime (2010, 5, 4, 3, 2, 1);
+			var ts = dt0 - dt1;
+			var dto = new DateTimeOffset (dt0, new TimeSpan(4, 5, 0));
+			decimal dec = 123987123;
+			var guid = new Guid ("3d36e07e-ac90-48c6-b7ec-a481e289d014");
+
+			var dts = new DateTime [] {
+				new DateTime (1983, 6, 7, 5, 6, 10),
+				new DateTime (1999, 10, 15, 1, 2, 3)
+			};
+
+			var obj = new ClassForToStringTests {
+				DT = new DateTime (2004, 10, 15, 1, 2, 3),
+				DTO = new DateTimeOffset (dt0, new TimeSpan(2, 14, 0)),
+				TS = ts,
+				Dec = 1239871,
+				Guid = guid
+			};
+
+			var sst = new StructForToStringTests {
+				DT = new DateTime (2004, 10, 15, 1, 2, 3),
+				DTO = new DateTimeOffset (dt0, new TimeSpan (3, 15, 0)),
+				TS = ts,
+				Dec = 1239871,
+				Guid = guid
+			};
+			Console.WriteLine ($"MethodWithLocalsForToStringTest: {dt0}, {dt1}, {ts}, {dec}, {guid}, {dts[0]}, {obj.DT}, {sst.DT}");
+			if (call_other)
+				await MethodWithArgumentsForToStringTestAsync (call_other, dt0, dt1, ts, dto, dec, guid, dts, obj, sst);
+		}
+
+		static async Task MethodWithArgumentsForToStringTestAsync (
+			bool call_other, // not really used, just to help with using common code in the tests
+			DateTime dt0, DateTime dt1, TimeSpan ts, DateTimeOffset dto, decimal dec,
+			Guid guid, DateTime[] dts, ClassForToStringTests obj, StructForToStringTests sst)
+		{
+			Console.WriteLine ($"MethodWithArgumentsForToStringTest: {dt0}, {dt1}, {ts}, {dec}, {guid}, {dts[0]}, {obj.DT}, {sst.DT}");
+		}
+
+	}
+
+	class ClassForToStringTests
+	{
+		public DateTime DT;
+		public DateTimeOffset DTO;
+		public TimeSpan TS;
+		public decimal Dec;
+		public Guid Guid;
+	}
+
+	struct StructForToStringTests
+	{
+		public DateTime DT;
+		public DateTimeOffset DTO;
+		public TimeSpan TS;
+		public decimal Dec;
+		public Guid Guid;
 	}
 
 	public enum RGB

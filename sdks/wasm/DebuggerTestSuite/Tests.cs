@@ -251,7 +251,12 @@ namespace DebuggerTests
 		}
 
 		async Task CheckDateTime (JToken locals, string name, DateTime expected)
-			=> await CheckObjectOnLocals (locals, name,
+		{
+			var obj = locals.Where (jt => jt ["name"]?.Value<string> () == name)
+					.FirstOrDefault ();
+			Assert.Equal (expected.ToString (), obj ["value"]? ["description"]?.Value<string> ());
+
+			await CheckObjectOnLocals (locals, name,
 				test_fn: (members) => {
 					// not checking everything
 #if false
@@ -273,6 +278,7 @@ namespace DebuggerTests
 					// FIXME: check some float properties too
 				}
 			);
+		}
 
 		JToken CheckBool (JToken locals, string name, bool expected)
 		{
@@ -907,7 +913,7 @@ namespace DebuggerTests
 				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
 						new {
 							str_member = TString ("set in MethodWithLocalStructs#SimpleStruct#str_member"),
-							dt = TValueType ("System.DateTime"),
+							dt = TValueType ("System.DateTime", "2/3/2021 4:06:07 AM"),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 							Kind = TEnum ("System.DateTimeKind", "Utc")
 						});
@@ -950,7 +956,7 @@ namespace DebuggerTests
 					await CompareObjectPropertiesFor (vt_local_props, "SimpleStructProperty", 
 						new {
 							str_member = TString ("SimpleStructProperty#string#0#SimpleStruct#str_member"),
-							dt = TValueType ("System.DateTime"),
+							dt = TValueType ("System.DateTime", "3/4/2022 5:07:08 AM"),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 							Kind = TEnum ("System.DateTimeKind", "Utc")
 						},
@@ -959,7 +965,7 @@ namespace DebuggerTests
 					await CompareObjectPropertiesFor (vt_local_props, "SimpleStructField",
 						new {
 							str_member = TString ("SimpleStructField#string#0#SimpleStruct#str_member"),
-							dt = TValueType ("System.DateTime"),
+							dt = TValueType ("System.DateTime", "6/7/2025 8:10:11 AM"),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 							Kind = TEnum ("System.DateTimeKind", "Local")
 						},
@@ -998,7 +1004,7 @@ namespace DebuggerTests
 
 				var ss_local_as_ss_arg = new {
 					str_member = TString    ("ss_local#SimpleStruct#string#0#SimpleStruct#str_member"),
-					dt         = TValueType ("System.DateTime"),
+					dt         = TValueType ("System.DateTime", "6/7/2025 8:10:11 AM"),
 					gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 					Kind       = TEnum      ("System.DateTimeKind", "Local")
 				};
@@ -1033,7 +1039,7 @@ namespace DebuggerTests
 
 				var ss_arg_updated = new {
 					str_member = TString    ("ValueTypesTest#MethodWithStructArgs#updated#ss_arg#str_member"),
-					dt         = TValueType ("System.DateTime"),
+					dt         = TValueType ("System.DateTime", "6/7/2025 8:10:11 AM"),
 					gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 					Kind       = TEnum      ("System.DateTimeKind", "Utc")
 				};
@@ -1119,7 +1125,7 @@ namespace DebuggerTests
 				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
 					new {
 						str_member = TString ("set in MethodWithLocalStructsStaticAsync#SimpleStruct#str_member"),
-						dt         = TValueType ("System.DateTime"),
+						dt         = TValueType ("System.DateTime", "2/3/2021 4:06:07 AM"),
 						gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 						Kind       = TEnum ("System.DateTimeKind", "Utc")
 					});
@@ -1650,6 +1656,74 @@ namespace DebuggerTests
 			});
 		}
 
+		[Theory]
+		[InlineData (123, 3, "MethodWithLocalsForToStringTest", false, false)]
+		[InlineData (133, 3, "MethodWithArgumentsForToStringTest", true, false)]
+		[InlineData (175, 3, "MethodWithArgumentsForToStringTestAsync", true, true)]
+		[InlineData (165, 3, "MethodWithArgumentsForToStringTestAsync", false, true)]
+		public async Task InspectLocalsForToStringDescriptions (int line, int col, string method_name, bool call_other, bool invoke_async)
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			string entry_method_name = $"[debugger-test] DebuggerTests.ValueTypesTest:MethodWithLocalsForToStringTest{(invoke_async ? "Async" : String.Empty)}";
+			int frame_idx = 0;
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-valuetypes-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() {"
+									+ (invoke_async ? "invoke_static_method_async (" : "invoke_static_method (")
+										+ $"'{entry_method_name}',"
+										+ (call_other ? "true" : "false")
+									+ "); }, 1);";
+				Console.WriteLine ($"{eval_expr}");
+
+				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, invoke_async ? "MoveNext" : method_name);
+
+				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
+					new {
+						call_other     = TBool      (call_other),
+						dt0            = TValueType ("System.DateTime", "1/2/2020 3:04:05 AM"),
+						dt1            = TValueType ("System.DateTime", "5/4/2010 3:02:01 AM"),
+						dto            = TValueType ("System.DateTimeOffset", "1/2/2020 3:04:05 AM +04:05"),
+						ts             = TValueType ("System.TimeSpan", "3530.00:02:04"),
+						dec            = TValueType ("System.Decimal", "123987123"),
+						guid           = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014"),
+						dts            = TArray     ("System.DateTime[]"),
+						obj            = TObject    ("DebuggerTests.ClassForToStringTests"),
+						sst            = TObject    ("DebuggerTests.StructForToStringTests")
+					},
+					"locals#0");
+
+				var dts_elements = await CheckObjectOnLocals (frame_locals, "dts");
+				await CheckDateTime (dts_elements, "[0]", new DateTime (1983, 6, 7, 5, 6, 10));
+				await CheckDateTime (dts_elements, "[1]", new DateTime (1999, 10, 15, 1, 2, 3));
+
+				var obj_props = await CompareObjectPropertiesFor (frame_locals, "obj",
+						new {
+							DT         = TValueType ("System.DateTime", "10/15/2004 1:02:03 AM"),
+							DTO        = TValueType ("System.DateTimeOffset", "1/2/2020 3:04:05 AM +02:14"),
+							TS         = TValueType ("System.TimeSpan", "3530.00:02:04"),
+							Dec        = TValueType ("System.Decimal", "1239871"),
+							Guid       = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014")
+						}, "obj_props");
+
+				var sst_props = await CompareObjectPropertiesFor (frame_locals, "sst",
+						new {
+							DT         = TValueType ("System.DateTime", "10/15/2004 1:02:03 AM"),
+							DTO        = TValueType ("System.DateTimeOffset", "1/2/2020 3:04:05 AM +03:15"),
+							TS         = TValueType ("System.TimeSpan", "3530.00:02:04"),
+							Dec        = TValueType ("System.Decimal", "1239871"),
+							Guid       = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014")
+						}, "sst_props");
+			});
+		}
+
 		[Fact]
 		public async Task EvaluateThisProperties ()
 		{
@@ -2044,7 +2118,7 @@ namespace DebuggerTests
 			}
 		}
 
-		async Task<JToken> CheckObjectOnLocals (JToken locals, string name, Action<JToken> test_fn)
+		async Task<JToken> CheckObjectOnLocals (JToken locals, string name, Action<JToken> test_fn = null)
 		{
 			var obj = locals.Where (jt => jt ["name"]?.Value<string> () == name)
 					.FirstOrDefault ();
@@ -2121,22 +2195,25 @@ namespace DebuggerTests
 		static JObject TNumber (int value) =>
 			JObject.FromObject (new { type = "number", value = @value.ToString (), description = value.ToString () });
 
-		static JObject TValueType (string className, object members = null) =>
-			JObject.FromObject (new { type = "object", isValueType = true, className = className, description = className });
+		static JObject TValueType (string className, string description = null, object members = null) =>
+			JObject.FromObject (new { type = "object", isValueType = true, className = className, description = description ?? className });
 
 		static JObject TEnum (string className, string descr, object members = null) =>
 			JObject.FromObject (new { type = "object", isEnum = true, className = className, description = descr });
 
-		static JObject TObject (string className, bool is_null = false) =>
+		static JObject TObject (string className, string description = null, bool is_null = false) =>
 			is_null
-				? JObject.FromObject (new { type = "object", className = className, description = className, subtype = is_null ? "null" : null })
-				: JObject.FromObject (new { type = "object", className = className, description = className });
+				? JObject.FromObject (new { type = "object", className = className, description = description ?? className, subtype = is_null ? "null" : null })
+				: JObject.FromObject (new { type = "object", className = className, description = description ?? className });
 
 		static JObject TArray (string className)
 			=> JObject.FromObject (new { type = "object", className = className, description = className, subtype = "array" });
 
 		static JObject TBool (bool value)
 			=> JObject.FromObject (new { type = "boolean", value = @value, description = @value ? "true" : "false" });
+
+		static JObject TSymbol (string value)
+			=> JObject.FromObject (new { type = "symbol", value = @value, description = @value });
 
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
