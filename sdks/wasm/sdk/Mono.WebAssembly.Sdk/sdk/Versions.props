@@ -3,11 +3,11 @@
 -->
 <Project>
   <PropertyGroup>
-    <_MonoWasmBuildPackageVersion>0.2.2</_MonoWasmBuildPackageVersion>
-    <_MonoWasmFrameworkPackageVersion>0.2.2</_MonoWasmFrameworkPackageVersion>
-    <_MonoWasmRuntimePackageVersion>0.2.2</_MonoWasmRuntimePackageVersion>
-    <_MonoWasmBindingsPackageVersion>0.2.2</_MonoWasmBindingsPackageVersion>
-    <_MonoWasmHttpHandlerPackageVersion>0.2.2</_MonoWasmHttpHandlerPackageVersion>
-    <_MonoWasmClientWebSocketPackageVersion>0.2.2</_MonoWasmClientWebSocketPackageVersion>
+    <_MonoWasmBuildPackageVersion>0.2.3</_MonoWasmBuildPackageVersion>
+    <_MonoWasmFrameworkPackageVersion>0.2.3</_MonoWasmFrameworkPackageVersion>
+    <_MonoWasmRuntimePackageVersion>0.2.3</_MonoWasmRuntimePackageVersion>
+    <_MonoWasmBindingsPackageVersion>0.2.3</_MonoWasmBindingsPackageVersion>
+    <_MonoWasmHttpHandlerPackageVersion>0.2.3</_MonoWasmHttpHandlerPackageVersion>
+    <_MonoWasmClientWebSocketPackageVersion>0.2.3</_MonoWasmClientWebSocketPackageVersion>
   </PropertyGroup>
 </Project>
