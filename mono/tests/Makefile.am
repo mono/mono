@@ -728,7 +728,8 @@ TESTS_CS_SRC=		\
 	null-blob-main.cs \
 	last-error.cs \
 	rgctx-thread-static.cs \
-	bug-gh-17285.cs
+	bug-gh-17285.cs \
+	typeloadexception.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
