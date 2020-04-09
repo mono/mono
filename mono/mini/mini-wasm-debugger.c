@@ -44,6 +44,7 @@ extern void mono_wasm_fire_bp (void);
 extern void mono_wasm_add_bool_var (gint8);
 extern void mono_wasm_add_number_var (double);
 extern void mono_wasm_add_string_var (const char*);
+extern void mono_wasm_add_getter_var (const char*);
 extern void mono_wasm_add_obj_var (const char*, const char*, guint64);
 extern void mono_wasm_add_value_type_unexpanded_var (const char*, const char*);
 extern void mono_wasm_begin_value_type_var (const char*, const char*);
@@ -66,6 +67,13 @@ static int event_request_id;
 static GHashTable *objrefs;
 static GHashTable *obj_to_objref;
 static int objref_id = 0;
+
+static const char*
+all_getters_allowed_class_names[] = {
+	"System.DateTime",
+	"System.DateTimeOffset",
+	"System.TimeSpan"
+};
 
 static const char*
 to_string_as_descr_names[] = {
@@ -661,8 +669,6 @@ invoke_to_string (MonoClass *klass, gpointer addr)
 	if (!is_ok (error))
 		return NULL;
 
-	// FREE boxed_obj
-
 	return ret_str;
 }
 
@@ -872,6 +878,17 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 	return TRUE;
 }
 
+static gboolean
+are_getters_allowed (const char *class_name)
+{
+	for (int i = 0; i < G_N_ELEMENTS (all_getters_allowed_class_names); i ++) {
+		if (strcmp (class_name, all_getters_allowed_class_names [i]) == 0)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAsyncLocalThis, gboolean expandValueType)
 {
@@ -882,6 +899,8 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 	ERROR_DECL (error);
 	gboolean is_valuetype;
 	int pnum;
+	char *klass_name;
+	gboolean getters_allowed;
 
 	g_assert (klass);
 	is_valuetype = m_class_is_valuetype(klass);
@@ -913,12 +932,17 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 		describe_value (f->type, field_addr, is_valuetype | expandValueType);
 	}
 
+	klass_name = mono_class_full_name (klass);
+	getters_allowed = are_getters_allowed (klass_name);
+
 	iter = NULL;
 	pnum = 0;
 	while ((p = mono_class_get_properties (klass, &iter))) {
 		DEBUG_PRINTF (2, "mono_class_get_properties - %s - %s\n", p->name, p->get->name);
 		if (p->get->name) { //if get doesn't have name means that doesn't have a getter implemented and we don't want to show value, like VS debug
-			char *class_name;
+			MonoObject *res;
+			MonoObject *exc;
+
 			if (isAsyncLocalThis && (p->name[0] != '<' || (p->name[0] == '<' &&  p->name[1] == '>')))
 				continue;
 
@@ -926,14 +950,18 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 			sig = mono_method_signature_internal (p->get);
 
 			// automatic properties will get skipped
-			class_name = mono_class_full_name (mono_class_from_mono_type_internal (sig->ret));
-			mono_wasm_add_string_var (class_name);
-			g_free (class_name);
+			if (!getters_allowed) {
+				// not allowed to call the getter here
+				char *ret_class_name = mono_class_full_name (mono_class_from_mono_type_internal (sig->ret));
+				mono_wasm_add_getter_var (ret_class_name);
+				g_free (ret_class_name);
 
-#if false // Disabled for now, as we don't want to invoke getters
+				continue;
+			}
+
 			if (is_valuetype && mono_class_from_mono_type_internal (sig->ret) == klass) {
 				// Property of the same valuetype, avoid endlessly recursion!
-				mono_wasm_add_string_var (mono_class_full_name (klass));
+				mono_wasm_add_getter_var (klass_name);
 				continue;
 			}
 
@@ -946,7 +974,6 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 				describe_value (sig->ret, &res, TRUE);
 			else
 				describe_value (sig->ret, mono_object_unbox_internal (res), TRUE);
-#endif
 		}
 		pnum ++;
 	}

@@ -259,21 +259,12 @@ namespace DebuggerTests
 			await CheckObjectOnLocals (locals, name,
 				test_fn: (members) => {
 					// not checking everything
-#if false
 					CheckNumber (members, "Year", expected.Year);
 					CheckNumber (members, "Month", expected.Month);
 					CheckNumber (members, "Day", expected.Day);
 					CheckNumber (members, "Hour", expected.Hour);
 					CheckNumber (members, "Minute", expected.Minute);
 					CheckNumber (members, "Second", expected.Second);
-#endif
-
-					CheckString (members, "Year", "int");
-					CheckString (members, "Month", "int");
-					CheckString (members, "Day", "int");
-					CheckString (members, "Hour", "int");
-					CheckString (members, "Minute", "int");
-					CheckString (members, "Second", "int");
 
 					// FIXME: check some float properties too
 				}
@@ -1178,7 +1169,7 @@ namespace DebuggerTests
 			Color = TEnum ("DebuggerTests.RGB", Color),
 			//PointWithCustomGetter = TValueType ("DebuggerTests.Point")
 			// only automatic properties are supported currently!
-			PointWithCustomGetter = TString ("DebuggerTests.Point")
+			PointWithCustomGetter = TSymbol ("DebuggerTests.Point { get; }")
 		};
 
 		static Func<int, int, string, string, object> TPoint = (X, Y, Id, Color) => new {
@@ -1704,6 +1695,22 @@ namespace DebuggerTests
 				await CheckDateTime (dts_elements, "[0]", new DateTime (1983, 6, 7, 5, 6, 10));
 				await CheckDateTime (dts_elements, "[1]", new DateTime (1999, 10, 15, 1, 2, 3));
 
+				// TimeSpan
+				await CompareObjectPropertiesFor (frame_locals, "ts",
+						new {
+							Days       = TNumber (3530),
+							Minutes    = TNumber (2),
+							Seconds    = TNumber (4),
+						}, "ts_props", num_fields: 12);
+
+				// DateTimeOffset
+				await CompareObjectPropertiesFor (frame_locals, "dto",
+						new {
+							Day        = TNumber (2),
+							Year       = TNumber (2020),
+							DayOfWeek  = TEnum   ("System.DayOfWeek", "Thursday")
+						}, "dto_props", num_fields: 22);
+
 				var obj_props = await CompareObjectPropertiesFor (frame_locals, "obj",
 						new {
 							DT         = TValueType ("System.DateTime", "10/15/2004 1:02:03 AM"),
@@ -2084,11 +2091,11 @@ namespace DebuggerTests
 		}
 
 		// Find an object with @name in the *frame*, *fetch* the object, and check against @o
-		async Task<JToken> CompareObjectPropertiesOnFrameLocals (JToken locals, string name, object o, string label = null) {
+		async Task<JToken> CompareObjectPropertiesOnFrameLocals (JToken locals, string name, object o, string label = null, int num_fields = -1) {
 			var obj_props = await CheckObjectOnFrameLocals (locals, name, (jt) => {});
 			try {
 				if (o != null)
-					await CheckProps (obj_props, o, label);
+					await CheckProps (obj_props, o, label, num_fields);
 			} catch {
 				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {obj_props}");
 				throw;
@@ -2103,14 +2110,14 @@ namespace DebuggerTests
 		}
 
 		// Find an object with @name, *fetch* the object, and check against @o
-		async Task<JToken> CompareObjectPropertiesFor (JToken locals, string name, object o, string label = null)
+		async Task<JToken> CompareObjectPropertiesFor (JToken locals, string name, object o, string label = null, int num_fields = -1)
 		{
 			if (label == null)
 				label = name;
 			var props = await CheckObjectOnLocals (locals, name, (jt) => {});
 			try {
 				if (o != null)
-					await CheckProps (props, o, label);
+					await CheckProps (props, o, label, num_fields);
 				return props;
 			} catch {
 				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {props}");

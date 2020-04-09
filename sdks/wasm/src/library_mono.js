@@ -563,6 +563,17 @@ var MonoSupportLib = {
 		});
 	},
 
+	mono_wasm_add_getter_var: function(className) {
+		var value = `${Module.UTF8ToString (className)} { get; }`;
+		MONO.var_info.push({
+			value: {
+				type: "symbol",
+				value: value,
+				description: value
+			}
+		});
+	},
+
 	mono_wasm_add_obj_var: function(className, toString, objectId) {
 		if (objectId == 0) {
 			MONO.mono_wasm_add_null_var (className);
