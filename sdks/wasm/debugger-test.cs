@@ -158,3 +158,22 @@ public class Math { //Only append content to this class as the test suite depend
 	}
 
 }
+
+public class DebuggerTest
+{
+	public static void run_all () {
+		locals ();
+	}
+
+	public static int locals () {
+		int l_int = 1;
+		char l_char = 'A';
+		long l_long = Int64.MaxValue;
+		ulong l_ulong = UInt64.MaxValue;
+		locals_inner ();
+		return 0;
+	}
+
+	static void locals_inner () {
+	}
+}
