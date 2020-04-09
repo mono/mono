@@ -135,6 +135,16 @@ public class Math { //Only append content to this class as the test suite depend
 		public SimpleStruct SimpleStructProperty { get; set; }
 	}
 
+	public static void PrimitiveTypesTest ()
+	{
+		char c0 = '€';
+		char c1 = 'A';
+		// TODO: other types!
+		// just trying to ensure vars don't get optimized out
+		if (c0 < 32 || c1 > 32)
+			Console.WriteLine ($"{c0}, {c1}");
+	}
+
 	struct SimpleStruct
 	{
 		public DateTime dt;
