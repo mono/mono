@@ -120,16 +120,21 @@ namespace TestSuite
             {
                 BaseApiUrl = (string)location.GetObjectProperty("origin");
             }
-            // WasmHttpMessageHandler.StreamingEnabled = true;
-            //                 var client = new System.Net.Http.HttpClient()
-            //     {
-            //         DefaultRequestHeaders = { { "origin", "WindowsCalculator" } }
-            //     };
 
             return new HttpClient() { BaseAddress = new Uri(BaseApiUrl), DefaultRequestHeaders = { { "origin", "WindowsCalculator" } } };
         }
 
+        // https://github.com/mono/mono/issues/18933 System.IO.Path.GetFileName doesn't work
+        public static string Issue18933_FileName_Backslash ()
+        {
+            return System.IO.Path.GetFileName(@"C:\FakePath\File1.txt");
+        }
 
+        // https://github.com/mono/mono/issues/18933 System.IO.Path.GetFileName doesn't work
+        public static string Issue18933_Directory_Backslash()
+        {
+            return new System.IO.DirectoryInfo(@"C:\FakePath\File1.txt").Name;
+        }
     }
 
     [Flags]
