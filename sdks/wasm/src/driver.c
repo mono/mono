@@ -749,12 +749,12 @@ EM_JS(size_t, mono_wasm_timezone_get_local_name, (),
 })
 
 void
-mono_timezone_get_local_name (MonoString *result)
+mono_timezone_get_local_name (MonoString **result)
 {
 	// WASM returns back an int pointer to a string UTF16 buffer.
 	// We then cast to `mono_unichar2*`.  Returning `mono_unichar2*` from the JavaScript call will
 	// result in cast warnings from the compiler.
 	mono_unichar2 *tzd_local_name = (mono_unichar2*)mono_wasm_timezone_get_local_name ();
-	result = mono_string_from_utf16 (tzd_local_name);
+	*result = mono_string_from_utf16 (tzd_local_name);
 	free (tzd_local_name);
 }
