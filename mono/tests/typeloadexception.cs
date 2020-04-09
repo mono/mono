@@ -18,6 +18,9 @@ public class TestTypeLoadException{
       catch(TypeLoadException e){
           caught=true;
       }
+      catch(Exception e){
+          caught=true;
+      }
       if(caught){
           return 0;
       }

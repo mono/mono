@@ -393,8 +393,7 @@ mono_field_from_token_checked (MonoImage *image, guint32 token, MonoClass **retk
 			*retklass = k;
 		if (mono_class_has_failure (k)) {
 			mono_error_set_for_class_failure (error, k);
-			if (error->error_code != MONO_ERROR_TYPE_LOAD)
-				mono_error_set_bad_image (error, image, "Could not resolve field token 0x%08x, due to: %s", token, mono_error_get_message (error));
+			mono_error_set_bad_image (error, image, "Could not resolve field token 0x%08x, due to: %s", token, mono_error_get_message (error));
 		} else {
 			field = mono_class_get_field (k, token);
 			if (!field) {
