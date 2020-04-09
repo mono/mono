@@ -7,7 +7,7 @@
   <PropertyGroup Label="Framework Version settings">
     <FrameworkMajorVersion>0</FrameworkMajorVersion>
     <FrameworkMinorVersion>2</FrameworkMinorVersion>
-    <FrameworkPatchVersion>2</FrameworkPatchVersion>
+    <FrameworkPatchVersion>3</FrameworkPatchVersion>
     <FrameworkPreReleasePreviewNumber>1</FrameworkPreReleasePreviewNumber>
     <FrameworkPreReleaseVersionLabel>preview$(FrameworkPreReleasePreviewNumber)</FrameworkPreReleaseVersionLabel>
     <FrameworkPreReleaseBrandingLabel>Preview $(FrameworkPreReleasePreviewNumber)</FrameworkPreReleaseBrandingLabel>
@@ -19,7 +19,7 @@
   <PropertyGroup Label="Bindings Version settings">
     <BindingsMajorVersion>0</BindingsMajorVersion>
     <BindingsMinorVersion>2</BindingsMinorVersion>
-    <BindingsPatchVersion>2</BindingsPatchVersion>
+    <BindingsPatchVersion>3</BindingsPatchVersion>
     <BindingsPreReleasePreviewNumber>1</BindingsPreReleasePreviewNumber>
     <BindingsPreReleaseVersionLabel>preview$(BindingsPreReleasePreviewNumber)</BindingsPreReleaseVersionLabel>
     <BindingsPreReleaseBrandingLabel>Preview $(BindingsPreReleasePreviewNumber)</BindingsPreReleaseBrandingLabel>
@@ -31,7 +31,7 @@
   <PropertyGroup Label="HttpHandler Version settings">
     <HttpHandlerMajorVersion>0</HttpHandlerMajorVersion>
     <HttpHandlerMinorVersion>2</HttpHandlerMinorVersion>
-    <HttpHandlerPatchVersion>2</HttpHandlerPatchVersion>
+    <HttpHandlerPatchVersion>3</HttpHandlerPatchVersion>
     <HttpHandlerPreReleasePreviewNumber>1</HttpHandlerPreReleasePreviewNumber>
     <HttpHandlerPreReleaseVersionLabel>preview$(HttpHandlerPreReleasePreviewNumber)</HttpHandlerPreReleaseVersionLabel>
     <HttpHandlerPreReleaseBrandingLabel>Preview $(HttpHandlerPreReleasePreviewNumber)</HttpHandlerPreReleaseBrandingLabel>
@@ -43,7 +43,7 @@
   <PropertyGroup Label="ClientWebSocket Version settings">
     <ClientWebSocketMajorVersion>0</ClientWebSocketMajorVersion>
     <ClientWebSocketMinorVersion>2</ClientWebSocketMinorVersion>
-    <ClientWebSocketPatchVersion>2</ClientWebSocketPatchVersion>
+    <ClientWebSocketPatchVersion>3</ClientWebSocketPatchVersion>
     <ClientWebSocketPreReleasePreviewNumber>1</ClientWebSocketPreReleasePreviewNumber>
     <ClientWebSocketPreReleaseVersionLabel>preview$(ClientWebSocketPreReleasePreviewNumber)</ClientWebSocketPreReleaseVersionLabel>
     <ClientWebSocketPreReleaseBrandingLabel>Preview $(ClientWebSocketPreReleasePreviewNumber)</ClientWebSocketPreReleaseBrandingLabel>
@@ -55,7 +55,7 @@
   <PropertyGroup Label="SDK Version settings">
     <SDKPackageMajorVersion>0</SDKPackageMajorVersion>
     <SDKPackageMinorVersion>2</SDKPackageMinorVersion>
-    <SDKPackagePatchVersion>2</SDKPackagePatchVersion>
+    <SDKPackagePatchVersion>3</SDKPackagePatchVersion>
     <SDKPackagePreReleasePreviewNumber>1</SDKPackagePreReleasePreviewNumber>
     <SDKPackagePreReleaseVersionLabel>preview$(SDKPackagePreReleasePreviewNumber)</SDKPackagePreReleaseVersionLabel>
     <SDKPackagePreReleaseBrandingLabel>Preview $(SDKPackagePreReleasePreviewNumber)</SDKPackagePreReleaseBrandingLabel>
