@@ -723,7 +723,7 @@ namespace WebAssembly.Net.Debugging {
 
 			foreach (var method in doc.Methods) {
 				foreach (var sequencePoint in method.DebugInformation.SequencePoints) {
-					if (!sequencePoint.IsHidden && Match (sequencePoint, start, end))
+					if (Match (sequencePoint, start, end))
 						res.Add (new SourceLocation (method, sequencePoint));
 				}
 			}
@@ -766,8 +766,7 @@ namespace WebAssembly.Net.Debugging {
 
 			foreach (var method in sourceFile.Methods) {
 				foreach (var sequencePoint in method.DebugInformation.SequencePoints) {
-					//FIXME handle multi doc methods
-					if (!sequencePoint.IsHidden && Match (sequencePoint, request.Line, request.Column))
+					if (Match (sequencePoint, request.Line, request.Column))
 						yield return new SourceLocation (method, sequencePoint);
 				}
 			}
