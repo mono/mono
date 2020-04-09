@@ -461,7 +461,7 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-.stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
+bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
 	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
@@ -665,7 +665,7 @@ run-aot-all: build-aot-all
 
 rebuild-debug-sample: clean-debug-sample build-debug-sample
 
-build-debugger-test-app: .stamp-build-debugger-test-app
+build-debugger-test-app: bin/debugger-test-suite/dotnet.wasm
 build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
