@@ -920,18 +920,19 @@ namespace DebuggerTests
 					}
 				);
 
+				var dt = new DateTime (2021, 2, 3, 4, 6, 7);
 				// Check ss_local's properties
 				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
 						new {
 							str_member = TString ("set in MethodWithLocalStructs#SimpleStruct#str_member"),
-							dt = TValueType ("System.DateTime", "2/3/2021 4:06:07 AM"),
+							dt = TValueType ("System.DateTime", dt.ToString ()),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 							Kind = TEnum ("System.DateTimeKind", "Utc")
 						});
 
 				{
 					// Check ss_local.dt
-					await CheckDateTime (ss_local_props, "dt", new DateTime (2021, 2, 3, 4, 6, 7));
+					await CheckDateTime (ss_local_props, "dt", dt);
 
 					// Check ss_local.gs
 					await CheckObjectOnLocals (ss_local_props, "gs",
@@ -964,23 +965,31 @@ namespace DebuggerTests
 				);
 
 				{
-					await CompareObjectPropertiesFor (vt_local_props, "SimpleStructProperty", 
+					// SimpleStructProperty
+					dt = new DateTime (2022, 3, 4, 5, 7, 8);
+					var ssp_props = await CompareObjectPropertiesFor (vt_local_props, "SimpleStructProperty",
 						new {
 							str_member = TString ("SimpleStructProperty#string#0#SimpleStruct#str_member"),
-							dt = TValueType ("System.DateTime", "3/4/2022 5:07:08 AM"),
+							dt = TValueType ("System.DateTime", dt.ToString ()),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 							Kind = TEnum ("System.DateTimeKind", "Utc")
 						},
 						label: "vt_local_props.SimpleStructProperty");
 
-					await CompareObjectPropertiesFor (vt_local_props, "SimpleStructField",
+					await CheckDateTime (ssp_props, "dt", dt);
+
+					// SimpleStructField
+					dt = new DateTime (2025, 6, 7, 8, 10, 11);
+					var ssf_props = await CompareObjectPropertiesFor (vt_local_props, "SimpleStructField",
 						new {
 							str_member = TString ("SimpleStructField#string#0#SimpleStruct#str_member"),
-							dt = TValueType ("System.DateTime", "6/7/2025 8:10:11 AM"),
+							dt = TValueType ("System.DateTime", dt.ToString ()),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 							Kind = TEnum ("System.DateTimeKind", "Local")
 						},
 						label: "vt_local_props.SimpleStructField");
+
+					await CheckDateTime (ssf_props, "dt", dt);
 				}
 
 				// FIXME: check ss_local.gs.List's members
@@ -1013,9 +1022,10 @@ namespace DebuggerTests
 					}
 				);
 
+				var dt = new DateTime (2025, 6, 7, 8, 10, 11);
 				var ss_local_as_ss_arg = new {
 					str_member = TString    ("ss_local#SimpleStruct#string#0#SimpleStruct#str_member"),
-					dt         = TValueType ("System.DateTime", "6/7/2025 8:10:11 AM"),
+					dt         = TValueType ("System.DateTime", dt.ToString ()),
 					gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 					Kind       = TEnum      ("System.DateTimeKind", "Local")
 				};
@@ -1031,7 +1041,7 @@ namespace DebuggerTests
 
 				{
 					// Check ss_local.dt
-					await CheckDateTime (ss_arg_props, "dt", new DateTime (2025, 6, 7, 8, 10, 11));
+					await CheckDateTime (ss_arg_props, "dt", dt);
 
 					// Check ss_local.gs
 					await CompareObjectPropertiesFor (ss_arg_props, "gs", ss_local_gs);
@@ -1050,7 +1060,7 @@ namespace DebuggerTests
 
 				var ss_arg_updated = new {
 					str_member = TString    ("ValueTypesTest#MethodWithStructArgs#updated#ss_arg#str_member"),
-					dt         = TValueType ("System.DateTime", "6/7/2025 8:10:11 AM"),
+					dt         = TValueType ("System.DateTime", dt.ToString ()),
 					gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 					Kind       = TEnum      ("System.DateTimeKind", "Utc")
 				};
@@ -1065,6 +1075,8 @@ namespace DebuggerTests
 									List        = TObject ("System.Collections.Generic.List<System.DateTime>"),
 									Options     = TEnum   ("DebuggerTests.Options", "Option1")
 							});
+
+					await CheckDateTime (ss_arg_props, "dt", dt);
 				}
 
 				// Check locals on previous frame, same as earlier in this test
@@ -1073,7 +1085,7 @@ namespace DebuggerTests
 
 				{
 					// Check ss_local.dt
-					await CheckDateTime (ss_arg_props, "dt", new DateTime (2025, 6, 7, 8, 10, 11));
+					await CheckDateTime (ss_arg_props, "dt", dt);
 
 					// Check ss_local.gs
 					await CheckObjectOnLocals (ss_arg_props, "gs",
@@ -1132,18 +1144,19 @@ namespace DebuggerTests
 						},
 						"locals#0");
 
+				var dt = new DateTime (2021, 2, 3, 4, 6, 7);
 				// Check ss_local's properties
 				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
 					new {
 						str_member = TString ("set in MethodWithLocalStructsStaticAsync#SimpleStruct#str_member"),
-						dt         = TValueType ("System.DateTime", "2/3/2021 4:06:07 AM"),
+						dt         = TValueType ("System.DateTime", dt.ToString ()),
 						gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 						Kind       = TEnum ("System.DateTimeKind", "Utc")
 					});
 
 				{
 					// Check ss_local.dt
-					await CheckDateTime (ss_local_props, "dt", new DateTime (2021, 2, 3, 4, 6, 7));
+					await CheckDateTime (ss_local_props, "dt", dt);
 
 					// Check ss_local.gs
 					await CompareObjectPropertiesFor (ss_local_props, "gs",
@@ -1696,13 +1709,18 @@ namespace DebuggerTests
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, invoke_async ? "MoveNext" : method_name);
 
+				var dt0 = new DateTime (2020, 1, 2, 3, 4, 5);
+				var dt1 = new DateTime (2010, 5, 4, 3, 2, 1);
+				var ts = dt0 - dt1;
+				var dto = new DateTimeOffset (dt0, new TimeSpan(4, 5, 0));
+
 				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
 					new {
 						call_other     = TBool      (call_other),
-						dt0            = TValueType ("System.DateTime", "1/2/2020 3:04:05 AM"),
-						dt1            = TValueType ("System.DateTime", "5/4/2010 3:02:01 AM"),
-						dto            = TValueType ("System.DateTimeOffset", "1/2/2020 3:04:05 AM +04:05"),
-						ts             = TValueType ("System.TimeSpan", "3530.00:02:04"),
+						dt0            = TValueType ("System.DateTime", dt0.ToString ()),
+						dt1            = TValueType ("System.DateTime", dt1.ToString ()),
+						dto            = TValueType ("System.DateTimeOffset", dto.ToString ()),
+						ts             = TValueType ("System.TimeSpan", ts.ToString ()),
 						dec            = TValueType ("System.Decimal", "123987123"),
 						guid           = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014"),
 						dts            = TArray     ("System.DateTime[]"),
@@ -1711,9 +1729,11 @@ namespace DebuggerTests
 					},
 					"locals#0");
 
+				var dts_0 = new DateTime (1983, 6, 7, 5, 6, 10);
+				var dts_1 = new DateTime (1999, 10, 15, 1, 2, 3);
 				var dts_elements = await CheckObjectOnLocals (frame_locals, "dts");
-				await CheckDateTime (dts_elements, "[0]", new DateTime (1983, 6, 7, 5, 6, 10));
-				await CheckDateTime (dts_elements, "[1]", new DateTime (1999, 10, 15, 1, 2, 3));
+				await CheckDateTime (dts_elements, "[0]", dts_0);
+				await CheckDateTime (dts_elements, "[1]", dts_1);
 
 				// TimeSpan
 				await CompareObjectPropertiesFor (frame_locals, "ts",
@@ -1731,20 +1751,24 @@ namespace DebuggerTests
 							DayOfWeek  = TEnum   ("System.DayOfWeek", "Thursday")
 						}, "dto_props", num_fields: 22);
 
+				var DT = new DateTime (2004, 10, 15, 1, 2, 3);
+				var DTO = new DateTimeOffset (dt0, new TimeSpan(2, 14, 0));
+
 				var obj_props = await CompareObjectPropertiesFor (frame_locals, "obj",
 						new {
-							DT         = TValueType ("System.DateTime", "10/15/2004 1:02:03 AM"),
-							DTO        = TValueType ("System.DateTimeOffset", "1/2/2020 3:04:05 AM +02:14"),
-							TS         = TValueType ("System.TimeSpan", "3530.00:02:04"),
+							DT         = TValueType ("System.DateTime", DT.ToString ()),
+							DTO        = TValueType ("System.DateTimeOffset", DTO.ToString ()),
+							TS         = TValueType ("System.TimeSpan", ts.ToString ()),
 							Dec        = TValueType ("System.Decimal", "1239871"),
 							Guid       = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014")
 						}, "obj_props");
 
+				DTO = new DateTimeOffset (dt0, new TimeSpan (3, 15, 0));
 				var sst_props = await CompareObjectPropertiesFor (frame_locals, "sst",
 						new {
-							DT         = TValueType ("System.DateTime", "10/15/2004 1:02:03 AM"),
-							DTO        = TValueType ("System.DateTimeOffset", "1/2/2020 3:04:05 AM +03:15"),
-							TS         = TValueType ("System.TimeSpan", "3530.00:02:04"),
+							DT         = TValueType ("System.DateTime", DT.ToString ()),
+							DTO        = TValueType ("System.DateTimeOffset", DTO.ToString ()),
+							TS         = TValueType ("System.TimeSpan", ts.ToString ()),
 							Dec        = TValueType ("System.Decimal", "1239871"),
 							Guid       = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014")
 						}, "sst_props");
