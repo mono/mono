@@ -390,10 +390,6 @@ mono_setup_thread_context(DWORD thread_id, MonoContext *mono_context)
 		return FALSE;
 	}
 
-	g_assert (context.ContextFlags & CONTEXT_INTEGER);
-	g_assert (context.ContextFlags & CONTEXT_FLOATING_POINT);
-	g_assert (context.ContextFlags & CONTEXT_CONTROL);
-
 	memset (mono_context, 0, sizeof (MonoContext));
 	mono_sigctx_to_monoctx (&context, mono_context);
 

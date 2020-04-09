@@ -296,10 +296,6 @@ mono_threads_suspend_begin_async_resume (MonoThreadInfo *info)
 			return FALSE;
 		}
 
-		g_assert (context.ContextFlags & CONTEXT_INTEGER);
-		g_assert (context.ContextFlags & CONTEXT_FLOATING_POINT);
-		g_assert (context.ContextFlags & CONTEXT_CONTROL);
-
 		mono_monoctx_to_sigctx (&ctx, &context);
 
 		context.ContextFlags = CONTEXT_INTEGER | CONTEXT_FLOATING_POINT | CONTEXT_CONTROL;
