@@ -31,7 +31,7 @@ void core_initialize_internals ();
 extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
 extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
 
-void mono_wasm_enable_debugging (void);
+void mono_wasm_enable_debugging (int);
 
 void mono_ee_interp_init (const char *opts);
 void mono_marshal_ilgen_init (void);
@@ -349,7 +349,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #else
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
 	if (enable_debugging)
-		mono_wasm_enable_debugging ();
+		mono_wasm_enable_debugging (enable_debugging);
 #endif
 
 #ifdef LINK_ICALLS
@@ -736,12 +736,12 @@ mono_wasm_enable_on_demand_gc (void)
 }
 
 // Returns the local timezone default is UTC.
-EM_JS(size_t, mono_wasm_timezone_get_local_name, (), 
+EM_JS(size_t, mono_wasm_timezone_get_local_name, (),
 {
 	var res = "UTC";
-	try { 
-		res = Intl.DateTimeFormat().resolvedOptions().timeZone; 
-	} catch(e) {} 
+	try {
+		res = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	} catch(e) {}
 
 	var buff = Module._malloc((res.length + 1) * 2);
 	stringToUTF16 (res, buff, (res.length + 1) * 2);
