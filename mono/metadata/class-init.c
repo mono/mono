@@ -4522,7 +4522,12 @@ mono_class_init_internal (MonoClass *klass)
 	}
 
 	if (klass->rank) {
-		array_method_count = 3 + (klass->rank > 1? 2: 1);
+		array_method_count =
+			1 + /* ctor([int32]*rank) */
+			1 + /* ctor([int32]*rank*2) */
+			1 + /* Get */
+			1 + /* Set */
+			1; /* Address */
 
 		if (klass->interface_count) {
 			int count_generic = generic_array_methods (klass);
@@ -4951,17 +4956,16 @@ mono_class_setup_methods (MonoClass *klass)
 		MonoMethodSignature *sig;
 		int count_generic = 0, first_generic = 0;
 		int method_num = 0;
-		gboolean jagged_ctor = FALSE;
 
-		count = 3 + (klass->rank > 1? 2: 1);
+		count =
+			1 + /* ctor([int32]*rank) */
+			1 + /* ctor([int32]*rank*2) */
+			1 + /* Get */
+			1 + /* Set */
+			1; /* Address */
 
 		mono_class_setup_interfaces (klass, error);
 		g_assert (is_ok (error)); /*FIXME can this fail for array types?*/
-
-		if (klass->rank == 1 && klass->element_class->rank) {
-			jagged_ctor = TRUE;
-			count ++;
-		}
 
 		if (klass->interface_count) {
 			count_generic = generic_array_methods (klass);
@@ -4980,29 +4984,16 @@ mono_class_setup_methods (MonoClass *klass)
 
 		amethod = create_array_method (klass, ".ctor", sig);
 		methods [method_num++] = amethod;
-		if (klass->rank > 1) {
-			sig = mono_metadata_signature_alloc (klass->image, klass->rank * 2);
-			sig->ret = mono_get_void_type ();
-			sig->pinvoke = TRUE;
-			sig->hasthis = TRUE;
-			for (i = 0; i < klass->rank * 2; ++i)
-				sig->params [i] = mono_get_int32_type ();
 
-			amethod = create_array_method (klass, ".ctor", sig);
-			methods [method_num++] = amethod;
-		}
+		sig = mono_metadata_signature_alloc (klass->image, klass->rank * 2);
+		sig->ret = mono_get_void_type ();
+		sig->pinvoke = TRUE;
+		sig->hasthis = TRUE;
+		for (i = 0; i < klass->rank * 2; ++i)
+			sig->params [i] = mono_get_int32_type ();
 
-		if (jagged_ctor) {
-			/* Jagged arrays have an extra ctor in .net which creates an array of arrays */
-			sig = mono_metadata_signature_alloc (klass->image, klass->rank + 1);
-			sig->ret = mono_get_void_type ();
-			sig->pinvoke = TRUE;
-			sig->hasthis = TRUE;
-			for (i = 0; i < klass->rank + 1; ++i)
-				sig->params [i] = mono_get_int32_type ();
-			amethod = create_array_method (klass, ".ctor", sig);
-			methods [method_num++] = amethod;
-		}
+		amethod = create_array_method (klass, ".ctor", sig);
+		methods [method_num++] = amethod;
 
 		/* element Get (idx11, [idx2, ...]) */
 		sig = mono_metadata_signature_alloc (klass->image, klass->rank);
