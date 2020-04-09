@@ -3855,7 +3855,7 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			int size = mono_type_size (field->type, &align);
 			int j = 0;
 			for (j = 0; j < size; j++) {
-				guint8 type =  field->type->type == MONO_TYPE_VALUETYPE ? 1 : 2;
+				guint8 type =  (mono_type_is_primitive(field->type) || (field->type->type == MONO_TYPE_VALUETYPE && m_class_is_enumtype (field->type->data.klass))) ? 1 : 2;
 				if (layout_check[field_offsets [i] + j] != 0 && layout_check[field_offsets [i] + j] != type) {
 					mono_class_set_type_load_failure (klass, "Could not load type '%s' because it contains an object field at offset %d that is incorrectly aligned or overlapped by a non-object field.", klass->name, field->offset);
 					break;
