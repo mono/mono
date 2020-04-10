@@ -121,7 +121,7 @@ namespace WebAssembly.Net.Debugging {
 			var sender = browser == to ? "Send-browser" : "Send-ide";
 
 			var method = o ["method"]?.ToString ();
-			if (method != "Debugger.scriptParsed" && method != "Runtime.consoleAPICalled")
+			//if (method != "Debugger.scriptParsed" && method != "Runtime.consoleAPICalled")
 				Log ("protocol", $"{sender}: " + JsonConvert.SerializeObject (o));
 			var bytes = Encoding.UTF8.GetBytes (o.ToString ());
 
@@ -172,7 +172,7 @@ namespace WebAssembly.Net.Debugging {
 			var res = JObject.Parse (msg);
 
 			var method = res ["method"]?.ToString ();
-			if (method != "Debugger.scriptParsed" && method != "Runtime.consoleAPICalled")
+			//if (method != "Debugger.scriptParsed" && method != "Runtime.consoleAPICalled")
 				Log ("protocol", $"browser: {msg}");
 
 			if (res ["id"] == null)
