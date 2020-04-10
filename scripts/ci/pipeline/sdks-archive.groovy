@@ -27,6 +27,8 @@ parallel (
 def archive (product, configuration, platform, chrootname = "", chrootadditionalpackages = "", chrootBindMounts = "", xcodeVersion = "") {
     def packageFileName = null
     def packageFileSha1 = null
+    def sdkPackageFileName = null
+    def sdkPackageFileSha1 = null
     def commitHash = null
     def commitContext = (xcodeVersion == "" ? "Archive-${product}-${configuration}-${platform}" : "Archive-${product}-${configuration}-${platform}-${xcodeVersion}")
     def azureArtifactUrl = null
@@ -84,10 +86,12 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                     }
                     // find Archive in the workspace root
                     packageFileName = findFiles (glob: "${product}-${configuration}-${platform}-${commitHash}.*")[0].name
-
+                    sdkPackageFileName = findFiles (glob: "sdks/${product}/*.zip")[0].name
                     // compute SHA1 of the Archive
                     packageFileSha1 = sha1 (packageFileName)
                     writeFile (file: "${packageFileName}.sha1", text: "${packageFileSha1}")
+                    sdkPackageFileSha1 = sha1 (sdkPackageFileName);
+                    writeFile (file: "${sdkPackageFileName}.sha1", text: "${sdkPackageFileSha1}")
 
                     // include xcode version in virtual path if necessary
                     if (xcodeVersion == "") {
@@ -103,7 +107,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                                 storageType: "blobstorage",
                                 containerName: azureContainerName,
                                 virtualPath: azureVirtualPath,
-                                filesPath: "${packageFileName},${packageFileName}.sha1",
+                                filesPath: "${packageFileName},${packageFileName}.sha1,${sdkPackageFileName},${sdkPakageFileName}.sha1",
                                 allowAnonymousAccess: true,
                                 pubAccessible: true,
                                 doNotWaitForPreviousBuild: true,
