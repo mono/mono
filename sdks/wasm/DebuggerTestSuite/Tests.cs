@@ -1722,7 +1722,7 @@ namespace DebuggerTests
 						dto            = TValueType ("System.DateTimeOffset", dto.ToString ()),
 						ts             = TValueType ("System.TimeSpan", ts.ToString ()),
 						dec            = TValueType ("System.Decimal", "123987123"),
-						guid           = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014"),
+						guid           = TValueType ("System.Guid", "3D36E07E-AC90-48C6-B7EC-A481E289D014"),
 						dts            = TArray     ("System.DateTime[]"),
 						obj            = TObject    ("DebuggerTests.ClassForToStringTests"),
 						sst            = TObject    ("DebuggerTests.StructForToStringTests")
@@ -1760,7 +1760,7 @@ namespace DebuggerTests
 							DTO        = TValueType ("System.DateTimeOffset", DTO.ToString ()),
 							TS         = TValueType ("System.TimeSpan", ts.ToString ()),
 							Dec        = TValueType ("System.Decimal", "1239871"),
-							Guid       = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014")
+							Guid       = TValueType ("System.Guid", "3D36E07E-AC90-48C6-B7EC-A481E289D014")
 						}, "obj_props");
 
 				DTO = new DateTimeOffset (dt0, new TimeSpan (3, 15, 0));
@@ -1770,7 +1770,7 @@ namespace DebuggerTests
 							DTO        = TValueType ("System.DateTimeOffset", DTO.ToString ()),
 							TS         = TValueType ("System.TimeSpan", ts.ToString ()),
 							Dec        = TValueType ("System.Decimal", "1239871"),
-							Guid       = TValueType ("System.Guid", "3d36e07e-ac90-48c6-b7ec-a481e289d014")
+							Guid       = TValueType ("System.Guid", "3D36E07E-AC90-48C6-B7EC-A481E289D014")
 						}, "sst_props");
 			});
 		}

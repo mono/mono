@@ -679,6 +679,9 @@ get_to_string_description (const char* class_name, MonoClass *klass, gpointer ad
 	if (!class_name || !klass || !addr)
 		return NULL;
 
+	if (strcmp (class_name, "System.Guid") == 0)
+		return mono_guid_to_string (addr);
+
 	for (int i = 0; i < G_N_ELEMENTS (to_string_as_descr_names); i ++) {
 		if (strcmp (to_string_as_descr_names [i], class_name) == 0) {
 			return invoke_to_string (klass, addr);
