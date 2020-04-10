@@ -635,7 +635,7 @@ mono_wasm_enum_frames (void)
 }
 
 static char*
-invoke_to_string (MonoClass *klass, gpointer addr)
+invoke_to_string (const char *class_name, MonoClass *klass, gpointer addr)
 {
 	MonoObject *exc;
 	MonoString *mstr;
@@ -647,15 +647,29 @@ invoke_to_string (MonoClass *klass, gpointer addr)
 	//       (invoke ToString() get a preview/description for *some* types)
 	//       and we don't want to report errors for that.
 	if (m_class_is_valuetype (klass)) {
-		MonoObject *boxed_obj = mono_value_box_checked (mono_domain_get (), klass, addr, error);
-		if (!is_ok (error))
+		MonoMethod *method;
+
+		MONO_STATIC_POINTER_INIT (MonoMethod, to_string)
+
+			to_string = mono_class_get_method_from_name_checked (mono_get_object_class (), "ToString", 0, METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_PUBLIC, error);
+			mono_error_assert_ok (error);
+
+		MONO_STATIC_POINTER_INIT_END (MonoMethod, to_string)
+
+		method = mono_class_get_virtual_method (klass, to_string, FALSE, error);
+		if (!method)
 			return NULL;
 
-		obj = boxed_obj;
-	} else {
-		obj = *(MonoObject**)addr;
+		MonoString *mstr = (MonoString*) mono_runtime_try_invoke (method, addr , NULL, &exc, error);
+		if (exc || !is_ok (error)) {
+			DEBUG_PRINTF (1, "Failed to invoke ToString for %s\n", class_name);
+			return NULL;
+		}
+
+		return mono_string_to_utf8_checked_internal (mstr, error);
 	}
 
+	obj = *(MonoObject**)addr;
 	if (!obj)
 		return NULL;
 
@@ -684,7 +698,7 @@ get_to_string_description (const char* class_name, MonoClass *klass, gpointer ad
 
 	for (int i = 0; i < G_N_ELEMENTS (to_string_as_descr_names); i ++) {
 		if (strcmp (to_string_as_descr_names [i], class_name) == 0) {
-			return invoke_to_string (klass, addr);
+			return invoke_to_string (class_name, klass, addr);
 		}
 	}
 
