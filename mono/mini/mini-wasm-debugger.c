@@ -81,8 +81,7 @@ to_string_as_descr_names[] = {
 	"System.DateTime",
 	"System.DateTimeOffset",
 	"System.Decimal",
-	"System.TimeSpan",
-	"System.Guid"
+	"System.TimeSpan"
 };
 
 #define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
