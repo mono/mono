@@ -649,10 +649,8 @@ invoke_to_string (const char *class_name, MonoClass *klass, gpointer addr)
 		MonoMethod *method;
 
 		MONO_STATIC_POINTER_INIT (MonoMethod, to_string)
-
 			to_string = mono_class_get_method_from_name_checked (mono_get_object_class (), "ToString", 0, METHOD_ATTRIBUTE_VIRTUAL | METHOD_ATTRIBUTE_PUBLIC, error);
 			mono_error_assert_ok (error);
-
 		MONO_STATIC_POINTER_INIT_END (MonoMethod, to_string)
 
 		method = mono_class_get_virtual_method (klass, to_string, FALSE, error);
@@ -673,10 +671,7 @@ invoke_to_string (const char *class_name, MonoClass *klass, gpointer addr)
 		return NULL;
 
 	mstr = mono_object_try_to_string (obj, &exc, error);
-	if (exc)
-		return NULL;
-
-	if (!is_ok (error))
+	if (exc || !is_ok (error))
 		return NULL;
 
 	ret_str = mono_string_to_utf8_checked_internal (mstr, error);
