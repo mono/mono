@@ -60,7 +60,7 @@ describe("The WebAssembly Http Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [true, "base/publish/netstandard2.0/NowIsTheTime.txt"]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [true, "base/publish/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -105,7 +105,7 @@ describe("The WebAssembly Http Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [true, "base/publish/netstandard2.0/NowIsTheTime.txt"]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [true, "base/publish/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -150,7 +150,7 @@ describe("The WebAssembly Http Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [false, "base/publish/netstandard2.0/NowIsTheTime.txt"]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestStream", [false, "base/publish/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -195,7 +195,7 @@ describe("The WebAssembly Http Test Suite",function(){
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
       
-      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [false, "base/publish/netstandard2.0/NowIsTheTime.txt"]).then(
+      _document.Module.BINDING.call_static_method("[HttpTestSuite]TestSuite.Program:RequestByteArray", [false, "base/publish/NowIsTheTime.txt"]).then(
         (result) => 
         {
             //console.log("we are here: " + result);
@@ -437,15 +437,15 @@ describe("The WebAssembly Http Test Suite",function(){
         (error) => done.fail(error)
 
       );
-      
-    }, DEFAULT_TIMEOUT);    
 
-    it('WebSocketSendBinary: should return echoed text.', (done) => {
+    }, DEFAULT_TIMEOUT);
+
+    it('WebSocketSendTextPartial: should return echoed text.', (done) => {
       //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
       var _document = karmaHTML.httpspec.document;
-      var binBuffer = new Uint8Array([49,50,51,52,53,54,55,56,57])
-      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:WebSocketSendBinary", ["ws://localhost:8889", "echo-protocol", "Hello WebSockets"]).then(
-        (result) => 
+
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:WebSocketSendTextPartial", ["ws://localhost:8889", "echo-protocol", "Hello WebSockets"]).then(
+        (result) =>
         {
             try {
               assert.equal(result, 'Hello WebSockets', "result does not match Hello WebSockets.");
@@ -457,6 +457,43 @@ describe("The WebAssembly Http Test Suite",function(){
         (error) => done.fail(error)
 
       );
-    }, DEFAULT_WS_TIMEOUT);  
-    
+
+    }, DEFAULT_TIMEOUT);
+
+    it('WebSocketSendBinary: should return echoed text.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:WebSocketSendBinary", ["ws://localhost:8889", "echo-protocol", "Hello WebSockets"]).then(
+        (result) =>
+        {
+            try {
+              assert.equal(result, 'Hello WebSockets', "result does not match Hello WebSockets.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+        },
+        (error) => done.fail(error)
+
+      );
+    }, DEFAULT_WS_TIMEOUT);
+
+    it('WebSocketSendBinaryPartial: should return echoed text.', (done) => {
+      //karmaHTML.httpspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.httpspec.document;
+
+      _document.Module.BINDING.call_static_method("[WebSocketTestSuite]TestSuite.Program:WebSocketSendBinaryPartial", ["ws://localhost:8889", "echo-protocol", "Hello WebSockets"]).then(
+        (result) =>
+        {
+            try {
+              assert.equal(result, 'Hello WebSockets', "result does not match Hello WebSockets.");
+              done()
+            } catch (e) {
+              done.fail(e);
+            }
+      },
+      (error) => done.fail(error)
+
+      );
+    }, DEFAULT_WS_TIMEOUT);
   });

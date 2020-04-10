@@ -20,6 +20,7 @@ usage()
   echo "  --reconfigure              Force provision and configure"  
   echo "  --test                     Run all tests (short: -t)"
   echo "  --thread                   Enable WASM threads"
+  echo "  --dynamic                  Enable Dynamic Runtime"  
   echo "  --win                      Enable Windows cross build"
   echo ""
 
@@ -33,6 +34,7 @@ configuration='Release'
 force_reconfigure=false
 test=false
 thread=false
+dynamic=false
 win=false
 
 while [[ $# > 0 ]]; do
@@ -51,6 +53,9 @@ while [[ $# > 0 ]]; do
     -configuration|-c)
       configuration=$2
       shift
+      ;;
+    -dynamic)
+      dynamic=true
       ;;
     -reconfigure)
       force_reconfigure=true
@@ -94,7 +99,11 @@ if [[ "$force_reconfigure" == "true" || ! -f .configured ]]; then
   if [ "$cxx" == "true" ]; then
     echo "ENABLE_CXX=1" >> ../Make.config
   fi
-  
+
+  if [ "$dynamic" == "true" ]; then
+    echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> ../Make.config
+  fi
+
   if [ "$thread" == "true" ]; then
     echo "ENABLE_WASM_THREADS=1" >> ../Make.config
   fi

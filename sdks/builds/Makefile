@@ -15,10 +15,12 @@ ifneq (,$(findstring CYGWIN,$(UNAME)))
 UNAME=Windows
 endif
 
+ifdef ENABLE_WSL_WINDOWS_BUILD_HOST
 ifeq ($(UNAME),Linux)
 UNAME_WSL_CHECK=$(shell uname -a)
 ifneq (,$(findstring Microsoft,$(UNAME_WSL_CHECK)))
 UNAME=Windows
+endif
 endif
 endif
 

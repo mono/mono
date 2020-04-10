@@ -53,15 +53,6 @@ stages:
               assetManifestPlatform: x64_Interpreter
               installDependencies: true
               interpreter: true
-            ARM64:
-              assetManifestOS: linux
-              assetManifestPlatform: arm64
-              installDependencies: false
-              llvm: false
-              ${{ if eq(variables['System.TeamProject'], 'public') }}:
-                poolname: Xamarin-ARM64
-              ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-                poolname: Xamarin-ARM64-Private
         pool:
           name: $(poolname)
         steps:

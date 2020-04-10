@@ -271,6 +271,12 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\hazard-pointer.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClInclude>
+   <ClCompile Include="$(MonoSourceLocation)\mono\utils\lifo-semaphore.c">
+      <Filter>Source Files$(MonoUtilsFilterSubFolder)\common</Filter>
+    </ClCompile>
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\lifo-semaphore.h">
+      <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
+    </ClInclude>
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\lock-free-queue.c">
       <Filter>Source Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClCompile>
@@ -484,6 +490,9 @@
   </ItemGroup>
   <ItemGroup Label="libmonoutilsinclude_headers">
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-logger.h">
+      <Filter>Header Files$(MonoUtilsFilterSubFolder)\common\public</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-private-unstable.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common\public</Filter>
     </ClInclude>
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\mono-error.h">

@@ -17,7 +17,7 @@ download()
 {
 	mkdir -p ${REPODIR}
 	report "Downloading Xar"
-	wget --quiet -O ${REPODIR}/xar.tar.gz https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/xar/xar-1.5.2.tar.gz || error "*** Could not download Xar ***"
+	wget --quiet -O ${REPODIR}/xar.tar.gz https://github.com/downloads/mackyle/xar/xar-1.6.1.tar.gz || error "*** Could not download Xar ***"
 	report "Downloading x64 hostfxr.dll"
 	wget --quiet -O ${REPODIR}/hostfxr-x64.zip https://www.nuget.org/api/v2/package/runtime.win-x64.Microsoft.NETCore.DotNetHostResolver/2.0.0 || error "*** Could not download 64bit hostfxr.dll ***"
 	report "Downloading x86 hostfxr.dll"
@@ -50,6 +50,8 @@ build()
 		mkdir -p xar
 		tar xf xar.tar.gz -C xar/ --strip-components=1
 		pushd xar/
+		report "Patching xar configure for compatibility with openssl 1.1"
+		sed -i 's/OpenSSL_add_all_ciphers/OPENSSL_init_crypto/g' configure
 		./configure
 		make
 		popd

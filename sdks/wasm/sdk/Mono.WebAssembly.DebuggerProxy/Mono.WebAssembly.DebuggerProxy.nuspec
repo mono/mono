@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Mono.WebAssembly.DebuggerProxy</id>
-    <version>0.2.2-martin-20200214.1</version>
+    <version>0.2.2-martin-20200408.1</version>
     <authors>Martin Baulig</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Experimental Preview</description>
@@ -15,5 +15,6 @@
   </metadata>
   <files>
     <file src="../../Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.1/*.dll" target="lib/netstandard2.1" />
+    <file src="../../Mono.WebAssembly.DebuggerProxy/*.cs" target="src" />
   </files>
 </package>

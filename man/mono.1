@@ -1498,6 +1498,9 @@ scanning is available.
 \fBno-managed-allocator\fR
 Disables the managed allocator.
 .TP
+\fBmanaged-allocator\fR
+Enables the managed allocator.
+.TP
 \fBcheck-scan-starts\fR
 If set, does a plausibility check on the scan_starts before and after each collection
 .TP
@@ -1523,7 +1526,10 @@ sgen-gc.c.   You can then use this command to explore the output
 \fBnursery-canaries\fR
 If set, objects allocated in the nursery are suffixed with a canary (guard)
 word, which is checked on each minor collection. Can be used to detect/debug
-heap corruption issues.
+heap corruption issues. This disables the usage of the managed allocator,
+because allocation from full aot code is inconsistent with this option. If
+the application is guaranteed not to use aot code, the managed allocator can
+be enabled back with managed-allocator option.
 
 .TP
 \fBdo-not-finalize(=\fIclasses\fB)\fR

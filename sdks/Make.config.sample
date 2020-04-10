@@ -38,3 +38,9 @@ ENABLE_ANDROID = 1
 
 # Path to the dotnet/runtime repo for the WASM netcore build
 #DOTNET_REPO_DIR =
+
+# Enable WASM threads build
+#ENABLE_WASM_THREADS=1
+
+# Enable WASM dynamic runtime build
+#ENABLE_WASM_DYNAMIC_RUNTIME=1

@@ -8,31 +8,19 @@ namespace System.Net.NetworkInformation
     {
         /// Returns objects that describe the network interfaces on the local computer.
         public static NetworkInterface[] GetAllNetworkInterfaces(){
-#if WASM
-            throw new PlatformNotSupportedException ();
-#else
 #if MONO_FEATURE_CAS
             (new NetworkInformationPermission(NetworkInformationAccess.Read)).Demand();
 #endif
             return SystemNetworkInterface.GetNetworkInterfaces();
-#endif
         }
 
         public static bool GetIsNetworkAvailable(){
-#if WASM
-            throw new PlatformNotSupportedException ();
-#else
             return SystemNetworkInterface.InternalGetIsNetworkAvailable();
-#endif
         }
 
         public static int LoopbackInterfaceIndex{
             get{
-#if WASM
-                throw new PlatformNotSupportedException ();
-#else
                 return SystemNetworkInterface.InternalLoopbackInterfaceIndex;
-#endif
             }
         }
 

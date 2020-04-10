@@ -70,6 +70,11 @@ namespace Mono.WebAssembly.Build
 		/// </summary>
 		public ITaskItem[] LinkDescriptions { get; set; }
 
+		/// <summary>
+		/// The directory containing the bindings assemblies.
+		/// </summary>
+		public string BindingsDir { get; set; }
+
 
 		protected override string ToolName => (InvokeLinkerUsingMono) ? "mono" : "monolinker.exe";
 		bool IsWindows => System.Runtime.InteropServices.RuntimeInformation
@@ -106,11 +111,12 @@ namespace Mono.WebAssembly.Build
 			return base.ValidateParameters ();
 		}
 
+		static List<string> bindingNames = new List<string> {"WebAssembly.Bindings","WebAssembly.Net.Http","WebAssembly.Net.WebSockets"};
 		protected override string GenerateCommandLineCommands ()
 		{
 
 			ProcessArguments arguments = null;
-			
+
 			if (!InvokeLinkerUsingMono) {
 				arguments = ProcessArguments.Create ("--verbose");
 			}
@@ -146,9 +152,10 @@ namespace Mono.WebAssembly.Build
 			arguments = arguments.AddRange ("-c", coremode, "-u", usermode);
 
 			//the linker doesn't consider these core by default
-			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Bindings");
-			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Net.Http");
-			arguments = arguments.AddRange ("-p", coremode, "WebAssembly.Net.WebSockets");
+			foreach (var bn in bindingNames)
+			{
+				arguments = arguments.AddRange ("-p", coremode, bn);
+			}
 
 			if (!string.IsNullOrEmpty (LinkSkip)) {
 				var skips = LinkSkip.Split (new[] { ';', ',', ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -192,7 +199,7 @@ namespace Mono.WebAssembly.Build
 			if (RuntimeCopyLocalAssemblies != null) {
 				foreach (var copyAsm in RuntimeCopyLocalAssemblies) {
 					var p = copyAsm.GetMetadata ("FullPath");
-					
+
 					if (frameworkAssemblies.Contains (Path.GetFileNameWithoutExtension (p))) {
 						continue;
 					}
@@ -204,12 +211,17 @@ namespace Mono.WebAssembly.Build
 			if (Assemblies != null) {
 				foreach (var asm in Assemblies) {
 					var p = asm.GetMetadata ("FullPath");
+
 					if (frameworkAssemblies.Contains (Path.GetFileNameWithoutExtension (p))) {
 						continue;
 					}
 
 					if (runtimeCopyLocal.TryGetValue(Path.GetFileNameWithoutExtension (p), out var runtimePath))
 					{
+						if (!string.IsNullOrEmpty(BindingsDir) && bindingNames.Contains(Path.GetFileNameWithoutExtension (p)))
+						{
+							runtimePath = Path.Combine(BindingsDir, Path.GetFileName (p));
+						}
 						// Just in case
 						if (File.Exists(runtimePath))
 							p = runtimePath;

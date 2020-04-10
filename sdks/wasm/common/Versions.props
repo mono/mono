@@ -61,7 +61,7 @@
     <SDKPackagePreReleaseBrandingLabel>Preview $(SDKPackagePreReleasePreviewNumber)</SDKPackagePreReleaseBrandingLabel>
     <SDKPackageMajorMinorVersion>$(SDKPackageMajorVersion).$(SDKPackageMinorVersion)</SDKPackageMajorMinorVersion>
     <SDKPackageVersionPrefix>$(SDKPackageMajorVersion).$(SDKPackageMinorVersion).$(SDKPackagePatchVersion)</SDKPackageVersionPrefix>
-    <SDKPackageVersionSuffix>-martin-20200214.1</SDKPackageVersionSuffix>
+    <SDKPackageVersionSuffix>-martin-20200408.1</SDKPackageVersionSuffix>
     <SDKPackageVersion>$(SDKPackageVersionPrefix)$(SDKPackageVersionSuffix)</SDKPackageVersion>
     <PreviousSDKPackageReleaseVersion Condition=" '$(SDKPackagePatchVersion)' != '0' ">$(SDKPackageMajorVersion).$(SDKPackageMinorVersion).$([MSBuild]::Subtract($(SDKPackagePatchVersion), 1))</PreviousSDKPackageReleaseVersion>
   </PropertyGroup>
