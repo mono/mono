@@ -1499,6 +1499,7 @@ public class DirectoryTest
 	}
 
 	[Test] // bug #346123
+	[Category ("NotWasm")]
 	public void GetDirectories_Backslash ()
 	{
 		if (!RunningOnUnix)
@@ -1567,6 +1568,7 @@ public class DirectoryTest
 	}
 
 	[Test] // bug #346123
+	[Category ("NotWasm")]
 	public void GetFiles_Backslash ()
 	{
 		if (!RunningOnUnix)
