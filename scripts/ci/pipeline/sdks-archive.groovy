@@ -86,7 +86,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                     }
                     // find Archive in the workspace root
                     packageFileName = findFiles (glob: "${product}-${configuration}-${platform}-${commitHash}.*")[0].name
-                    sdkPackageFileName = findFiles (glob: "sdks/${product}/*.zip")[0].name
+                    sdkPackageFileName = findFiles (glob: "sdks/${product}/*.zip")[0].path
                     // compute SHA1 of the Archive
                     packageFileSha1 = sha1 (packageFileName)
                     writeFile (file: "${packageFileName}.sha1", text: "${packageFileSha1}")
