@@ -387,11 +387,10 @@ namespace WebAssembly.Net.Debugging {
 			try {
 				Url = url;
 				ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
-				if (pdb != null) {
-					rp.ReadSymbols = true;
-					rp.SymbolReaderProvider = new PdbReaderProvider ();
+				rp.ReadSymbols = true;
+				rp.SymbolReaderProvider = new PdbReaderProvider ();
+				if (pdb != null)
 					rp.SymbolStream = new MemoryStream (pdb);
-				}
 				rp.ReadingMode = ReadingMode.Immediate;
 				rp.InMemory = true;
 
