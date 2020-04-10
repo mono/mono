@@ -665,7 +665,8 @@ namespace WebAssembly.Net.Debugging {
 					var bytes = await step.Data;
 					assembly = new AssemblyInfo (step.Url, bytes [0], bytes [1]);
 				} catch (Exception e) {
-					logger.LogDebug ($"Failed to load {step.Url} ({e.Message})");
+					// This can happen if the pdb file is missing like for netstandard.dll
+					//logger.LogDebug ($"Failed to load {step.Url} ({e.Message})");
 				}
 				if (assembly == null)
 					continue;
