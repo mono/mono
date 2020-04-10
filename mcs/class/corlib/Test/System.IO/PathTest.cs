@@ -983,9 +983,9 @@ namespace MonoTests.System.IO
 // and the AltDirectorySeparatorChar characters.
 #if !WASM					
 					Assert.IsTrue (!Path.IsPathRooted ("\\"), "IsPathRooted #09");
-#endif					
 					Assert.IsTrue (!Path.IsPathRooted ("\\\\"), "IsPathRooted #10");
 					Assert.IsTrue (!Path.IsPathRooted ("z:"), "IsPathRooted #11");
+#endif					
 				}
 			}
 		}
