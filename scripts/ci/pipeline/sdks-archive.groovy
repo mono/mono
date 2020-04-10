@@ -107,7 +107,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                                 storageType: "blobstorage",
                                 containerName: azureContainerName,
                                 virtualPath: azureVirtualPath,
-                                filesPath: "${packageFileName},${packageFileName}.sha1,${sdkPackageFileName},${sdkPakageFileName}.sha1",
+                                filesPath: "${packageFileName},${packageFileName}.sha1,${sdkPackageFileName},${sdkPackageFileName}.sha1",
                                 allowAnonymousAccess: true,
                                 pubAccessible: true,
                                 doNotWaitForPreviousBuild: true,
