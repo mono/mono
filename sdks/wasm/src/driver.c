@@ -328,6 +328,8 @@ void mono_initialize_internals ()
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
+	const char *interp_opts = "";
+
 	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 0);
 	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 0);
 #ifdef ENABLE_NETCORE
@@ -348,8 +350,11 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #endif
 #else
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
-	if (enable_debugging)
+	if (enable_debugging) {
+		// Disable optimizations which interfere with debugging
+		interp_opts = "-all";
 		mono_wasm_enable_debugging (enable_debugging);
+	}
 #endif
 
 #ifdef LINK_ICALLS
@@ -367,7 +372,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_icall_table_init ();
 #endif
 #ifdef NEED_INTERP
-	mono_ee_interp_init ("");
+	mono_ee_interp_init (interp_opts);
 	mono_marshal_ilgen_init ();
 	mono_method_builder_ilgen_init ();
 	mono_sgen_mono_ilgen_init ();

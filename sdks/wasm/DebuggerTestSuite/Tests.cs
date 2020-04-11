@@ -377,11 +377,11 @@ namespace DebuggerTests
 					CheckArray (locals, "fn_del_arr", "Math.IsMathNull[]");
 
 					// Unused locals
-					CheckObject (locals, "fn_func_unused", "System.Func<Math, bool>", is_null: true);
+					CheckObject (locals, "fn_func_unused", "System.Func<Math, bool>");
 					CheckObject (locals, "fn_func_null_unused", "System.Func<Math, bool>", is_null: true);
-					CheckObject (locals, "fn_func_arr_unused", "System.Func<Math, bool>[]", is_null: true);
+					CheckObject (locals, "fn_func_arr_unused", "System.Func<Math, bool>[]");
 
-					CheckObject (locals, "fn_del_unused", "Math.IsMathNull", is_null: true);
+					CheckFunction (locals, "fn_del_unused", "Math.IsMathNull");
 					CheckObject (locals, "fn_del_null_unused", "Math.IsMathNull", is_null: true);
 					CheckObject (locals, "fn_del_arr_unused", "Math.IsMathNull[]", is_null: true);
 				}
@@ -400,10 +400,10 @@ namespace DebuggerTests
 					CheckObject (locals, "list_arr_null", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", is_null: true);
 
 					// Unused locals
-					CheckObject (locals, "list_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", is_null: true);
+					CheckObject (locals, "list_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>");
 					CheckObject (locals, "list_null_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", is_null: true);
 
-					CheckObject (locals, "list_arr_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", is_null: true);
+					CheckObject (locals, "list_arr_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]");
 					CheckObject (locals, "list_arr_null_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", is_null: true);
 				}
 			);
@@ -771,7 +771,7 @@ namespace DebuggerTests
 						Assert.Equal (5, locals.Count());
 
 						CheckObject (locals, "nim", "Math.NestedInMath");
-						CheckNumber (locals, "i", 0);
+						CheckNumber (locals, "i", 5);
 						CheckNumber (locals, "k", 0);
 						CheckNumber (locals, "new_i", 0);
 						CheckString (locals, "text", null);
