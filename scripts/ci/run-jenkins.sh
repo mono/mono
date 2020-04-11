@@ -345,8 +345,10 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
         ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
+        ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
+        ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
+
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
             ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
             ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
             ${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-System
@@ -367,7 +369,6 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             # Requires a net 3.0 sdk
             #${TESTCMD} --label=netcore --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-hello-netcore
             #${TESTCMD} --label=check-aot --timeout=20m $gnumake -C sdks/wasm check-aot
-            ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
         fi
         exit 0
 fi
