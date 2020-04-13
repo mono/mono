@@ -1332,7 +1332,8 @@ PROFILE_DISABLED_TESTS += \
 	bug-81691.exe \
 	bug-327438.2.exe \
 	newobj-abstract.exe \
-	invalid-isbyreflike.exe
+	invalid-isbyreflike.exe \
+	typeloadexception.exe
 
 # Tests which rely on remoting
 PROFILE_DISABLED_TESTS += \
