@@ -845,7 +845,6 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 				mono_wasm_add_array_var(class_name, obj_id);
 			} else if (m_class_is_delegate (klass) || (type->type == MONO_TYPE_GENERICINST && m_class_is_delegate (type->data.generic_class->container_class))) {
 				MonoMethod *method;
-				GString *sig_desc;
 
 				if (type->type == MONO_TYPE_GENERICINST)
 					klass = type->data.generic_class->container_class;
@@ -856,9 +855,6 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 					break;
 				}
 
-				sig_desc = mono_method_to_desc_for_js (method, TRUE);
-				g_string_append_printf (sig_desc, ":%s", class_name);
-
 				MonoMethod *tm = ((MonoDelegate *)obj)->method;
 				GString *tm_desc = NULL;
 				if (tm) {
@@ -867,7 +863,6 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 				}
 
 				mono_wasm_add_func_var (class_name, tm_desc ? tm_desc->str : NULL, obj_id);
-				g_string_free (sig_desc, TRUE);
 				g_string_free (tm_desc, TRUE);
 			} else {
 				char *to_string_val = get_to_string_description (class_name, klass, addr);
