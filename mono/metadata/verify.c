@@ -6134,13 +6134,19 @@ mono_verifier_is_enabled_for_method (MonoMethod *method)
 gboolean
 mono_verifier_is_enabled_for_class (MonoClass *klass)
 {
-	return verify_all || (verifier_mode > MONO_VERIFIER_MODE_OFF && !(klass->image->assembly && klass->image->assembly->in_gac) && klass->image != mono_defaults.corlib);
+	return verify_all || (verifier_mode > MONO_VERIFIER_PE_ONLY && !(klass->image->assembly && klass->image->assembly->in_gac) && klass->image != mono_defaults.corlib);
 }
 
 gboolean
 mono_verifier_is_enabled_for_image (MonoImage *image)
 {
-	return verify_all || verifier_mode > MONO_VERIFIER_MODE_OFF;
+	return verify_all || verifier_mode > MONO_VERIFIER_PE_ONLY;
+}
+
+gboolean
+mono_verifier_is_enabled_for_pe_only ()
+{
+	return verify_all || verifier_mode == MONO_VERIFIER_PE_ONLY;
 }
 
 /*
