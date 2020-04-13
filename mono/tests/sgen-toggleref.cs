@@ -21,15 +21,14 @@ public class Toggleref {
 
 [StructLayout (LayoutKind.Explicit)]
 public struct Helper {
-	[FieldOffset(0)]
-	IntPtr ptr;
-	[FieldOffset(0)]
-	object obj;
 	public static IntPtr ObjToPtr (object obj)
 	{
-		Helper h = default (Helper);
-		h.obj = obj;
-		return h.ptr;
+		unsafe 
+		{
+			TypedReference tr = __makeref(obj);
+			IntPtr ptr = **(IntPtr**)(&tr);
+			return ptr;
+		}
 	}
 }
 
