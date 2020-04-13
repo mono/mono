@@ -715,18 +715,14 @@ typedef struct {
  *  .. which is consumed by `mono_wasm_add_func_var`. It is used for
  *  generating this for the delegate, and it's target.
  */
-static GString*
+static char*
 mono_method_to_desc_for_js (MonoMethod *method, gboolean include_namespace)
 {
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
-	GString *sig_desc = g_string_new ("");
-
 	char *ret_desc = mono_type_full_name (sig->ret);
-	g_string_append (sig_desc, ret_desc);
-	g_string_append_c (sig_desc, ':');
-
 	char *args_desc = mono_signature_get_desc (sig, include_namespace);
-	g_string_append (sig_desc, args_desc);
+
+	char *sig_desc = g_strdup_printf ("%s:%s:%s", ret_desc, args_desc, method->name);
 
 	g_free (ret_desc);
 	g_free (args_desc);
@@ -856,14 +852,12 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 				}
 
 				MonoMethod *tm = ((MonoDelegate *)obj)->method;
-				GString *tm_desc = NULL;
-				if (tm) {
+				char *tm_desc = NULL;
+				if (tm)
 					tm_desc = mono_method_to_desc_for_js (tm, FALSE);
-					g_string_append_printf (tm_desc, ":%s", tm->name);
-				}
 
-				mono_wasm_add_func_var (class_name, tm_desc ? tm_desc->str : NULL, obj_id);
-				g_string_free (tm_desc, TRUE);
+				mono_wasm_add_func_var (class_name, tm_desc, obj_id);
+				g_free (tm_desc);
 			} else {
 				char *to_string_val = get_to_string_description (class_name, klass, addr);
 				mono_wasm_add_obj_var (class_name, to_string_val, obj_id);
@@ -1052,13 +1046,12 @@ describe_delegate_properties (MonoObject *obj)
 
 	// Target, like in VS - what is this field supposed to be, anyway??
 	MonoMethod *tm = ((MonoDelegate *)obj)->method;
-	GString *sig_desc = mono_method_to_desc_for_js (tm, FALSE);
-	g_string_append_printf(sig_desc, ":%s", tm->name);
+	char * sig_desc = mono_method_to_desc_for_js (tm, FALSE);
 
 	mono_wasm_add_properties_var ("Target", -1);
-	mono_wasm_add_func_var (NULL, sig_desc->str, -1);
+	mono_wasm_add_func_var (NULL, sig_desc, -1);
 
-	g_string_free (sig_desc, TRUE);
+	g_free (sig_desc);
 	return TRUE;
 }
 
