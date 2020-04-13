@@ -9285,7 +9285,7 @@ calli_end:
 			}
 			else {
 				field = mono_field_from_token_checked (image, token, &klass, generic_context, cfg->error);
-				if (!field)
+				if (!field && mono_class_has_failure (klass))
 					TYPE_LOAD_ERROR (klass);
 				CHECK_CFG_ERROR;
 			}
