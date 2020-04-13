@@ -28,6 +28,8 @@ API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 
 PACKAGER=mono --debug packager.exe --no-native-strip
 
+MSBUILD_QUIET_ARGS=--nologo -v q -consoleloggerparameters:NoSummary
+
 ifeq ($(HOST_PLATFORM),win32)
 DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
 DOTNET_CMD := "$(subst \,/,$(DOTNET))"
@@ -68,7 +70,7 @@ MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 WASM_FRAMEWORK=$(TOP)/sdks/wasm/framework
 WASM_FRAMEWORK_SOURCE=$(TOP)/sdks/wasm/framework/src
 WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
-WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/System.Net.Http.WebAssemblyHttpHandler.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
+WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_THREADS=$(TOP)/sdks/wasm/tests/browser
@@ -163,8 +165,10 @@ EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=53
 #
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a}
-MONO_NETCORE_LIBS=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/{libmono-ee-interp.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a,System.Native.bc}
-MONO_NETCORE_DEPS=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.Native.bc
+MONO_DEPS = .stamp-runtime
+
+MONO_NETCORE_LIBS = $(TOP)/sdks/out/wasm-runtime-netcore-release/lib/{libmono-ee-interp.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a,libSystem.Native.a}
+MONO_NETCORE_DEPS=.stamp-runtime-netcore src/pinvoke-tables-default-netcore.h
 NETCORE_CFLAGS=-DENABLE_NETCORE
 
 # $(1) - name
@@ -177,10 +181,10 @@ define InterpBuildTemplate
 builds/$(1)/:
 	mkdir -p $$@
 
-builds/$(1)/dotnet.js: .stamp-runtime builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
+builds/$(1)/dotnet.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(5) | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/dotnet.js
 
-builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
+builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h $(5) | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) $(3) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o $$@
 
 builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
@@ -191,18 +195,20 @@ builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
 
 build-native: builds/$(1)/dotnet.js
 
+build-interp-$(1): builds/$(1)/dotnet.js
+
 endef
 
 ifndef DISABLE_WASM_NO_NETCORE
-$(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS)))
-$(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS)))
+$(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS),$(MONO_DEPS)))
+$(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS),$(MONO_DEPS)))
 ifdef ENABLE_WASM_THREADS
-$(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
-$(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
+$(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS),$(MONO_DEPS)))
+$(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS),$(MONO_DEP)))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
-$(eval $(call InterpBuildTemplate,dynamic-debug,wasm-runtime-dynamic-release,$(EMCC_DEBUG_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
-$(eval $(call InterpBuildTemplate,dynamic-release,wasm-runtime-dynamic-release,$(EMCC_RELEASE_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+$(eval $(call InterpBuildTemplate,dynamic-debug,wasm-runtime-dynamic-release,$(EMCC_DEBUG_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS),$(MONO_DEPS)))
+$(eval $(call InterpBuildTemplate,dynamic-release,wasm-runtime-dynamic-release,$(EMCC_RELEASE_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS),$(MONO_DEPS)))
 endif
 endif
 ifdef ENABLE_WASM_NETCORE
@@ -216,52 +222,66 @@ endif
 
 ifdef ENABLE_WASM_NETCORE
 
-ifeq ($(DOTNET_REPO_DIR),)
-$(error "Set the DOTNET_REPO_DIR variable for the netcore build to a checkout of the dotnet/runtime repo.")
+ifeq ($(ENABLE_WASM_NETCORE_LOCAL_BUILD),)
+$(error "Only local builds using a separate dotnet/runtime repo are supported.")
 endif
 
+ifeq ($(DOTNET_REPO_PATH),)
+$(error "Set the DOTNET_REPO_PATH variable for the netcore build to a checkout of the dotnet/runtime repo.")
+endif
+
+# FIXME:
 #NETCOREAPP_VERSION := $(shell cat ../../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
-NETCOREAPP_FEED=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
-NETCOREAPP_VERSION := 5.0.0-alpha.1.19559.6
-NETCOREAPP_NAME=runtime.webassembly-wasm.Microsoft.Private.CoreFx.NETCoreApp
-NETCOREAPP_DIR=$(NETCOREAPP_NAME).$(NETCOREAPP_VERSION)
+#NETCOREAPP_FEED=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+#NETCOREAPP_VERSION := 5.0.100-preview.4.20202.8
+#NETCOREAPP_NAME=runtime.webassembly-wasm.Microsoft.Private.CoreFx.NETCoreApp
+#NETCOREAPP_DIR=$(NETCOREAPP_NAME).$(NETCOREAPP_VERSION)
+#$(NETCOREAPP_DIR):
+#	nuget install $(NETCOREAPP_NAME) -Version $(NETCOREAPP_VERSION) -Source $(NETCOREAPP_FEED)
+NETCOREAPP_DIR=$(DOTNET_REPO_PATH)/artifacts//bin/runtime/netcoreapp5.0-OSX-Release-x64
 
-$(NETCOREAPP_DIR):
-	nuget install $(NETCOREAPP_NAME) -Version $(NETCOREAPP_VERSION) -Source $(NETCOREAPP_FEED)
-
-$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.Native.bc: $(NETCOREAPP_DIR)
-	cp $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/native/System.Native.bc $@
+ifdef ENABLE_RSYNC
+RSYNC=rsync
+else
+RSYNC=cp
+endif
 
 .PHONY: runtime-netcore
+# Installs into out/wasm-runtime-netcore
+# Use rsync to avoid rebuilds
 runtime-netcore:
-	$(MAKE) -C ../builds package-wasm-runtime-netcore
+	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset mono -c release -arch wasm -os WebAssembly
+	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset Libs.Native -c release -arch wasm -os WebAssembly
+	cd $(DOTNET_REPO_PATH)/artifacts/obj/mono/WebAssembly.wasm.Release && source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && make install
+	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/bin/mono/WebAssembly.wasm.Release/{System.Private.CoreLib.dll,System.Private.CoreLib.pdb} $(TOP)/sdks/out/wasm-runtime-netcore-release
+	$(RSYNC) -r $(DOTNET_REPO_PATH)/artifacts/obj/mono/WebAssembly.wasm.Release/out/* $(TOP)/sdks/out/wasm-runtime-netcore-release
+	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/obj/native/netcoreapp5.0-WebAssembly-Release-wasm/{System.Native/libSystem.Native.a,System.IO.Compression.Native/libSystem.IO.Compression.Native.a} $(TOP)/sdks/out/wasm-runtime-netcore-release/lib/
+	touch .stamp-runtime-netcore
 
-.PHONY: bcl-netcore
-bcl-netcore:
-	$(MAKE) -C ../builds package-wasm-bcl-netcore
+# The no-op build of this takes around 10s so use a .stamp gate
+.stamp-runtime-netcore: | provision-emsdk
+	$(MAKE) runtime-netcore
 
 cross-netcore:
 	$(MAKE) -C ../builds package-wasm-cross-netcore
 
-build-managed: bcl-netcore
-
 src/pinvoke-tables-default-netcore.h:
-	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll,System.IO.Compression.dll} > $@
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table libSystem.Native $(TOP)/sdks/out/wasm-runtime-netcore-release/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll,System.IO.Compression.dll} > $@
 
-samples/hello/bin/Debug/netcoreapp3.0/hello.dll: samples/hello/Program.cs
-	dotnet build samples/hello -f netcoreapp3.0 --nologo -v q
+samples/hello/bin/Debug/netcoreapp5.0/hello.dll: samples/hello/Program.cs
+	../../.dotnet/dotnet build samples/hello -f netcoreapp5.0 $(MSBUILD_QUIET_ARGS)
 
-build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
-	ninja -v -C obj/hello-netcore
+build-interp-netcore-hello: packager.exe samples/hello/bin/Debug/netcoreapp5.0/hello.dll $(NETCOREAPP_DIR)
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-netcore-hello --nobinding --builddir=obj/interp-netcore-hello --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp5.0/hello.dll
+	ninja -v -C obj/interp-netcore-hello
 
-bin/hello-netcore/dotnet.js: build-hello-netcore
+bin/interp-netcore-hello/dotnet.js: build-interp-netcore-hello
 
-run-hello-netcore: bin/hello-netcore/dotnet.js
-	(cd bin/hello-netcore && $(SM) runtime.js --run hello.dll)
+run-interp-netcore-hello: bin/interp-netcore-hello/dotnet.js
+	(cd bin/interp-netcore-hello && $(SM) runtime.js --run hello.dll)
 
-build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
-	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp5.0/hello.dll $(NETCOREAPP_DIR)
+	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp5.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp5.0/hello.dll
 	ninja -v -C obj/aot-hello-netcore
 
 bin/aot-hello-netcore/dotnet.js: build-aot-hello-netcore
@@ -461,7 +481,7 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
+.stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
 	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
@@ -665,7 +685,7 @@ run-aot-all: build-aot-all
 
 rebuild-debug-sample: clean-debug-sample build-debug-sample
 
-build-debugger-test-app: bin/debugger-test-suite/dotnet.wasm
+build-debugger-test-app: .stamp-build-debugger-test-app
 build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
@@ -746,6 +766,7 @@ clean: clean-browser-tests
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 	$(RM) .configured
+	$(RM) src/pinvoke-tables-default-netcore.h
 
 package: build build-sdk build-dbg-proxy
 	rm -rf tmp
