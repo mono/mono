@@ -303,11 +303,15 @@ run-aot-hello-netcore: bin/aot-hello-netcore/dotnet.js
 # $(5) - command line arguments
 define NetcoreTestTemplate
 
+ifeq ($(3),Common.Tests)
 $(1)_PATH=$(DOTNET_REPO_PATH)/artifacts/bin/$(3)/netcoreapp5.0-OSX-Release
+else
+$(1)_PATH=$(DOTNET_REPO_PATH)/artifacts/bin/$(3)/netcoreapp5.0-Release
+endif
 
 bin/$(2)/dotnet.js: packager.exe runtime-tests.js corefx-exclusions.rsp
 	cd xunit-runner && ../../../.dotnet/dotnet build $(MSBUILD_QUIET_ARGS)
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --search-path=$$($(1)_PATH) xunit-runner/bin/Debug/netcoreapp5.0/xunit-runner.dll $(5) $$($(1)_PATH)/$(4)
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --search-path=$$($(1)_PATH) --search-path=$$($(1)_PATH) xunit-runner/bin/Debug/netcoreapp5.0/xunit-runner.dll $(5) $$($(1)_PATH)/$(4)
 	ninja -v -C obj/$(2)
 
 build-$(1): bin/$(2)/dotnet.js
@@ -346,7 +350,8 @@ NETCORE_COREFX_PASSING_TEST_SUITES = \
 System.IO.Compression.ZipFile.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.ZipFile.Tests/ZipTestData@ZipTestData
 System.IO.Compression.Brotli.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/UncompressedTestFiles@UncompressedTestFiles --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/BrotliTestData@BrotliTestData
 
-$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,$(suite)-netcore,$(suite)-netcore,$(suite),$(suite).dll,$($(suite)_PACKAGER_ARGS))))
+# Test targets are named run-netcore-<test suite name>
+$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,netcore-$(suite),netcore-$(suite),$(suite),$(suite).dll,$($(suite)_PACKAGER_ARGS))))
 
 $(foreach suite,$(NETCORE_COREFX_PASSING_TEST_SUITES),$(eval run-corefx-tests-netcore: run-$(suite)))
 
