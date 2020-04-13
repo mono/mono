@@ -68,7 +68,7 @@ static const MonoCodeManagerCallbacks *code_manager_callbacks;
 #define MAX_WASTAGE 32
 #define MIN_BSIZE 32
 
-#ifdef __x86_64__
+#if defined(__x86_64__) && !defined(__APPLE__)
 #define ARCH_MAP_FLAGS MONO_MMAP_32BIT
 #else
 #define ARCH_MAP_FLAGS 0
