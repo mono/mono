@@ -9284,9 +9284,10 @@ calli_end:
 				klass = field->parent;
 			}
 			else {
+				klass = NULL;
 				field = mono_field_from_token_checked (image, token, &klass, generic_context, cfg->error);
-				if (!field && mono_class_has_failure (klass))
-					TYPE_LOAD_ERROR (klass);
+				if (!field)
+					CHECK_TYPELOAD (klass);
 				CHECK_CFG_ERROR;
 			}
 			if (!dont_verify && !cfg->skip_visibility && !mono_method_can_access_field (method, field))
