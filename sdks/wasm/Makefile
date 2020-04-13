@@ -289,8 +289,10 @@ bin/aot-hello-netcore/dotnet.js: build-aot-hello-netcore
 run-aot-hello-netcore: bin/aot-hello-netcore/dotnet.js
 	(cd bin/aot-hello-netcore && $(RUN_V8) --experimental-wasm-simd runtime.js -- --run hello.dll)
 
-# Path to <mono repo>/netcore/netcore/corefx/tests/extracted
-COREFX_TESTS_DIR=
+#
+# XUNIT test support
+#
+# This depends on the tests being built using build.sh --subset Libs.Tests -c release
 
 ##
 # Parameters:
@@ -301,12 +303,12 @@ COREFX_TESTS_DIR=
 # $(5) - command line arguments
 define NetcoreTestTemplate
 
+$(1)_PATH=$(DOTNET_REPO_PATH)/artifacts/bin/$(3)/netcoreapp5.0-OSX-Release
+
 bin/$(2)/dotnet.js: packager.exe runtime-tests.js corefx-exclusions.rsp
-	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
-	cd xunit-runner && dotnet build /nologo /v:q
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(5) $(COREFX_TESTS_DIR)/$(3)/$(4)
+	cd xunit-runner && ../../../.dotnet/dotnet build $(MSBUILD_QUIET_ARGS)
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --search-path=$$($(1)_PATH) xunit-runner/bin/Debug/netcoreapp5.0/xunit-runner.dll $(5) $$($(1)_PATH)/$(4)
 	ninja -v -C obj/$(2)
-#	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 
 build-$(1): bin/$(2)/dotnet.js
 
