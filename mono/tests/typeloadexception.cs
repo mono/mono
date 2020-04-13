@@ -37,7 +37,7 @@ public class TestTypeLoadException{
 
 public class Test{
   public static int test_0_typeloadexception(){
-      TestTypeLoadException.Run();
+      return TestTypeLoadException.Run();
   }
 
   public static int Main (string[] args) {
