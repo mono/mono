@@ -1,5 +1,5 @@
 {
   "msbuild-sdks": {
-    "Mono.WebAssembly.Sdk": "0.2.2"
+    "Mono.WebAssembly.Sdk": "0.2.3"
   }
 }
