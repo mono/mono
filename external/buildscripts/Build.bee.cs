@@ -75,8 +75,8 @@ namespace BuildProgram
 		{
 			Artifacts.Add("android-ndk-mac",
 				new Tuple<string, string>(
-					"android-ndk-mac/r19-unity_454fd8a3cd876251b64dfaf5ac8660724fd76cc675a9ad71bdf01761246a1376.7z",
-					"unity-internal"));
+					"android-ndk-mac/r19-unity_8b169ff2a8234c85e0c5ba3c776aa94273cd3c15fdc96d213154970d87938589.7z",
+					"testing"));
 
 			Artifacts.Add("MacBuildEnvironment",
 				new Tuple<string, string>(
