@@ -92,11 +92,19 @@ namespace Mono.Net.Security
 				try {
 					provider = CreateDefaultProviderImpl ();
 				} catch (Exception ex) {
+#if WASM
+					throw new PlatformNotSupportedException ("TLS Support not available.", ex);
+#else
 					throw new NotSupportedException ("TLS Support not available.", ex);
+#endif
 				}
 
 				if (provider == null)
+#if WASM
+					throw new PlatformNotSupportedException ("TLS Support not available.");
+#else
 					throw new NotSupportedException ("TLS Support not available.");
+#endif
 
 				if (!providerCache.ContainsKey (provider.ID))
 					providerCache.Add (provider.ID, provider);
