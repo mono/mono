@@ -19,9 +19,8 @@ public class Toggleref {
 	}
 }
 
-
+[StructLayout (LayoutKind.Explicit)]
 public struct Helper {
-
 	[FieldOffset(0)]
 	IntPtr ptr;
 	[FieldOffset(0)]
