@@ -1,6 +1,6 @@
 using System;
 
-public class Math { //Only append content to this class as the test suite depends on line info
+public partial class Math { //Only append content to this class as the test suite depends on line info
 	public static int IntAdd (int a, int b) {
 		int c = a + b; 
 		int d = c + b;
@@ -41,6 +41,7 @@ public class Math { //Only append content to this class as the test suite depend
 		Math.IsMathNull fn_del_unused = Math.IsMathNullDelegateTarget;
 		Math.IsMathNull fn_del_null_unused = null;
 		var fn_del_arr_unused = new Math.IsMathNull[] { Math.IsMathNullDelegateTarget };
+		OuterMethod ();
 		Console.WriteLine ("Just a test message, ignore");
 		return res ? 0 : 1;
 	}
@@ -62,6 +63,7 @@ public class Math { //Only append content to this class as the test suite depend
 		var list_arr_unused = new System.Collections.Generic.Dictionary<Math[], IsMathNull>[] { new System.Collections.Generic.Dictionary<Math[], IsMathNull> () };
 		System.Collections.Generic.Dictionary<Math[], IsMathNull>[] list_arr_null_unused = null;
 
+		OuterMethod ();
 		Console.WriteLine ("Just a test message, ignore");
 		return 0;
 	}
@@ -184,8 +186,8 @@ public class Math { //Only append content to this class as the test suite depend
 		fn_void_del_arr[0](gs);
 		fn_func_only_ret ();
 		foreach (var ret in rets) Console.WriteLine ($"ret: {ret}");
+		OuterMethod ();
 		Console.WriteLine ($"- {gs_gs.List[0].StringField}");
-		Console.WriteLine ("DelegatesSignatureTest: Just a test message, ignore");
 		return 0;
 	}
 
@@ -206,7 +208,7 @@ public class Math { //Only append content to this class as the test suite depend
 		fn_action_del (gs);
 		fn_action_arr[0](gs);
 		fn_action_bare ();
-		Console.WriteLine ("DelegatesSignatureTest: Just a test message, ignore");
+		OuterMethod ();
 		return 0;
 	}
 
@@ -223,7 +225,7 @@ public class Math { //Only append content to this class as the test suite depend
 		fn_func (fs);
 		fn_del_arr[0](fs);
 		fn_func_arr[0](fs);
-		Console.WriteLine ("DelegatesSignatureTest: Just a test message, ignore");
+		OuterMethod ();
 		return 0;
 	}
 
@@ -243,6 +245,7 @@ public class Math { //Only append content to this class as the test suite depend
 					Action<GenericStruct<int>[]> fn_action)
 	{
 		Console.WriteLine ($"Placeholder for breakpoint");
+		OuterMethod ();
 	}
 
 	public static async System.Threading.Tasks.Task MethodWithDelegatesAsyncTest ()
