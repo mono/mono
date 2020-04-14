@@ -185,7 +185,7 @@ typedef struct {
 // can pass context to generics or interfaces?
 #define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 1
 
-#ifdef TARGET_IOS
+#if defined(TARGET_IOS) || defined(TARGET_OSX)
 
 #define MONO_ARCH_REDZONE_SIZE 128
 
@@ -195,7 +195,7 @@ typedef struct {
 
 #endif
 
-#if defined(TARGET_IOS) || defined(TARGET_WATCHOS)
+#if defined(TARGET_IOS) || defined(TARGET_WATCHOS) || defined(TARGET_OSX)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
 #endif
 

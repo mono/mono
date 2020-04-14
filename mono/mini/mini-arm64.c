@@ -761,7 +761,7 @@ mono_arm_emit_aotconst (gpointer ji, guint8 *code, guint8 *code_start, int dreg,
 gboolean
 mono_arch_have_fast_tls (void)
 {
-#ifdef TARGET_IOS
+#if defined(TARGET_IOS) || defined(TARGET_OSX)
 	return FALSE;
 #else
 	return TRUE;
