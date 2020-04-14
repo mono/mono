@@ -270,10 +270,74 @@ namespace DebuggerTests
 
 		}
 
+<<<<<<< HEAD
 		[Theory]
 		[InlineData (false)]
 		[InlineData (true)]
 		public async Task InspectLocalsAtBreakpointSite (bool use_cfo) =>
+=======
+		async Task CheckDateTime (JToken locals, string name, DateTime expected)
+			=> await CheckObjectOnLocals (locals, name,
+				test_fn: (members) => {
+					// not checking everything
+#if false
+					CheckNumber (members, "Year", expected.Year);
+					CheckNumber (members, "Month", expected.Month);
+					CheckNumber (members, "Day", expected.Day);
+					CheckNumber (members, "Hour", expected.Hour);
+					CheckNumber (members, "Minute", expected.Minute);
+					CheckNumber (members, "Second", expected.Second);
+#endif
+
+					CheckString (members, "Year", "int");
+					CheckString (members, "Month", "int");
+					CheckString (members, "Day", "int");
+					CheckString (members, "Hour", "int");
+					CheckString (members, "Minute", "int");
+					CheckString (members, "Second", "int");
+
+					// FIXME: check some float properties too
+				}
+			);
+
+		JToken CheckValueType (JToken locals, string name, string class_name) {
+			var l = GetAndAssertObjectWithName (locals, name);
+			var val = l["value"];
+			Assert.Equal ("object", val ["type"]?.Value<string> ());
+			Assert.True (val ["isValueType"] != null && val ["isValueType"].Value<bool> ());
+			Assert.Equal (class_name, val ["className"]?.Value<string> ());
+			return l;
+		}
+
+		JToken CheckEnum (JToken locals, string name, string class_name, string descr) {
+			var l = GetAndAssertObjectWithName (locals, name);
+			var val = l["value"];
+			Assert.Equal ("object", val ["type"]?.Value<string> ());
+			Assert.True (val ["isEnum"] != null && val ["isEnum"].Value<bool> ());
+			Assert.Equal (class_name, val ["className"]?.Value<string> ());
+			Assert.Equal (descr, val ["description"]?.Value<string> ());
+			return l;
+		}
+
+		void CheckArray (JToken locals, string name, string class_name) {
+			foreach (var l in locals) {
+				if (name != l["name"]?.Value<string> ())
+					continue;
+
+				var val = l["value"];
+				Assert.Equal ("object", val ["type"]?.Value<string> ());
+				Assert.Equal ("array", val ["subtype"]?.Value<string> ());
+				Assert.Equal (class_name, val ["className"]?.Value<string> ());
+
+				//FIXME: elements?
+				return;
+			}
+			Assert.True(false, $"Could not find variable '{name}'");
+		}
+
+		[Fact]
+		public async Task InspectLocalsAtBreakpointSite () =>
+>>>>>>> [wasm][debugger] Add additional DateTimeFormatInfo tests for DateTime locales
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", 5, 2, "IntAdd",
 				"window.setTimeout(function() { invoke_add(); }, 1);",
