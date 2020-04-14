@@ -437,7 +437,7 @@ var MonoSupportLib = {
 		{
 			// Fix up generic names like Foo`2<int, string> to Foo<int, string>
 			// and nested class names like Foo/Bar to Foo.Bar
-			return className.replace('/', '.').replace(/`\d+/, '');
+			return className.replace(/\//g, '.').replace(/`\d+/g, '');
 		},
 	},
 
@@ -618,20 +618,57 @@ var MonoSupportLib = {
 		});
 	},
 
-	mono_wasm_add_func_var: function(className, objectId) {
+	/*
+	 * @className, and @targetName are in the following format:
+	 *
+	 *  <ret_type>:[<comma separated list of arg types>]:<method name>
+	 */
+	mono_wasm_add_func_var: function (className, targetName, objectId) {
 		if (objectId == 0) {
-			MONO.mono_wasm_add_null_var (className);
+			MONO.mono_wasm_add_null_var (
+				MONO._mono_csharp_fixup_class_name (Module.UTF8ToString (className)));
 			return;
 		}
 
-		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
-		MONO.var_info.push({
-			value: {
-				type: "function",
-				description: fixed_class_name,
-				objectId: "dotnet:object:"+ objectId,
-			}
-		});
+		function args_to_sig (args_str) {
+			var parts = args_str.split (":");
+			// TODO: min length = 3?
+			parts = parts.map (a => MONO._mono_csharp_fixup_class_name (a));
+
+			// method name at the end
+			var method_name = parts.pop ();
+
+			// ret type at the beginning
+			var ret_sig = parts [0];
+			var args_sig = parts.splice (1).join (', ');
+			return `${ret_sig} ${method_name} (${args_sig})`;
+		}
+
+		var tgt_sig;
+		if (targetName != 0)
+			tgt_sig = args_to_sig (Module.UTF8ToString (targetName));
+
+		var type_name = MONO._mono_csharp_fixup_class_name (Module.UTF8ToString (className));
+
+		if (objectId == -1) {
+			// Target property
+			MONO.var_info.push ({
+				value: {
+					type: "symbol",
+					value: tgt_sig,
+					description: tgt_sig,
+				}
+			});
+		} else {
+			MONO.var_info.push ({
+				value: {
+					type: "object",
+					className: type_name,
+					description: tgt_sig,
+					objectId: "dotnet:object:" + objectId,
+				}
+			});
+		}
 	},
 
 	mono_wasm_add_frame: function(il, method, name) {
