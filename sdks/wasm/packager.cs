@@ -596,7 +596,7 @@ class Driver {
 		bcl_prefixes = new List<string> ();
 		if (is_netcore) {
 			/* corelib */
-			bcl_prefixes.Add (Path.Combine (bcl_root, "netcore"));
+			bcl_prefixes.Add (Path.Combine (sdkdir, "wasm-runtime-netcore-release"));
 			/* .net runtime */
 			bcl_prefixes.Add (netcore_sdkdir);
 		} else {
