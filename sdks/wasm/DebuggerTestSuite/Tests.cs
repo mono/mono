@@ -382,11 +382,11 @@ namespace DebuggerTests
 						fn_del_arr		= TArray    ("Math.IsMathNull[]"),
 
 						// Unused locals
-						fn_func_unused		= TObject   ("System.Func<Math, bool>", is_null: true),
+						fn_func_unused		= TDelegate ("System.Func<Math, bool>", "bool <DelegatesTest>|(Math)"),
 						fn_func_null_unused	= TObject   ("System.Func<Math, bool>", is_null: true),
-						fn_func_arr_unused	= TObject   ("System.Func<Math, bool>[]", is_null: true),
+						fn_func_arr_unused	= TArray    ("System.Func<Math, bool>[]"),
 
-						fn_del_unused		= TObject   ("Math.IsMathNull", is_null: true),
+						fn_del_unused		= TDelegate ("Math.IsMathNull", "bool IsMathNullDelegateTarget (Math)"),
 						fn_del_null_unused	= TObject   ("Math.IsMathNull", is_null: true),
 						fn_del_arr_unused	= TObject   ("Math.IsMathNull[]", is_null: true),
 
