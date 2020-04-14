@@ -37,7 +37,6 @@ EMSCRIPTEN_KEEPALIVE int mono_wasm_setup_single_step (int kind);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_object_properties (int object_id, gboolean expand_value_types);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_values (int object_id);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_value_expanded (int object_id, int idx);
-EMSCRIPTEN_KEEPALIVE void mono_wasm_add_typed_value (const char *type, const char *str_value, int int_value);
 
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
@@ -51,6 +50,7 @@ extern void mono_wasm_add_func_var (const char*, const char*, guint64);
 extern void mono_wasm_add_properties_var (const char*, gint32);
 extern void mono_wasm_add_array_item (int);
 extern void mono_wasm_set_is_async_method (guint64);
+extern void mono_wasm_add_typed_value (const char *type, const char *str_value, int int_value);
 
 G_END_DECLS
 
