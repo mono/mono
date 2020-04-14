@@ -102,8 +102,9 @@ namespace DebuggerTests
 
 	public class DebuggerTestBase {
 		protected Task startTask;
+		private string testDriver;
 
-		static string FindTestPath () {
+		static string FindTestPath (string driver="debugger-driver.html") {
 			//FIXME how would I locate it otherwise?
 			var test_path = Environment.GetEnvironmentVariable ("TEST_SUITE_PATH");
 			//Lets try to guest
@@ -114,7 +115,7 @@ namespace DebuggerTests
 			Console.WriteLine ("guessing from {0}", cwd);
 			//tests run from DebuggerTestSuite/bin/Debug/netcoreapp2.1
 			var new_path = Path.Combine (cwd, "../../../../bin/debugger-test-suite");
-			if (File.Exists (Path.Combine (new_path, "debugger-driver.html")))
+			if (File.Exists (Path.Combine (new_path, driver)))
 				return new_path;
 
 			throw new Exception ("Missing TEST_SUITE_PATH env var and could not guess path from CWD");
@@ -145,7 +146,9 @@ namespace DebuggerTests
 		}
 
 		public DebuggerTestBase (string driver = "debugger-driver.html") {
-			startTask = TestHarnessProxy.Start (FindChromePath (), FindTestPath (), driver);
+			testDriver = driver;
+			Console.WriteLine("Test driver from {0}", testDriver);
+			startTask = TestHarnessProxy.Start (FindChromePath (), FindTestPath (testDriver), testDriver);
 		}
 
 		public Task Ready ()

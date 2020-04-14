@@ -100,6 +100,8 @@ WASM_TESTS_BIN=$(TOP)/sdks/wasm/bin
 
 TEST_SOURCE_DIR=$(TOP)/sdks/wasm/tests/src/
 
+DEBUG_DRIVER=debugger-driver.html
+
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
 	JSVU_OS=linux64
@@ -410,8 +412,8 @@ Simple.Dependency.dll: dependency.cs $(WASM_FRAMEWORK)/.stamp-framework
 sample.dll: Simple.Dependency.dll sample.cs $(WASM_FRAMEWORK)/.stamp-framework debugger-valuetypes-test.cs debugger-array-test.cs
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /unsafe $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) sample.cs debugger-valuetypes-test.cs debugger-array-test.cs
 
-debugger-test.dll: debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs Simple.Dependency.dll debugger-array-test.cs debugger-evaluate-test.cs
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll /unsafe debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs debugger-array-test.cs debugger-evaluate-test.cs
+debugger-test.dll: debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs Simple.Dependency.dll debugger-array-test.cs debugger-evaluate-test.cs debugger-datetime-test.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll /unsafe debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs debugger-array-test.cs debugger-evaluate-test.cs debugger-datetime-test.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 
@@ -494,8 +496,8 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html other.js builds/debug/dotnet.js
-	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html --asset=other.js debugger-test.dll
+bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll $(DEBUG_DRIVER) other.js builds/debug/dotnet.js
+	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=$(DEBUG_DRIVER) --asset=other.js debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 
@@ -699,6 +701,7 @@ run-aot-all: build-aot-all
 rebuild-debug-sample: clean-debug-sample build-debug-sample
 
 build-debugger-test-app: bin/debugger-test-suite/dotnet.wasm
+
 build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
