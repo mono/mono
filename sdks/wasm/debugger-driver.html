@@ -6,6 +6,8 @@
 	<script type='text/javascript'>
 		var App = {
 			init: function () {
+				this.wasm_setenv = Module.cwrap ('mono_wasm_setenv', null, ['string', 'string']);
+				this.wasm_setenv ("LC_ALL", "en_US.UTF-8");
 				this.int_add = Module.mono_bind_static_method ("[debugger-test] Math:IntAdd");
 				this.use_complex = Module.mono_bind_static_method ("[debugger-test] Math:UseComplex");
 				this.delegates_test = Module.mono_bind_static_method ("[debugger-test] Math:DelegatesTest");
