@@ -539,8 +539,21 @@ var MonoSupportLib = {
 			}
 			break;
 
-		default:
-			throw new Error (`Unknown type for value: ${type}`);
+		default: {
+			console.log (`Error: mono_wasm_add_typed_value: Unknown type for value: ${type}`);
+			var symbol_str = str_value != 0 ? Module.UTF8ToString (str_value) : '';
+			var msg = `'${symbol_str}' ${int_value}`;
+
+			MONO.var_info.push ({
+				value: {
+					type: "symbol",
+					value: msg,
+					description: msg
+				}
+			});
+
+			break;
+			}
 
 		}
 	},

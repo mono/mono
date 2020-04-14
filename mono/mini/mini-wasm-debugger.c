@@ -759,12 +759,6 @@ read_enum_value (const char *mem, int type)
 	return 0;
 }
 
-static void
-mono_wasm_add_number_var (guint64 val)
-{
-	mono_wasm_add_typed_value ("number", NULL, val);
-}
-
 static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandValueType)
 {
 	ERROR_DECL (error);
@@ -773,39 +767,39 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 			mono_wasm_add_typed_value ("bool", NULL, *(gint8*)addr);
 			break;
 		case MONO_TYPE_I1:
-			mono_wasm_add_number_var (*(gint8*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(gint8*)addr);
 			break;
 		case MONO_TYPE_U1:
-			mono_wasm_add_number_var (*(guint8*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(guint8*)addr);
 			break;
 		case MONO_TYPE_CHAR:
 			mono_wasm_add_typed_value ("char", NULL, *(guint16*)addr);
 			break;
 		case MONO_TYPE_U2:
-			mono_wasm_add_number_var (*(guint16*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(guint16*)addr);
 			break;
 		case MONO_TYPE_I2:
-			mono_wasm_add_number_var (*(gint16*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(gint16*)addr);
 			break;
 		case MONO_TYPE_I4:
 		case MONO_TYPE_I:
-			mono_wasm_add_number_var (*(gint32*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(gint32*)addr);
 			break;
 		case MONO_TYPE_U4:
 		case MONO_TYPE_U:
-			mono_wasm_add_number_var (*(guint32*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(guint32*)addr);
 			break;
 		case MONO_TYPE_I8:
-			mono_wasm_add_number_var (*(gint64*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(gint64*)addr);
 			break;
 		case MONO_TYPE_U8:
-			mono_wasm_add_number_var (*(guint64*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(guint64*)addr);
 			break;
 		case MONO_TYPE_R4:
-			mono_wasm_add_number_var (*(float*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(float*)addr);
 			break;
 		case MONO_TYPE_R8:
-			mono_wasm_add_number_var (*(double*)addr);
+			mono_wasm_add_typed_value ("number", NULL, *(double*)addr);
 			break;
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_FNPTR: {
@@ -851,7 +845,7 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 			int obj_id = get_object_id (obj);
 
 			if (type-> type == MONO_TYPE_ARRAY || type->type == MONO_TYPE_SZARRAY) {
-				mono_wasm_add_array_var(class_name, obj_id);
+				mono_wasm_add_typed_value ("array", class_name, obj_id);
 			} else if (m_class_is_delegate (klass) || (type->type == MONO_TYPE_GENERICINST && m_class_is_delegate (type->data.generic_class->container_class))) {
 				MonoMethod *method;
 
