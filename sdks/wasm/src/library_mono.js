@@ -527,6 +527,18 @@ var MonoSupportLib = {
 			MONO._mono_wasm_add_array_var (str_value, int_value);
 			break;
 
+		case "pointer": {
+			var symbol_str = Module.UTF8ToString (str_value);
+			MONO.var_info.push ({
+				value: {
+					type: "symbol",
+					value: symbol_str,
+					description: symbol_str
+				}
+			});
+			}
+			break;
+
 		default:
 			throw new Error (`Unknown type for value: ${type}`);
 

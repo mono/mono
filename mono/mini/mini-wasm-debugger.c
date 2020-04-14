@@ -807,6 +807,19 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 		case MONO_TYPE_R8:
 			mono_wasm_add_number_var (*(double*)addr);
 			break;
+		case MONO_TYPE_PTR:
+		case MONO_TYPE_FNPTR: {
+			char *class_name = mono_type_full_name (type);
+			const void *val = *(const void **)addr;
+			char *val_str = g_strdup_printf ("(%s) %p", class_name, val);
+
+			mono_wasm_add_typed_value ("pointer", val_str, (guint32)val);
+
+			g_free (val_str);
+			g_free (class_name);
+			break;
+		}
+
 		case MONO_TYPE_STRING: {
 			MonoString *str_obj = *(MonoString **)addr;
 			if (!str_obj) {

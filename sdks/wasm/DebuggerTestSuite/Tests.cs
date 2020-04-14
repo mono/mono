@@ -2131,6 +2131,35 @@ namespace DebuggerTests
 				});
 		}
 
+		[Fact]
+		public async Task InspectLocalsWithPointers ()
+			=> await CheckInspectLocalsAtBreakpointSite (
+				"dotnet://debugger-test.dll/debugger-test.cs", 294, 2,
+				"PointersTest",
+				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] Math:PointersTest'); })",
+				wait_for_event_fn: async (pause_location) => {
+					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
+
+					var dt = new DateTime (5, 6, 7, 8, 9, 10);
+					await CheckProps (locals, new {
+						ivalue0        = TNumber    (5),
+						ivalue1        = TNumber    (10),
+						ip             = TPointer   ("int*"),
+						ip_null        = TPointer   ("int*", is_null: true),
+						ipp            = TPointer   ("int**"),
+
+						ipa            = TArray     ("int*[]"),
+						cvalue0        = TSymbol    ("113 'q'"),
+						cp             = TPointer   ("char*"),
+						dt             = TValueType ("System.DateTime", dt.ToString ()),
+						vp             = TPointer   ("void*"),
+						vp_null        = TPointer   ("void*", is_null: true),
+						dtp            = TPointer   ("System.DateTime*"),
+						dtp_null       = TPointer   ("System.DateTime*", is_null: true)
+					}, "locals");
+
+				});
+
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
@@ -2233,6 +2262,23 @@ namespace DebuggerTests
 				case "delegate":
 					await CheckDelegate (actual_val, exp_val, label);
 					break;
+
+				case "pointer": {
+					AssertEqual ("symbol", actual_val ["type"]?.Value<string>(), $"{label}-type");
+
+					if (exp_val ["is_null"]?.Value<bool>() == false) {
+						var exp_prefix = $"({exp_val ["type_name"]?.Value<string>()})";
+						AssertStartsWith (exp_prefix, actual_val ["value"]?.Value<string> (), $"{label}-type_name");
+						AssertStartsWith (exp_prefix, actual_val ["description"]?.Value<string> (), $"{label}-description");
+					} else {
+						var exp_prefix = $"({exp_val ["type_name"]?.Value<string>()}) 0";
+						AssertEqual (exp_prefix, actual_val ["value"]?.Value<string> (), $"{label}-type_name");
+						AssertEqual (exp_prefix, actual_val ["description"]?.Value<string> (), $"{label}-description");
+
+					}
+					break;
+				}
+
 				default:
 					throw new ArgumentException($"{ctype} not supported");
 			}
@@ -2480,6 +2526,9 @@ namespace DebuggerTests
 						$"Expected: {expected?.ToString()}\n" +
 						$"Actual:   {actual?.ToString()}\n");
 
+		void AssertStartsWith (string expected, string actual, string label)
+			=> Assert.True(actual?.StartsWith (expected), $"[{label}] Does not start with the expected string\nExpected: {expected}\nActual:  {actual}");
+
 		//FIXME: um maybe we don't need to convert jobject right here!
 		static JObject TString (string value) =>
 			value == null
@@ -2521,6 +2570,9 @@ namespace DebuggerTests
 				className = className,
 				target = target
 			});
+
+		static JObject TPointer (string type_name, bool is_null = false)
+			=> JObject.FromObject (new { __custom_type = "pointer", type_name = type_name, is_null = is_null });
 
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
