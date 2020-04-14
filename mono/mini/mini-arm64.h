@@ -154,7 +154,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS 1
 
-#ifdef TARGET_IOS
+#if defined(TARGET_IOS) || defined(TARGET_OSX)
 
 #define MONO_ARCH_REDZONE_SIZE 128
 
@@ -164,7 +164,7 @@ typedef struct {
 
 #endif
 
-#if defined(TARGET_APPLETVOS) || defined(TARGET_IOS)
+#if defined(TARGET_IOS) || defined(TARGET_APPLETV) || defined(TARGET_OSX)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
 #endif
 
