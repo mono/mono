@@ -3859,16 +3859,15 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 					continue;
 				int align = 0;
 				int size = mono_type_size (field->type, &align);
-				int j = 0;
 				MonoType *ftype = mono_type_get_underlying_type (field->type);
 				ftype = mono_type_get_basic_type_from_generic (ftype);
 				guint8 type =  type_has_references (klass, ftype) ? 1 : 2;				
-				for (j = 0; j < size; j++) {
-					if (layout_check[field_offsets [i] + j] != 0 && layout_check[field_offsets [i] + j] != type) {
+				for (int j = 0; j < size; j++) {
+					if (layout_check [field_offsets [i] + j] != 0 && layout_check [field_offsets [i] + j] != type) {
 						mono_class_set_type_load_failure (klass, "Could not load type '%s' because it contains an object field at offset %d that is incorrectly aligned or overlapped by a non-object field.", klass->name, field->offset);
 						break;
 					}
-					layout_check[field_offsets [i] + j] = type;
+					layout_check [field_offsets [i] + j] = type;
 				}
 			}
 			g_free (layout_check);
