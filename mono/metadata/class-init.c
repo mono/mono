@@ -3802,7 +3802,6 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	case TYPE_ATTRIBUTE_EXPLICIT_LAYOUT: {
 		guint8 *ref_bitmap;
 
-		guint8 *layout_check;
 		real_size = 0;
 		for (i = 0; i < top; i++) {
 			gint32 align;
@@ -3848,8 +3847,10 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		}
 
 		/* check for incorrectly aligned or overlapped by a non-object field */
-		layout_check = g_new0 (guint8, real_size);
-		if (layout == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) {
+#ifdef ENABLE_NETCORE	
+		guint8 *layout_check;	
+		if (has_references) {
+			layout_check = g_new0 (guint8, real_size);
 			for (i = 0; i < top && !mono_class_has_failure (klass); i++) {
 				field = &klass->fields [i];
 				if (!field)
@@ -3863,8 +3864,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 				int j = 0;
 				MonoType *ftype = mono_type_get_underlying_type (field->type);
 				ftype = mono_type_get_basic_type_from_generic (ftype);
+				guint8 type =  type_has_references (klass, ftype) ? 1 : 2;				
 				for (j = 0; j < size; j++) {
-					guint8 type =  type_has_references (klass, ftype) ? 0 : 1;
 					if (layout_check[field_offsets [i] + j] != 0 && layout_check[field_offsets [i] + j] != type) {
 						mono_class_set_type_load_failure (klass, "Could not load type '%s' because it contains an object field at offset %d that is incorrectly aligned or overlapped by a non-object field.", klass->name, field->offset);
 						break;
@@ -3872,9 +3873,9 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 					layout_check[field_offsets [i] + j] = type;
 				}
 			}
+			g_free (layout_check);
 		}
-		g_free (layout_check);
-
+#endif
 
 		if (klass->has_references) {
 			ref_bitmap = g_new0 (guint8, real_size / TARGET_SIZEOF_VOID_P);

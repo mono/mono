@@ -728,8 +728,7 @@ TESTS_CS_SRC=		\
 	null-blob-main.cs \
 	last-error.cs \
 	rgctx-thread-static.cs \
-	bug-gh-17285.cs \
-	typeloadexception.cs
+	bug-gh-17285.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1332,8 +1331,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-81691.exe \
 	bug-327438.2.exe \
 	newobj-abstract.exe \
-	invalid-isbyreflike.exe \
-	typeloadexception.exe
+	invalid-isbyreflike.exe
 
 # Tests which rely on remoting
 PROFILE_DISABLED_TESTS += \
