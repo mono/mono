@@ -37,23 +37,17 @@ EMSCRIPTEN_KEEPALIVE int mono_wasm_setup_single_step (int kind);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_object_properties (int object_id, gboolean expand_value_types);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_values (int object_id);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_value_expanded (int object_id, int idx);
+EMSCRIPTEN_KEEPALIVE void mono_wasm_add_typed_value (const char *type, const char *str_value, int int_value);
 
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
 extern void mono_wasm_fire_bp (void);
-extern void mono_wasm_add_bool_var (gint8);
-extern void mono_wasm_add_char_var (double);
-extern void mono_wasm_add_number_var (double);
-extern void mono_wasm_add_string_var (const char*);
-extern void mono_wasm_add_getter_var (const char*);
 extern void mono_wasm_add_obj_var (const char*, const char*, guint64);
 extern void mono_wasm_add_value_type_unexpanded_var (const char*, const char*);
 extern void mono_wasm_begin_value_type_var (const char*, const char*);
 extern void mono_wasm_end_value_type_var (void);
 extern void mono_wasm_add_enum_var (const char*, const char*, guint64);
 extern void mono_wasm_add_func_var (const char*, const char*, guint64);
-extern void mono_wasm_add_symbol_var (const char*);
-extern void mono_wasm_add_array_var (const char*, guint64);
 extern void mono_wasm_add_properties_var (const char*, gint32);
 extern void mono_wasm_add_array_item (int);
 extern void mono_wasm_set_is_async_method (guint64);
@@ -765,12 +759,18 @@ read_enum_value (const char *mem, int type)
 	return 0;
 }
 
+static void
+mono_wasm_add_number_var (guint64 val)
+{
+	mono_wasm_add_typed_value ("number", NULL, val);
+}
+
 static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandValueType)
 {
 	ERROR_DECL (error);
 	switch (type->type) {
 		case MONO_TYPE_BOOLEAN:
-			mono_wasm_add_bool_var (*(gint8*)addr);
+			mono_wasm_add_typed_value ("bool", NULL, *(gint8*)addr);
 			break;
 		case MONO_TYPE_I1:
 			mono_wasm_add_number_var (*(gint8*)addr);
@@ -779,7 +779,7 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 			mono_wasm_add_number_var (*(guint8*)addr);
 			break;
 		case MONO_TYPE_CHAR:
-			mono_wasm_add_char_var (*(guint16*)addr);
+			mono_wasm_add_typed_value ("char", NULL, *(guint16*)addr);
 			break;
 		case MONO_TYPE_U2:
 			mono_wasm_add_number_var (*(guint16*)addr);
@@ -810,11 +810,11 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 		case MONO_TYPE_STRING: {
 			MonoString *str_obj = *(MonoString **)addr;
 			if (!str_obj) {
-				mono_wasm_add_string_var (NULL);
+				mono_wasm_add_typed_value ("string", NULL, 0);
 			} else {
 				char *str = mono_string_to_utf8_checked_internal (str_obj, error);
 				mono_error_assert_ok (error); /* FIXME report error */
-				mono_wasm_add_string_var (str);
+				mono_wasm_add_typed_value ("string", str, 0);
 				g_free (str);
 			}
 			break;
@@ -924,7 +924,7 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 		default: {
 			char *type_name = mono_type_full_name (type);
 			char *msg = g_strdup_printf("can't handle type %s [%p, %x]", type_name, type, type->type);
-			mono_wasm_add_string_var (msg);
+			mono_wasm_add_typed_value ("string", msg, 0);
 			g_free (msg);
 			g_free (type_name);
 		}
@@ -1007,7 +1007,7 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 			if (!getters_allowed) {
 				// not allowed to call the getter here
 				char *ret_class_name = mono_class_full_name (mono_class_from_mono_type_internal (sig->ret));
-				mono_wasm_add_getter_var (ret_class_name);
+				mono_wasm_add_typed_value ("getter", ret_class_name, 0);
 				g_free (ret_class_name);
 
 				continue;
@@ -1015,7 +1015,7 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 
 			if (is_valuetype && mono_class_from_mono_type_internal (sig->ret) == klass) {
 				// Property of the same valuetype, avoid endlessly recursion!
-				mono_wasm_add_getter_var (klass_name);
+				mono_wasm_add_typed_value ("getter", klass_name, 0);
 				continue;
 			}
 
