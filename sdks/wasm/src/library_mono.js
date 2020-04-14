@@ -484,7 +484,7 @@ var MonoSupportLib = {
 		},
 	},
 
-	mono_wasm_add_typed_value: function (type, str_value, int_value) {
+	mono_wasm_add_typed_value: function (type, str_value, value) {
 		var type_str = Module.UTF8ToString (type);
 
 		switch (type_str) {
@@ -492,7 +492,7 @@ var MonoSupportLib = {
 			MONO.var_info.push ({
 				value: {
 					type: "boolean",
-					value: int_value != 0
+					value: value != 0
 				}
 			});
 			break;
@@ -501,7 +501,7 @@ var MonoSupportLib = {
 			MONO.var_info.push ({
 				value: {
 					type: "symbol",
-					value: `${int_value} '${String.fromCharCode (int_value)}'`
+					value: `${value} '${String.fromCharCode (value)}'`
 				}
 			});
 			break;
@@ -510,7 +510,7 @@ var MonoSupportLib = {
 			MONO.var_info.push ({
 				value: {
 					type: "number",
-					value: int_value
+					value: value
 				}
 			});
 			break;
@@ -524,7 +524,7 @@ var MonoSupportLib = {
 			break;
 
 		case "array":
-			MONO._mono_wasm_add_array_var (str_value, int_value);
+			MONO._mono_wasm_add_array_var (str_value, value);
 			break;
 
 		case "pointer": {
@@ -540,9 +540,9 @@ var MonoSupportLib = {
 			break;
 
 		default: {
-			console.log (`Error: mono_wasm_add_typed_value: Unknown type for value: ${type}`);
+			console.log (`Error: mono_wasm_add_typed_value: Unknown type (${type_str}) for value`);
 			var symbol_str = str_value != 0 ? Module.UTF8ToString (str_value) : '';
-			var msg = `'${symbol_str}' ${int_value}`;
+			var msg = `'${symbol_str}' ${value}`;
 
 			MONO.var_info.push ({
 				value: {
