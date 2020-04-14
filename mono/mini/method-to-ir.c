@@ -8725,7 +8725,7 @@ calli_end:
 				MonoJitICallId function = MONO_JIT_ICALL_ZeroIsReserved;
 				int n = fsig->param_count;
 				/* Optimize the common cases, use ctor using length for each rank (no lbound). */
-				if (n == cmethod->klass->rank) {
+				if (n == m_class_get_rank (cmethod->klass)) {
 					switch (n) {
 					case 1: function = MONO_JIT_ICALL_mono_array_new_1;
 						break;
