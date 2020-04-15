@@ -548,10 +548,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public IEnumerable<MethodInfo> Methods => this.methods.Values;
 
-		public byte[] EmbeddedSource => doc.EmbeddedSource;
 		public string DocUrl => doc.Url;
-
-		byte[] sourceBytes;
 
 		public (int startLine, int startColumn, int endLine, int endColumn) GetExtents ()
 		{
@@ -567,11 +564,13 @@ namespace WebAssembly.Net.Debugging {
 				if (uri.IsFile && File.Exists (uri.LocalPath)) {
 					using (var file = File.Open (SourceUri.LocalPath, FileMode.Open)) {
 						await file.CopyToAsync (mem, token);
+						mem.Position = 0;
 					}
 				} else if (uri.Scheme == "http" || uri.Scheme == "https") {
 					var client = new HttpClient ();
 					using (var stream = await client.GetStreamAsync (uri)) {
 						await stream.CopyToAsync (mem, token);
+						mem.Position = 0;
 					}
 				}
 			} catch (Exception) {
@@ -590,7 +589,7 @@ namespace WebAssembly.Net.Debugging {
 			return null;
 		}
 
-		public bool CheckPdbHash (byte [] computedHash)
+		bool CheckPdbHash (byte [] computedHash)
 		{
 			if (computedHash.Length != doc.Hash.Length)
 				return false;
@@ -602,38 +601,36 @@ namespace WebAssembly.Net.Debugging {
 			return true;
 		}
 
-		public async Task<byte[]> ComputePdbHash (CancellationToken token = default(CancellationToken))
+		byte[] ComputePdbHash (Stream sourceStream)
 		{
 			var algorithm = GetHashAlgorithm (doc.HashAlgorithm);
 			if (algorithm != null)
 				using (algorithm)
-					return algorithm.ComputeHash (await GetSourceAsync (token));
+					return algorithm.ComputeHash (sourceStream);
 
 			return Array.Empty<byte> ();
 		}
 
-		public async Task<MemoryStream> GetSourceStreamAsync (CancellationToken token)
-			=> new MemoryStream (await GetSourceAsync (token), false);
-
-		async Task<byte[]> GetSourceAsync (CancellationToken token = default(CancellationToken))
+		public async Task<Stream> GetSourceAsync (bool checkHash, CancellationToken token = default(CancellationToken))
 		{
-			if (sourceBytes != null)
-				return sourceBytes;
-
 			if (doc.EmbeddedSource.Length > 0)
-				return sourceBytes = doc.EmbeddedSource;
+				return new MemoryStream (doc.EmbeddedSource, false);
 
 			MemoryStream mem;
 
 			mem = await GetDataAsync (SourceUri, token);
-			if (mem != null)
-				return sourceBytes = mem.ToArray ();
+			if (mem != null && (!checkHash || CheckPdbHash (ComputePdbHash (mem)))) {
+				mem.Position = 0;
+				return mem;
+			}
 
 			mem = await GetDataAsync (SourceLinkUri, token);
-			if (mem != null)
-				return sourceBytes = mem.ToArray ();
+			if (mem != null && (!checkHash || CheckPdbHash (ComputePdbHash (mem)))) {
+				mem.Position = 0;
+				return mem;
+			}
 
-			return sourceBytes = Array.Empty<byte> ();
+			return MemoryStream.Null;
 		}
 
 		public object ToScriptSource (int executionContextId, object executionContextAuxData)
@@ -643,7 +640,7 @@ namespace WebAssembly.Net.Debugging {
 				url = Url,
 				executionContextId,
 				executionContextAuxData,
-				//hash = "abcdee" + id,
+				//hash:  should be the v8 hash algo, managed implementation is pending
 				dotNetUrl = DotNetUrl,
 			};
 		}

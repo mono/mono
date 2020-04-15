@@ -895,10 +895,13 @@ namespace WebAssembly.Net.Debugging {
 				var uri = new Uri (src_file.Url);
 				string source = $"// Unable to find document {src_file.SourceUri}";
 
-				var data = await src_file.GetSourceStreamAsync (token);
-				using (var reader = new StreamReader (data))
-						source = await reader.ReadToEndAsync ();
+				using (var data = await src_file.GetSourceAsync (checkHash: false, token: token)) {
+						if (data.Length == 0)
+							return false;
 
+						using (var reader = new StreamReader (data))
+							source = await reader.ReadToEndAsync ();
+				}
 				SendResponse (msg_id, Result.OkFromObject (new { scriptSource = source }), token);
 			} catch (Exception e) {
 				var o = new {
