@@ -89,6 +89,9 @@ namespace WebAssembly.Net.Debugging {
 		public static Result Err (JObject err)
 			=> new Result (null, err);
 
+		public static Result Err (string msg)
+			=> new Result (null, JObject.FromObject (new { message = msg }));
+
 		public static Result Exception (Exception e)
 			=> new Result (null, JObject.FromObject (new { message = e.Message }));
 

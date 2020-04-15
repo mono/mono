@@ -376,7 +376,7 @@ var MonoSupportLib = {
 					heapBytes.set (asm);
 					mono_wasm_add_assembly (file_name, memory, asm.length);
 
-					console.log ("MONO_WASM: Loaded: " + file_name);
+					//console.log ("MONO_WASM: Loaded: " + file_name);
 					--pending;
 					if (pending == 0) {
 						MONO.loaded_files = loaded_files;

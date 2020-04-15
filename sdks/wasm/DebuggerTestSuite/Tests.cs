@@ -1972,8 +1972,47 @@ namespace DebuggerTests
 			});
 		}
 		
-		
-		
+		async Task<Result> SendCommand (string method, JObject args) {
+			var res = await ctx.cli.SendCommand (method, args, ctx.token);
+			if (!res.IsOk) {
+				Console.WriteLine ($"Failed to run command {method} with args: {args?.ToString ()}\nresult: {res.Error.ToString ()}");
+				Assert.True (false, $"SendCommand for {method} failed with {res.Error.ToString ()}");
+			}
+			return res;
+		}
+
+		async Task<Result> Evaluate (string expression) {
+			return await SendCommand ("Runtime.evaluate", JObject.FromObject (new { expression = expression }));
+		}
+
+		void AssertLocation (JObject args, string methodName) {
+			Assert.Equal (methodName, args ["callFrames"]?[0]?["functionName"]?.Value<string> ());
+		}
+
+		// Place a breakpoint in the given method and run until its hit
+		// Return the Debugger.paused data
+		async Task<JObject> RunUntil (string methodName) {
+			await SetBreakpointInMethod ("debugger-test", "DebuggerTest", methodName);
+			// This will run all the tests until it hits the bp
+			await Evaluate ("window.setTimeout(function() { invoke_run_all (); }, 1);");
+			var wait_res = await ctx.insp.WaitFor (Inspector.PAUSE);
+			AssertLocation (wait_res, "locals_inner");
+			return wait_res;
+		}
+
+		[Fact]
+		public async Task InspectLocals () {
+			var insp = new Inspector ();
+			var scripts = SubscribeToScripts (insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+
+				var wait_res = await RunUntil ("locals_inner");
+				var locals = await GetProperties (wait_res ["callFrames"][1]["callFrameId"].Value<string> ());
+				});
+		}
 
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
@@ -2235,6 +2274,16 @@ namespace DebuggerTests
 			Assert.True (expect_ok ? bp1_res.IsOk : bp1_res.IsErr);
 
 			return bp1_res;
+		}
+
+		async Task<Result> SetBreakpointInMethod (string assembly, string type, string method) {
+			var req = JObject.FromObject (new { assemblyName = assembly, typeName = type, methodName = method });
+
+			// Protocol extension
+			var res = await ctx.cli.SendCommand ("Dotnet-test.setBreakpointByMethod", req, ctx.token);
+			Assert.True (res.IsOk);
+
+			return res;
 		}
 
 		//FIXME: um maybe we don't need to convert jobject right here!
