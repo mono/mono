@@ -382,7 +382,7 @@ namespace WebAssembly.Net.Debugging {
 					foreach (var mono_frame in the_mono_frames) {
 						++frame_id;
 						var il_pos = mono_frame ["il_pos"].Value<int> ();
-						var method_token = mono_frame ["method_token"].Value<int> ();
+						var method_token = mono_frame ["method_token"].Value<uint> ();
 						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
 
 						var store = await LoadStore (sessionId, token);
@@ -838,6 +838,12 @@ namespace WebAssembly.Net.Debugging {
 			logger.LogDebug ("BP request for '{req}' runtime ready {context.RuntimeReady}", req, GetContext (sessionId).IsRuntimeReady);
 
 			var breakpoints = new List<Breakpoint> ();
+
+			// if column is specified the frontend wants the exact matches
+			// and will clear the bp if it isn't close enough
+			if (req.Column != 0)
+				locations = locations.Where (l => l.Column == req.Column).ToList ();
+
 			foreach (var loc in locations) {
 				var bp = await SetMonoBreakpoint (sessionId, req.Id, loc, token);
 

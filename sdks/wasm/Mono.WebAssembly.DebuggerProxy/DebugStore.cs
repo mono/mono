@@ -261,7 +261,7 @@ namespace WebAssembly.Net.Debugging {
 		public SourceLocation StartLocation { get; }
 		public SourceLocation EndLocation { get; }
 		public AssemblyInfo Assembly { get; }
-		public int Token => (int)methodDef.MetadataToken.RID;
+		public uint Token => methodDef.MetadataToken.RID;
 
 		public MethodInfo (AssemblyInfo assembly, MethodDefinition methodDef, SourceFile source)
 		{
@@ -347,7 +347,7 @@ namespace WebAssembly.Net.Debugging {
 		ModuleDefinition image;
 		readonly int id;
 		readonly ILogger logger;
-		Dictionary<int, MethodInfo> methods = new Dictionary<int, MethodInfo> ();
+		Dictionary<uint, MethodInfo> methods = new Dictionary<uint, MethodInfo> ();
 		Dictionary<string, string> sourceLinkMappings = new Dictionary<string, string>();
 		Dictionary<string, TypeInfo> typesByName = new Dictionary<string, TypeInfo> ();
 		readonly List<SourceFile> sources = new List<SourceFile>();
@@ -420,8 +420,7 @@ namespace WebAssembly.Net.Debugging {
 			void AddMethods (SourceFile src, MethodDefinition method)
 			{
 				var methodInfo = new MethodInfo (this, method, src);
-				int rid = (int)method.MetadataToken.RID;
-				this.methods [rid] = methodInfo;
+				this.methods [method.MetadataToken.RID] = methodInfo;
 				if (src != null)
 					src.AddMethod (methodInfo);
 			}
@@ -496,7 +495,7 @@ namespace WebAssembly.Net.Debugging {
 			return sources.FirstOrDefault (s => s.SourceId.Document == document);
 		}
 
-		public MethodInfo GetMethodByToken (int token)
+		public MethodInfo GetMethodByToken (uint token)
 		{
 			methods.TryGetValue (token, out var value);
 			return value;
@@ -510,14 +509,14 @@ namespace WebAssembly.Net.Debugging {
 	}
 
 	internal class SourceFile {
-		HashSet<MethodInfo> methods;
+		Dictionary<uint,MethodInfo> methods;
 		AssemblyInfo assembly;
 		int id;
 		Document doc;
 
 		internal SourceFile (AssemblyInfo assembly, int id, Document doc, Uri sourceLinkUri)
 		{
-			this.methods = new HashSet<MethodInfo> ();
+			this.methods = new Dictionary<uint, MethodInfo> ();
 			this.SourceLinkUri = sourceLinkUri;
 			this.assembly = assembly;
 			this.id = id;
@@ -533,7 +532,10 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		internal void AddMethod (MethodInfo mi)
-			=> this.methods.Add (mi);
+		{
+			if (!this.methods.ContainsKey (mi.Token))
+				this.methods [mi.Token] = mi;
+		}
 
 		public string DebuggerFileName { get; }
 		public string Url { get; }
@@ -544,7 +546,7 @@ namespace WebAssembly.Net.Debugging {
 		public Uri SourceLinkUri { get; }
 		public Uri SourceUri { get; }
 
-		public IEnumerable<MethodInfo> Methods => this.methods;
+		public IEnumerable<MethodInfo> Methods => this.methods.Values;
 
 		public byte[] EmbeddedSource => doc.EmbeddedSource;
 		public string DocUrl => doc.Url;
@@ -553,8 +555,8 @@ namespace WebAssembly.Net.Debugging {
 
 		public (int startLine, int startColumn, int endLine, int endColumn) GetExtents ()
 		{
-			var start = methods.OrderBy (m => m.StartLocation.Line).ThenBy (m => m.StartLocation.Column).First ();
-			var end = methods.OrderByDescending (m => m.EndLocation.Line).ThenByDescending (m => m.EndLocation.Column).First ();
+			var start = Methods.OrderBy (m => m.StartLocation.Line).ThenBy (m => m.StartLocation.Column).First ();
+			var end = Methods.OrderByDescending (m => m.EndLocation.Line).ThenByDescending (m => m.EndLocation.Column).First ();
 			return (start.StartLocation.Line, start.StartLocation.Column, end.EndLocation.Line, end.EndLocation.Column);
 		}
 
