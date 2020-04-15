@@ -65,6 +65,8 @@ typedef struct
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK		1
 #define MONO_ARCH_HAVE_TRACK_FPREGS			1
 #define MONO_ARCH_HAVE_OPTIMIZED_DIV			1
+#define MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE		1
+#define MONO_ARCH_HAVE_OP_TAILCALL_REG			1
 
 #define S390_STACK_ALIGNMENT		 8
 #define S390_FIRST_ARG_REG 		s390_r2
@@ -127,7 +129,7 @@ typedef struct
 
 // Does the ABI have a volatile non-parameter register, so tailcall
 // can pass context to generics or interfaces?
-#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 0 // FIXME?
+#define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 1 // FIXME?
 
 /*-----------------------------------------------*/
 /* Macros used to generate instructions          */

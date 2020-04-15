@@ -101,7 +101,7 @@
 /* Used to LLVM JIT */
 #define LLVM_JIT_INLINE_LENGTH_LIMIT 100
 
-static const gboolean debug_tailcall = FALSE;               // logging
+static const gboolean debug_tailcall = TRUE;               // logging
 static const gboolean debug_tailcall_try_all = FALSE;       // consider any call followed by ret
 
 gboolean
