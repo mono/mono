@@ -79,7 +79,7 @@ namespace DebuggerTests
 
 				Assert.EndsWith ("debugger-test.cs", bp1_res.Value ["breakpointId"].ToString());
 				Assert.Equal (1, bp1_res.Value ["locations"]?.Value<JArray> ()?.Count);
-			
+
 				var loc = bp1_res.Value ["locations"]?.Value<JArray> ()[0];
 
 				Assert.NotNull (loc ["scriptId"]);
@@ -1051,7 +1051,7 @@ namespace DebuggerTests
 						CheckObject (locals, "this", "Math.NestedInMath");
 					}
 				);
-				
+
 				await CheckLocalsOnFrame (wait_res ["callFrames"][2],
 					test_fn: (locals) => {
 						Assert.Equal (4, locals.Count());
@@ -2037,19 +2037,83 @@ namespace DebuggerTests
 
 		[Fact]
 		public async Task EvaluateThisExpressions ()
-			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 18, 16,
-				"run",
-				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
-				wait_for_event_fn: async (pause_location) => {
-					var locals = await GetProperties (pause_location ["callFrames"][0] ["callFrameId"].Value<string> ());
-					var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.a");
-					CheckContentValue (evaluate, "1");
-					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.b");
-					CheckContentValue (evaluate, "2");
-					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.c");
-					CheckContentValue (evaluate, "3");
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+			int line = 18;
+			int col = 16;
+			string entry_method_name = "[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals";
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-evaluate-test.cs";
+
+				await SetBreakpoint (debugger_test_loc, line, col);
+
+				var eval_expr = "window.setTimeout(function() { invoke_static_method_async ("
+							+ $"'{entry_method_name}'"
+						+ "); }, 1);";
+
+				var pause_location = await EvaluateAndCheck (eval_expr,
+										debugger_test_loc,
+										line,
+										col,
+										"run",
+										wait_for_event_fn: async (pause_location) => {
+											var locals = await GetProperties (pause_location ["callFrames"][0] ["callFrameId"].Value<string> ());
+											var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.a");
+											CheckContentValue (evaluate, "1");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.b");
+											CheckContentValue (evaluate, "2");
+											evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.c");
+											CheckContentValue (evaluate, "3");
+										});
+			});
+		}
+
+		async Task<Result> SendCommand (string method, JObject args) {
+			var res = await ctx.cli.SendCommand (method, args, ctx.token);
+			if (!res.IsOk) {
+				Console.WriteLine ($"Failed to run command {method} with args: {args?.ToString ()}\nresult: {res.Error.ToString ()}");
+				Assert.True (false, $"SendCommand for {method} failed with {res.Error.ToString ()}");
+			}
+			return res;
+		}
+
+		async Task<Result> Evaluate (string expression) {
+			return await SendCommand ("Runtime.evaluate", JObject.FromObject (new { expression = expression }));
+		}
+
+		void AssertLocation (JObject args, string methodName) {
+			Assert.Equal (methodName, args ["callFrames"]?[0]?["functionName"]?.Value<string> ());
+		}
+
+		// Place a breakpoint in the given method and run until its hit
+		// Return the Debugger.paused data
+		async Task<JObject> RunUntil (string methodName) {
+			await SetBreakpointInMethod ("debugger-test", "DebuggerTest", methodName);
+			// This will run all the tests until it hits the bp
+			await Evaluate ("window.setTimeout(function() { invoke_run_all (); }, 1);");
+			var wait_res = await ctx.insp.WaitFor (Inspector.PAUSE);
+			AssertLocation (wait_res, "locals_inner");
+			return wait_res;
+		}
+
+		[Fact]
+		public async Task InspectLocals () {
+			var insp = new Inspector ();
+			var scripts = SubscribeToScripts (insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+
+				var wait_res = await RunUntil ("locals_inner");
+				var locals = await GetProperties (wait_res ["callFrames"][1]["callFrameId"].Value<string> ());
 				});
+		}
 
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
@@ -2384,11 +2448,15 @@ namespace DebuggerTests
 			return bp1_res;
 		}
 
-		void AssertEqual (object expected, object actual, string label)
-			=> Assert.True (expected?.Equals (actual),
-						$"[{label}]\n" +
-						$"Expected: {expected?.ToString()}\n" +
-						$"Actual:   {actual?.ToString()}\n");
+		async Task<Result> SetBreakpointInMethod (string assembly, string type, string method) {
+			var req = JObject.FromObject (new { assemblyName = assembly, typeName = type, methodName = method });
+
+			// Protocol extension
+			var res = await ctx.cli.SendCommand ("Dotnet-test.setBreakpointByMethod", req, ctx.token);
+			Assert.True (res.IsOk);
+
+			return res;
+		}
 
 		//FIXME: um maybe we don't need to convert jobject right here!
 		static JObject TString (string value) =>

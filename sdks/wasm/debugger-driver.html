@@ -13,6 +13,7 @@
 				this.outer_method = Module.mono_bind_static_method ("[debugger-test] Math:OuterMethod");
 				this.async_method = Module.mono_bind_static_method ("[debugger-test] Math/NestedInMath:AsyncTest");
 				this.method_with_structs = Module.mono_bind_static_method ("[debugger-test] DebuggerTests.ValueTypesTest:MethodWithLocalStructs");
+				this.run_all = Module.mono_bind_static_method ("[debugger-test] DebuggerTest:run_all");
 				this.static_method_table = {};
 				console.log ("ready");
 			},
@@ -60,6 +61,9 @@
 		}
 		function invoke_method_with_structs () {
 			return App.method_with_structs ();
+		}
+		function invoke_run_all () {
+			return App.run_all ();
 		}
       </script>
       <script type="text/javascript" src="mono-config.js"></script>

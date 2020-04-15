@@ -21,6 +21,7 @@ namespace WebAssembly.Net.Debugging {
 		public string File { get; private set; }
 		public int Line { get; private set; }
 		public int Column { get; private set; }
+		public MethodInfo Method { get; private set; }
 
 		JObject request;
 
@@ -34,13 +35,22 @@ namespace WebAssembly.Net.Debugging {
 		public object AsSetBreakpointByUrlResponse ()
 			=> new { breakpointId = Id, locations = Locations.Select(l => l.Location.AsLocation ()) };
 
+		public BreakpointRequest () {
+		}
+
+		public BreakpointRequest (string id, MethodInfo method) {
+			Id = id;
+			Method = method;
+		}
+
+		public BreakpointRequest (string id, JObject request) {
+			Id = id;
+			this.request = request;
+		}
+
 		public static BreakpointRequest Parse (string id, JObject args)
 		{
-			var breakRequest = new BreakpointRequest () {
-				Id = id,
-				request = args
-			};
-			return breakRequest;
+			return new BreakpointRequest (id, args);
 		}
 
 		public BreakpointRequest Clone ()
@@ -337,6 +347,26 @@ namespace WebAssembly.Net.Debugging {
 
 			return res.ToArray ();
 		}
+
+		public override string ToString () => "MethodInfo(" + methodDef.FullName + ")";
+	}
+
+	internal class TypeInfo {
+		AssemblyInfo assembly;
+		TypeDefinition type;
+		List<MethodInfo> methods;
+
+		public TypeInfo (AssemblyInfo assembly, TypeDefinition type) {
+			this.assembly = assembly;
+			this.type = type;
+			methods = new List<MethodInfo> ();
+		}
+
+		public string Name => type.Name;
+		public string FullName => type.FullName;
+		public List<MethodInfo> Methods => methods;
+
+		public override string ToString () => "TypeInfo('" + FullName + "')";
 	}
 
 	internal class AssemblyInfo {
@@ -346,6 +376,7 @@ namespace WebAssembly.Net.Debugging {
 		readonly ILogger logger;
 		Dictionary<int, MethodInfo> methods = new Dictionary<int, MethodInfo> ();
 		Dictionary<string, string> sourceLinkMappings = new Dictionary<string, string>();
+		Dictionary<string, TypeInfo> typesByName = new Dictionary<string, TypeInfo> ();
 		readonly List<SourceFile> sources = new List<SourceFile>();
 		internal string Url { get; private set; }
 
@@ -360,7 +391,6 @@ namespace WebAssembly.Net.Debugging {
 				rp.SymbolReaderProvider = new PdbReaderProvider ();
 				if (pdb != null)
 					rp.SymbolStream = new MemoryStream (pdb);
-
 				rp.ReadingMode = ReadingMode.Immediate;
 				rp.InMemory = true;
 
@@ -411,30 +441,36 @@ namespace WebAssembly.Net.Debugging {
 				return src;
 			};
 
-			foreach (var m in image.GetTypes().SelectMany(t => t.Methods)) {
-				Document first_doc = null;
-				foreach (var sp in m.DebugInformation.SequencePoints) {
-					if (first_doc == null && !sp.Document.Url.EndsWith (".g.cs", StringComparison.OrdinalIgnoreCase)) {
-						first_doc = sp.Document;
+			foreach (var type in image.GetTypes()) {
+				var typeInfo = new TypeInfo (this, type);
+				typesByName [type.FullName] = typeInfo;
+
+				foreach (var m in type.Methods) {
+					Document first_doc = null;
+					foreach (var sp in m.DebugInformation.SequencePoints) {
+						if (first_doc == null && !sp.Document.Url.EndsWith (".g.cs", StringComparison.OrdinalIgnoreCase)) {
+							first_doc = sp.Document;
+						}
+						//  else if (first_doc != sp.Document) {
+						//	//FIXME this is needed for (c)ctors in corlib
+						//	throw new Exception ($"Cant handle multi-doc methods in {m}");
+						//}
 					}
-					//  else if (first_doc != sp.Document) {
-					//	//FIXME this is needed for (c)ctors in corlib
-					//	throw new Exception ($"Cant handle multi-doc methods in {m}");
-					//}
-				}
 
-				if (first_doc == null) {
-					// all generated files
-					first_doc = m.DebugInformation.SequencePoints.FirstOrDefault ()?.Document;
-				}
+					if (first_doc == null) {
+						// all generated files
+						first_doc = m.DebugInformation.SequencePoints.FirstOrDefault ()?.Document;
+					}
 
-				if (first_doc != null) {
-					var src = get_src (first_doc);
-					var mi = new MethodInfo (this, m, src);
-					int mt = (int)m.MetadataToken.RID;
-					this.methods [mt] = mi;
-					if (src != null)
-						src.AddMethod (mi);
+					if (first_doc != null) {
+						var src = get_src (first_doc);
+						var mi = new MethodInfo (this, m, src);
+						int mt = (int)m.MetadataToken.RID;
+						this.methods [mt] = mi;
+						if (src != null)
+							src.AddMethod (mi);
+						typeInfo.Methods.Add (mi);
+					}
 				}
 			}
 		}
@@ -503,6 +539,12 @@ namespace WebAssembly.Net.Debugging {
 		{
 			methods.TryGetValue (token, out var value);
 			return value;
+		}
+
+		public TypeInfo GetTypeByName (string name) {
+			TypeInfo res;
+			typesByName.TryGetValue (name, out res);
+			return res;
 		}
 	}
 
@@ -623,7 +665,8 @@ namespace WebAssembly.Net.Debugging {
 					var bytes = await step.Data;
 					assembly = new AssemblyInfo (step.Url, bytes [0], bytes [1]);
 				} catch (Exception e) {
-					logger.LogDebug ($"Failed to Load {step.Url} ({e.Message})");
+					// This can happen if the pdb file is missing like for netstandard.dll
+					//logger.LogDebug ($"Failed to load {step.Url} ({e.Message})");
 				}
 				if (assembly == null)
 					continue;
