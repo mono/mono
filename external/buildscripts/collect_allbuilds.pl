@@ -51,6 +51,9 @@ system("find collectedbuilds -type f -name xbuild -exec chmod +x {} \\;") eq 0 o
 
 chdir("collectedbuilds");
 
+system("cp embedruntimes/linux64/libmono-native.so monodistribution/lib/libmono-native.so");
+system("cp embedruntimes/linux64/libMonoPosixHelper.so monodistribution/lib/libMonoPosixHelper.so");
+
 rmove('versions-aggregated.txt', 'versions.txt');
 
 open(MYFILE,">built_by_teamcity.txt");

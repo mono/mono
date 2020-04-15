@@ -8,7 +8,7 @@ cd external/buildscripts
 ./bee
 cd ../..
 
-perl external/buildscripts/build_runtime_linux.pl -build64=1 --stevedorebuilddeps=1
+perl external/buildscripts/build_runtime_linux.pl --stevedorebuilddeps=1
 if [ $? -eq 0 ]
 then
   echo "mono build script ran successfully"
