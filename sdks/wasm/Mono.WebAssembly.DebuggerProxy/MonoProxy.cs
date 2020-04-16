@@ -280,7 +280,7 @@ namespace WebAssembly.Net.Debugging {
 					return true;
 				}
 
-				var methodInfo = type.Methods.First (m => m.Name == methodName);
+				var methodInfo = type.Methods.FirstOrDefault (m => m.Name == methodName);
 				if (methodInfo == null) {
 					SendResponse (id, Result.Err ($"Method '{typeName}:{methodName}' not found."), token);
 					return true;

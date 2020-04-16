@@ -417,21 +417,19 @@ namespace WebAssembly.Net.Debugging {
 				return src;
 			};
 
-			void AddMethods (SourceFile src, MethodDefinition method)
-			{
-				var methodInfo = new MethodInfo (this, method, src);
-				this.methods [method.MetadataToken.RID] = methodInfo;
-				if (src != null)
-					src.AddMethod (methodInfo);
-			}
-
 			foreach (var type in image.GetTypes()) {
 				var typeInfo = new TypeInfo (this, type);
 				typesByName [type.FullName] = typeInfo;
 
-				foreach (var m in type.Methods) {
-					foreach (var sp in m.DebugInformation.SequencePoints) {
-						AddMethods (FindSource (sp.Document), m);
+				foreach (var method in type.Methods) {
+					foreach (var sp in method.DebugInformation.SequencePoints) {
+						var source = FindSource (sp.Document);
+						var methodInfo = new MethodInfo (this, method, source);
+						methods [method.MetadataToken.RID] = methodInfo;
+						if (source != null)
+							source.AddMethod (methodInfo);
+
+						typeInfo.Methods.Add (methodInfo);
 					}
 				}
 			}
@@ -502,14 +500,13 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		public TypeInfo GetTypeByName (string name) {
-			TypeInfo res;
-			typesByName.TryGetValue (name, out res);
+			typesByName.TryGetValue (name, out var res);
 			return res;
 		}
 	}
 
 	internal class SourceFile {
-		Dictionary<uint,MethodInfo> methods;
+		Dictionary<uint, MethodInfo> methods;
 		AssemblyInfo assembly;
 		int id;
 		Document doc;
@@ -698,7 +695,7 @@ namespace WebAssembly.Net.Debugging {
 				try {
 					var bytes = await step.Data;
 					assembly = new AssemblyInfo (step.Url, bytes [0], bytes [1]);
-				} catch (Exception e) {
+				} catch (Exception) {
 					// This can happen if the pdb file is missing like for netstandard.dll
 					//logger.LogDebug ($"Failed to load {step.Url} ({e.Message})");
 				}
@@ -807,7 +804,6 @@ namespace WebAssembly.Net.Debugging {
 
 			foreach (var method in sourceFile.Methods) {
 				foreach (var sequencePoint in method.DebugInformation.SequencePoints) {
-					//FIXME handle multi doc methods
 					if (!sequencePoint.IsHidden && Match (sequencePoint, request.Line, request.Column))
 						yield return new SourceLocation (method, sequencePoint);
 				}
