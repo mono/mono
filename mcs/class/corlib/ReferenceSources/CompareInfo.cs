@@ -127,7 +127,7 @@ namespace System.Globalization
 				return internal_index_managed (s1, sindex, count, s2, opt, first);
 			} else {
 				if (opt == CompareOptions.IgnoreCase)
-					throw new NotImplementedException ("CompareOptions.IgnoreCase is not supported on this platform.");
+					throw new PlatformNotSupportedException ("CompareOptions.IgnoreCase is not supported on this platform.");
 				return internal_index (s1, sindex, count, s2, first);
 			}
 		}
