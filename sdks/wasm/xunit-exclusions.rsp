@@ -169,7 +169,7 @@
 
 # System.Net.Security.Tests
 # System.NotSupportedException: TLS Support not available
-# Added throwing PNSE to the respective code base (mcs/class/System/Mono.Net.Security/MonoTlsProviderFactory.cs)
+# Added throwing PNSE to the respective code base (mcs/class/System/System.Net.Security/SslStream.cs)
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_Async.SslStream_StreamToStream_Flush_Propagated
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_BeginEnd.SslStream_StreamToStream_Flush_Propagated
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_Sync.SslStream_StreamToStream_Flush_Propagated

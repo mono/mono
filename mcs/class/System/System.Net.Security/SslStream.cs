@@ -120,7 +120,15 @@ namespace System.Net.Security
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
+#if WASM
+			try {
+				provider = GetProvider ();
+			} catch (Exception ex) {
+				throw new PlatformNotSupportedException ("System.Net.Security.SslStream is not supported on the current platform.", ex);
+			}
+#else
 			provider = GetProvider ();
+#endif
 			settings = MonoTlsSettings.CopyDefaultSettings ();
 			impl = provider.CreateSslStream (this, innerStream, leaveInnerStreamOpen, settings);
 		}
@@ -133,7 +141,15 @@ namespace System.Net.Security
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
+#if WASM
+			try {
+				provider = GetProvider ();
+			} catch (Exception ex) {
+				throw new PlatformNotSupportedException ("System.Net.Security.SslStream is not supported on the current platform.", ex);
+			}
+#else
 			provider = GetProvider ();
+#endif
 			settings = MonoTlsSettings.CopyDefaultSettings ();
 			SetAndVerifyValidationCallback (userCertificateValidationCallback);
 			SetAndVerifySelectionCallback (userCertificateSelectionCallback);
