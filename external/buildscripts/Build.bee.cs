@@ -67,7 +67,7 @@ namespace BuildProgram
 		{
 			Artifacts.Add("android-ndk-win",
 				new Tuple<string, string>(
-					"android-ndk-win/r19-unity_ee15a8f43c980bbe7a1fe9ac072f5bcb85aada70cccd9852f4e777f54cc234b3.7z",
+					"android-ndk-win/r19-unity_799f451638695b9da797fcd509f9f2a8e59e35603e78a344acfd7fa2ba5f0ce1.7z",
 					"unity-internal"));
 		}
 
@@ -93,8 +93,8 @@ namespace BuildProgram
 		{
 			Artifacts.Add("android-ndk-linux",
 				new Tuple<string, string>(
-					"android-ndk-linux/r19-unity_0485c5b2fc49445102168d23dafb0176602a28a1e0dadb6e78eab722e32e2dd9.7z",
-					"unity-internal"));
+					"android-ndk-linux/r19-unity_c81ed9864399ec6f2d28181a58cc0588481499dddd4970e7e9f4bfbb64e8114e.7z",
+					"testing"));
 
 			Artifacts.Add("sysroot-gcc-glibc-x64",
 				new Tuple<string, string>(
