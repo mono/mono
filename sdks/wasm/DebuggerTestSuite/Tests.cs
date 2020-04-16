@@ -1072,7 +1072,7 @@ namespace DebuggerTests
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, 111, 3);
-				await SetBreakpoint (debugger_test_loc, 127, 3);
+				await SetBreakpoint (debugger_test_loc, 126, 3);
 
 				// Will stop in Asyncmethod0
 				var wait_res = await EvaluateAndCheck (
@@ -1099,7 +1099,7 @@ namespace DebuggerTests
 
 				// TODO: previous frames have async machinery details, so no point checking that right now
 
-				var pause_loc = await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 127, 3, /*FIXME: "AsyncMethodNoReturn"*/ "MoveNext",
+				var pause_loc = await SendCommandAndCheck (null, "Debugger.resume", debugger_test_loc, 126, 3, /*FIXME: "AsyncMethodNoReturn"*/ "MoveNext",
 					locals_fn: (locals) => {
 						Assert.Equal (4, locals.Count());
 						CheckString (locals, "str", "AsyncMethodNoReturn's local");
