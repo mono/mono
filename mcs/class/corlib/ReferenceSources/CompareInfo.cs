@@ -123,9 +123,13 @@ namespace System.Globalization
 			if (opt == CompareOptions.Ordinal)
 				return first ? s1.IndexOfUnchecked (s2, sindex, count) : s1.LastIndexOfUnchecked (s2, sindex, count);
 			
-			return UseManagedCollation ?
-				internal_index_managed (s1, sindex, count, s2, opt, first) :
-				internal_index (s1, sindex, count, s2, first);
+			if (UseManagedCollation) {
+				return internal_index_managed (s1, sindex, count, s2, opt, first);
+			} else {
+				if (opt == CompareOptions.IgnoreCase)
+					throw new NotImplementedException ("CompareOptions.IgnoreCase is not supported on this platform.");
+				return internal_index (s1, sindex, count, s2, first);
+			}
 		}
 
 		int internal_compare_switch (string str1, int offset1, int length1, string str2, int offset2, int length2, CompareOptions options)
