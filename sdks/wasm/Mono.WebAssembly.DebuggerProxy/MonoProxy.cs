@@ -280,7 +280,7 @@ namespace WebAssembly.Net.Debugging {
 					return true;
 				}
 
-				var methodInfo = type.Methods.First (m => m.Name == methodName);
+				var methodInfo = type.Methods.FirstOrDefault (m => m.Name == methodName);
 				if (methodInfo == null) {
 					SendResponse (id, Result.Err ($"Method '{typeName}:{methodName}' not found."), token);
 					return true;
@@ -382,7 +382,7 @@ namespace WebAssembly.Net.Debugging {
 					foreach (var mono_frame in the_mono_frames) {
 						++frame_id;
 						var il_pos = mono_frame ["il_pos"].Value<int> ();
-						var method_token = mono_frame ["method_token"].Value<int> ();
+						var method_token = mono_frame ["method_token"].Value<uint> ();
 						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
 
 						var store = await LoadStore (sessionId, token);
@@ -838,6 +838,12 @@ namespace WebAssembly.Net.Debugging {
 			logger.LogDebug ("BP request for '{req}' runtime ready {context.RuntimeReady}", req, GetContext (sessionId).IsRuntimeReady);
 
 			var breakpoints = new List<Breakpoint> ();
+
+			// if column is specified the frontend wants the exact matches
+			// and will clear the bp if it isn't close enough
+			if (req.Column != 0)
+				locations = locations.Where (l => l.Column == req.Column).ToList ();
+
 			foreach (var loc in locations) {
 				var bp = await SetMonoBreakpoint (sessionId, req.Id, loc, token);
 
@@ -884,31 +890,18 @@ namespace WebAssembly.Net.Debugging {
 				return false;
 
 			var src_file = (await LoadStore (msg_id, token)).GetFileById (id);
-			var res = new StringWriter ();
 
 			try {
 				var uri = new Uri (src_file.Url);
 				string source = $"// Unable to find document {src_file.SourceUri}";
 
-				if (uri.IsFile && File.Exists(uri.LocalPath)) {
-					using (var f = new StreamReader (File.Open (uri.LocalPath, FileMode.Open))) {
-						await res.WriteAsync (await f.ReadToEndAsync ());
-					}
+				using (var data = await src_file.GetSourceAsync (checkHash: false, token: token)) {
+						if (data.Length == 0)
+							return false;
 
-					source = res.ToString ();
-				} else if (src_file.SourceUri.IsFile && File.Exists(src_file.SourceUri.LocalPath)) {
-					using (var f = new StreamReader (File.Open (src_file.SourceUri.LocalPath, FileMode.Open))) {
-						await res.WriteAsync (await f.ReadToEndAsync ());
-					}
-
-					source = res.ToString ();
-				} else if(src_file.SourceLinkUri != null) {
-					var doc = await new WebClient ().DownloadStringTaskAsync (src_file.SourceLinkUri);
-					await res.WriteAsync (doc);
-
-					source = res.ToString ();
+						using (var reader = new StreamReader (data))
+							source = await reader.ReadToEndAsync ();
 				}
-
 				SendResponse (msg_id, Result.OkFromObject (new { scriptSource = source }), token);
 			} catch (Exception e) {
 				var o = new {
