@@ -238,7 +238,7 @@ endif
 #NETCOREAPP_DIR=$(NETCOREAPP_NAME).$(NETCOREAPP_VERSION)
 #$(NETCOREAPP_DIR):
 #	nuget install $(NETCOREAPP_NAME) -Version $(NETCOREAPP_VERSION) -Source $(NETCOREAPP_FEED)
-NETCOREAPP_DIR=$(DOTNET_REPO_PATH)/artifacts//bin/runtime/netcoreapp5.0-OSX-Release-x64
+NETCOREAPP_DIR=$(DOTNET_REPO_PATH)/artifacts//bin/pkg/netcoreapp5.0/runtime/OSX-Release-x64
 
 ifdef ENABLE_RSYNC
 RSYNC=rsync
@@ -249,10 +249,10 @@ endif
 .PHONY: runtime-netcore
 # Installs into out/wasm-runtime-netcore
 # Use rsync to avoid rebuilds
+# FIXME: 'bin' contains only libmono.a and not the other libs
 runtime-netcore:
 	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset mono -c release -arch wasm -os WebAssembly
 	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset Libs.Native -c release -arch wasm -os WebAssembly
-	cd $(DOTNET_REPO_PATH)/artifacts/obj/mono/WebAssembly.wasm.Release && source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && make install
 	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/bin/mono/WebAssembly.wasm.Release/{System.Private.CoreLib.dll,System.Private.CoreLib.pdb} $(TOP)/sdks/out/wasm-runtime-netcore-release
 	$(RSYNC) -r $(DOTNET_REPO_PATH)/artifacts/obj/mono/WebAssembly.wasm.Release/out/* $(TOP)/sdks/out/wasm-runtime-netcore-release
 	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/obj/native/netcoreapp5.0-WebAssembly-Release-wasm/{System.Native/libSystem.Native.a,System.IO.Compression.Native/libSystem.IO.Compression.Native.a} $(TOP)/sdks/out/wasm-runtime-netcore-release/lib/
@@ -578,13 +578,13 @@ build-interp-hello: packager.exe hello.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-hello --nobinding --builddir=obj/interp-hello --template=runtime-tests.js hello.exe
 	ninja -v -C obj/interp-hello
 
+run-interp-hello: build-interp-hello
+	(cd bin/interp-hello && $(SM) runtime.js --run hello.exe)
+
 build-io-sample: packager.exe hello-io.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/io-sample --builddir=obj/io-sample --template=runtime.js --asset=hello-io.html --enable-fs hello-io.exe
 	ninja -v -C obj/io-sample
 	(cd bin/io-sample && $(PYTHON) $(EMSCRIPTEN_SDK_DIR)/upstream/emscripten/tools/file_packager.py mono.dat --js-output=mono-loader.js --preload ../../hello-io.cs@/)
-
-run-interp-hello: build-interp-hello
-	(cd bin/interp-hello && $(SM) runtime.js --run hello.exe)
 
 threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs

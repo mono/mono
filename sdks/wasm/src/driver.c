@@ -229,7 +229,6 @@ int SystemNative_CreateNetworkChangeListenerSocket (int a) { return 0; }
 void SystemNative_ReadEvents (int a,int b) {}
 int SystemNative_SchedGetAffinity (int a,int b) { return 0; }
 int SystemNative_SchedSetAffinity (int a,int b) { return 0; }
-int getgrouplist (int a,int b,int c,int d) { return 0; }
 #endif
 
 #if !defined(ENABLE_AOT) || defined(EE_MODE_LLVMONLY_INTERP)
