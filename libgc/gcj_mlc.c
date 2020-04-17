@@ -50,6 +50,8 @@ int GC_gcj_debug_kind;	/* The kind of objects that is always marked 	*/
 ptr_t * GC_gcjobjfreelist;
 ptr_t * GC_gcjdebugobjfreelist;
 
+void GC_start_debugging();
+
 /* Caller does not hold allocation lock. */
 void GC_init_gcj_malloc(int mp_index, void * /* really GC_mark_proc */mp)
 {
