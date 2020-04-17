@@ -179,6 +179,9 @@ NOHANDLES(ICALL(KPAIR_4, "_ProtectMachine", ves_icall_Mono_Security_Cryptography
 NOHANDLES(ICALL(KPAIR_5, "_ProtectUser", ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser))
 #endif /* !PLATFORM_RO_FS */
 
+ICALL_TYPE(UNITYTLS, "Mono.Unity.UnityTls", UNITYTLS_1)
+ICALL(UNITYTLS_1, "GetUnityTlsInterface", mono_unity_get_unitytls_interface)
+
 ICALL_TYPE(APPDOM, "System.AppDomain", APPDOM_23)
 HANDLES(APPDOM_23, "DoUnhandledException", ves_icall_System_AppDomain_DoUnhandledException, void, 2, (MonoAppDomain, MonoException))
 HANDLES(APPDOM_1, "ExecuteAssembly", ves_icall_System_AppDomain_ExecuteAssembly, gint32, 3, (MonoAppDomain, MonoReflectionAssembly, MonoArray))

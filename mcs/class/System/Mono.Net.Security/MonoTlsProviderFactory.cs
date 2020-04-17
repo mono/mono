@@ -50,6 +50,10 @@ using Mono.Btls;
 using Mono.AppleTls;
 #endif
 
+#if UNITY
+using Mono.Unity;
+#endif
+
 #if !MOBILE
 using System.Reflection;
 #endif
@@ -212,6 +216,7 @@ namespace Mono.Net.Security
 
 #endregion
 
+		internal static readonly Guid UnityTlsId = new Guid("06414A97-74F6-488F-877B-A6CA9BBEB82E");
 		internal static readonly Guid AppleTlsId = new Guid ("981af8af-a3a3-419a-9f01-a518e3a17c1c");
 		internal static readonly Guid BtlsId = new Guid ("432d18c9-9348-4b90-bfbf-9f2a10e1f15b");
 
@@ -226,9 +231,26 @@ namespace Mono.Net.Security
 				providerRegistration = new Dictionary<string,Tuple<Guid,string>> ();
 				providerCache = new Dictionary<Guid,MobileTlsProvider> ();
 
+				// Let Unity check to see if we have an implementation first before falling back to the usual behavior
+#if UNITY
+				if (Mono.Unity.UnityTls.IsSupported) {
+					PopulateUnityProviders ();
+					return;
+				}
+#endif
+
 				PopulateProviders ();
 			}
 		}
+
+#if UNITY
+		static void PopulateUnityProviders ()
+		{
+			var unityTlsEntry = new Tuple<Guid,String> (UnityTlsId, "Mono.Unity.UnityTlsProvider");
+			providerRegistration.Add ("default", unityTlsEntry);
+			providerRegistration.Add ("unitytls", unityTlsEntry);
+		}
+#endif
 
 #if ONLY_APPLETLS || MONOTOUCH || XAMMAC
 		// TODO: Should be redundant
@@ -319,6 +341,10 @@ namespace Mono.Net.Security
 				if (IsBtlsSupported ())
 					goto case "btls";
 #endif
+#if UNITY
+				if (Mono.Unity.UnityTls.IsSupported)
+					goto case "unitytls";
+#endif
 				throw new NotSupportedException ("TLS Support not available.");
 #if MONO_FEATURE_APPLETLS
 			case "apple":
@@ -327,6 +353,10 @@ namespace Mono.Net.Security
 #if MONO_FEATURE_BTLS
 			case "btls":
 				return new MonoBtlsProvider ();
+#endif
+#if UNITY
+			case "unitytls":
+				return new UnityTlsProvider ();
 #endif
 			}
 

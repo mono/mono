@@ -245,6 +245,15 @@ Mono.Btls/X509PalImpl.Btls.cs
 
 Mono.AppleTls/INativeObject.cs
 
+Mono.UnityTls/UnityTls.cs
+Mono.UnityTls/UnityTlsProvider.cs
+Mono.UnityTls/UnityTlsStream.cs
+Mono.UnityTls/UnityTlsContext.cs
+Mono.UnityTls/UnityTlsConversions.cs
+Mono.UnityTls/X509ChainImplUnityTls.cs
+Mono.UnityTls/Debug.cs
+Mono.UnityTls/CertHelper.cs
+
 Mono.Util/MonoPInvokeCallbackAttribute.cs
 
 MonoTouch/Dummy.cs
