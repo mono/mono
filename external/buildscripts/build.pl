@@ -4,6 +4,8 @@ use Getopt::Long;
 use File::Basename;
 use File::Path;
 use lib ('external/buildscripts', "../../Tools/perl_lib","perl_lib", 'external/buildscripts/perl_lib');
+use strict;
+use warnings;
 use Tools qw(InstallNameTool);
 
 print ">>> PATH in Build All = $ENV{PATH}\n\n";
@@ -11,7 +13,7 @@ print ">>> PATH in Build All = $ENV{PATH}\n\n";
 my $currentdir = getcwd();
 
 my $monoroot = File::Spec->rel2abs(dirname(__FILE__) . "/../..");
-my $monoroot = abs_path($monoroot);
+$monoroot = abs_path($monoroot);
 
 my $buildscriptsdir = "$monoroot/external/buildscripts";
 my $addtoresultsdistdir = "$buildscriptsdir/add_to_build_results/monodistribution";
@@ -294,7 +296,7 @@ if ($build)
 			}
 			else
 			{
-				if (not $checkoutonthefly)
+				if (not $checkoutOnTheFly)
 				{
 					print(">>> No external build deps found.  Might as well try to check them out.  If it fails, we'll continue and trust mono is in your PATH\n");
 				}
@@ -681,7 +683,6 @@ if ($build)
 		my $platformRootPostfix = "";
 		my $useKraitPatch = 1;
 		my $kraitPatchPath = "$monoroot/../../android_krait_signal_handler/build";
-		my $toolChainExtension = "";
 
 		$ENV{ANDROID_PLATFORM} = "android-$apiLevel";
 
@@ -759,8 +760,6 @@ if ($build)
 
 		if ($runningOnWindows)
 		{
-			$toolChainExtension = ".exe";
-
 			$androidPlatformRoot = `cygpath -w $androidPlatformRoot`;
 			# clean up trailing new lines that end up in the output from cygpath.
 			$androidPlatformRoot =~ s/\n+$//;
@@ -968,8 +967,6 @@ if ($build)
 
 		if ($runningOnWindows)
 		{
-			$toolChainExtension = ".exe";
-
 			$tizenPlatformRoot = `cygpath -w $tizenPlatformRoot`;
 			# clean up trailing new lines that end up in the output from cygpath.
 			$tizenPlatformRoot =~ s/\n+$//;
@@ -1598,7 +1595,7 @@ if ($artifact)
 			system("ln","-f", "$monoroot/mono/mini/.libs/libmonosgen-2.0.dylib","$embedDirArchDestination/libmonosgen-2.0.dylib") eq 0 or die ("failed symlinking libmonosgen-2.0.dylib\n");
 
 			print "Hardlinking libMonoPosixHelper.dylib\n";
-			system("ln","-f", "$monoroot/support/.libs/libMonoPosixHelper.dylib","$embedDirArchDestination/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking $libtarget/libMonoPosixHelper.dylib\n");
+			system("ln","-f", "$monoroot/support/.libs/libMonoPosixHelper.dylib","$embedDirArchDestination/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking $embedDirArchDestination/libMonoPosixHelper.dylib\n");
 
 			InstallNameTool("$embedDirArchDestination/libmonobdwgc-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonobdwgc-2.0.dylib");
 			InstallNameTool("$embedDirArchDestination/libmonosgen-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonosgen-2.0.dylib");
@@ -1691,9 +1688,9 @@ else
 
 if ($test)
 {
+	my $runtimeTestsDir = "$monoroot/mono/mini";
 	if ($runRuntimeTests)
 	{
-		my $runtimeTestsDir = "$monoroot/mono/mini";
 		chdir("$runtimeTestsDir") eq 1 or die ("failed to chdir");
 		print("\n>>> Calling make check in $runtimeTestsDir\n\n");
 		system("make","check") eq 0 or die ("runtime tests failed\n");
