@@ -360,6 +360,10 @@ namespace WebAssembly.Net.Debugging {
 			try {
 				Url = url;
 				ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
+
+				// set ReadSymbols = true unconditionally in case there
+				// is an embedded pdb then handle ArgumentException
+				// and assume that if pdb == null that is the cause
 				rp.ReadSymbols = true;
 				rp.SymbolReaderProvider = new PdbReaderProvider ();
 				if (pdb != null)
@@ -370,7 +374,9 @@ namespace WebAssembly.Net.Debugging {
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
 			} catch (BadImageFormatException ex) {
 				logger.LogWarning ($"Failed to read assembly as portable PDB: {ex.Message}");
-			} catch (ArgumentNullException) {
+			} catch (ArgumentException) {
+				// if pdb == null this is expected and we
+				// read the assembly without symbols below
 				if (pdb != null)
 					throw;
 			}
@@ -695,9 +701,8 @@ namespace WebAssembly.Net.Debugging {
 				try {
 					var bytes = await step.Data;
 					assembly = new AssemblyInfo (step.Url, bytes [0], bytes [1]);
-				} catch (Exception) {
-					// This can happen if the pdb file is missing like for netstandard.dll
-					//logger.LogDebug ($"Failed to load {step.Url} ({e.Message})");
+				} catch (Exception e) {
+					logger.LogDebug ($"Failed to load {step.Url} ({e.Message})");
 				}
 				if (assembly == null)
 					continue;
