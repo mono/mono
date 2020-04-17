@@ -43,7 +43,7 @@ typedef struct
 	void *return_address;
 } MonoS390StackFrame;
 
-// #define MONO_ARCH_SIGSEGV_ON_ALTSTACK		1
+#define MONO_ARCH_SIGSEGV_ON_ALTSTACK			1
 #define MONO_ARCH_EMULATE_LCONV_TO_R8_UN 		1
 #define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS		1
 #define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS		1

@@ -973,7 +973,7 @@ add_general (guint *gr, size_data *sz, ArgInfo *ainfo)
 	if (*gr > S390_LAST_ARG_REG) {
 		sz->stack_size  = S390_ALIGN(sz->stack_size, sizeof(long));
 		ainfo->offset   = sz->stack_size;
-		ainfo->reg	= STK_BASE;
+		ainfo->reg	    = STK_BASE;
 		ainfo->regtype  = RegTypeBase;
 		sz->stack_size += sizeof(long);
 		sz->code_size  += 12;    
@@ -1460,19 +1460,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	
 	cinfo = get_call_info (cfg->mempool, sig);
 
-#if 0
-	if (!cinfo->struct_ret) {
-		switch (mini_get_underlying_type (sig->ret)->type) {
-		case MONO_TYPE_VOID:
-			break;
-		default:
-			cfg->ret->opcode = OP_REGVAR;
-			cfg->ret->dreg   = s390_r2;
-			break;
-		}
-	}
-#endif
-
 	/*--------------------------------------------------------------*/
 	/* local vars are at a positive offset from the stack pointer 	*/
 	/* also note that if the function uses alloca, we use s390_r11	*/
@@ -1486,20 +1473,6 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	cfg->sig_cookie = 0;
 
-#if 0
-	if (cinfo->struct_ret) {
-		inst 		       = cfg->vret_addr;
-		offset 		       = S390_ALIGN(offset, sizeof(gpointer));
-		inst->inst_offset  = offset;
-		inst->opcode 	   = OP_REGOFFSET;
-		inst->inst_basereg = frame_reg;
-		offset 		      += sizeof(gpointer);
-		if (G_UNLIKELY (cfg->verbose_level > 1)) {
-			printf ("struct_ret - size: %d offset: %d vret_addr =",cinfo->ret.size,offset);
-			mono_print_ins (cfg->vret_addr);
-		}
-	}
-#endif
     if (MONO_TYPE_ISSTRUCT(sig->ret)) {
         cfg->ret->opcode = OP_REGVAR;
         cfg->ret->inst_c0 = cfg->ret->dreg = cinfo->ret.reg;
@@ -3511,7 +3484,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (!cfg->r4fp)
 				s390_ledbr (code, ins->dreg, ins->sreg1);
 			break;
-                case OP_TLS_GET: {
+        case OP_TLS_GET: {
 			if (s390_is_imm16 (ins->inst_offset)) {
 				s390_lghi (code, s390_r13, ins->inst_offset);
 			} else if (s390_is_imm32 (ins->inst_offset)) {
@@ -3525,7 +3498,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			s390_lg  (code, ins->dreg, s390_r13, s390_r1, 0);
 			}
 			break;
-                case OP_TLS_SET: {
+        case OP_TLS_SET: {
 			if (s390_is_imm16 (ins->inst_offset)) {
 				s390_lghi (code, s390_r13, ins->inst_offset);
 			} else if (s390_is_imm32 (ins->inst_offset)) {
@@ -3549,18 +3522,56 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_TAILCALL_MEMBASE : {
 			MonoCallInst *call = (MonoCallInst *) ins;
 
-			s390_lgr (code, s390_r1, cfg->frame_reg);
+            /*
+             * Restore SP to caller's SP
+             */ 
 			code = backUpStackPtr(cfg, code);
 
-			s390_lg  (code, s390_r14, 0, STK_BASE, S390_RET_ADDR_OFFSET);
+            /*
+             * If the destination is specified as a register or membase then
+             * save destination so it doesn't get overwritten by the restores
+             */ 
+            if (ins->opcode != OP_TAILCALL)
+                s390_lgr (code, s390_r1, ins->sreg1);
+
+            /*
+             * If the IMT/RGCTX register is in use then don't restore over it
+             */
+            if ((call->used_iregs & (MONO_ARCH_RGCTX_REG << 1)) || (call->rgctx_reg))
+                s390_lgr (code, s390_r0, MONO_ARCH_RGCTX_REG);
+            /*
+             * If R6 is used for a parameter then don't restore the other
+             * parameter registers are volatile
+             */ 
+            if (call->used_iregs & (1 << 6))
+                s390_lmg (code, s390_r7, s390_r14, STK_BASE, S390_NONPARM_SAVE_OFFSET);
+            else
+                s390_lmg (code, s390_r6, s390_r14, STK_BASE, S390_REG_SAVE_OFFSET);
+
+            if ((call->used_iregs & (MONO_ARCH_RGCTX_REG << 1)) || (call->rgctx_reg))
+                s390_lgr (code, MONO_ARCH_RGCTX_REG, s390_r0);
+
+            /*
+             * Restore any FP registers that have been altered
+             */ 
+            if (cfg->arch.fpSize != 0) {
+                int fpOffset = -cfg->arch.fpSize;
+                for (int i = 8; i < 16; i++) {
+                    if (cfg->arch.used_fp_regs & (1 << i)) {
+                        s390_ldy (code, i, 0, STK_BASE, fpOffset);
+                        fpOffset += sizeof(double);
+                    }
+                }
+            }
+
             if (ins->opcode == OP_TAILCALL_REG) {
-                s390_br (code, ins->sreg1);
+                s390_br (code, s390_r1);
             } else { 
                 if (ins->opcode == OP_TAILCALL_MEMBASE) {
                     if (mono_hwcap_s390x_has_mie2) {
-                        s390_bi (code, 0, ins->sreg1, ins->inst_offset);
+                        s390_bi (code, 0, s390_r1, ins->inst_offset);
                     } else {
-                        s390_lg (code, s390_r1, 0, ins->sreg1, ins->inst_offset);
+                        s390_lg (code, s390_r1, 0, s390_r1, ins->inst_offset);
                         s390_br (code, s390_r1);
                     }
                 } else {
@@ -3643,47 +3654,49 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 			break;
 		case OP_LOCALLOC: {
-			int alloca_skip;
 			int area_offset;
 
 			if (cfg->param_area == 0)
-				alloca_skip = S390_MINIMAL_STACK_SIZE;
+				area_offset = S390_MINIMAL_STACK_SIZE;
 			else
-				alloca_skip = cfg->param_area;
+				area_offset = cfg->param_area;
 
-			area_offset = S390_ALIGN(alloca_skip, S390_STACK_ALIGNMENT);
+			area_offset = S390_ALIGN(area_offset, S390_STACK_ALIGNMENT);
+
+            /*
+             * Get alloc size and round to doubleword
+             */  
 			s390_lgr  (code, s390_r1, ins->sreg1);
-			if (ins->flags & MONO_INST_INIT)
-				s390_lgr  (code, s390_r0, ins->sreg1);
 			s390_aghi (code, s390_r1, 14);
 			s390_srlg (code, s390_r1, s390_r1, 0, 3);
 			s390_sllg (code, s390_r1, s390_r1, 0, 3);
-			if (cfg->method->save_lmf) {
-				/*----------------------------------*/
-				/* we have to adjust lmf ebp value  */
-				/*----------------------------------*/
-				int lmfOffset = cfg->stack_usage - sizeof(MonoLMF);
 
-				s390_lgr (code, s390_r13, cfg->frame_reg);
-				if (s390_is_imm16(lmfOffset)) {
-					s390_aghi (code, s390_r13, lmfOffset);
-				} else if (s390_is_imm32(lmfOffset)) {
-					s390_agfi (code, s390_r13, lmfOffset);
-				} else {
-					S390_SET  (code, s390_r13, lmfOffset);
-				}
-				s390_lgr (code, s390_r14, STK_BASE);
-				s390_sgr (code, s390_r14, s390_r1);
-				s390_stg (code, s390_r14, 0, s390_r13,
-					  MONO_STRUCT_OFFSET(MonoLMF, ebp));
-                        }
+            /*
+             * If we need to initialize then hold on to the length
+             */ 
+			if (ins->flags & MONO_INST_INIT) 
+                s390_lgr  (code, s390_r0, s390_r1);
+
+            /*
+             * Adjust the stack pointer and save the backchain
+             */ 
 			s390_lg   (code, s390_r13, 0, STK_BASE, 0);
 			s390_sgr  (code, STK_BASE, s390_r1);
 			s390_stg  (code, s390_r13, 0, STK_BASE, 0);
+
+            /*
+             * Skip the stack save requirements and point to localloc area 
+             * and ensure it's correctly aligned
+             */
 			s390_la   (code, ins->dreg, 0, STK_BASE, area_offset);
 			s390_aghi (code, ins->dreg, 7);
 			s390_srlg (code, ins->dreg, ins->dreg, 0, 3);
 			s390_sllg (code, ins->dreg, ins->dreg, 0, 3);
+
+            /*
+             * If we need to zero the area then clear from localloc start
+             * using the length we saved earlier
+             */ 
 			if (ins->flags & MONO_INST_INIT) {
 				s390_lgr  (code, s390_r1, s390_r0);
 				s390_lgr  (code, s390_r0, ins->dreg);
@@ -3693,6 +3706,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				s390_jo   (code, -2);
 				s390_lgr  (code, s390_r12, s390_r14);
 			}
+
+            /*
+             * If we have an LMF then we have to adjust its BP 
+             */
+			if (cfg->method->save_lmf) {
+				int lmfOffset = cfg->stack_usage - sizeof(MonoLMF);
+
+				if (s390_is_imm16(lmfOffset)) {
+					s390_lghi (code, s390_r13, lmfOffset);
+				} else if (s390_is_imm32(lmfOffset)) {
+					s390_lgfi (code, s390_r13, lmfOffset);
+				} else {
+					S390_SET  (code, s390_r13, lmfOffset);
+				}
+				s390_stg (code, s390_r15, s390_r13, cfg->frame_reg,
+                          MONO_STRUCT_OFFSET(MonoLMF, ebp));
+            }
 		}
 			break;
 		case OP_THROW: {
@@ -4269,12 +4299,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case OP_FSUB: {
 			CHECK_SRCDST_NCOM_F(sdbr);
-			// s390_sdbr (code, ins->dreg, src2);
 		}
 			break;		
 		case OP_RSUB: {
 			CHECK_SRCDST_NCOM_F(sebr);
-			// s390_sebr (code, ins->dreg, src2);
 		}
 			break;		
 		case OP_FMUL: {
@@ -4289,12 +4317,10 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;		
 		case OP_FDIV: {
 			CHECK_SRCDST_NCOM_F(ddbr);
-			// s390_ddbr (code, ins->dreg, src2);
 		}
 			break;		
 		case OP_RDIV: {
 			CHECK_SRCDST_NCOM_F(debr);
-			//s390_debr (code, ins->dreg, src2);
 		}
 			break;		
 		case OP_FNEG: {
@@ -5472,16 +5498,16 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		g_assert (cfg->rgctx_var->opcode == OP_REGOFFSET);
 
 		s390_stg  (code, MONO_ARCH_RGCTX_REG, 0, 
-			   cfg->rgctx_var->inst_basereg, 
-			   cfg->rgctx_var->inst_offset);
+			       cfg->rgctx_var->inst_basereg, 
+    			   cfg->rgctx_var->inst_offset);
 	}
 
 #if 0
 printf("ns: %s k: %s m: %s\n",method->klass->name_space,method->klass->name,method->name);fflush(stdout);
-// System.String:Concat
-if ((strcmp(method->klass->name_space,"System") == 0) && 
-    (strcmp(method->klass->name,"String") == 0) &&
-    (strcmp(method->name, "Concat") == 0)) {
+// Tests:test_9_tail_call_vret_by_val
+if ((strcmp(method->klass->name_space,"") == 0) && 
+    (strcmp(method->klass->name,"Tests") == 0) &&
+    (strcmp(method->name, "test_9_tail_call_vret_by_val") == 0)) {
     // (strcmp("CancellationToken,TaskCreationOptions,TaskContinuationOptions,TaskScheduler",mono_signature_get_desc(method->signature, FALSE)) != 0))  {
  printf("SIGNATURE: %s\n",mono_signature_get_desc(method->signature, FALSE)); fflush(stdout);
  s390_j (code, 0);
@@ -6808,23 +6834,48 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	CallInfo *caller_info = get_call_info (NULL, caller_sig);
 	CallInfo *callee_info = get_call_info (NULL, callee_sig);
 
-	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage) &&
-                   IS_SUPPORTED_TAILCALL (callee_info->struct_ret == caller_info->struct_ret);
+	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage);
 
 	// Any call that would result in parameters being placed on the stack cannot be "tailed" as it may 
 	// result in the callers parameter variables being overwritten.
 	ArgInfo const * const ainfo = callee_info->args + callee_sig->hasthis;
 	for (int i = 0; res && i < callee_sig->param_count; ++i) {
-		res = IS_SUPPORTED_TAILCALL (ainfo [i].regtype != RegTypeStructByAddr) &&
-			  IS_SUPPORTED_TAILCALL (((ainfo [i].regtype != RegTypeStructByVal) && 
-						             (ainfo [i].reg != STK_BASE) && 
-						             (ainfo [i].size <= 8 && ainfo [i].size != 3)));
+        switch(ainfo[i].regtype) {
+        case RegTypeGeneral :
+        case RegTypeFP :
+        case RegTypeFPR4 :
+        case RegTypeStructByValInFP :
+            res = TRUE;
+            break;
+        case RegTypeBase :
+            res = FALSE;
+            break;
+        case RegTypeStructByAddr :
+            if (ainfo[i].reg == STK_BASE) 
+                res = FALSE;
+            else
+                res = TRUE;
+            break;
+        case RegTypeStructByVal :
+            if (ainfo[i].reg == STK_BASE) 
+                res = FALSE;
+            else {
+                switch(ainfo[i].size) {
+                case 0: case 1: case 2: case 4: case 8:
+                    res = TRUE;
+                    break;
+                default:
+                    res = FALSE;
+                }
+            }
+            break;
+        }
 	}
 
 	g_free (caller_info);
 	g_free (callee_info);
 
-	return res;
+	return(res);
 }
 
 /*========================= End of Function ========================*/
