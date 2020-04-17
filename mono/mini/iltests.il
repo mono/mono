@@ -3820,7 +3820,7 @@ L3:
 		bne.un exit
 		pop
 
-		ldc.i4 5
+		ldc.i4 6
 		ldloc arr
 		ldc.i4 101
 		ldc.i4 202

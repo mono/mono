@@ -1163,7 +1163,7 @@ ves_array_create (MonoDomain *domain, MonoClass *klass, int param_count, stackva
 	} else {
 		/* Only lengths provided. */
 		for (int i = 0; i < param_count; ++i) {
-			lengths [i] = values [i]->data.i;
+			lengths [i] = values [i].data.i;
 		}
 	}
 	return (MonoObject*) mono_array_new_full_checked (domain, klass, lengths, lower_bounds, error);
