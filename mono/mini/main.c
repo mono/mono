@@ -199,9 +199,9 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		uint32_t count = h.ncmds;
 		while (total > 0 && count >0) {
 			struct load_command lc;
+			off_t sig_stored = lseek (fd, 0, SEEK_CUR);
 			if (read (fd, &lc, sizeof (lc)) == -1)
 				goto doclose;
-			off_t sig_stored = lseek (fd, 0, SEEK_CUR);
 			if (lc.cmd == LC_SYMTAB) {
 				struct symtab_command stc;
 				if ((sigstart = lseek (fd, -sizeof (lc), SEEK_CUR)) == -1)
@@ -216,7 +216,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 				if (memcmp (sigbuffer+sizeof(uint64_t), "xmonkeysloveplay", 16) == 0)
 					goto found;
 			}
-			if ((sigstart = lseek (fd, sig_stored + lc.cmdsize-sizeof (lc), SEEK_SET)) == -1)
+			if ((sigstart = lseek (fd, sig_stored + lc.cmdsize, SEEK_SET)) == -1)
 				goto doclose;
 			total -= sizeof (lc.cmdsize);
 			count--;
