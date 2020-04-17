@@ -35,6 +35,9 @@
 #    include "buildver-boehm.h"
 #  endif
 #endif
+#ifdef HOST_DARWIN
+#include <mach-o/loader.h>
+#endif
 
 //#define TEST_ICALL_SYMBOL_MAP 1
 
@@ -179,8 +182,49 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		goto doclose;
 	if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
 		goto doclose;
-	if (memcmp (sigbuffer+sizeof(uint64_t), "xmonkeysloveplay", 16) != 0)
+	if (memcmp (sigbuffer+sizeof(uint64_t), "xmonkeysloveplay", 16) == 0)
+		goto found;
+	else
+	{
+#ifdef HOST_DARWIN
+		struct mach_header_64 h;
+		if ((sigstart = lseek (fd, 0, SEEK_SET)) == -1)
+			goto doclose;
+		if (read (fd, &h, sizeof (h)) == -1)
+			goto doclose;
+		if (h.magic != MH_MAGIC_64)
+			goto doclose;
+
+		off_t total = h.sizeofcmds;
+		uint32_t count = h.ncmds;
+		while (total > 0 && count >0) {
+			struct load_command lc;
+			if (read (fd, &lc, sizeof (lc)) == -1)
+				goto doclose;
+			off_t sig_stored = lseek (fd, 0, SEEK_CUR);
+			if (lc.cmd == LC_SYMTAB) {
+				struct symtab_command stc;
+				if ((sigstart = lseek (fd, -sizeof (lc), SEEK_CUR)) == -1)
+					goto doclose;
+				if (read (fd, &stc, sizeof (stc)) == -1)
+					goto doclose;
+
+				if ((sigstart = lseek (fd, -(16+sizeof(uint64_t))+stc.stroff + stc.strsize, SEEK_SET)) == -1)
+					goto doclose;
+				if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
+					goto doclose;
+				if (memcmp (sigbuffer+sizeof(uint64_t), "xmonkeysloveplay", 16) == 0)
+					goto found;
+			}
+			if ((sigstart = lseek (fd, sig_stored + lc.cmdsize-sizeof (lc), SEEK_SET)) == -1)
+				goto doclose;
+			total -= sizeof (lc.cmdsize);
+			count--;
+		}
 		goto doclose;
+#endif
+	}
+found:
 	directory_location = GUINT64_FROM_LE ((*(uint64_t *) &sigbuffer [0]));
 	if (lseek (fd, directory_location, SEEK_SET) == -1)
 		goto doclose;
