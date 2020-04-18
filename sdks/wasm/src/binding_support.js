@@ -25,7 +25,7 @@ var BindingSupportLib = {
 		bindings_lazy_init: function () {
 			if (this.init)
 				return;
-		
+
 			this.assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string']);
 			this.find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string']);
 			this.find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number']);
@@ -65,7 +65,7 @@ var BindingSupportLib = {
 				}
 			}
 
-			var wasm_runtime_class = this.find_class (this.binding_module, namespace, classname)
+			var wasm_runtime_class = this.find_class (this.binding_module, namespace, classname);
 			if (!wasm_runtime_class)
 				throw "Can't find " + binding_fqn_class + " class";
 
@@ -91,29 +91,28 @@ var BindingSupportLib = {
 			this.bind_existing_obj = get_method ("BindExistingObject");
 			this.unbind_js_obj = get_method ("UnBindJSObject");
 			this.unbind_js_obj_and_free = get_method ("UnBindJSObjectAndFree");
-			this.unbind_raw_obj_and_free = get_method ("UnBindRawJSObjectAndFree");
-			this.get_js_id = get_method ("GetJSObjectId");
-			this.get_raw_mono_obj = get_method ("GetMonoObject");
+			this.unBindRawJSObjectAndFree = csharpWrap ("UnBindRawJSObjectAndFree", "ii");
+			this.getJSObjectId = csharpWrap ("GetJSObjectId", "m");
+			this.getMonoObject = csharpWrap ("GetMonoObject", "im");
 
-			this.box_js_int = get_method ("BoxInt");
-			this.box_js_double = get_method ("BoxDouble");
-			this.box_js_bool = get_method ("BoxBool");
-			this.is_simple_array = get_method ("IsSimpleArray");
-			this.get_core_type = get_method ("GetCoreType");
-			this.setup_js_cont = get_method ("SetupJSContinuation");
+			this.boxInt = csharpWrap ("BoxInt", "im");
+			this.boxDouble = csharpWrap ("BoxDouble", "dm");
+			this.boxBool = csharpWrap ("BoxBool", "im");
+			this.isSimpleArray = csharpWrap ("IsSimpleArray", "mi");
+			this.getCoreType = csharpWrap ("GetCoreType", "so");
+			this.setupJSContinuation = csharpWrap ("SetupJSContinuation", "mo");
 
-			this.create_tcs = get_method ("CreateTaskSource");
-			this.set_tcs_result = get_method ("SetTaskSourceResult");
-			this.set_tcs_failure = get_method ("SetTaskSourceFailure");
-			this.tcs_get_task_and_bind = get_method ("GetTaskAndBind");
-			this.get_call_sig = get_method ("GetCallSignature");
+			this.createTaskSource = csharpWrap ("CreateTaskSource", "i");
+			this.setTaskSourceResult = csharpWrap("SetTaskSourceResult", "oo");
+			this.setTaskSourceFailure = csharpWrap ("SetTaskSourceFailure", "os");
+			this.tcsGetTaskAndBind = csharpWrap ("GetTaskAndBind", "oi");
+			this.getCallSignature = csharpWrap ("GetCallSignature", "i");
 
-			this.object_to_string = get_method ("ObjectToString");
-			this.get_date_value = get_method ("GetDateValue");
-			this.create_date_time = get_method ("CreateDateTime");
-			this.create_uri = get_method ("CreateUri");
+			this.objectToString = csharpWrap ("ObjectToString", "m");
+			this.getDateValue = csharpWrap ("GetDateValue", "md");
+			this.createDateTime = csharpWrap ("CreateDateTime", "dm");
 			this.createUri = csharpWrap ("CreateUri", "sm");
-			this.object_to_enum = get_method ("ObjectToEnum");
+			this.objectToEnum = csharpWrap ("ObjectToEnum", "iimm");
 			this.init = true;
 		},
 
@@ -128,7 +127,7 @@ var BindingSupportLib = {
 		},
 
 		is_nested_array: function (ele) {
-			return this.call_method (this.is_simple_array, null, "mi", [ ele ]);
+			return this.isSimpleArray (null, [ ele ]);
 		},
 
 		mono_array_to_js_array: function (mono_array) {
@@ -191,7 +190,7 @@ var BindingSupportLib = {
 					};
 				});
 
-				this.call_method (this.setup_js_cont, null, "mo", [ mono_obj, cont_obj ]);
+				this.setupJSContinuation (null, [ mono_obj, cont_obj ]);
 				obj.__mono_js_cont__ = cont_obj.__mono_gchandle__;
 				cont_obj.__mono_js_task__ = obj.__mono_gchandle__;
 				return promise;
@@ -211,31 +210,31 @@ var BindingSupportLib = {
 				}
 				else
 				{
-					enumValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
+					enumValue = this.objectToString (null, [ mono_obj ]);
 				}
 
 				return enumValue;
 
 
-			case 11: 
-			case 12: 
-			case 13: 
-			case 14: 
-			case 15: 
-			case 16: 
-			case 17: 
+			case 11:
+			case 12:
+			case 13:
+			case 14:
+			case 15:
+			case 16:
+			case 17:
 			case 18:
 			{
 				throw new Error ("Marshalling of primitive arrays are not supported.  Use the corresponding TypedArray instead.");
 			}
 			case 20: // clr .NET DateTime
-				var dateValue = this.call_method(this.get_date_value, null, "md", [ mono_obj ]);
+				var dateValue = this.getDateValue (null, [ mono_obj ]);
 				return new Date(dateValue);
 			case 21: // clr .NET DateTimeOffset
-				var dateoffsetValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
+				var dateoffsetValue = this.objectToString (null, [ mono_obj ]);
 				return dateoffsetValue;
 			case 22: // clr .NET Uri
-				var uriValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
+				var uriValue = this.objectToString (null, [ mono_obj ]);
 				return uriValue;
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
@@ -243,19 +242,19 @@ var BindingSupportLib = {
 		},
 
 		create_task_completion_source: function () {
-			return this.call_method (this.create_tcs, null, "i", [ -1 ]);
+			return this.createTaskSource (null, [ -1 ]);
 		},
 
 		set_task_result: function (tcs, result) {
 			tcs.is_mono_tcs_result_set = true;
-			this.call_method (this.set_tcs_result, null, "oo", [ tcs, result ]);
+			this.setTaskSourceResult (null, [ tcs, result ]);
 			if (tcs.is_mono_tcs_task_bound)
 				this.free_task_completion_source(tcs);
 		},
 
 		set_task_failure: function (tcs, reason) {
 			tcs.is_mono_tcs_result_set = true;
-			this.call_method (this.set_tcs_failure, null, "os", [ tcs, reason.toString () ]);
+			this.setTaskSourceFailure (null, [ tcs, reason.toString () ]);
 			if (tcs.is_mono_tcs_task_bound)
 				this.free_task_completion_source(tcs);
 		},
@@ -272,15 +271,15 @@ var BindingSupportLib = {
 			this.bindings_lazy_init ();
 
 			// determines if the javascript object is a Promise or Promise like which can happen
-			// when using an external Promise library.  The javascript object should be marshalled 
+			// when using an external Promise library.  The javascript object should be marshalled
 			// as managed Task objects.
-			// 
-			// Example is when Bluebird is included in a web page using a script tag, it overwrites the 
+			//
+			// Example is when Bluebird is included in a web page using a script tag, it overwrites the
 			// global Promise object by default with its own version of Promise.
 			function isThenable() {
 				// When using an external Promise library the Promise.resolve may not be sufficient
 				// to identify the object as a Promise.
-				return Promise.resolve(js_obj) === js_obj || 
+				return Promise.resolve(js_obj) === js_obj ||
 						((typeof js_obj === "object" || typeof js_obj === "function") && typeof js_obj.then === "function")
 			}
 
@@ -290,12 +289,12 @@ var BindingSupportLib = {
 					return 0;
 				case typeof js_obj === "number":
 					if (parseInt(js_obj) == js_obj)
-						return this.call_method (this.box_js_int, null, "im", [ js_obj ]);
-					return this.call_method (this.box_js_double, null, "dm", [ js_obj ]);
+						return this.boxInt (null, [ js_obj ]);
+					return this.boxDouble (null, [ js_obj ]);
 				case typeof js_obj === "string":
 					return this.js_string_to_mono_string (js_obj);
 				case typeof js_obj === "boolean":
-					return this.call_method (this.box_js_bool, null, "im", [ js_obj ]);
+					return this.boxBool (null, [ js_obj ]);
 				case isThenable() === true:
 					var the_task = this.try_extract_mono_obj (js_obj);
 					if (the_task)
@@ -309,7 +308,7 @@ var BindingSupportLib = {
 					return this.get_task_and_bind (tcs, js_obj);
 				case js_obj.constructor.name === "Date":
 					// We may need to take into account the TimeZone Offset
-					return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
+					return this.createDateTime (null, [ js_obj.getTime() ]);
 				default:
 					return this.extract_mono_obj (js_obj);
 			}
@@ -366,7 +365,7 @@ var BindingSupportLib = {
 			}
 			else {
 				throw new Error("Object '" + js_obj + "' is not a typed array");
-			} 
+			}
 
 
 		},
@@ -374,15 +373,15 @@ var BindingSupportLib = {
 		// 	 typed array memory -> copy to heap -> address of managed pinned array
 		typedarray_copy_to : function (typed_array, pinned_array, begin, end, bytes_per_element) {
 
-			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
-			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays
 			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
-			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
-			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
-			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer,
+			// you need to use a view. A view provides a context — that is, a data type, starting offset,
 			// and number of elements — that turns the data into an actual typed array.
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
-			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT)) 
+			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT))
 			{
 				// Some sanity checks of what is being asked of us
 				// lets play it safe and throw an error here instead of assuming to much.
@@ -410,22 +409,22 @@ var BindingSupportLib = {
 			}
 			else {
 				throw new Error("Object '" + typed_array + "' is not a typed array");
-			} 
+			}
 
-		},	
+		},
 		// Copy the pinned array address from pinned_array allocated on the heap to the typed array.
 		// 	 adress of managed pinned array -> copy from heap -> typed array memory
 		typedarray_copy_from : function (typed_array, pinned_array, begin, end, bytes_per_element) {
 
-			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing 
-			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays 
+			// JavaScript typed arrays are array-like objects and provide a mechanism for accessing
+			// raw binary data. (...) To achieve maximum flexibility and efficiency, JavaScript typed arrays
 			// split the implementation into buffers and views. A buffer (implemented by the ArrayBuffer object)
-			//  is an object representing a chunk of data; it has no format to speak of, and offers no 
-			// mechanism for accessing its contents. In order to access the memory contained in a buffer, 
-			// you need to use a view. A view provides a context — that is, a data type, starting offset, 
+			//  is an object representing a chunk of data; it has no format to speak of, and offers no
+			// mechanism for accessing its contents. In order to access the memory contained in a buffer,
+			// you need to use a view. A view provides a context — that is, a data type, starting offset,
 			// and number of elements — that turns the data into an actual typed array.
 			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Typed_arrays
-			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT)) 
+			if (!!(typed_array.buffer instanceof ArrayBuffer && typed_array.BYTES_PER_ELEMENT))
 			{
 				// Some sanity checks of what is being asked of us
 				// lets play it safe and throw an error here instead of assuming to much.
@@ -451,9 +450,9 @@ var BindingSupportLib = {
 			}
 			else {
 				throw new Error("Object '" + typed_array + "' is not a typed array");
-			} 
+			}
 
-		},	
+		},
 		// Creates a new typed array from pinned array address from pinned_array allocated on the heap to the typed array.
 		// 	 adress of managed pinned array -> copy from heap -> typed array memory
 		typed_array_from : function (pinned_array, begin, end, bytes_per_element, type) {
@@ -463,25 +462,25 @@ var BindingSupportLib = {
 
 			switch (type)
 			{
-				case 5: 
+				case 5:
 					newTypedArray = new Int8Array(end - begin);
 					break;
-				case 6: 
+				case 6:
 					newTypedArray = new Uint8Array(end - begin);
 					break;
-				case 7: 
+				case 7:
 					newTypedArray = new Int16Array(end - begin);
 					break;
-				case 8: 
+				case 8:
 					newTypedArray = new Uint16Array(end - begin);
 					break;
-				case 9: 
+				case 9:
 					newTypedArray = new Int32Array(end - begin);
 					break;
-				case 10: 
+				case 10:
 					newTypedArray = new Uint32Array(end - begin);
 					break;
-				case 13: 
+				case 13:
 					newTypedArray = new Float32Array(end - begin);
 					break;
 				case 14:
@@ -494,16 +493,16 @@ var BindingSupportLib = {
 
 			this.typedarray_copy_from(newTypedArray, pinned_array, begin, end, bytes_per_element);
 			return newTypedArray;
-		},		
+		},
 		js_to_mono_enum: function (method, parmIdx, js_obj) {
 			this.bindings_lazy_init ();
-    
+
 			if (js_obj === null || typeof js_obj === "undefined")
 				return 0;
 
 			var monoObj = this.js_to_mono_obj(js_obj);
 			// Check enum contract
-			var monoEnum = this.call_method(this.object_to_enum, null, "iimm", [ method, parmIdx, monoObj ])
+			var monoEnum = this.objectToEnum (null, [ method, parmIdx, monoObj ]);
 			// return the unboxed enum value.
 			return this.mono_unbox_enum(monoEnum);
 		},
@@ -524,21 +523,21 @@ var BindingSupportLib = {
 		wasm_unbind_js_obj: function (js_obj_id)
 		{
 			this.call_method (this.unbind_js_obj, null, "i", [js_obj_id]);
-		},		
+		},
 
 		wasm_unbind_js_obj_and_free: function (js_obj_id)
 		{
 			this.call_method (this.unbind_js_obj_and_free, null, "i", [js_obj_id]);
-		},		
+		},
 
 		wasm_get_js_id: function (mono_obj)
 		{
-			return this.call_method (this.get_js_id, null, "m", [mono_obj]);
+			return this.getJSObjectId (null, [mono_obj]);
 		},
 
 		wasm_get_raw_obj: function (gchandle)
 		{
-			return this.call_method (this.get_raw_mono_obj, null, "im", [gchandle]);
+			return this.getMonoObject (null, [gchandle]);
 		},
 
 		try_extract_mono_obj:function (js_obj) {
@@ -550,12 +549,12 @@ var BindingSupportLib = {
 		mono_method_get_call_signature: function(method) {
 			this.bindings_lazy_init ();
 
-			return this.call_method (this.get_call_sig, null, "i", [ method ]);
+			return this.getCallSignature (null, [ method ]);
 		},
 
 		get_task_and_bind: function (tcs, js_obj) {
 			var gc_handle = this.mono_wasm_free_list.length ? this.mono_wasm_free_list.pop() : this.mono_wasm_ref_counter++;
-			var task_gchandle = this.call_method (this.tcs_get_task_and_bind, null, "oi", [ tcs, gc_handle + 1 ]);
+			var task_gchandle = this.tcsGetTaskAndBind (null, [ tcs, gc_handle + 1 ]);
 			js_obj.__mono_gchandle__ = task_gchandle;
 			this.mono_wasm_object_registry[gc_handle] = js_obj;
 			this.free_task_completion_source(tcs);
@@ -568,11 +567,11 @@ var BindingSupportLib = {
 		free_task_completion_source: function (tcs) {
 			if (tcs.is_mono_tcs_result_set)
 			{
-				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_gchandle__ ]);
+				this.unBindRawJSObjectAndFree (null, [ tcs.__mono_gchandle__ ]);
 			}
 			if (tcs.__mono_bound_task__)
 			{
-				this.call_method (this.unbind_raw_obj_and_free, null, "ii", [ tcs.__mono_bound_task__ ]);
+				this.unBindRawJSObjectAndFree (null, [ tcs.__mono_bound_task__ ]);
 			}
 		},
 
@@ -613,7 +612,7 @@ var BindingSupportLib = {
 
 		i: int32
 		j: int32 - Enum with underlying type of int32
-		l: int64 
+		l: int64
 		k: int64 - Enum with underlying type of int64
 		f: float
 		d: double
@@ -737,11 +736,11 @@ var BindingSupportLib = {
 			var mono_args = this.js_array_to_mono_array (js_args);
 			if (!this.delegate_dynamic_invoke)
 				throw new Error("System.Delegate.DynamicInvoke method can not be resolved.");
-			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mo" again.  
+			// Note: the single 'm' passed here is causing problems with AOT.  Changed to "mo" again.
 			// This may need more analysis if causes problems again.
 			return this.call_method (this.delegate_dynamic_invoke, this.extract_mono_obj (delegate_obj), "mo", [ mono_args ]);
 		},
-		
+
 		resolve_method_fqn: function (fqn) {
 			var assembly = fqn.substring(fqn.indexOf ("[") + 1, fqn.indexOf ("]")).trim();
 			fqn = fqn.substring (fqn.indexOf ("]") + 1).trim();
@@ -830,7 +829,7 @@ var BindingSupportLib = {
 		},
 		wasm_get_core_type: function (obj)
 		{
-			return this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
+			return this.getCoreType (null, [ "WebAssembly.Core."+obj.constructor.name ]);
 		},
 		get_wasm_type: function(obj) {
 			var coreType = obj[Symbol.for("wasm type")];
@@ -847,7 +846,7 @@ var BindingSupportLib = {
 		mono_wasm_register_obj: function(obj) {
 
 			var gc_handle = undefined;
-			if (obj !== null && typeof obj !== "undefined") 
+			if (obj !== null && typeof obj !== "undefined")
 			{
 				gc_handle = obj.__mono_gchandle__;
 
@@ -859,7 +858,7 @@ var BindingSupportLib = {
 					var wasm_type = this.get_wasm_type(obj);
 					gc_handle = obj.__mono_gchandle__ = this.wasm_binding_obj_new(handle + 1, wasm_type);
 					this.mono_wasm_object_registry[handle] = obj;
-						
+
 				}
 			}
 			return gc_handle;
@@ -939,7 +938,7 @@ var BindingSupportLib = {
 			}
 			throw Error('Unable to get mono wasm global object.');
 		},
-	
+
 	},
 
 	mono_wasm_invoke_js_with_args: function(js_handle, method_name, args, is_exception) {
@@ -994,7 +993,7 @@ var BindingSupportLib = {
 			var m = obj [js_name];
 			if (m === Object(m) && obj.__is_mono_proxied__)
 				m.__is_mono_proxied__ = true;
-				
+
 			return BINDING.js_to_mono_obj (m);
 		} catch (e) {
 			var res = e.toString ();
@@ -1045,9 +1044,9 @@ var BindingSupportLib = {
                 requireObject[property] = js_value;
                 result = true;
             }
-        
+
         }
-        return BINDING.call_method (BINDING.box_js_bool, null, "im", [ result ]);
+        return BINDING.boxBool (null,[ result ]);
 	},
 	mono_wasm_get_by_index: function(js_handle, property_index, is_exception) {
 		BINDING.bindings_lazy_init ();
@@ -1116,12 +1115,12 @@ var BindingSupportLib = {
 		BINDING.bindings_lazy_init ();
 
 		BINDING.mono_wasm_free_handle(js_handle);
-	},	
+	},
 	mono_wasm_release_object: function(js_handle, is_exception) {
 		BINDING.bindings_lazy_init ();
 
 		BINDING.mono_wasm_free_raw_object(js_handle);
-	},	
+	},
 	mono_wasm_bind_core_object: function(js_handle, gc_handle, is_exception) {
 		BINDING.bindings_lazy_init ();
 
@@ -1166,9 +1165,9 @@ var BindingSupportLib = {
 		}
 
 		var js_args = BINDING.mono_array_to_js_array(args);
-		
+
 		try {
-			
+
 			// This is all experimental !!!!!!
 			var allocator = function(constructor, js_args) {
 				// Not sure if we should be checking for anything here
@@ -1179,7 +1178,7 @@ var BindingSupportLib = {
 				var obj = new (constructor.bind.apply(constructor, argsList ));
 				return obj;
 			};
-	
+
 			var res = allocator(coreObj, js_args);
 			var gc_handle = BINDING.mono_wasm_free_list.length ? BINDING.mono_wasm_free_list.pop() : BINDING.mono_wasm_ref_counter++;
 			BINDING.mono_wasm_object_registry[gc_handle] = res;
@@ -1190,7 +1189,7 @@ var BindingSupportLib = {
 			if (res === null || res === undefined)
 				res = "Error allocating object.";
 			return BINDING.js_string_to_mono_string (res);
-		}	
+		}
 
 	},
 	mono_wasm_new_object: function(object_handle_or_function, args, is_exception) {
@@ -1213,9 +1212,9 @@ var BindingSupportLib = {
 			}
 
 			var js_args = BINDING.mono_array_to_js_array(args);
-			
+
 			try {
-				
+
 				// This is all experimental !!!!!!
 				var allocator = function(constructor, js_args) {
 					// Not sure if we should be checking for anything here
@@ -1226,7 +1225,7 @@ var BindingSupportLib = {
 					var obj = new (constructor.bind.apply(constructor, argsList ));
 					return obj;
 				};
-		
+
 				var res = allocator(requireObject, js_args);
 				return BINDING.extract_mono_obj (res);
 			} catch (e) {
@@ -1235,7 +1234,7 @@ var BindingSupportLib = {
 				if (res === null || res === undefined)
 					res = "Error allocating object.";
 				return BINDING.js_string_to_mono_string (res);
-			}	
+			}
 		}
 
 	},
