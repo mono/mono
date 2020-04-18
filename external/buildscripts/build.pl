@@ -321,14 +321,7 @@ if ($build)
 
 			if (-d "$existingExternalMono/builds")
 			{
-				print(">>> Mono already extracted at : $existingExternalMono/builds\n");
-			}
-
-			if (!(-d "$existingExternalMono/builds"))
-			{
-				# We need to extract builds.zip
-				print(">>> Extracting mono builds.zip...\n");
-				system("unzip", "$existingExternalMono/builds.zip", "-d", "$existingExternalMono/builds") eq 0 or die("failed to extract mono builds.zip\n");
+				print(">>> Mono found at at : $existingExternalMono/builds\n");
 			}
 
 			$existingMonoRootPath = "$existingExternalMono/builds/monodistribution";
