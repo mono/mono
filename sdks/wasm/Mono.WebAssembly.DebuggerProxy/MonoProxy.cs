@@ -223,15 +223,10 @@ namespace WebAssembly.Net.Debugging {
 					var parts = objId.Split (new char [] { ':' });
 					if (parts.Length < 3) {
 						// FIXME: um return an error?
-						return true;
+						return false;
 					}
 
 					var result = await RuntimeGetProperties (id, objId, parts, args, token);
-					if (result.IsErr) {
-						SendResponse (id, result, token);
-						return true;
-					}
-
 					SendResponse (id, result, token);
 					return true;
 				}
@@ -319,7 +314,7 @@ namespace WebAssembly.Net.Debugging {
 							SendResponse (id, Result.OkFromObject (new { result = new {} }), token);
 						else
 							SendResponse (id, Result.Exception (new ArgumentException ("Runtime.callFunctionOn not supported with scope ({objId}).")), token);
-						break;
+						return true;
 					}
 
 					var returnByValue = args ["returnByValue"]?.Value<bool> () ?? false;
