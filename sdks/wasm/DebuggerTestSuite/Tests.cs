@@ -261,23 +261,19 @@ namespace DebuggerTests
 
 		async Task CheckDateTime (JToken locals, string name, DateTime expected)
 		{
-			var obj = locals.Where (jt => jt ["name"]?.Value<string> () == name)
-					.FirstOrDefault ();
+			var obj = GetAndAssertObjectWithName(locals, name);
 			Assert.Equal (expected.ToString (), obj ["value"]? ["description"]?.Value<string> ());
 
-			await CheckObjectOnLocals (locals, name,
-				test_fn: (members) => {
-					// not checking everything
-					CheckNumber (members, "Year", expected.Year);
-					CheckNumber (members, "Month", expected.Month);
-					CheckNumber (members, "Day", expected.Day);
-					CheckNumber (members, "Hour", expected.Hour);
-					CheckNumber (members, "Minute", expected.Minute);
-					CheckNumber (members, "Second", expected.Second);
+			var members = await GetObjectOnLocals (locals, name);
+			// not checking everything
+			CheckNumber (members, "Year", expected.Year);
+			CheckNumber (members, "Month", expected.Month);
+			CheckNumber (members, "Day", expected.Day);
+			CheckNumber (members, "Hour", expected.Hour);
+			CheckNumber (members, "Minute", expected.Minute);
+			CheckNumber (members, "Second", expected.Second);
 
-					// FIXME: check some float properties too
-				}
-			);
+			// FIXME: check some float properties too
 		}
 
 		JToken CheckBool (JToken locals, string name, bool expected)
@@ -829,63 +825,48 @@ namespace DebuggerTests
 					}
 				);
 
-				await CheckObjectOnFrameLocals (pause_location["callFrames"][0], "this",
-					test_fn: (props) => {
-						Assert.Equal (3, props.Count());
-						CheckNumber (props, "A", 10);
-						CheckString (props, "B", "xx");
-						CheckObject (props, "c", "object");
-					}
-				);
+				var props = await GetObjectOnFrame (pause_location["callFrames"][0], "this");
+				Assert.Equal (3, props.Count());
+				CheckNumber (props, "A", 10);
+				CheckString (props, "B", "xx");
+				CheckObject (props, "c", "object");
 
 				// Check UseComplex frame
-				await CheckLocalsOnFrame (pause_location ["callFrames"][3], debugger_test_loc, 17, 2, "UseComplex",
-					test_fn: (locals_m1) => {
-						Assert.Equal (7, locals_m1.Count());
+				var locals_m1 = await GetLocalsForFrame (pause_location ["callFrames"][3], debugger_test_loc, 17, 2, "UseComplex");
+				Assert.Equal (7, locals_m1.Count());
 
-						CheckNumber (locals_m1, "a", 10);
-						CheckNumber (locals_m1, "b", 20);
-						CheckObject (locals_m1, "complex", "Simple.Complex");
-						CheckNumber (locals_m1, "c", 30);
-						CheckNumber (locals_m1, "d", 50);
-						CheckNumber (locals_m1, "e", 60);
-						CheckNumber (locals_m1, "f", 0);
-					}
-				);
+				CheckNumber (locals_m1, "a", 10);
+				CheckNumber (locals_m1, "b", 20);
+				CheckObject (locals_m1, "complex", "Simple.Complex");
+				CheckNumber (locals_m1, "c", 30);
+				CheckNumber (locals_m1, "d", 50);
+				CheckNumber (locals_m1, "e", 60);
+				CheckNumber (locals_m1, "f", 0);
 
-				await CheckObjectOnFrameLocals (pause_location["callFrames"][3], "complex",
-					test_fn: (props) => {
-						Assert.Equal (3, props.Count());
-						CheckNumber (props, "A", 10);
-						CheckString (props, "B", "xx");
-						CheckObject (props, "c", "object");
-					}
-				);
+				props = await GetObjectOnFrame (pause_location["callFrames"][3], "complex");
+				Assert.Equal (3, props.Count());
+				CheckNumber (props, "A", 10);
+				CheckString (props, "B", "xx");
+				CheckObject (props, "c", "object");
 
 				pause_location = await StepAndCheck (StepKind.Over, dep_cs_loc, 16, 2, "DoStuff", times: 2);
 				// Check UseComplex frame again
-				await CheckLocalsOnFrame (pause_location ["callFrames"][1], debugger_test_loc, 17, 2, "UseComplex",
-					test_fn: (locals_m1) => {
-						Assert.Equal (7, locals_m1.Count());
+				locals_m1 = await GetLocalsForFrame (pause_location ["callFrames"][1], debugger_test_loc, 17, 2, "UseComplex");
+				Assert.Equal (7, locals_m1.Count());
 
-						CheckNumber (locals_m1, "a", 10);
-						CheckNumber (locals_m1, "b", 20);
-						CheckObject (locals_m1, "complex", "Simple.Complex");
-						CheckNumber (locals_m1, "c", 30);
-						CheckNumber (locals_m1, "d", 50);
-						CheckNumber (locals_m1, "e", 60);
-						CheckNumber (locals_m1, "f", 0);
-					}
-				);
+				CheckNumber (locals_m1, "a", 10);
+				CheckNumber (locals_m1, "b", 20);
+				CheckObject (locals_m1, "complex", "Simple.Complex");
+				CheckNumber (locals_m1, "c", 30);
+				CheckNumber (locals_m1, "d", 50);
+				CheckNumber (locals_m1, "e", 60);
+				CheckNumber (locals_m1, "f", 0);
 
-				await CheckObjectOnFrameLocals (pause_location["callFrames"][1], "complex",
-					test_fn: (props) => {
-						Assert.Equal (3, props.Count());
-						CheckNumber (props, "A", 10);
-						CheckString (props, "B", "xx");
-						CheckObject (props, "c", "object");
-					}
-				);
+				props = await GetObjectOnFrame (pause_location["callFrames"][1], "complex");
+				Assert.Equal (3, props.Count());
+				CheckNumber (props, "A", 10);
+				CheckString (props, "B", "xx");
+				CheckObject (props, "c", "object");
 			});
 		}
 
@@ -915,35 +896,26 @@ namespace DebuggerTests
 					}
 				);
 
-				var this_props = await CheckObjectOnFrameLocals (wait_res["callFrames"][0], "this",
-					test_fn: (props) => {
-						Assert.Equal (2, props.Count());
-						CheckObject (props, "m", "Math");
-						CheckValueType (props, "SimpleStructProperty", "Math.SimpleStruct");
-					}
-				);
+				var this_props = await GetObjectOnFrame (wait_res["callFrames"][0], "this");
+				Assert.Equal (2, this_props.Count());
+				CheckObject (this_props, "m", "Math");
+				CheckValueType (this_props, "SimpleStructProperty", "Math.SimpleStruct");
 
-				var ss_props = await CheckObjectOnLocals (this_props, "SimpleStructProperty",
-					test_fn: (props) => {
-						Assert.Equal (2, props.Count());
-						CheckValueType (props, "dt", "System.DateTime");
-						CheckValueType (props, "gs", "Math.GenericStruct<System.DateTime>");
-					}
-				);
+				var ss_props = await GetObjectOnLocals (this_props, "SimpleStructProperty");
+				Assert.Equal (2, ss_props.Count());
+				CheckValueType (ss_props, "dt", "System.DateTime");
+				CheckValueType (ss_props, "gs", "Math.GenericStruct<System.DateTime>");
 
 				await CheckDateTime (ss_props, "dt", new DateTime (2020, 1, 2, 3, 4, 5));
 
 				// Check OuterMethod frame
-				await CheckLocalsOnFrame (wait_res ["callFrames"][1], debugger_test_loc, 78, 2, "OuterMethod",
-					test_fn: (locals_m1) => {
-						Assert.Equal (5, locals_m1.Count());
-						// FIXME: Failing test CheckNumber (locals_m1, "i", 5);
-						// FIXME: Failing test CheckString (locals_m1, "text", "Hello");
-						CheckNumber (locals_m1, "new_i", 0);
-						CheckNumber (locals_m1, "k", 0);
-						CheckObject (locals_m1, "nim", "Math.NestedInMath");
-					}
-				);
+				var locals_m1 = await GetLocalsForFrame (wait_res ["callFrames"][1], debugger_test_loc, 78, 2, "OuterMethod");
+				Assert.Equal (5, locals_m1.Count());
+				// FIXME: Failing test CheckNumber (locals_m1, "i", 5);
+				// FIXME: Failing test CheckString (locals_m1, "text", "Hello");
+				CheckNumber (locals_m1, "new_i", 0);
+				CheckNumber (locals_m1, "k", 0);
+				CheckObject (locals_m1, "nim", "Math.NestedInMath");
 
 				// step back into OuterMethod
 				await StepAndCheck (StepKind.Over, debugger_test_loc, 82, 2, "OuterMethod", times: 9,
@@ -1089,12 +1061,10 @@ namespace DebuggerTests
 				Console.WriteLine (wait_res);
 				
 #if false // Disabled for now, as we don't have proper async traces
-				await CheckLocalsOnFrame (wait_res ["callFrames"][2],
-					test_fn: (locals) => {
-						Assert.Equal (4, locals.Count());
-						CheckString (locals, "ls", "string from jstest");
-						CheckNumber (locals, "li", 52);
-				});
+				var locals = await GetProperties (wait_res ["callFrames"][2]["callFrameId"].Value<string> ());
+				Assert.Equal (4, locals.Count());
+				CheckString (locals, "ls", "string from jstest");
+				CheckNumber (locals, "li", 52);
 #endif
 
 				// TODO: previous frames have async machinery details, so no point checking that right now
@@ -1111,13 +1081,10 @@ namespace DebuggerTests
 					}
 				);
 
-				await CheckObjectOnFrameLocals (pause_loc ["callFrames"][0], "this",
-					test_fn: (props) => {
-						Assert.Equal (2, props.Count ());
-						CheckObject (props, "m", "Math");
-						CheckValueType (props, "SimpleStructProperty", "Math.SimpleStruct");
-					}
-				);
+				var this_props = await GetObjectOnFrame (pause_loc ["callFrames"][0], "this");
+				Assert.Equal (2, this_props.Count ());
+				CheckObject (this_props, "m", "Math");
+				CheckValueType (this_props, "SimpleStructProperty", "Math.SimpleStruct");
 
 				// TODO: Check `this` properties
 			});
@@ -1150,47 +1117,41 @@ namespace DebuggerTests
 
 				var dt = new DateTime (2021, 2, 3, 4, 6, 7);
 				// Check ss_local's properties
-				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
-						new {
+				var ss_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "ss_local");
+				await CheckProps (ss_local_props, new {
 							str_member = TString ("set in MethodWithLocalStructs#SimpleStruct#str_member"),
 							dt = TValueType ("System.DateTime", dt.ToString ()),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 							Kind = TEnum ("System.DateTimeKind", "Utc")
-						});
+						}, "ss_local");
 
 				{
 					// Check ss_local.dt
 					await CheckDateTime (ss_local_props, "dt", dt);
 
 					// Check ss_local.gs
-					await CheckObjectOnLocals (ss_local_props, "gs",
-						test_fn: (props) => {
-							CheckString (props, "StringField", "set in MethodWithLocalStructs#SimpleStruct#gs#StringField");
-							CheckObject (props, "List", "System.Collections.Generic.List<System.DateTime>");
-						}
-					);
+					var gs_props = await GetObjectOnLocals (ss_local_props, "gs");
+					CheckString (gs_props, "StringField", "set in MethodWithLocalStructs#SimpleStruct#gs#StringField");
+					CheckObject (gs_props, "List", "System.Collections.Generic.List<System.DateTime>");
 				}
 
 				// Check gs_local's properties
-				await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "gs_local",
-					new {
+				var gs_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "gs_local");
+				await CheckProps (gs_local_props, new {
 						StringField = TString ("gs_local#GenericStruct<ValueTypesTest>#StringField"),
 						List        = TObject ("System.Collections.Generic.List<DebuggerTests.ValueTypesTest>", is_null: true),
 						Options     = TEnum   ("DebuggerTests.Options", "None")
-					});
+					}, "gs_local");
 
 				// Check vt_local's properties
-				var vt_local_props = await CheckObjectOnFrameLocals (pause_location ["callFrames"][0], "vt_local",
-					test_fn: async (props) => {
-						Assert.Equal (5, props.Count());
+				var vt_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "vt_local");
+				Assert.Equal (5, vt_local_props.Count());
 
-						CheckString (props, "StringField", "string#0");
-						CheckValueType (props, "SimpleStructField", "DebuggerTests.ValueTypesTest.SimpleStruct");
-						CheckValueType (props, "SimpleStructProperty", "DebuggerTests.ValueTypesTest.SimpleStruct");
-						await CheckDateTime (props, "DT", new DateTime (2020, 1, 2, 3, 4, 5));
-						CheckEnum (props, "RGB", "DebuggerTests.RGB", "Blue");
-					}
-				);
+				CheckString (vt_local_props, "StringField", "string#0");
+				CheckValueType (vt_local_props, "SimpleStructField", "DebuggerTests.ValueTypesTest.SimpleStruct");
+				CheckValueType (vt_local_props, "SimpleStructProperty", "DebuggerTests.ValueTypesTest.SimpleStruct");
+				await CheckDateTime (vt_local_props, "DT", new DateTime (2020, 1, 2, 3, 4, 5));
+				CheckEnum (vt_local_props, "RGB", "DebuggerTests.RGB", "Blue");
 
 				{
 					// SimpleStructProperty
@@ -1264,8 +1225,8 @@ namespace DebuggerTests
 				};
 
 				// Check ss_arg's properties
-				var ss_arg_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0],
-								"ss_arg", ss_local_as_ss_arg);
+				var ss_arg_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "ss_arg");
+				await CheckProps (ss_arg_props, ss_local_as_ss_arg, "ss_arg");
 
 				{
 					// Check ss_local.dt
@@ -1293,8 +1254,8 @@ namespace DebuggerTests
 					Kind       = TEnum      ("System.DateTimeKind", "Utc")
 				};
 
-				ss_arg_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0],
-							"ss_arg", ss_arg_updated);
+				ss_arg_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "ss_arg");
+				await CheckProps (ss_arg_props, ss_arg_updated, "ss_ar");
 
 				{
 					// Check ss_local.gs
@@ -1308,33 +1269,32 @@ namespace DebuggerTests
 				}
 
 				// Check locals on previous frame, same as earlier in this test
-				ss_arg_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][1],
-						"ss_local", ss_local_as_ss_arg);
+				ss_arg_props = await GetObjectOnFrame (pause_location ["callFrames"][1], "ss_local");
+				await CheckProps (ss_arg_props, ss_local_as_ss_arg, "ss_local");
 
 				{
 					// Check ss_local.dt
 					await CheckDateTime (ss_arg_props, "dt", dt);
 
 					// Check ss_local.gs
-					await CheckObjectOnLocals (ss_arg_props, "gs",
-						test_fn: (props) => {
-							CheckString (props, "StringField", "ss_local#SimpleStruct#string#0#SimpleStruct#gs#StringField");
-							CheckObject (props, "List", "System.Collections.Generic.List<System.DateTime>");
-						}
-					);
+					var gs_props = await GetObjectOnLocals (ss_arg_props, "gs");
+					CheckString (gs_props, "StringField", "ss_local#SimpleStruct#string#0#SimpleStruct#gs#StringField");
+					CheckObject (gs_props, "List", "System.Collections.Generic.List<System.DateTime>");
 				}
 
 				// ----------- Step back to the caller ---------
 
 				pause_location = await StepAndCheck (StepKind.Over, debugger_test_loc, 22, 3, "TestStructsAsMethodArgs",
 							times: 2, locals_fn: (l) => { /* non-null to make sure that locals get fetched */} );
-				await CheckLocalsOnFrame (pause_location ["callFrames"][0], new {
-							ss_local =  TValueType ("DebuggerTests.ValueTypesTest.SimpleStruct"),
-							ss_ret   =  TValueType ("DebuggerTests.ValueTypesTest.SimpleStruct")
-							}, "locals#0");
+				var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string> ());
+				await CheckProps (locals, new {
+					ss_local =  TValueType ("DebuggerTests.ValueTypesTest.SimpleStruct"),
+					ss_ret   =  TValueType ("DebuggerTests.ValueTypesTest.SimpleStruct")
+					},
+					"locals#0");
 
-				ss_arg_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"] [0],
-							"ss_local", ss_local_as_ss_arg);
+				ss_arg_props = await GetObjectOnFrame (pause_location ["callFrames"] [0], "ss_local");
+				await CheckProps (ss_arg_props, ss_local_as_ss_arg, "ss_local");
 
 				{
 					// Check ss_local.gs
@@ -1364,23 +1324,23 @@ namespace DebuggerTests
 					+ "); }, 1);",
 					debugger_test_loc, 47, 3, "MoveNext"); //BUG: method name
 
-				await CheckLocalsOnFrame (pause_location ["callFrames"][0],
-						new {
-							ss_local = TObject ("DebuggerTests.ValueTypesTest.SimpleStruct"),
-							gs_local = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<int>"),
-							result   = TBool (true)
-						},
-						"locals#0");
+				var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string> ());
+				await CheckProps (locals, new {
+					ss_local = TObject ("DebuggerTests.ValueTypesTest.SimpleStruct"),
+					gs_local = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<int>"),
+					result   = TBool (true)
+					},
+					"locals#0");
 
 				var dt = new DateTime (2021, 2, 3, 4, 6, 7);
 				// Check ss_local's properties
-				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
-					new {
+				var ss_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "ss_local");
+				await CheckProps (ss_local_props, new {
 						str_member = TString ("set in MethodWithLocalStructsStaticAsync#SimpleStruct#str_member"),
 						dt         = TValueType ("System.DateTime", dt.ToString ()),
 						gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 						Kind       = TEnum ("System.DateTimeKind", "Utc")
-					});
+					}, "ss_local");
 
 				{
 					// Check ss_local.dt
@@ -1397,12 +1357,12 @@ namespace DebuggerTests
 				}
 
 				// Check gs_local's properties
-				await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "gs_local",
-					new {
+				var gs_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "gs_local");
+				await CheckProps (gs_local_props, new {
 						StringField = TString ("gs_local#GenericStruct<ValueTypesTest>#StringField"),
 						List        = TObject ("System.Collections.Generic.List<int>"),
 						Options     = TEnum   ("DebuggerTests.Options", "Option2")
-					});
+					}, "gs_local");
 
 				// FIXME: check ss_local.gs.List's members
 			});
@@ -1598,17 +1558,13 @@ namespace DebuggerTests
 						+ "); }, 1);";
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, method_name);
-				await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					test_fn: (locals) => {
-						Assert.Equal (4, locals.Count ());
-						CheckArray (locals, $"{local_var_name_prefix}_arr", $"{etype_name}[]");
-						CheckArray (locals, $"{local_var_name_prefix}_arr_empty", $"{etype_name}[]");
-						CheckObject (locals, $"{local_var_name_prefix}_arr_null", $"{etype_name}[]", is_null: true);
-						CheckBool (locals, "call_other", test_prev_frame);
-				});
 
-				var prefix_arr = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
-							$"{local_var_name_prefix}_arr", array);
+				var locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				Assert.Equal (4, locals.Count ());
+				CheckArray (locals, $"{local_var_name_prefix}_arr", $"{etype_name}[]");
+				CheckArray (locals, $"{local_var_name_prefix}_arr_empty", $"{etype_name}[]");
+				CheckObject (locals, $"{local_var_name_prefix}_arr_null", $"{etype_name}[]", is_null: true);
+				CheckBool (locals, "call_other", test_prev_frame);
 
 				var local_arr_name = $"{local_var_name_prefix}_arr";
 				var prefix_arr = await GetObjectOnFrame (pause_location ["callFrames"][frame_idx], local_arr_name);
@@ -1630,8 +1586,8 @@ namespace DebuggerTests
 					}
 				}
 
-				await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
-						$"{local_var_name_prefix}_arr_empty", new object[0]);
+				var props = await GetObjectOnFrame (pause_location ["callFrames"][frame_idx], $"{local_var_name_prefix}_arr_empty");
+				await CheckProps (props, new object[0], "${local_var_name_prefix}_arr_empty");
 			});
 		}
 
@@ -1659,20 +1615,19 @@ namespace DebuggerTests
 						+ "); }, 1);";
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, method_name);
-				await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					test_fn: (locals) => {
-						Assert.Single (locals);
-						CheckObject (locals, "c", "DebuggerTests.Container");
-				});
+				var locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				Assert.Single (locals);
+				CheckObject (locals, "c", "DebuggerTests.Container");
 
-				var c_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
-					"c", new {
+				var c_props = await GetObjectOnFrame (pause_location ["callFrames"][frame_idx], "c");
+				await CheckProps (c_props, new {
 						id = TString ("c#id"),
 						ClassArrayProperty = TArray ("DebuggerTests.SimpleClass[]", 3),
 						ClassArrayField = TArray ("DebuggerTests.SimpleClass[]", 3),
 						PointsProperty = TArray ("DebuggerTests.Point[]", 2),
 						PointsField = TArray ("DebuggerTests.Point[]", 2)
-					}
+					},
+					"c"
 				);
 
 				await CompareObjectPropertiesFor (c_props, "ClassArrayProperty",
@@ -1731,18 +1686,16 @@ namespace DebuggerTests
 						+ "); }, 1);";
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, method_name);
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						call_other = TBool (false),
-						gvclass_arr = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", 2),
-						gvclass_arr_empty = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]"),
-						gvclass_arr_null = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", is_null: true),
-						gvclass = TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
-						// BUG: this shouldn't be null!
-						points = TObject ("DebuggerTests.Point[]", is_null: true)
-					},
-					"ValueTypeLocalsAsync#locals"
-				);
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					call_other = TBool (false),
+					gvclass_arr = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", 2),
+					gvclass_arr_empty = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]"),
+					gvclass_arr_null = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", is_null: true),
+					gvclass = TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
+					// BUG: this shouldn't be null!
+					points = TObject ("DebuggerTests.Point[]", is_null: true)
+				}, "ValueTypeLocalsAsync#locals");
 
 				var local_var_name_prefix = "gvclass";
 				await CompareObjectPropertiesFor (frame_locals, local_var_name_prefix, new {
@@ -1796,15 +1749,13 @@ namespace DebuggerTests
 				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
 
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						t1 = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
-						@this = TObject ("DebuggerTests.ArrayTestsClass"),
-						point_arr = TArray ("DebuggerTests.Point[]", 2),
-						point = TValueType ("DebuggerTests.Point")
-					},
-					"InspectValueTypeArrayLocalsInstanceAsync#locals"
-				);
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					t1 = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
+					@this = TObject ("DebuggerTests.ArrayTestsClass"),
+					point_arr = TArray ("DebuggerTests.Point[]", 2),
+					point = TValueType ("DebuggerTests.Point")
+				}, "InspectValueTypeArrayLocalsInstanceAsync#locals");
 
 				await CompareObjectPropertiesFor (frame_locals, "t1",
 					new {
@@ -1851,14 +1802,12 @@ namespace DebuggerTests
 				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
 
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						call_other = TBool (false),
-						local_i  = TNumber (5),
-						sc = TSimpleClass (10, 45, "sc#Id", "Blue")
-					},
-					"InspectValueTypeArrayLocalsInAsyncStaticStructMethod#locals"
-				);
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					call_other = TBool (false),
+					local_i  = TNumber (5),
+					sc = TSimpleClass (10, 45, "sc#Id", "Blue")
+				}, "InspectValueTypeArrayLocalsInAsyncStaticStructMethod#locals");
 			});
 		}
 
@@ -1887,13 +1836,13 @@ namespace DebuggerTests
 				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
 
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						sc_arg = TObject ("DebuggerTests.SimpleClass"),
-						@this = TValueType ("DebuggerTests.Point"),
-						local_gs = TValueType ("DebuggerTests.SimpleGenericStruct<int>")
-					},
-					"locals#0");
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					sc_arg = TObject ("DebuggerTests.SimpleClass"),
+					@this = TValueType ("DebuggerTests.Point"),
+					local_gs = TValueType ("DebuggerTests.SimpleGenericStruct<int>")
+				},
+				"locals#0");
 
 				await CompareObjectPropertiesFor (frame_locals, "local_gs",
 					new {
@@ -1947,26 +1896,25 @@ namespace DebuggerTests
 				var ts = dt0 - dt1;
 				var dto = new DateTimeOffset (dt0, new TimeSpan(4, 5, 0));
 
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						call_other     = TBool      (call_other),
-						dt0            = TValueType ("System.DateTime", dt0.ToString ()),
-						dt1            = TValueType ("System.DateTime", dt1.ToString ()),
-						dto            = TValueType ("System.DateTimeOffset", dto.ToString ()),
-						ts             = TValueType ("System.TimeSpan", ts.ToString ()),
-						dec            = TValueType ("System.Decimal", "123987123"),
-						guid           = TValueType ("System.Guid", "3D36E07E-AC90-48C6-B7EC-A481E289D014"),
-						dts            = TArray     ("System.DateTime[]", 2),
-						obj            = TObject    ("DebuggerTests.ClassForToStringTests"),
-						sst            = TObject    ("DebuggerTests.StructForToStringTests")
-					},
-					"locals#0");
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					call_other     = TBool      (call_other),
+					dt0            = TValueType ("System.DateTime", dt0.ToString ()),
+					dt1            = TValueType ("System.DateTime", dt1.ToString ()),
+					dto            = TValueType ("System.DateTimeOffset", dto.ToString ()),
+					ts             = TValueType ("System.TimeSpan", ts.ToString ()),
+					dec            = TValueType ("System.Decimal", "123987123"),
+					guid           = TValueType ("System.Guid", "3D36E07E-AC90-48C6-B7EC-A481E289D014"),
+					dts            = TArray     ("System.DateTime[]", 2),
+					obj            = TObject    ("DebuggerTests.ClassForToStringTests"),
+					sst            = TObject    ("DebuggerTests.StructForToStringTests")
+				}, "locals#0");
 
 				var dts_0 = new DateTime (1983, 6, 7, 5, 6, 10);
 				var dts_1 = new DateTime (1999, 10, 15, 1, 2, 3);
-				var dts_elements = await CheckObjectOnLocals (frame_locals, "dts");
-				await CheckDateTime (dts_elements, "[0]", dts_0);
-				await CheckDateTime (dts_elements, "[1]", dts_1);
+				var dts_elements = await GetObjectOnLocals (frame_locals, "dts");
+				await CheckDateTime (dts_elements, "0", dts_0);
+				await CheckDateTime (dts_elements, "1", dts_1);
 
 				// TimeSpan
 				await CompareObjectPropertiesFor (frame_locals, "ts",
@@ -2207,8 +2155,10 @@ namespace DebuggerTests
 			if (wait_for_event_fn != null)
 				await wait_for_event_fn (wait_res);
 
-			if (locals_fn != null)
-				await CheckLocalsOnFrame (wait_res ["callFrames"][0], locals_fn);
+			if (locals_fn != null) {
+				var locals = await GetProperties (wait_res ["callFrames"][0]["callFrameId"].Value<string> ());
+				locals_fn (locals);
+			}
 
 			return wait_res;
 		}
@@ -2380,55 +2330,18 @@ namespace DebuggerTests
 			}
 		}
 
-		async Task<JToken> CheckLocalsOnFrame (JToken frame, string script_loc, int line, int column, string function_name, Action<JToken> test_fn = null)
+		async Task<JToken> GetLocalsForFrame (JToken frame, string script_loc, int line, int column, string function_name)
 		{
 			CheckLocation (script_loc, line, column, ctx.scripts, frame ["location"]);
 			Assert.Equal (function_name, frame ["functionName"].Value<string> ());
 
-			return await CheckLocalsOnFrame (frame, test_fn);
+			return await GetProperties (frame ["callFrameId"].Value<string> ());
 		}
 
-		async Task<JToken> CheckLocalsOnFrame (JToken frame, object expected, string label)
+		async Task<JToken> GetObjectOnFrame (JToken frame, string name)
 		{
 			var locals = await GetProperties (frame ["callFrameId"].Value<string> ());
-			try {
-				await CheckProps (locals, expected, label);
-				return locals;
-			} catch {
-				Console.WriteLine ($"CheckLocalsOnFrame failed for locals: {locals}");
-				throw;
-			}
-		}
-
-		async Task<JToken> CheckLocalsOnFrame (JToken frame, Action<JToken> test_fn)
-		{
-			var locals = await GetProperties (frame ["callFrameId"].Value<string> ());
-			try {
-				test_fn (locals);
-				return locals;
-			} catch {
-				Console.WriteLine ($"CheckLocalsOnFrame failed for locals: {locals}");
-				throw;
-			}
-		}
-
-		// Find an object with @name in the *frame*, *fetch* the object, and check against @o
-		async Task<JToken> CompareObjectPropertiesOnFrameLocals (JToken locals, string name, object o, string label = null, int num_fields = -1) {
-			var obj_props = await CheckObjectOnFrameLocals (locals, name, (jt) => {});
-			try {
-				if (o != null)
-					await CheckProps (obj_props, o, label, num_fields);
-			} catch {
-				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {obj_props}");
-				throw;
-			}
-			return obj_props;
-		}
-
-		async Task<JToken> CheckObjectOnFrameLocals (JToken frame, string name, Action<JToken> test_fn)
-		{
-			var locals = await GetProperties (frame ["callFrameId"].Value<string> ());
-			return await CheckObjectOnLocals (locals, name, test_fn);
+			return await GetObjectOnLocals (locals, name);
 		}
 
 		// Find an object with @name, *fetch* the object, and check against @o
@@ -2436,43 +2349,27 @@ namespace DebuggerTests
 		{
 			if (label == null)
 				label = name;
-			var props = await CheckObjectOnLocals (locals, name, (jt) => {});
+			var props = await GetObjectOnLocals (locals, name);
 			try {
 				if (o != null)
 					await CheckProps (props, o, label, num_fields);
 				return props;
 			} catch {
-				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {props}");
 				throw;
 			}
 		}
 
-		async Task<JToken> CheckObjectOnLocals (JToken locals, string name, Action<JToken> test_fn = null)
+		async Task<JToken> GetObjectOnLocals (JToken locals, string name)
 		{
-			var obj = locals.Where (jt => jt ["name"]?.Value<string> () == name)
-					.FirstOrDefault ();
-			if (obj == null) {
-				Console.WriteLine ($"CheckObjectOnLocals failed with locals: {locals}");
-				Assert.True (false, $"Could not find a var with name {name} and type object");
-			}
-
+			var obj = GetAndAssertObjectWithName (locals, name);
 			var objectId = obj ["value"]["objectId"]?.Value<string> ();
 			Assert.True (!String.IsNullOrEmpty (objectId), $"No objectId found for {name}");
 
-			var props = await GetProperties (objectId);
-			if (test_fn != null) {
-				try {
-					test_fn (props);
-				} catch (Exception) {
-					Console.WriteLine ($"Failed for properties: {props}");
-					throw;
-				}
-			}
-
-			return props;
+			return await GetProperties (objectId);
 		}
 
-		async Task<JToken> GetProperties (string id)
+		/* @fn_args is for use with `Runtime.callFunctionOn` only */
+		async Task<JToken> GetProperties (string id, JToken fn_args = null)
 		{
 			var get_prop_req = JObject.FromObject (new {
 				objectId = id
