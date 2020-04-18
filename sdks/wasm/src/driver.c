@@ -110,12 +110,13 @@ static void
 wasm_logger (const char *log_domain, const char *log_level, const char *message, mono_bool fatal, void *user_data)
 {
 	EM_ASM({
-		if (fatal)
+		var message = $1;
+		if ($2)
 			console.trace (message);
 
-		switch (log_level) {
+		switch ($0) {
 			case "critical":
-				case "error":
+			case "error":
 				console.error (message);
 				break;
 			case "warning":
@@ -745,12 +746,12 @@ mono_wasm_enable_on_demand_gc (void)
 }
 
 // Returns the local timezone default is UTC.
-EM_JS(size_t, mono_wasm_timezone_get_local_name, (), 
+EM_JS(size_t, mono_wasm_timezone_get_local_name, (),
 {
 	var res = "UTC";
-	try { 
-		res = Intl.DateTimeFormat().resolvedOptions().timeZone; 
-	} catch(e) {} 
+	try {
+		res = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	} catch(e) {}
 
 	var buff = Module._malloc((res.length + 1) * 2);
 	stringToUTF16 (res, buff, (res.length + 1) * 2);

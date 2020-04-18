@@ -36,6 +36,10 @@ if (typeof console !== "undefined") {
 		console.trace = console.log;
 	if (!console.warn)
 		console.warn = console.log;
+	if (!console.error)
+		console.error = console.log;
+	if (!console.info)
+		console.info = console.log;
 }
 
 if (typeof crypto == 'undefined') {
@@ -123,7 +127,7 @@ while (true) {
 		args = args.slice (1);
 	} else if (args [0] == "--enable-zoneinfo") {
 		enable_zoneinfo = true;
-		args = args.slice (1);			
+		args = args.slice (1);
 	} else {
 		break;
 	}
@@ -133,7 +137,7 @@ testArguments = args;
 if (typeof window == "undefined")
   load ("mono-config.js");
 
-var Module = { 
+var Module = {
 	mainScriptUrlOrBlob: "dotnet.js",
 
 	print: function(x) { print ("WASM: " + x) },
@@ -181,7 +185,7 @@ var Module = {
 			Module['FS_createPath']('/zoneinfo', 'Mexico', true, true);
 			Module['FS_createPath']('/zoneinfo', 'Africa', true, true);
 			Module['FS_createPath']('/zoneinfo', 'Chile', true, true);
-			Module['FS_createPath']('/zoneinfo', 'Canada', true, true);			
+			Module['FS_createPath']('/zoneinfo', 'Canada', true, true);
 			var zoneInfoData = read ('zoneinfo.data', 'binary');
 			var metadata = JSON.parse(read ("mono-webassembly-zoneinfo-fs-smd.js.metadata", 'utf-8'));
 			var files = metadata.files;
@@ -206,12 +210,12 @@ var Module = {
 				return fetch (asset, { credentials: 'same-origin' });
 			  } else {
 				// The default mono_load_runtime_and_bcl defaults to using
-				// fetch to load the assets.  It also provides a way to set a 
+				// fetch to load the assets.  It also provides a way to set a
 				// fetch promise callback.
 				// Here we wrap the file read in a promise and fake a fetch response
 				// structure.
 				return new Promise((resolve, reject) => {
-					 var response = { ok: true, url: asset, 
+					 var response = { ok: true, url: asset,
 							arrayBuffer: function() {
 								return new Promise((resolve2, reject2) => {
 									resolve2(new Uint8Array (read (asset, 'binary')));
@@ -343,21 +347,21 @@ var App = {
 			Module.printErr("Binding tests module 'binding_tests' not found.  Exiting Tests.")
 			throw new Error("Binding tests module 'binding_tests' not found.  Exiting Tests.");
 		}
-		
+
 		binding_test_class = find_class (binding_test_module, "", "TestClass");
 		if (!binding_test_class)
 		{
 			Module.printErr("Binding tests class 'TestClass' not found.  Exiting Tests.")
 			throw new Error("Binding tests class 'TestClass' not found.  Exiting Tests.");
-		}		
+		}
 
 		Module.print("Binding support complete.");
 
-		
+
 		Module.print("Checking for [main]Driver:Send ....");
-		
+
 		var send_message = undefined;
-		
+
 		try
 		{
 			send_message = BINDING.bind_static_method("[main]Driver:Send");
@@ -366,7 +370,7 @@ var App = {
 		{
 			Module.printErr("[main]Driver:Send not found: " + e);
 			throw e;
-		
+
 		}
 
 		Module.print("Driver binding complete.");
@@ -394,7 +398,7 @@ var App = {
 			print ("-----STARTED " + testArguments [i] + "---- " + res);
 
 			if (res == "SUCCESS") {
-				while (send_message ("pump-test", testArguments [i]) != "DONE") 
+				while (send_message ("pump-test", testArguments [i]) != "DONE")
 				{
 					Module.pump_message ();
 					print ("|");
