@@ -574,7 +574,7 @@ var MonoSupportLib = {
 			});
 		},
 
-		_mono_wasm_add_array_var: function(className, objectId) {
+		_mono_wasm_add_array_var: function(className, objectId, length) {
 			fixed_class_name = MONO._mono_csharp_fixup_class_name(className);
 			if (objectId == 0) {
 				MONO.mono_wasm_add_null_var (fixed_class_name);
@@ -586,7 +586,7 @@ var MonoSupportLib = {
 					type: "object",
 					subtype: "array",
 					className: fixed_class_name,
-					description: fixed_class_name,
+					description: `${fixed_class_name}(${length})`,
 					objectId: "dotnet:array:"+ objectId,
 				}
 			});
@@ -636,7 +636,7 @@ var MonoSupportLib = {
 				break;
 
 			case "array":
-				MONO._mono_wasm_add_array_var (str_value, value);
+				MONO._mono_wasm_add_array_var (str_value, value.objectId, value.length);
 				break;
 
 			case "pointer": {
@@ -763,7 +763,7 @@ var MonoSupportLib = {
 
 	mono_wasm_add_array_item: function(position) {
 		MONO.var_info.push({
-			name: "[" + position + "]",
+			name: `${position}`
 		});
 	},
 
