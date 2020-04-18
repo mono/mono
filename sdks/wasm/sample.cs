@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Reflection;
 using WebAssembly;
 
-public class Math {
+public partial class Math {
 	public static int IntAdd (int a, int b) {
 		var cp = new Simple.Complex (10, "hello");
 		int c = a + b;
@@ -20,6 +20,12 @@ public class Math {
 	public int First (int[] x) {
 		return x.FirstOrDefault ();
 	}
+
+	public static void Run ()
+	{
+		DebuggerTests.EntryClass.run ();
+	}
+
 }
 
 namespace GeoLocation
