@@ -170,6 +170,7 @@ var MonoSupportLib = {
 				}
 			}
 
+			this._post_process_details(res);
 			this.var_info = []
 
 			return res;
@@ -229,10 +230,121 @@ var MonoSupportLib = {
 			return res;
 		},
 
+		_post_process_details: function (details) {
+			if (details == undefined)
+				return {};
+
+			if (details.length > 0)
+				this._extract_and_cache_value_types(details);
+
+			return details;
+		},
+
+		_next_value_type_id: function () {
+			return ++this._next_value_type_id_var;
+		},
+
+		_extract_and_cache_value_types: function (var_list) {
+			if (var_list == undefined || !Array.isArray (var_list) || var_list.length == 0)
+				return var_list;
+
+			for (let i in var_list) {
+				var value = var_list [i].value;
+				if (value == undefined || value.type != "object")
+					continue;
+
+				if (value.isValueType != true || value.expanded != true) // undefined would also give us false
+					continue;
+
+				var objectId = value.objectId;
+				if (objectId == undefined)
+					objectId = `dotnet:valuetype:${this._next_value_type_id ()}`;
+				value.objectId = objectId;
+
+				this._extract_and_cache_value_types (value.members);
+
+				this._value_types_cache [objectId] = value.members;
+				delete value.members;
+			}
+
+			return var_list;
+		},
+
+		_get_details_for_value_type: function (objectId, fetchDetailsFn) {
+			if (objectId in this._value_types_cache)
+				return this._value_types_cache[objectId];
+
+			this._post_process_details (fetchDetailsFn());
+			if (objectId in this._value_types_cache)
+				return this._value_types_cache[objectId];
+
+			// return error
+			throw new Error (`Could not get details for ${objectId}`);
+		},
+
+		_is_object_id_array: function (objectId) {
+			// Keep this in sync with `_get_array_details`
+			return (objectId.startsWith ('dotnet:array:') && objectId.split (':').length == 3);
+		},
+
+		_get_array_details: function (objectId, objectIdParts) {
+			// Keep this in sync with `_is_object_id_array`
+			switch (objectIdParts.length) {
+				case 3:
+					return this._post_process_details (this.mono_wasm_get_array_values(objectIdParts[2]));
+
+				case 4:
+					var arrayObjectId = objectIdParts[2];
+					var arrayIdx = objectIdParts[3];
+					return this._get_details_for_value_type(
+									objectId, () => this.mono_wasm_get_array_value_expanded(arrayObjectId, arrayIdx));
+
+				default:
+					throw new Error (`object id format not supported : ${objectId}`);
+			}
+		},
+
+		mono_wasm_get_details: function (objectId, args) {
+			var parts = objectId.split(":");
+			if (parts[0] != "dotnet")
+				throw new Error ("Can't handle non-dotnet object ids. ObjectId: " + objectId);
+
+			switch (parts[1]) {
+				case "object":
+					if (parts.length != 3)
+						throw new Error(`exception this time: Invalid object id format: ${objectId}`);
+
+					return this._post_process_details(this.mono_wasm_get_object_properties(parts[2], false));
+
+				case "array":
+					return this._get_array_details(objectId, parts);
+
+				case "valuetype":
+					if (parts.length != 3 && parts.length != 4) {
+						// dotnet:valuetype:vtid
+						// dotnet:valuetype:containerObjectId:vtId
+						throw new Error(`Invalid object id format: ${objectId}`);
+					}
+
+					var containerObjectId = parts[2];
+					return this._get_details_for_value_type(objectId, () => this.mono_wasm_get_object_properties(containerObjectId, true));
+
+				default:
+					throw new Error(`Unknown object id format: ${objectId}`);
+			}
+		},
+
+		_x: function (obj, n) {
+			obj == undefined ? "" : JSON.stringify(obj, undefined, 4).slice(0, n);
+		},
+
 		mono_wasm_start_single_stepping: function (kind) {
 			console.log (">> mono_wasm_start_single_stepping " + kind);
 			if (!this.mono_wasm_setup_single_step)
 				this.mono_wasm_setup_single_step = Module.cwrap ("mono_wasm_setup_single_step", 'number', [ 'number']);
+
+			this._next_value_type_id_var = 0;
+			this._value_types_cache = {};
 
 			return this.mono_wasm_setup_single_step (kind);
 		},
@@ -241,6 +353,9 @@ var MonoSupportLib = {
 			this.mono_wasm_runtime_is_ready = true;
 			// DO NOT REMOVE - magic debugger init function
 			console.debug ("mono_wasm_runtime_ready", "fe00e07a-5519-4dfe-b35a-f867dbaf2e28");
+
+			this._next_value_type_id_var = 0;
+			this._value_types_cache = {};
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {
@@ -442,13 +557,14 @@ var MonoSupportLib = {
 			MONO.var_info.push({
 				value: {
 					type: "string",
-					value: Module.UTF8ToString (var_value),
+					value: var_value,
 				}
 			});
 		},
 
 		_mono_wasm_add_getter_var: function(className) {
-			var value = `${Module.UTF8ToString (className)} { get; }`;
+			fixed_class_name = MONO._mono_csharp_fixup_class_name (className);
+			var value = `${fixed_class_name} { get; }`;
 			MONO.var_info.push({
 				value: {
 					type: "symbol",
@@ -459,12 +575,12 @@ var MonoSupportLib = {
 		},
 
 		_mono_wasm_add_array_var: function(className, objectId) {
+			fixed_class_name = MONO._mono_csharp_fixup_class_name(className);
 			if (objectId == 0) {
-				MONO.mono_wasm_add_null_var (className);
+				MONO.mono_wasm_add_null_var (fixed_class_name);
 				return;
 			}
 
-			fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
 			MONO.var_info.push({
 				value: {
 					type: "object",
@@ -476,6 +592,79 @@ var MonoSupportLib = {
 			});
 		},
 
+		mono_wasm_add_typed_value: function (type, str_value, value) {
+			var type_str = type;
+			if (typeof type != 'string')
+				type_str = Module.UTF8ToString (type);
+			if (typeof str_value != 'string')
+				str_value = Module.UTF8ToString (str_value);
+
+			switch (type_str) {
+			case "bool":
+				MONO.var_info.push ({
+					value: {
+						type: "boolean",
+						value: value != 0
+					}
+				});
+				break;
+
+			case "char":
+				MONO.var_info.push ({
+					value: {
+						type: "symbol",
+						value: `${value} '${String.fromCharCode (value)}'`
+					}
+				});
+				break;
+
+			case "number":
+				MONO.var_info.push ({
+					value: {
+						type: "number",
+						value: value
+					}
+				});
+				break;
+
+			case "string":
+				MONO._mono_wasm_add_string_var (str_value);
+				break;
+
+			case "getter":
+				MONO._mono_wasm_add_getter_var (str_value);
+				break;
+
+			case "array":
+				MONO._mono_wasm_add_array_var (str_value, value);
+				break;
+
+			case "pointer": {
+				MONO.var_info.push ({
+					value: {
+						type: "symbol",
+						value: str_value,
+						description: str_value
+					}
+				});
+				}
+				break;
+
+			default: {
+				var msg = `'${str_value}' ${value}`;
+
+				MONO.var_info.push ({
+					value: {
+						type: "symbol",
+						value: msg,
+						description: msg
+					}
+				});
+				break;
+				}
+			}
+		},
+
 		_mono_csharp_fixup_class_name: function(className)
 		{
 			// Fix up generic names like Foo`2<int, string> to Foo<int, string>
@@ -485,77 +674,7 @@ var MonoSupportLib = {
 	},
 
 	mono_wasm_add_typed_value: function (type, str_value, value) {
-		var type_str = Module.UTF8ToString (type);
-
-		switch (type_str) {
-		case "bool":
-			MONO.var_info.push ({
-				value: {
-					type: "boolean",
-					value: value != 0
-				}
-			});
-			break;
-
-		case "char":
-			MONO.var_info.push ({
-				value: {
-					type: "symbol",
-					value: `${value} '${String.fromCharCode (value)}'`
-				}
-			});
-			break;
-
-		case "number":
-			MONO.var_info.push ({
-				value: {
-					type: "number",
-					value: value
-				}
-			});
-			break;
-
-		case "string":
-			MONO._mono_wasm_add_string_var (str_value);
-			break;
-
-		case "getter":
-			MONO._mono_wasm_add_getter_var (str_value);
-			break;
-
-		case "array":
-			MONO._mono_wasm_add_array_var (str_value, value);
-			break;
-
-		case "pointer": {
-			var symbol_str = Module.UTF8ToString (str_value);
-			MONO.var_info.push ({
-				value: {
-					type: "symbol",
-					value: symbol_str,
-					description: symbol_str
-				}
-			});
-			}
-			break;
-
-		default: {
-			console.log (`Error: mono_wasm_add_typed_value: Unknown type (${type_str}) for value`);
-			var symbol_str = str_value != 0 ? Module.UTF8ToString (str_value) : '';
-			var msg = `'${symbol_str}' ${value}`;
-
-			MONO.var_info.push ({
-				value: {
-					type: "symbol",
-					value: msg,
-					description: msg
-				}
-			});
-
-			break;
-			}
-
-		}
+		MONO.mono_wasm_add_typed_value (type, str_value, value);
 	},
 
 	mono_wasm_add_properties_var: function(name, field_offset) {

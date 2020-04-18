@@ -232,8 +232,6 @@ namespace WebAssembly.Net.Debugging {
 		internal DebugStore store;
 		public TaskCompletionSource<DebugStore> Source { get; } = new TaskCompletionSource<DebugStore> ();
 
-		int nextValueTypeId = 0;
-		public Dictionary<string, JToken> ValueTypesCache = new Dictionary<string, JToken> ();
 		public Dictionary<string, JToken> LocalsCache = new Dictionary<string, JToken> ();
 
 		public DebugStore Store {
@@ -248,11 +246,8 @@ namespace WebAssembly.Net.Debugging {
 		public void ClearState ()
 		{
 			CallStack = null;
-			ValueTypesCache.Clear ();
 			LocalsCache.Clear ();
-			nextValueTypeId = 0;
 		}
 
-		public int NextValueTypeId () => Interlocked.Increment (ref nextValueTypeId);
 	}
 }
