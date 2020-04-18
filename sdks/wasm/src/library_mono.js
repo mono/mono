@@ -329,13 +329,119 @@ var MonoSupportLib = {
 					var containerObjectId = parts[2];
 					return this._get_details_for_value_type(objectId, () => this.mono_wasm_get_object_properties(containerObjectId, true));
 
+				case "cfo_res": {
+					if (!(objectId in this._call_function_res_cache))
+						throw new Error(`Could not find any object with id ${objectId}`);
+
+					var real_obj = this._call_function_res_cache [objectId];
+					if (args.accessorPropertiesOnly) {
+						// var val_accessors = JSON.stringify ([
+						// 	{
+						// 		name: "__proto__",
+						// 		get: { type: "function", className: "Function", description: "function get __proto__ () {}", objectId: "dotnet:cfo_res:9999" },
+						// 		set: { type: "function", className: "Function", description: "function set __proto__ () {}", objectId: "dotnet:cfo_res:8888" },
+						// 		isOwn: false
+						// 	}], undefined, 4);
+						return { __value_as_json_string__:  "[]" };
+					}
+
+					// behaving as if (args.ownProperties == true)
+					var descriptors = Object.getOwnPropertyDescriptors (real_obj);
+					var own_properties = [];
+					Object.keys (descriptors).forEach (k => {
+						var new_obj;
+						var prop_desc = descriptors [k];
+						if (typeof prop_desc.value == "object") {
+							// convert `{value: { type='object', ... }}`
+							// to      `{ name: 'foo', value: { type='object', ... }}
+							new_obj = Object.assign ({ name: k}, prop_desc);
+						} else {
+							// This is needed for values that were not added by us,
+							// thus are like { value: 5 }
+							// instead of    { value: { type = 'number', value: 5 }}
+							//
+							// This can happen, for eg., when `length` gets added for arrays
+							// or `__proto__`.
+							new_obj = {
+								name: k,
+								// merge/add `type` and `description` to `d.value`
+								value: Object.assign ({ type: (typeof prop_desc.value), description: '' + prop_desc.value },
+														prop_desc)
+							};
+						}
+
+						own_properties.push (new_obj);
+					});
+
+					return { __value_as_json_string__: JSON.stringify (own_properties) };
+				}
+
 				default:
 					throw new Error(`Unknown object id format: ${objectId}`);
 			}
 		},
 
+		_cache_call_function_res: function (obj) {
+			var id = `dotnet:cfo_res:${this._next_call_function_res_id++}`;
+			this._call_function_res_cache[id] = obj;
+			return id;
+		},
+
 		_x: function (obj, n) {
 			obj == undefined ? "" : JSON.stringify(obj, undefined, 4).slice(0, n);
+		},
+
+		mono_wasm_release_object: function (objectId) {
+			if (objectId in this._cache_call_function_res)
+				delete this._cache_call_function_res[objectId];
+		},
+
+		mono_wasm_call_function_on: function (request, returnByValue) {
+			var objId = request.objectId;
+			var proxy;
+
+			if (objId in this._call_function_res_cache) {
+				proxy = this._call_function_res_cache [objId];
+			} else if (!objId.startsWith ('dotnet:cfo_res:')) {
+				var details = this.mono_wasm_get_details(objId);
+				var target_is_array = this._is_object_id_array (objId);
+				proxy = target_is_array ? [] : {};
+
+				Object.keys(details).forEach(p => {
+					var prop = details[p];
+					if (target_is_array) {
+						proxy.push(prop.value);
+					} else {
+						if (prop.name != undefined)
+							proxy [prop.name] = prop.value;
+						else // when can this happen??
+							proxy[''+p] = prop.value;
+					}
+				});
+			}
+
+			var fn_args = request.arguments != undefined ? request.arguments.map(a => a.value) : [];
+			var fn_eval_str = `var fn = ${request.functionDeclaration}; fn.call (proxy, ...[${fn_args}]);`;
+
+			var fn_res = eval (fn_eval_str);
+			if (returnByValue)
+				return fn_res;
+
+			if (fn_res == undefined)
+				throw Error ('Function returned undefined result');
+
+			var fn_res_id = this._cache_call_function_res (fn_res);
+			if (Object.getPrototypeOf (fn_res) == Array.prototype) {
+				return {
+					type: "object",
+					subtype: "array",
+					className: "Array",
+					description: `Array(${fn_res.length})`,
+					objectId: fn_res_id
+				};
+			} else {
+				return { type: "object", className: "Object", description: "Object", objectId: fn_res_id };
+			}
 		},
 
 		mono_wasm_start_single_stepping: function (kind) {
@@ -356,6 +462,10 @@ var MonoSupportLib = {
 
 			this._next_value_type_id_var = 0;
 			this._value_types_cache = {};
+
+			// FIXME: where should this go?
+			this._next_call_function_res_id = 0;
+			this._call_function_res_cache = {};
 		},
 
 		mono_wasm_set_breakpoint: function (assembly, method_token, il_offset) {

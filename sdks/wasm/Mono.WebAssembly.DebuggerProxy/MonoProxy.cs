@@ -236,6 +236,17 @@ namespace WebAssembly.Net.Debugging {
 					return true;
 				}
 
+			case "Runtime.releaseObject": {
+					var objId = args ["objectId"]?.Value<string> ();
+					if (objId?.StartsWith ("dotnet:cfo_res:", StringComparison.Ordinal) == true) {
+						await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_release_object('{objId}')"), token);
+						SendResponse (id, Result.OkFromObject (new{}), token);
+						return true;
+					}
+
+					break;
+				}
+
 				// Protocol extensions
 			case "Dotnet-test.setBreakpointByMethod": {
 				Console.WriteLine ("set-breakpoint-by-method: " + id + " " + args);
@@ -296,6 +307,35 @@ namespace WebAssembly.Net.Debugging {
 					}), token);
 
 				return true;
+			}
+			case "Runtime.callFunctionOn": {
+					var targetObjId = args ["objectId"].Value<string> ();
+					if (!targetObjId.StartsWith ("dotnet:", StringComparison.Ordinal))
+						return false;
+
+					var silent = args ["silent"]?.Value<bool> () ?? false;
+					if (targetObjId.StartsWith ("dotnet:scope:", StringComparison.Ordinal)) {
+						if (silent)
+							SendResponse (id, Result.OkFromObject (new { result = new {} }), token);
+						else
+							SendResponse (id, Result.Exception (new ArgumentException ("Runtime.callFunctionOn not supported with scope ({objId}).")), token);
+						break;
+					}
+
+					var returnByValue = args ["returnByValue"]?.Value<bool> () ?? false;
+					var cmd = new MonoCommands ($"MONO.mono_wasm_call_function_on ({args.ToString ()}, {(returnByValue ? "true" : "false")})");
+
+					var res = await SendMonoCommand (id, cmd, token);
+					if (!returnByValue && res.Value?["result"]?["value"]?["objectId"]?.Value<string> ()?.StartsWith ("dotnet:cfo_res:") == true)
+						res = Result.OkFromObject (new { result = res.Value ["result"] ["value"].Value<JObject> () });
+
+					if (res.IsErr && silent) {
+						SendResponse (id, Result.OkFromObject (new { result = new {} }), token);
+						return true;
+					} else {
+						SendResponse (id, res, token);
+						return true;
+					}
 				}
 			}
 
@@ -310,8 +350,22 @@ namespace WebAssembly.Net.Debugging {
 			var res = await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_get_details ('{objId}', {args})"), token);
 			if (res.IsErr)
 				return res;
-			else
-				return Result.Ok (JObject.FromObject (new { result = res.Value ["result"] ["value"] }));
+
+			if (objIdParts [1] == "cfo_res") {
+				// Runtime.callFunctionOn result object
+				var value_json_str = res.Value ["result"]?["value"]?["__value_as_json_string__"]?.Value<string> ();
+				if (value_json_str != null) {
+					res = Result.OkFromObject (new {
+							result = JArray.Parse (value_json_str.Replace (@"\""", "\""))
+					});
+				} else {
+					res = Result.OkFromObject (new { result = new {} });
+				}
+			} else {
+				res = Result.Ok (JObject.FromObject (new { result = res.Value ["result"] ["value"] }));
+			}
+
+			return res;
 		}
 
 		//static int frame_id=0;
