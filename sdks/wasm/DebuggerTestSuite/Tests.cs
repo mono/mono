@@ -379,19 +379,19 @@ namespace DebuggerTests
 					await CheckProps (locals, new {
 						fn_func			= TDelegate ("System.Func<Math, bool>", "bool <DelegatesTest>|(Math)"),
 						fn_func_null		= TObject   ("System.Func<Math, bool>", is_null: true),
-						fn_func_arr		= TArray    ("System.Func<Math, bool>[]"),
+						fn_func_arr		= TArray    ("System.Func<Math, bool>[]", 1),
 						fn_del			= TDelegate ("Math.IsMathNull", "bool IsMathNullDelegateTarget (Math)"),
 						fn_del_null		= TObject   ("Math.IsMathNull", is_null: true),
-						fn_del_arr		= TArray    ("Math.IsMathNull[]"),
+						fn_del_arr		= TArray    ("Math.IsMathNull[]", 1),
 
 						// Unused locals
 						fn_func_unused		= TDelegate ("System.Func<Math, bool>", "bool <DelegatesTest>|(Math)"),
 						fn_func_null_unused	= TObject   ("System.Func<Math, bool>", is_null: true),
-						fn_func_arr_unused	= TArray    ("System.Func<Math, bool>[]"),
+						fn_func_arr_unused	= TArray    ("System.Func<Math, bool>[]", 1),
 
 						fn_del_unused		= TDelegate ("Math.IsMathNull", "bool IsMathNullDelegateTarget (Math)"),
 						fn_del_null_unused	= TObject   ("Math.IsMathNull", is_null: true),
-						fn_del_arr_unused	= TArray    ("Math.IsMathNull[]"),
+						fn_del_arr_unused	= TArray    ("Math.IsMathNull[]", 1),
 
 						res			= TBool     (false),
 						m_obj			= TObject   ("Math")
@@ -465,7 +465,7 @@ namespace DebuggerTests
 
 						fn_func_null	= TObject    ("System.Func<Math, Math.GenericStruct<Math.GenericStruct<int[]>>, Math.GenericStruct<bool[]>>", is_null: true),
 						fn_func_only_ret= TDelegate  ("System.Func<bool>", "bool <DelegatesSignatureTest>|()"),
-						fn_func_arr	= TArray     ("System.Func<Math, Math.GenericStruct<Math.GenericStruct<int[]>>, Math.GenericStruct<bool[]>>[]"),
+						fn_func_arr	= TArray     ("System.Func<Math, Math.GenericStruct<Math.GenericStruct<int[]>>, Math.GenericStruct<bool[]>>[]", 1),
 
 						fn_del		= TDelegate  ("Math.DelegateForSignatureTest",
 									      "Math.GenericStruct<bool[]> DelegateTargetForSignatureTest (Math,Math.GenericStruct<Math.GenericStruct<int[]>>)"),
@@ -474,16 +474,16 @@ namespace DebuggerTests
 									      "Math.GenericStruct<bool[]> <DelegatesSignatureTest>|(Math,Math.GenericStruct<Math.GenericStruct<int[]>>)"),
 
 						fn_del_null	= TObject    ("Math.DelegateForSignatureTest", is_null: true),
-						fn_del_arr	= TArray     ("Math.DelegateForSignatureTest[]"),
+						fn_del_arr	= TArray     ("Math.DelegateForSignatureTest[]", 2),
 						m_obj		= TObject    ("Math"),
 						gs_gs		= TValueType ("Math.GenericStruct<Math.GenericStruct<int[]>>"),
 						fn_void_del	= TDelegate  ("Math.DelegateWithVoidReturn",
 									      "void DelegateTargetWithVoidReturn (Math.GenericStruct<int[]>)"),
 
-						fn_void_del_arr	= TArray     ("Math.DelegateWithVoidReturn[]"),
+						fn_void_del_arr	= TArray     ("Math.DelegateWithVoidReturn[]", 1),
 						fn_void_del_null= TObject    ("Math.DelegateWithVoidReturn", is_null: true),
 						gs		= TValueType ("Math.GenericStruct<int[]>"),
-						rets		= TArray     ("Math.GenericStruct<bool[]>[]")
+						rets		= TArray     ("Math.GenericStruct<bool[]>[]", 6)
 					}, "locals");
 
 					await CompareObjectPropertiesFor (locals, "fn_func_arr", new [] {
@@ -530,7 +530,7 @@ namespace DebuggerTests
 
 						fn_action_null	= TObject    ("System.Action<Math.GenericStruct<int[]>>", is_null: true),
 
-						fn_action_arr	= TArray     ("System.Action<Math.GenericStruct<int[]>>[]"),
+						fn_action_arr	= TArray     ("System.Action<Math.GenericStruct<int[]>>[]", 3),
 
 						gs		= TValueType ("Math.GenericStruct<int[]>"),
 					}, "locals");
@@ -561,8 +561,8 @@ namespace DebuggerTests
 						fn_func		= TDelegate ("System.Func<System.Func<int, bool>, bool>",
 									     "bool <NestedDelegatesTest>|(Func<int, bool>)"),
 						fn_func_null 	= TObject   ("System.Func<System.Func<int, bool>, bool>", is_null: true),
-						fn_func_arr	= TArray    ("System.Func<System.Func<int, bool>, bool>[]"),
-						fn_del_arr	= TArray    ("System.Func<System.Func<int, bool>, bool>[]"),
+						fn_func_arr	= TArray    ("System.Func<System.Func<int, bool>, bool>[]", 1),
+						fn_del_arr	= TArray    ("System.Func<System.Func<int, bool>, bool>[]", 1),
 
 						m_obj		= TObject   ("Math"),
 						fn_del_null	= TObject   ("System.Func<System.Func<int, bool>, bool>", is_null: true),
@@ -596,7 +596,7 @@ namespace DebuggerTests
 
 					await CheckProps (locals, new {
 						@this		= TObject   ("Math"),
-						dst_arr		= TArray    ("Math.DelegateForSignatureTest[]"),
+						dst_arr		= TArray    ("Math.DelegateForSignatureTest[]", 2),
 						fn_func		= TDelegate ("System.Func<char[], bool>",
 									     "bool <DelegatesAsMethodArgsTest>|(char[])"),
 						fn_action	= TDelegate ("System.Action<Math.GenericStruct<int>[]>",
@@ -622,7 +622,7 @@ namespace DebuggerTests
 
 					await CheckProps (locals, new {
 						@this		= TObject   ("Math"),
-						_dst_arr	= TArray    ("Math.DelegateForSignatureTest[]"),
+						_dst_arr	= TArray    ("Math.DelegateForSignatureTest[]", 2),
 						_fn_func 	= TDelegate ("System.Func<char[], bool>",
 									     "bool <MethodWithDelegatesAsync>|(char[])"),
 						_fn_action	= TDelegate ("System.Action<Math.GenericStruct<int>[]>",
@@ -1610,13 +1610,18 @@ namespace DebuggerTests
 				var prefix_arr = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
 							$"{local_var_name_prefix}_arr", array);
 
+				var local_arr_name = $"{local_var_name_prefix}_arr";
+				var prefix_arr = await GetObjectOnFrame (pause_location ["callFrames"][frame_idx], local_arr_name);
+
+				await CheckProps (prefix_arr, array, local_arr_name);
+
 				if (array_elements?.Length > 0) {
 					for (int i = 0; i < array_elements.Length; i ++) {
-						var i_str = $"[{i}]";
+						var i_str = i.ToString ();
 						var label = $"{local_var_name_prefix}_arr[{i}]";
 						if (array_elements [i] == null) {
 							var act_i = prefix_arr.FirstOrDefault (jt => jt ["name"]?.Value<string> () == i_str);
-							Assert.True (act_i != null, $"[{label}] Couldn't find array element {i_str}");
+							Assert.True (act_i != null, $"[{label}] Couldn't find array element [{i_str}]");
 
 							await CheckValue (act_i ["value"], TObject (etype_name, is_null: true), label);
 						} else {
@@ -1663,10 +1668,10 @@ namespace DebuggerTests
 				var c_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
 					"c", new {
 						id = TString ("c#id"),
-						ClassArrayProperty = TArray ("DebuggerTests.SimpleClass[]"),
-						ClassArrayField = TArray ("DebuggerTests.SimpleClass[]"),
-						PointsProperty = TArray ("DebuggerTests.Point[]"),
-						PointsField = TArray ("DebuggerTests.Point[]")
+						ClassArrayProperty = TArray ("DebuggerTests.SimpleClass[]", 3),
+						ClassArrayField = TArray ("DebuggerTests.SimpleClass[]", 3),
+						PointsProperty = TArray ("DebuggerTests.Point[]", 2),
+						PointsField = TArray ("DebuggerTests.Point[]", 2)
 					}
 				);
 
@@ -1729,7 +1734,7 @@ namespace DebuggerTests
 				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
 					new {
 						call_other = TBool (false),
-						gvclass_arr = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]"),
+						gvclass_arr = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", 2),
 						gvclass_arr_empty = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]"),
 						gvclass_arr_null = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", is_null: true),
 						gvclass = TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
@@ -1795,7 +1800,7 @@ namespace DebuggerTests
 					new {
 						t1 = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
 						@this = TObject ("DebuggerTests.ArrayTestsClass"),
-						point_arr = TArray ("DebuggerTests.Point[]"),
+						point_arr = TArray ("DebuggerTests.Point[]", 2),
 						point = TValueType ("DebuggerTests.Point")
 					},
 					"InspectValueTypeArrayLocalsInstanceAsync#locals"
@@ -1951,7 +1956,7 @@ namespace DebuggerTests
 						ts             = TValueType ("System.TimeSpan", ts.ToString ()),
 						dec            = TValueType ("System.Decimal", "123987123"),
 						guid           = TValueType ("System.Guid", "3D36E07E-AC90-48C6-B7EC-A481E289D014"),
-						dts            = TArray     ("System.DateTime[]"),
+						dts            = TArray     ("System.DateTime[]", 2),
 						obj            = TObject    ("DebuggerTests.ClassForToStringTests"),
 						sst            = TObject    ("DebuggerTests.StructForToStringTests")
 					},
@@ -2148,7 +2153,7 @@ namespace DebuggerTests
 						ip_null        = TPointer   ("int*", is_null: true),
 						ipp            = TPointer   ("int**"),
 
-						ipa            = TArray     ("int*[]"),
+						ipa            = TArray     ("int*[]", 3),
 						cvalue0        = TSymbol    ("113 'q'"),
 						cp             = TPointer   ("char*"),
 						dt             = TValueType ("System.DateTime", dt.ToString ()),
@@ -2299,7 +2304,7 @@ namespace DebuggerTests
 					var exp_i = exp_v_arr [i];
 					var act_i = actual_arr [i];
 
-					Assert.True (act_i ["name"]?.Value<string> () == $"[{i}]", $"{label}-[{i}].name");
+					AssertEqual (i.ToString (), act_i ["name"]?.Value<string> (), $"{label}-[{i}].name");
 
 					await CheckValue (act_i["value"], exp_i, $"{label}-{i}th value");
 				}
@@ -2549,8 +2554,8 @@ namespace DebuggerTests
 				? JObject.FromObject (new { type = "object", className = className, description = description ?? className, subtype = is_null ? "null" : null })
 				: JObject.FromObject (new { type = "object", className = className, description = description ?? className });
 
-		static JObject TArray (string className)
-			=> JObject.FromObject (new { type = "object", className = className, description = className, subtype = "array" });
+		static JObject TArray (string className, int length = 0)
+			=> JObject.FromObject (new { type = "object", className = className, description = $"{className}({length})", subtype = "array" });
 
 		static JObject TBool (bool value)
 			=> JObject.FromObject (new { type = "boolean", value = @value, description = @value ? "true" : "false" });
