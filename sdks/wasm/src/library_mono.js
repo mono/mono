@@ -387,10 +387,6 @@ var MonoSupportLib = {
 			return id;
 		},
 
-		_x: function (obj, n) {
-			obj == undefined ? "" : JSON.stringify(obj, undefined, 4).slice(0, n);
-		},
-
 		mono_wasm_release_object: function (objectId) {
 			if (objectId in this._cache_call_function_res)
 				delete this._cache_call_function_res[objectId];
