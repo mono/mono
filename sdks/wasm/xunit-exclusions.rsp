@@ -179,3 +179,7 @@
 
 # OOM
 -nomethod System.Buffers.Text.Tests.Base64EncoderUnitTests.BasicEncodingWithFinalBlockFalse
+
+# [SkipOnTargetFramework(TargetFrameworkMonikers.Mono)]
+-nomethod System.SpanTests.ReadOnlySpanTests.EndsWith_NullInStrings_NonOrdinal
+-nomethod System.SpanTests.ReadOnlySpanTests.StartsWith_NullInStrings_NonOrdinal
