@@ -261,23 +261,19 @@ namespace DebuggerTests
 
 		async Task CheckDateTime (JToken locals, string name, DateTime expected)
 		{
-			var obj = locals.Where (jt => jt ["name"]?.Value<string> () == name)
-					.FirstOrDefault ();
+			var obj = GetAndAssertObjectWithName(locals, name);
 			Assert.Equal (expected.ToString (), obj ["value"]? ["description"]?.Value<string> ());
 
-			await CheckObjectOnLocals (locals, name,
-				test_fn: (members) => {
-					// not checking everything
-					CheckNumber (members, "Year", expected.Year);
-					CheckNumber (members, "Month", expected.Month);
-					CheckNumber (members, "Day", expected.Day);
-					CheckNumber (members, "Hour", expected.Hour);
-					CheckNumber (members, "Minute", expected.Minute);
-					CheckNumber (members, "Second", expected.Second);
+			var members = await GetObjectOnLocals (locals, name);
+			// not checking everything
+			CheckNumber (members, "Year", expected.Year);
+			CheckNumber (members, "Month", expected.Month);
+			CheckNumber (members, "Day", expected.Day);
+			CheckNumber (members, "Hour", expected.Hour);
+			CheckNumber (members, "Minute", expected.Minute);
+			CheckNumber (members, "Second", expected.Second);
 
-					// FIXME: check some float properties too
-				}
-			);
+			// FIXME: check some float properties too
 		}
 
 		JToken CheckBool (JToken locals, string name, bool expected)
@@ -340,11 +336,14 @@ namespace DebuggerTests
 			return l;
 		}
 
-		[Fact]
-		public async Task InspectLocalsAtBreakpointSite () =>
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsAtBreakpointSite (bool use_cfo) =>
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", 5, 2, "IntAdd",
 				"window.setTimeout(function() { invoke_add(); }, 1);",
+				use_cfo: use_cfo,
 				test_fn: (locals) => {
 					CheckNumber (locals, "a", 10);
 					CheckNumber (locals, "b", 20);
@@ -366,32 +365,34 @@ namespace DebuggerTests
 			);
 
 		[Theory]
-		[InlineData (0, 45, 2, "DelegatesTest")]
-		[InlineData (2, 90, 2, "InnerMethod2")]
-		public async Task InspectLocalsWithDelegatesAtBreakpointSite (int frame, int line, int col, string method_name) =>
+		[InlineData (0, 45, 2, "DelegatesTest", false)]
+		[InlineData (0, 45, 2, "DelegatesTest", true)]
+		[InlineData (2, 90, 2, "InnerMethod2", false)]
+		[InlineData (2, 90, 2, "InnerMethod2", true)]
+		public async Task InspectLocalsWithDelegatesAtBreakpointSite (int frame, int line, int col, string method_name, bool use_cfo) =>
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", line, col, method_name,
 				"window.setTimeout(function() { invoke_delegates_test (); }, 1);",
+				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties(pause_location["callFrames"][frame]["callFrameId"].Value<string>());
 
-					Console.WriteLine (locals);
 					await CheckProps (locals, new {
 						fn_func			= TDelegate ("System.Func<Math, bool>", "bool <DelegatesTest>|(Math)"),
 						fn_func_null		= TObject   ("System.Func<Math, bool>", is_null: true),
-						fn_func_arr		= TArray    ("System.Func<Math, bool>[]"),
+						fn_func_arr		= TArray    ("System.Func<Math, bool>[]", 1),
 						fn_del			= TDelegate ("Math.IsMathNull", "bool IsMathNullDelegateTarget (Math)"),
 						fn_del_null		= TObject   ("Math.IsMathNull", is_null: true),
-						fn_del_arr		= TArray    ("Math.IsMathNull[]"),
+						fn_del_arr		= TArray    ("Math.IsMathNull[]", 1),
 
 						// Unused locals
 						fn_func_unused		= TDelegate ("System.Func<Math, bool>", "bool <DelegatesTest>|(Math)"),
 						fn_func_null_unused	= TObject   ("System.Func<Math, bool>", is_null: true),
-						fn_func_arr_unused	= TArray    ("System.Func<Math, bool>[]"),
+						fn_func_arr_unused	= TArray    ("System.Func<Math, bool>[]", 1),
 
 						fn_del_unused		= TDelegate ("Math.IsMathNull", "bool IsMathNullDelegateTarget (Math)"),
 						fn_del_null_unused	= TObject   ("Math.IsMathNull", is_null: true),
-						fn_del_arr_unused	= TArray    ("Math.IsMathNull[]"),
+						fn_del_arr_unused	= TArray    ("Math.IsMathNull[]", 1),
 
 						res			= TBool     (false),
 						m_obj			= TObject   ("Math")
@@ -423,11 +424,14 @@ namespace DebuggerTests
 				}
 			);
 
-		[Fact]
-		public async Task InspectLocalsWithGenericTypesAtBreakpointSite () =>
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsWithGenericTypesAtBreakpointSite (bool use_cfo) =>
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", 65, 2, "GenericTypesTest",
 				"window.setTimeout(function() { invoke_generic_types_test (); }, 1);",
+				use_cfo: use_cfo,
 				test_fn: (locals) => {
 					CheckObject (locals, "list", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>");
 					CheckObject (locals, "list_null", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>", is_null: true);
@@ -445,14 +449,17 @@ namespace DebuggerTests
 			);
 
 		[Theory]
-		[InlineData (0, 190, 2, "DelegatesSignatureTest")]
-		[InlineData (2, 90, 2, "InnerMethod2")]
-		public async Task InspectDelegateSignaturesWithFunc (int frame, int line, int col, string bp_method)
+		[InlineData (0, 190, 2, "DelegatesSignatureTest", false)]
+		[InlineData (0, 190, 2, "DelegatesSignatureTest", true)]
+		[InlineData (2, 90, 2, "InnerMethod2", false)]
+		[InlineData (2, 90, 2, "InnerMethod2", true)]
+		public async Task InspectDelegateSignaturesWithFunc (int frame, int line, int col, string bp_method, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs",
 				line, col,
 				bp_method,
 				"window.setTimeout (function () { invoke_static_method ('[debugger-test] Math:DelegatesSignatureTest'); }, 1)",
+				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][frame]["callFrameId"].Value<string>());
 
@@ -465,7 +472,7 @@ namespace DebuggerTests
 
 						fn_func_null	= TObject    ("System.Func<Math, Math.GenericStruct<Math.GenericStruct<int[]>>, Math.GenericStruct<bool[]>>", is_null: true),
 						fn_func_only_ret= TDelegate  ("System.Func<bool>", "bool <DelegatesSignatureTest>|()"),
-						fn_func_arr	= TArray     ("System.Func<Math, Math.GenericStruct<Math.GenericStruct<int[]>>, Math.GenericStruct<bool[]>>[]"),
+						fn_func_arr	= TArray     ("System.Func<Math, Math.GenericStruct<Math.GenericStruct<int[]>>, Math.GenericStruct<bool[]>>[]", 1),
 
 						fn_del		= TDelegate  ("Math.DelegateForSignatureTest",
 									      "Math.GenericStruct<bool[]> DelegateTargetForSignatureTest (Math,Math.GenericStruct<Math.GenericStruct<int[]>>)"),
@@ -474,16 +481,16 @@ namespace DebuggerTests
 									      "Math.GenericStruct<bool[]> <DelegatesSignatureTest>|(Math,Math.GenericStruct<Math.GenericStruct<int[]>>)"),
 
 						fn_del_null	= TObject    ("Math.DelegateForSignatureTest", is_null: true),
-						fn_del_arr	= TArray     ("Math.DelegateForSignatureTest[]"),
+						fn_del_arr	= TArray     ("Math.DelegateForSignatureTest[]", 2),
 						m_obj		= TObject    ("Math"),
 						gs_gs		= TValueType ("Math.GenericStruct<Math.GenericStruct<int[]>>"),
 						fn_void_del	= TDelegate  ("Math.DelegateWithVoidReturn",
 									      "void DelegateTargetWithVoidReturn (Math.GenericStruct<int[]>)"),
 
-						fn_void_del_arr	= TArray     ("Math.DelegateWithVoidReturn[]"),
+						fn_void_del_arr	= TArray     ("Math.DelegateWithVoidReturn[]", 1),
 						fn_void_del_null= TObject    ("Math.DelegateWithVoidReturn", is_null: true),
 						gs		= TValueType ("Math.GenericStruct<int[]>"),
-						rets		= TArray     ("Math.GenericStruct<bool[]>[]")
+						rets		= TArray     ("Math.GenericStruct<bool[]>[]", 6)
 					}, "locals");
 
 					await CompareObjectPropertiesFor (locals, "fn_func_arr", new [] {
@@ -509,13 +516,16 @@ namespace DebuggerTests
 				});
 
 		[Theory]
-		[InlineData (0, 211, 2, "ActionTSignatureTest")]
-		[InlineData (2, 90, 2, "InnerMethod2")]
-		public async Task ActionTSignatureTest (int frame, int line, int col, string bp_method)
+		[InlineData (0, 211, 2, "ActionTSignatureTest", false)]
+		[InlineData (0, 211, 2, "ActionTSignatureTest", true)]
+		[InlineData (2, 90, 2, "InnerMethod2", false)]
+		[InlineData (2, 90, 2, "InnerMethod2", true)]
+		public async Task ActionTSignatureTest (int frame, int line, int col, string bp_method, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", line, col,
 				bp_method,
 				"window.setTimeout (function () { invoke_static_method ('[debugger-test] Math:ActionTSignatureTest'); }, 1)",
+				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][frame]["callFrameId"].Value<string>());
 
@@ -530,7 +540,7 @@ namespace DebuggerTests
 
 						fn_action_null	= TObject    ("System.Action<Math.GenericStruct<int[]>>", is_null: true),
 
-						fn_action_arr	= TArray     ("System.Action<Math.GenericStruct<int[]>>[]"),
+						fn_action_arr	= TArray     ("System.Action<Math.GenericStruct<int[]>>[]", 3),
 
 						gs		= TValueType ("Math.GenericStruct<int[]>"),
 					}, "locals");
@@ -547,13 +557,16 @@ namespace DebuggerTests
 				});
 
 		[Theory]
-		[InlineData (0, 228, 2, "NestedDelegatesTest")]
-		[InlineData (2, 90, 2, "InnerMethod2")]
-		public async Task NestedDelegatesTest (int frame, int line, int col, string bp_method)
+		[InlineData (0, 228, 2, "NestedDelegatesTest", false)]
+		[InlineData (0, 228, 2, "NestedDelegatesTest", true)]
+		[InlineData (2, 90, 2, "InnerMethod2", false)]
+		[InlineData (2, 90, 2, "InnerMethod2", true)]
+		public async Task NestedDelegatesTest (int frame, int line, int col, string bp_method, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", line, col,
 				bp_method,
 				"window.setTimeout (function () { invoke_static_method ('[debugger-test] Math:NestedDelegatesTest'); }, 1)",
+				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][frame]["callFrameId"].Value<string>());
 
@@ -561,8 +574,8 @@ namespace DebuggerTests
 						fn_func		= TDelegate ("System.Func<System.Func<int, bool>, bool>",
 									     "bool <NestedDelegatesTest>|(Func<int, bool>)"),
 						fn_func_null 	= TObject   ("System.Func<System.Func<int, bool>, bool>", is_null: true),
-						fn_func_arr	= TArray    ("System.Func<System.Func<int, bool>, bool>[]"),
-						fn_del_arr	= TArray    ("System.Func<System.Func<int, bool>, bool>[]"),
+						fn_func_arr	= TArray    ("System.Func<System.Func<int, bool>, bool>[]", 1),
+						fn_del_arr	= TArray    ("System.Func<System.Func<int, bool>, bool>[]", 1),
 
 						m_obj		= TObject   ("Math"),
 						fn_del_null	= TObject   ("System.Func<System.Func<int, bool>, bool>", is_null: true),
@@ -584,19 +597,22 @@ namespace DebuggerTests
 				});
 
 		[Theory]
-		[InlineData (0, 247, 2, "MethodWithDelegateArgs")]
-		[InlineData (2, 90, 2, "InnerMethod2")]
-		public async Task DelegatesAsMethodArgsTest (int frame, int line, int col, string bp_method)
+		[InlineData (0, 247, 2, "MethodWithDelegateArgs", false)]
+		[InlineData (0, 247, 2, "MethodWithDelegateArgs", true)]
+		[InlineData (2, 90, 2, "InnerMethod2", false)]
+		[InlineData (2, 90, 2, "InnerMethod2", true)]
+		public async Task DelegatesAsMethodArgsTest (int frame, int line, int col, string bp_method, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", line, col,
 				bp_method,
 				"window.setTimeout (function () { invoke_static_method ('[debugger-test] Math:DelegatesAsMethodArgsTest'); }, 1)",
+				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][frame]["callFrameId"].Value<string>());
 
 					await CheckProps (locals, new {
 						@this		= TObject   ("Math"),
-						dst_arr		= TArray    ("Math.DelegateForSignatureTest[]"),
+						dst_arr		= TArray    ("Math.DelegateForSignatureTest[]", 2),
 						fn_func		= TDelegate ("System.Func<char[], bool>",
 									     "bool <DelegatesAsMethodArgsTest>|(char[])"),
 						fn_action	= TDelegate ("System.Action<Math.GenericStruct<int>[]>",
@@ -611,18 +627,21 @@ namespace DebuggerTests
 					}, "locals#dst_arr");
 				});
 
-		[Fact]
-		public async Task MethodWithDelegatesAsyncTest ()
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task MethodWithDelegatesAsyncTest (bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", 265, 2,
 				"MoveNext", //"DelegatesAsMethodArgsTestAsync"
 				"window.setTimeout (function () { invoke_static_method_async ('[debugger-test] Math:MethodWithDelegatesAsyncTest'); }, 1)",
+				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
 
 					await CheckProps (locals, new {
 						@this		= TObject   ("Math"),
-						_dst_arr	= TArray    ("Math.DelegateForSignatureTest[]"),
+						_dst_arr	= TArray    ("Math.DelegateForSignatureTest[]", 2),
 						_fn_func 	= TDelegate ("System.Func<char[], bool>",
 									     "bool <MethodWithDelegatesAsync>|(char[])"),
 						_fn_action	= TDelegate ("System.Action<Math.GenericStruct<int>[]>",
@@ -646,7 +665,7 @@ namespace DebuggerTests
 			};
 
 		async Task CheckInspectLocalsAtBreakpointSite (string url_key, int line, int column, string function_name, string eval_expression,
-						Action<JToken> test_fn = null, Func<JObject, Task> wait_for_event_fn = null)
+						Action<JToken> test_fn = null, Func<JObject, Task> wait_for_event_fn = null, bool use_cfo = false)
 		{
 			var insp = new Inspector ();
 			//Collect events
@@ -655,6 +674,7 @@ namespace DebuggerTests
 			await Ready ();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 
 				var bp = await SetBreakpoint (url_key, line, column);
 
@@ -804,8 +824,10 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task InspectLocalsInPreviousFramesDuringSteppingIn2 () {
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsInPreviousFramesDuringSteppingIn2 (bool use_cfo) {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -813,6 +835,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 
 				var dep_cs_loc = "dotnet://Simple.Dependency.dll/dependency.cs";
 				await SetBreakpoint (dep_cs_loc, 24, 2);
@@ -829,68 +852,55 @@ namespace DebuggerTests
 					}
 				);
 
-				await CheckObjectOnFrameLocals (pause_location["callFrames"][0], "this",
-					test_fn: (props) => {
-						Assert.Equal (3, props.Count());
-						CheckNumber (props, "A", 10);
-						CheckString (props, "B", "xx");
-						CheckObject (props, "c", "object");
-					}
-				);
+				var props = await GetObjectOnFrame (pause_location["callFrames"][0], "this");
+				Assert.Equal (3, props.Count());
+				CheckNumber (props, "A", 10);
+				CheckString (props, "B", "xx");
+				CheckObject (props, "c", "object");
 
 				// Check UseComplex frame
-				await CheckLocalsOnFrame (pause_location ["callFrames"][3], debugger_test_loc, 17, 2, "UseComplex",
-					test_fn: (locals_m1) => {
-						Assert.Equal (7, locals_m1.Count());
+				var locals_m1 = await GetLocalsForFrame (pause_location ["callFrames"][3], debugger_test_loc, 17, 2, "UseComplex");
+				Assert.Equal (7, locals_m1.Count());
 
-						CheckNumber (locals_m1, "a", 10);
-						CheckNumber (locals_m1, "b", 20);
-						CheckObject (locals_m1, "complex", "Simple.Complex");
-						CheckNumber (locals_m1, "c", 30);
-						CheckNumber (locals_m1, "d", 50);
-						CheckNumber (locals_m1, "e", 60);
-						CheckNumber (locals_m1, "f", 0);
-					}
-				);
+				CheckNumber (locals_m1, "a", 10);
+				CheckNumber (locals_m1, "b", 20);
+				CheckObject (locals_m1, "complex", "Simple.Complex");
+				CheckNumber (locals_m1, "c", 30);
+				CheckNumber (locals_m1, "d", 50);
+				CheckNumber (locals_m1, "e", 60);
+				CheckNumber (locals_m1, "f", 0);
 
-				await CheckObjectOnFrameLocals (pause_location["callFrames"][3], "complex",
-					test_fn: (props) => {
-						Assert.Equal (3, props.Count());
-						CheckNumber (props, "A", 10);
-						CheckString (props, "B", "xx");
-						CheckObject (props, "c", "object");
-					}
-				);
+				props = await GetObjectOnFrame (pause_location["callFrames"][3], "complex");
+				Assert.Equal (3, props.Count());
+				CheckNumber (props, "A", 10);
+				CheckString (props, "B", "xx");
+				CheckObject (props, "c", "object");
 
 				pause_location = await StepAndCheck (StepKind.Over, dep_cs_loc, 16, 2, "DoStuff", times: 2);
 				// Check UseComplex frame again
-				await CheckLocalsOnFrame (pause_location ["callFrames"][1], debugger_test_loc, 17, 2, "UseComplex",
-					test_fn: (locals_m1) => {
-						Assert.Equal (7, locals_m1.Count());
+				locals_m1 = await GetLocalsForFrame (pause_location ["callFrames"][1], debugger_test_loc, 17, 2, "UseComplex");
+				Assert.Equal (7, locals_m1.Count());
 
-						CheckNumber (locals_m1, "a", 10);
-						CheckNumber (locals_m1, "b", 20);
-						CheckObject (locals_m1, "complex", "Simple.Complex");
-						CheckNumber (locals_m1, "c", 30);
-						CheckNumber (locals_m1, "d", 50);
-						CheckNumber (locals_m1, "e", 60);
-						CheckNumber (locals_m1, "f", 0);
-					}
-				);
+				CheckNumber (locals_m1, "a", 10);
+				CheckNumber (locals_m1, "b", 20);
+				CheckObject (locals_m1, "complex", "Simple.Complex");
+				CheckNumber (locals_m1, "c", 30);
+				CheckNumber (locals_m1, "d", 50);
+				CheckNumber (locals_m1, "e", 60);
+				CheckNumber (locals_m1, "f", 0);
 
-				await CheckObjectOnFrameLocals (pause_location["callFrames"][1], "complex",
-					test_fn: (props) => {
-						Assert.Equal (3, props.Count());
-						CheckNumber (props, "A", 10);
-						CheckString (props, "B", "xx");
-						CheckObject (props, "c", "object");
-					}
-				);
+				props = await GetObjectOnFrame (pause_location["callFrames"][1], "complex");
+				Assert.Equal (3, props.Count());
+				CheckNumber (props, "A", 10);
+				CheckString (props, "B", "xx");
+				CheckObject (props, "c", "object");
 			});
 		}
 
-		[Fact]
-		public async Task InspectLocalsInPreviousFramesDuringSteppingIn () {
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsInPreviousFramesDuringSteppingIn (bool use_cfo) {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -898,6 +908,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 				await SetBreakpoint (debugger_test_loc, 102, 3);
@@ -915,35 +926,26 @@ namespace DebuggerTests
 					}
 				);
 
-				var this_props = await CheckObjectOnFrameLocals (wait_res["callFrames"][0], "this",
-					test_fn: (props) => {
-						Assert.Equal (2, props.Count());
-						CheckObject (props, "m", "Math");
-						CheckValueType (props, "SimpleStructProperty", "Math.SimpleStruct");
-					}
-				);
+				var this_props = await GetObjectOnFrame (wait_res["callFrames"][0], "this");
+				Assert.Equal (2, this_props.Count());
+				CheckObject (this_props, "m", "Math");
+				CheckValueType (this_props, "SimpleStructProperty", "Math.SimpleStruct");
 
-				var ss_props = await CheckObjectOnLocals (this_props, "SimpleStructProperty",
-					test_fn: (props) => {
-						Assert.Equal (2, props.Count());
-						CheckValueType (props, "dt", "System.DateTime");
-						CheckValueType (props, "gs", "Math.GenericStruct<System.DateTime>");
-					}
-				);
+				var ss_props = await GetObjectOnLocals (this_props, "SimpleStructProperty");
+				Assert.Equal (2, ss_props.Count());
+				CheckValueType (ss_props, "dt", "System.DateTime");
+				CheckValueType (ss_props, "gs", "Math.GenericStruct<System.DateTime>");
 
 				await CheckDateTime (ss_props, "dt", new DateTime (2020, 1, 2, 3, 4, 5));
 
 				// Check OuterMethod frame
-				await CheckLocalsOnFrame (wait_res ["callFrames"][1], debugger_test_loc, 78, 2, "OuterMethod",
-					test_fn: (locals_m1) => {
-						Assert.Equal (5, locals_m1.Count());
-						// FIXME: Failing test CheckNumber (locals_m1, "i", 5);
-						// FIXME: Failing test CheckString (locals_m1, "text", "Hello");
-						CheckNumber (locals_m1, "new_i", 0);
-						CheckNumber (locals_m1, "k", 0);
-						CheckObject (locals_m1, "nim", "Math.NestedInMath");
-					}
-				);
+				var locals_m1 = await GetLocalsForFrame (wait_res ["callFrames"][1], debugger_test_loc, 78, 2, "OuterMethod");
+				Assert.Equal (5, locals_m1.Count());
+				// FIXME: Failing test CheckNumber (locals_m1, "i", 5);
+				// FIXME: Failing test CheckString (locals_m1, "text", "Hello");
+				CheckNumber (locals_m1, "new_i", 0);
+				CheckNumber (locals_m1, "k", 0);
+				CheckObject (locals_m1, "nim", "Math.NestedInMath");
 
 				// step back into OuterMethod
 				await StepAndCheck (StepKind.Over, debugger_test_loc, 82, 2, "OuterMethod", times: 9,
@@ -1060,8 +1062,10 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task InspectLocalsInAsyncMethods () {
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsInAsyncMethods (bool use_cfo) {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -1069,6 +1073,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, 111, 3);
@@ -1089,12 +1094,10 @@ namespace DebuggerTests
 				Console.WriteLine (wait_res);
 				
 #if false // Disabled for now, as we don't have proper async traces
-				await CheckLocalsOnFrame (wait_res ["callFrames"][2],
-					test_fn: (locals) => {
-						Assert.Equal (4, locals.Count());
-						CheckString (locals, "ls", "string from jstest");
-						CheckNumber (locals, "li", 52);
-				});
+				var locals = await GetProperties (wait_res ["callFrames"][2]["callFrameId"].Value<string> ());
+				Assert.Equal (4, locals.Count());
+				CheckString (locals, "ls", "string from jstest");
+				CheckNumber (locals, "li", 52);
 #endif
 
 				// TODO: previous frames have async machinery details, so no point checking that right now
@@ -1111,20 +1114,19 @@ namespace DebuggerTests
 					}
 				);
 
-				await CheckObjectOnFrameLocals (pause_loc ["callFrames"][0], "this",
-					test_fn: (props) => {
-						Assert.Equal (2, props.Count ());
-						CheckObject (props, "m", "Math");
-						CheckValueType (props, "SimpleStructProperty", "Math.SimpleStruct");
-					}
-				);
+				var this_props = await GetObjectOnFrame (pause_loc ["callFrames"][0], "this");
+				Assert.Equal (2, this_props.Count ());
+				CheckObject (this_props, "m", "Math");
+				CheckValueType (this_props, "SimpleStructProperty", "Math.SimpleStruct");
 
 				// TODO: Check `this` properties
 			});
 		}
 
-		[Fact]
-		public async Task InspectLocalsWithStructs () {
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsWithStructs (bool use_cfo) {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -1132,6 +1134,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-valuetypes-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, 16, 2);
@@ -1150,47 +1153,41 @@ namespace DebuggerTests
 
 				var dt = new DateTime (2021, 2, 3, 4, 6, 7);
 				// Check ss_local's properties
-				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
-						new {
+				var ss_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "ss_local");
+				await CheckProps (ss_local_props, new {
 							str_member = TString ("set in MethodWithLocalStructs#SimpleStruct#str_member"),
 							dt = TValueType ("System.DateTime", dt.ToString ()),
 							gs = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 							Kind = TEnum ("System.DateTimeKind", "Utc")
-						});
+						}, "ss_local");
 
 				{
 					// Check ss_local.dt
 					await CheckDateTime (ss_local_props, "dt", dt);
 
 					// Check ss_local.gs
-					await CheckObjectOnLocals (ss_local_props, "gs",
-						test_fn: (props) => {
-							CheckString (props, "StringField", "set in MethodWithLocalStructs#SimpleStruct#gs#StringField");
-							CheckObject (props, "List", "System.Collections.Generic.List<System.DateTime>");
-						}
-					);
+					var gs_props = await GetObjectOnLocals (ss_local_props, "gs");
+					CheckString (gs_props, "StringField", "set in MethodWithLocalStructs#SimpleStruct#gs#StringField");
+					CheckObject (gs_props, "List", "System.Collections.Generic.List<System.DateTime>");
 				}
 
 				// Check gs_local's properties
-				await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "gs_local",
-					new {
+				var gs_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "gs_local");
+				await CheckProps (gs_local_props, new {
 						StringField = TString ("gs_local#GenericStruct<ValueTypesTest>#StringField"),
 						List        = TObject ("System.Collections.Generic.List<DebuggerTests.ValueTypesTest>", is_null: true),
 						Options     = TEnum   ("DebuggerTests.Options", "None")
-					});
+					}, "gs_local");
 
 				// Check vt_local's properties
-				var vt_local_props = await CheckObjectOnFrameLocals (pause_location ["callFrames"][0], "vt_local",
-					test_fn: async (props) => {
-						Assert.Equal (5, props.Count());
+				var vt_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "vt_local");
+				Assert.Equal (5, vt_local_props.Count());
 
-						CheckString (props, "StringField", "string#0");
-						CheckValueType (props, "SimpleStructField", "DebuggerTests.ValueTypesTest.SimpleStruct");
-						CheckValueType (props, "SimpleStructProperty", "DebuggerTests.ValueTypesTest.SimpleStruct");
-						await CheckDateTime (props, "DT", new DateTime (2020, 1, 2, 3, 4, 5));
-						CheckEnum (props, "RGB", "DebuggerTests.RGB", "Blue");
-					}
-				);
+				CheckString (vt_local_props, "StringField", "string#0");
+				CheckValueType (vt_local_props, "SimpleStructField", "DebuggerTests.ValueTypesTest.SimpleStruct");
+				CheckValueType (vt_local_props, "SimpleStructProperty", "DebuggerTests.ValueTypesTest.SimpleStruct");
+				await CheckDateTime (vt_local_props, "DT", new DateTime (2020, 1, 2, 3, 4, 5));
+				CheckEnum (vt_local_props, "RGB", "DebuggerTests.RGB", "Blue");
 
 				{
 					// SimpleStructProperty
@@ -1224,8 +1221,10 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task InspectValueTypeMethodArgs () {
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectValueTypeMethodArgs (bool use_cfo) {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -1233,6 +1232,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-valuetypes-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, 27, 3);
@@ -1264,8 +1264,8 @@ namespace DebuggerTests
 				};
 
 				// Check ss_arg's properties
-				var ss_arg_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0],
-								"ss_arg", ss_local_as_ss_arg);
+				var ss_arg_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "ss_arg");
+				await CheckProps (ss_arg_props, ss_local_as_ss_arg, "ss_arg");
 
 				{
 					// Check ss_local.dt
@@ -1293,8 +1293,8 @@ namespace DebuggerTests
 					Kind       = TEnum      ("System.DateTimeKind", "Utc")
 				};
 
-				ss_arg_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0],
-							"ss_arg", ss_arg_updated);
+				ss_arg_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "ss_arg");
+				await CheckProps (ss_arg_props, ss_arg_updated, "ss_ar");
 
 				{
 					// Check ss_local.gs
@@ -1308,33 +1308,32 @@ namespace DebuggerTests
 				}
 
 				// Check locals on previous frame, same as earlier in this test
-				ss_arg_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][1],
-						"ss_local", ss_local_as_ss_arg);
+				ss_arg_props = await GetObjectOnFrame (pause_location ["callFrames"][1], "ss_local");
+				await CheckProps (ss_arg_props, ss_local_as_ss_arg, "ss_local");
 
 				{
 					// Check ss_local.dt
 					await CheckDateTime (ss_arg_props, "dt", dt);
 
 					// Check ss_local.gs
-					await CheckObjectOnLocals (ss_arg_props, "gs",
-						test_fn: (props) => {
-							CheckString (props, "StringField", "ss_local#SimpleStruct#string#0#SimpleStruct#gs#StringField");
-							CheckObject (props, "List", "System.Collections.Generic.List<System.DateTime>");
-						}
-					);
+					var gs_props = await GetObjectOnLocals (ss_arg_props, "gs");
+					CheckString (gs_props, "StringField", "ss_local#SimpleStruct#string#0#SimpleStruct#gs#StringField");
+					CheckObject (gs_props, "List", "System.Collections.Generic.List<System.DateTime>");
 				}
 
 				// ----------- Step back to the caller ---------
 
 				pause_location = await StepAndCheck (StepKind.Over, debugger_test_loc, 22, 3, "TestStructsAsMethodArgs",
 							times: 2, locals_fn: (l) => { /* non-null to make sure that locals get fetched */} );
-				await CheckLocalsOnFrame (pause_location ["callFrames"][0], new {
-							ss_local =  TValueType ("DebuggerTests.ValueTypesTest.SimpleStruct"),
-							ss_ret   =  TValueType ("DebuggerTests.ValueTypesTest.SimpleStruct")
-							}, "locals#0");
+				var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string> ());
+				await CheckProps (locals, new {
+					ss_local =  TValueType ("DebuggerTests.ValueTypesTest.SimpleStruct"),
+					ss_ret   =  TValueType ("DebuggerTests.ValueTypesTest.SimpleStruct")
+					},
+					"locals#0");
 
-				ss_arg_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"] [0],
-							"ss_local", ss_local_as_ss_arg);
+				ss_arg_props = await GetObjectOnFrame (pause_location ["callFrames"] [0], "ss_local");
+				await CheckProps (ss_arg_props, ss_local_as_ss_arg, "ss_local");
 
 				{
 					// Check ss_local.gs
@@ -1345,8 +1344,10 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task InspectLocalsWithStructsStaticAsync () {
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsWithStructsStaticAsync (bool use_cfo) {
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -1354,6 +1355,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-valuetypes-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, 47, 3);
@@ -1364,23 +1366,23 @@ namespace DebuggerTests
 					+ "); }, 1);",
 					debugger_test_loc, 47, 3, "MoveNext"); //BUG: method name
 
-				await CheckLocalsOnFrame (pause_location ["callFrames"][0],
-						new {
-							ss_local = TObject ("DebuggerTests.ValueTypesTest.SimpleStruct"),
-							gs_local = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<int>"),
-							result   = TBool (true)
-						},
-						"locals#0");
+				var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string> ());
+				await CheckProps (locals, new {
+					ss_local = TObject ("DebuggerTests.ValueTypesTest.SimpleStruct"),
+					gs_local = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<int>"),
+					result   = TBool (true)
+					},
+					"locals#0");
 
 				var dt = new DateTime (2021, 2, 3, 4, 6, 7);
 				// Check ss_local's properties
-				var ss_local_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "ss_local",
-					new {
+				var ss_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "ss_local");
+				await CheckProps (ss_local_props, new {
 						str_member = TString ("set in MethodWithLocalStructsStaticAsync#SimpleStruct#str_member"),
 						dt         = TValueType ("System.DateTime", dt.ToString ()),
 						gs         = TValueType ("DebuggerTests.ValueTypesTest.GenericStruct<System.DateTime>"),
 						Kind       = TEnum ("System.DateTimeKind", "Utc")
-					});
+					}, "ss_local");
 
 				{
 					// Check ss_local.dt
@@ -1397,21 +1399,23 @@ namespace DebuggerTests
 				}
 
 				// Check gs_local's properties
-				await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][0], "gs_local",
-					new {
+				var gs_local_props = await GetObjectOnFrame (pause_location ["callFrames"][0], "gs_local");
+				await CheckProps (gs_local_props, new {
 						StringField = TString ("gs_local#GenericStruct<ValueTypesTest>#StringField"),
 						List        = TObject ("System.Collections.Generic.List<int>"),
 						Options     = TEnum   ("DebuggerTests.Options", "Option2")
-					});
+					}, "gs_local");
 
 				// FIXME: check ss_local.gs.List's members
 			});
 		}
 
 		[Theory]
-		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
-		public async Task InspectPrimitiveTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, false)]
+		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, true)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+		public async Task InspectPrimitiveTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:PrimitiveTypeLocals",
@@ -1421,7 +1425,8 @@ namespace DebuggerTests
 				array: new [] { TNumber (4), TNumber (70), TNumber (1) },
 				array_elements: null,
 				test_prev_frame: test_prev_frame,
-				frame_idx: frame_idx);
+				frame_idx: frame_idx,
+				use_cfo: use_cfo);
 
 		static Func<int, int, string, string, object> TSimpleClass = (X, Y, Id, Color) => new {
 			X =     TNumber (X),
@@ -1441,9 +1446,11 @@ namespace DebuggerTests
 		};
 
 		[Theory]
-		[InlineData (32, 2, "ValueTypeLocals", false, 0)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
-		public async Task InspectValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+		[InlineData (32, 2, "ValueTypeLocals", false, 0, false)]
+		[InlineData (32, 2, "ValueTypeLocals", false, 0, true)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+		public async Task InspectValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:ValueTypeLocals",
@@ -1459,12 +1466,15 @@ namespace DebuggerTests
 					TPoint (123, 0, "point_arr#Id#1", "Blue")
 				},
 				test_prev_frame: test_prev_frame,
-				frame_idx: frame_idx);
+				frame_idx: frame_idx,
+				use_cfo: use_cfo);
 
 		[Theory]
-		[InlineData (49, 2, "ObjectTypeLocals", false, 0)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
-		public async Task InspectObjectArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+		[InlineData (49, 2, "ObjectTypeLocals", false, 0, false)]
+		[InlineData (49, 2, "ObjectTypeLocals", false, 0, true)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+		public async Task InspectObjectArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:ObjectTypeLocals",
@@ -1481,12 +1491,15 @@ namespace DebuggerTests
 					null, // Element is null
 					TSimpleClass (123, 0, "class_arr#Id#2", "Blue") },
 				test_prev_frame: test_prev_frame,
-				frame_idx: frame_idx);
+				frame_idx: frame_idx,
+				use_cfo: use_cfo);
 
 		[Theory]
-		[InlineData (66, 2, "GenericTypeLocals", false, 0)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
-		public async Task InspectGenericTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+		[InlineData (66, 2, "GenericTypeLocals", false, 0, false)]
+		[InlineData (66, 2, "GenericTypeLocals", false, 0, true)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+		public async Task InspectGenericTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:GenericTypeLocals",
@@ -1512,12 +1525,15 @@ namespace DebuggerTests
 					}
 				},
 				test_prev_frame: test_prev_frame,
-				frame_idx: frame_idx);
+				frame_idx: frame_idx,
+				use_cfo: use_cfo);
 
 		[Theory]
-		[InlineData (82, 2, "GenericValueTypeLocals", false, 0)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
-		public async Task InspectGenericValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, false)]
+		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, true)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+		public async Task InspectGenericValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:GenericValueTypeLocals",
@@ -1541,12 +1557,15 @@ namespace DebuggerTests
 					}
 				},
 				test_prev_frame: test_prev_frame,
-				frame_idx: frame_idx);
+				frame_idx: frame_idx,
+				use_cfo: use_cfo);
 
 		[Theory]
-		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2)]
-		public async Task InspectGenericValueTypeArrayLocals2 (int line, int col, string method_name, bool test_prev_frame, int frame_idx)
+		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, false)]
+		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, true)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+		public async Task InspectGenericValueTypeArrayLocals2 (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:GenericValueTypeLocals2",
@@ -1576,11 +1595,12 @@ namespace DebuggerTests
 					}
 				},
 				test_prev_frame: test_prev_frame,
-				frame_idx: frame_idx);
+				frame_idx: frame_idx,
+				use_cfo: use_cfo);
 
 		async Task TestSimpleArrayLocals (int line, int col, string entry_method_name, string method_name, string etype_name,
 							string local_var_name_prefix, object[] array, object[] array_elements,
-							bool test_prev_frame=false, int frame_idx=0)
+							bool test_prev_frame=false, int frame_idx=0, bool use_cfo = false)
 		{
 			var insp = new Inspector ();
 			//Collect events
@@ -1590,6 +1610,7 @@ namespace DebuggerTests
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 
 				await SetBreakpoint (debugger_test_loc, line, col);
 
@@ -1598,25 +1619,40 @@ namespace DebuggerTests
 						+ "); }, 1);";
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, method_name);
-				await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					test_fn: (locals) => {
-						Assert.Equal (4, locals.Count ());
-						CheckArray (locals, $"{local_var_name_prefix}_arr", $"{etype_name}[]");
-						CheckArray (locals, $"{local_var_name_prefix}_arr_empty", $"{etype_name}[]");
-						CheckObject (locals, $"{local_var_name_prefix}_arr_null", $"{etype_name}[]", is_null: true);
-						CheckBool (locals, "call_other", test_prev_frame);
-				});
 
-				var prefix_arr = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
-							$"{local_var_name_prefix}_arr", array);
+				var locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				Assert.Equal (4, locals.Count ());
+				CheckArray (locals, $"{local_var_name_prefix}_arr", $"{etype_name}[]");
+				CheckArray (locals, $"{local_var_name_prefix}_arr_empty", $"{etype_name}[]");
+				CheckObject (locals, $"{local_var_name_prefix}_arr_null", $"{etype_name}[]", is_null: true);
+				CheckBool (locals, "call_other", test_prev_frame);
+
+				var local_arr_name = $"{local_var_name_prefix}_arr";
+
+				JToken prefix_arr;
+				if (use_cfo) {   // Use `Runtime.callFunctionOn` to get the properties
+					var frame = pause_location ["callFrames"][frame_idx];
+					var name = local_arr_name;
+					var fl = await GetProperties (frame ["callFrameId"].Value<string> ());
+					var l_obj = GetAndAssertObjectWithName (locals, name);
+					var l_objectId = l_obj ["value"]["objectId"]?.Value<string> ();
+
+					Assert.True (!String.IsNullOrEmpty (l_objectId), $"No objectId found for {name}");
+
+					prefix_arr = await GetObjectWithCFO (l_objectId);
+				} else {
+					prefix_arr = await GetObjectOnFrame (pause_location ["callFrames"][frame_idx], local_arr_name);
+				}
+
+				await CheckProps (prefix_arr, array, local_arr_name);
 
 				if (array_elements?.Length > 0) {
 					for (int i = 0; i < array_elements.Length; i ++) {
-						var i_str = $"[{i}]";
+						var i_str = i.ToString ();
 						var label = $"{local_var_name_prefix}_arr[{i}]";
 						if (array_elements [i] == null) {
 							var act_i = prefix_arr.FirstOrDefault (jt => jt ["name"]?.Value<string> () == i_str);
-							Assert.True (act_i != null, $"[{label}] Couldn't find array element {i_str}");
+							Assert.True (act_i != null, $"[{label}] Couldn't find array element [{i_str}]");
 
 							await CheckValue (act_i ["value"], TObject (etype_name, is_null: true), label);
 						} else {
@@ -1625,13 +1661,32 @@ namespace DebuggerTests
 					}
 				}
 
-				await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
-						$"{local_var_name_prefix}_arr_empty", new object[0]);
+				var props = await GetObjectOnFrame (pause_location ["callFrames"][frame_idx], $"{local_var_name_prefix}_arr_empty");
+				await CheckProps (props, new object[0], "${local_var_name_prefix}_arr_empty");
 			});
+
+			async Task<JToken> GetObjectWithCFO (string objectId, JObject fn_args = null)
+			{
+				var fn_decl = "function () { return this; }";
+				var cfo_args = JObject.FromObject (new {
+					functionDeclaration = fn_decl,
+					objectId = objectId
+				});
+
+				if (fn_args != null)
+					cfo_args ["arguments"] = fn_args;
+
+				// callFunctionOn
+				var result = await ctx.cli.SendCommand ("Runtime.callFunctionOn", cfo_args, ctx.token);
+
+				return await GetProperties (result.Value ["result"]["objectId"]?.Value<string> (), fn_args);
+			}
 		}
 
-		[Fact]
-		public async Task InspectObjectArrayMembers ()
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectObjectArrayMembers (bool use_cfo)
 		{
 			var insp = new Inspector ();
 			//Collect events
@@ -1645,6 +1700,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, line, col);
@@ -1654,20 +1710,19 @@ namespace DebuggerTests
 						+ "); }, 1);";
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, method_name);
-				await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					test_fn: (locals) => {
-						Assert.Single (locals);
-						CheckObject (locals, "c", "DebuggerTests.Container");
-				});
+				var locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				Assert.Single (locals);
+				CheckObject (locals, "c", "DebuggerTests.Container");
 
-				var c_props = await CompareObjectPropertiesOnFrameLocals (pause_location ["callFrames"][frame_idx],
-					"c", new {
+				var c_props = await GetObjectOnFrame (pause_location ["callFrames"][frame_idx], "c");
+				await CheckProps (c_props, new {
 						id = TString ("c#id"),
-						ClassArrayProperty = TArray ("DebuggerTests.SimpleClass[]"),
-						ClassArrayField = TArray ("DebuggerTests.SimpleClass[]"),
-						PointsProperty = TArray ("DebuggerTests.Point[]"),
-						PointsField = TArray ("DebuggerTests.Point[]")
-					}
+						ClassArrayProperty = TArray ("DebuggerTests.SimpleClass[]", 3),
+						ClassArrayField = TArray ("DebuggerTests.SimpleClass[]", 3),
+						PointsProperty = TArray ("DebuggerTests.Point[]", 2),
+						PointsField = TArray ("DebuggerTests.Point[]", 2)
+					},
+					"c"
 				);
 
 				await CompareObjectPropertiesFor (c_props, "ClassArrayProperty",
@@ -1702,8 +1757,10 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task InspectValueTypeArrayLocalsStaticAsync ()
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectValueTypeArrayLocalsStaticAsync (bool use_cfo)
 		{
 			var insp = new Inspector ();
 			//Collect events
@@ -1717,6 +1774,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, line, col);
@@ -1726,18 +1784,16 @@ namespace DebuggerTests
 						+ "); }, 1);";
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, method_name);
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						call_other = TBool (false),
-						gvclass_arr = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]"),
-						gvclass_arr_empty = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]"),
-						gvclass_arr_null = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", is_null: true),
-						gvclass = TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
-						// BUG: this shouldn't be null!
-						points = TObject ("DebuggerTests.Point[]", is_null: true)
-					},
-					"ValueTypeLocalsAsync#locals"
-				);
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					call_other = TBool (false),
+					gvclass_arr = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", 2),
+					gvclass_arr_empty = TArray ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]"),
+					gvclass_arr_null = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>[]", is_null: true),
+					gvclass = TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
+					// BUG: this shouldn't be null!
+					points = TObject ("DebuggerTests.Point[]", is_null: true)
+				}, "ValueTypeLocalsAsync#locals");
 
 				var local_var_name_prefix = "gvclass";
 				await CompareObjectPropertiesFor (frame_locals, local_var_name_prefix, new {
@@ -1766,8 +1822,10 @@ namespace DebuggerTests
 		}
 
 		// TODO: Check previous frame too
-		[Fact]
-		public async Task InspectValueTypeArrayLocalsInstanceAsync ()
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectValueTypeArrayLocalsInstanceAsync (bool use_cfo)
 		{
 			var insp = new Inspector ();
 			//Collect events
@@ -1780,6 +1838,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, line, col);
@@ -1791,15 +1850,13 @@ namespace DebuggerTests
 				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
 
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						t1 = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
-						@this = TObject ("DebuggerTests.ArrayTestsClass"),
-						point_arr = TArray ("DebuggerTests.Point[]"),
-						point = TValueType ("DebuggerTests.Point")
-					},
-					"InspectValueTypeArrayLocalsInstanceAsync#locals"
-				);
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					t1 = TObject ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
+					@this = TObject ("DebuggerTests.ArrayTestsClass"),
+					point_arr = TArray ("DebuggerTests.Point[]", 2),
+					point = TValueType ("DebuggerTests.Point")
+				}, "InspectValueTypeArrayLocalsInstanceAsync#locals");
 
 				await CompareObjectPropertiesFor (frame_locals, "t1",
 					new {
@@ -1820,8 +1877,518 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task InspectValueTypeArrayLocalsInAsyncStaticStructMethod ()
+		// This tests `callFunctionOn` with a function that the vscode-js-debug extension uses
+		// Using this here as a non-trivial test case
+		[Theory]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10, false)]
+		[InlineData ("big_array_js_test (0);", "/other.js", 5, 1, 0, true)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, 10, false)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 0);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, 0, true)]
+		public async Task CFO_CheckVSCodeTestFunction1 (string eval_fn, string bp_loc, int line, int col, int len, bool roundtrip)
+		{
+			string vscode_fn0 = "function(){const e={__proto__:this.__proto__},t=Object.getOwnPropertyNames(this);for(let r=0;r<t.length;++r){const n=t[r],i=n>>>0;if(String(i>>>0)===n&&i>>>0!=4294967295)continue;const a=Object.getOwnPropertyDescriptor(this,n);a&&Object.defineProperty(e,n,a)}return e}";
+
+			await RunCallFunctionOn (eval_fn, vscode_fn0, "big", bp_loc, line, col, res_array_len: len, roundtrip: roundtrip,
+				test_fn: async (result) => {
+
+					var is_js = bp_loc.EndsWith (".js", StringComparison.Ordinal);
+					var obj_accessors = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = true,
+						ownProperties = false
+					}), ctx.token);
+					if (is_js)
+						await CheckProps (obj_accessors.Value ["result"], new { __proto__ = TIgnore () }, "obj_accessors");
+					else
+						AssertEqual (0, obj_accessors.Value ["result"]?.Count (), "obj_accessors-count");
+
+					// Check for a __proto__ object
+					// isOwn = true, accessorPropertiesOnly = false
+					var obj_own = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = false,
+						ownProperties = true
+					}), ctx.token);
+
+					await CheckProps (obj_own.Value ["result"], new {
+						length = TNumber (len),
+						// __proto__ = TArray (type, 0) // Is this one really required?
+					}, $"obj_own", num_fields: is_js ? 2 : 1);
+
+				});
+		}
+
+		void CheckJFunction (JToken actual, string className, string label)
+		{
+			AssertEqual ("function", actual ["type"]?.Value<string> (), $"{label}-type");
+			AssertEqual (className, actual ["className"]?.Value<string> (), $"{label}-className");
+		}
+
+		// This tests `callFunctionOn` with a function that the vscode-js-debug extension uses
+		// Using this here as a non-trivial test case
+		[Theory]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10)]
+		[InlineData ("big_array_js_test (0);", "/other.js", 5, 1, 0)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, 10)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 0);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, 0)]
+		public async Task CFO_CheckVSCodeTestFunction2 (string eval_fn, string bp_loc, int line, int col, int len)
+		{
+			var fetch_start_idx = 2;
+			var num_elems_fetch = 3;
+			string vscode_fn1 = "function(e,t){const r={},n=-1===e?0:e,i=-1===t?this.length:e+t;for(let e=n;e<i&&e<this.length;++e){const t=Object.getOwnPropertyDescriptor(this,e);t&&Object.defineProperty(r,e,t)}return r}";
+
+			await RunCallFunctionOn (eval_fn, vscode_fn1, "big", bp_loc, line, col,
+				fn_args: JArray.FromObject (new [] {
+						new { @value = fetch_start_idx },
+						new { @value = num_elems_fetch }
+					}),
+				test_fn: async (result) => {
+
+					var is_js = bp_loc.EndsWith (".js", StringComparison.Ordinal);
+
+					// isOwn = false, accessorPropertiesOnly = true
+					var obj_accessors = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = true,
+						ownProperties = false
+					}), ctx.token);
+					if (is_js)
+						await CheckProps (obj_accessors.Value ["result"], new { __proto__ = TIgnore () }, "obj_accessors");
+					else
+						AssertEqual (0, obj_accessors.Value ["result"]?.Count (), "obj_accessors-count");
+
+					// Ignoring the __proto__ property
+
+					// isOwn = true, accessorPropertiesOnly = false
+					var obj_own = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = false,
+						ownProperties = true
+					}), ctx.token);
+
+					var obj_own_val = obj_own.Value ["result"];
+					var num_elems_recd = len == 0 ? 0 : num_elems_fetch;
+					AssertEqual (is_js ? num_elems_recd + 1 : num_elems_recd, obj_own_val.Count (), $"obj_own-count");
+
+					if (is_js)
+						CheckObject (obj_own_val, "__proto__", "Object");
+
+					for (int i = fetch_start_idx; i < fetch_start_idx + num_elems_recd; i ++)
+						CheckNumber (obj_own_val, i.ToString (), 1000 + i);
+			});
+		}
+
+		[Theory]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, false)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, true)]
+		public async Task CFO_RunOnArrayReturnEmptyArray (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
+		{
+			var ret_len = 0;
+
+			await RunCallFunctionOn (eval_fn,
+				"function () { return []; }",
+				"big", bp_loc, line, col,
+				res_array_len: ret_len,
+				roundtrip: roundtrip,
+				test_fn: async (result) => {
+					var is_js = bp_loc.EndsWith (".js", StringComparison.Ordinal);
+
+					// getProperties (isOwn = false, accessorPropertiesOnly = true)
+					var obj_accessors = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = true,
+						ownProperties = false
+					}), ctx.token);
+					if (is_js)
+						await CheckProps (obj_accessors.Value ["result"], new { __proto__ = TIgnore () }, "obj_accessors");
+					else
+						AssertEqual (0, obj_accessors.Value ["result"]?.Count (), "obj_accessors-count");
+
+					// getProperties (isOwn = true, accessorPropertiesOnly = false)
+					var obj_own = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = false,
+						ownProperties = true
+					}), ctx.token);
+
+					await CheckProps (obj_own.Value ["result"], new {
+						length = TNumber (ret_len),
+						// __proto__ returned by js
+					}, $"obj_own", num_fields: is_js ? 2 : 1);
+			});
+		}
+
+		[Theory]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, false)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, true)]
+		public async Task CFO_RunOnArrayReturnArray (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
+		{
+			var ret_len = 5;
+			await RunCallFunctionOn (eval_fn,
+				"function (m) { return Object.values (this).filter ((k, i) => i%m == 0); }",
+				"big", bp_loc, line, col,
+				fn_args: JArray.FromObject (new [] { new { value = 2 } }),
+				res_array_len: ret_len,
+				roundtrip: roundtrip,
+				test_fn: async (result) => {
+					var is_js = bp_loc.EndsWith (".js");
+
+					// getProperties (own=false)
+					var obj_accessors = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = true,
+						ownProperties = false
+					}), ctx.token);
+
+					if (is_js)
+						await CheckProps (obj_accessors.Value ["result"], new { __proto__ = TIgnore () }, "obj_accessors");
+					else
+						AssertEqual (0, obj_accessors.Value ["result"]?.Count (), "obj_accessors-count");
+
+					// getProperties (own=true)
+					// isOwn = true, accessorPropertiesOnly = false
+					var obj_own = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = false,
+						ownProperties = true
+					}), ctx.token);
+
+					// AssertEqual (2, obj_own.Value ["result"].Count (), $"{label}-obj_own.count");
+
+					var obj_own_val = obj_own.Value ["result"];
+					await CheckProps (obj_own_val, new {
+						length = TNumber (ret_len),
+						// __proto__ returned by JS
+					}, $"obj_own", num_fields: (is_js ? ret_len  + 2 : ret_len + 1));
+
+					for (int i = 0; i < ret_len; i ++)
+						CheckNumber (obj_own_val, i.ToString (), i*2 + 1000);
+			});
+		}
+
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task CFO_RunOnVTArray (bool roundtrip)
+		=>	await RunCallFunctionOn (
+				"invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);",
+				"function (m) { return Object.values (this).filter ((k, i) => i%m == 0); }",
+				"ss_arr",
+				"dotnet://debugger-test.dll/debugger-test.cs", 311, 2,
+				fn_args: JArray.FromObject (new [] { new { value = 2 } }),
+				res_array_len: 5,
+				roundtrip: roundtrip,
+				test_fn: async (result) => {
+					var ret_len = 5;
+
+					// getProperties (own=false)
+					var obj_accessors = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = true,
+						ownProperties = false
+					}), ctx.token);
+
+					AssertEqual (0, obj_accessors.Value ["result"]?.Count (), "obj_accessors-count");
+
+					// getProperties (own=true)
+					// isOwn = true, accessorPropertiesOnly = false
+					var obj_own = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = false,
+						ownProperties = true
+					}), ctx.token);
+
+					var obj_own_val = obj_own.Value ["result"];
+					await CheckProps (obj_own_val, new {
+						length = TNumber (ret_len),
+						// __proto__ returned by JS
+					}, "obj_own", num_fields: ret_len + 1);
+
+					for (int i = 0; i < ret_len; i ++) {
+						var act_i = CheckValueType (obj_own_val, i.ToString (), "Math.SimpleStruct");
+
+						// Valuetypes can get sent as part of the container's getProperties, so ensure that we can access it
+						var act_i_props = await GetProperties (act_i ["value"]["objectId"]?.Value<string> ());
+						await CheckProps (act_i_props, new {
+							dt = TValueType ("System.DateTime", new DateTime (2020 + (i*2), 1, 2, 3, 4, 5).ToString ()),
+							gs = TValueType ("Math.GenericStruct<System.DateTime>")
+						}, "obj_own ss_arr[{i}]");
+
+						var gs_props = await GetObjectOnLocals (act_i_props, "gs");
+						await CheckProps (gs_props, new {
+							List = TObject ("System.Collections.Generic.List<System.DateTime>", is_null: true),
+							StringField = TString ($"ss_arr # {i*2} # gs # StringField")
+						}, "obj_own ss_arr[{i}].gs");
+
+					}
+			});
+
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task CFO_RunOnCFOValueTypeResult (bool roundtrip)
+		=>	await RunCallFunctionOn (
+				eval_fn:    "invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);",
+				fn_decl:    "function () { return this; }",
+				local_name: "simple_struct",
+				bp_loc:     "dotnet://debugger-test.dll/debugger-test.cs", 311, 2,
+				roundtrip:  roundtrip,
+				test_fn: async (result) => {
+
+					// getProperties (own=false)
+					var obj_accessors = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = true,
+						ownProperties = false
+					}), ctx.token);
+					AssertEqual (0, obj_accessors.Value ["result"].Count (), "obj_accessors-count");
+
+					// getProperties (own=true)
+					// isOwn = true, accessorPropertiesOnly = false
+					var obj_own = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = false,
+						ownProperties = true
+					}), ctx.token);
+
+					var obj_own_val = obj_own.Value ["result"];
+					var dt = new DateTime (2020, 1, 2, 3, 4, 5);
+					await CheckProps (obj_own_val, new {
+						dt = TValueType ("System.DateTime", dt.ToString ()),
+						gs = TValueType ("Math.GenericStruct<System.DateTime>")
+					}, $"obj_own-props");
+
+					await CheckDateTime (obj_own_val, "dt", dt);
+
+					var gs_props = await GetObjectOnLocals (obj_own_val, "gs");
+					await CheckProps (gs_props, new {
+						List = TObject ("System.Collections.Generic.List<System.DateTime>", is_null: true),
+						StringField = TString ($"simple_struct # gs # StringField")
+					}, "simple_struct.gs-props");
+			});
+
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task CFO_RunOnJSObject (bool roundtrip)
+		=>	await RunCallFunctionOn (
+				"object_js_test ();",
+				"function () { return this; }",
+				"obj", "/other.js", 14, 1,
+				fn_args: JArray.FromObject (new [] { new { value = 2 } }),
+				roundtrip: roundtrip,
+				test_fn: async (result) => {
+
+					// getProperties (own=false)
+					var obj_accessors = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = true,
+						ownProperties = false
+					}), ctx.token);
+
+					await CheckProps (obj_accessors.Value ["result"], new { __proto__ = TIgnore () }, "obj_accessors");
+
+					// getProperties (own=true)
+					// isOwn = true, accessorPropertiesOnly = false
+					var obj_own = await ctx.cli.SendCommand ("Runtime.getProperties", JObject.FromObject (new {
+						objectId = result.Value ["result"]["objectId"].Value<string> (),
+						accessorPropertiesOnly = false,
+						ownProperties = true
+					}), ctx.token);
+
+					var obj_own_val = obj_own.Value ["result"];
+					await CheckProps (obj_own_val, new {
+						a_obj = TObject ("Object"),
+						b_arr = TArray ("Array", 2)
+					}, "obj_own", num_fields: 3);
+			});
+
+		[Theory]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, false)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, true)]
+		public async Task CFO_RunOnArrayReturnObjectArrayByValue (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
+		{
+			var ret_len = 5;
+			await RunCallFunctionOn (eval_fn,
+					"function () { return Object.values (this).filter ((k, i) => i%2 == 0); }",
+					"big", bp_loc, line, col, returnByValue: true, roundtrip: roundtrip,
+				test_fn: async (result) => {
+					// Check cfo result
+					AssertEqual ("object", result.Value ["result"]["type"]?.Value<string> (), "cfo-res-type");
+					AssertEqual (1, result.Value.Values ().Count (), "cfo-res-value-count");
+
+					var actual = result.Value ["result"]?["value"].Values<JToken> ().ToArray ();
+					for (int i = 0; i < ret_len; i ++) {
+						var exp_num = i*2 + 1000;
+						if (bp_loc.EndsWith (".js", StringComparison.Ordinal))
+							AssertEqual (exp_num, actual [i].Value<int> (), $"[{i}]");
+						else {
+							AssertEqual ("number", actual [i]?["type"]?.Value<string> (), $"[{i}]-type");
+							AssertEqual (exp_num.ToString (), actual [i]?["description"]?.Value<string> (), $"[{i}]-description");
+							AssertEqual (exp_num, actual [i]?["value"]?.Value<int> (), $"[{i}]-value");
+						}
+					}
+					await Task.CompletedTask;
+			});
+		}
+
+		[Theory]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, false)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10);", "dotnet://debugger-test.dll/debugger-test.cs", 311, 2, true)]
+		public async Task CFO_RunOnArrayReturnArrayByValue (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
+		=>	await RunCallFunctionOn (eval_fn,
+				"function () { return Object.getOwnPropertyNames (this); }",
+				"big", bp_loc, line, col, returnByValue: true,
+				roundtrip: roundtrip,
+				test_fn: async (result) => {
+					// Check cfo result
+					AssertEqual ("object", result.Value ["result"]["type"]?.Value<string> (), "cfo-res-type");
+
+					var exp = new JArray ();
+					for (int i = 0; i < 10; i ++)
+						exp.Add (i.ToString ());
+					exp.Add ("length");
+
+					var actual = result.Value ["result"]?["value"];
+					if (!JObject.DeepEquals (exp, actual)) {
+						Assert.True (false, $"Results don't match.\nExpected: {exp}\nActual:  {actual}");
+					}
+					await Task.CompletedTask;
+			});
+
+		[Theory]
+		[InlineData (null)]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task CFO_CheckErrorsWithSilent (bool? silent)
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 311, 2);
+
+				// callFunctionOn
+				var eval_expr = "window.setTimeout(function() { invoke_static_method ('[debugger-test] Math:CallFunctionOnTest', 10); }, 1);";
+				var result = await ctx.cli.SendCommand ("Runtime.evaluate", JObject.FromObject (new { expression = eval_expr }), ctx.token);
+				var pause_location = await ctx.insp.WaitFor (Inspector.PAUSE);
+
+				// Check the object at the bp
+				var cfo_args = JObject.FromObject (new {
+					functionDeclaration = "function () { throw Error ('test error'); }",
+					objectId = "dotnet:object:xyasd",
+				});
+
+				if (silent.HasValue)
+					cfo_args ["silent"] = silent;
+
+				// callFunctionOn
+				result = await ctx.cli.SendCommand ("Runtime.callFunctionOn", cfo_args, ctx.token);
+				Assert.True ((silent ?? false) == result.IsOk);
+			});
+		}
+
+		/*
+		 * 1. runs `Runtime.callFunctionOn` on the objectId,
+		 * if @roundtrip == false, then
+		 *     -> calls @test_fn for that result (new objectId)
+		 * else
+		 *     -> runs it again on the *result's* objectId.
+		 *        -> calls @test_fn on the *new* result objectId
+		 *
+		 * Returns: result of `Runtime.callFunctionOn`
+		 */ 
+		async Task RunCallFunctionOn (string eval_fn, string fn_decl, string local_name, string bp_loc, int line, int col, int res_array_len = -1,
+						Func<Result, Task> test_fn = null, bool returnByValue = false, JArray fn_args = null, bool roundtrip = false)
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				await SetBreakpoint (bp_loc, line, col);
+
+				// callFunctionOn
+				var eval_expr = $"window.setTimeout(function() {{ {eval_fn} }}, 1);";
+				var result = await ctx.cli.SendCommand ("Runtime.evaluate", JObject.FromObject (new { expression = eval_expr }), ctx.token);
+				var pause_location = await ctx.insp.WaitFor (Inspector.PAUSE);
+
+				// Um for js we get "scriptId": "6"
+				// CheckLocation (bp_loc, line, col, ctx.scripts, pause_location ["callFrames"][0]["location"]);
+
+				// Check the object at the bp
+				var frame_locals = await GetProperties (pause_location ["callFrames"][0]["scopeChain"][0]["object"]["objectId"].Value<string> ());
+				var obj = GetAndAssertObjectWithName (frame_locals, local_name);
+				var obj_id = obj ["value"]["objectId"].Value<string> ();
+
+				var cfo_args = JObject.FromObject (new {
+					functionDeclaration = fn_decl,
+					objectId = obj_id
+				});
+
+				if (fn_args != null)
+					cfo_args ["arguments"] = fn_args;
+
+				if (returnByValue)
+					cfo_args ["returnByValue"] = returnByValue;
+
+				// callFunctionOn
+				result = await ctx.cli.SendCommand ("Runtime.callFunctionOn", cfo_args, ctx.token);
+				await CheckCFOResult (result);
+
+				// If it wasn't `returnByValue`, then try to run a new function
+				// on that *returned* object
+				// This second function, just returns the object as-is, so the same
+				// test_fn is re-usable.
+				if (!returnByValue && roundtrip) {
+					cfo_args = JObject.FromObject (new {
+						functionDeclaration = "function () { return this; }",
+						objectId = result.Value ["result"]["objectId"]?.Value<string> ()
+					});
+
+					if (fn_args != null)
+						cfo_args ["arguments"] = fn_args;
+
+					result = await ctx.cli.SendCommand ("Runtime.callFunctionOn", cfo_args, ctx.token);
+
+					await CheckCFOResult (result);
+				}
+
+				if (test_fn != null)
+					await test_fn (result);
+
+				return;
+
+				async Task CheckCFOResult (Result result)
+				{
+					if (returnByValue)
+						return;
+
+					if (res_array_len < 0)
+						await CheckValue (result.Value ["result"], TObject ("Object"), $"cfo-res");
+					else
+						await CheckValue (result.Value ["result"], TArray ("Array", res_array_len), $"cfo-res");
+				}
+			});
+		}
+
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectValueTypeArrayLocalsInAsyncStaticStructMethod (bool use_cfo)
 		{
 			var insp = new Inspector ();
 			//Collect events
@@ -1834,6 +2401,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, line, col);
@@ -1846,19 +2414,19 @@ namespace DebuggerTests
 				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
 
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						call_other = TBool (false),
-						local_i  = TNumber (5),
-						sc = TSimpleClass (10, 45, "sc#Id", "Blue")
-					},
-					"InspectValueTypeArrayLocalsInAsyncStaticStructMethod#locals"
-				);
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					call_other = TBool (false),
+					local_i  = TNumber (5),
+					sc = TSimpleClass (10, 45, "sc#Id", "Blue")
+				}, "InspectValueTypeArrayLocalsInAsyncStaticStructMethod#locals");
 			});
 		}
 
-		[Fact]
-		public async Task InspectValueTypeArrayLocalsInAsyncInstanceStructMethod ()
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectValueTypeArrayLocalsInAsyncInstanceStructMethod (bool use_cfo)
 		{
 			var insp = new Inspector ();
 			//Collect events
@@ -1871,6 +2439,7 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
 
 				await SetBreakpoint (debugger_test_loc, line, col);
@@ -1882,13 +2451,13 @@ namespace DebuggerTests
 				// BUG: Should be InspectValueTypeArrayLocalsInstanceAsync
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "MoveNext");
 
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						sc_arg = TObject ("DebuggerTests.SimpleClass"),
-						@this = TValueType ("DebuggerTests.Point"),
-						local_gs = TValueType ("DebuggerTests.SimpleGenericStruct<int>")
-					},
-					"locals#0");
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					sc_arg = TObject ("DebuggerTests.SimpleClass"),
+					@this = TValueType ("DebuggerTests.Point"),
+					local_gs = TValueType ("DebuggerTests.SimpleGenericStruct<int>")
+				},
+				"locals#0");
 
 				await CompareObjectPropertiesFor (frame_locals, "local_gs",
 					new {
@@ -1942,26 +2511,25 @@ namespace DebuggerTests
 				var ts = dt0 - dt1;
 				var dto = new DateTimeOffset (dt0, new TimeSpan(4, 5, 0));
 
-				var frame_locals = await CheckLocalsOnFrame (pause_location ["callFrames"][frame_idx],
-					new {
-						call_other     = TBool      (call_other),
-						dt0            = TValueType ("System.DateTime", dt0.ToString ()),
-						dt1            = TValueType ("System.DateTime", dt1.ToString ()),
-						dto            = TValueType ("System.DateTimeOffset", dto.ToString ()),
-						ts             = TValueType ("System.TimeSpan", ts.ToString ()),
-						dec            = TValueType ("System.Decimal", "123987123"),
-						guid           = TValueType ("System.Guid", "3D36E07E-AC90-48C6-B7EC-A481E289D014"),
-						dts            = TArray     ("System.DateTime[]"),
-						obj            = TObject    ("DebuggerTests.ClassForToStringTests"),
-						sst            = TObject    ("DebuggerTests.StructForToStringTests")
-					},
-					"locals#0");
+				var frame_locals = await GetProperties (pause_location ["callFrames"][frame_idx]["callFrameId"].Value<string> ());
+				await CheckProps (frame_locals, new {
+					call_other     = TBool      (call_other),
+					dt0            = TValueType ("System.DateTime", dt0.ToString ()),
+					dt1            = TValueType ("System.DateTime", dt1.ToString ()),
+					dto            = TValueType ("System.DateTimeOffset", dto.ToString ()),
+					ts             = TValueType ("System.TimeSpan", ts.ToString ()),
+					dec            = TValueType ("System.Decimal", "123987123"),
+					guid           = TValueType ("System.Guid", "3D36E07E-AC90-48C6-B7EC-A481E289D014"),
+					dts            = TArray     ("System.DateTime[]", 2),
+					obj            = TObject    ("DebuggerTests.ClassForToStringTests"),
+					sst            = TObject    ("DebuggerTests.StructForToStringTests")
+				}, "locals#0");
 
 				var dts_0 = new DateTime (1983, 6, 7, 5, 6, 10);
 				var dts_1 = new DateTime (1999, 10, 15, 1, 2, 3);
-				var dts_elements = await CheckObjectOnLocals (frame_locals, "dts");
-				await CheckDateTime (dts_elements, "[0]", dts_0);
-				await CheckDateTime (dts_elements, "[1]", dts_1);
+				var dts_elements = await GetObjectOnLocals (frame_locals, "dts");
+				await CheckDateTime (dts_elements, "0", dts_0);
+				await CheckDateTime (dts_elements, "1", dts_1);
 
 				// TimeSpan
 				await CompareObjectPropertiesFor (frame_locals, "ts",
@@ -2131,12 +2699,15 @@ namespace DebuggerTests
 				});
 		}
 
-		[Fact]
-		public async Task InspectLocalsWithPointers ()
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsWithPointers (bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", 294, 2,
 				"PointersTest",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] Math:PointersTest'); })",
+				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
 
@@ -2148,7 +2719,7 @@ namespace DebuggerTests
 						ip_null        = TPointer   ("int*", is_null: true),
 						ipp            = TPointer   ("int**"),
 
-						ipa            = TArray     ("int*[]"),
+						ipa            = TArray     ("int*[]", 3),
 						cvalue0        = TSymbol    ("113 'q'"),
 						cp             = TPointer   ("char*"),
 						dt             = TValueType ("System.DateTime", dt.ToString ()),
@@ -2202,8 +2773,10 @@ namespace DebuggerTests
 			if (wait_for_event_fn != null)
 				await wait_for_event_fn (wait_res);
 
-			if (locals_fn != null)
-				await CheckLocalsOnFrame (wait_res ["callFrames"][0], locals_fn);
+			if (locals_fn != null) {
+				var locals = await GetProperties (wait_res ["callFrames"][0]["callFrameId"].Value<string> ());
+				locals_fn (locals);
+			}
 
 			return wait_res;
 		}
@@ -2274,10 +2847,13 @@ namespace DebuggerTests
 						var exp_prefix = $"({exp_val ["type_name"]?.Value<string>()}) 0";
 						AssertEqual (exp_prefix, actual_val ["value"]?.Value<string> (), $"{label}-type_name");
 						AssertEqual (exp_prefix, actual_val ["description"]?.Value<string> (), $"{label}-description");
-
 					}
 					break;
 				}
+
+				case "ignore_me":
+					// nothing to check ;)
+					break;
 
 				default:
 					throw new ArgumentException($"{ctype} not supported");
@@ -2299,7 +2875,7 @@ namespace DebuggerTests
 					var exp_i = exp_v_arr [i];
 					var act_i = actual_arr [i];
 
-					Assert.True (act_i ["name"]?.Value<string> () == $"[{i}]", $"{label}-[{i}].name");
+					AssertEqual (i.ToString (), act_i ["name"]?.Value<string> (), $"{label}-[{i}].name");
 
 					await CheckValue (act_i["value"], exp_i, $"{label}-{i}th value");
 				}
@@ -2375,55 +2951,18 @@ namespace DebuggerTests
 			}
 		}
 
-		async Task<JToken> CheckLocalsOnFrame (JToken frame, string script_loc, int line, int column, string function_name, Action<JToken> test_fn = null)
+		async Task<JToken> GetLocalsForFrame (JToken frame, string script_loc, int line, int column, string function_name)
 		{
 			CheckLocation (script_loc, line, column, ctx.scripts, frame ["location"]);
 			Assert.Equal (function_name, frame ["functionName"].Value<string> ());
 
-			return await CheckLocalsOnFrame (frame, test_fn);
+			return await GetProperties (frame ["callFrameId"].Value<string> ());
 		}
 
-		async Task<JToken> CheckLocalsOnFrame (JToken frame, object expected, string label)
+		async Task<JToken> GetObjectOnFrame (JToken frame, string name)
 		{
 			var locals = await GetProperties (frame ["callFrameId"].Value<string> ());
-			try {
-				await CheckProps (locals, expected, label);
-				return locals;
-			} catch {
-				Console.WriteLine ($"CheckLocalsOnFrame failed for locals: {locals}");
-				throw;
-			}
-		}
-
-		async Task<JToken> CheckLocalsOnFrame (JToken frame, Action<JToken> test_fn)
-		{
-			var locals = await GetProperties (frame ["callFrameId"].Value<string> ());
-			try {
-				test_fn (locals);
-				return locals;
-			} catch {
-				Console.WriteLine ($"CheckLocalsOnFrame failed for locals: {locals}");
-				throw;
-			}
-		}
-
-		// Find an object with @name in the *frame*, *fetch* the object, and check against @o
-		async Task<JToken> CompareObjectPropertiesOnFrameLocals (JToken locals, string name, object o, string label = null, int num_fields = -1) {
-			var obj_props = await CheckObjectOnFrameLocals (locals, name, (jt) => {});
-			try {
-				if (o != null)
-					await CheckProps (obj_props, o, label, num_fields);
-			} catch {
-				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {obj_props}");
-				throw;
-			}
-			return obj_props;
-		}
-
-		async Task<JToken> CheckObjectOnFrameLocals (JToken frame, string name, Action<JToken> test_fn)
-		{
-			var locals = await GetProperties (frame ["callFrameId"].Value<string> ());
-			return await CheckObjectOnLocals (locals, name, test_fn);
+			return await GetObjectOnLocals (locals, name);
 		}
 
 		// Find an object with @name, *fetch* the object, and check against @o
@@ -2431,44 +2970,42 @@ namespace DebuggerTests
 		{
 			if (label == null)
 				label = name;
-			var props = await CheckObjectOnLocals (locals, name, (jt) => {});
+			var props = await GetObjectOnLocals (locals, name);
 			try {
 				if (o != null)
 					await CheckProps (props, o, label, num_fields);
 				return props;
 			} catch {
-				Console.WriteLine ($"CheckObjectOnFrameLocals failed for locals: {props}");
 				throw;
 			}
 		}
 
-		async Task<JToken> CheckObjectOnLocals (JToken locals, string name, Action<JToken> test_fn = null)
+		async Task<JToken> GetObjectOnLocals (JToken locals, string name)
 		{
-			var obj = locals.Where (jt => jt ["name"]?.Value<string> () == name)
-					.FirstOrDefault ();
-			if (obj == null) {
-				Console.WriteLine ($"CheckObjectOnLocals failed with locals: {locals}");
-				Assert.True (false, $"Could not find a var with name {name} and type object");
-			}
-
+			var obj = GetAndAssertObjectWithName (locals, name);
 			var objectId = obj ["value"]["objectId"]?.Value<string> ();
 			Assert.True (!String.IsNullOrEmpty (objectId), $"No objectId found for {name}");
 
-			var props = await GetProperties (objectId);
-			if (test_fn != null) {
-				try {
-					test_fn (props);
-				} catch (Exception) {
-					Console.WriteLine ($"Failed for properties: {props}");
-					throw;
-				}
-			}
-
-			return props;
+			return await GetProperties (objectId);
 		}
 
-		async Task<JToken> GetProperties (string id)
+		/* @fn_args is for use with `Runtime.callFunctionOn` only */
+		async Task<JToken> GetProperties (string id, JToken fn_args = null)
 		{
+			if (ctx.UseCallFunctionOnBeforeGetProperties && !id.StartsWith ("dotnet:scope:")) {
+				var fn_decl = "function () { return this; }";
+				var cfo_args = JObject.FromObject (new {
+					functionDeclaration = fn_decl,
+					objectId = id
+				});
+				if (fn_args != null)
+					cfo_args ["arguments"] = fn_args;
+
+				var result = await ctx.cli.SendCommand ("Runtime.callFunctionOn", cfo_args, ctx.token);
+				AssertEqual (true, result.IsOk, $"Runtime.getProperties failed for {cfo_args.ToString ()}, with Result: {result}");
+				id = result.Value ["result"]?["objectId"]?.Value<string> ();
+			}
+
 			var get_prop_req = JObject.FromObject (new {
 				objectId = id
 			});
@@ -2478,6 +3015,17 @@ namespace DebuggerTests
 				Assert.True (false, $"Runtime.getProperties failed for {get_prop_req.ToString ()}, with Result: {frame_props}");
 
 			var locals = frame_props.Value ["result"];
+			// FIXME: Should be done when generating the list in library_mono.js, but not sure yet
+			//        whether to remove it, and how to do it correctly.
+			if (locals is JArray) {
+				foreach (var p in locals) {
+					if (p ["name"]?.Value<string> () == "length" && p ["enumerable"]?.Value<bool> () != true) {
+						p.Remove ();
+						break;
+					}
+				}
+			}
+
 			return locals;
 		}
 
@@ -2549,8 +3097,8 @@ namespace DebuggerTests
 				? JObject.FromObject (new { type = "object", className = className, description = description ?? className, subtype = is_null ? "null" : null })
 				: JObject.FromObject (new { type = "object", className = className, description = description ?? className });
 
-		static JObject TArray (string className)
-			=> JObject.FromObject (new { type = "object", className = className, description = className, subtype = "array" });
+		static JObject TArray (string className, int length = 0)
+			=> JObject.FromObject (new { type = "object", className = className, description = $"{className}({length})", subtype = "array" });
 
 		static JObject TBool (bool value)
 			=> JObject.FromObject (new { type = "boolean", value = @value, description = @value ? "true" : "false" });
@@ -2574,6 +3122,9 @@ namespace DebuggerTests
 		static JObject TPointer (string type_name, bool is_null = false)
 			=> JObject.FromObject (new { __custom_type = "pointer", type_name = type_name, is_null = is_null });
 
+		static JObject TIgnore ()
+			=> JObject.FromObject (new { __custom_type = "ignore_me" });
+		//
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
 
@@ -2583,6 +3134,8 @@ namespace DebuggerTests
 		public Inspector insp;
 		public CancellationToken token;
 		public Dictionary<string, string> scripts;
+
+		public bool UseCallFunctionOnBeforeGetProperties;
 
 		public DebugTestContext (InspectorClient cli, Inspector insp, CancellationToken token, Dictionary<string, string> scripts)
 		{
