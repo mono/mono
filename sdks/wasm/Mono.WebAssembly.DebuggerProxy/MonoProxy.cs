@@ -329,7 +329,7 @@ namespace WebAssembly.Net.Debugging {
 
 					var res = await SendMonoCommand (id, cmd, token);
 					if (!returnByValue &&
-						DotnetObjectId.TryParse (res.Value?["result"]?["value"]?]?[["objectId"], out var resultObjectId) &&
+						DotnetObjectId.TryParse (res.Value?["result"]?["value"]?["objectId"], out var resultObjectId) &&
 						resultObjectId.Scheme == "cfo_res")
 						res = Result.OkFromObject (new { result = res.Value ["result"]["value"] });
 
