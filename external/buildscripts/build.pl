@@ -264,7 +264,6 @@ if ($build)
 	push @configureparams, "--disable-mcs-build" if($disableMcs);
 	push @configureparams, "--with-glib=embedded";
 	push @configureparams, "--disable-nls";  #this removes the dependency on gettext package
-	push @configureparams, "--disable-btls";  #this removes the dependency on cmake to build btls for now
 	push @configureparams, "--with-mcs-docs=no";
 	push @configureparams, "--prefix=$monoprefix";
 	push @configureparams, "--enable-no-threads-discovery=yes";
@@ -892,6 +891,7 @@ if ($build)
 		push @configureparams, "--disable-visibility-hidden";
 		push @configureparams, "mono_cv_uscore=yes";
 		push @configureparams, "ac_cv_header_zlib_h=no" if($runningOnWindows);
+		push @configureparams, "--disable-btls";
 	}
 	elsif ($tizen)
 	{
@@ -1167,6 +1167,9 @@ if ($build)
 
 		$ENV{CC} = "$ENV{CC} -arch $monoHostArch";
 		$ENV{CXX} = "$ENV{CXX} -arch $monoHostArch";
+
+		#Set SDKROOT to force cmake to use the right sysroot
+		$ENV{SDKROOT} = "$macSdkPath";
 
 		# Add OSX specific autogen args
 		push @configureparams, "--host=$monoHostArch-apple-darwin12.2.0";
