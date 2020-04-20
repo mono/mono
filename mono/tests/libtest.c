@@ -102,15 +102,15 @@ static gunichar2* marshal_bstr_alloc(const gchar* str)
 	g_free (temp);
 	return ret;
 #else
+	int slen = strlen (str);
 	/* allocate len + 1 utf16 characters plus pointer-size integer for length, aligned to 16 bytes*/
 	size_t alloc_size = (slen + 1) * sizeof (gunichar2) + sizeof (void *);
 	alloc_size += (16 - 1);
 	alloc_size &= ~(16 - 1);
-	guint32 *ret = (gchar *)g_malloc (alloc_size);
+	guint32 *ret = (guint32 *)g_malloc (alloc_size);
 	if (ret == NULL)
 		return NULL;
-	gunichar2 *s = (ret + (sizeof (void *) / 4));
-	int slen = strlen (str);
+	gunichar2 *s = (gunichar2 *)(ret + (sizeof (void *) / 4));
 	memcpy (s, temp, slen * sizeof (gunichar2));
 	*((guint32 *)s - 1) = slen * sizeof (gunichar2);
 	s [slen] = 0;
