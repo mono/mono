@@ -76,7 +76,7 @@ namespace BuildProgram
 			Artifacts.Add("android-ndk-mac",
 				new Tuple<string, string>(
 					"android-ndk-mac/r19-unity_8b169ff2a8234c85e0c5ba3c776aa94273cd3c15fdc96d213154970d87938589.7z",
-					"testing"));
+					"unity-internal"));
 
 			Artifacts.Add("MacBuildEnvironment",
 				new Tuple<string, string>(
@@ -94,7 +94,7 @@ namespace BuildProgram
 			Artifacts.Add("android-ndk-linux",
 				new Tuple<string, string>(
 					"android-ndk-linux/r19-unity_c81ed9864399ec6f2d28181a58cc0588481499dddd4970e7e9f4bfbb64e8114e.7z",
-					"testing"));
+					"unity-internal"));
 
 			Artifacts.Add("sysroot-gcc-glibc-x64",
 				new Tuple<string, string>(
