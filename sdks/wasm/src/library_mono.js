@@ -392,7 +392,7 @@ var MonoSupportLib = {
 				delete this._cache_call_function_res[objectId];
 		},
 
-		mono_wasm_call_function_on: function (request, returnByValue) {
+		mono_wasm_call_function_on: function (request) {
 			var objId = request.objectId;
 			var proxy;
 
@@ -420,7 +420,7 @@ var MonoSupportLib = {
 			var fn_eval_str = `var fn = ${request.functionDeclaration}; fn.call (proxy, ...[${fn_args}]);`;
 
 			var fn_res = eval (fn_eval_str);
-			if (returnByValue)
+			if (request.returnByValue)
 				return fn_res;
 
 			if (fn_res == undefined)
