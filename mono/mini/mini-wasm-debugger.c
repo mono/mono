@@ -1163,11 +1163,18 @@ describe_non_async_this (InterpFrame *frame, MonoMethod *method)
 	if (mono_method_signature_internal (method)->hasthis) {
 		addr = mini_get_interp_callbacks ()->frame_get_this (frame);
 		MonoObject *obj = *(MonoObject**)addr;
-		char *class_name = mono_class_full_name (obj->vtable->klass);
+		MonoClass *klass = method->klass;
+		MonoType *type = m_class_get_byval_arg (method->klass);
 
 		mono_wasm_add_properties_var ("this", -1);
-		mono_wasm_add_obj_var (class_name, NULL, get_object_id(obj));
-		g_free (class_name);
+
+		if (m_class_is_valuetype (klass)) {
+			describe_value (type, obj, TRUE);
+		} else {
+			// this is an object, and we can retrieve the valuetypes in it later
+			// through the object id
+			describe_value (type, addr, FALSE);
+		}
 	}
 }
 

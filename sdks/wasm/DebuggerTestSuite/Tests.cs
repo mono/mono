@@ -2731,6 +2731,43 @@ namespace DebuggerTests
 
 				});
 
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsForStructInstanceMethod (bool use_cfo)
+			=> await CheckInspectLocalsAtBreakpointSite (
+				"dotnet://debugger-test.dll/debugger-array-test.cs", 236, 3,
+				"GenericInstanceMethod",
+				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EntryClass:run'); })",
+				use_cfo: use_cfo,
+				wait_for_event_fn: async (pause_location) => {
+					var frame_locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
+
+					await CheckProps (frame_locals, new {
+						sc_arg = TObject ("DebuggerTests.SimpleClass"),
+						@this = TValueType ("DebuggerTests.Point"),
+						local_gs = TValueType ("DebuggerTests.SimpleGenericStruct<int>")
+					},
+					"locals#0");
+
+					await CompareObjectPropertiesFor (frame_locals, "local_gs",
+						new {
+							Id = TString ("local_gs#Id"),
+							Color = TEnum ("DebuggerTests.RGB", "Green"),
+							Value = TNumber (4)
+						},
+						label: "local_gs#0");
+
+					await CompareObjectPropertiesFor (frame_locals, "sc_arg",
+							TSimpleClass (10, 45, "sc_arg#Id", "Blue"),
+							label: "sc_arg#0");
+
+					await CompareObjectPropertiesFor (frame_locals, "this",
+							TPoint (90, -4, "point#Id", "Green"),
+							label: "this#0");
+
+				});
+
 		async Task<JObject> StepAndCheck (StepKind kind, string script_loc, int line, int column, string function_name,
 							Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, int times=1)
 		{
