@@ -39,7 +39,7 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_values (int object_id);
 EMSCRIPTEN_KEEPALIVE void mono_wasm_get_array_value_expanded (int object_id, int idx);
 
 //JS functions imported that we use
-extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name);
+extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name, const char *method_name);
 extern void mono_wasm_fire_bp (void);
 extern void mono_wasm_add_obj_var (const char*, const char*, guint64);
 extern void mono_wasm_add_value_type_unexpanded_var (const char*, const char*);
@@ -587,6 +587,7 @@ list_frames (MonoStackFrameInfo *info, MonoContext *ctx, gpointer data)
 {
 	SeqPoint sp;
 	MonoMethod *method;
+	char *method_full_name;
 
 	//skip wrappers
 	if (info->type != FRAME_TYPE_MANAGED && info->type != FRAME_TYPE_INTERP)
@@ -606,6 +607,7 @@ list_frames (MonoStackFrameInfo *info, MonoContext *ctx, gpointer data)
 	if (!mono_find_prev_seq_point_for_native_offset (mono_get_root_domain (), method, info->native_offset, NULL, &sp))
 		DEBUG_PRINTF (1, "Failed to lookup sequence point\n");
 
+	method_full_name = mono_method_full_name (method, FALSE);
 	while (method->is_inflated)
 		method = ((MonoMethodInflated*)method)->declaring;
 
@@ -614,7 +616,7 @@ list_frames (MonoStackFrameInfo *info, MonoContext *ctx, gpointer data)
 
 	if (method->wrapper_type == MONO_WRAPPER_NONE) {
 		DEBUG_PRINTF (2, "adding off %d token %d assembly name %s\n", sp.il_offset, mono_metadata_token_index (method->token), assembly_name);
-		mono_wasm_add_frame (sp.il_offset, mono_metadata_token_index (method->token), assembly_name);
+		mono_wasm_add_frame (sp.il_offset, mono_metadata_token_index (method->token), assembly_name, method_full_name);
 	}
 
 	g_free (assembly_name);

@@ -943,11 +943,14 @@ var MonoSupportLib = {
 		}
 	},
 
-	mono_wasm_add_frame: function(il, method, name) {
+	mono_wasm_add_frame: function(il, method, assembly_name, method_full_name) {
+		var parts = Module.UTF8ToString (method_full_name).split (":", 2);
 		MONO.active_frames.push( {
 			il_pos: il,
 			method_token: method,
-			assembly_name: Module.UTF8ToString (name)
+			assembly_name: Module.UTF8ToString (assembly_name),
+			// Extract just the method name from `{class_name}:{method_name}`
+			method_name: parts [parts.length - 1]
 		});
 	},
 

@@ -414,6 +414,9 @@ namespace WebAssembly.Net.Debugging {
 						var method_token = mono_frame ["method_token"].Value<uint> ();
 						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
 
+						// This can be different than `method.Name`, like in case of generic methods
+						var method_name = mono_frame ["method_name"]?.Value<string> ();
+
 						var store = await LoadStore (sessionId, token);
 						var asm = store.GetAssemblyByName (assembly_name);
 						if (asm == null) {
@@ -439,11 +442,11 @@ namespace WebAssembly.Net.Debugging {
 						}
 
 						Log ("info", $"frame il offset: {il_pos} method token: {method_token} assembly name: {assembly_name}");
-						Log ("info", $"\tmethod {method.Name} location: {location}");
+						Log ("info", $"\tmethod {method_name} location: {location}");
 						frames.Add (new Frame (method, location, frame_id-1));
 
 						callFrames.Add (new {
-							functionName = method.Name,
+							functionName = method_name,
 							callFrameId = $"dotnet:scope:{frame_id-1}",
 							functionLocation = method.StartLocation.AsLocation (),
 
@@ -460,7 +463,7 @@ namespace WebAssembly.Net.Debugging {
 										description = "Object",
 										objectId = $"dotnet:scope:{frame_id-1}",
 									},
-									name = method.Name,
+									name = method_name,
 									startLocation = method.StartLocation.AsLocation (),
 									endLocation = method.EndLocation.AsLocation (),
 								}}

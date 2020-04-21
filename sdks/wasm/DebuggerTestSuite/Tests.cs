@@ -2589,7 +2589,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (56, 3, "EvaluateTestsStructInstanceMethod")]
-		[InlineData (72, 3, "GenericInstanceMethodOnStruct")]
+		[InlineData (72, 3, "GenericInstanceMethodOnStruct<int>")]
 		[InlineData (95, 3, "EvaluateTestsGenericStructInstanceMethod")]
 		public async Task EvaluateThisPropertiesOnStruct (int line, int col, string method_name)
 			=> await CheckInspectLocalsAtBreakpointSite (
@@ -2755,7 +2755,7 @@ namespace DebuggerTests
 		public async Task InspectLocalsForStructInstanceMethod (bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-array-test.cs", 236, 3,
-				"GenericInstanceMethod",
+				"GenericInstanceMethod<DebuggerTests.SimpleClass>",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EntryClass:run'); })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
