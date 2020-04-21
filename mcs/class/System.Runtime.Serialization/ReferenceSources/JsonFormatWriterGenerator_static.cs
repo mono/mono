@@ -423,8 +423,10 @@ namespace System.Runtime.Serialization.Json
 			XmlDictionaryString namespaceLocal = null;
 			if (nameLocal != null && nameLocal is string)
 				writer.WriteStartElement ((string) name, null);
-			else
+			else if (name is XmlDictionaryString)
 				writer.WriteStartElement ((XmlDictionaryString) name, null);
+			else
+				writer.WriteStartElement (name.ToString(), null);
 		}
 
 		void WriteEndElement ()
