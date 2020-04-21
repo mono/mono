@@ -325,7 +325,7 @@ namespace WebAssembly.Net.Debugging {
 					}
 
 					var returnByValue = args ["returnByValue"]?.Value<bool> () ?? false;
-					var cmd = new MonoCommands ($"MONO.mono_wasm_call_function_on ({args.ToString ()}, {(returnByValue ? "true" : "false")})");
+					var cmd = new MonoCommands ($"MONO.mono_wasm_call_function_on ({args.ToString ()})");
 
 					var res = await SendMonoCommand (id, cmd, token);
 					if (!returnByValue &&
