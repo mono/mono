@@ -118,7 +118,7 @@ class Driver {
 		"VFI",
 		"VIF",
 		"VIFF",
-		"VIFFF,
+		"VIFFF",
 		"VIFFFF",
 		"VIFFFFF",
 		"VIFFFFFF",
