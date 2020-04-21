@@ -1708,6 +1708,7 @@ namespace ExceptionRewriter {
 		}
 
 		public class RewriteContext {
+			public string MethodName;
 			public List<InstructionPair> Pairs;
 			public List<ExcGroup> NewGroups = new List<ExcGroup> ();
 			public List<FilterToInsert> FiltersToInsert = new List<FilterToInsert> ();
@@ -1903,6 +1904,7 @@ namespace ExceptionRewriter {
 				: new ParameterDefinition ("__this", ParameterAttributes.None, method.DeclaringType);
 
 			var context = new RewriteContext {
+				MethodName = method.FullName,
 				MethodQueue = queue
 			};
 
@@ -2168,7 +2170,10 @@ namespace ExceptionRewriter {
 								 startIndex,
 								 endIndex,
 								 size
-							 }).ToList ();
+							 })
+							 // HACK: For debugging
+							 // .Take(1)
+							 .ToList ();
 
 
 			if (TracedMethodNames.Contains (method.Name))
@@ -2289,10 +2294,20 @@ namespace ExceptionRewriter {
 							return null;
 
 						var target = (Instruction)insn.Operand;
-						scratch.Clear ();
-						DeactivateFilters (closureInfo, relevantFilters, scratch);
-						scratch.Add (Branch (context, OpCodes.Leave, target));
-						return scratch.ToArray ();
+						var leaveTargetIndex = Find (context, insns, target);
+						var currentIndex = Find (context, insns, insn);
+						var lastTryInstructionIndex = Find (context, insns, newStart);
+
+						// We need to check whether this leave is departing the block that we're processing now
+						//  otherwise we might erroneously rewrite leave instructions for nested non-filtered trys
+						if (leaveTargetIndex >= lastTryInstructionIndex) {
+							scratch.Clear ();
+							DeactivateFilters (closureInfo, relevantFilters, scratch);
+							scratch.Add (Branch (context, OpCodes.Leave, target));
+							return scratch.ToArray ();
+						} else {
+							return null;
+						}
 					}
 				);
 			}

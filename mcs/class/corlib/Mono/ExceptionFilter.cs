@@ -89,14 +89,14 @@ namespace Mono {
 					// When an exception filter throws on windows netframework, the filter's exception is
 					//  silently discarded and search for an exception handler continues as if it returned false
 					try {
-						result = filter.Evaluate(exc);
-						filter.Results[exc] = result;
-						if (result == exception_execute_handler)
-							hasLocatedValidHandler = true;
+						filter.Results[exc] = result = filter.Evaluate(exc);
 					} catch {
-						filter.Results[exc] = exception_continue_search;
+						filter.Results[exc] = result = exception_continue_search;
 					}
 				}
+
+				if (result == exception_execute_handler)
+					hasLocatedValidHandler = true;
 			}
 		}
 	}
