@@ -166,7 +166,7 @@ namespace WebAssembly.Net.Debugging {
 					//FIXME support variant where restrictToFunction=true and end is omitted
 					var end = SourceLocation.Parse (args? ["end"] as JObject);
 					if (start != null && end != null && await GetPossibleBreakpoints (id, start, end, token))
-							return true;
+						return true;
 
 					SendResponse (id, resp, token);
 					return true;
@@ -220,48 +220,35 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 			case "Debugger.evaluateOnCallFrame": {
-					var objId = args? ["callFrameId"]?.Value<string> ();
-					if (objId.StartsWith ("dotnet:", StringComparison.Ordinal)) {
-						var parts = objId.Split (new char [] { ':' });
-						if (parts.Length < 3)
-							return true;
-						switch (parts [1]) {
-						case "scope": {
-								await GetEvaluateOnCallFrame (id, int.Parse (parts [2]), args? ["expression"]?.Value<string> (), token);
-								break;
-							}
-						}
-						return true;
+					if (!DotnetObjectId.TryParse (args? ["callFrameId"], out var objectId))
+						return false;
+
+					switch (objectId.Scheme) {
+					case "scope":
+						return await OnEvaluateOnCallFrame (id,
+								int.Parse (objectId.Value),
+								args? ["expression"]?.Value<string> (), token);
+					default:
+						return false;
 					}
-					return false;
 				}
 
 			case "Runtime.getProperties": {
-					var objId = args? ["objectId"]?.Value<string> ();
-					if (!objId.StartsWith ("dotnet:", StringComparison.Ordinal))
-						// not for us
+					if (!DotnetObjectId.TryParse (args? ["objectId"], out var objectId))
 						break;
 
-					var parts = objId.Split (new char [] { ':' });
-					if (parts.Length < 3) {
-						// FIXME: um return an error?
-						return false;
-					}
-
-					var result = await RuntimeGetProperties (id, objId, parts, args, token);
+					var result = await RuntimeGetProperties (id, objectId, args, token);
 					SendResponse (id, result, token);
 					return true;
 				}
 
 			case "Runtime.releaseObject": {
-					var objId = args ["objectId"]?.Value<string> ();
-					if (objId?.StartsWith ("dotnet:cfo_res:", StringComparison.Ordinal) == true) {
-						await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_release_object('{objId}')"), token);
-						SendResponse (id, Result.OkFromObject (new{}), token);
-						return true;
-					}
+					if (!(DotnetObjectId.TryParse (args ["objectId"], out var objectId) && objectId.Scheme == "cfo_res"))
+						break;
 
-					break;
+					await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_release_object('{objectId}')"), token);
+					SendResponse (id, Result.OkFromObject (new{}), token);
+					return true;
 				}
 
 				// Protocol extensions
@@ -326,16 +313,14 @@ namespace WebAssembly.Net.Debugging {
 				return true;
 			}
 			case "Runtime.callFunctionOn": {
-					var targetObjId = args ["objectId"].Value<string> ();
-					if (!targetObjId.StartsWith ("dotnet:", StringComparison.Ordinal))
+					if (!DotnetObjectId.TryParse (args ["objectId"], out var objectId))
 						return false;
 
 					var silent = args ["silent"]?.Value<bool> () ?? false;
-					if (targetObjId.StartsWith ("dotnet:scope:", StringComparison.Ordinal)) {
-						if (silent)
-							SendResponse (id, Result.OkFromObject (new { result = new {} }), token);
-						else
-							SendResponse (id, Result.Exception (new ArgumentException ("Runtime.callFunctionOn not supported with scope ({objId}).")), token);
+					if (objectId.Scheme == "scope") {
+						var fail = silent ? Result.OkFromObject (new { result = new { } }) : Result.Exception (new ArgumentException ($"Runtime.callFunctionOn not supported with scope ({objectId})."));
+
+						SendResponse (id, fail, token);
 						return true;
 					}
 
@@ -343,32 +328,32 @@ namespace WebAssembly.Net.Debugging {
 					var cmd = new MonoCommands ($"MONO.mono_wasm_call_function_on ({args.ToString ()}, {(returnByValue ? "true" : "false")})");
 
 					var res = await SendMonoCommand (id, cmd, token);
-					if (!returnByValue && res.Value?["result"]?["value"]?["objectId"]?.Value<string> ()?.StartsWith ("dotnet:cfo_res:") == true)
-						res = Result.OkFromObject (new { result = res.Value ["result"] ["value"].Value<JObject> () });
+					if (!returnByValue &&
+						DotnetObjectId.TryParse (res.Value?["result"]?["value"]?["objectId"], out var resultObjectId) &&
+						resultObjectId.Scheme == "cfo_res")
+						res = Result.OkFromObject (new { result = res.Value ["result"]["value"] });
 
-					if (res.IsErr && silent) {
-						SendResponse (id, Result.OkFromObject (new { result = new {} }), token);
-						return true;
-					} else {
-						SendResponse (id, res, token);
-						return true;
-					}
+					if (res.IsErr && silent)
+						res = Result.OkFromObject (new { result = new { } });
+
+					SendResponse (id, res, token);
+					return true;
 				}
 			}
 
 			return false;
 		}
 
-		async Task<Result> RuntimeGetProperties (MessageId id, string objId, string[] objIdParts, JToken args, CancellationToken token)
+		async Task<Result> RuntimeGetProperties (MessageId id, DotnetObjectId objectId, JToken args, CancellationToken token)
 		{
-			if (objIdParts [1] == "scope")
-				return await GetScopeProperties (id, int.Parse (objIdParts [2]), token);
+			if (objectId.Scheme == "scope")
+				return await GetScopeProperties (id, int.Parse (objectId.Value), token);
 
-			var res = await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_get_details ('{objId}', {args})"), token);
+			var res = await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_get_details ('{objectId}', {args})"), token);
 			if (res.IsErr)
 				return res;
 
-			if (objIdParts [1] == "cfo_res") {
+			if (objectId.Scheme == "cfo_res") {
 				// Runtime.callFunctionOn result object
 				var value_json_str = res.Value ["result"]?["value"]?["__value_as_json_string__"]?.Value<string> ();
 				if (value_json_str != null) {
@@ -568,9 +553,9 @@ namespace WebAssembly.Net.Debugging {
 			var context = GetContext (msg_id);
 			if (context.CallStack == null)
 				return null;
-			
+
 			if (TryFindVariableValueInCache(context, expression, only_search_on_this, out JToken obj))
-				return obj;				
+				return obj;
 
 			var scope = context.CallStack.FirstOrDefault (s => s.Id == scope_id);
 			var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
@@ -579,7 +564,7 @@ namespace WebAssembly.Net.Debugging {
 			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
 			var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 			thisValue = values.FirstOrDefault (v => v ["name"].Value<string> () == "this");
-			
+
 			if (!only_search_on_this) {
 				if (thisValue != null && expression == "this") {
 					return thisValue;
@@ -595,9 +580,10 @@ namespace WebAssembly.Net.Debugging {
 
 			//search in scope
 			if (thisValue != null) {
-				var objectId = thisValue ["value"] ["objectId"].Value<string> ();
-				var parts = objectId.Split (new char [] { ':' });
-				res = await SendMonoCommand (msg_id, MonoCommands.GetObjectProperties (int.Parse (parts [2]), expandValueTypes: false), token);
+				if (!DotnetObjectId.TryParse (thisValue ["value"] ["objectId"], out var objectId))
+					return null;
+
+				res = await SendMonoCommand (msg_id, MonoCommands.GetObjectProperties (objectId, expandValueTypes: false), token);
 				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 				var foundValue = values.FirstOrDefault (v => v ["name"].Value<string> () == expression);
 				if (foundValue != null) {
@@ -609,12 +595,12 @@ namespace WebAssembly.Net.Debugging {
 			return null;
 		}
 
-		async Task GetEvaluateOnCallFrame (MessageId msg_id, int scope_id, string expression, CancellationToken token)
+		async Task<bool> OnEvaluateOnCallFrame (MessageId msg_id, int scope_id, string expression, CancellationToken token)
 		{
 			try {
 				var context = GetContext (msg_id);
 				if (context.CallStack == null)
-					return;
+					return false;
 
 				var varValue = await TryGetVariableValue (msg_id, scope_id, expression, false, token);
 
@@ -623,7 +609,7 @@ namespace WebAssembly.Net.Debugging {
 					SendResponse (msg_id, Result.OkFromObject (new {
 						result = varValue ["value"]
 					}), token);
-					return;
+					return true;
 				}
 
 				string retValue = await EvaluateExpression.CompileAndRunTheExpression (this, msg_id, scope_id, expression, token);
@@ -632,10 +618,11 @@ namespace WebAssembly.Net.Debugging {
 						value = retValue
 					}
 				}), token);
+				return true;
 			} catch (Exception e) {
-				logger.LogTrace (e, $"Error in EvaluateOnCallFrame for expression '{expression}.");
-				SendResponse (msg_id, Result.OkFromObject (new {}), token);
+				logger.LogDebug (e, $"Error in EvaluateOnCallFrame for expression '{expression}.");
 			}
+			return false;
 		}
 
 		async Task<Result> GetScopeProperties (MessageId msg_id, int scope_id, CancellationToken token)
