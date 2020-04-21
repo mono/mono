@@ -2587,6 +2587,24 @@ namespace DebuggerTests
 					CheckContentValue (evaluate, "3");
 				});
 
+		[Theory]
+		[InlineData (56, 3, "EvaluateTestsStructInstanceMethod")]
+		[InlineData (72, 3, "GenericInstanceMethodOnStruct")]
+		[InlineData (95, 3, "EvaluateTestsGenericStructInstanceMethod")]
+		public async Task EvaluateThisPropertiesOnStruct (int line, int col, string method_name)
+			=> await CheckInspectLocalsAtBreakpointSite (
+				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", line, col,
+				method_name,
+				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
+				wait_for_event_fn: async (pause_location) => {
+					var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "a");
+					CheckContentValue (evaluate, "1");
+					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "b");
+					CheckContentValue (evaluate, "2");
+					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "c");
+					CheckContentValue (evaluate, "3");
+				});
+
 		[Fact]
 		public async Task EvaluateParameters ()
 			=> await CheckInspectLocalsAtBreakpointSite (

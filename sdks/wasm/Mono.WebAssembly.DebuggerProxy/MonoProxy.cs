@@ -348,7 +348,7 @@ namespace WebAssembly.Net.Debugging {
 			if (objectId.Scheme == "scope")
 				return await GetScopeProperties (id, int.Parse (objectId.Value), token);
 
-			var res = await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_get_details ('{objectId}', {args})"), token);
+			var res = await SendMonoCommand (id, MonoCommands.GetDetails (objectId, args), token);
 			if (res.IsErr)
 				return res;
 
@@ -582,7 +582,7 @@ namespace WebAssembly.Net.Debugging {
 				if (!DotnetObjectId.TryParse (thisValue ["value"] ["objectId"], out var objectId))
 					return null;
 
-				res = await SendMonoCommand (msg_id, MonoCommands.GetObjectProperties (objectId, expandValueTypes: false), token);
+				res = await SendMonoCommand (msg_id, MonoCommands.GetDetails (objectId), token);
 				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 				var foundValue = values.FirstOrDefault (v => v ["name"].Value<string> () == expression);
 				if (foundValue != null) {
