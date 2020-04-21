@@ -246,7 +246,7 @@ namespace WebAssembly.Net.Debugging {
 					if (!(DotnetObjectId.TryParse (args ["objectId"], out var objectId) && objectId.Scheme == "cfo_res"))
 						break;
 
-					await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_release_object('{objectId}')"), token);
+					await SendMonoCommand (id, MonoCommands.ReleaseObject (objectId), token);
 					SendResponse (id, Result.OkFromObject (new{}), token);
 					return true;
 				}
@@ -325,9 +325,8 @@ namespace WebAssembly.Net.Debugging {
 					}
 
 					var returnByValue = args ["returnByValue"]?.Value<bool> () ?? false;
-					var cmd = new MonoCommands ($"MONO.mono_wasm_call_function_on ({args.ToString ()})");
+					var res = await SendMonoCommand (id, MonoCommands.CallFunctionOn (args), token);
 
-					var res = await SendMonoCommand (id, cmd, token);
 					if (!returnByValue &&
 						DotnetObjectId.TryParse (res.Value?["result"]?["value"]?["objectId"], out var resultObjectId) &&
 						resultObjectId.Scheme == "cfo_res")

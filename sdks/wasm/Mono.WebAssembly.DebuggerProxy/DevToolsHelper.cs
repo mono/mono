@@ -204,6 +204,12 @@ namespace WebAssembly.Net.Debugging {
 
 		public static MonoCommands RemoveBreakpoint (int breakpointId)
 			=> new MonoCommands ($"MONO.mono_wasm_remove_breakpoint({breakpointId})");
+
+		public static MonoCommands ReleaseObject (DotnetObjectId objectId)
+			=> new MonoCommands ($"MONO.mono_wasm_release_object('{objectId}')");
+
+		public static MonoCommands CallFunctionOn (JToken args)
+			=> new MonoCommands ($"MONO.mono_wasm_call_function_on ({args.ToString ()})");
 	}
 
 	internal enum MonoErrorCodes {
