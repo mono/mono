@@ -17,9 +17,10 @@ namespace WebAssembly.Net.Debugging {
 		HashSet<SessionId> sessions = new HashSet<SessionId> ();
 		Dictionary<SessionId, ExecutionContext> contexts = new Dictionary<SessionId, ExecutionContext> ();
 
-		public MonoProxy (ILoggerFactory loggerFactory, bool hideWebDriver = true) : base(loggerFactory) { }
+		public MonoProxy (ILoggerFactory loggerFactory) : base(loggerFactory) { }
 
-		readonly bool hideWebDriver;
+		// see https://github.com/mono/mono/issues/19549 for background
+		public bool HideWebDriver { get; set; } = true;
 
 		internal ExecutionContext GetContext (SessionId sessionId)
 		{
@@ -116,7 +117,7 @@ namespace WebAssembly.Net.Debugging {
 		{
 			// Inspector doesn't use the Target domain or sessions
 			// so we try to init immediately
-			if (hideWebDriver && id == SessionId.Null)
+			if (HideWebDriver && id == SessionId.Null)
 				await DeleteWebDriver (id, token);
 
 			if (!contexts.TryGetValue (id, out var context))
@@ -846,7 +847,7 @@ namespace WebAssembly.Net.Debugging {
 		async Task DeleteWebDriver (SessionId sessionId, CancellationToken token)
 		{
 			// see https://github.com/mono/mono/issues/19549 for background
-			if (hideWebDriver && sessions.Add (sessionId)) {
+			if (HideWebDriver && sessions.Add (sessionId)) {
 				var res = await SendCommand (sessionId,
 					"Page.addScriptToEvaluateOnNewDocument",
 					JObject.FromObject (new { source = "delete navigator.constructor.prototype.webdriver"}),
