@@ -229,6 +229,13 @@ namespace DebuggerTests
 			sc_arg.Id = "sc_arg#Id";
 			Console.WriteLine ($"AsyncInstanceMethod sc_arg: {sc_arg.Id}, local_gs: {local_gs.Id}");
 		}
+
+		public void GenericInstanceMethod<T> (T sc_arg) where T: SimpleClass
+		{
+			var local_gs = new SimpleGenericStruct<int> { Id = "local_gs#Id", Color = RGB.Green, Value = 4 };
+			sc_arg.Id = "sc_arg#Id";
+			Console.WriteLine ($"AsyncInstanceMethod sc_arg: {sc_arg.Id}, local_gs: {local_gs.Id}");
+		}
 	}
 
 	public class SimpleClass
@@ -270,6 +277,9 @@ namespace DebuggerTests
 			ArrayTestsClass.ValueTypeLocalsAsync (true).Wait ();
 
 			ArrayTestsClass.EntryPointForStructMethod (true).Wait ();
+
+			var sc = new SimpleClass { X = 10, Y = 45, Id = "sc#Id", Color = RGB.Blue };
+			new Point { X = 90, Y = -4, Id = "point#Id", Color = RGB.Green }.GenericInstanceMethod (sc);
 		}
 	}
 }
