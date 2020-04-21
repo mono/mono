@@ -124,9 +124,9 @@ class Driver {
 		"VIFFFFFF",
 		"VIFFFFFI",
 		"VIIF",
-                "VIIFF",
-                "VIIFFF",
-                "VIIFFFF",
+		"VIIFF",
+		"VIIFFF",
+		"VIIFFFF",
 		"VIIFFI",
 		"VIIFI"
 		"FF",
