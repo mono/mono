@@ -112,7 +112,7 @@ if ($artifact)
 		die("Expected source directory not found : $distDirSourceBin64\n");
 	}
 
-	for my $file ('libMonoPosixHelper.dylib, libmono-native.dylib')
+	for my $file ('libMonoPosixHelper.dylib', 'libmono-native.dylib')
 	{
 		print(">>> cp $embedDirSource64/$file $distDirDestinationLib/$file\n\n");
 		system ('cp', "$embedDirSource64/$file", "$distDirDestinationLib/$file");

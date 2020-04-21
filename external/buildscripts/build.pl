@@ -1364,33 +1364,33 @@ if ($build)
 
 	if(!($disableMcs))
 	{
-		my @additionalProfiles = ();
+		# my @additionalProfiles = ();
 		#push @additionalProfiles, "unityjit";
 		#push @additionalProfiles, "unityaot";
 
 		chdir("$monoroot/mcs");
 
-		system("make", "-j$jobs", "SKIP_AOT=1", "HOST_PLATFORM=win32") eq 0 or die ("Failed to make $profileName profile in mcs\n");
-		system("make", "-j$jobs", "SKIP_AOT=1", "HOST_PLATFORM=macos") eq 0 or die ("Failed to make $profileName profile in mcs\n");
-		system("make", "-j$jobs", "SKIP_AOT=1", "HOST_PLATFORM=linux") eq 0 or die ("Failed to make $profileName profile in mcs\n");
+		# system("make", "-j$jobs", "SKIP_AOT=1", "HOST_PLATFORM=win32") eq 0 or die ("Failed to make $profileName profile in mcs\n");
+		# system("make", "-j$jobs", "SKIP_AOT=1", "HOST_PLATFORM=macos") eq 0 or die ("Failed to make $profileName profile in mcs\n");
+		# system("make", "-j$jobs", "SKIP_AOT=1", "HOST_PLATFORM=linux") eq 0 or die ("Failed to make $profileName profile in mcs\n");
 
-		foreach my $profileName(@additionalProfiles)
-		{
-			print(">>> Making profile : $profileName\n");
-			system("make", "PROFILE=$profileName") eq 0 or die ("Failed to make $profileName profile in mcs\n");
+		# foreach my $profileName(@additionalProfiles)
+		# {
+		# 	print(">>> Making profile : $profileName\n");
+		# 	system("make", "PROFILE=$profileName") eq 0 or die ("Failed to make $profileName profile in mcs\n");
 
-			my $profileDestDir = "$monoprefix/lib/mono/$profileName";
-			print(">>> Copying $profileName to $profileDestDir directory\n");
+		# 	my $profileDestDir = "$monoprefix/lib/mono/$profileName";
+		# 	print(">>> Copying $profileName to $profileDestDir directory\n");
 
-			print(">>> Cleaning $profileDestDir\n");
-			system("rm -rf $profileDestDir");
+		# 	print(">>> Cleaning $profileDestDir\n");
+		# 	system("rm -rf $profileDestDir");
 
-			system("mkdir -p $profileDestDir") eq 0 or die("failed to make directory $profileDestDir\n");
-			system("mkdir -p $profileDestDir/Facades") eq 0 or die("failed to make directory $profileDestDir/Facades\n");
+		# 	system("mkdir -p $profileDestDir") eq 0 or die("failed to make directory $profileDestDir\n");
+		# 	system("mkdir -p $profileDestDir/Facades") eq 0 or die("failed to make directory $profileDestDir/Facades\n");
 
-			system("cp $monoroot/mcs/class/lib/$profileName/*.dll $profileDestDir") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName to $profileDestDir\n");
-			system("cp $monoroot/mcs/class/lib/$profileName/Facades/*.dll $profileDestDir/Facades") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName/Facades to $profileDestDir/Facades\n");
-		}
+		# 	system("cp $monoroot/mcs/class/lib/$profileName/*.dll $profileDestDir") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName to $profileDestDir\n");
+		# 	system("cp $monoroot/mcs/class/lib/$profileName/Facades/*.dll $profileDestDir/Facades") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName/Facades to $profileDestDir/Facades\n");
+		# }
 
 
 		my @hostPlatforms = ();
