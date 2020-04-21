@@ -187,8 +187,8 @@ namespace WebAssembly.Net.Debugging {
 		public static MonoCommands ClearAllBreakpoints ()
 			=> new MonoCommands ("MONO.mono_wasm_clear_all_breakpoints()");
 
-		public static MonoCommands GetObjectProperties (DotnetObjectId objectId, bool expandValueTypes)
-			=> new MonoCommands ($"MONO.mono_wasm_get_object_properties({int.Parse (objectId.Value)}, { (expandValueTypes ? "true" : "false") })");
+		public static MonoCommands GetDetails (DotnetObjectId objectId, JToken args = null)
+			=> new MonoCommands ($"MONO.mono_wasm_get_details ('{objectId}', {(args ?? "{}")})");
 
 		public static MonoCommands GetArrayValues (int objectId)
 			=> new MonoCommands ($"MONO.mono_wasm_get_array_values({objectId})");
