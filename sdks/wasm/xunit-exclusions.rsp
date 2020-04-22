@@ -75,7 +75,9 @@
 -nomethod System.Text.Tests.StringBuilderTests.Remove_Invalid_Desktop
 
 # System failures
+# Added throwing PNSE to the respective code base (mcs/class/corlib/System.Diagnostics.Tracing/EventSource.cs)
 -nomethod System.Net.Security.Tests.LoggingTest.EventSource_ExistsWithCorrectId
+
 -nomethod System.Net.Security.Tests.NegotiateStreamStreamToStreamTest_Async.NegotiateStream_StreamToStream_FlushAsync_Propagated
 -nomethod System.Net.Security.Tests.NegotiateStreamStreamToStreamTest_BeginEnd.NegotiateStream_StreamToStream_FlushAsync_Propagated
 -nomethod System.Net.Security.Tests.NegotiateStreamStreamToStreamTest_Sync.NegotiateStream_StreamToStream_FlushAsync_Propagated
@@ -167,6 +169,7 @@
 
 # System.Net.Security.Tests
 # System.NotSupportedException: TLS Support not available
+# Added throwing PNSE to the respective code base (mcs/class/System/System.Net.Security/SslStream.cs)
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_Async.SslStream_StreamToStream_Flush_Propagated
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_BeginEnd.SslStream_StreamToStream_Flush_Propagated
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_Sync.SslStream_StreamToStream_Flush_Propagated
