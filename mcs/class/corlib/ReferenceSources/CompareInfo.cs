@@ -83,7 +83,7 @@ namespace System.Globalization
 			}
 		}
 
-		static bool InoreCaseNotSupported {
+		static bool IgnoreCaseNotSupported {
 			get {
 				return false;
 			}
@@ -121,7 +121,7 @@ namespace System.Globalization
 			if (opt == CompareOptions.Ordinal)
 				return first ? s1.IndexOfUnchecked (s2, sindex, count) : s1.LastIndexOfUnchecked (s2, sindex, count);
 
-			if (InoreCaseNotSupported && opt.HasFlag (CompareOptions.IgnoreCase))
+			if (IgnoreCaseNotSupported && opt.HasFlag (CompareOptions.IgnoreCase))
 				throw new PlatformNotSupportedException ("The current collater does not support IgnoreCase on this platform");
 
 			return UseManagedCollation ?
@@ -131,7 +131,7 @@ namespace System.Globalization
 
 		int internal_compare_switch (string str1, int offset1, int length1, string str2, int offset2, int length2, CompareOptions options)
 		{
-			if (InoreCaseNotSupported && options.HasFlag (CompareOptions.IgnoreCase))
+			if (IgnoreCaseNotSupported && options.HasFlag (CompareOptions.IgnoreCase))
 				throw new PlatformNotSupportedException ("The current collater does not support IgnoreCase on this platform");
 
 			return UseManagedCollation ?
