@@ -2587,6 +2587,24 @@ namespace DebuggerTests
 					CheckContentValue (evaluate, "3");
 				});
 
+		[Theory]
+		[InlineData (56, 3, "EvaluateTestsStructInstanceMethod")]
+		[InlineData (72, 3, "GenericInstanceMethodOnStruct<int>")]
+		[InlineData (95, 3, "EvaluateTestsGenericStructInstanceMethod")]
+		public async Task EvaluateThisPropertiesOnStruct (int line, int col, string method_name)
+			=> await CheckInspectLocalsAtBreakpointSite (
+				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", line, col,
+				method_name,
+				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
+				wait_for_event_fn: async (pause_location) => {
+					var evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "a");
+					CheckContentValue (evaluate, "1");
+					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "b");
+					CheckContentValue (evaluate, "2");
+					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "c");
+					CheckContentValue (evaluate, "3");
+				});
+
 		[Fact]
 		public async Task EvaluateParameters ()
 			=> await CheckInspectLocalsAtBreakpointSite (
@@ -2728,6 +2746,43 @@ namespace DebuggerTests
 						dtp            = TPointer   ("System.DateTime*"),
 						dtp_null       = TPointer   ("System.DateTime*", is_null: true)
 					}, "locals");
+
+				});
+
+		[Theory]
+		[InlineData (false)]
+		[InlineData (true)]
+		public async Task InspectLocalsForStructInstanceMethod (bool use_cfo)
+			=> await CheckInspectLocalsAtBreakpointSite (
+				"dotnet://debugger-test.dll/debugger-array-test.cs", 236, 3,
+				"GenericInstanceMethod<DebuggerTests.SimpleClass>",
+				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EntryClass:run'); })",
+				use_cfo: use_cfo,
+				wait_for_event_fn: async (pause_location) => {
+					var frame_locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
+
+					await CheckProps (frame_locals, new {
+						sc_arg = TObject ("DebuggerTests.SimpleClass"),
+						@this = TValueType ("DebuggerTests.Point"),
+						local_gs = TValueType ("DebuggerTests.SimpleGenericStruct<int>")
+					},
+					"locals#0");
+
+					await CompareObjectPropertiesFor (frame_locals, "local_gs",
+						new {
+							Id = TString ("local_gs#Id"),
+							Color = TEnum ("DebuggerTests.RGB", "Green"),
+							Value = TNumber (4)
+						},
+						label: "local_gs#0");
+
+					await CompareObjectPropertiesFor (frame_locals, "sc_arg",
+							TSimpleClass (10, 45, "sc_arg#Id", "Blue"),
+							label: "sc_arg#0");
+
+					await CompareObjectPropertiesFor (frame_locals, "this",
+							TPoint (90, -4, "point#Id", "Green"),
+							label: "this#0");
 
 				});
 

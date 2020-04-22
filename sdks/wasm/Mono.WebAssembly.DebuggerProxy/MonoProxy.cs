@@ -246,7 +246,7 @@ namespace WebAssembly.Net.Debugging {
 					if (!(DotnetObjectId.TryParse (args ["objectId"], out var objectId) && objectId.Scheme == "cfo_res"))
 						break;
 
-					await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_release_object('{objectId}')"), token);
+					await SendMonoCommand (id, MonoCommands.ReleaseObject (objectId), token);
 					SendResponse (id, Result.OkFromObject (new{}), token);
 					return true;
 				}
@@ -325,9 +325,8 @@ namespace WebAssembly.Net.Debugging {
 					}
 
 					var returnByValue = args ["returnByValue"]?.Value<bool> () ?? false;
-					var cmd = new MonoCommands ($"MONO.mono_wasm_call_function_on ({args.ToString ()}, {(returnByValue ? "true" : "false")})");
+					var res = await SendMonoCommand (id, MonoCommands.CallFunctionOn (args), token);
 
-					var res = await SendMonoCommand (id, cmd, token);
 					if (!returnByValue &&
 						DotnetObjectId.TryParse (res.Value?["result"]?["value"]?["objectId"], out var resultObjectId) &&
 						resultObjectId.Scheme == "cfo_res")
@@ -349,7 +348,7 @@ namespace WebAssembly.Net.Debugging {
 			if (objectId.Scheme == "scope")
 				return await GetScopeProperties (id, int.Parse (objectId.Value), token);
 
-			var res = await SendMonoCommand (id, new MonoCommands ($"MONO.mono_wasm_get_details ('{objectId}', {args})"), token);
+			var res = await SendMonoCommand (id, MonoCommands.GetDetails (objectId, args), token);
 			if (res.IsErr)
 				return res;
 
@@ -415,6 +414,9 @@ namespace WebAssembly.Net.Debugging {
 						var method_token = mono_frame ["method_token"].Value<uint> ();
 						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
 
+						// This can be different than `method.Name`, like in case of generic methods
+						var method_name = mono_frame ["method_name"]?.Value<string> ();
+
 						var store = await LoadStore (sessionId, token);
 						var asm = store.GetAssemblyByName (assembly_name);
 						if (asm == null) {
@@ -440,11 +442,11 @@ namespace WebAssembly.Net.Debugging {
 						}
 
 						Log ("info", $"frame il offset: {il_pos} method token: {method_token} assembly name: {assembly_name}");
-						Log ("info", $"\tmethod {method.Name} location: {location}");
+						Log ("info", $"\tmethod {method_name} location: {location}");
 						frames.Add (new Frame (method, location, frame_id-1));
 
 						callFrames.Add (new {
-							functionName = method.Name,
+							functionName = method_name,
 							callFrameId = $"dotnet:scope:{frame_id-1}",
 							functionLocation = method.StartLocation.AsLocation (),
 
@@ -461,7 +463,7 @@ namespace WebAssembly.Net.Debugging {
 										description = "Object",
 										objectId = $"dotnet:scope:{frame_id-1}",
 									},
-									name = method.Name,
+									name = method_name,
 									startLocation = method.StartLocation.AsLocation (),
 									endLocation = method.EndLocation.AsLocation (),
 								}}
@@ -583,7 +585,7 @@ namespace WebAssembly.Net.Debugging {
 				if (!DotnetObjectId.TryParse (thisValue ["value"] ["objectId"], out var objectId))
 					return null;
 
-				res = await SendMonoCommand (msg_id, MonoCommands.GetObjectProperties (objectId, expandValueTypes: false), token);
+				res = await SendMonoCommand (msg_id, MonoCommands.GetDetails (objectId), token);
 				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 				var foundValue = values.FirstOrDefault (v => v ["name"].Value<string> () == expression);
 				if (foundValue != null) {
