@@ -83,6 +83,12 @@ namespace System.Globalization
 			}
 		}
 
+		static bool UnmanagedInoreCaseNotSupported {
+			get {
+				return true;
+			}
+		}
+
 		ISimpleCollator GetCollator ()
 		{
 			if (collator != null)
@@ -156,6 +162,9 @@ namespace System.Globalization
 		private static unsafe int internal_compare (string str1, int offset1,
 			int length1, string str2, int offset2, int length2, CompareOptions options)
 		{
+			if (UnmanagedInoreCaseNotSupported && options.HasFlag (CompareOptions.IgnoreCase))
+				throw new PlatformNotSupportedException ("The unmanaged collater does not support IgnoreCase on this platform");
+
 			fixed (char* fixed_str1 = str1,
 				     fixed_str2 = str2)
 				return internal_compare_icall (fixed_str1 + offset1, length1,
@@ -169,6 +178,9 @@ namespace System.Globalization
 		private static unsafe int internal_index (string source, int sindex,
 			int count, string value, bool first)
 		{
+			if (UnmanagedInoreCaseNotSupported && options.HasFlag (CompareOptions.IgnoreCase))
+				throw new PlatformNotSupportedException ("The unmanaged collater does not support IgnoreCase on this platform");
+
 			fixed (char* fixed_source = source,
 				     fixed_value = value)
 				return internal_index_icall (fixed_source, sindex, count,
