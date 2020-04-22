@@ -83,6 +83,20 @@ namespace System.Globalization
 			}
 		}
 
+		static CompareOptions CompareNotSupportedMask {
+			get {
+				// This property intended to allow customization buy a the linker
+				// when altering collation behavior
+				return UseManagedCollation ? CompareOptions.IgnoreCase : CompareOptions.None;
+			}
+		}
+
+		static void CheckSupport (CompareOptions compare)
+		{
+			if ((compare & CompareNotSupportedMask) != CompareOptions.None)
+				throw new PlatformNotSupportedException ("This string comparison is not enabled because collation data was not built into the application. To include collation data in the application, see https://aka.ms/webassembly-collations");
+		}
+
 		ISimpleCollator GetCollator ()
 		{
 			if (collator != null)
@@ -115,6 +129,8 @@ namespace System.Globalization
 			if (opt == CompareOptions.Ordinal)
 				return first ? s1.IndexOfUnchecked (s2, sindex, count) : s1.LastIndexOfUnchecked (s2, sindex, count);
 			
+			CheckSupport (opt);
+
 			return UseManagedCollation ?
 				internal_index_managed (s1, sindex, count, s2, opt, first) :
 				internal_index (s1, sindex, count, s2, first);
@@ -122,6 +138,8 @@ namespace System.Globalization
 
 		int internal_compare_switch (string str1, int offset1, int length1, string str2, int offset2, int length2, CompareOptions options)
 		{
+			CheckSupport (options);
+
 			return UseManagedCollation ?
 				internal_compare_managed (str1, offset1, length1,
 				str2, offset2, length2, options) :
