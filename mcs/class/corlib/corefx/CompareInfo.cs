@@ -86,9 +86,11 @@ namespace System.Globalization
 		unsafe int IndexOfCore (string source, string target, int startIndex, int count, CompareOptions options, int* matchLengthPtr)
 		{
 			if (matchLengthPtr != null)
-				throw new NotImplementedException ();
-
-			return internal_index_switch (source, startIndex, count, target, options, true);
+				*matchLengthPtr = 0;
+			int res = internal_index_switch (source, startIndex, count, target, options, true);
+			if (res >= 0 && matchLengthPtr != null)
+				*matchLengthPtr = target.Length;
+			return res;
 		}
 
 		unsafe int IndexOfCore (ReadOnlySpan<char> source, ReadOnlySpan<char> target, CompareOptions options, int* matchLengthPtr)
