@@ -371,6 +371,7 @@ class Driver {
 		public bool Simd;
 		public bool EnableDynamicRuntime;
 		public bool LinkerExcludeDeserialization;
+		public bool EnableCollation;
 	}
 
 	int Run (string[] args) {
@@ -432,7 +433,8 @@ class Driver {
 				NativeStrip = true,
 				Simd = false,
 				EnableDynamicRuntime = false,
-				LinkerExcludeDeserialization = true
+				LinkerExcludeDeserialization = true,
+				EnableCollation = false
 			};
 
 		var p = new OptionSet () {
@@ -480,6 +482,7 @@ class Driver {
 		AddFlag (p, new BoolFlag ("native-strip", "strip final executable", opts.NativeStrip, b => opts.NativeStrip = b));
 		AddFlag (p, new BoolFlag ("simd", "enable SIMD support", opts.Simd, b => opts.Simd = b));
 		AddFlag (p, new BoolFlag ("linker-exclude-deserialization", "Link out .NET deserialization support", opts.LinkerExcludeDeserialization, b => opts.LinkerExcludeDeserialization = b));
+		AddFlag (p, new BoolFlag ("collation", "enable unicode collation support", opts.EnableCollation, b => opts.EnableCollation = b));
 
 		var new_args = p.Parse (args).ToArray ();
 		foreach (var a in new_args) {
@@ -908,7 +911,7 @@ class Driver {
 		ninja.WriteLine ($"  command = bash -c '$emcc $emcc_flags {emcc_link_flags} -o $out_js --js-library $tool_prefix/src/library_mono.js --js-library $tool_prefix/src/dotnet_support.js {wasm_core_support_library} $in' {strip_cmd}");
 		ninja.WriteLine ("  description = [EMCC-LINK] $in -> $out_js");
 		ninja.WriteLine ("rule linker");
-		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --disable-opt unreachablebodies --exclude-feature com --exclude-feature remoting --exclude-feature etw $linker_args || exit 1; mono $tools_dir/wasm-tuner.exe --gen-empty-assemblies $out");
+		ninja.WriteLine ("  command = mono $tools_dir/monolinker.exe -out $builddir/linker-out -l none --deterministic --disable-opt unreachablebodies --exclude-feature com,remoting,etw $linker_args || exit 1; mono $tools_dir/wasm-tuner.exe --gen-empty-assemblies $out");
 		ninja.WriteLine ("  description = [IL-LINK]");
 		ninja.WriteLine ("rule aot-instances-dll");
 		ninja.WriteLine ("  command = echo > aot-instances.cs; csc /deterministic /out:$out /target:library aot-instances.cs");
@@ -973,8 +976,10 @@ class Driver {
 		if (enable_aot)
 			ninja.WriteLine ("build $builddir/aot-in: mkdir");
 		{
-			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "linker-subs.xml"));
-			ninja.WriteLine ($"build $builddir/linker-subs.xml: cpifdiff {source_file}");
+			foreach (var file in new string[] { "linker-subs.xml", "linker-disable-collation.xml" }) {
+				var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", file));
+				ninja.WriteLine ($"build $builddir/{file}: cpifdiff {source_file}");
+			}
 		}
 		var ofiles = "";
 		var bc_files = "";
@@ -1125,6 +1130,10 @@ class Driver {
 			linker_infiles += "| linker-subs.xml";
 			if (opts.LinkerExcludeDeserialization)
 				linker_args += "--exclude-feature deserialization ";
+			if (!opts.EnableCollation) {
+				linker_args += "--substitutions linker-disable-collation.xml ";
+				linker_infiles += " linker-disable-collation.xml";
+			}
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
 				linker_args += $"-x {linkDescriptor} ";
 				foreach (var assembly in root_assemblies) {
