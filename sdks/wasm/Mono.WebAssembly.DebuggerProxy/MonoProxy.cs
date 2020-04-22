@@ -560,24 +560,20 @@ namespace WebAssembly.Net.Debugging {
 				return obj;
 
 			var scope = context.CallStack.FirstOrDefault (s => s.Id == scope_id);
-			var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
+			var live_vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 			//get_this
-			int [] var_ids = { };
-			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
-			var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
-			thisValue = values.FirstOrDefault (v => v ["name"].Value<string> () == "this");
+			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, live_vars.Select (lv => lv.Index).ToArray ()), token);
+
+			var scope_values = res.Value? ["result"]? ["value"]?.Values<JObject> ()?.ToArray ();
+			thisValue = scope_values?.FirstOrDefault (v => v ["name"]?.Value<string> () == "this");
 
 			if (!only_search_on_this) {
-				if (thisValue != null && expression == "this") {
+				if (thisValue != null && expression == "this")
 					return thisValue;
-				}
-				//search in locals
-				var var_id = vars.SingleOrDefault (v => v.Name == expression);
-				if (var_id != null) {
-					res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, new int [] { var_id.Index }), token);
-					values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
-					return values [0];
-				}
+
+				var value = scope_values.SingleOrDefault (sv => sv ["name"]?.Value<string> () == expression);
+				if (value != null)
+					return value;
 			}
 
 			//search in scope
@@ -586,8 +582,8 @@ namespace WebAssembly.Net.Debugging {
 					return null;
 
 				res = await SendMonoCommand (msg_id, MonoCommands.GetDetails (objectId), token);
-				values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
-				var foundValue = values.FirstOrDefault (v => v ["name"].Value<string> () == expression);
+				scope_values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
+				var foundValue = scope_values.FirstOrDefault (v => v ["name"].Value<string> () == expression);
 				if (foundValue != null) {
 					foundValue["fromThis"] = true;
 					context.LocalsCache[foundValue ["name"].Value<string> ()] = foundValue;
@@ -607,7 +603,6 @@ namespace WebAssembly.Net.Debugging {
 				var varValue = await TryGetVariableValue (msg_id, scope_id, expression, false, token);
 
 				if (varValue != null) {
-					varValue ["value"] ["description"] = varValue ["value"] ["className"];
 					SendResponse (msg_id, Result.OkFromObject (new {
 						result = varValue ["value"]
 					}), token);
@@ -652,11 +647,17 @@ namespace WebAssembly.Net.Debugging {
 				var var_list = new List<object> ();
 				int i = 0;
 				for (; i < vars.Length && i < values.Length; i ++) {
+					// For async methods, we get locals with names, unlike non-async methods
+					// and the order may not match the var_ids, so, use the names that they
+					// come with
+					if (values [i]["name"] != null)
+						continue;
+
 					ctx.LocalsCache[vars [i].Name] = values [i];
 					var_list.Add (new { name = vars [i].Name, value = values [i]["value"] });
 				}
 				for (; i < values.Length; i ++) {
-					ctx.LocalsCache[values [i]["name"].ToString()] = values [i]["value"];
+					ctx.LocalsCache[values [i]["name"].ToString()] = values [i];
 					var_list.Add (values [i]);
 				}
 

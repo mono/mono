@@ -8,11 +8,13 @@ namespace DebuggerTests
             public int a;
             public int b;
             public int c;
+			public DateTime dt = new DateTime (2000, 5, 4, 3, 2, 1);
             public void run(int g, int h, string valString) {
                 int d = g + 1;
                 int e = g + 2;
                 int f = g + 3;
                 int i = d + e + f;
+				var local_dt = new DateTime (2010, 9, 8, 7, 6, 5);
                 a = 1;
                 b = 2;
                 c = 3;
@@ -43,7 +45,7 @@ namespace DebuggerTests
 		public int a;
 		public int b;
 		public int c;
-
+		DateTime dateTime;
 		public void EvaluateTestsStructInstanceMethod (int g, int h, string valString)
 		{
 			int d = g + 1;
@@ -53,7 +55,7 @@ namespace DebuggerTests
 			a = 1;
 			b = 2;
 			c = 3;
-
+			dateTime = new DateTime (2020, 1, 2, 3, 4, 5);
 			a = a + 1;
 			b = b + 1;
 			c = c + 1;
@@ -68,7 +70,7 @@ namespace DebuggerTests
 			a = 1;
 			b = 2;
 			c = 3;
-
+			dateTime = new DateTime (2020, 1, 2, 3, 4, 5);
 			T t = default(T);
 			a = a + 1;
 			b = b + 1;
@@ -81,7 +83,7 @@ namespace DebuggerTests
 		public int a;
 		public int b;
 		public int c;
-
+		DateTime dateTime;
 		public void EvaluateTestsGenericStructInstanceMethod (int g, int h, string valString)
 		{
 			int d = g + 1;
@@ -91,7 +93,7 @@ namespace DebuggerTests
 			a = 1;
 			b = 2;
 			c = 3;
-
+			dateTime = new DateTime (2020, 1, 2, 3, 4, 5);
 			T t = default(T);
 			a = a + 1;
 			b = b + 2;
