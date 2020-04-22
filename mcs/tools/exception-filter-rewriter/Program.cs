@@ -41,7 +41,7 @@ namespace ExceptionRewriter {
 
 					using (var def = AssemblyDefinition.ReadAssembly (src, new ReaderParameters {
 						ReadWrite = false,
-						ReadingMode = ReadingMode.Immediate,
+						ReadingMode = ReadingMode.Deferred,
 						AssemblyResolver = assemblyResolver,
 						ReadSymbols = options.EnableSymbols,
 						SymbolReaderProvider = new DefaultSymbolReaderProvider (throwIfNoSymbol: false)
