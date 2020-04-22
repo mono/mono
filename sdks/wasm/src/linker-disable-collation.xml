@@ -8,8 +8,9 @@
 	<resource name="collation.core.bin" action="remove"/>
 	<resource name="collation.tailoring.bin" action="remove"/>
 
+	<!-- remove the collation tables but still use the managed collator -->
 	<type fullname="System.Globalization.CompareInfo">
-	  <method signature="System.Boolean get_UseManagedCollation()" body="stub" value="false"/>
+	  <method signature="System.Boolean get_UseManagedCollation()" body="stub" value="true"/>
 	</type>
   </assembly>
 </linker>
