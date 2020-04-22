@@ -83,9 +83,9 @@ namespace System.Globalization
 			}
 		}
 
-		static bool UnmanagedInoreCaseNotSupported {
+		static bool InoreCaseNotSupported {
 			get {
-				return true;
+				return false;
 			}
 		}
 
@@ -120,7 +120,10 @@ namespace System.Globalization
 			// TODO: should not be needed,  why is there specialization for OrdinalIgnore and not for Ordinal
 			if (opt == CompareOptions.Ordinal)
 				return first ? s1.IndexOfUnchecked (s2, sindex, count) : s1.LastIndexOfUnchecked (s2, sindex, count);
-			
+
+			if (InoreCaseNotSupported && opt.HasFlag (CompareOptions.IgnoreCase))
+				throw new PlatformNotSupportedException ("The current collater does not support IgnoreCase on this platform");
+
 			return UseManagedCollation ?
 				internal_index_managed (s1, sindex, count, s2, opt, first) :
 				internal_index (s1, sindex, count, s2, first);
@@ -128,6 +131,9 @@ namespace System.Globalization
 
 		int internal_compare_switch (string str1, int offset1, int length1, string str2, int offset2, int length2, CompareOptions options)
 		{
+			if (InoreCaseNotSupported && options.HasFlag (CompareOptions.IgnoreCase))
+				throw new PlatformNotSupportedException ("The current collater does not support IgnoreCase on this platform");
+
 			return UseManagedCollation ?
 				internal_compare_managed (str1, offset1, length1,
 				str2, offset2, length2, options) :
@@ -162,9 +168,6 @@ namespace System.Globalization
 		private static unsafe int internal_compare (string str1, int offset1,
 			int length1, string str2, int offset2, int length2, CompareOptions options)
 		{
-			if (UnmanagedInoreCaseNotSupported && options.HasFlag (CompareOptions.IgnoreCase))
-				throw new PlatformNotSupportedException ("The unmanaged collater does not support IgnoreCase on this platform");
-
 			fixed (char* fixed_str1 = str1,
 				     fixed_str2 = str2)
 				return internal_compare_icall (fixed_str1 + offset1, length1,
@@ -178,9 +181,6 @@ namespace System.Globalization
 		private static unsafe int internal_index (string source, int sindex,
 			int count, string value, bool first)
 		{
-			if (UnmanagedInoreCaseNotSupported && options.HasFlag (CompareOptions.IgnoreCase))
-				throw new PlatformNotSupportedException ("The unmanaged collater does not support IgnoreCase on this platform");
-
 			fixed (char* fixed_source = source,
 				     fixed_value = value)
 				return internal_index_icall (fixed_source, sindex, count,
