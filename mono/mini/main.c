@@ -221,8 +221,8 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 			total -= sizeof (lc.cmdsize);
 			count--;
 		}
-		goto doclose;
 #endif
+		goto doclose;
 	}
 found:
 	directory_location = GUINT64_FROM_LE ((*(uint64_t *) &sigbuffer [0]));
