@@ -60,7 +60,8 @@ namespace ExceptionRewriter {
 								var shouldWriteSymbols = options.EnableSymbols && def.MainModule.SymbolReader != null;
 
 								def.Write (dst + ".tmp", new WriterParameters {
-									WriteSymbols = shouldWriteSymbols
+									WriteSymbols = shouldWriteSymbols,
+									DeterministicMvid = true
 								});
 
 								File.Copy (dst + ".tmp", dst, true);
