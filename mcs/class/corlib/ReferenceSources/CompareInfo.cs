@@ -87,7 +87,7 @@ namespace System.Globalization
 			get {
 				// This property intended to allow customization buy a the linker
 				// when altering collation behavior
-				return UseManagedCollation ? CompareOptions.IgnoreCase : CompareOptions.None;
+				return UseManagedCollation ? CompareOptions.None : CompareOptions.IgnoreCase;
 			}
 		}
 
