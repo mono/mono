@@ -8,7 +8,7 @@ using WebAssembly.Net.Debugging;
 namespace DebuggerTests
 {
 
-	public class EvaluateOnCallFrameTests : SourceList {
+	public class EvaluateOnCallFrameTests : DebuggerTestBase {
 
 		[Fact]
 		public async Task EvaluateThisProperties ()
