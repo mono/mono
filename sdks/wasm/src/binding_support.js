@@ -102,24 +102,16 @@ var BindingSupportLib = {
 
 			this.object_to_enum = get_method ("ObjectToEnum");
 			this.init = true;
-		},		
+		},
 
 		get_js_obj: function (js_handle) {
 			if (js_handle > 0)
 				return this.mono_wasm_require_handle(js_handle);
 			return null;
 		},
-		
-		//FIXME this is wastefull, we could remove the temp malloc by going the UTF16 route
-		//FIXME this is unsafe, cuz raw objects could be GC'd.
-		conv_string: function (mono_obj) {
-			if (mono_obj == 0)
-				return null;
-			var raw = this.mono_string_get_utf8 (mono_obj);
-			var res = Module.UTF8ToString (raw);
-			Module._free (raw);
 
-			return res;
+		conv_string: function (mono_obj) {
+			return MONO.string_decoder.copy (mono_obj);
 		},
 
 		is_nested_array: function (ele) {
@@ -622,77 +614,85 @@ var BindingSupportLib = {
 			this.bindings_lazy_init ();
 
 			// Allocate memory for error
-			var out_exc = Module._malloc (4);
-			// Set arguement memory to null;
-			var args_mem = null;
 			var has_args = args !== null && typeof args !== "undefined" && args.length > 0;
 			var has_args_marshal = args_marshal !== null && typeof args_marshal !== "undefined" && args_marshal.length > 0;
 
-			if (has_args_marshal && (!has_args || args.length < args_marshal.leghth))
+			if (has_args_marshal && (!has_args || args.length > args_marshal.length))
 				throw Error("Parameter count mismatch.");
-			
+
+			var args_start = null;
+			var buffer = null;
+			var exception_out = null;
+
 			// check if the method signature needs argument mashalling
 			if (has_args_marshal && has_args) {
-				var extra_args_mem = 0;
-				for (var i = 0; i < args.length; ++i) {
-					//long/double memory must be 8 bytes aligned and I'm being lazy here
-					if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd' || args_marshal[i] == 'j' || args_marshal[i] == 'k')
-						extra_args_mem += 8;
+				var i;
+
+				var converters = this.converters;
+				if (!converters) {
+					converters = new Map ();
+					converters.set ('m', { steps: [{ }], size: 0});
+					converters.set ('s', { steps: [{ convert: this.js_string_to_mono_string.bind (this)}], size: 0});
+					converters.set ('o', { steps: [{ convert: this.js_to_mono_obj.bind (this)}], size: 0});
+					converters.set ('u', { steps: [{ convert: this.js_to_mono_uri.bind (this)}], size: 0});
+					converters.set ('k', { steps: [{ convert: this.js_to_mono_enum.bind (this), indirect: 'i64'}], size: 8});
+					converters.set ('j', { steps: [{ convert: this.js_to_mono_enum.bind (this), indirect: 'i32'}], size: 8});
+					converters.set ('i', { steps: [{ indirect: 'i32'}], size: 8});
+					converters.set ('l', { steps: [{ indirect: 'i64'}], size: 8});
+					converters.set ('f', { steps: [{ indirect: 'float'}], size: 8});
+					converters.set ('d', { steps: [{ indirect: 'double'}], size: 8});
+					this.converters = converters;
 				}
 
-				var extra_args_mem = extra_args_mem ? Module._malloc (extra_args_mem) : 0;
-				var extra_arg_idx = 0;
-				args_mem = Module._malloc (args.length * 4);
+				var converter = converters.get (args_marshal);
+				if (!converter) {
+					var steps = [];
+					var size = 0;
 
-				for (var i = 0; i < args.length; ++i) {
-					if (args_marshal[i] == 's') {
-						Module.setValue (args_mem + i * 4, this.js_string_to_mono_string (args [i]), "i32");
-					} else if (args_marshal[i] == 'm') {
-						Module.setValue (args_mem + i * 4, args [i], "i32");
-					} else if (args_marshal[i] == 'o') {
-						Module.setValue (args_mem + i * 4, this.js_to_mono_obj (args [i]), "i32");
-					} else if (args_marshal[i] == 'u') {
-						Module.setValue (args_mem + i * 4, this.js_to_mono_uri (args [i]), "i32");
-					} else if (args_marshal[i] == 'j'  || args_marshal[i] == 'k') {
-						var enumVal = this.js_to_mono_enum(method, i, args[i]);
-			
-						var extra_cell = extra_args_mem + extra_arg_idx;
-						extra_arg_idx += 8;
+					for (i = 0; i < args_marshal.length; ++i) {
+						var conv = this.converters.get (args_marshal[i]);
+						if (!conv)
+							throw Error ("Unknown parameter type " + type);
 
-						if (args_marshal[i] == 'j')
-							Module.setValue (extra_cell, enumVal, "i32");
-						else if (args_marshal[i] == 'k')
-							Module.setValue (extra_cell, enumVal, "i64");
-
-						Module.setValue (args_mem + i * 4, extra_cell, "i32");
-					} else if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd') {
-						var extra_cell = extra_args_mem + extra_arg_idx;
-						extra_arg_idx += 8;
-
-						if (args_marshal[i] == 'i')
-							Module.setValue (extra_cell, args [i], "i32");
-						else if (args_marshal[i] == 'l')
-							Module.setValue (extra_cell, args [i], "i64");
-						else if (args_marshal[i] == 'f')
-							Module.setValue (extra_cell, args [i], "float");
-						else
-							Module.setValue (extra_cell, args [i], "double");
-
-						Module.setValue (args_mem + i * 4, extra_cell, "i32");
+						steps.push (conv.steps[0]);
+						size += conv.size;
 					}
+					converter = { steps: steps, size: size };
+					converters.set (args_marshal, converter);
 				}
+
+				// assume at least 8 byte alignment from malloc
+				buffer = Module._malloc (converter.size + (args.length * 4) + 4);
+				var indirect_start = buffer; // buffer + buffer % 8
+				exception_out = indirect_start + converter.size;
+				args_start = exception_out + 4;
+
+				var slot = args_start;
+				var indirect_value = indirect_start;
+				for (i = 0; i < args.length; ++i) {
+					var handler = converter.steps[i];
+					var obj = handler.convert ? handler.convert (args[i], method, i) : args[i];
+
+					if (handler.indirect) {
+						Module.setValue (indirect_value, obj, handler.indirect);
+						obj = indirect_value;
+						indirect_value += 8;
+					}
+
+					Module.setValue (slot, obj, "*");
+					slot += 4;
+				}
+			} else {
+				// only marshal the exception
+				exception_out = buffer = Module._malloc (4);
 			}
-			Module.setValue (out_exc, 0, "i32");
 
-			var res = this.invoke_method (method, this_arg, args_mem, out_exc);
+			Module.setValue (exception_out, 0, "*");
 
-			var eh_res = Module.getValue (out_exc, "i32");
+			var res = this.invoke_method (method, this_arg, args_start, exception_out);
+			var eh_res = Module.getValue (exception_out, "*");
 
-			if (extra_args_mem)
-				Module._free (extra_args_mem);
-			if (args_mem)
-				Module._free (args_mem);
-			Module._free (out_exc);
+			Module._free (buffer);
 
 			if (eh_res != 0) {
 				var msg = this.conv_string (res);
@@ -822,91 +822,9 @@ var BindingSupportLib = {
 		get_wasm_type: function(obj) {
 			var coreType = obj[Symbol.for("wasm type")];
 			if (typeof coreType === "undefined") {
-				switch (obj.constructor.name) {
-					case "Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "ArrayBuffer":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							ArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int8Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int8Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint8Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint8Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint8ClampedArray":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint8ClampedArray.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int16Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int16Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint16Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint16Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						return coreType;
-					case "Float32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Float32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Float64Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Float64Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Function":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Function.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "SharedArrayBuffer":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							SharedArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "DataView":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							DataView.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
+				coreType = this.wasm_get_core_type(obj);
+				if (typeof coreType !== "undefined") {
+					obj.constructor.prototype[Symbol.for("wasm type")] = coreType;
 				}
 		  	}
 			return coreType;

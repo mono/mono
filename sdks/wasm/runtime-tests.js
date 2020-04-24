@@ -99,6 +99,7 @@ profilers = [];
 setenv = {};
 runtime_args = [];
 enable_gc = false;
+enable_zoneinfo = false;
 while (true) {
 	if (args [0].startsWith ("--profile=")) {
 		var arg = args [0].substring ("--profile=".length);
@@ -120,6 +121,9 @@ while (true) {
 	} else if (args [0] == "--enable-gc") {
 		enable_gc = true;
 		args = args.slice (1);
+	} else if (args [0] == "--enable-zoneinfo") {
+		enable_zoneinfo = true;
+		args = args.slice (1);			
 	} else {
 		break;
 	}
@@ -154,7 +158,40 @@ var Module = {
 			var f = Module.cwrap ('mono_wasm_enable_on_demand_gc', 'void', []);
 			f ();
 		}
-
+		if (enable_zoneinfo) {
+			// Load the zoneinfo data into the VFS rooted at /zoneinfo
+			FS.mkdir("zoneinfo");
+			Module['FS_createPath']('/', 'zoneinfo', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Indian', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Atlantic', true, true);
+			Module['FS_createPath']('/zoneinfo', 'US', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Brazil', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Pacific', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Arctic', true, true);
+			Module['FS_createPath']('/zoneinfo', 'America', true, true);
+			Module['FS_createPath']('/zoneinfo/America', 'Indiana', true, true);
+			Module['FS_createPath']('/zoneinfo/America', 'Argentina', true, true);
+			Module['FS_createPath']('/zoneinfo/America', 'Kentucky', true, true);
+			Module['FS_createPath']('/zoneinfo/America', 'North_Dakota', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Australia', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Etc', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Asia', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Antarctica', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Europe', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Mexico', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Africa', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Chile', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Canada', true, true);			
+			var zoneInfoData = read ('zoneinfo.data', 'binary');
+			var metadata = JSON.parse(read ("mono-webassembly-zoneinfo-fs-smd.js.metadata", 'utf-8'));
+			var files = metadata.files;
+			for (var i = 0; i < files.length; ++i) {
+				var byteArray = zoneInfoData.subarray(files[i].start, files[i].end);
+				var stream = FS.open(files[i].filename, 'w+');
+				FS.write(stream, byteArray, 0, byteArray.length, 0);
+				FS.close(stream);
+			}
+		}
 		MONO.mono_load_runtime_and_bcl (
 			config.vfs_prefix,
 			config.deploy_prefix,

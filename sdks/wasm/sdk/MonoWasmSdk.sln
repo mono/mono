@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.WebAssembly.SdkTests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.WebAssembly.Runtime", "Mono.WebAssembly.Runtime.Framework\Mono.WebAssembly.Runtime.csproj", "{7DD2FF9E-D36E-417D-806F-899087BE9C54}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.Http", "WebAssembly.Net.Http.Framework\WebAssembly.Net.Http.csproj", "{F905CB2B-2EC2-4375-AC10-07F98E27822D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Net.Http.WebAssemblyHttpHandler", "System.Net.Http.WebAssemblyHttpHandler.Framework\System.Net.Http.WebAssemblyHttpHandler.csproj", "{F905CB2B-2EC2-4375-AC10-07F98E27822D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Bindings", "WebAssembly.Bindings.Framework\WebAssembly.Bindings.csproj", "{B8FDEB6F-F3CF-4C39-9275-C47CC1D34F22}"
 EndProject

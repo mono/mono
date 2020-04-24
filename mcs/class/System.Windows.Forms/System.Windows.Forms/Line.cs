@@ -953,7 +953,7 @@ namespace System.Windows.Forms
 
 			this.textHeight = (int)tag.Font.Height;
 			tag.Height = this.textHeight;
-			this.height = (int)(this.textHeight + this.LineSpacing + this.TotalParagraphSpacing);
+			this.height = (int)(this.LineSpacing + this.TotalParagraphSpacing);
 
 			this.ascent = tag.Ascent;
 

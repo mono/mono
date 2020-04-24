@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.WebSockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -31,11 +32,12 @@ namespace WebAssembly.Net.WebSockets {
 		private Action<JSObject> onClose;
 		private Action<JSObject> onMessage;
 
+		private MemoryStream writeBuffer;
 
 		private readonly ClientWebSocketOptions options;
 		private readonly CancellationTokenSource cts;
 
-		// Stages of this class. 
+		// Stages of this class.
 		private int state;
 		private const int created = 0;
 		private const int connecting = 1;
@@ -185,6 +187,7 @@ namespace WebAssembly.Net.WebSockets {
 						}
 					}
 					innerWebSocket = new HostObject ("WebSocket", uri.ToString (), subProtocols);
+					innerWebSocket.SetObjectProperty ("binaryType", "arraybuffer");
 
 					subProtocols?.Dispose ();
 
@@ -218,17 +221,17 @@ namespace WebAssembly.Net.WebSockets {
 
 					// Setup the onOpen callback
 					onOpen = new Action<JSObject> ((evt) => {
-						if (!cancellationToken.IsCancellationRequested) {
-							// Change internal state to 'connected' to enable the other methods
-							if (Interlocked.CompareExchange (ref state, connected, connecting) != connecting) {
+						using (evt) {
+							if (!cancellationToken.IsCancellationRequested) {
+								// Change internal state to 'connected' to enable the other methods
+								if (Interlocked.CompareExchange (ref state, connected, connecting) != connecting) {
 								// Aborted/Disposed during connect.
-								throw new ObjectDisposedException (GetType ().FullName);
+									throw new ObjectDisposedException (GetType ().FullName);
+								}
+
+								tcsConnect.SetResult (true);
 							}
-
-							tcsConnect.SetResult (true);
 						}
-
-						evt.Dispose ();
 					});
 
 					// Attach the onOpen callback
@@ -236,22 +239,24 @@ namespace WebAssembly.Net.WebSockets {
 
 					// Setup the onMessage callback
 					onMessage = new Action<JSObject> ((messageEvent) => {
-						ThrowIfNotConnected ();
-
 						// get the events "data"
-						var eventData = messageEvent.GetObjectProperty ("data");
-
-						// If the messageEvent's data property is marshalled as a JSObject then we are dealing with 
-						// binary data
-						if (eventData is JSObject) {
-							// TODO: Handle ArrayBuffer binary type but have only seen 'blob' so far without
-							// changing the default websocket binary type manually.
-							if (innerWebSocket.GetObjectProperty ("binaryType").ToString () == "blob") {
-
+						using (messageEvent) {
+							ThrowIfNotConnected ();
+							// If the messageEvent's data property is marshalled as a JSObject then we are dealing with
+							// binary data
+							var eventData = messageEvent.GetObjectProperty ("data");
+							switch (eventData) {
+							case  ArrayBuffer buffer: using (buffer) {
+								var mess = new ReceivePayload (buffer, WebSocketMessageType.Binary);
+								receiveMessageQueue.BufferPayload (mess);
+								break;
+							}
+							case JSObject blobData: using (blobData) {
 								Action<JSObject> loadend = null;
 								// Create a new "FileReader" object
 								using (var reader = new HostObject("FileReader")) {
 									loadend = new Action<JSObject> ((loadEvent) => {
+										using (loadEvent)
 										using (var target = (JSObject)loadEvent.GetObjectProperty ("target")) {
 											if ((int)target.GetObjectProperty ("readyState") == 2) {
 												using (var binResult = (ArrayBuffer)target.GetObjectProperty ("result")) {
@@ -261,24 +266,22 @@ namespace WebAssembly.Net.WebSockets {
 												}
 											}
 										}
-										loadEvent.Dispose ();
-
 									});
 
 									reader.Invoke ("addEventListener", "loadend", loadend);
-
-									using (var blobData = (JSObject)messageEvent.GetObjectProperty ("data"))
-										reader.Invoke ("readAsArrayBuffer", blobData);
+									reader.Invoke ("readAsArrayBuffer", blobData);
 								}
-							} else
+								break;
+							}
+							case String message: {
+								var mess = new ReceivePayload (Encoding.UTF8.GetBytes (message), WebSocketMessageType.Text);
+								receiveMessageQueue.BufferPayload (mess);
+								break;
+							}
+							default:
 								throw new NotImplementedException ($"WebSocket bynary type '{innerWebSocket.GetObjectProperty ("binaryType").ToString ()}' not supported.");
-						} else if (eventData is string) {
-
-							var mess = new ReceivePayload (Encoding.UTF8.GetBytes (((string)eventData).ToString ()), WebSocketMessageType.Text);
-							receiveMessageQueue.BufferPayload (mess);
+							}
 						}
-						messageEvent.Dispose ();
-
 					});
 
 					// Attach the onMessage callaback
@@ -315,6 +318,7 @@ namespace WebAssembly.Net.WebSockets {
 			cts.Cancel (false);
 			cts.Dispose ();
 
+			writeBuffer?.Dispose ();
 
 			// We need to clear the events on websocket as well or stray events
 			// are possible leading to crashes.
@@ -357,8 +361,6 @@ namespace WebAssembly.Net.WebSockets {
 		/// <param name="cancellationToken">Cancellation token.</param>
 		public override async Task SendAsync (ArraySegment<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken cancellationToken)
 		{
-			// TODO: Support send async buffering.
-
 			ThrowIfNotConnected ();
 
 			if (messageType != WebSocketMessageType.Binary &&
@@ -367,43 +369,43 @@ namespace WebAssembly.Net.WebSockets {
 				    nameof (messageType));
 			}
 
+			if (!endOfMessage) {
+				writeBuffer = writeBuffer ?? new MemoryStream ();
+
+				writeBuffer.Write (buffer.Array, buffer.Offset, buffer.Count);
+				return;
+			} else if (writeBuffer != null) {
+				writeBuffer.Write (buffer.Array, buffer.Offset, buffer.Count);
+
+				if (!writeBuffer.TryGetBuffer (out buffer))
+					throw new WebSocketException (WebSocketError.NativeError);
+			}
+
 			var tcsSend = new TaskCompletionSource<bool> ();
 			// Wrap the cancellationToken in a using so that it can be disposed of whether
 			// we successfully send or not.
 			// Otherwise any timeout/cancellation would apply to the full session.
+			var writtenBuffer = writeBuffer;
+			writeBuffer = null;
+
 			using (cancellationToken.Register (() => tcsSend.TrySetCanceled ())) {
-
-				if (messageType == WebSocketMessageType.Binary) {
-
-					try {
-						using (var uint8Buffer = Uint8Array.From(buffer))
-						{
+				try {
+					if (messageType == WebSocketMessageType.Binary) {
+						using (var uint8Buffer = Uint8Array.From(buffer)){
 							innerWebSocket.Invoke ("send", uint8Buffer);
 							tcsSend.SetResult (true);
 						}
-					} catch (Exception excb) {
-						throw new WebSocketException (WebSocketError.NativeError, excb);
-					}
-					await tcsSend.Task;
-
-				}
-				if (messageType == WebSocketMessageType.Text) {
-
-					try {
-						var bytesToSend = new byte [buffer.Count];
-						Buffer.BlockCopy (buffer.Array, buffer.Offset, bytesToSend, 0, buffer.Count);
-
-						var strBuffer = Encoding.UTF8.GetString (bytesToSend, 0, bytesToSend.Length);
+					} else if (messageType == WebSocketMessageType.Text) {
+						var strBuffer = Encoding.UTF8.GetString (buffer.Array, buffer.Offset, buffer.Count);
 						innerWebSocket.Invoke ("send", strBuffer);
 						tcsSend.SetResult (true);
-					} catch (Exception exct) {
-						throw new WebSocketException (WebSocketError.NativeError, exct);
 					}
-
-					await tcsSend.Task;
-
+				} catch (Exception excb) {
+					tcsSend.TrySetException (new WebSocketException (WebSocketError.NativeError, excb));
+				} finally {
+					writtenBuffer?.Dispose ();
 				}
-
+				await tcsSend.Task;
 			}
 		}
 
@@ -459,8 +461,9 @@ namespace WebAssembly.Net.WebSockets {
 
 		public override async Task CloseAsync (WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
 		{
+			writeBuffer = null;
 			ThrowIfNotConnected ();
-			
+
 			await CloseAsyncCore (closeStatus, statusDescription, cancellationToken);
 		}
 

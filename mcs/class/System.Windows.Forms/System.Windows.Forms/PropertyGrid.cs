@@ -939,6 +939,7 @@ namespace System.Windows.Forms
 			if (tabs != null && tabs.Count > 0) {
 				foreach (PropertyTab tab in tabs) {
 					PropertyToolBarButton button = new PropertyToolBarButton (tab);
+					button.ToolTipText = Locale.GetText(tab.TabName);
 					button.Click += new EventHandler (toolbarbutton_clicked);
 					toolbar.Items.Add (button);
 					if (tab.Bitmap != null) {
@@ -1575,7 +1576,7 @@ namespace System.Windows.Forms
 					if (categoryName == null)
 						categoryName = UNCATEGORIZED_CATEGORY_LABEL;
 					GridItem category_item = rootItem.GridItems [categoryName];
-					if (category_item == null)
+					if (category_item == null || !(category_item is CategoryGridEntry))
 						category_item = categories [categoryName];
 
 					if (category_item == null) {

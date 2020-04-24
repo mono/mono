@@ -43,6 +43,7 @@
 -nomethod System.Tests.AppDomainTests.ProcessExit_Called
 -nomethod System.Tests.AppDomainTests.ExecuteAssemblyByName
 -nomethod System.Tests.UnloadingAndProcessExitTests.UnloadingEventMustHappenBeforeProcessExitEvent
+-nomethod System.Buffers.ArrayPool.Tests.CollectionTests.BuffersAreCollectedWhenStale
 
 # Serialization + mscorlib not found
 -nomethod *.EqualityComparer_SerializationRoundtrip

@@ -1,6 +1,6 @@
 using System;
 
-public class Math { //Only append content to this class as the test suite depends on line info
+public partial class Math { //Only append content to this class as the test suite depends on line info
 	public static int IntAdd (int a, int b) {
 		int c = a + b; 
 		int d = c + b;
@@ -41,6 +41,7 @@ public class Math { //Only append content to this class as the test suite depend
 		Math.IsMathNull fn_del_unused = Math.IsMathNullDelegateTarget;
 		Math.IsMathNull fn_del_null_unused = null;
 		var fn_del_arr_unused = new Math.IsMathNull[] { Math.IsMathNullDelegateTarget };
+		OuterMethod ();
 		Console.WriteLine ("Just a test message, ignore");
 		return res ? 0 : 1;
 	}
@@ -62,6 +63,7 @@ public class Math { //Only append content to this class as the test suite depend
 		var list_arr_unused = new System.Collections.Generic.Dictionary<Math[], IsMathNull>[] { new System.Collections.Generic.Dictionary<Math[], IsMathNull> () };
 		System.Collections.Generic.Dictionary<Math[], IsMathNull>[] list_arr_null_unused = null;
 
+		OuterMethod ();
 		Console.WriteLine ("Just a test message, ignore");
 		return 0;
 	}
@@ -93,9 +95,10 @@ public class Math { //Only append content to this class as the test suite depend
 	{
 		public int InnerMethod (int i)
 		{
+			SimpleStructProperty = new SimpleStruct () { dt = new DateTime (2020, 1, 2, 3, 4, 5) };
 			int j = i + 10;
 			string foo_str = "foo";
-			Console.WriteLine ($"i: {i} and j: {j}, foo_str: {foo_str}");
+			Console.WriteLine ($"i: {i} and j: {j}, foo_str: {foo_str} ");
 			j += 9;
 			Console.WriteLine ($"i: {i} and j: {j}");
 			return j;
@@ -113,32 +116,200 @@ public class Math { //Only append content to this class as the test suite depend
 
 		public async System.Threading.Tasks.Task AsyncMethodNoReturn ()
 		{
-			var ss = new SimpleStruct ();
+			var ss = new SimpleStruct () { dt = new DateTime (2020, 1, 2, 3, 4, 5) };
 			var ss_arr = new SimpleStruct [] {};
-			ss.gs.StringField = "field in GenericStruct";
+			//ss.gs.StringField = "field in GenericStruct";
 
-			Console.WriteLine ($"Using the struct: {ss.dt}, {ss.gs.StringField}, ss_arr: {ss_arr.Length}");
+			//Console.WriteLine ($"Using the struct: {ss.dt}, {ss.gs.StringField}, ss_arr: {ss_arr.Length}");
 			string str = "AsyncMethodNoReturn's local";
-			Console.WriteLine ($"* field m: {m}");
+			//Console.WriteLine ($"* field m: {m}");
 			await System.Threading.Tasks.Task.Delay (1);
 			Console.WriteLine ($"str: {str}");
 		}
 
 		public static async System.Threading.Tasks.Task<bool> AsyncTest (string s, int i)
 		{
+			var li = 10 + i;
+			var ls = s + "test";
 			return await new NestedInMath().AsyncMethod0 (s, i);
 		}
 
-		public static void MethodWithStructs ()
-		{
-			var ss = new SimpleStruct ();
-			ss.gs.StringField = "field in GenericStruct";
+		public SimpleStruct SimpleStructProperty { get; set; }
+	}
 
-			var ss_arr = new SimpleStruct [] {};
-			var gs = new GenericStruct<Math> ();
-			Math m = new Math ();
-			Console.WriteLine ($"Using the struct: {ss.dt}, {ss.gs.StringField}, ss_arr: {ss_arr.Length}, gs: {gs.StringField}");
-		}
+	public static void PrimitiveTypesTest ()
+	{
+		char c0 = '€';
+		char c1 = 'A';
+		// TODO: other types!
+		// just trying to ensure vars don't get optimized out
+		if (c0 < 32 || c1 > 32)
+			Console.WriteLine ($"{c0}, {c1}");
+	}
+
+	public static int DelegatesSignatureTest ()
+	{
+		Func<Math, GenericStruct<GenericStruct<int[]>>, GenericStruct<bool[]>> fn_func = (m, gs) => new GenericStruct<bool[]>();
+		Func<Math, GenericStruct<GenericStruct<int[]>>, GenericStruct<bool[]>> fn_func_del = GenericStruct<int>.DelegateTargetForSignatureTest;
+		Func<Math, GenericStruct<GenericStruct<int[]>>, GenericStruct<bool[]>> fn_func_null = null;
+		Func<bool> fn_func_only_ret = () => { Console.WriteLine ($"hello"); return true; };
+		var fn_func_arr = new Func<Math, GenericStruct<GenericStruct<int[]>>, GenericStruct<bool[]>>[] { (m, gs) => new GenericStruct<bool[]>() };
+
+		Math.DelegateForSignatureTest fn_del = GenericStruct<int>.DelegateTargetForSignatureTest;
+		Math.DelegateForSignatureTest fn_del_l = (m, gs) => new GenericStruct<bool[]> { StringField = "fn_del_l#lambda" };
+		var fn_del_arr = new Math.DelegateForSignatureTest[] { GenericStruct<int>.DelegateTargetForSignatureTest, (m, gs) => new GenericStruct<bool[]> { StringField = "fn_del_arr#1#lambda" } };
+		var m_obj = new Math ();
+		Math.DelegateForSignatureTest fn_del_null = null;
+		var gs_gs = new GenericStruct<GenericStruct<int[]>>
+		{
+			List = new System.Collections.Generic.List<GenericStruct<int[]>> {
+				new GenericStruct<int[]> { StringField = "gs#List#0#StringField" },
+				new GenericStruct<int[]> { StringField = "gs#List#1#StringField" }
+			}
+		};
+
+		Math.DelegateWithVoidReturn fn_void_del = Math.DelegateTargetWithVoidReturn;
+		var fn_void_del_arr = new Math.DelegateWithVoidReturn[] { Math.DelegateTargetWithVoidReturn };
+		Math.DelegateWithVoidReturn fn_void_del_null = null;
+
+		var rets = new GenericStruct<bool[]>[] {
+			fn_func (m_obj, gs_gs),
+			fn_func_del (m_obj, gs_gs),
+			fn_del (m_obj, gs_gs),
+			fn_del_l (m_obj, gs_gs),
+			fn_del_arr[0] (m_obj, gs_gs),
+			fn_func_arr[0] (m_obj, gs_gs)
+		};
+
+		var gs = new GenericStruct<int[]>();
+		fn_void_del (gs);
+		fn_void_del_arr[0](gs);
+		fn_func_only_ret ();
+		foreach (var ret in rets) Console.WriteLine ($"ret: {ret}");
+		OuterMethod ();
+		Console.WriteLine ($"- {gs_gs.List[0].StringField}");
+		return 0;
+	}
+
+	public static int ActionTSignatureTest ()
+	{
+		Action<GenericStruct<int[]>> fn_action = (_) => { };
+		Action<GenericStruct<int[]>> fn_action_del = Math.DelegateTargetWithVoidReturn;
+		Action fn_action_bare = () => {};
+		Action<GenericStruct<int[]>> fn_action_null = null;
+		var fn_action_arr = new Action<GenericStruct<int[]>>[] {
+			(gs) => new GenericStruct<int[]>(),
+			Math.DelegateTargetWithVoidReturn,
+			null
+		};
+
+		var gs = new GenericStruct<int[]>();
+		fn_action (gs);
+		fn_action_del (gs);
+		fn_action_arr[0](gs);
+		fn_action_bare ();
+		OuterMethod ();
+		return 0;
+	}
+
+	public static int NestedDelegatesTest ()
+	{
+		Func<Func<int, bool>, bool> fn_func = (_) => { return true; };
+		Func<Func<int, bool>, bool> fn_func_null = null;
+		var fn_func_arr = new Func<Func<int, bool>, bool>[] { (gs) => { return true; } };
+
+		var fn_del_arr = new Func<Func<int, bool>, bool>[] { DelegateTargetForNestedFunc<Func<int, bool>> };
+		var m_obj = new Math ();
+		Func<Func<int, bool>, bool> fn_del_null = null;
+		Func<int, bool> fs = (i) => i == 0;
+		fn_func (fs);
+		fn_del_arr[0](fs);
+		fn_func_arr[0](fs);
+		OuterMethod ();
+		return 0;
+	}
+
+	public static void DelegatesAsMethodArgsTest ()
+	{
+		var _dst_arr = new DelegateForSignatureTest[] {
+			GenericStruct<int>.DelegateTargetForSignatureTest,
+			(m, gs) => new GenericStruct<bool[]> ()
+		};
+		Func<char[], bool> _fn_func = (cs) => cs.Length == 0;
+		Action<GenericStruct<int>[]> _fn_action = (gss) => { };
+
+		new Math ().MethodWithDelegateArgs (_dst_arr, _fn_func, _fn_action);
+	}
+
+	void MethodWithDelegateArgs (Math.DelegateForSignatureTest[] dst_arr, Func<char[], bool> fn_func,
+					Action<GenericStruct<int>[]> fn_action)
+	{
+		Console.WriteLine ($"Placeholder for breakpoint");
+		OuterMethod ();
+	}
+
+	public static async System.Threading.Tasks.Task MethodWithDelegatesAsyncTest ()
+	{
+		await new Math ().MethodWithDelegatesAsync ();
+	}
+
+	async System.Threading.Tasks.Task MethodWithDelegatesAsync ()
+	{
+		var _dst_arr = new DelegateForSignatureTest[] {
+			GenericStruct<int>.DelegateTargetForSignatureTest,
+			(m, gs) => new GenericStruct<bool[]> ()
+		};
+		Func<char[], bool> _fn_func = (cs) => cs.Length == 0;
+		Action<GenericStruct<int>[]> _fn_action = (gss) => { };
+
+		Console.WriteLine ($"Placeholder for breakpoint");
+		await System.Threading.Tasks.Task.CompletedTask;
+	}
+
+	delegate void DelegateWithVoidReturn (GenericStruct<int[]> gs);
+	static void DelegateTargetWithVoidReturn (GenericStruct<int[]> gs) { }
+
+	delegate GenericStruct<bool[]> DelegateForSignatureTest (Math m, GenericStruct<GenericStruct<int[]>> gs);
+	static bool DelegateTargetForNestedFunc<T>(T arg) => true;
+
+	public static unsafe void PointersTest ()
+	{
+		int ivalue0 = 5;
+		int ivalue1 = 10;
+
+		int* ip = &ivalue0;
+		int* ip_null = null;
+		int** ipp = &ip;
+
+		int*[] ipa = new int*[] { &ivalue0, &ivalue1, null };
+
+		char cvalue0 = 'q';
+		char* cp = &cvalue0;
+
+		DateTime dt = new DateTime(5, 6, 7, 8, 9, 10);
+		void* vp = &dt;
+		void* vp_null = null;
+
+		DateTime* dtp = &dt;
+		DateTime* dtp_null = null;
+		Console.WriteLine ($"-- break here");
+	}
+
+	public static void CallFunctionOnTest (int len)
+	{
+		var big = new int[len];
+		for (int i = 0; i < len; i ++)
+			big [i] = i + 1000;
+
+		var simple_struct = new SimpleStruct () { dt = new DateTime (2020, 1, 2, 3, 4, 5), gs = new GenericStruct<DateTime> { StringField = $"simple_struct # gs # StringField" } };
+
+		var ss_arr = new SimpleStruct [len];
+		for (int i = 0; i < len; i ++)
+			ss_arr [i] = new SimpleStruct () { dt = new DateTime (2020+i, 1, 2, 3, 4, 5), gs = new GenericStruct<DateTime> { StringField = $"ss_arr # {i} # gs # StringField" } };
+
+		var nim = new NestedInMath { SimpleStructProperty = new SimpleStruct () { dt = new DateTime (2010, 6, 7, 8, 9, 10) } };
+		Action<GenericStruct<int[]>> action = DelegateTargetWithVoidReturn;
+		Console.WriteLine("foo");
 	}
 
 	struct SimpleStruct
@@ -147,10 +318,32 @@ public class Math { //Only append content to this class as the test suite depend
 		public GenericStruct<DateTime> gs;
 	}
 
-	struct GenericStruct<T>
+	public struct GenericStruct<T>
 	{
 		public System.Collections.Generic.List<T> List;
 		public string StringField;
+
+		public static GenericStruct<bool[]> DelegateTargetForSignatureTest (Math m, GenericStruct<GenericStruct<T[]>> gs)
+			=> new GenericStruct<bool[]> ();
 	}
 
+}
+
+public class DebuggerTest
+{
+	public static void run_all () {
+		locals ();
+	}
+
+	public static int locals () {
+		int l_int = 1;
+		char l_char = 'A';
+		long l_long = Int64.MaxValue;
+		ulong l_ulong = UInt64.MaxValue;
+		locals_inner ();
+		return 0;
+	}
+
+	static void locals_inner () {
+	}
 }

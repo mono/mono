@@ -31,7 +31,7 @@ void core_initialize_internals ();
 extern void* mono_wasm_invoke_js_marshalled (MonoString **exceptionMessage, void *asyncHandleLongPtr, MonoString *funcName, MonoString *argsJson);
 extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, MonoString *funcName, void* arg0, void* arg1, void* arg2);
 
-void mono_wasm_enable_debugging (void);
+void mono_wasm_enable_debugging (int);
 
 void mono_ee_interp_init (const char *opts);
 void mono_marshal_ilgen_init (void);
@@ -68,16 +68,6 @@ void mono_trace_init (void);
 #define g_new(type, size)  ((type *) malloc (sizeof (type) * (size)))
 #define g_new0(type, size) ((type *) calloc (sizeof (type), (size)))
 
-static char*
-m_strdup (const char *str)
-{
-	if (!str)
-		return NULL;
-
-	const size_t len = strlen (str) + 1;
-	return memcpy (g_new (char, len), str, len);
-}
-
 static MonoDomain *root_domain;
 
 static MonoString*
@@ -86,27 +76,27 @@ mono_wasm_invoke_js (MonoString *str, int *is_exception)
 	if (str == NULL)
 		return NULL;
 
-	char *native_val = mono_string_to_utf8 (str);
+	mono_unichar2 *native_val = mono_string_chars (str);
+	int native_len = mono_string_length (str) * 2;
+
 	mono_unichar2 *native_res = (mono_unichar2*)EM_ASM_INT ({
-		var str = UTF8ToString ($0);
+		var str = MONO.string_decoder.decode ($0, $0 + $1);
 		try {
 			var res = eval (str);
 			if (res === null || res == undefined)
 				return 0;
 			res = res.toString ();
-			setValue ($1, 0, "i32");
+			setValue ($2, 0, "i32");
 		} catch (e) {
 			res = e.toString ();
-			setValue ($1, 1, "i32");
+			setValue ($2, 1, "i32");
 			if (res === null || res === undefined)
 				res = "unknown exception";
 		}
 		var buff = Module._malloc((res.length + 1) * 2);
 		stringToUTF16 (res, buff, (res.length + 1) * 2);
 		return buff;
-	}, (int)native_val, is_exception);
-
-	mono_free (native_val);
+	}, (int)native_val, native_len, is_exception);
 
 	if (native_res == NULL)
 		return NULL;
@@ -154,14 +144,14 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 {
 	int len = strlen (name);
 	if (!strcasecmp (".pdb", &name [len - 4])) {
-		char *new_name = m_strdup (name);
+		char *new_name = strdup (name);
 		//FIXME handle debugging assemblies with .exe extension
 		strcpy (&new_name [len - 3], "dll");
 		mono_register_symfile_for_assembly (new_name, data, size);
 		return;
 	}
 	WasmAssembly *entry = g_new0 (WasmAssembly, 1);
-	entry->assembly.name = m_strdup (name);
+	entry->assembly.name = strdup (name);
 	entry->assembly.data = data;
 	entry->assembly.size = size;
 	entry->next = assemblies;
@@ -239,7 +229,6 @@ int SystemNative_CreateNetworkChangeListenerSocket (int a) { return 0; }
 void SystemNative_ReadEvents (int a,int b) {}
 int SystemNative_SchedGetAffinity (int a,int b) { return 0; }
 int SystemNative_SchedSetAffinity (int a,int b) { return 0; }
-int getgrouplist (int a,int b,int c,int d) { return 0; }
 #endif
 
 #if !defined(ENABLE_AOT) || defined(EE_MODE_LLVMONLY_INTERP)
@@ -323,12 +312,13 @@ icall_table_lookup_symbol (void *func)
 void mono_initialize_internals ()
 {
 	mono_add_internal_call ("WebAssembly.Runtime::InvokeJS", mono_wasm_invoke_js);
+	// TODO: what happens when two types in different assemblies have the same FQN?
 
-	// Blazor specific custom routines - see dotnet_support.js for backing code		
+	// Blazor specific custom routines - see dotnet_support.js for backing code
 	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSMarshalled", mono_wasm_invoke_js_marshalled);
 	mono_add_internal_call ("WebAssembly.JSInterop.InternalCalls::InvokeJSUnmarshalled", mono_wasm_invoke_js_unmarshalled);
 
-#ifdef CORE_BINDINGS	
+#ifdef CORE_BINDINGS
 	core_initialize_internals();
 #endif
 
@@ -337,6 +327,8 @@ void mono_initialize_internals ()
 EMSCRIPTEN_KEEPALIVE void
 mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 {
+	const char *interp_opts = "";
+
 	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 0);
 	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 0);
 #ifdef ENABLE_NETCORE
@@ -357,8 +349,11 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 #endif
 #else
 	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
-	if (enable_debugging)
-		mono_wasm_enable_debugging ();
+	if (enable_debugging) {
+		// Disable optimizations which interfere with debugging
+		interp_opts = "-all";
+		mono_wasm_enable_debugging (enable_debugging);
+	}
 #endif
 
 #ifdef LINK_ICALLS
@@ -376,7 +371,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_icall_table_init ();
 #endif
 #ifdef NEED_INTERP
-	mono_ee_interp_init ("");
+	mono_ee_interp_init (interp_opts);
 	mono_marshal_ilgen_init ();
 	mono_method_builder_ilgen_init ();
 	mono_sgen_mono_ilgen_init ();
@@ -443,7 +438,7 @@ mono_wasm_invoke_method (MonoMethod *method, MonoObject *this_arg, void *params[
 			*out_exc = exc;
 
 		MonoObject *exc2 = NULL;
-		res = (MonoObject*)mono_object_to_string (exc, &exc2); 
+		res = (MonoObject*)mono_object_to_string (exc, &exc2);
 		if (exc2)
 			res = (MonoObject*) mono_string_new (root_domain, "Exception Double Fault");
 		return res;
@@ -480,32 +475,46 @@ mono_wasm_string_get_utf8 (MonoString *str)
 	return mono_string_to_utf8 (str); //XXX JS is responsible for freeing this
 }
 
+EMSCRIPTEN_KEEPALIVE void
+mono_wasm_string_convert (MonoString *str)
+{
+	if (str == NULL)
+		return;
+
+	mono_unichar2 *native_val = mono_string_chars (str);
+	int native_len = mono_string_length (str) * 2;
+
+	EM_ASM ({
+		MONO.string_decoder.decode($0, $0 + $1, true);
+	}, (int)native_val, native_len);
+}
+
 EMSCRIPTEN_KEEPALIVE MonoString *
 mono_wasm_string_from_js (const char *str)
 {
 	if (str)
 		return mono_string_new (root_domain, str);
 	else
-		return NULL;	
+		return NULL;
 }
 
 static int
 class_is_task (MonoClass *klass)
 {
-	if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) && 
+	if (!strcmp ("System.Threading.Tasks", mono_class_get_namespace (klass)) &&
 		(!strcmp ("Task", mono_class_get_name (klass)) || !strcmp ("Task`1", mono_class_get_name (klass))))
 		return 1;
 
 	return 0;
 }
 
-MonoClass* mono_get_uri_class(MonoException** exc) 
+MonoClass* mono_get_uri_class(MonoException** exc)
 {
 	MonoAssembly* assembly = mono_wasm_assembly_load ("System");
 	if (!assembly)
 		return NULL;
 	MonoClass* klass = mono_wasm_assembly_find_class(assembly, "System", "Uri");
-	return klass;    
+	return klass;
 }
 
 #define MARSHAL_TYPE_INT 1
@@ -578,20 +587,20 @@ mono_wasm_get_obj_type (MonoObject *obj)
 			case MONO_TYPE_I1:
 				return MARSHAL_ARRAY_BYTE;
 			case MONO_TYPE_U2:
-				return MARSHAL_ARRAY_USHORT;			
+				return MARSHAL_ARRAY_USHORT;
 			case MONO_TYPE_I2:
-				return MARSHAL_ARRAY_SHORT;			
+				return MARSHAL_ARRAY_SHORT;
 			case MONO_TYPE_U4:
-				return MARSHAL_ARRAY_UINT;			
+				return MARSHAL_ARRAY_UINT;
 			case MONO_TYPE_I4:
-				return MARSHAL_ARRAY_INT;			
+				return MARSHAL_ARRAY_INT;
 			case MONO_TYPE_R4:
 				return MARSHAL_ARRAY_FLOAT;
 			case MONO_TYPE_R8:
 				return MARSHAL_ARRAY_DOUBLE;
 			default:
 				return MARSHAL_TYPE_OBJECT;
-		}		
+		}
 	}
 	default:
 		if (klass == datetime_class)
@@ -728,4 +737,28 @@ EMSCRIPTEN_KEEPALIVE void
 mono_wasm_enable_on_demand_gc (void)
 {
 	mono_wasm_enable_gc = 1;
+}
+
+// Returns the local timezone default is UTC.
+EM_JS(size_t, mono_wasm_timezone_get_local_name, (),
+{
+	var res = "UTC";
+	try {
+		res = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	} catch(e) {}
+
+	var buff = Module._malloc((res.length + 1) * 2);
+	stringToUTF16 (res, buff, (res.length + 1) * 2);
+	return buff;
+})
+
+void
+mono_timezone_get_local_name (MonoString **result)
+{
+	// WASM returns back an int pointer to a string UTF16 buffer.
+	// We then cast to `mono_unichar2*`.  Returning `mono_unichar2*` from the JavaScript call will
+	// result in cast warnings from the compiler.
+	mono_unichar2 *tzd_local_name = (mono_unichar2*)mono_wasm_timezone_get_local_name ();
+	*result = mono_string_from_utf16 (tzd_local_name);
+	free (tzd_local_name);
 }

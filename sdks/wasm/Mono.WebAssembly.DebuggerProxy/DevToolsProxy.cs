@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using System.Net.WebSockets;
@@ -11,70 +12,6 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
 namespace WebAssembly.Net.Debugging {
-	internal class SessionId {
-		public string sessionId;
-	}
-
-	internal class MessageId : SessionId {
-		public int id;
-	}
-
-	internal struct Result {
-		public JObject Value { get; private set; }
-		public JObject Error { get; private set; }
-
-		public bool IsOk => Value != null;
-		public bool IsErr => Error != null;
-
-		Result (JObject result, JObject error)
-		{
-                       if (result != null && error != null)
-                               throw new ArgumentException ($"Both {nameof(result)} and {nameof(error)} arguments cannot be non-null.");
-
-                       bool resultHasError = String.Compare ((result? ["result"] as JObject)? ["subtype"]?. Value<string> (), "error") == 0;
-                       if (result != null && resultHasError) {
-                               this.Value = null;
-                               this.Error = result;
-                       } else {
-                               this.Value = result;
-                               this.Error = error;
-                       }
-		}
-
-		public static Result FromJson (JObject obj)
-		{
-			//Log ("protocol", $"from result: {obj}");
-			return new Result (obj ["result"] as JObject, obj ["error"] as JObject);
-		}
-
-		public static Result Ok (JObject ok)
-			=> new Result (ok, null);
-
-		public static Result OkFromObject (object ok)
-			=> Ok (JObject.FromObject(ok));
-
-		public static Result Err (JObject err)
-			=> new Result (null, err);
-
-		public static Result Exception (Exception e)
-			=> new Result (null, JObject.FromObject (new { message = e.Message }));
-
-		public JObject ToJObject (MessageId target) {
-			if (IsOk) {
-				return JObject.FromObject (new {
-					target.id,
-					target.sessionId,
-					result = Value
-				});
-			} else {
-				return JObject.FromObject (new {
-					target.id,
-					target.sessionId,
-					error = Error
-				});
-			}
-		}
-	}
 
 	class DevToolsQueue {
 		Task current_send;
@@ -120,12 +57,13 @@ namespace WebAssembly.Net.Debugging {
 	internal class DevToolsProxy {
 		TaskCompletionSource<bool> side_exception = new TaskCompletionSource<bool> ();
 		TaskCompletionSource<bool> client_initiated_close = new TaskCompletionSource<bool> ();
-		List<(MessageId, TaskCompletionSource<Result>)> pending_cmds = new List<(MessageId, TaskCompletionSource<Result>)> ();
+		Dictionary<MessageId, TaskCompletionSource<Result>> pending_cmds = new Dictionary<MessageId, TaskCompletionSource<Result>> ();
 		ClientWebSocket browser;
 		WebSocket ide;
 		int next_cmd_id;
 		List<Task> pending_ops = new List<Task> ();
 		List<DevToolsQueue> queues = new List<DevToolsQueue> ();
+
 		protected readonly ILogger logger;
 
 		public DevToolsProxy (ILoggerFactory loggerFactory)
@@ -181,7 +119,10 @@ namespace WebAssembly.Net.Debugging {
 		void Send (WebSocket to, JObject o, CancellationToken token)
 		{
 			var sender = browser == to ? "Send-browser" : "Send-ide";
-			Log ("protocol", $"{sender}: {o}");
+
+			var method = o ["method"]?.ToString ();
+			//if (method != "Debugger.scriptParsed" && method != "Runtime.consoleAPICalled")
+				Log ("protocol", $"{sender}: " + JsonConvert.SerializeObject (o));
 			var bytes = Encoding.UTF8.GetBytes (o.ToString ());
 
 			var queue = GetQueueForSocket (to);
@@ -219,22 +160,25 @@ namespace WebAssembly.Net.Debugging {
 		{
 			//logger.LogTrace ("got id {0} res {1}", id, result);
 			// Fixme
-			var idx = pending_cmds.FindIndex (e => e.Item1.id == id.id && e.Item1.sessionId == id.sessionId);
-			var item = pending_cmds [idx];
-			pending_cmds.RemoveAt (idx);
-
-			item.Item2.SetResult (result);
+			if (pending_cmds.Remove (id, out var task)) {
+				task.SetResult (result);
+				return;
+			}
+			logger.LogError ("Cannot respond to command: {id} with result: {result} - command is not pending", id, result);
 		}
 
 		void ProcessBrowserMessage (string msg, CancellationToken token)
 		{
-			Log ("protocol", $"browser: {msg}");
 			var res = JObject.Parse (msg);
 
+			var method = res ["method"]?.ToString ();
+			//if (method != "Debugger.scriptParsed" && method != "Runtime.consoleAPICalled")
+				Log ("protocol", $"browser: {msg}");
+
 			if (res ["id"] == null)
-				pending_ops.Add (OnEvent (new SessionId { sessionId = res ["sessionId"]?.Value<string> () }, res ["method"].Value<string> (), res ["params"] as JObject, token));
+				pending_ops.Add (OnEvent (new SessionId (res ["sessionId"]?.Value<string> ()), res ["method"].Value<string> (), res ["params"] as JObject, token));
 			else
-				OnResponse (new MessageId { id = res ["id"].Value<int> (), sessionId = res ["sessionId"]?.Value<string> () }, Result.FromJson (res));
+				OnResponse (new MessageId (res ["sessionId"]?.Value<string> (), res ["id"].Value<int> ()), Result.FromJson (res));
 		}
 
 		void ProcessIdeMessage (string msg, CancellationToken token)
@@ -242,7 +186,10 @@ namespace WebAssembly.Net.Debugging {
 			Log ("protocol", $"ide: {msg}");
 			if (!string.IsNullOrEmpty (msg)) {
 				var res = JObject.Parse (msg);
-				pending_ops.Add (OnCommand (new MessageId { id = res ["id"].Value<int> (), sessionId = res ["sessionId"]?.Value<string> () }, res ["method"].Value<string> (), res ["params"] as JObject, token));
+				pending_ops.Add (OnCommand (
+						new MessageId (res ["sessionId"]?.Value<string> (), res ["id"].Value<int> ()),
+						res ["method"].Value<string> (),
+						res ["params"] as JObject, token));
 			}
 		}
 
@@ -256,16 +203,17 @@ namespace WebAssembly.Net.Debugging {
 			int id = Interlocked.Increment (ref next_cmd_id);
 
 			var o = JObject.FromObject (new {
-				sessionId.sessionId,
 				id,
 				method,
 				@params = args
 			});
+			if (sessionId.sessionId != null)
+				o["sessionId"] = sessionId.sessionId;
 			var tcs = new TaskCompletionSource<Result> ();
 
-			var msgId = new MessageId { id = id, sessionId = sessionId.sessionId };
+			var msgId = new MessageId (sessionId.sessionId, id);
 			//Log ("verbose", $"add cmd id {sessionId}-{id}");
-			pending_cmds.Add ((msgId , tcs));
+			pending_cmds[msgId] = tcs;
 
 			Send (this.browser, o, token);
 			return tcs.Task;
@@ -280,23 +228,25 @@ namespace WebAssembly.Net.Debugging {
 		void SendEventInternal (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
 			var o = JObject.FromObject (new {
-				sessionId.sessionId,
 				method,
 				@params = args
 			});
+			if (sessionId.sessionId != null)
+				o["sessionId"] = sessionId.sessionId;
 
 			Send (this.ide, o, token);
 		}
 
 		internal void SendResponse (MessageId id, Result result, CancellationToken token)
 		{
-			//Log ("verbose", $"sending response: {id}: {result.ToJObject (id)}");
 			SendResponseInternal (id, result, token);
 		}
 
 		void SendResponseInternal (MessageId id, Result result, CancellationToken token)
 		{
 			JObject o = result.ToJObject (id);
+			if (result.IsErr)
+				logger.LogError ($"sending error response for id: {id} -> {result}");
 
 			Send (this.ide, o, token);
 		}

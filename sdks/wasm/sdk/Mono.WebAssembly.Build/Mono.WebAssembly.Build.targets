@@ -81,9 +81,7 @@
 		<ItemGroup>
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)dotnet.js" TargetPath="dotnet.js" />
 			<_WasmOutput Include="$(_MonoWasmRuntimePath)dotnet.wasm" TargetPath="dotnet.wasm" />
-			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.worker.js" TargetPath="mono.worker.js" Condition="'$(EnableMonoWasmThreads)'=='true'"/>
-			<_WasmOutput Include="$(_MonoWasmRuntimePath)dotnet.wasm.map" TargetPath="dotnet.wasm.map" Condition="'$(_MonoWasmDebugRuntime)'=='true'"/>
-			<_WasmOutput Include="$(_MonoWasmRuntimePath)dotnet.js.mem" TargetPath="dotnet.js.mem" Condition="'$(EnableMonoWasmThreads)'=='true'"/>
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)dotnet.worker.js" TargetPath="dotnet.worker.js" Condition="'$(EnableMonoWasmThreads)'=='true'"/>
 		</ItemGroup>
 
 		<AssignTargetPath
@@ -112,6 +110,7 @@
 			Debug="$(_DebugSymbolsProduced)"
 			I18n="$(MonoWasmI18n)"
 			LinkDescriptions="@(LinkDescription)"
+			BindingsDir="$(MonoWasmBindingsPath)"
 		/>
 
 		<PropertyGroup>

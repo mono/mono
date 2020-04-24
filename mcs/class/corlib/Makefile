@@ -74,10 +74,6 @@ RESOURCE_STRINGS_FILES = --mscorlib-debug
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 MODULE_DEPS = $(IL_REPLACE) LinkerDescriptor/mscorlib.xml
 
-
-ifdef WASM
-MANAGED_COLLATOR_RESOURCES_FILES =
-else
 MANAGED_COLLATOR_RESOURCES_FILES = \
 	resources/collation.core.bin \
 	resources/collation.tailoring.bin \
@@ -86,7 +82,6 @@ MANAGED_COLLATOR_RESOURCES_FILES = \
 	resources/collation.cjkJA.bin \
 	resources/collation.cjkKO.bin \
 	resources/collation.cjkKOlv2.bin
-endif
 
 ifdef MCS_MODE
 	UNICODECHARINFO = resources/charinfo.nlp

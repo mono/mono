@@ -211,7 +211,7 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             # Simulator runs
-            export sim_test_suites="Mono.Runtime.Tests corlib System.Core System.Data System.Numerics System.Runtime.Serialization System.Transactions System.IO.Compression System.IO.Compression.FileSystem System.Json System.ComponentModel.DataAnnotations System.Security System.Xml System.Xml.Linq System.ServiceModel.Web Mono.Data.Tds Mono.Security"
+            export sim_test_suites="Mono.Runtime.Tests corlib System System.Core System.Data System.Net.Http System.Numerics System.Runtime.Serialization System.Transactions System.IO.Compression System.IO.Compression.FileSystem System.Json System.ComponentModel.DataAnnotations System.Security System.Xml System.Xml.Linq System.ServiceModel.Web System.Web.Services Mono.CSharp Mono.Data.Sqlite Mono.Data.Tds Mono.Security"
 
             ${TESTCMD} --label=build-ios-sim --timeout=20m $gnumake -C sdks/ios build-ios-sim-all
             for suite in ${sim_test_suites}; do ${TESTCMD} --label=run-ios-sim-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-sim-${suite}; done
@@ -345,8 +345,10 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
         ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
+        ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
+        ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
+
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
             ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
             ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
             ${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-System
@@ -355,7 +357,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             # disable for now until https://github.com/mono/mono/pull/13622 goes in
             ${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm run-debugger-tests
             ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
-            #${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
+            ${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
             ${TESTCMD} --label=browser-dynamic --timeout=20m $gnumake -C sdks/wasm run-browser-dynamic-tests
             if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
                 ${TESTCMD} --label=browser-safari --timeout=20m $gnumake -C sdks/wasm run-browser-safari-tests            
@@ -367,7 +369,6 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             # Requires a net 3.0 sdk
             #${TESTCMD} --label=netcore --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-hello-netcore
             #${TESTCMD} --label=check-aot --timeout=20m $gnumake -C sdks/wasm check-aot
-            ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
         fi
         exit 0
 fi

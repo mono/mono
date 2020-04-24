@@ -1,6 +1,5 @@
 TOP=$(realpath $(CURDIR)/../..)
 -include $(TOP)/sdks/Make.config
--include $(TOP)/mcs/build/config.make
 include $(TOP)/sdks/versions.mk
 include $(TOP)/sdks/paths.mk
 
@@ -13,7 +12,9 @@ SHELL:=/bin/bash
 #Use either 'release' or 'debug' depending on what you need
 DRIVER_CONF=release
 
-CSC_LOCATION?=$(STANDALONE_CSC_LOCATION)
+# This is duplicated from configure.ac but we can't include config.make as
+# it might not be generated yet
+CSC_LOCATION=$(TOP)/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/csc.exe
 
 EMSCRIPTEN_SDK_DIR?=$(TOP)/sdks/builds/toolchains/emsdk
 EMCC=source $(CURDIR)/emsdk_env.sh && emcc
@@ -26,6 +27,8 @@ CSC_FLAGS := /debug:portable /noconfig /nostdlib /nologo /langversion:latest
 API_REFS=$(TOP)/external/binary-reference-assemblies/v4.6
 
 PACKAGER=mono --debug packager.exe --no-native-strip
+
+MSBUILD_QUIET_ARGS=--nologo -v q -consoleloggerparameters:NoSummary
 
 ifeq ($(HOST_PLATFORM),win32)
 DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
@@ -67,7 +70,7 @@ MINI_TEST_SOURCES = $(patsubst %,$(MINI_PATH)/%,$(MINI_TEST_FILES))
 WASM_FRAMEWORK=$(TOP)/sdks/wasm/framework
 WASM_FRAMEWORK_SOURCE=$(TOP)/sdks/wasm/framework/src
 WASM_FRAMEWORK_SOURCES=$(WASM_FRAMEWORK_SOURCE)/**/*
-WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.Http.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
+WASM_FRAMEWORK_DEPS=/r:$(WASM_FRAMEWORK)/WebAssembly.Bindings.dll /r:$(WASM_FRAMEWORK)/System.Net.Http.WebAssemblyHttpHandler.dll /r:$(WASM_FRAMEWORK)/WebAssembly.Net.WebSockets.dll
 
 BROWSER_TEST=$(TOP)/sdks/wasm/tests/browser
 BROWSER_TEST_THREADS=$(TOP)/sdks/wasm/tests/browser
@@ -89,6 +92,8 @@ BROWSER_TEST_ASSETS = \
 WASM_TESTS_SRC=$(TOP)/sdks/wasm/tests/src
 WASM_TESTS_BIN=$(TOP)/sdks/wasm/bin
 
+TEST_SOURCE_DIR=$(TOP)/sdks/wasm/tests/src/
+
 UNAME := $(shell uname -s)
 ifeq ($(UNAME),Linux)
 	JSVU_OS=linux64
@@ -98,30 +103,59 @@ ifeq ($(UNAME),Darwin)
 endif
 .PHONY: jsup
 
+NPM_VERSION=@^6.13.4
 NPM=$(CURDIR)/node_modules/node/bin/node $(CURDIR)/node_modules/npm/bin/npm-cli.js
+
+.stamp-npm-$(NPM_VERSION): 
+	npm install npm$(NPM_VERSION)
+	node_modules/npm/bin/npm-cli.js install
+	touch $@
 
 jsup: .stamp-jsvu
 	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=javascriptcore,spidermonkey,v8
 
-.stamp-jsvu: 
-	npm install npm@^6.13.4
-	node_modules/npm/bin/npm-cli.js install
+.stamp-jsvu: .stamp-npm-$(NPM_VERSION)
 	node_modules/node/bin/node node_modules/jsvu/cli.js --os=$(JSVU_OS) --engines=javascriptcore,spidermonkey,v8
 	touch $@
 
 .PHONY: toolchain
 toolchain: .stamp-jsvu
 
+provision-emsdk:
+	$(MAKE) -C ../builds provision-wasm
+
 # emsdk_env.sh calls emsdk construct_env which is a bit slow so make a copy
-emsdk_env.sh:
+emsdk_env.sh: | provision-emsdk
 	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
+
+# These builds overwrite their installed files
+# forcing everything to be rebuilt so use a stamp file
+.stamp-runtime: | provision-emsdk
+	$(MAKE) -C ../builds package-wasm-runtime
+	touch $@
+
+.stamp-bcl:
+	$(MAKE) -C ../builds package-wasm-bcl
+	touch $@
+
+# Use these targets to rebuild components
+runtime:
+	$(MAKE) -C ../builds package-wasm-runtime
+	touch .stamp-runtime
+
+cross:
+	$(MAKE) -C ../builds package-wasm-cross
+
+bcl:
+	$(MAKE) -C ../builds package-wasm-bcl
+	touch .stamp-bcl
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 MONO_THREADS_LIBS = $(TOP)/sdks/out/wasm-runtime-threads-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 MONO_DYNAMIC_LIBS = $(TOP)/sdks/out/wasm-runtime-dynamic-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 
 EMCC_FLAGS=--profiling-funcs -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'FS_createPath', 'FS_createDataFile', 'cwrap', 'setValue', 'getValue', 'UTF8ToString', 'addFunction']" -s USE_ZLIB=1 -s "EXPORTED_FUNCTIONS=['_putchar']" --source-map-base http://example.com  -s WASM_OBJECT_FILES=0 -s FORCE_FILESYSTEM=1
-EMCC_DEBUG_FLAGS =-g4 -Os -s ASSERTIONS=1
+EMCC_DEBUG_FLAGS =-g -Os -s ASSERTIONS=1
 EMCC_RELEASE_FLAGS=-Oz --llvm-opts 2 --llvm-lto 1
 EMCC_DYNAMIC_FLAGS=-s MAIN_MODULE=1 -s EXPORT_ALL=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ALLOW_TABLE_GROWTH=1 -s USE_ZLIB=0 -s WASM_OBJECT_FILES=0 -DWASM_SUPPORTS_DLOPEN
 EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=536870912 -pthread -Wl,--shared-memory,--no-check-features -s PTHREAD_POOL_SIZE=2
@@ -131,8 +165,10 @@ EMCC_THREADS_FLAGS=-s ALLOW_MEMORY_GROWTH=0 -s USE_PTHREADS=1 -s TOTAL_MEMORY=53
 #
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a}
-MONO_NETCORE_LIBS=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/{libmono-ee-interp.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a,System.Native.bc}
-MONO_NETCORE_DEPS=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.Native.bc
+MONO_DEPS = .stamp-runtime
+
+MONO_NETCORE_LIBS = $(TOP)/sdks/out/wasm-runtime-netcore-release/lib/{libmono-ee-interp.a,libmonosgen-2.0.a,libmono-ilgen.a,libmono-icall-table.a,libSystem.Native.a}
+MONO_NETCORE_DEPS=.stamp-runtime-netcore src/pinvoke-tables-default-netcore.h
 NETCORE_CFLAGS=-DENABLE_NETCORE
 
 # $(1) - name
@@ -145,10 +181,10 @@ define InterpBuildTemplate
 builds/$(1)/:
 	mkdir -p $$@
 
-builds/$(1)/dotnet.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(TOP)/sdks/out/$(2)/lib/libmonosgen-2.0.a | builds/$(1)/ emsdk_env.sh $(5)
+builds/$(1)/dotnet.js: builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o src/library_mono.js src/binding_support.js src/dotnet_support.js $(5) | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) $(3) --js-library src/library_mono.js --js-library src/binding_support.js --js-library src/dotnet_support.js builds/$(1)/driver.o builds/$(1)/corebindings.o builds/$(1)/zlib-helper.o $(4) -o builds/$(1)/dotnet.js
 
-builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h | builds/$(1)/ emsdk_env.sh
+builds/$(1)/driver.o: src/driver.c src/corebindings.c src/pinvoke-tables-default.h $(5) | builds/$(1)/ emsdk_env.sh
 	$(EMCC) $(EMCC_FLAGS) $(3) -Oz -DCORE_BINDINGS -I$(WASM_RUNTIME_DIR)/include/mono-2.0 src/driver.c -c -o $$@
 
 builds/$(1)/corebindings.o: src/corebindings.c | builds/$(1)/ emsdk_env.sh
@@ -159,18 +195,20 @@ builds/$(1)/zlib-helper.o: src/zlib-helper.c | builds/$(1)/ emsdk_env.sh
 
 build-native: builds/$(1)/dotnet.js
 
+build-interp-$(1): builds/$(1)/dotnet.js
+
 endef
 
 ifndef DISABLE_WASM_NO_NETCORE
-$(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS)))
-$(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS)))
+$(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS),$(MONO_DEPS)))
+$(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS),$(MONO_DEPS)))
 ifdef ENABLE_WASM_THREADS
-$(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
-$(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS)))
+$(eval $(call InterpBuildTemplate,threads-debug,wasm-runtime-threads-release,$(EMCC_DEBUG_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS),$(MONO_DEPS)))
+$(eval $(call InterpBuildTemplate,threads-release,wasm-runtime-threads-release,$(EMCC_RELEASE_FLAGS) $(EMCC_THREADS_FLAGS),$(MONO_THREADS_LIBS),$(MONO_DEP)))
 endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
-$(eval $(call InterpBuildTemplate,dynamic-debug,wasm-runtime-dynamic-release,$(EMCC_DEBUG_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
-$(eval $(call InterpBuildTemplate,dynamic-release,wasm-runtime-dynamic-release,$(EMCC_RELEASE_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS)))
+$(eval $(call InterpBuildTemplate,dynamic-debug,wasm-runtime-dynamic-release,$(EMCC_DEBUG_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS),$(MONO_DEPS)))
+$(eval $(call InterpBuildTemplate,dynamic-release,wasm-runtime-dynamic-release,$(EMCC_RELEASE_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS),$(MONO_DEPS)))
 endif
 endif
 ifdef ENABLE_WASM_NETCORE
@@ -178,67 +216,72 @@ $(eval $(call InterpBuildTemplate,netcore-debug,wasm-runtime-netcore-release,$(E
 $(eval $(call InterpBuildTemplate,netcore-release,wasm-runtime-netcore-release,$(EMCC_RELEASE_FLAGS) $(NETCORE_CFLAGS),$(MONO_NETCORE_LIBS),$(MONO_NETCORE_DEPS)))
 endif
 
-runtime:
-	$(MAKE) -C ../builds package-wasm-runtime
-
-cross:
-	$(MAKE) -C ../builds package-wasm-cross
-
-bcl:
-	$(MAKE) -C ../builds package-wasm-bcl
-
 #
 # NETCORE TARGETS
 #
 
 ifdef ENABLE_WASM_NETCORE
 
-ifeq ($(DOTNET_REPO_DIR),)
-$(error "Set the DOTNET_REPO_DIR variable for the netcore build to a checkout of the dotnet/runtime repo.")
+ifeq ($(ENABLE_WASM_NETCORE_LOCAL_BUILD),)
+$(error "Only local builds using a separate dotnet/runtime repo are supported.")
 endif
 
+ifeq ($(DOTNET_REPO_PATH),)
+$(error "Set the DOTNET_REPO_PATH variable for the netcore build to a checkout of the dotnet/runtime repo.")
+endif
+
+# FIXME:
 #NETCOREAPP_VERSION := $(shell cat ../../eng/Versions.props | sed -n 's/.*MicrosoftNETCoreAppVersion>\(.*\)<\/MicrosoftNETCoreAppVersion.*/\1/p' )
-NETCOREAPP_FEED=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
-NETCOREAPP_VERSION := 5.0.0-alpha.1.19559.6
-NETCOREAPP_NAME=runtime.webassembly-wasm.Microsoft.Private.CoreFx.NETCoreApp
-NETCOREAPP_DIR=$(NETCOREAPP_NAME).$(NETCOREAPP_VERSION)
+#NETCOREAPP_FEED=https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json
+#NETCOREAPP_VERSION := 5.0.100-preview.4.20202.8
+#NETCOREAPP_NAME=runtime.webassembly-wasm.Microsoft.Private.CoreFx.NETCoreApp
+#NETCOREAPP_DIR=$(NETCOREAPP_NAME).$(NETCOREAPP_VERSION)
+#$(NETCOREAPP_DIR):
+#	nuget install $(NETCOREAPP_NAME) -Version $(NETCOREAPP_VERSION) -Source $(NETCOREAPP_FEED)
+NETCOREAPP_DIR=$(DOTNET_REPO_PATH)/artifacts//bin/pkg/netcoreapp5.0/runtime/OSX-Release-x64
 
-$(NETCOREAPP_DIR):
-	nuget install $(NETCOREAPP_NAME) -Version $(NETCOREAPP_VERSION) -Source $(NETCOREAPP_FEED)
-
-$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.Native.bc: $(NETCOREAPP_DIR)
-	cp $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/native/System.Native.bc $@
+ifdef ENABLE_RSYNC
+RSYNC=rsync
+else
+RSYNC=cp
+endif
 
 .PHONY: runtime-netcore
+# Installs into out/wasm-runtime-netcore
+# Use rsync to avoid rebuilds
+# FIXME: 'bin' contains only libmono.a and not the other libs
 runtime-netcore:
-	$(MAKE) -C ../builds package-wasm-runtime-netcore
+	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset mono -c release -arch wasm -os WebAssembly
+	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset Libs.Native -c release -arch wasm -os WebAssembly
+	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/bin/mono/WebAssembly.wasm.Release/{System.Private.CoreLib.dll,System.Private.CoreLib.pdb} $(TOP)/sdks/out/wasm-runtime-netcore-release
+	$(RSYNC) -r $(DOTNET_REPO_PATH)/artifacts/obj/mono/WebAssembly.wasm.Release/out/* $(TOP)/sdks/out/wasm-runtime-netcore-release
+	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/obj/native/netcoreapp5.0-WebAssembly-Release-wasm/{System.Native/libSystem.Native.a,System.IO.Compression.Native/libSystem.IO.Compression.Native.a} $(TOP)/sdks/out/wasm-runtime-netcore-release/lib/
+	touch .stamp-runtime-netcore
 
-.PHONY: bcl-netcore
-bcl-netcore:
-	$(MAKE) -C ../builds package-wasm-bcl-netcore
+# The no-op build of this takes around 10s so use a .stamp gate
+.stamp-runtime-netcore: | provision-emsdk
+	$(MAKE) runtime-netcore
 
 cross-netcore:
 	$(MAKE) -C ../builds package-wasm-cross-netcore
 
-build-managed: bcl-netcore
-
 src/pinvoke-tables-default-netcore.h:
-	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table System.Native $(TOP)/sdks/out/wasm-bcl/netcore/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll,System.IO.Compression.dll} > $@
+	mono ../../mcs/class/lib/wasm_tools/wasm-tuner.exe --gen-pinvoke-table libSystem.Native $(TOP)/sdks/out/wasm-runtime-netcore-release/System.Private.CoreLib.dll $(NETCOREAPP_DIR)/{System.Console.dll,System.IO.FileSystem.dll,System.Runtime.InteropServices.RuntimeInformation.dll,System.IO.MemoryMappedFiles.dll,System.IO.Compression.dll} > $@
 
-samples/hello/bin/Debug/netcoreapp3.0/hello.dll: samples/hello/Program.cs
-	dotnet build samples/hello -f netcoreapp3.0 --nologo -v q
+samples/hello/bin/Debug/netcoreapp5.0/hello.dll: samples/hello/Program.cs
+	../../.dotnet/dotnet build samples/hello -f netcoreapp5.0 $(MSBUILD_QUIET_ARGS)
 
-build-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/hello-netcore --nobinding --builddir=obj/hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
-	ninja -v -C obj/hello-netcore
+build-interp-netcore-hello: packager.exe samples/hello/bin/Debug/netcoreapp5.0/hello.dll $(NETCOREAPP_DIR)
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-netcore-hello --nobinding --builddir=obj/interp-netcore-hello --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --template=runtime-tests.js --linker samples/hello/bin/Debug/netcoreapp5.0/hello.dll
+	ninja -v -C obj/interp-netcore-hello
 
-bin/hello-netcore/dotnet.js: build-hello-netcore
+bin/interp-netcore-hello/dotnet.js: build-interp-netcore-hello
 
-run-hello-netcore: bin/hello-netcore/dotnet.js
-	(cd bin/hello-netcore && $(SM) runtime.js --run hello.dll)
+run-interp-netcore-hello: bin/interp-netcore-hello/dotnet.js
+	(cd bin/interp-netcore-hello && $(SM) runtime.js --run hello.dll)
 
-build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp3.0/hello.dll $(NETCOREAPP_DIR)
-	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp3.0/hello.dll
+build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp5.0/hello.dll $(NETCOREAPP_DIR)
+	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp5.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp5.0/hello.dll
 	ninja -v -C obj/aot-hello-netcore
 
 bin/aot-hello-netcore/dotnet.js: build-aot-hello-netcore
@@ -246,8 +289,10 @@ bin/aot-hello-netcore/dotnet.js: build-aot-hello-netcore
 run-aot-hello-netcore: bin/aot-hello-netcore/dotnet.js
 	(cd bin/aot-hello-netcore && $(RUN_V8) --experimental-wasm-simd runtime.js -- --run hello.dll)
 
-# Path to <mono repo>/netcore/netcore/corefx/tests/extracted
-COREFX_TESTS_DIR=
+#
+# XUNIT test support
+#
+# This depends on the tests being built using build.sh --subset Libs.Tests -c release
 
 ##
 # Parameters:
@@ -258,12 +303,16 @@ COREFX_TESTS_DIR=
 # $(5) - command line arguments
 define NetcoreTestTemplate
 
+ifeq ($(3),Common.Tests)
+$(1)_PATH=$(DOTNET_REPO_PATH)/artifacts/bin/$(3)/netcoreapp5.0-OSX-Release
+else
+$(1)_PATH=$(DOTNET_REPO_PATH)/artifacts/bin/$(3)/netcoreapp5.0-Release
+endif
+
 bin/$(2)/dotnet.js: packager.exe runtime-tests.js corefx-exclusions.rsp
-	@if test -z "$(COREFX_TESTS_DIR)"; then echo "COREFX_TESTS_DIR is not set"; exit 1; fi
-	cd xunit-runner && dotnet build /nologo /v:q
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --search-path=$(COREFX_TESTS_DIR)/$(3) xunit-runner/bin/Debug/netcoreapp3.0/xunit-runner.dll $(5) $(COREFX_TESTS_DIR)/$(3)/$(4)
+	cd xunit-runner && ../../../.dotnet/dotnet build $(MSBUILD_QUIET_ARGS)
+	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --search-path=$$($(1)_PATH) --search-path=$$($(1)_PATH) xunit-runner/bin/Debug/netcoreapp5.0/xunit-runner.dll $(5) $$($(1)_PATH)/$(4)
 	ninja -v -C obj/$(2)
-#	$(PACKAGER) --debugrt --search-path=$(WASM_BCL_DIR)/tests --search-path=$(XUNIT_DIR) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=xunit-exclusions.rsp xunit-runner.exe $(WASM_BCL_DIR)/tests/xunit.execution.dotnet.dll $(WASM_BCL_DIR)/tests/$(3) $(WASM_BCL_DIR)/tests/Xunit.NetCore.Extensions.dll
 
 build-$(1): bin/$(2)/dotnet.js
 
@@ -301,7 +350,8 @@ NETCORE_COREFX_PASSING_TEST_SUITES = \
 System.IO.Compression.ZipFile.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.ZipFile.Tests/ZipTestData@ZipTestData
 System.IO.Compression.Brotli.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/UncompressedTestFiles@UncompressedTestFiles --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/BrotliTestData@BrotliTestData
 
-$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,$(suite)-netcore,$(suite)-netcore,$(suite),$(suite).dll,$($(suite)_PACKAGER_ARGS))))
+# Test targets are named run-netcore-<test suite name>
+$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,netcore-$(suite),netcore-$(suite),$(suite),$(suite).dll,$($(suite)_PACKAGER_ARGS))))
 
 $(foreach suite,$(NETCORE_COREFX_PASSING_TEST_SUITES),$(eval run-corefx-tests-netcore: run-$(suite)))
 
@@ -351,13 +401,15 @@ $(WASM_FRAMEWORK)/.stamp-framework: $(WASM_FRAMEWORK_SOURCES)
 Simple.Dependency.dll: dependency.cs $(WASM_FRAMEWORK)/.stamp-framework
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ $(BCL_DEPS) dependency.cs
 
-sample.dll: Simple.Dependency.dll sample.cs $(WASM_FRAMEWORK)/.stamp-framework
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) sample.cs
+sample.dll: Simple.Dependency.dll sample.cs $(WASM_FRAMEWORK)/.stamp-framework debugger-valuetypes-test.cs debugger-array-test.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /unsafe $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) sample.cs debugger-valuetypes-test.cs debugger-array-test.cs
 
-debugger-test.dll: debugger-test.cs debugger-test2.cs Simple.Dependency.dll
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll debugger-test.cs debugger-test2.cs
+debugger-test.dll: debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs Simple.Dependency.dll debugger-array-test.cs debugger-evaluate-test.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll /unsafe debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs debugger-array-test.cs debugger-evaluate-test.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
+
+$(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll: .stamp-bcl
 
 Mono.Cecil.dll: $(TOP)/mcs/class/lib/wasm_tools/Mono.Cecil.dll
 	cp $< $@
@@ -420,29 +472,29 @@ $(eval $(call XunitTestTemplate,System.Xml-xunit,System.Xml-xunit,wasm_System.Xm
 $(eval $(call XunitTestTemplate,System.Xml.Linq-xunit,System.Xml.Linq-xunit,wasm_System.Xml.Linq_xunit-test.dll))
 $(eval $(call XunitTestTemplate,corlib-xunit,corlib-xunit,wasm_corlib_xunit-test.dll))
 
-$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk 
+$(BROWSER_TEST)/.stamp-browser-test-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk .stamp-npm-$(NPM_VERSION)
 	$(DOTNET_BUILD) tests/browser/src -v normal
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-$(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+$(BROWSER_TEST_THREADS)/.stamp-browser-test-threads-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk .stamp-npm-$(NPM_VERSION)
 	$(DOTNET_BUILD) tests/browser/src -v normal -c DebugThreads
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-$(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk
+$(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_FRAMEWORK)/.stamp-framework $(BROWSER_TEST_SOURCES) clean-browser-tests build-sdk  .stamp-npm-$(NPM_VERSION)
 	echo BROWSER_TEST_SOURCES: $(BROWSER_TEST_SOURCES)
 	$(DOTNET_BUILD) tests/browser/src -v normal -p:EnableMonoWasmDynamic=true
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-.stamp-build-debugger-test-app: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html
-	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html debugger-test.dll
+bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll debugger-driver.html other.js builds/debug/dotnet.js
+	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=debugger-driver.html --asset=other.js debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 
 build-aot-hello: packager.exe hello.exe
-	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello --builddir=obj/aot-hello --aot --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello --builddir=obj/aot-hello --aot --nobinding --template=runtime-tests.js --pinvoke-libs=libfoo hello.exe
 	ninja -v -C obj/aot-hello
 
 build-aot-hello-profiled: packager.exe hello.exe data.aotprofile
@@ -475,6 +527,34 @@ build-zlib-aot-hello: packager.exe $(WASM_TESTS_BIN)/zlibtest.exe
 run-zlib-aot-hello: build-zlib-aot-hello
 	(cd bin/aot-zlib-sample && $(SM) runtime.js --run zlibtest.exe)
 
+# TimeZoneInfo tests
+
+$(TEST_SOURCE_DIR)/tzdtest.exe: $(TEST_SOURCE_DIR)/tzdtest.cs
+	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) $(TEST_SOURCE_DIR)/tzdtest.cs
+
+run-tzd-sample: build-tzd-sample
+	(cd bin/tzdtest-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
+
+build-tzd-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
+	mono packager.exe --nobinding --template=runtime-tests.js --out=bin/tzdtest-sample --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata $(TEST_SOURCE_DIR)/tzdtest.exe
+	cp -r /usr/share/zoneinfo ./bin/tzdtest-sample/zoneinfo
+
+build-tzd-interp-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata -appdir=bin/interp-tzd-sample --enable-fs --nobinding --builddir=obj/interp-tzd-sample --template=runtime-tests.js $(TEST_SOURCE_DIR)/tzdtest.exe --linker --link-icalls
+	ninja -v -C obj/interp-tzd-sample
+
+run-tzd-interp-sample: build-tzd-interp-sample
+	(cd bin/interp-tzd-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
+
+build-tzd-aot-sample: packager.exe $(TEST_SOURCE_DIR)/tzdtest.exe
+	mono --debug packager.exe --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-tzd-sample --enable-fs --nobinding --copy=ifnewer --asset=zoneinfo/zoneinfo.data --asset=zoneinfo/mono-webassembly-zoneinfo-fs-smd.js.metadata --builddir=obj/aot-tzd-sample --aot --template=runtime-tests.js $(TEST_SOURCE_DIR)/tzdtest.exe
+	ninja -v -C obj/aot-tzd-sample
+
+run-tzd-aot-sample: build-tzd-aot-sample
+	(cd bin/aot-tzd-sample && $(SM) runtime.js --enable-zoneinfo --run tzdtest.exe)
+
+# end TimeZoneInfo tests
+
 build-mixed-sample: packager.exe hello.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --aot-interp --aot-assemblies=mscorlib --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/mixed-sample --nobinding --builddir=obj/mixed-sample --template=runtime-tests.js hello.exe
 	ninja -v -C obj/mixed-sample
@@ -498,13 +578,13 @@ build-interp-hello: packager.exe hello.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-hello --nobinding --builddir=obj/interp-hello --template=runtime-tests.js hello.exe
 	ninja -v -C obj/interp-hello
 
+run-interp-hello: build-interp-hello
+	(cd bin/interp-hello && $(SM) runtime.js --run hello.exe)
+
 build-io-sample: packager.exe hello-io.exe
 	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/io-sample --builddir=obj/io-sample --template=runtime.js --asset=hello-io.html --enable-fs hello-io.exe
 	ninja -v -C obj/io-sample
 	(cd bin/io-sample && $(PYTHON) $(EMSCRIPTEN_SDK_DIR)/upstream/emscripten/tools/file_packager.py mono.dat --js-output=mono-loader.js --preload ../../hello-io.cs@/)
-
-run-interp-hello: build-interp-hello
-	(cd bin/interp-hello && $(SM) runtime.js --run hello.exe)
 
 threads.exe: threads.cs
 	$(CSC) $(CSC_FLAGS) -out:$@ $(BCL_DEPS) threads.cs
@@ -545,6 +625,17 @@ build-aot-profile: packager.exe aot-profile/main.exe
 
 data.aotprofile: build-aot-profile
 	node aot-profile/gen-profile.js $@ bin/aot-profile
+
+coverage-profile/main.exe: coverage-profile/main.cs
+	$(CSC) $(CSC_FLAGS) /unsafe -out:$@ $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) /r:$(WASM_BCL_DIR)/Facades/System.Memory.dll coverage-profile/main.cs
+
+.PHONY:
+build-coverage: packager.exe coverage-profile/main.exe
+	$(PACKAGER) --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/coverage-profile --builddir=obj/coverage-profile --profile=coverage --template=coverage-profile/runtime.js --asset=coverage-profile/index.html coverage-profile/main.exe
+	ninja -C obj/coverage-profile
+
+coverage.xml: build-coverage
+	node coverage-profile/gen-profile.js $@ bin/coverage-profile
 
 ##
 # Parameters:
@@ -601,7 +692,7 @@ run-aot-all: build-aot-all
 
 rebuild-debug-sample: clean-debug-sample build-debug-sample
 
-build-debugger-test-app: .stamp-build-debugger-test-app
+build-debugger-test-app: bin/debugger-test-suite/dotnet.wasm
 build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
@@ -640,7 +731,11 @@ run-all-%:
 	$(MAKE) -C . run-jsc-$*
 
 run-debugger-tests: build-debugger-test-app build-dbg-testsuite
-	dotnet test DebuggerTestSuite
+	if [ ! -z "$(TEST_FILTER)" ]; then \
+		LC_ALL=en_US.UTF-8 dotnet test DebuggerTestSuite --filter FullyQualifiedName~$(TEST_FILTER); \
+	else \
+		LC_ALL=en_US.UTF-8 dotnet test DebuggerTestSuite $(TEST_ARGS); \
+	fi
 
 run-browser-tests: build-browser-test-suite
 	(cd $(BROWSER_TEST) && $(NPM) test)
@@ -668,6 +763,7 @@ clean: clean-browser-tests
 	$(RM) -r mini_tests.dll
 	$(RM) -r main.exe
 	$(RM) -r binding-tests.dll
+	$(RM) -r coverage.xml
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
@@ -677,6 +773,7 @@ clean: clean-browser-tests
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 	$(RM) .configured
+	$(RM) src/pinvoke-tables-default-netcore.h
 
 package: build build-sdk build-dbg-proxy
 	rm -rf tmp
@@ -697,9 +794,9 @@ package: build build-sdk build-dbg-proxy
 	cp framework/WebAssembly.Bindings.dll tmp/framework
 	cp framework/WebAssembly.Bindings.pdb tmp/framework
 	cp framework/WebAssembly.Bindings.xml tmp/framework
-	cp framework/WebAssembly.Net.Http.dll tmp/framework
-	cp framework/WebAssembly.Net.Http.pdb tmp/framework
-	cp framework/WebAssembly.Net.Http.xml tmp/framework
+	cp framework/System.Net.Http.WebAssemblyHttpHandler.dll tmp/framework
+	cp framework/System.Net.Http.WebAssemblyHttpHandler.pdb tmp/framework
+	cp framework/System.Net.Http.WebAssemblyHttpHandler.xml tmp/framework
 	cp framework/WebAssembly.Net.WebSockets.dll tmp/framework
 	cp framework/WebAssembly.Net.WebSockets.pdb tmp/framework
 	cp framework/WebAssembly.Net.WebSockets.xml tmp/framework
@@ -759,4 +856,11 @@ clean-browser-tests: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-threads-suite
 	$(RM) -r $(BROWSER_TEST)/node-modules
 	$(RM) -r $(BROWSER_TEST)/publish
-	$(RM) -r $(BROWSER_TEST)/source/**/bin $(BROWSER_TEST)/source/**/**/bin $(BROWSER_TEST)/source/**/obj $(BROWSER_TEST)/source/**/**/obj publish
+	$(RM) -r $(BROWSER_TEST)/src/**/bin $(BROWSER_TEST)/src/**/**/bin $(BROWSER_TEST)/src/**/obj $(BROWSER_TEST)/src/**/**/obj publish
+
+clean-framework:
+	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
+	$(RM) -r $(WASM_FRAMEWORK)/netstandard2.0
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
+	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
