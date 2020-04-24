@@ -8,7 +8,7 @@ using WebAssembly.Net.Debugging;
 namespace DebuggerTests
 {
 
-	public class DelegateTests : SourceList {
+	public class DelegateTests : DebuggerTestBase {
 
 		[Theory]
 		[InlineData (0, 45, 2, "DelegatesTest", false)]

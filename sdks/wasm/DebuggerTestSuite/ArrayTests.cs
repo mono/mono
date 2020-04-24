@@ -8,7 +8,7 @@ using WebAssembly.Net.Debugging;
 namespace DebuggerTests
 {
 
-	public class ArrayTests : SourceList {
+	public class ArrayTests : DebuggerTestBase {
 
 		[Theory]
 		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, false)]

@@ -8,7 +8,7 @@ using WebAssembly.Net.Debugging;
 namespace DebuggerTests
 {
 
-	public class CallFunctionOnTests : SourceList {
+	public class CallFunctionOnTests : DebuggerTestBase {
 
 		// This tests `callFunctionOn` with a function that the vscode-js-debug extension uses
 		// Using this here as a non-trivial test case
