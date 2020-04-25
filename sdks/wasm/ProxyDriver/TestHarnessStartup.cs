@@ -160,18 +160,25 @@ namespace WebAssembly.Net.Debugging {
 					Console.WriteLine ("New test request");
 					var client = new HttpClient ();
 					await LaunchAndServe (psi, context, async (str) => {
-						string res = null;
 						var start = DateTime.Now;
+						JArray obj = null;
 
-						while (res == null) {
+						while (true) {
 							// Unfortunately it does look like we have to wait
 							// for a bit after getting the response but before
 							// making the list request.  We get an empty result
 							// if we make the request too soon.
 							await Task.Delay (100);
 
-							res = await client.GetStringAsync (new Uri (new Uri (str), "/json/list"));
+							var res = await client.GetStringAsync (new Uri (new Uri (str), "/json/list"));
 							Console.WriteLine ("res is {0}", res);
+
+							if (!String.IsNullOrEmpty (res)) {
+								// Sometimes we seem to get an empty array `[ ]`
+								obj = JArray.Parse (res);
+								if (obj != null && obj.Count >= 1)
+									break;
+							}
 
 							var elapsed = DateTime.Now - start;
 							if (res == null && elapsed.Milliseconds > 2000) {
@@ -180,9 +187,6 @@ namespace WebAssembly.Net.Debugging {
 							}
 						}
 
-						var obj = JArray.Parse (res);
-						if (obj == null || obj.Count < 1)
-							return null;
 
 						var wsURl = obj[0]? ["webSocketDebuggerUrl"]?.Value<string> ();
 						Console.WriteLine (">>> {0}", wsURl);
