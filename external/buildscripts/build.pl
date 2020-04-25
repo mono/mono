@@ -1080,7 +1080,7 @@ if ($build)
 		push @configureparams, "--with-sigaltstack=no";
 		push @configureparams, "--with-tls=pthread";
 		push @configureparams, "--disable-visibility-hidden";
-		push @configureparams, "--disable-executables";
+		push @configureparams, "--disable-executables"; 
 		push @configureparams, "--with-gnu-ld=yes";
 		push @configureparams, "mono_cv_uscore=yes";
 		push @configureparams, "ac_cv_header_zlib_h=no" if($runningOnWindows);
@@ -1093,7 +1093,6 @@ if ($build)
 		}
 
 		push @configureparams, "--host=$monoHostArch-pc-linux-gnu";
-
 		push @configureparams, "--disable-parallel-mark";  #this causes crashes
 
 		my $archflags = '';
@@ -1118,6 +1117,9 @@ if ($build)
 		if($ENV{UNITY_THISISABUILDMACHINE} || $ENV{UNITY_USE_LINUX_SDK})
 		{
 			my $linuxSysroot = "$externalBuildDeps/sysroot-gcc-glibc-x64/";
+			my $linuxToolchain = "$externalBuildDeps/toolchain-llvm-centos";
+			my $targetTriple = "x86_64-glibc2.17-linux-gnu";
+
 			if (!(-d $linuxSysroot))
 			{
 				die("mono linux builds require a sysroot and the directory was not found : $linuxSysroot\n");
@@ -1129,7 +1131,8 @@ if ($build)
 			}
 
 			print(">>> Linux Sysroot = $linuxSysroot\n");		
-			$ENV{CFLAGS} = "$ENV{CFLAGS} --sysroot=$linuxSysroot";
+			$ENV{'CC'} = "$linuxToolchain/bin/clang -target $targetTriple --sysroot=$linuxSysroot";
+			$ENV{'CXX'} = "$linuxToolchain/bin/clang++ -target $targetTriple --sysroot=$linuxSysroot";
 		}
 	}
 	elsif($^O eq 'darwin')
@@ -1299,6 +1302,7 @@ if ($build)
 			print ">>> Running MonoAotOffsetDumper : arch -i386 $iphoneCrossMonoBinToUse/mono @monoArgs\n";
 			system("arch", "-i386", "$iphoneCrossMonoBinToUse/mono", @monoArgs) eq 0 or die("failed to run MonoAotOffsetsDumper\n");
 		}
+
 
 		if ($mcsOnly)
 		{

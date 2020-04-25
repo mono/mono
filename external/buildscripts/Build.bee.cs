@@ -100,6 +100,11 @@ namespace BuildProgram
 				new Tuple<string, string>(
 					"sysroot-gcc-glibc-x64/9.1.0-2.17-v0_608efc24a3b402ec57809211b16a6d32d519f891d4038e1fc8509fe300c395b2.7z",
 					"testing"));
+
+			Artifacts.Add("toolchain-llvm-centos",
+				new Tuple<string, string>(
+					"toolchain-llvm-centos/9.0.1-7.7.1908-v0_9c1c26d5205c7ead3cba5a545796579d753c459ac5e16d0690d1b087efa7835d.7z",
+					"testing"));
 		}
 
 		private static void RegisterCommonNonWindowsArtifacts()
