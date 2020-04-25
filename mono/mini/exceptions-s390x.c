@@ -562,7 +562,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 static void
 altstack_handle_and_restore (MonoContext *ctx, gpointer obj, guint32 flags)
 {
-    MonoContext mctx;
+	MonoContext mctx;
 	MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), MONO_CONTEXT_GET_IP (ctx), NULL);
 	gboolean stack_ovf = (flags & 1) != 0;
 	gboolean nullref = (flags & 2) != 0;
@@ -590,14 +590,14 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 #ifdef MONO_ARCH_USE_SIGACTION
 	MonoContext *uc = (MonoContext *) sigctx;
 	MonoContext *uc_copy;
-    MonoException *exc = NULL;
-    MonoJitTlsData *jit_tls = NULL;
-    gboolean nullref = TRUE;
-    gint32 frame_size;
-    uintptr_t sp;
+	MonoException *exc = NULL;
+	MonoJitTlsData *jit_tls = NULL;
+	gboolean nullref = TRUE;
+	gint32 frame_size;
+	uintptr_t sp;
 
-    jit_tls = mono_tls_get_jit_tls();
-    g_assert (jit_tls);
+	jit_tls = mono_tls_get_jit_tls();
+	g_assert (jit_tls);
 
 	/* use TLS as temporary storage as we want to avoid
 	 * (1) stack allocation on the application stack
@@ -606,7 +606,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	 *
 	 * tls->orig_ex_ctx is used by the stack walker, which shouldn't be running at this point.
 	 */
-    uc_copy = &jit_tls->orig_ex_ctx;
+	uc_copy = &jit_tls->orig_ex_ctx;
 
 	if (!mono_is_addr_implicit_null_check (fault_addr))
 		nullref = FALSE;
@@ -614,7 +614,7 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	if (stack_ovf)
 		exc = mono_domain_get ()->stack_overflow_ex;
 
-    /*
+	/*
 	 * Setup the call frame on the application stack so that control is
 	 * returned there and exception handling can continue. we want the call
 	 * frame to be minimal as possible, for example no argument passing that
@@ -636,6 +636,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	UCONTEXT_REG_Rn(uc, S390_FIRST_ARG_REG + 2) = (stack_ovf ? 1 : 0) | (nullref ? 2 : 0);
 #endif
 }
+
+/*========================= End of Function ========================*/
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
