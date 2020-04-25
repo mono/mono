@@ -74,10 +74,6 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			var tcs = new TaskCompletionSource<string> ();
-			Console.WriteLine ("Launching with psi: {");
-			Console.WriteLine ($"\tFileName: '{psi.FileName}'");
-			Console.WriteLine ($"\tArguments: '{psi.Arguments}'");
-			Console.WriteLine ("}");
 
 			var proc = Process.Start (psi);
 			try {
@@ -136,9 +132,6 @@ namespace WebAssembly.Net.Debugging {
 			app.UseStaticFiles ();
 
 			TestHarnessOptions options = optionsAccessor.CurrentValue;
-			Console.WriteLine ($"Chrome from: '{options.ChromePath}'");
-			Console.WriteLine ($"Files from: '{options.AppPath}'");
-			Console.WriteLine ($"Using page : '{options.PagePath}'");
 
 			var provider = new FileExtensionContentTypeProvider();
 			provider.Mappings [".wasm"] = "application/wasm";
@@ -151,19 +144,20 @@ namespace WebAssembly.Net.Debugging {
 			});
 
 			var devToolsUrl = options.DevToolsUrl;
-			var psi = new ProcessStartInfo ();
-
-			psi.Arguments = $"--headless --disable-gpu --lang=en-US --incognito --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
-			psi.UseShellExecute = false;
-			psi.FileName = options.ChromePath;
-			psi.RedirectStandardError = true;
-			psi.RedirectStandardOutput = true;
-
 			app.UseRouter (router => {
 				router.MapGet ("launch-chrome-and-connect", async context => {
 					Console.WriteLine ("New test request");
 					try {
 						var client = new HttpClient ();
+						var psi = new ProcessStartInfo ();
+
+						psi.Arguments = $"--headless --disable-gpu --lang=en-US --incognito --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
+						psi.UseShellExecute = false;
+						psi.FileName = options.ChromePath;
+						psi.RedirectStandardError = true;
+						psi.RedirectStandardOutput = true;
+
+
 						await LaunchAndServe (psi, context, async (str) => {
 							var start = DateTime.Now;
 							JArray obj = null;
@@ -207,6 +201,11 @@ namespace WebAssembly.Net.Debugging {
 				Console.WriteLine($"Doing the nodejs: {options.NodeApp}");
 				var nodeFullPath = Path.GetFullPath (options.NodeApp);
 				Console.WriteLine (nodeFullPath);
+				var psi = new ProcessStartInfo ();
+
+				psi.UseShellExecute = false;
+				psi.RedirectStandardError = true;
+				psi.RedirectStandardOutput = true;
 
 				psi.Arguments = $"--inspect-brk=localhost:0 {nodeFullPath}";
 				psi.FileName = "node";
