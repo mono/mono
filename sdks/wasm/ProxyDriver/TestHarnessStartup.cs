@@ -74,6 +74,10 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			var tcs = new TaskCompletionSource<string> ();
+			Console.WriteLine ("Launching with psi: {");
+			Console.WriteLine ($"\tFileName: '{psi.FileName}'");
+			Console.WriteLine ($"\tArguments: '{psi.Arguments}'");
+			Console.WriteLine ("}");
 
 			var proc = Process.Start (psi);
 			try {
@@ -158,41 +162,44 @@ namespace WebAssembly.Net.Debugging {
 			app.UseRouter (router => {
 				router.MapGet ("launch-chrome-and-connect", async context => {
 					Console.WriteLine ("New test request");
-					var client = new HttpClient ();
-					await LaunchAndServe (psi, context, async (str) => {
-						var start = DateTime.Now;
-						JArray obj = null;
+					try {
+						var client = new HttpClient ();
+						await LaunchAndServe (psi, context, async (str) => {
+							var start = DateTime.Now;
+							JArray obj = null;
 
-						while (true) {
-							// Unfortunately it does look like we have to wait
-							// for a bit after getting the response but before
-							// making the list request.  We get an empty result
-							// if we make the request too soon.
-							await Task.Delay (100);
+							while (true) {
+								// Unfortunately it does look like we have to wait
+								// for a bit after getting the response but before
+								// making the list request.  We get an empty result
+								// if we make the request too soon.
+								await Task.Delay (100);
 
-							var res = await client.GetStringAsync (new Uri (new Uri (str), "/json/list"));
-							Console.WriteLine ("res is {0}", res);
+								var res = await client.GetStringAsync (new Uri (new Uri (str), "/json/list"));
+								Console.WriteLine ("res is {0}", res);
 
-							if (!String.IsNullOrEmpty (res)) {
-								// Sometimes we seem to get an empty array `[ ]`
-								obj = JArray.Parse (res);
-								if (obj != null && obj.Count >= 1)
-									break;
+								if (!String.IsNullOrEmpty (res)) {
+									// Sometimes we seem to get an empty array `[ ]`
+									obj = JArray.Parse (res);
+									if (obj != null && obj.Count >= 1)
+										break;
+								}
+
+								var elapsed = DateTime.Now - start;
+								if (elapsed.Milliseconds > 5000) {
+									Console.WriteLine ($"Unable to get DevTools /json/list response in {elapsed.Seconds} seconds, stopping");
+									return null;
+								}
 							}
 
-							var elapsed = DateTime.Now - start;
-							if (elapsed.Milliseconds > 5000) {
-								Console.WriteLine ($"Unable to get DevTools /json/list response in {elapsed.Seconds} seconds, stopping");
-								return null;
-							}
-						}
+							var wsURl = obj[0]? ["webSocketDebuggerUrl"]?.Value<string> ();
+							Console.WriteLine (">>> {0}", wsURl);
 
-
-						var wsURl = obj[0]? ["webSocketDebuggerUrl"]?.Value<string> ();
-						Console.WriteLine (">>> {0}", wsURl);
-
-						return wsURl;
-					});
+							return wsURl;
+						});
+					} catch (Exception ex) {
+						Console.WriteLine ($"launch-chrome-and-connect failed with {ex.ToString ()}");
+					}
 				});
 			});
 
