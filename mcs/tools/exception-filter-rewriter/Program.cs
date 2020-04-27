@@ -61,17 +61,20 @@ namespace ExceptionRewriter {
 							} else {
 								var shouldWriteSymbols = options.EnableSymbols && def.MainModule.SymbolReader != null;
 
-								def.Write (dst + ".tmp", new WriterParameters {
-									WriteSymbols = shouldWriteSymbols,
-									DeterministicMvid = true
-								});
+								if (options.Overwrite)
+									def.Write();
+								else
+									def.Write (dst + ".tmp", new WriterParameters {
+										WriteSymbols = shouldWriteSymbols,
+										DeterministicMvid = true
+									});
 
 								wroteOk = true;
 							}
 						}
 					}
 
-					if (wroteOk) {
+					if (wroteOk && !options.Overwrite) {
 						File.Copy (dst + ".tmp", dst, true);
 						if (File.Exists (dst + ".pdb")) {
 							File.Copy (dst + ".pdb", dst.Replace (".exe", ".pdb"), true);
