@@ -2170,10 +2170,7 @@ namespace ExceptionRewriter {
 								 startIndex,
 								 endIndex,
 								 size
-							 })
-							 // HACK: For debugging
-							 // .Take(1)
-							 .ToList ();
+							 }).ToList ();
 
 
 			if (TracedMethodNames.Contains (method.Name))
