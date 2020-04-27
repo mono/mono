@@ -42,7 +42,7 @@ namespace ExceptionRewriter {
 					var wroteOk = false;
 
 					using (var def = AssemblyDefinition.ReadAssembly (src, new ReaderParameters {
-						ReadWrite = false,
+						ReadWrite = options.Overwrite,
 						ReadingMode = ReadingMode.Deferred,
 						AssemblyResolver = assemblyResolver,
 						ReadSymbols = options.EnableSymbols,
