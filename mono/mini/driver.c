@@ -423,9 +423,14 @@ method_should_be_regression_tested (MonoMethod *method, gboolean interp)
 		}
 	}
 
-	g_print ("method %s has %d parameters\n", method->name, method->signature->param_count);
-
+	// FIXME: param_count is always 0?
 	if (method->signature && (method->signature->param_count > 0)) {
+		g_print ("skip %s...\n", method->name);
+		return FALSE;
+	}
+
+	// HACK: filter rewriter generates methods with __catch at the end
+	if (strstr (method->name, "__catch")) {
 		g_print ("skip %s...\n", method->name);
 		return FALSE;
 	}
