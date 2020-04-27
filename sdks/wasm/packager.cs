@@ -934,9 +934,6 @@ class Driver {
 		ninja.WriteLine ("rule ilstrip");
 		ninja.WriteLine ("  command = cp $in $out; mono $tools_dir/mono-cil-strip.exe -q $out");
 		ninja.WriteLine ("  description = [IL-STRIP]");
-		ninja.WriteLine ("rule filter-rewriter");
-		ninja.WriteLine ("  command = mono --debug $tools_dir/exception-filter-rewriter.exe --verbose --no-generics --warn --mono $in $out");
-		ninja.WriteLine ("  description = [FILTER-REWRITER]");
 
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
