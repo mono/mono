@@ -423,6 +423,13 @@ method_should_be_regression_tested (MonoMethod *method, gboolean interp)
 		}
 	}
 
+	g_print ("method %s has %d parameters\n", method->name, method->signature->param_count);
+
+	if (method->signature && (method->signature->param_count > 0)) {
+		g_print ("skip %s...\n", method->name);
+		return FALSE;
+	}
+
 	MonoCustomAttrInfo* ainfo = mono_custom_attrs_from_method_checked (method, error);
 	mono_error_cleanup (error);
 	if (!ainfo)
