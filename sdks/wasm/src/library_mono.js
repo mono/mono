@@ -199,7 +199,6 @@ var MonoSupportLib = {
 				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", null, [ 'number' ]);
 
 			this.var_info = [];
-			console.log (">> mono_wasm_get_array_values " + objId);
 			this.mono_wasm_get_array_values_info (objId);
 
 			var res = MONO._fixup_name_value_objects (this.var_info);

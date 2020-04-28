@@ -262,9 +262,16 @@ namespace DebuggerTests
 		async Task CheckDateTime (JToken locals, string name, DateTime expected)
 		{
 			var obj = GetAndAssertObjectWithName(locals, name);
-			Assert.Equal (expected.ToString (), obj ["value"]? ["description"]?.Value<string> ());
+			await CheckDateTimeValue (obj ["value"], expected);
+		}
 
-			var members = await GetObjectOnLocals (locals, name);
+		async Task CheckDateTimeValue (JToken value, DateTime expected)
+		{
+			AssertEqual ("System.DateTime", value ["className"]?.Value<string> (), "className");
+			AssertEqual (expected.ToString (), value ["description"]?.Value<string> (), "className");
+
+			var members = await GetProperties (value ["objectId"]?.Value<string> ());
+
 			// not checking everything
 			CheckNumber (members, "Year", expected.Year);
 			CheckNumber (members, "Month", expected.Month);
@@ -2574,7 +2581,7 @@ namespace DebuggerTests
 		[Fact]
 		public async Task EvaluateThisProperties ()
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 18, 16,
+				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 20, 16,
 				"run",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
 				wait_for_event_fn: async (pause_location) => {
@@ -2585,12 +2592,15 @@ namespace DebuggerTests
 					CheckContentValue (evaluate, "2");
 					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "c");
 					CheckContentValue (evaluate, "3");
+
+					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "dt");
+					await CheckDateTimeValue (evaluate, new DateTime (2000, 5, 4, 3, 2, 1));
 				});
 
 		[Theory]
-		[InlineData (56, 3, "EvaluateTestsStructInstanceMethod")]
-		[InlineData (72, 3, "GenericInstanceMethodOnStruct<int>")]
-		[InlineData (95, 3, "EvaluateTestsGenericStructInstanceMethod")]
+		[InlineData (58, 3, "EvaluateTestsStructInstanceMethod")]
+		[InlineData (74, 3, "GenericInstanceMethodOnStruct<int>")]
+		[InlineData (97, 3, "EvaluateTestsGenericStructInstanceMethod")]
 		public async Task EvaluateThisPropertiesOnStruct (int line, int col, string method_name)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", line, col,
@@ -2603,12 +2613,15 @@ namespace DebuggerTests
 					CheckContentValue (evaluate, "2");
 					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "c");
 					CheckContentValue (evaluate, "3");
+
+					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "dateTime");
+					await CheckDateTimeValue (evaluate, new DateTime (2020, 1, 2, 3, 4, 5));
 				});
 
 		[Fact]
 		public async Task EvaluateParameters ()
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 18, 16,
+				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 20, 16,
 				"run",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
 				wait_for_event_fn: async (pause_location) => {
@@ -2624,7 +2637,7 @@ namespace DebuggerTests
 		[Fact]
 		public async Task EvaluateLocals ()
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 18, 16,
+				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 20, 16,
 				"run",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
 				wait_for_event_fn: async (pause_location) => {
@@ -2635,12 +2648,88 @@ namespace DebuggerTests
 					CheckContentValue (evaluate, "102");
 					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "f");
 					CheckContentValue (evaluate, "103");
+
+					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "local_dt");
+					await CheckDateTimeValue (evaluate, new DateTime (2010, 9, 8, 7, 6, 5));
 				});
+
+		[Fact]
+		public async Task EvaluateLocalsAsync ()
+		{
+			var bp_loc = "dotnet://debugger-test.dll/debugger-array-test.cs";
+			int line = 227; int col = 3;
+			var function_name = "MoveNext";
+			await CheckInspectLocalsAtBreakpointSite (
+				bp_loc, line, col,
+				function_name,
+				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.ArrayTestsClass:EntryPointForStructMethod', true); })",
+				wait_for_event_fn: async (pause_location) => {
+					var locals = await GetProperties (pause_location ["callFrames"][0] ["callFrameId"].Value<string> ());
+
+					// sc_arg
+					{
+						var sc_arg = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "sc_arg");
+						await CheckValue (sc_arg, TObject ("DebuggerTests.SimpleClass"), "sc_arg#1");
+
+						var sc_arg_props = await GetProperties (sc_arg ["objectId"]?.Value<string> ());
+						await CheckProps (sc_arg_props, new {
+							X                     = TNumber (10),
+							Y                     = TNumber (45),
+							Id                    = TString ("sc#Id"),
+							Color                 = TEnum   ("DebuggerTests.RGB", "Blue"),
+							PointWithCustomGetter = TSymbol ("DebuggerTests.Point { get; }")
+						}, "sc_arg_props#1");
+					}
+
+					// local_gs
+					{
+						var local_gs = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "local_gs");
+						await CheckValue (local_gs, TValueType ("DebuggerTests.SimpleGenericStruct<int>"), "local_gs#1");
+
+						var local_gs_props = await GetProperties (local_gs ["objectId"]?.Value<string> ());
+						await CheckProps (local_gs_props, new {
+							Id    = TObject ("string", is_null: true),
+							Color = TEnum   ("DebuggerTests.RGB", "Red"),
+							Value = TNumber (0)
+						}, "local_gs_props#1");
+					}
+
+					// step, check local_gs
+					pause_location = await StepAndCheck (StepKind.Over, bp_loc, line + 1, col, function_name);
+					{
+						var local_gs = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "local_gs");
+						await CheckValue (local_gs, TValueType ("DebuggerTests.SimpleGenericStruct<int>"), "local_gs#2");
+
+						var local_gs_props = await GetProperties (local_gs ["objectId"]?.Value<string> ());
+						await CheckProps (local_gs_props, new {
+							Id    = TString ("local_gs#Id"),
+							Color = TEnum   ("DebuggerTests.RGB", "Green"),
+							Value = TNumber (4)
+						}, "local_gs_props#2");
+					}
+
+					// step check sc_arg.Id
+					pause_location = await StepAndCheck (StepKind.Over, bp_loc, line + 2, col, function_name);
+					{
+						var sc_arg = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "sc_arg");
+						await CheckValue (sc_arg, TObject ("DebuggerTests.SimpleClass"), "sc_arg#2");
+
+						var sc_arg_props = await GetProperties (sc_arg ["objectId"]?.Value<string> ());
+						await CheckProps (sc_arg_props, new {
+							X                     = TNumber (10),
+							Y                     = TNumber (45),
+							Id                    = TString ("sc_arg#Id"), // <------- This changed
+							Color                 = TEnum   ("DebuggerTests.RGB", "Blue"),
+							PointWithCustomGetter = TSymbol ("DebuggerTests.Point { get; }")
+						}, "sc_arg_props#2");
+					}
+				});
+		}
 
 		[Fact]
 		public async Task EvaluateExpressions ()
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 18, 16,
+				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 20, 16,
 				"run",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
 				wait_for_event_fn: async (pause_location) => {
@@ -2662,7 +2751,7 @@ namespace DebuggerTests
 		[Fact]
 		public async Task EvaluateThisExpressions ()
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 18, 16,
+				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 20, 16,
 				"run",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
 				wait_for_event_fn: async (pause_location) => {
@@ -2673,6 +2762,10 @@ namespace DebuggerTests
 					CheckContentValue (evaluate, "2");
 					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.c");
 					CheckContentValue (evaluate, "3");
+
+					// FIXME: not supported yet
+					// evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "this.dt");
+					// await CheckDateTimeValue (evaluate, new DateTime (2000, 5, 4, 3, 2, 1));
 				});
 
 		async Task<Result> SendCommand (string method, JObject args) {
