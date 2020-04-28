@@ -47,11 +47,11 @@ public static class KnownProject {
 			Path = @"$(SolutionDir)\mcs\tools\culevel\culevel.csproj",
 			Guid = "{E8E246BD-CD0C-4734-A3C2-7F44796EC47B}"
 		},
-        Exceptionrewriter = new KnownProjectInfo {
-            Name = "exception-filter-rewriter",
-            Path = @"$(SolutionDir)\mcs\tools\exception-filter-rewriter\exception-filter-rewriter.csproj",
-            Guid = "{D7459320-5DC6-4B6A-97F4-0EC56AC80FA5}"
-        };		
+		Exceptionrewriter = new KnownProjectInfo {
+			Name = "exception-filter-rewriter",
+			Path = @"$(SolutionDir)\mcs\tools\exception-filter-rewriter\exception-filter-rewriter.csproj",
+			Guid = "{D7459320-5DC6-4B6A-97F4-0EC56AC80FA5}"
+		};		
 }
 
 public class KnownProjectInfo {
@@ -254,7 +254,7 @@ public class MsbuildGenerator {
 
 	public static readonly (string, string)[] fixed_guids = new [] {
 		("tools/culevel/culevel.csproj", KnownProject.Culevel.Guid),
-        ("tools/exception-filter-rewriter/exception-filter-rewriter.csproj", KnownProject.Exceptionrewriter.Guid)
+		("tools/exception-filter-rewriter/exception-filter-rewriter.csproj", KnownProject.Exceptionrewriter.Guid)
 	};
 
 	static void Usage ()
