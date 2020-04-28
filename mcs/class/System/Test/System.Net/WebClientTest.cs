@@ -50,7 +50,6 @@ namespace MonoTests.System.Net
 				wc.DownloadData ((string) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				Console.WriteLine (ex);
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -68,8 +67,6 @@ namespace MonoTests.System.Net
 				wc.DownloadData ("tp://scheme.notsupported");
 				Assert.Fail ("#1");
 			} catch (WebException ex) {
-				Console.WriteLine (ex);
-
 				// An error occurred performing a WebClient request
 				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
@@ -79,8 +76,6 @@ namespace MonoTests.System.Net
 
 				// The URI prefix is not recognized
 				Exception inner = ex.InnerException;
-				Console.WriteLine (inner);
-
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
@@ -95,8 +90,6 @@ namespace MonoTests.System.Net
 				wc.DownloadData ((Uri) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				Console.WriteLine (ex);
-
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -114,8 +107,6 @@ namespace MonoTests.System.Net
 				wc.DownloadData (new Uri ("tp://scheme.notsupported"));
 				Assert.Fail ("#1");
 			} catch (WebException ex) {
-				Console.WriteLine (ex);
-
 				// An error occurred performing a WebClient request
 				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
@@ -125,8 +116,6 @@ namespace MonoTests.System.Net
 
 				// The URI prefix is not recognized
 				Exception inner = ex.InnerException;
-				Console.WriteLine (inner);
-
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
@@ -141,8 +130,6 @@ namespace MonoTests.System.Net
 				wc.DownloadFile ((string) null, "tmp.out");
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				Console.WriteLine (ex);
-
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -162,8 +149,6 @@ namespace MonoTests.System.Net
 					wc.DownloadFile ("tp://scheme.notsupported", file);
 					Assert.Fail ("#1");
 				} catch (WebException ex) {
-					Console.WriteLine (ex);
-
 					// An error occurred performing a WebClient request
 					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
 					Assert.IsNotNull (ex.InnerException, "#3");
@@ -173,8 +158,6 @@ namespace MonoTests.System.Net
 
 					// The URI prefix is not recognized
 					Exception inner = ex.InnerException;
-					Console.WriteLine (inner);
-
 					Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 					Assert.IsNull (inner.InnerException, "#8");
 					Assert.IsNotNull (inner.Message, "#9");
@@ -192,8 +175,6 @@ namespace MonoTests.System.Net
 					(string) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				Console.WriteLine (ex);
-
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -211,8 +192,6 @@ namespace MonoTests.System.Net
 				wc.DownloadFile ((Uri) null, "tmp.out");
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				Console.WriteLine (ex);
-
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -232,8 +211,6 @@ namespace MonoTests.System.Net
 					wc.DownloadFile (new Uri ("tp://scheme.notsupported"), file);
 					Assert.Fail ("#1");
 				} catch (WebException ex) {
-					Console.WriteLine (ex);
-
 					// An error occurred performing a WebClient request
 					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
 					Assert.IsNotNull (ex.InnerException, "#3");
@@ -243,8 +220,6 @@ namespace MonoTests.System.Net
 
 					// The URI prefix is not recognized
 					Exception inner = ex.InnerException;
-					Console.WriteLine (inner);
-
 					Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 					Assert.IsNull (inner.InnerException, "#8");
 					Assert.IsNotNull (inner.Message, "#9");
@@ -262,8 +237,6 @@ namespace MonoTests.System.Net
 					(string) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				Console.WriteLine (ex);
-
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
@@ -280,8 +253,6 @@ namespace MonoTests.System.Net
 				wc.DownloadString ((string) null);
 				Assert.Fail ("#1");
 			} catch (ArgumentNullException ex) {
-				Console.WriteLine (ex);
-
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
