@@ -184,7 +184,7 @@ namespace WebAssembly.Net.Debugging {
 					var start = SourceLocation.Parse (args? ["start"] as JObject);
 					//FIXME support variant where restrictToFunction=true and end is omitted
 					var end = SourceLocation.Parse (args? ["end"] as JObject);
-					if (start != null && end != null && await GetPossibleBreakpoints (id, start, end, token))
+					if (start != null && await GetPossibleBreakpoints (id, start, end, token))
 						return true;
 
 					SendResponse (id, resp, token);
