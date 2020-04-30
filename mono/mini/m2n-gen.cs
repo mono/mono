@@ -128,7 +128,7 @@ class Driver {
 		"VIIFFF",
 		"VIIFFFF",
 		"VIIFFI",
-		"VIIFI"
+		"VIIFI",
 		"FF",
 		"FFI",
 		"FFF",
