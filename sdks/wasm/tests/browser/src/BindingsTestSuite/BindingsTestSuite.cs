@@ -95,41 +95,41 @@ namespace BindingsTestSuite
             return new Float64Array(sab);
         }
 
-        public static int FunctionSumCall (int a, int b) 
+        public static int FunctionSumCall (int a, int b)
         {
             var sum = new Function("a", "b", "return a + b");
             return (int)sum.Call(null, a, b);
         }
 
-        public static double FunctionSumCallD (double a, double b) 
+        public static double FunctionSumCallD (double a, double b)
         {
             var sum = new Function("a", "b", "return a + b");
             return Math.Round((double)sum.Call(null, a, b), 2);
         }
-        public static int FunctionSumApply (int a, int b) 
+        public static int FunctionSumApply (int a, int b)
         {
             var sum = new Function("a", "b", "return a + b");
             return (int)sum.Apply(null, new object[] { a, b });
         }
 
-        public static double FunctionSumApplyD (double a, double b) 
+        public static double FunctionSumApplyD (double a, double b)
         {
             var sum = new Function("a", "b", "return a + b");
             return Math.Round((double)sum.Apply(null, new object[] { a, b }), 2);
         }
 
-        public static object FunctionMathMin (WebAssembly.Core.Array array) 
+        public static object FunctionMathMin (WebAssembly.Core.Array array)
         {
             object[] parms = new object[array.Length];
             for (int x = 0; x < array.Length; x++)
                 parms[x] = array[x];
 
             var math = (JSObject)Runtime.GetGlobalObject("Math");
-            var min = (Function)math.GetObjectProperty("min");
+            var min = math.GetObjectProperty<Function>("min");
             return min.Apply(null, parms);
         }
 
-        public static DataView DataViewConstructor () 
+        public static DataView DataViewConstructor ()
         {
             // create an ArrayBuffer with a size in bytes
             var buffer = new ArrayBuffer(16);

@@ -108,7 +108,7 @@ namespace System.Net.Http
 				WasmHttpReadStream wasmHttpReadStream = null;
 
 				JSObject abortController = new HostObject ("AbortController");
-				JSObject signal = (JSObject)abortController.GetObjectProperty ("signal");
+				JSObject signal = abortController.GetObjectProperty<JSObject> ("signal");
 				requestObject.SetObjectProperty ("signal", signal);
 				signal.Dispose ();
 
@@ -127,7 +127,7 @@ namespace System.Net.Http
 
 				requestObject.Dispose ();
 
-				var response = fetch.Invoke ("apply", window, args) as Task<object>;
+				var response = fetch.Invoke<object> ("apply", window, args) as Task<object>;
 				args.Dispose ();
 				if (response == null)
 					throw new Exception("Internal error marshalling the response Promise from `fetch`.");
@@ -162,12 +162,12 @@ namespace System.Net.Http
 				// Note: Some of the headers may not even be valid header types in .NET thus we use TryAddWithoutValidation
 				using (var respHeaders = (JSObject)status.Headers) {
 					if (respHeaders != null) {
-						using (var entriesIterator = (JSObject)respHeaders.Invoke ("entries")) {
+						using (var entriesIterator = respHeaders.Invoke<JSObject> ("entries")) {
 							JSObject nextResult = null;
 							try {
-								nextResult = (JSObject)entriesIterator.Invoke ("next");
-								while (!(bool)nextResult.GetObjectProperty ("done")) {
-									using (var resultValue = (WebAssembly.Core.Array)nextResult.GetObjectProperty ("value")) {
+								nextResult = entriesIterator.Invoke<JSObject> ("next");
+								while (!nextResult.GetObjectProperty<bool> ("done")) {
+									using (var resultValue = nextResult.GetObjectProperty<WebAssembly.Core.Array> ("value")) {
 										var name = (string)resultValue [0];
 										var value = (string)resultValue [1];
 										if (!httpresponse.Headers.TryAddWithoutValidation (name, value))
@@ -176,7 +176,7 @@ namespace System.Net.Http
 													Console.WriteLine ($"Warning: Can not add response header for name: {name} value: {value}");
 									}
 									nextResult?.Dispose ();
-									nextResult = (JSObject)entriesIterator.Invoke ("next");
+									nextResult = entriesIterator.Invoke<JSObject> ("next");
 								}
 							} finally {
 								nextResult?.Dispose ();
@@ -208,20 +208,20 @@ namespace System.Net.Http
 				this.abortRegistration = abortRegistration;
 			}
 
-			public bool IsOK => (bool)fetchResponse.GetObjectProperty ("ok");
-			public bool IsRedirected => (bool)fetchResponse.GetObjectProperty ("redirected");
-			public int Status => (int)fetchResponse.GetObjectProperty ("status");
-			public string StatusText => (string)fetchResponse.GetObjectProperty ("statusText");
-			public string ResponseType => (string)fetchResponse.GetObjectProperty ("type");
-			public string Url => (string)fetchResponse.GetObjectProperty ("url");
+			public bool IsOK => fetchResponse.GetObjectProperty<bool> ("ok");
+			public bool IsRedirected => fetchResponse.GetObjectProperty<bool> ("redirected");
+			public int Status => fetchResponse.GetObjectProperty<int> ("status");
+			public string StatusText => fetchResponse.GetObjectProperty<string> ("statusText");
+			public string ResponseType => fetchResponse.GetObjectProperty<string> ("type");
+			public string Url => fetchResponse.GetObjectProperty<string> ("url");
 			//public bool IsUseFinalURL => (bool)managedJSObject.GetObjectProperty("useFinalUrl");
-			public bool IsBodyUsed => (bool)fetchResponse.GetObjectProperty ("bodyUsed");
-			public JSObject Headers => (JSObject)fetchResponse.GetObjectProperty ("headers");
-			public JSObject Body => (JSObject)fetchResponse.GetObjectProperty ("body");
+			public bool IsBodyUsed => fetchResponse.GetObjectProperty<bool> ("bodyUsed");
+			public JSObject Headers => fetchResponse.GetObjectProperty<JSObject> ("headers");
+			public JSObject Body => fetchResponse.GetObjectProperty<JSObject> ("body");
 
-			public Task<object> ArrayBuffer () => (Task<object>)fetchResponse.Invoke ("arrayBuffer");
-			public Task<object> Text () => (Task<object>)fetchResponse.Invoke ("text");
-			public Task<object> JSON () => (Task<object>)fetchResponse.Invoke ("json");
+			public Task<object> ArrayBuffer () => fetchResponse.Invoke<Task<object>> ("arrayBuffer");
+			public Task<object> Text () => fetchResponse.Invoke<Task<object>> ("text");
+			public Task<object> JSON () => fetchResponse.Invoke<Task<object>> ("json");
 
 			public void Dispose ()
 			{
@@ -351,7 +351,7 @@ namespace System.Net.Http
 
 					try {
 						using (var body = _status.Body) {
-							_reader = (JSObject)body.Invoke ("getReader");
+							_reader = body.Invoke<JSObject> ("getReader");
 						}
 					} catch (JSException) {
 						cancellationToken.ThrowIfCancellationRequested ();
@@ -364,9 +364,9 @@ namespace System.Net.Http
 				}
 
 				try {
-					var t = (Task<object>)_reader.Invoke ("read");
+					var t = _reader.Invoke<Task<object>> ("read");
 					using (var read = (JSObject)await t) {
-						if ((bool)read.GetObjectProperty ("done")) {
+						if (read.GetObjectProperty<bool> ("done")) {
 							_reader.Dispose ();
 							_reader = null;
 
@@ -377,7 +377,7 @@ namespace System.Net.Http
 
 						_position = 0;
 						// value for fetch streams is a Uint8Array
-						using (Uint8Array binValue = (Uint8Array)read.GetObjectProperty("value"))
+						using (Uint8Array binValue = read.GetObjectProperty<Uint8Array> ("value"))
 							_bufferedBytes = binValue.ToArray ();
 					}
 				} catch (JSException) {

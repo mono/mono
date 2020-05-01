@@ -423,8 +423,8 @@ namespace TestSuite {
 		{
 			string BaseApiUrl = string.Empty;
 			using (var window = (JSObject)WebAssembly.Runtime.GetGlobalObject ("window"))
-			using (var location = (JSObject)window.GetObjectProperty ("location")) {
-				BaseApiUrl = (string)location.GetObjectProperty ("origin");
+			using (var location = window.GetObjectProperty<JSObject> ("location")) {
+				BaseApiUrl = location.GetObjectProperty<string> ("origin");
 			}
 			return new HttpClient () { BaseAddress = new Uri (BaseApiUrl) };
 		}

@@ -54,12 +54,19 @@ namespace WebAssembly {
 		///     valuews.
 		///   </para>
 		/// </returns>
-		public object Invoke (string method, params object [] args)
+		public T Invoke<T> (string method, params object [] args)
 		{
 			var res = Runtime.InvokeJSWithArgs (JSHandle, method, args, out int exception);
 			if (exception != 0)
 				throw new JSException ((string)res);
-			return res;
+			return (T)res;
+		}
+
+		public void Invoke (string method, params object [] args)
+		{
+			var res = Runtime.InvokeJSWithArgs (JSHandle, method, args, out int exception);
+			if (exception != 0)
+				throw new JSException ((string)res);
 		}
 
 		/// <summary>
@@ -84,7 +91,7 @@ namespace WebAssembly {
 		///     valuews.
 		///   </para>
 		/// </returns>
-		public object GetObjectProperty (string name)
+		public T GetObjectProperty<T> (string name)
 		{
 
 			var propertyValue = Runtime.GetObjectProperty (JSHandle, name, out int exception);
@@ -92,7 +99,7 @@ namespace WebAssembly {
 			if (exception != 0)
 				throw new JSException ((string)propertyValue);
 
-			return propertyValue;
+			return (T)propertyValue;
 
 		}
 
@@ -121,7 +128,7 @@ namespace WebAssembly {
 		/// </summary>
 		/// <value>The length.</value>
 		public int Length {
-			get => Convert.ToInt32(GetObjectProperty ("length"));
+			get => Convert.ToInt32(GetObjectProperty<object> ("length"));
 			set => SetObjectProperty ("length", value, false);
 		}
 
@@ -130,14 +137,14 @@ namespace WebAssembly {
 		/// </summary>
 		/// <returns><c>true</c>, if the object has the specified property as own property, <c>false</c> otherwise.</returns>
 		/// <param name="prop">The String name or Symbol of the property to test.</param>
-		public bool HasOwnProperty (string prop) => (bool)Invoke ("hasOwnProperty", prop);
+		public bool HasOwnProperty (string prop) => Invoke<bool> ("hasOwnProperty", prop);
 
 		/// <summary>
 		/// Returns a boolean indicating whether the specified property is enumerable.
 		/// </summary>
 		/// <returns><c>true</c>, if the specified property is enumerable, <c>false</c> otherwise.</returns>
 		/// <param name="prop">The String name or Symbol of the property to test.</param>
-		public bool PropertyIsEnumerable (string prop) => (bool)Invoke ("propertyIsEnumerable", prop);
+		public bool PropertyIsEnumerable (string prop) => Invoke<bool> ("propertyIsEnumerable", prop);
 
 		protected void FreeHandle ()
 		{

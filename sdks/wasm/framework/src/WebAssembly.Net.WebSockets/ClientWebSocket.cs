@@ -68,7 +68,7 @@ namespace WebAssembly.Net.WebSockets {
 			get {
 
 				if (innerWebSocket != null && !innerWebSocket.IsDisposed) {
-					return ReadyStateToDotNetState ((int)innerWebSocket.GetObjectProperty ("readyState"));
+					return ReadyStateToDotNetState (innerWebSocket.GetObjectProperty<int> ("readyState"));
 				}
 				switch (state) {
 				case created:
@@ -136,7 +136,7 @@ namespace WebAssembly.Net.WebSockets {
 		public override string SubProtocol {
 			get {
 				if (innerWebSocket != null && !innerWebSocket.IsDisposed) {
-					return innerWebSocket.GetObjectProperty ("protocol")?.ToString ();
+					return innerWebSocket.GetObjectProperty<string> ("protocol")?.ToString ();
 				}
 				return null;
 			}
@@ -202,8 +202,8 @@ namespace WebAssembly.Net.WebSockets {
 
 					// Setup the onClose callback
 					onClose = new Action<JSObject> ((closeEvt) => {
-						innerWebSocketCloseStatus = (WebSocketCloseStatus)closeEvt.GetObjectProperty ("code");
-						innerWebSocketCloseStatusDescription = closeEvt.GetObjectProperty ("reason")?.ToString ();
+						innerWebSocketCloseStatus = closeEvt.GetObjectProperty<WebSocketCloseStatus> ("code");
+						innerWebSocketCloseStatusDescription = closeEvt.GetObjectProperty<object> ("reason")?.ToString ();
 						var mess = new ReceivePayload (WebSocketHelpers.EmptyPayload, WebSocketMessageType.Close);
 						receiveMessageQueue.BufferPayload (mess);
 
@@ -244,7 +244,7 @@ namespace WebAssembly.Net.WebSockets {
 							ThrowIfNotConnected ();
 							// If the messageEvent's data property is marshalled as a JSObject then we are dealing with
 							// binary data
-							var eventData = messageEvent.GetObjectProperty ("data");
+							var eventData = messageEvent.GetObjectProperty<object> ("data");
 							switch (eventData) {
 							case  ArrayBuffer buffer: using (buffer) {
 								var mess = new ReceivePayload (buffer, WebSocketMessageType.Binary);
@@ -257,9 +257,9 @@ namespace WebAssembly.Net.WebSockets {
 								using (var reader = new HostObject("FileReader")) {
 									loadend = new Action<JSObject> ((loadEvent) => {
 										using (loadEvent)
-										using (var target = (JSObject)loadEvent.GetObjectProperty ("target")) {
-											if ((int)target.GetObjectProperty ("readyState") == 2) {
-												using (var binResult = (ArrayBuffer)target.GetObjectProperty ("result")) {
+										using (var target = loadEvent.GetObjectProperty<JSObject> ("target")) {
+											if (target.GetObjectProperty<int> ("readyState") == 2) {
+												using (var binResult = target.GetObjectProperty<ArrayBuffer> ("result")) {
 													var mess = new ReceivePayload (binResult, WebSocketMessageType.Binary);
 													receiveMessageQueue.BufferPayload (mess);
 													Runtime.FreeObject (loadend);
@@ -279,7 +279,7 @@ namespace WebAssembly.Net.WebSockets {
 								break;
 							}
 							default:
-								throw new NotImplementedException ($"WebSocket bynary type '{innerWebSocket.GetObjectProperty ("binaryType").ToString ()}' not supported.");
+								throw new NotImplementedException ($"WebSocket bynary type '{innerWebSocket.GetObjectProperty<object> ("binaryType").ToString ()}' not supported.");
 							}
 						}
 					});

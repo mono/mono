@@ -80,22 +80,22 @@ public class TestClass {
 
 	public static int first_val, second_val;
 	public static void PlayWithObj(JSObject obj) {
-		first_val = (int)obj.Invoke ("inc");;
-		second_val = (int)obj.Invoke("add", 20);
+		first_val = obj.Invoke<int> ("inc");;
+		second_val = obj.Invoke<int> ("add", 20);
 	}
 
 	public static object[] js_objs;
 	public static void PlayWithObjTypes (JSObject obj) {
 		js_objs = new object[4];
-		js_objs [0] = obj.Invoke ("return_int");
-		js_objs [1] = obj.Invoke ("return_double");
-		js_objs [2] = obj.Invoke ("return_string");
-		js_objs [3] = obj.Invoke ("return_bool");
+		js_objs [0] = obj.Invoke<int> ("return_int");
+		js_objs [1] = obj.Invoke<double> ("return_double");
+		js_objs [2] = obj.Invoke<string> ("return_string");
+		js_objs [3] = obj.Invoke<bool> ("return_bool");
 	}
 
 	public static int do_add;
 	public static void UseFunction (JSObject obj) {
-		do_add = (int)obj.Invoke("call", null, 10, 20);
+		do_add = obj.Invoke<int> ("call", null, 10, 20);
 	}
 
 	public static int dele_res;
@@ -142,16 +142,16 @@ public class TestClass {
 	{
 		js_objs_to_dispose.Add(obj);
 		obj.Dispose();
-	}	
+	}
 
 	public static object[] js_props;
 	public static void RetrieveObjectProperties (JSObject obj) {
 		js_props = new object[4];
-		js_props [0] = obj.GetObjectProperty ("myInt");
-		js_props [1] = obj.GetObjectProperty ("myDouble");
-		js_props [2] = obj.GetObjectProperty ("myString");
-		js_props [3] = obj.GetObjectProperty ("myBoolean");
-	}	
+		js_props [0] = obj.GetObjectProperty<int> ("myInt");
+		js_props [1] = obj.GetObjectProperty<double> ("myDouble");
+		js_props [2] = obj.GetObjectProperty<string> ("myString");
+		js_props [3] = obj.GetObjectProperty<bool> ("myBoolean");
+	}
 
 	public static void PopulateObjectProperties (JSObject obj, bool createIfNotExist) {
 		js_props = new object[4];
@@ -159,161 +159,161 @@ public class TestClass {
 		obj.SetObjectProperty ("myDouble", 4.5, createIfNotExist);
 		obj.SetObjectProperty ("myString", "qwerty", createIfNotExist);
 		obj.SetObjectProperty ("myBoolean", true, createIfNotExist);
-	}	
+	}
 
 	public static byte[] byteBuffer;
 	public static void MarshalArrayBuffer (ArrayBuffer buffer) {
 		using (var bytes = new Uint8Array(buffer))
 			byteBuffer = bytes.ToArray();
-	}	
+	}
 
 	public static void MarshalByteBuffer (Uint8Array buffer) {
 		byteBuffer = buffer.ToArray();
-	}	
+	}
 
 	public static int[] intBuffer;
 	public static void MarshalArrayBufferToInt32Array (ArrayBuffer buffer) {
 		using (var ints = new Int32Array(buffer))
-			intBuffer = ints.ToArray();		
-	}	
+			intBuffer = ints.ToArray();
+	}
 
 	public static void MarshalInt32Array (Int32Array buffer) {
-		intBuffer = buffer.ToArray();		
-	}	
+		intBuffer = buffer.ToArray();
+	}
 
 	public static void MarshalByteBufferToInts (ArrayBuffer buffer) {
-		
+
 		using(var bytes = new Uint8Array(buffer)) {
 			var byteBuffer = bytes.ToArray();
 			intBuffer = new int[bytes.Length / sizeof(int)];
 			for (int i = 0; i < bytes.Length; i += sizeof(int))
 				intBuffer[i / sizeof(int)] = BitConverter.ToInt32(byteBuffer, i);
 		}
-	}	
+	}
 
 	public static float[] floatBuffer;
 	public static void MarshalFloat32Array (Float32Array buffer) {
 		floatBuffer = buffer.ToArray();
-	}	
+	}
 	public static void MarshalArrayBufferToFloat32Array (ArrayBuffer buffer) {
 		using (var floats = new Float32Array(buffer))
-			floatBuffer = floats.ToArray();		
-	}	
+			floatBuffer = floats.ToArray();
+	}
 
 
 	public static void MarshalByteBufferToFloats (byte[] buffer) {
         floatBuffer = new float[buffer.Length / sizeof(float)];
         for (int i = 0; i < buffer.Length; i += sizeof(float))
 	        floatBuffer[i / sizeof(float)] = BitConverter.ToSingle(buffer, i);
-	}	
+	}
 
 
 	public static double[] doubleBuffer;
 	public static void MarshalFloat64Array (Float64Array buffer) {
 		doubleBuffer = buffer.ToArray();
-	}	
+	}
 
 	public static void MarshalArrayBufferToFloat64Array (ArrayBuffer buffer) {
 		using (var doubles = new Float64Array(buffer))
-			doubleBuffer = doubles.ToArray();		
-	}	
+			doubleBuffer = doubles.ToArray();
+	}
 
 
 	public static void MarshalByteBufferToDoubles (ArrayBuffer buffer) {
 		using (var doubles = new Float64Array(buffer))
-			doubleBuffer = doubles.ToArray();		
-	}	
+			doubleBuffer = doubles.ToArray();
+	}
 
 	public static void SetTypedArraySByte (JSObject obj) {
 		sbyte[] buffer = Enumerable.Repeat((sbyte)0x20, 11).ToArray();
 		obj.SetObjectProperty ("typedArray", Int8Array.From(buffer));
-	}	
+	}
 
 	public static sbyte[] taSByte;
 	public static void GetTypedArraySByte (JSObject obj) {
-		taSByte = ((Int8Array)obj.GetObjectProperty ("typedArray")).ToArray();
-	}	
+		taSByte = obj.GetObjectProperty<Int8Array> ("typedArray").ToArray();
+	}
 
 	public static void SetTypedArrayByte (JSObject obj) {
 		var dragons = "hic sunt dracones";
 		byte[] buffer = System.Text.Encoding.ASCII.GetBytes(dragons);
 		obj.SetObjectProperty ("dracones", Uint8Array.From(buffer));
-	}	
+	}
 
 	public static byte[] taByte;
 	public static void GetTypedArrayByte (JSObject obj) {
-		taByte = ((Uint8Array)obj.GetObjectProperty ("dracones")).ToArray();
-	}	
+		taByte = (obj.GetObjectProperty<Uint8Array> ("dracones")).ToArray();
+	}
 
 	public static void SetTypedArrayShort (JSObject obj) {
 		short[] buffer = Enumerable.Repeat((short)0x20, 13).ToArray();
 		obj.SetObjectProperty ("typedArray", Int16Array.From(buffer));
-	}	
+	}
 
 	public static short[] taShort;
 	public static void GetTypedArrayShort (JSObject obj) {
-		taShort = ((Int16Array)obj.GetObjectProperty ("typedArray")).ToArray();
-	}	
+		taShort = (obj.GetObjectProperty<Int16Array> ("typedArray")).ToArray();
+	}
 
 	public static void SetTypedArrayUShort (JSObject obj) {
 		ushort[] buffer = Enumerable.Repeat((ushort)0x20, 14).ToArray();
 		obj.SetObjectProperty ("typedArray", Uint16Array.From(buffer));
-	}	
+	}
 
 	public static ushort[] taUShort;
 	public static void GetTypedArrayUShort (JSObject obj) {
-		taUShort = ((Uint16Array)obj.GetObjectProperty ("typedArray")).ToArray();
-	}	
+		taUShort = (obj.GetObjectProperty<Uint16Array> ("typedArray")).ToArray();
+	}
 
 
 	public static void SetTypedArrayInt (JSObject obj) {
 		int[] buffer = Enumerable.Repeat((int)0x20, 15).ToArray();
 		obj.SetObjectProperty ("typedArray", Int32Array.From(buffer));
-	}	
+	}
 
 	public static int[] taInt;
 	public static void GetTypedArrayInt (JSObject obj) {
-		taInt = ((Int32Array)obj.GetObjectProperty ("typedArray")).ToArray();
-	}	
+		taInt = obj.GetObjectProperty<Int32Array> ("typedArray").ToArray();
+	}
 
 	public static void SetTypedArrayUInt (JSObject obj) {
 		uint[] buffer = Enumerable.Repeat((uint)0x20, 16).ToArray();
 		obj.SetObjectProperty ("typedArray", Uint32Array.From(buffer));
-	}	
+	}
 
 	public static uint[] taUInt;
 	public static void GetTypedArrayUInt (JSObject obj) {
-		taUInt = ((Uint32Array)obj.GetObjectProperty ("typedArray")).ToArray();
-	}	
+		taUInt = obj.GetObjectProperty<Uint32Array> ("typedArray").ToArray();
+	}
 
 	public static void SetTypedArrayFloat (JSObject obj) {
 		float[] buffer = Enumerable.Repeat(3.14f, 17).ToArray();
 		obj.SetObjectProperty ("typedArray", Float32Array.From(buffer));
-	}	
+	}
 
 	public static float[] taFloat;
 	public static void GetTypedArrayFloat (JSObject obj) {
-		taFloat = ((Float32Array)obj.GetObjectProperty ("typedArray")).ToArray();
-	}	
+		taFloat = obj.GetObjectProperty<Float32Array> ("typedArray").ToArray();
+	}
 
 
 	public static void SetTypedArrayDouble (JSObject obj) {
 		double[] buffer = Enumerable.Repeat(3.14d, 18).ToArray();
 		obj.SetObjectProperty ("typedArray", Float64Array.From(buffer));
-	}	
+	}
 
 	public static double[] taDouble;
 	public static void GetTypedArrayDouble (JSObject obj) {
-		taDouble = ((Float64Array)obj.GetObjectProperty ("typedArray")).ToArray();
-	}	
+		taDouble = obj.GetObjectProperty<Float64Array> ("typedArray").ToArray();
+	}
 
 	public static HttpClient client;
 	public static string fakeClientHandlerString;
 	public static HttpClientHandler fakeClientHandler;
 	public static void SetMessageHandler () {
-		
-		var httpMessageHandler = typeof(HttpClient).GetField("GetHttpMessageHandler", 
-                            BindingFlags.Static | 
+
+		var httpMessageHandler = typeof(HttpClient).GetField("GetHttpMessageHandler",
+                            BindingFlags.Static |
                             BindingFlags.NonPublic);
 
         httpMessageHandler.SetValue(null, (Func<HttpClientHandler>) (() => {
@@ -347,27 +347,27 @@ public class TestClass {
 	}
 
 	static Function sum;
-	public static void CreateFunctionSum () 
+	public static void CreateFunctionSum ()
 	{
 		sum = new Function("a", "b", "return a + b");
 	}
 
 	public static int sumValue = 0;
-	public static void CallFunctionSum () 
+	public static void CallFunctionSum ()
 	{
 		sumValue = (int)sum.Call(null, 3, 5);
 	}
 
 	static Function mathMin;
-	public static void CreateFunctionApply () 
+	public static void CreateFunctionApply ()
 	{
 		var math = (JSObject)Runtime.GetGlobalObject("Math");
-		mathMin = (Function)math.GetObjectProperty("min");
+		mathMin = math.GetObjectProperty<Function>("min");
 
 	}
 
 	public static int minValue = 0;
-	public static void CallFunctionApply () 
+	public static void CallFunctionApply ()
 	{
 		minValue = (int)mathMin.Apply(null, new object[] { 5, 6, 2, 3, 7 });
 	}

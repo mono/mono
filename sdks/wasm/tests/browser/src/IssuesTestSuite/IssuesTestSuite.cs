@@ -109,16 +109,16 @@ namespace TestSuite
             // On success, return sign in results from the server response packet
             var responseContent = await response.Content.ReadAsStringAsync();
             fetchHeadersResponse.Push(response.Headers.ToString());
-        }   
+        }
 
         static HttpClient CreateHttpClient()
         {
             //Console.WriteLine("Create  HttpClient");
             string BaseApiUrl = string.Empty;
             var window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window");
-            using (var location = (JSObject)window.GetObjectProperty("location"))
+            using (var location = window.GetObjectProperty<JSObject>("location"))
             {
-                BaseApiUrl = (string)location.GetObjectProperty("origin");
+                BaseApiUrl = location.GetObjectProperty<string>("origin");
             }
 
             return new HttpClient() { BaseAddress = new Uri(BaseApiUrl), DefaultRequestHeaders = { { "origin", "WindowsCalculator" } } };

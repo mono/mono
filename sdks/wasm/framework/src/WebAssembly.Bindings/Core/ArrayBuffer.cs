@@ -23,28 +23,28 @@ namespace WebAssembly.Core {
 		{ }
 
 		/// <summary>
-		/// The length of an ArrayBuffer in bytes. 
+		/// The length of an ArrayBuffer in bytes.
 		/// </summary>
 		/// <value>The length of the underlying ArrayBuffer in bytes.</value>
-		public int ByteLength => (int)GetObjectProperty ("byteLength");
+		public int ByteLength => GetObjectProperty<int> ("byteLength");
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="T:WebAssembly.Core.ArrayBuffer"/> is view.
 		/// </summary>
 		/// <value><c>true</c> if is view; otherwise, <c>false</c>.</value>
-		public bool IsView => (bool)GetObjectProperty ("isView");
+		public bool IsView => GetObjectProperty<bool> ("isView");
 		/// <summary>
 		/// Slice the specified begin.
 		/// </summary>
 		/// <returns>The slice.</returns>
 		/// <param name="begin">Begin.</param>
-		public ArrayBuffer Slice (int begin) => (ArrayBuffer)Invoke ("slice", begin);
+		public ArrayBuffer Slice (int begin) => Invoke<ArrayBuffer> ("slice", begin);
 		/// <summary>
 		/// Slice the specified begin and end.
 		/// </summary>
 		/// <returns>The slice.</returns>
 		/// <param name="begin">Begin.</param>
 		/// <param name="end">End.</param>
-		public ArrayBuffer Slice (int begin, int end) => (ArrayBuffer)Invoke ("slice", begin, end);
+		public ArrayBuffer Slice (int begin, int end) => Invoke<ArrayBuffer> ("slice", begin, end);
 
 	}
 }

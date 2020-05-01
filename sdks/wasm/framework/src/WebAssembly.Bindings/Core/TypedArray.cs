@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace WebAssembly.Core {
@@ -59,10 +58,10 @@ namespace WebAssembly.Core {
 			}
 		}
 
-		public int BytesPerElement => (int)GetObjectProperty ("BYTES_PER_ELEMENT");
-		public string Name => (string)GetObjectProperty ("name");
-		public int ByteLength => (int)GetObjectProperty ("byteLength");
-		public ArrayBuffer Buffer => (ArrayBuffer)GetObjectProperty ("buffer");
+		public int BytesPerElement => GetObjectProperty<int> ("BYTES_PER_ELEMENT");
+		public string Name => GetObjectProperty<string> ("name");
+		public int ByteLength => GetObjectProperty<int> ("byteLength");
+		public ArrayBuffer Buffer => GetObjectProperty<ArrayBuffer> ("buffer");
 
 		public void Fill (U value) => Invoke ("fill", value);
 		public void Fill (U value, int start) => Invoke ("fill", value, start);
@@ -73,13 +72,13 @@ namespace WebAssembly.Core {
 		public void Set (ITypedArray typedArray) => Invoke ("set", typedArray);
 		public void Set (ITypedArray typedArray, int offset) => Invoke ("set", typedArray, offset);
 
-		public T Slice () => (T)Invoke ("slice");
-		public T Slice (int begin) => (T)Invoke ("slice", begin);
-		public T Slice (int begin, int end) => (T)Invoke ("slice", begin, end);
+		public T Slice () => Invoke<T> ("slice");
+		public T Slice (int begin) => Invoke<T> ("slice", begin);
+		public T Slice (int begin, int end) => Invoke<T> ("slice", begin, end);
 
-		public T SubArray () => (T)Invoke ("subarray");
-		public T SubArray (int begin) => (T)Invoke ("subarray", begin);
-		public T SubArray (int begin, int end) => (T)Invoke ("subarray", begin, end);
+		public T SubArray () => Invoke<T> ("subarray");
+		public T SubArray (int begin) => Invoke<T> ("subarray", begin);
+		public T SubArray (int begin, int end) => Invoke<T> ("subarray", begin, end);
 
 		/// <summary>
 		/// Gets or sets the <see cref="T:WebAssembly.Core.TypedArray`2"/> with the specified i.

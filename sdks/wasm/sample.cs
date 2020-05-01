@@ -44,9 +44,9 @@ namespace GeoLocation
             navigator = new DOMObject("navigator");
 
             using (var window = (JSObject)WebAssembly.Runtime.GetGlobalObject("window"))
-                using (var location = (JSObject)window.GetObjectProperty("location"))
+                using (var location = window.GetObjectProperty<JSObject>("location"))
                 {
-                    BaseApiUrl = (string)location.GetObjectProperty("origin");
+                    BaseApiUrl = location.GetObjectProperty<string>("origin");
                 }
 
             httpClient = new HttpClient() { BaseAddress = new Uri(BaseApiUrl) };
@@ -59,7 +59,7 @@ namespace GeoLocation
             GeoLocation geoLocation;
             try
             {
-                geoLocation = new GeoLocation(navigator.GetProperty("geolocation"));
+                geoLocation = new GeoLocation(navigator.GetProperty<object>("geolocation"));
             }
             catch
             {
@@ -90,7 +90,7 @@ namespace GeoLocation
 
                                 var mimeType = getMimeType(rspMsg.Content?.ReadAsByteArrayAsync().Result);
                                 Console.WriteLine($"Request: {++requests}  ByteAsync: {rspMsg.Content?.ReadAsByteArrayAsync().Result.Length}  MimeType: {mimeType}");
-                                global.Invoke("showMyPosition", mimeType, Convert.ToBase64String(rspMsg.Content?.ReadAsByteArrayAsync().Result));
+                                global.Invoke<object>("showMyPosition", mimeType, Convert.ToBase64String(rspMsg.Content?.ReadAsByteArrayAsync().Result));
                             }
                             else
                             {
@@ -151,14 +151,14 @@ namespace GeoLocation
         public DOMObject(string globalName) : this((JSObject)Runtime.GetGlobalObject(globalName))
         { }
 
-        public object GetProperty(string property)
+        public T GetProperty<T>(string property)
         {
-            return ManagedJSObject.GetObjectProperty(property);
+            return ManagedJSObject.GetObjectProperty<T>(property);
         }
 
-        public object Invoke(string method, params object[] args)
+        public T Invoke<T>(string method, params object[] args)
         {
-            return ManagedJSObject.Invoke(method, args);
+            return ManagedJSObject.Invoke<T>(method, args);
         }
 
         public void Dispose()
@@ -228,7 +228,7 @@ namespace GeoLocation
         {
         }
 
-        public Coordinates Coordinates => new Coordinates(ManagedJSObject.GetObjectProperty("coords"));
+        public Coordinates Coordinates => new Coordinates(ManagedJSObject.GetObjectProperty<object>("coords"));
 
     }
 
@@ -239,8 +239,8 @@ namespace GeoLocation
         {
         }
 
-        public int Code => (int)ManagedJSObject.GetObjectProperty("code");
-        public string message => (string)ManagedJSObject.GetObjectProperty("message");
+        public int Code => ManagedJSObject.GetObjectProperty<int>("code");
+        public string message => ManagedJSObject.GetObjectProperty<string>("message");
 
     }
 
@@ -251,8 +251,8 @@ namespace GeoLocation
         {
         }
 
-        public double Latitude => (double)ManagedJSObject.GetObjectProperty("latitude");
-        public double Longitude => (double)ManagedJSObject.GetObjectProperty("longitude");
+        public double Latitude => ManagedJSObject.GetObjectProperty<double>("latitude");
+        public double Longitude => ManagedJSObject.GetObjectProperty<double>("longitude");
 
     }
 
