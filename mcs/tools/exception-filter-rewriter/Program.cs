@@ -36,12 +36,12 @@ namespace ExceptionRewriter {
 					else if (argv.Length > step)
 						Console.WriteLine ($"// {Path.GetFileName (src)} -> {Path.GetFullPath (dst)}");
 
-					var assemblyResolver = new DefaultAssemblyResolver ();
-					assemblyResolver.AddSearchDirectory (Path.GetDirectoryName (src));
-
 					var wroteOk = false;
 
 					try {
+						var assemblyResolver = new DefaultAssemblyResolver ();
+						assemblyResolver.AddSearchDirectory (Path.GetDirectoryName (src));
+
 						using (var def = AssemblyDefinition.ReadAssembly (src, new ReaderParameters {
 							ReadWrite = options.Overwrite,
 							ReadingMode = ReadingMode.Deferred,
@@ -88,8 +88,6 @@ namespace ExceptionRewriter {
 						}
 						File.Delete (dst + ".tmp");
 					}
-
-					Console.WriteLine ();
 				}
 
 				return exitCode;
