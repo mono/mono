@@ -41,37 +41,43 @@ namespace ExceptionRewriter {
 
 					var wroteOk = false;
 
-					using (var def = AssemblyDefinition.ReadAssembly (src, new ReaderParameters {
-						ReadWrite = options.Overwrite,
-						ReadingMode = ReadingMode.Deferred,
-						AssemblyResolver = assemblyResolver,
-						ReadSymbols = options.EnableSymbols,
-						SymbolReaderProvider = new DefaultSymbolReaderProvider (throwIfNoSymbol: false)
-					})) {
-						var arw = new AssemblyRewriter (def, options);
-						int errorCount = arw.Rewrite ();
+					try {
+						using (var def = AssemblyDefinition.ReadAssembly (src, new ReaderParameters {
+							ReadWrite = options.Overwrite,
+							ReadingMode = ReadingMode.Deferred,
+							AssemblyResolver = assemblyResolver,
+							ReadSymbols = options.EnableSymbols,
+							SymbolReaderProvider = new DefaultSymbolReaderProvider (throwIfNoSymbol: false)
+						})) {
+							var arw = new AssemblyRewriter (def, options);
+							int errorCount = arw.Rewrite ();
 
-						if (options.Mark)
-							def.Name.Name = Path.GetFileNameWithoutExtension (dst);
+							if (options.Mark)
+								def.Name.Name = Path.GetFileNameWithoutExtension (dst);
 
-						if (!options.Audit) {
-							if (errorCount > 0 && false) {
-								Console.Error.WriteLine ($"// Not saving due to error(s): {dst}");
-								exitCode += 1;
-							} else {
-								var shouldWriteSymbols = options.EnableSymbols && def.MainModule.SymbolReader != null;
+							if (!options.Audit) {
+								if (errorCount > 0 && false) {
+									Console.Error.WriteLine ($"// Not saving due to error(s): {dst}");
+									exitCode += 1;
+								} else {
+									var shouldWriteSymbols = options.EnableSymbols && def.MainModule.SymbolReader != null;
 
-								if (options.Overwrite)
-									def.Write();
-								else
-									def.Write (dst + ".tmp", new WriterParameters {
-										WriteSymbols = shouldWriteSymbols,
-										DeterministicMvid = true
-									});
+									if (options.Overwrite)
+										def.Write();
+									else
+										def.Write (dst + ".tmp", new WriterParameters {
+											WriteSymbols = shouldWriteSymbols,
+											DeterministicMvid = true
+										});
 
-								wroteOk = true;
+									wroteOk = true;
+								}
 							}
 						}
+					} catch (Exception exc) {
+						Console.Error.WriteLine ("Unhandled exception while rewriting {0}. Continuing...", src);
+						Console.Error.WriteLine (exc);
+						exitCode += 1;
 					}
 
 					if (wroteOk && !options.Overwrite) {
