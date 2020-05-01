@@ -53,6 +53,7 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\SR.cs" />
     <Compile Include="..\..\class\System.Json\corefx\SR.cs" />
+    <Compile Include="InterpToNativeGenerator.cs" />
     <Compile Include="tuner.cs" />
     <ProjectReference Include="$(SolutionDir)\msvc\scripts\genconsts.csproj">
       <Name>genconsts</Name>
