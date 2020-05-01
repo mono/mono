@@ -2603,7 +2603,10 @@ unload_thread_main (void *arg)
 	 */
 	for (i = 0; i < domain->class_vtable_array->len; ++i)
 		zero_static_data ((MonoVTable *)g_ptr_array_index (domain->class_vtable_array, i));
+	/* Boehm does not use remsets, therefore it seems safe to ifdef it out */
+#if !HAVE_BOEHM_GC
 	mono_gc_collect (0);
+#endif
 	for (i = 0; i < domain->class_vtable_array->len; ++i)
 		clear_cached_vtable ((MonoVTable *)g_ptr_array_index (domain->class_vtable_array, i));
 	deregister_reflection_info_roots (domain);
@@ -2621,8 +2624,6 @@ unload_thread_main (void *arg)
 	mono_gchandle_free_domain (domain);
 
 	mono_domain_free (domain, FALSE);
-
-	mono_gc_collect (mono_gc_max_generation ());
 
 	mono_atomic_store_release (&data->done, TRUE);
 	unload_data_unref (data);
