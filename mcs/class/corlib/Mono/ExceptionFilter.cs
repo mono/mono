@@ -27,6 +27,11 @@ namespace Mono {
 
 		public static readonly int exception_continue_search = 0;
 		public static readonly int exception_execute_handler = 1;
+		// Tracking whether the filter threw an unhandled exception, for debugging
+		public static readonly int exception_continue_search_due_to_unhandled_exception = 2;
+		// If we abort our search we fill in the rest of the filters with this value
+		//  so that ShouldRunHandler will not throw.
+		public static readonly int exception_early_out = 3;
 
 		private static readonly ThreadLocal<ThreadState> ThreadStates =
 			new ThreadLocal<ThreadState> (() => new ThreadState ());
@@ -81,17 +86,21 @@ namespace Mono {
 
 			for (int i = ts.ExceptionFilters.Count - 1; i >= 0; i--) {
 				var filter = ts.ExceptionFilters[i];
-				if (hasLocatedValidHandler)
-					break;
 
 				int result;
-				if (!filter.Results.TryGetValue (exc, out result)) {
-					// When an exception filter throws on windows netframework, the filter's exception is
-					//  silently discarded and search for an exception handler continues as if it returned false
+				// If the filter has not already run for this exception, evaluate it and store the result
+				if (!filter.Results.TryGetValue (exc, out result) || result == (exception_early_out)) {
 					try {
-						filter.Results[exc] = result = filter.Evaluate(exc);
+						// If we already located a filter during this search, mark the rest of the filters
+						//  as "early out" so that ShouldRunHandler will return false instead of throwing
+						if (hasLocatedValidHandler)
+							filter.Results[exc] = result = exception_early_out;
+						else
+							filter.Results[exc] = result = filter.Evaluate(exc);
 					} catch {
-						filter.Results[exc] = result = exception_continue_search;
+						// When an exception filter throws on windows netframework, the filter's exception is
+						//  silently discarded and search for an exception handler continues as if it returned false
+						filter.Results[exc] = result = exception_continue_search_due_to_unhandled_exception;
 					}
 				}
 
