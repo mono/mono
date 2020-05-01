@@ -3212,6 +3212,38 @@ class Tests
 		return i;
 	}
 
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static bool BrokenExceptionFilter (Exception exc) {
+        throw new Exception("Broken filter", exc);
+    }
+
+    public static int test_5_filters_throw_inside_filter () {
+    	int result = 0;
+
+        try {
+            try {
+                throw new Exception("test");
+                result += 128;
+            } catch (Exception exc) when (BrokenExceptionFilter(exc)) {
+            	result += 64;
+            } catch (Exception exc) {
+            	if (exc.InnerException != null)
+					result += 32;
+				else
+					result += 4;
+
+				throw;
+            }
+        } catch (Exception exc) {
+        	if (exc.InnerException != null)
+				result += 16;
+			else
+				result += 1;
+        }
+
+        return result;
+    }
+
 	public static int test_0_signed_ct_div () {
 		int n = 2147483647;
 		bool divide_by_zero = false;

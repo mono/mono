@@ -63,7 +63,7 @@ namespace ExceptionRewriter {
 									var shouldWriteSymbols = options.EnableSymbols && def.MainModule.SymbolReader != null;
 
 									if (options.Overwrite)
-										def.Write();
+										def.Write ();
 									else
 										def.Write (dst + ".tmp", new WriterParameters {
 											WriteSymbols = shouldWriteSymbols,

@@ -6,11 +6,13 @@ using System.Threading;
 namespace Mono {
 	public class ExceptionFilterException : Exception {
 		public ExceptionFilterException (string message)
-			: base (message) {
+			: base (message)
+		{
 		}
 
 		public ExceptionFilterException (string message, Exception innerException)
-			: base (message, innerException) {
+			: base (message, innerException)
+		{
 		}
 	}
 
@@ -38,20 +40,23 @@ namespace Mono {
 
 		public abstract int Evaluate (object exc);
 
-		public static void Push (ExceptionFilter filter) {
-			ThreadStates.Value.ExceptionFilters.Add(filter);
+		public static void Push (ExceptionFilter filter)
+		{
+			ThreadStates.Value.ExceptionFilters.Add (filter);
 		}
 
-		private static void ThrowException (string message, Exception innerException = null) {
+		private static void ThrowException (string message, Exception innerException = null)
+		{
 			throw new ExceptionFilterException (message, innerException);
 		}
 
-		public static void Pop (ExceptionFilter filter) {
+		public static void Pop (ExceptionFilter filter)
+		{
 			var ef = ThreadStates.Value.ExceptionFilters;
 			if (ef.Count == 0)
 				ThrowException ($"Attempted to pop filter {filter} with empty stack");
 			var current = ef[ef.Count - 1];
-			ef.RemoveAt(ef.Count - 1);
+			ef.RemoveAt (ef.Count - 1);
 			if (current != filter)
 				ThrowException ($"Attempted to pop filter {filter} but current filter on stack was {current}");
 		}
@@ -61,9 +66,10 @@ namespace Mono {
 		/// </summary>
 		/// <param name="exc">The exception being filtered.</param>
 		/// <returns>true if this filter selected the exception handler to run</returns>
-		public bool ShouldRunHandler (object exc) {
+		public bool ShouldRunHandler (object exc)
+		{
 			if (exc == null)
-				throw new ArgumentNullException("exc");
+				throw new ArgumentNullException ("exc");
 
 			int result;
 			if (!Results.TryGetValue (exc, out result))
@@ -79,7 +85,8 @@ namespace Mono {
 		/// If filters have already been run for the active exception they will not be run again.
 		/// </summary>
 		/// <param name="exc">The exception filters are being run for.</param>
-		public static void PerformEvaluate (object exc) {
+		public static void PerformEvaluate (object exc)
+		{
 			var ts = ThreadStates.Value;
 
 			var hasLocatedValidHandler = false;
@@ -96,7 +103,7 @@ namespace Mono {
 						if (hasLocatedValidHandler)
 							filter.Results[exc] = result = exception_early_out;
 						else
-							filter.Results[exc] = result = filter.Evaluate(exc);
+							filter.Results[exc] = result = filter.Evaluate (exc);
 					} catch {
 						// When an exception filter throws on windows netframework, the filter's exception is
 						//  silently discarded and search for an exception handler continues as if it returned false
