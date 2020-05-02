@@ -766,16 +766,16 @@ namespace ExceptionRewriter {
 
 			result.Constructor = CreateConstructor (result.TypeDefinition, false);
 
+			var parametersToPass = new List<ParameterReference> ();
+			parametersToPass.AddRange (parameters);
+
+			// No matter what, any closures for non-static methods must have the this-arg passed in
+			//  and stored so it's available for filter and catch bodies
+			if (!isStatic && !parametersToPass.Contains (fakeThis))
+				parametersToPass.Insert (0, fakeThis);
+
 			{
 				var ctorInsns = result.Constructor.Body.Instructions;
-
-				var parametersToPass = new List<ParameterReference> ();
-				parametersToPass.AddRange (parameters);
-
-				// No matter what, any closures for non-static methods must have the this-arg passed in
-				//  and stored so it's available for filter and catch bodies
-				if (!isStatic && !parametersToPass.Contains (fakeThis))
-					parametersToPass.Insert (0, fakeThis);
 
 				foreach (var param in parametersToPass) {
 					FieldDefinition fd;
@@ -861,7 +861,7 @@ namespace ExceptionRewriter {
 			);
 
 			var toInject = new List<Instruction> ();
-			foreach (var param in parameters) {
+			foreach (var param in parametersToPass) {
 				if (!extractedVariables.ContainsKey (param))
 					continue;
 
