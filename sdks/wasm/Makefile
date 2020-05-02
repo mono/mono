@@ -5,6 +5,10 @@ include $(TOP)/sdks/paths.mk
 
 all: build
 
+# Required by emscripten:
+# https://github.com/emscripten-core/emscripten/issues/10551
+export PYTHONUTF8=1
+
 MAKEFLAGS += --no-builtin-rules
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
