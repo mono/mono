@@ -194,6 +194,18 @@ var MonoSupportLib = {
 			return res;
 		},
 
+		mono_wasm_get_exception_properties: function(objId) {
+			if (!this.mono_wasm_get_exception_properties_info)
+				this.mono_wasm_get_exception_properties_info = Module.cwrap ("mono_wasm_get_exception_properties", null, [ 'number' ]);
+
+			this.var_info = [];
+			this.mono_wasm_get_exception_properties_info (objId);
+
+			var res = this.var_info;
+			this.var_info = [];
+			return res;
+		},
+
 		mono_wasm_get_array_values: function(objId) {
 			if (!this.mono_wasm_get_array_values_info)
 				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", null, [ 'number' ]);
@@ -281,6 +293,10 @@ var MonoSupportLib = {
 			throw new Error (`Could not get details for ${objectId}`);
 		},
 
+		_get_details_for_exception: function (objectId, objectId) {
+			return this.mono_wasm_get_exception_properties(objectId);
+		},
+
 		_is_object_id_array: function (objectId) {
 			// Keep this in sync with `_get_array_details`
 			return (objectId.startsWith ('dotnet:array:') && objectId.split (':').length == 3);
@@ -314,6 +330,12 @@ var MonoSupportLib = {
 						throw new Error(`exception this time: Invalid object id format: ${objectId}`);
 
 					return this._post_process_details(this.mono_wasm_get_object_properties(parts[2], false));
+
+				case "exception":
+					if (parts.length != 3)
+						throw new Error(`exception this time: Invalid object id format: ${objectId}`);
+
+					return this._get_details_for_exception(objectId, parts[2])
 
 				case "array":
 					return this._get_array_details(objectId, parts);
@@ -475,6 +497,13 @@ var MonoSupportLib = {
 				this.mono_wasm_del_bp = Module.cwrap ('mono_wasm_remove_breakpoint', 'number', ['number']);
 
 			return this.mono_wasm_del_bp (breakpoint_id);
+		},
+
+		mono_wasm_set_pause_on_exceptions: function (pauseOnExceptions, unhandledOnly) {
+			if (!this.mono_wasm_set_pause_on_exc)
+				this.mono_wasm_set_pause_on_exc = Module.cwrap ('mono_wasm_set_pause_on_exceptions', 'number', ['bool', 'bool']);
+
+			return this.mono_wasm_set_pause_on_exc (pauseOnExceptions, unhandledOnly)
 		},
 
 		// Set environment variable NAME to VALUE
@@ -889,6 +918,30 @@ var MonoSupportLib = {
 		});
 	},
 
+	mono_wasm_add_exc_var: function(className, message, stack, objectId) {
+		function add_string_var(name, value) {
+			MONO.var_info.push({ name, value: { type: "string", value } });
+		}
+
+		var fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString(className));
+		var message_str = Module.UTF8ToString(message)
+		var stack_str = Module.UTF8ToString(stack)
+
+		add_string_var("klass", fixed_class_name);
+		add_string_var("message", message_str);
+		add_string_var("stack", stack_str);
+
+		MONO.var_info.push({
+			name: "__obj__",
+			value: {
+				type: "object",
+				className: fixed_class_name,
+				description: message_str,
+				objectId: "dotnet:object:"+ objectId,
+			}
+		});
+	},
+
 	/*
 	 * @className, and @targetName are in the following format:
 	 *
@@ -989,6 +1042,11 @@ var MonoSupportLib = {
 
 	mono_wasm_fire_bp: function () {
 		console.log ("mono_wasm_fire_bp");
+		debugger;
+	},
+
+	mono_wasm_fire_exc: function (unhandled, exception) {
+		console.log ("mono_wasm_fire_exc", unhandled, exception)
 		debugger;
 	}
 };

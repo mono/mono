@@ -69,7 +69,7 @@ namespace WebAssembly.Net.Debugging {
 					//TODO figure out how to stich out more frames and, in particular what happens when real wasm is on the stack
 					var top_func = args? ["callFrames"]? [0]? ["functionName"]?.Value<string> ();
 
-					if (top_func == "mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_bp") {
+					if (IsFireBreakpointFunction (top_func)) {
 						return await OnBreakpointHit (sessionId, args, token);
 					}
 					break;
@@ -102,6 +102,19 @@ namespace WebAssembly.Net.Debugging {
 			}
 
 			return false;
+		}
+
+		static bool IsFireBreakpointFunction (string name)
+		{
+			switch (name) {
+			case "mono_wasm_fire_bp":
+			case "_mono_wasm_fire_bp":
+			case "mono_wasm_fire_exc":
+			case "_mono_wasm_fire_exc":
+				return true;
+			default:
+				return false;
+			}
 		}
 
 		async Task<bool> IsRuntimeAlreadyReadyAlready (SessionId sessionId, CancellationToken token)
@@ -386,6 +399,249 @@ namespace WebAssembly.Net.Debugging {
 			return res;
 		}
 
+		object GetMonoFrame (DebugStore store, JObject mono_frame, int frame_id, out Frame frame)
+		{
+			var il_pos = mono_frame ["il_pos"].Value<int> ();
+			var method_token = mono_frame ["method_token"].Value<uint> ();
+			var assembly_name = mono_frame ["assembly_name"].Value<string> ();
+
+			// This can be different than `method.Name`, like in case of generic methods
+			var method_name = mono_frame ["method_name"]?.Value<string> ();
+
+			var asm = store.GetAssemblyByName (assembly_name);
+			if (asm == null) {
+				Log ("info", $"Unable to find assembly: {assembly_name}");
+				frame = null;
+				return null;
+			}
+
+			var method = asm.GetMethodByToken (method_token);
+
+			if (method == null) {
+				Log ("info", $"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
+				frame = null;
+				return null;
+			}
+
+			var location = method?.GetLocationByIl (il_pos);
+
+			// When hitting a breakpoint on the "IncrementCount" method in the standard
+			// Blazor project template, one of the stack frames is inside mscorlib.dll
+			// and we get location==null for it. It will trigger a NullReferenceException
+			// if we don't skip over that stack frame.
+			if (location == null) {
+				frame = null;
+				return null;
+			}
+
+			Log ("info", $"frame il offset: {il_pos} method token: {method_token} assembly name: {assembly_name}");
+			Log ("info", $"\tmethod {method_name} location: {location}");
+			frame = new Frame (method, location, frame_id - 1);
+
+			return new {
+				functionName = method_name,
+				callFrameId = $"dotnet:scope:{frame_id - 1}",
+				functionLocation = method.StartLocation.AsLocation (),
+
+				location = location.AsLocation (),
+
+				url = store.ToUrl (location),
+
+				scopeChain = new [] {
+					new {
+						type = "local",
+						@object = new {
+							@type = "object",
+							className = "Object",
+							description = "Object",
+							objectId = $"dotnet:scope:{frame_id-1}",
+						},
+						name = method_name,
+						startLocation = method.StartLocation.AsLocation (),
+						endLocation = method.EndLocation.AsLocation (),
+					}}
+			};
+		}
+
+		void GetMonoFrames (ExecutionContext context, DebugStore store, List<object> callFrames, IEnumerable<JObject> the_mono_frames)
+		{
+			var frames = new List<Frame> ();
+			int frame_id = 0;
+
+			foreach (var mono_frame in the_mono_frames) {
+				var call_frame = GetMonoFrame (store, mono_frame, ++frame_id, out var frame);
+				frames.Add (frame);
+
+				callFrames.Add (call_frame);
+			}
+
+			context.CallStack = frames;
+		}
+
+		async Task<IDictionary<string, JObject>> GetJavaScriptVariables (SessionId id, JObject frame, CancellationToken token)
+		{
+			// We are stopped on a managed -> javascript call - like for instance mono_wasm_fire_exc().
+			Log ("verbose", $"getting javascript variables");
+			var scopeChain = frame ["scopeChain"]?.Values<JObject> ();
+			if (scopeChain == null || scopeChain.Count () == 0) {
+				Log ("info", $"Frame is missing scopeChain");
+				return null;
+			}
+
+			var scopeObj = scopeChain.First () ["object"]?.Value<JObject> ();
+			if (scopeObj == null) {
+				Log ("info", $"Frame is missing scope object");
+				return null;
+			}
+
+			var objectId = scopeObj ["objectId"]?.Value<string> ();
+			if (objectId == null) {
+				Log ("info", $"missing objectId");
+				return null;
+			}
+
+			var cmd_args = JObject.FromObject (new {
+				objectId,
+				ownProperties = false,
+				accessorPropertiesOnly = false,
+				generatePreview = true
+			});
+
+			var cmd_res = await SendCommand (id, "Runtime.getProperties", cmd_args, token);
+			if (!cmd_res.IsOk) {
+				Log ("info", $"command failed");
+				return null;
+			}
+
+			Log ("verbose", $"got properties: {cmd_res}");
+			var variables = cmd_res.Value ["result"]?.Values<JObject> ();
+			if (variables == null || variables.Count () == 0) {
+				Log ("info", $"did not get any variables");
+				return null;
+			}
+
+			var dict = new Dictionary<string, JObject> ();
+
+			foreach (var variable in variables) {
+				Log ("verbose", $"got variable: {variable}");
+				var name = variable ["name"]?.Value<string> ();
+				if (name != null)
+					dict.Add (name, variable);
+			}
+
+			return dict;
+		}
+
+		string GetVariableValue (JObject variable, string expectedType)
+		{
+			var value = variable ["value"]?.Value<JObject> ();
+			if (value == null) {
+				Log ("info", $"value is null");
+				return null;
+			}
+
+			var type = value ["type"]?.Value<string> ();
+			if (!string.Equals (type, expectedType)) {
+				Log ("info", $"variable has invalid type {type}");
+				return null;
+			}
+
+			var innerValue = value ["value"]?.Value<string> ();
+			if (string.IsNullOrEmpty (innerValue)) {
+				Log ("info", $"missing number value");
+				return null;
+			}
+
+			return innerValue;
+		}
+
+		string GetNumberValue (JObject variable) => GetVariableValue (variable, "number");
+
+		string GetStringValue (JObject variable) => GetVariableValue (variable, "string");
+
+		async Task<JObject> HandleExceptionFrame (SessionId id, JObject frame, CancellationToken token)
+		{
+			// We are stopped in mono_wasm_fire_exc(), which is called from the managed side with
+			// the arguments: a boolean describing whether the exception is unhandled and the
+			// exception object's object id.
+			//
+			// GetJavaScriptVariables() is a general-purpose method to get the variables from a
+			// call frame.
+			var variables = await GetJavaScriptVariables (id, frame, token);
+			if (variables == null) {
+				Log ("info", $"failed to get JS variables");
+				return null;
+			}
+
+			// Okay, we should have two variables, let's do some sanity checking.
+			if (!variables.TryGetValue ("exception", out var exception)) {
+				Log ("info", $"variables do not contain exception object");
+				return null;
+			}
+
+			if (!variables.TryGetValue ("unhandled", out var unhandled)) {
+				Log ("info", $"variables do not contain exception object");
+				return null;
+			}
+
+			Log ("verbose", $"got exception variables: {unhandled} {exception}");
+
+			var exceptionObj = GetNumberValue (exception);
+			var unhandledValue = GetNumberValue (unhandled);
+
+			if (exceptionObj == null || unhandledValue == null)
+				return null;
+
+			if (!int.TryParse (unhandledValue, out var unhandledInt)) {
+				Log ("verbose", $"failed to parse unhandled variable: {unhandledValue}");
+				return null;
+			}
+
+			// Okay, we got the exception's object id from the mono_wasm_fire_exc() call frame.
+			// Tis object id can be used with both "dotnet:exception:id" as well as
+			// "dotnet:object:id".  In fact, the former will include the latter for the actual
+			// exception instance.
+
+			var objectId = new DotnetObjectId ("exception", exceptionObj);
+
+			var res = await SendMonoCommand (id, MonoCommands.GetDetails (objectId), token);
+			var scope_values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
+			Log ("verbose", $"got scope values: {scope_values}");
+
+			// To display the exception message in the top-right corner directly underneath the
+			// "Paused on exception" message, we need to include a special "data" field with the
+			// "Debugger.paused" notification.
+
+			// This will also take care of adding the exception object to the locals window.
+
+			string className = null, description = null;
+			foreach (var value in scope_values) {
+				var name = value ["name"]?.Value<string> ();
+				switch (name) {
+				case "klass":
+					className = GetStringValue (value);
+					break;
+				case "message":
+					description = GetStringValue (value);
+					break;
+				}
+			}
+
+			if (string.IsNullOrEmpty (className))
+				className = "Exception";
+			if (string.IsNullOrEmpty (description))
+				description = "UNKNOWN EXCEPTION";
+
+			return JObject.FromObject (new {
+				type = "object",
+				subtype = "error",
+				className,
+				description = description + "\n",
+				objectId = objectId.ToString (),
+				uncaught = unhandledInt > 0
+			});
+		}
+
 		//static int frame_id=0;
 		async Task<bool> OnBreakpointHit (SessionId sessionId, JObject args, CancellationToken token)
 		{
@@ -406,6 +662,8 @@ namespace WebAssembly.Net.Debugging {
 				return false;
 			}
 
+			var frames = res_value ["frames"]?.Values<JObject> ();
+
 			Log ("verbose", $"call stack (err is {res.Error} value is:\n{res.Value}");
 			var bp_id = res_value? ["breakpoint_id"]?.Value<int> ();
 			Log ("verbose", $"We just hit bp {bp_id}");
@@ -414,81 +672,26 @@ namespace WebAssembly.Net.Debugging {
 				return false;
 			}
 
+			var store = await LoadStore (sessionId, token);
+
 			var bp = context.BreakpointRequests.Values.SelectMany (v => v.Locations).FirstOrDefault (b => b.RemoteId == bp_id.Value);
+
+			JObject exception_data = null;
 
 			var callFrames = new List<object> ();
 			foreach (var frame in orig_callframes) {
 				var function_name = frame ["functionName"]?.Value<string> ();
 				var url = frame ["url"]?.Value<string> ();
-				if ("mono_wasm_fire_bp" == function_name || "_mono_wasm_fire_bp" == function_name) {
-					var frames = new List<Frame> ();
-					int frame_id = 0;
-					var the_mono_frames = res.Value? ["result"]? ["value"]? ["frames"]?.Values<JObject> ();
-
-					foreach (var mono_frame in the_mono_frames) {
-						++frame_id;
-						var il_pos = mono_frame ["il_pos"].Value<int> ();
-						var method_token = mono_frame ["method_token"].Value<uint> ();
-						var assembly_name = mono_frame ["assembly_name"].Value<string> ();
-
-						// This can be different than `method.Name`, like in case of generic methods
-						var method_name = mono_frame ["method_name"]?.Value<string> ();
-
-						var store = await LoadStore (sessionId, token);
-						var asm = store.GetAssemblyByName (assembly_name);
-						if (asm == null) {
-							Log ("info",$"Unable to find assembly: {assembly_name}");
-							continue;
-						}
-
-						var method = asm.GetMethodByToken (method_token);
-
-						if (method == null) {
-							Log ("info", $"Unable to find il offset: {il_pos} in method token: {method_token} assembly name: {assembly_name}");
-							continue;
-						}
-
-						var location = method?.GetLocationByIl (il_pos);
-
-						// When hitting a breakpoint on the "IncrementCount" method in the standard
-						// Blazor project template, one of the stack frames is inside mscorlib.dll
-						// and we get location==null for it. It will trigger a NullReferenceException
-						// if we don't skip over that stack frame.
-						if (location == null) {
-							continue;
-						}
-
-						Log ("info", $"frame il offset: {il_pos} method token: {method_token} assembly name: {assembly_name}");
-						Log ("info", $"\tmethod {method_name} location: {location}");
-						frames.Add (new Frame (method, location, frame_id-1));
-
-						callFrames.Add (new {
-							functionName = method_name,
-							callFrameId = $"dotnet:scope:{frame_id-1}",
-							functionLocation = method.StartLocation.AsLocation (),
-
-							location = location.AsLocation (),
-
-							url = store.ToUrl (location),
-
-							scopeChain = new [] {
-								new {
-									type = "local",
-									@object = new {
-										@type = "object",
-										className = "Object",
-										description = "Object",
-										objectId = $"dotnet:scope:{frame_id-1}",
-									},
-									name = method_name,
-									startLocation = method.StartLocation.AsLocation (),
-									endLocation = method.EndLocation.AsLocation (),
-								}}
-						});
-
-						context.CallStack = frames;
-
-					}
+				if (function_name == "mono_wasm_fire_exc" || function_name == "_mono_wasm_fire_exc") {
+					Log ("info", $"exception frame");
+					exception_data = await HandleExceptionFrame (sessionId, frame, token);
+					Log ("info", $"exception frame done");
+				}
+				if (IsFireBreakpointFunction (function_name)) {
+					GetMonoFrames (context, store, callFrames, frames);
+				} else if (string.IsNullOrEmpty (url) || url.EndsWith (".wasm")) {
+					// Workaround for https://github.com/mono/mono/issues/19674.
+					Log ("info", $"frame with empty or wasm url: {url}");
 				} else if (!(function_name.StartsWith ("wasm-function", StringComparison.Ordinal)
 					|| url.StartsWith ("wasm://wasm/", StringComparison.Ordinal))) {
 					callFrames.Add (frame);
@@ -501,8 +704,9 @@ namespace WebAssembly.Net.Debugging {
 
 			var o = JObject.FromObject (new {
 				callFrames,
-				reason = "other", //other means breakpoint
+				reason = exception_data != null ? "exception" : "other", //other means breakpoint
 				hitBreakpoints = bp_list,
+				data = exception_data
 			});
 
 			SendEvent (sessionId, "Debugger.paused", o, token);
