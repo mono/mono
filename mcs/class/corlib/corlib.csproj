@@ -1314,6 +1314,7 @@
     <Compile Include="Mono\CertificateImportFlags.cs" />
     <Compile Include="Mono\DataConverter.cs" />
     <Compile Include="Mono\DependencyInjector.cs" />
+    <Compile Include="Mono\ExceptionFilter.cs" />
     <Compile Include="Mono\ISystemCertificateProvider.cs" />
     <Compile Include="Mono\ISystemDependencyProvider.cs" />
     <Compile Include="Mono\Runtime.cs" />
