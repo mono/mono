@@ -4987,11 +4987,7 @@ debugger_agent_breakpoint_from_context (MonoContext *ctx)
 		return;
 
 	orig_ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
-#ifndef __s390x__
 	MONO_CONTEXT_SET_IP (ctx, orig_ip - 1);
-#else
-	MONO_CONTEXT_SET_IP (ctx, orig_ip - 2);
-#endif
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	g_assert (tls);
