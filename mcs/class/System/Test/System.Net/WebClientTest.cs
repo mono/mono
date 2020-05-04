@@ -67,9 +67,6 @@ namespace MonoTests.System.Net
 				wc.DownloadData ("tp://scheme.notsupported");
 				Assert.Fail ("#1");
 			} catch (WebException ex) {
-				Console.WriteLine (ex);
-				Console.WriteLine (ex.InnerException);
-
 				// An error occurred performing a WebClient request
 				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
@@ -110,9 +107,6 @@ namespace MonoTests.System.Net
 				wc.DownloadData (new Uri ("tp://scheme.notsupported"));
 				Assert.Fail ("#1");
 			} catch (WebException ex) {
-				Console.WriteLine (ex);
-				Console.WriteLine (ex.InnerException);
-
 				// An error occurred performing a WebClient request
 				Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
@@ -155,9 +149,6 @@ namespace MonoTests.System.Net
 					wc.DownloadFile ("tp://scheme.notsupported", file);
 					Assert.Fail ("#1");
 				} catch (WebException ex) {
-					Console.WriteLine (ex);
-					Console.WriteLine (ex.InnerException);
-
 					// An error occurred performing a WebClient request
 					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
 					Assert.IsNotNull (ex.InnerException, "#3");
@@ -220,9 +211,6 @@ namespace MonoTests.System.Net
 					wc.DownloadFile (new Uri ("tp://scheme.notsupported"), file);
 					Assert.Fail ("#1");
 				} catch (WebException ex) {
-					Console.WriteLine (ex);
-					Console.WriteLine (ex.InnerException);
-
 					// An error occurred performing a WebClient request
 					Assert.AreEqual (typeof (WebException), ex.GetType (), "#2");
 					Assert.IsNotNull (ex.InnerException, "#3");
