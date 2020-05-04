@@ -1833,6 +1833,21 @@ buffer_add_data (Buffer *buf, guint8 *data, int len)
 }
 
 static void
+buffer_add_utf16 (Buffer *buf, guint8 *data, int len)
+{
+#if G_BYTE_ORDER == G_LITTLE_ENDIAN
+	buffer_make_room (buf, len);
+	memcpy (buf->p, data, len);
+#else
+	for (int i=0; i<len; i +=2) {
+		buf->p[i] = data[i+1];
+		buf->p[i+1] = data[i];
+	}
+#endif
+	buf->p += len;
+}
+
+static void
 buffer_add_string (Buffer *buf, const char *str)
 {
 	int len;
@@ -4972,7 +4987,11 @@ debugger_agent_breakpoint_from_context (MonoContext *ctx)
 		return;
 
 	orig_ip = (guint8 *)MONO_CONTEXT_GET_IP (ctx);
+#ifndef __s390x__
 	MONO_CONTEXT_SET_IP (ctx, orig_ip - 1);
+else
+	MONO_CONTEXT_SET_IP (ctx, orig_ip - 2);
+#endif
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	g_assert (tls);
@@ -5035,7 +5054,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 	mono_loader_unlock ();
 	g_assert (tls);
 	if (!tls->context.valid) {
-		DEBUG_PRINTF (1, "Received a single step request on a thread with no managed frames.");
+		DEBUG_PRINTF (1, "Received a single step request on a thread with no managed frames.\n");
 		return ERR_INVALID_ARGUMENT;
 	}
 
@@ -9575,7 +9594,7 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		}
 		if (use_utf16) {
 			buffer_add_int (buf, mono_string_length_internal (str) * 2);
-			buffer_add_data (buf, (guint8*)mono_string_chars_internal (str), mono_string_length_internal (str) * 2);
+			buffer_add_utf16 (buf, (guint8*)mono_string_chars_internal (str), mono_string_length_internal (str) * 2);
 		} else {
 			ERROR_DECL (error);
 			s = mono_string_to_utf8_checked_internal (str, error);
