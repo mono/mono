@@ -5,6 +5,12 @@ include $(TOP)/sdks/paths.mk
 
 all: build
 
+# Required by emscripten:
+# https://github.com/emscripten-core/emscripten/issues/10551
+# PYTHONUTF8 requires python 3.7, so set LC_ALL as well
+export PYTHONUTF8=1
+export LC_ALL=C.UTF-8
+
 MAKEFLAGS += --no-builtin-rules
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
