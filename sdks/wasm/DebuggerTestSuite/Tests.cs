@@ -123,6 +123,36 @@ namespace DebuggerTests
 			});
 		}
 
+		[Theory]
+		[InlineData (0)]
+		[InlineData (44)]
+		public async Task CheckMultipleBreakpointsOnSameLine (int col) {
+			var insp = new Inspector ();
+
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+
+				var bp1_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-array-test.cs", 197, col);
+				Assert.EndsWith ("debugger-array-test.cs", bp1_res.Value["breakpointId"].ToString());
+				Assert.Equal (1, bp1_res.Value ["locations"]?.Value<JArray> ()?.Count);
+
+				var loc = bp1_res.Value ["locations"]?.Value<JArray> ()[0];
+
+				CheckLocation ("dotnet://debugger-test.dll/debugger-array-test.cs", 197, 44, scripts, loc);
+
+				var bp2_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-array-test.cs", 197, 49);
+				Assert.EndsWith ("debugger-array-test.cs", bp2_res.Value["breakpointId"].ToString());
+				Assert.Equal (1, bp2_res.Value ["locations"]?.Value<JArray> ()?.Count);
+
+				var loc2 = bp2_res.Value ["locations"]?.Value<JArray> ()[0];
+
+				CheckLocation ("dotnet://debugger-test.dll/debugger-array-test.cs", 197, 49, scripts, loc2);
+			});
+		}
+
 		[Fact]
 		public async Task CreateBadBreakpoint () {
 			var insp = new Inspector ();
