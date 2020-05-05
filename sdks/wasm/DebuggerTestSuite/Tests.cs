@@ -268,6 +268,36 @@ namespace DebuggerTests
 				}
 			);
 
+		[Fact]
+		public async Task InspectLocalsTypesAtBreakpointSite () =>
+			await CheckInspectLocalsAtBreakpointSite (
+				"dotnet://debugger-test.dll/debugger-test2.cs", 40, 2, "Types",
+				"window.setTimeout(function() { invoke_static_method (\"[debugger-test] Fancy:Types\")(); }, 1);",
+				use_cfo: false,
+				test_fn: (locals) => {
+						CheckNumber (locals, "dPI", Math.PI);
+						CheckNumber (locals, "fPI", (float)Math.PI);
+						CheckNumber (locals, "iMax", int.MaxValue);
+						CheckNumber (locals, "iMin", int.MinValue);
+						CheckNumber (locals, "uiMax", uint.MaxValue);
+						CheckNumber (locals, "uiMin", uint.MinValue);
+
+						CheckNumber (locals, "l", uint.MaxValue * (long)2);
+						//CheckNumber (locals, "lMax", long.MaxValue); // cannot be represented as double
+						//CheckNumber (locals, "lMin", long.MinValue); // cannot be represented as double
+
+						CheckNumber (locals, "sbMax", sbyte.MaxValue);
+						CheckNumber (locals, "sbMin", sbyte.MinValue);
+						CheckNumber (locals, "bMax", byte.MaxValue);
+						CheckNumber (locals, "bMin", byte.MinValue);
+
+						CheckNumber (locals, "sMax", short.MaxValue);
+						CheckNumber (locals, "sMin", short.MinValue);
+						CheckNumber (locals, "usMin", ushort.MinValue);
+						CheckNumber (locals, "usMax", ushort.MaxValue);
+				}
+			);
+
 		[Theory]
 		[InlineData (false)]
 		[InlineData (true)]
