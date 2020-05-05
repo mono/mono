@@ -124,7 +124,7 @@ namespace DebuggerTests
 		}
 
 		[Fact]
-		public async Task CheckMultipleBreakpoints () {
+		public async Task CheckMultipleBreakpointsOnSameLine () {
 			var insp = new Inspector ();
 
 			var scripts = SubscribeToScripts(insp);
