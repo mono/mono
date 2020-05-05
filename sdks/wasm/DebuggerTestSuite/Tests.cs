@@ -123,32 +123,6 @@ namespace DebuggerTests
 			});
 		}
 
-#if false
-				[Fact]
-		public async Task CreateJSBreakpoint () {
-			var insp = new Inspector ();
-
-			//Collect events
-			var scripts = SubscribeToScripts(insp);
-
-			await Ready ();
-			await insp.Ready (async (cli, token) => {
-				ctx = new DebugTestContext (cli, insp, token, scripts);
-				//var bp1_res = await SetBreakpoint ("/debugger-driver.html", 24, 2);
-
-				//Assert.EndsWith ("debugger-driver.html", bp1_res.Value ["breakpointId"].ToString());
-				//Assert.Equal (1, bp1_res.Value ["locations"]?.Value<JArray> ()?.Count);
-
-				//var loc = bp1_res.Value ["locations"]?.Value<JArray> ()[0];
-
-				//Assert.NotNull (loc ["scriptId"]);
-				//Assert.Equal("dotnet://debugger-test.dll/debugger-test.cs", scripts [loc["scriptId"]?.Value<string> ()]);
-				//Assert.Equal (24, loc ["lineNumber"]);
-				//Assert.Equal (2, loc ["columnNumber"]);
-			});
-		}
-#endif
-
 		[Fact]
 		public async Task CreateBadBreakpoint () {
 			var insp = new Inspector ();
