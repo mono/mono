@@ -773,6 +773,7 @@ namespace WebAssembly.Net.Debugging {
 			var locations = store.FindBreakpointLocations (req)
 				.Distinct (comparer)
 				.Where (l => l.Line == req.Line && (req.Column == 0 || l.Column == req.Column))
+				.OrderBy (l => l.Column)
 				.GroupBy (l => l.Id);
 
 			logger.LogDebug ("BP request for '{req}' runtime ready {context.RuntimeReady}", req, GetContext (sessionId).IsRuntimeReady);
