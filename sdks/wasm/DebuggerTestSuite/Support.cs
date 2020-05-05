@@ -224,13 +224,13 @@ namespace DebuggerTests
 			Assert.Equal (expected_loc_str, loc_str);
 		}
 
-		internal void CheckNumber (JToken locals, string name, int value) {
+		internal void CheckNumber<T> (JToken locals, string name, T value) {
 			foreach (var l in locals) {
 				if (name != l["name"]?.Value<string> ())
 					continue;
 				var val = l["value"];
 				Assert.Equal ("number", val ["type"]?.Value<string> ());
-				Assert.Equal (value, val["value"]?.Value <int> ());
+				Assert.Equal (value, val["value"].Value <T> ());
 				return;
 			}
 			Assert.True(false, $"Could not find variable '{name}'");
