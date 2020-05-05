@@ -36,7 +36,7 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 		skip_step="CI provisioning scripts"
 		skip=true
 	fi
-	if ! grep -q -v a/sdks/wasm pr-files.txt; then
+	if [ ! grep -q -v a/sdks/wasm pr-files.txt ] || [ "${ghprbTargetBranch}" == "3.2-wasm" ]; then
 		if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]]; then
 			true
 		else
