@@ -1382,7 +1382,10 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 			g_print ("build_args_from_sig: margs->fargs [%d]: %p (%f) (frame @ %d)\n", int_f, margs->fargs [int_f], margs->fargs [int_f], i);
 #endif
 #if SIZEOF_VOID_P == 4
-			int_f += 2;
+			if (ptype == MONO_TYPE_R4)
+				int_f ++;
+			else
+				int_f += 2;
 #else
 			int_f++;
 #endif
