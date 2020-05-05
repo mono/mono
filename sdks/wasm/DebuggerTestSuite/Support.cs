@@ -702,13 +702,11 @@ namespace DebuggerTests
 			return evaluate_result;
 		}
 
-		internal async Task<Result> SetBreakpoint (string url_key, int line, int column, bool expect_ok=true)
+		internal async Task<Result> SetBreakpoint (string url_key, int line, int column, bool expect_ok=true, bool use_regex = false)
 		{
-			var bp1_req = JObject.FromObject(new {
-				lineNumber = line,
-				columnNumber = column,
-				url = dicFileToUrl[url_key],
-			});
+			var bp1_req = !use_regex ?
+				JObject.FromObject(new { lineNumber = line, columnNumber = column, url = dicFileToUrl[url_key],}) :
+				JObject.FromObject(new { lineNumber = line, columnNumber = column, urlRegex = url_key, });
 
 			var bp1_res = await ctx.cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, ctx.token);
 			Assert.True (expect_ok ? bp1_res.IsOk : bp1_res.IsErr);
