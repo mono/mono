@@ -124,7 +124,7 @@ namespace DebuggerTests
 		}
 
 		[Fact]
-		public async Task CheckBreakpoint () {
+		public async Task CheckMultipleBreakpoints () {
 			var insp = new Inspector ();
 
 			var scripts = SubscribeToScripts(insp);
@@ -139,9 +139,7 @@ namespace DebuggerTests
 
 				var loc = bp1_res.Value ["locations"]?.Value<JArray> ()[0];
 
-				Assert.NotNull (loc ["scriptId"]);
-				Assert.Equal (197, loc ["lineNumber"]);
-				Assert.Equal (44, loc ["columnNumber"]);
+				CheckLocation ("dotnet://debugger-test.dll/debugger-array-test.cs", 197, 44, scripts, loc);
 
 				var bp2_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-array-test.cs", 197, 49);
 				Assert.EndsWith ("debugger-array-test.cs", bp2_res.Value["breakpointId"].ToString());
@@ -149,10 +147,7 @@ namespace DebuggerTests
 
 				var loc2 = bp2_res.Value ["locations"]?.Value<JArray> ()[0];
 
-				Assert.NotNull (loc2 ["scriptId"]);
-				Assert.Equal (197, loc2 ["lineNumber"]);
-				Assert.Equal (49, loc2 ["columnNumber"]);
-
+				CheckLocation ("dotnet://debugger-test.dll/debugger-array-test.cs", 197, 49, scripts, loc2);
 			});
 		}
 
