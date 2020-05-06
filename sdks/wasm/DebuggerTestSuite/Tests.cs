@@ -1,11 +1,11 @@
-[assembly: CollectionBehavior (CollectionBehavior.CollectionPerAssembly)]
-
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using WebAssembly.Net.Debugging;
+
+[assembly: CollectionBehavior (CollectionBehavior.CollectionPerAssembly)]
 
 namespace DebuggerTests
 {
