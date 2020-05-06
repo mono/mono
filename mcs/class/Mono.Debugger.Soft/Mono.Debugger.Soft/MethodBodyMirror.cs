@@ -2,15 +2,11 @@ using System;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
+using Mono.Cecil.Cil;
+using Mono.Cecil.Metadata;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
-#if ENABLE_CECIL
-using Mono.Cecil.Cil;
-#else
-using System.Reflection.Emit;
-#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -88,21 +84,11 @@ namespace Mono.Debugger.Soft
 			if (!opcodes_inited) {
 				foreach (FieldInfo fi in typeof (OpCodes).GetFields (BindingFlags.Static|BindingFlags.Public)) {
 					var val = (OpCode)fi.GetValue (null);
-					bool isOneByteOpCode;
-					uint index;
 
-#if ENABLE_CECIL
-					isOneByteOpCode = val.Op1 == 0xff;
-					index = val.Op2;
-#else
-					uint value = (uint)val.Value;
-					isOneByteOpCode = value <= 0xff;
-					index = isOneByteOpCode ? value : value & 0xff;
-#endif
-					if (isOneByteOpCode)
-						OneByteOpCode [index] = val;
+					if (val.Op1 == 0xff)
+						OneByteOpCode [val.Op2] = val;
 					else
-						TwoBytesOpCode [index] = val;
+						TwoBytesOpCode [val.Op2] = val;
 				}
 				opcodes_inited = true;
 			}
@@ -153,11 +139,9 @@ namespace Mono.Debugger.Soft
 				case OperandType.ShortInlineVar :
 					instr.Operand = br.ReadByte ();
 					break;
-#if ENABLE_CECIL
 				case OperandType.ShortInlineArg :
 					instr.Operand = br.ReadByte ();
 					break;
-#endif
 				case OperandType.InlineSig :
 					br.ReadInt32 ();
 					//instr.Operand = GetCallSiteAt (br.ReadInt32 (), context);
@@ -168,11 +152,9 @@ namespace Mono.Debugger.Soft
 				case OperandType.InlineVar :
 					instr.Operand = br.ReadInt16 ();
 					break;
-#if ENABLE_CECIL
 				case OperandType.InlineArg :
 					instr.Operand = br.ReadInt16 ();
 					break;
-#endif
 				case OperandType.InlineI8 :
 					instr.Operand = br.ReadInt64 ();
 					break;

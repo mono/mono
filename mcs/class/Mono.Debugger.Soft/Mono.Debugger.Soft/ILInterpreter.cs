@@ -1,10 +1,6 @@
 using System;
-
-#if ENABLE_CECIL
 using Mono.Cecil.Cil;
-#else
-using System.Reflection.Emit;
-#endif
+using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft
 {
