@@ -109,7 +109,7 @@ namespace DebuggerTests
 							Y                     = TNumber (45),
 							Id                    = TString ("sc#Id"),
 							Color                 = TEnum   ("DebuggerTests.RGB", "Blue"),
-							PointWithCustomGetter = TSymbol ("DebuggerTests.Point { get; }")
+							PointWithCustomGetter = TGetter ("PointWithCustomGetter")
 						}, "sc_arg_props#1");
 					}
 
@@ -152,7 +152,7 @@ namespace DebuggerTests
 							Y                     = TNumber (45),
 							Id                    = TString ("sc_arg#Id"), // <------- This changed
 							Color                 = TEnum   ("DebuggerTests.RGB", "Blue"),
-							PointWithCustomGetter = TSymbol ("DebuggerTests.Point { get; }")
+							PointWithCustomGetter = TGetter ("PointWithCustomGetter")
 						}, "sc_arg_props#2");
 					}
 				});

@@ -342,15 +342,12 @@ namespace WebAssembly.Net.Debugging {
 						return true;
 					}
 
-					var returnByValue = args ["returnByValue"]?.Value<bool> () ?? false;
 					var res = await SendMonoCommand (id, MonoCommands.CallFunctionOn (args), token);
+					var res_value_type  = res.Value? ["result"]? ["value"]?.Type;
 
-					if (!returnByValue &&
-						DotnetObjectId.TryParse (res.Value?["result"]?["value"]?["objectId"], out var resultObjectId) &&
-						resultObjectId.Scheme == "cfo_res")
+					if (res.IsOk && res_value_type == JTokenType.Object || res_value_type == JTokenType.Object)
 						res = Result.OkFromObject (new { result = res.Value ["result"]["value"] });
-
-					if (res.IsErr && silent)
+					else if (res.IsErr && silent)
 						res = Result.OkFromObject (new { result = new { } });
 
 					SendResponse (id, res, token);

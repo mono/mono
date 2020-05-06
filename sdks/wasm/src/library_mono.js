@@ -1,4 +1,5 @@
-
+/* jshint esversion: 6 */
+/* jshint evil: true */
 var MonoSupportLib = {
 	$MONO__postset: 'MONO.export_functions (Module);',
 	$MONO: {
@@ -107,8 +108,10 @@ var MonoSupportLib = {
 					continue;
 				}
 
-				if (i + 1 < var_list.length)
-					o.value = _fixup_value(var_list[i + 1].value);
+				if (i + 1 < var_list.length) {
+					_fixup_value(var_list[i + 1].value);
+					o = Object.assign (o, var_list [i + 1]);
+				}
 
 				out_list.push (o);
 				i += 2;
@@ -185,8 +188,10 @@ var MonoSupportLib = {
 
 			var res = MONO._filter_automatic_properties (MONO._fixup_name_value_objects (this.var_info));
 			for (var i = 0; i < res.length; i++) {
-				if (res [i].value.isValueType != undefined && res [i].value.isValueType)
-					res [i].value.objectId = `dotnet:valuetype:${objId}:${res [i].fieldOffset}`;
+				var res_val = res [i].value;
+				// we might not have a `.value`, like in case of getters which have a `.get` instead
+				if (res_val !== undefined && res_val.isValueType != undefined && res_val.isValueType)
+					res_val.objectId = `dotnet:valuetype:${objId}:${res [i].fieldOffset}`;
 			}
 
 			this.var_info = [];
@@ -303,6 +308,64 @@ var MonoSupportLib = {
 			}
 		},
 
+		_get_cfo_res_details: function (objectId, args) {
+			if (!(objectId in this._call_function_res_cache))
+				throw new Error(`Could not find any object with id ${objectId}`);
+
+			var real_obj = this._call_function_res_cache [objectId];
+
+			var descriptors = Object.getOwnPropertyDescriptors (real_obj);
+			if (args.accessorPropertiesOnly) {
+				Object.keys (descriptors).forEach (k => {
+					if (descriptors [k].get === undefined)
+						Reflect.deleteProperty (descriptors, k);
+				});
+			}
+
+			var res_details = [];
+			Object.keys (descriptors).forEach (k => {
+				var new_obj;
+				var prop_desc = descriptors [k];
+				if (typeof prop_desc.value == "object") {
+					// convert `{value: { type='object', ... }}`
+					// to      `{ name: 'foo', value: { type='object', ... }}
+					new_obj = Object.assign ({ name: k }, prop_desc);
+				} else if (prop_desc.value !== undefined) {
+					// This is needed for values that were not added by us,
+					// thus are like { value: 5 }
+					// instead of    { value: { type = 'number', value: 5 }}
+					//
+					// This can happen, for eg., when `length` gets added for arrays
+					// or `__proto__`.
+					new_obj = {
+						name: k,
+						// merge/add `type` and `description` to `d.value`
+						value: Object.assign ({ type: (typeof prop_desc.value), description: '' + prop_desc.value },
+												prop_desc)
+					};
+				} else if (prop_desc.get !== undefined) {
+					// The real_obj has the actual getter. We are just returning a placeholder
+					// If the caller tries to run function on the cfo_res object,
+					// that accesses this property, then it would be run on `real_obj`,
+					// which *has* the original getter
+					new_obj = {
+						name: k,
+						get: {
+							className: "Function",
+							description: `get ${k} () {}`,
+							type: "function"
+						}
+					};
+				} else {
+					new_obj = { name: k, value: { type: "symbol", value: "<Unknown>", description: "<Unknown>"} };
+				}
+
+				res_details.push (new_obj);
+			});
+
+			return { __value_as_json_string__: JSON.stringify (res_details) };
+		},
+
 		mono_wasm_get_details: function (objectId, args) {
 			var parts = objectId.split(":");
 			if (parts[0] != "dotnet")
@@ -328,52 +391,8 @@ var MonoSupportLib = {
 					var containerObjectId = parts[2];
 					return this._get_details_for_value_type(objectId, () => this.mono_wasm_get_object_properties(containerObjectId, true));
 
-				case "cfo_res": {
-					if (!(objectId in this._call_function_res_cache))
-						throw new Error(`Could not find any object with id ${objectId}`);
-
-					var real_obj = this._call_function_res_cache [objectId];
-					if (args.accessorPropertiesOnly) {
-						// var val_accessors = JSON.stringify ([
-						// 	{
-						// 		name: "__proto__",
-						// 		get: { type: "function", className: "Function", description: "function get __proto__ () {}", objectId: "dotnet:cfo_res:9999" },
-						// 		set: { type: "function", className: "Function", description: "function set __proto__ () {}", objectId: "dotnet:cfo_res:8888" },
-						// 		isOwn: false
-						// 	}], undefined, 4);
-						return { __value_as_json_string__:  "[]" };
-					}
-
-					// behaving as if (args.ownProperties == true)
-					var descriptors = Object.getOwnPropertyDescriptors (real_obj);
-					var own_properties = [];
-					Object.keys (descriptors).forEach (k => {
-						var new_obj;
-						var prop_desc = descriptors [k];
-						if (typeof prop_desc.value == "object") {
-							// convert `{value: { type='object', ... }}`
-							// to      `{ name: 'foo', value: { type='object', ... }}
-							new_obj = Object.assign ({ name: k}, prop_desc);
-						} else {
-							// This is needed for values that were not added by us,
-							// thus are like { value: 5 }
-							// instead of    { value: { type = 'number', value: 5 }}
-							//
-							// This can happen, for eg., when `length` gets added for arrays
-							// or `__proto__`.
-							new_obj = {
-								name: k,
-								// merge/add `type` and `description` to `d.value`
-								value: Object.assign ({ type: (typeof prop_desc.value), description: '' + prop_desc.value },
-														prop_desc)
-							};
-						}
-
-						own_properties.push (new_obj);
-					});
-
-					return { __value_as_json_string__: JSON.stringify (own_properties) };
-				}
+				case "cfo_res":
+					return this._get_cfo_res_details (objectId, args);
 
 				default:
 					throw new Error(`Unknown object id format: ${objectId}`);
@@ -391,39 +410,83 @@ var MonoSupportLib = {
 				delete this._cache_call_function_res[objectId];
 		},
 
+		_invoke_getter_on_object: function (objectId, name) {
+			if (!this.mono_wasm_invoke_getter_on_object)
+				this.mono_wasm_invoke_getter_on_object = Module.cwrap ("mono_wasm_invoke_getter_on_object", 'void', [ 'number', 'string' ]);
+
+			if (objectId < 0) {
+				// invalid id
+				return [];
+			}
+
+			this.mono_wasm_invoke_getter_on_object (objectId, name);
+			var getter_res = MONO._post_process_details (MONO.var_info);
+
+			MONO.var_info = [];
+			return getter_res [0];
+		},
+
+		_create_proxy_from_object_id: function (objectId) {
+			var details = this.mono_wasm_get_details(objectId);
+
+			if (this._is_object_id_array (objectId))
+				return details.map (p => p.value);
+
+			var objIdParts = objectId.split (':');
+			var objIdNum = -1;
+			if (objectId.startsWith ("dotnet:object:"))
+				objIdNum = objIdParts [2];
+
+			var proxy = {};
+			Object.keys (details).forEach (p => {
+				var prop = details [p];
+				if (prop.get !== undefined) {
+					// TODO: `set`
+
+					// We don't add a `get` for non-object types right now,
+					// so, we shouldn't get here with objIdNum==-1
+					Object.defineProperty (proxy,
+							prop.name,
+							{ get () { return MONO._invoke_getter_on_object (objIdNum, prop.name); } }
+					);
+				} else {
+					proxy [prop.name] = prop.value;
+				}
+			});
+
+			return proxy;
+		},
+
 		mono_wasm_call_function_on: function (request) {
+			if (request.arguments != undefined && !Array.isArray (request.arguments))
+				throw new Error (`"arguments" should be an array, but was ${request.arguments}`);
+
 			var objId = request.objectId;
 			var proxy;
 
 			if (objId in this._call_function_res_cache) {
 				proxy = this._call_function_res_cache [objId];
 			} else if (!objId.startsWith ('dotnet:cfo_res:')) {
-				var details = this.mono_wasm_get_details(objId);
-				var target_is_array = this._is_object_id_array (objId);
-				proxy = target_is_array ? [] : {};
-
-				Object.keys(details).forEach(p => {
-					var prop = details[p];
-					if (target_is_array) {
-						proxy.push(prop.value);
-					} else {
-						if (prop.name != undefined)
-							proxy [prop.name] = prop.value;
-						else // when can this happen??
-							proxy[''+p] = prop.value;
-					}
-				});
+				proxy = this._create_proxy_from_object_id (objId);
 			}
 
-			var fn_args = request.arguments != undefined ? request.arguments.map(a => a.value) : [];
+			var fn_args = request.arguments != undefined ? request.arguments.map(a => JSON.stringify(a.value)) : [];
 			var fn_eval_str = `var fn = ${request.functionDeclaration}; fn.call (proxy, ...[${fn_args}]);`;
 
 			var fn_res = eval (fn_eval_str);
-			if (request.returnByValue)
+			if (fn_res == undefined) // should we just return undefined?
+				throw Error ('Function returned undefined result');
+
+			// primitive type
+			if (Object (fn_res) !== fn_res)
 				return fn_res;
 
-			if (fn_res == undefined)
-				throw Error ('Function returned undefined result');
+			// return .value, if it is a primitive type
+			if (fn_res.value !== undefined && Object (fn_res.value.value) !== fn_res.value.value)
+				return fn_res.value;
+
+			if (request.returnByValue)
+				return {type: "object", value: fn_res};
 
 			var fn_res_id = this._cache_call_function_res (fn_res);
 			if (Object.getPrototypeOf (fn_res) == Array.prototype) {
@@ -674,16 +737,31 @@ var MonoSupportLib = {
 			});
 		},
 
-		_mono_wasm_add_getter_var: function(className) {
+		_mono_wasm_add_getter_var: function(className, invokable) {
 			fixed_class_name = MONO._mono_csharp_fixup_class_name (className);
-			var value = `${fixed_class_name} { get; }`;
-			MONO.var_info.push({
-				value: {
-					type: "symbol",
-					value: value,
-					description: value
-				}
-			});
+			if (invokable != 0) {
+				var name;
+				if (MONO.var_info.length > 0)
+					name = MONO.var_info [MONO.var_info.length - 1].name;
+				name = (name === undefined) ? "" : name;
+
+				MONO.var_info.push({
+					get: {
+						className: "Function",
+						description: `get ${name} () {}`,
+						type: "function",
+					}
+				});
+			} else {
+				var value = `${fixed_class_name} { get; }`;
+				MONO.var_info.push({
+					value: {
+						type: "symbol",
+						description: value,
+						value: value,
+					}
+				});
+			}
 		},
 
 		_mono_wasm_add_array_var: function(className, objectId, length) {
@@ -744,7 +822,7 @@ var MonoSupportLib = {
 				break;
 
 			case "getter":
-				MONO._mono_wasm_add_getter_var (str_value);
+				MONO._mono_wasm_add_getter_var (str_value, value);
 				break;
 
 			case "array":
