@@ -5,6 +5,8 @@ using Newtonsoft.Json.Linq;
 using Xunit;
 using WebAssembly.Net.Debugging;
 
+[assembly: CollectionBehavior (CollectionBehavior.CollectionPerAssembly)]
+
 namespace DebuggerTests
 {
 
