@@ -1290,16 +1290,9 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 			break;
 #endif
 		case MONO_TYPE_R4:
-#if SIZEOF_VOID_P == 8
 		case MONO_TYPE_R8:
-#endif
 			margs->flen++;
 			break;
-#if SIZEOF_VOID_P == 4
-		case MONO_TYPE_R8:
-			margs->flen += 2;
-			break;
-#endif
 		default:
 			g_error ("build_args_from_sig: not implemented yet (1): 0x%x\n", ptype);
 		}
