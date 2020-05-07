@@ -13,10 +13,11 @@ WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.so
 endif
 
 $(TOP)/sdks/builds/toolchains/emsdk:
-	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
+	git clone https://github.com/emscripten-core/emsdk.git $(EMSCRIPTEN_SDK_DIR)
+	cd toolchains/emsdk && git checkout $(EMSCRIPTEN_VERSION)
 
 .stamp-wasm-checkout-and-update-emsdk: | $(EMSCRIPTEN_SDK_DIR)
-	cd $(TOP)/sdks/builds/toolchains/emsdk && git reset --hard && git clean -xdff && git pull
+	cd $(TOP)/sdks/builds/toolchains/emsdk && git reset --hard && git clean -xdff && git fetch origin && git checkout $(EMSCRIPTEN_VERSION)
 	touch $@
 
 #This is a weird rule to workaround the circularity of the next rule.
