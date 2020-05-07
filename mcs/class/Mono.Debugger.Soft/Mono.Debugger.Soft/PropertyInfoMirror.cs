@@ -19,7 +19,7 @@ namespace Mono.Debugger.Soft
 		CustomAttributeDataMirror[] cattrs;
 #if ENABLE_CECIL		
 		C.PropertyDefinition meta;
-#endif		
+#endif
 
 		public PropertyInfoMirror (TypeMirror parent, long id, string name, MethodMirror get_method, MethodMirror set_method, PropertyAttributes attrs) : base (parent.VirtualMachine, id) {
 			this.parent = parent;
@@ -130,7 +130,7 @@ namespace Mono.Debugger.Soft
 #if ENABLE_CECIL
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
-#endif				
+#endif
 
 			// FIXME: Handle inherit
 			if (cattrs == null) {

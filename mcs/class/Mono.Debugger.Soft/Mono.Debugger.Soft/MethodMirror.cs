@@ -19,7 +19,7 @@ namespace Mono.Debugger.Soft
 		DebugInfo debug_info;
 #if ENABLE_CECIL		
 		C.MethodDefinition meta;
-#endif		
+#endif
 		CustomAttributeDataMirror[] cattrs;
 		ParameterInfoMirror[] param_info;
 		ParameterInfoMirror ret_param;
@@ -433,7 +433,7 @@ namespace Mono.Debugger.Soft
 				return meta;
 			}
 		}
-#endif		
+#endif
 
 		//
 		// Evaluate the method on the client using an IL interpreter.

@@ -30,9 +30,9 @@ namespace Mono.Debugger.Soft
 		TypeMirror[] type_args;
 		bool cached_base_type;
 		bool inited;
-#if ENABLE_CECIL		
+#if ENABLE_CECIL
 		C.TypeDefinition meta;
-#endif		
+#endif
 
 		internal const BindingFlags DefaultBindingFlags =
 		BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -626,7 +626,7 @@ namespace Mono.Debugger.Soft
 				return meta;
 			}
 		}
-#endif		
+#endif
 
 		TypeInfo GetInfo () {
 			if (info == null)
