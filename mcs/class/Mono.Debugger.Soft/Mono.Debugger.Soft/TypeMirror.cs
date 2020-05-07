@@ -709,7 +709,7 @@ namespace Mono.Debugger.Soft
 
 		void AppendCustomAttrs (IList<CustomAttributeDataMirror> attrs, TypeMirror type, bool inherit)
 		{
-#ifdef ENABLE_CECIL
+#if ENABLE_CECIL
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
 #endif
