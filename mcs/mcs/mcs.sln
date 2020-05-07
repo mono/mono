@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mcs", "mcs.csproj", "{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}"
 EndProject
 Global
@@ -10,14 +12,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Debug - AST|Any CPU.ActiveCfg = Debug - AST|Any CPU
-		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Debug - AST|Any CPU.Build.0 = Debug - AST|Any CPU
-		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Debug - AST|Any CPU.ActiveCfg = Release|net_4_x
+		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Debug - AST|Any CPU.Build.0 = Release|net_4_x
+		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Debug|Any CPU.ActiveCfg = Debug|net_4_x
+		{D4A01C5B-A1B5-48F5-BB5B-D2E1BD236E56}.Release|Any CPU.ActiveCfg = Release|net_4_x
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83E8A2AD-34EC-4FE4-8631-78C36975710C}
 	EndGlobalSection
 EndGlobal
