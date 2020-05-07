@@ -377,7 +377,7 @@ Simple.Dependency.dll: dependency.cs $(WASM_FRAMEWORK)/.stamp-framework
 sample.dll: Simple.Dependency.dll sample.cs $(WASM_FRAMEWORK)/.stamp-framework tests/debugger/*.cs
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /unsafe $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) sample.cs tests/debugger/*.cs
 
-debugger-test.dll: tests/debugger/*.cs
+debugger-test.dll: tests/debugger/*.cs Simple.Dependency.dll
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll /unsafe tests/debugger/*.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
