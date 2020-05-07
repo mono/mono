@@ -186,13 +186,14 @@ namespace WebAssembly.Net.Debugging {
 					var bpid = resp.Value["breakpointId"]?.ToString ();
 					var locations = resp.Value["locations"]?.Values<object>();
 					var request = BreakpointRequest.Parse (bpid, args);
-					context.BreakpointRequests[bpid] = request;
+
 					if (await IsRuntimeAlreadyReadyAlready (id, token)) {
 						var store = await RuntimeReady (id, token);
 
 						Log ("verbose", $"BP req {args}");
 						await SetBreakpoint (id, store, request, false, token);
 					}
+					context.BreakpointRequests [bpid] = request;
 
 					var result = Result.OkFromObject (request.AsSetBreakpointByUrlResponse (locations));
 					SendResponse (id, result, token);
