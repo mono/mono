@@ -159,7 +159,7 @@ namespace Mono.Debugger.Soft
 				case OperandType.ShortInlineArg :
 					instr.Operand = br.ReadByte ();
 					break;
-#endif					
+#endif
 				case OperandType.InlineSig :
 					br.ReadInt32 ();
 					//instr.Operand = GetCallSiteAt (br.ReadInt32 (), context);
@@ -174,7 +174,7 @@ namespace Mono.Debugger.Soft
 				case OperandType.InlineArg :
 					instr.Operand = br.ReadInt16 ();
 					break;
-#endif					
+#endif
 				case OperandType.InlineI8 :
 					instr.Operand = br.ReadInt64 ();
 					break;
