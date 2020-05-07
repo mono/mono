@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
+
+#if ENABLE_CECIL
 using C = Mono.Cecil;
 using Mono.Cecil.Metadata;
+#endif
 
 namespace Mono.Debugger.Soft
 {
@@ -14,7 +17,9 @@ namespace Mono.Debugger.Soft
 		TypeMirror type;
 		FieldAttributes attrs;
 		CustomAttributeDataMirror[] cattrs;
+#if ENABLE_CECIL		
 		C.FieldDefinition meta;
+#endif		
 		bool inited;
 		int len_fixed_size_array;
 
@@ -191,6 +196,7 @@ namespace Mono.Debugger.Soft
 			return GetCAttrs (attributeType, inherit);
 		}
 
+#if ENABLE_CECIL
 		public C.FieldDefinition Metadata {		
 			get {
 				if (parent.Metadata == null)
@@ -208,11 +214,13 @@ namespace Mono.Debugger.Soft
 				return meta;
 			}
 		}
+#endif
 
 		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+#if ENABLE_CECIL			
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
-
+#endif
 			// FIXME: Handle inherit
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetFieldCustomAttributes (DeclaringType.Id, id, 0, false);
