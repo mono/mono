@@ -191,7 +191,7 @@ namespace WebAssembly.Net.Debugging {
 						var store = await RuntimeReady (id, token);
 
 						Log ("verbose", $"BP req {args}");
-						await SetBreakpoint (id, store, request, token);
+						await SetBreakpoint (id, store, request, false, token);
 					}
 
 					var result = Result.OkFromObject (request.AsSetBreakpointByUrlResponse (locations));
@@ -709,7 +709,7 @@ namespace WebAssembly.Net.Debugging {
 
 					foreach (var req in context.BreakpointRequests.Values) {
 						if (req.TryResolve (source)) {
-							await SetBreakpoint (sessionId, context.store, req, token);
+							await SetBreakpoint (sessionId, context.store, req, true, token);
 						}
 					}
 				}
@@ -759,7 +759,7 @@ namespace WebAssembly.Net.Debugging {
 			breakpointRequest.Locations.Clear ();
 		}
 
-		async Task SetBreakpoint (SessionId sessionId, DebugStore store, BreakpointRequest req, CancellationToken token)
+		async Task SetBreakpoint (SessionId sessionId, DebugStore store, BreakpointRequest req, bool sendResolvedEvent, CancellationToken token)
 		{
 			var context = GetContext (sessionId);
 			if (req.Locations.Any ()) {
@@ -796,7 +796,8 @@ namespace WebAssembly.Net.Debugging {
 					location = loc.AsLocation ()
 				};
 
-				SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolvedLocation), token);
+				if (sendResolvedEvent)
+						SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolvedLocation), token);
 			}
 
 			req.Locations.AddRange (breakpoints);
