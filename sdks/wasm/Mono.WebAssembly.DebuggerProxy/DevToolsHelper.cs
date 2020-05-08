@@ -274,6 +274,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public List<Frame> CallStack { get; set; }
 
+		public string[] LoadedFiles { get; set; }
 		internal DebugStore store;
 		public TaskCompletionSource<DebugStore> Source { get; } = new TaskCompletionSource<DebugStore> ();
 

@@ -45,8 +45,24 @@ namespace WebAssembly.Net.Debugging {
 			case "Runtime.consoleAPICalled": {
 					var type = args["type"]?.ToString ();
 					if (type == "debug") {
-						if (args["args"]?[0]?["value"]?.ToString () == MonoConstants.RUNTIME_IS_READY && args["args"]?[1]?["value"]?.ToString () == "fe00e07a-5519-4dfe-b35a-f867dbaf2e28")
+						var a = args ["args"];
+						if (a? [0]? ["value"]?.ToString () == MonoConstants.RUNTIME_IS_READY &&
+							a? [1]? ["value"]?.ToString () == "fe00e07a-5519-4dfe-b35a-f867dbaf2e28") {
+							if (a.Count () > 2) {
+								try {
+									// The optional 3rd argument is the stringified assembly
+									// list so that we don't have to make more round trips
+									var context = GetContext (sessionId);
+									var loaded = a? [2]? ["value"]?.ToString ();
+									if (loaded != null)
+										context.LoadedFiles = JToken.Parse (loaded).ToObject<string []> ();
+								} catch (InvalidCastException ice) {
+									Log ("verbose", ice.ToString ());
+								}
+							}
 							await RuntimeReady (sessionId, token);
+						}
+
 					}
 					break;
 				}
@@ -106,6 +122,9 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task<bool> IsRuntimeAlreadyReadyAlready (SessionId sessionId, CancellationToken token)
 		{
+			if (contexts.TryGetValue (sessionId, out var context) && context.IsRuntimeReady)
+				return true;
+
 			var res = await SendMonoCommand (sessionId, MonoCommands.IsRuntimeReady (), token);
 			return res.Value? ["result"]? ["value"]?.Value<bool> () ?? false;
 		}
@@ -697,11 +716,14 @@ namespace WebAssembly.Net.Debugging {
 				return await context.Source.Task;
 
 			try {
-				var loaded_pdbs = await SendMonoCommand (sessionId, MonoCommands.GetLoadedFiles(), token);
-				var the_value = loaded_pdbs.Value? ["result"]? ["value"];
-				var the_pdbs = the_value?.ToObject<string[]> ();
+				var loaded_files = context.LoadedFiles;
 
-				await foreach (var source in context.store.Load(sessionId, the_pdbs, token).WithCancellation (token)) {
+				if (loaded_files == null) {
+					var loaded = await SendMonoCommand (sessionId, MonoCommands.GetLoadedFiles (), token);
+					loaded_files = loaded.Value? ["result"]? ["value"]?.ToObject<string []> ();
+				}
+
+				await foreach (var source in context.store.Load(sessionId, loaded_files, token).WithCancellation (token)) {
 					var scriptSource = JObject.FromObject (source.ToScriptSource (context.Id, context.AuxData));
 					Log ("verbose", $"\tsending {source.Url} {context.Id} {sessionId.sessionId}");
 
