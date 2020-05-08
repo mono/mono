@@ -30,7 +30,7 @@ namespace Mono.Debugger.Soft
 		TypeMirror[] type_args;
 		bool cached_base_type;
 		bool inited;
-		
+
 #if ENABLE_CECIL
 		C.TypeDefinition meta;
 #endif
