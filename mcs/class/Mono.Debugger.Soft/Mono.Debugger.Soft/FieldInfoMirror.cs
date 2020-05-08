@@ -217,10 +217,12 @@ namespace Mono.Debugger.Soft
 #endif
 
 		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
-#if ENABLE_CECIL			
+
+#if ENABLE_CECIL
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
 #endif
+
 			// FIXME: Handle inherit
 			if (cattrs == null) {
 				CattrInfo[] info = vm.conn.Type_GetFieldCustomAttributes (DeclaringType.Id, id, 0, false);

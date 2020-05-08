@@ -11,7 +11,6 @@ using Mono.Cecil.Cil;
 using Mono.Cecil.Metadata;
 #endif
 
-
 namespace Mono.Debugger.Soft
 {
 	public class MethodBodyMirror : Mirror
@@ -88,7 +87,6 @@ namespace Mono.Debugger.Soft
 			if (!opcodes_inited) {
 				foreach (FieldInfo fi in typeof (OpCodes).GetFields (BindingFlags.Static|BindingFlags.Public)) {
 					var val = (OpCode)fi.GetValue (null);
-
 					bool isOneByteOpCode;
 					uint index;
 
@@ -104,7 +102,6 @@ namespace Mono.Debugger.Soft
 						OneByteOpCode [index] = val;
 					else
 						TwoBytesOpCode [index] = val;
-
 				}
 				opcodes_inited = true;
 			}

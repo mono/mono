@@ -17,7 +17,7 @@ namespace Mono.Debugger.Soft
 		PropertyAttributes attrs;
 		MethodMirror get_method, set_method;
 		CustomAttributeDataMirror[] cattrs;
-#if ENABLE_CECIL		
+#if ENABLE_CECIL
 		C.PropertyDefinition meta;
 #endif
 
@@ -127,6 +127,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+			
 #if ENABLE_CECIL
 			if (cattrs == null && Metadata != null && !Metadata.HasCustomAttributes)
 				cattrs = new CustomAttributeDataMirror [0];
