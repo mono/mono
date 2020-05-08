@@ -187,16 +187,30 @@ namespace WebAssembly.Net.Debugging {
 					var locations = resp.Value["locations"]?.Values<object>();
 					var request = BreakpointRequest.Parse (bpid, args);
 
+					// is the store done loading?
+					var loaded = context.Source.Task.IsCompleted;
+					if (!loaded) {
+						// Send and empty response immediately if not
+						// and register the breakpoint for resolution
+						context.BreakpointRequests [bpid] = request;
+						SendResponse (id, resp, token);
+					}
+
 					if (await IsRuntimeAlreadyReadyAlready (id, token)) {
 						var store = await RuntimeReady (id, token);
 
 						Log ("verbose", $"BP req {args}");
-						await SetBreakpoint (id, store, request, false, token);
+						await SetBreakpoint (id, store, request, !loaded, token);
 					}
-					context.BreakpointRequests [bpid] = request;
 
-					var result = Result.OkFromObject (request.AsSetBreakpointByUrlResponse (locations));
-					SendResponse (id, result, token);
+					if (loaded) {
+						// we were already loaded so we should send a response
+						// with the locations included and register the request
+						context.BreakpointRequests [bpid] = request;
+						var result = Result.OkFromObject (request.AsSetBreakpointByUrlResponse (locations));
+						SendResponse (id, result, token);
+
+					}
 					return true;
 				}
 
@@ -798,7 +812,7 @@ namespace WebAssembly.Net.Debugging {
 				};
 
 				if (sendResolvedEvent)
-						SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolvedLocation), token);
+					SendEvent (sessionId, "Debugger.breakpointResolved", JObject.FromObject (resolvedLocation), token);
 			}
 
 			req.Locations.AddRange (breakpoints);
