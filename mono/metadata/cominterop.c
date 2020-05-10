@@ -150,6 +150,7 @@ static GENERATE_GET_CLASS_WITH_CACHE (interface_type_attribute, "System.Runtime.
 static GENERATE_GET_CLASS_WITH_CACHE (guid_attribute, "System.Runtime.InteropServices", "GuidAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (com_visible_attribute, "System.Runtime.InteropServices", "ComVisibleAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (com_default_interface_attribute, "System.Runtime.InteropServices", "ComDefaultInterfaceAttribute")
+static GENERATE_GET_CLASS_WITH_CACHE (class_interface_attribute, "System.Runtime.InteropServices", "ClassInterfaceAttribute")
 
 /* Upon creation of a CCW, only allocate a weak handle and set the
  * reference count to 0. If the unmanaged client code decides to addref and
@@ -2078,6 +2079,46 @@ cominterop_get_ccw_default_mspec (const MonoType *param_type)
 	return result;
 }
 
+static MonoClass*
+cominterop_get_default_iface (MonoClass *klass)
+{
+	if (mono_class_is_interface (klass))
+		return klass;
+
+	ERROR_DECL (error);
+	MonoCustomAttrInfo *cinfo = mono_custom_attrs_from_class_checked (klass, error);
+	mono_error_assert_ok (error);
+
+	if (!cinfo)
+		return mono_class_get_idispatch_class ();
+
+	MonoClassInterfaceAttribute *class_attr = (MonoClassInterfaceAttribute *)mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_class_interface_attribute_class (), error);
+	MonoClass *ret;
+
+	if (class_attr)
+	{
+		if (class_attr->intType == 0) {
+			ret = mono_defaults.object_class;
+			for (guint16 i = 0; i < m_class_get_interface_count (klass); i++) {
+				MonoClass *iface = m_class_get_interfaces (klass) [i];
+				if (cominterop_com_visible (iface)) {
+					ret = iface;
+					break;
+				}
+			}
+		}
+		else if (class_attr->intType == 1)
+			ret = mono_class_get_idispatch_class ();
+		else
+			ret = klass;
+	} else
+		ret = mono_class_get_idispatch_class ();
+
+	if (!cinfo->cached)
+		mono_custom_attrs_free (cinfo);
+	return ret;
+}
+
 /**
  * cominterop_get_ccw_checked:
  * @object: a pointer to the object
@@ -2166,7 +2207,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 			mono_custom_attrs_free (cinfo);
 	}
 
-	iface = itf;
+	iface = cominterop_get_default_iface(itf);
 	if (iface == mono_class_get_iunknown_class ()) {
 		start_slot = 3;
 	}
