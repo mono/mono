@@ -2119,6 +2119,76 @@ cominterop_get_default_iface (MonoClass *klass)
 	return ret;
 }
 
+static gpointer
+cominterop_get_ccw_method (MonoClass *iface, MonoMethod *method, MonoError *error)
+{
+	int param_index = 0;
+	MonoMethodBuilder *mb;
+	MonoMarshalSpec ** mspecs;
+	MonoMethod *wrapper_method, *adjust_method;
+	MonoMethodSignature* sig_adjusted;
+	MonoMethodSignature* sig = mono_method_signature_internal (method);
+	gboolean const preserve_sig = (method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG) != 0;
+	EmitMarshalContext m;
+
+	mb = mono_mb_new (iface, method->name, MONO_WRAPPER_NATIVE_TO_MANAGED);
+	adjust_method = cominterop_get_managed_wrapper_adjusted (method);
+	sig_adjusted = mono_method_signature_internal (adjust_method);
+
+	mspecs = g_new (MonoMarshalSpec*, sig_adjusted->param_count + 1);
+	mono_method_get_marshal_info (method, mspecs);
+
+	/* move managed args up one */
+	for (param_index = sig->param_count; param_index >= 1; param_index--) {
+		int mspec_index = param_index+1;
+		mspecs [mspec_index] = mspecs [param_index];
+
+		if (mspecs[mspec_index] == NULL) {
+			mspecs[mspec_index] = cominterop_get_ccw_default_mspec (sig_adjusted->params[param_index]);
+		} else {
+			/* increase SizeParamIndex since we've added a param */
+			if (sig_adjusted->params[param_index]->type == MONO_TYPE_ARRAY ||
+			    sig_adjusted->params[param_index]->type == MONO_TYPE_SZARRAY)
+				if (mspecs[mspec_index]->data.array_data.param_num != -1)
+					mspecs[mspec_index]->data.array_data.param_num++;
+		}
+	}
+
+	/* first arg is IntPtr for interface */
+	mspecs [1] = NULL;
+
+	/* move return spec to last param */
+	if (!preserve_sig && !MONO_TYPE_IS_VOID (sig->ret)) {
+		if (mspecs [0] == NULL)
+			mspecs[0] = cominterop_get_ccw_default_mspec (sig_adjusted->params[sig_adjusted->param_count-1]);
+
+		mspecs [sig_adjusted->param_count] = mspecs [0];
+		mspecs [0] = NULL;
+	}
+
+#ifndef DISABLE_JIT
+	/* skip visiblity since we call internal methods */
+	mb->skip_visibility = TRUE;
+#endif
+
+	cominterop_setup_marshal_context (&m, adjust_method);
+	m.mb = mb;
+	mono_marshal_emit_managed_wrapper (mb, sig_adjusted, mspecs, &m, adjust_method, 0);
+	mono_cominterop_lock ();
+	wrapper_method = mono_mb_create_method (mb, m.csig, m.csig->param_count + 16);
+	mono_cominterop_unlock ();
+
+	gpointer ret = mono_compile_method_checked (wrapper_method, error);
+
+	mono_mb_free (mb);
+	for (param_index = sig_adjusted->param_count; param_index >= 0; param_index--)
+		if (mspecs [param_index])
+			mono_metadata_free_marshal_spec (mspecs [param_index]);
+	g_free (mspecs);
+
+	return ret;
+}
+
 /**
  * cominterop_get_ccw_checked:
  * @object: a pointer to the object
@@ -2137,7 +2207,6 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 	MonoCCWInterface* ccw_entry = NULL;
 	gpointer *vtable = NULL;
 	MonoClass* iface = NULL;
-	EmitMarshalContext m;
 	int start_slot = 3;
 	int method_count = 0;
 	GList *ccw_list, *ccw_list_item;
@@ -2241,71 +2310,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 			mono_class_setup_methods (iface);
 
 		for (i = method_count - 1; i >= 0; i--) {
-			int param_index = 0;
-			MonoMethodBuilder *mb;
-			MonoMarshalSpec ** mspecs;
-			MonoMethod *wrapper_method, *adjust_method;
-			MonoMethod *method = m_class_get_methods (iface) [i];
-			MonoMethodSignature* sig_adjusted;
-			MonoMethodSignature* sig = mono_method_signature_internal (method);
-			gboolean const preserve_sig = (method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG) != 0;
-
-			mb = mono_mb_new (iface, method->name, MONO_WRAPPER_NATIVE_TO_MANAGED);
-			adjust_method = cominterop_get_managed_wrapper_adjusted (method);
-			sig_adjusted = mono_method_signature_internal (adjust_method);
-			
-			mspecs = g_new (MonoMarshalSpec*, sig_adjusted->param_count + 1);
-			mono_method_get_marshal_info (method, mspecs);
-
-			
-			/* move managed args up one */
-			for (param_index = sig->param_count; param_index >= 1; param_index--) {
-				int mspec_index = param_index+1;
-				mspecs [mspec_index] = mspecs [param_index];
-
-				if (mspecs[mspec_index] == NULL) {
-					mspecs[mspec_index] = cominterop_get_ccw_default_mspec (sig_adjusted->params[param_index]);
-				} else {
-					/* increase SizeParamIndex since we've added a param */
-					if (sig_adjusted->params[param_index]->type == MONO_TYPE_ARRAY ||
-					    sig_adjusted->params[param_index]->type == MONO_TYPE_SZARRAY)
-						if (mspecs[mspec_index]->data.array_data.param_num != -1)
-							mspecs[mspec_index]->data.array_data.param_num++;
-				}
-			}
-
-			/* first arg is IntPtr for interface */
-			mspecs [1] = NULL;
-
-			/* move return spec to last param */
-			if (!preserve_sig && !MONO_TYPE_IS_VOID (sig->ret)) {
-				if (mspecs [0] == NULL)
-					mspecs[0] = cominterop_get_ccw_default_mspec (sig_adjusted->params[sig_adjusted->param_count-1]);
-
-				mspecs [sig_adjusted->param_count] = mspecs [0];
-				mspecs [0] = NULL;
-			}
-
-#ifndef DISABLE_JIT
-			/* skip visiblity since we call internal methods */
-			mb->skip_visibility = TRUE;
-#endif
-
-			cominterop_setup_marshal_context (&m, adjust_method);
-			m.mb = mb;
-			mono_marshal_emit_managed_wrapper (mb, sig_adjusted, mspecs, &m, adjust_method, 0);
-			mono_cominterop_lock ();
-			wrapper_method = mono_mb_create_method (mb, m.csig, m.csig->param_count + 16);
-			mono_cominterop_unlock ();
-
-			vtable [vtable_index--] = mono_compile_method_checked (wrapper_method, error);
-
-			// cleanup, then error out if compile_method failed
-			mono_mb_free (mb);
-			for (param_index = sig_adjusted->param_count; param_index >= 0; param_index--)
-				if (mspecs [param_index])
-					mono_metadata_free_marshal_spec (mspecs [param_index]);
-			g_free (mspecs);
+			vtable [vtable_index--] = cominterop_get_ccw_method (iface, m_class_get_methods (iface) [i], error);
 			return_val_if_nok (error, NULL);
 		}
 
