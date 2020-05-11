@@ -141,6 +141,7 @@ var MonoSupportLib = {
 			return final_var_list;
 		},
 
+		// @var_list: [ [<var_id>, <var_name>], .. ]
 		mono_wasm_get_variables: function(scope, var_list) {
 			if (!this.mono_wasm_get_var_info)
 				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", null, [ 'number', 'number', 'number']);
@@ -150,7 +151,7 @@ var MonoSupportLib = {
 			var ptr = Module._malloc(numBytes);
 			var heapBytes = new Int32Array(Module.HEAP32.buffer, ptr, numBytes);
 			for (let i=0; i<var_list.length; i++) {
-				heapBytes[i] = var_list[i]
+				heapBytes[i] = var_list[i][0]
 			}
 
 			this._async_method_objectId = 0;
@@ -164,6 +165,8 @@ var MonoSupportLib = {
 				var name = res [i].name;
 				if (name != undefined && name.indexOf ('>') > 0)
 					res [i].name = name.substring (1, name.indexOf ('>'));
+				else if (name === undefined && var_list [i] !== undefined)
+					res [i].name = var_list [i][1];
 			}
 
 			if (this._async_method_objectId != 0) {

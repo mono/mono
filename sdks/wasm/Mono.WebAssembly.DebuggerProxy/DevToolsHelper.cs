@@ -190,8 +190,11 @@ namespace WebAssembly.Net.Debugging {
 		public static MonoCommands GetDetails (DotnetObjectId objectId, JToken args = null)
 			=> new MonoCommands ($"MONO.mono_wasm_get_details ('{objectId}', {(args ?? "{}")})");
 
-		public static MonoCommands GetScopeVariables (int scopeId, params int[] vars)
-			=> new MonoCommands ($"MONO.mono_wasm_get_variables({scopeId}, [ {string.Join (",", vars)} ])");
+		public static MonoCommands GetScopeVariables (int scopeId, params VarInfo[] vars)
+		{
+			var var_ids = vars.Select (v => $"[{v.Index}, '{v.Name}']").ToArray ();
+			return new MonoCommands ($"MONO.mono_wasm_get_variables({scopeId}, [ {string.Join (",", var_ids)} ])");
+		}
 
 		public static MonoCommands SetBreakpoint (string assemblyName, uint methodToken, int ilOffset)
 			=> new MonoCommands ($"MONO.mono_wasm_set_breakpoint (\"{assemblyName}\", {methodToken}, {ilOffset})");
