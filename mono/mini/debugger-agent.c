@@ -5095,7 +5095,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 		if (!found_sp)
 			no_seq_points_found (frame.method, frame.native_offset);
 		if (!found_sp) {
-			DEBUG_PRINTF (1, "Could not finf next sequence point.\n");
+			DEBUG_PRINTF (1, "Could not find next sequence point.\n");
 			return ERR_INVALID_ARGUMENT;
 		}
 
@@ -5143,7 +5143,7 @@ ss_create_init_args (SingleStepReq *ss_req, SingleStepArgs *args)
 				if (!found_sp)
 					no_seq_points_found (frame->de.method, frame->de.native_offset);
 				if (!found_sp) {
-					DEBUG_PRINTF (1, "Could not finf next sequence point.\n");
+					DEBUG_PRINTF (1, "Could not find next sequence point.\n");
 					return ERR_INVALID_ARGUMENT;
 				}
 				method = frame->de.method;
