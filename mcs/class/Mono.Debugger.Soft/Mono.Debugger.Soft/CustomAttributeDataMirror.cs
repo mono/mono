@@ -5,10 +5,6 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
 
-#if ENABLE_CECIL
-using Mono.Cecil.Metadata;
-#endif
-
 namespace Mono.Debugger.Soft {
 
 	public sealed class CustomAttributeDataMirror {
@@ -144,6 +140,7 @@ namespace Mono.Debugger.Soft {
 				}
 				res [i] = new CustomAttributeDataMirror (ctor, ctor_args, named_args.ToArray ());
 			}
+			
 			return res;
 		}
 	}

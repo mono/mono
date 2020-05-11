@@ -5,7 +5,6 @@ using System.Reflection;
 
 #if ENABLE_CECIL
 using C = Mono.Cecil;
-using Mono.Cecil.Metadata;
 #endif
 
 namespace Mono.Debugger.Soft
@@ -17,11 +16,12 @@ namespace Mono.Debugger.Soft
 		TypeMirror type;
 		FieldAttributes attrs;
 		CustomAttributeDataMirror[] cattrs;
-#if ENABLE_CECIL		
-		C.FieldDefinition meta;
-#endif		
 		bool inited;
 		int len_fixed_size_array;
+
+#if ENABLE_CECIL
+		C.FieldDefinition meta;
+#endif
 
 		public FieldInfoMirror (TypeMirror parent, long id, string name, TypeMirror type, FieldAttributes attrs) : base (parent.VirtualMachine, id) {
 			this.parent = parent;

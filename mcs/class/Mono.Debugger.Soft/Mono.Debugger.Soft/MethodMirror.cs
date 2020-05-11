@@ -6,7 +6,6 @@ using System.Reflection;
 
 #if ENABLE_CECIL
 using C = Mono.Cecil;
-using Mono.Cecil.Metadata;
 #endif
 
 namespace Mono.Debugger.Soft
@@ -17,9 +16,6 @@ namespace Mono.Debugger.Soft
 		MethodInfo info;
 		TypeMirror declaring_type;
 		DebugInfo debug_info;
-#if ENABLE_CECIL		
-		C.MethodDefinition meta;
-#endif
 		CustomAttributeDataMirror[] cattrs;
 		ParameterInfoMirror[] param_info;
 		ParameterInfoMirror ret_param;
@@ -29,6 +25,10 @@ namespace Mono.Debugger.Soft
 		MethodBodyMirror body;
 		MethodMirror gmd;
 		TypeMirror[] type_args;
+
+#if ENABLE_CECIL		
+		C.MethodDefinition meta;
+#endif
 
 		internal MethodMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}

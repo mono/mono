@@ -5,7 +5,6 @@ using System.Reflection;
 
 #if ENABLE_CECIL
 using C = Mono.Cecil;
-using Mono.Cecil.Metadata;
 #endif
 
 namespace Mono.Debugger.Soft
@@ -17,6 +16,7 @@ namespace Mono.Debugger.Soft
 		PropertyAttributes attrs;
 		MethodMirror get_method, set_method;
 		CustomAttributeDataMirror[] cattrs;
+		
 #if ENABLE_CECIL
 		C.PropertyDefinition meta;
 #endif

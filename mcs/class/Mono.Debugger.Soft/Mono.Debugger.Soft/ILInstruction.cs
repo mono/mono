@@ -6,7 +6,6 @@ using System.Reflection;
 
 #if ENABLE_CECIL
 using Mono.Cecil.Cil;
-using Mono.Cecil.Metadata;
 #else
 using System.Reflection.Emit;
 #endif
