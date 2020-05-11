@@ -26,7 +26,7 @@ namespace Mono.Debugger.Soft
 		MethodMirror gmd;
 		TypeMirror[] type_args;
 
-#if ENABLE_CECIL		
+#if ENABLE_CECIL
 		C.MethodDefinition meta;
 #endif
 

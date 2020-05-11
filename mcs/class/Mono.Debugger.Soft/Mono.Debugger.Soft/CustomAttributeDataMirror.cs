@@ -140,7 +140,7 @@ namespace Mono.Debugger.Soft {
 				}
 				res [i] = new CustomAttributeDataMirror (ctor, ctor_args, named_args.ToArray ());
 			}
-			
+
 			return res;
 		}
 	}
