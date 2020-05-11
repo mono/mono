@@ -4589,7 +4589,7 @@ get_object_id_for_debugger_method (MonoClass* async_builder_class)
 	ERROR_DECL (error);
 	GPtrArray *array = mono_class_get_methods_by_name (async_builder_class, "get_ObjectIdForDebugger", 0x24, 1, FALSE, error);
 	mono_error_assert_ok (error);
-	if (array->len == 0) {
+	if (array->len != 1) {
 		g_ptr_array_free (array, TRUE);
 		return NULL;
 	}
@@ -4732,8 +4732,8 @@ get_notify_debugger_of_wait_completion_method (void)
 	MonoClass* task_class = mono_class_load_from_name (mono_defaults.corlib, "System.Threading.Tasks", "Task");
 	GPtrArray* array = mono_class_get_methods_by_name (task_class, "NotifyDebuggerOfWaitCompletion", 0x24, 1, FALSE, error);
 	mono_error_assert_ok (error);
-	if (array->len == 1)
-		notify_debugger_of_wait_completion_method_cache = (MonoMethod *)g_ptr_array_index (array, 0);
+	g_assert (array->len == 1);
+	notify_debugger_of_wait_completion_method_cache = (MonoMethod *)g_ptr_array_index (array, 0);
 	g_ptr_array_free (array, TRUE);
 	return notify_debugger_of_wait_completion_method_cache;
 }
