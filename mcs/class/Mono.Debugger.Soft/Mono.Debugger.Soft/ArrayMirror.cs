@@ -92,6 +92,14 @@ namespace Mono.Debugger.Soft
 			vm.conn.Array_SetValues (id, index, vm.EncodeValues (values));
 		}
 
+		public void SetByteValues (byte [] bytes)
+		{
+			if (bytes != null && bytes.Length != Length) {
+				throw new IndexOutOfRangeException ();
+			}
+			vm.conn.ByteArray_SetValues (id, bytes);
+		}
+
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new SimpleEnumerator (this);
