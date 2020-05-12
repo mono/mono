@@ -372,7 +372,7 @@ namespace WebAssembly.Net.Debugging {
 				var value_json_str = res.Value ["result"]?["value"]?["__value_as_json_string__"]?.Value<string> ();
 				if (value_json_str != null) {
 					res = Result.OkFromObject (new {
-							result = JArray.Parse (value_json_str.Replace (@"\""", "\""))
+							result = JArray.Parse (value_json_str)
 					});
 				} else {
 					res = Result.OkFromObject (new { result = new {} });

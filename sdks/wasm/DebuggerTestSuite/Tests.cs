@@ -1311,38 +1311,6 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (false)]
 		[InlineData (true)]
-		public async Task InspectLocalsWithPointers (bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-test.cs", 294, 2,
-				"PointersTest",
-				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] Math:PointersTest'); })",
-				use_cfo: use_cfo,
-				wait_for_event_fn: async (pause_location) => {
-					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
-
-					var dt = new DateTime (5, 6, 7, 8, 9, 10);
-					await CheckProps (locals, new {
-						ivalue0        = TNumber    (5),
-						ivalue1        = TNumber    (10),
-						ip             = TPointer   ("int*"),
-						ip_null        = TPointer   ("int*", is_null: true),
-						ipp            = TPointer   ("int**"),
-
-						ipa            = TArray     ("int*[]", 3),
-						cvalue0        = TSymbol    ("113 'q'"),
-						cp             = TPointer   ("char*"),
-						dt             = TValueType ("System.DateTime", dt.ToString ()),
-						vp             = TPointer   ("void*"),
-						vp_null        = TPointer   ("void*", is_null: true),
-						dtp            = TPointer   ("System.DateTime*"),
-						dtp_null       = TPointer   ("System.DateTime*", is_null: true)
-					}, "locals");
-
-				});
-
-		[Theory]
-		[InlineData (false)]
-		[InlineData (true)]
 		public async Task InspectLocalsForStructInstanceMethod (bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-array-test.cs", 236, 3,
@@ -1376,8 +1344,6 @@ namespace DebuggerTests
 							label: "this#0");
 
 				});
-		//
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
-
 }
