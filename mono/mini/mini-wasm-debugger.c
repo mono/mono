@@ -983,7 +983,6 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 	MonoProperty *p;
 	MonoMethodSignature *sig;
 	gpointer iter = NULL;
-	ERROR_DECL (error);
 	gboolean is_valuetype;
 	int pnum;
 	char *klass_name;
@@ -1026,9 +1025,6 @@ describe_object_properties_for_klass (void *obj, MonoClass *klass, gboolean isAs
 	pnum = 0;
 	while ((p = mono_class_get_properties (klass, &iter))) {
 		if (p->get->name) { //if get doesn't have name means that doesn't have a getter implemented and we don't want to show value, like VS debug
-			MonoObject *res;
-			MonoObject *exc;
-
 			if (isAsyncLocalThis && (p->name[0] != '<' || (p->name[0] == '<' &&  p->name[1] == '>')))
 				continue;
 
