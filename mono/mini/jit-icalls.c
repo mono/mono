@@ -67,6 +67,7 @@ ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 {
 	ERROR_DECL (error);
 	MonoMethod *res;
+	gpointer addr;
 
 	if (obj == NULL) {
 		mono_error_set_null_reference (error);
@@ -93,8 +94,29 @@ ldvirtfn_internal (MonoObject *obj, MonoMethod *method, gboolean gshared)
 	}
 
 	/* An rgctx wrapper is added by the trampolines no need to do it here */
+	gboolean need_unbox = m_class_is_valuetype (res->klass) && !m_class_is_valuetype (method->klass);
+	if (need_unbox && !mono_use_interpreter) {
+		/*
+		 * We can't return a jump trampoline here, because the trampoline code
+		 * can't determine whenever to add an unbox trampoline (ldvirtftn) or
+		 * not (ldftn). So compile the method here.
+		 */
+		addr = mono_compile_method_checked (res, error);
+		if (!is_ok (error)) {
+			mono_error_set_pending_exception (error);
+			return NULL;
+		}
+		
+		if (mono_llvm_only && mono_method_needs_static_rgctx_invoke (res, FALSE))
+			// FIXME:
+			g_assert_not_reached ();
 
-	return mono_ldftn (res);
+		addr = mini_add_method_trampoline (res, addr, mono_method_needs_static_rgctx_invoke (res, FALSE), TRUE);
+	} else {
+		addr = mono_ldftn (res);
+	}
+
+	return addr;
 }
 
 void*
