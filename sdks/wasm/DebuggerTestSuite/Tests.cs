@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using WebAssembly.Net.Debugging;
+using Microsoft.Extensions.Logging;
 
 [assembly: CollectionBehavior (CollectionBehavior.CollectionPerAssembly)]
 
@@ -1376,6 +1378,73 @@ namespace DebuggerTests
 							label: "this#0");
 
 				});
+
+		[Fact]
+		public async Task SetBreakpointBeforeInspectorReady () {
+			var insp = new Inspector ();
+
+			var scripts = SubscribeToScripts (insp);
+			await Ready (); 
+
+			using (var cts = new CancellationTokenSource()) {
+				cts.CancelAfter (60 * 1000);
+				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
+				using var loggerFactory = LoggerFactory.Create(
+					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
+					await client.Connect (uri, insp.OnMessage, async token => {
+						Task[] init_cmds = {
+							client.SendCommand ("Profiler.enable", null, token),
+							client.SendCommand ("Runtime.enable", null, token),
+							client.SendCommand ("Debugger.enable", null, token),
+							client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token),
+							insp.WaitFor ("ready"),
+						};
+
+						Console.WriteLine("waiting for the debugger to be ready");
+						await init_cmds [2];
+						ctx = new DebugTestContext (client, insp, token, scripts);
+						var bp1_req = JObject.FromObject(new { lineNumber = 5, columnNumber = 2, url ="dotnet://debugger-test.dll/debugger-test.cs",});
+						var bp1_res = await ctx.cli.SendCommand("Debugger.setBreakpointByUrl", bp1_req, ctx.token);
+						Assert.True (true ? bp1_res.IsOk : bp1_res.IsErr);
+						
+						var loc = bp1_res.Value["locations"]?.Value<JArray> ();
+						Assert.Equal(0, loc.Count);
+						Assert.Equal(0, scripts.Keys.Count);
+						Console.WriteLine("SCRIPT KEYS " + scripts.Keys.Count);
+						Console.WriteLine(bp1_res);
+						
+						//after Ready
+						await init_cmds[4];
+						Console.WriteLine("SCRIPT KEYS " + scripts.Keys.Count);
+						
+						// Check that scripts have been loaded   
+						Assert.True(scripts.Keys.Count > 0);
+						
+						var bp2_res = await SetBreakpoint("dotnet://debugger-test.dll/debugger-test.cs", 5, 2);
+						Console.WriteLine(bp2_res);
+						
+												
+					}, cts.Token);
+					await client.Close (cts.Token);
+				}
+			}
+		}
+
+		[Fact]
+		public async Task SetBreakpointAfterInspectorReady () {
+			var insp = new Inspector ();
+
+			var scripts = SubscribeToScripts (insp);
+			await Ready (); 
+			await insp.Ready (async(cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+
+				var bp1_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2);
+				Console.WriteLine(bp1_res);
+			});
+		}
+
 		//
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
