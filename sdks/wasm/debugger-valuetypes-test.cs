@@ -176,6 +176,37 @@ namespace DebuggerTests {
 			Console.WriteLine ($"MethodWithArgumentsForToStringTest: {dt0}, {dt1}, {ts}, {dec}, {guid}, {dts[0]}, {obj.DT}, {sst.DT}");
 		}
 
+		public static void MethodUpdatingValueTypeMembers ()
+		{
+			var obj = new ClassForToStringTests {
+				DT = new DateTime (1, 2, 3, 4, 5, 6)
+			};
+			var vt = new StructForToStringTests {
+				DT = new DateTime (4, 5, 6, 7, 8, 9)
+			};
+			Console.WriteLine ($"#1");
+			obj.DT = new DateTime (9, 8, 7, 6, 5, 4);
+			vt.DT = new DateTime  (5, 1, 3, 7, 9, 10);
+			Console.WriteLine ($"#2");
+		}
+
+		public static async Task MethodUpdatingValueTypeLocalsAsync ()
+		{
+			var dt = new DateTime (1, 2, 3, 4, 5, 6);
+			Console.WriteLine ($"#1");
+			dt = new DateTime (9, 8, 7, 6, 5, 4);
+			Console.WriteLine ($"#2");
+		}
+
+		public static void MethodUpdatingVTArrayMembers ()
+		{
+			var ssta = new [] {
+				new StructForToStringTests { DT = new DateTime (1, 2, 3, 4, 5, 6) }
+			};
+			Console.WriteLine ($"#1");
+			ssta [0].DT = new DateTime (9, 8, 7, 6, 5, 4);
+			Console.WriteLine ($"#2");
+		}
 	}
 
 	class ClassForToStringTests

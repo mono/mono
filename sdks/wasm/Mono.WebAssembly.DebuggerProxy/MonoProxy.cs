@@ -523,11 +523,11 @@ namespace WebAssembly.Net.Debugging {
 				await RuntimeReady (sessionId, token);
 		}
 
-		async Task OnResume (MessageId msd_id, CancellationToken token)
+		async Task OnResume (MessageId msg_id, CancellationToken token)
 		{
 			//discard managed frames
-			GetContext (msd_id).ClearState ();
-			await Task.CompletedTask;
+			GetContext (msg_id).ClearState ();
+			await SendMonoCommand (msg_id, MonoCommands.Resume (), token);
 		}
 
 		async Task<bool> Step (MessageId msg_id, StepKind kind, CancellationToken token)
