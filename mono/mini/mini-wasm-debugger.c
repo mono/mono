@@ -812,7 +812,7 @@ static gboolean describe_value(MonoType * type, gpointer addr, gboolean expandVa
 			char *descr = g_strdup_printf ("(%s) %p", class_name, val);
 
 			EM_ASM ({
-				MONO.mono_wasm_add_typed_value ('pointer', $0, { value_addr: $1, klass_addr: $2 });
+				MONO.mono_wasm_add_typed_value ('pointer', $0, { ptr_addr: $1, klass_addr: $2 });
 			}, descr, val ? addr : 0, val ? mono_class_from_mono_type_internal (type) : 0);
 
 			g_free (descr);
@@ -1293,12 +1293,8 @@ mono_wasm_get_deref_ptr_value (void *value_addr, MonoClass *klass)
 		return;
 	}
 
-	if (!value_addr)
-		return;
-
-	gpointer val = *(gpointer**) value_addr;
 	mono_wasm_add_properties_var ("deref", -1);
-	describe_value (type->data.type, val, TRUE);
+	describe_value (type->data.type, value_addr, TRUE);
 }
 
 //FIXME this doesn't support getting the return value pseudo-var

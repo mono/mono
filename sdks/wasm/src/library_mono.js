@@ -434,10 +434,11 @@ var MonoSupportLib = {
 				this.mono_wasm_get_deref_ptr_value_info = Module.cwrap("mono_wasm_get_deref_ptr_value", null, ['number', 'number']);
 
 			var ptr_args = this._get_ptr_args (objectId);
-			if (ptr_args.value_addr == 0 || ptr_args.klass_addr == 0)
-				throw new Error (`Both value_addr and klass_addr need to be non-zero, to dereference a pointer. objectId: ${objectId}`);
+			if (ptr_args.ptr_addr == 0 || ptr_args.klass_addr == 0)
+				throw new Error (`Both ptr_addr and klass_addr need to be non-zero, to dereference a pointer. objectId: ${objectId}`);
 
-			this.mono_wasm_get_deref_ptr_value_info (ptr_args.value_addr, ptr_args.klass_addr);
+			var value_addr = new Uint32Array (Module.HEAPU8.buffer, ptr_args.ptr_addr, 1) [0];
+			this.mono_wasm_get_deref_ptr_value_info (value_addr, ptr_args.klass_addr);
 
 			var res = MONO._fixup_name_value_objects(this.var_info);
 			if (res.length > 0) {
@@ -926,7 +927,7 @@ var MonoSupportLib = {
 
 			case "pointer": {
 				var fixed_value_str = MONO._mono_csharp_fixup_class_name (str_value);
-				if (value.klass_addr == 0 || value.value_addr == 0 || fixed_value_str.startsWith ('(void*')) {
+				if (value.klass_addr == 0 || value.ptr_addr == 0 || fixed_value_str.startsWith ('(void*')) {
 					// null or void*, which we can't deref
 					MONO.var_info.push({
 						value: {
