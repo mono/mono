@@ -525,9 +525,14 @@ namespace WebAssembly.Net.Debugging {
 
 		async Task OnResume (MessageId msg_id, CancellationToken token)
 		{
+			var ctx = GetContext (msg_id);
+			if (ctx.CallStack != null) {
+				// Stopped on managed code
+				await SendMonoCommand (msg_id, MonoCommands.Resume (), token);
+			}
+
 			//discard managed frames
 			GetContext (msg_id).ClearState ();
-			await SendMonoCommand (msg_id, MonoCommands.Resume (), token);
 		}
 
 		async Task<bool> Step (MessageId msg_id, StepKind kind, CancellationToken token)
