@@ -17,7 +17,7 @@ namespace WebAssembly.Net.Debugging {
 		HashSet<SessionId> sessions = new HashSet<SessionId> ();
 		Dictionary<SessionId, ExecutionContext> contexts = new Dictionary<SessionId, ExecutionContext> ();
 
-		public MonoProxy (ILoggerFactory loggerFactory, bool hideWebDriver = true) : base(loggerFactory) { this.hideWebDriver = hideWebDriver; }
+		public MonoProxy (ILoggerFactory loggerFactory, bool hideWebDriver = true) : base(loggerFactory) { this.HideWebDriver = hideWebDriver; }
 
 		// see https://github.com/mono/mono/issues/19549 for background
 		public bool HideWebDriver { get; set; } = true;
