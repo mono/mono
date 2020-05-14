@@ -192,12 +192,12 @@ namespace System.Net {
 			return false;
 		}
 
-		internal void FinishInitialization ()
+		internal bool FinishInitialization ()
 		{
 			string host = UserHostName;
 			if (version > HttpVersion.Version10 && (host == null || host.Length == 0)) {
 				context.ErrorMessage = "Invalid host name";
-				return;
+				return true;
 			}
 
 			string path;
@@ -223,7 +223,7 @@ namespace System.Net {
 
 			if (!Uri.TryCreate (base_uri + path, UriKind.Absolute, out url)){
 				context.ErrorMessage = WebUtility.HtmlEncode ("Invalid url: " + base_uri + path);
-				return;
+				return true;
 			}
 
 			CreateQueryString (url.Query);
@@ -239,7 +239,7 @@ namespace System.Net {
 				// 'identity' is not valid!
 				if (t_encoding != null && !is_chunked) {
 					context.Connection.SendError (null, 501);
-					return;
+					return false;
 				}
 			}
 
@@ -247,7 +247,7 @@ namespace System.Net {
 				if (String.Compare (method, "POST", StringComparison.OrdinalIgnoreCase) == 0 ||
 				    String.Compare (method, "PUT", StringComparison.OrdinalIgnoreCase) == 0) {
 					context.Connection.SendError (null, 411);
-					return;
+					return false;
 				}
 			}
 
@@ -255,6 +255,8 @@ namespace System.Net {
 				ResponseStream output = context.Connection.GetResponseStream ();
 				output.InternalWrite (_100continue, 0, _100continue.Length);
 			}
+
+			return true;
 		}
 
 		internal static string Unquote (String str) {

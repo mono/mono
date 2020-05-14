@@ -199,7 +199,6 @@ var MonoSupportLib = {
 				this.mono_wasm_get_array_values_info = Module.cwrap ("mono_wasm_get_array_values", null, [ 'number' ]);
 
 			this.var_info = [];
-			console.log (">> mono_wasm_get_array_values " + objId);
 			this.mono_wasm_get_array_values_info (objId);
 
 			var res = MONO._fixup_name_value_objects (this.var_info);
@@ -392,7 +391,7 @@ var MonoSupportLib = {
 				delete this._cache_call_function_res[objectId];
 		},
 
-		mono_wasm_call_function_on: function (request, returnByValue) {
+		mono_wasm_call_function_on: function (request) {
 			var objId = request.objectId;
 			var proxy;
 
@@ -420,7 +419,7 @@ var MonoSupportLib = {
 			var fn_eval_str = `var fn = ${request.functionDeclaration}; fn.call (proxy, ...[${fn_args}]);`;
 
 			var fn_res = eval (fn_eval_str);
-			if (returnByValue)
+			if (request.returnByValue)
 				return fn_res;
 
 			if (fn_res == undefined)
@@ -454,7 +453,7 @@ var MonoSupportLib = {
 		mono_wasm_runtime_ready: function () {
 			this.mono_wasm_runtime_is_ready = true;
 			// DO NOT REMOVE - magic debugger init function
-			console.debug ("mono_wasm_runtime_ready", "fe00e07a-5519-4dfe-b35a-f867dbaf2e28");
+			console.debug ("mono_wasm_runtime_ready", "fe00e07a-5519-4dfe-b35a-f867dbaf2e28", JSON.stringify (this.loaded_files));
 
 			this._next_value_type_id_var = 0;
 			this._value_types_cache = {};
@@ -943,11 +942,14 @@ var MonoSupportLib = {
 		}
 	},
 
-	mono_wasm_add_frame: function(il, method, name) {
+	mono_wasm_add_frame: function(il, method, assembly_name, method_full_name) {
+		var parts = Module.UTF8ToString (method_full_name).split (":", 2);
 		MONO.active_frames.push( {
 			il_pos: il,
 			method_token: method,
-			assembly_name: Module.UTF8ToString (name)
+			assembly_name: Module.UTF8ToString (assembly_name),
+			// Extract just the method name from `{class_name}:{method_name}`
+			method_name: parts [parts.length - 1]
 		});
 	},
 

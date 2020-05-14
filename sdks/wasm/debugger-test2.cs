@@ -15,4 +15,30 @@ public class Misc { //Only append content to this class as the test suite depend
 public class Fancy {
 	public int Foo;
 	public int Bar { get ; set; }
+	public static void Types () {
+		double dPI = System.Math.PI;
+		float  fPI = (float)System.Math.PI;
+
+		int iMax = int.MaxValue;
+		int iMin = int.MinValue;
+		uint uiMax = uint.MaxValue;
+		uint uiMin = uint.MinValue;
+
+		long l = uiMax * (long)2;
+		long lMax = long.MaxValue; // cannot be represented as double
+		long lMin = long.MinValue; // cannot be represented as double
+
+		sbyte sbMax = sbyte.MaxValue;
+		sbyte sbMin = sbyte.MinValue;
+		byte bMax = byte.MaxValue;
+		byte bMin = byte.MinValue;
+
+		short sMax = short.MaxValue;
+		short sMin = short.MinValue;
+		ushort usMin = ushort.MinValue;
+		ushort usMax = ushort.MaxValue;
+
+		var d = usMin + usMax;
+	}
 }
+

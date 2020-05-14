@@ -237,8 +237,12 @@ namespace System.Net {
 			}
 
 			if (ProcessInput (ms)) {
-				if (!context.HaveError)
-					context.Request.FinishInitialization ();
+				if (!context.HaveError) {
+					if (!context.Request.FinishInitialization()) {
+						Close (true);
+						return;
+					}
+				}
 
 				if (context.HaveError) {
 					SendError ();

@@ -5,6 +5,12 @@ include $(TOP)/sdks/paths.mk
 
 all: build
 
+# Required by emscripten:
+# https://github.com/emscripten-core/emscripten/issues/10551
+# PYTHONUTF8 requires python 3.7, so set LC_ALL as well
+export PYTHONUTF8=1
+export LC_ALL=C.UTF-8
+
 MAKEFLAGS += --no-builtin-rules
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
@@ -251,11 +257,11 @@ endif
 # Use rsync to avoid rebuilds
 # FIXME: 'bin' contains only libmono.a and not the other libs
 runtime-netcore:
-	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset mono -c release -arch wasm -os WebAssembly
-	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset Libs.Native -c release -arch wasm -os WebAssembly
-	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/bin/mono/WebAssembly.wasm.Release/{System.Private.CoreLib.dll,System.Private.CoreLib.pdb} $(TOP)/sdks/out/wasm-runtime-netcore-release
-	$(RSYNC) -r $(DOTNET_REPO_PATH)/artifacts/obj/mono/WebAssembly.wasm.Release/out/* $(TOP)/sdks/out/wasm-runtime-netcore-release
-	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/obj/native/netcoreapp5.0-WebAssembly-Release-wasm/{System.Native/libSystem.Native.a,System.IO.Compression.Native/libSystem.IO.Compression.Native.a} $(TOP)/sdks/out/wasm-runtime-netcore-release/lib/
+	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset mono -c release -arch wasm -os Browser
+	cd $(DOTNET_REPO_PATH) && EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) ./build.sh --subset Libs.Native -c release -arch wasm -os Browser
+	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/bin/mono/Browser.wasm.Release/{System.Private.CoreLib.dll,System.Private.CoreLib.pdb} $(TOP)/sdks/out/wasm-runtime-netcore-release
+	$(RSYNC) -r $(DOTNET_REPO_PATH)/artifacts/obj/mono/Browser.wasm.Release/out/* $(TOP)/sdks/out/wasm-runtime-netcore-release
+	$(RSYNC) $(DOTNET_REPO_PATH)/artifacts/obj/native/netcoreapp5.0-Browser-Release-wasm/{System.Native/libSystem.Native.a,System.IO.Compression.Native/libSystem.IO.Compression.Native.a} $(TOP)/sdks/out/wasm-runtime-netcore-release/lib/
 	touch .stamp-runtime-netcore
 
 # The no-op build of this takes around 10s so use a .stamp gate
@@ -404,8 +410,8 @@ Simple.Dependency.dll: dependency.cs $(WASM_FRAMEWORK)/.stamp-framework
 sample.dll: Simple.Dependency.dll sample.cs $(WASM_FRAMEWORK)/.stamp-framework debugger-valuetypes-test.cs debugger-array-test.cs
 	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:Simple.Dependency.dll /unsafe $(BCL_DEPS) $(WASM_FRAMEWORK_DEPS) sample.cs debugger-valuetypes-test.cs debugger-array-test.cs
 
-debugger-test.dll: debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs Simple.Dependency.dll debugger-array-test.cs debugger-evaluate-test.cs
-	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll /unsafe debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs debugger-array-test.cs debugger-evaluate-test.cs
+debugger-test.dll: debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs Simple.Dependency.dll debugger-array-test.cs debugger-evaluate-test.cs debugger-datetime-test.cs
+	$(CSC) $(CSC_FLAGS) /target:library -out:$@ /r:$(WASM_BCL_DIR)/mscorlib.dll /r:Simple.Dependency.dll /unsafe debugger-test.cs debugger-test2.cs debugger-valuetypes-test.cs debugger-array-test.cs debugger-evaluate-test.cs debugger-datetime-test.cs
 
 OPTIONS_CS = $(TOP)/mcs/class/Mono.Options/Mono.Options/Options.cs
 

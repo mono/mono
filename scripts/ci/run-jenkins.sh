@@ -322,7 +322,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'osx-amd64'* ]]; then
             echo "ENABLE_WINDOWS=1" >> sdks/Make.config
-            echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
+            #echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
         fi
 
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
@@ -358,7 +358,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm run-debugger-tests
             ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
             ${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
-            ${TESTCMD} --label=browser-dynamic --timeout=20m $gnumake -C sdks/wasm run-browser-dynamic-tests
+            #${TESTCMD} --label=browser-dynamic --timeout=20m $gnumake -C sdks/wasm run-browser-dynamic-tests
             if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
                 ${TESTCMD} --label=browser-safari --timeout=20m $gnumake -C sdks/wasm run-browser-safari-tests            
             fi

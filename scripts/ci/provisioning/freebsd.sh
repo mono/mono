@@ -75,7 +75,7 @@ fi
 # for compatibility with the mono build scripts, ideally shouldn't be necessary
 ln -s /usr/local/bin/bash /bin/bash
 # fix for gen-descriptor-tests.py
-if ! $(env python3) ; then
+if ! command -v python3 ; then
   if [ -f /usr/local/bin/python3.7 ]; then
     ln -s /usr/local/bin/python3.7 /usr/local/bin/python3
   elif [ -f /usr/local/bin/python3.6 ]; then
