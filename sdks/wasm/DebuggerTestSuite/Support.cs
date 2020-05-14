@@ -714,11 +714,23 @@ namespace DebuggerTests
 			return bp1_res;
 		}
 
-		internal async Task<Result> SetBreakpointInMethod (string assembly, string type, string method) {
-			var req = JObject.FromObject (new { assemblyName = assembly, typeName = type, methodName = method });
+		internal async Task<Result> SetBreakpointInMethod (string assembly, string type, string method, int lineOffset = 0, int col = 0) {
+			var req = JObject.FromObject (new { assemblyName = assembly, typeName = type, methodName = method, lineOffset = lineOffset });
 
 			// Protocol extension
-			var res = await ctx.cli.SendCommand ("Dotnet-test.setBreakpointByMethod", req, ctx.token);
+			var res = await ctx.cli.SendCommand ("DotnetDebugger.getMethodLocation", req, ctx.token);
+			Assert.True (res.IsOk);
+
+			var m_url = res.Value ["result"]["url"].Value<string> ();
+			var m_line = res.Value ["result"]["line"].Value<int> ();
+
+			var bp1_req = JObject.FromObject(new {
+				lineNumber = m_line + lineOffset,
+				columnNumber = col,
+				url = m_url
+			});
+
+			res = await ctx.cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, ctx.token);
 			Assert.True (res.IsOk);
 
 			return res;

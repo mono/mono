@@ -25,7 +25,7 @@ namespace DebuggerTests
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-datetime-test.cs";
 
-				await SetBreakpoint (debugger_test_loc, 20, 3);
+				await SetBreakpointInMethod ("debugger-test", "DebuggerTests.DateTimeTest", "LocaleTest", 15);
 				
 				var pause_location = await EvaluateAndCheck (
 					"window.setTimeout(function() { invoke_static_method ('[debugger-test] DebuggerTests.DateTimeTest:LocaleTest'," 
