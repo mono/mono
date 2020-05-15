@@ -38,7 +38,6 @@ system(
 	"--skipmonomake=$skipMonoMake",
 	"--artifact=1",
 	"--artifactscommon=1",
-	"--buildusandboo=0",
 	"--forcedefaultbuilddeps=1",
 	"--stevedorebuilddeps=$stevedoreBuildDeps",
 	"--jobs=$cpus",

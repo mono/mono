@@ -14,7 +14,6 @@ my $buildsroot = "$monoroot/builds";
 
 my $artifact=0;
 my $artifactsCommon=0;
-my $buildUsAndBoo=0;
 
 my @thisScriptArgs = ();
 my @passAlongArgs = ();
@@ -23,9 +22,9 @@ foreach my $arg (@ARGV)
 	# Filter out --clean if someone uses it.  We have to clean since we are doing two builds
 	if (not $arg =~ /^--clean=/)
 	{
-		# We don't need common artifacts, us, and boo, from both, so filter out temporarily and we'll
+		# We don't need common artifacts from both, so filter out temporarily and we'll
 		# only pass it to the second build
-		if ($arg =~ /^--artifactscommon=/ || $arg =~ /^--buildusandboo=/)
+		if ($arg =~ /^--artifactscommon=/)
 		{
 			push @thisScriptArgs, $arg;
 		}
@@ -48,7 +47,6 @@ print(">>> Pass Along Args = @passAlongArgs\n");
 GetOptions(
 	'artifact=i'=>\$artifact,
 	'artifactscommon=i'=>\$artifactsCommon,
-	'buildusandboo=i'=>\$buildUsAndBoo,
 );
 
 print(">>> Building x86_64\n");

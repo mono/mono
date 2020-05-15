@@ -15,7 +15,7 @@ TXT_RESOURCE_STRINGS = ../referencesource/System.Runtime.Serialization/System.Ru
 
 XTEST_LIB_REFS = System System.Core System.Xml System.Xml.Linq Facades/System.Threading.Tasks
 
-ifneq (,$(filter build net_4_x, $(PROFILE)))
+ifneq (,$(filter build net_4_x unityjit, $(PROFILE)))
 XTEST_LIB_REFS += System.Drawing
 endif
 

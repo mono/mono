@@ -40,7 +40,6 @@ my $artifact=0;
 my $debug=0;
 my $disableMcs=0;
 my $mcsOnly=0;
-my $buildUsAndBoo=0;
 my $artifactsCommon=0;
 my $artifactsRuntime=1;
 my $runRuntimeTests=1;
@@ -91,7 +90,6 @@ GetOptions(
 	'debug=i'=>\$debug,
 	'disablemcs=i'=>\$disableMcs,
 	'mcsonly=i'=>\$mcsOnly,
-	'buildusandboo=i'=>\$buildUsAndBoo,
 	'runtimetests=i'=>\$runRuntimeTests,
 	'classlibtests=i'=>\$runClasslibTests,
 	'arch32=i'=>\$arch32,
@@ -1405,23 +1403,13 @@ if ($build)
 		foreach my $hostPlatform(@hostPlatforms)
 		{
 			print(">>> Making host platform : $hostPlatform\n");
-			system("make", "-j$jobs", "SKIP_AOT=1", "HOST_PLATFORM=$hostPlatform") eq 0 or die ("Failed to make $hostPlatform host platform in mcs\n");
+			system("make", "-j$jobs", "HOST_PLATFORM=$hostPlatform") eq 0 or die ("Failed to make $hostPlatform host platform in mcs\n");
 
-			my $hostPlatformDestDir = "$monoprefix/lib/mono/net_4_x-$hostPlatform";
-			print(">>> Copying $hostPlatform to $hostPlatformDestDir directory\n");
-
-			print(">>> Cleaning $hostPlatformDestDir\n");
-			system("rm -rf $hostPlatformDestDir");
-
-			system("mkdir -p $hostPlatformDestDir") eq 0 or die("failed to make directory $hostPlatformDestDir\n");
-			system("mkdir -p $hostPlatformDestDir/Facades") eq 0 or die("failed to make directory $hostPlatformDestDir/Facades\n");
-
-			system("cp $monoroot/mcs/class/lib/net_4_x-$hostPlatform/*.dll $hostPlatformDestDir") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/net_4_x-$hostPlatform to $hostPlatformDestDir\n");
-			system("cp $monoroot/mcs/class/lib/net_4_x-$hostPlatform/Facades/*.dll $hostPlatformDestDir/Facades") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/net_4_x-$hostPlatform/Facades to $hostPlatformDestDir/Facades\n");
+			CopyProfile("unityjit-$hostPlatform");
+			CopyProfile("net_4_x-$hostPlatform");
 		}
 
-			system("cp -R $monoprefix/lib/mono/4.5 $monoprefix/lib/mono/unityjit") eq 0 or die("Failed copying unityjit\n");
-			system("cp -R $monoprefix/lib/mono/4.5 $monoprefix/lib/mono/unityaot") eq 0 or die("Failed copying unityaot\n");
+		CopyProfile("unityaot");
 
 		chdir("$monoroot");
 
@@ -1436,29 +1424,6 @@ if ($build)
 else
 {
 	print(">>> Skipping build\n");
-}
-
-if ($buildUsAndBoo)
-{
-	print(">>> Building Unity Script and Boo...\n");
-	if($windowsSubsystemForLinux)
-	{
-		#boo scripts expect a bin-platform folder, but we haven't built them that way
-		system("ln -s $monoprefix/bin $monoprefix/bin-linux64");
-		system("ln -s $monoprefix/bin $monoprefix/bin-linux32");
-	}
-
-	system(@commandPrefix, ("perl", "$buildscriptsdir/build_us_and_boo.pl", "--monoprefix=$monoprefix")) eq 0 or die ("Failed building Unity Script and Boo\n");
-
-	print(">>> Copying Unity Script and Boo *.Lang.dll's from 4.5 profile to unityjit profile...\n");
-	system("cp $monoprefix/lib/mono/4.5/Boo*.dll $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying Boo*.dll\n");
-	system("cp $monoprefix/lib/mono/4.5/UnityScript*.dll $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying UnityScript*.dll\n");
-	system("cp $monoprefix/lib/mono/4.5/booc.exe $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying booc.exe\n");
-	system("cp $monoprefix/lib/mono/4.5/us.exe $monoprefix/lib/mono/unityjit/.") eq 0 or die("Failed copying us.exe\n");
-}
-else
-{
-	print(">>> Skipping build Unity Script and Boo\n");
 }
 
 if ($artifact)
@@ -1496,15 +1461,6 @@ if ($artifact)
 
 		system("cp -R $externalBuildDeps/reference-assemblies/unity $distdirlibmono/unity");
  		system("cp -R $externalBuildDeps/reference-assemblies/unity_web $distdirlibmono/unity_web");
-
- 		system("cp -R $externalBuildDeps/reference-assemblies/unity/Boo*.dll $distdirlibmono/2.0-api");
- 		system("cp -R $externalBuildDeps/reference-assemblies/unity/UnityScript*.dll $distdirlibmono/2.0-api");
-
- 		system("cp -R $externalBuildDeps/reference-assemblies/unity/Boo*.dll $distdirlibmono/4.0-api");
- 		system("cp -R $externalBuildDeps/reference-assemblies/unity/UnityScript*.dll $distdirlibmono/4.0-api");
-
-		system("cp -R $externalBuildDeps/reference-assemblies/unity/Boo*.dll $distdirlibmono/4.5-api");
-		system("cp -R $externalBuildDeps/reference-assemblies/unity/UnityScript*.dll $distdirlibmono/4.5-api");
 
 		# now remove nunit from a couple places (but not all, we need some of them)
 		# linux tar is not happy these are removed(at least on wsl), so don't remove them for now
@@ -1797,3 +1753,20 @@ else
 }
 
 chdir ($currentdir);
+
+sub CopyProfile
+{
+	my ($profileName) = @_;
+
+	my $hostPlatformDestDir = "$monoprefix/lib/mono/$profileName";
+	print(">>> Copying $profileName to $hostPlatformDestDir directory\n");
+
+	print(">>> Cleaning $hostPlatformDestDir\n");
+	system("rm -rf $hostPlatformDestDir");
+
+	system("mkdir -p $hostPlatformDestDir") eq 0 or die("failed to make directory $hostPlatformDestDir\n");
+	system("mkdir -p $hostPlatformDestDir/Facades") eq 0 or die("failed to make directory $hostPlatformDestDir/Facades\n");
+
+	system("cp $monoroot/mcs/class/lib/$profileName/*.dll $hostPlatformDestDir") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName to $hostPlatformDestDir\n");
+	system("cp $monoroot/mcs/class/lib/$profileName/Facades/*.dll $hostPlatformDestDir/Facades") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName/Facades to $hostPlatformDestDir/Facades\n");
+}

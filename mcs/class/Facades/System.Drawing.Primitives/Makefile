@@ -14,7 +14,7 @@ SIGN_FLAGS = /delaysign /nowarn:1616,1699
 LIB_REFS = System
 LIB_MCS_FLAGS = $(SIGN_FLAGS) $(EXTRA_LIB_MCS_FLAGS)
 
-ifneq (,$(filter build net_4_x, $(PROFILE)))
+ifneq (,$(filter build net_4_x unityjit, $(PROFILE)))
 # drawing types are inside System.Drawing.dll
 LIB_REFS += System.Drawing
 else

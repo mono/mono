@@ -198,6 +198,9 @@ wasm_tools_dirs_parallel := \
 orbis_dirs_parallel := \
 	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))
 
+unityaot_dirs_parallel := \
+	$(filter-out Microsoft.CSharp,$(mobile_common_dirs_parallel))
+
 xammac_4_5_dirs_parallel := \
 	Mono.Security \
 	System	\
@@ -435,6 +438,12 @@ net_4_x_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
 xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
+unityjit_SUBDIRS := $(net_4_x_dirs)
+# TODO: Probably don't want ALL the net_4_x stuff here. Revisit.
+unityjit_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
+unityaot_SUBDIRS := $(mobile_common_dirs)
+unityaot_PARALLEL_SUBDIRS := $(unityaot_dirs_parallel)
+
 winaot_SUBDIRS := $(mobile_common_dirs)
 winaot_PARALLEL_SUBDIRS := $(winaot_dirs_parallel)
 
@@ -459,7 +468,7 @@ include ../build/rules.make
 
 DIST_SUBDIRS = $(testing_aot_full_dirs_parallel) $(testing_aot_hybrid_dirs_parallel) $(monotouch_dirs_parallel) $(monotouch_tools_dirs_parallel) \
 $(monodroid_dirs_parallel) $(monodroid_tools_dirs_parallel) $(xammac_dirs_parallel) $(net_4_x_dirs) $(net_4_x_parallel_dirs) \
-$(xammac_4_5_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(wasm_tools_dirs_parallel) $(xbuild_14_SUBDIRS) \
+$(xammac_4_5_dirs_parallel) $(unityaot_dirs_parallel) $(unreal_dirs_parallel) $(wasm_dirs_parallel) $(wasm_tools_dirs_parallel) $(xbuild_14_SUBDIRS) \
 $(testing_aot_full_interp_dirs_parallel) $(netcore_SUBDIRS) dlr aot-compiler reference-assemblies Facades
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,

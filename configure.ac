@@ -1297,11 +1297,13 @@ AC_ARG_WITH(testing_aot_full,    [  --with-testing_aot_full=yes,no      If you w
 AC_ARG_WITH(winaot,              [  --with-winaot=yes,no                If you want to build the Windows friendly AOT assemblies (defaults to no)], [], [with_winaot=default])
 AC_ARG_WITH(testing_winaot_interp,    [  --with-testing_winaot_interp=yes,no      If you want to build the Windows friendly AOT + Interpreter testing assemblies (defaults to no)], [], [with_testing_winaot_interp=default])
 AC_ARG_WITH(orbis,               [  --with-orbis=yes,no                 If you want to build the Orbis assemblies (defaults to no)], [], [with_orbis=default])
+AC_ARG_WITH(unityjit,            [  --with-unityjit=yes,no              If you want to build the Unity JIT friendly assemblies (defaults to no)],   [], [with_unityjit=default])
+AC_ARG_WITH(unityaot,            [  --with-unityaot=yes,no              If you want to build the Unity AOT friendly assemblies (defaults to no)],   [], [with_unityaot=default])
 AC_ARG_WITH(unreal,              [  --with-unreal=yes,no                If you want to build the Unreal assemblies (defaults to no)], [], [with_unreal=default])
 AC_ARG_WITH(wasm,                [  --with-wasm=yes,no                  If you want to build the WebAssembly (defaults to no)], [], [with_wasm=default])
 
 
-AC_ARG_WITH(runtime-preset, [  --with-runtime-preset=net_4_x,all,aot,aot_llvm,hybridaot,hybridaot_llvm,fullaot,fullaot_llvm,winaot,winaotinterp,winaot_llvm,winaotinterp_llvm,bitcode,bitcodeinterp,unreal,fullaotinterp,fullaotinterp_llvm  Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
+AC_ARG_WITH(runtime-preset, [  --with-runtime-preset=net_4_x,all,aot,aot_llvm,hybridaot,hybridaot_llvm,fullaot,fullaot_llvm,winaot,winaotinterp,winaot_llvm,winaotinterp_llvm,bitcode,bitcodeinterp,unreal,fullaotinterp,fullaotinterp_llvm,unityjit  Which default profile to build (defaults to net_4_x)],  [], [with_runtime_preset=net_4_x])
 AC_ARG_WITH(spectre-mitigation,             [  --with-spectre-mitigation=yes,no   If you want to build the runtime with compiler flags that enable Spectre mitigation (defaults to no)], [], [with_spectre_mitigation=default])
 AC_ARG_WITH(spectre-indirect-branch-choice,   [  --with-spectre-indirect-branch-choice=keep,thunk,inline,extern   Convert indirect branches to the specified kind of thunk (defaults to inline)], [], [with_spectre_indirect_branch_choice=inline])
 AC_ARG_WITH(spectre-function-return-choice, [  --with-spectre-function-return-choice=keep,thunk,inline,extern   Convert function return instructions to the specified kind of thunk (defaults to inline)], [], [with_spectre_function_return_choice=inline])
@@ -1372,6 +1374,8 @@ with_testing_aot_hybrid_default=no
 with_testing_aot_full_default=no
 with_winaot_default=no
 with_testing_winaot_interp_default=no
+with_unityjit_default=no
+with_unityaot_default=no
 with_orbis_default=no
 with_unreal_default=no
 with_wasm_default=no
@@ -1427,6 +1431,8 @@ elif test x$with_runtime_preset = xall; then
    with_xammac_default=yes
    with_winaot_default=yes
    with_testing_winaot_interp_default=yes
+   with_unityjit_default=yes
+   with_unityaot_default=yes
    with_orbis_default=yes
    with_unreal_default=yes
    with_wasm_default=yes
@@ -1595,6 +1601,25 @@ elif test x$with_runtime_preset = xwinaot_llvm; then
    AOT_BUILD_FLAGS="--runtime=mobile -O=gsharedvt --llvm --aot=full,$INVARIANT_AOT_OPTIONS"
    AOT_RUN_FLAGS="--runtime=mobile --full-aot"
    AOT_MODE="full"
+elif test x$with_runtime_preset = xunityjit; then
+   DISABLE_MCS_DOCS_default=yes
+   with_unityjit_default=yes
+   TEST_PROFILE=unityjit
+
+   mono_feature_disable_remoting='yes'
+elif test x$with_runtime_preset = xunityaot; then
+   DISABLE_MCS_DOCS_default=yes
+   with_unityaot_default=yes
+   TEST_PROFILE=unityaot
+
+   #mono_feature_disable_com='yes'
+   mono_feature_disable_remoting='yes'
+   mono_feature_disable_reflection_emit_save='yes'
+   mono_feature_disable_reflection_emit='yes'
+   mono_feature_disable_appdomains='yes'
+
+   AOT_BUILD_FLAGS="--aot=full,$INVARIANT_AOT_OPTIONS"
+   AOT_RUN_FLAGS="--full-aot"
 elif test x$with_runtime_preset = xorbis; then
    DISABLE_MCS_DOCS_default=yes
    with_orbis_default=yes
@@ -1683,6 +1708,12 @@ fi
 if test "x$with_testing_winaot_interp" = "xdefault"; then
    with_testing_winaot_interp=$with_testing_winaot_interp_default
 fi
+if test "x$with_unityjit = "xdefault"; then
+   with_unityjit=$with_unityjit_default
+fi
+if test "x$with_unityaot = "xdefault"; then
+   with_unityaot=$with_unityaot_default
+fi
 if test "x$with_orbis" = "xdefault"; then
    with_orbis=$with_orbis_default
 fi
@@ -1707,6 +1738,8 @@ AM_CONDITIONAL(INSTALL_TESTING_AOT_HYBRID, [test "x$with_testing_aot_hybrid" != 
 AM_CONDITIONAL(INSTALL_TESTING_AOT_FULL, [test "x$with_testing_aot_full" != "xno"])
 AM_CONDITIONAL(INSTALL_WINAOT, [test "x$with_winaot" != "xno"])
 AM_CONDITIONAL(INSTALL_TESTING_WINAOT_INTERP, [test "x$with_testing_winaot_interp" != "xno"])
+AM_CONDITIONAL(INSTALL_UNITYJIT, [test "x$with_unityjit" != "xno"])
+AM_CONDITIONAL(INSTALL_UNITYAOT, [test "x$with_unityaot" != "xno"])
 AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
 AM_CONDITIONAL(INSTALL_UNREAL, [test "x$with_unreal" != "xno"])
 AM_CONDITIONAL(INSTALL_WASM, [test "x$with_wasm" != "xno"])
@@ -1741,6 +1774,12 @@ if test -z "$INSTALL_WINAOT_TRUE"; then :
 fi
 if test -z "$INSTALL_TESTING_WINAOT_INTERP_TRUE"; then :
    default_profile=testing_winaot_interp
+fi
+if test -z "$INSTALL_UNITYJIT_TRUE"; then :
+   default_profile=unityjit
+fi
+if test -z "$INSTALL_UNITYAOT_TRUE"; then :
+   default_profile=unityaot
 fi
 if test -z "$INSTALL_ORBIS_TRUE"; then :
    default_profile=orbis
@@ -7218,6 +7257,8 @@ echo "
 	Xamarin.TVOS:    $with_monotouch_tv
 	Xamarin.Mac:     $with_xammac
 	Windows AOT:     $with_winaot
+	Unity JIT:       $with_unityjit
+	Unity AOT:       $with_unityaot
 	Orbis:           $with_orbis
 	Unreal:          $with_unreal
 	WebAssembly:     $with_wasm

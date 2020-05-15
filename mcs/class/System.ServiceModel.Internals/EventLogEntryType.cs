@@ -46,7 +46,7 @@ namespace System.Diagnostics {
 #else
 	public
 #endif
-	enum EventLogEntryType {{
+	enum EventLogEntryType {
 		Error = 0x01,
 		Warning = 0x02,
 		Information = 0x04,

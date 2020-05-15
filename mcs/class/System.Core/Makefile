@@ -34,7 +34,7 @@ endif
 ifndef NO_SRE
 LIB_MCS_FLAGS += -d:FEATURE_COMPILE,FEATURE_COMPILE_TO_METHODBUILDER
 else
-	MANAGED_INTERP := $(filter orbis winaot monotouch monotouch_tv monotouch_watch, $(PROFILE))
+	MANAGED_INTERP := $(filter orbis unityaot winaot monotouch monotouch_tv monotouch_watch, $(PROFILE))
 	ifdef MANAGED_INTERP
 	LIB_MCS_FLAGS += -d:NO_FEATURE_STATIC_DELEGATE,FEATURE_MAKE_RUN_METHODS
 	else

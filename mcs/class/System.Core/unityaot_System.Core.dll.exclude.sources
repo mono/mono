@@ -1,0 +1,3 @@
+../../../external/corefx/src/System.Net.Sockets/src/System/Net/Sockets/UnixDomainSocketEndPoint.Unix.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetDomainSocketSizes.cs
+../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
