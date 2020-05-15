@@ -8,8 +8,6 @@ using WebAssembly.Net.Debugging;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
-
 
 [assembly: CollectionBehavior (CollectionBehavior.CollectionPerAssembly)]
 
@@ -1387,9 +1385,8 @@ namespace DebuggerTests
 		public async Task SetBreakpointBeforeInspectorReady () {
 			var insp = new Inspector ();
 			insp.On("Debugger.breakpointResolved", async (args, c) => { 
-							Console.WriteLine ("BREAKPOINT RESOLVED");
-							events.Add ("breakpointResolved");
-						});
+				events.Add ("breakpointResolved");
+			});
 			
 			var scripts = SubscribeToScripts (insp);
 			await Ready (); 
@@ -1426,8 +1423,7 @@ namespace DebuggerTests
 						await EvaluateAndCheck (
 							"window.setTimeout(function() { invoke_add(); }, 1);",
 							"dotnet://debugger-test.dll/debugger-test.cs", 5, 2,
-							"IntAdd",
-							wait_for_event_fn: null
+							"IntAdd"
 						);
 						Assert.Contains ("breakpointResolved", events);
 						var script_ix = events.IndexOf ($"Debugger.scriptParsed {dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"]}");
@@ -1467,8 +1463,8 @@ namespace DebuggerTests
 				);
 
 				// check breakpoint was successfully set
-				Assert.Equal (1, loc.Count);
-				Assert.True (!events.Contains("breakpointResolved"));
+				Assert.Single (loc);
+				Assert.DoesNotContain ("breakpointResolved", events);
 			});
 		}
 

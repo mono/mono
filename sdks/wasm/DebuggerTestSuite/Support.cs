@@ -154,7 +154,7 @@ namespace DebuggerTests
 		internal DebugTestContext ctx;
 		internal Dictionary<string, string> dicScriptsIdToUrl;
 		internal Dictionary<string, string> dicFileToUrl;
-		internal List<string> event_order;
+		internal List<string> events;
 		internal Dictionary<string, string> SubscribeToScripts (Inspector insp) {
 			dicScriptsIdToUrl = new Dictionary<string, string> ();
 			dicFileToUrl = new Dictionary<string, string>();
@@ -172,6 +172,7 @@ namespace DebuggerTests
 					events.Add($"Debugger.scriptParsed {dicFileToUrl[dbgUrl]}");
 				} else if (!String.IsNullOrEmpty (url)) {
 					dicFileToUrl[new Uri (url).AbsolutePath] = url;
+					events.Add($"Debugger.scriptParsed {url}");
 				}
 				await Task.FromResult (0);
 			});
