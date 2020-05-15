@@ -91,7 +91,7 @@ public partial class Math { //Only append content to this class as the test suit
 		return i - 2;
 	}
 
-	class NestedInMath
+	public class NestedInMath
 	{
 		public int InnerMethod (int i)
 		{
@@ -266,8 +266,8 @@ public partial class Math { //Only append content to this class as the test suit
 		await System.Threading.Tasks.Task.CompletedTask;
 	}
 
-	delegate void DelegateWithVoidReturn (GenericStruct<int[]> gs);
-	static void DelegateTargetWithVoidReturn (GenericStruct<int[]> gs) { }
+	public delegate void DelegateWithVoidReturn (GenericStruct<int[]> gs);
+	public static void DelegateTargetWithVoidReturn (GenericStruct<int[]> gs) { }
 
 	delegate GenericStruct<bool[]> DelegateForSignatureTest (Math m, GenericStruct<GenericStruct<int[]>> gs);
 	static bool DelegateTargetForNestedFunc<T>(T arg) => true;
@@ -295,24 +295,7 @@ public partial class Math { //Only append content to this class as the test suit
 		Console.WriteLine ($"-- break here");
 	}
 
-	public static void CallFunctionOnTest (int len)
-	{
-		var big = new int[len];
-		for (int i = 0; i < len; i ++)
-			big [i] = i + 1000;
-
-		var simple_struct = new SimpleStruct () { dt = new DateTime (2020, 1, 2, 3, 4, 5), gs = new GenericStruct<DateTime> { StringField = $"simple_struct # gs # StringField" } };
-
-		var ss_arr = new SimpleStruct [len];
-		for (int i = 0; i < len; i ++)
-			ss_arr [i] = new SimpleStruct () { dt = new DateTime (2020+i, 1, 2, 3, 4, 5), gs = new GenericStruct<DateTime> { StringField = $"ss_arr # {i} # gs # StringField" } };
-
-		var nim = new NestedInMath { SimpleStructProperty = new SimpleStruct () { dt = new DateTime (2010, 6, 7, 8, 9, 10) } };
-		Action<GenericStruct<int[]>> action = DelegateTargetWithVoidReturn;
-		Console.WriteLine("foo");
-	}
-
-	struct SimpleStruct
+	public struct SimpleStruct
 	{
 		public DateTime dt;
 		public GenericStruct<DateTime> gs;
