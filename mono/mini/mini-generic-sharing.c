@@ -1337,10 +1337,9 @@ get_wrapper_shared_type (MonoType *t)
 static MonoType*
 get_wrapper_shared_type_reg (MonoType *t)
 {
-	t = get_wrapper_shared_type (t);
 	if (t->byref)
-		return t;
-
+		return m_class_get_this_arg (mono_defaults.int_class);
+retry:
 	switch (t->type) {
 	case MONO_TYPE_BOOLEAN:
 	case MONO_TYPE_CHAR:
@@ -1364,6 +1363,15 @@ get_wrapper_shared_type_reg (MonoType *t)
 	case MONO_TYPE_ARRAY:
 	case MONO_TYPE_PTR:
 		return mono_get_int_type ();
+	case MONO_TYPE_VALUETYPE:
+                if (m_class_is_enumtype (t->data.klass)) {
+                        t = mono_class_enum_basetype_internal (t->data.klass);
+                        goto retry;
+                } else
+			return t;
+	case MONO_TYPE_GENERICINST:
+		t = m_class_get_byval_arg (t->data.generic_class->container_class);
+		goto retry;
 	default:
 		return t;
 	}
