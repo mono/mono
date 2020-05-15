@@ -1335,11 +1335,14 @@ get_wrapper_shared_type (MonoType *t)
 
 /* Returns the intptr type for types that are passed in a single register */
 static MonoType*
-get_wrapper_shared_type_reg (MonoType *t)
+get_wrapper_shared_type_reg (MonoType *t, gboolean pinvoke)
 {
+	MonoType *orig_t = t;
+
+	t = get_wrapper_shared_type (t);
 	if (t->byref)
-		return m_class_get_this_arg (mono_defaults.int_class);
-retry:
+		return t;
+
 	switch (t->type) {
 	case MONO_TYPE_BOOLEAN:
 	case MONO_TYPE_CHAR:
@@ -1363,15 +1366,15 @@ retry:
 	case MONO_TYPE_ARRAY:
 	case MONO_TYPE_PTR:
 		return mono_get_int_type ();
-	case MONO_TYPE_VALUETYPE:
-                if (m_class_is_enumtype (t->data.klass)) {
-                        t = mono_class_enum_basetype_internal (t->data.klass);
-                        goto retry;
-                } else
-			return t;
 	case MONO_TYPE_GENERICINST:
-		t = m_class_get_byval_arg (t->data.generic_class->container_class);
-		goto retry;
+		if (orig_t->type == MONO_TYPE_VALUETYPE && pinvoke)
+			/*
+			 * These are translated to instances of Mono.ValueTuple, but generic types
+			 * cannot be passed in pinvoke.
+			 */
+			return orig_t;
+		else
+			return t;
 	default:
 		return t;
 	}
@@ -1383,9 +1386,9 @@ mini_get_underlying_reg_signature (MonoMethodSignature *sig)
 	MonoMethodSignature *res = mono_metadata_signature_dup (sig);
 	int i;
 
-	res->ret = get_wrapper_shared_type_reg (sig->ret);
+	res->ret = get_wrapper_shared_type_reg (sig->ret, sig->pinvoke);
 	for (i = 0; i < sig->param_count; ++i)
-		res->params [i] = get_wrapper_shared_type_reg (sig->params [i]);
+		res->params [i] = get_wrapper_shared_type_reg (sig->params [i], sig->pinvoke);
 	res->generic_param_count = 0;
 	res->is_inflated = 0;
 
