@@ -9,6 +9,8 @@ LLVM_VERSION := $(shell git -C "$(abs_top_srcdir)/external/llvm-project/llvm" re
 # FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(LLVM_BRANCH)/llvm-osx64-$(LLVM_VERSION).tar.gz
 LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(LLVM_VERSION).tar.gz"
 
+CPU_COUNT := $(shell getconf _NPROCESSORS_ONLN || echo 8)
+
 CMAKE := $(or $(CMAKE),$(shell which cmake))
 NINJA := $(shell which ninja)
 
@@ -43,7 +45,7 @@ configure-llvm: $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile)
 
 .PHONY: build-llvm
 build-llvm: configure-llvm
-	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE) -j) -C $(LLVM_BUILD)
+	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE) -j$(CPU_COUNT)) -C $(LLVM_BUILD)
 
 .PHONY: install-llvm
 install-llvm: build-llvm
