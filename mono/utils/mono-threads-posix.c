@@ -32,11 +32,12 @@
 
 #include <errno.h>
 
-#if defined(HOST_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
-// tkill was deprecated and removed in the recent versions of Android NDK
-#define USE_TKILL_ON_ANDROID 1
-extern int tkill (pid_t tid, int signal);
-#endif
+// Unity -- Just disable tkill wholesale for now
+// #if !defined(ENABLE_NETCORE) && defined(HOST_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
+// // tkill was deprecated and removed in the recent versions of Android NDK
+// #define USE_TKILL_ON_ANDROID 1
+// extern int tkill (pid_t tid, int signal);
+// #endif
 
 #if defined(_POSIX_VERSION) && !defined (HOST_WASM)
 
