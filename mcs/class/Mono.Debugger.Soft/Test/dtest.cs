@@ -4444,5 +4444,14 @@ public class DebuggerTests
 		}
 	}
 
+	[Test]
+	public void TestAsyncDebugGenerics () {
+		Event e = run_until ("test_async_debug_generics");
+		e = step_in_await ("test_async_debug_generics", e);
+		e = step_in_await ("MoveNext", e);
+		e = step_in_await ("MoveNext", e);
+		e = step_in_await ("MoveNext", e);
+		e = step_in_await ("MoveNext", e);
+	}
 } // class DebuggerTests
 } // namespace

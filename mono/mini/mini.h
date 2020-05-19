@@ -2883,4 +2883,7 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 
 #endif
 
+MonoGenericContext
+mono_get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info);
+
 #endif /* __MONO_MINI_H__ */

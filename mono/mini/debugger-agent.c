@@ -5442,10 +5442,45 @@ get_object_id_for_debugger_method (MonoClass* async_builder_class)
 	MonoError error;
 	GPtrArray *array = mono_class_get_methods_by_name (async_builder_class, "get_ObjectIdForDebugger", 0x24, FALSE, FALSE, &error);
 	mono_error_assert_ok (&error);
-	g_assert (array->len == 1);
+	if (array->len != 1) {
+		g_ptr_array_free (array, TRUE);
+		//if we don't find method get_ObjectIdForDebugger we try to find the property Task to continue async debug.
+		MonoProperty *prop = mono_class_get_property_from_name (async_builder_class, "Task");
+		if (!prop) {
+			DEBUG_PRINTF (1, "Impossible to debug async methods.\n");
+			return NULL;
+		}
+		return prop->get;
+	}
 	MonoMethod *method = (MonoMethod *)g_ptr_array_index (array, 0);
 	g_ptr_array_free (array, TRUE);
 	return method;
+}
+
+static MonoClass *
+get_class_to_get_builder_field(StackFrame *frame)
+{
+	MonoError error;
+	gpointer this_addr = get_this_addr (frame);
+	MonoClass *original_class = frame->method->klass;
+	MonoClass *ret;
+	if (!mono_class_is_valuetype(original_class) && mono_class_is_open_constructed_type (&original_class->byval_arg)) {
+		MonoObject *this_obj = *(MonoObject**)this_addr;
+		MonoGenericContext context;
+		MonoType *inflated_type;
+
+		if (!this_obj)
+			return NULL;
+
+		context = mono_get_generic_context_from_stack_frame (frame->ji, this_obj->vtable);
+		inflated_type = mono_class_inflate_generic_type_checked (&original_class->byval_arg, &context, &error);
+		mono_error_assert_ok (&error); /* FIXME don't swallow the error */
+
+		ret = mono_class_from_mono_type (inflated_type);
+		mono_metadata_free_type (inflated_type);
+		return ret;
+	}
+	return original_class;
 }
 
 /* Return the address of the AsyncMethodBuilder struct belonging to the state machine method pointed to by FRAME */
@@ -5456,15 +5491,18 @@ get_async_method_builder (StackFrame *frame)
 	MonoClassField *builder_field;
 	gpointer builder;
 	guint8 *this_addr;
+	MonoClass* klass = frame->method->klass;
 
-	builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
-	g_assert (builder_field);
+	klass = get_class_to_get_builder_field(frame);
+	builder_field = mono_class_get_field_from_name_full (klass, "<>t__builder", NULL);
+	if (!builder_field)
+		return NULL;
 
 	this_addr = get_this_addr (frame);
 	if (!this_addr)
 		return NULL;
 
-	if (mono_class_is_valuetype (frame->method->klass)) {
+	if (mono_class_is_valuetype (klass)) {
 		guint8 *vtaddr = *(guint8**)this_addr;
 		builder = (char*)vtaddr + mono_field_get_offset (builder_field) - sizeof (MonoObject);
 	} else {
@@ -5497,8 +5535,9 @@ get_this_async_id (StackFrame *frame)
 	if (!builder)
 		return 0;
 
-	builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
-	g_assert (builder_field);
+	builder_field = mono_class_get_field_from_name (get_class_to_get_builder_field(frame), "<>t__builder");
+	if (!builder_field)
+		return 0;
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
 	if (tls) {
@@ -5507,6 +5546,11 @@ get_this_async_id (StackFrame *frame)
 	}
 
 	method = get_object_id_for_debugger_method (mono_class_from_mono_type (mono_field_get_type (builder_field)));
+	if (!method) {
+		if (tls)
+			tls->disable_breakpoints = old_disable_breakpoints;
+		return 0;
+	}
 	obj = mono_runtime_try_invoke (method, builder, NULL, &ex, &error);
 	mono_error_assert_ok (&error);
 
@@ -5521,10 +5565,12 @@ get_this_async_id (StackFrame *frame)
 static gboolean
 set_set_notification_for_wait_completion_flag (StackFrame *frame)
 {
-	MonoClassField *builder_field = mono_class_get_field_from_name (frame->method->klass, "<>t__builder");
-	g_assert (builder_field);
+	MonoClassField *builder_field = mono_class_get_field_from_name (get_class_to_get_builder_field(frame), "<>t__builder");
+	if (!builder_field)
+		return FALSE;
 	gpointer builder = get_async_method_builder (frame);
-	g_assert (builder);
+	if (!builder)
+		return FALSE;
 
 	void* args [1];
 	gboolean arg = TRUE;
@@ -6015,7 +6061,6 @@ process_single_step_inner (DebuggerTlsData *tls, gboolean from_signal)
 		if (!found)
 			return;
 	}
-
 
 	/*
 	 * The ip points to the instruction causing the single step event, which is before
@@ -6788,7 +6833,10 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 		 * We are stopped at a throw site. Stepping should go to the catch site.
 		 */
 		frame = tls->catch_frame;
-		g_assert (frame.type == FRAME_TYPE_MANAGED || frame.type == FRAME_TYPE_INTERP);
+		if (frame.type != FRAME_TYPE_MANAGED && frame.type != FRAME_TYPE_INTERP) {
+			DEBUG_PRINTF (1, "Current frame is not managed nor interpreter.\n");
+			return ERR_INVALID_ARGUMENT;
+		}
 
 		/*
 		 * Find the seq point corresponding to the landing site ip, which is the first seq
@@ -6798,7 +6846,11 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 		sp = (found_sp)? &local_sp : NULL;
 		if (!sp)
 			no_seq_points_found (frame.method, frame.native_offset);
-		g_assert (sp);
+
+		if (!sp) {
+			DEBUG_PRINTF (1, "Could not find next sequence point.\n");
+			return ERR_INVALID_ARGUMENT;
+		}
 
 		method = frame.method;
 
@@ -6844,7 +6896,10 @@ ss_create (MonoInternalThread *thread, StepSize size, StepDepth depth, StepFilte
 				sp = (found_sp)? &local_sp : NULL;
 				if (!sp)
 					no_seq_points_found (frame->method, frame->native_offset);
-				g_assert (sp);
+				if (!sp) {
+					DEBUG_PRINTF (1, "Could not find next sequence point.\n");
+					return ERR_INVALID_ARGUMENT;
+				}
 				method = frame->method;
 			}
 		}
@@ -10812,7 +10867,11 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 						if (mono_class_get_context (klass)) {
 							MonoError error;
 							result = mono_class_inflate_generic_method_full_checked (result, klass, mono_class_get_context (klass), &error);
-							g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+							if (!mono_error_ok (&error)) {
+								buffer_add_string (buf, mono_error_get_message (&error));
+								mono_error_cleanup (&error);
+								return ERR_INVALID_ARGUMENT;
+							}
 						}
 					}
 				}
@@ -10955,7 +11014,12 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 				char *s;
 
 				s = mono_string_to_utf8_checked ((MonoString *)val, &error);
-				mono_error_assert_ok (&error);
+				if (!mono_error_ok (&error)) {
+					buffer_add_string (buf, mono_error_get_message (&error));
+					mono_error_cleanup (&error);
+					g_free (s);
+					return ERR_INVALID_ARGUMENT;
+				}
 				buffer_add_byte (buf, TOKEN_TYPE_STRING);
 				buffer_add_string (buf, s);
 				g_free (s);
@@ -11023,7 +11087,11 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		tmp_context.method_inst = ginst;
 
 		inflated = mono_class_inflate_generic_method_checked (method, &tmp_context, &error);
-		g_assert (mono_error_ok (&error)); /* FIXME don't swallow the error */
+		if (!mono_error_ok (&error)) {
+			buffer_add_string (buf, mono_error_get_message (&error));
+			mono_error_cleanup (&error);
+			return ERR_INVALID_ARGUMENT;
+		}
 		if (!mono_verifier_is_method_valid_generic_instantiation (inflated))
 			return ERR_INVALID_ARGUMENT;
 		buffer_add_methodid (buf, domain, inflated);
@@ -11492,7 +11560,10 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 			set_interp_var (&frame->actual_method->klass->this_arg, addr, val_buf);
 		} else {
 			var = jit->this_var;
-			g_assert (var);
+			if (!var) {
+				buffer_add_string (buf, "Invalid this object");
+				return ERR_INVALID_ARGUMENT;
+			}
 
 			set_var (&frame->actual_method->klass->this_arg, var, &frame->ctx, frame->domain, val_buf, frame->reg_locations, &tls->restore_state.ctx);
 		}
@@ -11535,9 +11606,11 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		index = decode_int (p, &p, end);
 		len = decode_int (p, &p, end);
 
-		g_assert (index >= 0 && len >= 0);
+		if (index < 0 || len < 0)
+			return ERR_INVALID_ARGUMENT;
 		// Reordered to avoid integer overflow
-		g_assert (!(index > arr->max_length - len));
+		if (index > arr->max_length - len)
+			return ERR_INVALID_ARGUMENT;
 
 		esize = mono_array_element_size (mono_object_get_class (&arr->obj));
 		for (i = index; i < index + len; ++i) {
@@ -11549,9 +11622,11 @@ array_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		index = decode_int (p, &p, end);
 		len = decode_int (p, &p, end);
 
-		g_assert (index >= 0 && len >= 0);
+		if (index < 0 || len < 0)
+			return ERR_INVALID_ARGUMENT;
 		// Reordered to avoid integer overflow
-		g_assert (!(index > arr->max_length - len));
+		if (index > arr->max_length - len)
+			return ERR_INVALID_ARGUMENT;
 
 		esize = mono_array_element_size (mono_object_get_class (&arr->obj));
 		for (i = index; i < index + len; ++i) {

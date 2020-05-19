@@ -366,6 +366,7 @@ public class Tests : TestsBase, ITest2
 			new Tests ().invoke_abort ();
 		new Tests ().evaluate_method ();
 
+		test_async_debug_generics();
 		test_invalid_argument_assembly_get_type ();
 
 		return 3;
@@ -556,6 +557,17 @@ public class Tests : TestsBase, ITest2
 		ss_nested_1 (ss_nested_2 ());
 		ss_nested_1 (ss_nested_2 ());
 		ss_nested_3 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void test_async_debug_generics () {
+		ExecuteAsync_Broken<object>().Wait ();
+	}
+
+	async static Task<T> ExecuteAsync_Broken<T>()
+	{
+		await Task.Delay(2);
+		return default;
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
