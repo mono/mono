@@ -1251,14 +1251,74 @@ mono_stringify_assembly_name (MonoAssemblyName *aname)
 {
 	const char *quote = (aname->name && g_ascii_isspace (aname->name [0])) ? "\"" : "";
 
-	return g_strdup_printf (
-		"%s%s%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
+	if (!((aname->major == 65535)&&(aname->minor == 65535)&&(aname->build == 65535)&&(aname->revision == 65535))) {
+		if ((aname->culture [0])) {
+			if(aname->public_key_token [0]) {
+
+				return g_strdup_printf (
+				"%s%s%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
+				quote, aname->name, quote,
+				aname->major, aname->minor, aname->build, aname->revision,
+				aname->culture,
+				aname->public_key_token,
+				(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+			} else {
+
+				return  g_strdup_printf (
+				"%s%s%s, Version=%d.%d.%d.%d, Culture=%s",
+				quote, aname->name, quote,
+				aname->major, aname->minor, aname->build, aname->revision,
+				aname->culture);
+				}
+			} else {
+				if(aname->public_key_token [0]) {
+
+					return g_strdup_printf (
+					"%s%s%s, Version=%d.%d.%d.%d, PublicKeyToken=%s%s",
+					quote, aname->name, quote,
+					aname->major, aname->minor, aname->build, aname->revision,
+					aname->public_key_token,
+					(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+				}
+
+					return g_strdup_printf (
+					"%s%s%s, Version=%d.%d.%d.%d",
+					quote, aname->name, quote,
+					aname->major, aname->minor, aname->build, aname->revision);
+			}
+		}
+
+	if ((aname->culture [0])) {
+		if(aname->public_key_token [0]) {
+
+			return g_strdup_printf (
+			"%s%s%s, Culture=%s, PublicKeyToken=%s%s",
+			quote, aname->name, quote,
+			aname->culture,
+			aname->public_key_token,
+			(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+		} else {
+
+			return  g_strdup_printf (
+			"%s%s%s, Culture=%s",
+			quote, aname->name, quote,
+			aname->culture);
+			}
+		}
+
+	if(aname->public_key_token [0]) {
+
+		return g_strdup_printf ("%s%s%s, PublicKeyToken=%s%s",
 		quote, aname->name, quote,
-		aname->major, aname->minor, aname->build, aname->revision,
-		aname->culture && *aname->culture? aname->culture: "neutral",
-		aname->public_key_token [0] ? (char *)aname->public_key_token : "null",
+		aname->public_key_token,
 		(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+		}
+
+	return g_strdup_printf (
+	"%s%s%s",
+	quote, aname->name, quote);
 }
+
 
 static gchar*
 assemblyref_public_tok (MonoImage *image, guint32 key_index, guint32 flags)
