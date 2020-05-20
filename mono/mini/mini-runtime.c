@@ -547,8 +547,8 @@ mono_tramp_info_register_internal (MonoTrampInfo *info, MonoDomain *domain, gboo
 		mono_jit_lock ();
 		tramp_infos = g_slist_prepend (tramp_infos, copy);
 		mono_jit_unlock ();
-	} else if (copy->uw_info) {
-		/* Only register trampolines that have unwind infos */
+	} else if (copy->uw_info || info->method) {
+		/* Only register trampolines that have unwind info */
 		register_trampoline_jit_info (domain, copy);
 	}
 
@@ -3789,7 +3789,7 @@ mini_init_delegate (MonoDelegateHandle delegate, MonoObjectHandle target, gpoint
 
 #ifndef DISABLE_REMOTING
 	if (!MONO_HANDLE_IS_NULL (target) && mono_class_is_transparent_proxy (mono_handle_class (target))) {
-		if (mini_get_interp_callbacks ()->get_remoting_invoke) {
+		if (mono_use_interpreter) {
 			MONO_HANDLE_SETVAL (delegate, interp_method, gpointer, mini_get_interp_callbacks ()->get_remoting_invoke (method, addr, error));
 		} else {
 			g_assert (method);
