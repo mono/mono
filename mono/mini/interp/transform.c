@@ -7342,7 +7342,7 @@ retry:
 				sp [-i].ins = NULL;
 			memset (sp, 0, sizeof (StackContentInfo));
 			sp++;
-		} else if (ins->opcode == MINT_POP) {
+		} else if (ins->opcode == MINT_POP || ins->opcode == MINT_POP_VT) {
 			sp--;
 			if (sp->ins) {
 				// The top of the stack is not used by any instructions. Kill both the
