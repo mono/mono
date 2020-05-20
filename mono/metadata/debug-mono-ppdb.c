@@ -415,6 +415,9 @@ mono_ppdb_get_seq_points (MonoDebugMethodInfo *minfo, char **source_file, GPtrAr
 
 	method_idx = mono_metadata_token_index (method->token);
 
+	if (tables [MONO_TABLE_METHODBODY].rows == 0)
+		return;
+
 	mono_metadata_decode_row (&tables [MONO_TABLE_METHODBODY], method_idx-1, cols, MONO_METHODBODY_SIZE);
 
 	docidx = cols [MONO_METHODBODY_DOCUMENT];
