@@ -6131,6 +6131,7 @@ mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 		return FALSE;
 	}
 
+	tinfo->method = method;
 	tinfo->code_size = *(guint32*)symbol_addr;
 	tinfo->unwind_ops = mono_arch_get_cie_program ();
 	mono_aot_tramp_info_register (tinfo, NULL);
