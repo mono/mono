@@ -6,7 +6,7 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
 
-LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%)
+LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%) $(UNICODECHARINFO:%=-resource:%)
 
 USE_XTEST_REMOTE_EXECUTOR = YES
 LIBRARY_WARN_AS_ERROR = yes
@@ -90,7 +90,6 @@ else
 endif
 
 RESOURCE_FILES = \
-	$(UNICODECHARINFO) \
 	$(MANAGED_COLLATOR_RESOURCES_FILES) \
 	LinkerDescriptor/mscorlib.xml
 
@@ -202,6 +201,7 @@ EXTRA_DISTFILES = \
 	$(RESOURCE_FILES) \
 	$(TEST_RESOURCE_FILES) \
 	$(TEST_RESOURCES:.resources=.resx) \
+	resources/charinfo.nlp \
 	LinkerDescriptor/mscorlib_test.xml
 
 TEST_RESOURCE_FILES = \
