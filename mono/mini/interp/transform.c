@@ -3739,14 +3739,15 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		}
 		case CEE_POP:
 			CHECK_STACK(td, 1);
-			SIMPLE_OP(td, MINT_POP);
 			if (td->sp [-1].type == STACK_TYPE_VT) {
 				int size = mono_class_value_size (td->sp [-1].klass, NULL);
 				size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
-				interp_add_ins (td, MINT_VTRESULT);
-				td->last_ins->data [0] = 0;
-				WRITE32_INS (td->last_ins, 1, &size);
+				interp_add_ins (td, MINT_POP_VT);
+				WRITE32_INS (td->last_ins, 0, &size);
 				td->vt_sp -= size;
+				td->ip++;
+			} else {
+				SIMPLE_OP(td, MINT_POP);
 			}
 			--td->sp;
 			break;
