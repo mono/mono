@@ -3749,7 +3749,7 @@ create_delegate_method_ptr (MonoMethod *method, MonoError *error)
 		func = mono_compile_method_checked (method, error);
 		return_val_if_nok (error, NULL);
 	} else {
-		gpointer trampoline = mono_runtime_create_jump_trampoline (mono_domain_get (), method, TRUE, error);
+		gpointer trampoline = mono_create_jump_trampoline (mono_domain_get (), method, TRUE, error);
 		return_val_if_nok (error, NULL);
 		func = mono_create_ftnptr (mono_domain_get (), trampoline);
 	}
@@ -3757,9 +3757,52 @@ create_delegate_method_ptr (MonoMethod *method, MonoError *error)
 }
 
 static void
-mini_init_delegate (MonoDelegateHandle delegate, MonoError *error)
+mini_init_delegate (MonoDelegateHandle delegate, MonoObjectHandle target, gpointer addr, MonoMethod *method, MonoError *error)
 {
 	MonoDelegate *del = MONO_HANDLE_RAW (delegate);
+	MonoDomain *domain = MONO_HANDLE_DOMAIN (delegate);
+
+	if (!method) {
+		MonoJitInfo *ji;
+
+		g_assert (addr);
+		ji = mono_jit_info_table_find_internal (domain, mono_get_addr_from_ftnptr (addr), TRUE, TRUE);
+		/* Shared code */
+		if (!ji && domain != mono_get_root_domain ())
+			ji = mono_jit_info_table_find_internal (mono_get_root_domain (), mono_get_addr_from_ftnptr (addr), TRUE, TRUE);
+		if (ji) {
+			if (ji->is_trampoline) {
+				/* Could be an unbox trampoline etc. */
+				method = ji->d.tramp_info->method;
+			} else {
+				method = mono_jit_info_get_method (ji);
+				g_assert (!mono_class_is_gtd (method->klass));
+			}
+		}
+	}
+
+	if (method)
+		MONO_HANDLE_SETVAL (delegate, method, MonoMethod*, method);
+
+	if (addr)
+		MONO_HANDLE_SETVAL (delegate, method_ptr, gpointer, addr);
+
+#ifndef DISABLE_REMOTING
+	if (!MONO_HANDLE_IS_NULL (target) && mono_class_is_transparent_proxy (mono_handle_class (target))) {
+		if (mini_get_interp_callbacks ()->get_remoting_invoke) {
+			MONO_HANDLE_SETVAL (delegate, interp_method, gpointer, mini_get_interp_callbacks ()->get_remoting_invoke (method, addr, error));
+		} else {
+			g_assert (method);
+			method = mono_marshal_get_remoting_invoke (method, error);
+			return_if_nok (error);
+			MONO_HANDLE_SETVAL (delegate, method_ptr, gpointer, mono_compile_method_checked (method, error));
+		}
+		return_if_nok (error);
+	}
+#endif
+
+	MONO_HANDLE_SET (delegate, target, target);
+	MONO_HANDLE_SETVAL (delegate, invoke_impl, gpointer, mono_create_delegate_trampoline (domain, mono_handle_class (delegate)));
 
 	if (mono_use_interpreter) {
 		mini_get_interp_callbacks ()->init_delegate (del, error);
@@ -4378,7 +4421,6 @@ mini_init (const char *filename, const char *runtime_version)
 #define JIT_TRAMPOLINES_WORK
 #ifdef JIT_TRAMPOLINES_WORK
 	callbacks.compile_method = mono_jit_compile_method;
-	callbacks.create_jump_trampoline = mono_create_jump_trampoline;
 	callbacks.create_jit_trampoline = mono_create_jit_trampoline;
 	callbacks.create_delegate_trampoline = mono_create_delegate_trampoline;
 	callbacks.free_method = mono_jit_free_method;

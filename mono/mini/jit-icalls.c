@@ -1484,7 +1484,7 @@ ves_icall_mono_delegate_ctor (MonoObject *this_obj_raw, MonoObject *target_raw, 
 		mono_error_set_pending_exception (error);
 		goto leave;
 	}
-	mono_delegate_ctor (this_obj, target, addr, error);
+	mono_delegate_ctor (this_obj, target, addr, NULL, error);
 	mono_error_set_pending_exception (error);
 
 leave:
