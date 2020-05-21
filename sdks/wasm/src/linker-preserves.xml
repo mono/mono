@@ -3,5 +3,7 @@
 	<assembly fullname="System">
 		<type fullname="Mono.Util.MonoPInvokeCallbackAttribute"/>
 	</assembly>
+	<assembly fullname="mscorlib">
+		<type fullname="System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute"/>
+	</assembly>
 </linker>
-
