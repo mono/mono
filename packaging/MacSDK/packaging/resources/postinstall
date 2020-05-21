@@ -4,6 +4,30 @@ FW=/Library/Frameworks/Mono.framework
 FW_CURRENT=${FW}/Versions/Current
 CURRENT=`basename $(readlink ${FW_CURRENT})`
 
+if [ -d ${FW_CURRENT} ]; then
+    cd ${FW_CURRENT}/etc
+    # Make sure we run the files we lay down, and not other stuff installed on the system
+    export PATH="${FW_CURRENT}/bin:$PATH"
+    LOG_DIR=/Library/Logs/Mono.framework
+    mkdir ${LOG_DIR}
+
+    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-gdk-pixbuf-query-loaders.log"
+    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-pango-querymodules.log"
+    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-fc-cache.log"
+    echo ======= `date` ===== >> "${LOG_DIR}/gtk-query-immodules-2.0.log"
+
+    # gtk+ setup
+    gdk-pixbuf-query-loaders --update-cache >> "${LOG_DIR}/postinstall-gdk-pixbuf-query-loaders.log" 2>&1 || true
+    # pango setup
+    mkdir -p pango
+    pango-querymodules > pango/pango.modules 2>> "${LOG_DIR}/postinstall-pango-querymodules.log" || true
+    pango-querymodules --update-cache >> "${LOG_DIR}/postinstall-pango-querymodules.log" 2>&1 || true
+    fc-cache -v >> "${LOG_DIR}/postinstall-fc-cache.log" 2>&1 || true
+
+    cd ${FW_CURRENT}/lib/gtk-2.0/2.10.0
+    gtk-query-immodules-2.0 > immodules.cache 2>> "${LOG_DIR}/gtk-query-immodules-2.0.log" || true
+fi
+
 # Remove PCL assemblies that we installed from Mono 3.1.1
 LICENSE="Portable Class Library Reference Assemblies License-07JUN2013.docx"
 if [ -f "$FW/External/xbuild-frameworks/.NETPortable/$LICENSE" ]; then
@@ -56,28 +80,6 @@ if [ -d ${FW_CURRENT} ]; then
             fi
         done
     done
-
-    cd ${FW_CURRENT}/etc
-    # Make sure we run the files we lay down, and not other stuff installed on the system
-    export PATH="${FW_CURRENT}/bin:$PATH"
-    LOG_DIR=/Library/Logs/Mono.framework
-    mkdir ${LOG_DIR}
-
-    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-gdk-pixbuf-query-loaders.log"
-    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-pango-querymodules.log"
-    echo ======= `date` ===== >> "${LOG_DIR}/postinstall-fc-cache.log"
-    echo ======= `date` ===== >> "${LOG_DIR}/gtk-query-immodules-2.0.log"
-
-    # gtk+ setup
-    gdk-pixbuf-query-loaders --update-cache >> "${LOG_DIR}/postinstall-gdk-pixbuf-query-loaders.log" 2>&1 || true
-    # pango setup
-    mkdir -p pango
-    pango-querymodules > pango/pango.modules 2>> "${LOG_DIR}/postinstall-pango-querymodules.log" || true
-    pango-querymodules --update-cache >> "${LOG_DIR}/postinstall-pango-querymodules.log" 2>&1 || true
-    fc-cache -v >> "${LOG_DIR}/postinstall-fc-cache.log" 2>&1 || true
-
-    cd ${FW_CURRENT}/lib/gtk-2.0/2.10.0
-    gtk-query-immodules-2.0 > immodules.cache 2>> "${LOG_DIR}/gtk-query-immodules-2.0.log" || true
 fi
 
 # Delete older Monos
