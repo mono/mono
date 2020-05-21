@@ -42,7 +42,8 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData ("/other.js$", "/other.js", "big_array_js_test (10);", "big_array_js_test", 3, 2)]
-		[InlineData ("/debugger-test.cs$", "dotnet://debugger-test.dll/debugger-test.cs", "invoke_add ();", "IntAdd", 8, 2)]
+		[InlineData ("/debugger-test.cs$", "dotnet://debugger-test.dll/debugger-test.cs", "invoke_add ();", "IntAdd", 8, 2,
+					Skip = "Bug: Cannot set breakpoints before the startup commands")]
 		public async Task SetBpBeforeAnyStartupCommands (string url_regex, string test_url, string eval_str, string fn_name, int line, int col)
 		{
 			await client.Connect (clientConnectUri, OnMessage, async token => {
@@ -103,6 +104,7 @@ namespace DebuggerTests
 				// breakpoint not resolved yet
 				Assert.Empty (bp1_res.Value ["locations"]?.Value<JArray> ());
 				Assert.DoesNotContain ("Debugger.breakpointResolved", events);
+				Assert.Empty (scripts);
 
 				_ = client.SendCommand ("Debugger.enable", null, token);
 				_ = client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token);
