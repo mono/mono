@@ -83,7 +83,8 @@
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "configurationProvider": "vector-of-bool.cmake-tools"
         }
     ],
     "version": 4
