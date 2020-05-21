@@ -1,13 +1,9 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Threading;
 using Newtonsoft.Json.Linq;
 using Xunit;
 using WebAssembly.Net.Debugging;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.IO;
 
 [assembly: CollectionBehavior (CollectionBehavior.CollectionPerAssembly)]
 
@@ -1380,94 +1376,6 @@ namespace DebuggerTests
 							label: "this#0");
 
 				});
-
-		[Fact]
-		public async Task SetBreakpointBeforeInspectorReady () {
-			var insp = new Inspector ();
-			insp.On("Debugger.breakpointResolved", async (args, c) => { 
-				events.Add ("breakpointResolved");
-			});
-			
-			var scripts = SubscribeToScripts (insp);
-			await Ready (); 
-
-			using (var cts = new CancellationTokenSource()) {
-				cts.CancelAfter (60 * 1000);
-				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
-				using var loggerFactory = LoggerFactory.Create(
-					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
-				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
-					await client.Connect (uri, insp.OnMessage, async token => {
-						Task[] init_cmds = {
-							client.SendCommand ("Profiler.enable", null, token),
-							client.SendCommand ("Runtime.enable", null, token),
-							client.SendCommand ("Debugger.enable", null, token),
-							client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token),
-							insp.WaitFor ("ready"),
-						};
-
-						Console.WriteLine ("waiting for the debugger to be ready");
-						await init_cmds[2];
-						Assert.False (scripts.Values.Contains("dotnet://debugger-test.dll/debugger-test.cs"));
-						ctx = new DebugTestContext (client, insp, token, scripts);
-						string urlregex = @"^\S+mono\/sdks\/wasm\/debugger-test\.cs$";
-						var bp1_res = await SetBreakpoint (urlregex, 5, 2, use_regex:true);
-						
-						var loc = bp1_res.Value["locations"]?.Value<JArray> ();
-						Assert.Equal (0, loc.Count);
-						//after Ready
-						await init_cmds[4];	
-						// Check that scripts have been loaded   
-						Assert.Contains ("dotnet://debugger-test.dll/debugger-test.cs", scripts.Values);
-
-						await EvaluateAndCheck (
-							"window.setTimeout(function() { invoke_add(); }, 1);",
-							"dotnet://debugger-test.dll/debugger-test.cs", 5, 2,
-							"IntAdd"
-						);
-						Assert.Contains ("breakpointResolved", events);
-						var script_ix = events.IndexOf ($"Debugger.scriptParsed {dicFileToUrl["dotnet://debugger-test.dll/debugger-test.cs"]}");
-						var resolve_ix = events.IndexOf ("breakpointResolved");
-						
-						// check breakpoint resolved after script is loaded
-						Assert.True (script_ix < resolve_ix);
-												
-					}, cts.Token);
-					await client.Close (cts.Token);
-				}
-			};
-		}
-
-		[Fact]
-		public async Task SetBreakpointAfterReadyNoBreakpointResolvedEventSent () {
-			var insp = new Inspector ();
-
-			var scripts = SubscribeToScripts (insp);
-			await Ready (); 
-
-			await insp.Ready (async (cli, token) => {
-				var bp_res = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 5, 2, expect_ok:true);
-				
-				Assert.Contains ("dotnet://debugger-test.dll/debugger-test.cs", scripts.Values);
-				var loc = bp_res.Value["locations"]?.Value<JArray> ();
-
-				await EvaluateAndCheck (
-					"window.setTimeout(function() { invoke_add(); }, 1);",
-					"dotnet://debugger-test.dll/debugger-test.cs", 5, 2,
-					"IntAdd",
-					wait_for_event_fn: (pause_location) => {
-						var top_frame = pause_location ["callFrames"][0];
-						Assert.Equal ("IntAdd", top_frame ["functionName"].Value<string>());
-						return Task.CompletedTask;
-					}
-				);
-
-				// check breakpoint was successfully set
-				Assert.Single (loc);
-				Assert.DoesNotContain ("breakpointResolved", events);
-			});
-		}
-
 		//
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}

@@ -171,8 +171,10 @@ namespace DebuggerTests
 					dicFileToUrl[dbgUrl] = args["url"]?.Value<string>();
 					events.Add($"Debugger.scriptParsed {dicFileToUrl[dbgUrl]}");
 				} else if (!String.IsNullOrEmpty (url)) {
-					dicFileToUrl[new Uri (url).AbsolutePath] = url;
-					events.Add($"Debugger.scriptParsed {url}");
+					var absPath = new Uri (url).AbsolutePath;
+					dicScriptsIdToUrl [script_id] = absPath;
+					dicFileToUrl [absPath] = url;
+					events.Add ($"Debugger.scriptParsed {url}");
 				}
 				await Task.FromResult (0);
 			});
