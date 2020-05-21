@@ -1251,72 +1251,18 @@ mono_stringify_assembly_name (MonoAssemblyName *aname)
 {
 	const char *quote = (aname->name && g_ascii_isspace (aname->name [0])) ? "\"" : "";
 
-	if (!((aname->major == 65535)&&(aname->minor == 65535)&&(aname->build == 65535)&&(aname->revision == 65535))) {
-		if ((aname->culture [0])) {
-			if(aname->public_key_token [0]) {
+	char *version_string = "";
+	char *culture_string = "";
+	char *token_string = "";
 
-				return g_strdup_printf (
-				"%s%s%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
-				quote, aname->name, quote,
-				aname->major, aname->minor, aname->build, aname->revision,
-				aname->culture,
-				aname->public_key_token,
-				(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
-			} else {
+	if (aname->culture [0])
+		culture_string = g_strdup_printf (", Culture=%s", aname->culture);
+	if (aname->public_key_token [0])
+		token_string = g_strdup_printf (", PublicKeyToken=%s%s", aname->public_key_token,(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+	if (aname->has_version)
+		version_string = g_strdup_printf (", Version=%d.%d.%d.%d", aname->major, aname->minor, aname->build, aname->revision);
 
-				return  g_strdup_printf (
-				"%s%s%s, Version=%d.%d.%d.%d, Culture=%s",
-				quote, aname->name, quote,
-				aname->major, aname->minor, aname->build, aname->revision,
-				aname->culture);
-				}
-			} else {
-				if(aname->public_key_token [0]) {
-
-					return g_strdup_printf (
-					"%s%s%s, Version=%d.%d.%d.%d, PublicKeyToken=%s%s",
-					quote, aname->name, quote,
-					aname->major, aname->minor, aname->build, aname->revision,
-					aname->public_key_token,
-					(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
-				}
-
-					return g_strdup_printf (
-					"%s%s%s, Version=%d.%d.%d.%d",
-					quote, aname->name, quote,
-					aname->major, aname->minor, aname->build, aname->revision);
-			}
-		}
-
-	if ((aname->culture [0])) {
-		if(aname->public_key_token [0]) {
-
-			return g_strdup_printf (
-			"%s%s%s, Culture=%s, PublicKeyToken=%s%s",
-			quote, aname->name, quote,
-			aname->culture,
-			aname->public_key_token,
-			(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
-		} else {
-
-			return  g_strdup_printf (
-			"%s%s%s, Culture=%s",
-			quote, aname->name, quote,
-			aname->culture);
-			}
-		}
-
-	if(aname->public_key_token [0]) {
-
-		return g_strdup_printf ("%s%s%s, PublicKeyToken=%s%s",
-		quote, aname->name, quote,
-		aname->public_key_token,
-		(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
-		}
-
-	return g_strdup_printf (
-	"%s%s%s",
-	quote, aname->name, quote);
+	return g_strdup_printf ("%s%s%s%s%s%s", quote, aname->name, quote, version_string, culture_string, token_string);
 }
 
 
