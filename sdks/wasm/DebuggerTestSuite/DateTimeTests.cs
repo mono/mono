@@ -31,8 +31,8 @@ namespace DebuggerTests
 					"window.setTimeout(function() { invoke_static_method ('[debugger-test] DebuggerTests.DateTimeTest:LocaleTest'," 
 					+ $"'{locale}'); }}, 1);",
 					debugger_test_loc, 20, 3, "LocaleTest",
-					locals_fn: (locals) => {
-                        DateTimeFormatInfo dtfi = CultureInfo.GetCultureInfo(locale).DateTimeFormat;
+					locals_fn: async (locals) => {
+						DateTimeFormatInfo dtfi = CultureInfo.GetCultureInfo(locale).DateTimeFormat;
 						CultureInfo.CurrentCulture = new CultureInfo (locale, false);
 						DateTime dt = new DateTime (2020, 1, 2, 3, 4, 5);
 						string dt_str = dt.ToString();
@@ -48,7 +48,7 @@ namespace DebuggerTests
 						CheckString(locals, "ltp", ltp);
 						CheckString(locals, "sdp", sdp);
 						CheckString(locals, "stp", stp);
-						CheckDateTime(locals, "dt", dt);
+						await CheckDateTime(locals, "dt", dt);
 						CheckString(locals, "dt_str", dt_str);
 					}
 				);
