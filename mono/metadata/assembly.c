@@ -1251,18 +1251,20 @@ mono_stringify_assembly_name (MonoAssemblyName *aname)
 {
 	const char *quote = (aname->name && g_ascii_isspace (aname->name [0])) ? "\"" : "";
 
-	char *version_string = "";
-	char *culture_string = "";
-	char *token_string = "";
+	GString *str;
+	str = g_string_new (NULL);
+	g_string_append_printf (str, "%s%s%s", quote, aname->name, quote);
 
 	if (aname->culture [0])
-		culture_string = g_strdup_printf (", Culture=%s", aname->culture);
+		g_string_append_printf (str, ", Culture=%s", aname->culture);
 	if (aname->public_key_token [0])
-		token_string = g_strdup_printf (", PublicKeyToken=%s%s", aname->public_key_token,(aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
-	if (aname->has_version)
-		version_string = g_strdup_printf (", Version=%d.%d.%d.%d", aname->major, aname->minor, aname->build, aname->revision);
+		g_string_append_printf (str,", PublicKeyToken=%s%s", aname->public_key_token, (aname->flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+	if (aname->has_version ==  TRUE)
+		g_string_append_printf (str,", Version=%d.%d.%d.%d", aname->major, aname->minor, aname->build, aname->revision);
 
-	return g_strdup_printf ("%s%s%s%s%s%s", quote, aname->name, quote, version_string, culture_string, token_string);
+	char *result = g_string_free (str, FALSE); //  result is the final formatted string.
+
+	return result;
 }
 
 

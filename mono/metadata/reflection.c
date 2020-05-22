@@ -1498,33 +1498,24 @@ mono_get_object_from_blob (MonoDomain *domain, MonoType *type, const char *blob,
 
 static int
 assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
+
 	int found_sep;
 	char *s;
 	gboolean quoted = FALSE;
-	int i=strlen(p)-1;
-	while(g_ascii_isspace(p[i])){
-	p[i]='\0';
-	if(i>0)
-		i-=1;
-		else break;
-	}
+	g_strchomp(p);
 
+	assembly->has_version =  FALSE;
 	memset (assembly, 0, sizeof (MonoAssemblyName));
 	assembly->culture = "";
-	assembly->major=65535;
-	assembly->minor=65535;
-	assembly->build=65535;
-	assembly->revision=65535;
 	memset (assembly->public_key_token, 0, MONO_PUBLIC_KEY_TOKEN_LENGTH);
+
 	if (*p == '"') {
 		quoted = TRUE;
 		p++;
 	}
-	g_strchomp(p);
 	assembly->name = p;
-	while (*p && (isalnum (*p) || *p == '.' || *p == '-' || *p == '_' || *p == '$' || *p == '@' || (quoted && g_ascii_isspace (*p)))){
-	p++;
-		}
+	while (*p && (isalnum (*p) || *p == '.' || *p == '-' || *p == '_' || *p == '$' || *p == '@' || (quoted && g_ascii_isspace (*p))))
+		p++;
 	if (quoted) {
 		if (*p != '"')
 			return 1;
@@ -1532,17 +1523,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 		p++;
 	}
 	if (*p != ',')
-	{
-	strcpy(s,assembly->name);
-	for (int i=0;i<strlen(s);i++)
-	{
-	if (g_ascii_isspace(s[i])){
-		 s[i]='\0';
-		}
-	}
-	assembly->name=s;
 		return 1;
-	}
 	*p = 0;
 	/* Remove trailing whitespace */
 	s = p - 1;
@@ -1573,15 +1554,9 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 			p = s;
 		} else if ((*p == 'C' || *p == 'c') && g_ascii_strncasecmp (p, "Culture=", 8) == 0) {
 			p += 8;
-			if (g_ascii_strncasecmp (p, "neutral", 7) == 0 && (p [7] == ' '|| p [7] == ',')) {
-				assembly->culture = "neutral";
-				p += 7;
-			} else {
 				assembly->culture = p;
-				while (*p && *p != ',') {
+				while (*p && *p != ',') 
 					p++;
-				}
-			}
 		} else if ((*p == 'P' || *p == 'p') && g_ascii_strncasecmp (p, "PublicKeyToken=", 15) == 0) {
 			p += 15;
 			if (strncmp (p, "null", 4) == 0) {
@@ -1615,6 +1590,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 	}
 
 	return 0;
+
 }
 
 /*
