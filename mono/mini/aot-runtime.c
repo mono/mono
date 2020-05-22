@@ -6055,7 +6055,9 @@ mono_aot_get_unbox_trampoline (MonoMethod *method, gpointer addr)
 	if (!amodule->unbox_tramp_per_method) {
 		gpointer arr = g_new0 (gpointer, amodule->info.nmethods);
 		mono_memory_barrier ();
-		amodule->unbox_tramp_per_method = (gpointer*)arr;
+		gpointer old_arr = mono_atomic_cas_ptr ((volatile gpointer*)&amodule->unbox_tramp_per_method, arr, NULL);
+		if (old_arr)
+			g_free (arr);
 	}
 	if (amodule->unbox_tramp_per_method [method_index])
 		return amodule->unbox_tramp_per_method [method_index];
