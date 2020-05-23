@@ -1096,7 +1096,8 @@ class Driver {
 			string pinvoke_assemblies = "";
 			foreach (var a in assemblies)
 				pinvoke_assemblies += $"{a.linkout_path} ";
-			ninja.WriteLine ($"build $builddir/pinvoke-table.h: gen-pinvoke-table {pinvoke_assemblies}");
+			ninja.WriteLine ($"build $builddir/pinvoke-table.h: cpifdiff $builddir/pinvoke-table.h.tmp");
+			ninja.WriteLine ($"build $builddir/pinvoke-table.h.tmp: gen-pinvoke-table {pinvoke_assemblies}");
 			ninja.WriteLine ($"  pinvoke_libs=System.Native,{pinvoke_libs}");
 		}
 		if (build_wasm) {
