@@ -283,7 +283,7 @@ static gboolean ss_enabled;
 static gboolean interp_init_done = FALSE;
 
 static void
-interp_exec_method (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error);
+interp_exec_method (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args);
 
 static InterpMethod* lookup_method_pointer (gpointer addr);
 
@@ -1899,7 +1899,7 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 
 	InterpFrame frame = {NULL, imethod, args, &result};
 
-	interp_exec_method (&frame, context, NULL, error);
+	interp_exec_method (&frame, context, NULL);
 
 	if (context->has_resume_state) {
 		// This can happen on wasm !?
@@ -2004,8 +2004,7 @@ interp_entry (InterpEntryData *data)
 		break;
 	}
 
-	ERROR_DECL (error);
-	interp_exec_method (&frame, context, NULL, error);
+	interp_exec_method (&frame, context, NULL);
 
 	g_assert (!context->has_resume_state);
 
@@ -2743,8 +2742,7 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 	/* Copy the args saved in the trampoline to the frame stack */
 	mono_arch_get_native_call_context_args (ccontext, &frame, sig);
 
-	ERROR_DECL (error);
-	interp_exec_method (&frame, context, NULL, error);
+	interp_exec_method (&frame, context, NULL);
 
 	g_assert (!context->has_resume_state);
 
@@ -3362,10 +3360,11 @@ method_entry (ThreadContext *context, InterpFrame *frame,
  * FRAME is only valid until the next call to alloc_frame ().
  */
 static MONO_NEVER_INLINE void
-interp_exec_method (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args, MonoError *error)
+interp_exec_method (InterpFrame *frame, ThreadContext *context, FrameClauseArgs *clause_args)
 {
 	InterpMethod *cmethod;
 	MonoException *ex;
+	ERROR_DECL(error);
 
 	/* Interpreter main loop state (InterpState) */
 	const guint16 *ip = NULL;
@@ -7215,8 +7214,6 @@ resume:
 	}
 	// fall through
 exit_frame:
-	error_init_reuse (error);
-
 	g_assert_checked (frame->imethod);
 
 	if (frame->parent && frame->parent->state.ip) {
@@ -7345,8 +7342,7 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 	InterpFrame* const next_free = iframe->next_free;
 	iframe->next_free = NULL;
 
-	ERROR_DECL (error);
-	interp_exec_method (iframe, context, &clause_args, error);
+	interp_exec_method (iframe, context, &clause_args);
 
 	iframe->next_free = next_free;
 	iframe->state.ip = state_ip;
@@ -7386,8 +7382,7 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 	clause_args.base_frame = iframe;
 	clause_args.exec_frame = &child_frame;
 
-	ERROR_DECL (error);
-	interp_exec_method (&child_frame, context, &clause_args, error);
+	interp_exec_method (&child_frame, context, &clause_args);
 
 	/* ENDFILTER stores the result into child_frame->retval */
 	return retval.data.i ? TRUE : FALSE;
