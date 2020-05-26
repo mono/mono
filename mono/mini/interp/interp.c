@@ -93,6 +93,9 @@ struct FrameClauseArgs {
 	int exit_clause;
 	/* Exception that we are filtering */
 	MonoException *filter_exception;
+	/* Frame that is executing this clause */
+	InterpFrame *exec_frame;
+	/* If set, exec_frame is a duplicate separate frame of this frame */
 	InterpFrame *base_frame;
 };
 
@@ -3331,7 +3334,6 @@ method_entry (ThreadContext *context, InterpFrame *frame,
 	frame->state.sp = sp; \
 	frame->state.vt_sp = vt_sp; \
 	frame->state.finally_ips = finally_ips; \
-	frame->state.clause_args = clause_args; \
 	} while (0)
 
 /* Load and clear state from FRAME */
@@ -3340,14 +3342,13 @@ method_entry (ThreadContext *context, InterpFrame *frame,
 	sp = frame->state.sp; \
 	vt_sp = frame->state.vt_sp; \
 	finally_ips = frame->state.finally_ips; \
-	clause_args = frame->state.clause_args; \
 	locals = (unsigned char *)frame->stack + frame->imethod->stack_size + frame->imethod->vt_stack_size; \
 	frame->state.ip = NULL; \
 	} while (0)
 
 /* Initialize interpreter state for executing FRAME */
 #define INIT_INTERP_STATE(frame, _clause_args) do {	 \
-	ip = _clause_args ? (_clause_args)->start_with_ip : (frame)->imethod->code; \
+	ip = _clause_args ? ((FrameClauseArgs *)_clause_args)->start_with_ip : (frame)->imethod->code; \
 	sp = (frame)->stack; \
 	vt_sp = (unsigned char *) sp + (frame)->imethod->stack_size; \
 	locals = (unsigned char *) vt_sp + (frame)->imethod->vt_stack_size; \
@@ -3925,8 +3926,7 @@ call:
 				EXCEPTION_CHECKPOINT;
 			}
 
-			clause_args = NULL;
-			INIT_INTERP_STATE (frame, clause_args);
+			INIT_INTERP_STATE (frame, NULL);
 
 			MINT_IN_BREAK;
 		}
@@ -6338,8 +6338,12 @@ call_newobj:
 			// After mono_threads_end_abort_protected_block to conserve stack.
 			const int clause_index = *ip;
 
-			if (clause_args && clause_index == clause_args->exit_clause)
-				goto exit_frame;
+			// clause_args stores the clause args only for the first frame that
+			// we started executing in interp_exec_method. If we are exiting the
+			// current frame at this finally clause, we need to make sure that
+			// this is the first frame invoked with interp_exec_method.
+			if (clause_args && clause_args->exec_frame == frame && clause_index == clause_args->exit_clause)
+				goto exit_clause;
 
 #if DEBUG_INTERP // This assert causes Linux/amd64/clang to use more stack.
 			g_assert (sp >= frame->stack);
@@ -6925,7 +6929,7 @@ call_newobj:
 		MINT_IN_CASE(MINT_ENDFILTER)
 			/* top of stack is result of filter */
 			frame->retval->data.i = sp [-1].data.i;
-			goto exit_frame;
+			goto exit_clause;
 		MINT_IN_CASE(MINT_INITOBJ)
 			--sp;
 			memset (sp->data.vt, 0, READ32(ip + 1));
@@ -7178,21 +7182,36 @@ resume:
 	g_assert (context->has_resume_state);
 	g_assert (frame->imethod);
 
-	if (frame == context->handler_frame && (!clause_args || context->handler_ip < clause_args->end_at_ip)) {
-		/* Set the current execution state to the resume state in context */
+	if (frame == context->handler_frame) {
+		/*
+		 * When running finally blocks, we can have the same frame twice on the stack. If we have
+		 * clause_args information, we need to check whether resuming should happen inside this
+		 * finally block, or in some other part of the method, in which case we need to exit.
+		 */
+		if (clause_args && frame == clause_args->exec_frame && context->handler_ip >= clause_args->end_at_ip) {
+			goto exit_clause;
+		} else {
+			/* Set the current execution state to the resume state in context */
+			ip = context->handler_ip;
+			/* spec says stack should be empty at endfinally so it should be at the start too */
+			sp = frame->stack;
+			vt_sp = (guchar*)sp + frame->imethod->stack_size;
+			g_assert (context->exc_gchandle);
+			sp->data.p = mono_gchandle_get_target_internal (context->exc_gchandle);
+			++sp;
 
-		ip = context->handler_ip;
-		/* spec says stack should be empty at endfinally so it should be at the start too */
-		sp = frame->stack;
-		vt_sp = (guchar*)sp + frame->imethod->stack_size;
-		g_assert (context->exc_gchandle);
-		sp->data.p = mono_gchandle_get_target_internal (context->exc_gchandle);
-		++sp;
-
-		finally_ips = clear_resume_state (context, finally_ips);
-		// goto main_loop instead of MINT_IN_DISPATCH helps the compiler and therefore conserves stack.
-		// This is a slow/rare path and conserving stack is preferred over its performance otherwise.
-		goto main_loop;
+			finally_ips = clear_resume_state (context, finally_ips);
+			// goto main_loop instead of MINT_IN_DISPATCH helps the compiler and therefore conserves stack.
+			// This is a slow/rare path and conserving stack is preferred over its performance otherwise.
+			goto main_loop;
+		}
+	} else if (clause_args && frame == clause_args->exec_frame) {
+		/*
+		 * This frame doesn't handle the resume state and it is the first frame invoked from EH.
+		 * We can't just return to parent. We must first exit the EH mechanism and start resuming
+		 * again from the original frame.
+		 */
+		goto exit_clause;
 	}
 	// fall through
 exit_frame:
@@ -7200,15 +7219,7 @@ exit_frame:
 
 	g_assert_checked (frame->imethod);
 
-	if (clause_args && clause_args->base_frame) {
-		// We finished executing a filter. The execution stack of the base frame
-		// should remain unmodified, but we need to update the local space.
-		char *locals_base = (char*)clause_args->base_frame->stack + frame->imethod->stack_size + frame->imethod->vt_stack_size;
-
-		memcpy (locals_base, locals, frame->imethod->locals_size);
-	}
-
-	if (!clause_args && frame->parent && frame->parent->state.ip) {
+	if (frame->parent && frame->parent->state.ip) {
 		/* Return to the main loop after a non-recursive interpreter call */
 		//printf ("R: %s -> %s %p\n", mono_method_get_full_name (frame->imethod->method), mono_method_get_full_name (frame->parent->imethod->method), frame->parent->state.ip);
 		InterpFrame* const child_frame = frame;
@@ -7222,9 +7233,19 @@ exit_frame:
 
 		goto main_loop;
 	}
+exit_clause:
+	if (clause_args) {
+		if (clause_args->base_frame) {
+			// We finished executing a filter. The execution stack of the base frame
+			// should remain unmodified, but we need to update the local space.
+			char *locals_base = (char*)clause_args->base_frame->stack + frame->imethod->stack_size + frame->imethod->vt_stack_size;
 
-	if (!clause_args)
+			memcpy (locals_base, locals, frame->imethod->locals_size);
+			pop_frame (context, frame);
+		}
+	} else {
 		pop_frame (context, frame);
+	}
 
 	DEBUG_LEAVE ();
 }
@@ -7316,6 +7337,7 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 	clause_args.start_with_ip = (const guint16*)handler_ip;
 	clause_args.end_at_ip = (const guint16*)handler_ip_end;
 	clause_args.exit_clause = clause_index;
+	clause_args.exec_frame = iframe;
 
 	state_ip = iframe->state.ip;
 	iframe->state.ip = NULL;
@@ -7328,7 +7350,6 @@ interp_run_finally (StackFrameInfo *frame, int clause_index, gpointer handler_ip
 
 	iframe->next_free = next_free;
 	iframe->state.ip = state_ip;
-	iframe->state.clause_args = NULL;
 	if (context->has_resume_state) {
 		return TRUE;
 	} else {
@@ -7363,6 +7384,7 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 	clause_args.end_at_ip = (const guint16*)handler_ip_end;
 	clause_args.filter_exception = ex;
 	clause_args.base_frame = iframe;
+	clause_args.exec_frame = &child_frame;
 
 	ERROR_DECL (error);
 	interp_exec_method (&child_frame, context, &clause_args, error);
