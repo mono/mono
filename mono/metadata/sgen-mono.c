@@ -2620,6 +2620,12 @@ mono_gc_collect (int generation)
 	MONO_EXIT_GC_UNSAFE;
 }
 
+void 
+mono_gc_start_incremental_collection()
+{
+
+}
+
 int
 mono_gc_collection_count (int generation)
 {

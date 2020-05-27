@@ -336,6 +336,11 @@ mono_gc_collect_a_little()
 	return GC_collect_a_little();
 }
 
+void mono_gc_start_incremental_collection()
+{
+	GC_start_incremental_collection();
+}
+
 /**
  * mono_gc_max_generation:
  *

@@ -61,6 +61,11 @@ mono_gc_collect (int generation)
 {
 }
 
+void
+mono_gc_start_incremental_collection()
+{
+}
+
 int
 mono_gc_max_generation (void)
 {
