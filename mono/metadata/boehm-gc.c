@@ -156,7 +156,7 @@ static mse * GC_gcj_vector_proc (word * addr, mse * mark_stack_ptr,
 	/* end at last element or max chunk size */
 	word *actual_end = actual_start + length * words_per_element;
 
-	return GC_gcj_vector_mark_proc (mark_stack_ptr, element_desc, start, actual_end, words_per_element);
+	return GC_gcj_vector_mark_proc (mark_stack_ptr, mark_stack_limit, element_desc, start, actual_end, words_per_element);
 }
 
 void
