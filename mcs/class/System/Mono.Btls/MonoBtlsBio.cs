@@ -270,8 +270,11 @@ namespace Mono.Btls
 			Flush = 1
 		}
 
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate int BioReadFunc (IntPtr bio, IntPtr data, int dataLength, out int wantMore);
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate int BioWriteFunc (IntPtr bio, IntPtr data, int dataLength);
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate long BioControlFunc (IntPtr bio, ControlCommand command, long arg);
 
 		[DllImport (BTLS_DYLIB)]

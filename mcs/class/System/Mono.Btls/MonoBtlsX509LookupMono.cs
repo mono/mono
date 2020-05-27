@@ -61,6 +61,7 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static int mono_btls_x509_lookup_mono_free (IntPtr handle);
 
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate int BySubjectFunc (IntPtr instance, IntPtr name, out IntPtr x509_ptr);
 
 		GCHandle gch;

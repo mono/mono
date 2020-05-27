@@ -32,8 +32,11 @@ using System.Runtime.CompilerServices;
 
 namespace Mono.Btls
 {
+	[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 	delegate int MonoBtlsVerifyCallback (MonoBtlsX509StoreCtx ctx);
+	[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 	delegate int MonoBtlsSelectCallback (string[] acceptableIssuers);
+	[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 	delegate int MonoBtlsServerNameCallback ();
 
 	class MonoBtlsSsl : MonoBtlsObject
@@ -259,6 +262,7 @@ namespace Mono.Btls
 			return error;
 		}
 
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate int PrintErrorsCallbackFunc (IntPtr str, IntPtr len, IntPtr ctx);
 
 		[Mono.Util.MonoPInvokeCallback (typeof (PrintErrorsCallbackFunc))]
