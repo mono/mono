@@ -174,10 +174,6 @@ public class WasmTuner
 		}
 
 		Console.WriteLine ("// GENERATED FILE, DO NOT MODIFY");
-		Console.WriteLine ("typedef struct {");
-		Console.WriteLine ("const char *name;");
-		Console.WriteLine ("void *func;");
-		Console.WriteLine ("} PinvokeImport;");
 		Console.WriteLine ();
 
 		foreach (var pinvoke in pinvokes) {

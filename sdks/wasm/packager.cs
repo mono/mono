@@ -934,6 +934,10 @@ class Driver {
 			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
+			source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "pinvoke.c"));
+			ninja.WriteLine ($"build $builddir/pinvoke.c: cpifdiff {source_file}");
+			source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "pinvoke.h"));
+			ninja.WriteLine ($"build $builddir/pinvoke.h: cpifdiff {source_file}");
 
 			var pinvoke_file_name = is_netcore ? "pinvoke-tables-default-netcore.h" : "pinvoke-tables-default.h";
 			var pinvoke_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", pinvoke_file_name));
@@ -957,6 +961,8 @@ class Driver {
 
 			ninja.WriteLine ("build $emsdk_env: create-emsdk-env");
 			ninja.WriteLine ($"build $builddir/driver.o: emcc $builddir/driver.c | $emsdk_env $builddir/driver-gen.c {driver_deps}");
+			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I{runtime_dir}/include/mono-2.0");
+			ninja.WriteLine ($"build $builddir/pinvoke.o: emcc $builddir/pinvoke.c | $emsdk_env {driver_deps}");
 			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I{runtime_dir}/include/mono-2.0");
 
 			if (enable_zlib) {
@@ -1102,7 +1108,7 @@ class Driver {
 		}
 		if (build_wasm) {
 			string zlibhelper = enable_zlib ? "$builddir/zlib-helper.o" : "";
-			ninja.WriteLine ($"build $appdir/dotnet.js $appdir/dotnet.wasm: emcc-link $builddir/driver.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {extra_link_libs} {runtime_libs} | $tool_prefix/src/library_mono.js $tool_prefix/src/dotnet_support.js {wasm_core_support} $emsdk_env");
+			ninja.WriteLine ($"build $appdir/dotnet.js $appdir/dotnet.wasm: emcc-link $builddir/driver.o $builddir/pinvoke.o {zlibhelper} {wasm_core_bindings} {ofiles} {profiler_libs} {extra_link_libs} {runtime_libs} | $tool_prefix/src/library_mono.js $tool_prefix/src/dotnet_support.js {wasm_core_support} $emsdk_env");
 			ninja.WriteLine ("  out_js=$appdir/dotnet.js");
 			ninja.WriteLine ("  out_wasm=$appdir/dotnet.wasm");
 		}
