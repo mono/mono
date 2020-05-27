@@ -2819,6 +2819,12 @@ mono_gc_collect (int generation)
 	sgen_gc_collect (generation);
 }
 
+void 
+mono_gc_start_incremental_collection()
+{
+
+}
+
 int
 mono_gc_collection_count (int generation)
 {

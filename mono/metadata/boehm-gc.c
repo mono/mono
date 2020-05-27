@@ -394,6 +394,13 @@ mono_gc_collect_a_little()
 	return GC_collect_a_little();
 }
 
+void mono_gc_start_incremental_collection()
+{
+#if HAVE_BDWGC_GC
+	GC_start_incremental_collection();
+#endif	
+}
+
 /**
  * mono_gc_max_generation:
  *
