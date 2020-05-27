@@ -5815,11 +5815,14 @@ typedef
 // Workaround gcc ABI bug. It returns the struct in ST0 instead of edx:eax.
 // Mono and Visual C++ agree.
 union
-#else
-struct
-#endif
 {
 	double d;
+	short dummy;
+#else
+struct
+{
+	double d;
+#endif
 } SingleDoubleStruct;
 
 LIBTEST_API SingleDoubleStruct STDCALL
