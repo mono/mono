@@ -428,11 +428,7 @@ namespace System
 		protected virtual object DynamicInvokeImpl (object[] args)
 		{
 			if (Method == null) {
-				Type[] mtypes = new Type [args.Length];
-				for (int i = 0; i < args.Length; ++i) {
-					mtypes [i] = args [i].GetType ();
-				}
-				method_info = m_target.GetType ().GetMethod (data.method_name, mtypes);
+				throw new NullReferenceException ("method_info was null");
 			}
 
 			var target = m_target;
