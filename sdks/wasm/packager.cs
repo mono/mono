@@ -86,6 +86,10 @@ class Driver {
 		public string linkin_path;
 		// Linker output path
 		public string linkout_path;
+		// Linker pdb input path
+		public string linkin_pdb_path;
+		// Linker pdb output path
+		public string linkout_pdb_path;
 		// AOT input path
 		public string aotin_path;
 		// Final output path after IL strip
@@ -1012,10 +1016,17 @@ class Driver {
 			bool emit_pdb = assemblies_with_dbg_info.Contains (source_file_path_pdb);
 			if (enable_linker) {
 				a.linkin_path = $"$builddir/linker-in/{filename}";
+				a.linkin_pdb_path = $"$builddir/linker-in/{filename_pdb}";
 				a.linkout_path = $"$builddir/linker-out/{filename}";
+				a.linkout_pdb_path = $"$builddir/linker-out/{filename_pdb}";
 				linker_infiles += $"{a.linkin_path} ";
 				linker_ofiles += $" {a.linkout_path}";
 				ninja.WriteLine ($"build {a.linkin_path}: cp {source_file_path}");
+				if (File.Exists(source_file_path_pdb)) {
+					ninja.WriteLine($"build {a.linkin_pdb_path}: cp {source_file_path_pdb}");
+					linker_ofiles += $" {a.linkout_pdb_path}";
+					infile_pdb = a.linkout_pdb_path;
+				}
 				a.aotin_path = a.linkout_path;
 				infile = $"{a.aotin_path}";
 			} else {
@@ -1142,6 +1153,9 @@ class Driver {
 			if (!opts.EnableCollation) {
 				linker_args += "--substitutions linker-disable-collation.xml ";
 				linker_infiles += "linker-disable-collation.xml";
+			}
+			if (opts.Debug) {
+				linker_args += "-b true ";
 			}
 			if (!string.IsNullOrEmpty (linkDescriptor)) {
 				linker_args += $"-x {linkDescriptor} ";
