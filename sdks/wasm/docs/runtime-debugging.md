@@ -26,4 +26,13 @@ EM_ASM(
 - The --stack-trace-limit=1000 option to V8 can be used to avoid V8 truncating stack traces.
 - Emscripten supports clang's -fsanitize=address option, it can also decompile
   wasm images at runtime to create readable stacktraces for C code.
-
+- The numbers in stack traces such as:
+```
+WebAssembly.instantiate:wasm-function[8003]:0x12b564
+```
+mean wasm function index/offset inside the wasm binary.
+The wasm-objdump tool in the emscripten sdk can be used to find the
+corresponding wasm code:
+```
+12b551 func[8003] <mono_wasm_load_runtime>:
+```
