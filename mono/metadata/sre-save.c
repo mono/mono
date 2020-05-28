@@ -3151,4 +3151,3 @@ mono_image_create_pefile (MonoReflectionModuleBuilder *mb, HANDLE file, MonoErro
 }
 
 #endif /* DISABLE_REFLECTION_EMIT_SAVE */
-
