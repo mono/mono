@@ -170,6 +170,8 @@ namespace DebuggerTests
 			if (method != "Debugger.scriptParsed")
 				events.Add (method);
 			await insp.OnMessage (method, args, token);
+			if (method.IndexOf ("crashed", StringComparison.InvariantCultureIgnoreCase) >= 0)
+				System.Console.WriteLine($"crashed: {method} {args}");
 		}
 	}
 }
