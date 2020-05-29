@@ -214,6 +214,50 @@ namespace DebuggerTests
 			});
 		}
 
+		// sets breakpoint by method name and line offset
+		internal async Task CheckInspectLocalsAtBreakpointSite (string type, string method, int line_offset, string bp_function_name, string eval_expression,
+						Action<JToken> locals_fn = null, Func<JObject, Task> wait_for_event_fn = null, bool use_cfo = false, string assembly="debugger-test.dll", int col = 0)
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
+
+				var bp = await SetBreakpointInMethod (assembly, type, method, line_offset, col);
+
+				var args = JObject.FromObject (new { expression = eval_expression });
+				var res = await ctx.cli.SendCommand ("Runtime.evaluate", args, ctx.token);
+				if (!res.IsOk) {
+					Console.WriteLine ($"Failed to run command {method} with args: {args?.ToString ()}\nresult: {res.Error.ToString ()}");
+					Assert.True (false, $"SendCommand for {method} failed with {res.Error.ToString ()}");
+				}
+
+				var pause_location = await ctx.insp.WaitFor (Inspector.PAUSE);
+
+				if (bp_function_name != null)
+					Assert.Equal (bp_function_name, pause_location ["callFrames"]?[0]?["functionName"]?.Value<string> ());
+
+				Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+
+				var top_frame = pause_location ["callFrames"][0];
+
+				var scope = top_frame ["scopeChain"][0];
+				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+
+				if (wait_for_event_fn != null)
+					await wait_for_event_fn (pause_location);
+
+				if (locals_fn != null) {
+					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string> ());
+					locals_fn (locals);
+				}
+			});
+		}
+
 		internal void CheckLocation (string script_loc, int line, int column, Dictionary<string, string> scripts, JToken location)
 		{
 			var loc_str = $"{ scripts[location["scriptId"].Value<string>()] }"

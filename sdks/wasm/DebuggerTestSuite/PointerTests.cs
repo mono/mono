@@ -10,20 +10,19 @@ namespace DebuggerTests
 
 	public class PointerTests : DebuggerTestBase {
 
-		public static TheoryData<string, string, int, int, bool> PointersTestData =>
-			new TheoryData<string, string, int, int, bool> {
-				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "LocalPointers", 42, 3, false},
-				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "LocalPointers", 42, 3, true},
-				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "MoveNext", 90, 3, false},
-				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "MoveNext", 90, 3, true},
+		public static TheoryData<string, string, string, int, string, bool> PointersTestData =>
+			new TheoryData<string, string, string, int, string, bool> {
+				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "LocalPointers", 32, "LocalPointers", false},
+				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "LocalPointers", 32, "LocalPointers", true},
+				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", false},
+				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", true}
 			};
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersToPrimitiveTypes (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectLocalPointersToPrimitiveTypes (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name,
+				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
@@ -66,10 +65,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointerArrays (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectLocalPointerArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
@@ -94,10 +93,10 @@ namespace DebuggerTests
 
  		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalDoublePointerToPrimitiveTypeArrays (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectLocalDoublePointerToPrimitiveTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
@@ -134,10 +133,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersToValueTypes (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectLocalPointersToValueTypes (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
@@ -201,10 +200,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersToValueTypeArrays (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectLocalPointersToValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
@@ -231,10 +230,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersToGenericValueTypeArrays (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectLocalPointersToGenericValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
@@ -293,10 +292,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalDoublePointersToValueTypeArrays (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectLocalDoublePointersToValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
@@ -330,10 +329,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersInClasses (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectLocalPointersInClasses (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
@@ -349,18 +348,18 @@ namespace DebuggerTests
 					await CheckDateTime (ptr_props, "*Ptr", dt);
 			});
 
-		public static TheoryData<string, string, int, int, bool> PointersAsMethodArgsTestData =>
-			new TheoryData<string, string, int, int, bool> {
-				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "PointersAsArgsTest", 53, 3, false},
-				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "PointersAsArgsTest", 53, 3, true},
+		public static TheoryData<string, string, string, int, string, bool> PointersAsMethodArgsTestData =>
+			new TheoryData<string, string, string, int, string, bool> {
+				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "PointersAsArgsTest", 2, "PointersAsArgsTest", false},
+				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "PointersAsArgsTest", 2, "PointersAsArgsTest", true},
 			};
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersAsMethodArgsTestData))]
-		public async Task InspectPrimitiveTypePointersAsMethodArgs (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectPrimitiveTypePointersAsMethodArgs (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
@@ -425,10 +424,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersAsMethodArgsTestData))]
-		public async Task InspectValueTypePointersAsMethodArgs (string eval_fn, string function_name, int line, int col, bool use_cfo)
+		public async Task InspectValueTypePointersAsMethodArgs (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-pointers-test.cs", line, col,
-				function_name, "window.setTimeout(function() { " + eval_fn + " })",
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
 				wait_for_event_fn: async (pause_location) => {
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
