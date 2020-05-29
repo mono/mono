@@ -52,9 +52,11 @@ GetOptions(
 );
 
 my $monoArch32Target = "i386";
-
-print(">>> Building $monoArch32Target\n");
-system("perl", "$buildscriptsdir/build.pl", "--arch32=1", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ("failing building $monoArch32Target");
+if ($buildMachine)
+{
+	print(">>> Building $monoArch32Target\n");
+	system("perl", "$buildscriptsdir/build.pl", "--arch32=1", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ("failing building $monoArch32Target");
+}
 
 if ($artifactsCommon)
 {
@@ -80,7 +82,7 @@ if ($artifact)
 
 	system("mkdir -p $embedDirDestination");
 
-	if (!(-d $embedDirSource32))
+	if (!(-d $embedDirSource32) && $buildMachine)
 	{
 		die("Expected source directory not found : $embedDirSource32\n");
 	}
