@@ -6,6 +6,7 @@
  */
 #define NULL ((void*)0)
 int strcmp (const char *s1, const char *s2);
+void mono_wasm_printerr (const char *s);
 
 #ifdef GEN_PINVOKE
 #include "pinvoke-table.h"
@@ -16,6 +17,12 @@ int strcmp (const char *s1, const char *s2);
 #include "pinvoke-tables-default.h"
 #endif
 #endif
+
+void
+mono_wasm_pinvoke_vararg_stub (void)
+{
+	/* This is just a stub used to mark vararg pinvokes */
+}
 
 void*
 wasm_dl_lookup_pinvoke_table (const char *name)

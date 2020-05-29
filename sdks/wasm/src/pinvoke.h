@@ -12,4 +12,7 @@ wasm_dl_lookup_pinvoke_table (const char *name);
 int
 wasm_dl_is_pinvoke_table (void *handle);
 
+void
+mono_wasm_pinvoke_vararg_stub (void);
+
 #endif

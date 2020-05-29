@@ -62,6 +62,13 @@ void mono_trace_init (void);
 
 static MonoDomain *root_domain;
 
+void
+mono_wasm_printerr (const char *message)
+{
+	fprintf (stderr, "%s\n", message);
+	fflush (stderr);
+}
+
 static MonoString*
 mono_wasm_invoke_js (MonoString *str, int *is_exception)
 {
@@ -196,8 +203,14 @@ wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 
 	PinvokeImport *table = (PinvokeImport*)handle;
 	for (int i = 0; table [i].name; ++i) {
-		if (!strcmp (table [i].name, name))
+		if (!strcmp (table [i].name, name)) {
+			if (table [i].func == mono_wasm_pinvoke_vararg_stub) {
+				fprintf (stderr, "PInvoke method '%s' has multiple conflicting declarations. PInvokes with varargs are not supported.\n", table [i].name);
+				fflush (stderr);
+				exit (1);
+			}
 			return table [i].func;
+		}
 	}
 	return NULL;
 }
