@@ -420,7 +420,7 @@ class Driver {
 		var linkMode = LinkMode.All;
 		var linkDescriptor = "";
 		var framework = "";
-		var netcore_sdkdir = "";
+		var runtimepack_dir = "";
 		string coremode, usermode;
 		string aot_profile = null;
 		string wasm_runtime_path = null;
@@ -448,7 +448,7 @@ class Driver {
 				{ "builddir=", s => builddir = s },
 				{ "mono-sdkdir=", s => sdkdir = s },
 				{ "emscripten-sdkdir=", s => emscripten_sdkdir = s },
-				{ "netcore-sdkdir=", s => netcore_sdkdir = s },
+				{ "runtimepack-dir=", s => runtimepack_dir = s },
 				{ "prefix=", s => app_prefix = s },
 				{ "wasm-runtime-path=", s => wasm_runtime_path = s },
 				{ "deploy=", s => deploy_prefix = s },
@@ -558,18 +558,18 @@ class Driver {
 			return 1;
 		}
 		if (framework != "") {
-			if (framework.StartsWith ("netcoreapp")) {
+			if (framework.StartsWith ("net5")) {
 				is_netcore = true;
-				if (netcore_sdkdir == "") {
-					Console.Error.WriteLine ("The --netcore-sdkdir= argument is required.");
+				if (runtimepack_dir == "") {
+					Console.Error.WriteLine ("The --runtimepack-dir= argument is required.");
 					return 1;
 				}
-				if (!Directory.Exists (netcore_sdkdir)) {
-					Console.Error.WriteLine ($"The directory '{netcore_sdkdir}' doesn't exist.");
+				if (!Directory.Exists (runtimepack_dir)) {
+					Console.Error.WriteLine ($"The directory '{runtimepack_dir}' doesn't exist.");
 					return 1;
 				}
 			} else {
-				Console.Error.WriteLine ("The only valid value for --framework is 'netcoreapp...'");
+				Console.Error.WriteLine ("The only valid value for --framework is 'net5...'");
 				return 1;
 			}
 		}
@@ -603,9 +603,10 @@ class Driver {
 		bcl_prefixes = new List<string> ();
 		if (is_netcore) {
 			/* corelib */
-			bcl_prefixes.Add (Path.Combine (sdkdir, "wasm-runtime-netcore-release"));
+			//bcl_prefixes.Add (Path.Combine (sdkdir, "wasm-runtime-netcore-release"));
 			/* .net runtime */
-			bcl_prefixes.Add (netcore_sdkdir);
+			bcl_prefixes.Add (Path.Combine (runtimepack_dir, "native"));
+			bcl_prefixes.Add (Path.Combine (runtimepack_dir, "lib", "net5.0"));
 		} else {
 			bcl_prefixes.Add (bcl_prefix);
 		}
@@ -721,19 +722,20 @@ class Driver {
 		File.Delete (config_js);
 		File.WriteAllText (config_js, config);
 
-
-		if (wasm_runtime_path == null)
-			wasm_runtime_path = Path.Combine (tool_prefix, "builds");
-
 		string wasm_runtime_dir;
-		if (is_netcore)
-			wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "netcore-release" : "netcore-debug");
-		else if (enable_threads)
-			wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "threads-release" : "threads-debug");
-		else if (enable_dynamic_runtime)
-			wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "dynamic-release" : "dynamic-debug");
-		else
-			wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "release" : "debug");
+		if (is_netcore) {
+			wasm_runtime_dir = Path.Combine (runtimepack_dir, "native", "wasm", "runtimes", use_release_runtime ? "release" : "debug");
+		} else {
+			if (wasm_runtime_path == null)
+				wasm_runtime_path = Path.Combine (tool_prefix, "builds");
+
+			if (enable_threads)
+				wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "threads-release" : "threads-debug");
+			else if (enable_dynamic_runtime)
+				wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "dynamic-release" : "dynamic-debug");
+			else
+				wasm_runtime_dir = Path.Combine (wasm_runtime_path, use_release_runtime ? "release" : "debug");
+		}
 		if (!emit_ninja) {
 			var interp_files = new List<string> { "dotnet.js", "dotnet.wasm" };
 			if (enable_threads) {
