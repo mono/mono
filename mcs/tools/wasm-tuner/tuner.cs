@@ -44,13 +44,16 @@ class Pinvoke
 {
 	public Pinvoke (string entry_point, string module, MethodReference method) {
 		EntryPoint = entry_point;
+		TableEntryPoint = entry_point;
 		Module = module;
 		Method = method;
 	}
 
 	public string EntryPoint;
+	public string TableEntryPoint;
 	public string Module;
 	public MethodReference Method;
+	public string CDecl;
 }
 
 public class WasmTuner
@@ -176,9 +179,21 @@ public class WasmTuner
 		Console.WriteLine ("// GENERATED FILE, DO NOT MODIFY");
 		Console.WriteLine ();
 
+		var decls = new Dictionary<string, Pinvoke> ();
 		foreach (var pinvoke in pinvokes) {
-			if (modules.ContainsKey (pinvoke.Module))
-				Console.WriteLine (GenPinvokeDecl (pinvoke));
+			if (modules.ContainsKey (pinvoke.Module)) {
+				pinvoke.CDecl = GenPinvokeDecl (pinvoke);
+				if (decls.TryGetValue (pinvoke.EntryPoint, out Pinvoke prev_pinvoke)) {
+					if (pinvoke.CDecl != prev_pinvoke.CDecl) {
+						Console.Error.WriteLine ($"Warning: PInvoke method '{pinvoke.EntryPoint}' has incompatible declarations.");
+						pinvoke.TableEntryPoint = "mono_wasm_pinvoke_vararg_stub";
+						prev_pinvoke.TableEntryPoint = "mono_wasm_pinvoke_vararg_stub";
+						continue;
+					}
+				}
+				decls [pinvoke.EntryPoint] = pinvoke;
+				Console.WriteLine (pinvoke.CDecl);
+			}
 		}
 
 		foreach (var module in modules.Keys) {
@@ -186,7 +201,7 @@ public class WasmTuner
 			Console.WriteLine ("static PinvokeImport " + symbol + " [] = {");
 			foreach (var pinvoke in pinvokes) {
 				if (pinvoke.Module == module)
-					Console.WriteLine ("{\"" + pinvoke.EntryPoint + "\", " + pinvoke.EntryPoint + "},");
+					Console.WriteLine ("{\"" + pinvoke.EntryPoint + "\", " + pinvoke.TableEntryPoint + "},");
 			}
 			Console.WriteLine ("{NULL, NULL}");
 			Console.WriteLine ("};");
