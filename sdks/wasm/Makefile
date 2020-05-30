@@ -236,7 +236,7 @@ $(error "Set the DOTNET_REPO_PATH variable for the netcore build to a checkout o
 endif
 
 DOTNET=$(DOTNET_REPO_PATH)/dotnet.sh
-RUNTIMEPACK_DIR=$(DOTNET_REPO_PATH)/artifacts/bin/lib-runtime-packs/net5.0-Browser-Release-wasm/runtimes/browser-wasm
+RUNTIMEPACK_DIR=$(DOTNET_REPO_PATH)/artifacts/bin/lib-runtime-packs/net5.0-Browser-Release-wasm
 
 .PHONY: build-netcore
 build-netcore: | provision-emsdk
@@ -254,9 +254,9 @@ bin/interp-netcore-hello/dotnet.js: build-interp-netcore-hello
 run-interp-netcore-hello: bin/interp-netcore-hello/dotnet.js
 	(cd bin/interp-netcore-hello && $(SM) runtime.js --run hello.dll)
 
-#build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/netcoreapp5.0/hello.dll $(NETCOREAPP_DIR)
-#	$(PACKAGER) --debugrt --simd --no-native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp5.0 --template=runtime-tests.js --aot --linker samples/hello/bin/Debug/netcoreapp5.0/hello.dll
-#	ninja -v -C obj/aot-hello-netcore
+build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/net5.0/hello.dll
+	$(PACKAGER) --native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=net5.0 --runtimepack-dir=$(RUNTIMEPACK_DIR) --template=runtime-tests.js --aot --linker --pinvoke-libs=libSystem.Native samples/hello/bin/Debug/net5.0/hello.dll
+	ninja -v -C obj/aot-hello-netcore
 
 bin/aot-hello-netcore/dotnet.js: build-aot-hello-netcore
 
