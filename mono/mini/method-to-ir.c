@@ -12458,7 +12458,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				CHECK_OPSIZE (4);
 				n = read16 (ip + 2);
 				CHECK_LOCAL (n);
-				if ((ip [4] == CEE_LDFLD) && ip_in_bb (cfg, cfg->cbb, ip + 4) && header->locals [n]->type == MONO_TYPE_VALUETYPE) {
+				if ((ip [4] == CEE_LDFLD) && ip_in_bb (cfg, cfg->cbb, ip + 4) && header->locals [n]->type == MONO_TYPE_VALUETYPE && !header->locals [n]->byref) {
 					/* Avoid loading a struct just to load one of its fields */
 					EMIT_NEW_LOCLOADA (cfg, ins, n);
 				} else {
