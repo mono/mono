@@ -568,6 +568,11 @@ class Driver {
 					Console.Error.WriteLine ($"The directory '{runtimepack_dir}' doesn't exist.");
 					return 1;
 				}
+				if (!Directory.Exists (Path.Combine (runtimepack_dir, "runtimes", "browser-wasm"))) {
+					Console.Error.WriteLine ($"The directory '{runtimepack_dir}' doesn't contain a 'runtimes/browser-wasm' subdirectory.");
+					return 1;
+				}
+				runtimepack_dir = Path.Combine (runtimepack_dir, "runtimes", "browser-wasm");
 			} else {
 				Console.Error.WriteLine ("The only valid value for --framework is 'net5...'");
 				return 1;
@@ -603,9 +608,8 @@ class Driver {
 		bcl_prefixes = new List<string> ();
 		if (is_netcore) {
 			/* corelib */
-			//bcl_prefixes.Add (Path.Combine (sdkdir, "wasm-runtime-netcore-release"));
-			/* .net runtime */
 			bcl_prefixes.Add (Path.Combine (runtimepack_dir, "native"));
+			/* .net runtime */
 			bcl_prefixes.Add (Path.Combine (runtimepack_dir, "lib", "net5.0"));
 		} else {
 			bcl_prefixes.Add (bcl_prefix);
@@ -787,9 +791,15 @@ class Driver {
 			GenDriver (builddir, profilers, ee_mode, link_icalls);
 		}
 
-		string runtime_dir = is_netcore ? "$mono_sdkdir/wasm-runtime-netcore-release" : "$mono_sdkdir/wasm-runtime-release";
-		string runtime_libdir = $"{runtime_dir}/lib";
-
+		string runtime_dir;
+		string runtime_libdir;
+		if (is_netcore) {
+			runtime_dir = "$runtimepack_dir/native";
+			runtime_libdir = "$runtimepack_dir/native";
+		} else {
+			runtime_dir = "$mono_sdkdir/wasm-runtime-release";
+			runtime_libdir = $"{runtime_dir}/lib";
+		}
 		string runtime_libs = "";
 		if (ee_mode == ExecMode.Interp || ee_mode == ExecMode.AotInterp || link_icalls) {
 			runtime_libs += $"$runtime_libdir/libmono-ee-interp.a $runtime_libdir/libmono-ilgen.a ";
@@ -799,7 +809,7 @@ class Driver {
 		}
 		runtime_libs += $"$runtime_libdir/libmonosgen-2.0.a ";
 		if (is_netcore)
-			runtime_libs += $"$runtime_libdir/System.Native.bc";
+			runtime_libs += $"$runtime_libdir/libSystem.Native.a";
 		else
 			runtime_libs += $"$runtime_libdir/libmono-native.a";
 
@@ -823,6 +833,8 @@ class Driver {
 			aot_args += "interp,";
 		if (build_wasm)
 			enable_zlib = true;
+		if (is_netcore)
+			enable_zlib = false;
 
 		wasm_runtime_dir = Path.GetFullPath (wasm_runtime_dir);
 		sdkdir = Path.GetFullPath (sdkdir);
@@ -836,7 +848,7 @@ class Driver {
 		string emcc_flags = "";
 		if (enable_lto)
 			emcc_flags += "--llvm-lto 1 ";
-		if (enable_zlib)
+		if (enable_zlib || is_netcore)
 			emcc_flags += "-s USE_ZLIB=1 ";
 		if (enable_fs)
 			emcc_flags += "-s FORCE_FILESYSTEM=1 ";
@@ -866,6 +878,8 @@ class Driver {
 		ninja.WriteLine ($"tool_prefix = {tool_prefix}");
 		ninja.WriteLine ($"appdir = {out_prefix}");
 		ninja.WriteLine ($"builddir = .");
+		if (is_netcore)
+			ninja.WriteLine ($"runtimepack_dir = {runtimepack_dir}");
 		ninja.WriteLine ($"wasm_runtime_dir = {wasm_runtime_dir}");
 		ninja.WriteLine ($"runtime_libdir = {runtime_libdir}");
 		ninja.WriteLine ($"deploy_prefix = {deploy_prefix}");
@@ -884,7 +898,7 @@ class Driver {
 			ninja.WriteLine ("wasm_core_support_library =");
 		}
 		if (is_netcore)
-			ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-netcore-release/bin/wasm32-unknown-none-mono-sgen");
+			ninja.WriteLine ("cross = $runtimepack_dir/native/cross/mono-aot-cross");
 		else
 			ninja.WriteLine ("cross = $mono_sdkdir/wasm-cross-release/bin/wasm32-unknown-none-mono-sgen");
 		ninja.WriteLine ("emcc = source $emsdk_env && emcc");
@@ -937,23 +951,29 @@ class Driver {
 		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
 		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
 		if (build_wasm) {
-			var source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "driver.c"));
+			string src_prefix;
+
+			if (is_netcore)
+				src_prefix = Path.Combine (runtimepack_dir, "native", "wasm", "src");
+			else
+				src_prefix = Path.Combine (tool_prefix, "src");
+			var source_file = Path.GetFullPath (Path.Combine (src_prefix, "driver.c"));
 			ninja.WriteLine ($"build $builddir/driver.c: cpifdiff {source_file}");
 			ninja.WriteLine ($"build $builddir/driver-gen.c: cpifdiff $builddir/driver-gen.c.in");
-			source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "pinvoke.c"));
+			source_file = Path.GetFullPath (Path.Combine (src_prefix, "pinvoke.c"));
 			ninja.WriteLine ($"build $builddir/pinvoke.c: cpifdiff {source_file}");
-			source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "pinvoke.h"));
+			source_file = Path.GetFullPath (Path.Combine (src_prefix, "pinvoke.h"));
 			ninja.WriteLine ($"build $builddir/pinvoke.h: cpifdiff {source_file}");
 
-			var pinvoke_file_name = is_netcore ? "pinvoke-tables-default-netcore.h" : "pinvoke-tables-default.h";
-			var pinvoke_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", pinvoke_file_name));
-			ninja.WriteLine ($"build $builddir/{pinvoke_file_name}: cpifdiff {pinvoke_file}");
-			driver_deps += $" $builddir/{pinvoke_file_name}";
+			var pinvoke_file_name = is_netcore ? "pinvoke-table.h" : "pinvoke-tables-default.h";
+			var pinvoke_file = Path.GetFullPath (Path.Combine (src_prefix, pinvoke_file_name));
+			ninja.WriteLine ($"build $builddir/pinvoke-tables-default.h: cpifdiff {pinvoke_file}");
+			driver_deps += $" $builddir/pinvoke-tables-default.h";
 
 			var driver_cflags = enable_aot ? "-DENABLE_AOT=1" : "";
 
 			if (add_binding) {
-				var bindings_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "corebindings.c"));
+				var bindings_source_file = Path.GetFullPath (Path.Combine (src_prefix, "corebindings.c"));
 				ninja.WriteLine ($"build $builddir/corebindings.c: cpifdiff {bindings_source_file}");
 
 				ninja.WriteLine ($"build $builddir/corebindings.o: emcc $builddir/corebindings.c | $emsdk_env");
@@ -972,7 +992,7 @@ class Driver {
 			ninja.WriteLine ($"  flags = {driver_cflags} -DDRIVER_GEN=1 -I{runtime_dir}/include/mono-2.0");
 
 			if (enable_zlib) {
-				var zlib_source_file = Path.GetFullPath (Path.Combine (tool_prefix, "src", "zlib-helper.c"));
+				var zlib_source_file = Path.GetFullPath (Path.Combine (src_prefix, "zlib-helper.c"));
 				ninja.WriteLine ($"build $builddir/zlib-helper.c: cpifdiff {zlib_source_file}");
 
 				ninja.WriteLine ($"build $builddir/zlib-helper.o: emcc $builddir/zlib-helper.c | $emsdk_env");
