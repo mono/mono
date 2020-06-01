@@ -168,10 +168,8 @@ namespace DebuggerTests
 		async Task OnMessage (string method, JObject args, CancellationToken token)
 		{
 			if (method != "Debugger.scriptParsed")
-				events.Add (method);
+				events.Add ($"{method} {args}");
 			await insp.OnMessage (method, args, token);
-			if (method.IndexOf ("crashed", StringComparison.InvariantCultureIgnoreCase) >= 0)
-				System.Console.WriteLine($"crashed: {method} {args}");
 		}
 	}
 }
