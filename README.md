@@ -13,8 +13,13 @@ Branches for released Unity versions are of the form unity-\<version\>\[-mbe\][-
 ### Branches
 
 #### Trunk
-* [unity-trunk (PR to this branch for Mono)](https://github.com/Unity-Technologies/mono/tree/unity-trunk)
 * [unity-master (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-master)
+
+#### 2020.1
+* [unity-2020.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2020.1-mbe)
+
+#### 2019.3
+* [unity-2019.3-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2019.3-mbe)
 
 #### 2019.2
 * [unity-2019.2](https://github.com/Unity-Technologies/mono/tree/unity-2019.2)
