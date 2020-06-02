@@ -167,8 +167,12 @@ namespace DebuggerTests
 
 		async Task OnMessage (string method, JObject args, CancellationToken token)
 		{
-			if (method != "Debugger.scriptParsed")
-				events.Add ($"{method} {args}");
+			if (method != "Debugger.scriptParsed") {
+				if (method == "Debugger.breakpointResolved")
+					events.Add (method);
+				else
+					events.Add ($"{method} {args}");
+			}
 			await insp.OnMessage (method, args, token);
 		}
 	}
