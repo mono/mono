@@ -152,9 +152,22 @@ MONO_API unitytls_interface_struct* mono_unity_get_unitytls_interface();
 MONO_API void mono_unity_install_unitytls_interface(unitytls_interface_struct* callbacks);
 
 // gc
+typedef enum
+{
+	MONO_GC_MODE_DISABLED = 0,
+	MONO_GC_MODE_ENABLED = 1,
+	MONO_GC_MODE_MANUAL = 2
+}  MonoGCMode;
+
+MONO_API void mono_unity_gc_set_mode(MonoGCMode mode);
+
+// Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API void mono_unity_gc_enable();
+// Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API void mono_unity_gc_disable();
+// Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API int mono_unity_gc_is_disabled();
+
 
 //misc
 MonoAssembly* mono_unity_assembly_get_mscorlib();

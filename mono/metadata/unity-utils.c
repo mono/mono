@@ -913,6 +913,34 @@ mono_unity_get_unitytls_interface()
 }
 
 // gc
+MONO_API void mono_unity_gc_set_mode(MonoGCMode mode)
+{
+#if HAVE_BDWGC_GC
+	switch (mode)
+	{
+		case MONO_GC_MODE_ENABLED:
+			if (GC_is_disabled())
+				GC_enable();
+			GC_set_disable_automatic_collection(FALSE);
+			break;
+
+		case MONO_GC_MODE_DISABLED:
+			if (!GC_is_disabled())
+				GC_disable();
+			break;
+
+		case MONO_GC_MODE_MANUAL:
+			if (GC_is_disabled())
+				GC_enable();
+			GC_set_disable_automatic_collection(TRUE);
+			break;
+	}
+#else
+	g_assert_not_reached ();
+#endif
+}
+
+// Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API void mono_unity_gc_enable()
 {
 #if HAVE_BDWGC_GC
@@ -922,6 +950,7 @@ MONO_API void mono_unity_gc_enable()
 #endif
 }
 
+// Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API void mono_unity_gc_disable()
 {
 #if HAVE_BDWGC_GC
@@ -931,6 +960,7 @@ MONO_API void mono_unity_gc_disable()
 #endif
 }
 
+// Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API int mono_unity_gc_is_disabled()
 {
 #if HAVE_BDWGC_GC
