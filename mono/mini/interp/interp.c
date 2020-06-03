@@ -2199,9 +2199,10 @@ typedef struct {
 	int pindex;
 	gpointer jit_wrapper;
 	gpointer *args;
-	MonoFtnDesc *ftndesc;
+	MonoFtnDesc ftndesc;
 } JitCallCbData;
 
+/* Callback called by mono_llvm_cpp_catch_exception () */
 static void
 jit_call_cb (gpointer arg)
 {
@@ -2209,70 +2210,70 @@ jit_call_cb (gpointer arg)
 	gpointer jit_wrapper = cb_data->jit_wrapper;
 	int pindex = cb_data->pindex;
 	gpointer *args = cb_data->args;
-	MonoFtnDesc ftndesc = *cb_data->ftndesc;
+	MonoFtnDesc *ftndesc = &cb_data->ftndesc;
 
 	switch (pindex) {
 	case 0: {
 		typedef void (*T)(gpointer);
 		T func = (T)jit_wrapper;
 
-		func (&ftndesc);
+		func (ftndesc);
 		break;
 	}
 	case 1: {
 		typedef void (*T)(gpointer, gpointer);
 		T func = (T)jit_wrapper;
 
-		func (args [0], &ftndesc);
+		func (args [0], ftndesc);
 		break;
 	}
 	case 2: {
 		typedef void (*T)(gpointer, gpointer, gpointer);
 		T func = (T)jit_wrapper;
 
-		func (args [0], args [1], &ftndesc);
+		func (args [0], args [1], ftndesc);
 		break;
 	}
 	case 3: {
 		typedef void (*T)(gpointer, gpointer, gpointer, gpointer);
 		T func = (T)jit_wrapper;
 
-		func (args [0], args [1], args [2], &ftndesc);
+		func (args [0], args [1], args [2], ftndesc);
 		break;
 	}
 	case 4: {
 		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer);
 		T func = (T)jit_wrapper;
 
-		func (args [0], args [1], args [2], args [3], &ftndesc);
+		func (args [0], args [1], args [2], args [3], ftndesc);
 		break;
 	}
 	case 5: {
 		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
 		T func = (T)jit_wrapper;
 
-		func (args [0], args [1], args [2], args [3], args [4], &ftndesc);
+		func (args [0], args [1], args [2], args [3], args [4], ftndesc);
 		break;
 	}
 	case 6: {
 		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
 		T func = (T)jit_wrapper;
 
-		func (args [0], args [1], args [2], args [3], args [4], args [5], &ftndesc);
+		func (args [0], args [1], args [2], args [3], args [4], args [5], ftndesc);
 		break;
 	}
 	case 7: {
 		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
 		T func = (T)jit_wrapper;
 
-		func (args [0], args [1], args [2], args [3], args [4], args [5], args [6], &ftndesc);
+		func (args [0], args [1], args [2], args [3], args [4], args [5], args [6], ftndesc);
 		break;
 	}
 	case 8: {
 		typedef void (*T)(gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer, gpointer);
 		T func = (T)jit_wrapper;
 
-		func (args [0], args [1], args [2], args [3], args [4], args [5], args [6], args [7], &ftndesc);
+		func (args [0], args [1], args [2], args [3], args [4], args [5], args [6], args [7], ftndesc);
 		break;
 	}
 	default:
@@ -2281,14 +2282,117 @@ jit_call_cb (gpointer arg)
 	}
 }
 
+enum {
+	/* Pass stackval->data.p */
+	JIT_ARG_BYVAL,
+	/* Pass &stackval->data.p */
+	JIT_ARG_BYREF
+};
+
+enum {
+	JIT_RET_VOID,
+	JIT_RET_SCALAR,
+	JIT_RET_VTYPE
+};
+
+typedef struct _JitCallInfo JitCallInfo;
+struct _JitCallInfo {
+	gpointer addr;
+	gpointer extra_arg;
+	gpointer wrapper;
+	MonoMethodSignature *sig;
+	guint8 *arginfo;
+	gint32 vt_res_size;
+	guint8 retinfo;
+};
+
 static MONO_NEVER_INLINE void
-do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpFrame *frame, InterpMethod *rmethod, MonoError *error)
+init_jit_call_info (InterpMethod *rmethod, MonoError *error)
 {
 	MonoMethodSignature *sig;
-	MonoFtnDesc ftndesc;
-	guint8 res_buf [256];
+	JitCallInfo *cinfo;
 	MonoType *type;
+
+	//printf ("jit_call: %s\n", mono_method_full_name (rmethod->method, 1));
+
+	MonoMethod *method = rmethod->method;
+
+	// FIXME: Memory management
+	cinfo = g_new0 (JitCallInfo, 1);
+
+	sig = mono_method_signature_internal (method);
+	g_assert (sig);
+
+	MonoMethod *wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
+	//printf ("J: %s %s\n", mono_method_full_name (method, 1), mono_method_full_name (wrapper, 1));
+
+	gpointer jit_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
+	mono_error_assert_ok (error);
+
+	gpointer addr = mono_jit_compile_method_jit_only (method, error);
+	return_if_nok (error);
+	g_assert (addr);
+
+	if (mono_llvm_only)
+		cinfo->addr = mini_llvmonly_add_method_wrappers (method, addr, FALSE, FALSE, &cinfo->extra_arg);
+	else
+		cinfo->addr = addr;
+	cinfo->sig = sig;
+	cinfo->wrapper = jit_wrapper;
+
+	if (sig->ret->type != MONO_TYPE_VOID) {
+		int mt = mint_type (sig->ret);
+		if (mt == MINT_TYPE_VT) {
+			MonoClass *klass = mono_class_from_mono_type_internal (sig->ret);
+			/*
+			 * We cache this size here, instead of the instruction stream of the
+			 * calling instruction, to save space for common callvirt instructions
+			 * that could end up doing a jit call.
+			 */
+			gint32 size = mono_class_value_size (klass, NULL);
+			cinfo->vt_res_size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
+		}
+	}
+
+	type = rmethod->rtype;
+	if (type->type != MONO_TYPE_VOID) {
+		if (MONO_TYPE_ISSTRUCT (type))
+			cinfo->retinfo = JIT_RET_VTYPE;
+		else
+			cinfo->retinfo = JIT_RET_SCALAR;
+	} else {
+		cinfo->retinfo = JIT_RET_VOID;
+	}
+
+	if (sig->param_count) {
+		cinfo->arginfo = g_new0 (guint8, sig->param_count);
+
+		for (int i = 0; i < rmethod->param_count; ++i) {
+			MonoType *t = rmethod->param_types [i];
+			if (sig->params [i]->byref) {
+				cinfo->arginfo [i] = JIT_ARG_BYVAL;
+			} else if (MONO_TYPE_ISSTRUCT (t)) {
+				cinfo->arginfo [i] = JIT_ARG_BYVAL;
+			} else if (MONO_TYPE_IS_REFERENCE (t)) {
+				cinfo->arginfo [i] = JIT_ARG_BYREF;
+			} else {
+				/* stackval->data is an union */
+				cinfo->arginfo [i] = JIT_ARG_BYREF;
+			}
+		}
+	}
+
+	mono_memory_barrier ();
+	rmethod->jit_call_info = cinfo;
+}
+
+static MONO_NEVER_INLINE void
+do_jit_call (stackval *sp, unsigned char *vt_sp, InterpFrame *frame, InterpMethod *rmethod, MonoError *error)
+{
+	MonoMethodSignature *sig;
+	guint8 res_buf [256];
 	MonoLMFExt ext;
+	JitCallInfo *cinfo;
 
 	//printf ("jit_call: %s\n", mono_method_full_name (rmethod->method, 1));
 
@@ -2296,51 +2400,17 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 	 * Call JITted code through a gsharedvt_out wrapper. These wrappers receive every argument
 	 * by ref and return a return value using an explicit return value argument.
 	 */
-	if (G_UNLIKELY (!rmethod->jit_wrapper)) {
-		MonoMethod *method = rmethod->method;
-
-		sig = mono_method_signature_internal (method);
-		g_assert (sig);
-
-		MonoMethod *wrapper = mini_get_gsharedvt_out_sig_wrapper (sig);
-		//printf ("J: %s %s\n", mono_method_full_name (method, 1), mono_method_full_name (wrapper, 1));
-
-		gpointer jit_wrapper = mono_jit_compile_method_jit_only (wrapper, error);
+	if (G_UNLIKELY (!rmethod->jit_call_info)) {
+		init_jit_call_info (rmethod, error);
 		mono_error_assert_ok (error);
-
-		gpointer addr = mono_jit_compile_method_jit_only (method, error);
-		return_if_nok (error);
-		g_assert (addr);
-
-		rmethod->jit_addr = addr;
-		rmethod->jit_sig = sig;
-
-		if (sig->ret->type != MONO_TYPE_VOID) {
-			int mt = mint_type (sig->ret);
-			if (mt == MINT_TYPE_VT) {
-				MonoClass *klass = mono_class_from_mono_type_internal (sig->ret);
-				/*
-				 * We cache this size here, instead of the instruction stream of the
-				 * calling instruction, to save space for common callvirt instructions
-				 * that could end up doing a jit call.
-				 */
-				gint32 size = mono_class_value_size (klass, NULL);
-				rmethod->jit_vt_res_size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
-			}
-		}
-
-		mono_memory_barrier ();
-		rmethod->jit_wrapper = jit_wrapper;
-
-	} else {
-		sig = rmethod->jit_sig;
 	}
+	cinfo = (JitCallInfo*)rmethod->jit_call_info;
 
-	ftndesc.addr = rmethod->jit_addr;
-	ftndesc.arg = NULL;
+	sig = cinfo->sig;
 
-	// FIXME: Optimize this
-
+	/*
+	 * Convert the arguments on the interpeter stack to the format expected by the gsharedvt_out wrapper.
+	 */
 	gpointer args [32];
 	int pindex = 0;
 	int stack_index = 0;
@@ -2348,90 +2418,55 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, ThreadContext *context, InterpF
 		args [pindex ++] = sp [0].data.p;
 		stack_index ++;
 	}
-	type = rmethod->rtype;
-	if (type->type != MONO_TYPE_VOID) {
-		if (MONO_TYPE_ISSTRUCT (type))
-			args [pindex ++] = vt_sp;
-		else
-			args [pindex ++] = res_buf;
+	switch (cinfo->retinfo) {
+	case JIT_RET_VOID:
+		break;
+	case JIT_RET_SCALAR:
+		args [pindex ++] = res_buf;
+		break;
+	case JIT_RET_VTYPE:
+		args [pindex ++] = vt_sp;
+		break;
 	}
 	for (int i = 0; i < rmethod->param_count; ++i) {
-		MonoType *t = rmethod->param_types [i];
 		stackval *sval = &sp [stack_index + i];
-		if (sig->params [i]->byref) {
+		if (cinfo->arginfo [i] == JIT_ARG_BYVAL)
 			args [pindex ++] = sval->data.p;
-		} else if (MONO_TYPE_ISSTRUCT (t)) {
-			args [pindex ++] = sval->data.p;
-		} else if (MONO_TYPE_IS_REFERENCE (t)) {
+		else
+			/* data is an union, so can use 'p' for all types */
 			args [pindex ++] = &sval->data.p;
-		} else {
-			switch (t->type) {
-			case MONO_TYPE_I1:
-			case MONO_TYPE_U1:
-			case MONO_TYPE_I2:
-			case MONO_TYPE_U2:
-			case MONO_TYPE_I4:
-			case MONO_TYPE_U4:
-			case MONO_TYPE_VALUETYPE:
-				args [pindex ++] = &sval->data.i;
-				break;
-			case MONO_TYPE_PTR:
-			case MONO_TYPE_FNPTR:
-			case MONO_TYPE_I:
-			case MONO_TYPE_U:
-			case MONO_TYPE_OBJECT:
-				args [pindex ++] = &sval->data.p;
-				break;
-			case MONO_TYPE_I8:
-			case MONO_TYPE_U8:
-				args [pindex ++] = &sval->data.l;
-				break;
-			case MONO_TYPE_R4:
-				args [pindex ++] = &sval->data.f_r4;
-				break;
-			case MONO_TYPE_R8:
-				args [pindex ++] = &sval->data.f;
-				break;
-			default:
-				printf ("%s\n", mono_type_full_name (t));
-				g_assert_not_reached ();
-			}
-		}
 	}
-
-	interp_push_lmf (&ext, frame);
 
 	JitCallCbData cb_data;
 	memset (&cb_data, 0, sizeof (cb_data));
-	cb_data.jit_wrapper = rmethod->jit_wrapper;
+	cb_data.jit_wrapper = cinfo->wrapper;
 	cb_data.pindex = pindex;
 	cb_data.args = args;
-	cb_data.ftndesc = &ftndesc;
+	cb_data.ftndesc.addr = cinfo->addr;
+	cb_data.ftndesc.arg = cinfo->extra_arg;
 
+	interp_push_lmf (&ext, frame);
+	gboolean thrown = FALSE;
 	if (mono_aot_mode == MONO_AOT_MODE_LLVMONLY_INTERP) {
 		/* Catch the exception thrown by the native code using a try-catch */
-		gboolean thrown = FALSE;
 		mono_llvm_cpp_catch_exception (jit_call_cb, &cb_data, &thrown);
-		interp_pop_lmf (&ext);
-		if (thrown) {
-			MonoObject *obj = mono_llvm_load_exception ();
-			g_assert (obj);
-			mono_error_set_exception_instance (error, (MonoException*)obj);
-			return;
-		}
 	} else {
 		jit_call_cb (&cb_data);
-		interp_pop_lmf (&ext);
+	}
+	interp_pop_lmf (&ext);
+	if (thrown) {
+		MonoObject *obj = mono_llvm_load_exception ();
+		g_assert (obj);
+		mono_error_set_exception_instance (error, (MonoException*)obj);
+		return;
 	}
 
+	/* rtype is the result of mini_get_underlying_type () */
 	MonoType *rtype = rmethod->rtype;
 	switch (rtype->type) {
 	case MONO_TYPE_VOID:
+		break;
 	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_ARRAY:
-	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
 	case MONO_TYPE_PTR:
@@ -3833,7 +3868,7 @@ main_loop:
 
 			} else if (code_type == IMETHOD_CODE_COMPILED) {
 				error_init_reuse (error);
-				do_jit_call (sp, vt_sp, context, frame, cmethod, error);
+				do_jit_call (sp, vt_sp, frame, cmethod, error);
 				if (!is_ok (error)) {
 					MonoException *ex = mono_error_convert_to_exception (error);
 					THROW_EX (ex, ip);
@@ -3843,7 +3878,7 @@ main_loop:
 
 				if (cmethod->rtype->type != MONO_TYPE_VOID) {
 					sp++;
-					vt_sp += cmethod->jit_vt_res_size;
+					vt_sp += ((JitCallInfo*)cmethod->jit_call_info)->vt_res_size;
 				}
 			}
 
@@ -3946,7 +3981,7 @@ call:
 			frame->ip = ip;
 			sp -= rmethod->param_count + rmethod->hasthis;
 			vt_sp -= ip [2];
-			do_jit_call (sp, vt_sp, context, frame, rmethod, error);
+			do_jit_call (sp, vt_sp, frame, rmethod, error);
 			if (!is_ok (error)) {
 				MonoException *ex = mono_error_convert_to_exception (error);
 				THROW_EX (ex, ip);
@@ -3956,7 +3991,7 @@ call:
 
 			if (rmethod->rtype->type != MONO_TYPE_VOID) {
 				sp++;
-				vt_sp += rmethod->jit_vt_res_size;
+				vt_sp += ((JitCallInfo*)rmethod->jit_call_info)->vt_res_size;
 			}
 
 			ip += 3;
@@ -3970,7 +4005,7 @@ call:
 			frame->ip = ip;
 
 			sp -= rmethod->param_count + rmethod->hasthis;
-			do_jit_call (sp, vt_sp, context, frame, rmethod, error);
+			do_jit_call (sp, vt_sp, frame, rmethod, error);
 			if (!is_ok (error)) {
 				MonoException *ex = mono_error_convert_to_exception (error);
 				THROW_EX (ex, ip);
