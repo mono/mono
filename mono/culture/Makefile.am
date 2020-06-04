@@ -6,7 +6,14 @@ CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
 
 noinst_LTLIBRARIES = libmono-culture.la
 
+if !HOST_WIN32
+unix_sources = w32process-unix-language.c
+
+platform_sources = $(unix_sources)
+endif
+
 libmono_culture_la_SOURCES = \
+	$(platform_sources)
 	culture-info.h	\
 	culture-info-tables.h	\
 	locales.c
