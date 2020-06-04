@@ -2290,9 +2290,9 @@ enum {
 };
 
 enum {
-	JIT_RET_VOID,
-	JIT_RET_SCALAR,
-	JIT_RET_VTYPE
+       JIT_RET_VOID,
+       JIT_RET_SCALAR,
+       JIT_RET_VTYPE
 };
 
 typedef struct _JitCallInfo JitCallInfo;
@@ -2303,7 +2303,7 @@ struct _JitCallInfo {
 	MonoMethodSignature *sig;
 	guint8 *arginfo;
 	gint32 vt_res_size;
-	guint8 retinfo;
+	int ret_mt;
 };
 
 static MONO_NEVER_INLINE void
@@ -2311,7 +2311,6 @@ init_jit_call_info (InterpMethod *rmethod, MonoError *error)
 {
 	MonoMethodSignature *sig;
 	JitCallInfo *cinfo;
-	MonoType *type;
 
 	//printf ("jit_call: %s\n", mono_method_full_name (rmethod->method, 1));
 
@@ -2352,16 +2351,9 @@ init_jit_call_info (InterpMethod *rmethod, MonoError *error)
 			gint32 size = mono_class_value_size (klass, NULL);
 			cinfo->vt_res_size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 		}
-	}
-
-	type = rmethod->rtype;
-	if (type->type != MONO_TYPE_VOID) {
-		if (MONO_TYPE_ISSTRUCT (type))
-			cinfo->retinfo = JIT_RET_VTYPE;
-		else
-			cinfo->retinfo = JIT_RET_SCALAR;
+		cinfo->ret_mt = mt;
 	} else {
-		cinfo->retinfo = JIT_RET_VOID;
+		cinfo->ret_mt = -1;
 	}
 
 	if (sig->param_count) {
@@ -2369,11 +2361,12 @@ init_jit_call_info (InterpMethod *rmethod, MonoError *error)
 
 		for (int i = 0; i < rmethod->param_count; ++i) {
 			MonoType *t = rmethod->param_types [i];
+			int mt = mint_type (t);
 			if (sig->params [i]->byref) {
 				cinfo->arginfo [i] = JIT_ARG_BYVAL;
-			} else if (MONO_TYPE_ISSTRUCT (t)) {
+			} else if (mt == MINT_TYPE_VT) {
 				cinfo->arginfo [i] = JIT_ARG_BYVAL;
-			} else if (MONO_TYPE_IS_REFERENCE (t)) {
+			} else if (mt == MINT_TYPE_O) {
 				cinfo->arginfo [i] = JIT_ARG_BYREF;
 			} else {
 				/* stackval->data is an union */
@@ -2418,14 +2411,14 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, InterpFrame *frame, InterpMetho
 		args [pindex ++] = sp [0].data.p;
 		stack_index ++;
 	}
-	switch (cinfo->retinfo) {
-	case JIT_RET_VOID:
+	switch (cinfo->ret_mt) {
+	case -1:
 		break;
-	case JIT_RET_SCALAR:
-		args [pindex ++] = res_buf;
-		break;
-	case JIT_RET_VTYPE:
+	case MINT_TYPE_VT:
 		args [pindex ++] = vt_sp;
+		break;
+	default:
+		args [pindex ++] = res_buf;
 		break;
 	}
 	for (int i = 0; i < rmethod->param_count; ++i) {
@@ -2461,64 +2454,42 @@ do_jit_call (stackval *sp, unsigned char *vt_sp, InterpFrame *frame, InterpMetho
 		return;
 	}
 
-	/* rtype is the result of mini_get_underlying_type () */
-	MonoType *rtype = rmethod->rtype;
-	switch (rtype->type) {
-	case MONO_TYPE_VOID:
-		break;
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-		sp->data.p = *(gpointer*)res_buf;
-		break;
-	case MONO_TYPE_I1:
-		sp->data.i = *(gint8*)res_buf;
-		break;
-	case MONO_TYPE_U1:
-		sp->data.i = *(guint8*)res_buf;
-		break;
-	case MONO_TYPE_I2:
-		sp->data.i = *(gint16*)res_buf;
-		break;
-	case MONO_TYPE_U2:
-		sp->data.i = *(guint16*)res_buf;
-		break;
-	case MONO_TYPE_I4:
-		sp->data.i = *(gint32*)res_buf;
-		break;
-	case MONO_TYPE_U4:
-		sp->data.i = *(guint32*)res_buf;
-		break;
-	case MONO_TYPE_I8:
-		sp->data.l = *(gint64*)res_buf;
-		break;
-	case MONO_TYPE_U8:
-		sp->data.l = *(guint64*)res_buf;
-		break;
-	case MONO_TYPE_R4:
-		sp->data.f_r4 = *(float*)res_buf;
-		break;
-	case MONO_TYPE_R8:
-		sp->data.f = *(double*)res_buf;
-		break;
-	case MONO_TYPE_TYPEDBYREF:
-	case MONO_TYPE_VALUETYPE:
-		/* The result was written to vt_sp */
-		sp->data.p = vt_sp;
-		break;
-	case MONO_TYPE_GENERICINST:
-		if (MONO_TYPE_IS_REFERENCE (rtype)) {
+	if (cinfo->ret_mt != -1) {
+		switch (cinfo->ret_mt) {
+		case MINT_TYPE_O:
 			sp->data.p = *(gpointer*)res_buf;
-		} else {
+			break;
+		case MINT_TYPE_I1:
+			sp->data.i = *(gint8*)res_buf;
+			break;
+		case MINT_TYPE_U1:
+			sp->data.i = *(guint8*)res_buf;
+			break;
+		case MINT_TYPE_I2:
+			sp->data.i = *(gint16*)res_buf;
+			break;
+		case MINT_TYPE_U2:
+			sp->data.i = *(guint16*)res_buf;
+			break;
+		case MINT_TYPE_I4:
+			sp->data.i = *(gint32*)res_buf;
+			break;
+		case MINT_TYPE_I8:
+			sp->data.l = *(gint64*)res_buf;
+			break;
+		case MINT_TYPE_R4:
+			sp->data.f_r4 = *(float*)res_buf;
+			break;
+		case MINT_TYPE_R8:
+			sp->data.f = *(double*)res_buf;
+			break;
+		case MINT_TYPE_VT:
 			/* The result was written to vt_sp */
 			sp->data.p = vt_sp;
+			break;
+		default:
+			g_assert_not_reached ();
 		}
-		break;
-	default:
-		g_print ("%s\n", mono_type_full_name (rtype));
-		g_assert_not_reached ();
-		break;
 	}
 }
 
