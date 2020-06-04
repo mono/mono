@@ -4,6 +4,8 @@ AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(GLIB_CFLAGS) $(SHARED_CFLAG
 
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
 
+if !ENABLE_MSVC_ONLY
+
 noinst_LTLIBRARIES = libmono-culture.la
 
 if !HOST_WIN32
@@ -13,8 +15,10 @@ platform_sources = $(unix_sources)
 endif
 
 libmono_culture_la_SOURCES = \
-	$(platform_sources)
+	$(platform_sources)	\
 	culture-info.h	\
 	culture-info-tables.h	\
 	locales.c
 libmono_culture_la_CPPFLAGS = $(AM_CPPFLAGS) @CXX_ADD_CFLAGS@
+
+endif # ENABLE_MSVC_ONLY
