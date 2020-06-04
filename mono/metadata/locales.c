@@ -29,7 +29,7 @@
 #include <mono/metadata/monitor.h>
 #include <mono/metadata/locales.h>
 #include <mono/metadata/culture-info.h>
-#include <mono/metadata/culture-info-tables.h>
+#include <mono/culture/culture-info-tables.h>
 #include <mono/utils/bsearch.h>
 
 #ifndef DISABLE_NORMALIZATION

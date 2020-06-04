@@ -255,7 +255,6 @@ common_sources = \
 	coree.h 		\
 	coree-internals.h \
 	culture-info.h  	\
-	culture-info-tables.h	\
 	debug-helpers.c		\
 	debug-mono-symfile.h	\
 	debug-mono-symfile.c	\
