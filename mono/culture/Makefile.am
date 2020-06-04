@@ -1,6 +1,12 @@
 MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
-# there's nothing to compile in this directory, so we use EXTRA_DIST
-# if we built a convenience library here, we wouldn't need this
-EXTRA_DIST = culture-info-tables.h
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS) $(METADATA_CFLAGS)
+
+noinst_LTLIBRARIES = libmono-culture.la
+
+libmono_culture_la_SOURCES = \
+	culture-info.h	\
+	culture-info-tables.h	\
+	locales.c
+
 
