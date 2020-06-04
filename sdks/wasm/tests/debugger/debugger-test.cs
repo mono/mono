@@ -272,29 +272,6 @@ public partial class Math { //Only append content to this class as the test suit
 	delegate GenericStruct<bool[]> DelegateForSignatureTest (Math m, GenericStruct<GenericStruct<int[]>> gs);
 	static bool DelegateTargetForNestedFunc<T>(T arg) => true;
 
-	public static unsafe void PointersTest ()
-	{
-		int ivalue0 = 5;
-		int ivalue1 = 10;
-
-		int* ip = &ivalue0;
-		int* ip_null = null;
-		int** ipp = &ip;
-
-		int*[] ipa = new int*[] { &ivalue0, &ivalue1, null };
-
-		char cvalue0 = 'q';
-		char* cp = &cvalue0;
-
-		DateTime dt = new DateTime(5, 6, 7, 8, 9, 10);
-		void* vp = &dt;
-		void* vp_null = null;
-
-		DateTime* dtp = &dt;
-		DateTime* dtp_null = null;
-		Console.WriteLine ($"-- break here");
-	}
-
 	public struct SimpleStruct
 	{
 		public DateTime dt;
