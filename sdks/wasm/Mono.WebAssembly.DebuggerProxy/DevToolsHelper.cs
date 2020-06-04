@@ -192,7 +192,7 @@ namespace WebAssembly.Net.Debugging {
 
 		public static MonoCommands GetScopeVariables (int scopeId, params VarInfo[] vars)
 		{
-			var var_ids = vars.Select (v => $"[{v.Index}, '{v.Name}']").ToArray ();
+			var var_ids = vars.Select (v => $"{{ index: {v.Index}, name: '{v.Name}' }}").ToArray ();
 			return new MonoCommands ($"MONO.mono_wasm_get_variables({scopeId}, [ {string.Join (",", var_ids)} ])");
 		}
 

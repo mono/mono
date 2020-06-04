@@ -670,10 +670,8 @@ namespace WebAssembly.Net.Debugging {
 				if(values == null || values.Length == 0)
 					return Result.OkFromObject (new { result = Array.Empty<object> () });
 
-				foreach (var value in values) {
-					var name = value ["name"]?.Value<string> ();
-					ctx.LocalsCache [value ["name"]?.ToString ()] = value;
-				}
+				foreach (var value in values)
+					ctx.LocalsCache [value ["name"]?.Value<string> ()] = value;
 
 				return Result.OkFromObject (new { result = values });
 			} catch (Exception exception) {

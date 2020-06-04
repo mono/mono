@@ -161,7 +161,7 @@ var MonoSupportLib = {
 		},
 
 		//
-		// @var_list: [ [<var_id>, <var_name>], .. ]
+		// @var_list: [ { index: <var_id>, name: <var_name> }, .. ]
 		mono_wasm_get_variables: function(scope, var_list) {
 			if (!this.mono_wasm_get_var_info)
 				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", null, [ 'number', 'number', 'number']);
@@ -171,7 +171,7 @@ var MonoSupportLib = {
 			var ptr = Module._malloc(numBytes);
 			var heapBytes = new Int32Array(Module.HEAP32.buffer, ptr, numBytes);
 			for (let i=0; i<var_list.length; i++) {
-				heapBytes[i] = var_list[i][0]
+				heapBytes[i] = var_list[i].index;
 			}
 
 			this._async_method_objectId = 0;
@@ -186,18 +186,18 @@ var MonoSupportLib = {
 				if (this._async_method_objectId != 0) {
 					//Async methods are special in the way that local variables can be lifted to generated class fields
 					//value of "this" comes here either
-					if (res_name != undefined && res_name.indexOf ('>') > 0) {
+					if (res_name !== undefined && res_name.indexOf ('>') > 0) {
 						// For async methods, we get the names too, so use that
 						// ALTHOUGH, the name wouldn't have `<>` for method args
 						res [i].name = res_name.substring (1, res_name.indexOf ('>'));
 					}
 
-					if (value.isValueType != undefined && value.isValueType)
+					if (value.isValueType)
 						value.objectId = `dotnet:valuetype:${this._async_method_objectId}:${res [i].fieldOffset}`;
-				} else if (res_name === undefined && var_list [i] != undefined) {
+				} else if (res_name === undefined && var_list [i] !== undefined) {
 					// For non-async methods, we just have the var id, but we have the name
 					// from the caller
-					res [i].name = var_list [i][1];
+					res [i].name = var_list [i].name;
 				}
 			}
 
@@ -237,9 +237,9 @@ var MonoSupportLib = {
 			var res = MONO._fixup_name_value_objects (this.var_info);
 			for (var i = 0; i < res.length; i++) {
 				var prop_value = res [i].value;
-				if (res [i].value.isValueType != undefined && res [i].value.isValueType) {
+				if (prop_value.isValueType) {
 					res [i].value.objectId = `dotnet:array:${objId}:${i}`;
-				} else if (prop_value.objectId != undefined && prop_value.objectId.startsWith("dotnet:pointer")) {
+				} else if (prop_value.objectId !== undefined && prop_value.objectId.startsWith("dotnet:pointer")) {
 					prop_value.objectId = this._get_updated_ptr_id (prop_value.objectId, {
 						varName: `[${i}]`
 					});
@@ -288,10 +288,10 @@ var MonoSupportLib = {
 
 			for (let i in var_list) {
 				var value = var_list [i].value;
-				if (value == undefined)
+				if (value === undefined)
 					continue;
 
-				if (value.objectId != undefined && value.objectId.startsWith ("dotnet:pointer:")) {
+				if (value.objectId !== undefined && value.objectId.startsWith ("dotnet:pointer:")) {
 					var ptr_args = this._get_ptr_args (value.objectId);
 					if (ptr_args.varName === undefined) {
 						// It might have been already set in some cases, like arrays
@@ -423,7 +423,7 @@ var MonoSupportLib = {
 
 		_get_updated_ptr_id: function (objectId, new_args) {
 			var old_args = {};
-			if (objectId != undefined && objectId != '')
+			if (typeof (objectId) === 'string' && objectId.length)
 				old_args = this._get_ptr_args (objectId);
 
 			return `dotnet:pointer:${JSON.stringify ( Object.assign (old_args, new_args) )}`;
@@ -437,7 +437,8 @@ var MonoSupportLib = {
 			if (ptr_args.ptr_addr == 0 || ptr_args.klass_addr == 0)
 				throw new Error (`Both ptr_addr and klass_addr need to be non-zero, to dereference a pointer. objectId: ${objectId}`);
 
-			var value_addr = new Uint32Array (Module.HEAPU8.buffer, ptr_args.ptr_addr, 1) [0];
+			this.var_info = [];
+			var value_addr = new DataView (Module.HEAPU8.buffer).getUint32 (ptr_args.ptr_addr, /* littleEndian */ true);
 			this.mono_wasm_get_deref_ptr_value_info (value_addr, ptr_args.klass_addr);
 
 			var res = MONO._fixup_name_value_objects(this.var_info);
