@@ -481,6 +481,29 @@ namespace DebuggerTests
 					await CheckArrayElements (dtppa_elems, exp_elems);
 				});
 
+		[Theory]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:UseComplex', 0, 0);", "Math", "UseComplex", 3, "UseComplex", false)]
+		[InlineData ("invoke_static_method ('[debugger-test] Math:UseComplex', 0, 0);", "Math", "UseComplex", 3, "UseComplex", true)]
+		public async Task DerefNonPointerObject (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
+			=> await CheckInspectLocalsAtBreakpointSite (
+				type, method, line_offset, bp_function_name,
+				"window.setTimeout(function() { " + eval_fn + " })",
+				use_cfo: use_cfo,
+				wait_for_event_fn: async (pause_location) => {
+
+					// this will generate the object ids
+					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
+					var complex = GetAndAssertObjectWithName (locals, "complex");
+
+					// try to deref the non-pointer object, as a pointer
+					var props = await GetProperties (complex ["value"]["objectId"].Value<string> ().Replace (":object:", ":pointer:"));
+					Assert.Empty (props.Values ());
+
+					// try to deref an invalid pointer id
+					props = await GetProperties ("dotnet:pointer:123897");
+					Assert.Empty (props.Values ());
+				});
+
 		async Task<JToken[]> CheckArrayElements (JToken array, JToken[] exp_elems)
 		{
 			var actual_elems = new JToken [exp_elems.Length];
