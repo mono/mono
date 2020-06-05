@@ -124,7 +124,7 @@ namespace WebAssembly.Net.Debugging {
 					var endpoint = new Uri ($"ws://{devToolsHost.Authority}{context.Request.Path.ToString ()}");
 					try {
 						using var loggerFactory = LoggerFactory.Create(
-							builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+							builder => builder.AddConsole().AddFilter(null, LogLevel.Information));
 						var proxy = new DebuggerProxy (loggerFactory);
 						var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
 

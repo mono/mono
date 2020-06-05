@@ -74,7 +74,7 @@ namespace DebuggerTests
 				cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
 				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
 				using var loggerFactory = LoggerFactory.Create(
-					builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+					builder => builder.AddConsole().AddFilter(null, LogLevel.Information));
 				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
 					await client.Connect (uri, OnMessage, async token => {
 						Task[] init_cmds = {
