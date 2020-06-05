@@ -320,10 +320,10 @@ namespace WebAssembly.Net.Debugging {
 		{
 			switch (priority) {
 			case "protocol":
-				//logger.LogTrace (msg);
+				logger.LogTrace (msg);
 				break;
 			case "verbose":
-				//logger.LogDebug (msg);
+				logger.LogVerbose (msg);
 				break;
 			case "info":
 			case "warning":
