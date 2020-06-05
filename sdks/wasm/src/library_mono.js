@@ -678,9 +678,8 @@ var MonoSupportLib = {
 								load_runtime (vfs_prefix, enable_debugging);
 							} catch (ex) {
 								print ("MONO_WASM: load_runtime () failed: " + ex);
-								var err = new Error();
 								print ("MONO_WASM: Stacktrace: \n");
-								print (err.stack);
+								print (ex.stack);
 
 								var wasm_exit = Module.cwrap ('mono_wasm_exit', null, ['number']);
 								wasm_exit (1);
