@@ -216,7 +216,7 @@ namespace Mono.Debugger.Soft
 		public bool IsEnum; // For ElementType.ValueType
 		public long Id; /* For VALUE_TYPE_ID_TYPE */
 		public int Index; /* For VALUE_TYPE_PARENT_VTYPE */
-		public int FixedSize; 
+		public int FixedSize;
 	}
 
 	class ModuleInfo {
@@ -315,7 +315,6 @@ namespace Mono.Debugger.Soft
 		}
 	}
 
-
 	class AssemblyModifier : Modifier {
 		public long[] Assemblies {
 			get; set;
@@ -409,6 +408,7 @@ namespace Mono.Debugger.Soft
 		public ErrorCode ErrorCode {
 			get; set;
 		}
+
 		public string ErrorMessage {
 			get; set;
 		}
@@ -807,16 +807,16 @@ namespace Mono.Debugger.Soft
 				get; set;
 			}
 
+			public string ErrorMsg {
+				get; internal set;
+			}
+
 			public int Command {
 				get; set;
 			}
 
 			public int ErrorCode {
 				get; set;
-			}
-
-			public string ErrorMsg {
-				get; internal set;
 			}
 
 			public int Offset {
@@ -873,6 +873,7 @@ namespace Mono.Debugger.Soft
 
 			public ValueImpl ReadValue () {
 				ElementType etype = (ElementType)ReadByte ();
+
 				switch (etype) {
 				case ElementType.Void:
 					return new ValueImpl { Type = etype };
@@ -1322,7 +1323,7 @@ namespace Mono.Debugger.Soft
 				}
 			}
 		}
-		
+
 		protected abstract int TransportReceive (byte[] buf, int buf_offset, int len);
 		protected abstract int TransportSend (byte[] buf, int buf_offset, int len);
 		protected abstract void TransportSetTimeouts (int send_timeout, int receive_timeout);
@@ -2751,6 +2752,21 @@ namespace Mono.Debugger.Soft
 
 		internal void Array_SetValues (long id, int index, ValueImpl[] values) {
 			SendReceive (CommandSet.ARRAY_REF, (int)CmdArrayRef.SET_VALUES, new PacketWriter ().WriteId (id).WriteInt (index).WriteInt (values.Length).WriteValues (values));
+		}
+
+		// This is a special case when setting values of an array that
+		// consists of a large number of bytes. This saves much time and
+		// cost than we create ValueImpl object for each byte.
+		internal void ByteArray_SetValues (long id, byte [] bytes)
+		{
+			int index = 0;
+			var typ = (byte)ElementType.U1;
+			var w = new PacketWriter ().WriteId (id).WriteInt (index).WriteInt (bytes.Length);
+			for (int i = 0; i < bytes.Length; i++) {
+				w.WriteByte (typ);
+				w.WriteInt (bytes [i]);
+			}
+			SendReceive (CommandSet.ARRAY_REF, (int)CmdArrayRef.SET_VALUES, w);
 		}
 
 		/*

@@ -1,6 +1,8 @@
 if !ENABLE_MSVC_ONLY
 
+if !DISABLE_EXECUTABLES
 bin_PROGRAMS = sgen-grep-binprot
+endif
 
 AM_CPPFLAGS =  $(GLIB_CFLAGS) -I$(top_srcdir)
 

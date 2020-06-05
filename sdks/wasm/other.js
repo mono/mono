@@ -14,3 +14,17 @@ function object_js_test () {
 
 	return obj;
 };
+
+function getters_js_test () {
+	var ptd = {
+		get Int () { return 5; },
+		get String () { return "foobar"; },
+		get DT () { return "dt"; },
+		get IntArray () { return [1,2,3]; },
+		get DTArray () { return ["dt0", "dt1"]; },
+		DTAutoProperty: "dt",
+		StringField: "string field value"
+	};
+	console.log (`break here`);
+	return ptd;
+}

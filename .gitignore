@@ -18,6 +18,7 @@
 *.vssscc
 *_i.c
 *_p.c
+*.mdb
 *.ncb
 *.suo
 *.tlb

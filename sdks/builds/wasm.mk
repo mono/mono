@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.39.11
+EMSCRIPTEN_VERSION=1.39.16
 EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
@@ -12,23 +12,12 @@ else ifeq ($(UNAME),Linux)
 WASM_LIBCLANG=$(EMSCRIPTEN_SDK_DIR)/upstream/lib/libclang.so
 endif
 
-$(TOP)/sdks/builds/toolchains/emsdk:
-	git clone https://github.com/juj/emsdk.git $(EMSCRIPTEN_SDK_DIR)
-
-.stamp-wasm-checkout-and-update-emsdk: | $(EMSCRIPTEN_SDK_DIR)
-	cd $(TOP)/sdks/builds/toolchains/emsdk && git reset --hard && git clean -xdff && git pull
-	touch $@
-
-#This is a weird rule to workaround the circularity of the next rule.
-#.stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION) depends on .emscripten and, at the same time, it updates it.
-#This is designed to force the .stamp target to rerun when a different emscripten version is selected, which causes .emscripten to be updated
-$(EMSCRIPTEN_SDK_DIR)/.emscripten: | $(EMSCRIPTEN_SDK_DIR)
-	touch $@
-
-.stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION): .stamp-wasm-checkout-and-update-emsdk $(EMSCRIPTEN_SDK_DIR)/.emscripten
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk install $(EMSCRIPTEN_VERSION)
-	cd $(TOP)/sdks/builds/toolchains/emsdk && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)
-	cd $(TOP)/sdks/builds/toolchains/emsdk/upstream/emscripten && (patch -N -p1 < $(TOP)/sdks/builds/fix-emscripten-8511.diff; exit 0)
+.stamp-wasm-install-and-select-$(EMSCRIPTEN_VERSION):
+	rm -rf $(EMSCRIPTEN_LOCAL_SDK_DIR)
+	git clone https://github.com/emscripten-core/emsdk.git $(EMSCRIPTEN_LOCAL_SDK_DIR)
+	cd $(EMSCRIPTEN_LOCAL_SDK_DIR) && git checkout $(EMSCRIPTEN_VERSION)
+	cd $(EMSCRIPTEN_LOCAL_SDK_DIR) && ./emsdk install $(EMSCRIPTEN_VERSION)
+	cd $(EMSCRIPTEN_LOCAL_SDK_DIR) && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)
 	touch $@
 
 .PHONY: provision-wasm

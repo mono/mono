@@ -1,8 +1,4 @@
 // GENERATED FILE, DO NOT MODIFY
-typedef struct {
-const char *name;
-void *func;
-} PinvokeImport;
 
 int SystemNative_ConvertErrorPlatformToPal (int);
 int SystemNative_ConvertErrorPalToPlatform (int);

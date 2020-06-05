@@ -44,13 +44,16 @@ class Pinvoke
 {
 	public Pinvoke (string entry_point, string module, MethodReference method) {
 		EntryPoint = entry_point;
+		TableEntryPoint = entry_point;
 		Module = module;
 		Method = method;
 	}
 
 	public string EntryPoint;
+	public string TableEntryPoint;
 	public string Module;
 	public MethodReference Method;
+	public string CDecl;
 }
 
 public class WasmTuner
@@ -97,6 +100,7 @@ public class WasmTuner
 		Console.WriteLine ("Arguments:");
 		Console.WriteLine ("--gen-icall-table icall-table.json <assemblies>.");
 		Console.WriteLine ("--gen-pinvoke-table <list of native library names separated by commas> <assemblies>.");
+		Console.WriteLine ("--gen-interp-to-native <output file name> <assemblies>.");
 		Console.WriteLine ("--gen-empty-assemblies <filenames>.");
 	}
 
@@ -116,6 +120,8 @@ public class WasmTuner
 			return GenPinvokeTable (args);
 		} else if (cmd == "--gen-empty-assemblies") {
 			return GenEmptyAssemblies (args);
+		} else if (cmd == "--gen-interp-to-native") {
+			return GenInterpToNative (args);
 		} else {
 			Usage ();
 			return 1;
@@ -164,22 +170,30 @@ public class WasmTuner
 			var a = AssemblyDefinition.ReadAssembly (fname);
 
 			foreach (var type in a.MainModule.Types) {
-				ProcessTypeForPinvoke (type);
+				ProcessTypeForPinvoke (pinvokes, type);
 				foreach (var nested in type.NestedTypes)
-					ProcessTypeForPinvoke (nested);
+					ProcessTypeForPinvoke (pinvokes, nested);
 			}
 		}
 
 		Console.WriteLine ("// GENERATED FILE, DO NOT MODIFY");
-		Console.WriteLine ("typedef struct {");
-		Console.WriteLine ("const char *name;");
-		Console.WriteLine ("void *func;");
-		Console.WriteLine ("} PinvokeImport;");
 		Console.WriteLine ();
 
+		var decls = new Dictionary<string, Pinvoke> ();
 		foreach (var pinvoke in pinvokes) {
-			if (modules.ContainsKey (pinvoke.Module))
-				Console.WriteLine (GenPinvokeDecl (pinvoke));
+			if (modules.ContainsKey (pinvoke.Module)) {
+				pinvoke.CDecl = GenPinvokeDecl (pinvoke);
+				if (decls.TryGetValue (pinvoke.EntryPoint, out Pinvoke prev_pinvoke)) {
+					if (pinvoke.CDecl != prev_pinvoke.CDecl) {
+						Console.Error.WriteLine ($"Warning: PInvoke method '{pinvoke.EntryPoint}' has incompatible declarations.");
+						pinvoke.TableEntryPoint = "mono_wasm_pinvoke_vararg_stub";
+						prev_pinvoke.TableEntryPoint = "mono_wasm_pinvoke_vararg_stub";
+						continue;
+					}
+				}
+				decls [pinvoke.EntryPoint] = pinvoke;
+				Console.WriteLine (pinvoke.CDecl);
+			}
 		}
 
 		foreach (var module in modules.Keys) {
@@ -187,7 +201,7 @@ public class WasmTuner
 			Console.WriteLine ("static PinvokeImport " + symbol + " [] = {");
 			foreach (var pinvoke in pinvokes) {
 				if (pinvoke.Module == module)
-					Console.WriteLine ("{\"" + pinvoke.EntryPoint + "\", " + pinvoke.EntryPoint + "},");
+					Console.WriteLine ("{\"" + pinvoke.EntryPoint + "\", " + pinvoke.TableEntryPoint + "},");
 			}
 			Console.WriteLine ("{NULL, NULL}");
 			Console.WriteLine ("};");
@@ -207,7 +221,7 @@ public class WasmTuner
 		return 0;
 	}
 
-	void ProcessTypeForPinvoke (TypeDefinition type) {
+	void ProcessTypeForPinvoke (List<Pinvoke> pinvokes, TypeDefinition type) {
 		foreach (var method in type.Methods) {
 			var info = method.PInvokeInfo;
 			if (info == null)
@@ -274,21 +288,26 @@ public class WasmTuner
 			var sorted = icalls.Where (i => i.Assembly == assembly).ToArray ();
 			Array.Sort (sorted);
 
-			Console.WriteLine ($"#define ICALL_TABLE_{assembly} 1\n");
+			string aname;
+			if (assembly == "mscorlib" || assembly == "System.Private.CoreLib")
+				aname = "corlib";
+			else
+				aname = assembly.Replace (".", "_");
+			Console.WriteLine ($"#define ICALL_TABLE_{aname} 1\n");
 
-			Console.WriteLine ($"static int {assembly}_icall_indexes [] = {{");
+			Console.WriteLine ($"static int {aname}_icall_indexes [] = {{");
 			foreach (var icall in sorted)
 				Console.WriteLine (String.Format ("{0},", icall.TokenIndex));
 			Console.WriteLine ("};");
 			foreach (var icall in sorted)
 				Console.WriteLine (GenIcallDecl (icall));
-			Console.WriteLine ($"static void *{assembly}_icall_funcs [] = {{");
+			Console.WriteLine ($"static void *{aname}_icall_funcs [] = {{");
 			foreach (var icall in sorted) {
 				Console.WriteLine (String.Format ("// token {0},", icall.TokenIndex));
 				Console.WriteLine (String.Format ("{0},", icall.Func));
 			}
 			Console.WriteLine ("};");
-			Console.WriteLine ($"static uint8_t {assembly}_icall_handles [] = {{");
+			Console.WriteLine ($"static uint8_t {aname}_icall_handles [] = {{");
 			foreach (var icall in sorted)
 				Console.WriteLine (String.Format ("{0},", icall.Handles ? "1" : "0"));
 			Console.WriteLine ("};");
@@ -423,6 +442,34 @@ public class WasmTuner
 			var basename = Path.GetFileName (fname).Replace (".exe", "").Replace (".dll", "");
 			var assembly = AssemblyDefinition.CreateAssembly (new AssemblyNameDefinition (basename, new Version (0, 0, 0, 0)), basename, ModuleKind.Dll);
 			assembly.Write (fname);
+		}
+		return 0;
+	}
+
+	int GenInterpToNative (String[] args) {
+		if (args.Length < 2) {
+			Usage ();
+			return 1;
+		}
+		string outfileName = args [1];
+		args = args.Skip (2).ToArray ();
+
+		pinvokes = new List<Pinvoke> ();
+		foreach (var fname in args) {
+			var a = AssemblyDefinition.ReadAssembly (fname);
+
+			foreach (var type in a.MainModule.Types) {
+				ProcessTypeForPinvoke (pinvokes, type);
+				foreach (var nested in type.NestedTypes)
+					ProcessTypeForPinvoke (pinvokes, nested);
+			}
+		}
+
+		var gen = new InterpToNativeGenerator ();
+		foreach (var pinvoke in pinvokes)
+			gen.AddSignature (pinvoke.Method);
+		using (var w = File.CreateText (outfileName)) {
+			gen.Emit (w);
 		}
 		return 0;
 	}

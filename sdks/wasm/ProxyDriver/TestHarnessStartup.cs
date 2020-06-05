@@ -97,8 +97,8 @@ namespace WebAssembly.Net.Debugging {
 				proc.BeginErrorReadLine ();
 				proc.BeginOutputReadLine ();
 
-				if (await Task.WhenAny (tcs.Task, Task.Delay (2000)) != tcs.Task) {
-					Console.WriteLine ("Didnt get the con string after 2s.");
+				if (await Task.WhenAny (tcs.Task, Task.Delay (5000)) != tcs.Task) {
+					Console.WriteLine ("Didnt get the con string after 5s.");
 					throw new Exception ("node.js timedout");
 				}
 				var line = await tcs.Task;
@@ -132,9 +132,6 @@ namespace WebAssembly.Net.Debugging {
 			app.UseStaticFiles ();
 
 			TestHarnessOptions options = optionsAccessor.CurrentValue;
-			Console.WriteLine ($"Chrome from: '{options.ChromePath}'");
-			Console.WriteLine ($"Files from: '{options.AppPath}'");
-			Console.WriteLine ($"Using page : '{options.PagePath}'");
 
 			var provider = new FileExtensionContentTypeProvider();
 			provider.Mappings [".wasm"] = "application/wasm";
@@ -147,48 +144,56 @@ namespace WebAssembly.Net.Debugging {
 			});
 
 			var devToolsUrl = options.DevToolsUrl;
-			var psi = new ProcessStartInfo ();
-
-			psi.Arguments = $"--headless --disable-gpu --lang=en-US --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
-			psi.UseShellExecute = false;
-			psi.FileName = options.ChromePath;
-			psi.RedirectStandardError = true;
-			psi.RedirectStandardOutput = true;
-
 			app.UseRouter (router => {
 				router.MapGet ("launch-chrome-and-connect", async context => {
 					Console.WriteLine ("New test request");
-					var client = new HttpClient ();
-					await LaunchAndServe (psi, context, async (str) => {
-						string res = null;
-						var start = DateTime.Now;
+					try {
+						var client = new HttpClient ();
+						var psi = new ProcessStartInfo ();
 
-						while (res == null) {
-							// Unfortunately it does look like we have to wait
-							// for a bit after getting the response but before
-							// making the list request.  We get an empty result
-							// if we make the request too soon.
-							await Task.Delay (100);
+						psi.Arguments = $"--headless --disable-gpu --lang=en-US --incognito --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
+						psi.UseShellExecute = false;
+						psi.FileName = options.ChromePath;
+						psi.RedirectStandardError = true;
+						psi.RedirectStandardOutput = true;
 
-							res = await client.GetStringAsync (new Uri (new Uri (str), "/json/list"));
-							Console.WriteLine ("res is {0}", res);
 
-							var elapsed = DateTime.Now - start;
-							if (res == null && elapsed.Milliseconds > 2000) {
-								Console.WriteLine ($"Unable to get DevTools /json/list response in {elapsed.Seconds} seconds, stopping");
-								return null;
+						await LaunchAndServe (psi, context, async (str) => {
+							var start = DateTime.Now;
+							JArray obj = null;
+
+							while (true) {
+								// Unfortunately it does look like we have to wait
+								// for a bit after getting the response but before
+								// making the list request.  We get an empty result
+								// if we make the request too soon.
+								await Task.Delay (100);
+
+								var res = await client.GetStringAsync (new Uri (new Uri (str), "/json/list"));
+								Console.WriteLine ("res is {0}", res);
+
+								if (!String.IsNullOrEmpty (res)) {
+									// Sometimes we seem to get an empty array `[ ]`
+									obj = JArray.Parse (res);
+									if (obj != null && obj.Count >= 1)
+										break;
+								}
+
+								var elapsed = DateTime.Now - start;
+								if (elapsed.Milliseconds > 5000) {
+									Console.WriteLine ($"Unable to get DevTools /json/list response in {elapsed.Seconds} seconds, stopping");
+									return null;
+								}
 							}
-						}
 
-						var obj = JArray.Parse (res);
-						if (obj == null || obj.Count < 1)
-							return null;
+							var wsURl = obj[0]? ["webSocketDebuggerUrl"]?.Value<string> ();
+							Console.WriteLine (">>> {0}", wsURl);
 
-						var wsURl = obj[0]? ["webSocketDebuggerUrl"]?.Value<string> ();
-						Console.WriteLine (">>> {0}", wsURl);
-
-						return wsURl;
-					});
+							return wsURl;
+						});
+					} catch (Exception ex) {
+						Console.WriteLine ($"launch-chrome-and-connect failed with {ex.ToString ()}");
+					}
 				});
 			});
 
@@ -196,6 +201,11 @@ namespace WebAssembly.Net.Debugging {
 				Console.WriteLine($"Doing the nodejs: {options.NodeApp}");
 				var nodeFullPath = Path.GetFullPath (options.NodeApp);
 				Console.WriteLine (nodeFullPath);
+				var psi = new ProcessStartInfo ();
+
+				psi.UseShellExecute = false;
+				psi.RedirectStandardError = true;
+				psi.RedirectStandardOutput = true;
 
 				psi.Arguments = $"--inspect-brk=localhost:0 {nodeFullPath}";
 				psi.FileName = "node";

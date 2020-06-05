@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -53,17 +54,20 @@ namespace WebAssembly.Net.Debugging
 				if (host != null)
 					return hostTask;
 
-				host = new WebHostBuilder()
+				host = WebHost.CreateDefaultBuilder ()
 					.UseSetting ("UseIISIntegration", false.ToString ())
-					.ConfigureServices (services => {
+					.ConfigureAppConfiguration ((hostingContext, config) => {
+						config.AddEnvironmentVariables (prefix: "WASM_TESTS_");
+					})
+					.ConfigureServices ((ctx, services) => {
+						services.Configure<TestHarnessOptions> (ctx.Configuration);
 						services.Configure<TestHarnessOptions> (options => {
-							options.ChromePath = chromePath;
+							options.ChromePath = options.ChromePath ?? chromePath;
 							options.AppPath = appPath;
 							options.PagePath = pagePath;
 							options.DevToolsUrl = new Uri ("http://localhost:0");
 						});
 					})
-					.UseKestrel ()
 					.UseStartup<TestHarnessStartup> ()
 					.UseUrls (Endpoint.ToString ())
 					.Build();

@@ -2298,6 +2298,7 @@ mono_wrapper_caches_free (MonoWrapperCaches *cache)
 	free_hash (cache->delegate_invoke_cache);
 	free_hash (cache->delegate_begin_invoke_cache);
 	free_hash (cache->delegate_end_invoke_cache);
+	free_hash (cache->delegate_bound_static_invoke_cache);
 	free_hash (cache->runtime_invoke_signature_cache);
 	
 	free_hash (cache->delegate_abstract_invoke_cache);
@@ -2442,7 +2443,6 @@ mono_image_close_except_pools (MonoImage *image)
 		g_hash_table_destroy (image->name_cache);
 	}
 
-	free_hash (image->delegate_bound_static_invoke_cache);
 	free_hash (image->ldfld_wrapper_cache);
 	free_hash (image->ldflda_wrapper_cache);
 	free_hash (image->stfld_wrapper_cache);

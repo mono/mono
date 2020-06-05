@@ -32,8 +32,8 @@ namespace WebAssembly.Net.Debugging {
 		public override string ToString ()
 			=> $"BreakpointRequest Assembly: {Assembly} File: {File} Line: {Line} Column: {Column}";
 
-		public object AsSetBreakpointByUrlResponse ()
-			=> new { breakpointId = Id, locations = Locations.Select(l => l.Location.AsLocation ()) };
+		public object AsSetBreakpointByUrlResponse (IEnumerable<object> jsloc)
+			=> new { breakpointId = Id, locations = Locations.Select(l => l.Location.AsLocation ()).Concat (jsloc) };
 
 		public BreakpointRequest () {
 		}
@@ -169,6 +169,28 @@ namespace WebAssembly.Net.Debugging {
 				return null;
 
 			return new SourceLocation (id, line.Value, column.Value);
+		}
+
+
+		internal class LocationComparer : EqualityComparer<SourceLocation>
+		{
+			public override bool Equals (SourceLocation l1, SourceLocation l2)
+			{
+				if (l1 == null && l2 == null)
+						return true;
+				else if (l1 == null || l2 == null)
+						return false;
+
+				return (l1.Line == l2.Line &&
+						l1.Column == l2.Column &&
+						l1.Id == l2.Id);
+			}
+
+			public override int GetHashCode (SourceLocation loc)
+			{
+				int hCode = loc.Line ^ loc.Column;
+				return loc.Id.GetHashCode () ^ hCode.GetHashCode ();
+			}
 		}
 
 		internal object AsLocation ()
@@ -353,14 +375,14 @@ namespace WebAssembly.Net.Debugging {
 		readonly List<SourceFile> sources = new List<SourceFile>();
 		internal string Url { get; }
 
-		public AssemblyInfo (string url, byte[] assembly, byte[] pdb)
+		public AssemblyInfo (IAssemblyResolver resolver, string url, byte[] assembly, byte[] pdb)
 		{
 			this.id = Interlocked.Increment (ref next_id);
 
 			try {
 				Url = url;
 				ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
-
+				rp.AssemblyResolver = resolver;
 				// set ReadSymbols = true unconditionally in case there
 				// is an embedded pdb then handle ArgumentException
 				// and assume that if pdb == null that is the cause
@@ -369,7 +391,6 @@ namespace WebAssembly.Net.Debugging {
 				if (pdb != null)
 					rp.SymbolStream = new MemoryStream (pdb);
 				rp.ReadingMode = ReadingMode.Immediate;
-				rp.InMemory = true;
 
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
 			} catch (BadImageFormatException ex) {
@@ -383,6 +404,7 @@ namespace WebAssembly.Net.Debugging {
 
 			if (this.image == null) {
 				ReaderParameters rp = new ReaderParameters (/*ReadingMode.Immediate*/);
+				rp.AssemblyResolver = resolver;
 				if (pdb != null) {
 					rp.ReadSymbols = true;
 					rp.SymbolReaderProvider = new PdbReaderProvider ();
@@ -390,7 +412,6 @@ namespace WebAssembly.Net.Debugging {
 				}
 
 				rp.ReadingMode = ReadingMode.Immediate;
-				rp.InMemory = true;
 
 				this.image = ModuleDefinition.ReadModule (new MemoryStream (assembly), rp);
 			}
@@ -478,16 +499,6 @@ namespace WebAssembly.Net.Debugging {
 			return null;
 		}
 
-		private static string GetRelativePath (string relativeTo, string path)
-		{
-			var uri = new Uri (relativeTo, UriKind.RelativeOrAbsolute);
-			var rel = Uri.UnescapeDataString (uri.MakeRelativeUri (new Uri (path, UriKind.RelativeOrAbsolute)).ToString ()).Replace (Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-			if (rel.Contains (Path.DirectorySeparatorChar.ToString ()) == false) {
-				rel = $".{ Path.DirectorySeparatorChar }{ rel }";
-			}
-			return rel;
-		}
-
 		public IEnumerable<SourceFile> Sources
 			=> this.sources;
 
@@ -566,13 +577,13 @@ namespace WebAssembly.Net.Debugging {
 			try {
 				if (uri.IsFile && File.Exists (uri.LocalPath)) {
 					using (var file = File.Open (SourceUri.LocalPath, FileMode.Open)) {
-						await file.CopyToAsync (mem, token);
+						await file.CopyToAsync (mem, token).ConfigureAwait (false);
 						mem.Position = 0;
 					}
 				} else if (uri.Scheme == "http" || uri.Scheme == "https") {
 					var client = new HttpClient ();
 					using (var stream = await client.GetStreamAsync (uri)) {
-						await stream.CopyToAsync (mem, token);
+						await stream.CopyToAsync (mem, token).ConfigureAwait (false);
 						mem.Position = 0;
 					}
 				}
@@ -619,18 +630,12 @@ namespace WebAssembly.Net.Debugging {
 			if (doc.EmbeddedSource.Length > 0)
 				return new MemoryStream (doc.EmbeddedSource, false);
 
-			MemoryStream mem;
-
-			mem = await GetDataAsync (SourceUri, token);
-			if (mem != null && (!checkHash || CheckPdbHash (ComputePdbHash (mem)))) {
-				mem.Position = 0;
-				return mem;
-			}
-
-			mem = await GetDataAsync (SourceLinkUri, token);
-			if (mem != null && (!checkHash || CheckPdbHash (ComputePdbHash (mem)))) {
-				mem.Position = 0;
-				return mem;
+			foreach (var url in new [] { SourceUri, SourceLinkUri }) {
+				var mem = await GetDataAsync (url, token).ConfigureAwait (false);
+				if (mem != null && (!checkHash || CheckPdbHash (ComputePdbHash (mem)))) {
+					mem.Position = 0;
+					return mem;
+				}
 			}
 
 			return MemoryStream.Null;
@@ -696,11 +701,12 @@ namespace WebAssembly.Net.Debugging {
 				}
 			}
 
+			var resolver = new DefaultAssemblyResolver ();
 			foreach (var step in steps) {
 				AssemblyInfo assembly = null;
 				try {
-					var bytes = await step.Data;
-					assembly = new AssemblyInfo (step.Url, bytes [0], bytes [1]);
+					var bytes = await step.Data.ConfigureAwait (false);
+					assembly = new AssemblyInfo (resolver, step.Url, bytes [0], bytes [1]);
 				} catch (Exception e) {
 					logger.LogDebug ($"Failed to load {step.Url} ({e.Message})");
 				}
