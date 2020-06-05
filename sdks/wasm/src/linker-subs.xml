@@ -88,11 +88,16 @@
 	  <!-- Keeps CultureInfo::get_LCID alive -->
 	  <method signature="System.Void OnSerializing(System.Runtime.Serialization.StreamingContext)" body="remove"/>
 	</type>
+	<type fullname="System.SR">
+	  <!-- Keeps resource manager alive -->
+	  <method signature="System.Boolean UsingResourceKeys()" body="stub" value="true"/>
+	</type>
   </assembly>
 
   <assembly fullname="System.Console">
 	<type fullname="System.SR">
 	  <!-- Keeps resource manager alive -->
+	  <!-- FIXME: The resources are still kept -->
 	  <method signature="System.Boolean UsingResourceKeys()" body="stub" value="true"/>
 	</type>
   </assembly>
