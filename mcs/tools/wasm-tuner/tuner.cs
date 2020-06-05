@@ -288,21 +288,26 @@ public class WasmTuner
 			var sorted = icalls.Where (i => i.Assembly == assembly).ToArray ();
 			Array.Sort (sorted);
 
-			Console.WriteLine ($"#define ICALL_TABLE_{assembly} 1\n");
+			string aname;
+			if (assembly == "mscorlib" || assembly == "System.Private.CoreLib")
+				aname = "corlib";
+			else
+				aname = assembly.Replace (".", "_");
+			Console.WriteLine ($"#define ICALL_TABLE_{aname} 1\n");
 
-			Console.WriteLine ($"static int {assembly}_icall_indexes [] = {{");
+			Console.WriteLine ($"static int {aname}_icall_indexes [] = {{");
 			foreach (var icall in sorted)
 				Console.WriteLine (String.Format ("{0},", icall.TokenIndex));
 			Console.WriteLine ("};");
 			foreach (var icall in sorted)
 				Console.WriteLine (GenIcallDecl (icall));
-			Console.WriteLine ($"static void *{assembly}_icall_funcs [] = {{");
+			Console.WriteLine ($"static void *{aname}_icall_funcs [] = {{");
 			foreach (var icall in sorted) {
 				Console.WriteLine (String.Format ("// token {0},", icall.TokenIndex));
 				Console.WriteLine (String.Format ("{0},", icall.Func));
 			}
 			Console.WriteLine ("};");
-			Console.WriteLine ($"static uint8_t {assembly}_icall_handles [] = {{");
+			Console.WriteLine ($"static uint8_t {aname}_icall_handles [] = {{");
 			foreach (var icall in sorted)
 				Console.WriteLine (String.Format ("{0},", icall.Handles ? "1" : "0"));
 			Console.WriteLine ("};");

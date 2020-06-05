@@ -259,13 +259,12 @@ icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char 
 
 	const char *image_name = mono_image_get_name (mono_class_get_image (mono_method_get_class (method)));
 
-#ifdef ICALL_TABLE_mscorlib
 	if (!strcmp (image_name, "mscorlib") || !strcmp (image_name, "System.Private.CoreLib")) {
-		indexes = mscorlib_icall_indexes;
-		indexes_size = sizeof (mscorlib_icall_indexes) / 4;
-		handles = mscorlib_icall_handles;
-		funcs = mscorlib_icall_funcs;
-		assert (sizeof (mscorlib_icall_indexes [0]) == 4);
+		indexes = corlib_icall_indexes;
+		indexes_size = sizeof (corlib_icall_indexes) / 4;
+		handles = corlib_icall_handles;
+		funcs = corlib_icall_funcs;
+		assert (sizeof (corlib_icall_indexes [0]) == 4);
 	}
 #ifdef ICALL_TABLE_System
 	if (!strcmp (image_name, "System")) {
@@ -280,8 +279,10 @@ icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char 
 	void *p = bsearch (&token_idx, indexes, indexes_size, 4, compare_int);
 	if (!p) {
 		return NULL;
+		/*
 		printf ("wasm: Unable to lookup icall: %s\n", mono_method_get_name (method));
 		exit (1);
+		*/
 	}
 
 	uint32_t idx = (int*)p - indexes;
@@ -290,7 +291,6 @@ icall_table_lookup (MonoMethod *method, char *classname, char *methodname, char 
 	//printf ("ICALL: %s %x %d %d\n", methodname, token, idx, (int)(funcs [idx]));
 
 	return funcs [idx];
-#endif
 }
 
 static const char*
