@@ -38,6 +38,10 @@
 #  define fprintf(__ignore, ...) g_log ("mono-gc", G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
 #endif
 
+#ifdef HOST_WIN32
+#  define printf g_print
+#endif
+
 static MonoCallSpec trace_spec;
 
 static volatile gint32 output_lock = 0;
