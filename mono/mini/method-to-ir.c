@@ -87,6 +87,10 @@
 #include "llvmonly-runtime.h"
 #include "mono/utils/mono-tls-inline.h"
 
+#ifdef HOST_WIN32
+#  define printf g_print
+#endif
+
 #define BRANCH_COST 10
 #define CALL_COST 10
 /* Used for the JIT */

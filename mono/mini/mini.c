@@ -82,6 +82,10 @@
 #include "aot-runtime.h"
 #include "mini-runtime.h"
 
+#ifdef HOST_WIN32
+#  define printf g_print
+#endif
+
 MonoCallSpec *mono_jit_trace_calls;
 MonoMethodDesc *mono_inject_async_exc_method;
 int mono_inject_async_exc_pos;

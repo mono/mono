@@ -17,6 +17,10 @@
 #include "mini.h"
 #include "mini-runtime.h"
 
+#ifdef HOST_WIN32
+#  define printf g_print
+#endif
+
 /*
  * Returns true if @bb is a basic block which falls through the next block.
  * TODO verify if it helps to check if the bb last ins is a branch to its successor. 

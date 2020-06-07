@@ -25,6 +25,10 @@
 #include "trace.h"
 #include "mini-arch.h"
 
+#ifdef HOST_WIN32
+#  define printf g_print
+#endif
+
 #ifndef DISABLE_JIT
 
 #ifndef MONO_MAX_XREGS

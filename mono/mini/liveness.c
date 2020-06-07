@@ -17,6 +17,10 @@
 
 #include "mini.h"
 
+#ifdef HOST_WIN32
+#  define printf g_print
+#endif
+
 #define SPILL_COST_INCREMENT (1 << (bb->nesting << 1))
 
 #define DEBUG_LIVENESS

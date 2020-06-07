@@ -18,6 +18,10 @@
 
 #include "mini.h"
 
+#ifdef HOST_WIN32
+#  define printf g_print
+#endif
+
 #ifndef DISABLE_JIT
 
 /*
