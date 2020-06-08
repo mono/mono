@@ -323,7 +323,7 @@ namespace WebAssembly.Net.Debugging {
 				logger.LogTrace (msg);
 				break;
 			case "verbose":
-				logger.LogVerbose (msg);
+				logger.LogDebug (msg);
 				break;
 			case "info":
 			case "warning":
