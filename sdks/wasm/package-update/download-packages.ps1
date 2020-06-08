@@ -1,11 +1,20 @@
-$asp_remote_name="upstream"
-$mono_remote_name="upstream"
-$asp_branch_name="blazor-wasm"
-$mono_branch_name="master"
-
 param ($filepath, $url, $runtime, $asp_working_dir, $mono_working_dir, $asp_remote_name, $mono_remote_name)
 
+if ($null -eq $asp_remote_name) {
+	$asp_remote_name="upstream"
+} 
 
+if ($null -eq $mono_remote_name) {
+	$mono_remote_name="upstream"
+}
+
+if ($null -eq $asp_branch_name) {
+	$asp_branch_name="blazor-wasm"
+}
+
+if ($null -eq $mono_branch_name) {
+	$mono_branch_name="master"
+}
 
 if ($null -eq $runtime) {
 	echo "Error: runtime version required. Use -runtime"
@@ -33,10 +42,11 @@ $PROXY_PACKAGE_PATH="$NUGET_HOME\\packages\\microsoft.aspnetcore.components.weba
 $ASP_PROXY_PATH="$asp_working_dir\\src\\Components\\WebAssembly\\DebugProxy\\src"
 $MONO_PROXY_PATH="$mono_working_dir\\sdks\\wasm\\Mono.WebAssembly.DebuggerProxy"
 $TMP_DIR=(mktemp -d)
-$TMP_PKG_DIR=$TMP_DIR\\wasm-package             
+$TMP_PKG_DIR="$TMP_DIR\\wasm-package"
+mkdir $TMP_DIR
 
 if ($null -eq $filepath) {
-	Invoke-WebRequest -Uri $url -OutFile "$TMP_DIR\\wasm-package.zip" -UseBasicParsing
+	Invoke-WebRequest -Uri $url -OutFile $TMP_DIR\wasm-package.zip -UseBasicParsing
 	Expand-Archive "$TMP_DIR\\wasm-package.zip" -d $TMP_PKG_DIR
 } else {
 	Expand-Archive $filepath -d $TMP_PKG_DIR
@@ -46,7 +56,7 @@ rm -r $PACKAGE_PATH\bcl
 cp $TMP_PKG_DIR\wasm-bcl\wasm $PACKAGE_PATH\bcl
 
 rm -r $PACKAGE_PATH\framework
-cp framework $PACKAGE_PATH\framework
+cp $TMP_PKG_DIR\framework $PACKAGE_PATH\framework
 
 rm -r $PACKAGE_PATH\wasm\*
 cp $TMP_PKG_DIR\builds\release\dotnet.js $PACKAGE_PATH\wasm\dotnet.$runtime.js
@@ -56,15 +66,13 @@ echo "Replacing DebuggerProxy"
 
 cd $mono_working_dir
 git checkout $mono_branch_name
-git reset --hard
 git fetch $mono_remote_name
-git pull $mono_remote_name $mono_branch_name
+git reset --hard $mono_remote_name/$mono_branch_name
 
 cd $asp_working_dir
 git checkout $asp_branch_name
-git reset --hard
 git fetch $asp_remote_name
-git pull $asp_remote_name $asp_branch_name
+git reset --hard $asp_remote_name/$asp_branch_name
 
 ./clean.ps1
 

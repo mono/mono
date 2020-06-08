@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e 
+set -u
 
 ASP_REMOTE_NAME="upstream"
 MONO_REMOTE_NAME="upstream"
