@@ -66,8 +66,8 @@ echo "Replacing DebuggerProxy"
 
 cd $mono_working_dir
 git checkout $mono_branch_name
-git fetch $mono_remote_name
-git reset --hard $mono_remote_name/$mono_branch_name
+# git fetch $mono_remote_name
+# git reset --hard $mono_remote_name/$mono_branch_name
 
 cd $asp_working_dir
 git checkout $asp_branch_name

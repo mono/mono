@@ -105,15 +105,14 @@ echo "Replacing DebuggerProxy..."
 
 cd $MONO
 git checkout $MONO_BRANCH_NAME
-git reset --hard
-git fetch $MONO_REMOTE_NAME
-git pull $MONO_REMOTE_NAME $MONO_BRANCH_NAME 
+# git reset --hard
+# git fetch $MONO_REMOTE_NAME
+# git pull $MONO_REMOTE_NAME $MONO_BRANCH_NAME 
 
 cd $ASPNETCORE 
 git checkout $ASP_BRANCH_NAME
-git reset --hard
 git fetch $ASP_REMOTE_NAME
-git pull $ASP_REMOTE_NAME $ASP_BRANCH_NAME
+git reset --hard $ASP_REMOTE_NAME/$ASP_BRANCH_NAME
 
 ./clean.sh || true
 
