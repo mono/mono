@@ -3,9 +3,11 @@ Unity
 This is Unity Technologies fork of the open source mono project.
 
 ### Versions
-Each Unity release contains two versions of Mono. One older version (Mono) is embedded into the Editor and Players. Another newer version (MonoBleedingEdge) is used to run tools and tests.
+Each Unity release upto 2019.2 contains two versions of Mono. One older version (Mono) is embedded into the Editor and Players. Another newer version (MonoBleedingEdge) is used to run tools and tests.
 
 In newer Unity versions (2017.1+) this MonoBleedingEdge version can be used in the Editor and Players via enabling an Experimental player setting.
+
+Unity versions 2019.3+ contain only MonoBleedingEdge.
 
 ### Branch Naming Convention
 Branches for released Unity versions are of the form unity-\<version\>\[-mbe\][-staging\]. The '-staging' suffix is used as a branch for PRs to target with potential changes. The '-mbe' suffix indicates the branch is for the MonoBleedingEdge version of Mono mentioned above.
