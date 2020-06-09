@@ -641,6 +641,7 @@ var BindingSupportLib = {
 					converters.set ('l', { steps: [{ indirect: 'i64'}], size: 8});
 					converters.set ('f', { steps: [{ indirect: 'float'}], size: 8});
 					converters.set ('d', { steps: [{ indirect: 'double'}], size: 8});
+					converters.set ('p', { steps: [{ }], size: 8});
 					this.converters = converters;
 				}
 

@@ -706,4 +706,12 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
         var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringToUri", ["ws://localhost"]);
         assert.equal(result, "ws://localhost/", "result does not match value ws://localhost/.");
     }, DEFAULT_TIMEOUT);     
+
+    it('BindingTestSuite: Should pass/return pointer types.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var res = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:PassReturnPtr", [42]);
+      assert.equal(res, 42, "");
+    }, DEFAULT_TIMEOUT);
   });
