@@ -24,6 +24,13 @@ namespace DebuggerTests
 		public const string PAUSE = "pause";
 		public const string READY = "ready";
 
+		static string[] FailOnMethods = new string[] {
+			"Runtime.exceptionThrown",
+			"Inspector.targetCrashed",
+			"Inspector.targetReloadedAfterCrash",
+			"Inspector.detached"
+		};
+
 		public Task<JObject> WaitFor(string what) {
 			if (notifications.ContainsKey (what))
 				throw new Exception ($"Invalid internal state, waiting for {what} while another wait is already setup");
@@ -65,7 +72,7 @@ namespace DebuggerTests
 			}
 			if (eventListeners.ContainsKey (method))
 				await eventListeners[method](args, token);
-			else if (String.Compare (method, "Runtime.exceptionThrown") == 0)
+			else if (FailOnMethods.Any (m => string.Compare (m, method) == 0))
 				FailAllWaitersWithException (args);
 		}
 
