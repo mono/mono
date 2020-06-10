@@ -2083,6 +2083,7 @@ namespace System.Windows.Forms {
 				
 				selected_node = highlighted_node;
 				focused_node = highlighted_node;
+				pre_selected_node = highlighted_node;
 				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
 
 				if (prev_highlighted_node != null) {
@@ -2105,6 +2106,7 @@ namespace System.Windows.Forms {
 
 				highlighted_node = focused_node;
 				selected_node = focused_node;
+				pre_selected_node = focused_node;
 				if (selected_node != null)
 					Invalidate (selected_node.Bounds);
 			}
