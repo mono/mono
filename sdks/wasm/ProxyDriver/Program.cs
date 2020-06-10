@@ -45,7 +45,16 @@ namespace WebAssembly.Net.Debugging
 		static CancellationTokenSource cts = new CancellationTokenSource ();
 		static object proxyLock = new object ();
 
-		public static readonly Uri Endpoint = new Uri ("http://localhost:9400");
+		static Uri _webserverUri = null;
+		public static Uri Endpoint {
+			get {
+				if (_webserverUri == null)
+					throw new ArgumentException ("Can't use WebServer Uri before it is set, since it is bound dynamically.");
+
+				return _webserverUri;
+			}
+			set { _webserverUri = value; }
+		}
 
 		public static Task Start (string chromePath, string appPath, string pagePath)
 		{
@@ -65,7 +74,7 @@ namespace WebAssembly.Net.Debugging
 					})
 					.UseKestrel ()
 					.UseStartup<TestHarnessStartup> ()
-					.UseUrls (Endpoint.ToString ())
+					.UseUrls ("http://127.0.0.1:0")
 					.Build();
 				hostTask = host.StartAsync (cts.Token);
 			}
