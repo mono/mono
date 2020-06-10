@@ -1,18 +1,21 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
@@ -126,8 +129,17 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure (IApplicationBuilder app, IOptionsMonitor<TestHarnessOptions> optionsAccessor, IWebHostEnvironment env)
+		public void Configure (IApplicationBuilder app, IOptionsMonitor<TestHarnessOptions> optionsAccessor, IWebHostEnvironment env, IHostApplicationLifetime lifetime)
 		{
+			lifetime.ApplicationStarted.Register (() =>  {
+				var addr = app.ServerFeatures.Get<IServerAddressesFeature> ()?.Addresses?.First ();
+				if (String.IsNullOrEmpty (addr))
+					throw new ArgumentNullException ("Did not get expected web server address");
+
+				TestHarnessProxy.Endpoint = new Uri (addr);
+				Console.WriteLine ($"WebServer listening on {addr}");
+			});
+
 			app.UseWebSockets ();
 			app.UseStaticFiles ();
 
