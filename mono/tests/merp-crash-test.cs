@@ -92,17 +92,17 @@ class C
 		public static void ValidateBreadcrumbs (object json)
 		{
 			var monoType = Type.GetType ("Mono.Runtime", false);
-			var m = monoType.GetMethod("CheckCrashReportReason", BindingFlags.NonPublic | BindingFlags.Static);
+			var m = monoType.GetMethod ("CheckCrashReportReason", BindingFlags.NonPublic | BindingFlags.Static);
 			var m_params = new object [] { "./", false };
 			string o = (string)m.Invoke(null, m_params);
 			if (o != "segv")
 				throw new Exception ("Crash report reason should be 'segv'");
 
-			m = monoType.GetMethod("CheckCrashReportHash", BindingFlags.NonPublic | BindingFlags.Static);
-			long hash = (long)m.Invoke(null, m_params);
+			m = monoType.GetMethod ("CheckCrashReportHash", BindingFlags.NonPublic | BindingFlags.Static);
+			long hash = (long)m.Invoke (null, m_params);
 
 			if (hash == 0)
-				throw new Exception("Crash hash should not be zero");
+				throw new Exception ("Crash hash should not be zero");
 		}
 
 		[DllImport("libtest")]
