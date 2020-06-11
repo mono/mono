@@ -273,7 +273,10 @@ namespace Mono {
 			if (allfiles.Length > 1) {
 				// it's impossible to tell which breadcrumb is the last one (let's not trust filesystem timestamps)
 				// delete the multiple files so at least next crash can make sense
-				Array.ForEach (allfiles, f => File.Delete (f) );
+				try {
+					Array.ForEach (allfiles, f => File.Delete (f) );
+				} catch (Exception) { }
+
 				return string.Empty;
 			}
 
