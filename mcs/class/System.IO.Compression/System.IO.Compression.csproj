@@ -184,9 +184,7 @@
     </When>
     <When Condition="'$(Platform)' == 'wasm'">
       <ItemGroup>
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Decoder.cs" />
-        <Compile Include="..\..\..\external\corefx\src\System.IO.Compression.Brotli\src\Interop\Interop.Brotli.Encoder.cs" />
-        <Compile Include="corefx\Interop.Libraries.cs" />
+        <Compile Include="corefx\BrotliStubs.cs" />
       </ItemGroup>
     </When>
     <When Condition="'$(Platform)' == 'unreal'">
