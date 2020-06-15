@@ -3297,12 +3297,6 @@ g_warning_d (const char *format, int d)
 	g_warning (format, d);
 }
 
-static void
-g_warning_ds (const char *format, int d, const char *s)
-{
-	g_warning (format, d, s);
-}
-
 #if !USE_COMPUTED_GOTO
 static void
 g_error_xsx (const char *format, int x1, const char *s, int x2)
@@ -4026,18 +4020,10 @@ call:
 				// FIXME This can only happen in a few wrappers. Add separate opcode for it
 				*frame->retval = *sp;
 			}
-#ifdef ENABLE_CHECKED_BUILD
-			/* FIXME Fix these warnings and replace with assertions */
-			if (sp > (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size))
-				g_warning_d ("ret: more values on stack: %d", sp - frame->stack);
-#endif
+			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VOID)
-#ifdef ENABLE_CHECKED_BUILD
-			/* FIXME Fix these warnings and replace with assertions */
-			if (sp > (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size))
-				g_warning_ds ("ret.void: more values on stack: %d %s", sp - frame->stack, mono_method_full_name (frame->imethod->method, TRUE));
-#endif
+			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT) {
 			gpointer dest_vt;
@@ -4053,11 +4039,7 @@ call:
 				dest_vt = frame->retval->data.p;
 			}
 			memcpy (dest_vt, sp->data.p, i32);
-#ifdef ENABLE_CHECKED_BUILD
-			/* FIXME Fix these warnings and replace with assertions */
-			if (sp > (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size))
-				g_warning_d ("ret.vt: more values on stack: %d", sp - frame->stack);
-#endif
+			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size));
 			goto exit_frame;
 		}
 
