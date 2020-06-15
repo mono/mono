@@ -2132,7 +2132,7 @@ interp_constrained_box (TransformData *td, MonoDomain *domain, MonoClass *constr
 		interp_add_ins (td, MINT_BOX_NULLABLE);
 		td->last_ins->data [0] = get_data_item_index (td, constrained_class);
 		td->last_ins->data [1] = csignature->param_count;
-		td->last_ins->data [2] = (td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : 1;
+		td->last_ins->data [2] = 1;
 	} else {
 		MonoVTable *vtable = mono_class_vtable_checked (domain, constrained_class, error);
 		return_if_nok (error);
@@ -2141,7 +2141,7 @@ interp_constrained_box (TransformData *td, MonoDomain *domain, MonoClass *constr
 			interp_add_ins (td, MINT_BOX_VT);
 			td->last_ins->data [0] = get_data_item_index (td, vtable);
 			td->last_ins->data [1] = csignature->param_count;
-			td->last_ins->data [2] = (td->sp - 1 - csignature->param_count)->type != STACK_TYPE_MP ? 0 : 1;
+			td->last_ins->data [2] = 1;
 		} else {
 			interp_add_ins (td, MINT_BOX);
 			td->last_ins->data [0] = get_data_item_index (td, vtable);
