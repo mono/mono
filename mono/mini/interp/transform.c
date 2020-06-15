@@ -1963,12 +1963,15 @@ interp_icall_op_for_sig (MonoMethodSignature *sig)
 #define INLINE_LENGTH_LIMIT 20
 
 static gboolean
-interp_method_check_inlining (TransformData *td, MonoMethod *method)
+interp_method_check_inlining (TransformData *td, MonoMethod *method, MonoMethodSignature *csignature)
 {
 	MonoMethodHeaderSummary header;
 
 	if (method->flags & METHOD_ATTRIBUTE_REQSECOBJ)
 		/* Used to mark methods containing StackCrawlMark locals */
+		return FALSE;
+
+	if (csignature->call_convention == MONO_CALL_VARARG)
 		return FALSE;
 
 	if (!mono_method_get_header_summary (method, &header))
@@ -2381,7 +2384,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	}
 
 	g_assert (csignature->call_convention != MONO_CALL_FASTCALL);
-	if ((mono_interp_opt & INTERP_OPT_INLINE) && op == -1 && !is_virtual && target_method && interp_method_check_inlining (td, target_method)) {
+	if ((mono_interp_opt & INTERP_OPT_INLINE) && op == -1 && !is_virtual && target_method && interp_method_check_inlining (td, target_method, csignature)) {
 		MonoMethodHeader *mheader = interp_method_get_header (target_method, error);
 		return_val_if_nok (error, FALSE);
 
@@ -4660,7 +4663,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					// We don't support inlining ctors of MINT_TYPE_VT which also receive a MINT_TYPE_VT
 					// as an argument. The reason is that we would need to push this on the vtstack before
 					// the argument, which is very awkward for uncommon scenario.
-					if ((mono_interp_opt & INTERP_OPT_INLINE) && interp_method_check_inlining (td, m) &&
+					if ((mono_interp_opt & INTERP_OPT_INLINE) && interp_method_check_inlining (td, m, csignature) &&
 							(!is_vtst || !signature_has_vt_params (csignature))) {
 						MonoMethodHeader *mheader = interp_method_get_header (m, error);
 						goto_if_nok (error, exit);
