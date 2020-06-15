@@ -3443,9 +3443,14 @@ main_loop:
 	while (1) {
 		MintOpcode opcode;
 #ifdef ENABLE_CHECKED_BUILD
+		guchar *vt_start = (guchar*)frame->stack + frame->imethod->total_locals_size;
+		guchar *sp_start = vt_start + frame->imethod->vt_stack_size;
+		guchar *sp_end = sp_start + frame->imethod->stack_size;
 		g_assert (locals == (guchar*)frame->stack);
-		g_assert (vt_sp >= locals);
-		g_assert ((guchar*)sp >= vt_sp);
+		g_assert (vt_sp >= vt_start);
+		g_assert (vt_sp <= sp_start);
+		g_assert ((guchar*)sp >= sp_start);
+		g_assert ((guchar*)sp <= sp_end);
 #endif
 		DUMP_INSTR();
 		MINT_IN_SWITCH (*ip) {
