@@ -1794,14 +1794,15 @@ static mode_t convert_perms(guint32 sharemode)
 static gboolean already_shared(gboolean file_alread_shared, ino_t inode)
 {
 #if HOST_DARWIN
-	/* On macOS and FAT32 partitions, we will sometimes get this inode value
-	 * for more than one file. It means the file is empty (FILENO_EMPTY is
-	 * defined in an internal header).  When this happens, the hash table of
-	 * file shares becomes corrupt, since more then one file has the same
-	 * inode. Instead, let's assume it is always fine to share empty files.
-	 * (Unity case 950616).
+	/* On macOS and FAT32 partitions, we will sometimes get an inode value
+	 * of 999999999 (or 1 on exFAT partitions) for more than one file. It
+	 * means the file is empty (FILENO_EMPTY is defined in an internal
+	 * header).  When this happens, the hash table of file shares becomes
+	 * corrupt, since more then one file has the same inode. Instead, let's
+	 * assume it is always fine to share empty files.
+	 * (Unity case 950616 or case 1253812).
 	 */
-	return file_alread_shared && inode != 999999999;
+	return file_alread_shared && inode != 999999999 && inode != 1;
 #else
 	return file_alread_shared;
 #endif
