@@ -435,14 +435,8 @@ get_context (void)
 	ThreadContext *context = (ThreadContext *) mono_native_tls_get_value (thread_context_id);
 	if (context == NULL) {
 		context = g_new0 (ThreadContext, 1);
-		/*
-		 * Initialize data stack.
-		 * There are multiple advantages to this being separate from the frame stack.
-		 * Frame stack can be alloca.
-		 * Frame stack can be perfectly fit (if heap).
-		 * Frame stack can skip GC tracking.
-		 */
-		frame_stack_init (&context->data_stack, 8192);
+		context->stack_start = (guchar*)mono_valloc (0, INTERP_STACK_SIZE, MONO_MMAP_READ | MONO_MMAP_WRITE, MONO_MEM_ACCOUNT_OTHER);
+		context->stack_pointer = context->stack_start;
 		set_context (context);
 	}
 	return context;
@@ -453,7 +447,6 @@ interp_free_context (gpointer ctx)
 {
 	ThreadContext *context = (ThreadContext*)ctx;
 
-	frame_stack_free (&context->data_stack);
 	g_free (context);
 }
 
@@ -3329,12 +3322,21 @@ method_entry (ThreadContext *context, InterpFrame *frame,
 		MonoException *ex = do_transform_method (frame, context);
 		if (ex) {
 			*out_ex = ex;
+			/*
+			 * Initialize the stack base pointer here, in the uncommon branch, so we don't
+			 * need to check for it everytime when exitting a frame.
+			 */
+			frame->stack = (stackval*)context->stack_pointer;
 			return slow;
 		}
 	}
 
-	if (!clause_args || clause_args->base_frame)
-		alloc_stack_data (context, frame, frame->imethod->alloca_size);
+	if (!clause_args || clause_args->base_frame) {
+		frame->stack = (stackval*)context->stack_pointer;
+		context->stack_pointer += frame->imethod->alloca_size;
+		/* Make sure the stack pointer is bumped before we store any references on the stack */
+		mono_compiler_barrier ();
+	}
 
 	return slow;
 }
@@ -3608,18 +3610,12 @@ main_loop:
 					THROW_EX (ex, ip);
 				EXCEPTION_CHECKPOINT;
 			}
-			const gboolean realloc_frame = new_method->alloca_size > frame->imethod->alloca_size;
-			frame->imethod = new_method;
 			/*
-			 * We allocate the stack frame from scratch and store the arguments in the
-			 * locals again since it's possible for the caller stack frame to be smaller
+			 * It's possible for the caller stack frame to be smaller
 			 * than the callee stack frame (at the interp level)
 			 */
-			if (realloc_frame) {
-				alloc_stack_data (context, frame, frame->imethod->alloca_size);
-				memset (frame->stack, 0, frame->imethod->alloca_size);
-				locals = (guchar*)frame->stack;
-			}
+			context->stack_pointer = (guchar*)frame->stack + new_method->alloca_size;
+			frame->imethod = new_method;
 			vt_sp = locals + frame->imethod->total_locals_size;
 #if DEBUG_INTERP
 			vtalloc = vt_sp;
@@ -6966,7 +6962,8 @@ call_newobj:
 				goto abort_label;
 
 			int len = sp [-1].data.i;
-			sp [-1].data.p = alloc_extra_stack_data (context, ALIGN_TO (len, 8));
+			// FIXME we need a separate allocator for localloc sections
+			sp [-1].data.p = alloca (ALIGN_TO (len, 8));
 
 			if (frame->imethod->init_locals)
 				memset (sp [-1].data.p, 0, len);
@@ -7268,12 +7265,9 @@ exit_frame:
 	if (frame->parent && frame->parent->state.ip) {
 		/* Return to the main loop after a non-recursive interpreter call */
 		//printf ("R: %s -> %s %p\n", mono_method_get_full_name (frame->imethod->method), mono_method_get_full_name (frame->parent->imethod->method), frame->parent->state.ip);
-		InterpFrame* const child_frame = frame;
-
+		context->stack_pointer = (guchar*)frame->stack;
 		frame = frame->parent;
 		LOAD_INTERP_STATE (frame);
-
-		pop_frame (context, child_frame);
 
 		CHECK_RESUME_STATE (context);
 
@@ -7287,10 +7281,10 @@ exit_clause:
 			char *locals_base = (char*)clause_args->base_frame->stack;
 
 			memcpy (locals_base, locals, frame->imethod->locals_size);
-			pop_frame (context, frame);
+			context->stack_pointer = (guchar*)frame->stack;
 		}
 	} else {
-		pop_frame (context, frame);
+		context->stack_pointer = (guchar*)frame->stack;
 	}
 
 	DEBUG_LEAVE ();
@@ -7642,17 +7636,12 @@ interp_mark_stack (gpointer thread_data, GcScanFunc func, gpointer gc_data, gboo
 		return;
 
 	ThreadContext *context = (ThreadContext*)jit_tls->interp_context;
-	if (!context || !context->data_stack.inited)
+	if (!context)
 		return;
 
-	StackFragment *frag;
-	for (frag = context->data_stack.first; frag; frag = frag->next) {
-		// FIXME: Scan the whole area with 1 call
-		for (gpointer *p = (gpointer*)&frag->data; p < (gpointer*)frag->pos; ++p)
-			func (p, gc_data);
-		if (frag == context->data_stack.current)
-			break;
-	}
+	// FIXME: Scan the whole area with 1 call
+	for (gpointer *p = (gpointer*)context->stack_start; p < (gpointer*)context->stack_pointer; p++)
+		func (p, gc_data);
 }
 
 #if COUNT_OPS

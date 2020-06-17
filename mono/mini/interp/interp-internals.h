@@ -27,6 +27,8 @@
 
 #define MINT_VT_ALIGNMENT 8
 
+#define INTERP_STACK_SIZE (1024*1024)
+
 enum {
 	VAL_I32     = 0,
 	VAL_DOUBLE  = 1,
@@ -211,8 +213,6 @@ struct InterpFrame {
 	stackval       *retval; /* parent */
 	stackval       *stack;
 	InterpFrame    *next_free;
-	/* Stack fragments this frame was allocated from */
-	StackFragment *data_frag;
 	/* State saved before calls */
 	/* This is valid if state.ip != NULL */
 	InterpState state;
@@ -231,8 +231,15 @@ typedef struct {
 	MonoJitExceptionInfo *handler_ei;
 	/* Exception that is being thrown. Set with rest of resume state */
 	MonoGCHandle exc_gchandle;
-	/* Stack of frame data */
-	FrameStack data_stack;
+	/* This is a contiguous space allocated for interp execution stack */
+	guchar *stack_start;
+	/*
+	 * This stack pointer is the highest stack memory that can be used by the current frame. This does not
+	 * change throughout the execution of a frame and it is essentially the upper limit of the execution
+	 * stack pointer. It is needed when re-entering interp, to know from which address we can start using
+	 * stack, and also needed for the GC to be able to scan the stack.
+	 */
+	guchar *stack_pointer;
 } ThreadContext;
 
 typedef struct {
