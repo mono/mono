@@ -59,6 +59,12 @@ class C
 			Crashers.Add(new Crasher ("MerpCrashSnprintf", MerpCrashSnprintf));
 			Crashers.Add(new Crasher ("MerpCrashDomainUnload", MerpCrashDomainUnload));
 			Crashers.Add(new Crasher ("MerpCrashUnbalancedGCSafe", MerpCrashUnbalancedGCSafe));
+			Crashers.Add(new Crasher  ("MerpCrashSignalTerm", MerpCrashSignalTerm));
+			Crashers.Add(new Crasher  ("MerpCrashSignalTerm", MerpCrashSignalAbrt));
+			Crashers.Add(new Crasher  ("MerpCrashSignalKill", MerpCrashSignalFpe));
+			Crashers.Add(new Crasher  ("MerpCrashSignalKill", MerpCrashSignalBus));
+			Crashers.Add(new Crasher  ("MerpCrashSignalSegv", MerpCrashSignalSegv));
+			Crashers.Add(new Crasher  ("MerpCrashSignalIll", MerpCrashSignalIll));
 		}
 
 		public static void 
@@ -148,6 +154,60 @@ class C
 
 		[DllImport("libtest")]
 		public static extern void mono_test_MerpCrashUnhandledExceptionHook ();
+
+		[DllImport("libtest")]
+		public static extern void mono_test_MerpCrashSignalTerm ();
+
+		public static void
+		MerpCrashSignalTerm ()
+		{
+			mono_test_MerpCrashSignalTerm ();
+		}
+
+		[DllImport("libtest")]
+		public static extern void mono_test_MerpCrashSignalAbrt ();
+
+		public static void
+		MerpCrashSignalAbrt ()
+		{
+			mono_test_MerpCrashSignalAbrt ();
+		}
+
+		[DllImport("libtest")]
+		public static extern void mono_test_MerpCrashSignalFpe ();
+
+		public static void
+		MerpCrashSignalFpe ()
+		{
+			mono_test_MerpCrashSignalFpe ();
+		}
+
+		[DllImport("libtest")]
+		public static extern void mono_test_MerpCrashSignalBus ();
+
+		public static void
+		MerpCrashSignalBus ()
+		{
+			mono_test_MerpCrashSignalBus ();
+		}
+
+		[DllImport("libtest")]
+		public static extern void mono_test_MerpCrashSignalSegv ();
+
+		public static void
+		MerpCrashSignalSegv ()
+		{
+			mono_test_MerpCrashSignalSegv ();
+		}
+
+		[DllImport("libtest")]
+		public static extern void mono_test_MerpCrashSignalIll ();
+
+		public static void
+		MerpCrashSignalIll ()
+		{
+			mono_test_MerpCrashSignalIll ();
+		}
 
 		public static void 
 		MerpCrashUnhandledExceptionHook ()
