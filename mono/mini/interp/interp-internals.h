@@ -177,10 +177,11 @@ struct InterpMethod {
 	unsigned int needs_thread_attach : 1;
 };
 
-typedef struct _StackFragment StackFragment;
-struct _StackFragment {
+/* Used for localloc memory allocation */
+typedef struct _FrameDataFragment FrameDataFragment;
+struct _FrameDataFragment {
 	guint8 *pos, *end;
-	struct _StackFragment *next;
+	struct _FrameDataFragment *next;
 #if SIZEOF_VOID_P == 4
 	/* Align data field to MINT_VT_ALIGNMENT */
 	gint32 pad;
@@ -189,10 +190,23 @@ struct _StackFragment {
 };
 
 typedef struct {
-	StackFragment *first, *current;
+	InterpFrame *frame;
+	/*
+	 * frag and pos hold the current allocation position when the stored frame
+	 * starts allocating memory. This is used for restoring the localloc stack
+	 * when frame returns.
+	 */
+	FrameDataFragment *frag;
+	guint8 *pos;
+} FrameDataInfo;
+
+typedef struct {
+	FrameDataFragment *first, *current;
+	FrameDataInfo *infos;
+	int infos_len, infos_capacity;
 	/* For GC sync */
 	int inited;
-} FrameStack;
+} FrameDataAllocator;
 
 
 /* Arguments that are passed when invoking only a finally/filter clause from the frame */
@@ -240,6 +254,8 @@ typedef struct {
 	 * stack, and also needed for the GC to be able to scan the stack.
 	 */
 	guchar *stack_pointer;
+	/* Used for allocation of localloc regions */
+	FrameDataAllocator data_stack;
 } ThreadContext;
 
 typedef struct {
