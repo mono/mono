@@ -3987,14 +3987,45 @@ call:
 				// FIXME This can only happen in a few wrappers. Add separate opcode for it
 				*frame->retval = *sp;
 			}
-			frame_data_allocator_pop (&context->data_stack, frame);
 			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VOID)
-			frame_data_allocator_pop (&context->data_stack, frame);
 			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT) {
+			gpointer dest_vt;
+			int const i32 = READ32 (ip + 1);
+			--sp;
+			if (frame->parent) {
+				dest_vt = frame->parent->state.vt_sp;
+				/* Push the valuetype in the parent frame */
+				frame->parent->state.sp [0].data.p = dest_vt;
+				frame->parent->state.sp++;
+				frame->parent->state.vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
+			} else {
+				dest_vt = frame->retval->data.p;
+			}
+			memcpy (dest_vt, sp->data.p, i32);
+			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size));
+			goto exit_frame;
+		}
+		MINT_IN_CASE(MINT_RET_LOCALLOC)
+			--sp;
+			if (frame->parent) {
+				frame->parent->state.sp [0] = *sp;
+				frame->parent->state.sp++;
+			} else {
+				// FIXME This can only happen in a few wrappers. Add separate opcode for it
+				*frame->retval = *sp;
+			}
+			frame_data_allocator_pop (&context->data_stack, frame);
+			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size));
+			goto exit_frame;
+		MINT_IN_CASE(MINT_RET_VOID_LOCALLOC)
+			frame_data_allocator_pop (&context->data_stack, frame);
+			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size + frame->imethod->vt_stack_size));
+			goto exit_frame;
+		MINT_IN_CASE(MINT_RET_VT_LOCALLOC) {
 			gpointer dest_vt;
 			int const i32 = READ32 (ip + 1);
 			--sp;
