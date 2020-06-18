@@ -6384,16 +6384,10 @@ call_newobj:
 			ip += short_offset ? (short)*(ip + 1) : (gint32)READ32 (ip + 1);
 			const guint16 *endfinally_ip = ip;
 			GSList *old_list = finally_ips;
-			MonoMethod *method = frame->imethod->method;
 #if DEBUG_INTERP
 			if (tracing)
 				g_print ("* Handle finally IL_%04x\n", endfinally_ip - frame->imethod->code);
 #endif
-			// FIXME Null check for frame->imethod follows deref.
-			if (frame->imethod == NULL || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL)
-					|| (method->iflags & (METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL | METHOD_IMPL_ATTRIBUTE_RUNTIME)))
-				goto exit_frame;
-
 			finally_ips = g_slist_prepend (finally_ips, (void *)endfinally_ip);
 
 			for (int i = frame->imethod->num_clauses - 1; i >= 0; i--) {
