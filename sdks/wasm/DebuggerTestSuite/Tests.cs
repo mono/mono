@@ -239,8 +239,10 @@ namespace DebuggerTests
 				});
 
 				var eval_res = await cli.SendCommand ("Runtime.evaluate", eval_req, token);
-				Assert.True (eval_res.IsErr);
-				Assert.Equal ("Uncaught", eval_res.Error ["exceptionDetails"]? ["text"]? .Value<string> ());
+				Assert.True (eval_res.IsOk);
+				Assert.False (eval_res.IsErr);
+				Assert.True (eval_res.ResultHasError);
+				Assert.Equal ("Uncaught", eval_res.Value ["exceptionDetails"]? ["text"]? .Value<string> ());
 			});
 		}
 

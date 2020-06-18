@@ -476,7 +476,9 @@ namespace DebuggerTests
 
 				// callFunctionOn
 				result = await ctx.cli.SendCommand ("Runtime.callFunctionOn", cfo_args, ctx.token);
-				Assert.True ((silent ?? false) == result.IsOk);
+				Assert.True (result.IsOk);
+				Assert.False (result.IsErr);
+				Assert.True (result.ResultHasError);
 			});
 		}
 
