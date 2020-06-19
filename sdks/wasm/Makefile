@@ -705,9 +705,9 @@ run-all-%:
 
 run-debugger-tests: build-debugger-test-app build-dbg-testsuite
 	if [ ! -z "$(TEST_FILTER)" ]; then \
-		LC_ALL=en_US.UTF-8 dotnet test DebuggerTestSuite --filter FullyQualifiedName~$(TEST_FILTER); \
+		LC_ALL=en_US.UTF-8 /usr/local/share/dotnet/dotnet test DebuggerTestSuite --filter FullyQualifiedName~$(TEST_FILTER); \
 	else \
-		LC_ALL=en_US.UTF-8 dotnet test DebuggerTestSuite $(TEST_ARGS); \
+		LC_ALL=en_US.UTF-8 /usr/local/share/dotnet/dotnet test DebuggerTestSuite $(TEST_ARGS); \
 	fi
 
 run-browser-tests: build-browser-test-suite
