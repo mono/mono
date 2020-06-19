@@ -201,7 +201,7 @@ var MonoSupportLib = {
 			this.var_info = [];
 			this.mono_wasm_get_exception_properties_info (objId);
 
-			var res = this.var_info;
+			var res = MONO._fixup_name_value_objects (this.var_info);
 			this.var_info = [];
 			return res;
 		},
@@ -320,6 +320,7 @@ var MonoSupportLib = {
 		},
 
 		mono_wasm_get_details: function (objectId, args) {
+			console.log(`GET DETAILS: ${objectId}`)
 			var parts = objectId.split(":");
 			if (parts[0] != "dotnet")
 				throw new Error ("Can't handle non-dotnet object ids. ObjectId: " + objectId);
@@ -805,6 +806,18 @@ var MonoSupportLib = {
 			// and nested class names like Foo/Bar to Foo.Bar
 			return className.replace(/\//g, '.').replace(/`\d+/g, '');
 		},
+
+		_mono_wasm_format_stack_trace: function(stackTrace) {
+			// FIXME: Can undefined ever happen here?
+			if (stackTrace === 0 || stackTrace === undefined)
+				return "";
+			let stackTraceString = Module.UTF8ToString (stackTrace).trim();
+			if (stackTraceString.startsWith("managed backtrace not available") || stackTraceString === "")
+				return "";
+			if (!stackTraceString.startsWith("at")) // FIXME: can this actually happen?
+				return "    at" + stackTraceString;
+			return "    " + stackTraceString;
+		},
 	},
 
 	mono_wasm_add_typed_value: function (type, str_value, value) {
@@ -908,38 +921,50 @@ var MonoSupportLib = {
 		}
 
 		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
-		MONO.var_info.push({
+		MONO.var_info.push({ 
 			value: {
 				type: "object",
 				className: fixed_class_name,
 				description: (toString == 0 ? fixed_class_name : Module.UTF8ToString (toString)),
-				objectId: "dotnet:object:"+ objectId,
+				objectId: "dotnet:object:" + objectId
+			}
+		 });
+	},
+
+	mono_wasm_add_exc_var: function(className, message, stackTrace, objectId) {
+		if (objectId == 0) {
+			MONO.mono_wasm_add_null_var (className);
+			return;
+		}
+
+		let fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		let messageString = Module.UTF8ToString (message);
+		let stackTraceString = MONO._mono_wasm_format_stack_trace(stackTrace)
+
+		MONO.var_info.push({
+			value: {
+				type: "object",
+				subtype: "error",
+				className: fixed_class_name,
+				description: `Error: ${messageString}\n${stackTraceString}`,
+				objectId: "dotnet:exception:" + objectId,
 			}
 		});
 	},
 
-	mono_wasm_add_exc_var: function(className, message, stack, objectId) {
+	mono_wasm_add_exc_prop: function(className, message, stack, objectId) {
 		function add_string_var(name, value) {
-			MONO.var_info.push({ name, value: { type: "string", value } });
+			MONO.var_info.push({ name })
+			MONO.var_info.push({ value: { type: "string", value } });
 		}
 
-		var fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString(className));
-		var message_str = Module.UTF8ToString(message)
-		var stack_str = Module.UTF8ToString(stack)
+		let fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString(className));
+		let messageString = Module.UTF8ToString (message);
+		let stackTraceString = MONO._mono_wasm_format_stack_trace(stack)
 
-		add_string_var("klass", fixed_class_name);
-		add_string_var("message", message_str);
-		add_string_var("stack", stack_str);
-
-		MONO.var_info.push({
-			name: "__obj__",
-			value: {
-				type: "object",
-				className: fixed_class_name,
-				description: message_str,
-				objectId: "dotnet:object:"+ objectId,
-			}
-		});
+		add_string_var("__class__", fixed_class_name);
+		add_string_var("Message", messageString);
+		add_string_var("Stack", `Error: ${messageString}\n${stackTraceString}`);
 	},
 
 	/*
