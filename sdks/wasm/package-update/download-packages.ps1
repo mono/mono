@@ -1,4 +1,4 @@
-param ($filepath, $url, $runtime, $asp_working_dir, $mono_working_dir, $asp_remote_name, $mono_remote_name)
+param ($url, $runtime, $asp_working_dir, $mono_working_dir, $asp_remote_name, $mono_remote_name)
 
 if ($null -eq $asp_remote_name) {
 	$asp_remote_name="upstream"
@@ -45,11 +45,13 @@ $TMP_DIR=(mktemp -d)
 $TMP_PKG_DIR="$TMP_DIR\\wasm-package"
 mkdir $TMP_DIR
 
-if ($null -eq $filepath) {
+if ($null -ne $url) {
 	Invoke-WebRequest -Uri $url -OutFile $TMP_DIR\wasm-package.zip -UseBasicParsing
 	Expand-Archive "$TMP_DIR\\wasm-package.zip" -d $TMP_PKG_DIR
 } else {
-	Expand-Archive $filepath -d $TMP_PKG_DIR
+	cp -r "$mono_working_dir/sdks/out/wasm-bcl" $TMP_PKG_DIR
+	cp -r "$mono_working_dir/sdks/wasm/framework" $TMP_PKG_DIR
+	cp -r "$mono_working_dir/sdks/wasm/builds" $TMP_PKG_DIR
 }
 
 rm -r $PACKAGE_PATH\bcl
@@ -76,6 +78,18 @@ git reset --hard $asp_remote_name/$asp_branch_name
 
 ./clean.ps1
 
+<ItemGroup>
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+
+    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+<ItemGroup>
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+
+    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 cp $MONO_PROXY_PATH\*.cs $ASP_PROXY_PATH\MonoDebugProxy\ws-proxy\
 rm $ASP_PROXY_PATH\MonoDebugProxy\ws-proxy\AssemblyInfo.cs
 
