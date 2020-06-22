@@ -23,7 +23,9 @@ public class SampleMath {
 
 	public static void Run ()
 	{
+#if SAMPLE == false
 		DebuggerTests.EntryClass.run ();
+#endif
 	}
 
 }
