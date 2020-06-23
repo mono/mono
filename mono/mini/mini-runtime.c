@@ -2692,6 +2692,8 @@ lookup_start:
 gpointer
 mono_jit_compile_method (MonoMethod *method, MonoError *error)
 {
+	MONO_SCOPE_ENABLE_JIT_WRITE();
+
 	gpointer code;
 
 	code = mono_jit_compile_method_with_opt (method, mono_get_optimizations_for_method (method, default_opt), FALSE, error);
@@ -3384,6 +3386,7 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		if (!is_ok (error))
 			return NULL;
 	} else {
+		MONO_SCOPE_ENABLE_JIT_EXEC();
 		runtime_invoke = (MonoObject *(*)(MonoObject *, void **, MonoObject **, void *))info->runtime_invoke;
 
 		result = runtime_invoke ((MonoObject *)obj, params, exc, info->compiled_method);
