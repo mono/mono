@@ -78,18 +78,6 @@ git reset --hard $asp_remote_name/$asp_branch_name
 
 ./clean.ps1
 
-<ItemGroup>
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
-
-    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-<ItemGroup>
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
-
-    <Content Include="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
 cp $MONO_PROXY_PATH\*.cs $ASP_PROXY_PATH\MonoDebugProxy\ws-proxy\
 rm $ASP_PROXY_PATH\MonoDebugProxy\ws-proxy\AssemblyInfo.cs
 
