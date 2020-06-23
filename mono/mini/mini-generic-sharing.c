@@ -2859,7 +2859,7 @@ class_rgctx_array_size (int n)
 static inline int
 method_rgctx_array_size (int n)
 {
-	return 4 << n;
+	return 6 << n;
 }
 
 /*
