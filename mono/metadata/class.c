@@ -2755,6 +2755,7 @@ mono_assembly_name_from_token (MonoImage *image, guint32 type_token)
 	case MONO_TOKEN_TYPE_REF: {
 		ERROR_DECL (error);
 		MonoAssemblyName aname;
+		memset (&aname, 0, sizeof (MonoAssemblyName));
 		guint32 cols [MONO_TYPEREF_SIZE];
 		MonoTableInfo  *t = &image->tables [MONO_TABLE_TYPEREF];
 		guint32 idx = mono_metadata_token_index (type_token);
