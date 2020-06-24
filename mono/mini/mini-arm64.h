@@ -164,8 +164,67 @@ typedef struct {
 
 #endif
 
-#if defined(TARGET_IOS) || defined(TARGET_APPLETV) || defined(TARGET_OSX)
+#if defined(TARGET_APPLETVOS) || defined(TARGET_IOS) || defined(TARGET_OSX)
 #define MONO_ARCH_HAVE_UNWIND_BACKTRACE 1
+#endif
+
+#if defined(TARGET_OSX)
+
+typedef enum {
+    JPM_NONE,
+    JPM_ENABLED,
+    JPM_DISABLED,
+} jit_protect_mode;
+
+extern __thread jit_protect_mode arm_current_jit_protect_mode;
+
+static void mono_arm_jit_write_protect_enable()
+{
+    if (__builtin_available(macOS 11, *)) {
+        if (arm_current_jit_protect_mode != JPM_ENABLED) {
+            pthread_jit_write_protect_np(1);
+            arm_current_jit_protect_mode = JPM_ENABLED;
+        }
+    }
+}
+
+static void mono_arm_jit_write_protect_disable()
+{
+    if (__builtin_available(macOS 11, *)) {
+        if (arm_current_jit_protect_mode != JPM_DISABLED) {
+            pthread_jit_write_protect_np(0);
+            arm_current_jit_protect_mode = JPM_DISABLED;
+        }
+    }
+}
+
+#define MONO_SCOPE_ENABLE_JIT_WRITE()                    \
+    __attribute__((unused, cleanup(mono_arm_restore_jit_protect_mode))) \
+    jit_protect_mode scope_restrict_mode = arm_current_jit_protect_mode; \
+        mono_arm_jit_write_protect_disable();                    \
+
+#define MONO_SCOPE_ENABLE_JIT_EXEC()                    \
+    __attribute__((unused, cleanup(mono_arm_restore_jit_protect_mode))) \
+    jit_protect_mode scope_restrict_mode = arm_current_jit_protect_mode; \
+    mono_arm_jit_write_protect_enable();                \
+
+static void mono_arm_restore_jit_protect_mode(jit_protect_mode* previous_jit_protect_mode)
+{
+    if (*previous_jit_protect_mode == arm_current_jit_protect_mode)
+        return;
+
+    switch (*previous_jit_protect_mode)
+    {
+    case JPM_ENABLED:
+        mono_arm_jit_write_protect_enable();
+        break;
+    case JPM_DISABLED:
+    case JPM_NONE:
+    default:
+        mono_arm_jit_write_protect_disable();
+    }
+}
+
 #endif
 
 /* Relocations */
