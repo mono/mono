@@ -163,7 +163,10 @@ namespace WebAssembly.Net.Debugging {
 						var client = new HttpClient ();
 						var psi = new ProcessStartInfo ();
 
-						psi.Arguments = $"--headless --disable-gpu --lang=en-US --incognito --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
+						var tempPath = Path.Combine (Path.GetTempPath (), Path.GetRandomFileName ());
+						Directory.CreateDirectory (tempPath);
+
+						psi.Arguments = $"--headless --disable-gpu --lang=en-US --incognito --user-data-dir={tempPath} --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
 						psi.UseShellExecute = false;
 						psi.FileName = options.ChromePath;
 						psi.RedirectStandardError = true;
