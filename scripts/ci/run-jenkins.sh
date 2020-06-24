@@ -36,6 +36,14 @@ if [[ ${CI_TAGS} == *'pull-request'* ]]; then
 		skip_step="CI provisioning scripts"
 		skip=true
 	fi
+	if [ ! grep -q -v a/sdks/wasm pr-files.txt ] || [ "${ghprbTargetBranch}" == "3.2-wasm" ]; then
+		if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]]; then
+			true
+		else
+			skip_step="WASM"
+			skip=true
+		fi
+	fi
 	if [ $skip = true ]; then
 		${TESTCMD} --label="Skipped on ${skip_step}." --timeout=60m --fatal sh -c 'exit 0'
 		if [[ $CI_TAGS == *'apidiff'* ]]; then report_github_status "success" "API Diff" "Skipped." || true; fi
