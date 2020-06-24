@@ -130,6 +130,7 @@ class InterpToNativeGenerator {
 		"FIF",
 		"FIFF",
 		"LILL",
+		"VL",
 		"VIL",
 		"VIIL",
 		"FIFFF",
