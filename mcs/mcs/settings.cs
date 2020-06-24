@@ -1661,7 +1661,7 @@ namespace Mono.CSharp {
 				"   -reference:A1[,An]   Imports metadata from the specified assembly (short: -r)\n" +
 				"   -reference:ALIAS=A   Imports metadata using specified extern alias (short: -r)\n" +
 				"   -sdk:VERSION         Specifies SDK version of referenced assemblies\n" +
-				"                        VERSION can be one of: 2, 4, 4.5 (default) or a custom value\n" +
+				"                        VERSION can be one of: 2, 4, 4.5, 4.x (default) or a custom value\n" +
 				"   -target:KIND         Specifies the format of the output assembly (short: -t)\n" +
 				"                        KIND can be one of: exe, winexe, library, module\n" +
 				"   -unsafe[+|-]         Allows to compile code which uses unsafe keyword\n" +
