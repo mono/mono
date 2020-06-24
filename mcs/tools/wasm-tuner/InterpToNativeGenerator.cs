@@ -15,6 +15,7 @@ class InterpToNativeGenerator {
 	static string[] cookies = new string[] {
 		"V",
 		"VI",
+		"VL",
 		"VII",
 		"VIII",
 		"VIIII",
