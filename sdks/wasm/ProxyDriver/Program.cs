@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
@@ -19,6 +20,7 @@ namespace WebAssembly.Net.Debugging
 		public string AppPath { get; set; }
 		public string PagePath { get; set; }
 		public string NodeApp { get; set; }
+		public string ChromeRevision { get; set; }
 	}
 
 	public class Program {
@@ -57,11 +59,27 @@ namespace WebAssembly.Net.Debugging
 			set { _webserverUri = value; }
 		}
 
-		public static Task Start (string chromePath, string appPath, string pagePath)
+		public static Task Start (string chromePath, string appPath, string pagePath, string chromeRevision = null)
 		{
 			lock (proxyLock) {
-				if (host != null)
+				if (hostTask != null)
 					return hostTask;
+
+				hostTask = Start ();
+			}
+
+			Console.WriteLine ("WebServer Ready!");
+			return hostTask;
+
+			async Task Start ()
+			{
+				if (chromePath == null || chromeRevision != null) {
+					try {
+						chromePath = await PuppeteerHelper.ProvisionChrome (chromeRevision).ConfigureAwait (false);
+					} catch (Exception ex) {
+						Environment.FailFast ($"Failed to auto-provision Chrome: {ex}");
+					}
+				}
 
 				host = WebHost.CreateDefaultBuilder ()
 					.UseSetting ("UseIISIntegration", false.ToString ())
@@ -75,16 +93,15 @@ namespace WebAssembly.Net.Debugging
 							options.AppPath = appPath;
 							options.PagePath = pagePath;
 							options.DevToolsUrl = new Uri ("http://localhost:0");
+							options.ChromeRevision = chromeRevision;
 						});
 					})
 					.UseStartup<TestHarnessStartup> ()
 					.UseUrls ("http://127.0.0.1:0")
-					.Build();
-				hostTask = host.StartAsync (cts.Token);
-			}
+					.Build ();
 
-			Console.WriteLine ("WebServer Ready!");
-			return hostTask;
+				await host.StartAsync (cts.Token).ConfigureAwait (false);
+			}
 		}
 	}
 }
