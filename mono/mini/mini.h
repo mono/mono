@@ -2886,4 +2886,12 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 MonoGenericContext
 mono_get_generic_context_from_stack_frame (MonoJitInfo *ji, gpointer generic_info);
 
+#ifndef MONO_SCOPE_ENABLE_JIT_WRITE
+#define MONO_SCOPE_ENABLE_JIT_WRITE()
+#endif
+
+#ifndef MONO_SCOPE_ENABLE_JIT_EXEC
+#define MONO_SCOPE_ENABLE_JIT_EXEC()
+#endif
+
 #endif /* __MONO_MINI_H__ */

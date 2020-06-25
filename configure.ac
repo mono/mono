@@ -355,6 +355,9 @@ case "$host" in
 				platform_ios=yes
 				has_dtrace=no
 				;;
+			aarch64*-darwinmacos*)
+				support_boehm=no
+				;;
 			aarch64*-darwin*)
 				platform_ios=yes
 				;;
@@ -1617,22 +1620,27 @@ if test x$host_win32 = xno; then
 		LIBS="$LIBS $DL_LIB"
 		AC_DEFINE(HAVE_DL_LOADER,1,[dlopen-based dynamic loader available])
 		dnl from glib's configure.ac
-		AC_CACHE_CHECK([for preceeding underscore in symbols],
-			mono_cv_uscore,[
-			AC_TRY_RUN([#include <dlfcn.h>
-			int mono_underscore_test (void) { return 42; }
-			int main() {
-			  void *f1 = (void*)0, *f2 = (void*)0, *handle;
-			  handle = dlopen ((void*)0, 0);
-			  if (handle) {
-			    f1 = dlsym (handle, "mono_underscore_test");
-			    f2 = dlsym (handle, "_mono_underscore_test");
-			  } return (!f2 || f1);
-			}],
+		if test "x$cross_compiling" = "xyes"; then
+		   AC_MSG_RESULT(cross compiling, assuming no)
+		   mono_cv_uscore=no
+		else
+			AC_CACHE_CHECK([for preceeding underscore in symbols],
+			  mono_cv_uscore,[
+			  AC_TRY_RUN([#include <dlfcn.h>
+			  int mono_underscore_test (void) { return 42; }
+			  int main() {
+			    void *f1 = (void*)0, *f2 = (void*)0, *handle;
+			    handle = dlopen ((void*)0, 0);
+			    if (handle) {
+			      f1 = dlsym (handle, "mono_underscore_test");
+			      f2 = dlsym (handle, "_mono_underscore_test");
+			    } return (!f2 || f1);
+			  }],
 				[mono_cv_uscore=yes],
 				[mono_cv_uscore=no],
-			[])
-		])
+			  [])
+		  ])
+		fi
 		if test "x$mono_cv_uscore" = "xyes"; then
 			MONO_DL_NEED_USCORE=1
 		else
@@ -3434,6 +3442,16 @@ case "$host" in
 		ACCESS_UNALIGNED="no"
 		CPPFLAGS="$CPPFLAGS -D__ARM_EABI__"
 		;;
+	aarch64-*-darwinmacos*)
+		TARGET_SYS=MACOS
+		TARGET=ARM64
+		arch_target=arm64
+		boehm_supported=false
+		AOT_SUPPORTED="yes"
+		BTLS_SUPPORTED=yes
+		BTLS_PLATFORM=aarch64
+		AC_CHECK_HEADER(stdalign.h,[],[BTLS_SUPPORTED=no])
+		;;
 	aarch64-*)
 		# https://lkml.org/lkml/2012/7/15/133
 		TARGET=ARM64
@@ -3727,8 +3745,8 @@ if test "x$target_mach" = "xyes"; then
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_WATCHOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_WATCHOS"
 	  BTLS_SUPPORTED=no
-   elif test "x$TARGET" = "xARM" -o "x$TARGET" = "xARM64"; then
-   	  AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
+   elif test "x$TARGET" = "xARM" -o "x$TARGET" = "xARM64" -a "x$TARGET_SYS" != "xMACOS"; then
+	  AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_IOS"
 	  BTLS_SUPPORTED=no

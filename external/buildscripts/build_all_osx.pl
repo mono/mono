@@ -51,13 +51,6 @@ GetOptions(
 	'buildusandboo=i'=>\$buildUsAndBoo,
 );
 
-my $monoArch32Target = "i386";
-if ($buildMachine)
-{
-	print(">>> Building $monoArch32Target\n");
-	system("perl", "$buildscriptsdir/build.pl", "--arch32=1", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ("failing building $monoArch32Target");
-}
-
 if ($artifactsCommon)
 {
 	push @passAlongArgs, "--artifactscommon=1";
@@ -69,55 +62,29 @@ if ($buildUsAndBoo)
 }
 
 print(">>> Building x86_64\n");
-system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ('failing building x86_64');
+system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=x86_64", @passAlongArgs) eq 0 or die ('failing building x86_64');
+
+print(">>> Building ARM64\n");
+system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=arm64", @passAlongArgs) eq 0 or die ("failing building ARM64");
 
 if ($artifact)
 {
-	print(">>> Creating universal binaries\n");
-	# Merge stuff in the embedruntimes directory
+	print(">>> Moving built binaries to final output directories\n");
+
+	# Copy stuff in the embedruntimes directory
 	my $embedDirRoot = "$buildsroot/embedruntimes";
-	my $embedDirDestination = "$embedDirRoot/osx";
-	my $embedDirSource32 = "$embedDirRoot/osx-tmp-$monoArch32Target";
-	my $embedDirSource64 = "$embedDirRoot/osx-tmp-x86_64";
+	my $embedDirSourceX64 = "$embedDirRoot/osx-tmp-x86_64";
+	my $embedDirSourceARM64 = "$embedDirRoot/osx-tmp-arm64";
 
-	system("mkdir -p $embedDirDestination");
-
-	if (!(-d $embedDirSource32) && $buildMachine)
-	{
-		die("Expected source directory not found : $embedDirSource32\n");
-	}
-
-	if (!(-d $embedDirSource64))
-	{
-		die("Expected source directory not found : $embedDirSource64\n");
-	}
-
-	for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib')
-	{
-		print(">>> cp $embedDirSource64/$file $embedDirDestination/$file\n\n");
-		system ('cp', "$embedDirSource64/$file", "$embedDirDestination/$file");
-	}
-
-	if (not $buildMachine)
-	{
-		print(">>> Doing non-build machine stuff...\n");
-		for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib')
-		{
-			print(">>> Removing $embedDirDestination/$file.dSYM\n");
-			rmtree ("$embedDirDestination/$file.dSYM");
-			print(">>> 'dsymutil $embedDirDestination/$file\n");
-			system ('dsymutil', "$embedDirDestination/$file") eq 0 or warn ("Failed creating $embedDirDestination/$file.dSYM");
-		}
-
-		print(">>> Done with non-build machine stuff\n");
-	}
+	CopyEmbedRuntimeBinaries($embedDirSourceX64, "$embedDirRoot/osx");
+	CopyEmbedRuntimeBinaries($embedDirSourceARM64, "$embedDirRoot/osx-arm64");
 
 	# Merge stuff in the monodistribution directory
 	my $distDirRoot = "$buildsroot/monodistribution";
 	my $distDirDestinationBin = "$buildsroot/monodistribution/bin";
 	my $distDirDestinationLib = "$buildsroot/monodistribution/lib";
-	my $distDirSourceBin32 = "$distDirRoot/bin-osx-tmp-$monoArch32Target";
-	my $distDirSourceBin64 = "$distDirRoot/bin-osx-tmp-x86_64";
+	my $distDirSourceBinX64 = "$distDirRoot/bin-osx-tmp-x86_64";
+	my $distDirSourceBinARM64 = "$distDirRoot/bin-osx-tmp-arm64";
 
 	# Should always exist because build_all would have put stuff in it, but in some situations
 	# depending on the options it may not.  So create it if it does not exist
@@ -131,35 +98,79 @@ if ($artifact)
 		system("mkdir -p $distDirDestinationLib");
 	}
 
-	if (!(-d $distDirSourceBin32))
+	if (!(-d $distDirSourceBinX64))
 	{
-		die("Expected source directory not found : $distDirSourceBin32\n");
+		die("Expected source directory not found : $distDirSourceBinX64\n");
 	}
 
-	if (!(-d $distDirSourceBin64))
+	if (!(-d $distDirSourceBinARM64))
 	{
-		die("Expected source directory not found : $distDirSourceBin64\n");
+		die("Expected source directory not found : $distDirSourceBinARM64\n");
 	}
 
-	for my $file ('mono','pedump')
+	for my $file ('mono')
 	{
-		print(">>> lipo $distDirSourceBin32/$file $distDirSourceBin64/$file -create -output $distDirDestinationBin/$file\n\n");
-		system ('lipo', "$distDirSourceBin32/$file", "$distDirSourceBin64/$file", '-create', '-output', "$distDirDestinationBin/$file");
+		MergeIntoFatBinary("$distDirSourceBinX64/$file", "$distDirSourceBinARM64/$file", "$distDirDestinationBin/$file");
+	}
+
+	for my $file ('pedump')
+	{
+		# pedump doens't get cross-compiled
+		system ('mv', "$distDirSourceBinX64/$file", "$distDirDestinationBin/$file") eq 0 or die ("Failed to move '$distDirSourceBinX64/$file' to '$distDirDestinationBin/$file'.");
 	}
 
 	for my $file ('libMonoPosixHelper.dylib')
 	{
-		print(">>> cp $embedDirSource64/$file $distDirDestinationLib/$file\n\n");
-		system ('cp', "$embedDirSource64/$file", "$distDirDestinationLib/$file");
+		MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file");
 	}
 
 	if ($buildMachine)
 	{
 		print(">>> Clean up temporary arch specific build directories\n");
 
-		rmtree("$distDirSourceBin32");
-		rmtree("$distDirSourceBin64");
-		rmtree("$embedDirSource32");
-		rmtree("$embedDirSource64");
+		rmtree("$distDirSourceBinX64");
+		rmtree("$distDirSourceBinARM64");
+		rmtree("$embedDirSourceX64");
+		rmtree("$embedDirSourceARM64");
 	}
+}
+
+sub CopyEmbedRuntimeBinaries
+{
+	my ($embedDirSource, $embedDirDestination) = @_;
+
+	system("mkdir -p $embedDirDestination");
+
+	if (!(-d $embedDirSource))
+	{
+		die("Expected source directory not found : $embedDirSource\n");
+	}
+
+	for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib')
+	{
+		print(">>> cp $embedDirSource/$file $embedDirDestination/$file\n\n");
+		system('cp', "$embedDirSource/$file", "$embedDirDestination/$file") eq 0 or die("Failed to copy '$embedDirSource/$file' to '$embedDirDestination/$file'.");
+	}
+
+	if (not $buildMachine)
+	{
+		print(">>> Doing non-build machine stuff...\n");
+		for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib')
+		{
+			print(">>> Removing $embedDirDestination/$file.dSYM\n");
+			rmtree("$embedDirDestination/$file.dSYM");
+			print(">>> 'dsymutil $embedDirDestination/$file\n");
+			system('dsymutil', "$embedDirDestination/$file") eq 0 or warn("Failed creating $embedDirDestination/$file.dSYM");
+		}
+
+		print(">>> Done with non-build machine stuff\n");
+	}
+}
+
+sub MergeIntoFatBinary
+{
+	my ($binary1, $binary2, $binaryOutput) = @_;
+
+	print(">>> Merging '$binary1' and '$binary2' into '$binaryOutput'\n\n");
+	system('lipo', "$binary1", "$binary2", "-create", "-output", "$binaryOutput") eq 0 or die("Failed to run lipo!");
 }

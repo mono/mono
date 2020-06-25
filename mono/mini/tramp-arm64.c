@@ -32,6 +32,8 @@
 void
 mono_arch_patch_callsite (guint8 *method_start, guint8 *code_ptr, guint8 *addr)
 {
+	MONO_SCOPE_ENABLE_JIT_WRITE();
+
 	mono_arm_patch (code_ptr - 4, addr, MONO_R_ARM64_BL);
 	mono_arch_flush_icache (code_ptr - 4, 4);
 }
@@ -113,6 +115,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 
 	buf_len = 768;
 	buf = code = mono_global_codeman_reserve (buf_len);
+	MONO_SCOPE_ENABLE_JIT_WRITE();
 
 	/*
 	 * We are getting called by a specific trampoline, ip1 contains the trampoline argument.
@@ -328,6 +331,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	 * Pass the argument in ip1, clobbering ip0.
 	 */
 	tramp = mono_get_trampoline_code (tramp_type);
+	MONO_SCOPE_ENABLE_JIT_WRITE();
 
 	buf = code = mono_global_codeman_reserve (buf_len);
 
@@ -352,6 +356,8 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	MonoDomain *domain = mono_domain_get ();
 
 	start = code = mono_domain_code_reserve (domain, size);
+	MONO_SCOPE_ENABLE_JIT_WRITE();
+
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
 	arm_addx_imm (code, ARMREG_R0, ARMREG_R0, sizeof (MonoObject));
 	arm_brx (code, ARMREG_IP0);
@@ -369,6 +375,8 @@ mono_arch_get_static_rgctx_trampoline (gpointer arg, gpointer addr)
 	MonoDomain *domain = mono_domain_get ();
 
 	start = code = mono_domain_code_reserve (domain, buf_len);
+	MONO_SCOPE_ENABLE_JIT_WRITE();
+
 	code = mono_arm_emit_imm64 (code, MONO_ARCH_RGCTX_REG, (guint64)arg);
 	code = mono_arm_emit_imm64 (code, ARMREG_IP0, (guint64)addr);
 	arm_brx (code, ARMREG_IP0);
@@ -407,6 +415,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 
 	buf_size = 64 + 16 * depth;
 	code = buf = mono_global_codeman_reserve (buf_size);
+	MONO_SCOPE_ENABLE_JIT_WRITE();
 
 	rgctx_null_jumps = g_malloc0 (sizeof (guint8*) * (depth + 2));
 	njumps = 0;
@@ -493,6 +502,7 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 	tramp_size = 32;
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
+	MONO_SCOPE_ENABLE_JIT_WRITE();
 
 	mono_add_unwind_op_def_cfa (unwind_ops, code, buf, ARMREG_SP, 0);
 
@@ -531,6 +541,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	MonoJumpInfo *ji = NULL;
 
 	code = buf = mono_global_codeman_reserve (tramp_size);
+	MONO_SCOPE_ENABLE_JIT_WRITE();
 
 	/* Compute stack frame size and offsets */
 	offset = 0;
@@ -630,6 +641,8 @@ mono_arch_get_enter_icall_trampoline (MonoTrampInfo **info)
 
 	buf_len = 512 + 1024;
 	start = code = (guint8 *) mono_global_codeman_reserve (buf_len);
+
+	MONO_SCOPE_ENABLE_JIT_WRITE();
 
 	/* save FP and LR */
 	framesize += 2 * sizeof (mgreg_t);

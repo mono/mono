@@ -4,6 +4,8 @@ use Getopt::Long;
 use File::Basename;
 use File::Path;
 use lib ('external/buildscripts', "../../Tools/perl_lib","perl_lib", 'external/buildscripts/perl_lib');
+use strict;
+use warnings;
 use Tools qw(InstallNameTool);
 
 print ">>> PATH in Build All = $ENV{PATH}\n\n";
@@ -11,7 +13,7 @@ print ">>> PATH in Build All = $ENV{PATH}\n\n";
 my $currentdir = getcwd();
 
 my $monoroot = File::Spec->rel2abs(dirname(__FILE__) . "/../..");
-my $monoroot = abs_path($monoroot);
+$monoroot = abs_path($monoroot);
 
 my $buildscriptsdir = "$monoroot/external/buildscripts";
 my $addtoresultsdistdir = "$buildscriptsdir/add_to_build_results/monodistribution";
@@ -50,6 +52,7 @@ my $forceDefaultBuildDeps=0;
 my $existingMonoRootPath = '';
 my $sdk = '';
 my $arch32 = 0;
+my $targetArch = "";
 my $winPerl = "";
 my $winMonoRoot = "";
 my $msBuildVersion = "14.0";
@@ -95,6 +98,7 @@ GetOptions(
 	'runtimetests=i'=>\$runRuntimeTests,
 	'classlibtests=i'=>\$runClasslibTests,
 	'arch32=i'=>\$arch32,
+	'targetarch=s'=>\$targetArch,
 	'jobs=i'=>\$jobs,
 	'sdk=s'=>\$sdk,
 	'existingmono=s'=>\$existingMonoRootPath,
@@ -204,9 +208,15 @@ if($^O eq "linux")
 }
 elsif($^O eq 'darwin')
 {
-	$monoHostArch = $arch32 ? "i386" : "x86_64";
+	$monoHostArch = "x86_64";
 	$existingExternalMono = "$existingExternalMonoRoot";
 	$existingExternalMonoBinDir = "bin";
+
+	if ($targetArch eq "arm64")
+	{
+		$disableMcs = 1;
+		$test = 0;
+	}
 
 	# From Massi: I was getting failures in install_name_tool about space
 	# for the commands being too small, and adding here things like
@@ -294,7 +304,7 @@ if ($build)
 			}
 			else
 			{
-				if (not $checkoutonthefly)
+				if (not $checkoutOnTheFly)
 				{
 					print(">>> No external build deps found.  Might as well try to check them out.  If it fails, we'll continue and trust mono is in your PATH\n");
 				}
@@ -445,22 +455,12 @@ if ($build)
 	}
 
 	my $macSdkPath = "";
-	my $macversion = '10.8';
+	my $macversion = '10.12';
 	my $darwinVersion = "10";
 	if ($^O eq 'darwin')
 	{
-		if ($sdk eq '')
-		{
-			$sdk='10.11';
-		}
-
-		my $macBuildEnvDir = "$externalBuildDeps/MacBuildEnvironment";
-		$macSdkPath = "$macBuildEnvDir/builds/MacOSX$sdk.sdk";
-		if (! -d $macSdkPath)
-		{
-			print(">>> Unzipping mac build toolchain\n");
-			system("unzip", '-qd', "$macBuildEnvDir", "$macBuildEnvDir/builds.zip") eq 0 or die ("failed unzipping mac build toolchain\n");
-		}
+		$sdk='11.0';
+		$macSdkPath = "$externalBuildDeps/mac-toolchain-11_0/MacOSX$sdk.sdk";
 	}
 
 	if ($iphone || $iphoneSimulator)
@@ -681,7 +681,6 @@ if ($build)
 		my $platformRootPostfix = "";
 		my $useKraitPatch = 1;
 		my $kraitPatchPath = "$monoroot/../../android_krait_signal_handler/build";
-		my $toolChainExtension = "";
 
 		$ENV{ANDROID_PLATFORM} = "android-$apiLevel";
 
@@ -759,8 +758,6 @@ if ($build)
 
 		if ($runningOnWindows)
 		{
-			$toolChainExtension = ".exe";
-
 			$androidPlatformRoot = `cygpath -w $androidPlatformRoot`;
 			# clean up trailing new lines that end up in the output from cygpath.
 			$androidPlatformRoot =~ s/\n+$//;
@@ -968,8 +965,6 @@ if ($build)
 
 		if ($runningOnWindows)
 		{
-			$toolChainExtension = ".exe";
-
 			$tizenPlatformRoot = `cygpath -w $tizenPlatformRoot`;
 			# clean up trailing new lines that end up in the output from cygpath.
 			$tizenPlatformRoot =~ s/\n+$//;
@@ -1159,20 +1154,37 @@ if ($build)
 			$existingMonoRootPath = "$monoInstalls/$monoVersionToUse";
 		}
 
+		if ($targetArch eq "arm64")
+		{
+			$macversion = "11.0"; # To build on ARM64, we need to specify min OS version as 11.0 as we need to use new APIs from 11.0
+		}
+
 		$mcs = "EXTERNAL_MCS=$existingMonoRootPath/bin/mcs";
 
 		$ENV{'CC'} = "$macSdkPath/../usr/bin/clang";
 		$ENV{'CXX'} = "$macSdkPath/../usr/bin/clang++";
-		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-D_XOPEN_SOURCE -I$macBuildEnvDir/builds/usr/include -mmacosx-version-min=$macversion -isysroot $macSdkPath";
+		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-mmacosx-version-min=$macversion -isysroot $macSdkPath -g";
 
-		$ENV{CFLAGS} = "$ENV{CFLAGS} -g -O0" if $debug;
+		$ENV{CFLAGS} = "$ENV{CFLAGS} -O0" if $debug;
 		$ENV{CFLAGS} = "$ENV{CFLAGS} -Os" if not $debug; #optimize for size
 
-		$ENV{CC} = "$ENV{CC} -arch $monoHostArch";
-		$ENV{CXX} = "$ENV{CXX} -arch $monoHostArch";
+		$ENV{CC} = "$ENV{CC} -arch $targetArch";
+		$ENV{CXX} = "$ENV{CXX} -arch $targetArch";
 
 		# Add OSX specific autogen args
-		push @configureparams, "--host=$monoHostArch-apple-darwin12.2.0";
+
+		if ($targetArch eq "x86_64")
+		{
+			push @configureparams, "--host=x86_64-apple-darwin12.2.0";
+		}
+		elsif ($targetArch eq "arm64")
+		{
+			push @configureparams, "--host=aarch64-apple-darwinmacos12.2.0";
+		}
+		else
+		{
+			die("Unsupported macOS architecture: $targetArch");
+		}
 
 		# Need to define because Apple's SIP gets in the way of us telling mono where to find this
 		push @configureparams, "--with-libgdiplus=$addtoresultsdistdir/lib/libgdiplus.dylib";
@@ -1510,10 +1522,9 @@ if ($artifact)
 	}
 	elsif($^O eq 'darwin')
 	{
-		# Note these tmp directories will get merged into a single 'osx' directory later by a parent script
-		$embedDirArchDestination = "$embedDirRoot/osx-tmp-$monoHostArch";
-		$distDirArchBin = "$distdir/bin-osx-tmp-$monoHostArch";
-		$versionsOutputFile = $arch32 ? "$buildsroot/versions-osx32.txt" : "$buildsroot/versions-osx64.txt";
+		$embedDirArchDestination = "$embedDirRoot/osx-tmp-$targetArch";
+		$distDirArchBin = "$distdir/bin-osx-tmp-$targetArch";
+		$versionsOutputFile = "$buildsroot/versions-macos-$targetArch.txt";
 	}
 	else
 	{
@@ -1598,7 +1609,7 @@ if ($artifact)
 			system("ln","-f", "$monoroot/mono/mini/.libs/libmonosgen-2.0.dylib","$embedDirArchDestination/libmonosgen-2.0.dylib") eq 0 or die ("failed symlinking libmonosgen-2.0.dylib\n");
 
 			print "Hardlinking libMonoPosixHelper.dylib\n";
-			system("ln","-f", "$monoroot/support/.libs/libMonoPosixHelper.dylib","$embedDirArchDestination/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking $libtarget/libMonoPosixHelper.dylib\n");
+			system("ln","-f", "$monoroot/support/.libs/libMonoPosixHelper.dylib","$embedDirArchDestination/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking $embedDirArchDestination/libMonoPosixHelper.dylib\n");
 
 			InstallNameTool("$embedDirArchDestination/libmonobdwgc-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonobdwgc-2.0.dylib");
 			InstallNameTool("$embedDirArchDestination/libmonosgen-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonosgen-2.0.dylib");
@@ -1691,9 +1702,9 @@ else
 
 if ($test)
 {
+	my $runtimeTestsDir = "$monoroot/mono/mini";
 	if ($runRuntimeTests)
 	{
-		my $runtimeTestsDir = "$monoroot/mono/mini";
 		chdir("$runtimeTestsDir") eq 1 or die ("failed to chdir");
 		print("\n>>> Calling make check in $runtimeTestsDir\n\n");
 		system("make","check") eq 0 or die ("runtime tests failed\n");
