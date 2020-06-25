@@ -166,7 +166,7 @@ namespace WebAssembly.Net.Debugging {
 						var tempPath = Path.Combine (Path.GetTempPath (), Path.GetRandomFileName ());
 						Directory.CreateDirectory (tempPath);
 
-						psi.Arguments = $"--headless --disable-gpu --lang=en-US --incognito --user-data-dir={tempPath} --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
+						psi.Arguments = $"--headless --disable-gpu --lang=en-US --user-data-dir={tempPath} --remote-debugging-port={devToolsUrl.Port} http://{TestHarnessProxy.Endpoint.Authority}/{options.PagePath}";
 						psi.UseShellExecute = false;
 						psi.FileName = options.ChromePath;
 						psi.RedirectStandardError = true;
