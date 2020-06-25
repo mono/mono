@@ -127,6 +127,8 @@ namespace DebuggerTests
 			throw new Exception ("Missing TEST_SUITE_PATH env var and could not guess path from CWD");
 		}
 
+		static string GetChromeRevision () => Environment.GetEnvironmentVariable ("TEST_SUITE_CHROME_REVISION");
+
 		static string[] PROBE_LIST = {
 			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
 			"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
@@ -152,7 +154,7 @@ namespace DebuggerTests
 		}
 
 		public DebuggerTestBase (string driver = "debugger-driver.html") {
-			startTask = TestHarnessProxy.Start (FindChromePath (), FindTestPath (), driver);
+			startTask = TestHarnessProxy.Start (FindChromePath (), FindTestPath (), driver, GetChromeRevision ());
 		}
 
 		public Task Ready ()
