@@ -12,7 +12,7 @@ namespace WebAssembly.Net.Debugging {
 		private readonly MonoProxy proxy;
 
 		public DebuggerProxy (ILoggerFactory loggerFactory) {
-			proxy = new MonoProxy(loggerFactory);
+			proxy = new MonoProxy(loggerFactory, true);
 		}
 
 		public Task Run (Uri browserUri, WebSocket ideSocket) {

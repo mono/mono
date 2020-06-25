@@ -17,9 +17,15 @@ namespace WebAssembly.Net.Debugging {
 		HashSet<SessionId> sessions = new HashSet<SessionId> ();
 		Dictionary<SessionId, ExecutionContext> contexts = new Dictionary<SessionId, ExecutionContext> ();
 
-		public MonoProxy (ILoggerFactory loggerFactory, bool hideWebDriver = true) : base(loggerFactory) { hideWebDriver = true; }
+		public MonoProxy (ILoggerFactory loggerFactory, bool debugDotnetSource, bool hideWebDriver = true) : base(loggerFactory)
+		{
+			hideWebDriver = true;
+			this.debugDotnetSource = debugDotnetSource;
+		}
 
 		readonly bool hideWebDriver;
+
+		readonly bool debugDotnetSource;
 
 		internal ExecutionContext GetContext (SessionId sessionId)
 		{
@@ -711,7 +717,7 @@ namespace WebAssembly.Net.Debugging {
 		{
 			var context = GetContext (sessionId);
 
-			if (Interlocked.CompareExchange (ref context.store, new DebugStore (logger), null) != null)
+			if (Interlocked.CompareExchange (ref context.store, new DebugStore (logger, debugDotnetSource), null) != null)
 				return await context.Source.Task;
 
 			try {

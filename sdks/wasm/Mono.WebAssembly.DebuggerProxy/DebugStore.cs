@@ -658,14 +658,16 @@ namespace WebAssembly.Net.Debugging {
 		List<AssemblyInfo> assemblies = new List<AssemblyInfo> ();
 		readonly HttpClient client;
 		readonly ILogger logger;
+		readonly bool debugDotnetSource;
 
 		public DebugStore (ILogger logger, HttpClient client) {
 			this.client = client;
 			this.logger = logger;
 		}
 
-		public DebugStore (ILogger logger) : this (logger, new HttpClient ())
+		public DebugStore (ILogger logger, bool debugDotnetSource) : this (logger, new HttpClient ())
 		{
+			this.debugDotnetSource = debugDotnetSource;
 		}
 
 		class DebugItem {
@@ -690,6 +692,8 @@ namespace WebAssembly.Net.Debugging {
 			List<DebugItem> steps = new List<DebugItem> ();
 			foreach (var url in asm_files) {
 				try {
+					if (!debugDotnetSource && ((url.IndexOf (@"System.") > 0) || (url.IndexOf (@"Microsoft.") > 0) || (url.IndexOf (@"mscorlib.dll") > 0) || (url.IndexOf (@"netstandard.dll") > 0)))
+						continue;
 					var pdb = pdb_files.FirstOrDefault (n => MatchPdb (url, n));
 					steps.Add (
 						new DebugItem {
