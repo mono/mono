@@ -37,11 +37,11 @@ namespace WebAssembly.Net.Debugging
 			var outputDir = Path.GetDirectoryName (Assembly.GetEntryAssembly ().Location);
 			var browserDir = Path.Combine (Path.GetDirectoryName (outputDir), "local-browser");
 
-			GetChromeRevision ("default");
+			var chromeRevision = GetChromeRevision (chromeRevisionString);
+			Console.WriteLine ($"Trying to auto-provision Chrome: {chromeRevisionString} - {chromeRevision}");
 
 			var options = new BrowserFetcherOptions { Path = browserDir };
 			var browserFetcher = Puppeteer.CreateBrowserFetcher (options);
-			var chromeRevision = GetChromeRevision (chromeRevisionString);
 			var revisionInfo = await browserFetcher.DownloadAsync (chromeRevision);
 			Console.WriteLine ($"Auto-provisioned Chrome revision {revisionInfo.Revision} into {browserDir}.");
 			Console.WriteLine ($"Executable path: {revisionInfo.ExecutablePath}");
