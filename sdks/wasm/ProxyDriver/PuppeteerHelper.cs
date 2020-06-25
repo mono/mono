@@ -25,7 +25,7 @@ namespace WebAssembly.Net.Debugging
 				"default" => BrowserFetcher.DefaultRevision,
 				"stable" => 756066,
 				"beta" => 768962,
-				"dev" => 781470,
+				"dev" => 778145, // FIXME: it was 778145 this afternoon, but now OmahaProxy says 781470 but I get a 404,
 				_ => throw new ArgumentException ($"Invalid chrome revision: '{revisionString}'.")
 			};
 
