@@ -351,7 +351,9 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             # ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
             # ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
-            TEST_SUITE_CHROME_REVISION=dev ${TESTCMD} --label=debugger --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+            TEST_SUITE_CHROME_REVISION=dev ${TESTCMD} --label=debugger-dev --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+            TEST_SUITE_CHROME_REVISION=beta ${TESTCMD} --label=debugger-beta --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+            TEST_SUITE_CHROME_REVISION=latest ${TESTCMD} --label=debugger-latest --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             # ${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-System
             # ${TESTCMD} --label=system-core --timeout=60m $gnumake -C sdks/wasm run-all-System.Core
             # for suite in ${xunit_test_suites}; do ${TESTCMD} --label=xunit-${suite} --timeout=30m $gnumake -C sdks/wasm run-${suite}-xunit; done
