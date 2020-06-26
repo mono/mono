@@ -870,7 +870,7 @@ do_load_header_internal (const char *raw_data, guint32 raw_data_len, MonoDotNetH
 		offset += sizeof (MonoDotNetHeader);
 		SWAP32 (header->pe.pe_data_size);
 		if (header->coff.coff_opt_header_size != (sizeof (MonoDotNetHeader) - sizeof (MonoCOFFHeader) - 4))
-			return -100;
+			return -1;
 
 		SWAP32	(header->nt.pe_image_base); 	/* must be 0x400000 */
 		SWAP32	(header->nt.pe_stack_reserve);
@@ -880,7 +880,7 @@ do_load_header_internal (const char *raw_data, guint32 raw_data_len, MonoDotNetH
 	} else if (header->pe.pe_magic == 0x20B) {
 		/* PE32+ file format */
 		if (header->coff.coff_opt_header_size != (sizeof (MonoDotNetHeader64) - sizeof (MonoCOFFHeader) - 4))
-			return -15;
+			return -1;
 		memcpy (&header64, raw_data + offset, sizeof (MonoDotNetHeader64));
 		offset += sizeof (MonoDotNetHeader64);
 		/* copy the fields already swapped. the last field, pe_data_size, is missing */
@@ -919,7 +919,7 @@ do_load_header_internal (const char *raw_data, guint32 raw_data_len, MonoDotNetH
 		/* copy the datadir */
 		memcpy (&header->datadir, &header64.datadir, sizeof (MonoPEDatadir));
 	} else {
-		return -10;
+		return -1;
 	}
 
 	/* MonoPEHeaderNT: not used yet */
@@ -982,7 +982,7 @@ do_load_header (MonoImage *image, MonoDotNetHeader *header, int offset)
 }
 
 mono_bool 
-mono_has_pdb_checksum (const unsigned char *raw_data, uint32_t raw_data_len) 
+mono_has_pdb_checksum (char *raw_data, uint32_t raw_data_len)
 {
 	MonoDotNetHeader cli_header;
 	MonoMSDOSHeader msdos;
