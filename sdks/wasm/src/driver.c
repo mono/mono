@@ -156,10 +156,8 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 	entry->assembly.size = size;
 	entry->next = assemblies;
 	assemblies = entry;
-	int val = mono_has_pdb_checksum (data, size);
-	printf("Consegui ler - %s - %d - %d\n", name, val, size);
 	++assembly_count;
-	return val;
+	return mono_has_pdb_checksum (data, size);
 }
 
 EMSCRIPTEN_KEEPALIVE void
