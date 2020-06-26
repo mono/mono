@@ -4650,6 +4650,7 @@ case "$host" in
 		BTLS_SUPPORTED=yes
 		BTLS_PLATFORM=s390x
 		CFLAGS="$CFLAGS -mbackchain -D__USE_STRING_INLINES"
+		csc_compiler="roslyn"
 		;;
 	riscv32-*)
 		TARGET=RISCV32
