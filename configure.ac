@@ -1124,7 +1124,10 @@ AC_ARG_WITH(csc, [  --with-csc=mcs,roslyn,default      Configures the CSharp com
 
 if test $csc_compiler = default; then
    if test $endian = big; then
-      csc_compiler=mcs
+      case "$host" in
+        s390x*) csc_compiler=roslyn ;;
+        *) csc_compiler=mcs
+      esac
    elif test $endian = little; then
       case "$host" in
         powerpc*) csc_compiler=mcs ;;
@@ -4650,7 +4653,6 @@ case "$host" in
 		BTLS_SUPPORTED=yes
 		BTLS_PLATFORM=s390x
 		CFLAGS="$CFLAGS -mbackchain -D__USE_STRING_INLINES"
-		csc_compiler="roslyn"
 		;;
 	riscv32-*)
 		TARGET=RISCV32
