@@ -2493,6 +2493,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 				td->last_ins->data [1] = vt_stack_used;
 				td->last_ins->data [2] = vt_res_size;
 				td->last_ins->data [3] = save_last_error;
+				td->last_ins->data [4] = get_data_item_index (td, NULL);
 			} else {
 				interp_add_ins (td, MINT_CALLI);
 				td->last_ins->data [1] = vt_stack_used;
