@@ -334,11 +334,11 @@ namespace WebAssembly.Net.Debugging {
 					if (!DotnetObjectId.TryParse (args ["objectId"], out var objectId))
 						return false;
 
-					var silent = args ["silent"]?.Value<bool> () ?? false;
 					if (objectId.Scheme == "scope") {
-						var fail = silent ? Result.OkFromObject (new { result = new { } }) : Result.Exception (new ArgumentException ($"Runtime.callFunctionOn not supported with scope ({objectId})."));
-
-						SendResponse (id, fail, token);
+						SendResponse (id,
+								Result.Exception (new ArgumentException (
+									$"Runtime.callFunctionOn not supported with scope ({objectId}).")),
+								token);
 						return true;
 					}
 
@@ -347,8 +347,6 @@ namespace WebAssembly.Net.Debugging {
 
 					if (res.IsOk && res_value_type == JTokenType.Object || res_value_type == JTokenType.Object)
 						res = Result.OkFromObject (new { result = res.Value ["result"]["value"] });
-					else if (res.IsErr && silent)
-						res = Result.OkFromObject (new { result = new { } });
 
 					SendResponse (id, res, token);
 					return true;
