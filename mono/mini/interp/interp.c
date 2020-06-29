@@ -95,8 +95,6 @@ struct FrameClauseArgs {
 	MonoException *filter_exception;
 	/* Frame that is executing this clause */
 	InterpFrame *exec_frame;
-	/* If set, exec_frame is a duplicate separate frame of this frame */
-	InterpFrame *base_frame;
 };
 
 /*
@@ -3403,14 +3401,11 @@ interp_exec_method (InterpFrame *frame, ThreadContext *context, FrameClauseArgs 
 		EXCEPTION_CHECKPOINT;
 	}
 
-	if (!clause_args || clause_args->base_frame) {
+	if (!clause_args) {
 		context->stack_pointer = (guchar*)frame->stack + frame->imethod->alloca_size;
 		/* Make sure the stack pointer is bumped before we store any references on the stack */
 		mono_compiler_barrier ();
 	}
-
-	if (clause_args && clause_args->base_frame)
-		memcpy (frame->stack, clause_args->base_frame->stack, frame->imethod->alloca_size);
 
 	INIT_INTERP_STATE (frame, clause_args);
 
@@ -7253,18 +7248,8 @@ exit_frame:
 		goto main_loop;
 	}
 exit_clause:
-	if (clause_args) {
-		if (clause_args->base_frame) {
-			// We finished executing a filter. The execution stack of the base frame
-			// should remain unmodified, but we need to update the local space.
-			char *locals_base = (char*)clause_args->base_frame->stack;
-
-			memcpy (locals_base, locals, frame->imethod->total_locals_size);
-			context->stack_pointer = (guchar*)frame->stack;
-		}
-	} else {
+	if (!clause_args)
 		context->stack_pointer = (guchar*)frame->stack;
-	}
 
 	DEBUG_LEAVE ();
 }
@@ -7396,17 +7381,25 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 	InterpFrame child_frame = {0};
 	child_frame.parent = iframe;
 	child_frame.imethod = iframe->imethod;
-	child_frame.stack = iframe->stack;
+	child_frame.stack = (stackval*)context->stack_pointer;
 	child_frame.retval = &retval;
+
+	/* Copy the stack frame of the original method */
+	memcpy (child_frame.stack, iframe->stack, iframe->imethod->total_locals_size);
+	context->stack_pointer += iframe->imethod->alloca_size;
 
 	memset (&clause_args, 0, sizeof (FrameClauseArgs));
 	clause_args.start_with_ip = (const guint16*)handler_ip;
 	clause_args.end_at_ip = (const guint16*)handler_ip_end;
 	clause_args.filter_exception = ex;
-	clause_args.base_frame = iframe;
 	clause_args.exec_frame = &child_frame;
 
 	interp_exec_method (&child_frame, context, &clause_args);
+
+	/* Copy back the updated frame */
+	memcpy (iframe->stack, child_frame.stack, iframe->imethod->total_locals_size);
+
+	context->stack_pointer = (guchar*)child_frame.stack;
 
 	/* ENDFILTER stores the result into child_frame->retval */
 	return retval.data.i ? TRUE : FALSE;
