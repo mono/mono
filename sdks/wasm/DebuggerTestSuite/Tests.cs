@@ -266,8 +266,18 @@ namespace DebuggerTests
 				Assert.True (eval_res.IsOk);
 
 				var ex = await Assert.ThrowsAsync<ArgumentException> (async () => await insp.WaitFor("Runtime.exceptionThrown"));
-				var ex_json = JObject.Parse (ex.Message);
-				Assert.Equal (dicFileToUrl["/debugger-driver.html"], ex_json ["exceptionDetails"]? ["url"]? .Value<string> ());
+
+				Console.Error.WriteLine ($"GOT EXPECTED EXCEPTION: |{ex.Message}|");
+				Console.WriteLine ($"GOT EXPECTED EXCEPTION: |{ex.Message}|");
+				System.Diagnostics.Debug.WriteLine ($"GOT EXPECTED EXCEPTION: |{ex.Message}|");
+
+				try {
+					var ex_json = JObject.Parse (ex.Message);
+					System.Diagnostics.Debug.WriteLine ($"GOT JOBJECT: {ex_json}");
+					Assert.Equal (dicFileToUrl["/debugger-driver.html"], ex_json ["exceptionDetails"]? ["url"]? .Value<string> ());
+				} catch {
+					throw new InvalidTimeZoneException ($"I LIVE ON THE MOON!\n%%%%%%%%\n{ex.Message}\n%%%%%%%\n");
+				}
 			});
 
 		}
