@@ -122,6 +122,8 @@ typedef struct
 	unsigned int max_vt_sp;
 	unsigned int total_locals_size;
 	InterpLocal *locals;
+	unsigned int il_locals_offset;
+	unsigned int il_locals_size;
 	unsigned int locals_size;
 	unsigned int locals_capacity;
 	int n_data_items;
