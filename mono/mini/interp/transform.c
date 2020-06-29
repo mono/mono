@@ -594,7 +594,8 @@ load_arg(TransformData *td, int n)
 
 		if (hasthis && n == 0) {
 			mt = MINT_TYPE_I;
-			interp_add_ins (td, MINT_LDARG_P0);
+			interp_add_ins (td, MINT_LDLOC_O);
+			td->last_ins->data [0] = 0;
 			klass = NULL;
 		} else {
 			PUSH_VT (td, size);
@@ -607,9 +608,10 @@ load_arg(TransformData *td, int n)
 			// Special case loading of the first ptr sized argument
 			if (mt != MINT_TYPE_O)
 				mt = MINT_TYPE_I;
-			interp_add_ins (td, MINT_LDARG_P0);
+			interp_add_ins (td, MINT_LDLOC_O);
+			td->last_ins->data [0] = 0;
 		} else {
-			interp_add_ins (td, MINT_LDARG_I1 + (mt - MINT_TYPE_I1));
+			interp_add_ins (td, MINT_LDLOC_I1 + (mt - MINT_TYPE_I1));
 			td->last_ins->data [0] = n;
 			if (mt == MINT_TYPE_O)
 				klass = mono_class_from_mono_type_internal (type);
@@ -640,7 +642,7 @@ store_arg(TransformData *td, int n)
 		if (td->sp [-1].type == STACK_TYPE_VT)
 			POP_VT(td, size);
 	} else {
-		interp_add_ins (td, MINT_STARG_I1 + (mt - MINT_TYPE_I1));
+		interp_add_ins (td, MINT_STLOC_I1 + (mt - MINT_TYPE_I1));
 		td->last_ins->data [0] = n;
 	}
 	--td->sp;
@@ -3631,7 +3633,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 			if (!inlining) {
 				get_arg_type_exact (td, n, &mt);
-				interp_add_ins (td, mt == MINT_TYPE_VT ? MINT_LDARGA_VT : MINT_LDARGA);
+				if (mt == MINT_TYPE_VT) {
+					interp_add_ins (td, MINT_LDARGA_VT);
+				} else {
+					interp_add_ins (td, MINT_LDLOCA_S);
+					td->locals [n].indirects++;
+				}
 				td->last_ins->data [0] = n;
 			} else {
 				int loc_n = arg_locals [n];
@@ -4925,7 +4932,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			obj_size = ALIGN_TO (obj_size, MINT_VT_ALIGNMENT);
 
 #ifndef DISABLE_REMOTING
-			if ((m_class_get_marshalbyref (klass) && !(signature->hasthis && td->last_ins->opcode == MINT_LDARG_P0)) ||
+			if ((m_class_get_marshalbyref (klass) && !(signature->hasthis && td->last_ins->opcode == MINT_LDLOC_O && td->last_ins->data [0] == 0)) ||
 					mono_class_is_contextbound (klass) ||
 					klass == mono_defaults.marshalbyrefobject_class) {
 				g_assert (!is_static);
@@ -6195,7 +6202,12 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 				if (!inlining) {
 					get_arg_type_exact (td, n, &mt);
-					interp_add_ins (td, mt == MINT_TYPE_VT ? MINT_LDARGA_VT : MINT_LDARGA);
+					if (mt == MINT_TYPE_VT) {
+						interp_add_ins (td, MINT_LDARGA_VT);
+					} else {
+						interp_add_ins (td, MINT_LDLOCA_S);
+						td->locals [n].indirects++;
+					}
 					td->last_ins->data [0] = n;
 				} else {
 					int loc_n = arg_locals [n];
@@ -6763,18 +6775,6 @@ clear_stack_content_info_for_local (StackContentInfo *start, StackContentInfo *e
 	}
 }
 
-// The value of argument has changed. This means the contents of the stack where the
-// argument was loaded, no longer contain the value of the argument. Clear them.
-static void
-clear_stack_content_info_for_argument (StackContentInfo *start, StackContentInfo *end, int argument)
-{
-	StackContentInfo *si;
-	for (si = start; si < end; si++) {
-		if (si->val.type == STACK_VALUE_ARG && si->val.arg == argument)
-			si->val.type = STACK_VALUE_NONE;
-	}
-}
-
 // The value of local has changed. This means we can no longer assume that any other local
 // is a copy of this local.
 static void
@@ -7287,7 +7287,7 @@ retry:
 				} else {
 					locals [dest_local].type = STACK_VALUE_NONE;
 				}
-			} else if (sp->val.type == STACK_VALUE_NONE || sp->val.type == STACK_VALUE_ARG) {
+			} else if (sp->val.type == STACK_VALUE_NONE) {
 				locals [dest_local].type = STACK_VALUE_NONE;
 			} else {
 				g_assert (sp->val.type == STACK_VALUE_I4 || sp->val.type == STACK_VALUE_I8);
@@ -7356,15 +7356,6 @@ retry:
 			// propagated instruction, so we remove the top of stack dependency
 			sp [-1].ins = NULL;
 			sp++;
-		} else if (MINT_IS_LDARG (ins->opcode)) {
-			sp->ins = ins;
-			sp->val.type = STACK_VALUE_ARG;
-			sp->val.arg = ins->opcode == MINT_LDARG_P0 ? 0 : ins->data [0];
-			sp++;
-		} else if (MINT_IS_STARG (ins->opcode)) {
-			int dest_arg = ins->data [0];
-			sp--;
-			clear_stack_content_info_for_argument (stack, sp, dest_arg);
 		} else if (ins->opcode >= MINT_BOX && ins->opcode <= MINT_BOX_NULLABLE) {
 			int offset = ins->data [1];
 			// Clear the stack slot that is boxed
@@ -7473,17 +7464,6 @@ retry:
 					interp_clear_ins (td, src->ins);
 					mono_interp_stats.super_instructions++;
 					mono_interp_stats.killed_instructions++;
-				} else if (src->val.type == STACK_VALUE_ARG && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
-					int arg_index = src->val.arg;
-					int fld_offset = ins->data [0];
-					int mt = ins->opcode - MINT_STFLD_I1;
-					ins = interp_insert_ins (td, ins, MINT_STARGFLD_I1 + mt);
-					ins->data [0] = arg_index;
-					ins->data [1] = fld_offset;
-					interp_clear_ins (td, ins->prev);
-					interp_clear_ins (td, src->ins);
-					mono_interp_stats.super_instructions++;
-					mono_interp_stats.killed_instructions++;
 				}
 			}
 			sp -= 2;
@@ -7546,20 +7526,6 @@ interp_super_instructions (TransformData *td)
 				int mt = ins->opcode - MINT_LDFLD_I1;
 				ins = interp_insert_ins (td, ins, MINT_LDLOCFLD_I1 + mt);
 				ins->data [0] = loc_index;
-				ins->data [1] = fld_offset;
-				interp_clear_ins (td, ins->prev);
-				interp_clear_ins (td, prev1_ins);
-				prev1_ins = NULL;
-				mono_interp_stats.super_instructions++;
-				mono_interp_stats.killed_instructions++;
-			} else if (prev1_ins->opcode == MINT_LDARG_O || prev1_ins->opcode == MINT_LDARG_P0) {
-				int arg_index = 0;
-				int fld_offset = ins->data [0];
-				int mt = ins->opcode - MINT_LDFLD_I1;
-				if (prev1_ins->opcode == MINT_LDARG_O)
-					arg_index = prev1_ins->data [0];
-				ins = interp_insert_ins (td, ins, MINT_LDARGFLD_I1 + mt);
-				ins->data [0] = arg_index;
 				ins->data [1] = fld_offset;
 				interp_clear_ins (td, ins->prev);
 				interp_clear_ins (td, prev1_ins);

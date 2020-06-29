@@ -5453,24 +5453,6 @@ call_newobj:
 			MINT_IN_BREAK;
 		}
 
-
-#define LDARGFLD(datamem, fieldtype) do { \
-	MonoObject *o = frame->stack_args [ip [1]].data.o; \
-	NULL_CHECK (o); \
-	sp [0].data.datamem = *(fieldtype *)((char *)o + ip [2]) ; \
-	sp++; \
-	ip += 3; \
-} while (0)
-		MINT_IN_CASE(MINT_LDARGFLD_I1) LDARGFLD(i, gint8); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARGFLD_U1) LDARGFLD(i, guint8); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARGFLD_I2) LDARGFLD(i, gint16); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARGFLD_U2) LDARGFLD(i, guint16); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARGFLD_I4) LDARGFLD(i, gint32); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARGFLD_I8) LDARGFLD(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARGFLD_R4) LDARGFLD(f_r4, float); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARGFLD_R8) LDARGFLD(f, double); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARGFLD_O) LDARGFLD(p, gpointer); MINT_IN_BREAK;
-
 #define LDLOCFLD(datamem, fieldtype) do { \
 	MonoObject *o = *(MonoObject**)(locals + ip [1]); \
 	NULL_CHECK (o); \
@@ -5563,30 +5545,6 @@ call_newobj:
 			ip += 2;
 			sp -= 2;
 			MINT_IN_BREAK;
-
-#define STARGFLD(datamem, fieldtype) do { \
-	MonoObject *o = frame->stack_args [ip [1]].data.o; \
-	NULL_CHECK (o); \
-	sp--; \
-	* (fieldtype *)((char *)o + ip [2]) = sp [0].data.datamem; \
-	ip += 3; \
-} while (0)
-		MINT_IN_CASE(MINT_STARGFLD_I1) STARGFLD(i, gint8); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARGFLD_U1) STARGFLD(i, guint8); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARGFLD_I2) STARGFLD(i, gint16); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARGFLD_U2) STARGFLD(i, guint16); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARGFLD_I4) STARGFLD(i, gint32); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARGFLD_I8) STARGFLD(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARGFLD_R4) STARGFLD(f_r4, float); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARGFLD_R8) STARGFLD(f, double); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARGFLD_O) {
-			MonoObject *o = frame->stack_args [ip [1]].data.o;
-			NULL_CHECK (o);
-			sp--;
-			mono_gc_wbarrier_set_field_internal (o, (char *) o + ip [2], sp [0].data.o);
-			ip += 3;
-			MINT_IN_BREAK;
-		}
 
 #define STLOCFLD(datamem, fieldtype) do { \
 	MonoObject *o = *(MonoObject**)(locals + ip [1]); \
@@ -6777,28 +6735,6 @@ call_newobj:
 			MINT_IN_BREAK;
 		}
 
-#define LDARG(datamem, argtype) \
-	sp->data.datamem = (argtype) frame->stack_args [ip [1]].data.datamem; \
-	ip += 2; \
-	++sp; 
-
-#define LDARGn(datamem, argtype, n) \
-	sp->data.datamem = (argtype) frame->stack_args [n].data.datamem; \
-	++ip; \
-	++sp;
-	
-		MINT_IN_CASE(MINT_LDARG_I1) LDARG(i, gint8); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_U1) LDARG(i, guint8); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_I2) LDARG(i, gint16); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_U2) LDARG(i, guint16); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_I4) LDARG(i, gint32); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_I8) LDARG(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_R4) LDARG(f_r4, float); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_R8) LDARG(f, double); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_LDARG_O) LDARG(p, gpointer); MINT_IN_BREAK;
-
-		MINT_IN_CASE(MINT_LDARG_P0) LDARGn(p, gpointer, 0); MINT_IN_BREAK;
-
 		MINT_IN_CASE(MINT_LDARG_VT) {
 			sp->data.p = vt_sp;
 			int const i32 = READ32 (ip + 2);
@@ -6808,21 +6744,6 @@ call_newobj:
 			++sp;
 			MINT_IN_BREAK;
 		}
-
-#define STARG(datamem, argtype) \
-	--sp; \
-	frame->stack_args [ip [1]].data.datamem = (argtype) sp->data.datamem; \
-	ip += 2; \
-	
-		MINT_IN_CASE(MINT_STARG_I1) STARG(i, gint8); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_U1) STARG(i, guint8); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_I2) STARG(i, gint16); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_U2) STARG(i, guint16); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_I4) STARG(i, gint32); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_I8) STARG(l, gint64); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_R4) STARG(f_r4, float); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_R8) STARG(f, double); MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_STARG_O) STARG(p, gpointer); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_STARG_VT) {
 			int const i32 = READ32 (ip + 2);
@@ -6919,12 +6840,6 @@ call_newobj:
 			ip += 4;
 			MINT_IN_BREAK;
 		}
-
-		MINT_IN_CASE(MINT_LDARGA)
-			sp->data.p = &frame->stack_args [ip [1]];
-			ip += 2;
-			++sp;
-			MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_LDARGA_VT)
 			sp->data.p = frame->stack_args [ip [1]].data.p;

@@ -23,9 +23,8 @@ typedef struct
 
 #define STACK_VALUE_NONE 0
 #define STACK_VALUE_LOCAL 1
-#define STACK_VALUE_ARG 2
-#define STACK_VALUE_I4 3
-#define STACK_VALUE_I8 4
+#define STACK_VALUE_I4 2
+#define STACK_VALUE_I8 3
 
 // StackValue contains data to construct an InterpInst that is equivalent with the contents
 // of the stack slot / local / argument.
