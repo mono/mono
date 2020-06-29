@@ -958,11 +958,6 @@ do_load_header_internal (const char *raw_data, guint32 raw_data_len, MonoDotNetH
  	SWAPPDE (header->datadir.pe_cli_header);
 	SWAPPDE (header->datadir.pe_reserved);
 
-#ifdef HOST_WIN32
-	if (image_is_module_handle)
-		image->storage->raw_data_len = header->nt.pe_image_size;
-#endif
-
 	return offset;
 }
 /*
@@ -978,6 +973,10 @@ do_load_header (MonoImage *image, MonoDotNetHeader *header, int offset)
 	FALSE);
 #endif	
 
+#ifdef HOST_WIN32
+	if (m_image_is_module_handle (image))
+		image->storage->raw_data_len = header->nt.pe_image_size;
+#endif
 	return offset;
 }
 
