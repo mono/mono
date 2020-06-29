@@ -23,7 +23,7 @@ namespace DebuggerTests
 				etype_name: "int",
 				local_var_name_prefix: "int",
 				array: new [] { TNumber (4), TNumber (70), TNumber (1) },
-				array_elements: null,
+				array_elem_props: null,
 				test_prev_frame: test_prev_frame,
 				frame_idx: frame_idx,
 				use_cfo: use_cfo);
@@ -44,7 +44,7 @@ namespace DebuggerTests
 					TValueType ("DebuggerTests.Point"),
 					TValueType ("DebuggerTests.Point"),
 				},
-				array_elements: new [] {
+				array_elem_props: new [] {
 					TPoint (5, -2, "point_arr#Id#0", "Green"),
 					TPoint (123, 0, "point_arr#Id#1", "Blue")
 				},
@@ -69,7 +69,7 @@ namespace DebuggerTests
 					TObject ("DebuggerTests.SimpleClass", is_null: true),
 					TObject ("DebuggerTests.SimpleClass")
 				},
-				array_elements: new [] {
+				array_elem_props: new [] {
 					TSimpleClass (5, -2, "class_arr#Id#0", "Green"),
 					null, // Element is null
 					TSimpleClass (123, 0, "class_arr#Id#2", "Blue") },
@@ -94,7 +94,7 @@ namespace DebuggerTests
 					TObject ("DebuggerTests.GenericClass<int>"),
 					TObject ("DebuggerTests.GenericClass<int>")
 				},
-				array_elements: new [] {
+				array_elem_props: new [] {
 					null, // Element is null
 					new {
 						Id = TString ("gclass_arr#1#Id"),
@@ -127,7 +127,7 @@ namespace DebuggerTests
 					TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>"),
 					TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point>")
 				},
-				array_elements: new [] {
+				array_elem_props: new [] {
 					new {
 						Id = TString ("gvclass_arr#1#Id"),
 						Color = TEnum ("DebuggerTests.RGB", "Red"),
@@ -159,7 +159,7 @@ namespace DebuggerTests
 					TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point[]>"),
 					TValueType ("DebuggerTests.SimpleGenericStruct<DebuggerTests.Point[]>")
 				},
-				array_elements: new [] {
+				array_elem_props: new [] {
 					new {
 						Id = TString ("gvclass_arr#0#Id"),
 						Color = TEnum ("DebuggerTests.RGB", "Red"),
@@ -182,7 +182,7 @@ namespace DebuggerTests
 				use_cfo: use_cfo);
 
 		async Task TestSimpleArrayLocals (int line, int col, string entry_method_name, string method_name, string etype_name,
-							string local_var_name_prefix, object[] array, object[] array_elements,
+							string local_var_name_prefix, object[] array, object[] array_elem_props,
 							bool test_prev_frame=false, int frame_idx=0, bool use_cfo = false)
 		{
 			var insp = new Inspector ();
@@ -229,17 +229,17 @@ namespace DebuggerTests
 
 				await CheckProps (prefix_arr, array, local_arr_name);
 
-				if (array_elements?.Length > 0) {
-					for (int i = 0; i < array_elements.Length; i ++) {
+				if (array_elem_props?.Length > 0) {
+					for (int i = 0; i < array_elem_props.Length; i ++) {
 						var i_str = i.ToString ();
 						var label = $"{local_var_name_prefix}_arr[{i}]";
-						if (array_elements [i] == null) {
+						if (array_elem_props [i] == null) {
 							var act_i = prefix_arr.FirstOrDefault (jt => jt ["name"]?.Value<string> () == i_str);
 							Assert.True (act_i != null, $"[{label}] Couldn't find array element [{i_str}]");
 
 							await CheckValue (act_i ["value"], TObject (etype_name, is_null: true), label);
 						} else {
-							await CompareObjectPropertiesFor (prefix_arr, i_str, array_elements [i], label: label);
+							await CompareObjectPropertiesFor (prefix_arr, i_str, array_elem_props [i], label: label);
 						}
 					}
 				}
