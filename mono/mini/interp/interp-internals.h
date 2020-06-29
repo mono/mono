@@ -222,7 +222,6 @@ typedef struct {
 struct InterpFrame {
 	InterpFrame *parent; /* parent */
 	InterpMethod  *imethod; /* parent */
-	stackval       *stack_args; /* parent */
 	stackval       *retval; /* parent */
 	stackval       *stack;
 	InterpFrame    *next_free;

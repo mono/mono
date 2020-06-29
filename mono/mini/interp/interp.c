@@ -226,7 +226,6 @@ reinit_frame (InterpFrame *frame, InterpFrame *parent, InterpMethod *imethod, st
 {
 	frame->parent = parent;
 	frame->imethod = imethod;
-	frame->stack_args = sp;
 	frame->stack = sp;
 	frame->state.ip = NULL;
 }
@@ -1286,8 +1285,9 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 	size_t int_f = 0;
 
 	if (sig->hasthis) {
-		margs->iargs [0] = frame->stack_args->data.p;
+		margs->iargs [0] = frame->stack [0].data.p;
 		int_i++;
+		g_error ("FIXME if hasthis, we incorrectly access the args below");
 	}
 
 	for (int i = 0; i < sig->param_count; i++) {
@@ -1314,7 +1314,7 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
 #endif
-			margs->iargs [int_i] = frame->stack_args [i].data.p;
+			margs->iargs [int_i] = frame->stack [i].data.p;
 #if DEBUG_INTERP
 			g_print ("build_args_from_sig: margs->iargs [%d]: %p (frame @ %d)\n", int_i, margs->iargs [int_i], i);
 #endif
@@ -1323,7 +1323,7 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 #if SIZEOF_VOID_P == 4
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8: {
-			stackval *sarg = &frame->stack_args [i];
+			stackval *sarg = &frame->stack [i];
 #ifdef TARGET_ARM
 			/* pairs begin at even registers */
 			if (i8_align == 8 && int_i & 1)
@@ -1342,9 +1342,9 @@ static InterpMethodArguments* build_args_from_sig (MonoMethodSignature *sig, Int
 		case MONO_TYPE_R4:
 		case MONO_TYPE_R8:
 			if (ptype == MONO_TYPE_R4)
-				* (float *) &(margs->fargs [int_f]) = frame->stack_args [i].data.f_r4;
+				* (float *) &(margs->fargs [int_f]) = frame->stack [i].data.f_r4;
 			else
-				margs->fargs [int_f] = frame->stack_args [i].data.f;
+				margs->fargs [int_f] = frame->stack [i].data.f;
 #if DEBUG_INTERP
 			g_print ("build_args_from_sig: margs->fargs [%d]: %p (%f) (frame @ %d)\n", int_f, margs->fargs [int_f], margs->fargs [int_f], i);
 #endif
@@ -1402,7 +1402,7 @@ interp_frame_arg_to_data (MonoInterpFrameHandle frame, MonoMethodSignature *sig,
 	if (index == -1)
 		stackval_to_data (sig->ret, iframe->retval, data, sig->pinvoke);
 	else
-		stackval_to_data (sig->params [index], &iframe->stack_args [index], data, sig->pinvoke);
+		stackval_to_data (sig->params [index], &iframe->stack [index], data, sig->pinvoke);
 }
 
 static void
@@ -1413,9 +1413,9 @@ interp_data_to_frame_arg (MonoInterpFrameHandle frame, MonoMethodSignature *sig,
 	if (index == -1)
 		stackval_from_data (sig->ret, iframe->retval, data, sig->pinvoke);
 	else if (sig->hasthis && index == 0)
-		iframe->stack_args [index].data.p = *(gpointer*)data;
+		iframe->stack [index].data.p = *(gpointer*)data;
 	else
-		stackval_from_data (sig->params [index - sig->hasthis], &iframe->stack_args [index], data, sig->pinvoke);
+		stackval_from_data (sig->params [index - sig->hasthis], &iframe->stack [index], data, sig->pinvoke);
 }
 
 static gpointer
@@ -1426,14 +1426,14 @@ interp_frame_arg_to_storage (MonoInterpFrameHandle frame, MonoMethodSignature *s
 	if (index == -1)
 		return stackval_to_data_addr (sig->ret, iframe->retval);
 	else
-		return stackval_to_data_addr (sig->params [index], &iframe->stack_args [index]);
+		return stackval_to_data_addr (sig->params [index], &iframe->stack [index]);
 }
 
 static void
 interp_frame_arg_set_storage (MonoInterpFrameHandle frame, MonoMethodSignature *sig, int index, gpointer storage)
 {
 	InterpFrame *iframe = (InterpFrame*)frame;
-	stackval *val = (index == -1) ? iframe->retval : &iframe->stack_args [index];
+	stackval *val = (index == -1) ? iframe->retval : &iframe->stack [index];
 	MonoType *type = (index == -1) ? sig->ret : sig->params [index];
 
 	switch (type->type) {
@@ -1487,7 +1487,10 @@ ves_pinvoke_method (
 	gboolean save_last_error,
 	stackval *sp)
 {
-	InterpFrame frame = {parent_frame, NULL, sp, retval};
+	InterpFrame frame = {0};
+	frame.parent = parent_frame;
+	frame.stack = sp;
+	frame.retval = retval;
 
 	MonoLMFExt ext;
 	gpointer args;
@@ -1763,11 +1766,11 @@ dump_args (InterpFrame *inv)
 
 	if (signature->hasthis) {
 		MonoMethod *method = inv->imethod->method;
-		dump_stackval (str, inv->stack_args, m_class_get_byval_arg (method->klass));
+		dump_stackval (str, inv->stack, m_class_get_byval_arg (method->klass));
 	}
 
 	for (i = 0; i < signature->param_count; ++i)
-		dump_stackval (str, inv->stack_args + (!!signature->hasthis) + i, signature->params [i]);
+		dump_stackval (str, inv->stack + (!!signature->hasthis) + i, signature->params [i]);
 
 	return g_string_free (str, FALSE);
 }
@@ -1882,7 +1885,6 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 	InterpFrame frame = {0};
 	frame.imethod = imethod;
 	frame.stack = sp;
-	frame.stack_args = sp;
 	frame.retval = &result;
 
 	// The method to execute might not be transformed yet, so we don't know how much stack
@@ -1985,7 +1987,6 @@ interp_entry (InterpEntryData *data)
 	InterpFrame frame = {0};
 	frame.imethod = data->rmethod;
 	frame.stack = sp;
-	frame.stack_args = sp;
 	frame.retval = &result;
 
 	type = rmethod->rtype;
@@ -2752,7 +2753,6 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 	InterpFrame frame = {0};
 	frame.imethod = rmethod;
 	frame.stack = sp;
-	frame.stack_args = sp;
 	frame.retval = &result;
 
 	/* Copy the args saved in the trampoline to the frame stack */
@@ -6738,7 +6738,7 @@ call_newobj:
 		MINT_IN_CASE(MINT_LDARG_VT) {
 			sp->data.p = vt_sp;
 			int const i32 = READ32 (ip + 2);
-			memcpy(sp->data.p, frame->stack_args [ip [1]].data.p, i32);
+			memcpy(sp->data.p, frame->stack [ip [1]].data.p, i32);
 			vt_sp += ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			ip += 4;
 			++sp;
@@ -6748,7 +6748,7 @@ call_newobj:
 		MINT_IN_CASE(MINT_STARG_VT) {
 			int const i32 = READ32 (ip + 2);
 			--sp;
-			memcpy(frame->stack_args [ip [1]].data.p, sp->data.p, i32);
+			memcpy(frame->stack [ip [1]].data.p, sp->data.p, i32);
 			vt_sp -= ALIGN_TO (i32, MINT_VT_ALIGNMENT);
 			ip += 4;
 			MINT_IN_BREAK;
@@ -6842,7 +6842,7 @@ call_newobj:
 		}
 
 		MINT_IN_CASE(MINT_LDARGA_VT)
-			sp->data.p = frame->stack_args [ip [1]].data.p;
+			sp->data.p = frame->stack [ip [1]].data.p;
 			ip += 2;
 			++sp;
 			MINT_IN_BREAK;
@@ -7397,7 +7397,6 @@ interp_run_filter (StackFrameInfo *frame, MonoException *ex, int clause_index, g
 	child_frame.parent = iframe;
 	child_frame.imethod = iframe->imethod;
 	child_frame.stack = iframe->stack;
-	child_frame.stack_args = iframe->stack_args;
 	child_frame.retval = &retval;
 
 	memset (&clause_args, 0, sizeof (FrameClauseArgs));
@@ -7532,7 +7531,7 @@ interp_frame_get_arg (MonoInterpFrameHandle frame, int pos)
 	g_assert (iframe->imethod);
 
 	sig = mono_method_signature_internal (iframe->imethod->method);
-	return stackval_to_data_addr (sig->params [pos], &iframe->stack_args [pos + !!iframe->imethod->hasthis]);
+	return stackval_to_data_addr (sig->params [pos], &iframe->stack [pos + !!iframe->imethod->hasthis]);
 }
 
 static gpointer
@@ -7552,7 +7551,7 @@ interp_frame_get_this (MonoInterpFrameHandle frame)
 
 	g_assert (iframe->imethod);
 	g_assert (iframe->imethod->hasthis);
-	return &iframe->stack_args [0].data.p;
+	return &iframe->stack [0].data.p;
 }
 
 static MonoInterpFrameHandle
