@@ -1027,10 +1027,6 @@ mono_has_pdb_checksum (char *raw_data, uint32_t raw_data_len)
 				/* consistency checks here */
 				if ((addr >= t.st_virtual_address) &&
 					(addr < t.st_virtual_address + t.st_raw_data_size)){
-#ifdef HOST_WIN32
-					if (m_image_is_module_handle (image))
-						break;
-#endif
 					addr = addr - t.st_virtual_address + t.st_raw_data_ptr;
 					break;
 				}
