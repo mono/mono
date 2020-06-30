@@ -61,6 +61,7 @@ namespace System
 
 		internal const uint TIME_ZONE_ID_INVALID = 0xffffffff;
 		internal const uint ERROR_NO_MORE_ITEMS = 259;
+		internal const uint ERROR_SUCCESS = 0;
 
 		[DllImport ("api-ms-win-core-timezone-l1-1-0.dll")]
 		internal extern static uint EnumDynamicTimeZoneInformation (uint dwIndex, out DYNAMIC_TIME_ZONE_INFORMATION lpTimeZoneInformation);
@@ -349,7 +350,7 @@ namespace System
 			try {
 				uint index = 0;
 				DYNAMIC_TIME_ZONE_INFORMATION dtzi;
-				while (EnumDynamicTimeZoneInformation (index++, out dtzi) != ERROR_NO_MORE_ITEMS) {
+				while (EnumDynamicTimeZoneInformation (index++, out dtzi) == ERROR_SUCCESS) {
 					var timeZoneInfo = TryCreateTimeZone (dtzi);
 					if (timeZoneInfo != null)
 						result.Add (timeZoneInfo);
@@ -358,8 +359,6 @@ namespace System
 				// EnumDynamicTimeZoneInformation() might not be available.
 			}
 
-			if (result.Count == 0)
-				result.Add (Local);
 			return result;
 		}
 	}
