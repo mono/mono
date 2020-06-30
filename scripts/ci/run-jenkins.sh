@@ -352,6 +352,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             # ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
             # ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
             TEST_SUITE_CHROME_REVISION=dev ${TESTCMD} --label=debugger-dev --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+            TEST_SUITE_CHROME_REVISION=781470 ${TESTCMD} --label=debugger-781470 --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             # TEST_SUITE_CHROME_REVISION=beta ${TESTCMD} --label=debugger-beta --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             TEST_SUITE_CHROME_REVISION=latest ${TESTCMD} --label=debugger-latest --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             # ${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-System
