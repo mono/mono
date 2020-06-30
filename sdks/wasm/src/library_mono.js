@@ -8,7 +8,7 @@
  * @property {string} idStr - full object id string
  * @property {string} scheme - eg, object, valuetype, array ..
  * @property {string} value - string part after `dotnet:scheme:` of the id string
- * @property {Object} o - value parsed as JSON
+ * @property {object} o - value parsed as JSON
  */
 
 var MonoSupportLib = {
@@ -101,12 +101,12 @@ var MonoSupportLib = {
 		},
 
 		_fixup_name_value_objects: function (var_list) {
-			var out_list = [];
+			let out_list = [];
 
 			var i = 0;
 			while (i < var_list.length) {
-				var o = var_list [i];
-				var name = o.name;
+				let o = var_list [i];
+				const name = o.name;
 				if (name == null || name == undefined) {
 					i ++;
 					out_list.push (o);
@@ -125,8 +125,8 @@ var MonoSupportLib = {
 		},
 
 		_filter_automatic_properties: function (props) {
-			var names_found = {};
-			var final_var_list = [];
+			let names_found = {};
+			let final_var_list = [];
 
 			for (var i in props) {
 				var p = props [i];
@@ -174,15 +174,15 @@ var MonoSupportLib = {
 
 			try {
 				res.o = JSON.parse(res.value);
-				// eslint-disable-next-line no-empty
-			} catch (e) { console.log(e); }
+			// eslint-disable-next-line no-empty
+			} catch (e) {}
 
 			return res;
 		},
 
 		/**
 		 * @param  {WasmId} id
-		 * @returns {Object[]}
+		 * @returns {object[]}
 		 */
 		_get_vt_properties: function (id) {
 			let entry = this._id_table [id.idStr];
@@ -241,9 +241,9 @@ var MonoSupportLib = {
 				this.mono_wasm_get_var_info = Module.cwrap ("mono_wasm_get_var_info", null, [ 'number', 'number', 'number']);
 
 			this.var_info = [];
-			var numBytes = var_list.length * Int32Array.BYTES_PER_ELEMENT;
-			var ptr = Module._malloc(numBytes);
-			var heapBytes = new Int32Array(Module.HEAP32.buffer, ptr, numBytes);
+			const numBytes = var_list.length * Int32Array.BYTES_PER_ELEMENT;
+			const ptr = Module._malloc(numBytes);
+			let heapBytes = new Int32Array(Module.HEAP32.buffer, ptr, numBytes);
 			for (let i=0; i<var_list.length; i++) {
 				heapBytes[i] = var_list[i].index;
 			}
@@ -251,13 +251,13 @@ var MonoSupportLib = {
 			this._async_method_objectId = 0;
 			this.mono_wasm_get_var_info (scope, heapBytes.byteOffset, var_list.length);
 			Module._free(heapBytes.byteOffset);
-			var res = MONO._fixup_name_value_objects (this.var_info);
+			let res = MONO._fixup_name_value_objects (this.var_info);
 
 			if (this._async_method_objectId != 0)
 				this._assign_vt_ids (res, v => ({ containerId: this._async_method_objectId, fieldOffset: v.fieldOffset }));
 
 			for (let i in res) {
-				var res_name = res [i].name;
+				const res_name = res [i].name;
 				if (this._async_method_objectId != 0) {
 					//Async methods are special in the way that local variables can be lifted to generated class fields
 					//value of "this" comes here either
@@ -282,6 +282,7 @@ var MonoSupportLib = {
 		/**
 		 * @param  {number} idNum
 		 * @param  {boolean} expandValueTypes
+		 * @returns {object}
 		 */
 		_get_object_properties: function(idNum, expandValueTypes) {
 			if (!this.mono_wasm_get_object_properties_info)
@@ -290,7 +291,7 @@ var MonoSupportLib = {
 			this.var_info = [];
 			this.mono_wasm_get_object_properties_info (idNum, expandValueTypes);
 
-			var res = MONO._filter_automatic_properties (MONO._fixup_name_value_objects (this.var_info));
+			let res = MONO._filter_automatic_properties (MONO._fixup_name_value_objects (this.var_info));
 			res = this._assign_vt_ids (res, v => ({ containerId: idNum, fieldOffset: v.fieldOffset }));
 			res = this._post_process_details (res);
 
@@ -301,9 +302,10 @@ var MonoSupportLib = {
 
 		/**
 		 * @param  {WasmId} id
-		 * @param  {number} startIdx=0
-		 * @param  {number} count=-1
-		 * @param  {boolean} expandValueTypes=false
+		 * @param  {number} [startIdx=0]
+		 * @param  {number} [count=-1]
+		 * @param  {boolean} [expandValueTypes=false]
+		 * @returns {object[]}
 		 */
 		_get_array_values: function (id, startIdx = 0, count = -1, expandValueTypes = false) {
 			if (!this.mono_wasm_get_array_values_info)
@@ -387,23 +389,13 @@ var MonoSupportLib = {
 			return var_list;
 		},
 
-		/**
-		 * @param  {string} objectId
-		 */
-		_get_vt_members: function (objectId) {
-			if (this._id_table [objectId] !== undefined && this._id_table [objectId].members !== undefined)
-				return this._id_table[objectId].members;
-
-			return undefined;
-		},
-
 		_get_cfo_res_details: function (objectId, args) {
 			if (!(objectId in this._call_function_res_cache))
 				throw new Error(`Could not find any object with id ${objectId}`);
 
-			var real_obj = this._call_function_res_cache [objectId];
+			const real_obj = this._call_function_res_cache [objectId];
 
-			var descriptors = Object.getOwnPropertyDescriptors (real_obj);
+			const descriptors = Object.getOwnPropertyDescriptors (real_obj);
 			if (args.accessorPropertiesOnly) {
 				Object.keys (descriptors).forEach (k => {
 					if (descriptors [k].get === undefined)
@@ -411,10 +403,10 @@ var MonoSupportLib = {
 				});
 			}
 
-			var res_details = [];
+			let res_details = [];
 			Object.keys (descriptors).forEach (k => {
-				var new_obj;
-				var prop_desc = descriptors [k];
+				let new_obj;
+				let prop_desc = descriptors [k];
 				if (typeof prop_desc.value == "object") {
 					// convert `{value: { type='object', ... }}`
 					// to      `{ name: 'foo', value: { type='object', ... }}
@@ -525,10 +517,10 @@ var MonoSupportLib = {
 				throw new Error (`Both ptr_addr and klass_addr need to be non-zero, to dereference a pointer. objectId: ${objectId}`);
 
 			this.var_info = [];
-			var value_addr = new DataView (Module.HEAPU8.buffer).getUint32 (ptr_args.ptr_addr, /* littleEndian */ true);
+			const value_addr = new DataView (Module.HEAPU8.buffer).getUint32 (ptr_args.ptr_addr, /* littleEndian */ true);
 			this.mono_wasm_get_deref_ptr_value_info (value_addr, ptr_args.klass_addr);
 
-			var res = MONO._fixup_name_value_objects(this.var_info);
+			let res = MONO._fixup_name_value_objects(this.var_info);
 			if (res.length > 0) {
 				if (ptr_args.varName === undefined)
 					throw new Error (`Bug: no varName found for the pointer. objectId: ${objectId}`);
@@ -572,7 +564,7 @@ var MonoSupportLib = {
 		},
 
 		_cache_call_function_res: function (obj) {
-			var id = `dotnet:cfo_res:${this._next_call_function_res_id++}`;
+			const id = `dotnet:cfo_res:${this._next_call_function_res_id++}`;
 			this._call_function_res_cache[id] = obj;
 			return id;
 		},
@@ -635,12 +627,12 @@ var MonoSupportLib = {
 		},
 
 		_create_proxy_from_object_id: function (objectId) {
-			var details = this.mono_wasm_get_details(objectId);
+			const details = this.mono_wasm_get_details(objectId);
 
 			if (objectId.startsWith ('dotnet:array:'))
 				return details.map (p => p.value);
 
-			var proxy = {};
+			let proxy = {};
 			Object.keys (details).forEach (p => {
 				var prop = details [p];
 				if (prop.get !== undefined) {
@@ -662,8 +654,8 @@ var MonoSupportLib = {
 			if (request.arguments != undefined && !Array.isArray (request.arguments))
 				throw new Error (`"arguments" should be an array, but was ${request.arguments}`);
 
-			var objId = request.objectId;
-			var proxy;
+			const objId = request.objectId;
+			let proxy;
 
 			if (objId in this._call_function_res_cache) {
 				proxy = this._call_function_res_cache [objId];
@@ -671,10 +663,10 @@ var MonoSupportLib = {
 				proxy = this._create_proxy_from_object_id (objId);
 			}
 
-			var fn_args = request.arguments != undefined ? request.arguments.map(a => JSON.stringify(a.value)) : [];
-			var fn_eval_str = `var fn = ${request.functionDeclaration}; fn.call (proxy, ...[${fn_args}]);`;
+			const fn_args = request.arguments != undefined ? request.arguments.map(a => JSON.stringify(a.value)) : [];
+			const fn_eval_str = `var fn = ${request.functionDeclaration}; fn.call (proxy, ...[${fn_args}]);`;
 
-			var fn_res = eval (fn_eval_str);
+			const fn_res = eval (fn_eval_str);
 			if (fn_res == undefined) // should we just return undefined?
 				throw Error ('Function returned undefined result');
 
@@ -689,7 +681,7 @@ var MonoSupportLib = {
 			if (request.returnByValue)
 				return {type: "object", value: fn_res};
 
-			var fn_res_id = this._cache_call_function_res (fn_res);
+			const fn_res_id = this._cache_call_function_res (fn_res);
 			if (Object.getPrototypeOf (fn_res) == Array.prototype) {
 				return {
 					type: "object",
@@ -761,7 +753,7 @@ var MonoSupportLib = {
 				this.wasm_parse_runtime_options = Module.cwrap ('mono_wasm_parse_runtime_options', null, ['number', 'number']);
 			var argv = Module._malloc (options.length * 4);
 			var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string']);
-			aindex = 0;
+			let aindex = 0;
 			for (var i = 0; i < options.length; ++i) {
 				Module.setValue (argv + (aindex * 4), wasm_strdup (options [i]), "i32");
 				aindex += 1;
@@ -915,7 +907,7 @@ var MonoSupportLib = {
 		
 		mono_wasm_add_null_var: function(className)
 		{
-			fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+			let fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
 			if (!fixed_class_name) {
 				// Eg, when a @className is passed from js itself, like
 				// mono_wasm_add_null_var ("string")
@@ -945,7 +937,7 @@ var MonoSupportLib = {
 		},
 
 		_mono_wasm_add_getter_var: function(className, invokable) {
-			fixed_class_name = MONO._mono_csharp_fixup_class_name (className);
+			const fixed_class_name = MONO._mono_csharp_fixup_class_name (className);
 			if (invokable != 0) {
 				var name;
 				if (MONO.var_info.length > 0)
@@ -972,7 +964,7 @@ var MonoSupportLib = {
 		},
 
 		_mono_wasm_add_array_var: function(className, objectId, length) {
-			fixed_class_name = MONO._mono_csharp_fixup_class_name(className);
+			const fixed_class_name = MONO._mono_csharp_fixup_class_name(className);
 			if (objectId == 0) {
 				MONO.mono_wasm_add_null_var (fixed_class_name);
 				return;
@@ -1028,7 +1020,7 @@ var MonoSupportLib = {
 		},
 
 		_end_value_type_var: function() {
-			var top_vt_obj_popped = MONO._vt_stack.pop ();
+			let top_vt_obj_popped = MONO._vt_stack.pop ();
 			top_vt_obj_popped.value.members = MONO._filter_automatic_properties (
 								MONO._fixup_name_value_objects (top_vt_obj_popped.value.members));
 
@@ -1063,7 +1055,7 @@ var MonoSupportLib = {
 
 
 		mono_wasm_add_typed_value: function (type, str_value, value) {
-			var type_str = type;
+			let type_str = type;
 			if (typeof type != 'string')
 				type_str = Module.UTF8ToString (type);
 				str_value = Module.UTF8ToString (str_value);
@@ -1128,7 +1120,7 @@ var MonoSupportLib = {
 				break;
 
 			case "pointer": {
-				var fixed_value_str = MONO._mono_csharp_fixup_class_name (str_value);
+				const fixed_value_str = MONO._mono_csharp_fixup_class_name (str_value);
 				if (value.klass_addr == 0 || value.ptr_addr == 0 || fixed_value_str.startsWith ('(void*')) {
 					// null or void*, which we can't deref
 					MONO.var_info.push({
@@ -1152,7 +1144,7 @@ var MonoSupportLib = {
 				break;
 
 			default: {
-				var msg = `'${str_value}' ${value}`;
+				const msg = `'${str_value}' ${value}`;
 
 				MONO.var_info.push ({
 					value: {
@@ -1196,13 +1188,13 @@ var MonoSupportLib = {
 		// group0: Monday:0
 		// group1: Monday
 		// group2: 0
-		var re = new RegExp (`[,]?([^,:]+):(${value}(?=,)|${value}$)`, 'g')
-		var members_str = Module.UTF8ToString (members);
+		const re = new RegExp (`[,]?([^,:]+):(${value}(?=,)|${value}$)`, 'g')
+		const members_str = Module.UTF8ToString (members);
 
-		var match = re.exec(members_str);
-		var member_name = match == null ? ('' + value) : match [1];
+		const match = re.exec(members_str);
+		const member_name = match == null ? ('' + value) : match [1];
 
-		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		const fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
 		MONO.var_info.push({
 			value: {
 				type: "object",
@@ -1225,7 +1217,7 @@ var MonoSupportLib = {
 			return;
 		}
 
-		fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
+		const fixed_class_name = MONO._mono_csharp_fixup_class_name(Module.UTF8ToString (className));
 		MONO.var_info.push({
 			value: {
 				type: "object",
@@ -1262,11 +1254,11 @@ var MonoSupportLib = {
 			return `${ret_sig} ${method_name} (${args_sig})`;
 		}
 
-		var tgt_sig;
+		let tgt_sig;
 		if (targetName != 0)
 			tgt_sig = args_to_sig (Module.UTF8ToString (targetName));
 
-		var type_name = MONO._mono_csharp_fixup_class_name (Module.UTF8ToString (className));
+		const type_name = MONO._mono_csharp_fixup_class_name (Module.UTF8ToString (className));
 
 		if (objectId == -1) {
 			// Target property
@@ -1336,6 +1328,7 @@ var MonoSupportLib = {
 
 	mono_wasm_fire_bp: function () {
 		console.log ("mono_wasm_fire_bp");
+		// eslint-disable-next-line no-debugger
 		debugger;
 	}
 };
