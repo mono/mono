@@ -244,7 +244,9 @@ namespace DebuggerTests
 			});
 		}
 
+#if MARTIN_FIXME
 		[Fact]
+#endif
 		public async Task ExceptionThrownInJSOutOfBand () {
 			var insp = new Inspector ();
 

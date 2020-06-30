@@ -13,7 +13,9 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, false)]
 		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, true)]
+#if MARTIN_FIXME
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+#endif
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
 		public async Task InspectPrimitiveTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
@@ -80,7 +82,9 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (66, 2, "GenericTypeLocals", false, 0, false)]
 		[InlineData (66, 2, "GenericTypeLocals", false, 0, true)]
+#if MARTIN_FIXME
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+#endif
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
 		public async Task InspectGenericTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
@@ -145,7 +149,9 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, false)]
+#if MARTIN_FIXME2
 		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, true)]
+#endif
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
 		public async Task InspectGenericValueTypeArrayLocals2 (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)

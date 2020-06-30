@@ -71,7 +71,9 @@ namespace DebuggerTests
 			);
 
 		[Theory]
+#if MARTIN_FIXME2
 		[InlineData (0, 190, 2, "DelegatesSignatureTest", false)]
+#endif
 		[InlineData (0, 190, 2, "DelegatesSignatureTest", true)]
 		[InlineData (2, 90, 2, "InnerMethod2", false)]
 		[InlineData (2, 90, 2, "InnerMethod2", true)]
@@ -180,7 +182,9 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (0, 228, 2, "NestedDelegatesTest", false)]
+#if MARTIN_FIXME2
 		[InlineData (0, 228, 2, "NestedDelegatesTest", true)]
+#endif
 		[InlineData (2, 90, 2, "InnerMethod2", false)]
 		[InlineData (2, 90, 2, "InnerMethod2", true)]
 		public async Task NestedDelegatesTest (int frame, int line, int col, string bp_method, bool use_cfo)
