@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\" />
+    <Compile Include="../browser-fetcher/PuppeteerHelper.cs" />
   </ItemGroup>
 
   <ItemGroup>
