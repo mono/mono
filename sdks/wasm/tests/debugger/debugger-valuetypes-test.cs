@@ -54,11 +54,11 @@ namespace DebuggerTests {
 
 		public struct SimpleStruct
 		{
+			public uint V { get { return 0xDEADBEEF + (uint)dt.Month; } set { } }
 			public string str_member;
 			public DateTime dt;
 			public GenericStruct<DateTime> gs;
 			public DateTimeKind Kind;
-
 			public SimpleStruct (string str, int f, DateTimeKind kind)
 			{
 				str_member = $"{str}#SimpleStruct#str_member";
