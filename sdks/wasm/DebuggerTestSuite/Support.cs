@@ -53,7 +53,7 @@ namespace DebuggerTests
 		void FailAllWaitersWithException (string method, JObject exception)
 		{
 			foreach (var tcs in notifications.Values)
-				tcs.SetException (new ArgumentException ($"{method}: {exception}"));
+				tcs.SetException (new ArgumentException (exception.ToString ()));
 		}
 
 		async Task OnMessage(string method, JObject args, CancellationToken token)
