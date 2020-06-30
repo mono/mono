@@ -316,20 +316,28 @@ namespace DebuggerTests
 
 		internal async Task CheckDateTimeValue (JToken value, DateTime expected)
 		{
-			AssertEqual ("System.DateTime", value ["className"]?.Value<string> (), "className");
-			AssertEqual (expected.ToString (), value ["description"]?.Value<string> (), "description");
+			await CheckDateTimeMembers (value, expected);
 
-			var members = await GetProperties (value ["objectId"]?.Value<string> ());
-
-			// not checking everything
-			CheckNumber (members, "Year", expected.Year);
-			CheckNumber (members, "Month", expected.Month);
-			CheckNumber (members, "Day", expected.Day);
-			CheckNumber (members, "Hour", expected.Hour);
-			CheckNumber (members, "Minute", expected.Minute);
-			CheckNumber (members, "Second", expected.Second);
+			var res = await InvokeGetter (JObject.FromObject (new { value = value }), "Date");
+			await CheckDateTimeMembers (res.Value ["result"], expected.Date);
 
 			// FIXME: check some float properties too
+
+			async Task CheckDateTimeMembers (JToken v, DateTime exp_dt)
+			{
+				AssertEqual ("System.DateTime", v ["className"]?.Value<string> (), "className");
+				AssertEqual (exp_dt.ToString (), v ["description"]?.Value<string> (), "description");
+
+				var members = await GetProperties (v ["objectId"]?.Value<string> ());
+
+				// not checking everything
+				CheckNumber (members, "Year", exp_dt.Year);
+				CheckNumber (members, "Month", exp_dt.Month);
+				CheckNumber (members, "Day", exp_dt.Day);
+				CheckNumber (members, "Hour", exp_dt.Hour);
+				CheckNumber (members, "Minute", exp_dt.Minute);
+				CheckNumber (members, "Second", exp_dt.Second);
+			}
 		}
 
 		internal JToken CheckBool (JToken locals, string name, bool expected)
@@ -605,7 +613,7 @@ namespace DebuggerTests
 
 				Assert.True(actual_obj != null, $"[{label}] not value found for property named '{exp_name}'");
 
-				var actual_val = actual_obj["value"];
+				var actual_val = actual_obj ["value"];
 				if (exp_val.Type == JTokenType.Array) {
 					var actual_props = await GetProperties(actual_val["objectId"]?.Value<string>());
 					await CheckProps (actual_props, exp_val, $"{label}-{exp_name}");
