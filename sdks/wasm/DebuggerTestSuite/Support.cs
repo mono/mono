@@ -58,7 +58,7 @@ namespace DebuggerTests
 
 		async Task OnMessage(string method, JObject args, CancellationToken token)
 		{
-			//System.Console.WriteLine("OnMessage " + method + args);
+			System.Console.WriteLine("OnMessage " + method + args);
 			switch (method) {
 			case "Debugger.paused":
 				NotifyOf (PAUSE, args);
