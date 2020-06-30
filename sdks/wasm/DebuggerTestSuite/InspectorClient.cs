@@ -59,7 +59,7 @@ namespace WebAssembly.Net.Debugging {
 			pending_cmds.Add ((id, tcs));
 
 			var str = o.ToString ();
-			Log ("protocol", $"SendCommand: id: {id} method: {method} params: {args}");
+			//Log ("protocol", $"SendCommand: id: {id} method: {method} params: {args}");
 
 			var bytes = Encoding.UTF8.GetBytes (str);
 			Send (bytes, token);
@@ -67,7 +67,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		protected virtual void DumpProtocol (string msg){
-			Console.WriteLine ($"DUMP PROTOCOL: {msg}");
+			// Console.WriteLine (msg);
 			//XXX make logging not stupid
 		}
 	}
