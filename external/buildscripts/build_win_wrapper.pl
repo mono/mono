@@ -100,7 +100,7 @@ else
 
 print(">>> externalBuildDeps = $externalBuildDeps\n");
 
-my $SevenZip = "$externalBuildDeps/7z/win64/7za.exe";
+my $SevenZip = "$externalBuildDeps/7za-win-x64/7za.exe";
 
 # Attempt to find common default cygwin install locations
 if ($cygwinRootWindows eq "")

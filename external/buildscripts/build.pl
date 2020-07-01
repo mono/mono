@@ -4,6 +4,8 @@ use Getopt::Long;
 use File::Basename;
 use File::Path;
 use lib ('external/buildscripts', "../../Tools/perl_lib","perl_lib", 'external/buildscripts/perl_lib');
+use strict;
+use warnings;
 use Tools qw(InstallNameTool);
 
 print ">>> PATH in Build All = $ENV{PATH}\n\n";
@@ -11,7 +13,7 @@ print ">>> PATH in Build All = $ENV{PATH}\n\n";
 my $currentdir = getcwd();
 
 my $monoroot = File::Spec->rel2abs(dirname(__FILE__) . "/../..");
-my $monoroot = abs_path($monoroot);
+$monoroot = abs_path($monoroot);
 
 my $buildscriptsdir = "$monoroot/external/buildscripts";
 my $addtoresultsdistdir = "$buildscriptsdir/add_to_build_results/monodistribution";
@@ -294,7 +296,7 @@ if ($build)
 			}
 			else
 			{
-				if (not $checkoutonthefly)
+				if (not $checkoutOnTheFly)
 				{
 					print(">>> No external build deps found.  Might as well try to check them out.  If it fails, we'll continue and trust mono is in your PATH\n");
 				}
@@ -321,14 +323,7 @@ if ($build)
 
 			if (-d "$existingExternalMono/builds")
 			{
-				print(">>> Mono already extracted at : $existingExternalMono/builds\n");
-			}
-
-			if (!(-d "$existingExternalMono/builds"))
-			{
-				# We need to extract builds.zip
-				print(">>> Extracting mono builds.zip...\n");
-				system("unzip", "$existingExternalMono/builds.zip", "-d", "$existingExternalMono/builds") eq 0 or die("failed to extract mono builds.zip\n");
+				print(">>> Mono found at at : $existingExternalMono/builds\n");
 			}
 
 			$existingMonoRootPath = "$existingExternalMono/builds/monodistribution";
@@ -452,6 +447,7 @@ if ($build)
 	}
 
 	my $macSdkPath = "";
+	my $macBuildEnvDir = "";
 	my $macversion = '10.11';
 	my $darwinVersion = "10";
 	if ($^O eq 'darwin')
@@ -461,7 +457,7 @@ if ($build)
 			$sdk='10.11';
 		}
 
-		my $macBuildEnvDir = "$externalBuildDeps/MacBuildEnvironment";
+		$macBuildEnvDir = "$externalBuildDeps/MacBuildEnvironment";
 		$macSdkPath = "$macBuildEnvDir/builds/MacOSX$sdk.sdk";
 		if (! -d $macSdkPath)
 		{
@@ -688,8 +684,8 @@ if ($build)
 		my $platformRootPostfix = "";
 		my $useKraitPatch = 1;
 		my $kraitPatchPath = "$monoroot/../../android_krait_signal_handler/build";
-		my $toolChainExtension = "";
 		my $binUtilsPrefix = "";
+		my $clangPrefix = "";
 
 		$ENV{ANDROID_PLATFORM} = "android-$apiLevel";
 
@@ -789,8 +785,6 @@ if ($build)
 		# TODO: No idea if we can build android 19 on windows yet
 		if ($runningOnWindows)
 		{
-			$toolChainExtension = ".exe";
-
 			$androidPlatformRoot = `cygpath -w $androidPlatformRoot`;
 			# clean up trailing new lines that end up in the output from cygpath.
 			$androidPlatformRoot =~ s/\n+$//;
@@ -951,7 +945,7 @@ if ($build)
 
 			if ($runningOnWindows)
 			{
-				my $sevenZip = "$externalBuildDeps/7z/win64/7za.exe";
+				my $sevenZip = "$externalBuildDeps/7za-win-x64/7za.exe";
 				my $winDepsSdkArchive = `cygpath -w $depsSdkArchive`;
 				my $winDepsSdkExtract = `cygpath -w $externalBuildDeps`;
 
@@ -990,8 +984,6 @@ if ($build)
 
 		if ($runningOnWindows)
 		{
-			$toolChainExtension = ".exe";
-
 			$tizenPlatformRoot = `cygpath -w $tizenPlatformRoot`;
 			# clean up trailing new lines that end up in the output from cygpath.
 			$tizenPlatformRoot =~ s/\n+$//;
@@ -1580,8 +1572,8 @@ if ($artifact)
 		}
 		elsif ($android)
 		{
-			system("cp", "$monoroot/mono/mini/.libs/libmonosgen-2.0.so","$embedDirArchDestination/libmonosgen-2.0.so") eq 0 or die ("failed copying $file\n");
-			system("cp", "$monoroot/mono/mini/.libs/libmonoboehm-2.0.so","$embedDirArchDestination/libmonobdwgc-2.0.so") eq 0 or die ("failed copying $file\n");
+			system("cp", "$monoroot/mono/mini/.libs/libmonosgen-2.0.so","$embedDirArchDestination/libmonosgen-2.0.so") eq 0 or die ("failed copying libmonosgen-2.0.so\n");
+			system("cp", "$monoroot/mono/mini/.libs/libmonoboehm-2.0.so","$embedDirArchDestination/libmonobdwgc-2.0.so") eq 0 or die ("failed copying libmonobdwgc-2.0.so\n");
 			print ">>> Copying libMonoPosixHelper.so\n";
 			system("cp", "$monoroot/support/.libs/libMonoPosixHelper.so","$embedDirArchDestination/libMonoPosixHelper.so") eq 0 or die ("failed copying libMonoPosixHelper.so\n");
 		}
@@ -1620,9 +1612,9 @@ if ($artifact)
 			system("ln","-f", "$monoroot/mono/mini/.libs/libmonosgen-2.0.dylib","$embedDirArchDestination/libmonosgen-2.0.dylib") eq 0 or die ("failed symlinking libmonosgen-2.0.dylib\n");
 
 			print "Hardlinking libMonoPosixHelper.dylib\n";
-			system("ln","-f", "$monoroot/support/.libs/libMonoPosixHelper.dylib","$embedDirArchDestination/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking $libtarget/libMonoPosixHelper.dylib\n");
+			system("ln","-f", "$monoroot/support/.libs/libMonoPosixHelper.dylib","$embedDirArchDestination/libMonoPosixHelper.dylib") eq 0 or die ("failed symlinking $embedDirArchDestination/libMonoPosixHelper.dylib\n");
 			print "Hardlinking libmono-native.dylib\n";
-			system("ln","-f", "$monoroot/mono/native/.libs/libmono-native.dylib","$embedDirArchDestination/libmono-native.dylib") eq 0 or die ("failed symlinking $libtarget/libmono-native.dylib\n");
+			system("ln","-f", "$monoroot/mono/native/.libs/libmono-native.dylib","$embedDirArchDestination/libmono-native.dylib") eq 0 or die ("failed symlinking $embedDirArchDestination/libmono-native.dylib\n");
 
 			InstallNameTool("$embedDirArchDestination/libmonobdwgc-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonobdwgc-2.0.dylib");
 			InstallNameTool("$embedDirArchDestination/libmonosgen-2.0.dylib", "\@executable_path/../Frameworks/MonoEmbedRuntime/osx/libmonosgen-2.0.dylib");
@@ -1716,9 +1708,9 @@ else
 
 if ($test)
 {
+	my $runtimeTestsDir = "$monoroot/mono/mini";
 	if ($runRuntimeTests)
 	{
-		my $runtimeTestsDir = "$monoroot/mono/mini";
 		chdir("$runtimeTestsDir") eq 1 or die ("failed to chdir");
 		print("\n>>> Calling make check in $runtimeTestsDir\n\n");
 		system("make","check") eq 0 or die ("runtime tests failed\n");

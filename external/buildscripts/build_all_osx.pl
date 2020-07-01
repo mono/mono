@@ -54,7 +54,7 @@ system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", @p
 
 if ($artifact)
 {
-	print(">>> Creating universal binaries\n");
+	print(">>> Moving built binaries to final output directories\n");
 	# Merge stuff in the embedruntimes directory
 	my $embedDirRoot = "$buildsroot/embedruntimes";
 	my $embedDirDestination = "$embedDirRoot/osx";
@@ -108,6 +108,11 @@ if ($artifact)
 	if (!(-d $distDirSourceBin64))
 	{
 		die("Expected source directory not found : $distDirSourceBin64\n");
+	}
+
+	for my $file ('mono','pedump')
+	{
+		system ('mv', "$distDirSourceBin64/$file", "$distDirDestinationBin/$file");
 	}
 
 	for my $file ('libMonoPosixHelper.dylib', 'libmono-native.dylib')

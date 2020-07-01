@@ -47,20 +47,15 @@ namespace BuildProgram
 
 		private static void RegisterCommonArtifacts()
 		{
-			Artifacts.Add("7z",
-				new Tuple<string, string>(
-					"7z/9df1e3b3b120_12ed325f6a47f0e5cebc247dbe9282a5da280d392cce4e6c9ed227d57ff1e2ff.7z",
-					"testing"));
-
 			Artifacts.Add("MonoBleedingEdge",
 				new Tuple<string, string>(
-					"MonoBleedingEdge/9df1e3b3b120_ab6d2f131e6bd4fe2aacafb0f683e8fa4e1ccba35552b6fe89bf359b6ee16215.7z",
-					"testing"));
+					"MonoBleedingEdge/fd0d97a7a35_5d627f842afebea942027a7fe8a590effb76deaf44736482b8bbcfae58316d42.7z",
+					"unity-internal"));
 
 			Artifacts.Add("reference-assemblies",
 				new Tuple<string, string>(
-					"reference-assemblies/9df1e3b3b120_bbb4750c6bf0a1784bec7d7c04b8ef5881f31f6212136e014694f3864a388886.7z",
-					"testing"));
+					"reference-assemblies/1.0_fc1889ab066ec621a44e51c666d750590b0496d8284b4420e1119c26ce0c7462.7z",
+					"unity-internal"));
 		}
 
 		private static void RegisterWindowsArtifacts()
@@ -81,12 +76,12 @@ namespace BuildProgram
 			Artifacts.Add("MacBuildEnvironment",
 				new Tuple<string, string>(
 					"MacBuildEnvironment/9df1e3b3b120_2fc8e616a2e5dfb7907fc42d9576b427e692223c266dc3bc305de4bf03714e30.7z",
-					"testing"));
+					"unity-internal"));
 
 			Artifacts.Add("mono-build-tools-extra",
 				new Tuple<string, string>(
-					"mono-build-tools-extra/70f9c4060363d11b3e69f000c8ff2c9ac8112bc2_e66148037ab6371658815c726e27e7ee7bdfdd705fb734708d07cbdfe7d8141e.7z",
-					"testing"));
+					"mono-build-tools-extra/9de3c42ef81ec4f79b53e7db32d390227d8c43c4_fa9931c37b7a4ca636eb9e0e48252c4cb591caaa9b77c41b75795037868c1256.7z",
+					"unity-internal"));
 		}
 
 		private static void RegisterLinuxArtifacts()
@@ -129,10 +124,10 @@ namespace BuildProgram
 					"autoconf-src/2.69_0e4ba7a0363c68ad08a7d138b228596aecdaea68e1d8b8eefc645e6ac8fc85c7.7z",
 					"public"));
 
-			Artifacts.Add("libgdiplus",
+			Artifacts.Add("libgdiplus-mac",
 				new Tuple<string, string>(
-					"libgdiplus/9df1e3b3b120_4cf7c08770db93922f54f38d2461b9122cddc898db58585864446e70c5ad3057.7z",
-					"testing"));
+					"libgdiplus-mac/9df1e3b3b120_4cf7c08770db93922f54f38d2461b9122cddc898db58585864446e70c5ad3057.7z",
+					"unity-internal"));
 		}
 	}
 }

@@ -62,14 +62,15 @@ print MYFILE "TC projectname was: $ENV{TEAMCITY_PROJECT_NAME}\n";
 print MYFILE "TC buildconfigname was: $ENV{TEAMCITY_BUILDCONF_NAME}\n";
 close(MYFILE);
 
+my $externalBuildDeps = "$monoroot/external/buildscripts/artifacts/Stevedore";
 my $externalzip = "";
 if($^O eq "linux")
 {
-	$externalzip = "$monoroot/../../mono-build-deps/build/7z/linux64/7za";
+	$externalzip = "$externalBuildDeps/7za-linux-x64/7za";
 }
 elsif($^O eq 'darwin')
 {
-	$externalzip = "$monoroot/../../mono-build-deps/build/7z/osx/7za";
+	$externalzip = "$externalBuildDeps/7za-mac-x64/7za";
 }
 
 
