@@ -154,12 +154,15 @@ namespace DebuggerTests
 		internal DebugTestContext ctx;
 		internal Dictionary<string, string> dicScriptsIdToUrl;
 		internal Dictionary<string, string> dicFileToUrl;
+		internal Dictionary<string, string> dicUrlToId;
 		internal Dictionary<string, string> SubscribeToScripts (Inspector insp) {
 			dicScriptsIdToUrl = new Dictionary<string, string> ();
 			dicFileToUrl = new Dictionary<string, string>();
+			dicUrlToId = new Dictionary<string, string> ();
 			insp.On("Debugger.scriptParsed", async (args, c) => {
 				var script_id = args? ["scriptId"]?.Value<string> ();
 				var url = args["url"]?.Value<string> ();
+				dicUrlToId[url] = script_id;
 				if (script_id.StartsWith("dotnet://"))
 				{
 					var dbgUrl = args["dotNetUrl"]?.Value<string>();

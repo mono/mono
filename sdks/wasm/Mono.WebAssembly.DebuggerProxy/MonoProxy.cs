@@ -832,6 +832,14 @@ namespace WebAssembly.Net.Debugging {
 			if (bps == null)
 				return false;
 
+			if (start.Line < 0 || start.Column < 0) {
+				SendResponse (msg, Result.Err (JObject.FromObject (new { code = -32000, message = "start.lineNumber and start.columnNumber should be >= 0" })), token);
+				return true;
+			} else if (end != null && (end.Line < 0 || end.Column < 0)) {
+				SendResponse (msg, Result.Err (JObject.FromObject (new { code = -32000, message = "end.lineNumber and end.columnNumber should be >= 0" })), token);
+				return true;
+			}
+
 			var response = new { locations = bps.Select (b => b.AsLocation ()) };
 
 			SendResponse (msg, Result.OkFromObject (response), token);
