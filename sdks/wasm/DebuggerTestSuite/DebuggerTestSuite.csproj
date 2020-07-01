@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <DefineConstants>MARTIN_FIXME;MARTIN_FIXME2</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
