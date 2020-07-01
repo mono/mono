@@ -9,6 +9,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Net;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace WebAssembly.Net.Debugging {
 
@@ -65,6 +66,19 @@ namespace WebAssembly.Net.Debugging {
 	internal class DotnetObjectId {
 		public string Scheme { get; }
 		public string Value { get; }
+
+		JObject value_json;
+		public JObject ValueAsJson {
+			get {
+				if (value_json == null) {
+					try {
+						value_json = JObject.Parse (Value);
+					} catch (JsonReaderException) {}
+				}
+
+				return value_json;
+			}
+		}
 
 		public static bool TryParse (JToken jToken, out DotnetObjectId objectId)
 			=> TryParse (jToken?.Value<string>(), out objectId);
