@@ -1,2 +1,9 @@
 #!/bin/sh
-mono bee.exe "$@"
+attempt=0
+until [ "$attempt" -ge 10 ]
+do
+   mono bee.exe "$@" && break
+   attempt=$((attempt+1)) 
+   sleep 5
+   echo "\nRetry running bee... $attempt"
+done
