@@ -225,7 +225,9 @@ namespace DebuggerTests
 			});
 		}
 
+#if MARTIN_FIXME3
 		[Fact]
+#endif
 		public async Task ExceptionThrownInJS () {
 			var insp = new Inspector ();
 
@@ -1146,7 +1148,9 @@ namespace DebuggerTests
 				await CheckDateTime (sst0, "DT", dt);
 			}
 		}
+#if MARTIN_FIXME3
 		[Theory]
+#endif
 		[InlineData (false)]
 		[InlineData (true)]
 		public async Task InspectLocalsWithStructsStaticAsync (bool use_cfo) {
