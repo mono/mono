@@ -10,5 +10,5 @@ dependencies:
   
 commands:
   - curl -sSo StevedoreUpload.exe "$STEVEDORE_UPLOAD_TOOL_URL"
-  - mono StevedoreUpload.exe --repo=unity-internal --version-len=11 --version="$GIT_REVISION" stevedore/MonoBleedingEdge.7z
+  - mono StevedoreUpload.exe --repo=testing --version-len=11 --version="$GIT_REVISION" stevedore/MonoBleedingEdge.7z
 
