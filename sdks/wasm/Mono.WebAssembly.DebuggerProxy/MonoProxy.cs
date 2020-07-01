@@ -66,6 +66,15 @@ namespace WebAssembly.Net.Debugging {
 					}
 					break;
 				}
+				
+			case "Inspector.targetReloadedAfterCrash":  {
+                    // I'm not sure if we really should send it but it fixes VS and Edge getting stucked sometimes after receiving a targetReloadedAfterCrash. 
+                    var res = await SendCommand(sessionId,
+                        "Runtime.runIfWaitingForDebugger",
+                        new JObject(),
+                        token);
+                    break;
+                }
 
 			case "Runtime.executionContextCreated": {
 					SendEvent (sessionId, method, args, token);
