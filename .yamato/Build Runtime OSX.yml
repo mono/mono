@@ -1,4 +1,4 @@
-name: build_osx_runtime
+name: Build Runtime OSX
 
 agent:
   type: Unity::VM::osx
@@ -6,7 +6,7 @@ agent:
   flavor: m1.mac
 
 commands:
-  - .yamato/build_osx_runtime.sh
+  - .yamato/scripts/build_osx_runtime.sh
 
 artifacts: 
   osx-i386:

@@ -1,4 +1,4 @@
-name: build_win
+name: Build Windows x64
 
 agent:
   type: Unity::VM
@@ -6,7 +6,7 @@ agent:
   flavor: b1.xlarge
 
 commands:
-  - .yamato/build_win.bat
+  - .yamato/scripts/build_win.bat
 
 artifacts: 
   win64:

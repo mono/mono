@@ -1,0 +1,14 @@
+name: 'Publish to Stevedore'
+
+agent:
+  type: Unity::VM
+  image: cds-ops/cds-ubuntu-18.04-base:stable
+  flavor: b1.large
+
+dependencies:
+  - .yamato/Collate Builds.yml
+  
+commands:
+  - curl -sSo StevedoreUpload.exe "$STEVEDORE_UPLOAD_TOOL_URL"
+  - mono StevedoreUpload.exe --repo=unity-internal --version-len=11 --version="$GIT_REVISION" stevedore/MonoBleedingEdge.7z
+

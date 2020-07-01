@@ -1,0 +1,29 @@
+name: 'Update Unity'
+agent:
+  type: Unity::VM
+  image: platform-foundation/windows-vs2019-bokken:latest
+  flavor: b1.xlarge 
+dependencies:
+  - .yamato/Collate Builds.yml
+  - .yamato/Publish To Stevedore.yml
+  - .yamato/Update Il2cpp-deps.yml
+commands:
+  - choco install python3 --pre
+  - |
+    git clone git@github.cds.internal.unity3d.com:unity/prtools.git
+    cd prtools
+    git checkout master
+    nuget.exe restore PRTools.sln
+    cmd /c cibuildscript
+    cmd /c xcopy build %PRTOOLS_BUILD_DIR% /s /Y /E /I
+    cd %UNITY_SOURCE_PRTOOLS_DIR%
+    %PRTOOLS_BUILD_DIR%\prtools.exe --update-mbe-unity=%YAMATO_SOURCE_DIR%/collectedbuilds/builds.7z --github-api-token=%GITHUB_TOKEN% --yamato-api-token=%YAMATO_TOKEN% --yamato-long-lived-token
+    if NOT %errorlevel% == 0 (
+      echo "PRTools failed"
+      EXIT /B %errorlevel%
+    )
+    cd %YAMATO_SOURCE_DIR%
+    py -m pip install requests
+    py prtools/katana-ci/katana_launcher.py --verbose --dontwait --project="proj0-ABuildVerification" --repo=unity --branch=scripting/mbe/staging --user="ashwini ashwini@unity3d.com" 
+timeout: 1
+

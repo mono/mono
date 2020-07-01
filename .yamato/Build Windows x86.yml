@@ -1,4 +1,4 @@
-name: build_win_bare_minimum
+name: Build Windows x86
 
 agent:
   type: Unity::VM
@@ -6,9 +6,9 @@ agent:
   flavor: b1.xlarge
 
 commands:
-  - .yamato/build_win_bare_minimum.bat
+  - .yamato/scripts/build_win_x86.bat
 
 artifacts: 
-  bareminimum:
+  win32:
     paths:
-      - incomingbuilds\bareminimum\**
+      - incomingbuilds\win32\**
