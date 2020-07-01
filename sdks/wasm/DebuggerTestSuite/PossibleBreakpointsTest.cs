@@ -42,10 +42,10 @@ namespace DebuggerTests
 		public Task TestGetPossibleBreakpointsJsHighStart () => TestGetPossibleBreakpoints (JsTestFile, 9999, null, new ExpectedLocation[0]);
 
 		[Fact]
-		public Task TestGetPossibleBreakpointsJsNevativeStart () => TestGetPossibleBreakpoints (JsTestFile, -1, null, new ExpectedLocation[0]);
+		public Task TestGetPossibleBreakpointsJsNegativeStart () => TestGetPossibleBreakpoints (JsTestFile, -1, null, new ExpectedLocation[0]);
 
 		[Fact]
-		public Task TestGetPossibleBreakpointsJsNevativeEnd () => TestGetPossibleBreakpoints (JsTestFile, 9999, -1, new ExpectedLocation[0]);
+		public Task TestGetPossibleBreakpointsJsNegativeEnd () => TestGetPossibleBreakpoints (JsTestFile, 9999, -1, new ExpectedLocation[0]);
 
 		[Fact]
 		public Task TestGetPossibleBreakpointsManagedNoEnd () => TestGetPossibleBreakpoints (ManagedTestFile, ManagedStartLine, null, new ExpectedLocation[] {
