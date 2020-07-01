@@ -119,7 +119,9 @@ namespace DebuggerTests
 		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, false)]
 		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, true)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+#if MARTIN_FIXME
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+#endif
 		public async Task InspectGenericValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
 				line, col,
