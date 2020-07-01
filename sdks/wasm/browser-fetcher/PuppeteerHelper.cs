@@ -108,7 +108,10 @@ namespace WebAssembly.Net.Debugging
 		{
 			// FIXME: is there a better option of detecting that on netcore?
 			var isMacOS = Directory.Exists ("/System/Applications/Utilities/Terminal.app");
-			var platform = isMacOS ? Platform.MacOS : Platform.Linux;
+			var isMacOS2 = Directory.Exists ("/Applications");
+			var platform = isMacOS2 ? Platform.MacOS : Platform.Linux;
+
+			Console.WriteLine ($"Platform check: {isMacOS} {isMacOS2}");
 
 			int? revision;
 			try {
@@ -144,14 +147,14 @@ namespace WebAssembly.Net.Debugging
 			int revision;
 			if (channel == Channel.Latest) {
 				var url = UrlForPlatform (platform);
-				Console.WriteLine ($"Trying to get latest revision from OmahaProxy: {url}");
+				Console.WriteLine ($"Trying to get latest revision from OmahaProxy: {platform} {url}");
 				revision = await GetOmahaProxyVersion (url).ConfigureAwait (false);
 				Console.WriteLine ($"Got revision from OmahaProxy: {revision}");
 			} else {
 				var url = GetChannelUrl (platform, channel);
-				Console.WriteLine ($"Trying to get {channel} revision from OmahaProxy: {url}");
+				Console.WriteLine ($"Trying to get {channel} revision from OmahaProxy: {platform} {url}");
 				revision = await GetChannelRevision (url);
-				Console.WriteLine ($"Got {channel} revision from OmahaProxy: {revision}");
+				Console.WriteLine ($"Got {channel} revision from OmahaProxy: {platform} {revision}");
 			}
 
 			var probed = await TryProbeRevision (fetcher, revision).ConfigureAwait (false);
