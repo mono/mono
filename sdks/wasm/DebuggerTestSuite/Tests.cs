@@ -225,10 +225,11 @@ namespace DebuggerTests
 			});
 		}
 
-#if MARTIN_FIXME3
-		[Fact]
-#endif
-		public async Task ExceptionThrownInJS () {
+		[Theory]
+		[InlineData (TestFlags.NotOnMacCI)]
+		public async Task ExceptionThrownInJS (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 
 			//Collect events
@@ -246,10 +247,11 @@ namespace DebuggerTests
 			});
 		}
 
-#if MARTIN_FIXME
-		[Fact]
-#endif
-		public async Task ExceptionThrownInJSOutOfBand () {
+		[Theory]
+		[InlineData (TestFlags.NotOnLinux)]
+		public async Task ExceptionThrownInJSOutOfBand (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 
 			//Collect events
@@ -1148,12 +1150,13 @@ namespace DebuggerTests
 				await CheckDateTime (sst0, "DT", dt);
 			}
 		}
-#if MARTIN_FIXME3
+
 		[Theory]
-#endif
-		[InlineData (false)]
-		[InlineData (true)]
-		public async Task InspectLocalsWithStructsStaticAsync (bool use_cfo) {
+		[InlineData (false, TestFlags.NotOnMacCI)]
+		[InlineData (true, TestFlags.NotOnMacCI)]
+		public async Task InspectLocalsWithStructsStaticAsync (bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);

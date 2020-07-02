@@ -121,11 +121,11 @@ namespace DebuggerTests
 		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, false)]
 		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, true)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
-#if MARTIN_FIXME
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
-#endif
-		public async Task InspectGenericValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
-			=> await TestSimpleArrayLocals (
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnLinux)]
+		public async Task InspectGenericValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:GenericValueTypeLocals",
 				method_name: method_name,
@@ -150,16 +150,17 @@ namespace DebuggerTests
 				test_prev_frame: test_prev_frame,
 				frame_idx: frame_idx,
 				use_cfo: use_cfo);
+		}
 
 		[Theory]
 		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, false)]
-#if MARTIN_FIXME2
-		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, true)]
-#endif
+		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, true, TestFlags.NotOnLinuxDev)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
-		public async Task InspectGenericValueTypeArrayLocals2 (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
-			=> await TestSimpleArrayLocals (
+		public async Task InspectGenericValueTypeArrayLocals2 (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:GenericValueTypeLocals2",
 				method_name: method_name,
@@ -190,6 +191,7 @@ namespace DebuggerTests
 				test_prev_frame: test_prev_frame,
 				frame_idx: frame_idx,
 				use_cfo: use_cfo);
+		}
 
 		async Task TestSimpleArrayLocals (int line, int col, string entry_method_name, string method_name, string etype_name,
 							string local_var_name_prefix, object[] array, object[] array_elements,
@@ -471,12 +473,11 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-#if MARTIN_FIXME3
-		[InlineData (false)]
-#endif
+		[InlineData (false, TestFlags.NotOnMacCI)]
 		[InlineData (true)]
-		public async Task InspectValueTypeArrayLocalsInAsyncStaticStructMethod (bool use_cfo)
+		public async Task InspectValueTypeArrayLocalsInAsyncStaticStructMethod (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);

@@ -13,11 +13,11 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (0, 45, 2, "DelegatesTest", false)]
 		[InlineData (0, 45, 2, "DelegatesTest", true)]
-#if MARTIN_FIXME3
-		[InlineData (2, 90, 2, "InnerMethod2", false)]
-		[InlineData (2, 90, 2, "InnerMethod2", true)]
-#endif
-		public async Task InspectLocalsWithDelegatesAtBreakpointSite (int frame, int line, int col, string method_name, bool use_cfo) =>
+		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnMacCI)]
+		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnMacCI)]
+		public async Task InspectLocalsWithDelegatesAtBreakpointSite (int frame, int line, int col, string method_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", line, col, method_name,
 				"window.setTimeout(function() { invoke_delegates_test (); }, 1);",
@@ -71,16 +71,17 @@ namespace DebuggerTests
 					}, "locals#fn_del_arr_unused");
 				}
 			);
+		}
 
 		[Theory]
-#if MARTIN_FIXME2
-		[InlineData (0, 190, 2, "DelegatesSignatureTest", false)]
-#endif
+		[InlineData (0, 190, 2, "DelegatesSignatureTest", false, TestFlags.NotOnLinuxDev)]
 		[InlineData (0, 190, 2, "DelegatesSignatureTest", true)]
 		[InlineData (2, 90, 2, "InnerMethod2", false)]
 		[InlineData (2, 90, 2, "InnerMethod2", true)]
-		public async Task InspectDelegateSignaturesWithFunc (int frame, int line, int col, string bp_method, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectDelegateSignaturesWithFunc (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs",
 				line, col,
 				bp_method,
@@ -140,6 +141,7 @@ namespace DebuggerTests
 							"void DelegateTargetWithVoidReturn (Math.GenericStruct<int[]>)")
 					}, "locals#fn_void_del_arr");
 				});
+		}
 
 		[Theory]
 		[InlineData (0, 211, 2, "ActionTSignatureTest", false)]
@@ -184,13 +186,13 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (0, 228, 2, "NestedDelegatesTest", false)]
-#if MARTIN_FIXME2
-		[InlineData (0, 228, 2, "NestedDelegatesTest", true)]
-#endif
+		[InlineData (0, 228, 2, "NestedDelegatesTest", true, TestFlags.NotOnLinuxDev)]
 		[InlineData (2, 90, 2, "InnerMethod2", false)]
 		[InlineData (2, 90, 2, "InnerMethod2", true)]
-		public async Task NestedDelegatesTest (int frame, int line, int col, string bp_method, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task NestedDelegatesTest (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", line, col,
 				bp_method,
 				"window.setTimeout (function () { invoke_static_method ('[debugger-test] Math:NestedDelegatesTest'); }, 1)",
@@ -223,6 +225,7 @@ namespace DebuggerTests
 							"bool DelegateTargetForNestedFunc (Func<int, bool>)")
 					}, "locals#fn_del_arr");
 				});
+		}
 
 		[Theory]
 		[InlineData (0, 247, 2, "MethodWithDelegateArgs", false)]

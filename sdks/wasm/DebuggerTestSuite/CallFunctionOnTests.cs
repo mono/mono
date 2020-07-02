@@ -13,14 +13,13 @@ namespace DebuggerTests
 		// This tests `callFunctionOn` with a function that the vscode-js-debug extension uses
 		// Using this here as a non-trivial test case
 		[Theory]
-#if MARTIN_FIXME2
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10, false)]
-#endif
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10, false, TestFlags.NotOnLinuxDev)]
 		[InlineData ("big_array_js_test (0);", "/other.js", 5, 1, 0, true)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 10, false)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 0);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 0, true)]
-		public async Task CheckVSCodeTestFunction1 (string eval_fn, string bp_loc, int line, int col, int len, bool roundtrip)
+		public async Task CheckVSCodeTestFunction1 (string eval_fn, string bp_loc, int line, int col, int len, bool roundtrip, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			string vscode_fn0 = "function(){const e={__proto__:this.__proto__},t=Object.getOwnPropertyNames(this);for(let r=0;r<t.length;++r){const n=t[r],i=n>>>0;if(String(i>>>0)===n&&i>>>0!=4294967295)continue;const a=Object.getOwnPropertyDescriptor(this,n);a&&Object.defineProperty(e,n,a)}return e}";
 
 			await RunCallFunctionOn (eval_fn, vscode_fn0, "big", bp_loc, line, col, res_array_len: len, roundtrip: roundtrip,
@@ -116,12 +115,11 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
-#if MARTIN_FIXME2
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false)]
-#endif
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false, TestFlags.NotOnLinuxDev)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true)]
-		public async Task RunOnArrayReturnEmptyArray (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
+		public async Task RunOnArrayReturnEmptyArray (string eval_fn, string bp_loc, int line, int col, bool roundtrip, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var ret_len = 0;
 
 			await RunCallFunctionOn (eval_fn,
@@ -158,16 +156,13 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-#if MARTIN_FIXME2
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
-#endif
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false, TestFlags.NotOnLinuxDev)]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
-#if MARTIN_FIXME2
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false)]
-#endif
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false, TestFlags.NotOnLinuxDev)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true)]
-		public async Task RunOnArrayReturnArray (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
+		public async Task RunOnArrayReturnArray (string eval_fn, string bp_loc, int line, int col, bool roundtrip, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var ret_len = 5;
 			await RunCallFunctionOn (eval_fn,
 				"function (m) { return Object.values (this).filter ((k, i) => i%m == 0); }",
@@ -268,13 +263,13 @@ namespace DebuggerTests
 					}
 			});
 
-#if MARTIN_FIXME2
 		[Theory]
-		[InlineData (false)]
-		[InlineData (true)]
-#endif
-		public async Task RunOnCFOValueTypeResult (bool roundtrip)
-		=>	await RunCallFunctionOn (
+		[InlineData (false, TestFlags.NotOnLinuxDev)]
+		[InlineData (true, TestFlags.NotOnLinuxDev)]
+		public async Task RunOnCFOValueTypeResult (bool roundtrip, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await RunCallFunctionOn (
 				eval_fn:    "invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);",
 				fn_decl:    "function () { return this; }",
 				local_name: "simple_struct",
@@ -313,14 +308,15 @@ namespace DebuggerTests
 						StringField = TString ($"simple_struct # gs # StringField")
 					}, "simple_struct.gs-props");
 			});
+		}
 
 		[Theory]
-#if MARTIN_FIXME
-		[InlineData (false)]
-#endif
+		[InlineData (false, TestFlags.NotOnLinux)]
 		[InlineData (true)]
-		public async Task RunOnJSObject (bool roundtrip)
-		=>	await RunCallFunctionOn (
+		public async Task RunOnJSObject (bool roundtrip, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await RunCallFunctionOn (
 				"object_js_test ();",
 				"function () { return this; }",
 				"obj", "/other.js", 14, 1,
@@ -351,18 +347,16 @@ namespace DebuggerTests
 						b_arr = TArray ("Array", 2)
 					}, "obj_own", num_fields: 3);
 			});
+		}
 
 		[Theory]
-#if MARTIN_FIXME
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
-#endif
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false, TestFlags.NotOnLinux)]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
-#if MARTIN_FIXME
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false)]
-#endif
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false, TestFlags.NotOnLinux)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true)]
-		public async Task RunOnArrayReturnObjectArrayByValue (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
+		public async Task RunOnArrayReturnObjectArrayByValue (string eval_fn, string bp_loc, int line, int col, bool roundtrip, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var ret_len = 5;
 			await RunCallFunctionOn (eval_fn,
 					"function () { return Object.values (this).filter ((k, i) => i%2 == 0); }",
@@ -393,12 +387,12 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
-#if MARTIN_FIXME
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false)]
-#endif
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false, TestFlags.NotOnLinux)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true)]
-		public async Task RunOnArrayReturnArrayByValue (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
-		=>	await RunCallFunctionOn (eval_fn,
+		public async Task RunOnArrayReturnArrayByValue (string eval_fn, string bp_loc, int line, int col, bool roundtrip, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await RunCallFunctionOn (eval_fn,
 				"function () { return Object.getOwnPropertyNames (this); }",
 				"big", bp_loc, line, col, returnByValue: true,
 				roundtrip: roundtrip,
@@ -417,16 +411,16 @@ namespace DebuggerTests
 					}
 					await Task.CompletedTask;
 			});
+		}
 
 		[Theory]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
-#if MARTIN_FIXME2
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
-#endif
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true, TestFlags.NotOnLinuxDev)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true)]
-		public async Task RunOnArrayReturnPrimitive (string eval_fn, string bp_loc, int line, int col, bool return_by_val)
+		public async Task RunOnArrayReturnPrimitive (string eval_fn, string bp_loc, int line, int col, bool return_by_val, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -500,22 +494,24 @@ namespace DebuggerTests
 			});
 		}
 
-		public static TheoryData<string, string, int, int, string, Func<string[], object>, bool> GettersTestData (bool use_cfo)
-			=> new TheoryData<string, string, int, int, string, Func<string[], object>, bool> {
+		public static TheoryData<string, string, int, int, string, Func<string[], object>, bool, TestFlags> GettersTestData (bool use_cfo, TestFlags flags = TestFlags.None)
+			=> new TheoryData<string, string, int, int, string, Func<string[], object>, bool, TestFlags> {
 				// Chrome sends this one
 				{
 					"invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');",
 					"PropertyGettersTest", 26, 3,
 					"function invokeGetter(arrayStr){ let result=this; const properties=JSON.parse(arrayStr); for(let i=0,n=properties.length;i<n;++i){ result=result[properties[i]]; } return result; }",
 					(arg_strs) => JArray.FromObject (arg_strs).ToString (),
-					use_cfo
+					use_cfo,
+					flags
 				},
 				{
 					"invoke_static_method_async ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTestAsync');",
 					"MoveNext", 34, 3,
 					"function invokeGetter(arrayStr){ let result=this; const properties=JSON.parse(arrayStr); for(let i=0,n=properties.length;i<n;++i){ result=result[properties[i]]; } return result; }",
 					(arg_strs) => JArray.FromObject (arg_strs).ToString (),
-					use_cfo
+					use_cfo,
+					flags
 				},
 
 				// VSCode sends this one
@@ -524,24 +520,26 @@ namespace DebuggerTests
 					"PropertyGettersTest", 26, 3,
 					"function(e){return this[e]}",
 					(args_str) => args_str?.Length > 0 ? args_str [0] : String.Empty,
-					use_cfo
+					use_cfo,
+					flags
 				},
 				{
 					"invoke_static_method_async ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTestAsync');",
 					"MoveNext", 34, 3,
 					"function(e){return this[e]}",
 					(args_str) => args_str?.Length > 0 ? args_str [0] : String.Empty,
-					use_cfo
+					use_cfo,
+					flags
 				}
 			};
 
 		[Theory]
-#if MARTIN_FIXME2
-		[MemberData (nameof (GettersTestData), parameters: false)]
-#endif
+		[MemberData (nameof (GettersTestData), false, TestFlags.NotOnLinuxDev)]
 		[MemberData (nameof (GettersTestData), parameters: true)]
-		public async Task PropertyGettersOnObjectsTest (string eval_fn, string method_name, int line, int col, string cfo_fn, Func<string[], object> get_args_fn, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task PropertyGettersOnObjectsTest (string eval_fn, string method_name, int line, int col, string cfo_fn, Func<string[], object> get_args_fn, bool use_cfo, TestFlags flags)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-cfo-test.cs", line, col,
 				method_name,
 				$"window.setTimeout(function() {{ {eval_fn} }}, 1);",
@@ -621,6 +619,7 @@ namespace DebuggerTests
 						await CheckProps (arr_elems, exp_elems, "ptd.DTArray");
 					}
 				});
+		}
 
 		[Theory]
 		[InlineData ("invoke_static_method_async ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTestAsync');", "MoveNext", 34, 3)]
@@ -653,11 +652,10 @@ namespace DebuggerTests
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 26, 3, false)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 26, 3, true)]
 		[InlineData ("invoke_getters_js_test ();", "/other.js", 26, 1, false)]
-#if MARTIN_FIXME2
-		[InlineData ("invoke_getters_js_test ();", "/other.js", 26, 1, true)]
-#endif
-		public async Task CheckAccessorsOnObjectsWithCFO (string eval_fn, string bp_loc, int line, int col, bool roundtrip)
+		[InlineData ("invoke_getters_js_test ();", "/other.js", 26, 1, true, TestFlags.NotOnLinuxDev)]
+		public async Task CheckAccessorsOnObjectsWithCFO (string eval_fn, string bp_loc, int line, int col, bool roundtrip, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			await RunCallFunctionOn (
 				eval_fn, "function() { return this; }", "ptd",
 				bp_loc, line, col,

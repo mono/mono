@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace DebuggerTests
 {
@@ -8,7 +10,8 @@ namespace DebuggerTests
 	{
 		None = 0,
 		NotOnLinux = 1,
-		NotOnMacCI = 2
+		NotOnLinuxDev = 2,
+		NotOnMacCI = 4
 	}
 
 	public static class TestHelper
@@ -18,7 +21,11 @@ namespace DebuggerTests
 		// FIXME: is there a better way to detect this on .NET Core?
 		internal static bool IsMacOS => File.Exists ("/usr/lib/libc.dylib");
 
-		public static bool IsSupported (TestFlags flags)
+		public static bool IsSupported (
+			TestFlags flags,
+			[CallerMemberName] string memberName = "",
+			[CallerFilePath] string sourceFilePath = "",
+			[CallerLineNumber] int sourceLineNumber = 0)
 		{
 			var variable = Environment.GetEnvironmentVariable (EnvironmentVariableName);
 			if (string.IsNullOrEmpty (variable))
@@ -32,15 +39,19 @@ namespace DebuggerTests
 				switch (part.ToLowerInvariant ()) {
 					case "stable":
 						if (flags != TestFlags.None)
-							return false;
+							return LogDisabled ();
 						break;
 					case "linux":
 						if (!IsMacOS && HasFlag (TestFlags.NotOnLinux))
-							return false;
+							return LogDisabled ();
+						break;
+					case "linux-dev":
+						if (!IsMacOS && HasFlag (TestFlags.NotOnLinux, TestFlags.NotOnLinuxDev))
+							return LogDisabled ();
 						break;
 					case "mac-ci":
 						if (IsMacOS & HasFlag (TestFlags.NotOnMacCI))
-							return false;
+							return LogDisabled ();
 						break;
 					default:
 						Console.Error.WriteLine ($"Invalid {EnvironmentVariableName} setting: {part}");
@@ -50,7 +61,13 @@ namespace DebuggerTests
 
 			return true;
 
-			bool HasFlag (TestFlags flag) => (flags & flag) != 0;
+			bool HasFlag (params TestFlags[] check) => check.Any (f => (flags & f) != 0);
+
+			bool LogDisabled ()
+			{
+				Console.WriteLine ($"Ignoring test {memberName} in {sourceFilePath}:{sourceLineNumber}");
+				return false;
+			}
 		}
 	}
 }
