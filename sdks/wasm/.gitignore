@@ -9,3 +9,4 @@ builds/threads-debug
 builds/threads-release
 .configured
 src/pinvoke-tables-default-netcore.h
+!DebuggerTestSuite

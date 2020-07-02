@@ -13,12 +13,12 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, false)]
 		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, true)]
-#if MARTIN_FIXME
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
-#endif
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false, TestFlags.NotOnLinux)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
-		public async Task InspectPrimitiveTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
-			=> await TestSimpleArrayLocals (
+		public async Task InspectPrimitiveTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:PrimitiveTypeLocals",
 				method_name: method_name,
@@ -29,6 +29,7 @@ namespace DebuggerTests
 				test_prev_frame: test_prev_frame,
 				frame_idx: frame_idx,
 				use_cfo: use_cfo);
+		}
 
 		[Theory]
 		[InlineData (32, 2, "ValueTypeLocals", false, 0, false)]
@@ -82,14 +83,12 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (66, 2, "GenericTypeLocals", false, 0, false)]
 		[InlineData (66, 2, "GenericTypeLocals", false, 0, true)]
-#if MARTIN_FIXME
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
-#endif
-#if MARTIN_FIXME3
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
-#endif
-		public async Task InspectGenericTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
-			=> await TestSimpleArrayLocals (
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false, TestFlags.NotOnLinux)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnMacCI)]
+		public async Task InspectGenericTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:GenericTypeLocals",
 				method_name: method_name,
@@ -116,6 +115,7 @@ namespace DebuggerTests
 				test_prev_frame: test_prev_frame,
 				frame_idx: frame_idx,
 				use_cfo: use_cfo);
+		}
 
 		[Theory]
 		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, false)]
