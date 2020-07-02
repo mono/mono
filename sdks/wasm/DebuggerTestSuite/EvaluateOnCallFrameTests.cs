@@ -66,9 +66,12 @@ namespace DebuggerTests
 					CheckContentValue (evaluate, "test");
 				});
 
-		[Fact]
-		public async Task EvaluateLocals ()
-			=> await CheckInspectLocalsAtBreakpointSite (
+		[Theory]
+		[InlineData (TestFlags.NotOnMac)]
+		public async Task EvaluateLocals (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 20, 16,
 				"run",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
@@ -84,6 +87,7 @@ namespace DebuggerTests
 					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "local_dt");
 					await CheckDateTimeValue (evaluate, new DateTime (2010, 9, 8, 7, 6, 5));
 				});
+		}
 
 		[Fact]
 		public async Task EvaluateLocalsAsync ()
@@ -181,7 +185,7 @@ namespace DebuggerTests
 				});
 
 		[Theory]
-		[InlineData (TestFlags.NotOnMacCI)]
+		[InlineData (TestFlags.NotOnMac)]
 		public async Task EvaluateThisExpressions (TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported  (flags)) return;

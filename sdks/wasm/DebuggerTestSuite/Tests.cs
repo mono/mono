@@ -127,8 +127,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (0)]
-		[InlineData (44)]
-		public async Task CheckMultipleBreakpointsOnSameLine (int col) {
+		[InlineData (44, TestFlags.NotOnMac)]
+		public async Task CheckMultipleBreakpointsOnSameLine (int col, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 
 			var scripts = SubscribeToScripts(insp);
@@ -226,7 +228,7 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (TestFlags.NotOnMacCI)]
+		[InlineData (TestFlags.NotOnMac)]
 		public async Task ExceptionThrownInJS (TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -498,9 +500,11 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false)]
-		[InlineData (true)]
-		public async Task InspectLocalsInPreviousFramesDuringSteppingIn2 (bool use_cfo) {
+		[InlineData (false, TestFlags.NotOnMacDev)]
+		[InlineData (true, TestFlags.NotOnMacDev)]
+		public async Task InspectLocalsInPreviousFramesDuringSteppingIn2 (bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -1152,8 +1156,8 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false, TestFlags.NotOnMacCI)]
-		[InlineData (true, TestFlags.NotOnMacCI)]
+		[InlineData (false, TestFlags.NotOnMac)]
+		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task InspectLocalsWithStructsStaticAsync (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -1328,10 +1332,12 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false)]
-		[InlineData (true)]
-		public async Task InspectLocalsWithPointers (bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		[InlineData (false, TestFlags.NotOnMacDev)]
+		[InlineData (true, TestFlags.NotOnMacDev)]
+		public async Task InspectLocalsWithPointers (bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", 294, 2,
 				"PointersTest",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] Math:PointersTest'); })",
@@ -1358,6 +1364,7 @@ namespace DebuggerTests
 					}, "locals");
 
 				});
+		}
 
 		[Theory]
 		[InlineData (false)]

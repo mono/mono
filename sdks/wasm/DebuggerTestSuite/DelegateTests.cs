@@ -13,8 +13,8 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (0, 45, 2, "DelegatesTest", false)]
 		[InlineData (0, 45, 2, "DelegatesTest", true)]
-		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnMacCI)]
-		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnMacCI)]
+		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnMac)]
+		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnMac)]
 		public async Task InspectLocalsWithDelegatesAtBreakpointSite (int frame, int line, int col, string method_name, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -75,7 +75,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (0, 190, 2, "DelegatesSignatureTest", false, TestFlags.NotOnLinuxDev)]
-		[InlineData (0, 190, 2, "DelegatesSignatureTest", true)]
+		[InlineData (0, 190, 2, "DelegatesSignatureTest", true, TestFlags.NotOnMac)]
 		[InlineData (2, 90, 2, "InnerMethod2", false)]
 		[InlineData (2, 90, 2, "InnerMethod2", true)]
 		public async Task InspectDelegateSignaturesWithFunc (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)

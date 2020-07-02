@@ -11,7 +11,9 @@ namespace DebuggerTests
 		None = 0,
 		NotOnLinux = 1,
 		NotOnLinuxDev = 2,
-		NotOnMacCI = 4
+		NotOnMac = 4,
+		NotOnMacDev = 8,
+		NotWorking = 16
 	}
 
 	public static class TestHelper
@@ -42,15 +44,19 @@ namespace DebuggerTests
 							return LogDisabled ();
 						break;
 					case "linux":
-						if (!IsMacOS && HasFlag (TestFlags.NotOnLinux))
+						if (!IsMacOS && HasFlag (TestFlags.NotOnLinux, TestFlags.NotWorking))
 							return LogDisabled ();
 						break;
 					case "linux-dev":
-						if (!IsMacOS && HasFlag (TestFlags.NotOnLinux, TestFlags.NotOnLinuxDev))
+						if (!IsMacOS && HasFlag (TestFlags.NotOnLinux, TestFlags.NotOnLinuxDev, TestFlags.NotWorking))
 							return LogDisabled ();
 						break;
-					case "mac-ci":
-						if (IsMacOS & HasFlag (TestFlags.NotOnMacCI))
+					case "mac":
+						if (IsMacOS & HasFlag (TestFlags.NotOnMac, TestFlags.NotWorking))
+							return LogDisabled ();
+						break;
+					case "mac-dev":
+						if (IsMacOS & HasFlag (TestFlags.NotOnMac, TestFlags.NotOnMacDev, TestFlags.NotWorking))
 							return LogDisabled ();
 						break;
 					default:

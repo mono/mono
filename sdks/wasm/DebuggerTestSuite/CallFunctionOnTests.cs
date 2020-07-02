@@ -460,11 +460,12 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (null)]
+		[InlineData (null, TestFlags.NotOnMac)]
 		[InlineData (false)]
 		[InlineData (true)]
-		public async Task CheckErrorsWithSilent (bool? silent)
+		public async Task CheckErrorsWithSilent (bool? silent, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -534,8 +535,8 @@ namespace DebuggerTests
 			};
 
 		[Theory]
-		[MemberData (nameof (GettersTestData), false, TestFlags.NotOnLinuxDev)]
-		[MemberData (nameof (GettersTestData), parameters: true)]
+		[MemberData (nameof (GettersTestData), false, TestFlags.NotWorking)]
+		[MemberData (nameof (GettersTestData), true, TestFlags.NotWorking)]
 		public async Task PropertyGettersOnObjectsTest (string eval_fn, string method_name, int line, int col, string cfo_fn, Func<string[], object> get_args_fn, bool use_cfo, TestFlags flags)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -649,7 +650,7 @@ namespace DebuggerTests
 				});
 
 		[Theory]
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 26, 3, false)]
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 26, 3, false, TestFlags.NotOnMac)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 26, 3, true)]
 		[InlineData ("invoke_getters_js_test ();", "/other.js", 26, 1, false)]
 		[InlineData ("invoke_getters_js_test ();", "/other.js", 26, 1, true, TestFlags.NotOnLinuxDev)]

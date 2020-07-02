@@ -81,10 +81,10 @@ namespace DebuggerTests
 				use_cfo: use_cfo);
 
 		[Theory]
-		[InlineData (66, 2, "GenericTypeLocals", false, 0, false)]
+		[InlineData (66, 2, "GenericTypeLocals", false, 0, false, TestFlags.NotOnMac)]
 		[InlineData (66, 2, "GenericTypeLocals", false, 0, true)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false, TestFlags.NotOnLinux)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnMacCI)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnMac)]
 		public async Task InspectGenericTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -473,7 +473,7 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false, TestFlags.NotOnMacCI)]
+		[InlineData (false, TestFlags.NotOnMac)]
 		[InlineData (true)]
 		public async Task InspectValueTypeArrayLocalsInAsyncStaticStructMethod (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
