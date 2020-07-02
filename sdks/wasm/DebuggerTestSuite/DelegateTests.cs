@@ -13,8 +13,10 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (0, 45, 2, "DelegatesTest", false)]
 		[InlineData (0, 45, 2, "DelegatesTest", true)]
+#if MARTIN_FIXME3
 		[InlineData (2, 90, 2, "InnerMethod2", false)]
 		[InlineData (2, 90, 2, "InnerMethod2", true)]
+#endif
 		public async Task InspectLocalsWithDelegatesAtBreakpointSite (int frame, int line, int col, string method_name, bool use_cfo) =>
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", line, col, method_name,

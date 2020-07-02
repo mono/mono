@@ -85,7 +85,9 @@ namespace DebuggerTests
 #if MARTIN_FIXME
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
 #endif
+#if MARTIN_FIXME3
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+#endif
 		public async Task InspectGenericTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
 			=> await TestSimpleArrayLocals (
 				line, col,
@@ -469,7 +471,9 @@ namespace DebuggerTests
 		}
 
 		[Theory]
+#if MARTIN_FIXME3
 		[InlineData (false)]
+#endif
 		[InlineData (true)]
 		public async Task InspectValueTypeArrayLocalsInAsyncStaticStructMethod (bool use_cfo)
 		{

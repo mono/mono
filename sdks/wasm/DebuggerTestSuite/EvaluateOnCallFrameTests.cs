@@ -180,7 +180,9 @@ namespace DebuggerTests
 					CheckContentValue (evaluate, "10");
 				});
 
+#if MARTIN_FIXME3
 		[Fact]
+#endif
 		public async Task EvaluateThisExpressions ()
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 20, 16,
