@@ -651,7 +651,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 26, 3, false, TestFlags.NotOnMac)]
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 26, 3, true)]
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 26, 3, true, TestFlags.NotOnMac)]
 		[InlineData ("invoke_getters_js_test ();", "/other.js", 26, 1, false)]
 		[InlineData ("invoke_getters_js_test ();", "/other.js", 26, 1, true, TestFlags.NotOnLinuxDev)]
 		public async Task CheckAccessorsOnObjectsWithCFO (string eval_fn, string bp_loc, int line, int col, bool roundtrip, TestFlags flags = TestFlags.None)
