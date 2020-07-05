@@ -12,7 +12,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (0, 45, 2, "DelegatesTest", false)]
-		[InlineData (0, 45, 2, "DelegatesTest", true)]
+		[InlineData (0, 45, 2, "DelegatesTest", true, TestFlags.NotOnMac)]
 		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnMac)]
 		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnMac)]
 		public async Task InspectLocalsWithDelegatesAtBreakpointSite (int frame, int line, int col, string method_name, bool use_cfo, TestFlags flags = TestFlags.None)

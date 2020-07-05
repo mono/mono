@@ -88,8 +88,11 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task CreateJS0Breakpoint () {
+		[Theory]
+		[InlineData (TestFlags.NotOnMac)]
+		public async Task CreateJS0Breakpoint (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			// Test that js column 0 does as expected
 			var insp = new Inspector ();
 
@@ -307,8 +310,11 @@ namespace DebuggerTests
 				}
 			);
 
-		[Fact]
-		public async Task InspectPrimitiveTypeLocalsAtBreakpointSite () =>
+		[Theory]
+		[InlineData (TestFlags.NotOnMac)]
+		public async Task InspectPrimitiveTypeLocalsAtBreakpointSite (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", 145, 2, "PrimitiveTypesTest",
 				"window.setTimeout(function() { invoke_static_method ('[debugger-test] Math:PrimitiveTypesTest'); }, 1);",
@@ -317,6 +323,7 @@ namespace DebuggerTests
 					CheckSymbol (locals, "c1", "65 'A'");
 				}
 			);
+		}
 
 		[Fact]
 		public async Task InspectLocalsTypesAtBreakpointSite () =>
@@ -741,8 +748,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false)]
-		[InlineData (true)]
-		public async Task InspectLocalsInAsyncMethods (bool use_cfo) {
+		[InlineData (true, TestFlags.NotOnMac)]
+		public async Task InspectLocalsInAsyncMethods (bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);

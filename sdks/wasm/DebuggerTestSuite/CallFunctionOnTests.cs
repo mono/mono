@@ -265,7 +265,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false, TestFlags.NotOnLinuxDev)]
-		[InlineData (true, TestFlags.NotOnLinuxDev)]
+		[InlineData (true, TestFlags.NotOnLinuxDev | TestFlags.NotOnMac)]
 		public async Task RunOnCFOValueTypeResult (bool roundtrip, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
