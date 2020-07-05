@@ -60,8 +60,10 @@ namespace DebuggerTests
 		[InlineData (49, 2, "ObjectTypeLocals", false, 0, true, TestFlags.NotOnMac)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnMac)]
-		public async Task InspectObjectArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
-			=> await TestSimpleArrayLocals (
+		public async Task InspectObjectArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:ObjectTypeLocals",
 				method_name: method_name,
@@ -79,6 +81,7 @@ namespace DebuggerTests
 				test_prev_frame: test_prev_frame,
 				frame_idx: frame_idx,
 				use_cfo: use_cfo);
+		}
 
 		[Theory]
 		[InlineData (66, 2, "GenericTypeLocals", false, 0, false, TestFlags.NotOnMac)]
