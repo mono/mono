@@ -158,7 +158,7 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false, TestFlags.NotOnLinuxDev)]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false, TestFlags.NotOnLinuxDev)]
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false, TestFlags.NotOnLinuxDev | TestFlags.NotOnMac)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true)]
 		public async Task RunOnArrayReturnArray (string eval_fn, string bp_loc, int line, int col, bool roundtrip, TestFlags flags = TestFlags.None)
 		{
@@ -465,7 +465,7 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (null, TestFlags.NotOnMac)]
 		[InlineData (false)]
-		[InlineData (true)]
+		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task CheckErrorsWithSilent (bool? silent, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;

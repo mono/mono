@@ -32,12 +32,14 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (32, 2, "ValueTypeLocals", false, 0, false)]
+		[InlineData (32, 2, "ValueTypeLocals", false, 0, false, TestFlags.NotOnMac)]
 		[InlineData (32, 2, "ValueTypeLocals", false, 0, true)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
-		public async Task InspectValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo)
-			=> await TestSimpleArrayLocals (
+		public async Task InspectValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await TestSimpleArrayLocals (
 				line, col,
 				entry_method_name: "[debugger-test] DebuggerTests.ArrayTestsClass:ValueTypeLocals",
 				method_name: method_name,
@@ -54,6 +56,7 @@ namespace DebuggerTests
 				test_prev_frame: test_prev_frame,
 				frame_idx: frame_idx,
 				use_cfo: use_cfo);
+		}
 
 		[Theory]
 		[InlineData (49, 2, "ObjectTypeLocals", false, 0, false)]
@@ -283,9 +286,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false)]
-		[InlineData (true)]
-		public async Task InspectObjectArrayMembers (bool use_cfo)
+		[InlineData (true, TestFlags.NotOnMac)]
+		public async Task InspectObjectArrayMembers (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);

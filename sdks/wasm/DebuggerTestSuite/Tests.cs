@@ -328,8 +328,11 @@ namespace DebuggerTests
 			);
 		}
 
-		[Fact]
-		public async Task InspectLocalsTypesAtBreakpointSite () =>
+		[Theory]
+		[InlineData (TestFlags.NotOnMac)]
+		public async Task InspectLocalsTypesAtBreakpointSite (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test2.cs", 40, 2, "Types",
 				"window.setTimeout(function() { invoke_static_method (\"[debugger-test] Fancy:Types\")(); }, 1);",
@@ -357,6 +360,7 @@ namespace DebuggerTests
 						CheckNumber (locals, "usMax", ushort.MaxValue);
 				}
 			);
+		}
 
 		[Theory]
 		[InlineData (false)]
