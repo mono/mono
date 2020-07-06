@@ -61,12 +61,13 @@ namespace DebuggerTests
 		// This tests `callFunctionOn` with a function that the vscode-js-debug extension uses
 		// Using this here as a non-trivial test case
 		[Theory]
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10, TestFlags.NotOnMacDev)]
 		[InlineData ("big_array_js_test (0);", "/other.js", 5, 1, 0)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 10)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 0);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 0)]
-		public async Task CheckVSCodeTestFunction2 (string eval_fn, string bp_loc, int line, int col, int len)
+		public async Task CheckVSCodeTestFunction2 (string eval_fn, string bp_loc, int line, int col, int len, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var fetch_start_idx = 2;
 			var num_elems_fetch = 3;
 			string vscode_fn1 = "function(e,t){const r={},n=-1===e?0:e,i=-1===t?this.length:e+t;for(let e=n;e<i&&e<this.length;++e){const t=Object.getOwnPropertyDescriptor(this,e);t&&Object.defineProperty(r,e,t)}return r}";
