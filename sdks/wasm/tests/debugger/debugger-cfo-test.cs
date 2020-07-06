@@ -34,6 +34,13 @@ namespace DebuggerTests
 			System.Console.WriteLine("break here");
 			await System.Threading.Tasks.Task.CompletedTask;
 		}
+
+		public static void MethodForNegativeTests (string value = null)
+		{
+			var ptd = new ClassWithProperties { StringField = value };
+			var swp = new StructWithProperties { StringField = value };
+			System.Console.WriteLine("break here");
+		}
 	}
 
 	class ClassWithProperties

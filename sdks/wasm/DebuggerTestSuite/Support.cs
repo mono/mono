@@ -405,13 +405,15 @@ namespace DebuggerTests
 			return wait_res;
 		}
 
-		internal async Task<Result> InvokeGetter (JToken obj, object arguments, string fn = "function(e){return this[e]}",bool expect_ok = true)
+		internal async Task<Result> InvokeGetter (JToken obj, object arguments, string fn = "function(e){return this[e]}", bool expect_ok = true, bool? returnByValue=null)
 		{
 			var req = JObject.FromObject (new {
 				functionDeclaration = fn,
 				objectId            = obj ["value"]?["objectId"]?.Value<string> (),
 				arguments           = new [] { new { value = arguments } }
 			});
+			if (returnByValue != null)
+				req ["returnByValue"] = returnByValue.Value;
 
 			var res = await ctx.cli.SendCommand ("Runtime.callFunctionOn", req, ctx.token);
 			Assert.True (expect_ok == res.IsOk, $"InvokeGetter failed for {req} with {res}");
