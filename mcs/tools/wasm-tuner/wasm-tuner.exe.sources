@@ -1,5 +1,6 @@
 tuner.cs
 InterpToNativeGenerator.cs
+PInvokeTableGenerator.cs
 ../../build/common/Consts.cs
 ../../build/common/SR.cs
 ../../class/System.Json/corefx/SR.cs
