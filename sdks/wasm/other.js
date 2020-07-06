@@ -28,3 +28,17 @@ function getters_js_test () {
 	console.log (`break here`);
 	return ptd;
 }
+
+function negative_cfo_test (str_value = null) {
+	var ptd = {
+		get Int () { return 5; },
+		get String () { return "foobar"; },
+		get DT () { return "dt"; },
+		get IntArray () { return [1,2,3]; },
+		get DTArray () { return ["dt0", "dt1"]; },
+		DTAutoProperty: "dt",
+		StringField: str_value
+	};
+	console.log (`break here`);
+	return ptd;
+}
