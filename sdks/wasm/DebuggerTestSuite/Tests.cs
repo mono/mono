@@ -1389,9 +1389,11 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false)]
-		[InlineData (true)]
-		public async Task InspectLocalsForStructInstanceMethod (bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		[InlineData (true, TestFlags.NotOnMac)]
+		public async Task InspectLocalsForStructInstanceMethod (bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-array-test.cs", 236, 3,
 				"GenericInstanceMethod<DebuggerTests.SimpleClass>",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EntryClass:run'); })",
@@ -1423,6 +1425,8 @@ namespace DebuggerTests
 							label: "this#0");
 
 				});
+		}
+
 		//
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}

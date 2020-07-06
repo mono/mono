@@ -316,7 +316,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false, TestFlags.NotOnLinux)]
-		[InlineData (true)]
+		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task RunOnJSObject (bool roundtrip, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -418,7 +418,7 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false, TestFlags.NotOnMac)]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true, TestFlags.NotOnLinuxDev)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true)]
@@ -628,8 +628,8 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData ("invoke_static_method_async ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTestAsync');", "MoveNext", 34, 3)]
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "PropertyGettersTest", 26, 3)]
-		public async Task PropertyGettersOnStructsTest (string eval_fn, string method_name, int line, int col)
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:PropertyGettersTest');", "PropertyGettersTest", 26, 3, TestFlags.NotOnMac)]
+		public async Task PropertyGettersOnStructsTest (string eval_fn, string method_name, int line, int col, TestFlags flags = TestFlags.None)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-cfo-test.cs", line, col,
 				method_name,
