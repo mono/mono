@@ -76,8 +76,8 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (0, 190, 2, "DelegatesSignatureTest", false, TestFlags.NotOnLinuxDev)]
 		[InlineData (0, 190, 2, "DelegatesSignatureTest", true, TestFlags.NotOnMac)]
-		[InlineData (2, 90, 2, "InnerMethod2", false)]
-		[InlineData (2, 90, 2, "InnerMethod2", true)]
+		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnLinux)]
+		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnLinux)]
 		public async Task InspectDelegateSignaturesWithFunc (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -187,7 +187,7 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (0, 228, 2, "NestedDelegatesTest", false)]
 		[InlineData (0, 228, 2, "NestedDelegatesTest", true, TestFlags.NotOnLinuxDev)]
-		[InlineData (2, 90, 2, "InnerMethod2", false)]
+		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnLinux)]
 		[InlineData (2, 90, 2, "InnerMethod2", true)]
 		public async Task NestedDelegatesTest (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)
 		{

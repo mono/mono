@@ -370,7 +370,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
                 DEBUGGER_TEST_SUITE_FLAGS=mac-dev TEST_SUITE_CHROME_REVISION=781470 ${TESTCMD} --label=debugger-mac-781470 --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
                 DEBUGGER_TEST_SUITE_FLAGS=mac TEST_SUITE_CHROME_REVISION=latest ${TESTCMD} --label=debugger-mac-latest --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
                 # we only run this on the Mac
-                DEBUGGER_TEST_SUITE_FLAGS=mac ${TESTCMD} --label=debugger-system --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+                # DEBUGGER_TEST_SUITE_FLAGS=mac ${TESTCMD} --label=debugger-system --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             fi
 
             # ${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-System

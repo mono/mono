@@ -207,10 +207,12 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false)]
+		[InlineData (false, TestFlags.NotOnMac)]
 		[InlineData (true)]
-		public async Task RunOnVTArray (bool roundtrip)
-		=>	await RunCallFunctionOn (
+		public async Task RunOnVTArray (bool roundtrip, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await RunCallFunctionOn (
 				"invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);",
 				"function (m) { return Object.values (this).filter ((k, i) => i%m == 0); }",
 				"ss_arr",
@@ -262,6 +264,7 @@ namespace DebuggerTests
 
 					}
 			});
+		}
 
 		[Theory]
 		[InlineData (false, TestFlags.NotOnLinuxDev)]

@@ -58,7 +58,7 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (49, 2, "ObjectTypeLocals", false, 0, false)]
 		[InlineData (49, 2, "ObjectTypeLocals", false, 0, true, TestFlags.NotOnMac)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false, TestFlags.NotOnLinux)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnMac)]
 		public async Task InspectObjectArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
@@ -356,10 +356,11 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false)]
+		[InlineData (false, TestFlags.NotOnLinux)]
 		[InlineData (true)]
-		public async Task InspectValueTypeArrayLocalsStaticAsync (bool use_cfo)
+		public async Task InspectValueTypeArrayLocalsStaticAsync (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -421,9 +422,9 @@ namespace DebuggerTests
 
 		// TODO: Check previous frame too
 		[Theory]
-		[InlineData (false)]
+		[InlineData (false, TestFlags.NotOnLinux)]
 		[InlineData (true)]
-		public async Task InspectValueTypeArrayLocalsInstanceAsync (bool use_cfo)
+		public async Task InspectValueTypeArrayLocalsInstanceAsync (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			var insp = new Inspector ();
 			//Collect events

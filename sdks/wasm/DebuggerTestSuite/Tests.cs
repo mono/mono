@@ -26,8 +26,11 @@ namespace DebuggerTests
 			Assert.Contains ("dotnet://Simple.Dependency.dll/dependency.cs", scripts.Values);
 		}
 
-		[Fact]
-		public async Task CreateGoodBreakpoint () {
+		[Theory]
+		[InlineData (TestFlags.NotOnMac)]
+		public async Task CreateGoodBreakpoint (TestFlags flags = TestFlags.NotOnMac)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 
 			//Collect events
@@ -508,7 +511,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false, TestFlags.NotOnMacDev)]
-		[InlineData (true, TestFlags.NotOnMacDev)]
+		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task InspectLocalsInPreviousFramesDuringSteppingIn2 (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -810,9 +813,11 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false)]
+		[InlineData (false, TestFlags.NotOnMac)]
 		[InlineData (true)]
-		public async Task InspectLocalsWithStructs (bool use_cfo) {
+		public async Task InspectLocalsWithStructs (bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
