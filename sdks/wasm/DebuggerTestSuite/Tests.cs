@@ -688,8 +688,11 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task InspectLocalsDuringSteppingIn () {
+		[Theory]
+		[InlineData (TestFlags.NotOnMac)]
+		public async Task InspectLocalsDuringSteppingIn (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);

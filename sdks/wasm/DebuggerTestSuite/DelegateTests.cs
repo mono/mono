@@ -147,9 +147,11 @@ namespace DebuggerTests
 		[InlineData (0, 211, 2, "ActionTSignatureTest", false)]
 		[InlineData (0, 211, 2, "ActionTSignatureTest", true)]
 		[InlineData (2, 90, 2, "InnerMethod2", false)]
-		[InlineData (2, 90, 2, "InnerMethod2", true)]
-		public async Task ActionTSignatureTest (int frame, int line, int col, string bp_method, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnMac)]
+		public async Task ActionTSignatureTest (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", line, col,
 				bp_method,
 				"window.setTimeout (function () { invoke_static_method ('[debugger-test] Math:ActionTSignatureTest'); }, 1)",
@@ -183,6 +185,7 @@ namespace DebuggerTests
 						TObject ("System.Action<Math.GenericStruct<int[]>>", is_null: true)
 					}, "locals#fn_action_arr");
 				});
+		}
 
 		[Theory]
 		[InlineData (0, 228, 2, "NestedDelegatesTest", false)]

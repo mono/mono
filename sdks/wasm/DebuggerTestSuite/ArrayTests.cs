@@ -285,7 +285,7 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false)]
+		[InlineData (false, TestFlags.NotOnMac)]
 		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task InspectObjectArrayMembers (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
