@@ -1,7 +1,7 @@
 #emcc has lots of bash'isms
 SHELL:=/bin/bash
 
-EMSCRIPTEN_VERSION=1.39.16
+EMSCRIPTEN_VERSION=1.39.18
 EMSCRIPTEN_LOCAL_SDK_DIR=$(TOP)/sdks/builds/toolchains/emsdk
 
 EMSCRIPTEN_SDK_DIR ?= $(EMSCRIPTEN_LOCAL_SDK_DIR)
@@ -54,7 +54,7 @@ WASM_RUNTIME_BASE_CONFIGURE_FLAGS = \
 	--disable-crash-reporting \
 	--with-bitcode=yes \
 	$(if $(ENABLE_CXX),--enable-cxx) \
-	--enable-checked-build=private_types
+	$(if $(RELEASE),,--enable-checked-build=private_types)
 
 # $(1) - target
 define WasmRuntimeTemplate

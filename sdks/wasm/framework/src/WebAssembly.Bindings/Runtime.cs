@@ -365,6 +365,8 @@ namespace WebAssembly {
  						res += "i";
 					} else if (t == typeof (Uri)) {
 						res += "u";
+					} else if (t.IsPointer) {
+						res += "p";
 					} else {
  						if (t.IsValueType)
  							throw new Exception("Can't handle VT arguments");

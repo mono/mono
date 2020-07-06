@@ -607,7 +607,8 @@ var MonoSupportLib = {
 		mono_load_runtime_and_bcl: function (vfs_prefix, deploy_prefix, enable_debugging, file_list, loaded_cb, fetch_file_cb) {
 			var pending = file_list.length;
 			var loaded_files = [];
-			var mono_wasm_add_assembly = Module.cwrap ('mono_wasm_add_assembly', null, ['string', 'number', 'number']);
+			var loaded_files_with_debug_info = [];
+			var mono_wasm_add_assembly = Module.cwrap ('mono_wasm_add_assembly', 'number', ['string', 'number', 'number']);
 
 			if (!fetch_file_cb) {
 				if (ENVIRONMENT_IS_NODE) {
@@ -656,7 +657,7 @@ var MonoSupportLib = {
 						}
 					}
 					else {
-						loaded_files.push (response.url);
+						loaded_files.push ({ url: response.url, file: file_name});
 						return response ['arrayBuffer'] ();
 					}
 				}).then (function (blob) {
@@ -664,12 +665,17 @@ var MonoSupportLib = {
 					var memory = Module._malloc(asm.length);
 					var heapBytes = new Uint8Array(Module.HEAPU8.buffer, memory, asm.length);
 					heapBytes.set (asm);
-					mono_wasm_add_assembly (file_name, memory, asm.length);
-
+					var hasPpdb = mono_wasm_add_assembly (file_name, memory, asm.length);
+					
+					if (!hasPpdb) {
+						var index = loaded_files.findIndex(element => element.file == file_name);
+						loaded_files.splice(index, 1);
+					}
 					//console.log ("MONO_WASM: Loaded: " + file_name);
 					--pending;
 					if (pending == 0) {
-						MONO.loaded_files = loaded_files;
+						loaded_files.forEach(value => loaded_files_with_debug_info.push(value.url));
+						MONO.loaded_files = loaded_files_with_debug_info;
 						var load_runtime = Module.cwrap ('mono_wasm_load_runtime', null, ['string', 'number']);
 
 						console.log ("MONO_WASM: Initializing mono runtime");

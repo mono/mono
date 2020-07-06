@@ -283,6 +283,11 @@ namespace BindingsTestSuite
         public static Uri StringToUri (string uri) 
         { 
             return new Uri(uri);
-        }        
+        }
+
+		public unsafe void* PassReturnPtr (void *ptr)
+		{
+			return ptr;
+		}
     }
 }
