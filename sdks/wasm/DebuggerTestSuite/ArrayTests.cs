@@ -159,7 +159,7 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, false)]
+		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, false, TestFlags.NotOnMac)]
 		[InlineData (191, 2, "GenericValueTypeLocals2", false, 0, true, TestFlags.NotOnLinuxDev)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
@@ -521,9 +521,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false)]
-		[InlineData (true)]
-		public async Task InspectValueTypeArrayLocalsInAsyncInstanceStructMethod (bool use_cfo)
+		[InlineData (true, TestFlags.NotOnMac)]
+		public async Task InspectValueTypeArrayLocalsInAsyncInstanceStructMethod (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);

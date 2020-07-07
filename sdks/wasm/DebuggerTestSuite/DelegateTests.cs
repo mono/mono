@@ -190,7 +190,7 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (0, 228, 2, "NestedDelegatesTest", false)]
 		[InlineData (0, 228, 2, "NestedDelegatesTest", true, TestFlags.NotOnLinuxDev)]
-		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnLinux)]
+		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnLinux | TestFlags.NotOnMac)]
 		[InlineData (2, 90, 2, "InnerMethod2", true)]
 		public async Task NestedDelegatesTest (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)
 		{

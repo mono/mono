@@ -364,8 +364,10 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false)]
-		[InlineData (true)]
-		public async Task InspectLocalsWithGenericTypesAtBreakpointSite (bool use_cfo) =>
+		[InlineData (true, TestFlags.NotOnMac)]
+		public async Task InspectLocalsWithGenericTypesAtBreakpointSite (bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-test.cs", 65, 2, "GenericTypesTest",
 				"window.setTimeout(function() { invoke_generic_types_test (); }, 1);",
@@ -385,6 +387,7 @@ namespace DebuggerTests
 					CheckObject (locals, "list_arr_null_unused", "System.Collections.Generic.Dictionary<Math[], Math.IsMathNull>[]", is_null: true);
 				}
 			);
+		}
 
 		object TGenericStruct(string typearg, string stringField)
 			=> new {
