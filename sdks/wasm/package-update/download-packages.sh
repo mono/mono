@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e 
 set -u
 
@@ -6,6 +6,8 @@ ASP_REMOTE_NAME="upstream"
 MONO_REMOTE_NAME="upstream"
 ASP_BRANCH_NAME="blazor-wasm"
 MONO_BRANCH_NAME="master"
+FILEPATH=""
+URL=""
 
 while (("$#"));
 do 
@@ -14,10 +16,6 @@ do
     case ${key} in
     -r|--runtime)
         RUNTIME_VER="$2"
-        shift 2
-        ;;
-    -f|--filepath)
-        FILEPATH="$2"
         shift 2
         ;;
     -u|--url)
@@ -46,8 +44,6 @@ do
     esac
 done
 
-echo $MONO
-
 if [ -z "$RUNTIME_VER" ]; then
 	echo "Error: runtime version required. Use -r"
 	exit 1
@@ -63,30 +59,27 @@ if [ -z "$MONO" ]; then
     exit 1
 fi
 
-if  [ -z "$FILEPATH" -a -z "$URL" ]; then
-	echo "Error: Either path to the wasm package file required, or the url to download from."
-	exit 1
-fi
-
 NUGET_HOME=${NUGET_HOME:-"$HOME/.nuget"}
 PACKAGE_PATH="$NUGET_HOME/packages/microsoft.aspnetcore.components.webassembly.runtime/$RUNTIME_VER/tools/dotnetwasm"
 PROXY_PACKAGE_PATH="$NUGET_HOME/packages/microsoft.aspnetcore.components.webassembly.devserver/$RUNTIME_VER/tools/BlazorDebugProxy"
 ASP_PROXY_PATH="$ASPNETCORE/src/Components/WebAssembly/DebugProxy/src"
 MONO_PROXY_PATH="$MONO/sdks/wasm/Mono.WebAssembly.DebuggerProxy"
 TMP_DIR=`mktemp -d`
-TMP_PKG_DIR=$TMP_DIR/wasm-package/
+TMP_PKG_DIR=$TMP_DIR/wasm-package
+mkdir $TMP_PKG_DIR
 
 if [ ! -d "$NUGET_HOME" ]; then
 	echo "NUGET_HOME envar = $NUGET_HOME does not exist."
 	exit 1
 fi
 
-if [ -z "$FILEPATH" ]
-then
+if [ ! -z "$URL" ]; then
     wget -O "$TMP_DIR/wasm-package.zip" $URL
     unzip "$TMP_DIR/wasm-package.zip" -d $TMP_PKG_DIR
 else
-    unzip "$FILEPATH" -d $TMP_PKG_DIR
+    cp -r "$MONO/sdks/out/wasm-bcl" $TMP_PKG_DIR
+    cp -r "$MONO/sdks/wasm/framework" $TMP_PKG_DIR
+    cp -r "$MONO/sdks/wasm/builds" $TMP_PKG_DIR
 fi
 
 echo "pkg: $TMP_PKG_DIR"

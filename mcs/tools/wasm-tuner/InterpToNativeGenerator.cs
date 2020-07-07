@@ -28,6 +28,7 @@ class InterpToNativeGenerator {
 		"VIIIIIIIIIIII",
 		"VIIIIIIIIIIIII",
 		"VIIIIIIIIIIIIII",
+		"VIIIIIIIIIIIIIII",
 		"I",
 		"II",
 		"III",
@@ -43,6 +44,7 @@ class InterpToNativeGenerator {
 		"IIIIIIIIIIIII",
 		"IIIIIIIIIIIIII",
 		"IILIIII",
+		"IIIL",
 		"IF",
 		"ID",
 		"IIF",
@@ -90,6 +92,15 @@ class InterpToNativeGenerator {
 		"DDI",
 		"DDD",
 		"DDDD",
+		"VF",
+		"VFF",
+		"VFFF",
+		"VFFFF",
+		"VFFFFF",
+		"VFFFFFF",
+		"VFFFFFFF",
+		"VFFFFFFFF",
+		"VFI",
 		"VIF",
 		"VIFF",
 		"VIFFFF",
@@ -97,6 +108,9 @@ class InterpToNativeGenerator {
 		"VIFFFFFF",
 		"VIFFFFFI",
 		"VIIFFI",
+		"VIIF",
+		"VIIFFF",
+		"VIIFI",
 		"FF",
 		"FFI",
 		"FFF",
@@ -116,7 +130,9 @@ class InterpToNativeGenerator {
 		"FIF",
 		"FIFF",
 		"LILL",
+		"VL",
 		"VIL",
+		"VIIL",
 		"FIFFF",
 		"FII",
 		"FIII",
@@ -279,60 +295,19 @@ class InterpToNativeGenerator {
 			w.WriteLine ("\n}\n");
 		}
 
-		w.WriteLine ("static void\nicall_trampoline_dispatch (const char *cookie, void *target_func, InterpMethodArguments *margs)");
-		w.WriteLine ("{");
-
-		/*
-		if (args.Any(a => a == "--flat")) {
-			for (int i = 0; i < cookies.Length; ++i) {
-				var c = cookies [i];
-				w.Write ("\t");
-				if (i > 0)
-					w.Write ("else ");
-				w.WriteLine ($"if (!strcmp (\"{c}\", cookie))");
-				w.WriteLine ($"\t\twasm_invoke_{c.ToLower ()} (target_func, margs);");
-			}
-			w.WriteLine ("\telse {");
-			w.WriteLine ("\t\tg_error (\"CANNOT HANDLE COOKIE %s\\n\", cookie);");
-			w.WriteLine ("\t}");
-		} else {
-		*/
 		Array.Sort (signatures);
-		WritePartition (w, signatures, 0);
-		w.WriteLine ("\tg_error (\"CANNOT HANDLE COOKIE %s\\n\", cookie);");
 
-		w.WriteLine ("}");
-	}
-	
-	static void WritePartition (StreamWriter w, IEnumerable<string> set, int pos = 0, int depth = 0) {
-		var prefix = "\t";
-		for (var c = 0; c < pos; c++)
-			prefix += "\t";
+		w.WriteLine ("static const char* interp_to_native_signatures [] = {");
+		foreach (var sig in signatures)
+			w.WriteLine ($"\"{sig}\",");
+		w.WriteLine ("};");
 
-		var checks = 0;
-		
-		var groups = set.OrderBy (s => -s.Length).Where (s => s.Length > pos).GroupBy (s => s.Skip(pos).First().ToString());
-		foreach (var g in groups) {
-			w.WriteLine ($"{prefix}{Elif (checks)} (cookie[{pos}] == '{g.Key}') {{");
-			WritePartition (w, g.ToList (), pos + 1, checks + depth);
-			w.WriteLine ($"{prefix}}}");
-			checks++;
+		w.WriteLine ("static void* interp_to_native_invokes [] = {");
+		foreach (var sig in signatures) {
+			var lsig = sig.ToLower ();
+			w.WriteLine ($"wasm_invoke_{lsig},");
 		}
-
-		var hits = set.Where (s => s.Length == pos);
-		if (hits.Any ()) {
-			w.WriteLine ($"{prefix}{Elif (checks++)} (cookie[{pos}] == '\\0') {{");
-
-			var h = hits.First ();
-			w.WriteLine ($"{prefix}\t// found: {h} depth {pos + checks + depth}");
-			w.WriteLine ($"{prefix}\twasm_invoke_{h.ToLower ()} (target_func, margs);");
-			w.WriteLine ($"{prefix}\treturn;");
-			w.WriteLine ($"{prefix}}}");
-		}
-
-		string Elif (int c) {
-			return c == 0 ? "if" : "else if";
-		}
+		w.WriteLine ("};");
 	}
 
 	class EmitCtx
