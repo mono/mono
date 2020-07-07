@@ -12,9 +12,9 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, false)]
-		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, true)]
+		[InlineData (16, 2, "PrimitiveTypeLocals", false, 0, true, TestFlags.NotOnMac)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false, TestFlags.NotOnLinux)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnMac)]
 		public async Task InspectPrimitiveTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -127,7 +127,7 @@ namespace DebuggerTests
 		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, false, TestFlags.NotOnMacDev)]
 		[InlineData (82, 2, "GenericValueTypeLocals", false, 0, true)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnLinux)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, true, TestFlags.NotOnLinux | TestFlags.NotOnMac)]
 		public async Task InspectGenericValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;

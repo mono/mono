@@ -355,7 +355,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false, TestFlags.NotOnLinux)]
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true, TestFlags.NotOnMac)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false, TestFlags.NotOnLinux | TestFlags.NotOnMac)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true)]
 		public async Task RunOnArrayReturnObjectArrayByValue (string eval_fn, string bp_loc, int line, int col, bool roundtrip, TestFlags flags = TestFlags.None)
@@ -389,7 +389,7 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, false, TestFlags.NotOnMac)]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, true)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, false, TestFlags.NotOnLinux)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, true, TestFlags.NotOnMac)]
@@ -465,7 +465,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (null, TestFlags.NotOnMac)]
-		[InlineData (false)]
+		[InlineData (false, TestFlags.NotOnMac)]
 		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task CheckErrorsWithSilent (bool? silent, TestFlags flags = TestFlags.None)
 		{
