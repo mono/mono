@@ -1114,6 +1114,18 @@ namespace MonoTests.System.Transactions
 				Assert.AreEqual(IsolationLevel.ReadCommitted, Transaction.Current.IsolationLevel);
 			}
 		}
+
+		[Test]
+		[ExpectedException(typeof(TransactionAbortedException))]
+		public void TransactionScopeTimeout()
+		{
+			Assert.IsNull(Transaction.Current, "Ambient transaction exists (before)");
+			using (var ts = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMilliseconds(1)))
+			{
+				for(int i = 0; i < 1000000000; i += 2) i--;
+				ts.Complete();
+			}
+		}
 	}
 
 }
