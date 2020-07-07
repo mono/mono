@@ -2,3 +2,5 @@
 dist:
 
 distdir:
+
+distclean:
