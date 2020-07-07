@@ -156,6 +156,10 @@ bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
 	touch .stamp-bcl
 
+tuner:
+	$(MAKE) -C ../../mcs/tools/wasm-tuner PROFILE=wasm_tools
+	cp ../../mcs/class/lib/wasm_tools/wasm-tuner.* ../out/wasm-bcl/wasm_tools/
+
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 MONO_THREADS_LIBS = $(TOP)/sdks/out/wasm-runtime-threads-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 MONO_DYNAMIC_LIBS = $(TOP)/sdks/out/wasm-runtime-dynamic-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
