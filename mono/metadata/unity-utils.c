@@ -871,6 +871,11 @@ MonoException* mono_unity_exception_get_marshal_directive(const char* msg)
 	return mono_exception_from_name_msg(mono_get_corlib(), "System.Runtime.InteropServices", "MarshalDirectiveException", msg);
 }
 
+MonoException* mono_unity_error_convert_to_exception (MonoError *error)
+{
+	return mono_error_convert_to_exception (error);
+}
+
 //defaults
 
 MonoClass* mono_unity_defaults_get_int_class()
