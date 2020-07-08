@@ -34,7 +34,7 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (32, 2, "ValueTypeLocals", false, 0, false, TestFlags.NotOnMac)]
 		[InlineData (32, 2, "ValueTypeLocals", false, 0, true)]
-		[InlineData (93, 2, "YetAnotherMethod", true, 2, false)]
+		[InlineData (93, 2, "YetAnotherMethod", true, 2, false, TestFlags.NotOnMac)]
 		[InlineData (93, 2, "YetAnotherMethod", true, 2, true)]
 		public async Task InspectValueTypeArrayLocals (int line, int col, string method_name, bool test_prev_frame, int frame_idx, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
