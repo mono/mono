@@ -1215,7 +1215,7 @@ create_custom_attr_data (MonoImage *image, MonoCustomAttrEntry *cattr, MonoError
 	HANDLE_FUNCTION_RETURN_OBJ (obj);
 }
 
-static MonoArray*
+MonoArray*
 mono_custom_attrs_construct_by_type (MonoCustomAttrInfo *cinfo, MonoClass *attr_klass, MonoError *error)
 {
 	MonoArray *result;
