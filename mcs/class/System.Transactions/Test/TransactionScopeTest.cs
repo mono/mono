@@ -11,6 +11,7 @@
 using System;
 using NUnit.Framework;
 using System.Transactions;
+using System.Threading;
 
 namespace MonoTests.System.Transactions
 {
@@ -1122,7 +1123,7 @@ namespace MonoTests.System.Transactions
 			Assert.IsNull(Transaction.Current, "Ambient transaction exists (before)");
 			using (var ts = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMilliseconds(1)))
 			{
-				for(int i = 0; i < 1000000000; i += 2) i--;
+				Thread.Sleep(100);
 				ts.Complete();
 			}
 		}
