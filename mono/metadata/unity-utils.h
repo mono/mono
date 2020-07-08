@@ -137,6 +137,7 @@ MonoObject* mono_unity_exception_get_inner_exception(MonoException *exc);
 MonoArray* mono_unity_exception_get_trace_ips(MonoException *exc);
 void mono_unity_exception_set_trace_ips(MonoException *exc, MonoArray *ips);
 MonoException* mono_unity_exception_get_marshal_directive(const char* msg);
+MONO_API MonoException* mono_unity_error_convert_to_exception(MonoError *error);
 
 //defaults
 MonoClass* mono_unity_defaults_get_int_class();
