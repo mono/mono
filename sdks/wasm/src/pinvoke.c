@@ -43,8 +43,6 @@ wasm_dl_is_pinvoke_table (void *handle)
 	return 0;
 }
 
-void foo2(void *p1, void *p2);
-
 void*
 wasm_dl_get_native_to_interp (const char *key, void *extra_arg)
 {
