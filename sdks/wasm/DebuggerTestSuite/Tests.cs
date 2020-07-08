@@ -471,8 +471,11 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task InspectLocalsDuringStepping () {
+		[Theory]
+		[InlineData (TestFlags.NotOnMac)]
+		public async Task InspectLocalsDuringStepping (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -1359,8 +1362,8 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false, TestFlags.NotOnMacDev)]
-		[InlineData (true, TestFlags.NotOnMacDev)]
+		[InlineData (false, TestFlags.NotOnMac)]
+		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task InspectLocalsWithPointers (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
