@@ -11,7 +11,7 @@ namespace DebuggerTests
 	public class DelegateTests : DebuggerTestBase {
 
 		[Theory]
-		[InlineData (0, 45, 2, "DelegatesTest", false)]
+		[InlineData (0, 45, 2, "DelegatesTest", false, TestFlags.NotOnMac)]
 		[InlineData (0, 45, 2, "DelegatesTest", true, TestFlags.NotOnMac)]
 		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnMac)]
 		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnMac)]
@@ -188,10 +188,10 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (0, 228, 2, "NestedDelegatesTest", false)]
-		[InlineData (0, 228, 2, "NestedDelegatesTest", true, TestFlags.NotOnLinuxDev)]
+		[InlineData (0, 228, 2, "NestedDelegatesTest", false, TestFlags.NotOnMac)]
+		[InlineData (0, 228, 2, "NestedDelegatesTest", true, TestFlags.NotOnLinuxDev | TestFlags.NotOnMac)]
 		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnLinux | TestFlags.NotOnMac)]
-		[InlineData (2, 90, 2, "InnerMethod2", true)]
+		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnMac)]
 		public async Task NestedDelegatesTest (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;

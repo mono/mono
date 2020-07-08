@@ -10,9 +10,12 @@ namespace DebuggerTests
 
 	public class EvaluateOnCallFrameTests : DebuggerTestBase {
 
-		[Fact]
-		public async Task EvaluateThisProperties ()
-			=> await CheckInspectLocalsAtBreakpointSite (
+		[Theory]
+		[InlineData (TestFlags.None)]
+		public async Task EvaluateThisProperties (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-evaluate-test.cs", 20, 16,
 				"run",
 				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] DebuggerTests.EvaluateTestsClass:EvaluateLocals'); })",
@@ -28,6 +31,7 @@ namespace DebuggerTests
 					evaluate = await EvaluateOnCallFrame (pause_location ["callFrames"][0] ["callFrameId"].Value<string> (), "dt");
 					await CheckDateTimeValue (evaluate, new DateTime (2000, 5, 4, 3, 2, 1));
 				});
+		}
 
 		[Theory]
 		[InlineData (58, 3, "EvaluateTestsStructInstanceMethod")]

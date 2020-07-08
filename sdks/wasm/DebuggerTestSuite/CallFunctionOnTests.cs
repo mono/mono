@@ -13,8 +13,8 @@ namespace DebuggerTests
 		// This tests `callFunctionOn` with a function that the vscode-js-debug extension uses
 		// Using this here as a non-trivial test case
 		[Theory]
-		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10, false, TestFlags.NotOnLinuxDev)]
-		[InlineData ("big_array_js_test (0);", "/other.js", 5, 1, 0, true)]
+		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10, false, TestFlags.NotOnLinuxDev | TestFlags.NotOnMac)]
+		[InlineData ("big_array_js_test (0);", "/other.js", 5, 1, 0, true, TestFlags.NotOnMac)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 10, false)]
 		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 0);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 0, true)]
 		public async Task CheckVSCodeTestFunction1 (string eval_fn, string bp_loc, int line, int col, int len, bool roundtrip, TestFlags flags = TestFlags.None)

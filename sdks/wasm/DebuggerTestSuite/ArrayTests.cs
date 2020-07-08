@@ -482,7 +482,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false, TestFlags.NotOnMac)]
-		[InlineData (true)]
+		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task InspectValueTypeArrayLocalsInAsyncStaticStructMethod (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
