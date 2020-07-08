@@ -23,6 +23,8 @@ namespace System.Transactions
 		[ThreadStatic]
 		static Transaction ambient;
 
+		Transaction internalTransaction;
+
 		IsolationLevel level;
 		TransactionInformation info;
 
@@ -83,6 +85,8 @@ namespace System.Transactions
 			volatiles = other.Volatiles;
 			durables = other.Durables;
 			pspe = other.Pspe;
+			TransactionCompletedInternal = other.TransactionCompletedInternal;
+			internalTransaction = other;
 		}
 
 		[MonoTODO]
@@ -92,7 +96,29 @@ namespace System.Transactions
 			throw new NotImplementedException ();
 		}
 
-		public event TransactionCompletedEventHandler TransactionCompleted;
+		internal event TransactionCompletedEventHandler TransactionCompletedInternal;
+
+		// Transaction B was cloned from transaction A. Add event handlers to A
+		// when they are added to B. This will not work when new handlers are added to A
+		// as A has no reference to B.
+		public event TransactionCompletedEventHandler TransactionCompleted
+		{
+			add
+			{
+				if (this.internalTransaction != null)
+					this.internalTransaction.TransactionCompleted += value;
+
+				TransactionCompletedInternal += value;
+			}
+
+			remove
+			{
+				if (this.internalTransaction != null)
+					this.internalTransaction.TransactionCompleted -= value;
+
+				TransactionCompletedInternal -= value;
+			}
+		}
 
 		public static Transaction Current {
 			get { 
@@ -378,7 +404,7 @@ namespace System.Transactions
 		private void DoCommit ()
 		{
 			/* Scope becomes null in TransactionScope.Dispose */
-			if (Scope != null) {
+			if (Scope != null && (!Scope.IsComplete || !Scope.IsDisposed)) {
 				/* See test ExplicitTransaction8 */
 				Rollback (null, null);
 				CheckAborted ();
@@ -529,14 +555,14 @@ namespace System.Transactions
 
 		void CheckAborted ()
 		{
-			if (aborted)
+			if (aborted || (Scope != null && Scope.IsAborted))
 				throw new TransactionAbortedException ("Transaction has aborted", innerException);
 		}
 
 		void FireCompleted ()
 		{
-			if (TransactionCompleted != null)
-				TransactionCompleted (this, new TransactionEventArgs(this));
+			if (TransactionCompletedInternal != null)
+				TransactionCompletedInternal (this, new TransactionEventArgs(this));
 		}
 
 		static void EnsureIncompleteCurrentScope ()
@@ -548,4 +574,3 @@ namespace System.Transactions
 		}
   }
 }
-
