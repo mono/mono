@@ -146,32 +146,32 @@ namespace System.Transactions
 				transaction.InitScope (this);
 			if (parentScope != null)
 				parentScope.nested ++;
-			if(timeout != TimeSpan.Zero)
-				scopeTimer = new Timer(TransactionScope.TimerCallback, this, scopeTimeout, TimeSpan.Zero);
+			if (timeout != TimeSpan.Zero)
+				scopeTimer = new Timer (TransactionScope.TimerCallback, this, scopeTimeout, TimeSpan.Zero);
 		}
 
-		private static void TimerCallback(object state)
+		private static void TimerCallback (object state)
 		{
 			TransactionScope scope = state as TransactionScope;
-			if ( null == scope )
+			if (null == scope)
 			{
-				throw new TransactionException( "TransactionScopeTimerObjectInvalid", null );
+				throw new TransactionException ("TransactionScopeTimerObjectInvalid", null);
 			}
 
-			scope.TimeoutScope();
+			scope.TimeoutScope ();
 		}
 
 		private void TimeoutScope()
 		{
-			if ( ( !this.completed ) && ( null != this.transaction ) )
+			if (!completed && transaction != null)
 			{
 				try
 				{
-					this.transaction.Rollback();
+					this.transaction.Rollback ();
 					this.aborted = true;
 				}
-				catch ( ObjectDisposedException ex ) { }
-				catch ( TransactionException txEx ) { }
+				catch (ObjectDisposedException ex) { }
+				catch (TransactionException txEx) { }
 			}
  		}
 
@@ -318,4 +318,3 @@ namespace System.Transactions
 
 	}
 }
-

@@ -105,7 +105,7 @@ namespace System.Transactions
 		{
 			add
 			{
-				if(this.internalTransaction != null)
+				if (this.internalTransaction != null)
 					this.internalTransaction.TransactionCompleted += value;
 
 				TransactionCompletedInternal += value;
@@ -113,7 +113,7 @@ namespace System.Transactions
 
 			remove
 			{
-				if(this.internalTransaction != null)
+				if (this.internalTransaction != null)
 					this.internalTransaction.TransactionCompleted -= value;
 
 				TransactionCompletedInternal -= value;
@@ -574,4 +574,3 @@ namespace System.Transactions
 		}
   }
 }
-
