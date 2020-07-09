@@ -43,10 +43,11 @@ namespace DebuggerTests
 			eventListeners[evtName] = cb;
 		}
 
-		void FailAllWaitersWithException (JObject exception)
+		void FailAllWaitersWithException (Exception exception)
 		{
+			// Console.WriteLine ($"-- FailAll {exception}");
 			foreach (var tcs in notifications.Values)
-				tcs.SetException (new ArgumentException (exception.ToString ()));
+				tcs.SetException (exception);
 		}
 
 		async Task OnMessage(string method, JObject args, CancellationToken token)
@@ -66,41 +67,33 @@ namespace DebuggerTests
 			if (eventListeners.ContainsKey (method))
 				await eventListeners[method](args, token);
 			else if (String.Compare (method, "Runtime.exceptionThrown") == 0)
-				FailAllWaitersWithException (args);
+				FailAllWaitersWithException (new ArgumentException (args.ToString ()));
 		}
 
-		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null, TimeSpan? span = null) {
-			using (var cts = new CancellationTokenSource ()) {
-				cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
-				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
-				using var loggerFactory = LoggerFactory.Create(
-					builder => builder.AddConsole().AddFilter(null, LogLevel.Information));
-				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
-					await client.Connect (uri, OnMessage, async token => {
-						Task[] init_cmds = {
-							client.SendCommand ("Profiler.enable", null, token),
-							client.SendCommand ("Runtime.enable", null, token),
-							client.SendCommand ("Debugger.enable", null, token),
-							client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token),
-							WaitFor (READY),
-						};
-						// await Task.WhenAll (init_cmds);
-						Console.WriteLine ("waiting for the runtime to be ready");
-						await init_cmds [4];
-						Console.WriteLine ("runtime ready, TEST TIME");
-						if (cb != null) {
-							Console.WriteLine("await cb(client, token)");
-							await cb(client, token);
-						}
+		public async Task Ready (Uri uri, InspectorClient client, CancellationToken token)
+		{
+			token.Register (() => FailAllWaitersWithException (new TaskCanceledException ()));
 
-					}, cts.Token);
-					await client.Close (cts.Token);
-				}
-			}
+			_ = client.Connect (uri, OnMessage, (token) => {
+				_ = client.SendCommand ("Profiler.enable", null, token);
+				_ = client.SendCommand ("Runtime.enable", null, token);
+				_ = client.SendCommand ("Debugger.enable", null, token);
+				_ = client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token);
+
+				Console.WriteLine ($"All commands sent");
+				return Task.CompletedTask;
+			}, token)
+			.ContinueWith (t => {
+					FailAllWaitersWithException (t.Exception);
+					// throw t.Exception;
+				}, TaskContinuationOptions.OnlyOnFaulted);
+
+			Console.WriteLine ($"-- Waiting for READY -- ");
+			await WaitFor (READY);
 		}
 	}
 
-	public class DebuggerTestBase {
+	public class DebuggerTestBase : IAsyncLifetime {
 		protected Task startTask;
 
 		static string FindTestPath () {
@@ -148,8 +141,58 @@ namespace DebuggerTests
 			startTask = TestHarnessProxy.Start (FindChromePath (), FindTestPath (), driver);
 		}
 
-		public Task Ready ()
-			=> startTask;
+		CancellationTokenSource cts;
+		ILoggerFactory loggerFactory;
+		internal InspectorClient cli;
+		protected CancellationToken token;
+		internal Inspector insp;
+		protected Dictionary<string, string> scripts;
+
+		public virtual async Task InitializeAsync ()
+		{
+			insp = new Inspector ();
+			scripts = SubscribeToScripts (insp);
+			await startTask;
+
+			cts = new CancellationTokenSource ();
+			token = cts.Token;
+			cts.CancelAfter (60 * 1000); //tests have 1 minute to complete by default
+
+			var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
+			loggerFactory = LoggerFactory.Create(
+				builder => builder.AddConsole().AddFilter(null, LogLevel.Trace));
+
+			cli = new InspectorClient (loggerFactory.CreateLogger<Inspector>());
+			ctx = new DebugTestContext (cli, insp, token, scripts);
+
+			await insp.Ready (uri, cli, token);
+			Console.WriteLine ($"---- Init is DONE.. let's start the test now!");
+		}
+
+		public virtual async Task DisposeAsync ()
+		{
+			Console.WriteLine ($"--- DisposeAsync ENTER ---");
+			try {
+				if (!cts.IsCancellationRequested)
+				cts.Cancel ();
+			} finally {
+				try { await cli.Close (cts.Token); }
+				catch (TaskCanceledException tce) {
+					// this might throw TaskCanceledException, because we just
+					// canceled cts
+				}
+				finally {
+					try { cli.Dispose (); }
+					finally {
+						try { loggerFactory.Dispose (); }
+						finally {
+							cts.Dispose ();
+						}
+					}
+				}
+			}
+			Console.WriteLine ($"------- DisposeAsync --------");
+		}
 
 		internal DebugTestContext ctx;
 		internal Dictionary<string, string> dicScriptsIdToUrl;
@@ -178,13 +221,6 @@ namespace DebuggerTests
 		internal async Task CheckInspectLocalsAtBreakpointSite (string url_key, int line, int column, string function_name, string eval_expression,
 						Action<JToken> test_fn = null, Func<JObject, Task> wait_for_event_fn = null, bool use_cfo = false)
 		{
-			var insp = new Inspector ();
-			//Collect events
-			var scripts = SubscribeToScripts(insp);
-
-			await Ready ();
-			await insp.Ready (async (cli, token) => {
-				ctx = new DebugTestContext (cli, insp, token, scripts);
 				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 
 				var bp = await SetBreakpoint (url_key, line, column);
@@ -211,20 +247,12 @@ namespace DebuggerTests
 							test_fn (locals);
 					}
 				);
-			});
 		}
 
 		// sets breakpoint by method name and line offset
 		internal async Task CheckInspectLocalsAtBreakpointSite (string type, string method, int line_offset, string bp_function_name, string eval_expression,
 						Action<JToken> locals_fn = null, Func<JObject, Task> wait_for_event_fn = null, bool use_cfo = false, string assembly="debugger-test.dll", int col = 0)
 		{
-			var insp = new Inspector ();
-			//Collect events
-			var scripts = SubscribeToScripts(insp);
-
-			await Ready ();
-			await insp.Ready (async (cli, token) => {
-				ctx = new DebugTestContext (cli, insp, token, scripts);
 				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
 
 				var bp = await SetBreakpointInMethod (assembly, type, method, line_offset, col);
@@ -255,7 +283,6 @@ namespace DebuggerTests
 					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string> ());
 					locals_fn (locals);
 				}
-			});
 		}
 
 		internal void CheckLocation (string script_loc, int line, int column, Dictionary<string, string> scripts, JToken location)
@@ -447,11 +474,13 @@ namespace DebuggerTests
 								Func<JObject, Task> wait_for_event_fn = null, Action<JToken> locals_fn = null, string waitForEvent = Inspector.PAUSE)
 		{
 			var res = await ctx.cli.SendCommand (method, args, ctx.token);
+			Console.WriteLine ($"comamnd returned {res}");
 			if (!res.IsOk) {
 				Console.WriteLine ($"Failed to run command {method} with args: {args?.ToString ()}\nresult: {res.Error.ToString ()}");
 				Assert.True (false, $"SendCommand for {method} failed with {res.Error.ToString ()}");
 			}
 
+			Console.WriteLine ($"waiting for {waitForEvent}");
 			var wait_res = await ctx.insp.WaitFor(waitForEvent);
 
 			if (function_name != null)
@@ -768,7 +797,9 @@ namespace DebuggerTests
 				JObject.FromObject(new { lineNumber = line, columnNumber = column, url = dicFileToUrl[url_key],}) :
 				JObject.FromObject(new { lineNumber = line, columnNumber = column, urlRegex = url_key, });
 
+			Console.WriteLine ($"- Sending setBreakpointByUrl command");
 			var bp1_res = await ctx.cli.SendCommand ("Debugger.setBreakpointByUrl", bp1_req, ctx.token);
+			Console.WriteLine ($"- back from SendCommand");
 			Assert.True (expect_ok ? bp1_res.IsOk : bp1_res.IsErr);
 
 			return bp1_res;

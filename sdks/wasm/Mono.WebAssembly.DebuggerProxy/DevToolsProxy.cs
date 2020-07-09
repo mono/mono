@@ -41,6 +41,10 @@ namespace WebAssembly.Net.Debugging {
 		public Task Pump (CancellationToken token)
 		{
 			current_send = null;
+			if (pending.Count == 0) {
+				return null;
+			}
+
 			pending.RemoveAt (0);
 
 			if (pending.Count > 0) {
@@ -121,7 +125,7 @@ namespace WebAssembly.Net.Debugging {
 			var sender = browser == to ? "Send-browser" : "Send-ide";
 
 			var method = o ["method"]?.ToString ();
-			//if (method != "Debugger.scriptParsed" && method != "Runtime.consoleAPICalled")
+			// if (method != "Debugger.scriptParsed" && method != "Runtime.consoleAPICalled")
 				Log ("protocol", $"{sender}: " + JsonConvert.SerializeObject (o));
 			var bytes = Encoding.UTF8.GetBytes (o.ToString ());
 
@@ -276,12 +280,22 @@ namespace WebAssembly.Net.Debugging {
 							var task = await Task.WhenAny (pending_ops.ToArray ());
 							//logger.LogTrace ("pump {0} {1}", task, pending_ops.IndexOf (task));
 							if (task == pending_ops [0]) {
+								if (task.IsFaulted) {
+									Log ("warning", $"Reading from the browser failed with {task.Exception}");
+									break;
+								}
+
 								var msg = ((Task<string>)task).Result;
 								if (msg != null) {
 									pending_ops [0] = ReadOne (browser, x.Token); //queue next read
 									ProcessBrowserMessage (msg, x.Token);
 								}
 							} else if (task == pending_ops [1]) {
+								if (task.IsFaulted) {
+									Log ("warning", $"Reading from the IDE failed with {task.Exception}");
+									break;
+								}
+
 								var msg = ((Task<string>)task).Result;
 								if (msg != null) {
 									pending_ops [1] = ReadOne (ide, x.Token); //queue next read
@@ -326,10 +340,13 @@ namespace WebAssembly.Net.Debugging {
 				logger.LogDebug (msg);
 				break;
 			case "info":
+				logger.LogInformation (msg);
+				break;
 			case "warning":
+				logger.LogWarning (msg);
+				break;
 			case "error":
-			default:
-				logger.LogDebug (msg);
+				logger.LogError (msg);
 				break;
 			}
 		}

@@ -36,11 +36,13 @@ namespace WebAssembly.Net.Debugging {
 		public async Task Connect(
 			Uri uri,
 			Func<string, JObject, CancellationToken, Task> onEvent,
-			Func<CancellationToken, Task> send,
+			Func<CancellationToken, Task> init,
 			CancellationToken token) {
-
 			this.onEvent = onEvent;
-			await ConnectWithMainLoops (uri, HandleMessage, send, token);
+			await ConnectWithMainLoops (uri,
+				HandleMessage,
+				(ex) => { pending_cmds.ForEach (cmd => cmd.Item2.SetException (ex)); },
+				init, token);
 		}
 
 		public Task<Result> SendCommand (string method, JObject args, CancellationToken token)
@@ -59,7 +61,7 @@ namespace WebAssembly.Net.Debugging {
 			pending_cmds.Add ((id, tcs));
 
 			var str = o.ToString ();
-			//Log ("protocol", $"SendCommand: id: {id} method: {method} params: {args}");
+			Log ("protocol", $"SendCommand: id: {id} method: {method}");
 
 			var bytes = Encoding.UTF8.GetBytes (str);
 			Send (bytes, token);
