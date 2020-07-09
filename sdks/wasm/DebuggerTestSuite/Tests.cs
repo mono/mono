@@ -1167,30 +1167,23 @@ namespace DebuggerTests
 				
 		[Fact]
 		public async Task SteppingIntoMscorlib () {
-			var insp = new Inspector ();
-			//Collect events
-			var scripts = SubscribeToScripts(insp);
+			ctx = new DebugTestContext (cli, insp, token, scripts);
 
-			await Ready ();
-			await insp.Ready (async (cli, token) => {
-				ctx = new DebugTestContext (cli, insp, token, scripts);
+			var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 74, 2);
+			var pause_location = await EvaluateAndCheck (
+				"window.setTimeout(function() { invoke_static_method ('[debugger-test] Math:OuterMethod'); }, 1);",
+				"dotnet://debugger-test.dll/debugger-test.cs", 74, 2,
+				"OuterMethod");
 
-				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 74, 2);
-				var pause_location = await EvaluateAndCheck (
-					"window.setTimeout(function() { invoke_static_method ('[debugger-test] Math:OuterMethod'); }, 1);",
-					"dotnet://debugger-test.dll/debugger-test.cs", 74, 2,
-					"OuterMethod");
+			//make sure we're on the right bp
+			Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
 
-				//make sure we're on the right bp
-				Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+			pause_location = await SendCommandAndCheck (null, $"Debugger.stepInto", null, -1, -1, null);
+			var top_frame = pause_location ["callFrames"][0];
 
-				pause_location = await SendCommandAndCheck (null, $"Debugger.stepInto", null, -1, -1, null);
-				var top_frame = pause_location ["callFrames"][0];
-
-				AssertEqual ("WriteLine", top_frame ["functionName"]?.Value<string> (), "Expected to be in WriteLine method");
-				var script_id = top_frame ["functionLocation"]["scriptId"].Value<string> ();
-				AssertEqual ("dotnet://mscorlib.dll/Console.cs", scripts [script_id], "Expected to stopped in System.Console.WriteLine");
-			});
+			AssertEqual ("WriteLine", top_frame ["functionName"]?.Value<string> (), "Expected to be in WriteLine method");
+			var script_id = top_frame ["functionLocation"]["scriptId"].Value<string> ();
+			AssertEqual ("dotnet://mscorlib.dll/Console.cs", scripts [script_id], "Expected to stopped in System.Console.WriteLine");
 		}
 
 		[Fact]
