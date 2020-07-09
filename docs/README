@@ -22,7 +22,7 @@ Layout
 	  	as well as the upcoming Monodoc tools and index creation
 		tools).
 
-		The files can contain any ammount of extra information.
+		The files can contain any amount of extra information.
 
 		The documentation from the source code is then merged with 
 		these files and the header/footer information to produce

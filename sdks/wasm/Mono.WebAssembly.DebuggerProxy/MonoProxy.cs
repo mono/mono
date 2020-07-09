@@ -319,6 +319,14 @@ namespace WebAssembly.Net.Debugging {
 
 				var methodInfo = type.Methods.FirstOrDefault (m => m.Name == methodName);
 				if (methodInfo == null) {
+					// Maybe this is an async method, in which case the debug info is attached
+					// to the async method implementation, in class named:
+					//      `{type_name}/<method_name>::MoveNext`
+					methodInfo = assembly.TypesByName.Values.SingleOrDefault (t => t.FullName.StartsWith ($"{typeName}/<{methodName}>"))
+										?.Methods.FirstOrDefault (mi => mi.Name == "MoveNext");
+				}
+
+				if (methodInfo == null) {
 					SendResponse (id, Result.Err ($"Method '{typeName}:{methodName}' not found."), token);
 					return true;
 				}
@@ -372,7 +380,7 @@ namespace WebAssembly.Net.Debugging {
 				var value_json_str = res.Value ["result"]?["value"]?["__value_as_json_string__"]?.Value<string> ();
 				if (value_json_str != null) {
 					res = Result.OkFromObject (new {
-							result = JArray.Parse (value_json_str.Replace (@"\""", "\""))
+							result = JArray.Parse (value_json_str)
 					});
 				} else {
 					res = Result.OkFromObject (new { result = new {} });
@@ -582,7 +590,7 @@ namespace WebAssembly.Net.Debugging {
 			var scope = context.CallStack.FirstOrDefault (s => s.Id == scope_id);
 			var live_vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 			//get_this
-			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, live_vars.Select (lv => lv.Index).ToArray ()), token);
+			var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, live_vars), token);
 
 			var scope_values = res.Value? ["result"]? ["value"]?.Values<JObject> ()?.ToArray ();
 			thisValue = scope_values?.FirstOrDefault (v => v ["name"]?.Value<string> () == "this");
@@ -650,9 +658,7 @@ namespace WebAssembly.Net.Debugging {
 				if (scope == null)
 					return Result.Err (JObject.FromObject (new { message = $"Could not find scope with id #{scope_id}" }));
 
-				var vars = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
-
-				var var_ids = vars.Select (v => v.Index).ToArray ();
+				var var_ids = scope.Method.GetLiveVarsAt (scope.Location.CliLocation.Offset);
 				var res = await SendMonoCommand (msg_id, MonoCommands.GetScopeVariables (scope.Id, var_ids), token);
 
 				//if we fail we just buble that to the IDE (and let it panic over it)
@@ -661,27 +667,13 @@ namespace WebAssembly.Net.Debugging {
 
 				var values = res.Value? ["result"]? ["value"]?.Values<JObject> ().ToArray ();
 
-				if(values == null)
+				if(values == null || values.Length == 0)
 					return Result.OkFromObject (new { result = Array.Empty<object> () });
 
-				var var_list = new List<object> ();
-				int i = 0;
-				for (; i < vars.Length && i < values.Length; i ++) {
-					// For async methods, we get locals with names, unlike non-async methods
-					// and the order may not match the var_ids, so, use the names that they
-					// come with
-					if (values [i]["name"] != null)
-						continue;
+				foreach (var value in values)
+					ctx.LocalsCache [value ["name"]?.Value<string> ()] = value;
 
-					ctx.LocalsCache[vars [i].Name] = values [i];
-					var_list.Add (new { name = vars [i].Name, value = values [i]["value"] });
-				}
-				for (; i < values.Length; i ++) {
-					ctx.LocalsCache[values [i]["name"].ToString()] = values [i];
-					var_list.Add (values [i]);
-				}
-
-				return Result.OkFromObject (new { result = var_list });
+				return Result.OkFromObject (new { result = values });
 			} catch (Exception exception) {
 				Log ("verbose", $"Error resolving scope properties {exception.Message}");
 				return Result.Exception (exception);
