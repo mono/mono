@@ -445,11 +445,17 @@ namespace DebuggerTests
 			});
 		}
 
+		public static TheoryData<string, string, int, int, bool?> SilentErrorsTestData (bool? silent)
+			=> new TheoryData<string, string, int, int, bool?> {
+				{ "invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, silent },
+				{ "big_array_js_test (10);", "/other.js", 5, 1, silent }
+			};
+
 		[Theory]
-		[InlineData (null)]
-		[InlineData (false)]
-		[InlineData (true)]
-		public async Task CheckErrorsWithSilent (bool? silent)
+		[MemberData (nameof (SilentErrorsTestData), null)]
+		[MemberData (nameof (SilentErrorsTestData), false)]
+		[MemberData (nameof (SilentErrorsTestData), true)]
+		public async Task CFOWithSilentReturnsErrors (string eval_fn, string bp_loc, int line, int col, bool? silent)
 		{
 			var insp = new Inspector ();
 			//Collect events
@@ -458,25 +464,35 @@ namespace DebuggerTests
 			await Ready();
 			await insp.Ready (async (cli, token) => {
 				ctx = new DebugTestContext (cli, insp, token, scripts);
-				await SetBreakpoint ("dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3);
+				await SetBreakpoint (bp_loc, line, col);
 
 				// callFunctionOn
-				var eval_expr = "window.setTimeout(function() { invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10); }, 1);";
+				var eval_expr = "window.setTimeout(function() { " + eval_fn + " }, 1);";
 				var result = await ctx.cli.SendCommand ("Runtime.evaluate", JObject.FromObject (new { expression = eval_expr }), ctx.token);
 				var pause_location = await ctx.insp.WaitFor (Inspector.PAUSE);
 
+				var frame_locals = await GetProperties (pause_location ["callFrames"][0]["scopeChain"][0]["object"]["objectId"].Value<string> ());
+				var obj = GetAndAssertObjectWithName (frame_locals, "big");
+				var big_obj_id = obj ["value"]["objectId"].Value<string> ();
+				var error_msg = "#This is an error message#";
+
 				// Check the object at the bp
 				var cfo_args = JObject.FromObject (new {
-					functionDeclaration = "function () { throw Error ('test error'); }",
-					objectId = "dotnet:object:xyasd",
+					functionDeclaration = $"function () {{ throw Error ('{error_msg}'); }}",
+					objectId = big_obj_id
 				});
 
 				if (silent.HasValue)
 					cfo_args ["silent"] = silent;
 
-				// callFunctionOn
+				// callFunctionOn, Silent does not change the result, except that the error
+				// doesn't get reported, and the execution is NOT paused even with setPauseOnException=true
 				result = await ctx.cli.SendCommand ("Runtime.callFunctionOn", cfo_args, ctx.token);
-				Assert.True ((silent ?? false) == result.IsOk);
+				Assert.False (result.IsOk, "result.IsOk");
+				Assert.True  (result.IsErr, "result.IsErr");
+
+				var hasErrorMessage = result.Error ["exceptionDetails"]?["exception"]?["description"]?.Value<string> ()?.Contains (error_msg);
+				Assert.True ((hasErrorMessage ?? false), "Exception message not found");
 			});
 		}
 
