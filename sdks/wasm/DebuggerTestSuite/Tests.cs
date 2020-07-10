@@ -830,7 +830,7 @@ namespace DebuggerTests
 
 		[Theory]
 		[InlineData (false, TestFlags.NotOnMac)]
-		[InlineData (true)]
+		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task InspectLocalsWithStructs (bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
@@ -1256,10 +1256,11 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (123, 3, "MethodWithLocalsForToStringTest", false, false)]
 		[InlineData (133, 3, "MethodWithArgumentsForToStringTest", true, false)]
-		[InlineData (175, 3, "MethodWithArgumentsForToStringTestAsync", true, true)]
-		[InlineData (165, 3, "MethodWithArgumentsForToStringTestAsync", false, true)]
-		public async Task InspectLocalsForToStringDescriptions (int line, int col, string method_name, bool call_other, bool invoke_async)
+		[InlineData (175, 3, "MethodWithArgumentsForToStringTestAsync", true, true, TestFlags.NotOnMac)]
+		[InlineData (165, 3, "MethodWithArgumentsForToStringTestAsync", false, true, TestFlags.NotOnMac)]
+		public async Task InspectLocalsForToStringDescriptions (int line, int col, string method_name, bool call_other, bool invoke_async, TestFlags flags = TestFlags.None)
 		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);

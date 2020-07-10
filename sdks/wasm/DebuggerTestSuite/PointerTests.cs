@@ -10,18 +10,20 @@ namespace DebuggerTests
 
 	public class PointerTests : DebuggerTestBase {
 
-		public static TheoryData<string, string, string, int, string, bool> PointersTestData =>
-			new TheoryData<string, string, string, int, string, bool> {
-				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "LocalPointers", 32, "LocalPointers", false},
-				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "LocalPointers", 32, "LocalPointers", true},
-				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", false},
-				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", true}
+		public static TheoryData<string, string, string, int, string, bool, TestFlags> PointersTestData =>
+			new TheoryData<string, string, string, int, string, bool, TestFlags> {
+				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "LocalPointers", 32, "LocalPointers", false, TestFlags.NotOnMac},
+				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "LocalPointers", 32, "LocalPointers", true, TestFlags.NotOnMac},
+				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", false, TestFlags.None},
+				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", true, TestFlags.None}
 			};
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersToPrimitiveTypes (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectLocalPointersToPrimitiveTypes (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -62,11 +64,14 @@ namespace DebuggerTests
 					props = await GetObjectOnLocals (locals, "cp");
 					await CheckPointerValue (props, "*cp", TSymbol ("113 'q'"));
 				});
+		}
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointerArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectLocalPointerArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -90,11 +95,14 @@ namespace DebuggerTests
 						null
 					});
  				});
+		}
 
  		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalDoublePointerToPrimitiveTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectLocalDoublePointerToPrimitiveTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -130,11 +138,14 @@ namespace DebuggerTests
 						await CheckPointerValue (val, "**[2]", TNumber (5));
 					}
  				});
+		}
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersToValueTypes (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectLocalPointersToValueTypes (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -197,11 +208,14 @@ namespace DebuggerTests
 						}
 					}
 			});
+		}
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersToValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectLocalPointersToValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -227,11 +241,14 @@ namespace DebuggerTests
 						await CheckDateTime (actual_elems [0], "*[0]", dt);
 					}
 			});
+		}
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersToGenericValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectLocalPointersToGenericValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -289,11 +306,14 @@ namespace DebuggerTests
 						}
 					}
 			});
+		}
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalDoublePointersToValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectLocalDoublePointersToValueTypeArrays (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -326,11 +346,14 @@ namespace DebuggerTests
 						}
 					}
 			});
+		}
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersTestData))]
-		public async Task InspectLocalPointersInClasses (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectLocalPointersInClasses (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -347,6 +370,7 @@ namespace DebuggerTests
 					var ptr_props = await GetObjectOnLocals (cwp_props, "Ptr");
 					await CheckDateTime (ptr_props, "*Ptr", dt);
 			});
+		}
 
 		public static TheoryData<string, string, string, int, string, bool> PointersAsMethodArgsTestData =>
 			new TheoryData<string, string, string, int, string, bool> {
