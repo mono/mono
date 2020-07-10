@@ -132,7 +132,7 @@ provision-emsdk:
 
 # emsdk_env.sh calls emsdk construct_env which is a bit slow so make a copy
 emsdk_env.sh: | provision-emsdk
-	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
+	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env > $(CURDIR)/emsdk_env.sh
 
 # These builds overwrite their installed files
 # forcing everything to be rebuilt so use a stamp file

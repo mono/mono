@@ -18,6 +18,7 @@ endif
 	cd $(EMSCRIPTEN_LOCAL_SDK_DIR) && git checkout $(EMSCRIPTEN_VERSION)
 	cd $(EMSCRIPTEN_LOCAL_SDK_DIR) && ./emsdk install $(EMSCRIPTEN_VERSION)
 	cd $(EMSCRIPTEN_LOCAL_SDK_DIR) && ./emsdk activate --embedded $(EMSCRIPTEN_VERSION)
+	cd $(EMSCRIPTEN_LOCAL_SDK_DIR) && git apply ../../emsdk-98eaeb0ca24e8cea635e83c6ca7dc913a66a3705.diff
 	touch $@
 
 .PHONY: provision-wasm
