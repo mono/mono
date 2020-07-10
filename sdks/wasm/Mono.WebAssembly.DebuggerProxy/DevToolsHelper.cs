@@ -101,6 +101,7 @@ namespace WebAssembly.Net.Debugging {
 	internal struct Result {
 		public JObject Value { get; private set; }
 		public JObject Error { get; private set; }
+		public bool ResultHasError { get; private set; }
 
 		public bool IsOk => Value != null;
 		public bool IsErr => Error != null;
@@ -110,14 +111,10 @@ namespace WebAssembly.Net.Debugging {
 			if (result != null && error != null)
 				throw new ArgumentException ($"Both {nameof(result)} and {nameof(error)} arguments cannot be non-null.");
 
-			bool resultHasError = String.Compare ((result? ["result"] as JObject)? ["subtype"]?. Value<string> (), "error") == 0;
-			if (result != null && resultHasError) {
-				this.Value = null;
-				this.Error = result;
-			} else {
-				this.Value = result;
-				this.Error = error;
-			}
+			ResultHasError = result? ["exceptionDetails"] != null || String.Compare ((result? ["result"] as JObject)? ["subtype"]?. Value<string> (), "error") == 0;
+
+			this.Value = result;
+			this.Error = error;
 		}
 
 		public static Result FromJson (JObject obj)

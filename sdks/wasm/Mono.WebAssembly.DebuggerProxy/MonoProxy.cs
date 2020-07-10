@@ -372,7 +372,7 @@ namespace WebAssembly.Net.Debugging {
 				return await GetScopeProperties (id, int.Parse (objectId.Value), token);
 
 			var res = await SendMonoCommand (id, MonoCommands.GetDetails (objectId, args), token);
-			if (res.IsErr)
+			if (res.IsErr || res.ResultHasError)
 				return res;
 
 			if (objectId.Scheme == "cfo_res") {
