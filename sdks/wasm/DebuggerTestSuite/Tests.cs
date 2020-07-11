@@ -435,8 +435,11 @@ namespace DebuggerTests
 			});
 		}
 
-		[Fact]
-		public async Task TrivalStepping () {
+		[Theory]
+		[InlineData (TestFlags.NotOnMac)]
+		public async Task TrivalStepping (TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
 			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
@@ -523,7 +526,7 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (false, TestFlags.NotOnMacDev)]
+		[InlineData (false, TestFlags.NotOnMac)]
 		[InlineData (true, TestFlags.NotOnMac)]
 		public async Task InspectLocalsInPreviousFramesDuringSteppingIn2 (bool use_cfo, TestFlags flags = TestFlags.None)
 		{

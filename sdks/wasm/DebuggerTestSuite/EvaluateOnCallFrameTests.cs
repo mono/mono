@@ -11,7 +11,7 @@ namespace DebuggerTests
 	public class EvaluateOnCallFrameTests : DebuggerTestBase {
 
 		[Theory]
-		[InlineData (TestFlags.None)]
+		[InlineData (TestFlags.NotOnMac)]
 		public async Task EvaluateThisProperties (TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
