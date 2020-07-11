@@ -74,10 +74,10 @@ namespace DebuggerTests
 		}
 
 		[Theory]
-		[InlineData (0, 190, 2, "DelegatesSignatureTest", false, TestFlags.NotOnLinuxDev)]
+		[InlineData (0, 190, 2, "DelegatesSignatureTest", false, TestFlags.NotOnLinuxDev | TestFlags.NotOnMac)]
 		[InlineData (0, 190, 2, "DelegatesSignatureTest", true, TestFlags.NotOnMac)]
-		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnLinux)]
-		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnLinux)]
+		[InlineData (2, 90, 2, "InnerMethod2", false, TestFlags.NotOnLinux | TestFlags.NotOnMac)]
+		[InlineData (2, 90, 2, "InnerMethod2", true, TestFlags.NotOnLinux | TestFlags.NotOnMac)]
 		public async Task InspectDelegateSignaturesWithFunc (int frame, int line, int col, string bp_method, bool use_cfo, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;

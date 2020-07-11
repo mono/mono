@@ -14,8 +14,8 @@ namespace DebuggerTests
 			new TheoryData<string, string, string, int, string, bool, TestFlags> {
 				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "LocalPointers", 32, "LocalPointers", false, TestFlags.NotOnMac},
 				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "LocalPointers", 32, "LocalPointers", true, TestFlags.NotOnMac},
-				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", false, TestFlags.None},
-				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", true, TestFlags.None}
+				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", false, TestFlags.NotOnMac},
+				{$"invoke_static_method_async ('[debugger-test] DebuggerTests.PointerTests:LocalPointersAsync');", "DebuggerTests.PointerTests", "LocalPointersAsync", 32, "MoveNext", true, TestFlags.NotOnMac}
 			};
 
 		[Theory]
@@ -372,16 +372,18 @@ namespace DebuggerTests
 			});
 		}
 
-		public static TheoryData<string, string, string, int, string, bool> PointersAsMethodArgsTestData =>
-			new TheoryData<string, string, string, int, string, bool> {
-				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "PointersAsArgsTest", 2, "PointersAsArgsTest", false},
-				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "PointersAsArgsTest", 2, "PointersAsArgsTest", true},
+		public static TheoryData<string, string, string, int, string, bool, TestFlags> PointersAsMethodArgsTestData =>
+			new TheoryData<string, string, string, int, string, bool, TestFlags> {
+				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "PointersAsArgsTest", 2, "PointersAsArgsTest", false, TestFlags.NotOnMac},
+				{$"invoke_static_method ('[debugger-test] DebuggerTests.PointerTests:LocalPointers');", "DebuggerTests.PointerTests", "PointersAsArgsTest", 2, "PointersAsArgsTest", true, TestFlags.NotOnMac},
 			};
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersAsMethodArgsTestData))]
-		public async Task InspectPrimitiveTypePointersAsMethodArgs (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectPrimitiveTypePointersAsMethodArgs (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -445,11 +447,14 @@ namespace DebuggerTests
 						await CheckPointerValue (val, "**[2]", TNumber (5));
 					}
 			});
+		}
 
 		[Theory]
 		[MemberDataAttribute (nameof (PointersAsMethodArgsTestData))]
-		public async Task InspectValueTypePointersAsMethodArgs (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
+		public async Task InspectValueTypePointersAsMethodArgs (string eval_fn, string type, string method, int line_offset, string bp_function_name, bool use_cfo, TestFlags flags = TestFlags.None)
+		{
+			if (!TestHelper.IsSupported (flags)) return;
+			await CheckInspectLocalsAtBreakpointSite (
 				type, method, line_offset, bp_function_name,
 				"window.setTimeout(function() { " + eval_fn + " })",
 				use_cfo: use_cfo,
@@ -504,6 +509,7 @@ namespace DebuggerTests
 
 					await CheckArrayElements (dtppa_elems, exp_elems);
 				});
+		}
 
 		[Theory]
 		[InlineData ("invoke_static_method ('[debugger-test] Math:UseComplex', 0, 0);", "Math", "UseComplex", 3, "UseComplex", false)]
