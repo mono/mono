@@ -357,8 +357,10 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             # Disable all tests that fail on some platforms
             # DEBUGGER_TEST_SUITE_FLAGS=stable TEST_SUITE_CHROME_REVISION=stable ${TESTCMD} --label=debugger-stable --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             DEBUGGER_TEST_SUITE_FLAGS=stable TEST_SUITE_CHROME_REVISION=dev ${TESTCMD} --label=debugger-stable-dev --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+            DEBUGGER_TEST_SUITE_FLAGS=stable TEST_SUITE_CHROME_REVISION=782782 ${TESTCMD} --label=debugger-stable-dev-782782 --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             DEBUGGER_TEST_SUITE_FLAGS=stable TEST_SUITE_CHROME_REVISION=781470 ${TESTCMD} --label=debugger-stable-781470 --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             DEBUGGER_TEST_SUITE_FLAGS=stable TEST_SUITE_CHROME_REVISION=latest ${TESTCMD} --label=debugger-stable-latest --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+            DEBUGGER_TEST_SUITE_FLAGS=stable TEST_SUITE_CHROME_REVISION=787702 ${TESTCMD} --label=debugger-stable-latest-787702 --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
 
             if [[ ${CI_TAGS} != *'osx'* ]]; then
                 DEBUGGER_TEST_SUITE_FLAGS=linux-dev TEST_SUITE_CHROME_REVISION=dev ${TESTCMD} --label=debugger-linux-dev --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
@@ -367,8 +369,10 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             else
                 # DEBUGGER_TEST_SUITE_FLAGS=mac TEST_SUITE_CHROME_REVISION=stable ${TESTCMD} --label=debugger-mac-stable --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
                 DEBUGGER_TEST_SUITE_FLAGS=mac-dev TEST_SUITE_CHROME_REVISION=dev ${TESTCMD} --label=debugger-mac-dev --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+                DEBUGGER_TEST_SUITE_FLAGS=mac-dev TEST_SUITE_CHROME_REVISION=782782 ${TESTCMD} --label=debugger-mac-dev-782782 --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
                 DEBUGGER_TEST_SUITE_FLAGS=mac-dev TEST_SUITE_CHROME_REVISION=781470 ${TESTCMD} --label=debugger-mac-781470 --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
                 DEBUGGER_TEST_SUITE_FLAGS=mac TEST_SUITE_CHROME_REVISION=latest ${TESTCMD} --label=debugger-mac-latest --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
+                DEBUGGER_TEST_SUITE_FLAGS=mac TEST_SUITE_CHROME_REVISION=787702 ${TESTCMD} --label=debugger-mac-latest-787702 --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
                 # we only run this on the Mac
                 # DEBUGGER_TEST_SUITE_FLAGS=mac ${TESTCMD} --label=debugger-system --timeout=60m $gnumake -C sdks/wasm run-debugger-tests
             fi

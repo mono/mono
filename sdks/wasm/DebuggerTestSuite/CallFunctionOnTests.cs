@@ -15,8 +15,8 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData ("big_array_js_test (10);", "/other.js", 5, 1, 10, false, TestFlags.NotOnLinuxDev | TestFlags.NotOnMac)]
 		[InlineData ("big_array_js_test (0);", "/other.js", 5, 1, 0, true, TestFlags.NotOnMac)]
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 10, false)]
-		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 0);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 0, true)]
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 10);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 10, false, TestFlags.NotOnMac)]
+		[InlineData ("invoke_static_method ('[debugger-test] DebuggerTests.CallFunctionOnTest:LocalsTest', 0);", "dotnet://debugger-test.dll/debugger-cfo-test.cs", 19, 3, 0, true, TestFlags.NotOnMac)]
 		public async Task CheckVSCodeTestFunction1 (string eval_fn, string bp_loc, int line, int col, int len, bool roundtrip, TestFlags flags = TestFlags.None)
 		{
 			if (!TestHelper.IsSupported (flags)) return;
