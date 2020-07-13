@@ -22,6 +22,8 @@ using Newtonsoft.Json.Linq;
 
 namespace WebAssembly.Net.Debugging {
 	public class TestHarnessStartup {
+		const int StartupTimeout = 15000;
+
 		static Regex parseConnection = new Regex (@"listening on (ws?s://[^\s]*)");
 		public TestHarnessStartup (IConfiguration configuration)
 		{
@@ -100,8 +102,8 @@ namespace WebAssembly.Net.Debugging {
 				proc.BeginErrorReadLine ();
 				proc.BeginOutputReadLine ();
 
-				if (await Task.WhenAny (tcs.Task, Task.Delay (5000)) != tcs.Task) {
-					Console.WriteLine ("Didnt get the con string after 5s.");
+				if (await Task.WhenAny (tcs.Task, Task.Delay (StartupTimeout)) != tcs.Task) {
+					Console.WriteLine ($"Didnt get the con string after {StartupTimeout}ms.");
 					throw new Exception ("node.js timedout");
 				}
 				var line = await tcs.Task;
@@ -195,7 +197,7 @@ namespace WebAssembly.Net.Debugging {
 								}
 
 								var elapsed = DateTime.Now - start;
-								if (elapsed.Milliseconds > 5000) {
+								if (elapsed.Milliseconds > StartupTimeout) {
 									Console.WriteLine ($"Unable to get DevTools /json/list response in {elapsed.Seconds} seconds, stopping");
 									return null;
 								}
