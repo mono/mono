@@ -78,7 +78,7 @@ namespace DebuggerTests
 
 		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null, TimeSpan? span = null) {
 			using (var cts = new CancellationTokenSource ()) {
-				cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
+				cts.CancelAfter (span?.Milliseconds ?? 125 * 1000); //tests have 1 minute to complete by default
 				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
 				using var loggerFactory = LoggerFactory.Create(
 					builder => builder.AddConsole().AddFilter(null, LogLevel.Information));
