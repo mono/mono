@@ -6,7 +6,7 @@
     <!-- Change this to custom distribution tree location to enable out of source tree distribution, example c:/mono-dist/ -->
     <MONO_INSTALL_DIR_PREFIX>$(MSBuildProjectDirectory)/./dist/</MONO_INSTALL_DIR_PREFIX>
     <!-- GC in use, sgen or boehm, default is sgen. -->
-    <MONO_TARGET_GC>sgen</MONO_TARGET_GC>
+    <MONO_TARGET_GC>boehm</MONO_TARGET_GC>
     <!-- When true, build targets will get a suffix based on used GC. Makes it possible to have builds using different GC's in same build folders, sharing common targets. -->
     <MONO_USE_TARGET_SUFFIX>true</MONO_USE_TARGET_SUFFIX>
     <!-- When true, build will get a separate build folder based on various configuration parameters. Makes it possible separate builds into different output folders under the same build prefix. -->
