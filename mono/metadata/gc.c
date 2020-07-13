@@ -327,25 +327,6 @@ mono_gc_run_finalize (void *obj, void *data)
 		return;
 	}
 
-	/* 
-	 * To avoid the locking plus the other overhead of mono_runtime_invoke_checked (),
-	 * create and precompile a wrapper which calls the finalize method using
-	 * a CALLVIRT.
-	 */
-	if (log_finalizers)
-		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Compiling finalizer.", o->vtable->klass->name, o);
-
-#ifndef HOST_WASM
-	if (!domain->finalize_runtime_invoke) {
-		MonoMethod *invoke = mono_marshal_get_runtime_invoke (mono_class_get_method_from_name_flags (mono_defaults.object_class, "Finalize", 0, 0), TRUE);
-
-		domain->finalize_runtime_invoke = mono_compile_method_checked (invoke, &error);
-		mono_error_assert_ok (&error); /* expect this not to fail */
-	}
-
-	RuntimeInvokeFunction runtime_invoke = (RuntimeInvokeFunction)domain->finalize_runtime_invoke;
-#endif
-
 	mono_runtime_class_init_full (o->vtable, &error);
 	goto_if_nok (&error, unhandled_error);
 
@@ -354,22 +335,20 @@ mono_gc_run_finalize (void *obj, void *data)
 				o->vtable->klass->name_space, o->vtable->klass->name);
 	}
 
-	if (log_finalizers)
-		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Calling finalizer.", o->vtable->klass->name, o);
+	if (finalizer) {
+		if (log_finalizers)
+			g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Calling finalizer.", o->vtable->klass->name, o);
 
-	MONO_PROFILER_RAISE (gc_finalizing_object, (o));
+		MONO_PROFILER_RAISE (gc_finalizing_object, (o));
 
-#ifdef HOST_WASM
-	gpointer params[] = { NULL };
-	mono_runtime_try_invoke (finalizer, o, params, &exc, &error);
-#else
-	runtime_invoke (o, NULL, &exc, NULL);
-#endif
+		gpointer params[] = { NULL };
+		mono_runtime_try_invoke (finalizer, o, params, &exc, &error);
 
-	MONO_PROFILER_RAISE (gc_finalized_object, (o));
+		MONO_PROFILER_RAISE (gc_finalized_object, (o));
 
-	if (log_finalizers)
-		g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Returned from finalizer.", o->vtable->klass->name, o);
+		if (log_finalizers)
+			g_log ("mono-gc-finalizers", G_LOG_LEVEL_MESSAGE, "<%s at %p> Returned from finalizer.", o->vtable->klass->name, o);
+	}
 
 unhandled_error:
 	if (!is_ok (&error))
