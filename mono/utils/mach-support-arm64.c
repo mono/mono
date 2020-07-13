@@ -29,9 +29,13 @@
 
 
 static const int known_tls_offsets[] = {
+#if defined(TARGET_OSX)
+	0xE0, /* macOS 11.0 on Apple silicon */
+#else
 	0x48, /*Found on iOS 6 */
 	0xA4,
 	0xA8,
+#endif // defined(HOST_OSX)
 };
 
 #define TLS_PROBE_COUNT (sizeof (known_tls_offsets) / sizeof (int))
