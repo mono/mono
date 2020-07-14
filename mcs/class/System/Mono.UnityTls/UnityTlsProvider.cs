@@ -131,6 +131,12 @@ namespace Mono.Unity
 			}
 
 			errors = UnityTlsConversions.VerifyResultToPolicyErrror(result);
+			// There should be a status per certificate, but once again we're following closely the BTLS implementation
+			// https://github.com/mono/mono/blob/1553889bc54f87060158febca7e6b8b9910975f8/mcs/class/System/Mono.Btls/MonoBtlsProvider.cs#L180
+			// which also provides only a single status for the entire chain.
+			// It is notoriously tricky to implement in OpenSSL to get a status for all invididual certificates without finishing the handshake in the process.
+			// This is partially the reason why unitytls_x509verify_X doesn't expose it (TODO!) and likely the reason Mono's BTLS impl ignores this.
+			unityTlsChainImpl?.AddStatus(UnityTlsConversions.VerifyResultToChainStatus(result));
 			return result == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS && 
 					errorState.code == UnityTls.unitytls_error_code.UNITYTLS_SUCCESS;
 		}
