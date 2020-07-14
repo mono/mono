@@ -9,6 +9,7 @@ using Mono.Security.Interface;
 
 using System.Security.Authentication;
 using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Mono.Unity
 {
@@ -101,6 +102,30 @@ namespace Mono.Unity
 			// Anything else translates to SslPolicyErrors.RemoteCertificateChainErrors. So if it is not the only flag, add it.
 			if (verifyResult != UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_CN_MISMATCH)
 				error |= SslPolicyErrors.RemoteCertificateChainErrors;
+			return error;
+		}
+
+		public static X509ChainStatusFlags VerifyResultToChainStatus (UnityTls.unitytls_x509verify_result verifyResult)
+		{
+			// First, check "non-flags"
+			if (verifyResult == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS)
+				return X509ChainStatusFlags.NoError;
+			else if (verifyResult == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FATAL_ERROR)
+				return X509ChainStatusFlags.UntrustedRoot; // Inaccurate, throw exception instead?
+
+			// Yes, we ignore user error flags here. They still affect if a chain is accepted, but they are not status flags of the chain!
+			X509ChainStatusFlags error = X509ChainStatusFlags.NoError;
+			if (verifyResult.HasFlag (UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_EXPIRED))
+				error |= X509ChainStatusFlags.NotTimeValid;
+			if (verifyResult.HasFlag (UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_REVOKED))
+				error |= X509ChainStatusFlags.Revoked;
+			if (verifyResult.HasFlag (UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_CN_MISMATCH))
+				// Unclear what to return, behaving like Mono's BTLS impl
+				// https://github.com/mono/mono/blob/1553889bc54f87060158febca7e6b8b9910975f8/mcs/class/System/Mono.Btls/MonoBtlsProvider.cs#L312
+				error |= X509ChainStatusFlags.UntrustedRoot;
+			if (verifyResult.HasFlag (UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED))
+				error |= X509ChainStatusFlags.UntrustedRoot;
+
 			return error;
 		}
 	}
