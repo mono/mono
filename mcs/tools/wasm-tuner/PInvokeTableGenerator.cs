@@ -189,6 +189,7 @@ public class PInvokeTableGenerator
 
 	static bool IsBlittable (TypeReference type) {
 		switch (type.MetadataType) {
+		case MetadataType.Void:
 		case MetadataType.Char:
 		case MetadataType.Boolean:
 		case MetadataType.Byte:
