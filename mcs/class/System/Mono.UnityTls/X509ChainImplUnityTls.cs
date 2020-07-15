@@ -1,6 +1,7 @@
 #if SECURITY_DEP
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Security;
 using System.Security.Cryptography;
@@ -12,9 +13,10 @@ namespace Mono.Unity
 	// Follows mostly X509ChainImplBtls
 	class X509ChainImplUnityTls : X509ChainImpl
 	{
-		X509ChainElementCollection elements;
-		UnityTls.unitytls_x509list_ref nativeCertificateChain;
-		X509ChainPolicy policy = new X509ChainPolicy ();
+		private X509ChainElementCollection elements;
+		private UnityTls.unitytls_x509list_ref nativeCertificateChain;
+		private X509ChainPolicy policy = new X509ChainPolicy ();
+		private List<X509ChainStatus> chainStatusList;
 
 		internal X509ChainImplUnityTls (UnityTls.unitytls_x509list_ref nativeCertificateChain)
 		{
@@ -64,8 +66,13 @@ namespace Mono.Unity
 			set { policy = value; }
 		}
 
-		public override X509ChainStatus[] ChainStatus {
-			get { throw new NotImplementedException (); }
+		public override X509ChainStatus[] ChainStatus => chainStatusList?.ToArray() ?? new X509ChainStatus[0];
+
+		public void AddStatus (X509ChainStatusFlags errorCode)
+		{
+			if (chainStatusList == null)
+				chainStatusList = new List<X509ChainStatus>();
+			chainStatusList.Add (new X509ChainStatus(errorCode));
 		}
 
 		public override bool Build (X509Certificate2 certificate)
