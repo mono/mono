@@ -112,23 +112,41 @@ namespace WebAssembly.Net.Debugging {
 			pending_ops.Add (MarkCompleteAfterward (send, token));
 
 			while (!token.IsCancellationRequested) {
-				var task = await Task.WhenAny (pending_ops);
-				if (task == pending_ops [0]) { //pending_ops[0] is for message reading
-					var msg = ((Task<string>)task).Result;
-					pending_ops [0] = ReadOne (token);
-					Task tsk = receive (msg, token);
-					if (tsk != null)
-						pending_ops.Add (tsk);
-				} else if (task == pending_ops [1]) {
-					var res = ((Task<bool>)task).Result;
-					//it might not throw if exiting successfull
-					return res;
-				} else { //must be a background task
-					pending_ops.Remove (task);
-					var tsk = Pump (task, token);
-					if (tsk != null)
-						pending_ops.Add (tsk);
+				await Task.WhenAny (pending_ops);
+
+				var new_ops = new List<Task> (pending_ops.Count);
+				// Clear out all the completed tasks
+				for (int i = 0; i < pending_ops.Count; i ++) {
+					var task = pending_ops [i];
+
+					if (task.IsFaulted) {
+						await task;
+						throw new InvalidOperationException ("Should not have reached here");
+					}
+
+					if (task.Status != TaskStatus.RanToCompletion) {
+						new_ops.Add (task);
+						continue;
+					}
+
+					if (i == 0) { //pending_ops[0] is for message reading
+						var msg = ((Task<string>)task).Result;
+						new_ops.Add (ReadOne (token));
+						Task tsk = receive (msg, token);
+						if (tsk != null)
+							new_ops.Add (tsk);
+					} else if (task == side_exit.Task) {
+						var res = ((Task<bool>)task).Result;
+						//it might not throw if exiting successfull
+						return res;
+					} else { //must be a background task
+						var tsk = Pump (task, token);
+						if (tsk != null)
+							new_ops.Add (tsk);
+					}
 				}
+
+				pending_ops = new_ops;
 			}
 
 			return false;
