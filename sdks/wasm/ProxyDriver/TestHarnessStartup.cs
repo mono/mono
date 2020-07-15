@@ -84,7 +84,7 @@ namespace WebAssembly.Net.Debugging {
 					var str = e.Data;
 					Console.WriteLine ($"stderr: {str}");
 
-					if (tcs.Task.IsCompleted)
+					if (String.IsNullOrEmpty (str) || tcs.Task.IsCompleted)
 						return;
 
 					var match = parseConnection.Match (str);
