@@ -34,7 +34,7 @@ namespace WebAssembly.Net.Debugging
 				return revision;
 
 			// FIXME: is there a better option of detecting MacOS?
-			var isMacOS = File.Exists ("/System/Applications/Utilities/Terminal.app");
+			var isMacOS = File.Exists ("/usr/lib/libc.dylib");
 
 			return revisionString switch
 			{
@@ -107,7 +107,7 @@ namespace WebAssembly.Net.Debugging
 		public static async Task<int> GetLatestRevision (string channelOrRevision)
 		{
 			// FIXME: is there a better option of detecting that on netcore?
-			var isMacOS = Directory.Exists ("/System/Applications/Utilities/Terminal.app");
+			var isMacOS = File.Exists ("/usr/lib/libc.dylib");
 			var platform = isMacOS ? Platform.MacOS : Platform.Linux;
 
 			int? revision;
