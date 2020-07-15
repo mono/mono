@@ -78,12 +78,13 @@ namespace DebuggerTests
 
 		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null, TimeSpan? span = null) {
 			using (var cts = new CancellationTokenSource ()) {
-				cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
 				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
 				using var loggerFactory = LoggerFactory.Create(
 					builder => builder.AddConsole().AddFilter(null, LogLevel.Information));
 				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
 					await client.Connect (uri, OnMessage, async token => {
+						Console.WriteLine ($"-- Setting 1m timeout");
+						cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
 						Task[] init_cmds = {
 							client.SendCommand ("Profiler.enable", null, token),
 							client.SendCommand ("Runtime.enable", null, token),
@@ -480,7 +481,9 @@ namespace DebuggerTests
 				Assert.True (false, $"SendCommand for {method} failed with {res.Error.ToString ()}");
 			}
 
+			Console.WriteLine ($"- SendCommandAndCheck WaitFor {waitForEvent}");
 			var wait_res = await ctx.insp.WaitFor(waitForEvent);
+			Console.WriteLine ($"- SendCommandAndCheck DONE - WaitFor {waitForEvent}");
 
 			if (function_name != null)
 				Assert.Equal (function_name, wait_res ["callFrames"]?[0]?["functionName"]?.Value<string> ());
