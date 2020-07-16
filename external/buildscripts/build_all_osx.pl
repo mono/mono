@@ -52,8 +52,8 @@ GetOptions(
 print(">>> Building x86_64\n");
 system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=x86_64", @passAlongArgs) eq 0 or die ('failing building x86_64');
 
-print(">>> Building ARM64\n");
-system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=arm64", @passAlongArgs) eq 0 or die ("failing building ARM64");
+#print(">>> Building ARM64\n");
+#system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=arm64", @passAlongArgs) eq 0 or die ("failing building ARM64");
 
 if ($artifact)
 {
@@ -62,17 +62,17 @@ if ($artifact)
 	# Copy stuff in the embedruntimes directory
 	my $embedDirRoot = "$buildsroot/embedruntimes";
 	my $embedDirSourceX64 = "$embedDirRoot/osx-tmp-x86_64";
-	my $embedDirSourceARM64 = "$embedDirRoot/osx-tmp-arm64";
+	#my $embedDirSourceARM64 = "$embedDirRoot/osx-tmp-arm64";
 
 	CopyEmbedRuntimeBinaries($embedDirSourceX64, "$embedDirRoot/osx");
-	CopyEmbedRuntimeBinaries($embedDirSourceARM64, "$embedDirRoot/osx-arm64");
+	#CopyEmbedRuntimeBinaries($embedDirSourceARM64, "$embedDirRoot/osx-arm64");
 
 	# Merge stuff in the monodistribution directory
 	my $distDirRoot = "$buildsroot/monodistribution";
 	my $distDirDestinationBin = "$buildsroot/monodistribution/bin";
 	my $distDirDestinationLib = "$buildsroot/monodistribution/lib";
 	my $distDirSourceBinX64 = "$distDirRoot/bin-osx-tmp-x86_64";
-	my $distDirSourceBinARM64 = "$distDirRoot/bin-osx-tmp-arm64";
+	#my $distDirSourceBinARM64 = "$distDirRoot/bin-osx-tmp-arm64";
 
 	# Should always exist because build_all would have put stuff in it, but in some situations
 	# depending on the options it may not.  So create it if it does not exist
@@ -91,9 +91,15 @@ if ($artifact)
 		die("Expected source directory not found : $distDirSourceBinX64\n");
 	}
 
-	if (!(-d $distDirSourceBinARM64))
+	#if (!(-d $distDirSourceBinARM64))
+	#{
+		#die("Expected source directory not found : $distDirSourceBinARM64\n");
+	#}
+
+	for my $file ('mono')
 	{
-		die("Expected source directory not found : $distDirSourceBinARM64\n");
+		#MergeIntoFatBinary("$distDirSourceBinX64/$file", "$distDirSourceBinARM64/$file", "$distDirDestinationBin/$file");
+		system ('mv', "$distDirSourceBinX64/$file", "$distDirDestinationBin/$file");
 	}
 
 	for my $file ('pedump')
@@ -102,9 +108,11 @@ if ($artifact)
 		system ('mv', "$distDirSourceBinX64/$file", "$distDirDestinationBin/$file") eq 0 or die ("Failed to move '$distDirSourceBinX64/$file' to '$distDirDestinationBin/$file'.");
 	}
 
-	for my $file ('libMonoPosixHelper.dylib')
+	for my $file ('libMonoPosixHelper.dylib', 'libmono-native.dylib')
 	{
-		MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file");
+		#MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file");
+		print(">>> cp $embedDirSourceX64/$file $distDirDestinationLib/$file\n\n");
+		system ('cp', "$embedDirSourceX64/$file", "$distDirDestinationLib/$file");
 	}
 
 	if ($buildMachine)
@@ -112,9 +120,9 @@ if ($artifact)
 		print(">>> Clean up temporary arch specific build directories\n");
 
 		rmtree("$distDirSourceBinX64");
-		rmtree("$distDirSourceBinARM64");
+		#rmtree("$distDirSourceBinARM64");
 		rmtree("$embedDirSourceX64");
-		rmtree("$embedDirSourceARM64");
+		#rmtree("$embedDirSourceARM64");
 	}
 }
 
@@ -129,7 +137,7 @@ sub CopyEmbedRuntimeBinaries
 		die("Expected source directory not found : $embedDirSource\n");
 	}
 
-	for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib')
+	for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib', 'libmono-native.dylib')
 	{
 		print(">>> cp $embedDirSource/$file $embedDirDestination/$file\n\n");
 		system('cp', "$embedDirSource/$file", "$embedDirDestination/$file") eq 0 or die("Failed to copy '$embedDirSource/$file' to '$embedDirDestination/$file'.");
@@ -138,7 +146,7 @@ sub CopyEmbedRuntimeBinaries
 	if (not $buildMachine)
 	{
 		print(">>> Doing non-build machine stuff...\n");
-		for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib')
+		for my $file ('libmonobdwgc-2.0.dylib','libmonosgen-2.0.dylib','libMonoPosixHelper.dylib', 'libmono-native.dylib')
 		{
 			print(">>> Removing $embedDirDestination/$file.dSYM\n");
 			rmtree("$embedDirDestination/$file.dSYM");
