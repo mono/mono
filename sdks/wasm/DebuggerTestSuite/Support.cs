@@ -12,6 +12,10 @@ using Microsoft.Extensions.Logging;
 using WebAssembly.Net.Debugging;
 using Newtonsoft.Json.Linq;
 using Xunit;
+using Serilog;
+using Serilog.Debugging;
+using Serilog.Events;
+using System.Reflection;
 
 namespace DebuggerTests
 {
@@ -23,7 +27,6 @@ namespace DebuggerTests
 
 		public const string PAUSE = "pause";
 		public const string READY = "ready";
-
 		static string[] FailOnMethods = new string[] {
 			"Runtime.exceptionThrown",
 			"Inspector.targetCrashed",
@@ -31,17 +34,28 @@ namespace DebuggerTests
 			"Inspector.detached"
 		};
 
-		public Task<JObject> WaitFor(string what) {
+		static readonly int defaultTestTimeoutMs = 120 * 1000;
+
+		public Task<JObject> WaitFor (string what, int? timeoutSeconds = 10)
+		{
 			if (notifications.ContainsKey (what))
 				throw new Exception ($"Invalid internal state, waiting for {what} while another wait is already setup");
 			var n = new TaskCompletionSource<JObject> ();
 			notifications [what] = n;
+
+			if (timeoutSeconds.HasValue) {
+				Logger.LogDebug ($"- WaitFor {what}, with timeout ({timeoutSeconds})");
+				return n.Task.TimeoutAfter (TimeSpan.FromSeconds (timeoutSeconds.Value), $"Timed out waiting for {what}");
+			}
+			Logger.LogDebug ($"- WaitFor {what}, {timeoutSeconds}");
+
 			return n.Task;
 		}
 
 		void NotifyOf (string what, JObject args) {
 			if (!notifications.ContainsKey (what))
 				throw new Exception ($"Invalid internal state, notifying of {what}, but nobody waiting");
+			Logger.LogDebug ($"** NotifyOf {what} **");
 			notifications [what].SetResult (args);
 			notifications.Remove (what);
 		}
@@ -50,10 +64,10 @@ namespace DebuggerTests
 			eventListeners[evtName] = cb;
 		}
 
-		void FailAllWaitersWithException (string method, JObject exception)
+		void FailAllWaitersWithException (Exception exception)
 		{
 			foreach (var tcs in notifications.Values)
-				tcs.SetException (new ArgumentException (exception.ToString ()));
+				tcs.SetException (exception);
 		}
 
 		async Task OnMessage(string method, JObject args, CancellationToken token)
@@ -64,45 +78,93 @@ namespace DebuggerTests
 				NotifyOf (PAUSE, args);
 				break;
 			case "Mono.runtimeReady":
-				NotifyOf (READY, args);
+				// NotifyOf (READY, args);
 				break;
 			case "Runtime.consoleAPICalled":
-				Console.WriteLine ("CWL: {0}", args? ["args"]? [0]? ["value"]);
+				// Console.WriteLine ("CWL: {0}", args? ["args"]? [0]? ["value"]);
+				Logger.LogTrace ($"CWL: {args? ["args"]? [0]? ["value"]}");
 				break;
 			}
 			if (eventListeners.ContainsKey (method))
 				await eventListeners[method](args, token);
 			else if (FailOnMethods.Any (m => string.Compare (m, method) == 0))
-				FailAllWaitersWithException (method, args);
+				FailAllWaitersWithException (new ArgumentException (args.ToString (), paramName: method));
+		}
+
+		static int logCount = 0;
+		public Microsoft.Extensions.Logging.ILogger Logger { get; private set; }
+
+		void DumpLastLog ()
+		{
+			Console.WriteLine ($"--------- Dumping *test* Log for logCount: {logCount} --------");
+			var baseDir = Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location);
+			var testLogPath = Directory.EnumerateFiles (baseDir, $"test-{logCount}-*.log").FirstOrDefault ();
+			if (testLogPath != null) {
+				Console.WriteLine (File.ReadAllText (testLogPath));
+			} else {
+				Console.WriteLine ($"* No test log found *");
+			}
+
+			Console.WriteLine ($"--------- Dumping *proxy* Log for logCount: {logCount} --------");
+			var proxyLogPath = Directory.EnumerateFiles (baseDir, $"proxy-{logCount}-*.log").FirstOrDefault ();
+			if (proxyLogPath != null) {
+				Console.WriteLine (File.ReadAllText (proxyLogPath));
+			} else {
+				Console.WriteLine ($"* No proxy log found *");
+			}
+
+			Console.WriteLine ($"---------- Dumping logs done -----------");
 		}
 
 		public async Task Ready (Func<InspectorClient, CancellationToken, Task> cb = null, TimeSpan? span = null) {
 			using (var cts = new CancellationTokenSource ()) {
 				var uri = new Uri ($"ws://{TestHarnessProxy.Endpoint.Authority}/launch-chrome-and-connect");
+				var baseDir = Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location);
+
 				using var loggerFactory = LoggerFactory.Create(
-					builder => builder.AddConsole().AddFilter(null, LogLevel.Information));
-				using (var client = new InspectorClient (loggerFactory.CreateLogger<Inspector>())) {
+					builder => {
+						builder.AddConsole().AddFilter(null, LogLevel.Information);
+						builder.AddFile (Path.Combine (baseDir, $"test-{Interlocked.Increment (ref logCount)}.log"), LogLevel.Trace);
+					});
+
+				Logger = loggerFactory.CreateLogger<Inspector> ();
+
+				try {
+				using (var client = new InspectorClient (Logger)) {
+					cts.Token.Register (() => FailAllWaitersWithException (new TimeoutException ("Test timed out")));
+
 					await client.Connect (uri, OnMessage, async token => {
-						Console.WriteLine ($"-- Setting 1m timeout");
-						cts.CancelAfter (span?.Milliseconds ?? 60 * 1000); //tests have 1 minute to complete by default
+						try {
+						Logger.LogDebug ($"-- Setting 1m timeout");
+						var ms = span?.Milliseconds ?? defaultTestTimeoutMs;
+						cts.CancelAfter (ms); //tests have 1 minute to complete by default
 						Task[] init_cmds = {
 							client.SendCommand ("Profiler.enable", null, token),
 							client.SendCommand ("Runtime.enable", null, token),
 							client.SendCommand ("Debugger.enable", null, token),
 							client.SendCommand ("Runtime.runIfWaitingForDebugger", null, token),
-							WaitFor (READY),
+							WaitFor (READY, null)
 						};
 						// await Task.WhenAll (init_cmds);
-						Console.WriteLine ("waiting for the runtime to be ready");
+						Logger.LogTrace ("-- waiting for the runtime to be ready");
 						await init_cmds [4];
-						Console.WriteLine ("runtime ready, TEST TIME");
+						Logger.LogTrace ("runtime ready, TEST TIME");
 						if (cb != null) {
-							Console.WriteLine("await cb(client, token)");
+							Logger.LogTrace ("await cb(client, token)");
 							await cb(client, token);
+							Logger.LogTrace ($"--- cb DONE");
+						}
+						} catch (Exception ex) {
+							Logger.LogDebug ($"send function failed with {ex}");
+							throw;
 						}
 
 					}, cts.Token);
+					Logger.LogTrace ($"--- Test DONE ---");
 					await client.Close (cts.Token);
+				}
+				} finally {
+					DumpLastLog ();
 				}
 			}
 		}
@@ -482,7 +544,7 @@ namespace DebuggerTests
 			}
 
 			Console.WriteLine ($"- SendCommandAndCheck WaitFor {waitForEvent}");
-			var wait_res = await ctx.insp.WaitFor(waitForEvent);
+			var wait_res = await ctx.insp.WaitFor (waitForEvent);
 			Console.WriteLine ($"- SendCommandAndCheck DONE - WaitFor {waitForEvent}");
 
 			if (function_name != null)

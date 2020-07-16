@@ -549,6 +549,8 @@ namespace DebuggerTests
 				await CompareObjectPropertiesFor (frame_locals, "this",
 						TPoint (90, -4, "point#Id", "Green"),
 						label: "this#0");
+
+				Console.WriteLine ($"-- Done with the test itself");
 			});
 		}
 

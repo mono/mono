@@ -709,10 +709,11 @@ run-all-%:
 	$(MAKE) -C . run-jsc-$*
 
 run-debugger-tests: build-debugger-test-app build-dbg-testsuite
+	rm DebuggerTestSuite/bin/Debug/netcoreapp3.0/*.log; \
 	if [ ! -z "$(TEST_FILTER)" ]; then \
-		LC_ALL=en_US.UTF-8 dotnet test DebuggerTestSuite --filter FullyQualifiedName~$(TEST_FILTER); \
+		LC_ALL=en_US.UTF-8 WASM_TESTS_LOG_PROTOCOL=1 TEST_SUITE_CHROME_REVISION=782793 dotnet test -r TestResults -l:"trx;LogFileName=TestOutput.xml" DebuggerTestSuite --filter FullyQualifiedName~$(TEST_FILTER); \
 	else \
-		LC_ALL=en_US.UTF-8 dotnet test DebuggerTestSuite $(TEST_ARGS); \
+		LC_ALL=en_US.UTF-8 WASM_TESTS_LOG_PROTOCOL=1 TEST_SUITE_CHROME_REVISION=782793 dotnet test -r TestResults $(TEST_ARGS) DebuggerTestSuite; \
 	fi
 
 run-browser-tests: build-browser-test-suite

@@ -15,7 +15,7 @@ namespace WebAssembly.Net.Debugging {
 
 	class DevToolsQueue {
 		Task current_send;
-		List<byte []> pending;
+		public List<byte []> pending;
 
 		public WebSocket Ws { get; private set; }
 		public Task CurrentSend { get { return current_send; } }
@@ -41,6 +41,9 @@ namespace WebAssembly.Net.Debugging {
 		public Task Pump (CancellationToken token)
 		{
 			current_send = null;
+			if (pending.Count == 0)
+				return null;
+
 			pending.RemoveAt (0);
 
 			if (pending.Count > 0) {
@@ -63,6 +66,8 @@ namespace WebAssembly.Net.Debugging {
 		int next_cmd_id;
 		List<Task> pending_ops = new List<Task> ();
 		List<DevToolsQueue> queues = new List<DevToolsQueue> ();
+
+		static readonly bool LogProtocolMessages = Environment.GetEnvironmentVariable ("WASM_TESTS_LOG_PROTOCOL") != null;
 
 		protected readonly ILogger logger;
 
@@ -200,6 +205,7 @@ namespace WebAssembly.Net.Debugging {
 
 		Task<Result> SendCommandInternal (SessionId sessionId, string method, JObject args, CancellationToken token)
 		{
+			// Console.WriteLine ($"- SendCommand: {method}");
 			int id = Interlocked.Increment (ref next_cmd_id);
 
 			var o = JObject.FromObject (new {
@@ -306,6 +312,7 @@ namespace WebAssembly.Net.Debugging {
 							}
 						}
 					} catch (Exception e) {
+						Log ("verbose", $"DevToolsProxy::Run: Exception {e.Message}");
 						Log ("error", $"DevToolsProxy::Run: Exception {e}");
 						//throw;
 					} finally {
@@ -320,14 +327,21 @@ namespace WebAssembly.Net.Debugging {
 		{
 			switch (priority) {
 			case "protocol":
-				logger.LogTrace (msg);
+				if (LogProtocolMessages)
+					logger.LogTrace (msg);
 				break;
 			case "verbose":
 				logger.LogDebug (msg);
 				break;
 			case "info":
+				logger.LogInformation (msg);
+				break;
 			case "warning":
+				logger.LogWarning (msg);
+				break;
 			case "error":
+				logger.LogError (msg);
+				break;
 			default:
 				logger.LogDebug (msg);
 				break;

@@ -12,6 +12,10 @@
   <ItemGroup>
     <PackageReference Include="PuppeteerSharp" Version="2.0.3" />
     <ProjectReference Include="..\Mono.WebAssembly.DebuggerProxy\Mono.WebAssembly.DebuggerProxy.csproj" />
+    
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <!-- <PackageReference Include="Serilog.Sinks.File" Version="3.0.1" /> -->
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

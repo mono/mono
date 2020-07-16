@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
+using Serilog;
+using Serilog.Events;
 
 namespace WebAssembly.Net.Debugging {
 	public class TestHarnessStartup {
@@ -68,6 +71,8 @@ namespace WebAssembly.Net.Debugging {
 			} catch (Exception e) { Console.WriteLine (e); }
 		}
 
+		static int logCount = 0;
+
 		public async Task LaunchAndServe (ProcessStartInfo psi, HttpContext context, Func<string, Task<string>> extract_conn_url)
 		{
 
@@ -109,8 +114,14 @@ namespace WebAssembly.Net.Debugging {
 
 				Console.WriteLine ($"launching proxy for {con_str}");
 
+				var baseDir = Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location);
 				using var loggerFactory = LoggerFactory.Create(
-					builder => builder.AddConsole().AddFilter(null, LogLevel.Information));
+					builder => {
+						builder.AddConsole().AddFilter(null, LogLevel.Information);
+						// builder.AddFile ($"/tmp/proxy-{Interlocked.Increment (ref logCount)}.log", LogLevel.Trace);
+						builder.AddFile (Path.Combine (baseDir, $"proxy-{Interlocked.Increment (ref logCount)}.log"), LogLevel.Trace);
+					});
+
 				var proxy = new DebuggerProxy (loggerFactory);
 				var browserUri = new Uri (con_str);
 				var ideSocket = await context.WebSockets.AcceptWebSocketAsync ();
