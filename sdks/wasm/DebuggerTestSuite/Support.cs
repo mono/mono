@@ -78,7 +78,7 @@ namespace DebuggerTests
 				NotifyOf (PAUSE, args);
 				break;
 			case "Mono.runtimeReady":
-				// NotifyOf (READY, args);
+				NotifyOf (READY, args);
 				break;
 			case "Runtime.consoleAPICalled":
 				// Console.WriteLine ("CWL: {0}", args? ["args"]? [0]? ["value"]);
@@ -163,8 +163,9 @@ namespace DebuggerTests
 					Logger.LogTrace ($"--- Test DONE ---");
 					await client.Close (cts.Token);
 				}
-				} finally {
+				} catch {
 					DumpLastLog ();
+					throw;
 				}
 			}
 		}
