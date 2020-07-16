@@ -172,7 +172,6 @@ class InterpToNativeGenerator {
 		"VIIIFIII",
 		"VIIIIF",
 		"IFFFFIII",
-		"IFFFFIII",
 		"IFFIII",
 		"VIIIIFFII",
 	};
