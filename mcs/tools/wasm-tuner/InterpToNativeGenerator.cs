@@ -171,6 +171,10 @@ class InterpToNativeGenerator {
 		"VIIIFII",
 		"VIIIFIII",
 		"VIIIIF",
+		"IFFFFIII",
+		"IFFFFIII",
+		"IFFIII",
+		"VIIIIFFII",
 	};
  
 	static string TypeToSigType (char c) {
