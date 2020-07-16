@@ -51,6 +51,7 @@ my $forceDefaultBuildDeps=0;
 my $existingMonoRootPath = '';
 my $sdk = '';
 my $arch32 = 0;
+my $targetArch = "";
 my $winPerl = "";
 my $winMonoRoot = "";
 my $msBuildVersion = "14.0";
@@ -95,6 +96,7 @@ GetOptions(
 	'runtimetests=i'=>\$runRuntimeTests,
 	'classlibtests=i'=>\$runClasslibTests,
 	'arch32=i'=>\$arch32,
+	'targetarch=s'=>\$targetArch,
 	'jobs=i'=>\$jobs,
 	'sdk=s'=>\$sdk,
 	'existingmono=s'=>\$existingMonoRootPath,
@@ -204,9 +206,15 @@ if($^O eq "linux")
 }
 elsif($^O eq 'darwin')
 {
-	$monoHostArch = $arch32 ? "i386" : "x86_64";
+	$monoHostArch = "x86_64";
 	$existingExternalMono = "$existingExternalMonoRoot";
 	$existingExternalMonoBinDir = "bin";
+
+	if ($targetArch eq "arm64")
+	{
+		$disableMcs = 1;
+		$test = 0;
+	}
 
 	# From Massi: I was getting failures in install_name_tool about space
 	# for the commands being too small, and adding here things like
@@ -448,22 +456,12 @@ if ($build)
 
 	my $macSdkPath = "";
 	my $macBuildEnvDir = "";
-	my $macversion = '10.11';
+	my $macversion = '10.12';
 	my $darwinVersion = "10";
 	if ($^O eq 'darwin')
 	{
-		if ($sdk eq '')
-		{
-			$sdk='10.11';
-		}
-
-		$macBuildEnvDir = "$externalBuildDeps/MacBuildEnvironment";
-		$macSdkPath = "$macBuildEnvDir/builds/MacOSX$sdk.sdk";
-		if (! -d $macSdkPath)
-		{
-			print(">>> Unzipping mac build toolchain\n");
-			system("unzip", '-qd', "$macBuildEnvDir", "$macBuildEnvDir/builds.zip") eq 0 or die ("failed unzipping mac build toolchain\n");
-		}
+		$sdk='11.0';
+		$macSdkPath = "$externalBuildDeps/mac-toolchain-11_0/MacOSX$sdk.sdk";
 	}
 
 	if ($iphone || $iphoneSimulator)
@@ -1147,25 +1145,43 @@ if ($build)
 			$existingMonoRootPath = "$monoInstalls/$monoVersionToUse";
 		}
 
+		if ($targetArch eq "arm64")
+		{
+			$macversion = "11.0"; # To build on ARM64, we need to specify min OS version as 11.0 as we need to use new APIs from 11.0
+		}
+
 		$mcs = "EXTERNAL_MCS=$existingMonoRootPath/bin/mcs";
 
 		$ENV{'CC'} = "$macSdkPath/../usr/bin/clang";
 		$ENV{'CXX'} = "$macSdkPath/../usr/bin/clang++";
-		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-I$macBuildEnvDir/builds/usr/include -mmacosx-version-min=$macversion -isysroot $macSdkPath";
+		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-mmacosx-version-min=$macversion -isysroot $macSdkPath -g";
+
 		$ENV{'CXXFLAGS'} = $ENV{CFLAGS};
 		$ENV{'CPPFLAGS'} = $ENV{CFLAGS};
 
-		$ENV{CFLAGS} = "$ENV{CFLAGS} -g -O0" if $debug;
+		$ENV{CFLAGS} = "$ENV{CFLAGS} -O0" if $debug;
 		$ENV{CFLAGS} = "$ENV{CFLAGS} -Os" if not $debug; #optimize for size
 
-		$ENV{CC} = "$ENV{CC} -arch $monoHostArch";
-		$ENV{CXX} = "$ENV{CXX} -arch $monoHostArch";
+		$ENV{CC} = "$ENV{CC} -arch $targetArch";
+		$ENV{CXX} = "$ENV{CXX} -arch $targetArch";
 
 		#Set SDKROOT to force cmake to use the right sysroot
 		$ENV{SDKROOT} = "$macSdkPath";
 
 		# Add OSX specific autogen args
-		push @configureparams, "--host=$monoHostArch-apple-darwin12.2.0";
+
+		if ($targetArch eq "x86_64")
+		{
+			push @configureparams, "--host=x86_64-apple-darwin12.2.0";
+		}
+		elsif ($targetArch eq "arm64")
+		{
+			push @configureparams, "--host=aarch64-apple-darwinmacos12.2.0";
+		}
+		else
+		{
+			die("Unsupported macOS architecture: $targetArch");
+		}
 
 		# Need to define because Apple's SIP gets in the way of us telling mono where to find this
 		push @configureparams, "--with-libgdiplus=$addtoresultsdistdir/lib/libgdiplus.dylib";
@@ -1526,9 +1542,9 @@ if ($artifact)
 	elsif($^O eq 'darwin')
 	{
 		# Note these tmp directories will get merged into a single 'osx' directory later by a parent script
-		$embedDirArchDestination = "$embedDirRoot/osx-tmp-$monoHostArch";
-		$distDirArchBin = "$distdir/bin-osx-tmp-$monoHostArch";
-		$versionsOutputFile = $arch32 ? "$buildsroot/versions-osx32.txt" : "$buildsroot/versions-osx64.txt";
+		$embedDirArchDestination = "$embedDirRoot/osx-tmp-$targetArch";
+		$distDirArchBin = "$distdir/bin-osx-tmp-$targetArch";
+		$versionsOutputFile = "$buildsroot/versions-macos-$targetArch.txt";
 	}
 	else
 	{

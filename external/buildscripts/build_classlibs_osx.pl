@@ -35,6 +35,7 @@ system(
 	"--build=$build",
 	"--clean=$clean",
 	"--mcsonly=$mcsOnly",
+	"--targetarch=x86_64",
 	"--skipmonomake=$skipMonoMake",
 	"--artifact=1",
 	"--artifactscommon=1",
