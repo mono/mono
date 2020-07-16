@@ -207,6 +207,10 @@ public class PInvokeTableGenerator
 		case MetadataType.Pointer:
 		case MetadataType.ByReference:
 			return true;
+		case MetadataType.ValueType: {
+			var tdef = type.Resolve ();
+			return tdef != null && tdef.IsEnum;
+		}
 		default:
 			return false;
 		}
