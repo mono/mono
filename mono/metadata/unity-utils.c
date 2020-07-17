@@ -916,9 +916,9 @@ mono_unity_get_unitytls_interface()
 // gc
 MONO_API void mono_unity_gc_set_mode(MonoGCMode mode)
 {
-#if HAVE_BDWGC_GC
 	switch (mode)
 	{
+#if HAVE_BOEHM_GC
 		case MONO_GC_MODE_ENABLED:
 			if (GC_is_disabled())
 				GC_enable();
@@ -935,10 +935,10 @@ MONO_API void mono_unity_gc_set_mode(MonoGCMode mode)
 				GC_enable();
 			GC_set_disable_automatic_collection(TRUE);
 			break;
-	}
 #else
-	g_assert_not_reached ();
+		g_assert_not_reached();
 #endif
+	}
 }
 
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
