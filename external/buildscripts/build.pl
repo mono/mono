@@ -272,6 +272,7 @@ if ($build)
 	push @configureparams, "--disable-mcs-build" if($disableMcs);
 	push @configureparams, "--with-glib=embedded";
 	push @configureparams, "--disable-nls";  #this removes the dependency on gettext package
+	push @configureparams, "--disable-btls";  #this removes the dependency on cmake to build btls for now
 	push @configureparams, "--with-mcs-docs=no";
 	push @configureparams, "--prefix=$monoprefix";
 	push @configureparams, "--enable-no-threads-discovery=yes";
@@ -455,7 +456,6 @@ if ($build)
 	}
 
 	my $macSdkPath = "";
-	my $macBuildEnvDir = "";
 	my $macversion = '10.12';
 	my $darwinVersion = "10";
 	if ($^O eq 'darwin')
@@ -1154,7 +1154,7 @@ if ($build)
 
 		$ENV{'CC'} = "$macSdkPath/../usr/bin/clang";
 		$ENV{'CXX'} = "$macSdkPath/../usr/bin/clang++";
-		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-mmacosx-version-min=$macversion -isysroot $macSdkPath -g";
+		$ENV{'CFLAGS'} = $ENV{MACSDKOPTIONS} = "-I$macSdkPath/../usr/include -mmacosx-version-min=$macversion -isysroot $macSdkPath -g";
 
 		$ENV{'CXXFLAGS'} = $ENV{CFLAGS};
 		$ENV{'CPPFLAGS'} = $ENV{CFLAGS};
@@ -1166,7 +1166,7 @@ if ($build)
 		$ENV{CXX} = "$ENV{CXX} -arch $targetArch";
 
 		#Set SDKROOT to force cmake to use the right sysroot
-		$ENV{SDKROOT} = "$macSdkPath";
+		#$ENV{SDKROOT} = "$macSdkPath";
 
 		# Add OSX specific autogen args
 
