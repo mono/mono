@@ -5458,7 +5458,9 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	} else {
 		/* ip points to an ldrx */
 		code += 4;
+		mono_codeman_enable_write ();
 		arm_blrx (code, ARMREG_IP0);
+		mono_codeman_disable_write ();
 		mono_arch_flush_icache (ip, code - ip);
 	}
 }
@@ -5477,7 +5479,9 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	} else {
 		/* ip points to an ldrx */
 		code += 4;
+		mono_codeman_enable_write ();
 		arm_nop (code);
+		mono_codeman_disable_write ();
 		mono_arch_flush_icache (ip, code - ip);
 	}
 }
