@@ -276,7 +276,10 @@ mono_codeman_malloc (gsize n)
 	g_assert (heap);
 	return HeapAlloc (heap, 0, n);
 #else
-	return dlmemalign (MIN_ALIGN, n);
+	mono_codeman_enable_write ();
+	gpointer res = dlmemalign (MIN_ALIGN, n);
+	mono_codeman_disable_write ();
+	return res;
 #endif
 }
 
@@ -290,7 +293,9 @@ mono_codeman_free (gpointer p)
 	g_assert (heap);
 	HeapFree (heap, 0, p);
 #else
+	mono_codeman_enable_write ();
 	dlfree (p);
+	mono_codeman_disable_write ();
 #endif
 }
 
@@ -481,7 +486,9 @@ new_codechunk (MonoCodeManager *cman, int size)
 #ifdef BIND_ROOM
 	if (flags == CODE_FLAG_MALLOC) {
 		/* Make sure the thunks area is zeroed */
+		mono_codeman_enable_write ();
 		memset (ptr, 0, bsize);
+		mono_codeman_disable_write ();
 	}
 #endif
 
