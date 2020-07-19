@@ -114,6 +114,8 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 {
 	guint8 *code, *start;
 
+	MINI_BEGIN_CODEGEN ();
+
 	if (has_target) {
 		start = code = mono_global_codeman_reserve (12);
 
@@ -123,9 +125,6 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 		arm_brx (code, ARMREG_IP0);
 
 		g_assert ((code - start) <= 12);
-
-		mono_arch_flush_icache (start, 12);
-		MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 	} else {
 		int size, i;
 
@@ -139,10 +138,8 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 		arm_brx (code, ARMREG_IP0);
 
 		g_assert ((code - start) <= size);
-
-		mono_arch_flush_icache (start, size);
-		MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 	}
+	MINI_END_CODEGEN (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
 
 	if (code_size)
 		*code_size = code - start;
@@ -5350,6 +5347,8 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 		buf = mono_domain_code_reserve (domain, buf_len);
 	code = buf;
 
+	MINI_BEGIN_CODEGEN ();
+
 	/*
 	 * We are called by JITted code, which passes in the IMT argument in
 	 * MONO_ARCH_RGCTX_REG (r27). We need to preserve all caller saved regs
@@ -5419,8 +5418,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	g_assert ((code - buf) <= buf_len);
 
-	mono_arch_flush_icache (buf, code - buf);
-	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
+	MINI_END_CODEGEN (buf, code - buf, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);
 
 	return buf;
 }
