@@ -56,10 +56,6 @@ static gpointer bp_trampoline;
 
 static gboolean ios_abi;
 
-#if defined(__APPLE__)
-__thread jit_protect_mode arm_current_jit_protect_mode = JPM_NONE;
-#endif
-
 static __attribute__ ((__warn_unused_result__)) guint8* emit_load_regset (guint8 *code, guint64 regs, int basereg, int offset);
 
 const char*
