@@ -1460,8 +1460,11 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			}
 		}
 
-		for (i = 0; i < patch_info->data.table->table_size; i++) {
-			jump_table [i] = code + GPOINTER_TO_INT (patch_info->data.table->table [i]);
+		{
+			MONO_SCOPE_ENABLE_JIT_WRITE ();
+			for (i = 0; i < patch_info->data.table->table_size; i++) {
+				jump_table [i] = code + GPOINTER_TO_INT (patch_info->data.table->table [i]);
+			}
 		}
 
 		target = jump_table;
