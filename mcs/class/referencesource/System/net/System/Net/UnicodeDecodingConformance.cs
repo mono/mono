@@ -16,7 +16,7 @@ namespace System.Net.Configuration
     /// See http://www.w3.org/International/questions/qa-escapes#bytheway for more information
     /// on how Unicode characters in the SMP are supposed to be encoded in HTML.
     /// </remarks>
-#if !MOBILE
+#if !MOBILE || UNITY_AOT
     public
 #endif
     enum UnicodeDecodingConformance
