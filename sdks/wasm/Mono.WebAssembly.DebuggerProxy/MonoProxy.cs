@@ -17,11 +17,6 @@ namespace WebAssembly.Net.Debugging {
 		HashSet<SessionId> sessions = new HashSet<SessionId> ();
 		Dictionary<SessionId, ExecutionContext> contexts = new Dictionary<SessionId, ExecutionContext> ();
 
-		protected enum ExceptionState {
-			None,
-			Uncaught,
-			All
-		}
 		public MonoProxy (ILoggerFactory loggerFactory, bool hideWebDriver = true) : base(loggerFactory) { hideWebDriver = true; }
 
 		readonly bool hideWebDriver;
@@ -91,7 +86,7 @@ namespace WebAssembly.Net.Debugging {
 					var top_func = args? ["callFrames"]? [0]? ["functionName"]?.Value<string> ();
 
 					if (top_func == "mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_exception") {
-						return await OnBreakpointHit (sessionId, args, token);
+						return await OnPause (sessionId, args, token);
 					}
 					break;
 				}
@@ -136,17 +131,6 @@ namespace WebAssembly.Net.Debugging {
 
 		static int bpIdGenerator;
 
-		protected ExceptionState getExceptionStateEnum (string state)
-		{
-			switch (state) {
-				case "uncaught":
-					return ExceptionState.Uncaught;
-				case "all":
-					return ExceptionState.All;
-			}
-			return ExceptionState.None;
-		}
-		
 		protected override async Task<bool> AcceptCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
 			// Inspector doesn't use the Target domain or sessions
@@ -305,7 +289,7 @@ namespace WebAssembly.Net.Debugging {
 				
 			case "Debugger.setPauseOnExceptions": {
 				string state = args["state"].Value<string> ();
-				await SendMonoCommand (id, MonoCommands.SetPauseOnExceptions ((int)getExceptionStateEnum (state)), token);
+				await SendMonoCommand (id, MonoCommands.SetPauseOnExceptions (state), token);
 				SendResponse (id, Result.OkFromObject (new{}), token);
 				return true;
 			}
@@ -414,7 +398,7 @@ namespace WebAssembly.Net.Debugging {
 		}
 
 		//static int frame_id=0;
-		async Task<bool> OnBreakpointHit (SessionId sessionId, JObject args, CancellationToken token)
+		async Task<bool> OnPause (SessionId sessionId, JObject args, CancellationToken token)
 		{
 			//FIXME we should send release objects every now and then? Or intercept those we inject and deal in the runtime
 			var res = await SendMonoCommand (sessionId, MonoCommands.GetCallStack(), token);
@@ -459,7 +443,7 @@ namespace WebAssembly.Net.Debugging {
 							type = "object",
 							subtype = "error",
 							className = "Exception",
-            				description = exception_obj_id.Value? ["result"]? ["value"]? ["message"]?.Value<string> (),
+            				description = exception_obj_id.Value? ["result"]? ["value"]? ["message"]?.Value<string> () + "\n",
 							objectId = exception_dotnet_obj_id.ToString ()
 						});
 						reason = "exception";

@@ -621,7 +621,16 @@ var MonoSupportLib = {
 		mono_wasm_set_pause_on_exceptions: function (state) {
 			if (!this.mono_wasm_pause_on_exceptions)
 				this.mono_wasm_pause_on_exceptions = Module.cwrap ("mono_wasm_pause_on_exceptions", 'number', [ 'number']);
-			return this.mono_wasm_pause_on_exceptions (state);
+			var state_enum = 0;
+			switch (state) {
+				case 'uncaught':
+					state_enum = 1; //EXCEPTION_MODE_UNCAUGHT
+					break;
+				case 'all':
+					state_enum = 2; //EXCEPTION_MODE_ALL
+					break;
+			}
+			return this.mono_wasm_pause_on_exceptions (state_enum);
 		},
 
 		mono_wasm_runtime_ready: function () {

@@ -215,8 +215,8 @@ namespace WebAssembly.Net.Debugging {
 		public static MonoCommands Resume ()
 			=> new MonoCommands ($"MONO.mono_wasm_debugger_resume ()");
 		
-		public static MonoCommands SetPauseOnExceptions (int state)
-			=> new MonoCommands ($"MONO.mono_wasm_set_pause_on_exceptions({state})");
+		public static MonoCommands SetPauseOnExceptions (string state)
+			=> new MonoCommands ($"MONO.mono_wasm_set_pause_on_exceptions(\"{state}\")");
 	}
 
 	internal enum MonoErrorCodes {

@@ -376,7 +376,6 @@ mono_wasm_debugger_init (void)
 	objrefs = g_hash_table_new_full (NULL, NULL, NULL, mono_debugger_free_objref);
 
 	mini_get_dbg_callbacks ()->handle_exception = handle_exception;
-	DEBUG_PRINTF (1, "handle_exception atualizado\n");
 }
 
 MONO_API void
