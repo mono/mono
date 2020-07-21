@@ -26,9 +26,9 @@ static int log_level = 1;
 
 
 enum {
-	EXCEPTION_MODE_NONE = 0,
-	EXCEPTION_MODE_UNCAUGHT = 2,
-	EXCEPTION_MODE_ALL = 3
+	EXCEPTION_MODE_NONE,
+	EXCEPTION_MODE_UNCAUGHT,
+	EXCEPTION_MODE_ALL
 };
 
 //functions exported to be used by JS
