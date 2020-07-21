@@ -3049,6 +3049,9 @@ init_backend (MonoBackend *backend)
 #ifdef MONO_ARCH_HAVE_OPTIMIZED_DIV
 	backend->optimized_div = 1;
 #endif
+#ifdef MONO_ARCH_FORCE_FLOAT32
+	backend->force_float32 = 1;
+#endif
 }
 
 static gboolean
@@ -3151,6 +3154,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 #ifndef MONO_ARCH_FLOAT32_SUPPORTED
 	opts &= ~MONO_OPT_FLOAT32;
 #endif
+	if (current_backend->force_float32)
+		/* Force float32 mode on newer platforms */
+		opts |= MONO_OPT_FLOAT32;
 
  restart_compile:
 	if (method_is_gshared) {
