@@ -446,10 +446,11 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 			if (field->offset == -1)
 				continue;
 
+			char* offseted = (char*)mono_vtable_get_static_field_data (vtable);
+			offseted += field->offset;
+
 			if (MONO_TYPE_ISSTRUCT(field->type))
 			{
-				char* offseted = (char*)mono_vtable_get_static_field_data (vtable);
-				offseted += field->offset;
 				if (field->type->type == MONO_TYPE_GENERICINST)
 				{
 					g_assert(field->type->data.generic_class->cached_class);
@@ -462,18 +463,12 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 			}
 			else
 			{
-				// MonoError error;
-				MonoObject* val = NULL;
-				MonoStringHandle string_handle = MONO_HANDLE_NEW (MonoString, NULL);
-				ERROR_DECL (error);
+				MonoObject* val = *(MonoObject**)offseted;
 
-				mono_field_static_get_value_checked (mono_class_vtable_checked (domain, klass, error), field, &val, string_handle, error);
-
-				if (val && is_ok (error))
+				if (val)
 				{
 					mono_add_process_object(val, liveness_state);
 				}
-				mono_error_cleanup (error);
 			}
 		}
 	}
