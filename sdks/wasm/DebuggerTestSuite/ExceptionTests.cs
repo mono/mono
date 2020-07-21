@@ -8,11 +8,11 @@ using WebAssembly.Net.Debugging;
 namespace DebuggerTests
 {
 
-    public class ExceptionTests : DebuggerTestBase {
+	public class ExceptionTests : DebuggerTestBase {
 
-        [Fact]
-        public async Task ExceptionTestAll () {
-            var insp = new Inspector ();
+[Fact]
+		public async Task ExceptionTestAll () {
+			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 			int line = 9;
@@ -24,19 +24,19 @@ namespace DebuggerTests
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-exception-test.cs";
 
-                await SetPauseOnException("all");
+			await SetPauseOnException("all");
 
-                var eval_expr = "window.setTimeout(function() { invoke_static_method ("
+			var eval_expr = "window.setTimeout(function() { invoke_static_method ("
 							+ $"'{entry_method_name}'"
 						+ "); }, 1);";
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "run");
-            });
-        }
+			});
+		}
 
-        [Fact]
-        public async Task ExceptionTestUncaught () {
-            var insp = new Inspector ();
+		[Fact]
+		public async Task ExceptionTestUncaught () {
+			var insp = new Inspector ();
 			//Collect events
 			var scripts = SubscribeToScripts(insp);
 			int line = 19;
@@ -48,14 +48,14 @@ namespace DebuggerTests
 				ctx = new DebugTestContext (cli, insp, token, scripts);
 				var debugger_test_loc = "dotnet://debugger-test.dll/debugger-exception-test.cs";
 
-                await SetPauseOnException("uncaught");
+				await SetPauseOnException("uncaught");
 
-                var eval_expr = "window.setTimeout(function() { invoke_static_method ("
+				var eval_expr = "window.setTimeout(function() { invoke_static_method ("
 							+ $"'{entry_method_name}'"
 						+ "); }, 1);";
 
 				var pause_location = await EvaluateAndCheck (eval_expr, debugger_test_loc, line, col, "run");
-            });
-        }
-    }
+			});
+		}
+	}
 }
