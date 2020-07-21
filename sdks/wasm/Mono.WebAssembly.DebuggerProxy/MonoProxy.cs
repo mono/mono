@@ -146,6 +146,7 @@ namespace WebAssembly.Net.Debugging {
 			}
 			return ExceptionState.None;
 		}
+		
 		protected override async Task<bool> AcceptCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
 			// Inspector doesn't use the Target domain or sessions
