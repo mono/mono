@@ -1,4 +1,4 @@
-# Contents
+# Contents 
 
 > **_Note:_** Recent changes have occurred to the directory structure for `Available WebAssembly Runtime Builds` (see below diagrams).  All builds can now be found in one directory `sdk/wasm/builds`.  This was necessary to start supporting more options and functionality.
 
