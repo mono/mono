@@ -44,7 +44,6 @@
 
 #if HAVE_BOEHM_GC
 
-#define GC_dirty(x)
 #include <private/gc_pmark.h>
 #include <gc_vector.h>
 
