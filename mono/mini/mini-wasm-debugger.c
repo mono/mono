@@ -1379,9 +1379,14 @@ handle_exception (MonoException *exc, MonoContext *throw_ctx, MonoContext *catch
 		return;
 
 	int obj_id = get_object_id ((MonoObject *)exc);
-	DEBUG_PRINTF (2, "handle exception - calling mono_wasm_fire_exc(): %d - message - %s\n", obj_id,  mono_string_to_utf8_checked_internal (exc->message, error));
+	const char *error_message = mono_string_to_utf8_checked_internal (exc->message, error);
+
+	if (!is_ok (error))
+		error_message = "Failed to get exception message.";
+
+	DEBUG_PRINTF (2, "handle exception - calling mono_wasm_fire_exc(): %d - message - %s\n", obj_id,  error_message);
 	
-	mono_wasm_fire_exception (obj_id, mono_string_to_utf8_checked_internal (exc->message, error));
+	mono_wasm_fire_exception (obj_id, error_message);
 
 	//mono_wasm_fire_exc (catch_ctx == NULL, obj_id);
 	DEBUG_PRINTF (2, "handle exception - done\n");
