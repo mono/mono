@@ -66,6 +66,11 @@ var MonoSupportLib = {
 				return str;
 			},
 		},
+		mono_wasm_get_exception_object: function() {
+			var exception_obj = MONO.active_exception;
+			MONO.active_exception = null;
+			return exception_obj ;
+		},
 
 		mono_wasm_get_call_stack: function() {
 			if (!this.mono_wasm_current_bp_id)
@@ -611,6 +616,12 @@ var MonoSupportLib = {
 			this._clear_per_step_state ();
 
 			return this.mono_wasm_setup_single_step (kind);
+		},
+
+		mono_wasm_set_pause_on_exceptions: function (state) {
+			if (!this.mono_wasm_pause_on_exceptions)
+				this.mono_wasm_pause_on_exceptions = Module.cwrap ("mono_wasm_pause_on_exceptions", 'number', [ 'number']);
+			return this.mono_wasm_pause_on_exceptions (state);
 		},
 
 		mono_wasm_runtime_ready: function () {
@@ -1184,6 +1195,11 @@ var MonoSupportLib = {
 
 	mono_wasm_fire_bp: function () {
 		console.log ("mono_wasm_fire_bp");
+		debugger;
+	},
+
+	mono_wasm_fire_exception: function (object_exception_id, message) {
+		MONO.active_exception = {"exception_id" : object_exception_id, "message" : Module.UTF8ToString (message) };
 		debugger;
 	}
 };

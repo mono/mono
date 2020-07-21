@@ -17,6 +17,11 @@ namespace WebAssembly.Net.Debugging {
 		HashSet<SessionId> sessions = new HashSet<SessionId> ();
 		Dictionary<SessionId, ExecutionContext> contexts = new Dictionary<SessionId, ExecutionContext> ();
 
+		protected enum ExceptionState {
+			None,
+			Uncaught,
+			All
+		}
 		public MonoProxy (ILoggerFactory loggerFactory, bool hideWebDriver = true) : base(loggerFactory) { hideWebDriver = true; }
 
 		readonly bool hideWebDriver;
@@ -85,7 +90,7 @@ namespace WebAssembly.Net.Debugging {
 					//TODO figure out how to stich out more frames and, in particular what happens when real wasm is on the stack
 					var top_func = args? ["callFrames"]? [0]? ["functionName"]?.Value<string> ();
 
-					if (top_func == "mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_bp") {
+					if (top_func == "mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_bp" || top_func == "_mono_wasm_fire_exception") {
 						return await OnBreakpointHit (sessionId, args, token);
 					}
 					break;
@@ -131,6 +136,16 @@ namespace WebAssembly.Net.Debugging {
 
 		static int bpIdGenerator;
 
+		protected ExceptionState getExceptionStateEnum (string state)
+		{
+			switch (state) {
+				case "uncaught":
+					return ExceptionState.Uncaught;
+				case "all":
+					return ExceptionState.All;
+			}
+			return ExceptionState.None;
+		}
 		protected override async Task<bool> AcceptCommand (MessageId id, string method, JObject args, CancellationToken token)
 		{
 			// Inspector doesn't use the Target domain or sessions
@@ -286,6 +301,13 @@ namespace WebAssembly.Net.Debugging {
 					SendResponse (id, Result.OkFromObject (new{}), token);
 					return true;
 				}
+				
+			case "Debugger.setPauseOnExceptions": {
+				string state = args["state"].Value<string> ();
+				await SendMonoCommand (id, MonoCommands.SetPauseOnExceptions ((int)getExceptionStateEnum (state)), token);
+				SendResponse (id, Result.OkFromObject (new{}), token);
+				return true;
+			}
 
 				// Protocol extensions
 			case "DotnetDebugger.getMethodLocation": {
@@ -397,6 +419,8 @@ namespace WebAssembly.Net.Debugging {
 			var res = await SendMonoCommand (sessionId, MonoCommands.GetCallStack(), token);
 			var orig_callframes = args? ["callFrames"]?.Values<JObject> ();
 			var context = GetContext (sessionId);
+			JObject data = null;
+			var reason = "other";//other means breakpoint
 
 			if (res.IsErr) {
 				//Give up and send the original call stack
@@ -424,7 +448,22 @@ namespace WebAssembly.Net.Debugging {
 			foreach (var frame in orig_callframes) {
 				var function_name = frame ["functionName"]?.Value<string> ();
 				var url = frame ["url"]?.Value<string> ();
-				if ("mono_wasm_fire_bp" == function_name || "_mono_wasm_fire_bp" == function_name) {
+				if ("mono_wasm_fire_bp" == function_name || "_mono_wasm_fire_bp" == function_name ||
+					"_mono_wasm_fire_exception" == function_name) {
+
+					if ("_mono_wasm_fire_exception" == function_name) {
+						var exception_obj_id = await SendMonoCommand (sessionId, MonoCommands.GetExceptionObject (), token);
+						var exception_dotnet_obj_id = new DotnetObjectId ("object", exception_obj_id.Value? ["result"]? ["value"]? ["exception_id"]?.Value<string> ());
+						data = JObject.FromObject (new {
+							type = "object",
+							subtype = "error",
+							className = "Exception",
+            				description = exception_obj_id.Value? ["result"]? ["value"]? ["message"]?.Value<string> (),
+							objectId = exception_dotnet_obj_id.ToString ()
+						});
+						reason = "exception";
+					}
+
 					var frames = new List<Frame> ();
 					int frame_id = 0;
 					var the_mono_frames = res.Value? ["result"]? ["value"]? ["frames"]?.Values<JObject> ();
@@ -505,7 +544,8 @@ namespace WebAssembly.Net.Debugging {
 
 			var o = JObject.FromObject (new {
 				callFrames,
-				reason = "other", //other means breakpoint
+				reason, 
+				data,
 				hitBreakpoints = bp_list,
 			});
 

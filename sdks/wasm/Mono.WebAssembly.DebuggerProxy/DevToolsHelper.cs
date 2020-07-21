@@ -176,6 +176,9 @@ namespace WebAssembly.Net.Debugging {
 		public static MonoCommands GetCallStack ()
 			=> new MonoCommands ("MONO.mono_wasm_get_call_stack()");
 
+		public static MonoCommands GetExceptionObject ()
+			=> new MonoCommands ("MONO.mono_wasm_get_exception_object()");
+
 		public static MonoCommands IsRuntimeReady ()
 			=> new MonoCommands ("MONO.mono_wasm_runtime_is_ready");
 
@@ -211,6 +214,9 @@ namespace WebAssembly.Net.Debugging {
 
 		public static MonoCommands Resume ()
 			=> new MonoCommands ($"MONO.mono_wasm_debugger_resume ()");
+		
+		public static MonoCommands SetPauseOnExceptions (int state)
+			=> new MonoCommands ($"MONO.mono_wasm_set_pause_on_exceptions({state})");
 	}
 
 	internal enum MonoErrorCodes {
