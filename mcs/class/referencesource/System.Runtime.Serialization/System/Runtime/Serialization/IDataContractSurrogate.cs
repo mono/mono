@@ -17,7 +17,7 @@ namespace System.Runtime.Serialization
         object GetCustomDataToExport(Type clrType, Type dataContractType);
         void GetKnownCustomDataTypes(Collection<Type> customDataTypes);
         Type GetReferencedTypeOnImport(string typeName, string typeNamespace, object customData);
-#if !NO_CODEDOM
+#if !NO_CODEDOM || UNITY_AOT
         CodeTypeDeclaration ProcessImportedType(CodeTypeDeclaration typeDeclaration, CodeCompileUnit compileUnit);
 #endif
     }
@@ -70,7 +70,7 @@ namespace System.Runtime.Serialization
                 return null;
             return surrogate.GetReferencedTypeOnImport(typeName, typeNamespace, customData);
         }
-#if !NO_CODEDOM
+#if !NO_CODEDOM || UNITY_AOT
         internal static CodeTypeDeclaration ProcessImportedType(IDataContractSurrogate surrogate, CodeTypeDeclaration typeDeclaration, CodeCompileUnit compileUnit)
         {
             return surrogate.ProcessImportedType(typeDeclaration, compileUnit);
