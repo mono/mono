@@ -12,6 +12,23 @@
 
 #ifdef HAVE_BOEHM_GC
 
+/* Use unity's updated Boehm GC from IL2CPP */
+#define ALL_INTERIOR_POINTERS 1
+#define GC_GCJ_SUPPORT 1
+#define JAVA_FINALIZATION 1
+#define NO_EXECUTE_PERMISSION 1
+#define GC_NO_THREADS_DISCOVERY 1
+#define IGNORE_DYNAMIC_LOADING 1
+#define GC_DONT_REGISTER_MAIN_STATIC_DATA 1
+#define GC_VERSION_MAJOR 7
+#define GC_VERSION_MINOR 7
+#define GC_VERSION_MICRO 0
+#define GC_THREADS 1
+#define USE_MMAP 1
+#define USE_MUNMAP 1
+
+#define GC_EventType GCEventType
+
 #	ifdef _MSC_VER
 #		include <winsock2.h>
 #	else
@@ -43,7 +60,6 @@
 
 #	include <gc.h>
 #	include <gc_typed.h>
-#	include <gc_mark.h>
 #	include <gc_gcj.h>
 
 #if defined(HOST_WIN32)
