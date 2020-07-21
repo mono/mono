@@ -66,6 +66,7 @@ var MonoSupportLib = {
 				return str;
 			},
 		},
+		
 		mono_wasm_get_exception_object: function() {
 			var exception_obj = MONO.active_exception;
 			MONO.active_exception = null;
