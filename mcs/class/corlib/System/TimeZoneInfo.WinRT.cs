@@ -359,6 +359,17 @@ namespace System
 				// EnumDynamicTimeZoneInformation() might not be available.
 			}
 
+			// If we are in this function we know that TimeZoneKey is null and need to use the fallback
+			// Adding Local here will cause a stack overflow
+			if (result.Count == 0)
+			{
+				var l = GetLocalTimeZoneInfoWinRTFallback();
+				if (Interlocked.CompareExchange (ref local, l, null) != null)
+					l = local;
+
+				result.Add(l);
+			}
+
 			return result;
 		}
 	}
