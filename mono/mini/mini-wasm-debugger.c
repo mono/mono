@@ -51,7 +51,7 @@ EMSCRIPTEN_KEEPALIVE void mono_wasm_get_deref_ptr_value (void *value_addr, MonoC
 //JS functions imported that we use
 extern void mono_wasm_add_frame (int il_offset, int method_token, const char *assembly_name, const char *method_name);
 extern void mono_wasm_fire_bp (void);
-extern void mono_wasm_fire_exception (int exception_obj_id, const char* message);
+extern void mono_wasm_fire_exception (int exception_obj_id, const char* message, const char* class_name, gboolean uncaught);
 extern void mono_wasm_add_obj_var (const char*, const char*, guint64);
 extern void mono_wasm_add_value_type_unexpanded_var (const char*, const char*);
 extern void mono_wasm_begin_value_type_var (const char*, const char*);
@@ -1384,11 +1384,11 @@ handle_exception (MonoException *exc, MonoContext *throw_ctx, MonoContext *catch
 	if (!is_ok (error))
 		error_message = "Failed to get exception message.";
 
-	DEBUG_PRINTF (2, "handle exception - calling mono_wasm_fire_exc(): %d - message - %s\n", obj_id,  error_message);
+	const char *class_name = mono_class_full_name (mono_object_class (exc));
+	DEBUG_PRINTF (2, "handle exception - calling mono_wasm_fire_exc(): %d - message - %s, class_name: %s\n", obj_id,  error_message, class_name);
 	
-	mono_wasm_fire_exception (obj_id, error_message);
+	mono_wasm_fire_exception (obj_id, error_message, class_name, !catch_ctx);
 
-	//mono_wasm_fire_exc (catch_ctx == NULL, obj_id);
 	DEBUG_PRINTF (2, "handle exception - done\n");
 }
 

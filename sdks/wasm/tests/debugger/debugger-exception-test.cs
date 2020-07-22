@@ -7,7 +7,7 @@ namespace DebuggerTests
 		public class TestCaughtException {
 			public void run() {
 				try {
-					throw new Exception("not implemented caught");
+					throw new CustomException ("not implemented caught");
 				}
 				catch {
 					Console.WriteLine("caught exception");
@@ -17,7 +17,7 @@ namespace DebuggerTests
 
 		public class TestUncaughtException {
 			public void run() {
-				throw new Exception("not implemented uncaught");
+				throw new CustomException ("not implemented uncaught");
 			}
 		}
 
@@ -31,5 +31,18 @@ namespace DebuggerTests
 		}
 
 	}
+
+	public class CustomException : Exception
+	{
+		// Using this name to match with what js has.
+		// helps with the tests
+		public string message;
+		public CustomException (string message)
+			: base (message)
+		{
+			this.message = message;
+		}
+	}
+
 
 }

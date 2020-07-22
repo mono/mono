@@ -1208,8 +1208,14 @@ var MonoSupportLib = {
 		debugger;
 	},
 
-	mono_wasm_fire_exception: function (object_exception_id, message) {
-		MONO.active_exception = {"exception_id" : object_exception_id, "message" : Module.UTF8ToString (message) };
+	mono_wasm_fire_exception: function (exception_id, message, class_name, uncaught) {
+		MONO.active_exception = {
+			exception_id: exception_id,
+			message     : Module.UTF8ToString (message),
+			class_name  : Module.UTF8ToString (class_name),
+			uncaught    : uncaught
+		};
+
 		debugger;
 	}
 };

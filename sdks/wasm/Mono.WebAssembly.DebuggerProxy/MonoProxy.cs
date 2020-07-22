@@ -286,12 +286,13 @@ namespace WebAssembly.Net.Debugging {
 					SendResponse (id, Result.OkFromObject (new{}), token);
 					return true;
 				}
-				
+
 			case "Debugger.setPauseOnExceptions": {
 				string state = args["state"].Value<string> ();
 				await SendMonoCommand (id, MonoCommands.SetPauseOnExceptions (state), token);
-				SendResponse (id, Result.OkFromObject (new{}), token);
-				return true;
+
+				// Pass this on to JS too
+				return false;
 			}
 
 				// Protocol extensions
@@ -438,13 +439,15 @@ namespace WebAssembly.Net.Debugging {
 
 					if ("_mono_wasm_fire_exception" == function_name) {
 						var exception_obj_id = await SendMonoCommand (sessionId, MonoCommands.GetExceptionObject (), token);
-						var exception_dotnet_obj_id = new DotnetObjectId ("object", exception_obj_id.Value? ["result"]? ["value"]? ["exception_id"]?.Value<string> ());
+						var res_val = exception_obj_id.Value? ["result"]? ["value"];
+						var exception_dotnet_obj_id = new DotnetObjectId ("object", res_val? ["exception_id"]?.Value<string> ());
 						data = JObject.FromObject (new {
-							type = "object",
-							subtype = "error",
-							className = "Exception",
-            				description = exception_obj_id.Value? ["result"]? ["value"]? ["message"]?.Value<string> () + "\n",
-							objectId = exception_dotnet_obj_id.ToString ()
+							type        = "object",
+							subtype     = "error",
+							className   = res_val? ["class_name"]?.Value<string> (),
+							uncaught    = res_val? ["uncaught"]?.Value<bool> (),
+							description = res_val? ["message"]?.Value<string> () + "\n",
+							objectId    = exception_dotnet_obj_id.ToString ()
 						});
 						reason = "exception";
 					}
@@ -529,7 +532,7 @@ namespace WebAssembly.Net.Debugging {
 
 			var o = JObject.FromObject (new {
 				callFrames,
-				reason, 
+				reason,
 				data,
 				hitBreakpoints = bp_list,
 			});

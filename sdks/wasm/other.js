@@ -28,3 +28,21 @@ function getters_js_test () {
 	console.log (`break here`);
 	return ptd;
 }
+
+function exception_caught_test () {
+	try {
+		throw new TypeError ('exception caught');
+	} catch (e) {
+		console.log(e);
+	}
+}
+
+function exception_uncaught_test () {
+	console.log('uncaught test');
+	throw new RangeError ('exception uncaught');
+}
+
+function exceptions_test () {
+	exception_caught_test ();
+	exception_uncaught_test ();
+}
