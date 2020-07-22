@@ -7,7 +7,7 @@ namespace DebuggerTests
 		public class TestCaughtException {
 			public void run() {
 				try {
-					throw new Exception("not implemented");
+					throw new Exception("not implemented caught");
 				}
 				catch {
 					Console.WriteLine("caught exception");
@@ -17,7 +17,7 @@ namespace DebuggerTests
 
 		public class TestUncaughtException {
 			public void run() {
-				throw new Exception("not implemented");
+				throw new Exception("not implemented uncaught");
 			}
 		}
 
