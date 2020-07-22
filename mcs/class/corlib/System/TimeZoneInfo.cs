@@ -787,10 +787,6 @@ namespace System
 			if (systemTimeZones == null) {
 				var tz = new List<TimeZoneInfo> ();
 				GetSystemTimeZonesCore (tz);
-				// Don't want to return an empty list if we can help it
-				// but we don't want to stack overflow via a CreateLocal loop
-				if (tz.Count == 0 && local != null)
-					tz.Add(Local);
 				Interlocked.CompareExchange (ref systemTimeZones, new ReadOnlyCollection<TimeZoneInfo> (tz), null);
 			}
 
