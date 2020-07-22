@@ -2980,7 +2980,7 @@ ves_icall_RuntimeType_GetInterfaces (MonoReflectionTypeHandle ref_type, MonoErro
 		g_hash_table_destroy (iface_hash);
 		if (!domain->empty_types) {
 			domain->empty_types = mono_array_new_cached (domain, mono_defaults.runtimetype_class, 0, error);
-            mono_gc_wbarrier_generic_nostore (&domain->empty_types);			
+			mono_gc_wbarrier_generic_nostore_internal (&domain->empty_types);
 			goto_if_nok (error, fail);
 		}
 		return MONO_HANDLE_NEW (MonoArray, domain->empty_types);

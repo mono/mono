@@ -989,7 +989,7 @@ mono_domain_set_internal_with_options (MonoDomain *domain, gboolean migrate_exce
 
 	SET_APPDOMAIN (domain);
 	SET_APPCONTEXT (domain->default_context);
-	mono_gc_wbarrier_generic_nostore (&domain->default_context);
+	mono_gc_wbarrier_generic_nostore_internal (&domain->default_context);
 
 	if (migrate_exception) {
 		thread = mono_thread_internal_current ();
