@@ -330,12 +330,7 @@ if ($build)
 		{
 			print(">>> External mono found at : $existingExternalMono\n");
 
-			if (-d "$existingExternalMono/builds")
-			{
-				print(">>> Mono found at at : $existingExternalMono/builds\n");
-			}
-
-			$existingMonoRootPath = "$existingExternalMono/builds/monodistribution";
+			$existingMonoRootPath = "$existingExternalMono/monodistribution";
 		}
 		else
 		{

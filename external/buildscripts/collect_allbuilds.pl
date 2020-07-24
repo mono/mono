@@ -56,12 +56,6 @@ system("cp embedruntimes/linux64/libMonoPosixHelper.so monodistribution/lib/libM
 
 rmove('versions-aggregated.txt', 'versions.txt');
 
-open(MYFILE,">built_by_teamcity.txt");
-print MYFILE "These builds were created by teamcity from svn revision $ENV{BUILD_VCS_NUMBER}\n";
-print MYFILE "TC projectname was: $ENV{TEAMCITY_PROJECT_NAME}\n";
-print MYFILE "TC buildconfigname was: $ENV{TEAMCITY_BUILDCONF_NAME}\n";
-close(MYFILE);
-
 my $externalBuildDeps = "$monoroot/external/buildscripts/artifacts/Stevedore";
 my $externalzip = "";
 if($^O eq "linux")
@@ -80,12 +74,11 @@ if($^O eq "linux" || $^O eq 'darwin')
 {
 	rmtree("../stevedore");
 	my $stevedoreMbePath = "../stevedore/MonoBleedingEdge";
-	my $stevedoreMbeBuildsPath = "../stevedore/MonoBleedingEdge/builds";
 	my $stevedoreMbe7z = "../stevedore/MonoBleedingEdge.7z";
 	my $stevedoreMbeArtifactID = "../stevedore/artifactid.txt";
 
-	system("mkdir -p $stevedoreMbeBuildsPath") eq 0 or die("failed to mkdir $stevedoreMbeBuildsPath");
-	system("cp -r * $stevedoreMbeBuildsPath/") eq 0 or die ("failed copying builds to $stevedoreMbeBuildsPath\n");
+	system("mkdir -p $stevedoreMbePath") eq 0 or die("failed to mkdir $stevedoreMbePath");
+	system("cp -r * $stevedoreMbePath/") eq 0 or die ("failed copying builds to $stevedoreMbePath\n");
 	if(-f $externalzip)
 	{
 		system("$externalzip a $stevedoreMbe7z $stevedoreMbePath/* -sdel") eq 0 or die("failed 7z up $stevedoreMbePath");
