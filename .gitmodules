@@ -39,7 +39,7 @@
 	url = git://github.com/mono/corefx.git
 [submodule "external/bockbuild"]
 	path = external/bockbuild
-	url = git://github.com/bratsche/bockbuild.git
+	url = git://github.com/mono/bockbuild.git
 [submodule "external/linker"]
 	path = external/linker
 	url = git://github.com/mono/linker.git
