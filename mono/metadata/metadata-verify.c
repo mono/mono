@@ -441,8 +441,6 @@ verify_pe_header (VerifyContext *ctx)
 
 	if (offset > ctx->size - 20)
 		ADD_ERROR (ctx, g_strdup ("File with truncated pe header"));
-	if (read16 (pe_header) != 0x14c)
-		ADD_ERROR (ctx, g_strdup ("Invalid PE header Machine value"));
 }
 
 static void
