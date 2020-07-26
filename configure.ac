@@ -449,6 +449,10 @@ case "$host" in
 				platform_ios=yes
 				has_dtrace=no
 				;;
+			aarch64*-darwin20*)
+				# OSX/arm64
+				support_boehm=no
+				;;
 			aarch64*-darwin*)
 				platform_ios=yes
 				;;
@@ -5001,6 +5005,9 @@ if test "x$target_mach" = "xyes"; then
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_OSX"
           CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_OSX"
           target_osx=yes
+          if test "x$TARGET" = "xARM64"; then
+             BTLS_SUPPORTED=no
+          fi
        ], [
           AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
