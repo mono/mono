@@ -253,7 +253,7 @@ typedef struct {
 struct CallInfo {
 	int nargs;
 	int gr, fr, stack_usage;
-	gboolean pinvoke;
+	gboolean pinvoke, vararg;
 	ArgInfo ret;
 	ArgInfo sig_cookie;
 	ArgInfo args [1];

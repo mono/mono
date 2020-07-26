@@ -1073,7 +1073,11 @@ add_general (CallInfo *cinfo, ArgInfo *ainfo, int size, gboolean sign)
 {
 	if (cinfo->gr >= PARAM_REGS) {
 		ainfo->storage = ArgOnStack;
-		if (ios_abi) {
+		/*
+		 * FIXME: The vararg argument handling code in ves_icall_System_ArgIterator_IntGetNextArg
+		 * assumes every argument is allocated to a separate full size stack slot.
+		 */
+		if (ios_abi && !cinfo->vararg) {
 			/* Assume size == align */
 		} else {
 			/* Put arguments into 8 byte aligned stack slots */
@@ -1341,6 +1345,10 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 
 	cinfo->nargs = n;
 	cinfo->pinvoke = sig->pinvoke;
+	// Constrain this to OSX only for now
+#ifdef TARGET_OSX
+	cinfo->vararg = sig->call_convention == MONO_CALL_VARARG;
+#endif
 
 	/* Return value */
 	add_param (cinfo, &cinfo->ret, sig->ret);
