@@ -1208,6 +1208,7 @@ if test "x$crash_reporting" != "xyes"; then
 CFLAGS="$CFLAGS -DDISABLE_CRASH_REPORTING=1"
 CXXFLAGS="$CXXFLAGS -DDISABLE_CRASH_REPORTING=1"
 fi
+AM_CONDITIONAL(DISABLE_CRASH_REPORTING, test x$crash_reporting != xyes)
 
 AC_ARG_ENABLE(monodroid, [ --enable-monodroid Enable runtime support for Monodroid (Xamarin.Android)], enable_monodroid=$enableval, enable_monodroid=no)
 AM_CONDITIONAL(ENABLE_MONODROID, test x$enable_monodroid = xyes)
