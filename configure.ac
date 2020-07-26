@@ -2820,7 +2820,7 @@ if test x$host_win32 = xno; then
 	AC_CHECK_HEADERS(pthread_np.h)
 	AC_CHECK_FUNCS(pthread_mutex_timedlock)
 	AC_CHECK_FUNCS(pthread_getattr_np pthread_attr_get_np pthread_getname_np pthread_setname_np pthread_cond_timedwait_relative_np)
-	AC_CHECK_FUNCS(pthread_kill)
+	AC_CHECK_FUNCS(pthread_kill pthread_jit_write_protect_np)
 	AC_MSG_CHECKING(for PTHREAD_MUTEX_RECURSIVE)
 	AC_TRY_COMPILE([ #include <pthread.h>], [
 		pthread_mutexattr_t attr;

@@ -661,7 +661,7 @@ mono_code_manager_size (MonoCodeManager *cman, int *used_size)
 void
 mono_codeman_enable_write (void)
 {
-#ifdef TARGET_OSX
+#ifdef HAVE_PTHREAD_JIT_WRITE_PROTECT_NP
 	if (__builtin_available (macOS 11, *)) {
 		int level = GPOINTER_TO_INT (mono_native_tls_get_value (write_level_tls_id));
 		level ++;
@@ -680,7 +680,7 @@ mono_codeman_enable_write (void)
 void
 mono_codeman_disable_write (void)
 {
-#ifdef TARGET_OSX
+#ifdef HAVE_PTHREAD_JIT_WRITE_PROTECT_NP
 	if (__builtin_available (macOS 11, *)) {
 		int level = GPOINTER_TO_INT (mono_native_tls_get_value (write_level_tls_id));
 		g_assert (level);
