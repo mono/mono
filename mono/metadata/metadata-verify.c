@@ -623,6 +623,10 @@ verify_import_table (VerifyContext *ctx)
 	const char *ptr = ctx->data + offset;
 	guint32 name_rva, ilt_rva, iat_rva;
 
+	// Having no import table is structurally valid
+	if (it.rva == 0 && it.size == 0)
+		return;
+
 	g_assert (offset != INVALID_OFFSET);
 
 	if (it.size < 40)
