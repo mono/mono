@@ -4779,6 +4779,13 @@ if test "x$host" != "x$target"; then
 		;;
 	aarch64-*)
 		TARGET=ARM64
+		# Both ios and osx/arm64 have the same aarc64-darwin triple, so
+		# use an -ios suffix when cross compiling
+		case "$target" in
+		*-ios)
+			TARGET_SYS=IOS
+			;;
+		esac
 		;;
 	riscv32*)
 		TARGET=RISCV32
@@ -4989,7 +4996,7 @@ if test "x$target_mach" = "xyes"; then
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_WATCHOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_WATCHOS"
 	  BTLS_SUPPORTED=no
-   elif test "x$TARGET" = "xARM" -o "x$TARGET" = "xARM6432"; then
+   elif test "x$TARGET_SYS" = "xIOS" -o "x$TARGET" = "xARM" -o "x$TARGET" = "xARM6432"; then
    	  AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
 	  CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
 	  CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_IOS"
