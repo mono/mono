@@ -169,6 +169,10 @@ MONO_API void mono_unity_gc_disable();
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API int mono_unity_gc_is_disabled();
 
+// logging
+typedef void (*UnityLogErrorCallback) (const char *message);
+MONO_API void mono_unity_set_editor_logging_callback(UnityLogErrorCallback callback);
+gboolean mono_unity_log_error_to_editor(const char *message);
 
 //misc
 MonoAssembly* mono_unity_assembly_get_mscorlib();

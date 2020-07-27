@@ -1579,7 +1579,10 @@ done:
 
 invalid_image:
 	if (!is_ok (error)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Could not load image %s due to %s", image->name, mono_error_get_message (error));
+		char* log_message = g_strdup_printf("Could not load image %s due to %s\nRun the peverify utility against this for more information.", image->name, mono_error_get_message (error));
+		if (!mono_unity_log_error_to_editor(log_message))
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, log_message);
+		g_free(log_message);
 		mono_error_cleanup (error);
 	}
 	MONO_PROFILER_RAISE (image_failed, (image));

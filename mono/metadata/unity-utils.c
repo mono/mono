@@ -977,6 +977,23 @@ MONO_API int mono_unity_gc_is_disabled()
 #endif	
 }
 
+// Logging
+static UnityLogErrorCallback editorLoggingCallback;
+MONO_API void mono_unity_set_editor_logging_callback(UnityLogErrorCallback callback)
+{
+	editorLoggingCallback = callback;
+}
+
+gboolean mono_unity_log_error_to_editor(const char *message)
+{
+	if (editorLoggingCallback)
+	{
+		editorLoggingCallback(message);
+		return TRUE;
+	}
+	return FALSE;
+}
+
 MONO_API void 
 mono_unity_install_unitytls_interface(unitytls_interface_struct* callbacks)
 {
