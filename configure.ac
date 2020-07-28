@@ -4777,15 +4777,14 @@ if test "x$host" != "x$target"; then
 		sizeof_register=8
 		AC_DEFINE(TARGET_WATCHOS, 1, [...])
 		;;
+	aarch64*darwin*)
+		TARGET=ARM64
+		# Both ios and osx/arm64 have the same aarc64-darwin triple,
+		# assume ios for now when cross compiling
+		TARGET_SYS=IOS
+		;;
 	aarch64-*)
 		TARGET=ARM64
-		# Both ios and osx/arm64 have the same aarc64-darwin triple, so
-		# use an -ios suffix when cross compiling
-		case "$target" in
-		*-ios)
-			TARGET_SYS=IOS
-			;;
-		esac
 		;;
 	riscv32*)
 		TARGET=RISCV32

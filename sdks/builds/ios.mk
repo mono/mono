@@ -492,14 +492,14 @@ ios-netcore_crosswatch64_32_CONFIGURE_FLAGS = --with-core=only
 
 ifndef DISABLE_CLASSIC
 $(eval $(call iOSCrossTemplate,cross32,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(ios_sysroot_path)))
-$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64-darwin-ios,target64,llvm-llvm64,aarch64-apple-darwin10,$(ios_sysroot_path)))
+$(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64-darwin,target64,llvm-llvm64,aarch64-apple-darwin10,$(ios_sysroot_path)))
 $(eval $(call iOSCrossTemplate,crosswatch,x86_64,armv7k-unknown-darwin,targetwatch,llvm-llvm64,armv7k-apple-darwin,$(watchos_sysroot_path)))
 $(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,targetwatch64_32,llvm-llvm64,aarch64-apple-darwin10_ilp32,$(watchos64_32_sysroot_path)))
 endif
 
 ifdef ENABLE_NETCORE
 $(eval $(call iOSCrossTemplate,netcore_cross32,x86_64,arm-darwin,netcore_target32,llvm-llvm64,arm-apple-darwin10,$(ios_sysroot_path)))
-$(eval $(call iOSCrossTemplate,netcore_cross64,x86_64,aarch64-darwin-ios,netcore_target64,llvm-llvm64,aarch64-apple-darwin10,$(ios_sysroot_path)))
+$(eval $(call iOSCrossTemplate,netcore_cross64,x86_64,aarch64-darwin,netcore_target64,llvm-llvm64,aarch64-apple-darwin10,$(ios_sysroot_path)))
 $(eval $(call iOSCrossTemplate,netcore_crosswatch,x86_64,armv7k-unknown-darwin,netcore_targetwatch,llvm-llvm64,armv7k-apple-darwin,$(watchos_sysroot_path)))
 $(eval $(call iOSCrossTemplate,netcore_crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,netcore_targetwatch64_32,llvm-llvm64,aarch64-apple-darwin10_ilp32,$(watchos64_32_sysroot_path)))
 endif
