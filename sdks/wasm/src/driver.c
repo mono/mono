@@ -158,7 +158,7 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 	entry->next = assemblies;
 	assemblies = entry;
 	++assembly_count;
-	return mono_has_pdb_checksum (data, size);
+	return mono_has_pdb_checksum ((char*)data, size);
 }
 
 EMSCRIPTEN_KEEPALIVE void
@@ -369,7 +369,7 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 	mono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY);
 #endif
 #else
-	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_LLVMONLY);
+	mono_jit_set_aot_mode (MONO_AOT_MODE_INTERP_ONLY);
 	if (enable_debugging) {
 		// Disable optimizations which interfere with debugging
 		interp_opts = "-all";
