@@ -329,8 +329,8 @@ get_type_init_exception_for_vtable (MonoVTable *vtable)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 	ERROR_DECL (error);
-	MonoDomain *domain = vtable->domain;
 	MonoClass *klass = vtable->klass;
+	MonoMemoryManager *memory_manager = mono_memory_manager_from_class (vtable->domain, vtable->klass);
 	MonoException *ex;
 	gchar *full_name;
 
@@ -342,10 +342,9 @@ get_type_init_exception_for_vtable (MonoVTable *vtable)
 	 * in the hash.
 	 */
 	ex = NULL;
-	mono_domain_lock (domain);
-	if (domain->type_init_exception_hash)
-		ex = (MonoException *)mono_g_hash_table_lookup (domain->type_init_exception_hash, klass);
-	mono_domain_unlock (domain);
+	mono_memory_manager_lock (memory_manager);
+	ex = (MonoException *)mono_g_hash_table_lookup (memory_manager->type_init_exception_hash, klass);
+	mono_memory_manager_unlock (memory_manager);
 
 	if (!ex) {
 		const char *klass_name_space = m_class_get_name_space (klass);
@@ -446,6 +445,7 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 		return TRUE;
 
 	MonoClass *klass = vtable->klass;
+	MonoMemoryManager *memory_manager = mono_memory_manager_from_class (domain, klass);
 
 	MonoImage *klass_image = m_class_get_image (klass);
 	if (!mono_runtime_run_module_cctor(klass_image, vtable->domain, error)) {
@@ -593,11 +593,9 @@ mono_runtime_class_init_full (MonoVTable *vtable, MonoError *error)
 			 * Store the exception object so it could be thrown on subsequent
 			 * accesses.
 			 */
-			mono_domain_lock (domain);
-			if (!domain->type_init_exception_hash)
-				domain->type_init_exception_hash = mono_g_hash_table_new_type_internal (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Type Initialization Exception Table");
-			mono_g_hash_table_insert_internal (domain->type_init_exception_hash, klass, exc_to_throw);
-			mono_domain_unlock (domain);
+			mono_memory_manager_lock (memory_manager);
+			mono_g_hash_table_insert_internal (memory_manager->type_init_exception_hash, klass, exc_to_throw);
+			mono_memory_manager_unlock (memory_manager);
 		}
 
 		if (last_domain)
@@ -1736,7 +1734,7 @@ gpointer
 	}
 	generic_virtual_trampolines_size += size;
 
-	return mono_domain_code_reserve (domain, size);
+	return mono_memory_manager_code_reserve (mono_domain_ambient_memory_manager (domain), size);
 }
 
 typedef struct _GenericVirtualCase {
@@ -1838,7 +1836,7 @@ mono_method_add_generic_virtual_invocation (MonoDomain *domain, MonoVTable *vtab
 
 	/* If not found, make a new one */
 	if (!gvc) {
-		gvc = (GenericVirtualCase *)mono_domain_alloc (domain, sizeof (GenericVirtualCase));
+		gvc = (GenericVirtualCase *)mono_method_alloc_code (domain, method, sizeof (GenericVirtualCase));
 		gvc->method = method;
 		gvc->code = code;
 		gvc->count = 0;
@@ -1965,7 +1963,7 @@ mono_class_try_get_vtable (MonoDomain *domain, MonoClass *klass)
 }
 
 static gpointer*
-alloc_vtable (MonoDomain *domain, size_t vtable_size, size_t imt_table_bytes)
+alloc_vtable (MonoDomain *domain, MonoClass *klass, size_t vtable_size, size_t imt_table_bytes)
 {
 	MONO_REQ_GC_NEUTRAL_MODE;
 
@@ -1984,7 +1982,7 @@ alloc_vtable (MonoDomain *domain, size_t vtable_size, size_t imt_table_bytes)
 		alloc_offset = 0;
 	}
 
-	return (gpointer*) ((char*)mono_domain_alloc0 (domain, vtable_size) + alloc_offset);
+	return (gpointer*) ((char*)mono_class_alloc0_code (domain, klass, vtable_size) + alloc_offset);
 }
 
 static MonoVTable *
@@ -2090,7 +2088,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	UnlockedIncrement (&mono_stats.used_class_count);
 	UnlockedAdd (&mono_stats.class_vtable_size, vtable_size);
 
-	interface_offsets = alloc_vtable (domain, vtable_size, imt_table_bytes);
+	interface_offsets = alloc_vtable (domain, klass, vtable_size, imt_table_bytes);
 	vt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
 	/* If on interp, skip the interp interface table */
 	if (use_interpreter)
@@ -2151,7 +2149,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 			if (bitmap != default_bitmap)
 				g_free (bitmap);
 		} else {
-			vt->vtable [m_class_get_vtable_size (klass)] = mono_domain_alloc0 (domain, class_size);
+			vt->vtable [m_class_get_vtable_size (klass)] = mono_class_alloc0_code (domain, klass, class_size);
 		}
 		vt->has_static_fields = TRUE;
 		UnlockedAdd (&mono_stats.class_static_data_size, class_size);
@@ -2283,7 +2281,10 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 
 	/*  class_vtable_array keeps an array of created vtables
 	 */
-	g_ptr_array_add (domain->class_vtable_array, vt);
+	MonoMemoryManager *memory_manager = mono_memory_manager_from_class (domain, klass);
+	mono_memory_manager_lock (memory_manager);
+	g_ptr_array_add (memory_manager->class_vtable_array, vt);
+	mono_memory_manager_unlock (memory_manager);
 	/* klass->runtime_info is protected by the loader lock, both when
 	 * it it enlarged and when it is stored info.
 	 */
@@ -2705,6 +2706,7 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 	MonoRemoteClass *rc;
 	gpointer* key, *mp_key;
 	char *name;
+	MonoMemoryManager *memory_manager = mono_domain_default_memory_manager (domain);
 	
 	error_init (error);
 
@@ -2719,7 +2721,9 @@ mono_remote_class (MonoDomain *domain, MonoStringHandle class_name, MonoClass *p
 		return rc;
 	}
 
-	name = mono_string_to_utf8_mp (domain->mp, MONO_HANDLE_RAW (class_name), error);
+	mono_memory_manager_lock (memory_manager);
+	name = mono_string_to_utf8_mp (memory_manager->mp, MONO_HANDLE_RAW (class_name), error);
+	mono_memory_manager_unlock (memory_manager);
 	if (!is_ok (error)) {
 		g_free (key);
 		mono_domain_unlock (domain);
