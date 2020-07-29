@@ -719,7 +719,7 @@ namespace System.Windows.Forms
 
 				if (doc.Wrap) {
 					// FIXME: Technically there are multiple no-break spaces, not just the main one.
-					if ((Char.IsWhiteSpace (c) && c != '\u00A0') || c == '-' || c == '\u2013' || c == '\u2014') {
+					if (wrap_pos <= pos && ((Char.IsWhiteSpace (c) && c != '\u00A0') || c == '-' || c == '\u2013' || c == '\u2014')) {
 						// Primarily break on dashes or whitespace other than a no-break space.
 						prev_wrap_pos = wrap_pos;
 						if (c == '\t') {
@@ -738,11 +738,15 @@ namespace System.Windows.Forms
 							if (Char.IsWhiteSpace (c)) {
 								if (wrap_pos > pos) {
 									while (wrap_pos < text.Length && Char.IsWhiteSpace (text [wrap_pos]) && text [wrap_pos] != '\t') {
+										// Leave whitespace other than tabs on the end of this line.
 										wrap_pos++;
 									}
 									pos++;
 									wrapped = true;
-									// don't try pulling more into this line, but keep looping to deal with the rest of the widths and tags
+									// don't try pulling more into this line, but keep looping to deal with the rest of the widths and tags that will be left on the line
+								} else {
+									// At the wrap position, so split the line. c is a tab.
+									split_tag = tag;
 								}
 							} else  {
 								if (wrap_pos > pos && pos > 0) {
