@@ -3,3 +3,4 @@
 #include macos_networkinfo.sources
 
 ../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.Unix.cs
+System.Net.NetworkInformation/NetworkChange.cs
