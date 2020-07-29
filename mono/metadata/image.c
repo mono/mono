@@ -1345,7 +1345,10 @@ done:
 invalid_image:
 	if (errors) {
 		MonoVerifyInfo *info = (MonoVerifyInfo *)errors->data;
-		g_warning ("Could not load image %s due to %s", image->name, info->message);
+		char* log_message = g_strdup_printf("Could not load image %s due to %s\nRun the peverify utility against this for more information.", image->name, info->message);
+		if (!mono_unity_log_error_to_editor(log_message))
+			g_warning (log_message);
+		g_free(log_message);
 		mono_free_verify_list (errors);
 	}
 	MONO_PROFILER_RAISE (image_failed, (image));
