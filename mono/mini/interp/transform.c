@@ -1518,7 +1518,19 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	} else if (in_corlib && !strcmp (klass_name_space, "System.Text") && !strcmp (klass_name, "ASCIIUtility")) {
 		if (!strcmp (tm, "WidenAsciiToUtf16"))
 			*op = MINT_INTRINS_WIDEN_ASCII_TO_UTF16;
-	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "Number")) {
+	}
+#if !defined(_MSC_VER)
+	else if (in_corlib && !strcmp (klass_name_space, "System.Numerics") && !strcmp (klass_name, "BitOperations")) {
+		if (!strcmp (tm, "Log2")) {
+			gboolean is_long = csignature->params [0]->type == MONO_TYPE_U8 || csignature->params [0]->type == MONO_TYPE_I8;
+			*op = is_long ? MINT_INTRINS_BITOPS_LOG2_64 : MINT_INTRINS_BITOPS_LOG2_32;
+		} else if (!strcmp (tm, "TrailingZeroCount")) {
+			gboolean is_long = csignature->params [0]->type == MONO_TYPE_U8 || csignature->params [0]->type == MONO_TYPE_I8;
+			*op = is_long ? MINT_INTRINS_BITOPS_TZC_64 : MINT_INTRINS_BITOPS_TZC_32;
+		}
+	} 
+#endif
+	else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "Number")) {
 		if (!strcmp (tm, "UInt32ToDecStr") && csignature->param_count == 1) {
 			ERROR_DECL(error);
 			MonoVTable *vtable = mono_class_vtable_checked (td->rtm->domain, target_method->klass, error);
