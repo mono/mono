@@ -862,7 +862,7 @@ typedef
                     /* results = r3 */                           \
                     "lgr %0,%%r3\n\t"                            \
                     : "=d" (_zzq_result)                         \
-                    : "a" (&_zzq_args[0]), "0" (_zzq_default)    \
+                    : "a" (&_zzq_args[0]), "r" (_zzq_default)    \
                     : "cc", "2", "3", "memory"                   \
                    );                                            \
    _zzq_result;                                                  \
