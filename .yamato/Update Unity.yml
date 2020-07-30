@@ -23,7 +23,7 @@ commands:
       EXIT /B %errorlevel%
     )
     cd %YAMATO_SOURCE_DIR%
-    py -m pip install requests
+    py -m pip install requests --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple
     py prtools/katana-ci/katana_launcher.py --verbose --dontwait --project="proj0-ABuildVerification" --repo=unity --branch=scripting/mbe/staging --user="ashwini ashwini@unity3d.com" 
 timeout: 1
 
