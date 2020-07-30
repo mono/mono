@@ -12,14 +12,15 @@
 #ifndef DISABLE_JIT
 
 static gpointer
-nop_stub (void)
+nop_stub (unsigned int pattern)
 {
 	guint8 *code, *start;
 
 	start = code = mono_global_codeman_reserve (0x50);
 
-	/* nop */
-	riscv_addi (code, RISCV_X0, RISCV_X0, 0);
+	/* hang in debugger */
+	riscv_addi (code, RISCV_X0, RISCV_X0, pattern);
+	riscv_ebreak (code);
 
 	mono_arch_flush_icache (start, code - start);
 
@@ -37,35 +38,35 @@ gpointer
 mono_arch_get_call_filter (MonoTrampInfo **info, gboolean aot)
 {
 	*info = NULL;
-	return nop_stub ();
+	return nop_stub (0x37);
 }
 
 gpointer
 mono_arch_get_throw_exception (MonoTrampInfo **info, gboolean aot)
 {
 	*info = NULL;
-	return nop_stub ();
+	return nop_stub (0x77);
 }
 
 gpointer
 mono_arch_get_rethrow_exception (MonoTrampInfo **info, gboolean aot)
 {
 	*info = NULL;
-	return nop_stub ();
+	return nop_stub (0x88);
 }
 
 gpointer
 mono_arch_get_rethrow_preserve_exception (MonoTrampInfo **info, gboolean aot)
 {
 	*info = NULL;
-	return nop_stub ();
+	return nop_stub (0x99);
 }
 
 gpointer
 mono_arch_get_throw_corlib_exception (MonoTrampInfo **info, gboolean aot)
 {
 	*info = NULL;
-	return nop_stub ();
+	return nop_stub (0xaa);
 }
 
 #else
