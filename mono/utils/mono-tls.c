@@ -70,7 +70,7 @@
 #  endif
 # else
 #  define MONO_THREAD_VAR_OFFSET(var,offset) do { guint64 foo;  			\
-						__asm__ ("basr  %%r1,0\n\t"		\
+						__asm__ ("basr  %%r1,%%r0\n\t"		\
 							 "j     0f\n\t"			\
 							 ".quad " #var "@NTPOFF\n"	\
 							 "0:\n\t"			\
