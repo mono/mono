@@ -1671,7 +1671,7 @@ public class DebuggerTests
 		t = frame.Method.GetParameters ()[7].ParameterType;
 
 		var props = t.GetProperties ();
-		Assert.AreEqual (3, props.Length);
+		Assert.AreEqual (4, props.Length);
 		foreach (PropertyInfoMirror prop in props) {
 			ParameterInfoMirror[] indexes = prop.GetIndexParameters ();
 
@@ -4452,6 +4452,23 @@ public class DebuggerTests
 		e = step_in_await ("MoveNext", e);
 		e = step_in_await ("MoveNext", e);
 		e = step_in_await ("MoveNext", e);
+	}
+
+	[Test]
+	public void DebuggerBreakInFieldDoesNotHang () {
+		vm.EnableEvents (EventType.UserBreak);
+		Event e = run_until ("o1");
+
+		StackFrame frame = e.Thread.GetFrames () [0];
+		object val = frame.GetThis ();
+		Assert.IsTrue (val is ObjectMirror);
+		Assert.AreEqual ("Tests", (val as ObjectMirror).Type.Name);
+		ObjectMirror o = (val as ObjectMirror);
+		TypeMirror t = o.Type;
+
+		MethodMirror m = t.GetProperty ("BreakInField").GetGetMethod();
+		Value v = o.InvokeMethod (e.Thread, m, null, InvokeOptions.DisableBreakpoints);
+		AssertValue ("Foo", v);
 	}
 } // class DebuggerTests
 } // namespace

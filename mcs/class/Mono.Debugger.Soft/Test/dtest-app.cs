@@ -268,6 +268,14 @@ public class Tests : TestsBase, ITest2
 
 #pragma warning restore 0414
 
+	public string BreakInField
+	{
+		get {
+			Debugger.Break ();
+			return "Foo";
+		}
+	}
+
 	public class NestedClass {
 	}
 
