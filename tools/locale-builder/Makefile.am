@@ -47,5 +47,5 @@ locale-data:
 	fi
 
 install-culture-table: culture-info-tables.h
-	cp -f culture-info-tables.h ../../mono/metadata/.
+	cp -f culture-info-tables.h ../../mono/culture/.
 

@@ -1311,38 +1311,6 @@ namespace DebuggerTests
 		[Theory]
 		[InlineData (false)]
 		[InlineData (true)]
-		public async Task InspectLocalsWithPointers (bool use_cfo)
-			=> await CheckInspectLocalsAtBreakpointSite (
-				"dotnet://debugger-test.dll/debugger-test.cs", 294, 2,
-				"PointersTest",
-				"window.setTimeout(function() { invoke_static_method_async ('[debugger-test] Math:PointersTest'); })",
-				use_cfo: use_cfo,
-				wait_for_event_fn: async (pause_location) => {
-					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string>());
-
-					var dt = new DateTime (5, 6, 7, 8, 9, 10);
-					await CheckProps (locals, new {
-						ivalue0        = TNumber    (5),
-						ivalue1        = TNumber    (10),
-						ip             = TPointer   ("int*"),
-						ip_null        = TPointer   ("int*", is_null: true),
-						ipp            = TPointer   ("int**"),
-
-						ipa            = TArray     ("int*[]", 3),
-						cvalue0        = TSymbol    ("113 'q'"),
-						cp             = TPointer   ("char*"),
-						dt             = TValueType ("System.DateTime", dt.ToString ()),
-						vp             = TPointer   ("void*"),
-						vp_null        = TPointer   ("void*", is_null: true),
-						dtp            = TPointer   ("System.DateTime*"),
-						dtp_null       = TPointer   ("System.DateTime*", is_null: true)
-					}, "locals");
-
-				});
-
-		[Theory]
-		[InlineData (false)]
-		[InlineData (true)]
 		public async Task InspectLocalsForStructInstanceMethod (bool use_cfo)
 			=> await CheckInspectLocalsAtBreakpointSite (
 				"dotnet://debugger-test.dll/debugger-array-test.cs", 236, 3,
@@ -1376,8 +1344,35 @@ namespace DebuggerTests
 							label: "this#0");
 
 				});
-		//
+				
+		[Fact]
+		public async Task SteppingIntoMscorlib () {
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+
+				var bp = await SetBreakpoint ("dotnet://debugger-test.dll/debugger-test.cs", 74, 2);
+				var pause_location = await EvaluateAndCheck (
+					"window.setTimeout(function() { invoke_static_method ('[debugger-test] Math:OuterMethod'); }, 1);",
+					"dotnet://debugger-test.dll/debugger-test.cs", 74, 2,
+					"OuterMethod");
+
+				//make sure we're on the right bp
+				Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+
+				pause_location = await SendCommandAndCheck (null, $"Debugger.stepInto", null, -1, -1, null);
+				var top_frame = pause_location ["callFrames"][0];
+
+				AssertEqual ("WriteLine", top_frame ["functionName"]?.Value<string> (), "Expected to be in WriteLine method");
+				var script_id = top_frame ["functionLocation"]["scriptId"].Value<string> ();
+				AssertEqual ("dotnet://mscorlib.dll/Console.cs", scripts [script_id], "Expected to stopped in System.Console.WriteLine");
+			});
+		}
+
 		//TODO add tests covering basic stepping behavior as step in/out/over
 	}
-
 }

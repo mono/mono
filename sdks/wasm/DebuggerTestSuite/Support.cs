@@ -214,6 +214,50 @@ namespace DebuggerTests
 			});
 		}
 
+		// sets breakpoint by method name and line offset
+		internal async Task CheckInspectLocalsAtBreakpointSite (string type, string method, int line_offset, string bp_function_name, string eval_expression,
+						Action<JToken> locals_fn = null, Func<JObject, Task> wait_for_event_fn = null, bool use_cfo = false, string assembly="debugger-test.dll", int col = 0)
+		{
+			var insp = new Inspector ();
+			//Collect events
+			var scripts = SubscribeToScripts(insp);
+
+			await Ready ();
+			await insp.Ready (async (cli, token) => {
+				ctx = new DebugTestContext (cli, insp, token, scripts);
+				ctx.UseCallFunctionOnBeforeGetProperties = use_cfo;
+
+				var bp = await SetBreakpointInMethod (assembly, type, method, line_offset, col);
+
+				var args = JObject.FromObject (new { expression = eval_expression });
+				var res = await ctx.cli.SendCommand ("Runtime.evaluate", args, ctx.token);
+				if (!res.IsOk) {
+					Console.WriteLine ($"Failed to run command {method} with args: {args?.ToString ()}\nresult: {res.Error.ToString ()}");
+					Assert.True (false, $"SendCommand for {method} failed with {res.Error.ToString ()}");
+				}
+
+				var pause_location = await ctx.insp.WaitFor (Inspector.PAUSE);
+
+				if (bp_function_name != null)
+					Assert.Equal (bp_function_name, pause_location ["callFrames"]?[0]?["functionName"]?.Value<string> ());
+
+				Assert.Equal (bp.Value ["breakpointId"]?.ToString (), pause_location ["hitBreakpoints"]?[0]?.Value<string> ());
+
+				var top_frame = pause_location ["callFrames"][0];
+
+				var scope = top_frame ["scopeChain"][0];
+				Assert.Equal ("dotnet:scope:0", scope ["object"]["objectId"]);
+
+				if (wait_for_event_fn != null)
+					await wait_for_event_fn (pause_location);
+
+				if (locals_fn != null) {
+					var locals = await GetProperties (pause_location ["callFrames"][0]["callFrameId"].Value<string> ());
+					locals_fn (locals);
+				}
+			});
+		}
+
 		internal void CheckLocation (string script_loc, int line, int column, Dictionary<string, string> scripts, JToken location)
 		{
 			var loc_str = $"{ scripts[location["scriptId"].Value<string>()] }"
@@ -274,6 +318,13 @@ namespace DebuggerTests
 			if (subtype != null)
 				Assert.Equal (subtype, val ["subtype"]?.Value<string> ());
 
+			return l;
+		}
+
+		internal async Task<JToken> CheckPointerValue (JToken locals, string name, JToken expected, string label = null)
+		{
+			var l = GetAndAssertObjectWithName (locals, name);
+			await CheckValue (l ["value"], expected, $"{label ?? String.Empty}-{name}");
 			return l;
 		}
 
@@ -486,9 +537,8 @@ namespace DebuggerTests
 			}
 		}
 
-		internal async Task CheckCustomType (JToken actual, JToken exp_val, string label)
+		internal async Task CheckCustomType (JToken actual_val, JToken exp_val, string label)
 		{
-			var actual_val = actual ["value"];
 			var ctype = exp_val["__custom_type"].Value<string>();
 			switch (ctype) {
 				case "delegate":
@@ -496,23 +546,35 @@ namespace DebuggerTests
 					break;
 
 				case "pointer": {
-					AssertEqual ("symbol", actual_val ["type"]?.Value<string>(), $"{label}-type");
 
-					if (exp_val ["is_null"]?.Value<bool>() == false) {
-						var exp_prefix = $"({exp_val ["type_name"]?.Value<string>()})";
-						AssertStartsWith (exp_prefix, actual_val ["value"]?.Value<string> (), $"{label}-value");
-						AssertStartsWith (exp_prefix, actual_val ["description"]?.Value<string> (), $"{label}-description");
+					if (exp_val ["is_null"]?.Value<bool>() == true) {
+						AssertEqual ("symbol", actual_val ["type"]?.Value<string>(), $"{label}-type");
+
+						var exp_val_str = $"({exp_val ["type_name"]?.Value<string>()}) 0";
+						AssertEqual (exp_val_str, actual_val ["value"]?.Value<string> (), $"{label}-value");
+						AssertEqual (exp_val_str, actual_val ["description"]?.Value<string> (), $"{label}-description");
+					} else if (exp_val ["is_void"]?.Value<bool> () == true) {
+						AssertEqual ("symbol", actual_val ["type"]?.Value<string>(), $"{label}-type");
+
+						var exp_val_str = $"({exp_val ["type_name"]?.Value<string>()})";
+						AssertStartsWith (exp_val_str, actual_val ["value"]?.Value<string> (), $"{label}-value");
+						AssertStartsWith (exp_val_str, actual_val ["description"]?.Value<string> (), $"{label}-description");
 					} else {
-						var exp_prefix = $"({exp_val ["type_name"]?.Value<string>()}) 0";
-						AssertEqual (exp_prefix, actual_val ["value"]?.Value<string> (), $"{label}-value");
-						AssertEqual (exp_prefix, actual_val ["description"]?.Value<string> (), $"{label}-description");
+						AssertEqual ("object", actual_val ["type"]?.Value<string>(), $"{label}-type");
+
+						var exp_prefix = $"({exp_val ["type_name"]?.Value<string>()})";
+						AssertStartsWith (exp_prefix, actual_val ["className"]?.Value<string> (), $"{label}-className");
+						AssertStartsWith (exp_prefix, actual_val ["description"]?.Value<string> (), $"{label}-description");
+						Assert.False (actual_val ["className"]?.Value<string> () == $"{exp_prefix} 0", $"[{label}] Expected a non-null value, but got {actual_val}");
 					}
 					break;
 				}
 
 				case "getter": {
-					var get = actual ["get"];
-					Assert.True (get != null, $"[{label}] No `get` found");
+					// For getter, `actual_val` is not `.value`, instead it's the container object
+					// which has a `.get` instead of a `.value`
+					var get = actual_val ["get"];
+					Assert.True (get != null, $"[{label}] No `get` found. {(actual_val != null ? "Make sure to pass the container object for testing getters, and not the ['value']": String.Empty)}");
 
 					AssertEqual ("Function", get ["className"]?.Value<string> (), $"{label}-className");
 					AssertStartsWith ($"get {exp_val ["type_name"]?.Value<string> ()} ()", get ["description"]?.Value<string> (), $"{label}-description");
@@ -546,12 +608,8 @@ namespace DebuggerTests
 					var act_i = actual_arr [i];
 
 					AssertEqual (i.ToString (), act_i ["name"]?.Value<string> (), $"{label}-[{i}].name");
-
-					if (exp_i ["__custom_type"] != null) {
-						await CheckCustomType (act_i, exp_i, $"{label}-{i}th value");
-					} else {
+					if (exp_i != null)
 						await CheckValue (act_i["value"], exp_i, $"{label}-{i}th value");
-					}
 				}
 
 				return;
@@ -580,7 +638,8 @@ namespace DebuggerTests
 				if (exp_val.Type == JTokenType.Array) {
 					var actual_props = await GetProperties(actual_val["objectId"]?.Value<string>());
 					await CheckProps (actual_props, exp_val, $"{label}-{exp_name}");
-				} else if (exp_val ["__custom_type"] != null) {
+				} else if (exp_val ["__custom_type"] != null && exp_val ["__custom_type"]?.Value<string> () == "getter") {
+					// hack: for getters, actual won't have a .value
 					await CheckCustomType (actual_obj, exp_val, $"{label}#{exp_name}");
 				} else {
 					await CheckValue (actual_val, exp_val, $"{label}#{exp_name}");
@@ -820,7 +879,7 @@ namespace DebuggerTests
 			});
 
 		internal static JObject TPointer (string type_name, bool is_null = false)
-			=> JObject.FromObject (new { __custom_type = "pointer", type_name = type_name, is_null = is_null });
+			=> JObject.FromObject (new { __custom_type = "pointer", type_name = type_name, is_null = is_null, is_void = type_name.StartsWith ("void*") });
 
 		internal static JObject TIgnore ()
 			=> JObject.FromObject (new { __custom_type = "ignore_me" });

@@ -132,7 +132,7 @@ provision-emsdk:
 
 # emsdk_env.sh calls emsdk construct_env which is a bit slow so make a copy
 emsdk_env.sh: | provision-emsdk
-	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env $(CURDIR)/emsdk_env.sh
+	cd $(EMSCRIPTEN_SDK_DIR) && ./emsdk construct_env > $(CURDIR)/emsdk_env.sh
 
 # These builds overwrite their installed files
 # forcing everything to be rebuilt so use a stamp file
@@ -155,6 +155,10 @@ cross:
 bcl:
 	$(MAKE) -C ../builds package-wasm-bcl
 	touch .stamp-bcl
+
+tuner:
+	$(MAKE) -C ../../mcs/tools/wasm-tuner PROFILE=wasm_tools
+	cp ../../mcs/class/lib/wasm_tools/wasm-tuner.* ../out/wasm-bcl/wasm_tools/
 
 MONO_LIBS = $(TOP)/sdks/out/wasm-runtime-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
 MONO_THREADS_LIBS = $(TOP)/sdks/out/wasm-runtime-threads-release/lib/{libmono-ee-interp.a,libmono-native.a,libmono-icall-table.a,libmonosgen-2.0.a,libmono-ilgen.a}
