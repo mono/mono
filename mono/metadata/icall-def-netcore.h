@@ -1,3 +1,10 @@
+#if defined(TARGET_WASM)
+ICALL_TYPE(MDFIVEHASHPROVIDER, "Internal.Cryptography.MD5HashProvider", MDFIVEHASHPROVIDER_0)
+NOHANDLES(ICALL(MDFIVEHASHPROVIDER_0, "md5_final", mono_md5_final))
+NOHANDLES(ICALL(MDFIVEHASHPROVIDER_1, "md5_init", mono_md5_init))
+NOHANDLES(ICALL(MDFIVEHASHPROVIDER_2, "md5_update", mono_md5_update))
+#endif
+
 ICALL_TYPE(SAFEWAITHANDLE, "Microsoft.Win32.SafeHandles.SafeWaitHandle", SAFEWAITHANDLE_1) // && UNIX
 NOHANDLES(ICALL(SAFEWAITHANDLE_1, "CloseEventInternal", ves_icall_System_Threading_Events_CloseEvent_internal))
 
