@@ -131,7 +131,11 @@ namespace System.Net
 				
 				string strProxyServer = (string)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyServer", null);
 				string strProxyOverrride = (string)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyOverride", null);
-				
+
+				if(strProxyServer == null) {
+					return null;
+				}
+
 				if (strProxyServer.Contains ("=")) {
 					foreach (string strEntry in strProxyServer.Split (new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
 						if (strEntry.StartsWith ("http=")) {
