@@ -859,7 +859,7 @@ class Driver {
 			emcc_flags += "--preload-file " + pf + " ";
 		foreach (var f in embed_files)
 			emcc_flags += "--embed-file " + f + " ";
-		if (!String.IsNullOrEmpty(extra_emcc_flags))
+		if (!String.IsNullOrEmpty (extra_emcc_flags))
 			emcc_flags += extra_emcc_flags + " ";
 		string emcc_link_flags = "";
 		if (enable_debug)
