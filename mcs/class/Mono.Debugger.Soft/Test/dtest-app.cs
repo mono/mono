@@ -377,6 +377,11 @@ public class Tests : TestsBase, ITest2
 		test_async_debug_generics();
 		test_invalid_argument_assembly_get_type ();
 
+		if (args.Length >0 && args [0] == "pointer_arguments2") {
+			pointers2 ();
+			return 0;
+		}
+
 		return 3;
 	}
 
@@ -1786,6 +1791,17 @@ public class Tests : TestsBase, ITest2
 	static BlittableStruct ref_return_struct = new BlittableStruct () { i = 1, d = 2.0 };
 	public static ref BlittableStruct get_ref_struct () {
 		return ref ref_return_struct;
+	}
+
+	public static unsafe void pointer_arguments2 (int* a) {
+		*a = 0;
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static unsafe void pointers2 () {
+		int[] a = new [] {1,2,3};
+		fixed (int* pa = a)
+			pointer_arguments2 (pa);
 	}
 }
 

@@ -45,6 +45,7 @@
 #include <process.h>
 #endif
 #include <ws2tcpip.h>
+#include <windows.h>
 #endif
 
 #ifdef HOST_ANDROID
@@ -107,6 +108,13 @@
 #ifndef DISABLE_DEBUGGER_AGENT
 
 #include <mono/utils/mono-os-mutex.h>
+
+#include <fcntl.h>
+#include <sys/stat.h>
+
+#ifndef S_IWUSR
+	#define S_IWUSR S_IWRITE
+#endif
 
 #define THREAD_TO_INTERNAL(thread) (thread)->internal_thread
 
@@ -709,6 +717,10 @@ static MonoThreadHandle *debugger_thread_handle;
 
 static int log_level;
 
+static int file_check_valid_memory = -1;
+
+static char* filename_check_valid_memory;
+
 static gboolean embedding;
 
 static FILE *log_file;
@@ -1281,6 +1293,12 @@ mono_debugger_agent_cleanup (void)
 	breakpoints_cleanup ();
 	objrefs_cleanup ();
 	ids_cleanup ();
+
+	if (file_check_valid_memory != -1) {
+		remove (filename_check_valid_memory);
+		g_free (filename_check_valid_memory);
+		close (file_check_valid_memory);
+	}
 }
 
 /*
@@ -11711,6 +11729,46 @@ string_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	return ERR_NONE;
 }
 
+#ifndef _MSC_VER
+static void 
+create_file_to_check_memory_address (void) 
+{
+	if (file_check_valid_memory != -1)
+		return;
+	char *file_name = g_strdup_printf ("debugger_check_valid_memory.%d", getpid());
+	filename_check_valid_memory = g_build_filename (g_get_tmp_dir (), file_name, (const char*)NULL);
+	file_check_valid_memory = open(filename_check_valid_memory, O_CREAT | O_WRONLY | O_APPEND, S_IWUSR);
+	g_free (file_name);
+}
+#endif
+
+static gboolean 
+valid_memory_address (gpointer addr, gint size)
+{
+#ifndef _MSC_VER
+	gboolean ret = TRUE;
+	create_file_to_check_memory_address ();
+	if(file_check_valid_memory < 0) {
+		return TRUE;
+	}
+	write (file_check_valid_memory,  (gpointer)addr, 1);
+	if (errno == EFAULT) {
+		ret = FALSE;
+	}
+#else
+	int i = 0;
+	gboolean ret = FALSE;
+	__try {
+		for (i = 0; i < size; i++)
+			*((volatile char*)addr+i);
+		ret = TRUE;
+	} __except(1) {
+		return ret;
+	}
+#endif
+	return ret;
+}
+
 static ErrorCode
 pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 {
@@ -11718,6 +11776,9 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 	gint64 addr;
 	MonoClass* klass;
 	MonoDomain* domain = NULL;
+	MonoType *type = NULL;
+	int align;
+	int size = 0;
 
 	switch (command) {
 	case CMD_POINTER_GET_VALUE:
@@ -11729,8 +11790,13 @@ pointer_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		if (mono_class_get_type (klass)->type != MONO_TYPE_PTR)
 			return ERR_INVALID_ARGUMENT;
 
-		buffer_add_value (buf, mono_class_get_type (mono_class_get_element_class (klass)), (gpointer)addr, domain);
+		type =  mono_class_get_type (mono_class_get_element_class(klass));
+		size = mono_type_size (type, &align);
+		
+		if (!valid_memory_address((gpointer)addr, size))
+			return ERR_INVALID_ARGUMENT;
 
+		buffer_add_value (buf, type, (gpointer)addr, domain);
 		break;
 	default:
 		return ERR_NOT_IMPLEMENTED;
