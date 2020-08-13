@@ -791,8 +791,8 @@ package: build build-sdk build-dbg-proxy
 	cp $(OPTIONS_CS) tmp/	
 	cp packager.exe tmp/
 	cp runtime.js tmp/
-	cp BrowserDebugProxy/bin/Debug/netstandard2.1/BrowserDebugProxy.dll tmp/
-	cp BrowserDebugProxy/bin/Debug/netstandard2.1/BrowserDebugProxy.pdb tmp/
+	cp BrowserDebugProxy/bin/Debug/netcoreapp3.0/BrowserDebugProxy.dll tmp/
+	cp BrowserDebugProxy/bin/Debug/netcoreapp3.0/BrowserDebugProxy.pdb tmp/
 	mkdir tmp/dbg-proxy
 	cp -r BrowserDebugHost/bin/Debug/netcoreapp3.0/ tmp/dbg-proxy/
 	mkdir tmp/docs
