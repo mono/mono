@@ -515,7 +515,7 @@ class Driver {
 			return 1;
 		}
 
-		enable_debug = opts.Debug;
+		enable_debug = true;
 		enable_linker = opts.Linker;
 		add_binding = opts.AddBinding;
 		use_release_runtime = !opts.DebugRuntime;
@@ -686,7 +686,9 @@ class Driver {
 			wasm_core_support = BINDINGS_MODULE_SUPPORT;
 			wasm_core_support_library = $"--js-library {BINDINGS_MODULE_SUPPORT}";
 		}
-		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
+		System.Console.WriteLine("leone - " + runtimeTemplate);
+		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, runtimeTemplate);
+		System.Console.WriteLine("leone2 - " + runtime_js);		
 		if (emit_ninja) {
 			File.Delete (runtime_js);
 			File.Copy (runtimeTemplate, runtime_js);
@@ -948,7 +950,7 @@ class Driver {
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
-		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
+		ninja.WriteLine ($"build $appdir/{runtimeTemplate}: cpifdiff $builddir/{runtimeTemplate}");
 		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
 		if (build_wasm) {
 			string src_prefix;

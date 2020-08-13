@@ -5,11 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <ProjectReference Include="..\BrowserDebugProxy\BrowserDebugProxy.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Mono.WebAssembly.DebuggerProxy\Mono.WebAssembly.DebuggerProxy.csproj" />
-  </ItemGroup>
+  <Target Name="GetFilesToPackage" />
 
 </Project>

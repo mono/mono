@@ -40,7 +40,7 @@ $NUGET_HOME="~\\.nuget"
 $PACKAGE_PATH="$NUGET_HOME\\packages\\microsoft.aspnetcore.components.webassembly.runtime\\$runtime\\tools\\dotnetwasm"
 $PROXY_PACKAGE_PATH="$NUGET_HOME\\packages\\microsoft.aspnetcore.components.webassembly.devserver\\$runtime\\tools\\BlazorDebugProxy"
 $ASP_PROXY_PATH="$asp_working_dir\\src\\Components\\WebAssembly\\DebugProxy\\src"
-$MONO_PROXY_PATH="$mono_working_dir\\sdks\\wasm\\Mono.WebAssembly.DebuggerProxy"
+$MONO_PROXY_PATH="$mono_working_dir\\sdks\\wasm\\BrowserDebugProxy"
 $TMP_DIR=(mktemp -d)
 $TMP_PKG_DIR="$TMP_DIR\\wasm-package"
 mkdir $TMP_DIR
