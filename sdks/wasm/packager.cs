@@ -515,7 +515,7 @@ class Driver {
 			return 1;
 		}
 
-		enable_debug = true;
+		enable_debug = opts.Debug;
 		enable_linker = opts.Linker;
 		add_binding = opts.AddBinding;
 		use_release_runtime = !opts.DebugRuntime;

@@ -790,7 +790,7 @@ package: build build-sdk build-dbg-proxy
 	cp Mono.Cecil.dll tmp/
 	cp $(OPTIONS_CS) tmp/	
 	cp packager.exe tmp/
-	cp runtime.js tmp/
+	cp runtime-debugger.js tmp/
 	cp BrowserDebugProxy/bin/Debug/netcoreapp3.0/BrowserDebugProxy.dll tmp/
 	cp BrowserDebugProxy/bin/Debug/netcoreapp3.0/BrowserDebugProxy.pdb tmp/
 	mkdir tmp/dbg-proxy
