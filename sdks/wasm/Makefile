@@ -466,8 +466,8 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	(cd $(BROWSER_TEST) && $(NPM) install)
 	touch $@
 
-bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll tests/debugger/debugger-driver.html other.js builds/debug/dotnet.js
-	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=tests/debugger/debugger-driver.html --asset=other.js debugger-test.dll
+bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll tests/debugger/debugger-driver.html other.js tests/debugger/possible-breakpoints.js builds/debug/dotnet.js
+	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=tests/debugger/debugger-driver.html --asset=other.js --asset=tests/debugger/possible-breakpoints.js debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 

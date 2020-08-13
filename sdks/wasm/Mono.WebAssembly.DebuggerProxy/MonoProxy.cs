@@ -184,7 +184,7 @@ namespace WebAssembly.Net.Debugging {
 					var start = SourceLocation.Parse (args? ["start"] as JObject);
 					//FIXME support variant where restrictToFunction=true and end is omitted
 					var end = SourceLocation.Parse (args? ["end"] as JObject);
-					if (start != null && end != null && await GetPossibleBreakpoints (id, start, end, token))
+					if (start != null && await GetPossibleBreakpoints (id, start, end, token))
 						return true;
 
 					SendResponse (id, resp, token);
@@ -821,6 +821,14 @@ namespace WebAssembly.Net.Debugging {
 
 			if (bps == null)
 				return false;
+
+			if (start.Line < 0 || start.Column < 0) {
+				SendResponse (msg, Result.Err (JObject.FromObject (new { code = -32000, message = "start.lineNumber and start.columnNumber should be >= 0" })), token);
+				return true;
+			} else if (end != null && (end.Line < 0 || end.Column < 0)) {
+				SendResponse (msg, Result.Err (JObject.FromObject (new { code = -32000, message = "end.lineNumber and end.columnNumber should be >= 0" })), token);
+				return true;
+			}
 
 			var response = new { locations = bps.Select (b => b.AsLocation ()) };
 
