@@ -197,7 +197,7 @@ To experiment with the debugger, do the following steps:
 
 - When calling `packager.exe` pass the `-debug` argument to it.
 - Start Chrome with remote debugging enabled (IE `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222`)
-- Run the proxy: `dotnet run -p ProxyDriver/ProxyDriver.csproj`
+- Run the proxy: `dotnet run -p BrowserDebugHost/BrowserDebugHost.csproj`
 - Connect to the proxy by visiting http://localhost:9300/ and select the tab you wish to debug from the list of tabs
 - Refresh the debugged page and you should be set
 

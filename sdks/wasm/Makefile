@@ -674,7 +674,7 @@ build-debugger-test-app: bin/debugger-test-suite/dotnet.wasm
 build-managed: build-debug-sample build-test-suite
 
 build-dbg-proxy:
-	$(DOTNET_BUILD) ProxyDriver
+	$(DOTNET_BUILD) BrowserDebugHost
 
 build-dbg-testsuite:
 	$(DOTNET_BUILD) DebuggerTestSuite
@@ -791,10 +791,10 @@ package: build build-sdk build-dbg-proxy
 	cp $(OPTIONS_CS) tmp/	
 	cp packager.exe tmp/
 	cp runtime.js tmp/
-	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.1/Mono.WebAssembly.DebuggerProxy.dll tmp/
-	cp Mono.WebAssembly.DebuggerProxy/bin/Debug/netstandard2.1/Mono.WebAssembly.DebuggerProxy.pdb tmp/
+	cp BrowserDebugProxy/bin/Debug/netstandard2.1/BrowserDebugProxy.dll tmp/
+	cp BrowserDebugProxy/bin/Debug/netstandard2.1/BrowserDebugProxy.pdb tmp/
 	mkdir tmp/dbg-proxy
-	cp -r ProxyDriver/bin/Debug/netcoreapp3.0/ tmp/dbg-proxy/
+	cp -r BrowserDebugHost/bin/Debug/netcoreapp3.0/ tmp/dbg-proxy/
 	mkdir tmp/docs
 	cp -r ./docs/ tmp/docs/
 	mkdir tmp/packages
