@@ -407,6 +407,7 @@ class Driver {
 		var il_strip = false;
 		var linker_verbose = false;
 		var runtimeTemplate = "runtime.js";
+		var runtimeTemplateOutputName = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
 		var native_libs = new List<string> ();
@@ -456,6 +457,7 @@ class Driver {
 				{ "aot", s => ee_mode = ExecMode.Aot },
 				{ "aot-interp", s => ee_mode = ExecMode.AotInterp },
 				{ "template=", s => runtimeTemplate = s },
+				{ "template-output-name=", s => runtimeTemplateOutputName = s },
 				{ "asset=", s => assets.Add(s) },
 				{ "search-path=", s => root_search_paths.Add(s) },
 				{ "profile=", s => profilers.Add (s) },
@@ -686,7 +688,7 @@ class Driver {
 			wasm_core_support = BINDINGS_MODULE_SUPPORT;
 			wasm_core_support_library = $"--js-library {BINDINGS_MODULE_SUPPORT}";
 		}
-		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, runtimeTemplate);
+		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, runtimeTemplateOutputName);
 		if (emit_ninja) {
 			File.Delete (runtime_js);
 			File.Copy (runtimeTemplate, runtime_js);
@@ -948,7 +950,7 @@ class Driver {
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
-		ninja.WriteLine ($"build $appdir/{runtimeTemplate}: cpifdiff $builddir/{runtimeTemplate}");
+		ninja.WriteLine ($"build $appdir/{runtimeTemplateOutputName}: cpifdiff $builddir/{runtimeTemplateOutputName}");
 		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
 		if (build_wasm) {
 			string src_prefix;

@@ -467,7 +467,7 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	touch $@
 
 bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll tests/debugger/debugger-driver.html other.js builds/debug/dotnet.js
-	$(PACKAGER) --copy=always -debugrt -debug --template=runtime-debugger.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=tests/debugger/debugger-driver.html --asset=other.js debugger-test.dll
+	$(PACKAGER) --copy=always -debugrt -debug --template=runtime-debugger.js --template-output-name=runtime-debugger.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=tests/debugger/debugger-driver.html --asset=other.js debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 

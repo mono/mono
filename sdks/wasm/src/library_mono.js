@@ -973,8 +973,6 @@ var MonoSupportLib = {
 		mono_load_runtime_and_bcl: function (
 			unused_vfs_prefix, deploy_prefix, debug_level, file_list, loaded_cb, fetch_file_cb
 		) {
-			console.log("leone");
-			console.log(debug_level);
 			var args = {
 				fetch_file_cb: fetch_file_cb,
 				loaded_cb: loaded_cb,
