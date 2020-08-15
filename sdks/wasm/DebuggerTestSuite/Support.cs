@@ -49,7 +49,7 @@ namespace DebuggerTests
 				tcs.SetException (new ArgumentException (exception.ToString ()));
 		}
 
-		async Task OnMessage(string method, JObject args, CancellationToken token)
+		public async Task OnMessage(string method, JObject args, CancellationToken token)
 		{
 			//System.Console.WriteLine("OnMessage " + method + args);
 			switch (method) {
@@ -154,9 +154,11 @@ namespace DebuggerTests
 		internal DebugTestContext ctx;
 		internal Dictionary<string, string> dicScriptsIdToUrl;
 		internal Dictionary<string, string> dicFileToUrl;
+		internal List<string> events;
 		internal Dictionary<string, string> SubscribeToScripts (Inspector insp) {
 			dicScriptsIdToUrl = new Dictionary<string, string> ();
 			dicFileToUrl = new Dictionary<string, string>();
+			events = new List<string>();
 			insp.On("Debugger.scriptParsed", async (args, c) => {
 				var script_id = args? ["scriptId"]?.Value<string> ();
 				var url = args["url"]?.Value<string> ();
@@ -167,8 +169,12 @@ namespace DebuggerTests
 					dbgUrl = arrStr[0] + "/" + arrStr[1] + "/" + arrStr[2] + "/" + arrStr[arrStr.Length - 1];
 					dicScriptsIdToUrl[script_id] = dbgUrl;
 					dicFileToUrl[dbgUrl] = args["url"]?.Value<string>();
+					events.Add($"Debugger.scriptParsed {dicFileToUrl[dbgUrl]}");
 				} else if (!String.IsNullOrEmpty (url)) {
-					dicFileToUrl[new Uri (url).AbsolutePath] = url;
+					var absPath = new Uri (url).AbsolutePath;
+					dicScriptsIdToUrl [script_id] = absPath;
+					dicFileToUrl [absPath] = url;
+					events.Add ($"Debugger.scriptParsed {url}");
 				}
 				await Task.FromResult (0);
 			});
