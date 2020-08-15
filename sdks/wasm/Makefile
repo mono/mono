@@ -467,7 +467,7 @@ $(BROWSER_TEST_DYNAMIC)/.stamp-browser-test-dynamic-suite: packager.exe $(WASM_F
 	touch $@
 
 bin/debugger-test-suite/dotnet.wasm: packager.exe binding_tests.dll debugger-test.dll tests/debugger/debugger-driver.html other.js builds/debug/dotnet.js
-	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=tests/debugger/debugger-driver.html --asset=other.js debugger-test.dll
+	$(PACKAGER) --copy=always -debugrt -debug --template=runtime.js --template-output-name=runtime-debugger.js --builddir=obj/debugger-test-suite --appdir=bin/debugger-test-suite --asset=tests/debugger/debugger-driver.html --asset=other.js debugger-test.dll
 	ninja -v -C obj/debugger-test-suite
 	touch $@
 
@@ -791,8 +791,8 @@ package: build build-sdk build-dbg-proxy
 	cp $(OPTIONS_CS) tmp/	
 	cp packager.exe tmp/
 	cp runtime.js tmp/
-	cp BrowserDebugProxy/bin/Debug/netstandard2.1/BrowserDebugProxy.dll tmp/
-	cp BrowserDebugProxy/bin/Debug/netstandard2.1/BrowserDebugProxy.pdb tmp/
+	cp BrowserDebugProxy/bin/Debug/netcoreapp3.0/BrowserDebugProxy.dll tmp/
+	cp BrowserDebugProxy/bin/Debug/netcoreapp3.0/BrowserDebugProxy.pdb tmp/
 	mkdir tmp/dbg-proxy
 	cp -r BrowserDebugHost/bin/Debug/netcoreapp3.0/ tmp/dbg-proxy/
 	mkdir tmp/docs
