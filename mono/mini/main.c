@@ -182,7 +182,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		goto doclose;
 	if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
 		goto doclose;
-	if (memcmp (sigbuffer+sizeof(uint64_t), "xmonkeysloveplay", 16) == 0)
+	if (memcmp (sigbuffer + sizeof (uint64_t), "xmonkeysloveplay", 16) == 0)
 		goto found;
 	else
 	{
