@@ -182,14 +182,29 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		goto doclose;
 	if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
 		goto doclose;
+	// First, see if "xmonkeysloveplay" is at the end of file
 	if (memcmp (sigbuffer + sizeof (uint64_t), "xmonkeysloveplay", 16) == 0)
 		goto found;
 	else
 	{
 #ifdef HOST_DARWIN
+		/*
+		 * If "xmonkeysloveplay" is not at the end of file,
+		 * on Mac OS X, we try a little harder, by actually
+		 * reading the binary's header structure, to see
+		 * if it is located at the end of a LC_SYMTAB section.
+		 *
+		 * This is because Apple code-signing appends a
+		 * LC_CODE_SIGNATURE section to the binary, so
+		 * for a signed binary, "xmonkeysloveplay" is no
+		 * longer at the end of file.
+		 *
+		 * The rest is sanity-checks for the header and section structures.
+		 */
 		struct mach_header_64 h;
 		if ((sigstart = lseek (fd, 0, SEEK_SET)) == -1)
 			goto doclose;
+		// Find and check binary header
 		if (read (fd, &h, sizeof (h)) == -1)
 			goto doclose;
 		if (h.magic != MH_MAGIC_64)
@@ -209,6 +224,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 				if (read (fd, &stc, sizeof (stc)) == -1)
 					goto doclose;
 
+				// Check the end of the LC_SYMTAB section for "xmonkeysloveplay"
 				if ((sigstart = lseek (fd, -(16 + sizeof (uint64_t)) + stc.stroff + stc.strsize, SEEK_SET)) == -1)
 					goto doclose;
 				if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
