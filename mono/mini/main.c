@@ -197,7 +197,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 
 		off_t total = h.sizeofcmds;
 		uint32_t count = h.ncmds;
-		while (total > 0 && count >0) {
+		while (total > 0 && count > 0) {
 			struct load_command lc;
 			off_t sig_stored = lseek (fd, 0, SEEK_CUR);
 			if (read (fd, &lc, sizeof (lc)) == -1)
