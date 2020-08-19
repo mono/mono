@@ -62,7 +62,7 @@ shell:
 
 .PHONY: accept-android-license
 accept-android-license:
-	yes | $(SDK_DIR)/tools/bin/sdkmanager --licenses
+	yes | $(SDK_DIR)/tools/bin/sdkmanager --sdk_root=$(SDK_DIR) --licenses
 
 ## Check targets
 
