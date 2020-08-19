@@ -2056,6 +2056,10 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 		gc_safe_transition_builder_add_locals (&gc_safe_transition_builder);
 
 	if (!func && !aot && !func_param && !MONO_CLASS_IS_IMPORT (mb->method->klass)) {
+		static int count;
+		count ++;
+		if (count == 2)
+			g_error ("XX: %s\n", mono_method_get_full_name (&piinfo->method));
 		/*
 		 * On netcore, its possible to register pinvoke resolvers at runtime, so
 		 * a pinvoke lookup can fail, and then succeed later. So if the
