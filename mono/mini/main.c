@@ -199,7 +199,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		uint32_t count = h.ncmds;
 		while (total > 0 && count > 0) {
 			struct load_command lc;
-			off_t sig_stored = lseek (fd, 0, SEEK_CUR);
+			off_t sig_stored = lseek (fd, 0, SEEK_CUR); // get current offset
 			if (read (fd, &lc, sizeof (lc)) == -1)
 				goto doclose;
 			if (lc.cmd == LC_SYMTAB) {
