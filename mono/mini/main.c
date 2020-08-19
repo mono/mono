@@ -209,7 +209,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 				if (read (fd, &stc, sizeof (stc)) == -1)
 					goto doclose;
 
-				if ((sigstart = lseek (fd, -(16+sizeof(uint64_t))+stc.stroff + stc.strsize, SEEK_SET)) == -1)
+				if ((sigstart = lseek (fd, -(16 + sizeof (uint64_t)) + stc.stroff + stc.strsize, SEEK_SET)) == -1)
 					goto doclose;
 				if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
 					goto doclose;
