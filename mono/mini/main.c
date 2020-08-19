@@ -201,17 +201,17 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		 *
 		 * The rest is sanity-checks for the header and section structures.
 		 */
-		struct mach_header_64 h;
+		struct mach_header_64 bin_header;
 		if ((sigstart = lseek (fd, 0, SEEK_SET)) == -1)
 			goto doclose;
 		// Find and check binary header
-		if (read (fd, &h, sizeof (h)) == -1)
+		if (read (fd, &bin_header, sizeof (bin_header)) == -1)
 			goto doclose;
-		if (h.magic != MH_MAGIC_64)
+		if (bin_header.magic != MH_MAGIC_64)
 			goto doclose;
 
-		off_t total = h.sizeofcmds;
-		uint32_t count = h.ncmds;
+		off_t total = bin_header.sizeofcmds;
+		uint32_t count = bin_header.ncmds;
 		while (total > 0 && count > 0) {
 			struct load_command lc;
 			off_t sig_stored = lseek (fd, 0, SEEK_CUR); // get current offset
