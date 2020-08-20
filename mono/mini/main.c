@@ -35,7 +35,7 @@
 #    include "buildver-boehm.h"
 #  endif
 #endif
-#ifdef HOST_DARWIN
+#ifdef TARGET_OSX
 #include <mach-o/loader.h>
 #endif
 
@@ -187,7 +187,7 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		goto found;
 	else
 	{
-#ifdef HOST_DARWIN
+#ifdef TARGET_OSX
 		/*
 		 * If "xmonkeysloveplay" is not at the end of file,
 		 * on Mac OS X, we try a little harder, by actually
