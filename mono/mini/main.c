@@ -185,9 +185,9 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 	// First, see if "xmonkeysloveplay" is at the end of file
 	if (memcmp (sigbuffer + sizeof (uint64_t), "xmonkeysloveplay", 16) == 0)
 		goto found;
-	else
-	{
+
 #ifdef TARGET_OSX
+	{
 		/*
 		 * If "xmonkeysloveplay" is not at the end of file,
 		 * on Mac OS X, we try a little harder, by actually
@@ -237,9 +237,12 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 			total -= sizeof (lc.cmdsize);
 			count--;
 		}
-#endif
-		goto doclose;
 	}
+#endif
+
+	// did not find "xmonkeysloveplay" at end of file or end of LC_SYMTAB section
+	goto doclose;
+
 found:
 	directory_location = GUINT64_FROM_LE ((*(uint64_t *) &sigbuffer [0]));
 	if (lseek (fd, directory_location, SEEK_SET) == -1)
