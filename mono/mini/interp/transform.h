@@ -60,16 +60,22 @@ struct InterpInst {
 	guint16 data [MONO_ZERO_LEN_ARRAY];
 };
 
-typedef struct {
+typedef struct _InterpBasicBlock InterpBasicBlock;
+
+struct _InterpBasicBlock {
 	guint8 *ip;
 	GSList *preds;
 	GSList *seq_points;
 	SeqPoint *last_seq_point;
 
+	InterpInst *first_ins, *last_ins;
+	/* Next bb in IL order */
+	InterpBasicBlock *next_bb;
+
 	// This will hold a list of last sequence points of incoming basic blocks
 	SeqPoint **pred_seq_points;
 	guint num_pred_seq_points;
-} InterpBasicBlock;
+};
 
 typedef enum {
 	RELOC_SHORT_BRANCH,
@@ -109,7 +115,7 @@ typedef struct
 	StackInfo **stack_state;
 	int *stack_height;
 	int *vt_stack_size;
-	unsigned char *is_bb_start;
+	unsigned char *is_bb_start; // FIXME Kill me
 	unsigned short *new_code;
 	unsigned short *new_code_end;
 	unsigned int max_code_size;
@@ -136,7 +142,7 @@ typedef struct
 	gboolean gen_sdb_seq_points;
 	GPtrArray *seq_points;
 	InterpBasicBlock **offset_to_bb;
-	InterpBasicBlock *entry_bb;
+	InterpBasicBlock *entry_bb, *cbb;
 	MonoMemPool     *mempool;
 	GList *basic_blocks;
 	GPtrArray *relocs;

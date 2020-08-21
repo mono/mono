@@ -197,11 +197,13 @@ static InterpInst*
 interp_add_ins_explicit (TransformData *td, guint16 opcode, int len)
 {
 	InterpInst *new_inst = interp_new_ins (td, opcode, len);
-	new_inst->prev = td->last_ins;
-	if (td->last_ins)
-		td->last_ins->next = new_inst;
+	new_inst->prev = td->cbb->last_ins;
+	if (td->cbb->last_ins)
+		td->cbb->last_ins->next = new_inst;
 	else
-		td->first_ins = new_inst;
+		td->cbb->first_ins = new_inst;
+	td->cbb->last_ins = new_inst;
+	// We should delete this, but is currently used widely to set the args of an instruction
 	td->last_ins = new_inst;
 	return new_inst;
 }
@@ -224,10 +226,17 @@ interp_insert_ins (TransformData *td, InterpInst *prev_ins, guint16 opcode)
 	new_inst->next = prev_ins->next;
 	prev_ins->next = new_inst;
 
-	if (new_inst->next == NULL)
+	if (new_inst->next == NULL) {
+		/*
+		 * This assumes prev_ins is inside cbb
+		 * FIXME Get rid of this il_offset tracking per instructions and have branch
+		 * instructions reference basic blocks directly.
+		 */
+		td->cbb->last_ins = new_inst;
 		td->last_ins = new_inst;
-	else
+	} else {
 		new_inst->next->prev = new_inst;
+	}
 
 	return new_inst;
 }
@@ -2054,6 +2063,9 @@ interp_method_check_inlining (TransformData *td, MonoMethod *method, MonoMethodS
 {
 	MonoMethodHeaderSummary header;
 
+	/* FIXME */
+	return FALSE;
+
 	if (method->flags & METHOD_ATTRIBUTE_REQSECOBJ)
 		/* Used to mark methods containing StackCrawlMark locals */
 		return FALSE;
@@ -2687,7 +2699,9 @@ get_basic_blocks (TransformData *td)
 	InterpBasicBlock *cbb;
 
 	td->offset_to_bb = (InterpBasicBlock**)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock*) * (end - start + 1));
-	td->entry_bb = cbb = get_bb (td, NULL, start);
+	cbb = get_bb (td, NULL, start);
+
+	td->is_bb_start [0] = 1;
 
 	while (ip < end) {
 		cli_addr = ip - start;
@@ -2717,12 +2731,14 @@ get_basic_blocks (TransformData *td)
 			break;
 		case MonoShortInlineBrTarget:
 			target = start + cli_addr + 2 + (signed char)ip [1];
+			td->is_bb_start [target - start] = 1;
 			get_bb (td, cbb, target);
 			ip += 2;
 			cbb = get_bb (td, cbb, ip);
 			break;
 		case MonoInlineBrTarget:
 			target = start + cli_addr + 5 + (gint32)read32 (ip + 1);
+			td->is_bb_start [target - start] = 1;
 			get_bb (td, cbb, target);
 			ip += 5;
 			cbb = get_bb (td, cbb, ip);
@@ -2737,6 +2753,7 @@ get_basic_blocks (TransformData *td)
 
 			for (j = 0; j < n; ++j) {
 				target = start + cli_addr + (gint32)read32 (ip);
+				td->is_bb_start [target - start] = 1;
 				get_bb (td, cbb, target);
 				ip += 4;
 			}
@@ -3087,115 +3104,6 @@ type_has_references (MonoType *type)
 	return FALSE;
 }
 
-/* Return false is failure to init basic blocks due to being in inline method */
-static gboolean
-init_bb_start (TransformData *td, MonoMethodHeader *header, gboolean inlining)
-{
-	const unsigned char *ip, *end;
-	const MonoOpcode *opcode;
-	int offset, i, in, backwards;
-
-	/* intern the strings in the method. */
-	ip = header->code;
-	end = ip + header->code_size;
-
-	/* inlined method continues the basic block of parent method */
-	if (!inlining)
-		td->is_bb_start [0] = 1;
-	while (ip < end) {
-		in = *ip;
-		if (in == 0xfe) {
-			ip++;
-			in = *ip + 256;
-		}
-		else if (in == 0xf0) {
-			ip++;
-			in = *ip + MONO_CEE_MONO_ICALL;
-		}
-		opcode = &mono_opcodes [in];
-		switch (opcode->argument) {
-		case MonoInlineNone:
-			++ip;
-			break;
-		case MonoInlineString:
-			ip += 5;
-			break;
-		case MonoInlineType:
-			ip += 5;
-			break;
-		case MonoInlineMethod:
-			ip += 5;
-			break;
-		case MonoInlineField:
-		case MonoInlineSig:
-		case MonoInlineI:
-		case MonoInlineTok:
-		case MonoShortInlineR:
-			ip += 5;
-			break;
-		case MonoInlineBrTarget:
-			offset = read32 (ip + 1);
-			ip += 5;
-			/* this branch is ignored */
-			if (offset == 0 && in == MONO_CEE_BR)
-				break;
-			backwards = offset < 0;
-			offset += ip - header->code;
-			g_assert (offset >= 0 && offset < header->code_size);
-			if (inlining)
-				return FALSE;
-			td->is_bb_start [offset] |= backwards ? 2 : 1;
-			break;
-		case MonoShortInlineBrTarget:
-			offset = ((gint8 *)ip) [1];
-			ip += 2;
-			/* this branch is ignored */
-			if (offset == 0 && in == MONO_CEE_BR_S)
-				break;
-			backwards = offset < 0;
-			offset += ip - header->code;
-			g_assert (offset >= 0 && offset < header->code_size);
-			if (inlining)
-				return FALSE;
-			td->is_bb_start [offset] |= backwards ? 2 : 1;
-			break;
-		case MonoInlineVar:
-			ip += 3;
-			break;
-		case MonoShortInlineVar:
-		case MonoShortInlineI:
-			ip += 2;
-			break;
-		case MonoInlineSwitch: {
-			guint32 n;
-			const unsigned char *next_ip;
-			++ip;
-			n = read32 (ip);
-			ip += 4;
-			next_ip = ip + 4 * n;
-			for (i = 0; i < n; i++) {
-				offset = read32 (ip);
-				backwards = offset < 0;
-				offset += next_ip - header->code;
-				g_assert (offset >= 0 && offset < header->code_size);
-				if (inlining)
-					return FALSE;
-				td->is_bb_start [offset] |= backwards ? 2 : 1;
-				ip += 4;
-			}
-			break;
-		}
-		case MonoInlineR:
-		case MonoInlineI8:
-			ip += 9;
-			break;
-		default:
-			g_assert_not_reached ();
-		}
-	}
-	return TRUE;
-}
-
 #ifdef NO_UNALIGNED_ACCESS
 static int
 get_unaligned_opcode (int opcode)
@@ -3434,8 +3342,10 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	td->in_start = td->ip = header->code;
 	end = td->ip + header->code_size;
 
-	if (!init_bb_start (td, header, inlining))
-		goto exit;
+	// FIXME is_bb_start is no longer initialized. Do we even need it ?
+	get_basic_blocks (td);
+
+	td->cbb = td->entry_bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
 
 	if (!inlining) {
 		for (i = 0; i < header->code_size; i++) {
@@ -3475,7 +3385,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 	if (td->gen_sdb_seq_points && !inlining) {
 		MonoDebugMethodInfo *minfo;
-		get_basic_blocks (td);
 
 		minfo = mono_debug_lookup_method (method);
 
@@ -3600,6 +3509,13 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		g_assert (td->sp >= td->stack);
 		g_assert (td->vt_sp < 0x10000000);
 		in_offset = td->ip - header->code;
+
+		InterpBasicBlock *new_bb = td->offset_to_bb [in_offset];
+		if (td->cbb != new_bb) {
+			/* We are starting a new basic block. Change cbb and link them together */
+			td->cbb->next_bb = new_bb;
+			td->cbb = new_bb;
+		}
 		if (!inlining)
 			td->current_il_offset = in_offset;
 		td->in_start = td->ip;
@@ -6912,20 +6828,26 @@ generate_compacted_code (TransformData *td)
 	guint16 *ip;
 	int size = 0;
 	td->relocs = g_ptr_array_new ();
+	InterpBasicBlock *bb;
 
 	// Iterate once to compute the exact size of the compacted code
-	InterpInst *ins = td->first_ins;
-	while (ins) {
-		size += get_inst_length (ins);
-		ins = ins->next;
+	for (bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
+		InterpInst *ins = bb->first_ins;
+		while (ins) {
+			size += get_inst_length (ins);
+			ins = ins->next;
+		}
 	}
 
 	// Generate the compacted stream of instructions
 	td->new_code = ip = (guint16*)mono_domain_alloc0 (td->rtm->domain, size * sizeof (guint16));
-	ins = td->first_ins;
-	while (ins) {
-		ip = emit_compacted_instruction (td, ip, ins);
-		ins = ins->next;
+
+	for (bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
+		InterpInst *ins = bb->first_ins;
+		while (ins) {
+			ip = emit_compacted_instruction (td, ip, ins);
+			ins = ins->next;
+		}
 	}
 	td->new_code_end = ip;
 	td->in_offsets [td->header->code_size] = td->new_code_end - td->new_code;
@@ -7867,6 +7789,7 @@ interp_super_instructions (TransformData *td)
 static void
 interp_optimize_code (TransformData *td)
 {
+	return;
 	if (mono_interp_opt & INTERP_OPT_CPROP)
 		MONO_TIME_TRACK (mono_interp_stats.cprop_time, interp_cprop (td));
 
@@ -7883,10 +7806,13 @@ static void
 interp_fix_localloc_ret (TransformData *td)
 {
 	g_assert (td->has_localloc);
-	InterpInst *ins;
-	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
-		if (ins->opcode >= MINT_RET && ins->opcode <= MINT_RET_VT)
-			ins->opcode += MINT_RET_LOCALLOC - MINT_RET;
+	for (InterpBasicBlock *bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
+		InterpInst *ins = bb->first_ins;
+		while (ins) {   
+			if (ins->opcode >= MINT_RET && ins->opcode <= MINT_RET_VT)
+				ins->opcode += MINT_RET_LOCALLOC - MINT_RET;
+			ins = ins->next;
+		}
 	}
 }
 
