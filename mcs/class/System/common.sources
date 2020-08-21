@@ -879,7 +879,7 @@ corefx/SR.cs
 
 ../../../external/corefx/src/Common/src/System/Net/Logging/NetEventSource.Common.cs
 
-../../../external/corefx/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
+../../../external/corefx-bugfix/src/Common/src/System/Net/WebSockets/ManagedWebSocket.cs
 ../../../external/corefx/src/Common/src/System/Net/WebSockets/WebSocketValidate.cs
 
 ../../../external/corefx/src/System.Runtime/src/System/Collections/Generic/ISet.cs
