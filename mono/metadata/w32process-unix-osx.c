@@ -132,7 +132,7 @@ static GHashTable *images;
 static MonoCoopMutex images_mutex;
 
 static int
-sort_modules_by_load_order(gconstpointer a, gconstpointer b)
+sort_modules_by_load_order (gconstpointer a, gconstpointer b)
 {
 	MonoW32ProcessModule *ma = (MonoW32ProcessModule *) a;
 	MonoW32ProcessModule *mb = (MonoW32ProcessModule *) b;
