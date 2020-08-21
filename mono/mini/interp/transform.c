@@ -1010,21 +1010,21 @@ emit_store_value_as_local (TransformData *td, MonoType *src)
 // Returns whether we can optimize away the instructions starting at start.
 // If any instructions are part of a new basic block, we can't remove them.
 static gboolean
-interp_is_bb_start (TransformData *td, InterpInst *start, InterpInst *end)
+interp_is_same_bb (TransformData *td, InterpInst *start, InterpInst *end)
 {
 	InterpInst *ins = start;
 	while (ins != end) {
 		if (ins->il_offset != -1) {
 			if (td->is_bb_start [ins->il_offset])
-				return TRUE;
+				return FALSE;
 		}
 		ins = ins->next;
 	}
 
 	// Also check if end is bb start
 	if (ins != NULL && ins->il_offset != -1 && td->is_bb_start [ins->il_offset])
-		return TRUE;
-	return FALSE;
+		return FALSE;
+	return TRUE;
 }
 
 static gboolean
@@ -1792,7 +1792,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 				td->last_ins->prev && interp_ins_is_ldc (td->last_ins->prev) &&
 				td->last_ins->prev->prev && td->last_ins->prev->prev->opcode == MINT_BOX &&
 				td->sp [-2].klass == td->sp [-1].klass &&
-				!interp_is_bb_start (td, td->last_ins->prev->prev, NULL) &&
+				interp_is_same_bb (td, td->last_ins->prev->prev, NULL) &&
 				!td->is_bb_start [td->in_start - td->il_code]) {
 			// csc pattern : box, ldc, box, call HasFlag
 			g_assert (m_class_is_enumtype (td->sp [-2].klass));
@@ -1807,7 +1807,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 		} else if (td->last_ins && td->last_ins->opcode == MINT_BOX &&
 				td->last_ins->prev && interp_ins_is_ldc (td->last_ins->prev) &&
 				constrained_class && td->sp [-1].klass == constrained_class &&
-				!interp_is_bb_start (td, td->last_ins->prev, NULL) &&
+				interp_is_same_bb (td, td->last_ins->prev, NULL) &&
 				!td->is_bb_start [td->in_start - td->il_code]) {
 			// mcs pattern : ldc, box, constrained Enum, call HasFlag
 			g_assert (m_class_is_enumtype (constrained_class));
@@ -7463,7 +7463,7 @@ retry:
 			int loaded_local = ins->data [0];
 			local_ref_count [loaded_local]++;
 			InterpInst *prev_ins = interp_prev_ins (ins);
-			if (prev_ins && MINT_IS_STLOC (prev_ins->opcode) && !interp_is_bb_start (td, prev_ins, ins) && interp_local_equal (locals, prev_ins->data [0], loaded_local)) {
+			if (prev_ins && MINT_IS_STLOC (prev_ins->opcode) && interp_is_same_bb (td, prev_ins, ins) && interp_local_equal (locals, prev_ins->data [0], loaded_local)) {
 				int mt = prev_ins->opcode - MINT_STLOC_I1;
 				if (ins->opcode - MINT_LDLOC_I1 == mt) {
 					if (mt == MINT_TYPE_I4)
@@ -7610,7 +7610,7 @@ retry:
 			if (prev_ins && prev_ins->opcode == MINT_POP &&
 					((is_i8 && sp->val.type == STACK_VALUE_I8 && sp->val.l == val.l) ||
 					(!is_i8 && sp->val.type == STACK_VALUE_I4 && sp->val.i == val.i)) &&
-					!interp_is_bb_start (td, prev_ins, ins)) {
+					interp_is_same_bb (td, prev_ins, ins)) {
 				// The previous instruction pops the stack of the value we are pushing
 				// right now. We can kill both instructions
 				if (td->verbose_level)
