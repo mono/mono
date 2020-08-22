@@ -432,3 +432,36 @@ mono_conc_hashtable_foreach_steal (MonoConcurrentHashTable *hash_table, GHRFunc 
 	}
 	check_table_size (hash_table);
 }
+
+/**
+ * mono_conc_hashtable_foreach_snapshot:
+ *
+ * Calls @func for each entry in the hashtable. Does not require external
+ * locking. Keys and values are not guaranteed to reference live data; keys and
+ * values that have non-trivial lifetimes should be managed using an external
+ * mechanism. No implicit acquire-release synchronization is performed through
+ * the memory locations containing each value.
+ */
+void
+mono_conc_hashtable_foreach_snapshot (
+	MonoConcurrentHashTable *hash_table, MonoThreadHazardPointers *hp,
+	GHFunc func, gpointer userdata)
+{
+	conc_table *table = (conc_table *) mono_get_hazardous_pointer (
+		(gpointer volatile *) &hash_table->table, hp, 0);
+
+	key_value_pair *kvs = table->kvs;
+	for (int i = 0; i < table->table_size; ++i) {
+		gpointer key = kvs [i].key; /* load-relaxed */
+		if (key && key != TOMBSTONE) {
+			mono_memory_barrier (); /* only needs an acquire fence */
+			gpointer val = kvs[i].value; /* load-relaxed */
+			/* The kv pair could have been concurrently deleted. */
+			if (val != NULL) {
+				func (key, val, userdata);
+			}
+		}
+	}
+
+	mono_hazard_pointer_clear (hp, 0);
+}
