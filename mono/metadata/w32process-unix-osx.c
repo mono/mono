@@ -125,19 +125,11 @@ struct mono_dyld_image_info
 	const void *data_section_end;
 	const char *name;
 	guint64 order;
-	struct mono_dyld_image_info *limbo_next;
 };
 
-static MonoConcurrentHashTable *images;
-static mono_mutex_t images_mutex;
-static volatile gpointer limbo_head;
-
-static void
-mono_dyld_image_info_free (struct mono_dyld_image_info *info)
-{
-	g_free ((void *) info->name);
-	g_free (info);
-}
+static guint64 dyld_order = 0;
+static GHashTable *images;
+static MonoCoopMutex images_mutex;
 
 static int
 sort_modules_by_load_order (gconstpointer a, gconstpointer b)
@@ -147,77 +139,42 @@ sort_modules_by_load_order (gconstpointer a, gconstpointer b)
 	return ma->inode == mb->inode ? 0 : ma->inode < mb->inode ? -1 : 1;
 }
 
-static void
-iter_images (gpointer key, gpointer val, gpointer user_data)
-{
-	GSList **data = (GSList **) user_data;
-	struct mono_dyld_image_info *info = (struct mono_dyld_image_info *) val;
-
-	MonoW32ProcessModule *mod = g_new0 (MonoW32ProcessModule, 1);
-	mod->address_start = GINT_TO_POINTER (info->data_section_start);
-	mod->address_end = GINT_TO_POINTER (info->data_section_end);
-	mod->perms = g_strdup ("r--p");
-	mod->address_offset = 0;
-	mod->device = makedev (0, 0);
-	mod->inode = info->order;
-	mod->filename = g_strdup (info->name);
-
-	*data = g_slist_prepend (*data, mod);
-}
-
-static void
-clear_limbo_list (void)
-{
-	gpointer head = mono_atomic_load_ptr (&limbo_head); /* load-relaxed */
-	if (head) {
-		head = mono_atomic_xchg_ptr (&limbo_head, NULL); /* xchg acquire */
-		struct mono_dyld_image_info *list = (struct mono_dyld_image_info *) head;
-		while (list) {
-			struct mono_dyld_image_info *cur = list;
-			list = list->limbo_next;
-			mono_dyld_image_info_free (cur);
-		}
-	}
-}
-
 GSList *
 mono_w32process_get_modules (pid_t pid)
 {
-	GSList *ret = NULL;
-	MONO_ENTER_GC_SAFE;
-
 	if (pid != getpid ())
-		goto done;
+		return NULL;
 
-	mono_os_mutex_lock (&images_mutex);
-	mono_conc_hashtable_foreach_snapshot (images, mono_hazard_pointer_get (), iter_images, &ret);
-	mono_os_mutex_unlock (&images_mutex);
+	GHashTableIter it;
+	g_hash_table_iter_init (&it, images);
 
-	ret = g_slist_sort (ret, &sort_modules_by_load_order);
+	GSList *ret = NULL;
+	gpointer val;
 
-	clear_limbo_list ();
-
-done:
-	MONO_EXIT_GC_SAFE;
-	return ret;
+	mono_coop_mutex_lock (&images_mutex);
+	while (g_hash_table_iter_next (&it, NULL, &val)) {
+		struct mono_dyld_image_info *info = (struct mono_dyld_image_info *) val;
+		MonoW32ProcessModule *mod = g_new0 (MonoW32ProcessModule, 1);
+		mod->address_start = GINT_TO_POINTER (info->data_section_start);
+		mod->address_end = GINT_TO_POINTER (info->data_section_end);
+		mod->perms = g_strdup ("r--p");
+		mod->address_offset = 0;
+		mod->device = makedev (0, 0);
+		mod->inode = info->order;
+		mod->filename = g_strdup (info->name);
+		ret = g_slist_prepend (ret, mod);
+	}
+	mono_coop_mutex_unlock (&images_mutex);
+	return g_slist_sort (ret, &sort_modules_by_load_order);
 }
 
 static void
-free_if_locked (int lock_status, struct mono_dyld_image_info *info)
+mono_dyld_image_info_free (void *info)
 {
-	if (!info) return;
-	if (lock_status) {
-		mono_dyld_image_info_free (info);
-		return;
-	}
-	gpointer head = NULL;
-	do {
-		head = mono_atomic_load_ptr (&limbo_head); /* load-relaxed */
-		info->limbo_next = (struct mono_dyld_image_info *) head;
-	} while (mono_atomic_cas_ptr (&limbo_head, info, head) != head); /* strong cas release on success, relaxed on failure */
+	struct mono_dyld_image_info *dinfo = (struct mono_dyld_image_info *) info;
+	g_free ((void *) dinfo->name);
+	g_free (dinfo);
 }
-
-static guint64 dyld_order = 0;
 
 static void
 image_added (const struct mach_header *hdr32, intptr_t vmaddr_slide)
@@ -232,38 +189,38 @@ image_added (const struct mach_header *hdr32, intptr_t vmaddr_slide)
 	if (!dladdr (hdr32, &dlinfo)) return;
 	if (sec == NULL) return;
 
-	struct mono_dyld_image_info *info = g_new0 (struct mono_dyld_image_info, 1);
-	info->header_addr = hdr32;
-	info->data_section_start = GINT_TO_POINTER (sec->addr);
-	info->data_section_end = GINT_TO_POINTER (sec->addr + sec->size);
-	info->name = g_strdup (dlinfo.dli_fname);
-	info->order = dyld_order;
-	++dyld_order;
+	mono_coop_mutex_lock (&images_mutex);
+	gpointer found = g_hash_table_lookup (images, (gpointer) hdr32);
+	mono_coop_mutex_unlock (&images_mutex);
 
-	int lock_status = mono_os_mutex_trylock (&images_mutex);
-	gpointer old = mono_conc_hashtable_insert (images, (gpointer) hdr32, info);
-	struct mono_dyld_image_info *old_info = (struct mono_dyld_image_info *) old;
-	free_if_locked (lock_status, old_info);
-	if (lock_status)
-		mono_os_mutex_unlock (&images_mutex);
+	if (found == NULL) {
+		struct mono_dyld_image_info *info = g_new0 (struct mono_dyld_image_info, 1);
+		info->header_addr = hdr32;
+		info->data_section_start = GINT_TO_POINTER (sec->addr);
+		info->data_section_end = GINT_TO_POINTER (sec->addr + sec->size);
+		info->name = g_strdup (dlinfo.dli_fname);
+		info->order = dyld_order;
+		++dyld_order;
+
+		mono_coop_mutex_lock (&images_mutex);
+		g_hash_table_insert (images, (gpointer) hdr32, info);
+		mono_coop_mutex_unlock (&images_mutex);
+	}
 }
 
 static void
 image_removed (const struct mach_header *hdr32, intptr_t vmaddr_slide)
 {
-	int lock_status = mono_os_mutex_trylock (&images_mutex);
-	gpointer old = mono_conc_hashtable_remove (images, (gpointer) hdr32);
-	struct mono_dyld_image_info *old_info = (struct mono_dyld_image_info *) old;
-	free_if_locked (lock_status, old_info);
-	if (lock_status)
-		mono_os_mutex_unlock (&images_mutex);
+	mono_coop_mutex_lock (&images_mutex);
+	g_hash_table_remove (images, hdr32);
+	mono_coop_mutex_unlock (&images_mutex);
 }
 
 void
 mono_w32process_platform_init_once (void)
 {
-	images = mono_conc_hashtable_new (NULL, NULL);
-	mono_os_mutex_init (&images_mutex);
+	mono_coop_mutex_init (&images_mutex);
+	images = g_hash_table_new_full (NULL, NULL, NULL, &mono_dyld_image_info_free);
 	_dyld_register_func_for_add_image (&image_added);
 	_dyld_register_func_for_remove_image (&image_removed);
 }

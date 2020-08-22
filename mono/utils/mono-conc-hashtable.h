@@ -14,7 +14,6 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/mono-os-mutex.h>
-#include <mono/utils/hazard-pointer.h>
 #include <glib.h>
 
 typedef struct _MonoConcurrentHashTable MonoConcurrentHashTable;
@@ -27,6 +26,5 @@ MONO_API gpointer mono_conc_hashtable_insert (MonoConcurrentHashTable *hash_tabl
 MONO_API gpointer mono_conc_hashtable_remove (MonoConcurrentHashTable *hash_table, gpointer key);
 MONO_API void mono_conc_hashtable_foreach (MonoConcurrentHashTable *hashtable, GHFunc func, gpointer userdata);
 MONO_API void mono_conc_hashtable_foreach_steal (MonoConcurrentHashTable *hashtable, GHRFunc func, gpointer userdata);
-MONO_API void mono_conc_hashtable_foreach_snapshot (MonoConcurrentHashTable *hash_table, MonoThreadHazardPointers *hp, GHFunc func, gpointer userdata);
 
 #endif
