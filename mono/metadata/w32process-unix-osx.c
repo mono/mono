@@ -160,7 +160,7 @@ mono_w32process_get_modules (pid_t pid)
 		mod->address_end = GINT_TO_POINTER (info->data_section_end);
 		mod->perms = g_strdup ("r--p");
 		mod->address_offset = 0;
-		mod->device = makedev (0, 0);
+		mod->device = 0;
 		mod->inode = info->order;
 		mod->filename = g_strdup (info->name);
 		ret = g_slist_prepend (ret, mod);
@@ -225,6 +225,19 @@ mono_w32process_platform_init_once (void)
 {
 	mono_os_mutex_init (&images_mutex);
 	images = g_hash_table_new_full (NULL, NULL, NULL, &mono_dyld_image_info_free);
+
+	/* Ensure that the functions used within the lock-protected region in
+	 * mono_w32process_get_modules have been loaded, in case these symbols
+	 * are lazily bound. g_new0 and g_strdup will be called by
+	 * _dyld_register_func_for_add_image when it calls image_added with the
+	 * current list of all loaded dynamic libraries
+	 */
+	GSList *dummy = g_slist_prepend (NULL, NULL);
+	g_slist_free (dummy);
+	GHashTableIter it;
+	g_hash_table_iter_init (&it, images);
+	g_hash_table_iter_next (&it, NULL, NULL);
+
 	_dyld_register_func_for_add_image (&image_added);
 	_dyld_register_func_for_remove_image (&image_removed);
 }
