@@ -129,7 +129,7 @@ struct mono_dyld_image_info
 
 static guint64 dyld_order = 0;
 static GHashTable *images;
-static MonoCoopMutex images_mutex;
+static mono_mutex_t images_mutex;
 
 static int
 sort_modules_by_load_order (gconstpointer a, gconstpointer b)
@@ -142,16 +142,17 @@ sort_modules_by_load_order (gconstpointer a, gconstpointer b)
 GSList *
 mono_w32process_get_modules (pid_t pid)
 {
+	GSList *ret = NULL;
+	MONO_ENTER_GC_SAFE;
 	if (pid != getpid ())
-		return NULL;
+		goto done;
 
 	GHashTableIter it;
 	g_hash_table_iter_init (&it, images);
 
-	GSList *ret = NULL;
 	gpointer val;
 
-	mono_coop_mutex_lock (&images_mutex);
+	mono_os_mutex_lock (&images_mutex);
 	while (g_hash_table_iter_next (&it, NULL, &val)) {
 		struct mono_dyld_image_info *info = (struct mono_dyld_image_info *) val;
 		MonoW32ProcessModule *mod = g_new0 (MonoW32ProcessModule, 1);
@@ -164,8 +165,11 @@ mono_w32process_get_modules (pid_t pid)
 		mod->filename = g_strdup (info->name);
 		ret = g_slist_prepend (ret, mod);
 	}
-	mono_coop_mutex_unlock (&images_mutex);
-	return g_slist_sort (ret, &sort_modules_by_load_order);
+	mono_os_mutex_unlock (&images_mutex);
+	ret = g_slist_sort (ret, &sort_modules_by_load_order);
+done:
+	MONO_EXIT_GC_SAFE;
+	return ret;
 }
 
 static void
@@ -189,9 +193,9 @@ image_added (const struct mach_header *hdr32, intptr_t vmaddr_slide)
 	if (!dladdr (hdr32, &dlinfo)) return;
 	if (sec == NULL) return;
 
-	mono_coop_mutex_lock (&images_mutex);
+	mono_os_mutex_lock (&images_mutex);
 	gpointer found = g_hash_table_lookup (images, (gpointer) hdr32);
-	mono_coop_mutex_unlock (&images_mutex);
+	mono_os_mutex_unlock (&images_mutex);
 
 	if (found == NULL) {
 		struct mono_dyld_image_info *info = g_new0 (struct mono_dyld_image_info, 1);
@@ -202,24 +206,24 @@ image_added (const struct mach_header *hdr32, intptr_t vmaddr_slide)
 		info->order = dyld_order;
 		++dyld_order;
 
-		mono_coop_mutex_lock (&images_mutex);
+		mono_os_mutex_lock (&images_mutex);
 		g_hash_table_insert (images, (gpointer) hdr32, info);
-		mono_coop_mutex_unlock (&images_mutex);
+		mono_os_mutex_unlock (&images_mutex);
 	}
 }
 
 static void
 image_removed (const struct mach_header *hdr32, intptr_t vmaddr_slide)
 {
-	mono_coop_mutex_lock (&images_mutex);
+	mono_os_mutex_lock (&images_mutex);
 	g_hash_table_remove (images, hdr32);
-	mono_coop_mutex_unlock (&images_mutex);
+	mono_os_mutex_unlock (&images_mutex);
 }
 
 void
 mono_w32process_platform_init_once (void)
 {
-	mono_coop_mutex_init (&images_mutex);
+	mono_os_mutex_init (&images_mutex);
 	images = g_hash_table_new_full (NULL, NULL, NULL, &mono_dyld_image_info_free);
 	_dyld_register_func_for_add_image (&image_added);
 	_dyld_register_func_for_remove_image (&image_removed);
