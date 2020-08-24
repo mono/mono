@@ -115,7 +115,6 @@ typedef struct
 	StackInfo **stack_state;
 	int *stack_height;
 	int *vt_stack_size;
-	unsigned char *is_bb_start; // FIXME Kill me
 	unsigned short *new_code;
 	unsigned short *new_code_end;
 	unsigned int max_code_size;
