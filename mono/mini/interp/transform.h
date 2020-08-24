@@ -12,7 +12,8 @@
 
 #define INTERP_LOCAL_FLAG_DEAD 1
 
-typedef struct InterpInst InterpInst;
+typedef struct _InterpInst InterpInst;
+typedef struct _InterpBasicBlock InterpBasicBlock;
 
 typedef struct
 {
@@ -50,17 +51,23 @@ typedef struct
 	InterpInst *ins;
 } StackContentInfo;
 
-struct InterpInst {
+struct _InterpInst {
 	guint16 opcode;
 	InterpInst *next, *prev;
 	// If this is -1, this instruction is not logically associated with an IL offset, it is
 	// part of the IL instruction associated with the previous interp instruction.
 	int il_offset;
 	guint32 flags;
+	// This union serves the same purpose as the data array. The difference is that
+	// the data array maps exactly to the final representation of the instruction.
+	// FIXME We should consider using a separate higher level IR, that is also easier
+	// to use for various optimizations.
+	union {
+		InterpBasicBlock *target_bb;
+		InterpBasicBlock **target_bb_table;
+	} info;
 	guint16 data [MONO_ZERO_LEN_ARRAY];
 };
-
-typedef struct _InterpBasicBlock InterpBasicBlock;
 
 struct _InterpBasicBlock {
 	guint8 *ip;
@@ -71,6 +78,8 @@ struct _InterpBasicBlock {
 	InterpInst *first_ins, *last_ins;
 	/* Next bb in IL order */
 	InterpBasicBlock *next_bb;
+
+	int native_offset;
 
 	// This will hold a list of last sequence points of incoming basic blocks
 	SeqPoint **pred_seq_points;
@@ -87,8 +96,7 @@ typedef struct {
 	RelocType type;
 	/* In the interpreter IR */
 	int offset;
-	/* In the IL code */
-	int target;
+	InterpBasicBlock *target_bb;
 } Reloc;
 
 typedef struct {

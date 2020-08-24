@@ -407,10 +407,12 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 
 	if (shorten_branch) {
 		interp_add_ins (td, short_op);
-		td->last_ins->data [0] = (guint16) target;
+		g_assert (td->offset_to_bb [target]);
+		td->last_ins->info.target_bb = td->offset_to_bb [target];
 	} else {
 		interp_add_ins (td, long_op);
-		WRITE32_INS (td->last_ins, 0, &target);
+		g_assert (td->offset_to_bb [target]);
+		td->last_ins->info.target_bb = td->offset_to_bb [target];
 	}
 }
 
@@ -2430,7 +2432,7 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 
 			interp_add_ins (td, MINT_BR_S);
 			// We are branching to the beginning of the method
-			td->last_ins->data [0] = 0;
+			td->last_ins->info.target_bb = td->entry_bb;
 			int in_offset = td->ip - td->il_code;
 			if (interp_ip_in_cbb (td, in_offset + 5))
 				++td->ip; /* gobble the CEE_RET if it isn't branched to */				
@@ -2658,6 +2660,7 @@ get_bb (TransformData *td, InterpBasicBlock *cbb, unsigned char *ip)
 	if (!bb) {
 		bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
 		bb->ip = ip;
+		bb->native_offset = -1;
 		td->offset_to_bb [offset] = bb;
 
 		td->basic_blocks = g_list_append_mempool (td->mempool, td->basic_blocks, bb);
@@ -4047,6 +4050,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			next_ip = td->ip + n * 4;
 			--td->sp;
 			int stack_height = td->sp - td->stack;
+			InterpBasicBlock **target_bb_table = (InterpBasicBlock**)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock*) * n);
 			for (i = 0; i < n; i++) {
 				offset = read32 (td->ip);
 				target = next_ip - td->il_code + offset;
@@ -4061,9 +4065,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					if (stack_height > 0)
 						td->stack_state [target] = (StackInfo*)g_memdup (td->stack, stack_height * sizeof (td->stack [0]));
 				}
-				WRITE32_INS (td->last_ins, 2 + i * 2, &target);
+				g_assert (td->offset_to_bb [target]);
+				target_bb_table [i] = td->offset_to_bb [target];
 				td->ip += 4;
 			}
+			td->last_ins->info.target_bb_table = target_bb_table;
 			break;
 		}
 		case CEE_LDIND_I1:
@@ -6524,7 +6530,7 @@ handle_relocations (TransformData *td)
 	// Handle relocations
 	for (int i = 0; i < td->relocs->len; ++i) {
 		Reloc *reloc = (Reloc*)g_ptr_array_index (td->relocs, i);
-		int offset = get_in_offset (td, reloc->target) - reloc->offset;
+		int offset = reloc->target_bb->native_offset - reloc->offset;
 
 		switch (reloc->type) {
 		case RELOC_SHORT_BRANCH:
@@ -6687,7 +6693,7 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 			Reloc *reloc = (Reloc*)mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
 			reloc->type = RELOC_SWITCH;
 			reloc->offset = ip - td->new_code;
-			reloc->target = READ32 (&ins->data [2 + i * 2]);
+			reloc->target_bb = ins->info.target_bb_table [i];
 			g_ptr_array_add (td->relocs, reloc);
 			*ip++ = 0xdead;
 			*ip++ = 0xbeef;
@@ -6696,15 +6702,15 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 			(opcode >= MINT_BEQ_I4_S && opcode <= MINT_BLT_UN_R8_S) ||
 			opcode == MINT_BR_S || opcode == MINT_LEAVE_S || opcode == MINT_LEAVE_S_CHECK) {
 		const int br_offset = start_ip - td->new_code;
-		if (ins->data [0] < ins->il_offset) {
+		if (ins->info.target_bb->native_offset >= 0) {
 			// Backwards branch. We can already patch it.
-			*ip++ = get_in_offset (td, ins->data [0]) - br_offset;
+			*ip++ = ins->info.target_bb->native_offset - br_offset;
 		} else {
 			// We don't know the in_offset of the target, add a reloc
 			Reloc *reloc = (Reloc*)mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
 			reloc->type = RELOC_SHORT_BRANCH;
 			reloc->offset = br_offset;
-			reloc->target = ins->data [0];
+			reloc->target_bb = ins->info.target_bb;
 			g_ptr_array_add (td->relocs, reloc);
 			*ip++ = 0xdead;
 		}
@@ -6712,17 +6718,15 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 			(opcode >= MINT_BEQ_I4 && opcode <= MINT_BLT_UN_R8) ||
 			opcode == MINT_BR || opcode == MINT_LEAVE || opcode == MINT_LEAVE_CHECK) {
 		const int br_offset = start_ip - td->new_code;
-		int target_il = READ32 (&ins->data [0]);
-		if (target_il < ins->il_offset) {
+		if (ins->info.target_bb->native_offset >= 0) {
 			// Backwards branch. We can already patch it
-			const int br_offset = start_ip - td->new_code;
-			int target_offset = get_in_offset (td, target_il) - br_offset;
+			int target_offset = ins->info.target_bb->native_offset - br_offset;
 			WRITE32 (ip, &target_offset);
 		} else {
 			Reloc *reloc = (Reloc*)mono_mempool_alloc0 (td->mempool, sizeof (Reloc));
 			reloc->type = RELOC_LONG_BRANCH;
 			reloc->offset = br_offset;
-			reloc->target = target_il;
+			reloc->target_bb = ins->info.target_bb;
 			g_ptr_array_add (td->relocs, reloc);
 			*ip++ = 0xdead;
 			*ip++ = 0xbeef;
@@ -6815,6 +6819,7 @@ generate_compacted_code (TransformData *td)
 
 	for (bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
 		InterpInst *ins = bb->first_ins;
+		bb->native_offset = ip - td->new_code;
 		while (ins) {
 			ip = emit_compacted_instruction (td, ip, ins);
 			ins = ins->next;
@@ -6823,7 +6828,8 @@ generate_compacted_code (TransformData *td)
 	td->new_code_end = ip;
 	td->in_offsets [td->header->code_size] = td->new_code_end - td->new_code;
 
-	// Patch all branches
+	// Patch all branches. This might be useless since we iterate once anyway to compute the size
+	// of the generated code. We could compute the native offset of each basic block then.
 	handle_relocations (td);
 
 	g_ptr_array_free (td->relocs, TRUE);
