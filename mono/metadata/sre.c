@@ -3713,8 +3713,10 @@ typebuilder_setup_one_field (MonoDynamicImage *dynamic_image, MonoClass *klass, 
 			field->type->attrs |= FIELD_ATTRIBUTE_RT_SPECIAL_NAME;
 
 		if (!mono_type_get_underlying_type (field->type)) {
-			mono_class_set_type_load_failure (klass, "Field '%s' is an enum type with a bad underlying type", field->name);
-			goto leave;
+			if (!(klass->enumtype && mono_metadata_type_equal (field->type, m_class_get_byval_arg (klass)))) {
+				mono_class_set_type_load_failure (klass, "Field '%s' is an enum type with a bad underlying type", field->name);
+				goto leave;
+			}
 		}
 
 		if ((fb->attrs & FIELD_ATTRIBUTE_HAS_FIELD_RVA) && (rva_data = fb->rva_data)) {
