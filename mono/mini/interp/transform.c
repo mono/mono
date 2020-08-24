@@ -7322,29 +7322,24 @@ interp_cprop (TransformData *td)
 	StackContentInfo *sp;
 	StackValue *locals = (StackValue*) g_malloc (td->locals_size * sizeof (StackValue));
 	int *local_ref_count = (int*) g_malloc (td->locals_size * sizeof (int));
-	InterpInst *ins;
-	int last_il_offset;
+	InterpBasicBlock *bb;
 
 retry:
 	sp = stack;
-	last_il_offset = -1;
 	memset (local_ref_count, 0, td->locals_size * sizeof (int));
 
-	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
+	for (bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
+		InterpInst *ins;
+		for (ins = bb->first_ins; ins != NULL; ins = ins->next) {
 		int pop, push;
 		int il_offset = ins->il_offset;
 		// Optimizations take place only inside a single basic block
-		// If two instructions have the same il_offset, then the second one
-		// cannot be part the start of a basic block.
-		gboolean is_bb_start = 0; // FIXME
-		if (is_bb_start) {
-			if (td->stack_height [il_offset] >= 0) {
-				sp = stack + td->stack_height [il_offset];
-				g_assert (sp <= stack_end);
-				memset (stack, 0, (sp - stack) * sizeof (StackContentInfo));
-			}
-			memset (locals, 0, td->locals_size * sizeof (StackValue));
+		if (td->stack_height [il_offset] >= 0) {
+			sp = stack + td->stack_height [il_offset];
+			g_assert (sp <= stack_end);
+			memset (stack, 0, (sp - stack) * sizeof (StackContentInfo));
 		}
+		memset (locals, 0, td->locals_size * sizeof (StackValue));
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
 		if (td->verbose_level && ins->opcode != MINT_NOP) {
@@ -7679,7 +7674,7 @@ retry:
 			if (push == 1 && pop == 0 && !MINT_IS_CALL (ins->opcode) && !MINT_IS_NEWOBJ (ins->opcode))
 				sp [-1].ins = ins;
 		}
-		last_il_offset = ins->il_offset;
+		}
 	}
 
 	if (interp_local_deadce (td, local_ref_count))
@@ -7699,23 +7694,14 @@ mono_test_interp_cprop (TransformData *td)
 static void
 interp_super_instructions (TransformData *td)
 {
-	InterpInst *ins;
-	InterpInst *prev1_ins = NULL;
-	InterpInst *prev2_ins = NULL;
-	int last_il_offset = -1;
-	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
-		int il_offset = ins->il_offset;
-		// If two instructions have the same il_offset, then the second one
-		// cannot be the start of a basic block.
-		gboolean is_bb_start = 0; // FIXME
-		last_il_offset = il_offset;
+	InterpBasicBlock *bb;
+	for (bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
+		InterpInst *ins;
+		InterpInst *prev1_ins = NULL;
+		InterpInst *prev2_ins = NULL;
+		for (ins = bb->first_ins; ins != NULL; ins = ins->next) {
 		if (ins->opcode == MINT_NOP)
 			continue;
-		if (is_bb_start) {
-			// Prevent optimizations spanning multiple basic blocks
-			prev2_ins = NULL;
-			prev1_ins = NULL;
-		}
 		if (ins->opcode >= MINT_LDFLD_I1 && ins->opcode <= MINT_LDFLD_O && prev1_ins) {
 			if (prev1_ins->opcode == MINT_LDLOC_O) {
 				int loc_index = prev1_ins->data [0];
@@ -7753,13 +7739,13 @@ interp_super_instructions (TransformData *td)
 		}
 		prev2_ins = prev1_ins;
 		prev1_ins = ins;
+		}
 	}
 }
 
 static void
 interp_optimize_code (TransformData *td)
 {
-	return;
 	if (mono_interp_opt & INTERP_OPT_CPROP)
 		MONO_TIME_TRACK (mono_interp_stats.cprop_time, interp_cprop (td));
 
