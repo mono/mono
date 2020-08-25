@@ -2063,9 +2063,6 @@ interp_method_check_inlining (TransformData *td, MonoMethod *method, MonoMethodS
 {
 	MonoMethodHeaderSummary header;
 
-	/* FIXME */
-	return FALSE;
-
 	if (method->flags & METHOD_ATTRIBUTE_REQSECOBJ)
 		/* Used to mark methods containing StackCrawlMark locals */
 		return FALSE;
@@ -2119,6 +2116,26 @@ interp_method_check_inlining (TransformData *td, MonoMethod *method, MonoMethodS
 	return TRUE;
 }
 
+static void
+interp_merge_bblocks (InterpBasicBlock *bb, InterpBasicBlock *bbadd)
+{
+	// Append all instructions from bbadd to bb
+	if (bb->last_ins) {
+		if (bbadd->first_ins) {
+			bb->last_ins->next = bbadd->first_ins;
+			bbadd->first_ins->prev = bb->last_ins;
+			bb->last_ins = bbadd->last_ins;
+		}
+	} else {
+		bb->first_ins = bbadd->first_ins;
+		bb->last_ins = bbadd->last_ins;
+	}
+	bb->next_bb = bbadd->next_bb;
+
+	// bbadd should never be used/referenced after this
+}
+
+
 static gboolean
 interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHeader *header, MonoError *error)
 {
@@ -2131,6 +2148,8 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	int prev_sp_offset;
 	MonoGenericContext *generic_context = NULL;
 	StackInfo *prev_param_area;
+	InterpBasicBlock **prev_offset_to_bb;
+	InterpBasicBlock *prev_cbb, *prev_entry_bb;
 	MonoMethod *prev_inlined_method;
 	MonoMethodSignature *csignature = mono_method_signature_internal (target_method);
 	int nargs = csignature->param_count + !!csignature->hasthis;
@@ -2151,6 +2170,9 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 	prev_vt_sp = td->vt_sp;
 	prev_inlined_method = td->inlined_method;
 	prev_last_ins = td->last_ins;
+	prev_offset_to_bb = td->offset_to_bb;
+	prev_cbb = td->cbb;
+	prev_entry_bb = td->entry_bb;
 	td->inlined_method = target_method;
 
 	prev_max_stack_height = td->max_stack_height;
@@ -2189,6 +2211,7 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 		memcpy (&td->sp [-nargs], prev_param_area, nargs * sizeof (StackInfo));
 		td->vt_sp = prev_vt_sp;
 		td->last_ins = prev_last_ins;
+		td->cbb = prev_cbb;
 		if (td->last_ins)
 			td->last_ins->next = NULL;
 		UnlockedIncrement (&mono_interp_stats.inline_failures);
@@ -2196,13 +2219,17 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 		if (td->verbose_level)
 			g_print ("Inline end method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
 		UnlockedIncrement (&mono_interp_stats.inlined_methods);
+
+		interp_merge_bblocks (prev_cbb, td->entry_bb);
 	}
 
 	td->ip = prev_ip;
 	td->in_start = prev_in_start;
 	td->il_code = prev_il_code;
 	td->inlined_method = prev_inlined_method;
+	td->offset_to_bb = prev_offset_to_bb;
 	td->code_size = prev_code_size;
+	td->entry_bb = prev_entry_bb;
 
 	g_free (td->in_offsets);
 	td->in_offsets = prev_in_offsets;
@@ -3846,6 +3873,14 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			/* Return from inlined method, return value is on top of stack */
 			if (td->method != method) {
 				td->ip++;
+				if (td->ip != end) {
+					/*
+					 * FIXME We only support inlining methods that have a single return
+					 * at the end of the method. We would need to create an exit_bb and have
+					 * all return opcodes branch to it.
+					 */
+					INLINE_FAILURE;
+				}
 				break;
 			}
 
@@ -3902,144 +3937,115 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		}
 		case CEE_BR: {
 			int offset = read32 (td->ip + 1);
-			if (offset) {
-				INLINE_FAILURE;
+			if (offset)
 				handle_branch (td, MINT_BR_S, MINT_BR, 5 + offset);
-			}
 			td->ip += 5;
 			break;
 		}
 		case CEE_BR_S: {
 			int offset = (gint8)td->ip [1];
-			if (offset) {
-				INLINE_FAILURE;
+			if (offset)
 				handle_branch (td, MINT_BR_S, MINT_BR, 2 + (gint8)td->ip [1]);
-			}
 			td->ip += 2;
 			break;
 		}
 		case CEE_BRFALSE:
-			INLINE_FAILURE;
 			one_arg_branch (td, MINT_BRFALSE_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BRFALSE_S:
-			INLINE_FAILURE;
 			one_arg_branch (td, MINT_BRFALSE_I4, 2 + (gint8)td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BRTRUE:
-			INLINE_FAILURE;
 			one_arg_branch (td, MINT_BRTRUE_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BRTRUE_S:
-			INLINE_FAILURE;
 			one_arg_branch (td, MINT_BRTRUE_I4, 2 + (gint8)td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BEQ:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BEQ_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BEQ_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BEQ_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BGE:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BGE_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BGE_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BGE_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BGT:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BGT_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BGT_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BGT_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BLT:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BLT_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BLT_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BLT_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BLE:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BLE_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BLE_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BLE_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BNE_UN:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BNE_UN_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BNE_UN_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BNE_UN_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BGE_UN:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BGE_UN_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BGE_UN_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BGE_UN_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BGT_UN:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BGT_UN_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BGT_UN_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BGT_UN_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BLE_UN:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BLE_UN_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BLE_UN_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BLE_UN_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_BLT_UN:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BLT_UN_I4, 5 + read32 (td->ip + 1));
 			td->ip += 5;
 			break;
 		case CEE_BLT_UN_S:
-			INLINE_FAILURE;
 			two_arg_branch (td, MINT_BLT_UN_I4, 2 + (gint8) td->ip [1]);
 			td->ip += 2;
 			break;
 		case CEE_SWITCH: {
-			INLINE_FAILURE;
 			guint32 n;
 			const unsigned char *next_ip;
 			++td->ip;
