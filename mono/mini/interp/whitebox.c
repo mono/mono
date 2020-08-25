@@ -167,7 +167,6 @@ transform_method (MonoDomain *domain, MonoImage *image, TestItem *ti)
 	td->verbose_level = determine_verbose_level (td);
 	td->mempool = mp;
 	td->rtm = rtm;
-	td->stack_height = (int*)g_malloc(header->code_size * sizeof(int));
 	td->clause_indexes = (int*)g_malloc (header->code_size * sizeof (int));
 	td->data_items = NULL;
 	td->data_hash = g_hash_table_new (NULL, NULL);

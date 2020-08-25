@@ -81,6 +81,14 @@ struct _InterpBasicBlock {
 
 	int native_offset;
 
+	/*
+	 * The state of the stack when entering this basic block. By default, the stack height is
+	 * -1, which means it inherits the stack state from the previous instruction, in IL order
+	 */
+	int stack_height;
+	StackInfo *stack_state;
+	int vt_stack_size;
+
 	// This will hold a list of last sequence points of incoming basic blocks
 	SeqPoint **pred_seq_points;
 	guint num_pred_seq_points;
@@ -120,9 +128,6 @@ typedef struct
 	int code_size;
 	int *in_offsets;
 	int current_il_offset;
-	StackInfo **stack_state;
-	int *stack_height;
-	int *vt_stack_size;
 	unsigned short *new_code;
 	unsigned short *new_code_end;
 	unsigned int max_code_size;

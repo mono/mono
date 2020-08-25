@@ -395,11 +395,14 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 		else
 			interp_add_ins (td, MINT_CHECKPOINT);
 	}
-	if (offset > 0 && td->stack_height [target] < 0) {
-		td->stack_height [target] = td->sp - td->stack;
-		if (td->stack_height [target] > 0)
-			td->stack_state [target] = (StackInfo*)g_memdup (td->stack, td->stack_height [target] * sizeof (td->stack [0]));
-		td->vt_stack_size [target] = td->vt_sp;
+
+	InterpBasicBlock *target_bb = td->offset_to_bb [target];
+
+	if (offset > 0 && target_bb->stack_height < 0) {
+		target_bb->stack_height = td->sp - td->stack;
+		if (target_bb->stack_height > 0)
+			target_bb->stack_state = (StackInfo*)g_memdup (td->stack, target_bb->stack_height * sizeof (td->stack [0]));
+		target_bb->vt_stack_size = td->vt_sp;
 	}
 
 	if (td->header->code_size <= 25000) /* FIX to be precise somehow? */
@@ -408,11 +411,11 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 	if (shorten_branch) {
 		interp_add_ins (td, short_op);
 		g_assert (td->offset_to_bb [target]);
-		td->last_ins->info.target_bb = td->offset_to_bb [target];
+		td->last_ins->info.target_bb = target_bb;
 	} else {
 		interp_add_ins (td, long_op);
 		g_assert (td->offset_to_bb [target]);
-		td->last_ins->info.target_bb = td->offset_to_bb [target];
+		td->last_ins->info.target_bb = target_bb;
 	}
 }
 
@@ -2661,6 +2664,7 @@ get_bb (TransformData *td, InterpBasicBlock *cbb, unsigned char *ip)
 		bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
 		bb->ip = ip;
 		bb->native_offset = -1;
+		bb->stack_height = -1;
 		td->offset_to_bb [offset] = bb;
 
 		td->basic_blocks = g_list_append_mempool (td->mempool, td->basic_blocks, bb);
@@ -2693,11 +2697,25 @@ get_basic_blocks (TransformData *td, MonoMethodHeader *header)
 
 	for (i = 0; i < header->num_clauses; i++) {
 		MonoExceptionClause *c = header->clauses + i;
-		get_bb (td, NULL, start + c->handler_offset);
+		/* We never inline methods with clauses, so we can hard code stack heights */
+		InterpBasicBlock *bb;
 		get_bb (td, NULL, start + c->try_offset);
 
-		if (c->flags == MONO_EXCEPTION_CLAUSE_FILTER)
-			get_bb (td, NULL, start + c->data.filter_offset);
+		bb = get_bb (td, NULL, start + c->handler_offset);
+		bb->stack_height = 1;
+		bb->vt_stack_size = 0;
+		bb->stack_state = (StackInfo*) mono_mempool_alloc0 (td->mempool, sizeof (StackInfo));
+		bb->stack_state [0].type = STACK_TYPE_O;
+		bb->stack_state [0].klass = NULL; /*FIX*/
+
+		if (c->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
+			bb = get_bb (td, NULL, start + c->data.filter_offset);
+			bb->stack_height = 1;
+			bb->vt_stack_size= 0;
+			bb->stack_state = (StackInfo*) mono_mempool_alloc0 (td->mempool, sizeof (StackInfo));
+			bb->stack_state [0].type = STACK_TYPE_O;
+			bb->stack_state [0].klass = NULL; /*FIX*/
+		}
 	}
 
 	// FIXME Computing bb preds here is wrong. Link basic blocks during codegen
@@ -3339,33 +3357,16 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	get_basic_blocks (td, header);
 
 	td->cbb = td->entry_bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
+	td->cbb->stack_height = -1;
 
 	if (!inlining) {
 		for (i = 0; i < header->code_size; i++) {
-			td->stack_height [i] = -1;
 			td->clause_indexes [i] = -1;
 		}
 	}
 
 	for (i = 0; i < header->num_clauses; i++) {
 		MonoExceptionClause *c = header->clauses + i;
-		td->stack_height [c->handler_offset] = 0;
-		td->vt_stack_size [c->handler_offset] = 0;
-
-		td->stack_height [c->handler_offset] = 1;
-		td->stack_state [c->handler_offset] = (StackInfo*)g_malloc0(sizeof(StackInfo));
-		td->stack_state [c->handler_offset][0].type = STACK_TYPE_O;
-		td->stack_state [c->handler_offset][0].klass = NULL; /*FIX*/
-
-		if (c->flags & MONO_EXCEPTION_CLAUSE_FILTER) {
-			td->stack_height [c->data.filter_offset] = 0;
-			td->vt_stack_size [c->data.filter_offset] = 0;
-
-			td->stack_height [c->data.filter_offset] = 1;
-			td->stack_state [c->data.filter_offset] = (StackInfo*)g_malloc0(sizeof(StackInfo));
-			td->stack_state [c->data.filter_offset][0].type = STACK_TYPE_O;
-			td->stack_state [c->data.filter_offset][0].klass = NULL; /*FIX*/
-		}
 
 		for (int j = c->handler_offset; j < c->handler_offset + c->handler_len; ++j) {
 			if (td->clause_indexes [j] == -1)
@@ -3507,17 +3508,16 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			/* We are starting a new basic block. Change cbb and link them together */
 			td->cbb->next_bb = new_bb;
 			td->cbb = new_bb;
+
+			if (new_bb->stack_height >= 0) {
+				if (new_bb->stack_height > 0)
+					memcpy (td->stack, new_bb->stack_state, new_bb->stack_height * sizeof(td->stack [0]));
+				td->sp = td->stack + new_bb->stack_height;
+				td->vt_sp = new_bb->vt_stack_size;
+			}
 		}
 		td->offset_to_bb [in_offset] = td->cbb;
 		td->in_start = td->ip;
-
-		// Inlined method doesn't have clauses or branches
-		if (!inlining && td->stack_height [in_offset] >= 0) {
-			if (td->stack_height [in_offset] > 0)
-				memcpy (td->stack, td->stack_state [in_offset], td->stack_height [in_offset] * sizeof(td->stack [0]));
-			td->sp = td->stack + td->stack_height [in_offset];
-			td->vt_sp = td->vt_stack_size [in_offset];
-		}
 
 		if (in_offset == bb->end)
 			bb = bb->next;
@@ -4054,19 +4054,20 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			for (i = 0; i < n; i++) {
 				offset = read32 (td->ip);
 				target = next_ip - td->il_code + offset;
+				InterpBasicBlock *target_bb = td->offset_to_bb [target];
+				g_assert (target_bb);
 				if (offset < 0) {
 #if DEBUG_INTERP
-					if (stack_height > 0 && stack_height != td->stack_height [target])
+					if (stack_height > 0 && stack_height != target_bb->stack_height)
 						g_warning ("SWITCH with back branch and non-empty stack");
 #endif
 				} else {
-					td->stack_height [target] = stack_height;
-					td->vt_stack_size [target] = td->vt_sp;
+					target_bb->stack_height = stack_height;
+					target_bb->vt_stack_size = td->vt_sp;
 					if (stack_height > 0)
-						td->stack_state [target] = (StackInfo*)g_memdup (td->stack, stack_height * sizeof (td->stack [0]));
+						target_bb->stack_state = (StackInfo*)g_memdup (td->stack, stack_height * sizeof (td->stack [0]));
 				}
-				g_assert (td->offset_to_bb [target]);
-				target_bb_table [i] = td->offset_to_bb [target];
+				target_bb_table [i] = target_bb;
 				td->ip += 4;
 			}
 			td->last_ins->info.target_bb_table = target_bb_table;
@@ -7336,16 +7337,16 @@ retry:
 
 	for (bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
 		InterpInst *ins;
-		for (ins = bb->first_ins; ins != NULL; ins = ins->next) {
-		int pop, push;
-		int il_offset = ins->il_offset;
 		// Optimizations take place only inside a single basic block
-		if (td->stack_height [il_offset] >= 0) {
-			sp = stack + td->stack_height [il_offset];
+		if (bb->stack_height >= 0) {
+			sp = stack + bb->stack_height;
 			g_assert (sp <= stack_end);
 			memset (stack, 0, (sp - stack) * sizeof (StackContentInfo));
 		}
 		memset (locals, 0, td->locals_size * sizeof (StackValue));
+
+		for (ins = bb->first_ins; ins != NULL; ins = ins->next) {
+		int pop, push;
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
 		if (td->verbose_level && ins->opcode != MINT_NOP) {
@@ -7802,9 +7803,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	td->header = header;
 	td->max_code_size = td->code_size;
 	td->in_offsets = (int*)g_malloc0((header->code_size + 1) * sizeof(int));
-	td->stack_height = (int*)g_malloc(header->code_size * sizeof(int));
-	td->stack_state = (StackInfo**)g_malloc0(header->code_size * sizeof(StackInfo *));
-	td->vt_stack_size = (int*)g_malloc(header->code_size * sizeof(int));
 	td->clause_indexes = (int*)g_malloc (header->code_size * sizeof (int));
 	td->mempool = mono_mempool_new ();
 	td->n_data_items = 0;
@@ -7938,11 +7936,6 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 
 exit:
 	g_free (td->in_offsets);
-	g_free (td->stack_height);
-	for (i = 0; i < header->code_size; ++i)
-		g_free (td->stack_state [i]);
-	g_free (td->stack_state);
-	g_free (td->vt_stack_size);
 	g_free (td->clause_indexes);
 	g_free (td->data_items);
 	g_free (td->stack);
