@@ -3513,6 +3513,17 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->sp = td->stack + new_bb->stack_height;
 				td->vt_sp = new_bb->vt_stack_size;
 			}
+			if (!inlining) {
+				int index = td->clause_indexes [in_offset];
+				if (index != -1) {
+					MonoExceptionClause *clause = &header->clauses [index];
+					if ((clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY ||
+						clause->flags == MONO_EXCEPTION_CLAUSE_FAULT) &&
+							in_offset == clause->handler_offset)
+						interp_add_ins (td, MINT_START_ABORT_PROT);
+				}
+			}
+
 		}
 		td->offset_to_bb [in_offset] = td->cbb;
 		td->in_start = td->ip;
@@ -3561,15 +3572,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 			interp_add_ins (td, MINT_PROF_COVERAGE_STORE);
 			WRITE64_INS (td->last_ins, 0, &counter);
-		}
-
-		int index = td->clause_indexes [in_offset];
-		if (index != -1) {
-			MonoExceptionClause *clause = &header->clauses [index];
-			if ((clause->flags == MONO_EXCEPTION_CLAUSE_FINALLY ||
-				clause->flags == MONO_EXCEPTION_CLAUSE_FAULT) &&
-					in_offset == clause->handler_offset)
-				interp_add_ins (td, MINT_START_ABORT_PROT);
 		}
 
 		switch (*td->ip) {
