@@ -317,6 +317,28 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		public void TestCreateInvalidEnumWithAnIncompleteUnderlyingEnumType ()
+		{
+			var mb = GenerateModule ();
+			var incomplete = GenerateEnum (mb);
+			GenerateField (incomplete);
+
+			var eb = mb.DefineEnum (
+				_enumNamespace + ".IncompleteUnderlying",
+				TypeAttributes.Public,
+				incomplete);
+
+			bool caught = false;
+			try {
+				var t = eb.CreateType ();
+			} catch (TypeLoadException exn) {
+				caught = true;
+			}
+			if (!caught)
+				Assert.Fail ("Expected CreateType of a broken type to throw TLE");
+		}
+
+		[Test]
 		public void TestEnumBuilderTokenUsable () {
 			// Regression test for https://bugzilla.xamarin.com/show_bug.cgi?id=58361
 			// Create an EnumBuilder and use it in an ILGenerator that consumes its token.
