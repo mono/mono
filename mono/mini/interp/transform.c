@@ -952,6 +952,15 @@ dump_interp_inst (InterpInst *ins)
 	g_free (descr);
 }
 
+static G_GNUC_UNUSED void
+dump_interp_bb (InterpBasicBlock *bb)
+{
+	for (InterpInst *ins = bb->first_ins; ins != NULL; ins = ins->next) {
+		dump_interp_inst (ins);
+		g_print ("\n");
+	}
+}
+
 static void
 dump_interp_inst_newline (InterpInst *ins)
 {
