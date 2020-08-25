@@ -5,7 +5,7 @@ standards for C# and the Common Language Runtime.
 
 The Mono project is part of the [.NET Foundation](https://www.dotnetfoundation.org/)
 
-Join us on [Discord](https://aka.ms/dotnet-discord) in the #monovm channel:
+Join us on [Discord](https://aka.ms/dotnet-discord) in the `#monovm` channel:
 
 <a href="https://aka.ms/dotnet-discord">
   <img src="https://img.shields.io/discord/732297728826277939?style=flat-square&label=Discord&logo=discord&logoColor=white&color=7289DA">
