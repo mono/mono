@@ -7612,7 +7612,7 @@ retry:
 		} else if (MINT_IS_BINOP (ins->opcode)) {
 			ins = interp_fold_binop (td, sp, ins);
 			sp--;
-		} else if (ins->opcode == MINT_LDLOCA_S && MINT_IS_LDFLD (ins->next->opcode) &&
+		} else if (ins->opcode == MINT_LDLOCA_S && ins->next && MINT_IS_LDFLD (ins->next->opcode) &&
 				td->locals [ins->data [0]].mt == (ins->next->opcode - MINT_LDFLD_I1) &&
 				ins->next->data [0] == 0) {
 			int mt = ins->next->opcode - MINT_LDFLD_I1;
