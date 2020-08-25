@@ -2056,7 +2056,9 @@ interp_icall_op_for_sig (MonoMethodSignature *sig)
 	return op;
 }
 
+/* Same as mono jit */
 #define INLINE_LENGTH_LIMIT 20
+#define INLINE_DEPTH_LIMIT 10
 
 static gboolean
 interp_method_check_inlining (TransformData *td, MonoMethod *method, MonoMethodSignature *csignature)
@@ -2078,6 +2080,9 @@ interp_method_check_inlining (TransformData *td, MonoMethod *method, MonoMethodS
 	    (method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED) ||
 	    (mono_class_is_marshalbyref (method->klass)) ||
 	    header.has_clauses)
+		return FALSE;
+
+	if (td->inline_depth > INLINE_DEPTH_LIMIT)
 		return FALSE;
 
 	if (header.code_size >= INLINE_LENGTH_LIMIT && !(method->iflags & METHOD_IMPL_ATTRIBUTE_AGGRESSIVE_INLINING))
@@ -2192,7 +2197,10 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 
 	if (td->verbose_level)
 		g_print ("Inline start method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
+
+	td->inline_depth++;
 	ret = generate_code (td, target_method, header, generic_context, error);
+	td->inline_depth--;
 
 	if (!ret) {
 		if (td->verbose_level)
@@ -7856,6 +7864,8 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 
 	generate_code (td, method, header, generic_context, error);
 	goto_if_nok (error, exit);
+
+	g_assert (td->inline_depth == 0);
 
 	if (td->has_localloc)
 		interp_fix_localloc_ret (td);

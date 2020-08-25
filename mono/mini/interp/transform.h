@@ -163,6 +163,7 @@ typedef struct
 	gboolean prof_coverage;
 	MonoProfilerCoverageInfo *coverage_info;
 	GList *dont_inline;
+	int inline_depth;
 	int has_localloc : 1;
 } TransformData;
 
