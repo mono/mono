@@ -5,7 +5,13 @@ standards for C# and the Common Language Runtime.
 
 The Mono project is part of the [.NET Foundation](https://www.dotnetfoundation.org/)
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mono/mono?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Join us on [Discord](https://aka.ms/dotnet-discord) in the #monovm channel:
+
+<a href="https://aka.ms/dotnet-discord">
+  <img src="https://img.shields.io/discord/732297728826277939?style=flat-square&label=Discord&logo=discord&logoColor=white&color=7289DA">
+</a>
+
+### Contents
 
 1. [Compilation and Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
