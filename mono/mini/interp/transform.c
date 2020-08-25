@@ -2196,17 +2196,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 		if (td->verbose_level)
 			g_print ("Inline end method %s.%s\n", m_class_get_name (target_method->klass), target_method->name);
 		UnlockedIncrement (&mono_interp_stats.inlined_methods);
-		// Make sure we have an IR instruction associated with the now removed IL CALL
-		// FIXME This could be prettier. We might be able to make inlining saner now that
-		// that we can easily tweak the instruction list.
-		if (!prev_inlined_method) {
-			if (prev_last_ins) {
-				if (prev_last_ins->next)
-					prev_last_ins->next->il_offset = prev_in_start - prev_il_code;
-			} else if (td->first_ins) {
-				td->first_ins->il_offset = prev_in_start - prev_il_code;
-			}
-		}
 	}
 
 	td->ip = prev_ip;
