@@ -126,6 +126,16 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 			     MonoError *error);
 
 
+
+
+static gboolean ignore_version_and_key_when_finding_assemblies_already_loaded = FALSE;
+
+void
+mono_set_ignore_version_and_key_when_finding_assemblies_already_loaded(gboolean value)
+{
+	ignore_version_and_key_when_finding_assemblies_already_loaded = value;
+}
+
 static void
 mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error_out);
 
@@ -2633,7 +2643,7 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	/* If it's not a strong name, any version that has the right simple
 	 * name is good enough to satisfy the request.  .NET Framework also
 	 * ignores case differences in this case. */
-	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)(strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
+	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)((strong_name && !ignore_version_and_key_when_finding_assemblies_already_loaded) ? MONO_ANAME_EQ_IGNORE_CASE :
 		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE));
 
 	mono_domain_assemblies_lock (domain);

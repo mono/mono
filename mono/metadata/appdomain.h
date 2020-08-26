@@ -114,6 +114,9 @@ mono_domain_assembly_open  (MonoDomain *domain, const char *name);
 MONO_API void
 mono_domain_ensure_entry_assembly (MonoDomain *domain, MonoAssembly *assembly);
 
+MONO_API void
+mono_set_ignore_version_and_key_when_finding_assemblies_already_loaded(mono_bool value);
+
 MONO_API mono_bool
 mono_domain_finalize       (MonoDomain *domain, uint32_t timeout);
 
