@@ -151,6 +151,7 @@ ICALL_EXPORT gint32 ves_icall_System_Environment_get_ProcessorCount (void);
 ICALL_EXPORT gint32 ves_icall_System_Environment_get_TickCount (void);
 #if ENABLE_NETCORE
 ICALL_EXPORT gint64 ves_icall_System_Environment_get_TickCount64 (void);
+ICALL_EXPORT gint32 ves_icall_System_Environment_get_CurrentManagedThreadId (void);
 #endif
 ICALL_EXPORT gint64 ves_icall_System_DateTime_GetSystemTimeAsFileTime (void);
 ICALL_EXPORT gint64 ves_icall_System_Diagnostics_Process_GetProcessData (int, gint32, MonoProcessError*);

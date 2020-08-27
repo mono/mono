@@ -8059,6 +8059,12 @@ ves_icall_System_Environment_get_TickCount (void)
 }
 
 #if ENABLE_NETCORE
+gint32
+ves_icall_System_Environment_get_CurrentManagedThreadId (void)
+{
+	return mono_thread_current ()->managed_id;
+}
+
 gint64
 ves_icall_System_Environment_get_TickCount64 (void)
 {
