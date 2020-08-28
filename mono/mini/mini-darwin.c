@@ -79,6 +79,7 @@ mono_runtime_install_handlers (void)
 {
 	mono_runtime_posix_install_handlers ();
 
+#if !defined (HOST_WATCHOS) && !defined (HOST_TVOS)
 	/* LLDB installs task-wide Mach exception handlers. XNU dispatches Mach
 	 * exceptions first to any registered "activation" handler and then to
 	 * any registered task handler before dispatching the exception to a
@@ -99,6 +100,7 @@ mono_runtime_install_handlers (void)
 		MACHINE_THREAD_STATE);
 	if (kr != KERN_SUCCESS)
 		g_warning ("mono_runtime_install_handlers: task_set_exception_ports failed");
+#endif
 
 	/* Snow Leopard has a horrible bug: http://openradar.appspot.com/7209349
 	 * This causes obscure SIGTRAP's for any application that comes across this built on
