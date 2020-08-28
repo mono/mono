@@ -214,31 +214,34 @@ interp_add_ins (TransformData *td, guint16 opcode)
 	return interp_add_ins_explicit (td, opcode, mono_interp_oplen [opcode]);
 }
 
-// This instruction will have the il_offset of the previous instruction
+static InterpInst*
+interp_insert_ins_bb (TransformData *td, InterpBasicBlock *bb, InterpInst *prev_ins, guint16 opcode)
+{
+	InterpInst *new_inst = interp_new_ins (td, opcode, mono_interp_oplen [opcode]);
+
+	new_inst->prev = prev_ins;
+
+	if (prev_ins) {
+		new_inst->next = prev_ins->next;
+		prev_ins->next = new_inst;
+	} else {
+		new_inst->next = bb->first_ins;
+		bb->first_ins = new_inst;
+	}
+
+	if (new_inst->next == NULL)
+		bb->last_ins = new_inst;
+	else
+		new_inst->next->prev = new_inst;
+
+	return new_inst;
+}
+
+/* Inserts a new instruction after prev_ins. prev_ins must be in cbb */
 static InterpInst*
 interp_insert_ins (TransformData *td, InterpInst *prev_ins, guint16 opcode)
 {
-	InterpInst *new_inst = interp_new_ins (td, opcode, mono_interp_oplen [opcode]);
-	g_assert (prev_ins);
-	new_inst->il_offset = prev_ins->il_offset;
-
-	new_inst->prev = prev_ins;
-	new_inst->next = prev_ins->next;
-	prev_ins->next = new_inst;
-
-	if (new_inst->next == NULL) {
-		/*
-		 * This assumes prev_ins is inside cbb
-		 * FIXME Get rid of this il_offset tracking per instructions and have branch
-		 * instructions reference basic blocks directly.
-		 */
-		td->cbb->last_ins = new_inst;
-		td->last_ins = new_inst;
-	} else {
-		new_inst->next->prev = new_inst;
-	}
-
-	return new_inst;
+	return interp_insert_ins_bb (td, td->cbb, prev_ins, opcode);
 }
 
 static void
