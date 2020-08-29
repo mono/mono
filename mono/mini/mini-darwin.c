@@ -85,7 +85,7 @@ mono_runtime_install_handlers (void)
 	 * any registered task handler before dispatching the exception to a
 	 * host-wide Mach exception handler that does translation to POSIX
 	 * signals. This makes it impossible to use LLDB with an
-	 * implicit-null-check-enabled Mono; contiuing execution after LLDB
+	 * implicit-null-check-enabled Mono; continuing execution after LLDB
 	 * traps an EXC_BAD_ACCESS will result in LLDB's EXC_BAD_ACCESS handler
 	 * being invoked again. This also interferes with the translation of
 	 * SIGFPEs to .NET-level ArithmeticExceptions. Work around this here by
