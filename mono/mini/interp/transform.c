@@ -2786,32 +2786,10 @@ get_basic_blocks (TransformData *td, MonoMethodHeader *header)
 
 	for (i = 0; i < header->num_clauses; i++) {
 		MonoExceptionClause *c = header->clauses + i;
-		/* We never inline methods with clauses, so we can hard code stack heights */
-		InterpBasicBlock *bb;
 		get_bb (td, start + c->try_offset);
-
-		bb = get_bb (td, start + c->handler_offset);
-		bb->stack_height = 1;
-		bb->vt_stack_size = 0;
-		bb->stack_state = (StackInfo*) mono_mempool_alloc0 (td->mempool, sizeof (StackInfo));
-		bb->stack_state [0].type = STACK_TYPE_O;
-		bb->stack_state [0].klass = NULL; /*FIX*/
-
-		if (c->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
-			bb = get_bb (td, start + c->data.filter_offset);
-			bb->stack_height = 1;
-			bb->vt_stack_size= 0;
-			bb->stack_state = (StackInfo*) mono_mempool_alloc0 (td->mempool, sizeof (StackInfo));
-			bb->stack_state [0].type = STACK_TYPE_O;
-			bb->stack_state [0].klass = NULL; /*FIX*/
-		} else if (c->flags == MONO_EXCEPTION_CLAUSE_NONE) {
-			/*
-			 * JIT doesn't emit sdb seq intr point at the start of catch clause, probably
-			 * by accident. Mimic the same behavior with the interpreter for now. Because
-			 * this bb is not empty, we won't emit a MINT_SDB_INTR_LOC when generating the code
-			 */
-			interp_insert_ins_bb (td, bb, NULL, MINT_NOP);
-		}
+		get_bb (td, start + c->handler_offset);
+		if (c->flags == MONO_EXCEPTION_CLAUSE_FILTER)
+			get_bb (td, start + c->data.filter_offset);
 	}
 
 	while (ip < end) {
@@ -3411,6 +3389,53 @@ signature_has_vt_params (MonoMethodSignature *csignature)
 	return FALSE;
 }
 
+static void
+initialize_clause_bblocks (TransformData *td)
+{
+	MonoMethodHeader *header = td->header;
+	int i;
+
+	for (i = 0; i < header->code_size; i++)
+		td->clause_indexes [i] = -1;
+
+	for (i = 0; i < header->num_clauses; i++) {
+		MonoExceptionClause *c = header->clauses + i;
+		InterpBasicBlock *bb;
+
+		for (int j = c->handler_offset; j < c->handler_offset + c->handler_len; j++) {
+			if (td->clause_indexes [j] == -1)
+				td->clause_indexes [j] = i;
+		}
+
+		/* We never inline methods with clauses, so we can hard code stack heights */
+		bb = td->offset_to_bb [c->handler_offset];
+		g_assert (bb);
+		bb->stack_height = 1;
+		bb->vt_stack_size = 0;
+		bb->stack_state = (StackInfo*) mono_mempool_alloc0 (td->mempool, sizeof (StackInfo));
+		bb->stack_state [0].type = STACK_TYPE_O;
+		bb->stack_state [0].klass = NULL; /*FIX*/
+
+		if (c->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
+			bb = td->offset_to_bb [c->data.filter_offset];
+			g_assert (bb);
+			bb->stack_height = 1;
+			bb->vt_stack_size= 0;
+			bb->stack_state = (StackInfo*) mono_mempool_alloc0 (td->mempool, sizeof (StackInfo));
+			bb->stack_state [0].type = STACK_TYPE_O;
+			bb->stack_state [0].klass = NULL; /*FIX*/
+		} else if (c->flags == MONO_EXCEPTION_CLAUSE_NONE) {
+			/*
+			 * JIT doesn't emit sdb seq intr point at the start of catch clause, probably
+			 * by accident. Mimic the same behavior with the interpreter for now. Because
+			 * this bb is not empty, we won't emit a MINT_SDB_INTR_LOC when generating the code
+			 */
+			interp_insert_ins_bb (td, bb, NULL, MINT_NOP);
+		}
+	}
+
+}
+
 static gboolean
 generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, MonoGenericContext *generic_context, MonoError *error)
 {
@@ -3454,20 +3479,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	td->cbb = td->entry_bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
 	td->cbb->stack_height = -1;
 
-	if (!inlining) {
-		for (i = 0; i < header->code_size; i++) {
-			td->clause_indexes [i] = -1;
-		}
-	}
-
-	for (i = 0; i < header->num_clauses; i++) {
-		MonoExceptionClause *c = header->clauses + i;
-
-		for (int j = c->handler_offset; j < c->handler_offset + c->handler_len; ++j) {
-			if (td->clause_indexes [j] == -1)
-				td->clause_indexes [j] = i;
-		}
-	}
+	if (!inlining)
+		initialize_clause_bblocks (td);
 
 	if (td->gen_sdb_seq_points && !inlining) {
 		MonoDebugMethodInfo *minfo;
