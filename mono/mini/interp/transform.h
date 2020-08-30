@@ -71,13 +71,17 @@ struct _InterpInst {
 
 struct _InterpBasicBlock {
 	guint8 *ip;
-	GSList *preds;
 	GSList *seq_points;
 	SeqPoint *last_seq_point;
 
 	InterpInst *first_ins, *last_ins;
 	/* Next bb in IL order */
 	InterpBasicBlock *next_bb;
+
+	gint16 in_count;
+	InterpBasicBlock **in_bb;
+	gint16 out_count;
+	InterpBasicBlock **out_bb;
 
 	int native_offset;
 
