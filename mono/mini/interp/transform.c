@@ -7166,6 +7166,42 @@ cfold_failed:
 	return ins;
 }
 
+#define INTERP_FOLD_UNOP_BR(_opcode,_stack_type,_cond) \
+	case _opcode: \
+		g_assert (sp->val.type == _stack_type); \
+		if (_cond) \
+			ins->opcode = MINT_BR_S; \
+		else \
+			interp_clear_ins (td, ins); \
+		break;
+
+static InterpInst*
+interp_fold_unop_cond_br (TransformData *td, StackContentInfo *sp, InterpInst *ins)
+{
+	sp--;
+	// If we can't remove the instruction pushing the constant, don't bother
+	if (sp->ins == NULL)
+		return ins;
+	if (sp->val.type != STACK_VALUE_I4 && sp->val.type != STACK_VALUE_I8)
+		return ins;
+	// Top of the stack is a constant
+	switch (ins->opcode) {
+		INTERP_FOLD_UNOP_BR (MINT_BRFALSE_I4_S, STACK_VALUE_I4, sp [0].val.i == 0);
+		INTERP_FOLD_UNOP_BR (MINT_BRFALSE_I8_S, STACK_VALUE_I8, sp [0].val.l == 0);
+		INTERP_FOLD_UNOP_BR (MINT_BRTRUE_I4_S, STACK_VALUE_I4, sp [0].val.i != 0);
+		INTERP_FOLD_UNOP_BR (MINT_BRTRUE_I8_S, STACK_VALUE_I8, sp [0].val.l != 0);
+
+		default:
+			return ins;
+	}
+
+	mono_interp_stats.constant_folds++;
+	mono_interp_stats.killed_instructions++;
+	interp_clear_ins (td, sp->ins);
+	sp->val.type = STACK_VALUE_NONE;
+	return ins;
+}
+
 #define INTERP_FOLD_BINOP(opcode,stack_type,field,op) \
 	case opcode: \
 		g_assert (sp [0].val.type == stack_type && sp [1].val.type == stack_type); \
@@ -7596,9 +7632,15 @@ retry:
 		} else if (ins->opcode == MINT_CASTCLASS || ins->opcode == MINT_CASTCLASS_COMMON || ins->opcode == MINT_CASTCLASS_INTERFACE) {
 			// Keep the value on the stack, but prevent optimizing away
 			sp [-1].ins = NULL;
-		} else if (MINT_IS_CONDITIONAL_BRANCH (ins->opcode)) {
-			sp -= pop;
-			g_assert (push == 0);
+		} else if (MINT_IS_UNOP_CONDITIONAL_BRANCH (ins->opcode)) {
+			ins = interp_fold_unop_cond_br (td, sp, ins);
+			sp--;
+			// We can't clear any instruction that pushes the stack, because the
+			// branched code will expect a certain stack size.
+			for (StackContentInfo *sp_iter = stack; sp_iter < sp; sp_iter++)
+				sp_iter->ins = NULL;
+		} else if (MINT_IS_BINOP_CONDITIONAL_BRANCH (ins->opcode)) {
+			sp -= 2;
 			// We can't clear any instruction that pushes the stack, because the
 			// branched code will expect a certain stack size.
 			for (StackContentInfo *sp_iter = stack; sp_iter < sp; sp_iter++)
