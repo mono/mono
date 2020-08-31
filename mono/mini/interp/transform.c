@@ -7342,6 +7342,63 @@ cfold_failed:
 	return ins;
 }
 
+#define INTERP_FOLD_BINOP_BR(_opcode,_stack_type,_cond) \
+	case _opcode: \
+		g_assert (sp [0].val.type == _stack_type); \
+		g_assert (sp [1].val.type == _stack_type); \
+		if (_cond) \
+			ins->opcode = MINT_BR_S; \
+		else \
+			interp_clear_ins (td, ins); \
+		break;
+
+static InterpInst*
+interp_fold_binop_cond_br (TransformData *td, StackContentInfo *sp, InterpInst *ins)
+{
+	sp -= 2;
+	// If we can't remove the instructions pushing the constants, don't bother
+	if (sp [0].ins == NULL || sp [1].ins == NULL)
+		return ins;
+	if (sp [0].val.type != STACK_VALUE_I4 && sp [0].val.type != STACK_VALUE_I8)
+		return ins;
+	if (sp [1].val.type != STACK_VALUE_I4 && sp [1].val.type != STACK_VALUE_I8)
+		return ins;
+
+	switch (ins->opcode) {
+		INTERP_FOLD_BINOP_BR (MINT_BEQ_I4_S, STACK_VALUE_I4, sp [0].val.i == sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BEQ_I8_S, STACK_VALUE_I8, sp [0].val.l == sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BGE_I4_S, STACK_VALUE_I4, sp [0].val.i >= sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BGE_I8_S, STACK_VALUE_I8, sp [0].val.l >= sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BGT_I4_S, STACK_VALUE_I4, sp [0].val.i > sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BGT_I8_S, STACK_VALUE_I8, sp [0].val.l > sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BLT_I4_S, STACK_VALUE_I4, sp [0].val.i < sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BLT_I8_S, STACK_VALUE_I8, sp [0].val.l < sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BLE_I4_S, STACK_VALUE_I4, sp [0].val.i <= sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BLE_I8_S, STACK_VALUE_I8, sp [0].val.l <= sp [1].val.l);
+
+		INTERP_FOLD_BINOP_BR (MINT_BNE_UN_I4_S, STACK_VALUE_I4, sp [0].val.i != sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BNE_UN_I8_S, STACK_VALUE_I8, sp [0].val.l != sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BGE_UN_I4_S, STACK_VALUE_I4, (guint32)sp [0].val.i >= (guint32)sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BGE_UN_I8_S, STACK_VALUE_I8, (guint64)sp [0].val.l >= (guint64)sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BGT_UN_I4_S, STACK_VALUE_I4, (guint32)sp [0].val.i > (guint32)sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BGT_UN_I8_S, STACK_VALUE_I8, (guint64)sp [0].val.l > (guint64)sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BLE_UN_I4_S, STACK_VALUE_I4, (guint32)sp [0].val.i <= (guint32)sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BLE_UN_I8_S, STACK_VALUE_I8, (guint64)sp [0].val.l <= (guint64)sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BLT_UN_I4_S, STACK_VALUE_I4, (guint32)sp [0].val.i < (guint32)sp [1].val.i);
+		INTERP_FOLD_BINOP_BR (MINT_BLT_UN_I8_S, STACK_VALUE_I8, (guint64)sp [0].val.l < (guint64)sp [1].val.l);
+
+		default:
+			return ins;
+	}
+	mono_interp_stats.constant_folds++;
+	mono_interp_stats.killed_instructions += 2;
+	interp_clear_ins (td, sp [0].ins);
+	interp_clear_ins (td, sp [1].ins);
+	sp [0].val.type = STACK_VALUE_NONE;
+	sp [1].val.type = STACK_VALUE_NONE;
+	return ins;
+}
+
 static gboolean
 interp_local_equal (StackValue *locals, int local1, int local2)
 {
@@ -7650,6 +7707,7 @@ retry:
 			for (StackContentInfo *sp_iter = stack; sp_iter < sp; sp_iter++)
 				sp_iter->ins = NULL;
 		} else if (MINT_IS_BINOP_CONDITIONAL_BRANCH (ins->opcode)) {
+			ins = interp_fold_binop_cond_br (td, sp, ins);
 			sp -= 2;
 			// We can't clear any instruction that pushes the stack, because the
 			// branched code will expect a certain stack size.
