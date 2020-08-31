@@ -326,6 +326,51 @@ interp_prev_ins (InterpInst *ins)
 
 #endif
 
+#define SET_SIMPLE_TYPE(s, ty) \
+	do { \
+		(s)->type = (ty); \
+		(s)->flags = 0; \
+		(s)->klass = NULL; \
+	} while (0)
+
+#define SET_TYPE(s, ty, k) \
+	do { \
+		(s)->type = (ty); \
+		(s)->flags = 0; \
+		(s)->klass = k; \
+	} while (0)
+
+#define REALLOC_STACK(td, sppos) \
+	do { \
+		(td)->stack_capacity *= 2; \
+		(td)->stack = (StackInfo*)realloc ((td)->stack, (td)->stack_capacity * sizeof (td->stack [0])); \
+		(td)->sp = (td)->stack + (sppos); \
+	} while (0);
+
+#define PUSH_SIMPLE_TYPE(td, ty) \
+	do { \
+		int sp_height; \
+		(td)->sp++; \
+		sp_height = (td)->sp - (td)->stack; \
+		if (sp_height > (td)->max_stack_height) \
+			(td)->max_stack_height = sp_height; \
+		if (sp_height > (td)->stack_capacity) \
+			REALLOC_STACK(td, sp_height); \
+		SET_SIMPLE_TYPE((td)->sp - 1, ty); \
+	} while (0)
+
+#define PUSH_TYPE(td, ty, k) \
+	do { \
+		int sp_height; \
+		(td)->sp++; \
+		sp_height = (td)->sp - (td)->stack; \
+		if (sp_height > (td)->max_stack_height) \
+			(td)->max_stack_height = sp_height; \
+		if (sp_height > (td)->stack_capacity) \
+			REALLOC_STACK(td, sp_height); \
+		SET_TYPE((td)->sp - 1, ty, k); \
+	} while (0)
+
 
 static void 
 handle_branch (TransformData *td, int short_op, int long_op, int offset)
@@ -376,23 +421,31 @@ two_arg_branch(TransformData *td, int mint_op, int offset)
 {
 	int type1 = td->sp [-1].type == STACK_TYPE_O || td->sp [-1].type == STACK_TYPE_MP ? STACK_TYPE_I : td->sp [-1].type;
 	int type2 = td->sp [-2].type == STACK_TYPE_O || td->sp [-2].type == STACK_TYPE_MP ? STACK_TYPE_I : td->sp [-2].type;
-	int long_op = mint_op + type1 - STACK_TYPE_I4;
-	int short_op = long_op + MINT_BEQ_I4_S - MINT_BEQ_I4;
 	CHECK_STACK(td, 2);
+
 	if (type1 == STACK_TYPE_I4 && type2 == STACK_TYPE_I8) {
 		// The il instruction starts with the actual branch, and not with the conversion opcodes
 		interp_insert_ins (td, td->last_ins, MINT_CONV_I8_I4);
+		SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_I8);
+		type1 = STACK_TYPE_I8;
 	} else if (type1 == STACK_TYPE_I8 && type2 == STACK_TYPE_I4) {
 		interp_insert_ins (td, td->last_ins, MINT_CONV_I8_I4_SP);
+		SET_SIMPLE_TYPE (td->sp - 2, STACK_TYPE_I8);
 	} else if (type1 == STACK_TYPE_R4 && type2 == STACK_TYPE_R8) {
 		interp_insert_ins (td, td->last_ins, MINT_CONV_R8_R4);
+		SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_R8);
+		type1 = STACK_TYPE_R8;
 	} else if (type1 == STACK_TYPE_R8 && type2 == STACK_TYPE_R4) {
 		interp_insert_ins (td, td->last_ins, MINT_CONV_R8_R4_SP);
+		SET_SIMPLE_TYPE (td->sp - 2, STACK_TYPE_R8);
 	} else if (type1 != type2) {
 		g_warning("%s.%s: branch type mismatch %d %d", 
 			m_class_get_name (td->method->klass), td->method->name,
 			td->sp [-1].type, td->sp [-2].type);
 	}
+
+	int long_op = mint_op + type1 - STACK_TYPE_I4;
+	int short_op = long_op + MINT_BEQ_I4_S - MINT_BEQ_I4;
 	td->sp -= 2;
 	handle_branch (td, short_op, long_op, offset);
 }
@@ -469,51 +522,6 @@ can_store (int st_value, int vt_value)
 		vt_value = STACK_TYPE_I;
 	return st_value == vt_value;
 }
-
-#define SET_SIMPLE_TYPE(s, ty) \
-	do { \
-		(s)->type = (ty); \
-		(s)->flags = 0; \
-		(s)->klass = NULL; \
-	} while (0)
-
-#define SET_TYPE(s, ty, k) \
-	do { \
-		(s)->type = (ty); \
-		(s)->flags = 0; \
-		(s)->klass = k; \
-	} while (0)
-
-#define REALLOC_STACK(td, sppos) \
-	do { \
-		(td)->stack_capacity *= 2; \
-		(td)->stack = (StackInfo*)realloc ((td)->stack, (td)->stack_capacity * sizeof (td->stack [0])); \
-		(td)->sp = (td)->stack + (sppos); \
-	} while (0);
-
-#define PUSH_SIMPLE_TYPE(td, ty) \
-	do { \
-		int sp_height; \
-		(td)->sp++; \
-		sp_height = (td)->sp - (td)->stack; \
-		if (sp_height > (td)->max_stack_height) \
-			(td)->max_stack_height = sp_height; \
-		if (sp_height > (td)->stack_capacity) \
-			REALLOC_STACK(td, sp_height); \
-		SET_SIMPLE_TYPE((td)->sp - 1, ty); \
-	} while (0)
-
-#define PUSH_TYPE(td, ty, k) \
-	do { \
-		int sp_height; \
-		(td)->sp++; \
-		sp_height = (td)->sp - (td)->stack; \
-		if (sp_height > (td)->max_stack_height) \
-			(td)->max_stack_height = sp_height; \
-		if (sp_height > (td)->stack_capacity) \
-			REALLOC_STACK(td, sp_height); \
-		SET_TYPE((td)->sp - 1, ty, k); \
-	} while (0)
 
 static void
 move_stack (TransformData *td, int start, int amount)
