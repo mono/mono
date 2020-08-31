@@ -988,18 +988,15 @@ interp_method_get_header (MonoMethod* method, MonoError *error)
 static void
 emit_store_value_as_local (TransformData *td, MonoType *src)
 {
-	int size = mini_magic_type_size (NULL, src);
 	int local = create_interp_local (td, mini_native_type_replace_type (src));
 
 	store_local (td, local);
 
-	size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
-	interp_add_ins (td, MINT_LDLOC_VT);
+	interp_add_ins (td, MINT_LDLOCA_S);
 	td->last_ins->data [0] = local;
-	WRITE32_INS (td->last_ins, 1, &size);
+	td->locals [local].indirects++;
 
-	PUSH_VT (td, size);
-	PUSH_TYPE (td, STACK_TYPE_VT, NULL);
+	PUSH_SIMPLE_TYPE (td, STACK_TYPE_MP);
 }
 
 // Returns whether we can optimize away the instructions starting at start.
@@ -1369,10 +1366,11 @@ interp_handle_magic_type_intrinsics (TransformData *td, MonoMethod *target_metho
 		return TRUE;
 	} else if (!strcmp ("CompareTo", tm) || !strcmp ("Equals", tm)) {
 		MonoType *arg = csignature->params [0];
+		int mt = mint_type (arg);
 
 		/* on 'System.n*::{CompareTo,Equals} (System.n*)' variant we need to push managed
 		 * pointer instead of value */
-		if (arg->type == MONO_TYPE_VALUETYPE)
+		if (mt != MINT_TYPE_O)
 			emit_store_value_as_local (td, arg);
 
 		/* emit call to managed conversion method */
