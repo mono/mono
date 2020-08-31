@@ -7435,36 +7435,40 @@ retry:
 						mono_interp_stats.killed_instructions++;
 					}
 				}
-			} else if (locals [loaded_local].type == STACK_VALUE_LOCAL) {
-				g_assert (!td->locals [loaded_local].indirects);
-				// do copy propagation of the original source
-				mono_interp_stats.copy_propagations++;
-				local_ref_count [loaded_local]--;
-				// We can't propagate a local that has its address taken
-				g_assert (!td->locals [locals [loaded_local].local].indirects);
-				ins->data [0] = locals [loaded_local].local;
-				local_ref_count [ins->data [0]]++;
-				if (td->verbose_level) {
-					g_print ("cprop loc %d -> loc %d :\n\t", loaded_local, locals [loaded_local].local);
-					dump_interp_inst_newline (ins);
+			}
+			/* If we didn't replace this ldloc with a stloc.np, try other optimizations */
+			if (!replace_op) {
+				if (locals [loaded_local].type == STACK_VALUE_LOCAL) {
+					g_assert (!td->locals [loaded_local].indirects);
+					// do copy propagation of the original source
+					mono_interp_stats.copy_propagations++;
+					local_ref_count [loaded_local]--;
+					// We can't propagate a local that has its address taken
+					g_assert (!td->locals [locals [loaded_local].local].indirects);
+					ins->data [0] = locals [loaded_local].local;
+					local_ref_count [ins->data [0]]++;
+					if (td->verbose_level) {
+						g_print ("cprop loc %d -> loc %d :\n\t", loaded_local, locals [loaded_local].local);
+						dump_interp_inst_newline (ins);
+					}
+				} else if (locals [loaded_local].type == STACK_VALUE_I4 || locals [loaded_local].type == STACK_VALUE_I8) {
+					gboolean is_i4 = locals [loaded_local].type == STACK_VALUE_I4;
+					g_assert (!td->locals [loaded_local].indirects);
+					if (is_i4)
+						ins = interp_get_ldc_i4_from_const (td, ins, locals [loaded_local].i);
+					else
+						ins = interp_inst_replace_with_i8_const (td, ins, locals [loaded_local].l);
+					sp->ins = ins;
+					sp->val = locals [loaded_local];
+					local_ref_count [loaded_local]--;
+					mono_interp_stats.copy_propagations++;
+					if (td->verbose_level) {
+						g_print ("cprop loc %d -> ct :\n\t", loaded_local);
+						dump_interp_inst_newline (ins);
+					}
+					// FIXME this replace_op got ugly
+					replace_op = ins->opcode;
 				}
-			} else if (locals [loaded_local].type == STACK_VALUE_I4 || locals [loaded_local].type == STACK_VALUE_I8) {
-				gboolean is_i4 = locals [loaded_local].type == STACK_VALUE_I4;
-				g_assert (!td->locals [loaded_local].indirects);
-				if (is_i4)
-					ins = interp_get_ldc_i4_from_const (td, ins, locals [loaded_local].i);
-				else
-					ins = interp_inst_replace_with_i8_const (td, ins, locals [loaded_local].l);
-				sp->ins = ins;
-				sp->val = locals [loaded_local];
-				local_ref_count [loaded_local]--;
-				mono_interp_stats.copy_propagations++;
-				if (td->verbose_level) {
-					g_print ("cprop loc %d -> ct :\n\t", loaded_local);
-					dump_interp_inst_newline (ins);
-				}
-				// FIXME this replace_op got ugly
-				replace_op = ins->opcode;
 			}
 			if (!replace_op) {
 				// Save the ldloc on the stack if it wasn't optimized away
