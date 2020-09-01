@@ -3622,7 +3622,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				 */
 				interp_link_bblocks (td, td->cbb, new_bb);
 			}
-			link_bblocks = TRUE;
 			td->cbb->next_bb = new_bb;
 			td->cbb = new_bb;
 
@@ -3631,7 +3630,14 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					memcpy (td->stack, new_bb->stack_state, new_bb->stack_height * sizeof(td->stack [0]));
 				td->sp = td->stack + new_bb->stack_height;
 				td->vt_sp = new_bb->vt_stack_size;
+			} else if (link_bblocks) {
+				/* This bblock is not branched to. Initialize its stack state */
+				new_bb->stack_height = td->sp - td->stack;
+				if (new_bb->stack_height > 0)
+					new_bb->stack_state = (StackInfo*)g_memdup (td->stack, new_bb->stack_height * sizeof (td->stack [0]));
+				new_bb->vt_stack_size = td->vt_sp;
 			}
+			link_bblocks = TRUE;
 			if (!inlining) {
 				int index = td->clause_indexes [in_offset];
 				if (index != -1) {
