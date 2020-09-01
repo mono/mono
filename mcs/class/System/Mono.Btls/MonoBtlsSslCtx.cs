@@ -93,8 +93,11 @@ namespace Mono.Btls
 		[DllImport (BTLS_DYLIB)]
 		extern static void mono_btls_ssl_ctx_set_server_name_callback (IntPtr handle, IntPtr func);
 
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate int NativeVerifyFunc (IntPtr instance, int preverify_ok, IntPtr ctx);
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate int NativeSelectFunc (IntPtr instance, int count, IntPtr sizes, IntPtr data);
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate int NativeServerNameFunc (IntPtr instance);
 
 		NativeVerifyFunc verifyFunc;

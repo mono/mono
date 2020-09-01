@@ -23,27 +23,15 @@ var DotNetSupportLib = {
 			}
 			throw Error('unable to get DotNet global object.');
 		},
-		//FIXME this is wastefull, we could remove the temp malloc by going the UTF16 route
-		//FIXME this is unsafe, cuz raw objects could be GC'd.
 		conv_string: function (mono_obj) {
-			if (mono_obj == 0)
-				return null;
-
-			if (!this.mono_string_get_utf8)
-				this.mono_string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'number', ['number']);
-
-			var raw = this.mono_string_get_utf8 (mono_obj);
-			var res = Module.UTF8ToString (raw);
-			Module._free (raw);
-
-			return res;
-		},		
+			return MONO.string_decoder.copy (mono_obj);
+		}
 	},
 	mono_wasm_invoke_js_marshalled: function(exceptionMessage, asyncHandleLongPtr, functionName, argsJson) {
 
 		var mono_string = DOTNET._dotnet_get_global()._mono_string_cached
 			|| (DOTNET._dotnet_get_global()._mono_string_cached = Module.cwrap('mono_wasm_string_from_js', 'number', ['string']));
-	
+
 		try {
 			// Passing a .NET long into JS via Emscripten is tricky. The method here is to pass
 			// as pointer to the long, then combine two reads from the HEAPU32 array.

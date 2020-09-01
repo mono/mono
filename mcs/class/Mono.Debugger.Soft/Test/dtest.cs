@@ -470,7 +470,6 @@ public class DebuggerTests
 			
 			var pdbFromMemory = assemblyMirror.GetPdbBlob ();
 			if (!File.Exists (pdbPath)) {
-				Assert.IsFalse (assemblyMirror.HasPdb);
 				Assert.IsTrue (assemblyMirror.HasFetchedPdb);
 				continue;
 			}
@@ -1807,7 +1806,7 @@ public class DebuggerTests
 		t = frame.Method.GetParameters ()[7].ParameterType;
 
 		var props = t.GetProperties ();
-		Assert.AreEqual (3, props.Length);
+		Assert.AreEqual (4, props.Length);
 		foreach (PropertyInfoMirror prop in props) {
 			ParameterInfoMirror[] indexes = prop.GetIndexParameters ();
 
@@ -4954,6 +4953,23 @@ public class DebuggerTests
 		Assert.IsTrue ((e as StepEvent).Method.Name == "op_Equality" || (e as StepEvent).Method.Name == "if_property_stepping");
 	}
 
+	[Test]
+	public void DebuggerBreakInFieldDoesNotHang () {
+		vm.EnableEvents (EventType.UserBreak);
+		Event e = run_until ("o1");
+
+		StackFrame frame = e.Thread.GetFrames () [0];
+		object val = frame.GetThis ();
+		Assert.IsTrue (val is ObjectMirror);
+		Assert.AreEqual ("Tests", (val as ObjectMirror).Type.Name);
+		ObjectMirror o = (val as ObjectMirror);
+		TypeMirror t = o.Type;
+
+		MethodMirror m = t.GetProperty ("BreakInField").GetGetMethod();
+		Value v = o.InvokeMethod (e.Thread, m, null, InvokeOptions.DisableBreakpoints);
+		AssertValue ("Foo", v);
+	}
+
 #if !MONODROID_TOOLS
 
 	void HandleEvents () {
@@ -5174,7 +5190,156 @@ public class DebuggerTests
 		e = step_in_await ("MoveNext", e);
 		e = step_in_await ("MoveNext", e);
 	}
+
+	[Test]
+	public void InvalidPointer_GetValue () {
+		vm.Detach ();
+		Start (dtest_app_path, "pointer_arguments2");
+		Event e = run_until ("pointer_arguments2");
+		var frame = e.Thread.GetFrames () [0];
+
+		var param = frame.Method.GetParameters()[0];
+		Assert.AreEqual("Int32*", param.ParameterType.Name);
+
+		var pointerValue = frame.GetValue(param) as PointerValue;
+		Assert.AreEqual("Int32*", pointerValue.Type.Name);
+
+
+		var pointerValue2 = new PointerValue (pointerValue.VirtualMachine, pointerValue.Type, 200);
+
+		try {
+			var val = pointerValue2.Value;
+		}
+		catch (ArgumentException ex) {
+			Assert.IsInstanceOfType (typeof (ArgumentException), ex);
+		}
+	}
+  
+	[Test]
+	public void InvalidArgumentAssemblyGetType () {
+		Event e = run_until ("test_invalid_argument_assembly_get_type");
+		var assembly = entry_point.DeclaringType.Assembly;
+		try {
+			var type = assembly.GetType ("System.Collections.Generic.Dictionary<double, float>.Main");
+		}
+		catch (CommandException ex) {
+			Assert.AreEqual(ex.ErrorMessage, "Unexpected assembly-qualified type \"System.Collections.Generic.Dictionary<double, float>.Main\" was provided");
+		}
+	}
+  
+	[Test]
+	public void InvokeSingleStepMultiThread () {
+		vm.Detach ();
+		Start (dtest_app_path, "ss_multi_thread");
+		MethodMirror m = entry_point.DeclaringType.GetMethod ("mt_ss");
+		int firstLineFound = m.Locations [0].LineNumber + 1;
+		int line_first_counter = 5;
+		int line_second_counter = 5;
+		int line_third_counter = 3;
+		Event e = run_until ("ss_multi_thread");
+		EventRequest req = create_step (e);
+		req.Disable ();
+		ReusableBreakpoint breakpoint = new ReusableBreakpoint (this, "mt_ss");
+		breakpoint.Continue ();
+		e = breakpoint.lastEvent;
+		req = create_step (e);
+		while (line_first_counter > 0 || line_second_counter > 0 || line_third_counter > 0) {
+			var thread = e.Thread;
+			var l = thread.GetFrames ()[0].Location;
+			var frame = thread.GetFrames()[0];
+			
+			if (l.LineNumber == firstLineFound)
+				line_first_counter--;
+			if (l.LineNumber == firstLineFound + 1)
+				line_second_counter--;
+			if (l.LineNumber == firstLineFound + 2)
+				line_third_counter--;				
+
+			if (req.GetId() != breakpoint.req.GetId()) 
+				req.Disable ();
+			
+			req = create_step (e);
+			((StepEventRequest)req).Size = StepSize.Line;
+			try {
+				if ((e.Thread.GetFrames ()[0].Location.LineNumber == firstLineFound + 1 && (e.Thread.Name.Equals("Thread_0") || e.Thread.Name.Equals("Thread_1"))) || l.LineNumber == firstLineFound + 2) {
+					vm.Resume ();
+					e = GetNextEvent ();
+				}
+				else
+					e = step_over_or_breakpoint ();
+				req =  e.Request;		
+			}
+			catch (Exception z){
+				//expected vmdeath
+				break;
+			}
+		}
+		Assert.AreEqual(0, line_first_counter);
+		Assert.AreEqual(0, line_second_counter);
+		Assert.AreEqual(0, line_third_counter);
+		vm = null;
+	}
 	
+	[Test]
+	public void CheckSuspendPolicySentWhenLaunchSuspendYes () {
+		vm.Exit (0);
+		var port = GetFreePort ();
+
+		// Launch the app using server=y,suspend=y
+		var pi = CreateStartInfo (dtest_app_path, "attach", $"--debugger-agent=transport=dt_socket,address=127.0.0.1:{port},server=y,suspend=y");
+		pi.UseShellExecute = false;
+		var process = Diag.Process.Start (pi);
+
+		string failMessage = null;
+		try {
+			vm = ConnectToPort (port);
+
+			vm.EnableEvents (EventType.AssemblyLoad, EventType.ThreadStart);
+			var es =  vm.GetNextEventSet ();
+			Assert.AreEqual (es.SuspendPolicy, SuspendPolicy.All);
+			Assert.AreEqual (EventType.VMStart, es[0].EventType);
+		}
+		catch (Exception ex) {
+			failMessage = ex.Message;
+		}
+		finally {
+			vm.Exit (0);
+			vm = null;
+		}
+		if (failMessage != null)
+			Assert.Fail (failMessage);
+	}
+
+	[Test]
+	public void Frame_SetValue_WithList () {
+		Event e = run_until ("frame_setvalue_withlist");
+		var req = create_step (e);
+		req.Enable ();
+
+		e = step_once ();
+		e = step_over ();
+		e = step_over ();		
+		e = step_over ();				
+		e = step_over ();			
+		e = step_over ();				
+		e = step_over ();				
+			
+		StackFrame frame = e.Thread.GetFrames () [0];
+		var l = frame.Method.GetLocal ("someLocalString");
+		var l1 = frame.Method.GetLocal ("aList");
+		TypeMirror t = l1.Type;
+		var m = t.GetMethod ("get_Count");
+		var contentOrig1 =  frame.GetValue (l1);	
+		var v = (contentOrig1 as ObjectMirror).InvokeMethod (e.Thread, m, null);
+		var contentOrig =  frame.GetValue (l);					
+		var str = vm.RootDomain.CreateString ("test1");
+		frame.SetValue (l, str);
+		contentOrig =  frame.GetValue (l);		
+		e.Thread.GetFrames ();
+		contentOrig =  frame.GetValue (l);		
+		AssertValue ("test1", contentOrig);
+	}
+
 #endif
 } // class DebuggerTests
 } // namespace

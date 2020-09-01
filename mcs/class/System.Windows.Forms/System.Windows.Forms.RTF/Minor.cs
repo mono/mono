@@ -41,6 +41,7 @@ namespace System.Windows.Forms.RTF {
 
 		// Major.Destinan
 		FontTbl,
+		FontName,
 		FontAltName,
 		EmbeddedFont,
 		FontFile,
@@ -520,10 +521,12 @@ namespace System.Windows.Forms.RTF {
 		// Major.PictAttr
 		MacQD,
 		PMMetafile,
+		EnhancedMetafile,
 		WinMetafile,
 		DevIndBitmap,
 		WinBitmap,
 		PngBlip,
+		JpegBlip,
 		PixelBits,
 		BitmapPlanes,
 		BitmapWid,

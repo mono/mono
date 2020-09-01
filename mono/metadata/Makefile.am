@@ -91,6 +91,10 @@ if !ENABLE_ILGEN
 ilgen_libraries = libmono-ilgen.la
 endif
 
+if ENABLE_PERFTRACING
+eventpipe_libs = $(top_builddir)/mono/eventpipe/libeventpipe.la
+endif
+
 BUNDLE_ZLIB_PATH=$(top_builddir)/mono/zlib/libz.la
 
 if HAVE_STATIC_ZLIB
@@ -103,11 +107,11 @@ Z_LIBS=$(BUNDLE_ZLIB_PATH)
 endif
 endif
 
-noinst_LTLIBRARIES = libmonoruntime-config.la $(support_libraries) $(boehm_libraries) $(sgen_libraries)
+noinst_LTLIBRARIES = libmonoruntime-config.la $(support_libraries) $(boehm_libraries) $(sgen_libraries) $(shim_libraries)
 
 lib_LTLIBRARIES = $(icall_table_libraries) $(ilgen_libraries)
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/mono $(LIBGC_CPPFLAGS) $(GLIB_CFLAGS) $(SHARED_CFLAGS) $(METADATA_CFLAGS)
 
 #
 # Make sure any prefix changes are updated in the binaries too.
@@ -130,12 +134,46 @@ libmonoruntime_config_la_CPPFLAGS = $(AM_CPPFLAGS) -DMONO_BINDIR=\"$(bindir)/\" 
 #
 # Support is a separate library because it is not valid C++.
 #
-if !ENABLE_NETCORE
 support_libraries = libmonoruntime-support.la
 
 libmonoruntime_support_la_SOURCES = support.c
 libmonoruntime_support_la_LDFLAGS = $(Z_LIBS)
 libmonoruntime_support_la_CFLAGS = $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @ZLIB_CFLAGS@
+
+if ENABLE_NETCORE
+if HAVE_SYS_ICU
+
+# symlink ICU sources to a local dir so automake puts intermediates into the target-specific folder
+icushim/%.c: @ICU_SHIM_PATH@/%.c
+	$(LN_S) $^ $@
+
+shim_libraries = libmonoruntime-shimglobalization.la
+
+nodist_libmonoruntime_shimglobalization_la_SOURCES = \
+									icushim/pal_calendarData.c \
+									icushim/pal_casing.c \
+									icushim/pal_collation.c \
+									icushim/pal_idna.c \
+									icushim/pal_locale.c \
+									icushim/pal_localeNumberData.c \
+									icushim/pal_localeStringData.c \
+									icushim/pal_normalization.c \
+									icushim/pal_timeZoneInfo.c \
+									icushim/entrypoints.c
+
+libmonoruntime_shimglobalization_la_CFLAGS = @ICU_CFLAGS@ -I$(top_srcdir)/../libraries/Native/Unix/System.Globalization.Native/ -I$(top_srcdir)/../libraries/Native/Unix/Common/
+
+if STATIC_ICU
+nodist_libmonoruntime_shimglobalization_la_SOURCES += icushim/pal_icushim_static.c
+else
+nodist_libmonoruntime_shimglobalization_la_SOURCES += icushim/pal_icushim.c
+endif # STATIC_ICU
+
+endif # HAVE_SYS_ICU
+endif # ENABLE_NETCORE
+
+if !ENABLE_NETCORE
+culture_libraries = ../culture/libmono-culture.la
 endif
 
 #
@@ -151,7 +189,7 @@ if BITCODE
 if WASM
 libmono_icall_table_la_LIBADD = # empty to avoid duplicate symbols when enabling dynamic linking
 else
-libmono_icall_table_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
+libmono_icall_table_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la $(eventpipe_libs) libmonoruntimesgen.la
 endif
 endif
 endif
@@ -175,7 +213,7 @@ if BITCODE
 if WASM
 libmono_ilgen_la_LIBADD =  # empty to avoid duplicate symbols when enabling dynamic linking
 else
-libmono_ilgen_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la libmonoruntimesgen.la
+libmono_ilgen_la_LIBADD = $(glib_libs) ../utils/libmonoutils.la ../sgen/libmonosgen.la $(eventpipe_libs) libmonoruntimesgen.la
 endif
 endif
 endif
@@ -222,9 +260,11 @@ common_sources = \
 	class-getters.h		\
 	class-init.h		\
 	class-init.c		\
+	class-init-internals.h	\
 	class-internals.h	\
 	class-inlines.h		\
 	class-private-definition.h	\
+	class-setup-vtable.c	\
 	class-accessors.c	\
 	cominterop.c		\
 	cominterop.h		\
@@ -232,8 +272,6 @@ common_sources = \
 	coree.c 		\
 	coree.h 		\
 	coree-internals.h \
-	culture-info.h  	\
-	culture-info-tables.h	\
 	debug-helpers.c		\
 	debug-mono-symfile.h	\
 	debug-mono-symfile.c	\
@@ -242,6 +280,7 @@ common_sources = \
 	domain-internals.h	\
 	environment.c		\
 	environment.h		\
+	icall-eventpipe.c	\
 	exception.c		\
 	exception.h		\
 	exception-internals.h	\
@@ -269,7 +308,6 @@ common_sources = \
 	loaded-images.c		\
 	loaded-images-global.c	\
 	loaded-images-netcore.c	\
-	locales.c		\
 	locales.h		\
 	lock-tracer.c		\
 	lock-tracer.h		\
@@ -389,7 +427,10 @@ common_sources = \
 	callspec.h	\
 	callspec.c	\
 	abi.c	\
-	native-library.c
+	native-library.c \
+	native-library.h \
+	native-library-qcall.c \
+	qcall-def.h 
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
@@ -425,13 +466,13 @@ if !ENABLE_MSVC_ONLY
 
 libmonoruntime_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(null_gc_sources) $(boehm_sources)
 # Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
-libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES) @CXX_ADD_CFLAGS@
-libmonoruntime_la_LIBADD = libmonoruntime-config.la $(support_libraries)
+libmonoruntime_la_CFLAGS = $(BOEHM_DEFINES) $(GLOBALIZATION_SHIM_DEFINES) @CXX_ADD_CFLAGS@
+libmonoruntime_la_LIBADD = libmonoruntime-config.la $(culture_libraries) $(support_libraries) $(shim_libraries)
 
 libmonoruntimesgen_la_SOURCES = $(common_sources) $(icall_tables_sources) $(ilgen_sources) $(gc_dependent_sources) $(sgen_sources)
 # Add CXX_ADD_CFLAGS per-library until/unless https://github.com/dotnet/corefx/pull/31342.
-libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES) @CXX_ADD_CFLAGS@
-libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la $(support_libraries)
+libmonoruntimesgen_la_CFLAGS = $(SGEN_DEFINES) $(GLOBALIZATION_SHIM_DEFINES) @CXX_ADD_CFLAGS@
+libmonoruntimesgen_la_LIBADD = libmonoruntime-config.la $(culture_libraries) $(support_libraries) $(shim_libraries)
 
 endif # !ENABLE_MSVC_ONLY
 
@@ -457,6 +498,7 @@ libmonoruntimeinclude_HEADERS = \
 	mono-config.h		\
 	mono-debug.h		\
 	mono-gc.h		\
+	mono-private-unstable.h	\
 	object.h		\
 	object-forward.h	\
 	opcodes.h		\
@@ -467,7 +509,7 @@ libmonoruntimeinclude_HEADERS = \
 	sgen-bridge.h		\
 	threads.h		\
 	tokentype.h		\
-	verify.h		
+	verify.h
 
 if !ENABLE_MSVC_ONLY
 

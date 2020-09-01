@@ -1301,6 +1301,7 @@
     <Compile Include="Mono.Globalization.Unicode\MSCompatUnicodeTableUtil.cs" />
     <Compile Include="Mono.Globalization.Unicode\Normalization.cs" />
     <Compile Include="Mono.Globalization.Unicode\NormalizationTableUtil.cs" />
+    <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
     <Compile Include="Mono.Globalization.Unicode\SortKey.cs" />
     <Compile Include="Mono.Globalization.Unicode\SortKeyBuffer.cs" />
     <Compile Include="Mono.Security.Cryptography\DSAManaged.cs" />
@@ -1986,7 +1987,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="Mono.Interop\ComInteropProxy.cs" />
         <Compile Include="Mono.Interop\IDispatch.cs" />
         <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -2172,7 +2172,6 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2267,7 +2266,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="Mono.Interop\ComInteropProxy.cs" />
         <Compile Include="Mono.Interop\IDispatch.cs" />
         <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -2527,7 +2525,6 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2602,7 +2599,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="Mono.Interop\ComInteropProxy.cs" />
         <Compile Include="Mono.Interop\IDispatch.cs" />
         <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -2791,7 +2787,6 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -2858,7 +2853,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="Mono.Interop\ComInteropProxy.cs" />
         <Compile Include="Mono.Interop\IDispatch.cs" />
         <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -3047,7 +3041,6 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -3180,7 +3173,6 @@
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha384managed.cs" />
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\sha512managed.cs" />
             <Compile Include="..\referencesource\mscorlib\system\security\cryptography\tripledescryptoserviceprovider.cs" />
-            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="Mono.Interop\ComInteropProxy.cs" />
             <Compile Include="Mono.Interop\IDispatch.cs" />
             <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -3429,7 +3421,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="Mono.Interop\ComInteropProxy.cs" />
             <Compile Include="Mono.Interop\IDispatch.cs" />
             <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -3615,7 +3606,6 @@
             <Compile Include="System\AndroidPlatform.cs" />
             <Compile Include="System\Console.iOS.cs" />
             <Compile Include="System\MarshalByRefObject.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -3686,7 +3676,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="Mono.Interop\ComInteropProxy.cs" />
             <Compile Include="Mono.Interop\IDispatch.cs" />
             <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -3872,7 +3861,6 @@
             <Compile Include="System\AndroidPlatform.cs" />
             <Compile Include="System\Console.iOS.cs" />
             <Compile Include="System\MarshalByRefObject.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -3943,7 +3931,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="Mono.Interop\ComInteropProxy.cs" />
             <Compile Include="Mono.Interop\IDispatch.cs" />
             <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -4129,7 +4116,6 @@
             <Compile Include="System\AndroidPlatform.cs" />
             <Compile Include="System\Console.iOS.cs" />
             <Compile Include="System\MarshalByRefObject.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
             <Compile Include="corefx\Mono.SafePasswordHandle.Unix.cs" />
             <Compile Include="corert\PreAllocatedOverlapped.platformnotsupported.cs" />
@@ -4192,7 +4178,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="Mono.Interop\ComInteropProxy.cs" />
         <Compile Include="Mono.Interop\IDispatch.cs" />
         <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -4381,7 +4366,6 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -4444,7 +4428,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="Mono.Interop\ComInteropProxy.cs" />
         <Compile Include="Mono.Interop\IDispatch.cs" />
         <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -4633,7 +4616,6 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -4696,7 +4678,6 @@
         <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
         <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-        <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
         <Compile Include="Mono.Interop\ComInteropProxy.cs" />
         <Compile Include="Mono.Interop\IDispatch.cs" />
         <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -4885,7 +4866,6 @@
         <Compile Include="System\TimeZoneInfo.Android.cs" />
         <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
         <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-        <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
         <Compile Include="System\TimeZoneInfo.WinRT.cs" />
         <Compile Include="System\TimeZoneInfo.cs" />
         <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -4983,7 +4963,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="Mono.Interop\ComInteropProxy.cs" />
             <Compile Include="Mono.Interop\IDispatch.cs" />
             <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -5233,7 +5212,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="Mono.Interop\ComInteropProxy.cs" />
             <Compile Include="Mono.Interop\IDispatch.cs" />
             <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -5422,7 +5400,6 @@
             <Compile Include="System\TimeZoneInfo.Android.cs" />
             <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
             <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="System\TimeZoneInfo.WinRT.cs" />
             <Compile Include="System\TimeZoneInfo.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -5489,7 +5466,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="Mono.Interop\ComInteropProxy.cs" />
             <Compile Include="Mono.Interop\IDispatch.cs" />
             <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -5678,7 +5654,6 @@
             <Compile Include="System\TimeZoneInfo.Android.cs" />
             <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
             <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="System\TimeZoneInfo.WinRT.cs" />
             <Compile Include="System\TimeZoneInfo.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -5745,7 +5720,6 @@
             <Compile Include="Microsoft.Win32\UnixRegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32RegistryApi.cs" />
             <Compile Include="Microsoft.Win32\Win32ResultCode.cs" />
-            <Compile Include="Mono.Globalization.Unicode\SimpleCollator.cs" />
             <Compile Include="Mono.Interop\ComInteropProxy.cs" />
             <Compile Include="Mono.Interop\IDispatch.cs" />
             <Compile Include="Mono.Interop\IUnknown.cs" />
@@ -5934,7 +5908,6 @@
             <Compile Include="System\TimeZoneInfo.Android.cs" />
             <Compile Include="System\TimeZoneInfo.MonoTouch.cs" />
             <Compile Include="System\TimeZoneInfo.Serialization.cs" />
-            <Compile Include="System\TimeZoneInfo.WebAssembly.cs" />
             <Compile Include="System\TimeZoneInfo.WinRT.cs" />
             <Compile Include="System\TimeZoneInfo.cs" />
             <Compile Include="corefx\DriveInfoInternal.Unix.cs" />
@@ -6435,6 +6408,27 @@
   <ItemGroup Condition=" '$(Platform)' == 'wasm' ">
     <EmbeddedResource Include="LinkerDescriptor/mscorlib.xml">
       <LogicalName>mscorlib.xml</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkCHS.bin">
+      <LogicalName>collation.cjkCHS.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkCHT.bin">
+      <LogicalName>collation.cjkCHT.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkJA.bin">
+      <LogicalName>collation.cjkJA.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkKO.bin">
+      <LogicalName>collation.cjkKO.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.cjkKOlv2.bin">
+      <LogicalName>collation.cjkKOlv2.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.core.bin">
+      <LogicalName>collation.core.bin</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources/collation.tailoring.bin">
+      <LogicalName>collation.tailoring.bin</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <!-- @ALL_RESOURCES@ -->

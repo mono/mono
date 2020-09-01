@@ -1,5 +1,6 @@
 ../../build/common/Consts.cs
 Assembly/AssemblyInfo.cs
+corefx/CountPropertyHelper.cs
 ../referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/AppSettings.cs
 ../referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/AssociatedMetadataTypeTypeDescriptionProvider.cs
 ../referencesource/System.ComponentModel.DataAnnotations/DataAnnotations/AssociatedMetadataTypeTypeDescriptor.cs

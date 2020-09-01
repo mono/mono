@@ -274,7 +274,7 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 		pes [0].name = #f1; \
 		pes [0].data = &entry->f1; \
 		pes [0].color = index_color(0, num_nums, match_indices); \
-		printf ("%s ", #method + strlen ("binary_protocol_"));
+		printf ("%s ", &#method [strlen ("binary_protocol_")]);
 #define BEGIN_PROTOCOL_ENTRY2(method,t1,f1,t2,f2) \
 	case PROTOCOL_ID(method): { \
 		PROTOCOL_STRUCT (method) *entry = (PROTOCOL_STRUCT (method)*)data; \
@@ -288,7 +288,7 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 		pes [1].name = #f2; \
 		pes [1].data = &entry->f2; \
 		pes [1].color = index_color(1, num_nums, match_indices); \
-		printf ("%s ", #method + strlen ("binary_protocol_"));
+		printf ("%s ", &#method [strlen ("binary_protocol_")]);
 #define BEGIN_PROTOCOL_ENTRY3(method,t1,f1,t2,f2,t3,f3) \
 	case PROTOCOL_ID(method): { \
 		PROTOCOL_STRUCT (method) *entry = (PROTOCOL_STRUCT (method)*)data; \
@@ -306,7 +306,7 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 		pes [2].name = #f3; \
 		pes [2].data = &entry->f3; \
 		pes [2].color = index_color(2, num_nums, match_indices); \
-		printf ("%s ", #method + strlen ("binary_protocol_"));
+		printf ("%s ", &#method [strlen ("binary_protocol_")]);
 #define BEGIN_PROTOCOL_ENTRY4(method,t1,f1,t2,f2,t3,f3,t4,f4) \
 	case PROTOCOL_ID(method): { \
 		PROTOCOL_STRUCT (method) *entry = (PROTOCOL_STRUCT (method)*)data; \
@@ -328,7 +328,7 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 		pes [3].name = #f4; \
 		pes [3].data = &entry->f4; \
 		pes [3].color = index_color(3, num_nums, match_indices); \
-		printf ("%s ", #method + strlen ("binary_protocol_"));
+		printf ("%s ", &#method [strlen ("binary_protocol_")]);
 #define BEGIN_PROTOCOL_ENTRY5(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5) \
 	case PROTOCOL_ID(method): { \
 		PROTOCOL_STRUCT (method) *entry = (PROTOCOL_STRUCT (method)*)data; \
@@ -354,7 +354,7 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 		pes [4].name = #f5; \
 		pes [4].data = &entry->f5; \
 		pes [4].color = index_color(4, num_nums, match_indices); \
-		printf ("%s ", #method + strlen ("binary_protocol_"));
+		printf ("%s ", &#method [strlen ("binary_protocol_")]);
 #define BEGIN_PROTOCOL_ENTRY6(method,t1,f1,t2,f2,t3,f3,t4,f4,t5,f5,t6,f6) \
 	case PROTOCOL_ID(method): { \
 		PROTOCOL_STRUCT (method) *entry = (PROTOCOL_STRUCT (method)*)data; \
@@ -384,7 +384,7 @@ print_entry (int type, void *data, int num_nums, int *match_indices, gboolean co
 		pes [5].name = #f6; \
 		pes [5].data = &entry->f6; \
 		pes [5].color = index_color(5, num_nums, match_indices); \
-		printf ("%s ", #method + strlen ("binary_protocol_"));
+		printf ("%s ", &#method [strlen ("binary_protocol_")]);
 
 #define BEGIN_PROTOCOL_ENTRY_HEAVY0(method) \
 	BEGIN_PROTOCOL_ENTRY0 (method)

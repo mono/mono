@@ -186,7 +186,8 @@ public class AppBuilder
 			line = line.Replace ("BUNDLE_IDENTIFIER", bundle_identifier);
 			line = line.Replace ("BUNDLE_EXECUTABLE", bundle_executable);
 			line = line.Replace ("BUNDLE_NAME", bundle_name);
-			line = line.Replace ("PLATFORM", isdev ? "iPhoneOS" : "iPhoneSimulator");
+			line = line.Replace ("BUNDLE_PLATFORM", isdev ? "iPhoneOS" : "iPhoneSimulator");
+			line = line.Replace ("BUNDLE_DTPLATFORMNAME", isdev ? "iphoneos" : "iphonesimulator");
 			lines [i] = line;
 		}
 		File.WriteAllLines (Path.Combine (builddir, "Info.plist"), lines);

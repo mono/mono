@@ -57,6 +57,9 @@
 
 #endif
 
+#if _MSC_VER
+#pragma warning(disable:4293) // FIXME negative shift is undefined
+#endif
 
 /* If the bank is mirrored return the true logical bank that the register in the
  * physical register bank is allocated to.
@@ -1741,7 +1744,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		if (spec [MONO_INST_CLOB] == 'c') {
-			int j, s, dreg, dreg2, cur_bank;
+			int j, dreg, dreg2, cur_bank;
+			regmask_t s;
 			guint64 clob_mask;
 
 			clob_mask = MONO_ARCH_CALLEE_REGS;

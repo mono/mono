@@ -38,7 +38,7 @@ LIB_MCS_FLAGS += -d:XAMARIN_MODERN
 endif
 
 ifeq (wasm,$(PROFILE))
-API_BIN_REFS := WebAssembly.Net.Http
+API_BIN_REFS := System.Net.Http.WebAssemblyHttpHandler
 endif
 
 TEST_LIB_REFS = System System.Core

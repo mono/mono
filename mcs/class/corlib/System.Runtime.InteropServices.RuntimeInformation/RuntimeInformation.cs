@@ -66,6 +66,11 @@ namespace System.Runtime.InteropServices
 				_osArchitecture = Environment.Is64BitOperatingSystem ? Architecture.X64 : Architecture.X86;
 				_processArchitecture = Architecture.X64;
 				break;
+			case "wasm":
+#if false
+				_osArchitecture = Architecture.Wasm;
+				_processArchitecture = Architecture.Wasm;
+#endif
 			// upstream only has these values; try to pretend we're x86 if nothing matches
 			// want more? bug: https://github.com/dotnet/corefx/issues/30706
 			default:
@@ -107,7 +112,7 @@ namespace System.Runtime.InteropServices
 					_osPlatform = OSPlatform.Create ("HAIKU");
 					break;
 				case "wasm":
-					_osPlatform = OSPlatform.Create ("WEBASSEMBLY");
+					_osPlatform = OSPlatform.Create ("BROWSER");
 					break;
 				default:
 					_osPlatform = OSPlatform.Create ("UNKNOWN");

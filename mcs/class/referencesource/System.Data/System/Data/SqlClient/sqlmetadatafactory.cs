@@ -242,7 +242,7 @@ namespace System.Data.SqlClient{
         private DataTable GetDataTypesTable(SqlConnection connection){
         
                                  
-            // verify the existance of the table in the data set
+            // verify the existence of the table in the data set
             DataTable dataTypesTable = CollectionDataSet.Tables[DbMetaDataCollectionNames.DataTypes]; 
             if (dataTypesTable == null){
                 throw ADP.UnableToBuildCollection(DbMetaDataCollectionNames.DataTypes);

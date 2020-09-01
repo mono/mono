@@ -9,7 +9,7 @@ import sys
 prefix=" (elem (i32.const 1) "
 
 if len(sys.argv) < 2:
-    print "Usage: python print-table.py <path to mono.wast>"
+    print ("Usage: python print-table.py <path to mono.wast>")
     sys.exit (1)
 
 f = open (sys.argv [1])
@@ -20,5 +20,5 @@ for line in f:
          break
      
 for (index, v) in enumerate (table_line.split (" ")):
-    print "" + str(index) + ": " + v
+    print ("" + str(index) + ": " + v)
     index += 1

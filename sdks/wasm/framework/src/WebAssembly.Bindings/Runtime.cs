@@ -365,6 +365,8 @@ namespace WebAssembly {
  						res += "i";
 					} else if (t == typeof (Uri)) {
 						res += "u";
+					} else if (t.IsPointer) {
+						res += "p";
 					} else {
  						if (t.IsValueType)
  							throw new Exception("Can't handle VT arguments");
@@ -607,6 +609,13 @@ namespace WebAssembly {
 				var js_dump = (JSObject)Runtime.GetGlobalObject ("Module");
 				js_dump.SetObjectProperty ("aot_profile_data", WebAssembly.Core.Uint8Array.From (span));
 			}
+		}
+
+		// Called by the coverage profiler to save profile data into Module.coverage_profile_data
+		internal static void DumpCoverageProfileData (string data, string s) {
+			// Send it to JS
+			var js_dump = (JSObject)Runtime.GetGlobalObject ("Module");
+			js_dump.SetObjectProperty ("coverage_profile_data", data);
 		}
 	}
 }

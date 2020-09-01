@@ -160,9 +160,9 @@ Steps of execution are:
    [27/46] cp linker-out/System.Numerics.dll ilstrip-out/System.Numerics.dll; mono-cil-strip ilstrip-out/System.Numerics.dll
    Mono CIL Stripper
    ```
-1. The WebAssembly modules mono.js, mono.wasm etc are then generated.
+1. The WebAssembly modules dotnet.js, dotnet.wasm etc are then generated.
    ``` bash
-   emcc -Oz -g -s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s "EXPORTED_FUNCTIONS=['___cxa_is_pointer_type', '___cxa_can_catch']" -o bin/aot-mini/mono.js --js-library sdks/wasm/library_mono.js --js-library sdks/wasm/binding_support.js --js-library sdks/wasm/dotnet_support.js driver.o mini_tests.dll.bc mscorlib.dll.bc System.dll.bc Mono.Security.dll.bc System.Xml.dll.bc System.Numerics.dll.bc System.Core.dll.bc nunitlite.dll.bc aot-dummy.dll.bc sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a sdks/out/wasm-runtime-release/lib/libmono-native.a' 
+   emcc -Oz -g -s EMULATED_FUNCTION_POINTERS=1 -s DISABLE_EXCEPTION_CATCHING=0 -s ASSERTIONS=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s BINARYEN=1 -s "BINARYEN_TRAP_MODE='clamp'" -s TOTAL_MEMORY=134217728 -s ALIASING_FUNCTION_POINTERS=0 -s NO_EXIT_RUNTIME=1 -s ERROR_ON_UNDEFINED_SYMBOLS=1 -s "EXTRA_EXPORTED_RUNTIME_METHODS=['ccall', 'cwrap', 'setValue', 'getValue', 'UTF8ToString']" -s "EXPORTED_FUNCTIONS=['___cxa_is_pointer_type', '___cxa_can_catch']" -o bin/aot-mini/dotnet.js --js-library sdks/wasm/library_mono.js --js-library sdks/wasm/binding_support.js --js-library sdks/wasm/dotnet_support.js driver.o mini_tests.dll.bc mscorlib.dll.bc System.dll.bc Mono.Security.dll.bc System.Xml.dll.bc System.Numerics.dll.bc System.Core.dll.bc nunitlite.dll.bc aot-instances.dll.bc sdks/out/wasm-runtime-release/lib/libmonosgen-2.0.a sdks/out/wasm-runtime-release/lib/libmono-native.a'
    ```
 ### Example 1:
 ``` bash

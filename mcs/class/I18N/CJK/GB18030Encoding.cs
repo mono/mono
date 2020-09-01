@@ -430,10 +430,9 @@ namespace I18N.CJK
 		}
 #else
 
-		public override int GetByteCount(char[] chars, int index, int count, bool refresh)
+		public override int GetByteCount(char[] chars, int start, int count, bool refresh)
 		{
-			int start = 0;
-			int end = count;
+			int end = start + count;
 			int ret = 0;
 			while (start < end)
 			{

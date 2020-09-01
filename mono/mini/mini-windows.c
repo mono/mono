@@ -193,7 +193,7 @@ mono_runtime_install_handlers (void)
 #ifndef MONO_CROSS_COMPILE
 	win32_seh_init();
 	win32_seh_set_handler(SIGFPE, mono_sigfpe_signal_handler);
-	win32_seh_set_handler(SIGILL, mono_sigill_signal_handler);
+	win32_seh_set_handler(SIGILL, mono_crashing_signal_handler);
 	win32_seh_set_handler(SIGSEGV, mono_sigsegv_signal_handler);
 	if (mini_debug_options.handle_sigint)
 		win32_seh_set_handler(SIGINT, mono_sigint_signal_handler);
@@ -281,7 +281,7 @@ mono_dump_native_crash_info (const char *signal, MonoContext *mctx, MONO_SIG_HAN
 }
 
 void
-mono_post_native_crash_handler (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info, gboolean crash_chaining)
+mono_post_native_crash_handler (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info, gboolean crash_chaining, void *context)
 {
 	if (!crash_chaining)
 		abort ();
@@ -383,15 +383,12 @@ mono_setup_thread_context(DWORD thread_id, MonoContext *mono_context)
 	handle = OpenThread (THREAD_ALL_ACCESS, FALSE, thread_id);
 	g_assert (handle);
 
-	context.ContextFlags = CONTEXT_INTEGER | CONTEXT_CONTROL;
+	context.ContextFlags = CONTEXT_INTEGER | CONTEXT_FLOATING_POINT | CONTEXT_CONTROL;
 
 	if (!GetThreadContext (handle, &context)) {
 		CloseHandle (handle);
 		return FALSE;
 	}
-
-	g_assert (context.ContextFlags & CONTEXT_INTEGER);
-	g_assert (context.ContextFlags & CONTEXT_CONTROL);
 
 	memset (mono_context, 0, sizeof (MonoContext));
 	mono_sigctx_to_monoctx (&context, mono_context);

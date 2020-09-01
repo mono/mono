@@ -63,5 +63,6 @@ partial class DataAnnotationsResources
 	public const string MinLengthAttribute_InvalidMinLength = "MinLengthAttribute must have a Length value that is zero or greater.";
 	public const string MinLengthAttribute_ValidationError = "The field {0} must be a string or array type with a minimum length of '{1}'.";
 	public const string ArgumentIsNullOrWhitespace = "The argument '{0}' cannot be null, empty or contain only white space.";
+	public const string LengthAttribute_InvalidValueType = "The field of type {0} must be a string, array or ICollection type.";
 }
 }

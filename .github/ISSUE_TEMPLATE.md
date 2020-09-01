@@ -43,5 +43,5 @@ Please paste the stack trace here if available.
 ```
 
 <!--
-You can join us at https://gitter.im/mono/mono to discuss your reported issue
+You can join us on Discord (https://aka.ms/dotnet-discord) in the #monovm channel to discuss your reported issue
 -->

@@ -111,12 +111,12 @@ struct MonoJitTlsData {
 	/* 
 	 * The current exception in flight
 	 */
-	guint32 thrown_exc;
+	MonoGCHandle thrown_exc;
 	/*
 	 * If the current exception is not a subclass of Exception,
 	 * the original exception.
 	 */
-	guint32 thrown_non_exc;
+	MonoGCHandle thrown_non_exc;
 
 	/*
 	 * The calling assembly in llvmonly mode.
@@ -160,7 +160,7 @@ typedef struct {
 #endif
 } MonoLMFExt;
 
-typedef void (*MonoFtnPtrEHCallback) (guint32 gchandle);
+typedef void (*MonoFtnPtrEHCallback) (MonoGCHandle gchandle);
 
 typedef struct MonoDebugOptions {
 	gboolean handle_sigint;
@@ -178,13 +178,6 @@ typedef struct MonoDebugOptions {
 	gboolean gdb;
 	gboolean lldb;
 
-	/*
-	 * With LLVM codegen, this option will cause methods to be called indirectly through the
-	 * PLT (As they are in other FullAOT modes, without LLVM). 
-	 *
-	 * Enable this to debug problems with direct calls in llvm
-	 */
-	gboolean llvm_disable_self_init;
 	/*
 	 * Prevent LLVM from inlining any methods
 	 */
@@ -256,8 +249,17 @@ typedef struct MonoDebugOptions {
 	 */
 	gboolean aot_skip_set;
 	int aot_skip;
-} MonoDebugOptions;
 
+	/*
+	 * Treat exceptions which reach the topmost runtime invoke as unhandled when
+	 * embedding.
+	 */
+	gboolean top_runtime_invoke_unhandled;
+
+#ifdef ENABLE_NETCORE
+	gboolean enabled;
+#endif
+} MonoDebugOptions;
 
 /*
  * We need to store the image which the token refers to along with the token,
@@ -362,14 +364,18 @@ extern gboolean mono_compile_aot;
 extern gboolean mono_aot_only;
 extern gboolean mono_llvm_only;
 extern MonoAotMode mono_aot_mode;
+MONO_BEGIN_DECLS
 MONO_API_DATA const char *mono_build_date;
+MONO_END_DECLS
 extern gboolean mono_do_signal_chaining;
 extern gboolean mono_do_crash_chaining;
+MONO_BEGIN_DECLS
 MONO_API_DATA gboolean mono_use_llvm;
 MONO_API_DATA gboolean mono_use_fast_math;
 MONO_API_DATA gboolean mono_use_interpreter;
 MONO_API_DATA MonoCPUFeatures mono_cpu_features_enabled;
 MONO_API_DATA MonoCPUFeatures mono_cpu_features_disabled;
+MONO_END_DECLS
 extern const char* mono_interp_opts_string;
 extern gboolean mono_do_single_method_regression;
 extern guint32 mono_single_method_regression_opt;
@@ -380,6 +386,7 @@ extern GList* mono_aot_paths;
 extern MonoDebugOptions mini_debug_options;
 extern GSList *mono_interp_only_classes;
 extern char *sdb_options;
+extern MonoMethodDesc *mono_stats_method_desc;
 
 /*
 This struct describes what execution engine feature to use.
@@ -404,10 +411,8 @@ extern MonoEEFeatures mono_ee_features;
 
 //XXX this enum *MUST extend MonoAotMode as they are consumed together.
 typedef enum {
-	/* Always execute with interp, will use JIT to produce trampolines */
-	MONO_EE_MODE_INTERP = MONO_AOT_MODE_LAST,
+	MONO_EE_MODE_INTERP = MONO_AOT_MODE_INTERP_ONLY,
 } MonoEEMode;
-
 
 static inline MonoMethod*
 jinfo_get_method (MonoJitInfo *ji)
@@ -422,6 +427,7 @@ MONO_API void        mono_parse_env_options         (int *ref_argc, char **ref_a
 MONO_API char       *mono_parse_options_from        (const char *options, int *ref_argc, char **ref_argv []);
 MONO_API int         mono_regression_test_step      (int verbose_level, const char *image, const char *method_name);
 
+void                   mono_runtime_print_stats      (void);
 
 void                   mono_interp_stub_init         (void);
 void                   mini_install_interp_callbacks (const MonoEECallbacks *cbs);
@@ -460,31 +466,31 @@ MONO_API void      mono_jit_set_domain      (MonoDomain *domain);
 
 gboolean  mono_method_same_domain           (MonoJitInfo *caller, MonoJitInfo *callee);
 gpointer  mono_create_ftnptr                (MonoDomain *domain, gpointer addr);
-MONO_LLVM_INTERNAL MonoMethod* mono_icall_get_wrapper_method    (MonoJitICallInfo* callinfo);
-MONO_LLVM_INTERNAL gconstpointer mono_icall_get_wrapper       (MonoJitICallInfo* callinfo);
-MONO_LLVM_INTERNAL gconstpointer mono_icall_get_wrapper_full  (MonoJitICallInfo* callinfo, gboolean do_compile);
+MonoMethod* mono_icall_get_wrapper_method    (MonoJitICallInfo* callinfo);
+gconstpointer mono_icall_get_wrapper       (MonoJitICallInfo* callinfo);
+gconstpointer mono_icall_get_wrapper_full  (MonoJitICallInfo* callinfo, gboolean do_compile);
 
 MonoJumpInfo* mono_patch_info_dup_mp        (MonoMemPool *mp, MonoJumpInfo *patch_info);
-MONO_LLVM_INTERNAL guint mono_patch_info_hash (gconstpointer data);
-MONO_LLVM_INTERNAL gint  mono_patch_info_equal (gconstpointer ka, gconstpointer kb);
+guint mono_patch_info_hash (gconstpointer data);
+gint  mono_patch_info_equal (gconstpointer ka, gconstpointer kb);
 MonoJumpInfo *mono_patch_info_list_prepend  (MonoJumpInfo *list, int ip, MonoJumpInfoType type, gconstpointer target);
 MonoJumpInfoToken* mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token);
 MonoJumpInfoToken* mono_jump_info_token_new2 (MonoMemPool *mp, MonoImage *image, guint32 token, MonoGenericContext *context);
-MONO_LLVM_INTERNAL gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors, MonoError *error);
+gpointer  mono_resolve_patch_target         (MonoMethod *method, MonoDomain *domain, guint8 *code, MonoJumpInfo *patch_info, gboolean run_cctors, MonoError *error);
 void mini_register_jump_site                (MonoDomain *domain, MonoMethod *method, gpointer ip);
 void mini_patch_jump_sites                  (MonoDomain *domain, MonoMethod *method, gpointer addr);
 void mini_patch_llvm_jit_callees            (MonoDomain *domain, MonoMethod *method, gpointer addr);
 gpointer  mono_jit_search_all_backends_for_jit_info (MonoDomain *domain, MonoMethod *method, MonoJitInfo **ji);
 gpointer  mono_jit_find_compiled_method_with_jit_info (MonoDomain *domain, MonoMethod *method, MonoJitInfo **ji);
 gpointer  mono_jit_find_compiled_method     (MonoDomain *domain, MonoMethod *method);
-MONO_LLVM_INTERNAL gpointer mono_jit_compile_method (MonoMethod *method, MonoError *error);
+gpointer mono_jit_compile_method (MonoMethod *method, MonoError *error);
 gpointer  mono_jit_compile_method_jit_only  (MonoMethod *method, MonoError *error);
 
 void      mono_set_bisect_methods          (guint32 opt, const char *method_list_filename);
 guint32   mono_get_optimizations_for_method (MonoMethod *method, guint32 default_opt);
 char*     mono_opt_descr                   (guint32 flags);
 void      mono_set_verbose_level           (guint32 level);
-MONO_LLVM_INTERNAL const char*mono_ji_type_to_string           (MonoJumpInfoType type);
+const char*mono_ji_type_to_string           (MonoJumpInfoType type);
 void      mono_print_ji                     (const MonoJumpInfo *ji);
 MONO_API void      mono_print_method_from_ip         (void *ip);
 MONO_API char     *mono_pmip                         (void *ip);
@@ -505,9 +511,13 @@ gboolean mono_jit_map_is_enabled (void);
 #else
 #define mono_enable_jit_map()
 #define mono_emit_jit_map(ji)
-#define mono_emit_jit_tramp(s,z,d)
+#define mono_emit_jit_tramp(s,z,d) do { } while (0) /* non-empty to avoid warning */
 #define mono_jit_map_is_enabled() (0)
 #endif
+
+void mono_enable_jit_dump (void);
+void mono_emit_jit_dump (MonoJitInfo *jinfo, gpointer code);
+void mono_jit_dump_cleanup (void);
 
 /*
  * Per-OS implementation functions.
@@ -549,7 +559,7 @@ void
 mono_dump_native_crash_info (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info);
 
 void
-mono_post_native_crash_handler (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info, gboolean crash_chaining);
+mono_post_native_crash_handler (const char *signal, MonoContext *mctx, MONO_SIG_HANDLER_INFO_TYPE *info, gboolean crash_chaining, void *context);
 
 gboolean
 mono_is_addr_implicit_null_check (void *addr);
@@ -564,7 +574,7 @@ mono_is_addr_implicit_null_check (void *addr);
 #endif
 
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigfpe_signal_handler) ;
-void MONO_SIG_HANDLER_SIGNATURE (mono_sigill_signal_handler) ;
+void MONO_SIG_HANDLER_SIGNATURE (mono_crashing_signal_handler) ;
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigsegv_signal_handler);
 void MONO_SIG_HANDLER_SIGNATURE (mono_sigint_signal_handler) ;
 gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
@@ -600,6 +610,17 @@ gboolean MONO_SIG_HANDLER_SIGNATURE (mono_chain_signal);
 #endif
 
 void mini_register_sigterm_handler (void);
+
+#define MINI_BEGIN_CODEGEN() do { \
+	mono_codeman_enable_write (); \
+	} while (0)
+
+#define MINI_END_CODEGEN(buf,size,type,arg) do { \
+	mono_codeman_disable_write (); \
+	mono_arch_flush_icache ((buf), (size)); \
+	if ((int)type != -1) \
+		MONO_PROFILER_RAISE (jit_code_buffer, ((buf), (size), (type), (arg))); \
+	} while (0)
 
 #endif /* __MONO_MINI_RUNTIME_H__ */
 

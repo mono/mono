@@ -677,6 +677,30 @@ namespace MonoTests.System.Windows.Forms
 			item1.ToolTipText = null;
 			Assert.AreEqual (String.Empty, item1.ToolTipText, "ToolTipText#1");
 		}
+
+		[TestCase(CheckState.Checked, CheckState.Unchecked, CheckState.Unchecked)]
+		[TestCase(CheckState.Checked, CheckState.Unchecked, CheckState.Checked)]
+		[TestCase(CheckState.Unchecked, CheckState.Checked, CheckState.Unchecked)]
+		public void ListViewItemCheckEventChangesValue (CheckState currentValue, CheckState newValue, CheckState overrideNewValue)
+		{
+			ListView lv = new ListView ();
+			ListViewItem item1 = lv.Items.Add ("Item 1");
+			item1.Checked = currentValue == CheckState.Checked;
+
+			ItemCheckEventHandler checkEventHandler = (object sender, ItemCheckEventArgs args) => {
+				Assert.AreEqual (currentValue, args.CurrentValue, "#1");
+				Assert.AreEqual (newValue, args.NewValue, "#2");
+				args.NewValue = overrideNewValue;
+			};
+
+			lv.ItemCheck += checkEventHandler;
+			try {
+				item1.Checked = newValue == CheckState.Checked;
+				Assert.AreEqual (overrideNewValue == CheckState.Checked, item1.Checked, "#3");
+			} finally {
+				lv.ItemCheck -= checkEventHandler;
+			}
+		}
 	}
 
 	[TestFixture]

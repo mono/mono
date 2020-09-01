@@ -10,7 +10,7 @@
 #ifndef runtime_h
 #define runtime_h
 
-void mono_sdks_ui_register_testcase_result_fields (int*, int*, int*);
+void mono_sdks_ui_register_test_result_fields (int*, int*, int*, char**);
 void mono_ios_runtime_init (void);
 
 #endif /* runtime_h */

@@ -171,8 +171,7 @@ namespace Mono.Debugger.Soft
 
 		HashSet<ThreadMirror> threadsToInvalidate = new HashSet<ThreadMirror> ();
 		ThreadMirror[] threadCache;
-		object threadCacheLocker = new object ();
-
+		
 		void InvalidateThreadAndFrameCaches () {
 			lock (threadsToInvalidate) {
 				foreach (var thread in threadsToInvalidate)
@@ -200,7 +199,7 @@ namespace Mono.Debugger.Soft
 				var fetchingEvent = new ManualResetEvent (false);
 				vm.conn.VM_GetThreads ((threadsIds) => {
 					ids = threadsIds;
-					threadCache = threads = new ThreadMirror [threadsIds.Length];
+					threads = new ThreadMirror [threadsIds.Length];
 					fetchingEvent.Set ();
 				});
 				if (WaitHandle.WaitAny (new []{ vm.conn.DisconnectedEvent, fetchingEvent }) == 0) {
@@ -215,6 +214,8 @@ namespace Mono.Debugger.Soft
 				//if (threadCache != threads) {//While fetching threads threadCache was invalidated(thread was created/destoyed)
 				//	return GetThreads ();
 				//}
+				Thread.MemoryBarrier ();
+				threadCache = threads;
 				return threads;
 			} else {
 				return threads;
@@ -371,7 +372,7 @@ namespace Mono.Debugger.Soft
 			case ErrorCode.NO_SEQ_POINT_AT_IL_OFFSET:
 				throw new ArgumentException ("Cannot set breakpoint on the specified IL offset.");
 			default:
-				throw new CommandException (args.ErrorCode);
+				throw new CommandException (args.ErrorCode, args.ErrorMessage);
 			}
 		}
 
@@ -657,7 +658,9 @@ namespace Mono.Debugger.Soft
 
 		internal EventRequest GetRequest (int id) {
 			lock (requests_lock) {
-				return requests [id];
+				EventRequest obj;
+				requests.TryGetValue (id, out obj);
+				return obj;
 			}
 		}
 
@@ -885,12 +888,17 @@ namespace Mono.Debugger.Soft
 
 	public class CommandException : Exception {
 
-		internal CommandException (ErrorCode error_code) : base ("Debuggee returned error code " + error_code + ".") {
+		internal CommandException (ErrorCode error_code, string error_message) : base ("Debuggee returned error code " + error_code + (error_message == null || error_message.Length == 0 ? "." : " - " + error_message + ".")) {
 			ErrorCode = error_code;
+			ErrorMessage = error_message;
 		}
 
 		public ErrorCode ErrorCode {
 			get; set;
+		}
+
+		public string ErrorMessage {
+			get; internal set;
 		}
 	}
 

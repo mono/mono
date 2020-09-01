@@ -294,8 +294,6 @@ corefx/GlobalizationMode.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeZoneNotFoundExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.netcoreapp.cs
-../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/BooleanTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/BooleanTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ByteTests.cs
@@ -365,6 +363,15 @@ corefx/GlobalizationMode.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Reflection/*.cs:CustomAttributeDataTests.cs,MethodBodyTests.cs,StrongNameKeyPairTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
+
+
+#split monotouch
+#split monotouch_tv
+#split monotouch_watch
+
+
+../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.netcoreapp.cs
 
 # System.Collections
 ../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs

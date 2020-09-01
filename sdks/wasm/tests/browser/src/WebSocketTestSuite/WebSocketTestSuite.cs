@@ -262,6 +262,83 @@ namespace TestSuite
             return "SomethingWentWrong";
         }
 
+        public async Task<string> WebSocketSendBinaryPartial(Uri server, string protocols, string text)
+        {
+            var cws = CreateWebSocket(server, protocols);
+
+            using (var cts2 = new CancellationTokenSource(500))
+            {
+
+                try
+                {
+                    Task taskConnect = cws.ConnectAsync(server, cts2.Token);
+                    await taskConnect;
+                    if (cws.State == WebSocketState.Open)
+                    {
+                        var sndBuffer = Encoding.UTF8.GetBytes(text);
+                        await cws.SendAsync(new ArraySegment<byte>(sndBuffer, 0, 2), WebSocketMessageType.Binary, false, CancellationToken.None);
+                        await cws.SendAsync(new ArraySegment<byte>(sndBuffer, 2, sndBuffer.Length - 2), WebSocketMessageType.Binary, true, CancellationToken.None);
+                        var rcvBuffer = new ArraySegment<byte>(new byte[4096]);
+                        var r = await cws.ReceiveAsync(rcvBuffer, CancellationToken.None);
+                        return Encoding.UTF8.GetString(rcvBuffer.Array, rcvBuffer.Offset, r.Count);
+                    }
+
+                }
+                catch (Exception exc)
+                {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
+                }
+                finally
+                {
+                    cws = null;
+                }
+            }
+            return "SomethingWentWrong";
+        }
+        public async Task<string> WebSocketSendTextPartial(Uri server, string protocols, string text)
+        {
+            var cws = CreateWebSocket(server, protocols);
+
+            using (var cts2 = new CancellationTokenSource(500))
+            {
+
+                try
+                {
+                    Task taskConnect = cws.ConnectAsync(server, cts2.Token);
+                    await taskConnect;
+                    if (cws.State == WebSocketState.Open)
+                    {
+                        var sndBuffer = Encoding.UTF8.GetBytes(text);
+                        await cws.SendAsync(new ArraySegment<byte>(sndBuffer, 0, 2), WebSocketMessageType.Text, false, CancellationToken.None);
+                        await cws.SendAsync(new ArraySegment<byte>(sndBuffer, 2, sndBuffer.Length - 2), WebSocketMessageType.Text, true, CancellationToken.None);
+
+                        var rcvBuffer = new ArraySegment<byte>(new byte[4096]);
+                        var r = 0;
+                        WebSocketReceiveResult receiveResult;
+
+                        while (true) {
+                            receiveResult =  await cws.ReceiveAsync(rcvBuffer, CancellationToken.None);
+                            r+= receiveResult.Count;
+                            if (receiveResult.EndOfMessage)
+                                break;
+                            rcvBuffer = new ArraySegment<byte>(rcvBuffer.Array, r, rcvBuffer.Array.Length - r);
+                        }
+                        return Encoding.UTF8.GetString(rcvBuffer.Array, 0, r);
+                    }
+
+                }
+                catch (Exception exc)
+                {
+                    Console.WriteLine($"{exc.Message} / {exc.InnerException?.Message}");
+                }
+                finally
+                {
+                    cws = null;
+                }
+            }
+            return "SomethingWentWrong";
+        }
+
         public async Task<WebSocketState> ConnectWebSocket(Uri server, string protocols)
         {
             var cws = CreateWebSocket(server, protocols);

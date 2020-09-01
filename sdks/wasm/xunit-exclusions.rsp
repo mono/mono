@@ -31,24 +31,12 @@
 -nomethod System.Buffers.Text.Tests.ParserTests.TestParserSingle
 -nomethod System.Collections.Tests.BitArray_CtorTests.Clone_LongLength_Works
 -nomethod System.Collections.Tests.BitArray_CtorTests.Ctor_LargeByteArrayOverflowingBitArray_ThrowsArgumentException
--nomethod System.Collections.Tests.CaseInsensitiveComparerTests.Ctor_CultureInfo_Compare_TurkishI
--nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Ctor_CultureInfo_ChangeCurrentCulture_GetHashCodeCompare
--nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Ctor_CultureInfo_GetHashCodeCompare_TurkishI
--nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Ctor_Empty_GetHashCodeCompare
--nomethod System.Collections.Tests.CaseInsensitiveHashCodeProviderTests.Default_GetHashCodeCompare
--nomethod System.Collections.Tests.ComparerTests.Default_Compare
--nomethod System.Collections.Tests.HashtableTests.Comparer_Set_ImpactsSearch
--nomethod System.Collections.Tests.HashtableTests.HashCodeProvider_Set_ImpactsSearch
 -nomethod System.Reflection.Tests.GetCustomAttributes_ParameterInfo.GetCustom_Attribute_On_Return_Parameter_On_Parent_Method
 -nomethod System.Reflection.Tests.MethodBaseTests.TestMethodBody
 -nomethod System.Reflection.Tests.ModuleTests.ResolveField
 -nomethod System.Reflection.Tests.ModuleTests.ResolveMethod
 -nomethod System.Runtime.CompilerServices.Tests.RuntimeHelpersTests.PrepareGenericMethod
 -nomethod System.Runtime.CompilerServices.Tests.RuntimeHelpersTests.PrepareMethod
--nomethod System.SpanTests.ReadOnlySpanTests.Compare
--nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_AllSubstrings
--nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_EquivalentDiacritics_EnglishUSCulture
--nomethod System.SpanTests.ReadOnlySpanTests.IndexOf_EquivalentDiacritics_InvariantCulture
 -nomethod System.SpanTests.ReadOnlySpanTests.ToStringSpanOverFullStringReturnsOriginal
 -nomethod System.Tests.DateTimeOffsetTests.TryParse_TimeDesignators_Netfx
 -nomethod System.Tests.DateTimeTests.TryParse_TimeDesignators_Netfx
@@ -64,7 +52,6 @@
 -nomethod System.Tests.MathTests.Pow_IEEE_Legacy
 -nomethod System.Tests.MathTests.Tan_PiOver2_Legacy
 -nomethod System.Tests.TypeTestsExtended.IsContextful
--nomethod System.Tests.ValueTupleTests.TestCompareTo
 -nomethod System.Text.Encodings.Tests.EncodingMiscTests.DefaultEncodingBOMTest
 -nomethod System.Text.Encodings.Tests.EncodingMiscTests.GetEncodingsTest
 -nomethod System.Text.Tests.EncoderExceptionFallbackTests.CreateFallbackBuffer_Fallback_InvalidSurrogateChars_ThrowsArgumentOutOfRangeException_Desktop
@@ -75,7 +62,9 @@
 -nomethod System.Text.Tests.StringBuilderTests.Remove_Invalid_Desktop
 
 # System failures
+# Added throwing PNSE to the respective code base (mcs/class/corlib/System.Diagnostics.Tracing/EventSource.cs)
 -nomethod System.Net.Security.Tests.LoggingTest.EventSource_ExistsWithCorrectId
+
 -nomethod System.Net.Security.Tests.NegotiateStreamStreamToStreamTest_Async.NegotiateStream_StreamToStream_FlushAsync_Propagated
 -nomethod System.Net.Security.Tests.NegotiateStreamStreamToStreamTest_BeginEnd.NegotiateStream_StreamToStream_FlushAsync_Propagated
 -nomethod System.Net.Security.Tests.NegotiateStreamStreamToStreamTest_Sync.NegotiateStream_StreamToStream_FlushAsync_Propagated
@@ -98,41 +87,6 @@
 -nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbConnection
 -nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbCommand
 -nomethod System.Data.SqlClient.ManualTesting.Tests.BaseProviderAsyncTest.TestDbDataReader
-
-# https://github.com/mono/mono/issues/17052
--nomethod System.Data.Tests.DataViewTest.Find_3
-
-# https://github.com/mono/mono/issues/17051
--nomethod System.Data.Tests.DataTableTest5.XmlTest3
--nomethod System.Data.Tests.DataTableTest5.XmlTest4
--nomethod System.Data.Tests.DataTableTest5.XmlTest14
-
-# https://github.com/mono/mono/issues/17050
--nomethod System.Data.Tests.DataTableTest4.XmlTest5
--nomethod System.Data.Tests.DataTableTest4.XmlTest6
--nomethod System.Data.Tests.DataTableTest4.XmlTest7
--nomethod System.Data.Tests.DataTableTest4.XmlTest8
--nomethod System.Data.Tests.DataTableTest4.XmlTest9
--nomethod System.Data.Tests.DataTableTest4.XmlTest29
-
-# https://github.com/mono/mono/issues/17049
--nomethod System.Data.Tests.DataTableTest3.XmlSchemaTest5
-
-# https://github.com/mono/mono/issues/17048
--nomethod System.Data.Tests.DataTableTest2.Columns
-
-# https://github.com/mono/mono/issues/17046
--nomethod System.Data.Tests.DataRowTest2.DataRowExpressionDefaultValueTest
-
-# https://github.com/mono/mono/issues/17045
--noclass System.Data.Tests.DataRowTest
-
-# https://github.com/mono/mono/issues/17044
--nomethod System.Data.Tests.DataColumnCollectionTest.Contains
--nomethod System.Data.Tests.DataColumnCollectionTest.IndexOf
--nomethod System.Data.Tests.DataColumnCollectionTest.Remove
--nomethod System.Data.Tests.DataColumnCollectionTest.CaseSensitiveIndexOfTest
--nomethod System.Data.Tests.DataColumnCollectionTest2.Indexer2
 
 # System.Numerics failures
 -nomethod System.Numerics.Tests.ComparisonTest.IComparable_Invalid_net46
@@ -167,6 +121,7 @@
 
 # System.Net.Security.Tests
 # System.NotSupportedException: TLS Support not available
+# Added throwing PNSE to the respective code base (mcs/class/System/System.Net.Security/SslStream.cs)
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_Async.SslStream_StreamToStream_Flush_Propagated
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_BeginEnd.SslStream_StreamToStream_Flush_Propagated
 -nomethod System.Net.Security.Tests.SslStreamStreamToStreamTest_Sync.SslStream_StreamToStream_Flush_Propagated
@@ -179,3 +134,7 @@
 
 # OOM
 -nomethod System.Buffers.Text.Tests.Base64EncoderUnitTests.BasicEncodingWithFinalBlockFalse
+
+# [SkipOnTargetFramework(TargetFrameworkMonikers.Mono)]
+-nomethod System.SpanTests.ReadOnlySpanTests.EndsWith_NullInStrings_NonOrdinal
+-nomethod System.SpanTests.ReadOnlySpanTests.StartsWith_NullInStrings_NonOrdinal

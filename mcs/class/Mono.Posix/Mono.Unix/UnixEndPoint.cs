@@ -75,13 +75,6 @@ namespace Mono.Unix
 				throw new ArgumentException ("socketAddress is not a unix socket address.");
 			 */
 
-			if (socketAddress.Size == 2) {
-				// Empty filename.
-				// Probably from RemoteEndPoint which on linux does not return the file name.
-				UnixEndPoint uep = new UnixEndPoint ("a");
-				uep.filename = "";
-				return uep;
-			}
 			int size = socketAddress.Size - 2;
 			byte [] bytes = new byte [size];
 			for (int i = 0; i < bytes.Length; i++) {
@@ -91,6 +84,14 @@ namespace Mono.Unix
 					size = i;
 					break;
 				}
+			}
+			
+			if (size == 0) {
+				// Empty filename.
+				// Probably from RemoteEndPoint which on linux/windows does not return the file name.
+				UnixEndPoint uep = new UnixEndPoint ("dummy");
+				uep.filename = "";
+				return uep;
 			}
 
 			string name = Encoding.Default.GetString (bytes, 0, size);

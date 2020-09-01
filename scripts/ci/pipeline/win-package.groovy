@@ -1,6 +1,6 @@
 isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
 monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
-isReleaseJob = (!isPr && monoBranch ==~ /201\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
+isReleaseJob = (!isPr && monoBranch ==~ /20\d\d-\d\d/) // check if we're on a 2017-xx branch, i.e. release
 jobName = (isPr ? "build-package-win-mono-pullrequest" : "build-package-win-mono")
 macJobName = (isPr ? "build-package-osx-mono-pullrequest" : "build-package-osx-mono/${monoBranch}")
 packageFileNameX86 = null

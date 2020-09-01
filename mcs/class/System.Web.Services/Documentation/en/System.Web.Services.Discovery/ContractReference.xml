@@ -21,7 +21,7 @@
   <Docs>
     <remarks>
       <attribution license="cc4" from="Microsoft" modified="false" />
-      <para>XML Web services discovery involves discovering the available Web Services given an URL. The URL usually points to a discovery document, which typically has a.disco file name extension. Within a discovery document are references to information about the existance of XML Web services. These references can refer to service descriptions, XML Schema Definition language (XSD) schemas or other discovery documents. This class represents a reference to a Service Description.</para>
+      <para>XML Web services discovery involves discovering the available Web Services given an URL. The URL usually points to a discovery document, which typically has a.disco file name extension. Within a discovery document are references to information about the existence of XML Web services. These references can refer to service descriptions, XML Schema Definition language (XSD) schemas or other discovery documents. This class represents a reference to a Service Description.</para>
       <para>Within a discovery document, a reference to a Service Description is contained within a contractRef XML element. The contractRef XML element has two attributes: ref and docRef. The contractRef element must have an XML namespace matching the <see cref="F:System.Web.Services.Discovery.ContractReference.Namespace" /> constant, whereas the ref and docRef attributes are placed in the <see cref="P:System.Web.Services.Discovery.ContractReference.Ref" /> and <see cref="P:System.Web.Services.Discovery.ContractReference.DocRef" /> properties.</para>
     </remarks>
     <summary>

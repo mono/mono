@@ -6,7 +6,7 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
 
-LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%)
+LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%) $(UNICODECHARINFO:%=-resource:%)
 
 USE_XTEST_REMOTE_EXECUTOR = YES
 LIBRARY_WARN_AS_ERROR = yes
@@ -74,10 +74,6 @@ RESOURCE_STRINGS_FILES = --mscorlib-debug
 RESOURCE_STRINGS = ../referencesource/mscorlib/mscorlib.txt
 MODULE_DEPS = $(IL_REPLACE) LinkerDescriptor/mscorlib.xml
 
-
-ifdef WASM
-MANAGED_COLLATOR_RESOURCES_FILES =
-else
 MANAGED_COLLATOR_RESOURCES_FILES = \
 	resources/collation.core.bin \
 	resources/collation.tailoring.bin \
@@ -86,7 +82,6 @@ MANAGED_COLLATOR_RESOURCES_FILES = \
 	resources/collation.cjkJA.bin \
 	resources/collation.cjkKO.bin \
 	resources/collation.cjkKOlv2.bin
-endif
 
 ifdef MCS_MODE
 	UNICODECHARINFO = resources/charinfo.nlp
@@ -95,7 +90,6 @@ else
 endif
 
 RESOURCE_FILES = \
-	$(UNICODECHARINFO) \
 	$(MANAGED_COLLATOR_RESOURCES_FILES) \
 	LinkerDescriptor/mscorlib.xml
 
@@ -207,6 +201,7 @@ EXTRA_DISTFILES = \
 	$(RESOURCE_FILES) \
 	$(TEST_RESOURCE_FILES) \
 	$(TEST_RESOURCES:.resources=.resx) \
+	resources/charinfo.nlp \
 	LinkerDescriptor/mscorlib_test.xml
 
 TEST_RESOURCE_FILES = \

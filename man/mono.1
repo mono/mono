@@ -860,9 +860,11 @@ Instruct the runtime on the number of times that the method specified
 by --compile (or all the methods if --compile-all is used) to be
 compiled.  This is used for testing the code generator performance. 
 .TP 
-\fB--stats\fR
+\fB--stats=[method]\fR
 Displays information about the work done by the runtime during the
-execution of an application. 
+execution of an application. If a method (namespace.name:methodname)
+is specified, it will display that information when the method is
+first run in addition to the end of program execution.
 .TP
 \fB--wapi=hps|semdel\fR
 Perform maintenance of the process shared data.
@@ -1496,6 +1498,9 @@ scanning is available.
 \fBno-managed-allocator\fR
 Disables the managed allocator.
 .TP
+\fBmanaged-allocator\fR
+Enables the managed allocator.
+.TP
 \fBcheck-scan-starts\fR
 If set, does a plausibility check on the scan_starts before and after each collection
 .TP
@@ -1521,7 +1526,10 @@ sgen-gc.c.   You can then use this command to explore the output
 \fBnursery-canaries\fR
 If set, objects allocated in the nursery are suffixed with a canary (guard)
 word, which is checked on each minor collection. Can be used to detect/debug
-heap corruption issues.
+heap corruption issues. This disables the usage of the managed allocator,
+because allocation from full aot code is inconsistent with this option. If
+the application is guaranteed not to use aot code, the managed allocator can
+be enabled back with managed-allocator option.
 
 .TP
 \fBdo-not-finalize(=\fIclasses\fB)\fR

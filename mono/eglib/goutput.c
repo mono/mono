@@ -57,19 +57,23 @@ g_assert_abort (void)
 		abort ();
 }
 
-void
+gint
 g_printv (const gchar *format, va_list args)
 {
 	char *msg;
+	int ret;
 
-	if (g_vasprintf (&msg, format, args) < 0)
-		return;
+	ret = g_vasprintf (&msg, format, args);
+	if (ret < 0)
+		return -1;
 
 	if (!stdout_handler)
 		stdout_handler = default_stdout_handler;
 
 	stdout_handler (msg);
 	g_free (msg);
+
+	return ret;
 }
 
 void
@@ -79,6 +83,19 @@ g_print (const gchar *format, ...)
 	va_start (args, format);
 	g_printv (format, args);
 	va_end (args);
+}
+
+gint
+g_printf (gchar const *format, ...)
+{
+	va_list args;
+	gint ret;
+
+	va_start (args, format);
+	ret = g_printv (format, args);
+	va_end (args);
+
+	return ret;
 }
 
 void
@@ -164,6 +181,12 @@ g_log (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, .
 	va_start (args, format);
 	g_logv (log_domain, log_level, format, args);
 	va_end (args);
+}
+
+void
+g_log_disabled (const gchar *log_domain, GLogLevelFlags log_level, const char *file, int line)
+{
+	g_log (log_domain, log_level, "%s:%d <disabled>", file, line);
 }
 
 static char *failure_assertion = NULL;

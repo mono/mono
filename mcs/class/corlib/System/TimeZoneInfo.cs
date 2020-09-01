@@ -149,7 +149,11 @@ namespace System
 			return true;
 		}
 
-#if (!MONODROID && !MONOTOUCH && !XAMMAC && !WASM) || MOBILE_DESKTOP_HOST
+#if (!MONODROID && !MONOTOUCH && !XAMMAC) || MOBILE_DESKTOP_HOST
+#if WASM
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void mono_timezone_get_local_name (ref string name);
+#endif
 		static TimeZoneInfo CreateLocal ()
 		{
 #if WIN_PLATFORM
@@ -164,7 +168,15 @@ namespace System
 				return GetLocalTimeZoneInfoWinRTFallback ();
 			}
 #endif
-
+#if WASM
+			string localName = null;
+			mono_timezone_get_local_name (ref localName);
+			try {
+				return FindSystemTimeZoneByFileName (localName, Path.Combine (TimeZoneDirectory, localName));
+			} catch {
+				return Utc;
+			}
+#else		
 			var tz = Environment.GetEnvironmentVariable ("TZ");
 			if (tz != null) {
 				if (tz == String.Empty)
@@ -192,6 +204,7 @@ namespace System
 			}
 
 			return Utc;
+#endif			
 		}
 
 		static TimeZoneInfo FindSystemTimeZoneByIdCore (string id)
@@ -266,7 +279,11 @@ namespace System
 			}
 		}
 #if LIBC
+#if WASM
+		const string DefaultTimeZoneDirectory = "/zoneinfo";
+#else		
 		const string DefaultTimeZoneDirectory = "/usr/share/zoneinfo";
+#endif
 		static string timeZoneDirectory;
 		static string TimeZoneDirectory {
 			get {

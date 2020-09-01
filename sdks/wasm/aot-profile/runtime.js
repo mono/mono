@@ -53,7 +53,7 @@ var App = {
 	  var wasm_set_main_args = Module.cwrap ('mono_wasm_set_main_args', 'void', ['number', 'number']);
 	  var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string'])
 
-	  main_assembly = assembly_load ("main.exe");
+	  main_assembly = assembly_load (config.file_list [0]);
 	  if (main_assembly == 0)
 		fail_exec ("Error: Unable to load main executable.'");
 	  main_method = assembly_get_entry_point (main_assembly);

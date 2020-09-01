@@ -120,7 +120,15 @@ namespace System.Net.Security
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
+#if WASM
+			try {
+				provider = GetProvider ();
+			} catch (Exception ex) {
+				throw new PlatformNotSupportedException ("System.Net.Security.SslStream is not supported on the current platform.", ex);
+			}
+#else
 			provider = GetProvider ();
+#endif
 			settings = MonoTlsSettings.CopyDefaultSettings ();
 			impl = provider.CreateSslStream (this, innerStream, leaveInnerStreamOpen, settings);
 		}
@@ -133,7 +141,15 @@ namespace System.Net.Security
 		public SslStream (Stream innerStream, bool leaveInnerStreamOpen, RemoteCertificateValidationCallback userCertificateValidationCallback, LocalCertificateSelectionCallback userCertificateSelectionCallback)
 			: base (innerStream, leaveInnerStreamOpen)
 		{
+#if WASM
+			try {
+				provider = GetProvider ();
+			} catch (Exception ex) {
+				throw new PlatformNotSupportedException ("System.Net.Security.SslStream is not supported on the current platform.", ex);
+			}
+#else
 			provider = GetProvider ();
+#endif
 			settings = MonoTlsSettings.CopyDefaultSettings ();
 			SetAndVerifyValidationCallback (userCertificateValidationCallback);
 			SetAndVerifySelectionCallback (userCertificateSelectionCallback);
@@ -486,6 +502,26 @@ namespace System.Net.Security
 		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			return Impl.WriteAsync (buffer, offset, count, cancellationToken);
+		}
+
+		public override IAsyncResult BeginRead (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+		{
+			return TaskToApm.Begin (Impl.ReadAsync (buffer, offset, count), callback, state);
+		}
+
+		public override int EndRead (IAsyncResult asyncResult)
+		{
+			return TaskToApm.End<int> (asyncResult);
+		}
+
+		public override IAsyncResult BeginWrite (byte[] buffer, int offset, int count, AsyncCallback callback, object state)
+		{
+			return TaskToApm.Begin (Impl.WriteAsync (buffer, offset, count), callback, state);
+		}
+
+		public override void EndWrite (IAsyncResult asyncResult)
+		{
+			TaskToApm.End (asyncResult);
 		}
 
 #else // !SECURITY_DEP

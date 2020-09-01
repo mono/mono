@@ -171,7 +171,9 @@ typedef enum {
 	MONO_MARSHAL_CONV_SB_UTF8STR,
 	MONO_MARSHAL_CONV_UTF8STR_STR,
 	MONO_MARSHAL_CONV_UTF8STR_SB,
-	MONO_MARSHAL_CONV_FIXED_BUFFER
+	MONO_MARSHAL_CONV_FIXED_BUFFER,
+	MONO_MARSHAL_CONV_ANSIBSTR_STR,
+	MONO_MARSHAL_CONV_TBSTR_STR
 } MonoMarshalConv;
 
 #define MONO_MARSHAL_CONV_INVALID ((MonoMarshalConv)-1)
@@ -367,10 +369,10 @@ MONO_API mono_bool mono_type_is_pointer   (MonoType *type);
 MONO_API mono_bool mono_type_is_reference (MonoType *type);
 MONO_API mono_bool mono_type_is_generic_parameter (MonoType *type);
 
-MONO_API MonoType*
+MONO_API MONO_RT_EXTERNAL_ONLY MonoType*
 mono_signature_get_return_type (MonoMethodSignature *sig);
 
-MONO_API MonoType*
+MONO_API MONO_RT_EXTERNAL_ONLY MonoType*
 mono_signature_get_params      (MonoMethodSignature *sig, void **iter);
 
 MONO_API uint32_t

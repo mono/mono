@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Net.Sockets;
 #if XUNIT_RUNNER
 using Xunit;
@@ -68,18 +69,18 @@ class DiagnosticTextWriterMessageSink : LongLivedMarshalByRefObject, IMessageSin
 {
 	TextWriter writer;
 
-    public DiagnosticTextWriterMessageSink(TextWriter wr)
-    {
+	public DiagnosticTextWriterMessageSink(TextWriter wr)
+	{
 		writer = wr;
-    }
+	}
 
-    public bool OnMessage(IMessageSinkMessage message)
-    {
+	public bool OnMessage(IMessageSinkMessage message)
+	{
 		if (message is IDiagnosticMessage diagnosticMessage)
-	        writer.WriteLine (diagnosticMessage.Message);
+			writer.WriteLine (diagnosticMessage.Message);
 
-        return true;
-    }
+		return true;
+	}
 }
 
 class XunitArgumentsParser
@@ -163,6 +164,9 @@ class Interop
 {
 	[System.Runtime.InteropServices.DllImport ("__Internal")]
 	public extern static void mono_sdks_ui_increment_testcase_result (int resultType);
+
+	[System.Runtime.InteropServices.DllImport ("__Internal")]
+	public extern static void mono_sdks_ui_set_test_summary_message (string summaryMessage);
 }
 
 public class TestRunner
@@ -171,17 +175,22 @@ public class TestRunner
 		var arguments = new Stack<string> ();
 		string host = null;
 		int port = 0;
+		bool closeAfterTestRun;
+		bool failed;
 
 		for (var i = args.Length - 1; i >= 0; i--)
 			arguments.Push (args[i]);
 
-		// First argument is the connection string
-		if (arguments.Peek ().StartsWith("tcp:", StringComparison.Ordinal)) {
+		// First argument is the connection string if we're driven by harness.exe, otherwise we're driven by UITests
+		if (arguments.Count > 0 && arguments.Peek ().StartsWith("tcp:", StringComparison.Ordinal)) {
 			var parts = arguments.Pop ().Split (':');
 			if (parts.Length != 3)
 				throw new Exception ();
 			host = parts [1];
 			port = Int32.Parse (parts [2]);
+			closeAfterTestRun = true;
+		} else {
+			closeAfterTestRun = false;
 		}
 
 #if !ENABLE_NETCORE
@@ -190,6 +199,9 @@ public class TestRunner
 		// `xamarin-macios/src/ObjcRuntime/Runtime.cs`.
 		MonoTlsProviderFactory.Initialize ();
 #endif
+
+		// some tests assert having a SynchronizationContext for MONOTOUCH, provide a default one
+		SynchronizationContext.SetSynchronizationContext (new SynchronizationContext ());
 
 #if XUNIT_RUNNER
 		var writer = new TcpWriter (host, port);
@@ -202,6 +214,8 @@ public class TestRunner
 		var testOptions = TestFrameworkOptions.ForExecution (configuration);
 		var testSink = new TestMessageSink ();
 		var controller = new XunitFrontController (AppDomainSupport.Denied, assemblyFileName, configFileName: null, shadowCopy: false, diagnosticMessageSink: diagnosticSink);
+
+		Interop.mono_sdks_ui_set_test_summary_message ($"Running {assemblyFileName}...");
 
 		writer.WriteLine ($"Discovering tests for {assemblyFileName}");
 		controller.Find (includeSourceInformation: false, discoverySink, discoveryOptions);
@@ -223,41 +237,61 @@ public class TestRunner
 		controller.RunTests (testCasesToRun, resultsSink, testOptions);
 		resultsSink.Finished.WaitOne ();
 
-		writer.WriteLine ($"STARTRESULTXML");
 		var resultsXml = new XElement ("assemblies");
 		resultsXml.Add (resultsXmlAssembly);
-		resultsXml.Save (writer.RawStream);
-		writer.WriteLine ();
-		writer.WriteLine ($"ENDRESULTXML");
-
-		var failed = resultsSink.ExecutionSummary.Failed > 0 || resultsSink.ExecutionSummary.Errors > 0;
-		return failed ? 1 : 0;
-#else
-		MonoSdksTextUI runner;
-		TcpWriter writer = null;
-		string resultsXml = null;
+		resultsXml.Save (resultsXmlPath);
 
 		if (host != null) {
-			Console.WriteLine ($"Connecting to harness at {host}:{port}.");
-			resultsXml = Path.GetTempFileName ();
-			arguments.Push ("-format:xunit");
-			arguments.Push ($"-result:{resultsXml}");
-			writer = new TcpWriter (host, port);
-			runner = new MonoSdksTextUI (writer);
-		} else {
-			runner = new MonoSdksTextUI ();
-		}
-
-		runner.Execute (arguments.ToArray ());
-
-		if (resultsXml != null) {
 			writer.WriteLine ($"STARTRESULTXML");
-			using (var resultsXmlStream = File.OpenRead (resultsXml)) resultsXmlStream.CopyTo (writer.RawStream);
+			resultsXml.Save (((TcpWriter)writer).RawStream);
 			writer.WriteLine ();
 			writer.WriteLine ($"ENDRESULTXML");
 		}
 
-		return (runner.Failure ? 1 : 0);
+		failed = resultsSink.ExecutionSummary.Failed > 0 || resultsSink.ExecutionSummary.Errors > 0;
+#else
+		MonoSdksTextUI runner;
+		TextWriter writer = null;
+		string resultsXmlPath = Path.GetTempFileName ();
+		string assemblyFileName = arguments.Peek ();
+
+		if (File.Exists ("nunit-excludes.txt")) {
+			var excludes = File.ReadAllLines ("nunit-excludes.txt");
+			arguments.Push ("-exclude:" + String.Join (",", excludes));
+		}
+
+		arguments.Push ("-labels");
+		arguments.Push ("-format:xunit");
+		arguments.Push ($"-result:{resultsXmlPath}");
+
+		if (host != null) {
+			Console.WriteLine ($"Connecting to harness at {host}:{port}.");
+			writer = new TcpWriter (host, port);
+		} else {
+			writer = ConsoleWriter.Out;
+		}
+
+		Interop.mono_sdks_ui_set_test_summary_message ($"Running {assemblyFileName}...");
+
+		runner = new MonoSdksTextUI (writer);
+		runner.Execute (arguments.ToArray ());
+
+		if (host != null) {
+			writer.WriteLine ($"STARTRESULTXML");
+			using (var resultsXmlStream = File.OpenRead (resultsXmlPath)) resultsXmlStream.CopyTo (((TcpWriter)writer).RawStream);
+			writer.WriteLine ();
+			writer.WriteLine ($"ENDRESULTXML");
+		}
+
+		failed = runner.Failure;
 #endif
+
+		Interop.mono_sdks_ui_set_test_summary_message ($"Summary: {(failed ? "Failed" : "Succeeded")} for {assemblyFileName}.");
+
+		if (!closeAfterTestRun) {
+			Thread.Sleep (Int32.MaxValue);
+		}
+
+		return failed ? 1 : 0;
 	}
 }

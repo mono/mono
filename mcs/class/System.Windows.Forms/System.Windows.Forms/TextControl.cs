@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
+//	Karl Scowen	<contact@scowencomputers.co.nz>
 //
 //
 
@@ -47,6 +48,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Text;
@@ -71,6 +73,17 @@ namespace System.Windows.Forms {
 		BackColor = 2,
 		Font = 4,
 		Color = 8,
+		TextPosition = 16,
+		CharOffset = 32,
+		Visibility = 64,
+
+		All = 126
+	}
+
+	internal enum TextPositioning {
+		Normal,
+		Superscript,
+		Subscript
 	}
 
 	internal enum CaretDirection {
@@ -103,7 +116,7 @@ namespace System.Windows.Forms {
 
 		None = 0
 	}
-	
+
 	internal class Document : ICloneable, IEnumerable {
 		#region Structures
 		// FIXME - go through code and check for places where
@@ -224,7 +237,7 @@ namespace System.Windows.Forms {
 		internal int		viewport_x;
 		internal int		viewport_y;		// The visible area of the document
 		internal int		offset_x;
-		internal int		offset_y;
+		internal int		offset_y;		// Never assigned to except in constructor, and a property that is also never assigned to?
 		internal int		viewport_width;
 		internal int		viewport_height;
 
@@ -240,6 +253,8 @@ namespace System.Windows.Forms {
 		internal int left_margin = 2;  // A left margin for all lines
 		internal int top_margin = 2;
 		internal int right_margin = 2;
+
+		internal float	dpi;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -301,6 +316,15 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region Internal Properties
+
+		internal float Dpi {
+			get {
+				if (dpi > 0)
+					return dpi;
+				return TextRenderer.GetDpi ().Height;
+			}
+		}
+
 		internal Line Root {
 			get {
 				return document;
@@ -400,7 +424,8 @@ namespace System.Windows.Forms {
 
 		internal int Length {
 			get {
-				return char_count + lines - 1;	// Add \n for each line but the last
+				var lastLine = GetLine (lines);
+				return char_count - LineEndingLength (lastLine.ending);
 			}
 		}
 
@@ -683,12 +708,8 @@ namespace System.Windows.Forms {
 		}
 
 		private void IncrementLines(int line_no) {
-			int	current;
-
-			current = this.lines;
-			while (current >= line_no) {
-				GetLine(current).line_no++;
-				current--;
+			foreach (var line in TransverseLines(this.lines, line_no)) {
+				line.line_no++;
 			}
 			return;
 		}
@@ -868,19 +889,27 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			var prev_line_pos = new Point(line.X, line.Y);
+			var prev_line_bottom = line.Y + line.Height;
+			var prev_pos_width = line.widths[pos];
+			float prev_pos1_width = (line.widths.Length > pos + 1) ? line.widths[pos + 1] : prev_pos_width;
+
 			// Optimize invalidation based on Line alignment
 			bool height_changed;
 			using (var graphics = owner.CreateGraphics())
 				height_changed = RecalculateDocument(graphics, line.line_no, line.line_no, true);
+			var x = Math.Min(prev_line_pos.X, line.X);
+			var y = Math.Min(prev_line_pos.Y, line.Y);
+			var h = Math.Max(prev_line_bottom, line.Y + line.Height) - y;
 			if (height_changed) {
 				// Lineheight changed, invalidate the rest of the document
-				if ((line.Y - viewport_y) >=0 ) {
+				if ((y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
 					owner.Invalidate(new Rectangle(
 						offset_x, 
-						line.Y - viewport_y + offset_y, 
+						y - viewport_y + offset_y, 
 						viewport_width, 
-						owner.Height - (line.Y - viewport_y)));
+						owner.Height - (y - viewport_y)));
 				} else {
 					// The tag was above the visible area, draw everything
 					owner.Invalidate();
@@ -889,28 +918,28 @@ namespace System.Windows.Forms {
 				switch(line.alignment) {
 					case HorizontalAlignment.Left: {
 						owner.Invalidate(new Rectangle(
-							line.X + ((int)line.widths[pos] - viewport_x - 1) + offset_x, 
-							line.Y - viewport_y + offset_y, 
+							x + ((int)Math.Max(line.widths[pos], prev_pos_width) - viewport_x - 1) + offset_x, 
+							y - viewport_y + offset_y, 
 							viewport_width, 
-							line.height + 1));
+							h + 1));
 						break;
 					}
 
 					case HorizontalAlignment.Center: {
 						owner.Invalidate(new Rectangle(
-							line.X + offset_x, 
-							line.Y - viewport_y + offset_y, 
+							x + offset_x, 
+							y - viewport_y + offset_y, 
 							viewport_width, 
-							line.height + 1));
+							h + 1));
 						break;
 					}
 
 					case HorizontalAlignment.Right: {
 						owner.Invalidate(new Rectangle(
-							line.X + offset_x, 
-							line.Y - viewport_y + offset_y, 
-							(int)line.widths[pos + 1] - viewport_x + line.X, 
-							line.height + 1));
+							x + offset_x, 
+							y - viewport_y + offset_y, 
+							(int)Math.Max(line.widths[pos + ((line.widths.Length > pos + 1) ? 1 : 0)], prev_pos1_width) - viewport_x + line.X, 
+							h + 1));
 						break;
 					}
 				}
@@ -1248,6 +1277,14 @@ namespace System.Windows.Forms {
 
 		internal void PositionCaret(Line line, int pos) {
 			caret.tag = line.FindTag (pos);
+			if (pos == caret.tag.Start - 1 && caret.tag.Length != 0 && caret.tag.Previous != null)
+				caret.tag = caret.tag.Previous;
+			// When we're at a tag boundary we want the cursor in the previous (left) tag
+			// whereas FindTag(pos) gets the next (right) tag. LineTag.Start is 1-based.
+
+			if (pos > line.TextLengthWithoutEnding())
+				pos = line.TextLengthWithoutEnding();
+			// We don't want the caret after the line ending.
 
 			MoveCaretToTextTag ();
 
@@ -1256,20 +1293,15 @@ namespace System.Windows.Forms {
 
 			if (owner.IsHandleCreated) {
 				if (owner.Focused) {
-					if (caret.height != caret.tag.Height)
+					if (caret.height != caret.tag.DrawnHeight) {
+						caret.height = caret.tag.DrawnHeight;
 						XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
-					XplatUI.SetCaretPos(owner.Handle, 
-						offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-						offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+					}
+					SetCaretPos();
 				}
 
 				if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
 			}
-
-			// We set this at the end because we use the heights to determine whether or
-			// not we need to recreate the caret
-			caret.height = caret.tag.Height;
-
 		}
 
 		internal void PositionCaret(int x, int y) {
@@ -1278,17 +1310,20 @@ namespace System.Windows.Forms {
 			}
 
 			caret.tag = FindCursor(x, y, out caret.pos);
+
+			if (caret.pos > caret.tag.Line.TextLengthWithoutEnding())
+				caret.pos = caret.tag.Line.TextLengthWithoutEnding();
+			// Don't allow the caret to be positioned after the line ending.
+			// This was happening with the up and down arrows due to how FindCursor works.
 			
 			MoveCaretToTextTag ();
 			
 			caret.line = caret.tag.Line;
-			caret.height = caret.tag.Height;
+			caret.height = caret.tag.DrawnHeight;
 
 			if (owner.ShowSelection && (!selection_visible || owner.show_caret_w_selection)) {
 				XplatUI.CreateCaret (owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, 
-					(int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x + offset_x, 
-					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				SetCaretPos();
 			}
 
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
@@ -1297,9 +1332,7 @@ namespace System.Windows.Forms {
 		internal void CaretHasFocus() {
 			if ((caret.tag != null) && owner.IsHandleCreated) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos(owner.Handle, 
-					offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				SetCaretPos();
 
 				DisplayCaret ();
 			}
@@ -1337,17 +1370,15 @@ namespace System.Windows.Forms {
 			// font is larger than the line (line recalculations
 			// ignore empty tags) in which case we make it equal
 			// the line height and then when text is entered
-			if (caret.tag.Height > caret.tag.Line.Height) {
-				caret.height = caret.line.height;
+			if (caret.tag.DrawnHeight > caret.tag.Line.TextHeight) {
+				caret.height = caret.line.TextHeight;
 			} else {
-				caret.height = caret.tag.Height;
+				caret.height = caret.tag.DrawnHeight;
 			}
 
 			if (owner.Focused) {
 				XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
-				XplatUI.SetCaretPos (owner.Handle, 
-					offset_x + (int) caret.tag.Line.widths [caret.pos] + caret.line.X - viewport_x, 
-					offset_y + caret.line.Y + viewport_y + caret_shift);
+				SetCaretPos();
 				DisplayCaret ();
 			}
 
@@ -1361,21 +1392,28 @@ namespace System.Windows.Forms {
 
 			MoveCaretToTextTag ();
 
-			if (caret.tag.Height != caret.height) {
-				caret.height = caret.tag.Height;
+			if (caret.tag.DrawnHeight != caret.height) {
+				caret.height = caret.tag.DrawnHeight;
 				if (owner.Focused) {
 					XplatUI.CreateCaret(owner.Handle, caret_width, caret.height);
 				}
 			}
 
 			if (owner.Focused) {
-				XplatUI.SetCaretPos(owner.Handle, 
-					offset_x + (int)caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x, 
-					offset_y + caret.line.Y + caret.tag.Shift - viewport_y + caret_shift);
+				SetCaretPos();
 				DisplayCaret ();
 			}
 			
 			if (CaretMoved != null) CaretMoved(this, EventArgs.Empty);
+		}
+
+		void SetCaretPos ()
+		{
+			XplatUI.SetCaretPos (owner.Handle,
+				(int)Math.Min(offset_x + caret.tag.Line.widths[caret.pos] + caret.line.X - viewport_x,
+					viewport_width - caret.tag.Line.right_indent - caret_width), // Limit X, because whitespace can be outside this.
+				(int)(offset_y + caret.line.Y + caret.line.SpacingBefore + caret.tag.OffsetY -
+				caret.tag.CharOffset + caret.tag.Shift - viewport_y + caret_shift));
 		}
 
 		internal void DisplayCaret() {
@@ -1417,6 +1455,10 @@ namespace System.Windows.Forms {
 			// FIXME should we use IsWordSeparator to detect whitespace, instead 
 			// of looking for actual spaces in the Word move cases?
 
+			Line currentLine = caret.line;
+			int currentPos = caret.pos;
+			LineTag currentTag = caret.tag;
+
 			bool nowrap = false;
 			switch(direction) {
 				case CaretDirection.CharForwardNoWrap:
@@ -1444,7 +1486,7 @@ namespace System.Windows.Forms {
 						}
 					}
 					UpdateCaret();
-					return;
+					break;
 				}
 
 				case CaretDirection.CharBackNoWrap:
@@ -1452,12 +1494,10 @@ namespace System.Windows.Forms {
 					goto case CaretDirection.CharBack;
 				case CaretDirection.CharBack: {
 					if (caret.pos > 0) {
-						// caret.pos--; // folded into the if below
+						caret.pos--;
 						
-						if (--caret.pos > 0) {
-							if (caret.tag.Start > caret.pos) {
-								caret.tag = caret.tag.Previous;
-							}
+						if (caret.tag.Start > caret.pos && caret.tag.Previous != null) {
+							caret.tag = caret.tag.Previous;
 						}
 					} else {
 						if (caret.line.line_no > 1 && !nowrap) {
@@ -1467,7 +1507,7 @@ namespace System.Windows.Forms {
 						}
 					}
 					UpdateCaret();
-					return;
+					break;
 				}
 
 				case CaretDirection.WordForward: {
@@ -1493,7 +1533,7 @@ namespace System.Windows.Forms {
 						}
 					}
 					UpdateCaret();
-					return;
+					break;
 				}
 
 				case CaretDirection.WordBack: {
@@ -1525,31 +1565,31 @@ namespace System.Windows.Forms {
 						}
 					}
 					UpdateCaret();
-					return;
+					break;
 				}
 
 				case CaretDirection.LineUp: {
 					if (caret.line.line_no > 1) {
 						int	pixel;
 
-						pixel = (int)caret.line.widths[caret.pos];
+						pixel = (int)caret.line.widths[caret.pos] + caret.line.align_shift;
 						PositionCaret(pixel, GetLine(caret.line.line_no - 1).Y);
 
 						DisplayCaret ();
 					}
-					return;
+					break;
 				}
 
 				case CaretDirection.LineDown: {
 					if (caret.line.line_no < lines) {
 						int	pixel;
 
-						pixel = (int)caret.line.widths[caret.pos];
+						pixel = (int)caret.line.widths[caret.pos] + caret.line.align_shift;
 						PositionCaret(pixel, GetLine(caret.line.line_no + 1).Y);
 
 						DisplayCaret ();
 					}
-					return;
+					break;
 				}
 
 				case CaretDirection.Home: {
@@ -1558,7 +1598,7 @@ namespace System.Windows.Forms {
 						caret.tag = caret.line.tags;
 						UpdateCaret();
 					}
-					return;
+					break;
 				}
 
 				case CaretDirection.End: {
@@ -1567,7 +1607,7 @@ namespace System.Windows.Forms {
 						caret.tag = LineTag.FindTag(caret.line, caret.pos);
 						UpdateCaret();
 					}
-					return;
+					break;
 				}
 
 				case CaretDirection.PgUp: {
@@ -1576,17 +1616,20 @@ namespace System.Windows.Forms {
 						owner.vscroll.Value = 0;
 						Line line = GetLine (1);
 						PositionCaret (line, 0);
+						break;
 					}
 
 					int y_offset = caret.line.Y + caret.line.height - 1 - viewport_y;
+					int expected_y = viewport_y - viewport_height;
 					int index;
-					LineTag top = FindCursor ((int) caret.line.widths [caret.pos],
-							viewport_y - viewport_height, out index);
+					LineTag top = FindCursor ((int) caret.line.widths [caret.pos] + caret.line.align_shift,
+							expected_y, out index);
 
 					owner.vscroll.Value = Math.Min (top.Line.Y, owner.vscroll.Maximum - viewport_height);
-					PositionCaret ((int) caret.line.widths [caret.pos], y_offset + viewport_y);
+					PositionCaret ((int) caret.line.widths [caret.pos] + caret.line.align_shift,
+						(expected_y >= 0) ? y_offset + viewport_y : 0);
 
-					return;
+					break;
 				}
 
 				case CaretDirection.PgDn: {
@@ -1595,23 +1638,26 @@ namespace System.Windows.Forms {
 						owner.vscroll.Value = owner.vscroll.Maximum - viewport_height + 1;
 						Line line = GetLine (lines);
 						PositionCaret (line, line.TextLengthWithoutEnding());
+						break;
 					}
 
 					int y_offset = caret.line.Y - viewport_y;
+					int expected_y = viewport_y + viewport_height;
 					int index;
-					LineTag top = FindCursor ((int) caret.line.widths [caret.pos],
-							viewport_y + viewport_height, out index);
+					LineTag top = FindCursor ((int) caret.line.widths [caret.pos] + caret.line.align_shift,
+							expected_y, out index);
 
 					owner.vscroll.Value = Math.Min (top.Line.Y, owner.vscroll.Maximum - viewport_height);
-					PositionCaret ((int) caret.line.widths [caret.pos], y_offset + viewport_y);
+					PositionCaret ((int) caret.line.widths [caret.pos] + caret.line.align_shift,
+						(expected_y <= document_y - viewport_height) ? y_offset + viewport_y : document_y);
 					
-					return;
+					break;
 				}
 
 				case CaretDirection.CtrlPgUp: {
 					PositionCaret(0, viewport_y);
 					DisplayCaret ();
-					return;
+					break;
 				}
 
 				case CaretDirection.CtrlPgDn: {
@@ -1627,7 +1673,7 @@ namespace System.Windows.Forms {
 					}
 					PositionCaret(line, line.Text.Length);
 					DisplayCaret ();
-					return;
+					break;
 				}
 
 				case CaretDirection.CtrlHome: {
@@ -1636,7 +1682,7 @@ namespace System.Windows.Forms {
 					caret.tag = caret.line.tags;
 
 					UpdateCaret();
-					return;
+					break;
 				}
 
 				case CaretDirection.CtrlEnd: {
@@ -1645,7 +1691,7 @@ namespace System.Windows.Forms {
 					caret.tag = LineTag.FindTag(caret.line, caret.pos);
 
 					UpdateCaret();
-					return;
+					break;
 				}
 
 				case CaretDirection.SelectionStart: {
@@ -1654,7 +1700,7 @@ namespace System.Windows.Forms {
 					caret.tag = selection_start.tag;
 
 					UpdateCaret();
-					return;
+					break;
 				}
 
 				case CaretDirection.SelectionEnd: {
@@ -1663,22 +1709,38 @@ namespace System.Windows.Forms {
 					caret.tag = selection_end.tag;
 
 					UpdateCaret();
-					return;
+					break;
 				}
+			}
+
+			if ((caret.pos != currentPos || caret.line != currentLine) && currentTag.Length == 0) {
+				// Remove the empty tag it was previously on.
+				if (currentTag.Previous != null) {
+					currentTag.Previous.Next = currentTag.Next;
+				} else if (currentTag.Next != null) {
+					// update line.tags, but don't set it to null!
+					currentLine.tags = currentTag.Next;
+				}
+				if (currentTag.Next != null)
+					currentTag.Next.Previous = currentTag.Previous;
 			}
 		}
 
 		internal void DumpDoc ()
 		{
-			Console.WriteLine ("<doc lines='{0}'>", lines);
+			Console.WriteLine ("<doc lines='{0}' width='{1}' height='{2}' ownerwidth='{3}' ownerheight='{4}'>",
+				lines, document_x, document_y, owner.Width, owner.Height);
 			for (int i = 1; i <= lines ; i++) {
 				Line line = GetLine (i);
-				Console.WriteLine ("<line no='{0}' ending='{1}'>", line.line_no, line.ending);
+				Console.WriteLine ("<line no='{0}' ending='{1}' x='{2}' y='{3}' width='{4}' height='{5}' indent='{6}' hanging-indent='{7}' right-indent='{8}' spacing-before='{9}' spacing-after='{10}'>",
+					line.line_no, line.ending, line.X, line.Y, line.Width, line.Height, line.Indent, line.HangingIndent, line.RightIndent, line.SpacingBefore, line.SpacingAfter);
 
 				LineTag tag = line.tags;
 				while (tag != null) {
-					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}'>",
-							tag.GetType (), tag.Start, tag.Length, tag.Font, tag.Color);
+					Console.Write ("\t<tag type='{0}' span='{1}->{2}' font='{3}' color='{4}' position='{5}' " +
+						"charoffset='{6}' x='{7}' width='{8}' height='{11}' ascent='{9}' descent='{10}'>",
+						tag.GetType (), tag.Start, tag.Length, tag.Font, tag.Color, tag.TextPosition,
+						tag.CharOffset, tag.X, tag.Width, tag.Ascent, tag.Descent, tag.MaxHeight());
 					Console.Write (tag.Text ());
 					Console.WriteLine ("</tag>");
 					tag = tag.Next;
@@ -1713,7 +1775,9 @@ namespace System.Windows.Forms {
 			StringBuilder text;	// String representing the current line
 			int line_no;
 			Color tag_color;
+			Color tag_backcolor;
 			Color current_color;
+			Color current_backcolor;
 
 			// First, figure out from what line to what line we need to draw
 			GetVisibleLineIndexes (clip, out start, out end);
@@ -1748,15 +1812,15 @@ namespace System.Windows.Forms {
 				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
 						offset_x + selection_start.line.widths [selection_start.pos] +
 						selection_start.line.X - viewport_x, 
-						offset_y + selection_start.line.Y,
+				        offset_y + selection_start.line.Y,
 						(selection_end.line.X + selection_end.line.widths [selection_end.pos]) -
 						(selection_start.line.X + selection_start.line.widths [selection_start.pos]), 
-						selection_start.line.height);
+				        selection_start.line.height);
 			}
 
 			while (line_no <= end) {
 				line = GetLine (line_no);
-				float line_y = line.Y - viewport_y + offset_y;
+				float line_y = line.Y - viewport_y + offset_y + line.SpacingBefore;
 				
 				tag = line.tags;
 				if (!calc_pass) {
@@ -1792,35 +1856,28 @@ namespace System.Windows.Forms {
 					} else if (multiline) {
 						// lets draw some selection baby!!  (non multiline selection is drawn outside the loop)
 						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight),
-								offset_x + line.widths [line_selection_start - 1] + line.X - viewport_x, 
-								line_y, line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], 
-								line.height);
+							offset_x + line.widths [line_selection_start - 1] + line.X - viewport_x, line_y - line.SpacingBefore,
+							line.widths [line_selection_end - 1] - line.widths [line_selection_start - 1], line.height);
 					}
 				}
 
-				current_color = line.tags.ColorToDisplay;
 				while (tag != null) {
 
 					// Skip empty tags
-					if (tag.Length == 0) {
+					if (tag.Length == 0 || !tag.Visible) {
 						tag = tag.Next;
 						continue;
 					}
 
-					if (((tag.X + tag.Width) < (clip.Left - viewport_x - offset_x)) && 
-					     (tag.X > (clip.Right - viewport_x - offset_x))) {
+					if (((tag.X + tag.Width) < (clip.Left + viewport_x - offset_x)) ||
+					     (tag.X > (clip.Right + viewport_x - offset_x))) {
+						// Don't draw a tag that is horizontally outside the visible region.
 						tag = tag.Next;
 						continue;
-					}
-
-					if (tag.BackColor != Color.Empty) {
-						g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (tag.BackColor), 
-								offset_x + tag.X + line.X - viewport_x,
-								line_y + tag.Shift, tag.Width, line.height);
 					}
 
 					tag_color = tag.ColorToDisplay;
-					current_color = tag_color;
+					tag_backcolor = tag.BackColor;
 
 					if (!owner.Enabled) {
 						Color a = tag.Color;
@@ -1832,26 +1889,36 @@ namespace System.Windows.Forms {
 					} 
 
 					int tag_pos = tag.Start;
-					current_color = tag_color;
 					while (tag_pos < tag.Start + tag.Length) {
 						int old_tag_pos = tag_pos;
 
 						if (tag_pos >= line_selection_start && tag_pos < line_selection_end) {
 							current_color = ThemeEngine.Current.ColorHighlightText;
 							tag_pos = Math.Min (tag.End, line_selection_end);
+							current_backcolor = Color.Empty;
 						} else if (tag_pos < line_selection_start) {
 							current_color = tag_color;
 							tag_pos = Math.Min (tag.End, line_selection_start);
+							current_backcolor = tag_backcolor;
 						} else {
 							current_color = tag_color;
 							tag_pos = tag.End;
+							current_backcolor = tag_backcolor;
+						}
+
+						if (current_backcolor != Color.Empty && current_backcolor != owner.BackColor) {
+							g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (current_backcolor),
+							    offset_x + line.widths [old_tag_pos - 1] + line.X - viewport_x,
+							    line_y - line.SpacingBefore,
+							    line.widths [Math.Min (tag.Start + tag.Length, tag_pos) - 1] - line.widths [old_tag_pos - 1],
+							    line.height);
 						}
 
 						Rectangle text_size;
 
 						tag.Draw (g, current_color,
 								offset_x + line.X - viewport_x,
-								line_y + tag.Shift,
+								line_y + tag.Shift - tag.CharOffset,
 								old_tag_pos - 1, Math.Min (tag.Start + tag.Length, tag_pos) - 1,
 								text.ToString (), out text_size, tag.IsLink);
 
@@ -1975,7 +2042,21 @@ namespace System.Windows.Forms {
 		
 		internal void Insert (Line line, int pos, bool update_caret, string s)
 		{
-			Insert (line, pos, update_caret, s, line.FindTag (pos));
+			LineTag tag = line.FindTag(pos);
+			if (tag.Length != 0) {
+				if (tag.Start == pos + 1) { // pos is zero-based, tag.Start and tag.End are one-based.
+					// Check for empty tags before this one at the same position
+					var t = tag.Previous;
+					while (t != null && t.End == pos + 1) {
+						if (t.Length == 0) {
+							tag = t;
+							break;
+						}
+						t = t.Previous;
+					}
+				} // There will never be empty tags after this one, because FindTag gets the last tag at the position.
+			}
+			Insert (line, pos, update_caret, s, tag);
 		}
 
 		// Insert text at the given position; use formatting at insertion point for inserted text
@@ -2004,9 +2085,11 @@ namespace System.Windows.Forms {
 			// There are no line feeds in our text to be pasted
 			if (break_index == s.Length) {
 				line.InsertString (pos, s, tag);
+				CharCount += s.Length;
 			} else {
 				// Add up to the first line feed to our current position
 				line.InsertString (pos, s.Substring (0, break_index + LineEndingLength (ending)), tag);
+				CharCount += break_index + LineEndingLength (ending);
 				
 				// Split the rest of the original line to a new line
 				Split (line, pos + (break_index + LineEndingLength (ending)));
@@ -2035,14 +2118,12 @@ namespace System.Windows.Forms {
 
 				// Add the remainder of the insert text to the split
 				// part of the original line
+				CharCount += s.Length - break_index;
 				split_line.InsertString (0, s.Substring (break_index));
 			}
 			
 			// Allow the document to recalculate things
 			ResumeRecalc (false);
-
-			// Update our character count
-			CharCount += s.Length;
 
 			UpdateView (line, lines - old_line_count + 1, pos);
 
@@ -2191,8 +2272,15 @@ namespace System.Windows.Forms {
 			if (!multiline) {
 				UpdateView (line, lines, pos);
 				owner.Invalidate ();
-			} else 
+			} else {
+				if (line.line_no > 1) {
+					// If the previous line is wrapped, we update that too in case the wrap point has changed.
+					var l = GetLine(line.line_no - 1);
+					if (l != null && (l.ending == LineEnding.None || l.ending == LineEnding.Wrap))
+						line = l;
+				}
 				UpdateView (line, pos);
+			}
 		}
 
 		// Deletes a character at or after the given position (depending on forward); it will not delete past line limits
@@ -2349,7 +2437,9 @@ namespace System.Windows.Forms {
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
-				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, line.ending);
+				Add (line.line_no + 1, String.Empty, line.alignment, tag.Font, tag.Color, tag.BackColor, tag.TextPosition,
+				     tag.CharOffset, line.Indent, line.HangingIndent, line.RightIndent, line.spacing_before, line.spacing_after,
+					 line.line_spacing, line.line_spacing_multiple, line.tab_stops, tag.Visible, line.ending);
 
 				new_line = GetLine (line.line_no + 1);
 				
@@ -2382,7 +2472,10 @@ namespace System.Windows.Forms {
 			}
 
 			// We need to move the rest of the text into the new line
-			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.Font, tag.Color, line.ending);
+			Add (line.line_no + 1, line.text.ToString (pos, line.text.Length - pos), line.alignment, tag.Font, tag.Color,
+			     tag.BackColor, tag.TextPosition, tag.CharOffset, line.Indent, line.HangingIndent, line.RightIndent,
+				 line.spacing_before, line.spacing_after, line.line_spacing, line.line_spacing_multiple, line.tab_stops,
+				 tag.Visible, line.ending);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -2515,11 +2608,18 @@ namespace System.Windows.Forms {
 
 		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, LineEnding ending)
 		{
+			Add (LineNo, Text, align, font, color, Color.Empty, TextPositioning.Normal,
+				0, 0, 0, 0, 0, 0, 0, false, new TabStopCollection(), true, ending);
+		}
+
+		internal void Add (int LineNo, string Text, HorizontalAlignment align, Font font, Color color, Color back_color,
+		                   TextPositioning text_position, float char_offset, float left_indent, float hanging_indent,
+		                   float right_indent, float spacing_before, float spacing_after, float line_spacing,
+		                   bool line_spacing_multiple, TabStopCollection tab_stops, bool visible, LineEnding ending)
+		{
 			Line	add;
 			Line	line;
 			int	line_no;
-
-			CharCount += Text.Length;
 
 			if (LineNo<1 || Text == null) {
 				if (LineNo<1) {
@@ -2529,7 +2629,10 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			add = new Line (this, LineNo, Text, align, font, color, ending);
+			CharCount += Text.Length;
+
+			add = new Line (this, LineNo, Text, align, font, color, back_color, text_position, char_offset, left_indent,
+				hanging_indent, right_indent, spacing_before, spacing_after, line_spacing, line_spacing_multiple, tab_stops, visible, ending);
 
 			line = document;
 			while (line != sentinel) {
@@ -2598,7 +2701,7 @@ namespace System.Windows.Forms {
 			Delete (line);
 		}
 
-		private void Delete(Line line1) {
+		internal void Delete(Line line1) {
 			Line	line2;// = new Line();
 			Line	line3;
 
@@ -3202,7 +3305,9 @@ namespace System.Windows.Forms {
 			int selection_start_pos = LineTagToCharIndex (selection_start.line, selection_start.pos);
 			SuspendRecalc ();
 
-			// First, delete any selected text
+			var formatTag = selection_start.tag;
+
+			// Delete any selected text
 			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
 				if (selection_start.line == selection_end.line) {
 					undo.RecordDeleteString (selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
@@ -3244,9 +3349,23 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			if (!String.IsNullOrEmpty(s)) {
+				int old_line_count = lines;
+				Insert(selection_start.line, selection_start.pos, false, s);
+				Line end_line;
+				int end_pos;
+				if (lines == old_line_count) {
+					end_line = selection_start.line;
+					end_pos = selection_start.pos + s.Length + 1;
+				} else {
+					end_line = GetLine(selection_start.line.line_no + lines - old_line_count);
+					end_pos = end_line.text.Length;
+				}
+				FormatText(selection_start.line, selection_start.pos + 1, end_line, end_pos, formatTag); // 0-base to 1-base...
+				undo.RecordInsertString(selection_start.line, selection_start.pos, s);
+			}
 
-			Insert(selection_start.line, selection_start.pos, false, s);
-			undo.RecordInsertString (selection_start.line, selection_start.pos, s);
+
 
 			Line begin_update_line = selection_start.line;
 			int begin_update_pos = selection_start.pos;
@@ -3279,6 +3398,11 @@ namespace System.Windows.Forms {
 
 			ResumeRecalc (false);
 			PositionCaret (selection_start.line, selection_start.pos);
+
+			if (begin_update_line.line_no > selection_start.line.line_no) {
+				begin_update_line = selection_start.line;
+				begin_update_pos = selection_start.pos;
+			}
 			UpdateView (begin_update_line, selection_end.line.line_no - begin_update_line.line_no, begin_update_pos);
 		}
 
@@ -3297,7 +3421,7 @@ namespace System.Windows.Forms {
 				start = chars;
 				chars += line.text.Length;
 
-				if (index <= chars) {
+				if (index < chars) {
 					// we found the line
 					tag = line.tags;
 
@@ -3408,6 +3532,56 @@ namespace System.Windows.Forms {
 			}
 
 			return null;
+		}
+
+		internal IEnumerable<Line> TransverseLines (int start, int end)
+		{
+			Line l, c, r, prev = null;
+			bool r2l = start > end;
+			int number;
+			if (r2l) {
+				// swap start and end so that start is less than end
+				int s = start;
+				start = end;
+				end = s;
+			}
+			c = document;
+			while (c != null && c != sentinel) {
+				l = c.left;
+				r = c.right;
+
+				if (((r2l && c.line_no < end) || (!r2l && c.line_no > start)) && (r2l ? r : l) != sentinel && (r2l ? r : l) != prev) {
+					// There's no point going further this way if we're just finding lines we don't want!
+					c = r2l ? r : l;
+					continue;
+				}
+
+				number = c.line_no;
+				if (number >= start && number <= end)
+					yield return c;
+
+				if ((r2l && number <= start) || (!r2l && number >= end))
+					yield break; // We're done here, no need to look further.
+
+				if ((r2l ? l : r) != sentinel) {
+					c = r2l ? l : r;
+				} else {
+					// If we're on the first-side node, the parent is finished with too (continues up tree), otherwise we're only done with the current node.
+					// We don't want to come back to first-side nodes we've already done when we do the new parent.
+					// The highest node we discard is going to be a first-side node, because we're discarding all second-side nodes we run into.
+					// The exception is when we run off the top, which is just fine too, because we're done.
+					// But the highest node we discard is already visited, so that is the one we're not allowed back to -- anything higher needs visiting still.
+					prev = c;
+					c = c.parent;
+					// The xor inverts the condition when we're going right-to-left, and therefore trims non-right (i.e. left) branches.
+					// With both forwards and reverse transversal, prev will be given the first-side node.
+					while (c != null && c.parent != null && c.right == prev ^ r2l) {
+						prev = c;
+						c = c.parent;
+					}
+					// And prev is now the previous first-side node, unless we happen to have none remaining!
+				}
+			}
 		}
 
 		/// <summary>Retrieve the previous tag; walks line boundaries</summary>
@@ -3539,30 +3713,45 @@ namespace System.Windows.Forms {
 			return tag;
 		}
 
+		public void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, LineTag copyFrom) {
+			FormatText(start_line, start_pos, end_line, end_pos, copyFrom.Font, copyFrom.Color,
+				copyFrom.BackColor, copyFrom.TextPosition, copyFrom.CharOffset, copyFrom.Visible, FormatSpecified.All);
+		}
+
+		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
+		                          Color color, Color back_color, FormatSpecified specified)
+		{
+			FormatText (start_line, start_pos, end_line, end_pos, font, color, back_color,
+				TextPositioning.Normal, 0, true, specified);
+		}
+
 		/// <summary>Format area of document in specified font and color</summary>
 		/// <param name="start_pos">1-based start position on start_line</param>
 		/// <param name="end_pos">1-based end position on end_line </param>
 		internal void FormatText (Line start_line, int start_pos, Line end_line, int end_pos, Font font,
-				Color color, Color back_color, FormatSpecified specified)
+		                          Color color, Color back_color, TextPositioning text_position, float char_offset,
+		                          bool visible, FormatSpecified specified)
 		{
 			Line    l;
 
 			// First, format the first line
 			if (start_line != end_line) {
 				// First line
-				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color, back_color, specified);
+				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color,
+					back_color, text_position, char_offset, visible, specified);
 
 				// Format last line
-				LineTag.FormatText(end_line, 1, end_pos, font, color, back_color, specified);
+				LineTag.FormatText(end_line, 1, end_pos - 1, font, color, back_color, text_position, char_offset, visible, specified);
 
 				// Now all the lines inbetween
 				for (int i = start_line.line_no + 1; i < end_line.line_no; i++) {
 					l = GetLine(i);
-					LineTag.FormatText(l, 1, l.text.Length, font, color, back_color, specified);
+					LineTag.FormatText(l, 1, l.text.Length, font, color, back_color, text_position, char_offset, visible, specified);
 				}
 			} else {
 				// Special case, single line
-				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color, back_color, specified);
+				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color, back_color,
+					text_position, char_offset, visible, specified);
 				
 				if ((end_pos - start_pos) == 0 && CaretTag.Length != 0)
 					CaretTag = CaretTag.Next;
@@ -3582,17 +3771,7 @@ namespace System.Windows.Forms {
 				line = GetLine(line_no);
 
 				if (line != null) {
-					switch (line.alignment) {
-					case HorizontalAlignment.Left:
-						line.align_shift = 0;
-						break;
-					case HorizontalAlignment.Center:
- 						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
-						break;
-					case HorizontalAlignment.Right:
- 						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - right_margin;
-						break;
-					}
+					line.CalculateAlignment();
 				}
 
 				line_no++;
@@ -3623,6 +3802,8 @@ namespace System.Windows.Forms {
 			int	new_width;
 			bool	changed;
 			int	shift;
+			bool width_changed;
+			bool height_changed;
 
 			if (recalc_suspended > 0) {
 				recalc_pending = true;
@@ -3641,6 +3822,8 @@ namespace System.Windows.Forms {
 			line_no = start;
 			new_width = 0;
 			shift = this.lines;
+			width_changed = false;
+			height_changed = false;
 			if (!optimize) {
 				changed = true;		// We always return true if we run non-optimized
 			} else {
@@ -3677,17 +3860,10 @@ namespace System.Windows.Forms {
 				}
 
 				if (line.widths[line.text.Length] > new_width) {
-					new_width = (int)line.widths[line.text.Length];
+					new_width = (int)Math.Ceiling(line.widths[line.text.Length]);
 				}
 
-				// Calculate alignment
-				if (line.alignment != HorizontalAlignment.Left) {
-					if (line.alignment == HorizontalAlignment.Center) {
-						line.align_shift = (viewport_width - (int)line.widths[line.text.Length]) / 2;
-					} else {
-						line.align_shift = viewport_width - (int)line.widths[line.text.Length] - 1;
-					}
-				}
+				line.CalculateAlignment ();
 
 				if (multiline)
 					offset += line.height;
@@ -3701,21 +3877,21 @@ namespace System.Windows.Forms {
 
 			if (document_x != new_width) {
 				document_x = new_width;
-				if (WidthChanged != null) {
-					WidthChanged(this, null);
-				}
+				width_changed = true;
 			}
-
-			RecalculateAlignments();
 
 			line = GetLine(lines);
 
 			if (document_y != line.Y + line.height) {
 				document_y = line.Y + line.height;
-				if (HeightChanged != null) {
-					HeightChanged(this, null);
-				}
+				height_changed = true;
 			}
+
+			if (height_changed || width_changed) {
+				SizeChanged?.Invoke (this, new SizeChangedEventArgs(height_changed));
+			}
+
+			RecalculateAlignments ();
 
 			// scan for links and tell us if its all
 			// changed, so we can update everything
@@ -3731,13 +3907,15 @@ namespace System.Windows.Forms {
 		}
 
 		private void owner_HandleCreated(object sender, EventArgs e) {
-			using (var graphics = owner.CreateGraphics())
+			using (var graphics = owner.CreateGraphics()) {
+				dpi = (graphics.DpiX + graphics.DpiY) / 2;
 				RecalculateDocument(graphics);
+			}
 			AlignCaret();
 		}
 
 		private void owner_VisibleChanged(object sender, EventArgs e) {
-			if (owner.Visible) {
+			if (owner.Visible && owner.IsHandleCreated) {
 				using (var graphics = owner.CreateGraphics())
 					RecalculateDocument(graphics);
 			}
@@ -4031,9 +4209,17 @@ namespace System.Windows.Forms {
 		#endregion	// Internal Methods
 
 		#region Events
+		internal class SizeChangedEventArgs : EventArgs {
+			public bool HeightChanged { get; }
+
+			public SizeChangedEventArgs (bool HeightChanged)
+			{
+				this.HeightChanged = HeightChanged;
+			}
+		}
+
 		internal event EventHandler CaretMoved;
-		internal event EventHandler WidthChanged;
-		internal event EventHandler HeightChanged;
+		internal event EventHandler<SizeChangedEventArgs> SizeChanged;
 		internal event EventHandler LengthChanged;
 		internal event EventHandler UIASelectionChanged;
 		#endregion	// Events
@@ -4089,7 +4275,10 @@ namespace System.Windows.Forms {
 
 		public override SizeF SizeOfPosition (Graphics dc, int pos)
 		{
-			return picture.Size;
+			if (Visible)
+				return picture.Size;
+			else
+				return SizeF.Empty;
 		}
 
 		internal override int MaxHeight ()
@@ -4099,12 +4288,24 @@ namespace System.Windows.Forms {
 
 		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end)
 		{
-			picture.DrawImage (dc, xoff + Line.widths [start], y, false);
+			if (Visible)
+				picture.DrawImage (dc, (xoff + Line.widths [start]), y, false);
 		}
 
 		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end, string text)
 		{
-			picture.DrawImage (dc, xoff + + Line.widths [start], y, false);
+			Draw (dc, color, xoff, y, start, end);
+		}
+
+		public override void Draw (Graphics dc, Color color, float xoff, float y, int start, int end,
+		                           string text, out Rectangle measuredText, bool measureText)
+		{
+			Draw (dc, color, xoff, y, start, end);
+			if (measureText && Visible) {
+				measuredText = new Rectangle (Point.Round (new PointF (xoff + Line.widths [start], y)), Size.Round (picture.Size));
+			} else {
+				measuredText = new Rectangle ();
+			}
 		}
 
 		public override string Text ()

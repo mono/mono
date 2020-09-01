@@ -6,6 +6,7 @@
 #define __MONO_ERROR_INTERNALS_H__
 
 #include <mono/metadata/object-forward.h>
+#include <mono/utils/mono-forward.h>
 #include "mono/utils/mono-compiler.h"
 
 /*Keep in sync with MonoError*/
@@ -32,7 +33,7 @@ typedef union _MonoErrorInternal {
 			/* Valid if error_code == MONO_ERROR_EXCEPTION_INSTANCE.
 			 * Generic error specified by a managed instance.
 			 */
-			uint32_t instance_handle;
+			MonoGCHandle instance_handle;
 		} exn;
 		const char *full_message;
 		const char *full_message_with_fields;
@@ -277,6 +278,11 @@ mono_error_set_cannot_unload_appdomain (MonoError *error, const char *message)
 	mono_error_set_generic_error (error, "System", "CannotUnloadAppDomainException", "%s", message);
 }
 
+static inline void
+mono_error_set_platform_not_supported (MonoError *error, const char *message)
+{
+	mono_error_set_generic_error (error, "System", "PlatformNotSupportedException", "%s", message);
+}
 
 MonoException*
 mono_error_prepare_exception (MonoError *error, MonoError *error_out);

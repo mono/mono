@@ -14,7 +14,7 @@ namespace Internal.Runtime.Augments
 		
 		public void ResetThreadPoolThread () {}
 		
-		public static RuntimeThread InitializeThreadPoolThread () => default;
+		public static RuntimeThread InitializeThreadPoolThread () => new RuntimeThread (null);
 
 		public static RuntimeThread Create (ParameterizedThreadStart start, int maxStackSize) 
 			=> new RuntimeThread (new Thread (start, maxStackSize));

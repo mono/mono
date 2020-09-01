@@ -100,7 +100,7 @@ MonoReflectionTypeBuilderHandle
 mono_class_get_ref_info (MonoClass *klass)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-	guint32 ref_info_handle = mono_class_get_ref_info_handle (klass);
+	MonoGCHandle ref_info_handle = mono_class_get_ref_info_handle (klass);
 
 	if (ref_info_handle == 0)
 		return MONO_HANDLE_NEW (MonoReflectionTypeBuilder, NULL);
@@ -119,7 +119,7 @@ mono_class_get_ref_info_raw (MonoClass *klass)
 {
 	/* FIXME callers of mono_class_get_ref_info_raw should use handles */
 	MONO_REQ_GC_UNSAFE_MODE;
-	guint32 ref_info_handle = mono_class_get_ref_info_handle (klass);
+	MonoGCHandle ref_info_handle = mono_class_get_ref_info_handle (klass);
 
 	if (ref_info_handle == 0)
 		return NULL;
@@ -131,8 +131,8 @@ mono_class_set_ref_info (MonoClass *klass, MonoObjectHandle obj)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 
-	guint32 candidate = mono_gchandle_from_handle (obj, FALSE);
-	guint32 handle = mono_class_set_ref_info_handle (klass, candidate);
+	MonoGCHandle candidate = mono_gchandle_from_handle (obj, FALSE);
+	MonoGCHandle handle = mono_class_set_ref_info_handle (klass, candidate);
 	++class_ref_info_handle_count;
 
 	if (handle != candidate)
@@ -143,7 +143,7 @@ void
 mono_class_free_ref_info (MonoClass *klass)
 {
 	MONO_REQ_GC_NEUTRAL_MODE;
-	guint32 handle = mono_class_get_ref_info_handle (klass);
+	MonoGCHandle handle = mono_class_get_ref_info_handle (klass);
 
 	if (handle) {
 		mono_gchandle_free_internal (handle);
@@ -570,7 +570,7 @@ mono_type_get_object_checked (MonoDomain *domain, MonoType *type, MonoError *err
 	res->type = type;
 	mono_g_hash_table_insert_internal (domain->type_hash, type, res);
 
-	if (type->type == MONO_TYPE_VOID)
+	if (type->type == MONO_TYPE_VOID && !type->byref)
 		domain->typeof_void = (MonoObject*)res;
 
 	mono_domain_unlock (domain);
@@ -1312,7 +1312,7 @@ method_body_object_construct (MonoDomain *domain, MonoClass *unused_class, MonoM
 	MonoArrayHandle il_arr;
 	il_arr = mono_array_new_handle (domain, mono_defaults.byte_class, header->code_size, error);
 	goto_if_nok (error, fail);
-	uint32_t il_gchandle;
+	MonoGCHandle il_gchandle;
 	guint8* il_data;
 	il_data = MONO_ARRAY_HANDLE_PIN (il_arr, guint8, 0, &il_gchandle);
 	memcpy (il_data, header->code, header->code_size);
@@ -1958,7 +1958,7 @@ _mono_reflection_get_type_from_info (MonoAssemblyLoadContext *alc, MonoTypeNameP
 			MonoAssemblyByNameRequest req;
 			mono_assembly_request_prepare_byname (&req, MONO_ASMCTX_DEFAULT, alc);
 			req.requesting_assembly = NULL;
-			req.basedir = image->assembly->basedir;
+			req.basedir = image ? image->assembly->basedir : NULL;
 			assembly = mono_assembly_request_byname (&info->assembly, &req, NULL);
 			if (!assembly)
 				return NULL;
@@ -3131,7 +3131,11 @@ mono_reflection_call_is_assignable_to (MonoClass *klass, MonoClass *oklass, Mono
 	error_init (error);
 
 	if (method == NULL) {
+#ifdef ENABLE_NETCORE
+		method = mono_class_get_method_from_name_checked (mono_class_get_type_builder_class (), "IsAssignableToInternal", 1, 0, error);
+#else
 		method = mono_class_get_method_from_name_checked (mono_class_get_type_builder_class (), "IsAssignableTo", 1, 0, error);
+#endif		
 		mono_error_assert_ok (error);
 		g_assert (method);
 	}

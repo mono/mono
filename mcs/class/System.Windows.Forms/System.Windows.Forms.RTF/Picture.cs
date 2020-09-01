@@ -66,7 +66,7 @@ namespace System.Windows.Forms.RTF {
 		public float Width {
 			get {
 				float w = width;
-				if (w == -1) {
+				if (w < 0) {
 					if (image == null)
 						image = ToImage ();
 					w = image.Width;
@@ -79,7 +79,7 @@ namespace System.Windows.Forms.RTF {
 		public float Height {
 			get {
 				float h = height;
-				if (h == -1) {
+				if (h < 0) {
 					if (image == null)
 						image = ToImage ();
 					h = image.Height;
@@ -113,7 +113,9 @@ namespace System.Windows.Forms.RTF {
 				return false;
 			switch (image_type) {
 			case Minor.PngBlip:
+			case Minor.JpegBlip:
 			case Minor.WinMetafile:
+			case Minor.EnhancedMetafile:
 				break;
 			default:
 				return false;
@@ -126,15 +128,7 @@ namespace System.Windows.Forms.RTF {
 		{
 			if (image == null)
 				image = ToImage ();
-
-			float height = this.height;
-			float width = this.width;
-
-			if (height == -1)
-				height = image.Height;
-			if (width == -1)
-				width = image.Width;
-			dc.DrawImage (image, x, y, width, height);
+			dc.DrawImage (image, x, y, Width, Height);
 		}
 
 		public Image ToImage ()

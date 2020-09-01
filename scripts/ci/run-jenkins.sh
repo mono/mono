@@ -96,7 +96,7 @@ if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then EXTRA_CFLAGS="$EXTRA_CFLAGS -m64 -arc
 if [[ ${CI_TAGS} == *'win-i386'* ]]; then PLATFORM=Win32; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=i686-w64-mingw32 --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/Win32/bin/Release/mono-sgen.exe"; fi
 if [[ ${CI_TAGS} == *'win-amd64'* && ${CI_TAGS} != *'sdks-android'* ]]; then PLATFORM=x64; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --host=x86_64-w64-mingw32 --disable-boehm --enable-btls"; export MONO_EXECUTABLE="${MONO_REPO_ROOT}/msvc/build/sgen/x64/bin/Release/mono-sgen.exe"; fi
 if [[ ${CI_TAGS} == *'freebsd-amd64'* ]]; then export CC="clang"; export CXX="clang++"; EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-dtrace --disable-boehm ac_cv_header_sys_inotify_h=no ac_cv_func_inotify_init=no ac_cv_func_inotify_add_watch=no ac_cv_func_inotify_rm_watch=no"; fi
-if [[ ${CI_TAGS} == *'make-install'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-loadedllvm --prefix=${MONO_REPO_ROOT}/tmp/monoprefix"; fi
+if [[ ${CI_TAGS} == *'make-install'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-llvm --prefix=${MONO_REPO_ROOT}/tmp/monoprefix"; fi
 
 if   [[ ${CI_TAGS} == *'coop-suspend'* ]];   then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --disable-hybrid-suspend --enable-cooperative-suspend";
 elif [[ ${CI_TAGS} == *'hybrid-suspend'* ]]; then EXTRA_CONF_FLAGS="${EXTRA_CONF_FLAGS} --enable-hybrid-suspend";
@@ -211,7 +211,7 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
 
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
             # Simulator runs
-            export sim_test_suites="Mono.Runtime.Tests corlib System.Core System.Data System.Numerics System.Runtime.Serialization System.Transactions System.IO.Compression System.IO.Compression.FileSystem System.Json System.ComponentModel.DataAnnotations System.Security System.Xml System.Xml.Linq System.ServiceModel.Web Mono.Data.Tds Mono.Security"
+            export sim_test_suites="Mono.Runtime.Tests corlib System System.Core System.Data System.Net.Http System.Numerics System.Runtime.Serialization System.Transactions System.IO.Compression System.IO.Compression.FileSystem System.Json System.ComponentModel.DataAnnotations System.Security System.Xml System.Xml.Linq System.ServiceModel.Web System.Web.Services Mono.CSharp Mono.Data.Sqlite Mono.Data.Tds Mono.Security"
 
             ${TESTCMD} --label=build-ios-sim --timeout=20m $gnumake -C sdks/ios build-ios-sim-all
             for suite in ${sim_test_suites}; do ${TESTCMD} --label=run-ios-sim-${suite} --timeout=10m $gnumake -C sdks/ios run-ios-sim-${suite}; done
@@ -322,7 +322,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
 
         if [[ ${CI_TAGS} != *'osx-amd64'* ]]; then
             echo "ENABLE_WINDOWS=1" >> sdks/Make.config
-            echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
+            #echo "ENABLE_WASM_DYNAMIC_RUNTIME=1" >> sdks/Make.config
         fi
 
         if [[ ${CI_TAGS} == *'cxx'* ]]; then
@@ -333,7 +333,7 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         fi
 
         echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
-        echo "ENABLE_WASM_NETCORE=1" >> sdks/Make.config
+        #echo "ENABLE_WASM_NETCORE=1" >> sdks/Make.config
 
         export aot_test_suites="System.Core"
         export mixed_test_suites="System.Core"
@@ -345,18 +345,20 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-wasm     NINJA=
         ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-wasm   NINJA=
 
+        ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
+        ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
+
         if [[ ${CI_TAGS} != *'no-tests'* ]]; then
-            ${TESTCMD} --label=wasm-build --timeout=20m --fatal $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build
             ${TESTCMD} --label=mini --timeout=20m $gnumake -C sdks/wasm run-all-mini
             ${TESTCMD} --label=v8-corlib --timeout=20m $gnu$gnumake -C sdks/wasm run-v8-corlib
+            ${TESTCMD} --label=debugger --timeout=40m $gnumake -C sdks/wasm run-debugger-tests
             ${TESTCMD} --label=mini-system --timeout=60m $gnu$gnumake -C sdks/wasm run-all-System
             ${TESTCMD} --label=system-core --timeout=60m $gnumake -C sdks/wasm run-all-System.Core
             for suite in ${xunit_test_suites}; do ${TESTCMD} --label=xunit-${suite} --timeout=30m $gnumake -C sdks/wasm run-${suite}-xunit; done
             # disable for now until https://github.com/mono/mono/pull/13622 goes in
-            ${TESTCMD} --label=debugger --timeout=20m $gnumake -C sdks/wasm run-debugger-tests
             ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
-            #${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
-            ${TESTCMD} --label=browser-dynamic --timeout=20m $gnumake -C sdks/wasm run-browser-dynamic-tests
+            ${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
+            #${TESTCMD} --label=browser-dynamic --timeout=20m $gnumake -C sdks/wasm run-browser-dynamic-tests
             if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
                 ${TESTCMD} --label=browser-safari --timeout=20m $gnumake -C sdks/wasm run-browser-safari-tests            
             fi
@@ -367,7 +369,6 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             # Requires a net 3.0 sdk
             #${TESTCMD} --label=netcore --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-hello-netcore
             #${TESTCMD} --label=check-aot --timeout=20m $gnumake -C sdks/wasm check-aot
-            ${TESTCMD} --label=package --timeout=20m $gnumake -C sdks/wasm package
         fi
         exit 0
 fi

@@ -284,56 +284,93 @@ namespace System.Diagnostics.Tracing
 //		[MonoTODO]
 		public event EventHandler<EventCommandEventArgs> EventCommandExecuted
 		{
+#if WASM
+			add { throw new PlatformNotSupportedException (); }
+			remove { throw new PlatformNotSupportedException (); }
+#else
 			add { throw new NotImplementedException (); }
 			remove { throw new NotImplementedException (); }
+#endif
 		}
 
 //		[MonoTODO]
 		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest)
 		{
+#if WASM
+			throw new PlatformNotSupportedException ();
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 //		[MonoTODO]
 		public static string GenerateManifest (Type eventSourceType, string assemblyPathToIncludeInManifest, EventManifestOptions flags)
 		{
+#if WASM
+			throw new PlatformNotSupportedException ();
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 //		[MonoTODO]
 		public static Guid GetGuid (Type eventSourceType)
 		{
+#if WASM
+			throw new PlatformNotSupportedException ();
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 //		[MonoTODO]
 		public static string GetName (Type eventSourceType)
 		{
+#if WASM
+			throw new PlatformNotSupportedException ();
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 //		[MonoTODO]
 		public static IEnumerable<EventSource> GetSources ()
 		{
+#if WASM
+			throw new PlatformNotSupportedException ();
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 //		[MonoTODO]
 		public static void SendCommand (EventSource eventSource, EventCommand command, IDictionary<string, string> commandArguments)
 		{
+#if WASM
+			throw new PlatformNotSupportedException ();
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 //		[MonoTODO]
 		public static void SetCurrentThreadActivityId (Guid activityId)
 		{
+#if WASM
+			throw new PlatformNotSupportedException ();
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 
 //		[MonoTODO]
 		public static void SetCurrentThreadActivityId (Guid activityId, out Guid oldActivityThatWillContinue)
 		{
+#if WASM
+			throw new PlatformNotSupportedException ();
+#else
 			throw new NotImplementedException ();
+#endif
 		}
 	}
 }

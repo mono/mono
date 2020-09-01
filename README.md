@@ -5,7 +5,13 @@ standards for C# and the Common Language Runtime.
 
 The Mono project is part of the [.NET Foundation](https://www.dotnetfoundation.org/)
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mono/mono?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+Join us on [Discord](https://aka.ms/dotnet-discord) in the `#monovm` channel:
+
+<a href="https://aka.ms/dotnet-discord">
+  <img src="https://img.shields.io/discord/732297728826277939?style=flat-square&label=Discord&logo=discord&logoColor=white&color=7289DA">
+</a>
+
+### Contents
 
 1. [Compilation and Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
@@ -434,7 +440,6 @@ Disables compilation for the SSA optimization
 framework, and the various SSA-based optimizations.
 
 * `--enable-llvm`
-* `--enable-loadedllvm`
 
   * This enables the use of LLVM as a code generation engine
 for Mono.  The LLVM code generator and optimizer will be 
@@ -446,10 +451,6 @@ full details and up-to-date information on this feature.
 
   * You will need to have an LLVM built that Mono can link
 against.
-
-  * The `--enable-loadedllvm` variant will make the LLVM backend
-into a runtime-loadable module instead of linking it directly
-into the main mono binary.
 
 * `--enable-big-arrays` - Enable use of arrays with indexes larger
 than Int32.MaxValue.

@@ -15,22 +15,55 @@
     <type fullname="System.Numerics.Vector">
       <method signature="System.Boolean get_IsHardwareAccelerated()" body="stub"/>
     </type>
+	<type fullname="System.BitConverter">
+	  <field name="IsLittleEndian" value="true"/>
+	</type>
   </assembly>
 
   <assembly fullname="System.Private.CoreLib">
     <type fullname="System.Numerics.Vector">
       <method signature="System.Boolean get_IsHardwareAccelerated()" body="stub"/>
     </type>
+    <type fullname="System.Runtime.Intrinsics.X86.X86Base">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
+    <type fullname="System.Runtime.Intrinsics.X86.X86Base/64">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
     <type fullname="System.Runtime.Intrinsics.X86.Sse">
 	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
 	</type>
     <type fullname="System.Runtime.Intrinsics.X86.Sse2">
 	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
 	</type>
+    <type fullname="System.Runtime.Intrinsics.X86.Sse2/X64">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
+    <type fullname="System.Runtime.Intrinsics.X86.Sse41/X64">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
     <type fullname="System.Runtime.Intrinsics.X86.Avx">
 	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
 	</type>
     <type fullname="System.Runtime.Intrinsics.X86.Avx2">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
+    <type fullname="System.Runtime.Intrinsics.X86.Lzcnt">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
+    <type fullname="System.Runtime.Intrinsics.X86.Lzcnt/X64">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
+    <type fullname="System.Runtime.Intrinsics.X86.Bmi1">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
+    <type fullname="System.Runtime.Intrinsics.Arm.ArmBase">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
+    <type fullname="System.Runtime.Intrinsics.Arm.ArmBase/Arm64">
+	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
+	</type>
+    <type fullname="System.Runtime.Intrinsics.Arm.AdvSimd">
 	  <method signature="System.Boolean get_IsSupported()" body="stub"/>
 	</type>
 	<type fullname="System.Environment">
@@ -45,7 +78,9 @@
     <type fullname="System.UIntPtr">
 	  <method signature="System.Int32 get_Size()" body="stub" value="4"/>
 	</type>
-	<!-- System.BitConverter::IsLittleEndian is a field -->
+	<type fullname="System.BitConverter">
+	  <field name="IsLittleEndian" value="true"/>
+	</type>
 	<type fullname="System.Globalization.GlobalizationMode">
 	  <method signature="System.Boolean get_Invariant()" body="stub" value="true"/> 
 	</type>
@@ -53,11 +88,16 @@
 	  <!-- Keeps CultureInfo::get_LCID alive -->
 	  <method signature="System.Void OnSerializing(System.Runtime.Serialization.StreamingContext)" body="remove"/>
 	</type>
+	<type fullname="System.SR">
+	  <!-- Keeps resource manager alive -->
+	  <method signature="System.Boolean UsingResourceKeys()" body="stub" value="true"/>
+	</type>
   </assembly>
 
   <assembly fullname="System.Console">
 	<type fullname="System.SR">
 	  <!-- Keeps resource manager alive -->
+	  <!-- FIXME: The resources are still kept -->
 	  <method signature="System.Boolean UsingResourceKeys()" body="stub" value="true"/>
 	</type>
   </assembly>

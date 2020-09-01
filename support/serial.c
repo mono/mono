@@ -510,7 +510,13 @@ set_signal (int fd, MonoSerialSignal signal, gboolean value)
 
 	expected = get_signal_code (signal);
 	if (ioctl (fd, TIOCMGET, &signals) == -1)
-		return -1;
+		{
+			/* Return successfully for pseudo-ttys. */
+			if (errno == EINVAL)
+				return 1;
+
+			return -1;
+		}
 	
 	activated = (signals & expected) != 0;
 	if (activated == value) /* Already set */

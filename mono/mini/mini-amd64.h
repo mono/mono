@@ -390,7 +390,7 @@ typedef struct {
 
 #endif /* !HOST_WIN32 */
 
-#if !defined(__linux__)
+#if !defined(__linux__) && !defined(__sun)
 #define MONO_ARCH_NOMAP32BIT 1
 #endif
 
@@ -520,7 +520,7 @@ mono_amd64_start_gsharedvt_call (GSharedVtCallInfo *info, gpointer *caller, gpoi
 GSList*
 mono_amd64_get_exception_trampolines (gboolean aot);
 
-MONO_LLVM_INTERNAL int
+int
 mono_amd64_get_tls_gs_offset (void);
 
 #if defined(TARGET_WIN32) && !defined(DISABLE_JIT)

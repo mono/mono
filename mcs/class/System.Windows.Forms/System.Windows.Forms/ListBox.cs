@@ -1614,7 +1614,7 @@ namespace System.Windows.Forms
 		private bool KeySearch (Keys key)
 		{
 			char c = (char) key;
-			if (!Char.IsLetterOrDigit (c))
+			if (!Char.IsLetterOrDigit (c) || SelectionMode == SelectionMode.None)
 				return false;
 
 			int idx = FindString (c.ToString (), SelectedIndex);

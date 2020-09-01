@@ -161,6 +161,8 @@ monoutils_sources = \
 	mono-stack-unwinding.h	\
 	hazard-pointer.c	\
 	hazard-pointer.h	\
+	lifo-semaphore.c	\
+	lifo-semaphore.h	\
 	lock-free-queue.c	\
 	lock-free-queue.h	\
 	lock-free-alloc.c	\
@@ -184,6 +186,7 @@ monoutils_sources = \
 	mono-threads-haiku.c	\
 	mono-threads-aix.c	\
 	mono-threads-wasm.c	\
+	mono-threads-sunos.c	\
 	mono-threads.h	\
 	mono-threads-debug.h	\
 	mono-threads-api.h	\
@@ -206,6 +209,7 @@ monoutils_sources = \
 	bsearch.h	\
 	bsearch.c	\
 	mono-signal-handler.h	\
+	mono-signal-handler.c	\
 	mono-conc-hashtable.h	\
 	mono-conc-hashtable.c	\
 	json.h	\
@@ -340,6 +344,7 @@ libmonoutilsinclude_HEADERS = 	\
 	mono-publib.h		\
 	mono-jemalloc.h		\
 	mono-dl-fallback.h	\
+	mono-private-unstable.h	\
 	mono-counters.h
 
 EXTRA_DIST = mono-errno.h mono-embed.h mono-embed.c ../../support/libm/complex.c mono-experiments.def

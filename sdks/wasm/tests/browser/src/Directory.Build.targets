@@ -1,3 +1,22 @@
 <Project>
   <Import Project="Sdk.targets" Sdk="Microsoft.Build.CentralPackageVersions" />
+    <Import Project="$(MSBuildThisFileDirectory)..\..\..\common\Versions.props" />
+    <Target Name="_WriteDotNetTemplateVersion" BeforeTargets="PreBuildEvent">
+    <PropertyGroup>
+      <_globalOutputPath>$(MSBuildThisFileDirectory)</_globalOutputPath>
+      <_globalFixedContent>
+      <![CDATA[
+{
+  "msbuild-sdks": {
+    "Microsoft.Build.CentralPackageVersions": "2.0.1",
+    "Microsoft.Build.Traversal": "1.0.34",
+    "Mono.WebAssembly.Sdk": "$(SDKPackageVersion)"
+  }
+}
+      ]]>
+      </_globalFixedContent>      
+    </PropertyGroup>
+
+    <WriteLinesToFile File="$(_globalOutputPath)\global.json" Overwrite="true" Lines="$(_globalFixedContent)" />
+  </Target>
 </Project>

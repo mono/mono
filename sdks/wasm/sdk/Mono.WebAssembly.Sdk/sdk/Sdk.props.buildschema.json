@@ -5,7 +5,7 @@
     "MonoWasmFrameworkPath": "Overrides the path to the Mono WebAssembly framework assemblies.",
     "MonoWasmRuntimePath": "Overrides the path to the Mono WebAssembly runtime.",
     "MonoWasmTargetsPath": "Overrides the path to the Mono WebAssembly build targets.",
-    "MonoWasmBindingsPath": "Overrides the path to the Mono WebAssembly binding assemblies (WebAssembly.Bindings and WebAssembly.Net.Http).",
-    "DisableImplicitWasmBindingReferences": "Whether to omit references to the WebAssembly binding assemblies (WebAssembly.Bindings and WebAssembly.Net.Http)"
+    "MonoWasmBindingsPath": "Overrides the path to the Mono WebAssembly binding assemblies (WebAssembly.Bindings and System.Net.Http.WebAssemblyHttpHandler).",
+    "DisableImplicitWasmBindingReferences": "Whether to omit references to the WebAssembly binding assemblies (WebAssembly.Bindings and System.Net.Http.WebAssemblyHttpHandler)"
   }
 }

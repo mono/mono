@@ -21,7 +21,7 @@ namespace System.Runtime.Serialization
         public static void SetSerializationSurrogateProvider(this DataContractSerializer serializer, ISerializationSurrogateProvider provider)
         {
             // allocate every time, expectation is that this won't happen enough to warrant maintaining a CondtionalWeakTable.
-            IDataContractSurrogate adapter = new SurrogateProviderAdapter(provider);
+            IDataContractSurrogate adapter = (provider != null) ? new SurrogateProviderAdapter(provider) : null;
 
             // DCS doesn't expose a setter, access the field directly as a workaround
             typeof(DataContractSerializer)

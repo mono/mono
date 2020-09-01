@@ -977,9 +977,15 @@ namespace MonoTests.System.IO
 					Assert.IsTrue (Path.IsPathRooted ("\\"), "IsPathRooted #16");
 					Assert.IsTrue (Path.IsPathRooted ("\\\\"), "IsPathRooted #17");
 				} else {
+// To fix issue https://github.com/mono/mono/issues/18933 we set the AltDirectorySeparatorChar as well.
+// This causes the Assert.IsTrue (!Path.IsPathRooted ("\\"), "IsPathRooted #09"); to fail. 
+// Path.IsPathFullyQualified Method handles paths that use both the DirectorySeparatorChar 
+// and the AltDirectorySeparatorChar characters.
+#if !WASM					
 					Assert.IsTrue (!Path.IsPathRooted ("\\"), "IsPathRooted #09");
 					Assert.IsTrue (!Path.IsPathRooted ("\\\\"), "IsPathRooted #10");
 					Assert.IsTrue (!Path.IsPathRooted ("z:"), "IsPathRooted #11");
+#endif					
 				}
 			}
 		}

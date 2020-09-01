@@ -67,6 +67,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using Mono.Unix.Native;
+using Mono.Unix;
 
 /// X11 Version
 namespace System.Windows.Forms {
@@ -108,9 +109,8 @@ namespace System.Windows.Forms {
 		static object wake_waiting_lock = new object ();
 		static X11Keyboard	Keyboard;		//
 		static X11Dnd		Dnd;
-		static Socket		listen;			//
-		static Socket		wake;			//
-		static Socket		wake_receive;		//
+		static UnixStream	wake;			//
+		static UnixStream	wake_receive;		//
 		static byte[]		network_buffer;		//
 		static bool		detectable_key_auto_repeat;
 
@@ -485,24 +485,19 @@ namespace System.Windows.Forms {
 				hwnd.whole_window = RootWindow;
 				hwnd.ClientWindow = RootWindow;
 
-				// For sleeping on the X11 socket
-				listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-				IPEndPoint ep = new IPEndPoint(IPAddress.Loopback, 0);
-				listen.Bind(ep);
-				listen.Listen(1);
-
 				// To wake up when a timer is ready
 				network_buffer = new byte[10];
 
-				wake = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-				wake.Connect(listen.LocalEndPoint);
+				int[] pipefds = new int[2];
+				Syscall.pipe (pipefds);
+				wake = new UnixStream (pipefds [1]);
 
 				// Make this non-blocking, so it doesn't
 				// deadlock if too many wakes are sent
 				// before the wake_receive end is polled
-				wake.Blocking = false;
+				Syscall.fcntl (pipefds [1], FcntlCommand.F_SETFL, Syscall.fcntl (pipefds [1], FcntlCommand.F_GETFL) | (int) OpenFlags.O_NONBLOCK);
 
-				wake_receive = listen.Accept();
+				wake_receive = new UnixStream (pipefds [0]);
 
 				pollfds = new Pollfd [2];
 				pollfds [0] = new Pollfd ();
@@ -510,7 +505,7 @@ namespace System.Windows.Forms {
 				pollfds [0].events = PollEvents.POLLIN;
 
 				pollfds [1] = new Pollfd ();
-				pollfds [1].fd = wake_receive.Handle.ToInt32 ();
+				pollfds [1].fd = pipefds [0];
 				pollfds [1].events = PollEvents.POLLIN;
 
 				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
@@ -1232,7 +1227,7 @@ namespace System.Windows.Forms {
 
 		void WakeupMain () {
 			try {
-				wake.Send (new byte [] { 0xFF });
+				wake.Write (new byte [] { 0xFF }, 0, 1);
 			} catch (SocketException ex) {
 				if (ex.SocketErrorCode != SocketError.WouldBlock) {
 					throw;
@@ -1739,7 +1734,7 @@ namespace System.Windows.Forms {
 					// Clean out buffer, so we're not busy-looping on the same data
 					if (length == pollfds.Length) {
 						if (pollfds[1].revents != 0)
-							wake_receive.Receive(network_buffer, 0, 1, SocketFlags.None);
+							wake_receive.Read(network_buffer, 0, 1);
 						lock (wake_waiting_lock) {
 							wake_waiting = false;
 						}
@@ -6039,7 +6034,6 @@ namespace System.Windows.Forms {
 			hwnd.y = y;
 			hwnd.width = width;
 			hwnd.height = height;
-			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 
 			if (!hwnd.zero_sized) {
 				if (hwnd.fixed_size) {
@@ -6054,15 +6048,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			// Update our position/size immediately, so
-			// that future calls to SetWindowPos aren't
-			// kept from calling XMoveResizeWindow (by the
-			// "Save a server roundtrip" block above).
-			hwnd.x = x;
-			hwnd.y = y;
-			hwnd.width = width;
-			hwnd.height = height;
-			hwnd.ClientRect = Rectangle.Empty;
+			SendMessage(hwnd.client_window, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 		}
 
 		internal override void SetWindowState(IntPtr handle, FormWindowState state)

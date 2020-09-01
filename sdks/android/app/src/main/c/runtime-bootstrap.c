@@ -102,6 +102,7 @@ typedef void (*mono_jit_parse_options_fn) (int argc, char * argv[]);
 typedef void (*mono_debug_init_fn) (MonoDebugFormat format);
 typedef gboolean (*mini_parse_debug_option_fn) (const char *option);
 typedef void (*mono_jit_cleanup_fn) (MonoDomain *domain);
+typedef void (*mono_jit_set_aot_mode_fn) (int /* MonoAotMode */ mode);
 
 typedef MonoArray *(*mono_array_new_fn) (MonoDomain *domain, MonoClass *eclass, uintptr_t n);
 typedef MonoClass *(*mono_get_string_class_fn) (void);
@@ -132,6 +133,7 @@ static mono_get_string_class_fn mono_get_string_class;
 static mono_dllmap_insert_fn mono_dllmap_insert;
 static mini_parse_debug_option_fn mini_parse_debug_option;
 static mono_jit_cleanup_fn mono_jit_cleanup;
+static mono_jit_set_aot_mode_fn mono_jit_set_aot_mode;
 
 static MonoAssembly *main_assembly;
 static void *runtime_bootstrap_dso;
@@ -395,6 +397,7 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	DLSYM (mono_thread_attach);
 	DLSYM (mono_trace_init);
 	DLSYM (mono_trace_set_log_handler);
+	DLSYM (mono_jit_set_aot_mode);
 
 #undef DLSYM
 
@@ -412,6 +415,9 @@ Java_org_mono_android_AndroidRunner_runTests (JNIEnv* env, jobject thiz, jstring
 	setenv ("MONO_LOG_LEVEL", "info", 1);
 	setenv ("MONO_LOG_MASK", "all", 1);
 	// setenv ("MONO_VERBOSE_METHOD", "GetCallingAssembly", 1);
+
+	/* uncomment to enable interpreter */
+	// mono_jit_set_aot_mode (1000 /* MONO_EE_MODE_INTERP */);
 
 	mono_trace_init ();
 	mono_trace_set_log_handler (_runtime_log, NULL);

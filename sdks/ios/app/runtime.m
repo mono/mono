@@ -9,11 +9,18 @@
 #include <mono/utils/mono-logger.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/metadata/mono-gc.h>
 #include <mono/metadata/exception.h>
 #include <mono/jit/jit.h>
+#include <mono/jit/mono-private-unstable.h>
 
 #include <sys/stat.h>
 #include <sys/mman.h>
+
+// no-op for iOS and tvOS.
+// watchOS is not supported yet.
+#define MONO_ENTER_GC_UNSAFE
+#define MONO_EXIT_GC_UNSAFE
 
 #include "runtime.h"
 
@@ -21,16 +28,7 @@
 // Based on runtime/ in xamarin-macios
 //
 
-#define PRINT(...) do { printf (__VA_ARGS__); } while (0);
-
 static os_log_t stdout_log;
-
-/* These are not in public headers */
-typedef unsigned char* (*MonoLoadAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void **out_handle);
-typedef void  (*MonoFreeAotDataFunc)          (MonoAssembly *assembly, int size, void *user_data, void *handle);
-void mono_install_load_aot_data_hook (MonoLoadAotDataFunc load_func, MonoFreeAotDataFunc free_func, void *user_data);
-void mono_trace_init (void);
-void mono_gc_init_finalizer_thread (void);
 
 bool
 file_exists (const char *path)
@@ -173,7 +171,7 @@ fetch_exception_property (MonoObject *obj, const char *name, bool is_virtual)
 
 		return (MonoObject *) mono_runtime_invoke (get, obj, NULL, &exc);
 	} else {
-		PRINT ("Could not find the property System.Exception.%s", name);
+		os_log_error (OS_LOG_DEFAULT, "Could not find the property System.Exception.%{public}s.", name);
 	}
 
 	return NULL;
@@ -304,11 +302,13 @@ mono_ios_runtime_init (void)
 		}
 		aindex ++;
 	}
+
 	if (aindex == nargs) {
 		os_log_info (OS_LOG_DEFAULT, "Executable argument missing.");
 		exit (1);
 	}
-    executable = args [aindex];
+
+	executable = args [aindex];
 	aindex ++;
 
 	const char *bundle = get_bundle_path ();
@@ -325,7 +325,6 @@ mono_ios_runtime_init (void)
 	mono_install_assembly_preload_hook (assembly_preload_hook, NULL);
 	mono_install_load_aot_data_hook (load_aot_data, free_aot_data, NULL);
 	mono_install_unhandled_exception_hook (unhandled_exception_handler, NULL);
-	mono_trace_init ();
 	mono_trace_set_log_handler (log_callback, NULL);
 	mono_set_signal_chaining (TRUE);
 	mono_set_crash_chaining (TRUE);
@@ -341,7 +340,9 @@ mono_ios_runtime_init (void)
 	mono_jit_init_version ("Mono.ios", "mobile");
 
 #ifdef DEVICE // device runtimes are configured to use lazy gc thread creation
+	MONO_ENTER_GC_UNSAFE;
 	mono_gc_init_finalizer_thread ();
+	MONO_EXIT_GC_UNSAFE;
 #endif
 
 	MonoAssembly *assembly = load_assembly (executable, NULL);
@@ -369,13 +370,15 @@ mono_ios_runtime_init (void)
 }
 
 static int *testPassed, *testSkipped, *testFailed;
+static char **testSummaryMessage;
 
 void
-mono_sdks_ui_register_testcase_result_fields (int *passed, int *skipped, int *failed)
+mono_sdks_ui_register_test_result_fields (int *passed, int *skipped, int *failed, char **summaryMessage)
 {
 	testPassed = passed;
 	testSkipped = skipped;
 	testFailed = failed;
+	testSummaryMessage = summaryMessage;
 }
 
 void
@@ -386,6 +389,12 @@ mono_sdks_ui_increment_testcase_result (int type)
 		case 1: (*testSkipped)++; break;
 		case 2: (*testFailed)++; break;
 	}
+}
+
+void
+mono_sdks_ui_set_test_summary_message (const char *summaryMessage)
+{
+	*testSummaryMessage = strdup (summaryMessage);
 }
 
 //
@@ -451,6 +460,12 @@ xamarin_GetFolderPath (int folder)
 	return strdup ([path UTF8String]);
 }
 
+// mcs/class/System/System.Net/WebConnection.cs
+void
+xamarin_start_wwan (const char *uri)
+{
+	// let's ignore this
+}
 
 // mcs/class/corlib/System/Console.iOS.cs
 void

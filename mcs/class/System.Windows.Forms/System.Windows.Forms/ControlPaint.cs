@@ -370,11 +370,11 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.CPDrawContainerGrabHandle (graphics, bounds);
 		}
 
-		public static void DrawFocusRectangle( Graphics graphics, Rectangle rectangle) {
+		public static void DrawFocusRectangle(Graphics graphics, Rectangle rectangle) {
 			DrawFocusRectangle(graphics, rectangle, SystemColors.Control, SystemColors.ControlText);
 		}
 
-		public static void DrawFocusRectangle( Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) {
+		public static void DrawFocusRectangle(Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) {
 
 			ThemeEngine.Current.CPDrawFocusRectangle (graphics, rectangle, foreColor, backColor);
 		}

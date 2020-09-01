@@ -379,7 +379,7 @@ namespace MonoTests.System.Net {
 			Assert.IsTrue (e is WebException);
 			//#if NET_2_0 e.Message == "The underlying connection was closed: The remote name could not be resolved."
 			//#if NET_1_1 e.Message == "The remote name could not be resolved: 'thisdomaindoesnotexist.monotestcase.x'"
-			Assert.AreEqual (((WebException)e).Status, WebExceptionStatus.NameResolutionFailure);
+			Assert.AreEqual (WebExceptionStatus.NameResolutionFailure, ((WebException)e).Status);
 			Assert.IsNull (e.InnerException);
 		}
 	}

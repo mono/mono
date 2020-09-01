@@ -430,18 +430,6 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = OP_FMOVE;
 		break;
 
-	case OP_FCONV_TO_OVF_I1_UN:
-	case OP_FCONV_TO_OVF_I2_UN:
-	case OP_FCONV_TO_OVF_I4_UN:
-	case OP_FCONV_TO_OVF_I8_UN:
-	case OP_FCONV_TO_OVF_U1_UN:
-	case OP_FCONV_TO_OVF_U2_UN:
-	case OP_FCONV_TO_OVF_U4_UN:
-	case OP_FCONV_TO_OVF_I_UN:
-	case OP_FCONV_TO_OVF_U_UN:
-		mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("float conv.ovf.un opcodes not supported."));
-		break;
-
 	case OP_IDIV:
 	case OP_IREM:
 	case OP_IDIV_UN:
@@ -1287,7 +1275,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
-					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, 0);
+					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, ins->flags);
 					break;
 				}
 				case OP_LOADV_MEMBASE: {

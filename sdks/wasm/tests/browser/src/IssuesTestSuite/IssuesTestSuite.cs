@@ -87,7 +87,7 @@ namespace TestSuite
         private static async Task Fetch()
         {
             var client = CreateHttpClient();
-            var response = await client.GetStringAsync("base/publish/netstandard2.0/NowIsTheTime.txt");
+            var response = await client.GetStringAsync("base/publish/NowIsTheTime.txt");
             fetchResponse.Push(response);
         }   
 
@@ -103,7 +103,7 @@ namespace TestSuite
         private static async Task FetchHeaders()
         {
             var client = CreateHttpClient();
-            var response = await client.GetAsync("base/publish/netstandard2.0/NowIsTheTime.txt");
+            var response = await client.GetAsync("base/publish/NowIsTheTime.txt");
             // Raise exception if fails
             response.EnsureSuccessStatusCode();
             // On success, return sign in results from the server response packet
@@ -120,16 +120,21 @@ namespace TestSuite
             {
                 BaseApiUrl = (string)location.GetObjectProperty("origin");
             }
-            // WasmHttpMessageHandler.StreamingEnabled = true;
-            //                 var client = new System.Net.Http.HttpClient()
-            //     {
-            //         DefaultRequestHeaders = { { "origin", "WindowsCalculator" } }
-            //     };
 
             return new HttpClient() { BaseAddress = new Uri(BaseApiUrl), DefaultRequestHeaders = { { "origin", "WindowsCalculator" } } };
         }
 
+        // https://github.com/mono/mono/issues/18933 System.IO.Path.GetFileName doesn't work
+        public static string Issue18933_FileName_Backslash ()
+        {
+            return System.IO.Path.GetFileName(@"C:\FakePath\File1.txt");
+        }
 
+        // https://github.com/mono/mono/issues/18933 System.IO.Path.GetFileName doesn't work
+        public static string Issue18933_Directory_Backslash()
+        {
+            return new System.IO.DirectoryInfo(@"C:\FakePath\File1.txt").Name;
+        }
     }
 
     [Flags]

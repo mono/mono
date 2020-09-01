@@ -21,7 +21,7 @@
   <Docs>
     <remarks>
       <attribution license="cc4" from="Microsoft" modified="false" />
-      <para>XML Web services discovery involves discovering the available XML Web services, given an URL. The URL typically points to a discovery document, which usually has a.disco file name extension. The discovery document, which is an XML document, contains references to information about the existance of XML Web services, such as a service description, XML Schema Definition (XSD) language schema, or another discovery document. This class represents the contents of the discovery document; where the <see cref="P:System.Web.Services.Discovery.DiscoveryDocument.References" /> property contains a list of the references contained within the discovery document.</para>
+      <para>XML Web services discovery involves discovering the available XML Web services, given an URL. The URL typically points to a discovery document, which usually has a.disco file name extension. The discovery document, which is an XML document, contains references to information about the existence of XML Web services, such as a service description, XML Schema Definition (XSD) language schema, or another discovery document. This class represents the contents of the discovery document; where the <see cref="P:System.Web.Services.Discovery.DiscoveryDocument.References" /> property contains a list of the references contained within the discovery document.</para>
     </remarks>
     <summary>
       <attribution license="cc4" from="Microsoft" modified="false" />

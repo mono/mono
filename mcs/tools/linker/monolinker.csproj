@@ -87,11 +87,13 @@
     <Compile Include="..\..\..\external\linker\src\linker\Linker\I18nAssemblies.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\IDependencyRecorder.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\ILogger.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker\IReflectionPatternRecorder.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\IXApiVisitor.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\Inflater.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\KnownMembers.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\LinkContext.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\LoadException.cs" />
+    <Compile Include="..\..\..\external\linker\src\linker\Linker\LoggingReflectionPatternRecorder.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MarkException.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MarkingHelpers.cs" />
     <Compile Include="..\..\..\external\linker\src\linker\Linker\MethodAction.cs" />
