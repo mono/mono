@@ -119,6 +119,9 @@ mono_domain_assembly_foreach (MonoDomain* domain, MonoDomainAssemblyFunc func, v
 MONO_API MonoAssembly *
 mono_domain_assembly_open  (MonoDomain *domain, const char *name);
 
+MONO_API void
+mono_set_ignore_version_and_key_when_finding_assemblies_already_loaded(mono_bool value);
+
 MONO_API mono_bool
 mono_domain_finalize       (MonoDomain *domain, uint32_t timeout);
 
