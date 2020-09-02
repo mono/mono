@@ -1094,28 +1094,28 @@ dump_mint_code (const guint16 *start, const guint16* end)
 }
 
 static void
-dump_interp_inst (InterpInst *ins)
+dump_interp_inst_no_newline (InterpInst *ins)
 {
 	char *descr = mono_interp_dis_mintop (ins->il_offset, FALSE, &ins->data [0], ins->opcode);
 	g_print ("%s", descr);
 	g_free (descr);
 }
 
+static void
+dump_interp_inst (InterpInst *ins)
+{
+	dump_interp_inst_no_newline (ins);
+	g_print ("\n");
+}
+
 static G_GNUC_UNUSED void
 dump_interp_bb (InterpBasicBlock *bb)
 {
-	for (InterpInst *ins = bb->first_ins; ins != NULL; ins = ins->next) {
+	g_print ("BB%d:\n", bb->index);
+	for (InterpInst *ins = bb->first_ins; ins != NULL; ins = ins->next)
 		dump_interp_inst (ins);
-		g_print ("\n");
-	}
 }
 
-static void
-dump_interp_inst_newline (InterpInst *ins)
-{
-	dump_interp_inst (ins);
-	g_print ("\n");
-}
 
 /* For debug use */
 void
@@ -1145,7 +1145,7 @@ mono_interp_print_td_code (TransformData *td)
 	g_print ("IR for \"%s\"\n", name);
 	g_free (name);
 	while (ins) {
-		dump_interp_inst_newline (ins);
+		dump_interp_inst (ins);
 		ins = ins->next;
 	}
 }
@@ -7257,7 +7257,7 @@ interp_fold_unop (TransformData *td, StackContentInfo *sp, InterpInst *ins)
 			g_assert_not_reached ();
 		if (td->verbose_level) {
 			g_print ("Fold unop :\n\t");
-			dump_interp_inst_newline (sp->ins);
+			dump_interp_inst (sp->ins);
 		}
 		mono_interp_stats.killed_instructions++;
 		interp_clear_ins (ins);
@@ -7426,7 +7426,7 @@ interp_fold_binop (TransformData *td, StackContentInfo *sp, InterpInst *ins)
 			g_assert_not_reached ();
 		if (td->verbose_level) {
 			g_print ("Fold binop :\n\t");
-			dump_interp_inst_newline (ins);
+			dump_interp_inst (ins);
 		}
 		sp [0].ins = ins;
 	} else {
@@ -7552,7 +7552,7 @@ retry:
 		// The instruction pops some values then pushes some other
 		get_inst_stack_usage (td, ins, &pop, &push);
 		if (td->verbose_level && ins->opcode != MINT_NOP) {
-			dump_interp_inst (ins);
+			dump_interp_inst_no_newline (ins);
 			g_print (", sp %d, (pop %d, push %d)\n", sp - stack, pop, push);
 		}
 		if (MINT_IS_LDLOC (ins->opcode)) {
@@ -7589,7 +7589,7 @@ retry:
 						local_ref_count [loaded_local]--;
 						if (td->verbose_level) {
 							g_print ("Add stloc.np :\n\t");
-							dump_interp_inst_newline (ins);
+							dump_interp_inst (ins);
 						}
 						mono_interp_stats.stloc_nps++;
 						mono_interp_stats.killed_instructions++;
@@ -7609,7 +7609,7 @@ retry:
 					local_ref_count [ins->data [0]]++;
 					if (td->verbose_level) {
 						g_print ("cprop loc %d -> loc %d :\n\t", loaded_local, locals [loaded_local].local);
-						dump_interp_inst_newline (ins);
+						dump_interp_inst (ins);
 					}
 				} else if (locals [loaded_local].type == STACK_VALUE_I4 || locals [loaded_local].type == STACK_VALUE_I8) {
 					gboolean is_i4 = locals [loaded_local].type == STACK_VALUE_I4;
@@ -7624,7 +7624,7 @@ retry:
 					mono_interp_stats.copy_propagations++;
 					if (td->verbose_level) {
 						g_print ("cprop loc %d -> ct :\n\t", loaded_local);
-						dump_interp_inst_newline (ins);
+						dump_interp_inst (ins);
 					}
 					// FIXME this replace_op got ugly
 					replace_op = ins->opcode;
@@ -7674,7 +7674,7 @@ retry:
 						// Clear ldloc / stloc pair and replace it with movloc superinstruction
 						if (td->verbose_level) {
 							g_print ("Add movloc (ldloc off %d) :\n\t", sp->ins->il_offset);
-							dump_interp_inst_newline (ins);
+							dump_interp_inst (ins);
 						}
 						mono_interp_stats.movlocs++;
 						mono_interp_stats.killed_instructions++;
@@ -7830,7 +7830,7 @@ retry:
 			mono_interp_stats.ldlocas_removed++;
 			if (td->verbose_level) {
 				g_print ("Replace ldloca/ldfld pair :\n\t");
-				dump_interp_inst_newline (ins->next);
+				dump_interp_inst (ins->next);
 			}
 		} else if (ins->opcode >= MINT_STFLD_I1 && ins->opcode <= MINT_STFLD_O) {
 			StackContentInfo *src = &sp [-2];
@@ -7851,7 +7851,7 @@ retry:
 
 					if (td->verbose_level) {
 						g_print ("Replace ldloca/stfld pair (off %p) :\n\t", src->ins->il_offset);
-						dump_interp_inst_newline (ins);
+						dump_interp_inst (ins);
 					}
 				} else if (src->val.type == STACK_VALUE_LOCAL && (mono_interp_opt & INTERP_OPT_SUPER_INSTRUCTIONS)) {
 					int loc_index = src->val.local;
