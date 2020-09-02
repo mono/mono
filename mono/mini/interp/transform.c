@@ -3478,7 +3478,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 	td->cbb = td->entry_bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
 	td->cbb->index = td->bb_count++;
-	td->cbb->stack_height = -1;
+	td->cbb->stack_height = td->sp - td->stack;
 
 	get_basic_blocks (td, header);
 
