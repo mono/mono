@@ -4171,6 +4171,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						target_bb->stack_state = (StackInfo*)g_memdup (td->stack, stack_height * sizeof (td->stack [0]));
 				}
 				target_bb_table [i] = target_bb;
+				interp_link_bblocks (td, td->cbb, target_bb);
 				td->ip += 4;
 			}
 			td->last_ins->info.target_bb_table = target_bb_table;
