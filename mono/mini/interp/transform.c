@@ -7836,17 +7836,9 @@ retry:
 		} else if (MINT_IS_UNOP_CONDITIONAL_BRANCH (ins->opcode)) {
 			ins = interp_fold_unop_cond_br (td, bb, sp, ins);
 			sp--;
-			// We can't clear any instruction that pushes the stack, because the
-			// branched code will expect a certain stack size.
-			for (StackContentInfo *sp_iter = stack; sp_iter < sp; sp_iter++)
-				sp_iter->ins = NULL;
 		} else if (MINT_IS_BINOP_CONDITIONAL_BRANCH (ins->opcode)) {
 			ins = interp_fold_binop_cond_br (td, bb, sp, ins);
 			sp -= 2;
-			// We can't clear any instruction that pushes the stack, because the
-			// branched code will expect a certain stack size.
-			for (StackContentInfo *sp_iter = stack; sp_iter < sp; sp_iter++)
-				sp_iter->ins = NULL;
 		} else if (MINT_IS_UNOP (ins->opcode)) {
 			ins = interp_fold_unop (td, sp, ins);
 		} else if (MINT_IS_BINOP (ins->opcode)) {
