@@ -390,6 +390,17 @@ interp_merge_bblocks (InterpBasicBlock *bb, InterpBasicBlock *bbadd)
 	g_assert (bbadd->in_count == 1 && bbadd->in_bb [0] == bb);
 	g_assert (bb->next_bb == bbadd);
 
+	// Remove the branch instruction to the invalid bblock
+	if (bb->last_ins) {
+		if (bb->last_ins->opcode == MINT_BR || bb->last_ins->opcode == MINT_BR_S) {
+			g_assert (bb->last_ins->info.target_bb == bbadd);
+			interp_clear_ins (bb->last_ins);
+		} else if (bb->last_ins->opcode == MINT_SWITCH) {
+			// Weird corner case where empty switch can branch by default to next instruction
+			bb->last_ins->opcode = MINT_POP;
+		}
+	}
+
 	// Append all instructions from bbadd to bb
 	if (bb->last_ins) {
 		if (bbadd->first_ins) {
@@ -415,6 +426,38 @@ interp_merge_bblocks (InterpBasicBlock *bb, InterpBasicBlock *bbadd)
 
 
 	// bbadd should never be used/referenced after this
+}
+
+// array must contain ref
+static void
+remove_bblock_ref (InterpBasicBlock **array, InterpBasicBlock *ref, int len)
+{
+	int i = 0;
+	while (array [i] != ref)
+		i++;
+	i++;
+	while (i < len) {
+		array [i - 1] = array [i];
+		i++;
+	}
+}
+
+static void
+interp_unlink_bblocks (InterpBasicBlock *from, InterpBasicBlock *to)
+{
+	remove_bblock_ref (from->out_bb, to, from->out_count);
+	from->out_count--;
+	remove_bblock_ref (to->in_bb, from, to->in_count);
+	to->in_count--;
+}
+
+static void
+interp_remove_bblock (TransformData *td, InterpBasicBlock *bb, InterpBasicBlock *prev_bb)
+{
+	g_assert (!bb->in_count);
+	while (bb->out_count)
+		interp_unlink_bblocks (bb, bb->out_bb [0]);
+	prev_bb->next_bb = bb->next_bb;
 }
 
 static void
@@ -471,6 +514,10 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 	}
 
 	InterpBasicBlock *target_bb = td->offset_to_bb [target];
+	g_assert (target_bb);
+
+	if (short_op == MINT_LEAVE_S || short_op == MINT_LEAVE_S_CHECK)
+		target_bb->eh_block = TRUE;
 
 	interp_link_bblocks (td, td->cbb, target_bb);
 
@@ -486,11 +533,9 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 
 	if (shorten_branch) {
 		interp_add_ins (td, short_op);
-		g_assert (td->offset_to_bb [target]);
 		td->last_ins->info.target_bb = target_bb;
 	} else {
 		interp_add_ins (td, long_op);
-		g_assert (td->offset_to_bb [target]);
 		td->last_ins->info.target_bb = target_bb;
 	}
 }
@@ -2286,8 +2331,6 @@ interp_inline_method (TransformData *td, MonoMethod *target_method, MonoMethodHe
 
 		interp_link_bblocks (td, prev_cbb, td->entry_bb);
 		prev_cbb->next_bb = td->entry_bb;
-		/* FIXME we should merge bblocks during optimization passes, not now */
-		interp_merge_bblocks (prev_cbb, td->entry_bb);
 	}
 
 	td->ip = prev_ip;
@@ -3408,9 +3451,14 @@ initialize_clause_bblocks (TransformData *td)
 				td->clause_indexes [j] = i;
 		}
 
+		bb = td->offset_to_bb [c->try_offset];
+		g_assert (bb);
+		bb->eh_block = TRUE;
+
 		/* We never inline methods with clauses, so we can hard code stack heights */
 		bb = td->offset_to_bb [c->handler_offset];
 		g_assert (bb);
+		bb->eh_block = TRUE;
 		bb->stack_height = 1;
 		bb->vt_stack_size = 0;
 		bb->stack_state = (StackInfo*) mono_mempool_alloc0 (td->mempool, sizeof (StackInfo));
@@ -3420,6 +3468,7 @@ initialize_clause_bblocks (TransformData *td)
 		if (c->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
 			bb = td->offset_to_bb [c->data.filter_offset];
 			g_assert (bb);
+			bb->eh_block = TRUE;
 			bb->stack_height = 1;
 			bb->vt_stack_size= 0;
 			bb->stack_state = (StackInfo*) mono_mempool_alloc0 (td->mempool, sizeof (StackInfo));
@@ -6982,6 +7031,33 @@ clear_local_content_info_for_local (StackValue *start, StackValue *end, int loca
 	}
 }
 
+// Traverse the list of basic blocks and merge adjacent blocks
+static void
+interp_optimize_bblocks (TransformData *td)
+{
+	InterpBasicBlock *bb = td->entry_bb;
+
+	while (TRUE) {
+		InterpBasicBlock *next_bb = bb->next_bb;
+		if (!next_bb)
+			break;
+		if (next_bb->in_count == 0 && !next_bb->eh_block) {
+			if (td->verbose_level)
+				g_print ("Removed BB%d\n", next_bb->index);
+			interp_remove_bblock (td, next_bb, bb);
+			continue;
+		} else if (bb->out_count == 1 && bb->out_bb [0] == next_bb && next_bb->in_count == 1 && !next_bb->eh_block) {
+			g_assert (next_bb->in_bb [0] == bb);
+			interp_merge_bblocks (bb, next_bb);
+			if (td->verbose_level)
+				g_print ("Merged BB%d and BB%d\n", bb->index, next_bb->index);
+			continue;
+		}
+
+		bb = next_bb;
+	}
+}
+
 static gboolean
 interp_local_deadce (TransformData *td, int *local_ref_count)
 {
@@ -7851,6 +7927,9 @@ interp_super_instructions (TransformData *td)
 static void
 interp_optimize_code (TransformData *td)
 {
+	if (mono_interp_opt & INTERP_OPT_BBLOCKS)
+		interp_optimize_bblocks (td);
+
 	if (mono_interp_opt & INTERP_OPT_CPROP)
 		MONO_TIME_TRACK (mono_interp_stats.cprop_time, interp_cprop (td));
 

@@ -7431,6 +7431,8 @@ interp_parse_options (const char *options)
 			mono_interp_opt &= ~INTERP_OPT_CPROP;
 		else if (strncmp (arg, "-super", 6) == 0)
 			mono_interp_opt &= ~INTERP_OPT_SUPER_INSTRUCTIONS;
+		else if (strncmp (arg, "-bblocks", 8) == 0)
+			mono_interp_opt &= ~INTERP_OPT_BBLOCKS;
 		else if (strncmp (arg, "-all", 4) == 0)
 			mono_interp_opt = INTERP_OPT_NONE;
 	}
