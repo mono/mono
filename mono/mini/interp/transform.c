@@ -6985,7 +6985,6 @@ clear_local_content_info_for_local (StackValue *start, StackValue *end, int loca
 static gboolean
 interp_local_deadce (TransformData *td, int *local_ref_count)
 {
-	InterpInst *ins;
 	gboolean needs_dce = FALSE;
 	gboolean needs_cprop = FALSE;
 
@@ -7009,26 +7008,28 @@ interp_local_deadce (TransformData *td, int *local_ref_count)
 		return FALSE;
 
 	// Kill instructions that don't use stack and are storing into dead locals
-	for (ins = td->first_ins; ins != NULL; ins = ins->next) {
-		if (MINT_IS_STLOC_NP (ins->opcode)) {
-			if (!local_ref_count [ins->data [0]] && !td->locals [ins->data [0]].indirects) {
-				interp_clear_ins (td, ins);
-				mono_interp_stats.killed_instructions++;
-				// We killed an instruction that makes use of the stack. This might uncover new optimizations
-				needs_cprop = TRUE;
-			}
-		} else if (MINT_IS_MOVLOC (ins->opcode)) {
-			if (!local_ref_count [ins->data [1]] && !td->locals [ins->data [1]].indirects) {
-				interp_clear_ins (td, ins);
-				mono_interp_stats.killed_instructions++;
-			}
-		} else if (MINT_IS_STLOC (ins->opcode) && ins->opcode != MINT_STLOC_VT) {
-			if (!local_ref_count [ins->data [0]] && !td->locals [ins->data [0]].indirects) {
-				// We store to a dead stloc, we can replace it with a POP to save local space
-				ins->opcode = MINT_POP;
-				mono_interp_stats.added_pop_count++;
-				// We might to be able to kill both the pop and the instruction pushing the value
-				needs_cprop = TRUE;
+	for (InterpBasicBlock *bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
+		for (InterpInst *ins = bb->first_ins; ins != NULL; ins = ins->next) {
+			if (MINT_IS_STLOC_NP (ins->opcode)) {
+				if (!local_ref_count [ins->data [0]] && !td->locals [ins->data [0]].indirects) {
+					interp_clear_ins (td, ins);
+					mono_interp_stats.killed_instructions++;
+					// We killed an instruction that makes use of the stack. This might uncover new optimizations
+					needs_cprop = TRUE;
+				}
+			} else if (MINT_IS_MOVLOC (ins->opcode)) {
+				if (!local_ref_count [ins->data [1]] && !td->locals [ins->data [1]].indirects) {
+					interp_clear_ins (td, ins);
+					mono_interp_stats.killed_instructions++;
+				}
+			} else if (MINT_IS_STLOC (ins->opcode) && ins->opcode != MINT_STLOC_VT) {
+				if (!local_ref_count [ins->data [0]] && !td->locals [ins->data [0]].indirects) {
+					// We store to a dead stloc, we can replace it with a POP to save local space
+					ins->opcode = MINT_POP;
+					mono_interp_stats.added_pop_count++;
+					// We might to be able to kill both the pop and the instruction pushing the value
+					needs_cprop = TRUE;
+				}
 			}
 		}
 	}
