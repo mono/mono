@@ -2854,7 +2854,7 @@ get_basic_blocks (TransformData *td, MonoMethodHeader *header)
 			g_assert_not_reached ();
 		}
 
-		if (i == CEE_THROW || i == CEE_ENDFINALLY)
+		if (i == CEE_THROW || i == CEE_ENDFINALLY || i == CEE_RETHROW)
 			get_bb (td, ip);
 	}
 }
@@ -6550,6 +6550,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				SIMPLE_OP (td, MINT_RETHROW);
 				td->last_ins->data [0] = rtm->exvar_offsets [clause_index];
 				td->sp = td->stack;
+				link_bblocks = FALSE;
 				break;
 			}
 			case CEE_SIZEOF: {
