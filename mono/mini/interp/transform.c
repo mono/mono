@@ -245,7 +245,7 @@ interp_insert_ins (TransformData *td, InterpInst *prev_ins, guint16 opcode)
 }
 
 static void
-interp_clear_ins (TransformData *td, InterpInst *ins)
+interp_clear_ins (InterpInst *ins)
 {
 	// Clearing instead of removing from the list makes everything easier.
 	// We don't change structure of the instruction list, we don't need
@@ -1174,7 +1174,7 @@ interp_get_ldc_i4_from_const (TransformData *td, InterpInst *ins, gint32 ct)
 	if (ins_size < new_size) {
 		// We can't replace the passed instruction, discard it and emit a new one
 		ins = interp_insert_ins (td, ins, opcode);
-		interp_clear_ins (td, ins->prev);
+		interp_clear_ins (ins->prev);
 	} else {
 		ins->opcode = opcode;
 	}
@@ -1194,7 +1194,7 @@ interp_inst_replace_with_i8_const (TransformData *td, InterpInst *ins, gint64 ct
 
 	if (size < 5) {
 		ins = interp_insert_ins (td, ins, MINT_LDC_I8);
-		interp_clear_ins (td, ins->prev);
+		interp_clear_ins (ins->prev);
 	} else {
 		ins->opcode = MINT_LDC_I8;
 	}
@@ -1886,8 +1886,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			base_klass = mono_class_from_mono_type_internal (base_type);
 
 			// Remove the boxing of valuetypes
-			interp_clear_ins (td, td->last_ins->prev->prev);
-			interp_clear_ins (td, td->last_ins);
+			interp_clear_ins (td->last_ins->prev->prev);
+			interp_clear_ins (td->last_ins);
 
 			intrinsify = TRUE;
 		} else if (td->last_ins && td->last_ins->opcode == MINT_BOX &&
@@ -1901,7 +1901,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			int mt = mint_type (m_class_get_byval_arg (base_klass));
 
 			// Remove boxing and load the value of this
-			interp_clear_ins (td, td->last_ins);
+			interp_clear_ins (td->last_ins);
 			interp_insert_ins (td, td->last_ins->prev->prev, interp_get_ldind_for_mt (mt));
 
 			intrinsify = TRUE;
@@ -4556,7 +4556,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			case STACK_TYPE_I4: {
 				if (interp_ins_is_ldc (td->last_ins) && td->last_ins == td->cbb->last_ins) {
 					gint64 ct = interp_get_const_from_ldc_i4 (td->last_ins);
-					interp_clear_ins (td, td->last_ins);
+					interp_clear_ins (td->last_ins);
 
 					interp_add_ins (td, MINT_LDC_I8);
 					WRITE64_INS (td->last_ins, 0, &ct);
@@ -4625,7 +4625,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			case STACK_TYPE_I4:
 				if (interp_ins_is_ldc (td->last_ins) && td->last_ins == td->cbb->last_ins) {
 					gint64 ct = (guint32)interp_get_const_from_ldc_i4 (td->last_ins);
-					interp_clear_ins (td, td->last_ins);
+					interp_clear_ins (td->last_ins);
 
 					interp_add_ins (td, MINT_LDC_I8);
 					WRITE64_INS (td->last_ins, 0, &ct);
@@ -4960,7 +4960,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if ((td->last_ins->opcode == MINT_BOX || td->last_ins->opcode == MINT_BOX_VT) &&
 					(td->sp - 1)->klass == klass && td->last_ins == td->cbb->last_ins) {
 				gboolean is_vt = td->last_ins->opcode == MINT_BOX_VT;
-				interp_clear_ins(td, td->last_ins);
+				interp_clear_ins (td->last_ins);
 				if (is_vt)
 					PUSH_VT(td, mono_class_value_size(klass, NULL));
 				int mt = mint_type(m_class_get_byval_arg(klass));
@@ -7012,14 +7012,14 @@ interp_local_deadce (TransformData *td, int *local_ref_count)
 		for (InterpInst *ins = bb->first_ins; ins != NULL; ins = ins->next) {
 			if (MINT_IS_STLOC_NP (ins->opcode)) {
 				if (!local_ref_count [ins->data [0]] && !td->locals [ins->data [0]].indirects) {
-					interp_clear_ins (td, ins);
+					interp_clear_ins (ins);
 					mono_interp_stats.killed_instructions++;
 					// We killed an instruction that makes use of the stack. This might uncover new optimizations
 					needs_cprop = TRUE;
 				}
 			} else if (MINT_IS_MOVLOC (ins->opcode)) {
 				if (!local_ref_count [ins->data [1]] && !td->locals [ins->data [1]].indirects) {
-					interp_clear_ins (td, ins);
+					interp_clear_ins (ins);
 					mono_interp_stats.killed_instructions++;
 				}
 			} else if (MINT_IS_STLOC (ins->opcode) && ins->opcode != MINT_STLOC_VT) {
@@ -7156,7 +7156,7 @@ interp_fold_unop (TransformData *td, StackContentInfo *sp, InterpInst *ins)
 			dump_interp_inst_newline (sp->ins);
 		}
 		mono_interp_stats.killed_instructions++;
-		interp_clear_ins (td, ins);
+		interp_clear_ins (ins);
 	}
 	sp->val = result;
 	return ins;
@@ -7173,7 +7173,7 @@ cfold_failed:
 		if (_cond) \
 			ins->opcode = MINT_BR_S; \
 		else \
-			interp_clear_ins (td, ins); \
+			interp_clear_ins (ins); \
 		break;
 
 static InterpInst*
@@ -7198,7 +7198,7 @@ interp_fold_unop_cond_br (TransformData *td, StackContentInfo *sp, InterpInst *i
 
 	mono_interp_stats.constant_folds++;
 	mono_interp_stats.killed_instructions++;
-	interp_clear_ins (td, sp->ins);
+	interp_clear_ins (sp->ins);
 	sp->val.type = STACK_VALUE_NONE;
 	return ins;
 }
@@ -7311,8 +7311,8 @@ interp_fold_binop (TransformData *td, StackContentInfo *sp, InterpInst *ins)
 	// instructions that are part of this unary operation with a single LDC.
 	mono_interp_stats.constant_folds++;
 	if (sp [0].ins != NULL && sp [1].ins != NULL) {
-		interp_clear_ins (td, sp [0].ins);
-		interp_clear_ins (td, sp [1].ins);
+		interp_clear_ins (sp [0].ins);
+		interp_clear_ins (sp [1].ins);
 		mono_interp_stats.killed_instructions += 2;
 		if (result.type == STACK_VALUE_I4)
 			ins = interp_get_ldc_i4_from_const (td, ins, result.i);
@@ -7344,7 +7344,7 @@ cfold_failed:
 		if (_cond) \
 			ins->opcode = MINT_BR_S; \
 		else \
-			interp_clear_ins (td, ins); \
+			interp_clear_ins (ins); \
 		break;
 
 static InterpInst*
@@ -7387,8 +7387,8 @@ interp_fold_binop_cond_br (TransformData *td, StackContentInfo *sp, InterpInst *
 	}
 	mono_interp_stats.constant_folds++;
 	mono_interp_stats.killed_instructions += 2;
-	interp_clear_ins (td, sp [0].ins);
-	interp_clear_ins (td, sp [1].ins);
+	interp_clear_ins (sp [0].ins);
+	interp_clear_ins (sp [1].ins);
 	sp [0].val.type = STACK_VALUE_NONE;
 	sp [1].val.type = STACK_VALUE_NONE;
 	return ins;
@@ -7479,7 +7479,7 @@ retry:
 						}
 
 						// Clear the previous stloc instruction
-						interp_clear_ins (td, prev_ins);
+						interp_clear_ins (prev_ins);
 						ins->opcode = replace_op;
 						ins->data [0] = stored_local;
 						local_ref_count [loaded_local]--;
@@ -7559,8 +7559,8 @@ retry:
 						// new dependency on the src_local since we are adding a movloc from it.
 						if (!MINT_IS_LDLOC (sp->ins->opcode))
 							local_ref_count [src_local]++;
-						interp_clear_ins (td, sp->ins);
-						interp_clear_ins (td, ins);
+						interp_clear_ins (sp->ins);
+						interp_clear_ins (ins);
 
 						ins = interp_insert_ins (td, ins, get_movloc_for_type (td->locals [src_local].mt));
 						ins->data [0] = src_local;
@@ -7607,8 +7607,8 @@ retry:
 				// right now. We can kill both instructions
 				if (td->verbose_level)
 					g_print ("Kill redundant pop/ldc pair: pop (off %p), ldc (off %p)\n", prev_ins->il_offset, ins->il_offset);
-				interp_clear_ins (td, prev_ins);
-				interp_clear_ins (td, ins);
+				interp_clear_ins (prev_ins);
+				interp_clear_ins (ins);
 				mono_interp_stats.killed_instructions += 2;
 			} else {
 				sp->ins = ins;
@@ -7670,8 +7670,8 @@ retry:
 			if (sp->ins) {
 				// The top of the stack is not used by any instructions. Kill both the
 				// instruction that pushed it and the pop.
-				interp_clear_ins (td, sp->ins);
-				interp_clear_ins (td, ins);
+				interp_clear_ins (sp->ins);
+				interp_clear_ins (ins);
 				mono_interp_stats.killed_instructions += 2;
 				// The value pop-ed by this instruction can still be accessed. If we also
 				// kill the instruction pushing the value, then we need to empty the
@@ -7721,7 +7721,7 @@ retry:
 			ins->next->opcode = MINT_LDLOC_I1 + mt;
 			ins->next->data [0] = local;
 			td->locals [local].indirects--;
-			interp_clear_ins (td, ins);
+			interp_clear_ins (ins);
 			mono_interp_stats.killed_instructions++;
 			mono_interp_stats.ldlocas_removed++;
 			if (td->verbose_level) {
@@ -7735,7 +7735,7 @@ retry:
 						ins->data [0] == 0) {
 					int mt = ins->opcode - MINT_STFLD_I1;
 					int local = src->ins->data [0];
-					interp_clear_ins (td, src->ins);
+					interp_clear_ins (src->ins);
 					ins->opcode = MINT_STLOC_I1 + mt;
 					ins->data [0] = local;
 					td->locals [local].indirects--;
@@ -7757,8 +7757,8 @@ retry:
 					ins->data [0] = loc_index;
 					ins->data [1] = fld_offset;
 					local_ref_count [loc_index]++;
-					interp_clear_ins (td, ins->prev);
-					interp_clear_ins (td, src->ins);
+					interp_clear_ins (ins->prev);
+					interp_clear_ins (src->ins);
 					mono_interp_stats.super_instructions++;
 					mono_interp_stats.killed_instructions++;
 				}
@@ -7815,8 +7815,8 @@ interp_super_instructions (TransformData *td)
 				ins = interp_insert_ins (td, ins, MINT_LDLOCFLD_I1 + mt);
 				ins->data [0] = loc_index;
 				ins->data [1] = fld_offset;
-				interp_clear_ins (td, ins->prev);
-				interp_clear_ins (td, prev1_ins);
+				interp_clear_ins (ins->prev);
+				interp_clear_ins (prev1_ins);
 				prev1_ins = NULL;
 				mono_interp_stats.super_instructions++;
 				mono_interp_stats.killed_instructions++;
@@ -7834,8 +7834,8 @@ interp_super_instructions (TransformData *td)
 					else
 						ins->opcode = MINT_LOCSUB1_I8;
 					// the local index is already set inside the replaced STLOC instruction
-					interp_clear_ins (td, prev1_ins);
-					interp_clear_ins (td, prev2_ins);
+					interp_clear_ins (prev1_ins);
+					interp_clear_ins (prev2_ins);
 					prev1_ins = NULL;
 					mono_interp_stats.super_instructions++;
 					mono_interp_stats.killed_instructions += 2;
