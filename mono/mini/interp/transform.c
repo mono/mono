@@ -2757,6 +2757,7 @@ get_bb (TransformData *td, unsigned char *ip)
 		bb->ip = ip;
 		bb->native_offset = -1;
 		bb->stack_height = -1;
+		bb->index = td->bb_count++;
 		td->offset_to_bb [offset] = bb;
 
 		td->basic_blocks = g_list_append_mempool (td->mempool, td->basic_blocks, bb);
@@ -3475,10 +3476,11 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	td->in_start = td->ip = header->code;
 	end = td->ip + header->code_size;
 
-	get_basic_blocks (td, header);
-
 	td->cbb = td->entry_bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
+	td->cbb->index = td->bb_count++;
 	td->cbb->stack_height = -1;
+
+	get_basic_blocks (td, header);
 
 	if (!inlining)
 		initialize_clause_bblocks (td);
@@ -7434,6 +7436,9 @@ retry:
 			memset (stack, 0, (sp - stack) * sizeof (StackContentInfo));
 		}
 		memset (locals, 0, td->locals_size * sizeof (StackValue));
+
+		if (td->verbose_level)
+			g_print ("BB%d\n", bb->index);
 
 		for (ins = bb->first_ins; ins != NULL; ins = ins->next) {
 		int pop, push;

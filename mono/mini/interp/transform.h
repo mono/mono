@@ -93,6 +93,8 @@ struct _InterpBasicBlock {
 	StackInfo *stack_state;
 	int vt_stack_size;
 
+	int index;
+
 	// This will hold a list of last sequence points of incoming basic blocks
 	SeqPoint **pred_seq_points;
 	guint num_pred_seq_points;
@@ -159,6 +161,7 @@ typedef struct
 	GPtrArray *seq_points;
 	InterpBasicBlock **offset_to_bb;
 	InterpBasicBlock *entry_bb, *cbb;
+	int bb_count;
 	MonoMemPool     *mempool;
 	GList *basic_blocks;
 	GPtrArray *relocs;
