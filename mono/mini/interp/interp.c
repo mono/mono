@@ -7815,6 +7815,7 @@ interp_print_op_count (void)
 	}
 	qsort (ordered_ops, MINT_LASTOP, sizeof (int), opcode_count_comparer);
 
+	g_print ("total ops %ld\n", total_ops);
 	for (i = 0; i < MINT_LASTOP; i++) {
 		long count = opcode_counts [ordered_ops [i]];
 		g_print ("%s : %ld (%.2lf%%)\n", mono_interp_opname (ordered_ops [i]), count, (double)count / total_ops * 100);
