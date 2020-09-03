@@ -7060,10 +7060,11 @@ clear_local_content_info_for_local (StackValue *start, StackValue *end, int loca
 }
 
 // Traverse the list of basic blocks and merge adjacent blocks
-static void
+static gboolean
 interp_optimize_bblocks (TransformData *td)
 {
 	InterpBasicBlock *bb = td->entry_bb;
+	gboolean needs_cprop = FALSE;
 
 	while (TRUE) {
 		InterpBasicBlock *next_bb = bb->next_bb;
@@ -7079,11 +7080,13 @@ interp_optimize_bblocks (TransformData *td)
 			interp_merge_bblocks (td, bb, next_bb);
 			if (td->verbose_level)
 				g_print ("Merged BB%d and BB%d\n", bb->index, next_bb->index);
+			needs_cprop = TRUE;
 			continue;
 		}
 
 		bb = next_bb;
 	}
+	return needs_cprop;
 }
 
 static gboolean
@@ -7274,14 +7277,18 @@ cfold_failed:
 #define INTERP_FOLD_UNOP_BR(_opcode,_stack_type,_cond) \
 	case _opcode: \
 		g_assert (sp->val.type == _stack_type); \
-		if (_cond) \
+		if (_cond) { \
 			ins->opcode = MINT_BR_S; \
-		else \
+			if (cbb->next_bb != ins->info.target_bb) \
+				interp_unlink_bblocks (cbb, cbb->next_bb); \
+		} else { \
 			interp_clear_ins (ins); \
+			interp_unlink_bblocks (cbb, ins->info.target_bb); \
+		} \
 		break;
 
 static InterpInst*
-interp_fold_unop_cond_br (TransformData *td, StackContentInfo *sp, InterpInst *ins)
+interp_fold_unop_cond_br (TransformData *td, InterpBasicBlock *cbb, StackContentInfo *sp, InterpInst *ins)
 {
 	sp--;
 	// If we can't remove the instruction pushing the constant, don't bother
@@ -7445,14 +7452,18 @@ cfold_failed:
 	case _opcode: \
 		g_assert (sp [0].val.type == _stack_type); \
 		g_assert (sp [1].val.type == _stack_type); \
-		if (_cond) \
+		if (_cond) { \
 			ins->opcode = MINT_BR_S; \
-		else \
+			if (cbb->next_bb != ins->info.target_bb) \
+				interp_unlink_bblocks (cbb, cbb->next_bb); \
+		} else { \
 			interp_clear_ins (ins); \
+			interp_unlink_bblocks (cbb, ins->info.target_bb); \
+		} \
 		break;
 
 static InterpInst*
-interp_fold_binop_cond_br (TransformData *td, StackContentInfo *sp, InterpInst *ins)
+interp_fold_binop_cond_br (TransformData *td, InterpBasicBlock *cbb, StackContentInfo *sp, InterpInst *ins)
 {
 	sp -= 2;
 	// If we can't remove the instructions pushing the constants, don't bother
@@ -7529,10 +7540,14 @@ interp_cprop (TransformData *td)
 	StackValue *locals = (StackValue*) g_malloc (td->locals_size * sizeof (StackValue));
 	int *local_ref_count = (int*) g_malloc (td->locals_size * sizeof (int));
 	InterpBasicBlock *bb;
+	gboolean needs_retry;
 
 retry:
 	sp = stack;
 	memset (local_ref_count, 0, td->locals_size * sizeof (int));
+
+	if (td->verbose_level)
+		g_print ("\ncprop iteration\n");
 
 	for (bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
 		InterpInst *ins;
@@ -7796,14 +7811,14 @@ retry:
 			// Keep the value on the stack, but prevent optimizing away
 			sp [-1].ins = NULL;
 		} else if (MINT_IS_UNOP_CONDITIONAL_BRANCH (ins->opcode)) {
-			ins = interp_fold_unop_cond_br (td, sp, ins);
+			ins = interp_fold_unop_cond_br (td, bb, sp, ins);
 			sp--;
 			// We can't clear any instruction that pushes the stack, because the
 			// branched code will expect a certain stack size.
 			for (StackContentInfo *sp_iter = stack; sp_iter < sp; sp_iter++)
 				sp_iter->ins = NULL;
 		} else if (MINT_IS_BINOP_CONDITIONAL_BRANCH (ins->opcode)) {
-			ins = interp_fold_binop_cond_br (td, sp, ins);
+			ins = interp_fold_binop_cond_br (td, bb, sp, ins);
 			sp -= 2;
 			// We can't clear any instruction that pushes the stack, because the
 			// branched code will expect a certain stack size.
@@ -7886,7 +7901,11 @@ retry:
 		}
 	}
 
-	if (interp_local_deadce (td, local_ref_count))
+	needs_retry = interp_local_deadce (td, local_ref_count);
+	if (mono_interp_opt & INTERP_OPT_BBLOCKS)
+		needs_retry |= interp_optimize_bblocks (td);
+
+	if (needs_retry)
 		goto retry;
 
 	g_free (stack);
