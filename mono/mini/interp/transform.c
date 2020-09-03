@@ -7666,7 +7666,7 @@ retry:
 						interp_clear_ins (sp->ins);
 						interp_clear_ins (ins);
 
-						ins = interp_insert_ins (td, ins, get_movloc_for_type (td->locals [src_local].mt));
+						ins = interp_insert_ins_bb (td, bb, ins, get_movloc_for_type (td->locals [src_local].mt));
 						ins->data [0] = src_local;
 						ins->data [1] = dest_local;
 						if (vtsize)
@@ -7857,7 +7857,7 @@ retry:
 					int loc_index = src->val.local;
 					int fld_offset = ins->data [0];
 					int mt = ins->opcode - MINT_STFLD_I1;
-					ins = interp_insert_ins (td, ins, MINT_STLOCFLD_I1 + mt);
+					ins = interp_insert_ins_bb (td, bb, ins, MINT_STLOCFLD_I1 + mt);
 					ins->data [0] = loc_index;
 					ins->data [1] = fld_offset;
 					local_ref_count [loc_index]++;
@@ -7916,7 +7916,7 @@ interp_super_instructions (TransformData *td)
 				int loc_index = prev1_ins->data [0];
 				int fld_offset = ins->data [0];
 				int mt = ins->opcode - MINT_LDFLD_I1;
-				ins = interp_insert_ins (td, ins, MINT_LDLOCFLD_I1 + mt);
+				ins = interp_insert_ins_bb (td, bb, ins, MINT_LDLOCFLD_I1 + mt);
 				ins->data [0] = loc_index;
 				ins->data [1] = fld_offset;
 				interp_clear_ins (ins->prev);
