@@ -194,6 +194,7 @@ MONO_API gpointer mono_unity_alloc(gsize size);
 MONO_API void mono_unity_g_free (void *ptr);
 
 MONO_API MonoClass* mono_custom_attrs_get_attrs (MonoCustomAttrInfo *ainfo, gpointer *iter);
+MONO_API MonoArray* mono_unity_custom_attrs_construct (MonoCustomAttrInfo *cinfo, MonoError *error);
 
 typedef size_t (*RemapPathFunction)(const char* path, char* buffer, size_t buffer_len);
 MONO_API void mono_unity_register_path_remapper (RemapPathFunction func);

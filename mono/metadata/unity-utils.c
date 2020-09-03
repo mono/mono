@@ -168,6 +168,14 @@ mono_custom_attrs_get_attrs (MonoCustomAttrInfo *ainfo, gpointer *iter)
 	return ainfo->attrs[index].ctor->klass;
 }
 
+MONO_API MonoArray*
+mono_unity_custom_attrs_construct (MonoCustomAttrInfo *cinfo, MonoError *error)
+{
+	HANDLE_FUNCTION_ENTER ();
+	MonoArrayHandle result = mono_custom_attrs_construct_by_type (cinfo, NULL, error);
+	HANDLE_FUNCTION_RETURN_OBJ (result);
+}
+
 MONO_API gboolean
 mono_class_is_inflated (MonoClass *klass)
 {
