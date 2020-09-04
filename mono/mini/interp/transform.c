@@ -526,6 +526,20 @@ interp_link_bblocks (TransformData *td, InterpBasicBlock *from, InterpBasicBlock
 	}
 }
 
+// Initializes stack state at entry to bb, based on the current stack state
+static void
+init_bb_stack_state (TransformData *td, InterpBasicBlock *bb)
+{
+	// Check if already initialized
+	if (bb->stack_height >= 0)
+		return;
+
+	bb->stack_height = td->sp - td->stack;
+	if (bb->stack_height > 0)
+		bb->stack_state = (StackInfo*)g_memdup (td->stack, bb->stack_height * sizeof (td->stack [0]));
+	bb->vt_stack_size = td->vt_sp;
+}
+
 static void 
 handle_branch (TransformData *td, int short_op, int long_op, int offset)
 {
@@ -547,14 +561,10 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 	if (short_op == MINT_LEAVE_S || short_op == MINT_LEAVE_S_CHECK)
 		target_bb->eh_block = TRUE;
 
-	interp_link_bblocks (td, td->cbb, target_bb);
+	if (offset > 0)
+		init_bb_stack_state (td, target_bb);
 
-	if (offset > 0 && target_bb->stack_height < 0) {
-		target_bb->stack_height = td->sp - td->stack;
-		if (target_bb->stack_height > 0)
-			target_bb->stack_state = (StackInfo*)g_memdup (td->stack, target_bb->stack_height * sizeof (td->stack [0]));
-		target_bb->vt_stack_size = td->vt_sp;
-	}
+	interp_link_bblocks (td, td->cbb, target_bb);
 
 	if (td->header->code_size <= 25000) /* FIX to be precise somehow? */
 		shorten_branch = 1;
@@ -3544,6 +3554,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	gboolean save_last_error = FALSE;
 	gboolean link_bblocks = TRUE;
 	gboolean inlining = td->method != method;
+	InterpBasicBlock *exit_bb = NULL;
 
 	original_bb = bb = mono_basic_block_split (method, error, header);
 	goto_if_nok (error, exit);
@@ -3555,7 +3566,15 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 	td->cbb = td->entry_bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
 	td->cbb->index = td->bb_count++;
+	td->cbb->native_offset = -1;
 	td->cbb->stack_height = td->sp - td->stack;
+
+	if (inlining) {
+		exit_bb = (InterpBasicBlock*)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock));
+		exit_bb->index = td->bb_count++;
+		exit_bb->native_offset = -1;
+		exit_bb->stack_height = -1;
+	}
 
 	get_basic_blocks (td, header);
 
@@ -3711,10 +3730,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->vt_sp = new_bb->vt_stack_size;
 			} else if (link_bblocks) {
 				/* This bblock is not branched to. Initialize its stack state */
-				new_bb->stack_height = td->sp - td->stack;
-				if (new_bb->stack_height > 0)
-					new_bb->stack_state = (StackInfo*)g_memdup (td->stack, new_bb->stack_height * sizeof (td->stack [0]));
-				new_bb->vt_stack_size = td->vt_sp;
+				init_bb_stack_state (td, new_bb);
 			}
 			link_bblocks = TRUE;
 			if (!inlining) {
@@ -4041,16 +4057,13 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 		}
 		case CEE_RET: {
 			/* Return from inlined method, return value is on top of stack */
-			if (td->method != method) {
+			if (inlining) {
 				td->ip++;
-				if (td->ip != end) {
-					/*
-					 * FIXME We only support inlining methods that have a single return
-					 * at the end of the method. We would need to create an exit_bb and have
-					 * all return opcodes branch to it.
-					 */
-					INLINE_FAILURE;
-				}
+				interp_add_ins (td, MINT_BR_S);
+				td->last_ins->info.target_bb = exit_bb;
+				init_bb_stack_state (td, exit_bb);
+				interp_link_bblocks (td, td->cbb, exit_bb);
+				link_bblocks = FALSE;
 				break;
 			}
 
@@ -4229,7 +4242,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			td->ip += 4;
 			next_ip = td->ip + n * 4;
 			--td->sp;
-			int stack_height = td->sp - td->stack;
 			InterpBasicBlock **target_bb_table = (InterpBasicBlock**)mono_mempool_alloc0 (td->mempool, sizeof (InterpBasicBlock*) * n);
 			for (i = 0; i < n; i++) {
 				offset = read32 (td->ip);
@@ -4242,10 +4254,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						g_warning ("SWITCH with back branch and non-empty stack");
 #endif
 				} else {
-					target_bb->stack_height = stack_height;
-					target_bb->vt_stack_size = td->vt_sp;
-					if (stack_height > 0)
-						target_bb->stack_state = (StackInfo*)g_memdup (td->stack, stack_height * sizeof (td->stack [0]));
+					init_bb_stack_state (td, target_bb);
 				}
 				target_bb_table [i] = target_bb;
 				interp_link_bblocks (td, td->cbb, target_bb);
@@ -6676,6 +6685,20 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	}
 
 	g_assert (td->ip == end);
+
+	if (inlining) {
+		// When inlining, all return points branch to this bblock. Code generation inside the caller
+		// method continues in this bblock. exit_bb is not necessarily an out bb for cbb. We need to
+		// restore stack state so future codegen can work.
+		td->cbb->next_bb = exit_bb;
+		td->cbb = exit_bb;
+		if (exit_bb->stack_height >= 0) {
+			if (exit_bb->stack_height > 0)
+				memcpy (td->stack, exit_bb->stack_state, exit_bb->stack_height * sizeof(td->stack [0]));
+			td->sp = td->stack + exit_bb->stack_height;
+			td->vt_sp = exit_bb->vt_stack_size;
+		}
+	}
 
 	if (sym_seq_points) {
 		for (InterpBasicBlock *bb = td->entry_bb->next_bb; bb != NULL; bb = bb->next_bb) {
