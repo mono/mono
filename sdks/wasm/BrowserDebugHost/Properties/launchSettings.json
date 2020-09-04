@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ProxyDriver": {
+    "BrowserDebugHost": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

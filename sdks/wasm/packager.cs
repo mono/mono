@@ -145,6 +145,7 @@ class Driver {
 		Console.WriteLine ("\t--native-lib=x  Link the native library 'x' into the final executable.");
 		Console.WriteLine ("\t--preload-file=x Preloads the file or directory 'x' into the virtual filesystem.");
 		Console.WriteLine ("\t--embed-file=x  Embeds the file or directory 'x' into the virtual filesystem.");
+		Console.WriteLine ("\t--extra-emcc-flags=\"x\"  Additional flags to pass to emcc.");
 
 		Console.WriteLine ("foo.dll         Include foo.dll as one of the root assemblies");
 		Console.WriteLine ();
@@ -407,11 +408,13 @@ class Driver {
 		var il_strip = false;
 		var linker_verbose = false;
 		var runtimeTemplate = "runtime.js";
+		var runtimeTemplateOutputName = "runtime.js";
 		var assets = new List<string> ();
 		var profilers = new List<string> ();
 		var native_libs = new List<string> ();
 		var preload_files = new List<string> ();
 		var embed_files = new List<string> ();
+		var extra_emcc_flags = "";
 		var pinvoke_libs = "";
 		var copyTypeParm = "default";
 		var copyType = CopyType.Default;
@@ -456,6 +459,7 @@ class Driver {
 				{ "aot", s => ee_mode = ExecMode.Aot },
 				{ "aot-interp", s => ee_mode = ExecMode.AotInterp },
 				{ "template=", s => runtimeTemplate = s },
+				{ "template-output-name=", s => runtimeTemplateOutputName = s },
 				{ "asset=", s => assets.Add(s) },
 				{ "search-path=", s => root_search_paths.Add(s) },
 				{ "profile=", s => profilers.Add (s) },
@@ -468,6 +472,7 @@ class Driver {
 				{ "native-lib=", s => native_libs.Add (s) },
 				{ "preload-file=", s => preload_files.Add (s) },
 				{ "embed-file=", s => embed_files.Add (s) },
+				{ "extra-emcc-flags=", s => extra_emcc_flags = s },
 				{ "framework=", s => framework = s },
 				{ "help", s => print_usage = true },
 			};
@@ -686,7 +691,7 @@ class Driver {
 			wasm_core_support = BINDINGS_MODULE_SUPPORT;
 			wasm_core_support_library = $"--js-library {BINDINGS_MODULE_SUPPORT}";
 		}
-		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, "runtime.js");
+		var runtime_js = Path.Combine (emit_ninja ? builddir : out_prefix, runtimeTemplateOutputName);
 		if (emit_ninja) {
 			File.Delete (runtime_js);
 			File.Copy (runtimeTemplate, runtime_js);
@@ -856,6 +861,8 @@ class Driver {
 			emcc_flags += "--preload-file " + pf + " ";
 		foreach (var f in embed_files)
 			emcc_flags += "--embed-file " + f + " ";
+		if (!String.IsNullOrEmpty (extra_emcc_flags))
+			emcc_flags += extra_emcc_flags + " ";
 		string emcc_link_flags = "";
 		if (enable_debug)
 			emcc_link_flags += "-O0 ";
@@ -948,7 +955,7 @@ class Driver {
 		// Targets
 		ninja.WriteLine ("build $appdir: mkdir");
 		ninja.WriteLine ("build $appdir/$deploy_prefix: mkdir");
-		ninja.WriteLine ("build $appdir/runtime.js: cpifdiff $builddir/runtime.js");
+		ninja.WriteLine ($"build $appdir/{runtimeTemplateOutputName}: cpifdiff $builddir/{runtimeTemplateOutputName}");
 		ninja.WriteLine ("build $appdir/mono-config.js: cpifdiff $builddir/mono-config.js");
 		if (build_wasm) {
 			string src_prefix;

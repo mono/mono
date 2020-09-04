@@ -5,8 +5,8 @@ include $(TOP)/sdks/paths.mk
 
 UNAME=$(shell uname)
 
-SDK_DIR = $(ANDROID_TOOLCHAIN_DIR)/sdk
-NDK_DIR = $(ANDROID_TOOLCHAIN_DIR)/ndk
+SDK_DIR = $(or $(ANDROID_SDK_ROOT),$(ANDROID_TOOLCHAIN_DIR)/sdk)
+NDK_DIR = $(or $(ANDROID_NDK_ROOT),$(ANDROID_TOOLCHAIN_DIR)/ndk)
 
 ADB       = $(SDK_DIR)/platform-tools/adb
 
@@ -62,7 +62,7 @@ shell:
 
 .PHONY: accept-android-license
 accept-android-license:
-	yes | $(SDK_DIR)/tools/bin/sdkmanager --licenses
+	yes | $(SDK_DIR)/tools/bin/sdkmanager --sdk_root=$(SDK_DIR) --licenses
 
 ## Check targets
 

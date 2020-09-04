@@ -466,8 +466,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (this.IsReadOnly)
 				return false;
 
-			if (value != Value) {
-				SetValueCore(value, out error);
+			if (SetValueCore (value, out error)) {
 				InvalidateChildGridItemsCache ();
 				property_grid.OnPropertyValueChangedInternal (this, this.Value);
 				return true;
@@ -478,6 +477,40 @@ namespace System.Windows.Forms.PropertyGridInternal
 		protected virtual bool SetValueCore (object value, out string error)
 		{
 			error = null;
+
+			TypeConverter converter = GetConverter ();
+			Type valueType = value != null ? value.GetType () : null;
+			// if the new value is not of the same type try to convert it
+			if (valueType != null && this.PropertyDescriptor.PropertyType != null &&
+			    !this.PropertyDescriptor.PropertyType.IsAssignableFrom (valueType)) {
+				bool conversionError = false;
+				try {
+					if (converter != null &&
+					    converter.CanConvertFrom ((ITypeDescriptorContext)this, valueType))
+						value = converter.ConvertFrom ((ITypeDescriptorContext)this, 
+									       CultureInfo.CurrentCulture, value);
+				} catch (Exception e) {
+					error = e.Message;
+					conversionError = true;
+				}
+				if (conversionError) {
+					string valueText = ConvertToString (value);
+					string errorShortDescription = null;
+					if (valueText != null) {
+						errorShortDescription = "Property value '" + valueText + "' of '" +
+							PropertyDescriptor.Name + "' is not convertible to type '" +
+							this.PropertyDescriptor.PropertyType.Name + "'";
+
+					} else {
+						errorShortDescription = "Property value of '" +
+							PropertyDescriptor.Name + "' is not convertible to type '" +
+							this.PropertyDescriptor.PropertyType.Name + "'";
+					}
+					error = errorShortDescription + Environment.NewLine + Environment.NewLine + error;
+					return false;
+				}
+			}
+
 			bool changed = false;
 			bool current_changed = false;
 			object[] propertyOwners = this.PropertyOwners;
@@ -516,7 +549,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 						if (IsValueType (this.ParentEntry)) 
 							current_changed = ParentEntry.SetValueCore (propertyOwners[i], out error);
 						else
-							current_changed = Object.Equals (properties[i].GetValue (propertyOwners[i]), value);
+							current_changed = true;
 					}
 				}
 				if (current_changed)
