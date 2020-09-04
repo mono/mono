@@ -58,10 +58,16 @@ namespace System {
 	 *    https://android.googlesource.com/platform/libcore/+/master/luni/src/main/java/libcore/util/ZoneInfoDB.java
 	 *
 	 * This is needed in order to read Android v4.3 tzdata files.
+	 *
+	 * Android 10+ moved the up-to-date tzdata location to a module updatable via the Google Play Store and the
+	 * database location changed (https://source.android.com/devices/architecture/modular-system/runtime#time-zone-data-interactions)
+	 * The older locations still exist (at least the `/system/usr/share/zoneinfo` one) but they won't be updated.
 	 */
 	sealed class AndroidTzData : IAndroidTimeZoneDB {
 
 		internal static readonly string[] Paths = new string[]{
+			GetApexTimeDataRoot () + "/etc/tz/tzdata", // Android 10+, TimeData module where the updates land
+			GetApexRuntimeRoot () + "/etc/tz/tzdata",  // Android 10+, Fallback location if the above isn't found or corrupted
 			Environment.GetEnvironmentVariable ("ANDROID_DATA") + "/misc/zoneinfo/tzdata",
 			Environment.GetEnvironmentVariable ("ANDROID_ROOT") + "/usr/share/zoneinfo/tzdata",
 		};
@@ -96,6 +102,26 @@ namespace System {
 
 		public string ZoneTab {
 			get {return zoneTab;}
+		}
+
+		static string GetApexTimeDataRoot ()
+		{
+			string ret = Environment.GetEnvironmentVariable ("ANDROID_TZDATA_ROOT");
+			if (!String.IsNullOrEmpty (ret)) {
+				return ret;
+			}
+
+			return "/apex/com.android.tzdata";
+		}
+
+		static string GetApexRuntimeRoot ()
+		{
+			string ret = Environment.GetEnvironmentVariable ("ANDROID_RUNTIME_ROOT");
+			if (!String.IsNullOrEmpty (ret)) {
+				return ret;
+			}
+
+			return "/apex/com.android.runtime";
 		}
 
 		bool LoadData (string path)
