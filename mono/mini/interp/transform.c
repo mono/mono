@@ -8032,7 +8032,9 @@ interp_fix_localloc_ret (TransformData *td)
 static int
 get_native_offset (TransformData *td, int il_offset)
 {
-	if (il_offset < td->header->code_size) {
+	// We can't access offset_to_bb for header->code_size IL offset. Also, offset_to_bb
+	// is not set for dead bblocks at method end.
+	if (il_offset < td->header->code_size && td->offset_to_bb [il_offset]) {
 		InterpBasicBlock *bb = td->offset_to_bb [il_offset];
 		g_assert (!bb->dead);
 		return bb->native_offset;
