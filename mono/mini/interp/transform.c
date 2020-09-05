@@ -535,8 +535,11 @@ init_bb_stack_state (TransformData *td, InterpBasicBlock *bb)
 		return;
 
 	bb->stack_height = td->sp - td->stack;
-	if (bb->stack_height > 0)
-		bb->stack_state = (StackInfo*)g_memdup (td->stack, bb->stack_height * sizeof (td->stack [0]));
+	if (bb->stack_height > 0) {
+		int size = bb->stack_height * sizeof (td->stack [0]);
+		bb->stack_state = (StackInfo*)mono_mempool_alloc (td->mempool, size);
+		memcpy (bb->stack_state, td->stack, size);
+	}
 	bb->vt_stack_size = td->vt_sp;
 }
 
