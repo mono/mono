@@ -579,18 +579,21 @@ handle_branch (TransformData *td, int short_op, int long_op, int offset)
 }
 
 static void 
-one_arg_branch(TransformData *td, int mint_op, int offset) 
+one_arg_branch(TransformData *td, int mint_op, int offset, int inst_size)
 {
 	int type = td->sp [-1].type == STACK_TYPE_O || td->sp [-1].type == STACK_TYPE_MP ? STACK_TYPE_I : td->sp [-1].type;
 	int long_op = mint_op + type - STACK_TYPE_I4;
 	int short_op = long_op + MINT_BRFALSE_I4_S - MINT_BRFALSE_I4;
 	CHECK_STACK(td, 1);
 	--td->sp;
-	handle_branch (td, short_op, long_op, offset);
+	if (offset)
+		handle_branch (td, short_op, long_op, offset + inst_size);
+	else
+		interp_add_ins (td, MINT_POP);
 }
 
 static void 
-two_arg_branch(TransformData *td, int mint_op, int offset) 
+two_arg_branch(TransformData *td, int mint_op, int offset, int inst_size)
 {
 	int type1 = td->sp [-1].type == STACK_TYPE_O || td->sp [-1].type == STACK_TYPE_MP ? STACK_TYPE_I : td->sp [-1].type;
 	int type2 = td->sp [-2].type == STACK_TYPE_O || td->sp [-2].type == STACK_TYPE_MP ? STACK_TYPE_I : td->sp [-2].type;
@@ -620,7 +623,12 @@ two_arg_branch(TransformData *td, int mint_op, int offset)
 	int long_op = mint_op + type1 - STACK_TYPE_I4;
 	int short_op = long_op + MINT_BEQ_I4_S - MINT_BEQ_I4;
 	td->sp -= 2;
-	handle_branch (td, short_op, long_op, offset);
+	if (offset) {
+		handle_branch (td, short_op, long_op, offset + inst_size);
+	} else {
+		interp_add_ins (td, MINT_POP);
+		interp_add_ins (td, MINT_POP);
+	}
 }
 
 static void
@@ -4137,99 +4145,99 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			break;
 		}
 		case CEE_BRFALSE:
-			one_arg_branch (td, MINT_BRFALSE_I4, 5 + read32 (td->ip + 1));
+			one_arg_branch (td, MINT_BRFALSE_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BRFALSE_S:
-			one_arg_branch (td, MINT_BRFALSE_I4, 2 + (gint8)td->ip [1]);
+			one_arg_branch (td, MINT_BRFALSE_I4, (gint8)td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BRTRUE:
-			one_arg_branch (td, MINT_BRTRUE_I4, 5 + read32 (td->ip + 1));
+			one_arg_branch (td, MINT_BRTRUE_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BRTRUE_S:
-			one_arg_branch (td, MINT_BRTRUE_I4, 2 + (gint8)td->ip [1]);
+			one_arg_branch (td, MINT_BRTRUE_I4, (gint8)td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BEQ:
-			two_arg_branch (td, MINT_BEQ_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BEQ_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BEQ_S:
-			two_arg_branch (td, MINT_BEQ_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BEQ_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BGE:
-			two_arg_branch (td, MINT_BGE_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BGE_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BGE_S:
-			two_arg_branch (td, MINT_BGE_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BGE_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BGT:
-			two_arg_branch (td, MINT_BGT_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BGT_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BGT_S:
-			two_arg_branch (td, MINT_BGT_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BGT_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BLT:
-			two_arg_branch (td, MINT_BLT_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BLT_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BLT_S:
-			two_arg_branch (td, MINT_BLT_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BLT_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BLE:
-			two_arg_branch (td, MINT_BLE_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BLE_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BLE_S:
-			two_arg_branch (td, MINT_BLE_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BLE_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BNE_UN:
-			two_arg_branch (td, MINT_BNE_UN_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BNE_UN_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BNE_UN_S:
-			two_arg_branch (td, MINT_BNE_UN_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BNE_UN_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BGE_UN:
-			two_arg_branch (td, MINT_BGE_UN_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BGE_UN_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BGE_UN_S:
-			two_arg_branch (td, MINT_BGE_UN_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BGE_UN_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BGT_UN:
-			two_arg_branch (td, MINT_BGT_UN_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BGT_UN_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BGT_UN_S:
-			two_arg_branch (td, MINT_BGT_UN_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BGT_UN_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BLE_UN:
-			two_arg_branch (td, MINT_BLE_UN_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BLE_UN_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BLE_UN_S:
-			two_arg_branch (td, MINT_BLE_UN_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BLE_UN_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_BLT_UN:
-			two_arg_branch (td, MINT_BLT_UN_I4, 5 + read32 (td->ip + 1));
+			two_arg_branch (td, MINT_BLT_UN_I4, read32 (td->ip + 1), 5);
 			td->ip += 5;
 			break;
 		case CEE_BLT_UN_S:
-			two_arg_branch (td, MINT_BLT_UN_I4, 2 + (gint8) td->ip [1]);
+			two_arg_branch (td, MINT_BLT_UN_I4, (gint8) td->ip [1], 2);
 			td->ip += 2;
 			break;
 		case CEE_SWITCH: {
