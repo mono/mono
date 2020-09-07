@@ -383,9 +383,37 @@ interp_prev_ins (InterpInst *ins)
 		SET_TYPE((td)->sp - 1, ty, k); \
 	} while (0)
 
+static void
+mark_bb_as_dead (TransformData *td, InterpBasicBlock *bb)
+{
+	// Update IL offset to bb mapping so that offset_to_bb doesn't point to dead
+	// bblocks. This mapping can still be needed when computing clause ranges. Since
+	// multiple IL offsets can end up pointing to same bblock after optimizations,
+	// make sure we update mapping for all of them
+	if (bb->ip >= td->header->code && bb->ip < td->il_code + td->header->code_size) {
+		// To avoid scanning the entire offset_to_bb array, we scan only in the vicinity
+		// of the IL offset of bb. We can stop search when we encounter a different bblock.
+		for (int il_offset = bb->ip - td->il_code; il_offset >= 0; il_offset--) {
+			if (td->offset_to_bb [il_offset] == bb)
+				td->offset_to_bb [il_offset] = bb->next_bb;
+			else if (td->offset_to_bb [il_offset])
+				break;
+		}
+		for (int il_offset = bb->ip - td->il_code + 1; il_offset < td->header->code_size; il_offset++) {
+			if (td->offset_to_bb [il_offset] == bb)
+				td->offset_to_bb [il_offset] = bb->next_bb;
+			else if (td->offset_to_bb [il_offset])
+				break;
+		}
+	}
+
+	bb->dead = TRUE;
+	// bb should never be used/referenced after this
+}
+
 /* Merges two consecutive bbs (in code order) into a single one */
 static void
-interp_merge_bblocks (InterpBasicBlock *bb, InterpBasicBlock *bbadd)
+interp_merge_bblocks (TransformData *td, InterpBasicBlock *bb, InterpBasicBlock *bbadd)
 {
 	g_assert (bbadd->in_count == 1 && bbadd->in_bb [0] == bb);
 	g_assert (bb->next_bb == bbadd);
@@ -424,8 +452,7 @@ interp_merge_bblocks (InterpBasicBlock *bb, InterpBasicBlock *bbadd)
 		}
 	}
 
-
-	// bbadd should never be used/referenced after this
+	mark_bb_as_dead (td, bbadd);
 }
 
 // array must contain ref
@@ -458,6 +485,7 @@ interp_remove_bblock (TransformData *td, InterpBasicBlock *bb, InterpBasicBlock 
 	while (bb->out_count)
 		interp_unlink_bblocks (bb, bb->out_bb [0]);
 	prev_bb->next_bb = bb->next_bb;
+	mark_bb_as_dead (td, bb);
 }
 
 static void
@@ -7048,7 +7076,7 @@ interp_optimize_bblocks (TransformData *td)
 			continue;
 		} else if (bb->out_count == 1 && bb->out_bb [0] == next_bb && next_bb->in_count == 1 && !next_bb->eh_block) {
 			g_assert (next_bb->in_bb [0] == bb);
-			interp_merge_bblocks (bb, next_bb);
+			interp_merge_bblocks (td, bb, next_bb);
 			if (td->verbose_level)
 				g_print ("Merged BB%d and BB%d\n", bb->index, next_bb->index);
 			continue;
@@ -7961,7 +7989,7 @@ get_native_offset (TransformData *td, int il_offset)
 {
 	if (il_offset < td->header->code_size) {
 		InterpBasicBlock *bb = td->offset_to_bb [il_offset];
-		g_assert (bb);
+		g_assert (!bb->dead);
 		return bb->native_offset;
 	} else {
 		return td->new_code_end - td->new_code;
