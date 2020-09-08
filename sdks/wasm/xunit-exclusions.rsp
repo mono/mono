@@ -134,6 +134,8 @@
 
 # OOM
 -nomethod System.Buffers.Text.Tests.Base64EncoderUnitTests.BasicEncodingWithFinalBlockFalse
+-nomethod System.Collections.Tests.HashtableTests.AddRemove_LargeAmountNumbers
+-nomethod System.Collections.Tests.HashtableTests.Ctor_Int_Int_GenerateNewPrime
 
 # [SkipOnTargetFramework(TargetFrameworkMonikers.Mono)]
 -nomethod System.SpanTests.ReadOnlySpanTests.EndsWith_NullInStrings_NonOrdinal
