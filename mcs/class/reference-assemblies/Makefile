@@ -79,8 +79,8 @@ install-local:
 	# so we need to place something there or those tools break. We decided to symlink to the reference assembly for now.
 	# See https://bugzilla.xamarin.com/show_bug.cgi?id=38331 and https://bugzilla.xamarin.com/show_bug.cgi?id=41052
 	$(MKINSTALLDIRS) $(PROFILE_DIR)/4.0
-	ln -sf ../4.0-api/mscorlib.dll $(PROFILE_DIR)/4.0/mscorlib.dll
-	ln -sf ../4.0-api/Mono.Posix.dll $(PROFILE_DIR)/4.0/Mono.Posix.dll
+	$(if $(filter $(BUILD_PLATFORM),win32),CYGWIN=winsymlinks:nativestrict) ln -sf ../4.0-api/mscorlib.dll $(PROFILE_DIR)/4.0/mscorlib.dll
+	$(if $(filter $(BUILD_PLATFORM),win32),CYGWIN=winsymlinks:nativestrict) ln -sf ../4.0-api/Mono.Posix.dll $(PROFILE_DIR)/4.0/Mono.Posix.dll
 
 DISTFILES =	\
 	$(wildcard ../../../external/binary-reference-assemblies/v4.8/Facades/*.dll)	\
