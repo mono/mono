@@ -131,7 +131,7 @@ frame_data_allocator_init (FrameDataAllocator *stack, int size)
 	frag = frame_data_frag_new (size);
 	stack->first = stack->current = frag;
 	stack->infos_capacity = 4;
-	stack->infos = g_malloc (stack->infos_capacity * sizeof (FrameDataInfo));
+	stack->infos = (FrameDataInfo*)g_malloc (stack->infos_capacity * sizeof (FrameDataInfo));
 }
 
 static void
@@ -170,7 +170,7 @@ frame_data_allocator_alloc (FrameDataAllocator *stack, InterpFrame *frame, int s
 		/* First allocation by this frame. Save the markers for restore */
 		if (infos_len == stack->infos_capacity) {
 			stack->infos_capacity = infos_len * 2;
-			stack->infos = g_realloc (stack->infos, stack->infos_capacity * sizeof (FrameDataInfo));
+			stack->infos = (FrameDataInfo*)g_realloc (stack->infos, stack->infos_capacity * sizeof (FrameDataInfo));
 		}
 		stack->infos [infos_len].frame = frame;
 		stack->infos [infos_len].frag = current;
@@ -2725,7 +2725,7 @@ interp_entry_from_trampoline (gpointer ccontext_untyped, gpointer rmethod_untype
 	method = rmethod->method;
 	sig = mono_method_signature_internal (method);
 	if (method->string_ctor) {
-		MonoMethodSignature *newsig = g_alloca (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+		MonoMethodSignature *newsig = (MonoMethodSignature*)g_alloca (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
 		memcpy (newsig, sig, mono_metadata_signature_size (sig));
 		newsig->ret = m_class_get_byval_arg (mono_defaults.string_class);
 		sig = newsig;
@@ -2913,7 +2913,7 @@ interp_create_method_pointer (MonoMethod *method, gboolean compile, MonoError *e
 
 	MonoMethodSignature *sig = mono_method_signature_internal (method);
 	if (method->string_ctor) {
-		MonoMethodSignature *newsig = g_alloca (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
+		MonoMethodSignature *newsig = (MonoMethodSignature*)g_alloca (MONO_SIZEOF_METHOD_SIGNATURE + ((sig->param_count + 2) * sizeof (MonoType*)));
 		memcpy (newsig, sig, mono_metadata_signature_size (sig));
 		newsig->ret = m_class_get_byval_arg (mono_defaults.string_class);
 		sig = newsig;
