@@ -1596,7 +1596,7 @@ m_field_get_offset (MonoClassField *field)
  * Memory allocation for classes/methods
  *
  *   These should be used to allocate memory whose lifetime is equal to
- * the lifetime of the domain-class/method pair.
+ * the lifetime of the domain+class/method pair.
  */
 
 static inline MonoMemoryManager*
