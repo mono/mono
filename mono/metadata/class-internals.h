@@ -1610,13 +1610,13 @@ m_class_get_mem_manager (MonoDomain *domain, MonoClass *klass)
 #endif
 }
 
-static void *
+static inline void *
 m_class_alloc (MonoDomain *domain, MonoClass *klass, guint size)
 {
 	return mono_mem_manager_alloc (m_class_get_mem_manager (domain, klass), size);
 }
 
-static void *
+static inline void *
 m_class_alloc0 (MonoDomain *domain, MonoClass *klass, guint size)
 {
 	return mono_mem_manager_alloc0 (m_class_get_mem_manager (domain, klass), size);
@@ -1633,13 +1633,13 @@ m_method_get_mem_manager (MonoDomain *domain, MonoMethod *method)
 #endif
 }
 
-static void *
+static inline void *
 m_method_alloc (MonoDomain *domain, MonoMethod *method, guint size)
 {
 	return mono_mem_manager_alloc (m_method_get_mem_manager (domain, method), size);
 }
 
-static void *
+static inline void *
 m_method_alloc0 (MonoDomain *domain, MonoMethod *method, guint size)
 {
 	return mono_mem_manager_alloc0 (m_method_get_mem_manager (domain, method), size);
