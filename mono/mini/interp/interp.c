@@ -713,7 +713,7 @@ alloc_method_table (MonoVTable *vtable, int offset)
 	gpointer *table;
 
 	if (offset >= 0) {
-		table = m_class_alloc0 (vtable->domain, vtable->klass, m_class_get_vtable_size (vtable->klass) * sizeof (gpointer));
+		table = (gpointer*)m_class_alloc0 (vtable->domain, vtable->klass, m_class_get_vtable_size (vtable->klass) * sizeof (gpointer));
 		vtable->interp_vtable = table;
 	} else {
 		table = (gpointer*)vtable;
