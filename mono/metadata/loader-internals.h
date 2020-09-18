@@ -232,6 +232,8 @@ mono_mem_manager_alloc0_nolock (MonoMemoryManager *memory_manager, guint size);
 void *
 mono_mem_manager_code_reserve (MonoMemoryManager *memory_manager, int size);
 
+#define mono_mem_manager_code_reserve(mem_manager, size) (g_cast (mono_mem_manager_code_reserve ((mem_manager), (size))))
+
 void *
 mono_mem_manager_code_reserve_align (MonoMemoryManager *memory_manager, int size, int newsize);
 

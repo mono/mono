@@ -182,7 +182,7 @@ mono_mem_manager_strdup (MonoMemoryManager *memory_manager, const char *s)
 }
 
 void *
-mono_mem_manager_code_reserve (MonoMemoryManager *memory_manager, int size)
+(mono_mem_manager_code_reserve) (MonoMemoryManager *memory_manager, int size)
 {
 	void *res;
 
