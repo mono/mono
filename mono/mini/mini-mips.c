@@ -5345,7 +5345,8 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	if (fail_tramp) {
 		code = mono_method_alloc_generic_virtual_trampoline (domain, size);
 	} else {
-		code = mono_domain_code_reserve (domain, size);
+		MonoMemoryManager *mem_manager = m_class_get_mem_manager (domain, vtable->klass);
+		code = mono_mem_manager_code_reserve (mem_manager, size);
 	}
 	start = code;
 
