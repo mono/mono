@@ -78,7 +78,9 @@ static MonoGCFinalizerCallbacks fin_callbacks;
 
 static mono_mutex_t handle_section;
 #define lock_handles(handles) mono_os_mutex_lock (&handle_section)
+void mono_gc_handle_lock () { lock_handles (NULL);}
 #define unlock_handles(handles) mono_os_mutex_unlock (&handle_section)
+void mono_gc_handle_unlock () { unlock_handles (NULL); }
 
 typedef struct {
 	guint32  *bitmap;
@@ -881,10 +883,19 @@ mono_gc_free_fixed (void* addr)
 	GC_FREE (addr);
 }
 
+static int validate_heap = 0;
+static int counter = 0;
+static int validate_frequency = 100;
+
+extern void mono_unity_heap_validation ();
+
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
+
+	if (validate_heap && (counter++ % validate_frequency) == 0)
+		mono_unity_heap_validation ();
 
 	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
