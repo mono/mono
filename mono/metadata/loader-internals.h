@@ -27,6 +27,8 @@
 #endif
 #endif
 
+G_BEGIN_DECLS
+
 typedef struct _MonoLoadedImages MonoLoadedImages;
 typedef struct _MonoAssemblyLoadContext MonoAssemblyLoadContext;
 typedef struct _MonoMemoryManager MonoMemoryManager;
@@ -245,5 +247,7 @@ mono_mem_manager_code_foreach (MonoMemoryManager *memory_manager, MonoCodeManage
 
 char*
 mono_mem_manager_strdup (MonoMemoryManager *memory_manager, const char *s);
+
+G_END_DECLS
 
 #endif
