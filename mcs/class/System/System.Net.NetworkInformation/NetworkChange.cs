@@ -108,6 +108,8 @@ namespace System.Net.NetworkInformation {
 			if (networkChange != null)
 				return;
 
+			if (IsWindows)
+				throw new PlatformNotSupportedException ("NetworkInformation.NetworkChange is not supported on the current platform.");
 			try {
 				networkChange = new MacNetworkChange ();
 			} catch {
@@ -116,6 +118,21 @@ namespace System.Net.NetworkInformation {
 #endif
 			}
 #endif // MONOTOUCH_WATCH
+		}
+
+		static bool IsWindows
+		{
+			get
+			{
+				PlatformID platform = Environment.OSVersion.Platform;
+				if (platform == PlatformID.Win32S ||
+					platform == PlatformID.Win32Windows ||
+					platform == PlatformID.Win32NT ||
+					platform == PlatformID.WinCE) {
+					return true;
+				}
+				return false;
+			}
 		}
 
 		static void MaybeDispose ()
