@@ -4067,6 +4067,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			break;
 		}
 		case CEE_RET: {
+			link_bblocks = FALSE;
 			/* Return from inlined method, return value is on top of stack */
 			if (inlining) {
 				td->ip++;
@@ -4074,7 +4075,6 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				td->last_ins->info.target_bb = exit_bb;
 				init_bb_stack_state (td, exit_bb);
 				interp_link_bblocks (td, td->cbb, exit_bb);
-				link_bblocks = FALSE;
 				break;
 			}
 
