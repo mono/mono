@@ -7768,6 +7768,18 @@ retry:
 				sp->val = val;
 			}
 			sp++;
+		} else if (ins->opcode == MINT_MONO_LDPTR) {
+			StackValue val;
+#if SIZEOF_VOID_P == 8
+			val.type = STACK_VALUE_I8;
+			val.l = (gint64)td->data_items [ins->data [0]];
+#else
+			val.type = STACK_VALUE_I4;
+			val.i = (gint32)td->data_items [ins->data [0]];
+#endif
+			sp->ins = ins;
+			sp->val = val;
+			sp++;
 		} else if (MINT_IS_MOVLOC (ins->opcode)) {
 			int src_local = ins->data [0];
 			int dest_local = ins->data [1];
