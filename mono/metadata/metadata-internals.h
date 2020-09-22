@@ -125,6 +125,7 @@ typedef struct {
 	 * indexed by SignaturePointerPair
 	 */
 	GHashTable *delegate_abstract_invoke_cache;
+	GHashTable *delegate_bound_static_invoke_cache;
 
 	/*
 	 * indexed by MonoMethod pointers
@@ -339,7 +340,6 @@ struct _MonoImage {
 	/*
 	 * indexed by SignaturePointerPair
 	 */
-	GHashTable *delegate_bound_static_invoke_cache;
 	GHashTable *native_func_wrapper_cache;
 
 	/*

@@ -3515,7 +3515,7 @@ free_signature_pointer_pair (SignaturePointerPair *pair)
 MonoMethod *
 mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt, gboolean static_method_with_first_arg_bound, MonoMethod *target_method)
 {
-	MonoMethodSignature *sig, *static_sig, *invoke_sig;
+	MonoMethodSignature *sig, *invoke_sig;
 	int i;
 	MonoMethodBuilder *mb;
 	MonoMethod *res;
@@ -3568,6 +3568,13 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 		subtype = WRAPPER_SUBTYPE_DELEGATE_INVOKE_BOUND;
 		g_assert (!callvirt);
 		invoke_sig = mono_method_signature (target_method);
+		/*
+		 * The wrapper has a different lifetime from the method to be invoked.
+		 * If the method is dynamic we don't want to be using its signature
+		 * in the wrapper since it could get freed early.
+		 */
+		if (method_is_dynamic(target_method))
+			invoke_sig = mono_metadata_signature_dup_full(target_method->klass->image, invoke_sig);
 	}
 
 	/*
@@ -3595,7 +3602,11 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 			return res;
 		cache_key = method->klass;
 	} else if (static_method_with_first_arg_bound) {
-		cache = get_cache (&method->klass->image->delegate_bound_static_invoke_cache,
+		GHashTable **cache_ptr;
+
+		cache_ptr = &mono_method_get_wrapper_cache (target_method)->delegate_bound_static_invoke_cache;
+
+		cache = get_cache (cache_ptr,
 						   (GHashFunc)mono_signature_hash, 
 						   (GCompareFunc)mono_metadata_signature_equal);
 		/*
@@ -3633,10 +3644,10 @@ mono_marshal_get_delegate_invoke_internal (MonoMethod *method, gboolean callvirt
 		cache_key = sig;
 	}
 
-	static_sig = mono_metadata_signature_dup_full (method->klass->image, sig);
-	static_sig->hasthis = 0;
-	if (!static_method_with_first_arg_bound)
-		invoke_sig = static_sig;
+	if (!static_method_with_first_arg_bound) {
+		invoke_sig = mono_metadata_signature_dup_full(method->klass->image, sig);
+		invoke_sig->hasthis = 0;
+	}
 
 	if (static_method_with_first_arg_bound)
 		name = mono_signature_to_name (invoke_sig, "invoke_bound");
@@ -12393,8 +12404,8 @@ mono_marshal_free_dynamic_wrappers (MonoMethod *method)
 	if (image->wrapper_caches.delegate_abstract_invoke_cache)
 		g_hash_table_foreach_remove (image->wrapper_caches.delegate_abstract_invoke_cache, signature_pointer_pair_matches_pointer, method);
 	// FIXME: Need to clear the caches in other images as well
-	if (image->delegate_bound_static_invoke_cache)
-		g_hash_table_remove (image->delegate_bound_static_invoke_cache, mono_method_signature (method));
+	if (image->wrapper_caches.delegate_bound_static_invoke_cache)
+		g_hash_table_remove (image->wrapper_caches.delegate_bound_static_invoke_cache, mono_method_signature (method));
 
 	if (marshal_mutex_initialized)
 		mono_marshal_unlock ();
