@@ -1485,28 +1485,29 @@ mono_unity_image_set_mempool_chunk_foreach(GFunc callback, gpointer user_data)
 MONO_API void
 mono_unity_domain_mempool_chunk_foreach(MonoDomain *domain, GFunc callback, gpointer user_data)
 {
-	mono_domain_lock(domain);
+	MonoMemoryManager* memory_manager = mono_domain_ambient_memory_manager(domain);
 
+	mono_mem_manager_lock(memory_manager);
 	execution_ctx ctx;
 	ctx.callback = callback;
 	ctx.user_data = user_data;
-	mono_mempool_foreach_block(domain->mp, handle_mem_pool_chunk, &ctx);
+	mono_mempool_foreach_block(memory_manager->mp, handle_mem_pool_chunk, &ctx);
 
-	mono_domain_unlock(domain);
+	mono_mem_manager_unlock(memory_manager);
 }
 
 MONO_API void
 mono_unity_root_domain_mempool_chunk_foreach(GFunc callback, gpointer user_data)
 {
-	MonoDomain *domain = mono_get_root_domain();
-	mono_domain_lock(domain);
+	MonoMemoryManager* memory_manager = mono_domain_ambient_memory_manager(mono_get_root_domain());
+	mono_mem_manager_lock(memory_manager);
 
 	execution_ctx ctx;
 	ctx.callback = callback;
 	ctx.user_data = user_data;
-	mono_mempool_foreach_block(domain->mp, handle_mem_pool_chunk, &ctx);
+	mono_mempool_foreach_block(memory_manager->mp, handle_mem_pool_chunk, &ctx);
 
-	mono_domain_unlock(domain);
+	mono_mem_manager_unlock(memory_manager);
 }
 
 MONO_API void

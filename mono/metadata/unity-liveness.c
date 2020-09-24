@@ -418,13 +418,14 @@ void mono_unity_liveness_calculation_from_statics(LivenessState* liveness_state)
 {
 	int i, j;
 	MonoDomain* domain = mono_domain_get();
+	MonoMemoryManager* memory_manager = mono_domain_memory_manager(domain);
 
 	mono_reset_state(liveness_state);
 
 
-	for (i = 0; i < domain->class_vtable_array->len; ++i)
+	for (i = 0; i < memory_manager->class_vtable_array->len; ++i)
 	{
-		MonoVTable* vtable = (MonoVTable *)g_ptr_array_index (domain->class_vtable_array, i);
+		MonoVTable* vtable = (MonoVTable *)g_ptr_array_index (memory_manager->class_vtable_array, i);
 		MonoClass* klass = vtable->klass;
 		MonoClassField *field;
 		if (!klass)
