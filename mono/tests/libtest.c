@@ -7556,3 +7556,12 @@ mono_test_native_to_managed_exception_rethrow (NativeToManagedExceptionRethrowFu
 	pthread_join (t, NULL);
 }
 #endif
+
+static guint8 static_arr[] = { 1, 2, 3, 4 };
+
+LIBTEST_API guint8*
+mono_test_marshal_return_array (void)
+{
+	return static_arr;
+}
+
