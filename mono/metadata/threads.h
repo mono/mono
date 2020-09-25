@@ -42,7 +42,8 @@ mono_thread_create (MonoDomain *domain, void* func, void* arg);
 
 MONO_API MONO_RT_EXTERNAL_ONLY MonoThread *
 mono_thread_attach (MonoDomain *domain);
-MONO_API void mono_thread_detach (MonoThread *thread);
+MONO_API MONO_RT_EXTERNAL_ONLY void
+mono_thread_detach (MonoThread *thread);
 MONO_API void mono_thread_exit (void);
 
 MONO_API MONO_RT_EXTERNAL_ONLY void

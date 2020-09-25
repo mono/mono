@@ -1560,6 +1560,26 @@ mono_thread_attach_external_native_thread (MonoDomain *domain, gboolean backgrou
 		mono_threads_enter_gc_safe_region_unbalanced_internal (&stackdata);
 	}
 #endif
+	if (mono_threads_is_blocking_transition_enabled ()) {
+		/*
+		 * Ensure the thread is in a running state.
+		 * If the thread is doing something like this
+		 *
+		 * while (cond) {
+		 *   t = mono_thread_attach (domain);
+		 *   <...>
+		 *   mono_thread_detach (t);
+		 * }
+		 *
+		 * The call to mono_thread_detach will put it in GC Safe
+		 * (blocking, preemptive suspend) mode, so the next time we
+		 * come back to attach, we need to switch to GC Unsafe
+		 * (running, cooperative suspend) mode.
+		 */
+		MONO_STACKDATA (stackdata);
+		mono_threads_enter_gc_unsafe_region_unbalanced_internal (&stackdata);
+	}
+
 	return thread;
 }
 
@@ -1644,11 +1664,34 @@ mono_threads_attach_tools_thread (void)
 
 /**
  * mono_thread_detach:
+ *
+ * COOP: On return, the thread is in GC Safe mode
  */
 void
 mono_thread_detach (MonoThread *thread)
 {
+	if (!thread)
+		return;
+	mono_thread_internal_detach (thread);
+	/*
+	 * If the thread wasn't created by the runtime, leave it in GC
+	 * Safe mode.  Under hybrid and coop suspend, we don't want to
+	 * wait for it to cooperatively suspend.
+	 */
+	if (mono_threads_is_blocking_transition_enabled ()) {
+		MONO_STACKDATA (stackdata);
+		mono_threads_enter_gc_safe_region_unbalanced_internal (&stackdata);
+	}
+}
 
+/**
+ * mono_thread_internal_detach:
+ *
+ * COOP: GC thread state is unchanged
+ */
+void
+mono_thread_internal_detach (MonoThread *thread)
+{
 	if (!thread)
 		return;
 	MONO_ENTER_GC_UNSAFE;

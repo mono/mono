@@ -428,6 +428,9 @@ void mono_thread_join (gpointer tid);
 MONO_PROFILER_API MonoThread*
 mono_thread_internal_attach (MonoDomain *domain);
 
+MONO_PROFILER_API void
+mono_thread_internal_detach (MonoThread *thread);
+
 MonoThread *
 mono_thread_attach_external_native_thread (MonoDomain *domain, gboolean background);
 

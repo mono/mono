@@ -3199,7 +3199,7 @@ profiler_thread_check_detach (MonoProfilerThread *thread)
 		thread->did_detach = TRUE;
 
 		mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NONE);
-		mono_thread_detach (mono_thread_current ());
+		mono_thread_internal_detach (mono_thread_current ());
 
 		mono_os_sem_post (&log_profiler.detach_threads_sem);
 	}

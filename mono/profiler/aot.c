@@ -312,7 +312,7 @@ helper_thread (void *arg)
 	prof_shutdown (&aot_profiler);
 
 	mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NONE);
-	mono_thread_detach (mono_thread_current ());
+	mono_thread_internal_detach (mono_thread_current ());
 
 	return NULL;
 }
