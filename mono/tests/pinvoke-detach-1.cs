@@ -7,14 +7,21 @@ using System;
 using System.Threading;
 using System.Runtime.InteropServices;
 
+public class MonoPInvokeCallbackAttribute : Attribute {
+	public MonoPInvokeCallbackAttribute (Type delegateType) { }
+}
+
 public class Tests {
 	public static int Main ()
 	{
 		return TestDriver.RunTests (typeof (Tests));
 	}
 
+	public delegate void VoidVoidDelegate ();
+
 	static int was_called;
 
+	[MonoPInvokeCallback (typeof (VoidVoidDelegate))]
 	private static void MethodInvokedFromNative ()
 	{
 		was_called++;
@@ -30,6 +37,7 @@ public class Tests {
 		return skipped || was_called == 5 ? 0 : 1;
 	}
 
+	[MonoPInvokeCallback (typeof (VoidVoidDelegate))]
 	private static void MethodInvokedFromNative2 ()
 	{
 	}
