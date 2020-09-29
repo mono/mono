@@ -413,6 +413,8 @@ interp_free_context (gpointer ctx)
 {
 	ThreadContext *context = (ThreadContext*)ctx;
 
+	set_context (NULL);
+
 	mono_vfree (context->stack_start, INTERP_STACK_SIZE, MONO_MEM_ACCOUNT_INTERP_STACK);
 	/* Prevent interp_mark_stack from trying to scan the data_stack, before freeing it */
 	context->stack_start = NULL;
