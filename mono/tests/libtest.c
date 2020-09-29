@@ -8362,7 +8362,15 @@ static void*
 invoke_foreign_thread (void* user_data)
 {
 	struct invoke_names *names = (struct invoke_names*)user_data;
-	test_invoke_by_name (names);
+        /*
+         * Run a couple of times to check that attach/detach multiple
+         * times from the same thread leaves it in a reasonable coop
+         * thread state.
+         */
+        for (int i = 0; i < 5; ++i) {
+                test_invoke_by_name (names);
+                sleep (2);
+        }
 	destroy_invoke_names (names);
 	return NULL;
 }
@@ -8386,40 +8394,13 @@ mono_test_attach_invoke_foreign_thread (const char *assm_name, const char *name_
 }
 
 #ifndef HOST_WIN32
-static void*
-invoke_repeat_foreign_thread (void *user_data)
-{
-	// This thread tries to call back into the runtime forever, and it
-	// never ends. It should not prevent the runtime from shutting down.
-	struct invoke_names *names = (struct invoke_names *)user_data;
-	while (1) {
-		test_invoke_by_name (names);
-		sleep (2);
-	}
-	g_assert_not_reached ();
-}
-#endif
-
-LIBTEST_API mono_bool STDCALL
-mono_test_attach_invoke_repeat_foreign_thread (const char *assm_name, const char *name_space, const char *name, const char *meth_name)
-{
-#ifndef HOST_WIN32
-	struct invoke_names *names = make_invoke_names (assm_name, name_space, name, meth_name);
-	pthread_t t;
-	int res = pthread_create (&t, NULL, invoke_repeat_foreign_thread, (void*)names);
-	g_assert (res == 0);
-	pthread_detach (t);
-	return 0;
-#else
-	// TODO: Win32 version of this test
-	return 1;
-#endif
-}
-
-#ifndef HOST_WIN32
 struct names_and_mutex {
 	struct invoke_names *names;
-	pthread_mutex_t mutex;
+        /* mutex to coordinate test and foreign thread */
+        pthread_mutex_t coord_mutex;
+        pthread_cond_t coord_cond;
+        /* mutex to block the foreign thread */
+	pthread_mutex_t deadlock_mutex;
 };
 
 static void*
@@ -8429,7 +8410,12 @@ invoke_block_foreign_thread (void *user_data)
 	// prevent the runtime from shutting down.
 	struct names_and_mutex *nm = (struct names_and_mutex *)user_data;
 	test_invoke_by_name (nm->names);
-	pthread_mutex_lock (&nm->mutex); // blocks forever
+        pthread_mutex_lock (&nm->coord_mutex);
+        /* signal the test thread that we called the runtime */
+        pthread_cond_signal (&nm->coord_cond);
+        pthread_mutex_unlock (&nm->coord_mutex);
+
+	pthread_mutex_lock (&nm->deadlock_mutex); // blocks forever
 	g_assert_not_reached ();
 }
 #endif
@@ -8441,12 +8427,20 @@ mono_test_attach_invoke_block_foreign_thread (const char *assm_name, const char 
 	struct invoke_names *names = make_invoke_names (assm_name, name_space, name, meth_name);
 	struct names_and_mutex *nm = malloc (sizeof (struct names_and_mutex));
 	nm->names = names;
-	pthread_mutex_init (&nm->mutex, NULL);
+        pthread_mutex_init (&nm->coord_mutex, NULL);
+        pthread_cond_init (&nm->coord_cond, NULL);
+	pthread_mutex_init (&nm->deadlock_mutex, NULL);
 
-	pthread_mutex_lock (&nm->mutex); // lock the mutex and never unlock it.
+	pthread_mutex_lock (&nm->deadlock_mutex); // lock the mutex and never unlock it.
 	pthread_t t;
 	int res = pthread_create (&t, NULL, invoke_block_foreign_thread, (void*)nm);
 	g_assert (res == 0);
+        /* wait for the foreign thread to finish calling the runtime before
+         * detaching it and returning
+         */
+        pthread_mutex_lock (&nm->coord_mutex);
+        pthread_cond_wait (&nm->coord_cond, &nm->coord_mutex);
+        pthread_mutex_unlock (&nm->coord_mutex);
 	pthread_detach (t);
 	return 0;
 #else

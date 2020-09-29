@@ -13,11 +13,11 @@ public class Tests {
 		return TestDriver.RunTests (typeof (Tests));
 	}
 
-	static bool was_called;
+	static int was_called;
 
 	private static void MethodInvokedFromNative ()
 	{
-		was_called = true;
+		was_called++;
 	}
 
 	[DllImport ("libtest", EntryPoint="mono_test_attach_invoke_foreign_thread")]
@@ -25,31 +25,9 @@ public class Tests {
 
 	public static int test_0_attach_invoke_foreign_thread ()
 	{
-		was_called = false;
+		was_called = 0;
 		bool skipped = mono_test_attach_invoke_foreign_thread (typeof (Tests).Assembly.Location, "", "Tests", "MethodInvokedFromNative");
-		return skipped || was_called ? 0 : 1;
-	}
-
-	static SemaphoreSlim sema;
-
-	[DllImport ("libtest", EntryPoint="mono_test_attach_invoke_repeat_foreign_thread")]
-	public static extern bool mono_test_attach_invoke_repeat_foreign_thread (string assm_name, string name_space, string class_name, string method_name);
-
-	private static void MethodInvokedRepeatedlyFromNative ()
-	{
-		if (sema != null)
-			sema.Release (1);
-		sema = null;
-	}
-
-	public static int test_0_attach_invoke_repeat_foreign_thread ()
-	{
-		sema = new SemaphoreSlim (0, 1);
-		bool skipped = mono_test_attach_invoke_repeat_foreign_thread (typeof (Tests).Assembly.Location, "", "Tests", "MethodInvokedRepeatedlyFromNative");
-		if (!skipped)
-			sema.Wait ();
-		GC.Collect (); // should not hang waiting for the foreign thread
-		return 0; // really we succeed if the app can shut down without hanging
+		return skipped || was_called == 5 ? 0 : 1;
 	}
 
 	private static void MethodInvokedFromNative2 ()
