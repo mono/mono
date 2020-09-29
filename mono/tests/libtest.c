@@ -8358,6 +8358,7 @@ test_invoke_by_name (struct invoke_names *names)
 		sym_mono_thread_detach (thread);
 }
 
+#ifndef HOST_WIN32
 static void*
 invoke_foreign_thread (void* user_data)
 {
@@ -8374,7 +8375,7 @@ invoke_foreign_thread (void* user_data)
 	destroy_invoke_names (names);
 	return NULL;
 }
-
+#endif
 
 
 LIBTEST_API mono_bool STDCALL
