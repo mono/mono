@@ -1456,7 +1456,7 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *jump_table;
 		int i;
-		MonoMemoryManager *mem_manager = m_method_get_mem_manager (domain, method);
+		MonoMemoryManager *mem_manager = method ? m_method_get_mem_manager (domain, method) : mono_domain_memory_manager (domain);
 		if (mono_aot_only)
 			jump_table = (void **)mono_mem_manager_alloc (mem_manager, sizeof (gpointer) * patch_info->data.table->table_size);
 		else
