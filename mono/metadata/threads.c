@@ -147,7 +147,7 @@ static StaticDataInfo context_static_info;
 /* The hash of existing threads (key is thread ID, value is
  * MonoInternalThread*) that need joining before exit
  */
-static MonoGHashTable *threads__=NULL;
+static MonoGHashTable *threads=NULL;
 
 /* List of app context GC handles.
  * Added to from mono_threads_register_app_context ().
@@ -699,7 +699,7 @@ static MonoInternalThread*
 create_internal_thread_object (void)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-	
+
 	ERROR_DECL (error);
 	MonoInternalThread *thread;
 	MonoVTable *vt;
@@ -904,13 +904,13 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	if (threads_starting_up)
 		mono_g_hash_table_remove (threads_starting_up, thread);
 
-	if (!threads__) {
-		threads__ = mono_g_hash_table_new_type_internal (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREADING, NULL, "Thread Table");
+	if (!threads) {
+		threads = mono_g_hash_table_new_type_internal (NULL, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_THREADING, NULL, "Thread Table");
 	}
 
 	/* We don't need to duplicate thread->handle, because it is
 	 * only closed when the thread object is finalized by the GC. */
-	mono_g_hash_table_insert_internal (threads__, (gpointer)(gsize)(internal->tid), internal);
+	mono_g_hash_table_insert_internal (threads, (gpointer)(gsize)(internal->tid), internal);
 
 	/* We have to do this here because mono_thread_start_cb
 	 * requires that root_domain_thread is set up. */
@@ -1019,9 +1019,9 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 
 	mono_threads_lock ();
 
-	g_assert (threads__);
+	g_assert (threads);
 
-	if (!mono_g_hash_table_lookup_extended (threads__, (gpointer)thread->tid, NULL, (gpointer*) &value)) {
+	if (!mono_g_hash_table_lookup_extended (threads, (gpointer)thread->tid, NULL, (gpointer*) &value)) {
 		g_error ("%s: thread %p (tid: %p) should not have been removed yet from threads", __func__, thread, thread->tid);
 	} else if (thread != value) {
 		/* We have to check whether the thread object for the tid is still the same in the table because the
@@ -1030,7 +1030,7 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 		g_error ("%s: thread %p (tid: %p) do not match with value %p (tid: %p)", __func__, thread, thread->tid, value, value->tid);
 	}
 
-	removed = mono_g_hash_table_remove (threads__, (gpointer)thread->tid);
+	removed = mono_g_hash_table_remove (threads, (gpointer)thread->tid);
 	g_assert (removed);
 
 	mono_threads_unlock ();
@@ -3698,7 +3698,7 @@ wait_for_tids (struct wait_data *wait, guint32 timeout, gboolean check_state_cha
 		internal = wait->threads [ret - MONO_THREAD_INFO_WAIT_RET_SUCCESS_0];
 
 		mono_threads_lock ();
-		if (mono_g_hash_table_lookup (threads__, (gpointer) internal->tid) == internal)
+		if (mono_g_hash_table_lookup (threads, (gpointer) internal->tid) == internal)
 			g_error ("%s: failed to call mono_thread_detach_internal on thread %p, InternalThread: %p", __func__, internal->tid, internal);
 		mono_threads_unlock ();
 	}
@@ -3847,7 +3847,7 @@ mono_thread_manage_internal (void)
 	THREAD_DEBUG (g_message ("%s: Joining each running thread...", __func__));
 	
 	mono_threads_lock ();
-	if(threads__==NULL) {
+	if(threads==NULL) {
 		THREAD_DEBUG (g_message("%s: No threads", __func__));
 		mono_threads_unlock ();
 		return;
@@ -3871,7 +3871,7 @@ mono_thread_manage_internal (void)
 		wait->num=0;
 		/* We must zero all InternalThread pointers to avoid making the GC unhappy. */
 		memset (wait->threads, 0, sizeof (wait->threads));
-		mono_g_hash_table_foreach (threads__, build_wait_tids, wait);
+		mono_g_hash_table_foreach (threads, build_wait_tids, wait);
 		mono_threads_unlock ();
 		if (wait->num > 0)
 			/* Something to wait for */
@@ -3903,7 +3903,7 @@ mono_thread_manage_internal (void)
 		wait->num = 0;
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
 		memset (wait->threads, 0, sizeof (wait->threads));
-		mono_g_hash_table_foreach (threads__, abort_threads, wait);
+		mono_g_hash_table_foreach (threads, abort_threads, wait);
 
 		mono_threads_unlock ();
 
@@ -3991,7 +3991,7 @@ void mono_thread_suspend_all_other_threads (void)
 		/*We must zero all InternalThread pointers to avoid making the GC unhappy.*/
 		memset (wait->threads, 0, sizeof (wait->threads));
 		mono_threads_lock ();
-		mono_g_hash_table_foreach (threads__, collect_threads_for_suspend, wait);
+		mono_g_hash_table_foreach (threads, collect_threads_for_suspend, wait);
 		mono_threads_unlock ();
 
 		eventidx = 0;
@@ -4134,7 +4134,7 @@ collect_threads (MonoGCHandle *thread_handles, int max_threads)
 	CollectThreadsUserData ud;
 
 	mono_memory_barrier ();
-	if (!threads__)
+	if (!threads)
 		return 0;
 
 	memset (&ud, 0, sizeof (ud));
@@ -4143,7 +4143,7 @@ collect_threads (MonoGCHandle *thread_handles, int max_threads)
 	ud.max_threads = max_threads;
 
 	mono_threads_lock ();
-	mono_g_hash_table_foreach (threads__, collect_thread, &ud);
+	mono_g_hash_table_foreach (threads, collect_thread, &ud);
 	mono_threads_unlock ();
 
 	return ud.nthreads;
@@ -4581,7 +4581,7 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 		user_data.domain = domain;
 		user_data.wait.num = 0;
 		/* This shouldn't take any locks */
-		mono_g_hash_table_foreach (threads__, collect_appdomain_thread, &user_data);
+		mono_g_hash_table_foreach (threads, collect_appdomain_thread, &user_data);
 		mono_threads_unlock ();
 
 		if (user_data.wait.num > 0) {
@@ -4969,8 +4969,8 @@ mono_alloc_special_static_data (guint32 static_type, guint32 size, guint32 align
 
 	if (static_type == SPECIAL_STATIC_THREAD) {
 		/* This can be called during startup */
-		if (threads__ != NULL)
-			mono_g_hash_table_foreach (threads__, alloc_thread_static_data_helper, GUINT_TO_POINTER (offset));
+		if (threads != NULL)
+			mono_g_hash_table_foreach (threads, alloc_thread_static_data_helper, GUINT_TO_POINTER (offset));
 	} else {
 		if (contexts != NULL)
 			g_hash_table_foreach (contexts, alloc_context_static_data_helper, GUINT_TO_POINTER (offset));
@@ -5069,8 +5069,8 @@ do_free_special_slot (guint32 offset, guint32 size)
 	clear_reference_bitmap (sets, data.offset, data.size);
 
 	if (static_type == SPECIAL_STATIC_OFFSET_TYPE_THREAD) {
-		if (threads__ != NULL)
-			mono_g_hash_table_foreach (threads__, free_thread_static_data_helper, &data);
+		if (threads != NULL)
+			mono_g_hash_table_foreach (threads, free_thread_static_data_helper, &data);
 	} else {
 		if (contexts != NULL)
 			g_hash_table_foreach (contexts, free_context_static_data_helper, &data);
@@ -6248,9 +6248,7 @@ mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackD
 	if (mono_threads_is_blocking_transition_enabled ()) {
 		/* it won't do anything if cookie is NULL
 		 * thread state RUNNING -> (RUNNING|BLOCKING) */
-		// mono_threads_exit_gc_unsafe_region_unbalanced_internal (cookie, stackdata);
-		mono_threads_enter_gc_safe_region_unbalanced_internal (stackdata);
-
+		mono_threads_exit_gc_unsafe_region_unbalanced_internal (cookie, stackdata);
 	}
 }
 
@@ -6508,7 +6506,7 @@ collect_thread_ids (MonoNativeThreadId *thread_ids, int max_threads)
 	CollectThreadIdsUserData ud;
 
 	mono_memory_barrier ();
-	if (!threads__)
+	if (!threads)
 		return 0;
 
 	memset (&ud, 0, sizeof (ud));
@@ -6517,7 +6515,7 @@ collect_thread_ids (MonoNativeThreadId *thread_ids, int max_threads)
 	ud.max_threads = max_threads;
 
 	mono_threads_lock ();
-	mono_g_hash_table_foreach (threads__, collect_thread_id, &ud);
+	mono_g_hash_table_foreach (threads, collect_thread_id, &ud);
 	mono_threads_unlock ();
 
 	return ud.nthreads;
