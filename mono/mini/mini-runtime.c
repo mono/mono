@@ -1456,16 +1456,11 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 	case MONO_PATCH_INFO_SWITCH: {
 		gpointer *jump_table;
 		int i;
-		if (method && method->dynamic) {
-			jump_table = (void **)mono_code_manager_reserve (mono_dynamic_code_hash_lookup (domain, method)->code_mp, sizeof (gpointer) * patch_info->data.table->table_size);
-		} else {
-			MonoMemoryManager *mem_manager = m_method_get_mem_manager (domain, method);
-			if (mono_aot_only) {
-				jump_table = (void **)mono_mem_manager_alloc (mem_manager, sizeof (gpointer) * patch_info->data.table->table_size);
-			} else {
-				jump_table = (void **)mono_mem_manager_code_reserve (mem_manager, sizeof (gpointer) * patch_info->data.table->table_size);
-			}
-		}
+		MonoMemoryManager *mem_manager = m_method_get_mem_manager (domain, method);
+		if (mono_aot_only)
+			jump_table = (void **)mono_mem_manager_alloc (mem_manager, sizeof (gpointer) * patch_info->data.table->table_size);
+		else
+			jump_table = (void **)mono_mem_manager_code_reserve (mem_manager, sizeof (gpointer) * patch_info->data.table->table_size);
 
 		mono_codeman_enable_write ();
 		for (i = 0; i < patch_info->data.table->table_size; i++) {
@@ -2825,7 +2820,8 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 	mono_jit_info_table_remove (domain, ji->ji);
 
 	if (destroy)
-		mono_code_manager_destroy (ji->code_mp);
+		mono_mem_manager_free_dynamic_method (((MonoDynamicMethod*)method)->mem_manager);
+	((MonoDynamicMethod*)method)->mem_manager = NULL;
 	g_free (ji);
 }
 
@@ -4204,7 +4200,6 @@ static void
 dynamic_method_info_free (gpointer key, gpointer value, gpointer user_data)
 {
 	MonoJitDynamicMethodInfo *di = (MonoJitDynamicMethodInfo *)value;
-	mono_code_manager_destroy (di->code_mp);
 	g_free (di);
 }
 

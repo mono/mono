@@ -155,7 +155,6 @@ typedef struct
 
 typedef struct {
 	MonoJitInfo *ji;
-	MonoCodeManager *code_mp;
 } MonoJitDynamicMethodInfo;
 
 /* An extension of MonoGenericParamFull used in generic sharing */
