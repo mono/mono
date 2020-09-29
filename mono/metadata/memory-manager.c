@@ -4,34 +4,56 @@
 #include <mono/metadata/mono-hash-internals.h>
 
 static void
-memory_manager_init (MonoMemoryManager *memory_manager, MonoDomain *domain, gboolean collectible)
+memory_manager_delete (MonoMemoryManager *memory_manager, gboolean debug_unload);
+
+static void
+memory_manager_init (MonoMemoryManager *memory_manager, MonoDomain *domain, gboolean collectible,
+					 gboolean dynamic_method)
 {
 	memory_manager->domain = domain;
 	memory_manager->freeing = FALSE;
+	memory_manager->dynamic_method = dynamic_method;
 
 	mono_coop_mutex_init_recursive (&memory_manager->lock);
 
 	memory_manager->mp = mono_mempool_new ();
 	memory_manager->code_mp = mono_code_manager_new ();
 
-	memory_manager->class_vtable_array = g_ptr_array_new ();
+	if (!dynamic_method) {
+		memory_manager->class_vtable_array = g_ptr_array_new ();
 
-	// TODO: make these not linked to the domain for debugging
-	memory_manager->type_hash = mono_g_hash_table_new_type_internal ((GHashFunc)mono_metadata_type_hash, (GCompareFunc)mono_metadata_type_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Reflection Type Table");
-	memory_manager->refobject_hash = mono_conc_g_hash_table_new_type (mono_reflected_hash, mono_reflected_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Reflection Object Table");
-	memory_manager->type_init_exception_hash = mono_g_hash_table_new_type_internal (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Type Initialization Exception Table");
+		// TODO: make these not linked to the domain for debugging
+		memory_manager->type_hash = mono_g_hash_table_new_type_internal ((GHashFunc)mono_metadata_type_hash, (GCompareFunc)mono_metadata_type_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Reflection Type Table");
+		memory_manager->refobject_hash = mono_conc_g_hash_table_new_type (mono_reflected_hash, mono_reflected_equal, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Reflection Object Table");
+		memory_manager->type_init_exception_hash = mono_g_hash_table_new_type_internal (mono_aligned_addr_hash, NULL, MONO_HASH_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Type Initialization Exception Table");
+	}
 }
 
 MonoSingletonMemoryManager *
 mono_mem_manager_create_singleton (MonoAssemblyLoadContext *alc, MonoDomain *domain, gboolean collectible)
 {
 	MonoSingletonMemoryManager *mem_manager = g_new0 (MonoSingletonMemoryManager, 1);
-	memory_manager_init ((MonoMemoryManager *)mem_manager, domain, collectible);
+	memory_manager_init ((MonoMemoryManager *)mem_manager, domain, collectible, FALSE);
 
 	mem_manager->memory_manager.is_generic = FALSE;
 	mem_manager->alc = alc;
 
 	return mem_manager;
+}
+
+MonoMemoryManager *
+mono_mem_manager_create_dynamic_method (MonoDomain *domain)
+{
+	MonoMemoryManager *mem_manager = g_new0 (MonoMemoryManager, 1);
+	memory_manager_init (mem_manager, domain, FALSE, TRUE);
+
+	return mem_manager;
+}
+
+void
+mono_mem_manager_free_dynamic_method (MonoMemoryManager *memory_manager)
+{
+	memory_manager_delete (memory_manager, FALSE);
 }
 
 static void
@@ -76,7 +98,7 @@ memory_manager_delete (MonoMemoryManager *memory_manager, gboolean debug_unload)
 {
 	// Scan here to assert no lingering references in vtables?
 
-	if (!memory_manager->freeing)
+	if (!memory_manager->dynamic_method && !memory_manager->freeing)
 		memory_manager_delete_objects (memory_manager);
 
 	mono_coop_mutex_destroy (&memory_manager->lock);
@@ -90,10 +112,9 @@ memory_manager_delete (MonoMemoryManager *memory_manager, gboolean debug_unload)
 		mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, -1 * mono_mempool_get_allocated (memory_manager->mp));
 #endif
 		mono_mempool_destroy (memory_manager->mp);
-		memory_manager->mp = NULL;
 		mono_code_manager_destroy (memory_manager->code_mp);
-		memory_manager->code_mp = NULL;
 	}
+	g_free (memory_manager);
 }
 
 void
@@ -110,7 +131,6 @@ mono_mem_manager_free_singleton (MonoSingletonMemoryManager *memory_manager, gbo
 	g_assert (!memory_manager->memory_manager.is_generic);
 
 	memory_manager_delete (&memory_manager->memory_manager, debug_unload);
-	g_free (memory_manager);
 }
 
 void
