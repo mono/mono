@@ -16,7 +16,10 @@ memory_manager_init (MonoMemoryManager *memory_manager, MonoDomain *domain, gboo
 
 	mono_coop_mutex_init_recursive (&memory_manager->lock);
 
-	memory_manager->mp = mono_mempool_new ();
+	if (dynamic_method)
+		memory_manager->mp = mono_mempool_new_size (256);
+	else
+		memory_manager->mp = mono_mempool_new ();
 	memory_manager->code_mp = mono_code_manager_new ();
 
 	if (!dynamic_method) {
