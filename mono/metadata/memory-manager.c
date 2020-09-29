@@ -105,14 +105,18 @@ memory_manager_delete (MonoMemoryManager *memory_manager, gboolean debug_unload)
 
 	if (debug_unload) {
 		mono_mempool_invalidate (memory_manager->mp);
-		mono_code_manager_invalidate (memory_manager->code_mp);
+		if (memory_manager->code_mp)
+			/* Can already be freed by the JIT */
+			mono_code_manager_invalidate (memory_manager->code_mp);
 	} else {
 #ifndef DISABLE_PERFCOUNTERS
 		/* FIXME: use an explicit subtraction method as soon as it's available */
 		mono_atomic_fetch_add_i32 (&mono_perfcounters->loader_bytes, -1 * mono_mempool_get_allocated (memory_manager->mp));
 #endif
 		mono_mempool_destroy (memory_manager->mp);
-		mono_code_manager_destroy (memory_manager->code_mp);
+		if (memory_manager->code_mp)
+			/* Can already be freed by the JIT */
+			mono_code_manager_destroy (memory_manager->code_mp);
 	}
 	g_free (memory_manager);
 }

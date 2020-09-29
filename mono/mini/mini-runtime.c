@@ -2747,6 +2747,7 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 	GHashTableIter iter;
 	MonoJumpList *jlist;
 	MonoJitDomainInfo *info = domain_jit_info (domain);
+	MonoDynamicMethod *dmethod = (MonoDynamicMethod*)method;
 
 	g_assert (method->dynamic);
 
@@ -2819,9 +2820,11 @@ mono_jit_free_method (MonoDomain *domain, MonoMethod *method)
 	 */
 	mono_jit_info_table_remove (domain, ji->ji);
 
+	/* Free the code manager here if needed, the mem manager will be freed in mono_free_method () */
 	if (destroy)
-		mono_mem_manager_free_dynamic_method (((MonoDynamicMethod*)method)->mem_manager);
-	((MonoDynamicMethod*)method)->mem_manager = NULL;
+		mono_code_manager_destroy (dmethod->mem_manager->code_mp);
+	dmethod->mem_manager->code_mp = NULL;
+
 	g_free (ji);
 }
 
