@@ -2487,7 +2487,7 @@ create_jit_info (MonoCompile *cfg, MonoMethod *method_to_compile)
 		g_assert (gi);
 
 		gi->generic_sharing_context = (MonoGenericSharingContext *)mono_mem_manager_alloc0 (cfg->mem_manager, sizeof (MonoGenericSharingContext));
-		mini_init_gsctx (cfg->method->dynamic ? NULL : cfg->domain, NULL, cfg->gsctx_context, gi->generic_sharing_context);
+		mini_init_gsctx (cfg->gsctx_context, gi->generic_sharing_context);
 
 		if ((method_to_compile->flags & METHOD_ATTRIBUTE_STATIC) ||
 				mini_method_get_context (method_to_compile)->method_inst ||
@@ -3233,7 +3233,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 			context = &inflated->context;
 		}
 
-		mini_init_gsctx (NULL, cfg->mempool, context, &cfg->gsctx);
+		mini_init_gsctx (context, &cfg->gsctx);
 		cfg->gsctx_context = context;
 
 		cfg->gsharedvt = TRUE;
