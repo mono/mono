@@ -2241,7 +2241,7 @@ public class Tests : TestsBase, ITest2
 	{
 	}
 
-	public static unsafe void pointer_arguments (int* a, BlittableStruct* s) {
+	public static unsafe void pointer_arguments (int* a, BlittableStruct* s, delegate*<int> del) {
 		*a = 0;
 	}
 
@@ -2250,7 +2250,7 @@ public class Tests : TestsBase, ITest2
 		int[] a = new [] {1,2,3};
 		BlittableStruct s = new BlittableStruct () { i = 2, d = 3.0 };
 		fixed (int* pa = a)
-			pointer_arguments (pa, &s);
+			pointer_arguments (pa, &s, null);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
