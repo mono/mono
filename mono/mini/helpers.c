@@ -107,6 +107,10 @@ mono_blockset_print (MonoCompile *cfg, MonoBitSet *set, const char *name, guint 
 #endif
 }
 
+#ifdef HOST_WIN32
+#include <mono/w32subset.h>
+#endif
+
 /**
  * \param cfg compilation context
  * \param code a pointer to the code
