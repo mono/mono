@@ -4870,6 +4870,12 @@ public class DebuggerTests
 		var structValue = pointerValue.Value as StructMirror;
 		Assert.AreEqual("BlittableStruct", structValue.Type.Name);
 
+		object f = structValue.Fields[0];
+		AssertValue (2, f);
+		f = structValue.Fields[1];
+		AssertValue (3.0, f);
+
+#if !__MonoCS__
 		// function pointers
 		param = frame.Method.GetParameters()[2];
 		pointerValue = frame.GetValue(param) as PointerValue;
@@ -4877,11 +4883,7 @@ public class DebuggerTests
 		frame.SetValue (param, new PointerValue (vm, param.ParameterType, 1));
 		pointerValue = frame.GetValue(param) as PointerValue;
 		Assert.AreEqual (1, pointerValue.Address);
-
-		object f = structValue.Fields[0];
-		AssertValue (2, f);
-		f = structValue.Fields[1];
-		AssertValue (3.0, f);
+#endif
 	}
 
 	[Test]

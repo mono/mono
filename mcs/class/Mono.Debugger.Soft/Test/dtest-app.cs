@@ -2241,7 +2241,11 @@ public class Tests : TestsBase, ITest2
 	{
 	}
 
+#if __MonoCS__
+	public static unsafe void pointer_arguments (int* a, BlittableStruct* s, int *del) {
+#else
 	public static unsafe void pointer_arguments (int* a, BlittableStruct* s, delegate*<int> del) {
+#endif
 		*a = 0;
 	}
 
