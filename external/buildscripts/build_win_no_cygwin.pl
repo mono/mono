@@ -136,11 +136,19 @@ if ($build)
 	copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/bin/$configDirName/mono-bdwgc.exe", "$monoprefix/bin/.") or die ("failed copying mono-bdwgc.exe\n");
 	copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/bin/$configDirName/mono-2.0-bdwgc.dll", "$monoprefix/bin/.") or die ("failed copying mono-2.0-bdwgc.dll\n");
 	copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/bin/$configDirName/mono-2.0-bdwgc.pdb", "$monoprefix/bin/.") or die ("failed copying mono-2.0-bdwgc.pdb\n");
+	if($ENV{MONODIS})
+	{
+		copy("$monoroot/msvc/build/bdwgc/$archNameForBuild/bin/$configDirName/monodis-bdwgc.exe", "$monoprefix/bin/.") or die ("failed copying monodis-bdwgc.exe\n");
+	}
 
 	copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-sgen.exe", "$monoprefix/bin/.") or die ("failed copying mono-sgen.exe\n");
 	copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-2.0-sgen.dll", "$monoprefix/bin/.") or die ("failed copying mono-2.0-sgen.dll\n");
 	copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-2.0-sgen.pdb", "$monoprefix/bin/.") or die ("failed copying mono-2.0-sgen.pdb\n");
-
+	if($ENV{MONODIS})
+	{	
+		copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/monodis-sgen.exe", "$monoprefix/bin/.") or die ("failed copying monodis-sgen.exe\n");
+	}
+	
 	# sgen as default exe
 	copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-sgen.exe", "$monoprefix/bin/mono.exe") or die ("failed copying mono-sgen.exe to mono.exe\n");
 
@@ -224,7 +232,11 @@ if ($artifact)
 	copy("$monoprefix/bin/mono-sgen.exe", "$distDirArchBin/.") or die ("failed copying mono-sgen.exe\n");
 	copy("$monoprefix/bin/mono-bdwgc.exe", "$distDirArchBin/.") or die ("failed copying mono-bdwgc.exe\n");
 	copy("$monoprefix/bin/mono.exe", "$distDirArchBin/.") or die ("failed copying mono.exe\n");
-
+	if($ENV{MONODIS})
+	{
+		copy("$monoprefix/bin/monodis-bdwgc.exe", "$distDirArchBin/.") or die ("failed copying monodis-bdwgc.exe\n");
+		copy("$monoprefix/bin/monodis-sgen.exe", "$distDirArchBin/.") or die ("failed copying monodis-sgen.exe\n");
+	}
 	copy("$monoprefix/bin/MonoPosixHelper.dll", "$distDirArchBin/.") or die ("failed copying MonoPosixHelper.dll\n");
 	copy("$monoprefix/bin/MonoPosixHelper.pdb", "$distDirArchBin/.") or die ("failed copying MonoPosixHelper.pdb\n");
 
