@@ -36,7 +36,7 @@
 #include <windows.h>
 #include <psapi.h>
 #include <gmodule.h>
-#include <mono/w32subset.h>
+#include "../w32subset.h"
 
 #define LIBSUFFIX ".dll"
 #define LIBPREFIX ""

@@ -33,7 +33,7 @@
 #include <direct.h>
 #include <io.h>
 #include <assert.h>
-#include <mono/w32subset.h>
+#include "../w32subset.h"
 
 gboolean
 g_hasenv (const gchar *variable)

@@ -9,7 +9,7 @@
 
 #define CODESET 1
 #include <windows.h>
-#include <mono/w32subset.h>
+#include "../w32subset.h"
 
 #if HAVE_API_SUPPORT_WIN32_GET_ACP || HAVE_API_SUPPORT_WIN32_GET_CP_INFO_EX
 extern const char *eg_my_charset;
