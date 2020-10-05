@@ -195,10 +195,6 @@ mono_draw_code_cfg (MonoCompile *cfg, FILE *fp)
 	fprintf (fp, "}\n");
 }
 
-#if defined(HOST_WIN32)
-#include <mono/w32subset.h>
-#endif
-
 void
 mono_draw_graph (MonoCompile *cfg, MonoGraphOptions draw_options)
 {
