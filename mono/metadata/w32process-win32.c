@@ -119,7 +119,7 @@ mono_w32process_module_get_information (gpointer process, gpointer module, gpoin
 
 #if HAVE_API_SUPPORT_WIN32_GET_FILE_VERSION_INFO
 gboolean
-mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
+mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
 {
 	DWORD handle;
 
@@ -140,7 +140,7 @@ mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
 }
 #elif !HAVE_EXTERN_DEFINED_WIN32_GET_FILE_VERSION_INFO
 gboolean
-mono_w32process_get_fileversion_info (gunichar2 *filename, gpointer *data)
+mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
 {
 	g_unsupported_api ("GetFileVersionInfo");
 	SetLastError (ERROR_NOT_SUPPORTED);
