@@ -20,7 +20,7 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/security.h>
 #include <mono/utils/strenc.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 #include "reflection-internals.h"
 #include "icall-decl.h"
 

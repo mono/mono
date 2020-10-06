@@ -22,7 +22,7 @@
 #include <mono/utils/os-event.h>
 #include <mono/utils/refcount.h>
 #include <mono/utils/mono-error-internals.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #include <glib.h>
 #include <config.h>

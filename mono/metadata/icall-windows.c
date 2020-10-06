@@ -12,7 +12,7 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <mono/metadata/icall-internals.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 void
 mono_icall_make_platform_path (gchar *path)

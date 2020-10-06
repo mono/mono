@@ -30,7 +30,7 @@
 #include <mono/metadata/w32handle.h>
 #include <mono/utils/w32api.h>
 #include <mono/utils/mono-threads-coop.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 void
 mono_w32process_init (void)

@@ -7,7 +7,7 @@
 
 #include <config.h>
 #include <glib.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #ifdef HOST_WIN32
 #include <windows.h>

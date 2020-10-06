@@ -9938,7 +9938,7 @@ mono_aot_patch_info_dup (MonoJumpInfo* ji)
 }
 
 #ifdef HOST_WIN32
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 #endif
 
 static int

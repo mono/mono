@@ -69,7 +69,7 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-state.h>
 #include <mono/utils/mono-threads-debug.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #include "mini.h"
 #include "trace.h"

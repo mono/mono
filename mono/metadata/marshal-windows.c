@@ -17,7 +17,7 @@ MONO_PRAGMA_WARNING_DISABLE (4115) // warning C4115: 'IRpcStubBuffer': named typ
 #include <objbase.h>
 MONO_PRAGMA_WARNING_POP()
 #include "mono/metadata/marshal-internals.h"
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 #include "icall-decl.h"
 
 #if HAVE_API_SUPPORT_WIN32_GLOBAL_ALLOC_FREE

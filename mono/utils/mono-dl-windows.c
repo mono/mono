@@ -27,7 +27,7 @@
 #include <windows.h>
 #include <psapi.h>
 
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 const char*
 mono_dl_get_so_prefix (void)

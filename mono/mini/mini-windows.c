@@ -44,7 +44,7 @@
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/dtrace.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #include "mini.h"
 #include "mini-runtime.h"

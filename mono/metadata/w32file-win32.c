@@ -10,7 +10,7 @@
 
 #include <winsock2.h>
 #include <windows.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 #include "icall-decl.h"
 
 void

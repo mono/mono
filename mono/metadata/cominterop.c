@@ -49,7 +49,7 @@ MONO_PRAGMA_WARNING_PUSH()
 MONO_PRAGMA_WARNING_DISABLE (4115) // warning C4115: 'IRpcStubBuffer': named type definition in parentheses
 #include <oleauto.h>
 MONO_PRAGMA_WARNING_POP()
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 #endif
 #include "icall-decl.h"
 #include "icall-signatures.h"

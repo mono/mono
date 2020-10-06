@@ -28,7 +28,7 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/console-io.h>
 #include <mono/metadata/exception.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 #include "icall-decl.h"
 
 void

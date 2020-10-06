@@ -31,7 +31,7 @@
 WINBASEAPI HMODULE WINAPI LoadLibraryExW (PCWSTR, HANDLE, DWORD);
 #define LOAD_LIBRARY_SEARCH_SYSTEM32        0x00000800
 
-#include <mono//w32subset.h>
+#include <mono/utils/w32subset.h>
 
 // This is compiler specific because of the use of __try / __except.
 #if _MSC_VER

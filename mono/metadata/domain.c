@@ -51,7 +51,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
 #include <mono/utils/mono-experiments.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 #include "external-only.h"
 #include "mono/utils/mono-tls-inline.h"
 

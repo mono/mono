@@ -21,7 +21,7 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/file-mmap.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #if HAVE_API_SUPPORT_WIN32_FILE_MAPPING
 // These control the retry behaviour when lock violation errors occur during Flush:

@@ -31,7 +31,7 @@
 #include "environment.h"
 #include "coree.h"
 #include "coree-internals.h"
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 gchar*
 mono_get_module_file_name (HMODULE module_handle)

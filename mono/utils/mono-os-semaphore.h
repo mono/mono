@@ -33,7 +33,7 @@
 #else
 #include <mono/utils/mono-os-wait.h>
 #endif
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #define MONO_HAS_SEMAPHORES 1
 

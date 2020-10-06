@@ -37,7 +37,7 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-state.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #include "mini.h"
 #include "mini-amd64.h"

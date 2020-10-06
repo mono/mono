@@ -15,7 +15,7 @@
 #include <mono/utils/mono-error.h>
 #include <mono/utils/mono-error-internals.h>
 #include <mono/metadata/object-internals.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #if HAVE_API_SUPPORT_WIN32_SECURITY
 #include <aclapi.h>

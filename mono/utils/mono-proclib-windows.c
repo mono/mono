@@ -12,7 +12,7 @@
 #ifdef HOST_WIN32
 #include <windows.h>
 #include <mono/utils/mono-proclib.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 int
 mono_process_current_pid ()

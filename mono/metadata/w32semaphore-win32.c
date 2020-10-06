@@ -13,7 +13,7 @@
 #include <windows.h>
 #include <winbase.h>
 #include <mono/metadata/object-internals.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 #include "icall-decl.h"
 
 void

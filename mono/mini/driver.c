@@ -54,7 +54,7 @@
 #include "mono/metadata/w32handle.h"
 #include "mono/metadata/callspec.h"
 #include "mono/metadata/custom-attrs-internals.h"
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 #include "mini.h"
 #include "jit.h"

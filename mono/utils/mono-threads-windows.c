@@ -18,7 +18,7 @@
 #include <mono/utils/mono-threads-debug.h>
 #include <mono/utils/mono-os-wait.h>
 #include <limits.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 enum Win32APCInfo {
 	WIN32_APC_INFO_CLEARED = 0,

@@ -18,7 +18,7 @@
 #include <mono/utils/mono-counters.h>
 #include "mono/utils/mono-mmap.h"
 #include "mono/utils/mono-mmap-internals.h"
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 static void *malloced_shared_area;
 

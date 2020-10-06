@@ -14,7 +14,7 @@
 #include "mono-logger-internals.h"
 #include "mono-error-internals.h"
 #include <mono/utils/checked-build.h>
-#include <mono/w32subset.h>
+#include <mono/utils/w32subset.h>
 
 /* Empty handler only used to detect interrupt state of current thread. */
 /* Needed in order to correctly avoid entering wait methods under */
