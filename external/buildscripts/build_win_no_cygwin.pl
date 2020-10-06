@@ -147,6 +147,9 @@ if ($build)
 	if($ENV{MONODIS})
 	{	
 		copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/monodis-sgen.exe", "$monoprefix/bin/.") or die ("failed copying monodis-sgen.exe\n");
+
+		# monodis-sgen as default monodis.exe
+		copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/monodis-sgen.exe", "$monoprefix/bin/monodis.exe") or die ("failed copying monodis.exe\n");
 	}
 	
 	# sgen as default exe
@@ -236,6 +239,7 @@ if ($artifact)
 	{
 		copy("$monoprefix/bin/monodis-bdwgc.exe", "$distDirArchBin/.") or die ("failed copying monodis-bdwgc.exe\n");
 		copy("$monoprefix/bin/monodis-sgen.exe", "$distDirArchBin/.") or die ("failed copying monodis-sgen.exe\n");
+		copy("$monoprefix/bin/monodis.exe", "$distDirArchBin/.") or die ("failed copying monodis.exe\n");
 	}
 	copy("$monoprefix/bin/MonoPosixHelper.dll", "$distDirArchBin/.") or die ("failed copying MonoPosixHelper.dll\n");
 	copy("$monoprefix/bin/MonoPosixHelper.pdb", "$distDirArchBin/.") or die ("failed copying MonoPosixHelper.pdb\n");
