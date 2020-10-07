@@ -119,6 +119,11 @@ if ($artifact)
 		system ('mv', "$distDirSourceBinX64/$file", "$distDirDestinationBin/$file") eq 0 or die ("Failed to move '$distDirSourceBinX64/$file' to '$distDirDestinationBin/$file'.");
 	}
 
+	if($ENV{MONODIS})
+	{
+		system ('mv', "$distDirSourceBinX64/monodis", "$distDirDestinationBin/monodis") eq 0 or die ("Failed to move '$distDirSourceBinX64/monodis' to '$distDirDestinationBin/monodis'.");
+	}
+
 	for my $file ('libMonoPosixHelper.dylib')
 	{
 		MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file");
