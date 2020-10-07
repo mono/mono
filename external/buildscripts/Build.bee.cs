@@ -75,7 +75,7 @@ namespace BuildProgram
 
 			Artifacts.Add("MacBuildEnvironment",
 				new Tuple<string, string>(
-					"mac-toolchain-11_0/12.0-12A8158a_2b346a6c93e9c82250a1d88c02f24a5dea9f0bd1aa2ef44109896a44800e8c68.zip",
+					"mac-toolchain-11_0/12.2-12B5018i_351c773fb8a192039fe0f0e962314b888102b0718c734ad54f3906c0caeed1c9.zip",
 					"unity-internal"));
 
 			Artifacts.Add("mono-build-tools-extra",
