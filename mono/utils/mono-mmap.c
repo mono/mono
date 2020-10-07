@@ -228,6 +228,13 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 	mflags |= MAP_ANONYMOUS;
 	mflags |= MAP_PRIVATE;
 
+#if defined(__APPLE__) && defined(__arm64__)
+	/* macOS on ARM64 requires using MAP_JIT in order
+	   to allocate executable memory. */
+	if (type == MONO_MEM_ACCOUNT_CODE)
+		mflags |= MAP_JIT;
+#endif
+
 	BEGIN_CRITICAL_SECTION;
 	ptr = mmap (addr, length, prot, mflags, -1, 0);
 	if (ptr == MAP_FAILED) {
