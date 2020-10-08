@@ -1314,7 +1314,14 @@ extern void*     sbrk(ptrdiff_t);
 #define MAP_ANONYMOUS        MAP_ANON
 #endif /* MAP_ANON */
 #ifdef MAP_ANONYMOUS
+
+#if defined(__APPLE__) && defined(__arm64__)
+/* macOS on ARM64 requires using MAP_JIT in order to allocate executable memory. */
+#define MMAP_FLAGS           (MAP_PRIVATE|MAP_ANONYMOUS|MAP_JIT)
+#else
 #define MMAP_FLAGS           (MAP_PRIVATE|MAP_ANONYMOUS)
+#endif
+
 #define CALL_MMAP(s)         mmap(0, (s), MMAP_PROT, MMAP_FLAGS, -1, 0)
 #else /* MAP_ANONYMOUS */
 /*

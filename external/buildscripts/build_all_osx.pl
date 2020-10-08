@@ -110,7 +110,7 @@ if ($artifact)
 
 	for my $file ('mono')
 	{
-		MergeIntoFatBinary("$distDirSourceBinX64/$file", "$distDirSourceBinARM64/$file", "$distDirDestinationBin/$file");
+		MergeIntoFatBinary("$distDirSourceBinX64/$file", "$distDirSourceBinARM64/$file", "$distDirDestinationBin/$file", 1);
 	}
 
 	for my $file ('pedump')
@@ -126,7 +126,7 @@ if ($artifact)
 
 	for my $file ('libMonoPosixHelper.dylib')
 	{
-		MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file");
+		MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file", 0);
 	}
 
 	if ($buildMachine)
@@ -174,8 +174,17 @@ sub CopyEmbedRuntimeBinaries
 
 sub MergeIntoFatBinary
 {
-	my ($binary1, $binary2, $binaryOutput) = @_;
+	my ($binary1, $binary2, $binaryOutput, $isExe) = @_;
 
 	print(">>> Merging '$binary1' and '$binary2' into '$binaryOutput'\n\n");
 	system('lipo', "$binary1", "$binary2", "-create", "-output", "$binaryOutput") eq 0 or die("Failed to run lipo!");
+
+	if ($isExe)
+	{
+		system("codesign", "--entitlements", $buildscriptsdir . "/entitlements.plist", "-s", "-", "$binaryOutput") eq 0 or die("Failed to codesign $binaryOutput!");
+	}
+	else
+	{
+		system("codesign", "-s", "-", "$binaryOutput") eq 0 or die("Failed to codesign $binaryOutput!");
+	}
 }
