@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Reflection;
+using System.Threading;
 using System.Collections.Generic;
 
 namespace MonoTests.System
@@ -3744,6 +3745,65 @@ public class ArrayTest
 		Assert.Throws<NotSupportedException> (() => { var _ = e.Current; }, "#1");
 		Assert.Throws<NotSupportedException> (() => { var _ = x.GetValue (0); }, "#2");
 		Assert.Throws<NotSupportedException> (() => { x.SetValue (0, 0); }, "#3");
+	}
+
+
+	public struct J
+	{
+		public int i;
+
+		public J(int i_) { i = i_; }
+	}
+
+	struct JComp : IComparer<J>
+	{
+		public int Compare(J x, J y)
+		{
+			int val = 0;
+			Thread.Sleep (Timeout.Infinite);
+			return val;
+		}
+	}
+
+	class ArraySortAbortData {
+		internal ManualResetEventSlim mre;
+		internal bool threw;
+
+		internal ArraySortAbortData () {
+			mre = new ManualResetEventSlim ();
+			threw = false;
+		}
+	}
+
+	[Test]
+	public void ArraySortAbort ()
+	{
+		var d = new ArraySortAbortData();
+		var t = new Thread(RunArraySort);
+		t.Start(d);
+		d.mre.Wait();
+		Thread.Sleep(400);
+		t.Abort();
+		t.Join();
+		Assert.IsFalse (d.threw);
+	}
+
+	public static void RunArraySort(object data)
+	{
+		var d = data as ArraySortAbortData;
+		int n = 10;
+		var a = new J[n];
+		for (int i = 0; i < n; ++i)
+		{
+			a[i] = new J(n - i);
+		}
+		d.mre.Set();
+		try {
+			Array.Sort(a, 0, n, new JComp());
+		} catch (InvalidOperationException) {
+			// t.Abort in ArraySortAbort should _not_ end up here
+			d.threw = true;
+		}
 	}
 }
 }
