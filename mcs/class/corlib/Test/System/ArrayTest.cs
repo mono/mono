@@ -3748,6 +3748,7 @@ public class ArrayTest
 	}
 
 
+#if MONO_FEATURE_THREAD_ABORT
 	public struct J
 	{
 		public int i;
@@ -3805,5 +3806,6 @@ public class ArrayTest
 			d.threw = true;
 		}
 	}
+#endif
 }
 }
