@@ -887,6 +887,13 @@ static int validate_heap = 0;
 static int counter = 0;
 static int validate_frequency = 100;
 
+void
+mono_gc_set_heap_verifier (gboolean enabled)
+{
+	g_message("heap verifier is now: %d", enabled);
+	validate_heap = enabled;
+}
+
 extern void mono_unity_heap_validation ();
 
 MonoObject*
