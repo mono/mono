@@ -237,6 +237,30 @@ static void mono_traverse_and_validate_generic_object(MonoObject *object, Livene
 		mono_validate_object(object, state);
 }
 
+static void validate_object_value(MonoObject *val, MonoType *storageType)
+{
+	if (val && storageType->type == MONO_TYPE_CLASS) {
+		MonoClass *storageClass = storageType->data.klass;
+		MonoClass *valClass = GET_VTABLE(val)->klass;
+		if (mono_class_is_interface(storageClass)) {
+			int found = 0;
+			for (int i = 0; i < valClass->interface_offsets_count; ++i)
+			{
+				if (valClass->interfaces_packed[i] == storageClass)
+				{
+					found = TRUE;
+					break;
+				}
+			}
+			g_assert(found);
+		}
+		else {
+			int res = mono_class_has_parent_fast(valClass, storageClass);
+			g_assert(res);
+		}
+	}
+}
+
 static gboolean mono_add_process_object(MonoObject *object, LivenessState *state)
 {
 	if (object && !IS_MARKED(object)) {
@@ -358,6 +382,7 @@ static gboolean mono_traverse_object_internal(MonoObject *object, gboolean isStr
 				MonoVTable *vtable = NULL;
 				mono_field_get_value_internal(object, field, &val);
 				added_objects |= mono_add_process_object(val, state);
+				validate_object_value(val, field->type);
 			}
 		}
 	}
@@ -413,6 +438,22 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 				MonoVTable* vtable = NULL;
 				mono_field_get_value(object, field, &val);
 				added_objects |= mono_add_and_validate_object(val, state);
+				if (val && field->type->type == MONO_TYPE_CLASS) {
+					MonoClass *fieldClass = field->type->data.klass;
+					MonoClass *valClass = GET_VTABLE(val)->klass;
+					g_assert(valClass->byval_arg.type == MONO_TYPE_CLASS || 
+						valClass->byval_arg.type == MONO_TYPE_GENERICINST ||
+						valClass->byval_arg.type == MONO_TYPE_SZARRAY ||
+						valClass->byval_arg.type == MONO_TYPE_STRING ||
+						valClass->byval_arg.type == MONO_TYPE_OBJECT);
+					if (mono_class_is_interface(fieldClass)) {
+						/* TODO */
+					}
+					else {
+						int res = mono_class_has_parent_fast(valClass, fieldClass);
+						g_assert(res);
+					}
+				}
 			}
 		}
 	}
@@ -577,6 +618,8 @@ static void mono_validate_array(MonoArray *array, LivenessState *state)
 			MonoObject *val = mono_array_get(array, MonoObject*, i);
 			if (mono_add_and_validate_object(val, state))
 				items_processed++;
+
+			validate_object_value(val, &element_class->byval_arg);
 
 			if (should_traverse_objects (items_processed, state->traverse_depth))
 				mono_traverse_and_validate_objects(state);
