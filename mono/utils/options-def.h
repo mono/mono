@@ -44,6 +44,11 @@
 /*
  * List of runtime flags
  */
+
+// FIXME: To avoid empty arrays, remove later
+DEFINE_BOOL(bool_flag, "bool-flag", FALSE, "Example")
+
+/*
 DEFINE_BOOL(bool_flag, "bool-flag", FALSE, "Example")
 DEFINE_INT(int_flag, "int-flag", 0, "Example")
 DEFINE_STRING(string_flag, "string-flag", NULL, "Example")
@@ -53,6 +58,7 @@ DEFINE_BOOL(readonly_flag, "readonly-flag", FALSE, "Example")
 #else
 DEFINE_BOOL_READONLY(readonly_flag, "readonly-flag", FALSE, "Example")
 #endif
+*/
 
 /* Cleanup */
 #undef DEFINE_OPTION_FULL
