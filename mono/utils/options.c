@@ -19,7 +19,7 @@ typedef enum {
 
 /* Define flags */
 #define DEFINE_OPTION_FULL(option_type, ctype, c_name, cmd_name, def_value, comment) \
-	ctype mono_##c_name = def_value;
+	ctype mono_opt_##c_name = def_value;
 #define DEFINE_OPTION_READONLY(option_type, ctype, c_name, cmd_name, def_value, comment)
 #include "options-def.h"
 
@@ -33,7 +33,7 @@ typedef struct {
 
 static OptionData option_meta[] = {
 #define DEFINE_OPTION_FULL(option_type, ctype, c_name, cmd_name, def_value, comment) \
-	{ option_type, &mono_##c_name, cmd_name, sizeof (cmd_name) - 1 },
+	{ option_type, &mono_opt_##c_name, cmd_name, sizeof (cmd_name) - 1 },
 #define DEFINE_OPTION_READONLY(option_type, ctype, c_name, cmd_name, def_value, comment) \
 	{ option_type, NULL, cmd_name, sizeof (cmd_name) - 1 },
 #include "options-def.h"
