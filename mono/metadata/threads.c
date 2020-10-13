@@ -3780,7 +3780,7 @@ abort_threads (gpointer key, gpointer value, gpointer user)
 	MonoThreadHandle *handle = mono_threads_open_thread_handle (thread->handle);
 	THREAD_DEBUG (g_print ("%s: Aborting id: %" G_GSIZE_FORMAT "\n", __func__, (gsize)thread->tid));
 	if (!mono_thread_internal_abort (thread, FALSE)) {
-		THREAD_DEBUG (g_print ("%s: Failed aborting id:  %" G_GSIZE_FORMAT ", ignoring it\n", __func__, (gsize)thread->tid));
+		g_warning ("%s: Failed aborting id: %p, mono_thread_manage will ignore it\n", __func__, (void*)(intptr_t)(gsize)thread->tid);
 		/* close the handle, we're not going to wait for the thread to be aborted */
 		mono_threads_close_thread_handle (handle);
 	} else {
