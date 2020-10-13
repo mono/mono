@@ -27,6 +27,8 @@ extern void* mono_wasm_invoke_js_unmarshalled (MonoString **exceptionMessage, Mo
 
 void mono_wasm_enable_debugging (int);
 
+int mono_wasm_assembly_already_added (const char *assembly_name);
+
 void mono_ee_interp_init (const char *opts);
 void mono_marshal_ilgen_init (void);
 void mono_method_builder_ilgen_init (void);
@@ -159,6 +161,22 @@ mono_wasm_add_assembly (const char *name, const unsigned char *data, unsigned in
 	assemblies = entry;
 	++assembly_count;
 	return mono_has_pdb_checksum ((char*)data, size);
+}
+
+EMSCRIPTEN_KEEPALIVE int
+mono_wasm_assembly_already_added (const char *assembly_name)
+{
+	if (assembly_count == 0)
+		return 0;
+
+	WasmAssembly *entry = assemblies;
+	while (entry != NULL) {
+		if (strcmp (entry->assembly.name, assembly_name) == 0)
+			return 1;
+		entry = entry->next;
+	}
+
+	return 0;
 }
 
 EMSCRIPTEN_KEEPALIVE void

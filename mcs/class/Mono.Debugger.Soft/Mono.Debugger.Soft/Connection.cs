@@ -906,6 +906,7 @@ namespace Mono.Debugger.Soft
 					// FIXME: The client and the debuggee might have different word sizes
 					return new ValueImpl { Type = etype, Value = ReadLong () };
 				case ElementType.Ptr:
+				case ElementType.FnPtr:
 					long value = ReadLong ();
 					if (connection.Version.AtLeast (2, 46)) {
 						long pointerClass = ReadId ();

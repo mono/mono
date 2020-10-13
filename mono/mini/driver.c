@@ -39,6 +39,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
+#include <mono/metadata/environment-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-debug.h>
@@ -55,6 +56,7 @@
 #include "mono/metadata/w32handle.h"
 #include "mono/metadata/callspec.h"
 #include "mono/metadata/custom-attrs-internals.h"
+#include <mono/utils/w32subset.h>
 
 #include "mini.h"
 #include "jit.h"
@@ -345,14 +347,15 @@ interp_opt_sets [] = {
 	INTERP_OPT_INLINE | INTERP_OPT_CPROP,
 	INTERP_OPT_INLINE | INTERP_OPT_SUPER_INSTRUCTIONS,
 	INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS,
-	INTERP_OPT_INLINE | INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS,
+	INTERP_OPT_INLINE | INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS | INTERP_OPT_BBLOCKS,
 };
 
 static const char* const
 interp_opflags_names [] = {
 	"inline",
 	"cprop",
-	"super-insn"
+	"super-insn",
+	"bblocks"
 };
 
 static const char*
@@ -2648,6 +2651,8 @@ mono_main (int argc, char* argv[])
 	}
 
 	mono_set_defaults (mini_verbose_level, opt);
+	mono_set_os_args (argc, argv);
+
 	domain = mini_init (argv [i], forced_version);
 
 	mono_gc_set_stack_end (&domain);
@@ -2740,7 +2745,7 @@ mono_main (int argc, char* argv[])
 			exit (1);
 		}
 
-#if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if defined(HOST_WIN32) && HAVE_API_SUPPORT_WIN32_CONSOLE
 		/* Detach console when executing IMAGE_SUBSYSTEM_WINDOWS_GUI on win32 */
 		if (!enable_debugging && !mono_compile_aot && mono_assembly_get_image_internal (assembly)->image_info->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
 			FreeConsole ();
@@ -3223,7 +3228,7 @@ mono_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboo
 	return NULL;
 }
 
-#if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if defined(HOST_WIN32) && HAVE_API_SUPPORT_WIN32_COMMAND_LINE_TO_ARGV
 #include <shellapi.h>
 
 static char *

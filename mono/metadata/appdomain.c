@@ -74,6 +74,11 @@
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/w32error.h>
 #include <mono/utils/w32api.h>
+
+#ifdef ENABLE_PERFTRACING
+#include <mono/eventpipe/ds-server.h>
+#endif
+
 #ifdef HOST_WIN32
 #include <direct.h>
 #endif
@@ -344,7 +349,12 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 		domain->setup = MONO_HANDLE_RAW (setup);
 	}
 
-	mono_thread_attach (domain);
+	mono_thread_internal_attach (domain);
+
+#if defined(ENABLE_PERFTRACING) && !defined(DISABLE_EVENTPIPE)
+	ds_server_init ();
+	ds_server_pause_for_diagnostics_monitor ();
+#endif
 
 	mono_type_initialization_init ();
 
@@ -1052,10 +1062,11 @@ gboolean
 mono_domain_owns_vtable_slot (MonoDomain *domain, gpointer vtable_slot)
 {
 	gboolean res;
+	MonoMemoryManager *memory_manager = mono_domain_ambient_memory_manager (domain);
 
-	mono_domain_lock (domain);
-	res = mono_mempool_contains_addr (domain->mp, vtable_slot);
-	mono_domain_unlock (domain);
+	mono_mem_manager_lock (memory_manager);
+	res = mono_mempool_contains_addr (memory_manager->mp, vtable_slot);
+	mono_mem_manager_unlock (memory_manager);
 	return res;
 }
 
@@ -3229,6 +3240,7 @@ unload_thread_main (void *arg)
 {
 	unload_data *data = (unload_data*)arg;
 	MonoDomain *domain = data->domain;
+	MonoMemoryManager *memory_manager = mono_domain_memory_manager (domain);
 	int i;
 	gsize result = 1; // failure
 
@@ -3261,6 +3273,7 @@ unload_thread_main (void *arg)
 
 	mono_loader_lock ();
 	mono_domain_lock (domain);
+	mono_mem_manager_lock (memory_manager);
 	/*
 	 * We need to make sure that we don't have any remsets
 	 * pointing into static data of the to-be-freed domain because
@@ -3270,17 +3283,18 @@ unload_thread_main (void *arg)
 	 * now be null we won't do any unnecessary copies and after
 	 * the collection there won't be any more remsets.
 	 */
-	for (i = 0; i < domain->class_vtable_array->len; ++i)
-		zero_static_data ((MonoVTable *)g_ptr_array_index (domain->class_vtable_array, i));
+	for (i = 0; i < memory_manager->class_vtable_array->len; ++i)
+		zero_static_data ((MonoVTable *)g_ptr_array_index (memory_manager->class_vtable_array, i));
 #if !HAVE_BOEHM_GC
 	mono_gc_collect (0);
 #endif
-	for (i = 0; i < domain->class_vtable_array->len; ++i)
-		clear_cached_vtable ((MonoVTable *)g_ptr_array_index (domain->class_vtable_array, i));
+	for (i = 0; i < memory_manager->class_vtable_array->len; ++i)
+		clear_cached_vtable ((MonoVTable *)g_ptr_array_index (memory_manager->class_vtable_array, i));
 	deregister_reflection_info_roots (domain);
 
 	mono_assembly_cleanup_domain_bindings (domain->domain_id);
 
+	mono_mem_manager_unlock (memory_manager);
 	mono_domain_unlock (domain);
 	mono_loader_unlock ();
 
