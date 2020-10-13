@@ -15,7 +15,7 @@ using System.Security.Cryptography;
 using Mono.Security.Authenticode;
 
 [assembly: AssemblyTitle ("Mono CheckTrust")]
-[assembly: AssemblyDescription ("Verify if an PE executable has a valid Authenticode(tm) signature")]
+[assembly: AssemblyDescription ("Verify if a PE binary has a valid Authenticode(tm) signature")]
 
 namespace Mono.Tools {
 
