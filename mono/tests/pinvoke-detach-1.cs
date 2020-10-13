@@ -71,7 +71,7 @@ public class Tests {
 	}
 
 	// This one fails because we haven't fully detached, so shutdown is waiting for the thread
-	public static int disabled_test_0_attach_invoke_block_foreign_thread_delegate ()
+	public static int test_0_attach_invoke_block_foreign_thread_delegate ()
 	{
 		var del = new VoidVoidDelegate (MethodInvokedFromNative2);
 		bool skipped = mono_test_attach_invoke_block_foreign_thread (null, null, null, null, del);
