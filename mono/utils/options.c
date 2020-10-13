@@ -78,7 +78,7 @@ void
 mono_options_print_usage (void)
 {
 #define DEFINE_OPTION_FULL(option_type, ctype, c_name, cmd_name, def_value, comment) do { \
-		char *val = option_value_to_str (option_type, &mono_##c_name); \
+		char *val = option_value_to_str (option_type, &mono_opt_##c_name); \
 		g_printf ("  --%s (%s)\n\ttype: %s  default: %s\n", cmd_name, comment, option_type_to_str (option_type), val); \
 		g_free (val); \
 	} while (0);
