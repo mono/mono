@@ -1,6 +1,9 @@
 <configuration>
 	<dllmap dll="i:cygwin1.dll" target="@LIBC@" os="!windows" />
 	<dllmap dll="libc" target="@LIBC@" os="!windows"/>
+	<dllmap dll="libc">
+		<dllentry os="windows" dll="ucrtbase" name="isatty" target="_isatty"/>
+	</dllmap>
 	<dllmap dll="intl" target="@INTL@" os="!windows"/>
 	<dllmap dll="intl" name="bind_textdomain_codeset" target="@LIBC@" os="solaris"/>
 	<dllmap dll="libintl" name="bind_textdomain_codeset" target="@LIBC@" os="solaris"/>
