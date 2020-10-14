@@ -762,7 +762,7 @@ get_virtual_method_fast (InterpMethod *imethod, MonoVTable *vtable, int offset)
 }
 
 // Returns the size it uses on the interpreter stack
-static int inline
+static int
 stackval_from_data (MonoType *type, stackval *result, const void *data, gboolean pinvoke)
 {
 	type = mini_native_type_replace_type (type);
@@ -849,14 +849,14 @@ stackval_from_data (MonoType *type, stackval *result, const void *data, gboolean
 	}
 }
 
-static void inline
+static int
 stackval_to_data (MonoType *type, stackval *val, void *data, gboolean pinvoke)
 {
 	type = mini_native_type_replace_type (type);
 	if (type->byref) {
 		gpointer *p = (gpointer*)data;
 		*p = val->data.p;
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	/* printf ("TODAT0 %p\n", data); */
 	switch (type->type) {
@@ -864,19 +864,19 @@ stackval_to_data (MonoType *type, stackval *val, void *data, gboolean pinvoke)
 	case MONO_TYPE_U1: {
 		guint8 *p = (guint8*)data;
 		*p = val->data.i;
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_BOOLEAN: {
 		guint8 *p = (guint8*)data;
 		*p = (val->data.i != 0);
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_I2:
 	case MONO_TYPE_U2:
 	case MONO_TYPE_CHAR: {
 		guint16 *p = (guint16*)data;
 		*p = val->data.i;
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_I: {
 		mono_i *p = (mono_i*)data;
@@ -885,33 +885,33 @@ stackval_to_data (MonoType *type, stackval *val, void *data, gboolean pinvoke)
 		   a native int - both by csc and mcs). Not sure what to do about sign extension
 		   as it is outside the spec... doing the obvious */
 		*p = (mono_i)val->data.nati;
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_U: {
 		mono_u *p = (mono_u*)data;
 		/* see above. */
 		*p = (mono_u)val->data.nati;
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_I4:
 	case MONO_TYPE_U4: {
 		gint32 *p = (gint32*)data;
 		*p = val->data.i;
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_I8:
 	case MONO_TYPE_U8: {
 		memmove (data, &val->data.l, sizeof (gint64));
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_R4: {
 		/* memmove handles unaligned case */
 		memmove (data, &val->data.f_r4, sizeof (float));
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_R8: {
 		memmove (data, &val->data.f, sizeof (double));
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_STRING:
 	case MONO_TYPE_SZARRAY:
@@ -920,37 +920,44 @@ stackval_to_data (MonoType *type, stackval *val, void *data, gboolean pinvoke)
 	case MONO_TYPE_ARRAY: {
 		gpointer *p = (gpointer *) data;
 		mono_gc_wbarrier_generic_store_internal (p, val->data.o);
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_PTR:
 	case MONO_TYPE_FNPTR: {
 		gpointer *p = (gpointer *) data;
 		*p = val->data.p;
-		return;
+		return MINT_STACK_SLOT_SIZE;
 	}
 	case MONO_TYPE_VALUETYPE:
 		if (m_class_is_enumtype (type->data.klass)) {
-			stackval_to_data (mono_class_enum_basetype_internal (type->data.klass), val, data, pinvoke);
-			return;
-		} else if (pinvoke) {
-			memcpy (data, val, mono_class_native_size (type->data.klass, NULL));
+			return stackval_to_data (mono_class_enum_basetype_internal (type->data.klass), val, data, pinvoke);
 		} else {
-			mono_value_copy_internal (data, val, type->data.klass);
+			int size;
+			if (pinvoke) {
+				size = mono_class_native_size (type->data.klass, NULL);
+				memcpy (data, val, size);
+			} else {
+				size = mono_class_value_size (type->data.klass, NULL);
+				mono_value_copy_internal (data, val, type->data.klass);
+			}
+			return ALIGN_TO (size, MINT_STACK_SLOT_SIZE);
 		}
-		return;
 	case MONO_TYPE_GENERICINST: {
 		MonoClass *container_class = type->data.generic_class->container_class;
 
 		if (m_class_is_valuetype (container_class) && !m_class_is_enumtype (container_class)) {
 			MonoClass *klass = mono_class_from_mono_type_internal (type);
-			if (pinvoke)
-				memcpy (data, val, mono_class_native_size (klass, NULL));
-			else
+			int size;
+			if (pinvoke) {
+				size = mono_class_native_size (klass, NULL);
+				memcpy (data, val, size);
+			} else {
+				size = mono_class_value_size (klass, NULL);
 				mono_value_copy_internal (data, val, klass);
-			return;
+			}
+			return ALIGN_TO (size, MINT_STACK_SLOT_SIZE);
 		}
-		stackval_to_data (m_class_get_byval_arg (type->data.generic_class->container_class), val, data, pinvoke);
-		return;
+		return stackval_to_data (m_class_get_byval_arg (type->data.generic_class->container_class), val, data, pinvoke);
 	}
 	default:
 		g_error ("got type %x", type->type);
@@ -2456,34 +2463,20 @@ do_transform_method (InterpFrame *frame, ThreadContext *context)
 }
 
 static void
-copy_varargs_vtstack (MonoMethodSignature *csig, stackval *sp)
+init_arglist (InterpFrame *frame, MonoMethodSignature *sig, stackval *sp, char *arglist)
 {
-#if 0
-	stackval *first_arg = sp - csig->param_count;
-	guchar *vt_sp = vt_sp_start;
+	*(gpointer*)arglist = sig;
+	arglist += sizeof (gpointer);
 
-	/*
-	 * We need to have the varargs linearly on the stack so the ArgIterator
-	 * can iterate over them. We pass the signature first and then copy them
-	 * one by one on the vtstack. The callee (MINT_ARGLIST) will be able to
-	 * find this space by adding the current vt_sp pointer in the parent frame
-	 * with the amount of vtstack space used by the parameters.
-	 */
-	*(gpointer*)vt_sp = csig;
-	vt_sp += sizeof (gpointer);
+	for (int i = sig->sentinelpos; i < sig->param_count; i++) {
+		int align, arg_size, sv_size;
+		arg_size = mono_type_stack_size (sig->params [i], &align);
+		arglist = (char*)ALIGN_PTR_TO (arglist, align);
 
-	for (int i = csig->sentinelpos; i < csig->param_count; i++) {
-		int align, arg_size;
-		arg_size = mono_type_stack_size (csig->params [i], &align);
-		vt_sp = (guchar*)ALIGN_PTR_TO (vt_sp, align);
-
-		stackval_to_data (csig->params [i], &first_arg [i], vt_sp, FALSE);
-		vt_sp += arg_size;
+		sv_size = stackval_to_data (sig->params [i], sp, arglist, FALSE);
+		arglist += arg_size;
+		sp = STACK_ADD_BYTES (sp, sv_size);
 	}
-#else
-	// FIXME varargs call
-	g_assert_not_reached ();
-#endif
 }
 
 /*
@@ -3369,11 +3362,24 @@ main_loop:
 			++ip;
 			++sp;
 			MINT_IN_BREAK;
-		MINT_IN_CASE(MINT_ARGLIST)
-			g_error ("FIXME varargs");
-			++ip;
-			++sp;
+		MINT_IN_CASE(MINT_INIT_ARGLIST) {
+			const guint16 *call_ip = frame->parent->state.ip - 4;
+			g_assert_checked (*call_ip == MINT_CALL_VARARG);
+			int params_stack_size = call_ip [2];
+			MonoMethodSignature *sig = (MonoMethodSignature*)frame->parent->imethod->data_items [call_ip [3]];
+
+			// we are being overly conservative with the size here, for simplicity
+			gpointer arglist = frame_data_allocator_alloc (&context->data_stack, frame, params_stack_size + MINT_STACK_SLOT_SIZE);
+
+			init_arglist (frame, sig, STACK_ADD_BYTES (frame->stack, ip [2]), (char*)arglist);
+
+			// save the arglist for future access with MINT_ARGLIST
+			*(gpointer*)(locals + ip [1]) = arglist;
+
+			ip += 3;
 			MINT_IN_BREAK;
+		}
+
 #define LDC(n) do { sp->data.i = (n); ++ip; ++sp; } while (0)
 		MINT_IN_CASE(MINT_LDC_I4_M1)
 			LDC(-1);
@@ -3701,25 +3707,14 @@ main_loop:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CALL_VARARG) {
-			MonoMethodSignature *csig;
-
+			// Same as MINT_CALL, except at ip [3] we have the index for the csignature,
+			// which is required by the called method to set up the arglist.
 			cmethod = (InterpMethod*)frame->imethod->data_items [ip [1]];
-
-			/* The real signature for vararg calls */
-			csig = (MonoMethodSignature*) frame->imethod->data_items [ip [2]];
-
-			g_error ("FIXME varargs");
-			copy_varargs_vtstack (csig, sp);
-
-			// FIXME varargs
-
-			/* decrement by the actual number of args */
-			// FIXME This seems excessive: frame and csig param_count.
-			sp -= cmethod->param_count + cmethod->hasthis + csig->param_count - csig->sentinelpos;
-
+			sp = STACK_SUB_BYTES (sp, ip [2]);
 			ip += 4;
 			goto call;
 		}
+
 		MINT_IN_CASE(MINT_CALLVIRT) {
 			// FIXME CALLVIRT opcodes are not used on netcore. We should kill them.
 			cmethod = (InterpMethod*)frame->imethod->data_items [ip [1]];

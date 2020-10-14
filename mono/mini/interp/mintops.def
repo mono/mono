@@ -45,7 +45,7 @@ OPDEF(MINT_LDC_I8_S, "ldc.i8.s", 2, Pop0, Push1, MintOpShortInt)
 OPDEF(MINT_LDC_R4, "ldc.r4", 3, Pop0, Push1, MintOpFloat)
 OPDEF(MINT_LDC_R8, "ldc.r8", 5, Pop0, Push1, MintOpDouble)
 
-OPDEF(MINT_ARGLIST, "arglist", 1, Pop0, Push1, MintOpNoArgs)
+OPDEF(MINT_INIT_ARGLIST, "init_arglist", 3, Pop0, Push0, MintOpNoArgs)
 
 OPDEF(MINT_LDFLD_VT_I1, "ldfld.vt.i1", 3, Pop1, Push1, MintOpTwoShorts)
 OPDEF(MINT_LDFLD_VT_U1, "ldfld.vt.u1", 3, Pop1, Push1, MintOpTwoShorts)

@@ -2597,29 +2597,8 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 
 	target_method = interp_transform_internal_calls (method, target_method, csignature, is_virtual);
 
-	if (csignature->call_convention == MONO_CALL_VARARG) {
+	if (csignature->call_convention == MONO_CALL_VARARG)
 		csignature = mono_method_get_signature_checked (target_method, image, token, generic_context, error);
-		int vararg_stack = 0;
-		/*
-		 * For vararg calls, ArgIterator expects the signature and the varargs to be
-		 * stored in a linear memory. We allocate the necessary vt_stack space for
-		 * this. All varargs will be pushed to the vt_stack at call site.
-		 */
-		vararg_stack += sizeof (gpointer);
-		for (i = csignature->sentinelpos; i < csignature->param_count; ++i) {
-			int align, arg_size;
-			arg_size = mono_type_stack_size (csignature->params [i], &align);
-			vararg_stack = ALIGN_TO (vararg_stack, align);
-			vararg_stack += arg_size;
-		}
-		/*
-		 * MINT_CALL_VARARG needs this space on the vt stack. Make sure the
-		 * vtstack space is sufficient.
-		 */
-//		PUSH_VT (td, vararg_stack);
-//		POP_VT (td, vararg_stack);
-		g_assert_not_reached ();
-	}
 
 	if (need_null_check) {
 		interp_add_ins (td, MINT_CKNULL_N);
@@ -3532,6 +3511,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 	MonoDomain *domain = rtm->domain;
 	MonoMethodSignature *signature = mono_method_signature_internal (method);
 	int num_args = signature->hasthis + signature->param_count;
+	int arglist_local = -1;
 	gboolean ret = TRUE;
 	gboolean emitted_funccall_seq_point = FALSE;
 	guint32 *arg_locals = NULL;
@@ -3618,6 +3598,21 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			g_print ("%s\n", tmp);
 			g_free (tmp);
 			g_free (name);
+		}
+
+		if (rtm->vararg) {
+			// vararg calls are identical to normal calls on the call site. However, the
+			// first instruction in a vararg method needs to copy the variable arguments
+			// into a special region so they can be accessed by MINT_ARGLIST. This region
+			// is localloc'ed so we have compile time static offsets for all locals/stack.
+			arglist_local = create_interp_local (td, m_class_get_byval_arg (mono_defaults.int_class));
+			interp_add_ins (td, MINT_INIT_ARGLIST);
+			td->last_ins->data [0] = arglist_local;
+			// This is the offset where the variable args are on stack. After this instruction
+			// which copies them to localloc'ed memory, this space will be overwritten by normal
+			// locals
+			td->last_ins->data [1] = td->il_locals_offset;
+			td->has_localloc = TRUE;
 		}
 
 		/*
@@ -6313,8 +6308,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			++td->ip;
 			switch (*td->ip) {
 			case CEE_ARGLIST:
-				interp_add_ins (td, MINT_ARGLIST);
-				push_type_vt (td, NULL, SIZEOF_VOID_P);
+				load_local (td, arglist_local);
 				++td->ip;
 				break;
 			case CEE_CEQ:
@@ -6777,7 +6771,7 @@ get_inst_stack_usage (TransformData *td, InterpInst *ins, int *pop, int *push)
 		}
 		case MINT_CALL_VARARG: {
 			InterpMethod *imethod = (InterpMethod*) td->data_items [ins->data [0]];
-			MonoMethodSignature *csignature = (MonoMethodSignature*) td->data_items [ins->data [1]];
+			MonoMethodSignature *csignature = (MonoMethodSignature*) td->data_items [ins->data [2]];
 			*pop = imethod->param_count + imethod->hasthis + csignature->param_count - csignature->sentinelpos;
 			*push = imethod->rtype->type != MONO_TYPE_VOID;
 			break;
@@ -6955,6 +6949,8 @@ emit_compacted_instruction (TransformData *td, guint16* start_ip, InterpInst *in
 		} else if (MINT_IS_MOVLOC (opcode)) {
 			ins->data [0] = get_interp_local_offset (td, ins->data [0]);
 			ins->data [1] = get_interp_local_offset (td, ins->data [1]);
+		} else if (opcode == MINT_INIT_ARGLIST) {
+			ins->data [0] = get_interp_local_offset (td, ins->data [0]);
 		}
 
 		int size = get_inst_length (ins) - 1;
