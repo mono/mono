@@ -2538,20 +2538,21 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 		return_val_if_nok (error, FALSE);
 		mono_class_setup_vtable (target_method->klass);
 
+		// Follow the rules for constrained calls from ECMA spec
 		if (!m_class_is_valuetype (constrained_class)) {
 			/* managed pointer on the stack, we need to deref that puppy */
 			interp_add_ins (td, MINT_LDIND_I);
 			td->last_ins->data [0] = csignature->param_count;
-		} else if (target_method->klass == mono_defaults.object_class || target_method->klass == m_class_get_parent (mono_defaults.enum_class) || target_method->klass == mono_defaults.enum_class) {
+		} else if (target_method->klass != constrained_class) {
 			/*
-			 * Constrained expects a managed pointer that normally needs dereferencing.
-			 * For value types that have their storage on the vtstack, a managed pointer
-			 * to it is identical to the internal pointer that is passed on the stack
-			 * when using the value type, not needing any dereferencing.
+			 * The type parameter is instantiated as a valuetype,
+			 * but that type doesn't override the method we're
+			 * calling, so we need to box `this'.
 			 */
 			int this_type = (td->sp - csignature->param_count - 1)->type;
 			g_assert (this_type == STACK_TYPE_I || this_type == STACK_TYPE_MP);
 			if (mint_type (m_class_get_byval_arg (constrained_class)) != MINT_TYPE_VT) {
+				/* managed pointer on the stack, we need to deref that puppy */
 				/* Always load the entire stackval, to handle also the case where the enum has long storage */
 				interp_add_ins (td, MINT_LDIND_I8);
 				td->last_ins->data [0] = csignature->param_count;
@@ -2560,24 +2561,6 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			interp_constrained_box (td, domain, constrained_class, csignature, error);
 			return_val_if_nok (error, FALSE);
 		} else {
-			if (target_method->klass != constrained_class) {
-				/*
-				 * The type parameter is instantiated as a valuetype,
-				 * but that type doesn't override the method we're
-				 * calling, so we need to box `this'.
-				 */
-				int this_type = (td->sp - csignature->param_count - 1)->type;
-				g_assert (this_type == STACK_TYPE_I || this_type == STACK_TYPE_MP);
-				if (mint_type (m_class_get_byval_arg (constrained_class)) != MINT_TYPE_VT) {
-					/* managed pointer on the stack, we need to deref that puppy */
-					/* Always load the entire stackval, to handle also the case where the enum has long storage */
-					interp_add_ins (td, MINT_LDIND_I8);
-					td->last_ins->data [0] = csignature->param_count;
-				}
-
-				interp_constrained_box (td, domain, constrained_class, csignature, error);
-				return_val_if_nok (error, FALSE);
-			}
 			is_virtual = FALSE;
 		}
 	}
