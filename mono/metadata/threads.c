@@ -5624,9 +5624,11 @@ mono_thread_info_get_last_managed (MonoThreadInfo *info)
 }
 
 typedef struct {
+	/* inputs */
 	MonoInternalThread *thread;
 	gboolean install_async_abort;
-	gboolean was_suspended;
+	/* outputs */
+	gboolean thread_will_abort;
 	MonoThreadInfoInterruptToken *interrupt_token;
 } AbortThreadData;
 
@@ -5639,7 +5641,7 @@ async_abort_critical (MonoThreadInfo *info, gpointer ud)
 	gboolean protected_wrapper;
 	gboolean running_managed;
 
-	data->was_suspended = TRUE;
+	data->thread_will_abort = TRUE;
 
 	if (mono_get_eh_callbacks ()->mono_install_handler_block_guard (mono_thread_info_get_suspend_state (info)))
 		return MonoResumeThread;
@@ -5680,7 +5682,7 @@ async_abort_internal (MonoInternalThread *thread, gboolean install_async_abort)
 	g_assert (thread != mono_thread_internal_current ());
 
 	data.thread = thread;
-	data.was_suspended = FALSE;
+	data.thread_will_abort = FALSE;
 	data.install_async_abort = install_async_abort;
 	data.interrupt_token = NULL;
 
@@ -5689,10 +5691,11 @@ async_abort_internal (MonoInternalThread *thread, gboolean install_async_abort)
 		mono_thread_info_finish_interrupt (data.interrupt_token);
 	/*FIXME we need to wait for interruption to complete -- figure out how much into interruption we should wait for here*/
 
-	/* If the thread was not suspended and async_abort_critical did not
-	 * run, for example because the thread was running native code without
-	 * any managed callers, ignore it. */
-	return data.was_suspended;
+	/* If the thread was not suspended (async_abort_critical did not run), or the thread is
+	 * "suspended" (BLOCKING) under full coop, and the thread was running native code without
+	 * any managed callers, we can't be sure that it will aknowledge the abort request and
+	 * actually abort. */
+	return data.thread_will_abort;
 }
 
 static void
