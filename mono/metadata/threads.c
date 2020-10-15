@@ -5670,6 +5670,15 @@ async_abort_critical (MonoThreadInfo *info, gpointer ud)
 		 */
 		data->interrupt_token = mono_thread_info_prepare_interrupt (info);
 
+		if (!ji && !info->runtime_thread) {
+			/* Under full cooperative suspend, if a thread is in GC Safe mode (blocking
+			 * state), mono_thread_info_safe_suspend_and_run will treat the thread as
+			 * suspended and run async_abort_critical.  If the thread has no managed
+			 * frames, it is some native thread that may not call Mono again anymore, so
+			 * don't wait for it to abort.
+			 */
+			data->thread_will_abort = FALSE;
+		}
 		return MonoResumeThread;
 	}
 }
