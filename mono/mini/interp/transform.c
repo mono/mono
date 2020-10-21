@@ -7780,11 +7780,6 @@ retry:
 			// for now since we will get rid of the stack design anyway.
 			for (StackContentInfo *spit = stack; spit < sp; spit++)
 				spit->ins = NULL;
-		} else if (ins->opcode == MINT_LD_DELEGATE_INVOKE_IMPL) {
-			// This opcode violates the stack based design, just clear the whole stack
-			// for now since we will get rid of the stack design anyway.
-			sp++;
-			memset (stack, 0, (sp - stack) * sizeof (StackContentInfo));
 		} else if (ins->opcode == MINT_POP || ins->opcode == MINT_POP_VT) {
 			sp--;
 			if (sp->ins) {

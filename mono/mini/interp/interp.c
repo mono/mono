@@ -6853,26 +6853,6 @@ call:
 		   ip += 1;
 		   MINT_IN_BREAK;
 	   }
-		MINT_IN_CASE(MINT_LD_DELEGATE_INVOKE_IMPL) {
-			MonoDelegate *del;
-			int n = ip [1];
-			del = (MonoDelegate*)sp [-n].data.p;
-			g_error ("FIXME accessing stack slot");
-			if (!del->interp_invoke_impl) {
-				/*
-				 * First time we are called. Set up the invoke wrapper. We might be able to do this
-				 * in ctor but we would need to handle AllocDelegateLike_internal separately
-				 */
-				error_init_reuse (error);
-				MonoMethod *invoke = mono_get_delegate_invoke_internal (del->object.vtable->klass);
-				del->interp_invoke_impl = mono_interp_get_imethod (del->object.vtable->domain, mono_marshal_get_delegate_invoke (invoke, del), error);
-				mono_error_assert_ok (error);
-			}
-			sp ++;
-			sp [-1].data.p = del->interp_invoke_impl;
-			ip += 2;
-			MINT_IN_BREAK;
-		}
 
 #define MATH_UNOP(mathfunc) \
 	sp [-1].data.f = mathfunc (sp [-1].data.f); \
