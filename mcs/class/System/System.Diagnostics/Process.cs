@@ -110,12 +110,14 @@ namespace System.Diagnostics
 			}
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static IntPtr MainWindowHandle_icall (int pid);
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[MonitoringDescription ("The handle of the main window of the process.")]
 		public IntPtr MainWindowHandle {
 			get {
-				return((IntPtr)0);
+				return MainWindowHandle_icall (processId);
 			}
 		}
 
