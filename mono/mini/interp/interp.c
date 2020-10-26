@@ -3472,10 +3472,10 @@ main_loop:
 			++ip; 
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_DUP_VT) {
-			int i32 = READ32 (ip + 1);
-			memcpy (sp, STACK_SUB_BYTES (sp, i32), i32);
-			sp = STACK_ADD_BYTES (sp, i32);
-			ip += 3;
+			guint16 size = ip [1];
+			memcpy (sp, STACK_SUB_BYTES (sp, size), size);
+			sp = STACK_ADD_BYTES (sp, size);
+			ip += 2;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_POP) {
@@ -3484,10 +3484,9 @@ main_loop:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_POP_VT) {
-			int i32 = READ32 (ip + 1);
-			i32 = ALIGN_TO (i32, MINT_STACK_SLOT_SIZE);
-			sp = STACK_SUB_BYTES (sp, i32);
-			ip += 3;
+			guint16 size = ALIGN_TO (ip [1], MINT_STACK_SLOT_SIZE);
+			sp = STACK_SUB_BYTES (sp, size);
+			ip += 2;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_POP1) {
@@ -3883,12 +3882,12 @@ call:
 			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT) {
-			int const i32 = READ32 (ip + 1);
+			guint16 size = ip [1];
 
-			sp = STACK_SUB_BYTES (sp, i32);
+			sp = STACK_SUB_BYTES (sp, size);
 			if (frame->parent) {
-				memmove (frame->parent->state.sp, sp, i32);
-				frame->parent->state.sp = STACK_ADD_BYTES (frame->parent->state.sp, i32);
+				memmove (frame->parent->state.sp, sp, size);
+				frame->parent->state.sp = STACK_ADD_BYTES (frame->parent->state.sp, size);
 			}
 			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
@@ -3907,11 +3906,11 @@ call:
 			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT_LOCALLOC) {
-			int const i32 = READ32 (ip + 1);
-			sp = STACK_SUB_BYTES (sp, i32);
+			guint16 size = ip [1];
+			sp = STACK_SUB_BYTES (sp, size);
 			if (frame->parent) {
-				memmove (frame->parent->state.sp, sp, i32);
-				frame->parent->state.sp = STACK_ADD_BYTES (frame->parent->state.sp, i32);
+				memmove (frame->parent->state.sp, sp, size);
+				frame->parent->state.sp = STACK_ADD_BYTES (frame->parent->state.sp, size);
 			}
 			frame_data_allocator_pop (&context->data_stack, frame);
 			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
@@ -4861,11 +4860,11 @@ call:
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDOBJ_VT) {
-			int size = READ32(ip + 1);
+			guint16 size = ip [1];
 			sp--;
 			memcpy (sp, sp [0].data.p, size);
 			sp = STACK_ADD_BYTES (sp, size);
-			ip += 3;
+			ip += 2;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDSTR)
@@ -5302,11 +5301,11 @@ call:
 			MonoObject* const o = sp [-1].data.o;
 			NULL_CHECK (o);
 
-			int size = READ32(ip + 2);
+			guint16 size = ip [2];
 			sp--;
 			memcpy (sp, (char *)o + ip [1], size);
 			sp = STACK_ADD_BYTES (sp, size);
-			ip += 4;
+			ip += 3;
 			MINT_IN_BREAK;
 		}
 
@@ -5510,11 +5509,11 @@ call:
 			INIT_VTABLE (vtable);
 
 			gpointer addr = frame->imethod->data_items [ip [2]];
-			int const i32 = READ32 (ip + 3);
+			guint16 size = ip [3];
 
-			memcpy (sp, addr, i32);
-			sp = STACK_ADD_BYTES (sp, i32);
-			ip += 5;
+			memcpy (sp, addr, size);
+			sp = STACK_ADD_BYTES (sp, size);
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 
@@ -5549,10 +5548,10 @@ call:
 			guint32 offset = READ32(ip + 1);
 			gpointer addr = mono_get_special_static_data (offset);
 
-			int size = READ32 (ip + 3);
+			guint16 size = ip [3];
 			memcpy (sp, addr, size);
 			sp = STACK_ADD_BYTES (sp, size);
-			ip += 5;
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 #define STSFLD(datamem, fieldtype) { \
@@ -5576,13 +5575,13 @@ call:
 		MINT_IN_CASE(MINT_STSFLD_VT) {
 			MonoVTable *vtable = (MonoVTable*) frame->imethod->data_items [ip [1]];
 			INIT_VTABLE (vtable);
-			int const i32 = READ32 (ip + 3);
+			guint16 size = ip [3];
 			gpointer addr = frame->imethod->data_items [ip [2]];
 
-			sp = STACK_SUB_BYTES (sp, i32);
-			memcpy (addr, sp, i32);
+			sp = STACK_SUB_BYTES (sp, size);
+			memcpy (addr, sp, size);
 
-			ip += 5;
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 
@@ -5617,12 +5616,12 @@ call:
 		MINT_IN_CASE(MINT_STSSFLD_VT) {
 			guint32 offset = READ32(ip + 1);
 			gpointer addr = mono_get_special_static_data (offset);
-			int size = READ32 (ip + 3);
+			guint16 size = ip [3];
 
 			sp = STACK_SUB_BYTES (sp, size);
 			memcpy (addr, sp, size);
 
-			ip += 5;
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 
@@ -5861,17 +5860,17 @@ call:
 			gint32 const index = sp [-1].data.i;
 			if (index >= ao->max_length)
 				THROW_EX (mono_get_exception_index_out_of_range (), ip);
-			gint32 const size = READ32 (ip + 1);
+			guint16 size = ip [1];
 			sp [-2].data.p = mono_array_addr_with_size_fast (ao, size, index);
-			ip += 3;
+			ip += 2;
 			sp --;
 
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDELEMA) {
 			guint16 rank = ip [1];
-			gint32 const esize = READ32 (ip + 2);
-			ip += 4;
+			guint16 esize = ip [2];
+			ip += 3;
 			sp -= rank;
 
 			MonoArray* const ao = (MonoArray*) sp [-1].data.o;
@@ -5936,12 +5935,12 @@ call:
 			if (aindex >= mono_array_length_internal (o))
 				THROW_EX (mono_get_exception_index_out_of_range (), ip);
 
-			int i32 = READ32 (ip + 1);
-			char *src_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
-			memcpy (sp, src_addr, i32);
-			sp = STACK_ADD_BYTES (sp, i32);
+			guint16 size = ip [1];
+			char *src_addr = mono_array_addr_with_size_fast ((MonoArray *) o, size, aindex);
+			memcpy (sp, src_addr, size);
+			sp = STACK_ADD_BYTES (sp, size);
 
-			ip += 3;
+			ip += 2;
 			MINT_IN_BREAK;
 		}
 #define STELEM_PROLOG(o, aindex) do { \
@@ -5985,18 +5984,18 @@ call:
 		}
 
 		MINT_IN_CASE(MINT_STELEM_VT) {
-			int i32 = READ32 (ip + 2);
-			sp = STACK_SUB_BYTES (sp, 2 * MINT_STACK_SLOT_SIZE + i32);
+			guint16 size = ip [2];
+			sp = STACK_SUB_BYTES (sp, 2 * MINT_STACK_SLOT_SIZE + size);
 			MonoArray *o = (MonoArray*)sp [0].data.p;
 			NULL_CHECK (o);
 			gint32 aindex = sp [1].data.i;
 			if (aindex >= mono_array_length_internal (o))
 				THROW_EX (mono_get_exception_index_out_of_range (), ip);
 
-			char *dst_addr = mono_array_addr_with_size_fast ((MonoArray *) o, i32, aindex);
+			char *dst_addr = mono_array_addr_with_size_fast ((MonoArray *) o, size, aindex);
 			MonoClass *klass_vt = (MonoClass*)frame->imethod->data_items [ip [1]];
 			mono_value_copy_internal (dst_addr, sp + 2, klass_vt);
-			ip += 4;
+			ip += 3;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_CONV_OVF_I4_U4)
@@ -6736,10 +6735,10 @@ call:
 		MINT_IN_CASE(MINT_LDLOC_O) LDLOC(p, gpointer); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_LDLOC_VT) {
-			int const i32 = READ32 (ip + 2);
-			memcpy (sp, locals + ip [1], i32);
-			sp = STACK_ADD_BYTES (sp, i32);
-			ip += 4;
+			guint16 size = ip [2];
+			memcpy (sp, locals + ip [1], size);
+			sp = STACK_ADD_BYTES (sp, size);
+			ip += 3;
 			MINT_IN_BREAK;
 		}
 		MINT_IN_CASE(MINT_LDLOCA_S)
@@ -6774,10 +6773,10 @@ call:
 		MINT_IN_CASE(MINT_STLOC_NP_O) STLOC_NP(p, gpointer); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_STLOC_VT) {
-			int const i32 = READ32 (ip + 2);
-			sp = STACK_SUB_BYTES (sp, i32);
-			memcpy (locals + ip [1], sp, i32);
-			ip += 4;
+			guint16 size = ip [2];
+			sp = STACK_SUB_BYTES (sp, size);
+			memcpy (locals + ip [1], sp, size);
+			ip += 3;
 			MINT_IN_BREAK;
 		}
 
@@ -6791,9 +6790,9 @@ call:
 		MINT_IN_CASE(MINT_MOVLOC_8) MOVLOC(guint64); MINT_IN_BREAK;
 
 		MINT_IN_CASE(MINT_MOVLOC_VT) {
-			int const i32 = READ32(ip + 3);
-			memcpy (locals + ip [2], locals + ip [1], i32);
-			ip += 5;
+			guint16 size = ip [3];
+			memcpy (locals + ip [2], locals + ip [1], size);
+			ip += 4;
 			MINT_IN_BREAK;
 		}
 
@@ -6817,8 +6816,8 @@ call:
 			goto exit_clause;
 		MINT_IN_CASE(MINT_INITOBJ)
 			--sp;
-			memset (sp->data.vt, 0, READ32(ip + 1));
-			ip += 3;
+			memset (sp->data.vt, 0, ip [1]);
+			ip += 2;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_CPBLK)
 			sp -= 3;
@@ -6828,16 +6827,6 @@ call:
 			/* FIXME: value and size may be int64... */
 			memcpy (sp [0].data.p, sp [1].data.p, sp [2].data.i);
 			MINT_IN_BREAK;
-#if 0
-		MINT_IN_CASE(MINT_CONSTRAINED_) {
-			guint32 token;
-			/* FIXME: implement */
-			++ip;
-			token = READ32 (ip);
-			ip += 2;
-			MINT_IN_BREAK;
-		}
-#endif
 		MINT_IN_CASE(MINT_INITBLK)
 			sp -= 3;
 			NULL_CHECK (sp [0].data.p);
@@ -6845,12 +6834,6 @@ call:
 			/* FIXME: value and size may be int64... */
 			memset (sp [0].data.p, sp [1].data.i, sp [2].data.i);
 			MINT_IN_BREAK;
-#if 0
-		MINT_IN_CASE(MINT_NO_)
-			/* FIXME: implement */
-			ip += 2;
-			MINT_IN_BREAK;
-#endif
 	   MINT_IN_CASE(MINT_RETHROW) {
 			int exvar_offset = ip [1];
 			THROW_EX_GENERAL (*(MonoException**)(frame_locals (frame) + exvar_offset), ip, TRUE);

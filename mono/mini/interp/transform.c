@@ -788,7 +788,8 @@ load_arg(TransformData *td, int n)
 		} else {
 			interp_add_ins (td, MINT_LDLOC_VT);
 			td->last_ins->data [0] = n;
-			WRITE32_INS (td->last_ins, 1, &size);
+			g_assert (size < G_MAXUINT16);
+			td->last_ins->data [1]= size;
 			push_type_vt (td, klass, size);
 		}
 	} else {
@@ -826,7 +827,8 @@ store_arg(TransformData *td, int n)
 			size = mono_class_value_size (klass, NULL);
 		interp_add_ins (td, MINT_STLOC_VT);
 		td->last_ins->data [0] = n;
-		WRITE32_INS (td->last_ins, 1, &size);
+		g_assert (size < G_MAXUINT16);
+		td->last_ins->data [1]= size;
 	} else {
 		interp_add_ins (td, MINT_STLOC_I1 + (mt - MINT_TYPE_I1));
 		td->last_ins->data [0] = n;
@@ -1330,7 +1332,8 @@ interp_emit_ldobj (TransformData *td, MonoClass *klass)
 	if (mt == MINT_TYPE_VT) {
 		interp_add_ins (td, MINT_LDOBJ_VT);
 		size = mono_class_value_size (klass, NULL);
-		WRITE32_INS (td->last_ins, 0, &size);
+		g_assert (size < G_MAXUINT16);
+		td->last_ins->data [0] = size;
 		push_type_vt (td, klass, size);
 	} else {
 		int opcode = interp_get_ldind_for_mt (mt);
@@ -1393,11 +1396,13 @@ interp_emit_ldelema (TransformData *td, MonoClass *array_class, MonoClass *check
 	if (!check_class || m_class_is_valuetype (element_class)) {
 		if (rank == 1 && !bounded) {
 			interp_add_ins (td, MINT_LDELEMA1);
-			WRITE32_INS (td->last_ins, 0, &size);
+			g_assert (size < G_MAXUINT16);
+			td->last_ins->data [0] = size;
 		} else {
 			interp_add_ins (td, MINT_LDELEMA);
 			td->last_ins->data [0] = rank;
-			WRITE32_INS (td->last_ins, 1, &size);
+			g_assert (size < G_MAXUINT16);
+			td->last_ins->data [1] = size;
 		}
 	} else {
 		interp_add_ins (td, MINT_LDELEMA_TC);
@@ -3395,7 +3400,8 @@ interp_emit_sfld_access (TransformData *td, MonoClassField *field, MonoClass *fi
 				WRITE32_INS(td->last_ins, 0, &offset);
 
 				int size = mono_class_value_size (field_class, NULL);
-				WRITE32_INS(td->last_ins, 2, &size);
+				g_assert (size < G_MAXUINT16);
+				td->last_ins->data [2] = size;
 			} else {
 				interp_add_ins (td, is_load ? MINT_LDSSFLD : MINT_STSSFLD);
 				td->last_ins->data [0] = get_data_item_index (td, field);
@@ -3420,7 +3426,8 @@ interp_emit_sfld_access (TransformData *td, MonoClassField *field, MonoClass *fi
 
 		if (mt == MINT_TYPE_VT) {
 			int size = mono_class_value_size (field_class, NULL);
-			WRITE32_INS(td->last_ins, 2, &size);
+			g_assert (size < G_MAXUINT16);
+			td->last_ins->data [2] = size;
 		}
 	}
 }
@@ -3953,7 +3960,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 			if (td->sp [-1].type == STACK_TYPE_VT) {
 				gint32 size = mono_class_value_size (klass, NULL);
 				interp_add_ins (td, MINT_DUP_VT);
-				WRITE32_INS (td->last_ins, 0, &size);
+				g_assert (size < G_MAXUINT16);
+				td->last_ins->data [0] = size;
 				td->ip ++;
 				push_type_vt (td, klass, size);
 			} else  {
@@ -3968,7 +3976,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				int size = mono_class_value_size (td->sp [-1].klass, NULL);
 				size = ALIGN_TO (size, MINT_VT_ALIGNMENT);
 				interp_add_ins (td, MINT_POP_VT);
-				WRITE32_INS (td->last_ins, 0, &size);
+				g_assert (size < G_MAXUINT16);
+				td->last_ins->data [0] = size;
 				td->ip++;
 			} else {
 				SIMPLE_OP(td, MINT_POP);
@@ -4075,7 +4084,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					SIMPLE_OP(td, ult->type == MONO_TYPE_VOID ? MINT_RET_VOID : MINT_RET);
 				else {
 					interp_add_ins (td, MINT_RET_VT);
-					WRITE32_INS (td->last_ins, 0, &vt_size);
+					g_assert (vt_size < G_MAXUINT16);
+					td->last_ins->data [0] = vt_size;
 					++td->ip;
 				}
 			}
@@ -5145,7 +5155,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					td->last_ins->data [0] = m_class_is_valuetype (klass) ? field->offset - MONO_ABI_SIZEOF (MonoObject) : field->offset;
 					if (mt == MINT_TYPE_VT) {
 						int size = mono_class_value_size (field_klass, NULL);
-						WRITE32_INS (td->last_ins, 1, &size);
+						g_assert (size < G_MAXUINT16);
+						td->last_ins->data [1] = size;
 					}
 				}
 			}
@@ -5605,7 +5616,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					int size = mono_class_value_size (klass, NULL);
 					ENSURE_I4 (td, 1);
 					SIMPLE_OP (td, MINT_LDELEM_VT);
-					WRITE32_INS (td->last_ins, 0, &size);
+					g_assert (size < G_MAXUINT16);
+					td->last_ins->data [0] = size;
 					td->sp -= 2;
 					push_type_vt (td, klass, size);
 					break;
@@ -5707,7 +5719,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					int size = mono_class_value_size (klass, NULL);
 					SIMPLE_OP (td, MINT_STELEM_VT);
 					td->last_ins->data [0] = get_data_item_index (td, klass);
-					WRITE32_INS (td->last_ins, 1, &size);
+					g_assert (size < G_MAXUINT16);
+					td->last_ins->data [1] = size;
 					break;
 				}
 				default: {
@@ -6558,7 +6571,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				if (m_class_is_valuetype (klass)) {
 					interp_add_ins (td, MINT_INITOBJ);
 					i32 = mono_class_value_size (klass, NULL);
-					WRITE32_INS (td->last_ins, 0, &i32);
+					g_assert (i32 < G_MAXUINT16);
+					td->last_ins->data [0] = i32;
 					--td->sp;
 				} else {
 					interp_add_ins (td, MINT_LDNULL);
