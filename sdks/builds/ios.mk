@@ -550,7 +550,7 @@ $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-ta
 	mkdir -p $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-sim32-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib $(TOP)/sdks/out/ios-sim64-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simtv-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
