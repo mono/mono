@@ -1131,7 +1131,7 @@ typedef enum {
 
 void sgen_clear_tlabs (void);
 void sgen_update_allocation_count (void)
-	MONO_PERMIT (need (sten_world_stopped));
+	MONO_PERMIT (need (sgen_world_stopped));
 guint64 sgen_get_total_allocated_bytes (MonoBoolean precise)
 	MONO_PERMIT (need (sgen_lock_gc, sgen_stop_world));
 
