@@ -22,6 +22,9 @@ sub InstallNameTool
   system("install_name_tool -id $pathtoburnin $target") eq 0 or die("Failed running install_name_tool");
   print "running otool after:\n";
   system("otool","-L",$target);
+
+  print "running codesign on $target:\n";
+  system("codesign", "-s", "-", "-f", $target);
 }
 
 sub GitClone
