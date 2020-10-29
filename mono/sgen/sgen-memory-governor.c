@@ -210,6 +210,10 @@ sgen_memgov_minor_collection_end (const char *reason, gboolean is_overflow)
 
 		sgen_add_log_entry (log_entry);
 	}
+
+	sgen_gc_info.heap_size_bytes = sgen_major_collector.get_num_major_sections () * sgen_major_collector.section_size + sgen_los_memory_usage_total;
+	sgen_gc_info.fragmented_bytes = sgen_gc_info.heap_size_bytes - sgen_los_memory_usage - (last_used_slots_size + sgen_total_allocated_major - total_allocated_major_end);
+	sgen_gc_info.memory_load_bytes = mono_determine_physical_ram_available_size ();
 }
 
 void
@@ -235,10 +239,6 @@ sgen_memgov_major_post_sweep (mword used_slots_size)
 
 		sgen_add_log_entry (log_entry);
 	}
-
-	sgen_gc_info.heap_size_bytes = sgen_major_collector.get_num_major_sections () * sgen_major_collector.section_size + sgen_los_memory_usage_total;
-	sgen_gc_info.fragmented_bytes = sgen_gc_info.heap_size_bytes - sgen_los_memory_usage - (used_slots_size + sgen_total_allocated_major - total_allocated_major_end);
-	sgen_gc_info.memory_load_bytes = mono_determine_physical_ram_available_size ();
 
 	last_used_slots_size = used_slots_size;
 }
@@ -500,6 +500,7 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 
 	if (max_heap == 0) {
 		sgen_gc_info.total_available_memory_bytes = mono_determine_physical_ram_size ();
+		sgen_gc_info.memory_load_bytes = mono_determine_physical_ram_available_size ();
 
 		// This threshold is commonly used by software caches to detect when they are approaching the limit of available memory.
 		// In sgen it is not adjusted dynamically, since sgen does not adjust compaction strategies based on a threshold.
@@ -525,6 +526,7 @@ sgen_memgov_init (size_t max_heap, size_t soft_limit, gboolean debug_allowance, 
 
 	sgen_gc_info.total_available_memory_bytes = max_heap;
 	sgen_gc_info.high_memory_load_threshold_bytes = .9 * sgen_gc_info.total_available_memory_bytes;
+	sgen_gc_info.memory_load_bytes = mono_determine_physical_ram_available_size ();
 
 	if (allowance_ratio)
 		default_allowance_nursery_size_ratio = allowance_ratio;
