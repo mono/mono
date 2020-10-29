@@ -172,10 +172,10 @@ sub MergeIntoFatBinary
 
 	if ($isExe)
 	{
-		system("codesign", "--entitlements", $buildscriptsdir . "/entitlements.plist", "-s", "-", "$binaryOutput") eq 0 or die("Failed to codesign $binaryOutput!");
+		system("codesign", "--entitlements", $buildscriptsdir . "/entitlements.plist", "-s", "-", "-f", "$binaryOutput") eq 0 or die("Failed to codesign $binaryOutput!");
 	}
 	else
 	{
-		system("codesign", "-s", "-", "$binaryOutput") eq 0 or die("Failed to codesign $binaryOutput!");
+		system("codesign", "-s", "-", "-f", "$binaryOutput") eq 0 or die("Failed to codesign $binaryOutput!");
 	}
 }
