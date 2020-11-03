@@ -2043,7 +2043,8 @@ check_call_signature (MonoCompile *cfg, MonoMethodSignature *sig, MonoInst **arg
 	}
 	for (i = 0; i < sig->param_count; ++i) {
 		if (sig->params [i]->byref) {
-			if (args [i]->type != STACK_MP && args [i]->type != STACK_PTR)
+			if (args [i]->type != STACK_I4 && !(SIZEOF_VOID_P == 8 && args [i]->type == STACK_I8) &&
+				args [i]->type != STACK_PTR && args [i]->type != STACK_MP && args [i]->type != STACK_OBJ)
 				return TRUE;
 			continue;
 		}
