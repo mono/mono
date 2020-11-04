@@ -11,6 +11,7 @@
 #define INTERP_INST_FLAG_RECORD_CALL_PATCH 16
 
 #define INTERP_LOCAL_FLAG_DEAD 1
+#define INTERP_LOCAL_FLAG_EXECUTION_STACK 2
 
 typedef struct _InterpInst InterpInst;
 typedef struct _InterpBasicBlock InterpBasicBlock;
@@ -20,6 +21,11 @@ typedef struct
 	MonoClass *klass;
 	unsigned char type;
 	unsigned char flags;
+	/*
+	 * The local associated with the value of this stack entry. Every time we push on
+	 * the stack a new local is created.
+	 */
+	int local;
 	/* The offset from the execution stack start where this is stored */
 	int offset;
 	/* Saves how much stack this is using. It is a multiple of MINT_VT_ALIGNMENT */
@@ -62,6 +68,8 @@ struct _InterpInst {
 	// part of the IL instruction associated with the previous interp instruction.
 	int il_offset;
 	guint32 flags;
+	gint32 dreg;
+	gint32 sregs [3]; // Currently all instructions have at most 3 sregs
 	// This union serves the same purpose as the data array. The difference is that
 	// the data array maps exactly to the final representation of the instruction.
 	// FIXME We should consider using a separate higher level IR, that is also easier
@@ -70,6 +78,8 @@ struct _InterpInst {
 		InterpBasicBlock *target_bb;
 		InterpBasicBlock **target_bb_table;
 	} info;
+	// Variable data immediately following the dreg/sreg information. This is represented exactly
+	// in the final code stream as in this array.
 	guint16 data [MONO_ZERO_LEN_ARRAY];
 };
 
@@ -115,6 +125,8 @@ typedef enum {
 
 typedef struct {
 	RelocType type;
+	/* For branch relocation, how many sreg slots to skip */
+	int skip;
 	/* In the interpreter IR */
 	int offset;
 	InterpBasicBlock *target_bb;
@@ -127,6 +139,10 @@ typedef struct {
 	int indirects;
 	int offset;
 	int size;
+	union {
+		// the offset from the start of the execution stack locals space
+		int stack_offset;
+	};
 } InterpLocal;
 
 typedef struct

@@ -35,28 +35,16 @@ unsigned char const mono_interp_oplen [] = {
 };
 #undef OPDEF
 
-#define Push0 0
-#define Push1 1
-#define Push2 2
-#define Pop0 0
-#define Pop1 1
-#define Pop2 2
-#define Pop3 3
-#define Pop4 4
-#define Pop5 5
-#define Pop6 6
-#define PopAll MINT_POP_ALL
-#define VarPush MINT_VAR_PUSH
-#define VarPop MINT_VAR_POP
+#define CallArgs MINT_CALL_ARGS
 
-#define OPDEF(a,b,c,d,e,f) d,
-int const mono_interp_oppop[] = {
+#define OPDEF(a,b,c,d,e,f) e,
+int const mono_interp_op_sregs[] = {
 #include "mintops.def"
 };
 #undef OPDEF
 
-#define OPDEF(a,b,c,d,e,f) e,
-int const mono_interp_oppush[] = {
+#define OPDEF(a,b,c,d,e,f) d,
+int const mono_interp_op_dregs[] = {
 #include "mintops.def"
 };
 #undef OPDEF
@@ -76,7 +64,7 @@ mono_interp_dis_mintop_len (const guint16 *ip)
 		g_print ("op %d len %d\n", *ip, len);
 		g_assert_not_reached ();
 	} else if (len == 0) { /* SWITCH */
-		int n = READ32 (ip + 1);
+		int n = READ32 (ip + 2);
 		len = MINT_SWITCH_LEN (n);
 	}
 
@@ -97,9 +85,24 @@ mono_interp_dis_mintop (gint32 ins_offset, gboolean native_offset, const guint16
 	int target;
 
 	if (native_offset)
-		g_string_append_printf (str, "IR_%04x: %-10s", ins_offset, mono_interp_opname (opcode));
+		g_string_append_printf (str, "IR_%04x: %-14s", ins_offset, mono_interp_opname (opcode));
 	else
-		g_string_append_printf (str, "IL_%04x: %-10s", ins_offset, mono_interp_opname (opcode));
+		g_string_append_printf (str, "IL_%04x: %-14s", ins_offset, mono_interp_opname (opcode));
+
+	if (mono_interp_op_dregs [opcode] == MINT_CALL_ARGS)
+		g_string_append_printf (str, " [call_args %d <-", *ip++);
+	else if (mono_interp_op_dregs [opcode] > 0)
+		g_string_append_printf (str, " [%d <-", *ip++);
+	else
+		g_string_append (str, " [nil <-");
+
+	if (mono_interp_op_sregs [opcode] > 0) {
+		for (int i = 0; i < mono_interp_op_sregs [opcode]; i++)
+			g_string_append_printf (str, " %d", *ip++);
+		g_string_append (str, "],");
+	} else {
+		g_string_append (str, " nil],");
+	}
 
 	switch (mono_interp_opargtype [opcode]) {
 	case MintOpNoArgs:
