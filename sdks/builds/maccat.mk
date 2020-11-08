@@ -22,8 +22,8 @@ maccat_$(1)_PLATFORM_BIN=$(3)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 # libtool who acknowledge that some parameters are just not passed through
 # to the compiler. You can use -Wc, flags, but I failed to get the working appropriately.
 #
-_maccat-$(1)_CC=$$(CCACHE) $$(maccat_$(1)_PLATFORM_BIN)/clang -target $(2)-apple-ios13.0-macabi
-_maccat-$(1)_CXX=$$(CCACHE) $$(maccat_$(1)_PLATFORM_BIN)/clang++ -target $(2)-apple-ios13.0-macabi
+_maccat-$(1)_CC=$$(CCACHE) $$(maccat_$(1)_PLATFORM_BIN)/clang -target $(2)-apple-ios$(MACCAT_IOS_VERSION_MIN)-macabi
+_maccat-$(1)_CXX=$$(CCACHE) $$(maccat_$(1)_PLATFORM_BIN)/clang++ -target $(2)-apple-ios$(MACCAT_IOS_VERSION_MIN)-macabi
 
 _maccat-$(1)_AC_VARS= \
 	ac_cv_func_system=no \
@@ -52,7 +52,6 @@ _maccat-$(1)_CPPFLAGS= \
 	-DSMALL_CONFIG -D_XOPEN_SOURCE -DHOST_IOS -DHOST_MACCAT -DHAVE_LARGE_FILE_SUPPORT=1
 
 _maccat-$(1)_LDFLAGS= \
-	-target $(2)-apple-ios13.6-macabi \
 	-iframework $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk/System/iOSSupport/System/Library/Frameworks \
 	-framework CoreFoundation \
 	-lobjc -lc++
