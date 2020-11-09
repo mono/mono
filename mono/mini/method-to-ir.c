@@ -5042,6 +5042,35 @@ ensure_method_is_allowed_to_call_method (MonoCompile *cfg, MonoMethod *caller, M
 		emit_throw_exception (cfg, ex);
 }
 
+static void
+ensure_type_is_valid (MonoCompile *cfg, MonoType *type)
+{
+	MonoClass *klass;
+
+	switch (type->type) {
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_VALUETYPE:
+	case MONO_TYPE_SZARRAY:
+		klass = type->data.klass;
+		break;
+	case MONO_TYPE_ARRAY:
+		klass = type->data.array->eklass;
+		break;
+	case MONO_TYPE_GENERICINST:
+		klass = mono_class_create_generic_inst (type->data.generic_class);
+		break;
+	default:
+		klass = NULL;
+		break;
+	}
+
+	if (klass) {
+		MonoException *ex = mono_class_get_exception_for_failure (klass);
+		if (ex)
+			emit_throw_exception (cfg, ex);
+	}
+}
+
 static guchar*
 il_read_op (guchar *ip, guchar *end, guchar first_byte, MonoOpcodeEnum desired_il_op)
 // If ip is desired_il_op, return the next ip, else NULL.
@@ -7488,7 +7517,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			for (int i = 0; i < fsig->param_count; ++i)
+			{
+				ensure_type_is_valid (cfg, fsig->params [i]);
 				sp [i + fsig->hasthis] = convert_value (cfg, fsig->params [i], sp [i + fsig->hasthis]);
+			}
 
 			if (check_call_signature (cfg, fsig, sp)) {
 				if (break_on_unverified ())
@@ -9570,6 +9602,7 @@ calli_end:
 			*/
 
 			ftype = mono_field_get_type_internal (field);
+			ensure_type_is_valid (cfg, ftype);
 
 			/*
 			 * LDFLD etc. is usable on static fields as well, so convert those cases to
