@@ -67,7 +67,7 @@ parallel (
     "Mac Catalyst (Xcode 11.3)": {
         throttle(['provisions-mac-toolchain']) {
             node ("xcode113") {
-                archive ("catalyst", "release", "Darwin", "", "", "", "xcode113")
+                archive ("maccat", "release", "Darwin", "", "", "", "xcode113")
             }
         }
     },
