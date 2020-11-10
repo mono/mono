@@ -1,12 +1,11 @@
 
-maccat_BIN_DIR = $(TOP)/sdks/out/maccat-bin
 maccat_PKG_CONFIG_DIR = $(TOP)/sdks/out/maccat-pkgconfig
 maccat_LIBS_DIR = $(TOP)/sdks/out/maccat-libs
 maccat_TPN_DIR = $(TOP)/sdks/out/maccat-tpn
 maccat_MONO_VERSION = $(TOP)/sdks/out/maccat-mono-version.txt
 
-maccat_ARCHIVE += maccat-bin maccat-pkgconfig maccat-libs maccat-tpn maccat-mono-version.txt
-ADDITIONAL_PACKAGE_DEPS += $(maccat_BIN_DIR) $(maccat_PKG_CONFIG_DIR) $(maccat_LIBS_DIR) $(maccat_TPN_DIR) $(maccat_MONO_VERSION)
+maccat_ARCHIVE += maccat-pkgconfig maccat-libs maccat-tpn maccat-mono-version.txt
+ADDITIONAL_PACKAGE_DEPS += $(maccat_PKG_CONFIG_DIR) $(maccat_LIBS_DIR) $(maccat_TPN_DIR) $(maccat_MONO_VERSION)
 
 ##
 # Parameters
@@ -88,12 +87,6 @@ maccat-mac64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/
 $(eval $(call MacCatTemplate,mac64,x86_64,$(XCODE_DIR)))
 
 $(eval $(call BclTemplate,maccat,monotouch,monotouch))
-
-$(maccat_BIN_DIR): package-maccat-mac64
-	rm -rf $(maccat_BIN_DIR)
-	mkdir -p $(maccat_BIN_DIR)
-
-	cp $(TOP)/sdks/out/maccat-mac64-$(CONFIGURATION)/bin/mono-sgen $(maccat_BIN_DIR)/mono-sgen
 
 $(maccat_PKG_CONFIG_DIR): package-maccat-mac64
 	rm -rf $(maccat_PKG_CONFIG_DIR)

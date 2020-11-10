@@ -64,6 +64,13 @@ parallel (
             }
         }
     },
+    "Mac Catalyst (Xcode 11.3)": {
+        throttle(['provisions-mac-toolchain']) {
+            node ("xcode113") {
+                archive ("maccat", "release", "Darwin", "", "", "", "xcode113")
+            }
+        }
+    },
     "WASM Linux": {
         if (monoBranch != 'master') {
             echo "Skipping WASM build on non-master branch."
