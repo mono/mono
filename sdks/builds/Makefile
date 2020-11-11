@@ -39,12 +39,14 @@ ifneq ($(UNAME),Darwin)
 # iOS and Mac requires Xcode to be available, and Xcode is only available on macOS
 ENABLE_IOS=
 ENABLE_MAC=
+ENABLE_MACCAT=
 endif
 
 # On Windows, we will just trigger LLVM and Android builds using this Makefile.
 ifeq ($(UNAME),Windows)
 ENABLE_IOS=
 ENABLE_MAC=
+ENABLE_MACCAT=
 ENABLE_WASM=
 ENABLE_WASM_CROSS=
 ENABLE_DESKTOP=
@@ -105,6 +107,10 @@ ifdef ENABLE_MAC
 mac_ARCHIVE=
 endif
 
+ifdef ENABLE_MACCAT
+maccat_ARCHIVE=
+endif
+
 ifdef ENABLE_WASM
 wasm_ARCHIVE=
 endif
@@ -136,6 +142,10 @@ endif
 
 ifdef ENABLE_MAC
 $(eval $(call ArchiveTemplate,mac,7z))
+endif
+
+ifdef ENABLE_MACCAT
+$(eval $(call ArchiveTemplate,maccat,7z))
 endif
 
 ifdef ENABLE_WASM
@@ -221,6 +231,11 @@ endif
 ## Mac targets
 ifdef ENABLE_MAC
 include mac.mk
+endif
+
+## Mac Catalyst targets
+ifdef ENABLE_MACCAT
+include maccat.mk
 endif
 
 ## Desktop targets
