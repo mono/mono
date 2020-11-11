@@ -236,6 +236,39 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
         exit 0
 fi
 
+
+if [[ ${CI_TAGS} == *'sdks-maccat'* ]];
+then
+    # configuration on our bots
+    if [[ ${CI_TAGS} == *'xcode113'* ]]; then
+        export XCODE_DIR=/Applications/Xcode113.app/Contents/Developer
+        export MACOS_VERSION=10.15
+    else
+        export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
+        export MACOS_VERSION=10.14
+    fi
+
+    # retrieve selected Xcode version
+    /usr/libexec/PlistBuddy -c 'Print :ProductBuildVersion' ${XCODE_DIR}/../version.plist > xcode_version.txt
+
+    # make sure we embed the correct path into the PDBs
+    export MONOTOUCH_MCS_FLAGS=-pathmap:${MONO_REPO_ROOT}/=/Library/Frameworks/Xamarin.iOS.framework/Versions/Current/src/Xamarin.iOS/
+
+    echo "ENABLE_MACCAT=1" > sdks/Make.config
+    if [[ ${CI_TAGS} == *'cxx'* ]]; then
+        echo "ENABLE_CXX=1" >> sdks/Make.config
+    fi
+    if [[ ${CI_TAGS} == *'debug'* ]]; then
+        echo "CONFIGURATION=debug" >> sdks/Make.config
+    fi
+
+    ${TESTCMD} --label=configure --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds configure-maccat NINJA=
+    ${TESTCMD} --label=build     --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds build-maccat     NINJA=
+    ${TESTCMD} --label=archive   --timeout=180m --fatal $gnumake -j ${CI_CPU_COUNT} --output-sync=recurse --trace -C sdks/builds archive-maccat   NINJA=
+
+    exit 0
+fi
+
 if [[ ${CI_TAGS} == *'sdks-mac'* ]];
 then
     # configuration on our bots

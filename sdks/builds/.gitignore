@@ -38,6 +38,7 @@ ios-sim32-*/
 ios-sim64-*/
 ios-simtv-*/
 ios-simwatch-*/
+ios-simwatch64-*/
 ios-netcore_target32-*/
 ios-netcore_target32s-*/
 ios-netcore_target64-*/
@@ -52,7 +53,9 @@ ios-netcore_sim32-*/
 ios-netcore_sim64-*/
 ios-netcore_simtv-*/
 ios-netcore_simwatch-*/
+ios-netcore_simwatch64-*/
 mac-mac64-*/
+maccat-mac64-*/
 wasm-runtime-*/
 wasm-cross-*/
 wasm-cross-win-*/
