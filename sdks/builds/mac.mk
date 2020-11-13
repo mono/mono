@@ -36,8 +36,12 @@ _mac-$(1)_CXXFLAGS= \
 
 _mac-$(1)_CPPFLAGS=
 
-_mac-$(1)_LDFLAGS= \
-	-Wl,-no_weak_imports
+_mac-$(1)_LDFLAGS=
+
+# Xcode 12 and later cause issues with no_weak_imports: https://github.com/mono/mono/issues/19393
+ifeq ($(XCODE_MAJOR_VERSION),$(filter $(XCODE_MAJOR_VERSION), 11 10 9))
+_mac-$(1)_LDFLAGS += -Wl,-no_weak_imports
+endif
 
 _mac-$(1)_CONFIGURE_FLAGS= \
 	--disable-boehm \
