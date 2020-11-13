@@ -67,6 +67,9 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
 	ac_cv_func_shm_open_working_with_mmap=no \
+	ac_cv_func_pthread_jit_write_protect_np=no \
+	ac_cv_func_preadv=no \
+	ac_cv_func_pwritev=no \
 	mono_cv_sizeof_sunpath=104 \
 	mono_cv_uscore=yes
 
@@ -90,10 +93,14 @@ _ios-$(1)_CPPFLAGS= \
 	-DSMALL_CONFIG -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
 
 _ios-$(1)_LDFLAGS= \
-	-Wl,-no_weak_imports \
 	-arch $(3) \
 	-framework CoreFoundation \
 	-lobjc -lc++
+
+# Xcode 12 and later cause issues with no_weak_imports: https://github.com/mono/mono/issues/19393
+ifeq ($(XCODE_MAJOR_VERSION),$(filter $(XCODE_MAJOR_VERSION), 11 10 9))
+_ios-$(1)_LDFLAGS += -Wl,-no_weak_imports
+endif
 
 _ios-$(1)_CONFIGURE_FLAGS = \
 	--disable-boehm \
@@ -296,6 +303,9 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
 	ac_cv_func_shm_open_working_with_mmap=no \
+	ac_cv_func_pthread_jit_write_protect_np=no \
+	ac_cv_func_preadv=no \
+	ac_cv_func_pwritev=no \
 	mono_cv_uscore=yes
 
 _ios-$(1)_CFLAGS= \
