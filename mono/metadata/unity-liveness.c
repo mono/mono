@@ -279,6 +279,33 @@ static gboolean mono_add_process_object(MonoObject *object, LivenessState *state
 	return FALSE;
 }
 
+MONO_API void mono_validate_object_pointer (MonoObject *object)
+{
+	if (object) {
+		void *vtable = NULL;
+		MonoClass *klass = NULL;
+		char *name = NULL;
+		__try {
+			vtable = *(void**)(object);
+			klass = object->vtable->klass;
+			name = klass->name;
+		}
+		__except(1) {
+
+			vtable = NULL;
+			klass = NULL;
+		}
+
+		if (vtable == NULL || klass == NULL || name == NULL)
+			DebugBreak();
+	}
+}
+
+MONO_API void mono_validate_string_pointer(MonoString *string)
+{
+	mono_validate_object_pointer(&string->object);
+}
+
 static gboolean mono_add_and_validate_object(MonoObject *object, LivenessState *state)
 {
 	// TODO: validate object is good first...
