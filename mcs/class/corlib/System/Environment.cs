@@ -352,7 +352,7 @@ namespace System {
 		[MonoTODO ("Currently always returns false, regardless of interactive state")]
 		public static bool UserInteractive {
 			get {
-				return false;
+				return true;
 			}
 		}
 
