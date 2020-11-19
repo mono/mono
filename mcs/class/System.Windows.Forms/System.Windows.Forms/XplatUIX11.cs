@@ -1479,11 +1479,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		int NextTimeout (ArrayList timers, DateTime now) {
+		int NextTimeout (ArrayList timers, long now) {
 			int timeout = int.MaxValue; 
 
 			foreach (Timer timer in timers) {
-				int next = (int) (timer.Expires - now).TotalMilliseconds;
+				int next = (int) (timer.Expires - now);
 				if (next < 0) {
 					return 0; // Have a timer that has already expired
 				}
@@ -1501,7 +1501,7 @@ namespace System.Windows.Forms {
 			return timeout;
 		}
 
-		void CheckTimers (ArrayList timers, DateTime now) {
+		void CheckTimers (ArrayList timers, long now) {
 			int count;
 
 			count = timers.Count;
@@ -1691,11 +1691,11 @@ namespace System.Windows.Forms {
 		}
 
 		void UpdateMessageQueue (XEventQueue queue, bool allowIdle) {
-			DateTime	now;
+			long	now;
 			int		pending;
 			Hwnd		hwnd;
 
-			now = DateTime.UtcNow;
+			now = Timer.StopWatchNowMilliseconds;
 
 			lock (XlibLock) {
 				pending = XPending (DisplayHandle);
@@ -5168,7 +5168,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			CheckTimers(queue.timer_list, DateTime.UtcNow);
+			CheckTimers(queue.timer_list, Timer.StopWatchNowMilliseconds);
 
 			if (!pending) {
 				return false;

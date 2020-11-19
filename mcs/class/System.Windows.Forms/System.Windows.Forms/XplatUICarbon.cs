@@ -141,7 +141,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal void FlushQueue () {
-			CheckTimers (DateTime.UtcNow);
+			CheckTimers (Timer.StopWatchNowMilliseconds);
 			lock (queuelock) {
 				while (MessageQueue.Count > 0) {
 					object queueobj = MessageQueue.Dequeue ();
@@ -469,11 +469,11 @@ namespace System.Windows.Forms {
 		}
 
 		private double NextTimeout () {
-			DateTime now = DateTime.UtcNow;
+			long now = Timer.StopWatchNowMilliseconds;
 			int timeout = 0x7FFFFFF;
 			lock (TimerList) {
 				foreach (Timer timer in TimerList) {
-					int next = (int) (timer.Expires - now).TotalMilliseconds;
+					int next = (int) (timer.Expires - now);
 					if (next < 0)
 						return 0;
 					if (next < timeout)
@@ -486,7 +486,7 @@ namespace System.Windows.Forms {
 			return (double)((double)timeout/1000);
 		}
 		
-		private void CheckTimers (DateTime now) {
+		private void CheckTimers (long now) {
 			lock (TimerList) {
 				int count = TimerList.Count;
 				if (count == 0)
@@ -1339,7 +1339,7 @@ namespace System.Windows.Forms {
 		internal override bool GetMessage(object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			IntPtr evtRef = IntPtr.Zero;
 			IntPtr target = GetEventDispatcherTarget();
-			CheckTimers (DateTime.UtcNow);
+			CheckTimers (Timer.StopWatchNowMilliseconds);
 			ReceiveNextEvent (0, IntPtr.Zero, 0, true, ref evtRef);
 			if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
 				SendEventToEventTarget (evtRef, target);
@@ -1577,7 +1577,7 @@ namespace System.Windows.Forms {
 		internal override bool PeekMessage(Object queue_id, ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			IntPtr evtRef = IntPtr.Zero;
 			IntPtr target = GetEventDispatcherTarget();
-			CheckTimers (DateTime.UtcNow);
+			CheckTimers (Timer.StopWatchNowMilliseconds);
 			ReceiveNextEvent (0, IntPtr.Zero, 0, true, ref evtRef);
 			if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
 				SendEventToEventTarget (evtRef, target);
