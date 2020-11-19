@@ -733,7 +733,7 @@ namespace MonoTests.System
 				DateTime afterDST = new DateTime (2007, 10, 28, 2, 0, 0, DateTimeKind.Unspecified);
 				Assert.IsFalse (london.IsDaylightSavingTime (beforeDST), "Just before DST");
 				Assert.IsTrue (london.IsDaylightSavingTime (startDST), "the first seconds of DST");
-				Assert.IsTrue (london.IsDaylightSavingTime (endDST), "The last seconds of DST");
+				Assert.IsFalse (london.IsDaylightSavingTime (endDST), "The last seconds of DST");
 				Assert.IsFalse (london.IsDaylightSavingTime (afterDST), "Just after DST");
 			}
 		
@@ -826,12 +826,12 @@ namespace MonoTests.System
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 				date = new DateTime (2014, 3, 30 , 3, 1, 0);
-				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 				date = new DateTime (2014, 3, 30 , 3, 59, 0);
-				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
@@ -859,17 +859,17 @@ namespace MonoTests.System
 				try {
 
 					var date = new DateTime (2014, 3, 30 , 3, 0, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 					date = new DateTime (2014, 3, 30 , 3, 1, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 					date = new DateTime (2014, 3, 30 , 3, 59, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
@@ -1494,19 +1494,22 @@ namespace MonoTests.System
 			[Test]
 			public void AmbiguousDates ()
 			{
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 1)));
-				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0)));
 				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 1)));
 			}
 		
 			[Test]
 			public void AmbiguousUTCDates ()
 			{
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 0, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 1, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 59, 59, DateTimeKind.Utc)));
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 59, 59, DateTimeKind.Utc)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0, DateTimeKind.Utc)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 1, DateTimeKind.Utc)));
 			}
 		
 		#if SLOW_TESTS
@@ -1885,7 +1888,6 @@ namespace MonoTests.System
 
 				d = dst1End.Add (-dstOffset);
 				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0,-1))));
-				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d));
 				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,1,0, 1))));
 
 				d = dst2Start.Add (dstOffset);
@@ -1895,7 +1897,6 @@ namespace MonoTests.System
 
 				d = dst2End.Add (-dstOffset);
 				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0,-1))));
-				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d));
 				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,1,0, 1))));
 			}
 
