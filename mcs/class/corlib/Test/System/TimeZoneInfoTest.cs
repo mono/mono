@@ -375,6 +375,22 @@ namespace MonoTests.System
 				Assert.IsFalse (timeZone.IsDaylightSavingTime (new DateTime (2014, 3, 7, 12, 0, 0, DateTimeKind.Unspecified)));
 			}
 
+			[Test] // Issue#20510.
+			public void TestCasablancaTZ ()
+			{
+				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Africa/Casablanca"));
+				// Check DTS. 
+				var date = new DateTime (2020, 11, 16 , 1, 0, 0);
+				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (1,0,0), tzi.GetUtcOffset (date));
+
+				//Check Non-DST.
+				date = new DateTime (2020, 4, 25 , 0, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (0,0,0), tzi.GetUtcOffset (date));
+			}
+
+
 			[Test] //Covers #25050
 			public void TestAthensDST ()
 			{

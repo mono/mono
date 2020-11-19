@@ -1389,17 +1389,10 @@ namespace System
 							storeTransition = true;
 
 						DateTime dateStart, dateEnd;
-						if (dst_start.Month < 7)
-							dateStart = new DateTime (dst_start.Year, 1, 1);
-						else
-							dateStart = new DateTime (dst_start.Year, 7, 1);
 
-						if (dst_end.Month >= 7)
-							dateEnd = new DateTime (dst_end.Year, 12, 31);
-						else
-							dateEnd = new DateTime (dst_end.Year, 6, 30);
+						dateStart = new DateTime (dst_start.Year, dst_start.Month, dst_start.Day);
+						dateEnd = new DateTime (dst_end.Year, dst_end.Month, dst_end.Day);
 
-						
 						TransitionTime transition_start = TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1) + dst_start.TimeOfDay, dst_start.Month, dst_start.Day);
 						TransitionTime transition_end = TransitionTime.CreateFixedDateRule (new DateTime (1, 1, 1) + dst_end.TimeOfDay, dst_end.Month, dst_end.Day);
 						if  (transition_start != transition_end) //y, that happened in Argentina in 1943-1946
