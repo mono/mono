@@ -467,6 +467,48 @@ namespace MonoTests.System
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 			}
 
+			[Test]
+			public void TestAthensDST_InDSTDelta_NoTransitions ()
+			{
+				if (Environment.OSVersion.Platform != PlatformID.Unix)
+					Assert.Ignore ("TimeZoneInfo on Mono on Windows and .NET has no transitions");
+
+				// Repeat the previous test but this time force using AdjustmentRules by nulling out TimeZoneInfo.transitions
+
+				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById ("Europe/Athens");
+
+				var transitionsField = typeof (TimeZoneInfo).GetField ("transitions", BindingFlags.Instance | BindingFlags.NonPublic);
+				var transitions = transitionsField.GetValue (tzi);
+				Assert.IsNotNull (transitions, "Expected Athens TimeZoneInfo.transitions to be non-null");
+				transitionsField.SetValue (tzi, null);
+
+				try {
+
+					var date = new DateTime (2014, 3, 30 , 3, 0, 0);
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+					date = new DateTime (2014, 3, 30 , 3, 1, 0);
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+					date = new DateTime (2014, 3, 30 , 3, 59, 0);
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+					date = new DateTime (2014, 3, 30 , 4, 0, 0);
+					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.AreEqual (new TimeSpan (3, 0, 0), tzi.GetUtcOffset (date));
+					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+				} finally {
+					transitionsField.SetValue (tzi, transitions);
+				}
+			}
+
 			[Test] //Covers #41349
 			public void TestIsDST_DateTimeOffset ()
 			{
@@ -1101,6 +1143,9 @@ namespace MonoTests.System
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 1, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 59, 59, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 59, 59, DateTimeKind.Utc)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0, DateTimeKind.Utc)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 1, DateTimeKind.Utc)));
 			}
 		
 		#if SLOW_TESTS

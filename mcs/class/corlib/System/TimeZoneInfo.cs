@@ -908,7 +908,33 @@ namespace System
 			AdjustmentRule rule = GetApplicableRule (dateTime);
 			if (rule != null) {
 				DateTime tpoint = TransitionPoint (rule.DaylightTransitionEnd, dateTime.Year);
-				if (dateTime > tpoint - rule.DaylightDelta && dateTime <= tpoint)
+				if (dateTime >= tpoint - rule.DaylightDelta && dateTime < tpoint)
+					return true;
+			}
+				
+			return false;
+		}
+        
+		private bool IsAmbiguousLocalDstFromUtc (DateTime dateTime) 
+		{
+			// This method determines if a dateTime in UTC falls into the Dst side
+			// of the ambiguous local time (the local time that occurs twice).
+            
+			if (dateTime.Kind == DateTimeKind.Local)
+				return false;
+
+			if (this == TimeZoneInfo.Utc)
+				return false;
+
+			AdjustmentRule rule = GetApplicableRule (dateTime);
+			if (rule != null) {
+				DateTime tpoint = TransitionPoint (rule.DaylightTransitionEnd, dateTime.Year);
+				// tpoint is the local time in daylight savings time when daylight savings time will end, convert it to UTC
+				DateTime tpointUtc;
+				if (!TryAddTicks(tpoint, -(BaseUtcOffset.Ticks + rule.DaylightDelta.Ticks), out tpointUtc, DateTimeKind.Utc))
+					return false;
+
+				if (dateTime >= tpointUtc - rule.DaylightDelta && dateTime < tpointUtc)
 					return true;
 			}
 				
@@ -927,7 +953,18 @@ namespace System
 				return true;
 
 			// We might be in the dateTime previous year's DST period
-			return dateTime.Year > 1 && IsInDSTForYear (rule, dateTime, dateTime.Year - 1);
+			if (dateTime.Year > 1 && IsInDSTForYear(rule, dateTime, dateTime.Year - 1))
+				return true;
+            
+			// If we are checking an ambiguous local time, that is the local time that occurs twice during a DST "fall back"
+			// check if it was marked as being in the DST side of the ambiguous time when it was created
+			// We need to re-check IsAmbiguousTime because the IsAmbiguousDaylightSavingTime flag is not cleared when using DateTime.Add/Subtract
+			if (dateTime.Kind == DateTimeKind.Local && IsAmbiguousTime(dateTime))
+			{
+				return dateTime.IsAmbiguousDaylightSavingTime();
+			}
+
+			return false;
 		}
 
 		bool IsInDSTForYear (AdjustmentRule rule, DateTime dateTime, int year)
@@ -1262,6 +1299,15 @@ namespace System
 						offset = baseUtcOffset;
 						isDst = false;
 					}
+					
+					// If we are checking an ambiguous local time, that is the local time that occurs twice during a DST "fall back"
+					// check if it was marked as being in the DST side of the ambiguous time when it was created
+					// We need to re-check IsAmbiguousTime because the IsAmbiguousDaylightSavingTime flag is not cleared when using DateTime.Add/Subtract
+					if (!isDst && dateTime.Kind == DateTimeKind.Local && IsAmbiguousTime(dateTime) && dateTime.IsAmbiguousDaylightSavingTime())
+					{
+						offset += current.DaylightDelta;
+						isDst = true;
+					}
 
 					return true;
 				}
@@ -1559,7 +1605,7 @@ namespace System
 			isAmbiguousLocalDst = false;
 			TimeSpan baseOffset = zone.BaseUtcOffset;
 
-			if (zone.IsAmbiguousTime (time)) {
+			if (zone.IsAmbiguousLocalDstFromUtc (time)) {
 				isAmbiguousLocalDst = true;
 //				return baseOffset;
 			}

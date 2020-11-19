@@ -299,12 +299,12 @@ public class TimeZoneTest {
 			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 2));
 			st = new DateTime(2016, 10, 30, 2, 0, 0, DateTimeKind.Local);
 #if !MOBILE
-			Assert.IsFalse (tzInfo.IsDaylightSavingTime(st));	
-			Assert.IsFalse (!tzInfo.IsAmbiguousTime(st));
-			Assert.IsFalse ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 1));
+			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
+			Assert.IsTrue (tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 2));
 			st = new DateTime(2016, 10, 30, 3, 0, 0, DateTimeKind.Local);
 			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
-			Assert.IsFalse (tzInfo.IsAmbiguousTime(st));
+			Assert.IsTrue (!tzInfo.IsAmbiguousTime(st));
 			Assert.IsTrue ((TimeZoneInfo.ConvertTimeToUtc(st).Hour == 3));
 			st = new DateTime(2016, 10, 30, 4, 0, 0, DateTimeKind.Local);
 			Assert.IsTrue (!tzInfo.IsDaylightSavingTime(st));	
@@ -348,8 +348,29 @@ public class TimeZoneTest {
 			var dstOffset = tz.GetUtcOffset(daylightChanges.Start.AddMinutes(1));
 
 //			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end));
-			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
-			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
+			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add (daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(1)))));
+			Assert.AreEqual(standardOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ())));
+			Assert.AreEqual(dstOffset, tz.GetUtcOffset (dst_end.Add(daylightChanges.Delta.Negate ().Add (TimeSpan.FromSeconds(-1)))));
+			
+			// This test assumes that the DST end is a "fall back" where we go to an earlier local time
+			if (daylightChanges.Delta > TimeSpan.Zero)
+			{
+				// dst_end is the end time of the DST in DST time.
+				// It is technically an ambiguous time because the same local time occurs twice, 
+				// once in DST and then again in standard time
+				// The ToUniversalTime() will assume standard time for ambiguous times, so we subtract
+				// the DST delta to the the UTC time corresponding to the end of DST. Then
+				// the ToLocalTime() will encode some extra info letting the framework know that we
+				// are dealing with the ambiguous local time that is in DST.
+				var dst_ambiguous = tz.ToUniversalTime(dst_end.Add(daylightChanges.Delta.Negate())).ToUniversalTime()
+					.Add(daylightChanges.Delta.Negate()).ToLocalTime();
+
+				Assert.AreEqual(dstOffset, tz.GetUtcOffset(dst_ambiguous));
+
+				// The IsAmbiguousDaylightSavingTime flag is not cleared by DateTime.Add
+				Assert.AreEqual(standardOffset, tz.GetUtcOffset(dst_ambiguous.Add(daylightChanges.Delta)));
+				Assert.AreEqual(dstOffset, tz.GetUtcOffset(dst_ambiguous.Add(daylightChanges.Delta).Subtract(daylightChanges.Delta)));
+			}
 		}
 
 
