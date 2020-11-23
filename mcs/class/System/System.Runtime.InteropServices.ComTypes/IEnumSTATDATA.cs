@@ -38,12 +38,12 @@ namespace System.Runtime.InteropServices.ComTypes
 	[ComImport]
 	public interface IEnumSTATDATA
 	{
-		void Clone (out IEnumSTATDATA newEnum);
 		[PreserveSig]
 		int Next (int celt, [MarshalAs (UnmanagedType.LPArray)] [Out] STATDATA [] rgelt, [MarshalAs (UnmanagedType.LPArray)] [Out] int [] pceltFetched);
 		[PreserveSig]
-		int Reset ();
-		[PreserveSig]
 		int Skip (int celt);
+		[PreserveSig]
+		int Reset ();
+		void Clone (out IEnumSTATDATA newEnum);
 	}
 }
