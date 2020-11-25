@@ -198,7 +198,7 @@ namespace System.ServiceModel.Channels.Http
 				return null;
 			}
 
-			if (!Encoder.IsContentTypeSupported (ctxi.Request.ContentType)) {
+			if (ctxi.Request.ContentType == null || !Encoder.IsContentTypeSupported (ctxi.Request.ContentType)) {
 				ctxi.Response.StatusCode = (int) HttpStatusCode.UnsupportedMediaType;
 				ctxi.Response.StatusDescription = String.Format (
 						"Expected content-type '{0}' but got '{1}'", Encoder.ContentType, ctxi.Request.ContentType);
