@@ -466,9 +466,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (this.IsReadOnly)
 				return false;
 
+			object oldValue = Value;
+
 			if (SetValueCore (value, out error)) {
 				InvalidateChildGridItemsCache ();
-				property_grid.OnPropertyValueChangedInternal (this, this.Value);
+				property_grid.OnPropertyValueChangedInternal (this, oldValue);
 				return true;
 			}
 			return false;
