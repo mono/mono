@@ -324,6 +324,18 @@ sgen_thread_pool_job_alloc (const char *name, SgenThreadPoolJobFunc func, size_t
 	return job;
 }
 
+SgenThreadPoolJobArray
+sgen_thread_pool_job_array_alloc (int num_jobs)
+{
+	return (SgenThreadPoolJobArray)sgen_alloc_internal_dynamic (sizeof (SgenThreadPoolJob *) * num_jobs, INTERNAL_MEM_THREAD_POOL_JOB, TRUE);
+}
+
+void
+sgen_thread_pool_job_array_free (SgenThreadPoolJobArray jobs, int num_jobs)
+{
+	sgen_free_internal_dynamic (jobs, sizeof (SgenThreadPoolJob *) * num_jobs, INTERNAL_MEM_THREAD_POOL_JOB);
+}
+
 void
 sgen_thread_pool_job_free (SgenThreadPoolJob *job)
 {
@@ -339,6 +351,22 @@ sgen_thread_pool_job_enqueue (int context_id, SgenThreadPoolJob *job)
 	mono_os_cond_broadcast (&work_cond);
 
 	mono_os_mutex_unlock (&lock);
+}
+
+void
+sgen_thread_pool_job_array_enqueue (int context_id, SgenThreadPoolJobArray jobs, int num_jobs, gboolean signal)
+{
+	mono_os_mutex_lock (&lock);
+
+	for (int i = 0; i < num_jobs; i++)
+		sgen_pointer_queue_add (&pool_contexts[context_id].job_queue, jobs[i]);
+
+	if (signal)
+		mono_os_cond_broadcast (&work_cond);
+
+	mono_os_mutex_unlock (&lock);
+
+	sgen_thread_pool_job_array_free (jobs, num_jobs);
 }
 
 void
@@ -432,6 +460,18 @@ sgen_thread_pool_job_alloc (const char *name, SgenThreadPoolJobFunc func, size_t
 	return job;
 }
 
+SgenThreadPoolJobArray
+sgen_thread_pool_job_array_alloc (int num_jobs)
+{
+	return (SgenThreadPoolJobArray)sgen_alloc_internal_dynamic (sizeof (SgenThreadPoolJob *) * num_jobs, INTERNAL_MEM_THREAD_POOL_JOB, TRUE);
+}
+
+void
+sgen_thread_pool_job_array_free (SgenThreadPoolJobArray jobs, int num_jobs)
+{
+	sgen_free_internal_dynamic (jobs, sizeof (SgenThreadPoolJob *) * num_jobs, INTERNAL_MEM_THREAD_POOL_JOB);
+}
+
 void
 sgen_thread_pool_job_free (SgenThreadPoolJob *job)
 {
@@ -440,6 +480,11 @@ sgen_thread_pool_job_free (SgenThreadPoolJob *job)
 
 void
 sgen_thread_pool_job_enqueue (int context_id, SgenThreadPoolJob *job)
+{
+}
+
+void
+sgen_thread_pool_job_array_enqueue (int context_id, SgenThreadPoolJobArray jobs, int num_jobs, gboolean signal)
 {
 }
 

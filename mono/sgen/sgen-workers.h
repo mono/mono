@@ -84,6 +84,7 @@ void sgen_workers_start_all_workers (int generation, SgenObjectOperations *objec
 #define sgen_workers_start_all_workers(...)
 #endif
 void sgen_workers_enqueue_job (int generation, SgenThreadPoolJob *job, gboolean enqueue);
+void sgen_workers_enqueue_job_array (int generation, SgenThreadPoolJobArray jobs, int num_jobs, gboolean enqueue, gboolean signal);
 void sgen_workers_join (int generation);
 gboolean sgen_workers_have_idle_work (int generation);
 gboolean sgen_workers_all_done (void);

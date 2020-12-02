@@ -189,6 +189,23 @@ sgen_workers_enqueue_job (int generation, SgenThreadPoolJob *job, gboolean enque
 	sgen_thread_pool_job_enqueue (worker_contexts [generation].thread_pool_context, job);
 }
 
+void
+sgen_workers_enqueue_job_array (int generation, SgenThreadPoolJobArray jobs, int num_jobs, gboolean enqueue, gboolean signal)
+{
+	if (!enqueue) {
+		SgenThreadPoolJob *job = NULL;
+		for (int i = 0; i < num_jobs; i++) {
+			job = jobs[i];
+			job->func (NULL, job);
+			sgen_thread_pool_job_free (job);
+		}
+		sgen_thread_pool_job_array_free (jobs, num_jobs);
+		return;
+	}
+
+	sgen_thread_pool_job_array_enqueue (worker_contexts[generation].thread_pool_context, jobs, num_jobs, signal);
+}
+
 static gboolean
 workers_get_work (WorkerData *data)
 {
@@ -625,6 +642,20 @@ sgen_workers_enqueue_job (int generation, SgenThreadPoolJob *job, gboolean enque
 		job->func (NULL, job);
 		sgen_thread_pool_job_free (job);
 		return;
+	}
+}
+
+void
+sgen_workers_enqueue_job_array (int generation, SgenThreadPoolJobArray jobs, int num_jobs, gboolean enqueue, gboolean signal)
+{
+	if (!enqueue) {
+		SgenThreadPoolJob *job = NULL;
+		for (int i = 0; i < num_jobs; i++) {
+			job = jobs[i];
+			job->func (NULL, job);
+			sgen_thread_pool_job_free (job);
+		}
+		sgen_thread_pool_job_array_free (jobs, num_jobs);
 	}
 }
 
