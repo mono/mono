@@ -49,7 +49,7 @@ namespace BuildProgram
 		{
 			Artifacts.Add("MonoBleedingEdge",
 				new Tuple<string, string>(
-					"MonoBleedingEdge/f6eb9e15148_2a5566bb437c65d9af40d5f0f7fa4c2cc0f6e6efa243ae673bde2f5b29b03f08.7z",
+					"MonoBleedingEdge/b8ea873d69f_11313119e2f8a79ea5d21056a99e6a4346037cfb9915548344409bede6995c84.7z",
 					"unity-internal"));
 
 			Artifacts.Add("reference-assemblies",
