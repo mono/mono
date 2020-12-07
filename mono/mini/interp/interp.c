@@ -1433,10 +1433,9 @@ interp_frame_arg_to_data (MonoInterpFrameHandle frame, MonoMethodSignature *sig,
 	InterpFrame *iframe = (InterpFrame*)frame;
 	InterpMethod *imethod = iframe->imethod;
 
-	// If index == 1, we finished executing an InterpFrame, thus we always have imethod set,
-	// and the result is at the bottom of the execution stack.
+	// If index == -1, we finished executing an InterpFrame and the result is at the bottom of the stack.
 	if (index == -1)
-		stackval_to_data (sig->ret, STACK_ADD_BYTES (iframe->stack, imethod->total_locals_size), data, TRUE);
+		stackval_to_data (sig->ret, iframe->stack, data, TRUE);
 	else if (sig->hasthis && index == 0)
 		*(gpointer*)data = iframe->stack->data.p;
 	else
@@ -1465,7 +1464,7 @@ interp_frame_arg_to_storage (MonoInterpFrameHandle frame, MonoMethodSignature *s
 	InterpMethod *imethod = iframe->imethod;
 
 	if (index == -1)
-		return STACK_ADD_BYTES (iframe->stack, imethod->total_locals_size);
+		return iframe->stack;
 	else
 		return STACK_ADD_BYTES (iframe->stack, get_arg_offset (imethod, sig, index));
 }
@@ -1769,7 +1768,7 @@ dump_retval (InterpFrame *inv)
 	MonoType *ret = mono_method_signature_internal (inv->imethod->method)->ret;
 
 	if (ret->type != MONO_TYPE_VOID)
-		dump_stackval (str, STACK_ADD_BYTES (inv->stack, inv->imethod->total_locals_size), ret);
+		dump_stackval (str, inv->stack, ret);
 
 	return g_string_free (str, FALSE);
 }
@@ -1921,8 +1920,8 @@ interp_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject 
 		 */
 		return NULL;
 	}
-	// The return value is at the bottom of the stack, after the locals
-	return STACK_ADD_BYTES (frame.stack, imethod->total_locals_size)->data.o;
+	// The return value is at the bottom of the stack
+	return frame.stack->data.o;
 }
 
 typedef struct {
@@ -2010,7 +2009,7 @@ interp_entry (InterpEntryData *data)
 	// The return value is at the bottom of the stack, after the locals space
 	type = rmethod->rtype;
 	if (type->type != MONO_TYPE_VOID)
-		stackval_to_data (type, STACK_ADD_BYTES (frame.stack, rmethod->total_locals_size), data->res, FALSE);
+		stackval_to_data (type, frame.stack, data->res, FALSE);
 }
 
 static void
@@ -3309,13 +3308,6 @@ main_loop:
 		total_executed_opcodes++;
 #endif
 		MintOpcode opcode;
-#ifdef ENABLE_CHECKED_BUILD
-		guchar *sp_start = (guchar*)frame->stack + frame->imethod->total_locals_size;
-		guchar *sp_end = sp_start + frame->imethod->stack_size;
-		g_assert (locals == (guchar*)frame->stack);
-		g_assert ((guchar*)sp >= sp_start);
-		g_assert ((guchar*)sp <= sp_end);
-#endif
 		DUMP_INSTR();
 		MINT_IN_SWITCH (*ip) {
 		MINT_IN_CASE(MINT_INITLOCALS)
@@ -3754,29 +3746,23 @@ call:
 		}
 		MINT_IN_CASE(MINT_RET)
 			frame->stack [0] = LOCAL_VAR (ip [1], stackval);
-			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VOID)
-			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT) {
 			memmove (frame->stack, locals + ip [1], ip [2]);
-			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
 		}
 		MINT_IN_CASE(MINT_RET_LOCALLOC)
 			frame->stack [0] = LOCAL_VAR (ip [1], stackval);
 			frame_data_allocator_pop (&context->data_stack, frame);
-			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VOID_LOCALLOC)
 			frame_data_allocator_pop (&context->data_stack, frame);
-			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
 		MINT_IN_CASE(MINT_RET_VT_LOCALLOC) {
 			memmove (frame->stack, locals + ip [1], ip [2]);
 			frame_data_allocator_pop (&context->data_stack, frame);
-			g_assert_checked (sp == (stackval*)(locals + frame->imethod->total_locals_size));
 			goto exit_frame;
 		}
 
