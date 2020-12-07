@@ -12,6 +12,7 @@
 
 #define INTERP_LOCAL_FLAG_DEAD 1
 #define INTERP_LOCAL_FLAG_EXECUTION_STACK 2
+#define INTERP_LOCAL_FLAG_CALL_ARGS 4
 
 typedef struct _InterpInst InterpInst;
 typedef struct _InterpBasicBlock InterpBasicBlock;
@@ -32,34 +33,26 @@ typedef struct
 	int size;
 } StackInfo;
 
-#define STACK_VALUE_NONE 0
-#define STACK_VALUE_LOCAL 1
-#define STACK_VALUE_I4 2
-#define STACK_VALUE_I8 3
+#define LOCAL_VALUE_NONE 0
+#define LOCAL_VALUE_LOCAL 1
+#define LOCAL_VALUE_I4 2
+#define LOCAL_VALUE_I8 3
 
-// StackValue contains data to construct an InterpInst that is equivalent with the contents
+// LocalValue contains data to construct an InterpInst that is equivalent with the contents
 // of the stack slot / local / argument.
 typedef struct {
-	// Indicates the type of the stored information. It can be a local, argument or a constant
+	// Indicates the type of the stored information. It can be another local or a constant
 	int type;
 	// Holds the local index or the actual constant value
 	union {
 		int local;
-		int arg;
 		gint32 i;
 		gint64 l;
 	};
-} StackValue;
-
-typedef struct
-{
-	// This indicates what is currently stored in this stack slot. This can be a constant
-	// or the copy of a local / argument.
-	StackValue val;
-	// The instruction that pushed this stack slot. If ins is null, we can't remove the usage
-	// of the stack slot, because we can't clear the instruction that set it.
+	// The instruction that writes this local.
 	InterpInst *ins;
-} StackContentInfo;
+	int def_index;
+} LocalValue;
 
 struct _InterpInst {
 	guint16 opcode;

@@ -54,7 +54,7 @@ typedef enum {
 
 #define MINT_SWITCH_LEN(n) (4 + (n) * 2)
 
-#define MINT_IS_MOVLOC(op) ((op) >= MINT_MOVLOC_1 && (op) <= MINT_MOVLOC_VT)
+#define MINT_IS_MOV(op) ((op) >= MINT_MOV_I1 && (op) <= MINT_MOV_VT)
 #define MINT_IS_CONDITIONAL_BRANCH(op) ((op) >= MINT_BRFALSE_I4 && (op) <= MINT_BLT_UN_R8_S)
 #define MINT_IS_UNOP_CONDITIONAL_BRANCH(op) ((op) >= MINT_BRFALSE_I4 && (op) <= MINT_BRTRUE_R8_S)
 #define MINT_IS_BINOP_CONDITIONAL_BRANCH(op) ((op) >= MINT_BEQ_I4 && (op) <= MINT_BLT_UN_R8_S)
