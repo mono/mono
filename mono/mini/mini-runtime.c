@@ -2384,7 +2384,7 @@ compile_special (MonoMethod *method, MonoDomain *target_domain, MonoError *error
 			if (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
 				guint32 flags = MONO_ICALL_FLAGS_NONE;
 				gpointer icall_addr;
-				icall_addr = mono_lookup_internal_call_full_with_flags (method, TRUE, (guint32 *)&flags);
+				icall_addr = (gpointer)mono_lookup_internal_call_full_with_flags (method, TRUE, (guint32 *)&flags);
 				if (flags & MONO_ICALL_FLAGS_NO_WRAPPER) {
 					piinfo->icflags = MONO_ICALL_FLAGS_NO_WRAPPER;
 					mono_memory_write_barrier ();
