@@ -194,7 +194,7 @@ typedef struct MonoDebugOptions {
 	gboolean dyn_runtime_invoke;
 	gboolean gdb;
 	gboolean lldb;
-	gboolean unity_mixed_callstack;
+	guint unity_mixed_callstack;
 
 	/*
 	 * Prevent LLVM from inlining any methods
