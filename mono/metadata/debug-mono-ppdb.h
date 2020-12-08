@@ -17,6 +17,9 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/mono-debug.h>
 
+MONO_API gboolean
+mono_ppdb_get_signature (MonoImage *image, const char** out_path, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp);
+
 MonoPPDBFile*
 mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size);
 

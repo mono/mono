@@ -54,6 +54,7 @@ typedef struct {
 	gint32 signature;
 	guint8 guid [16];
 	gint32 age;
+	char path [];
 } CodeviewDebugDirectory;
 
 typedef struct {
@@ -63,7 +64,7 @@ typedef struct {
 } PdbStreamHeader;
 
 static gboolean
-get_pe_debug_guid (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp)
+get_pe_debug_guid (MonoImage *image, const char** out_path, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp)
 {
 	MonoPEDirEntry *debug_dir_entry;
 	ImageDebugDirectory *debug_dir;
@@ -82,6 +83,11 @@ get_pe_debug_guid (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *
 			memcpy (out_guid, dir->guid, 16);
 			*out_age = dir->age;
 			*out_timestamp = debug_dir->time_date_stamp;
+
+			if (out_path != NULL) {
+				*out_path = g_strdup (dir->path);
+			}
+
 			return TRUE;
 		}
 	}
@@ -109,6 +115,12 @@ create_ppdb_file (MonoImage *ppdb_image)
 	return ppdb;
 }
 
+gboolean
+mono_ppdb_get_signature(MonoImage *image, const char** out_path, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp)
+{
+	return get_pe_debug_guid (image, out_path, out_guid, out_age, out_timestamp);
+}
+
 MonoPPDBFile*
 mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 {
@@ -126,7 +138,7 @@ mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 		return create_ppdb_file (image);
 	}
 
-	if (!get_pe_debug_guid (image, pe_guid, &pe_age, &pe_timestamp)) {
+	if (!get_pe_debug_guid (image, NULL, pe_guid, &pe_age, &pe_timestamp)) {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Image '%s' has no debug directory.", image->name);
 		return NULL;
 	}

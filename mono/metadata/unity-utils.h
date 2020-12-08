@@ -96,7 +96,7 @@ guint64 mono_unity_method_get_hash(MonoMethod *method, gboolean inflate);
 MonoMethod* mono_unity_method_get_aot_array_helper_from_wrapper(MonoMethod *method);
 MonoObject* mono_unity_method_convert_return_type_if_needed(MonoMethod *method, void *value);
 MONO_API gboolean unity_mono_method_is_inflated(MonoMethod* method);
-guint32 mono_unity_method_get_token(MonoMethod *method);
+MONO_API guint32 mono_unity_method_get_token(MonoMethod *method);
 
 //domain
 void mono_unity_domain_install_finalize_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback);
