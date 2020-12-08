@@ -552,6 +552,9 @@ void
 mono_jit_info_table_add    (MonoDomain *domain, MonoJitInfo *ji);
 
 void
+mono_jit_info_table_foreach (MonoDomain *domain, MonoDomainFunc func, void *user_data);
+
+void
 mono_jit_info_table_remove (MonoDomain *domain, MonoJitInfo *ji);
 
 void
