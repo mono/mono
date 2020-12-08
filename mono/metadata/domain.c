@@ -987,6 +987,12 @@ mono_domain_foreach (MonoDomainFunc func, gpointer user_data)
 }
 
 MONO_API void
+mono_domain_jit_foreach (MonoDomain *domain, MonoJitInfoFunc func, void *user_data)
+{
+	mono_jit_info_table_foreach (domain, func, user_data);
+}
+
+MONO_API void
 mono_domain_assembly_foreach (MonoDomain* domain, MonoDomainAssemblyFunc func, void* user_data)
 {
 	MonoAssembly* assembly;
