@@ -97,7 +97,12 @@
  * while the jit only sees one method, so we have to inline things ourselves.
  */
 /* Used by LLVM AOT */
+#ifdef ENABLE_NETCORE
 #define LLVM_AOT_INLINE_LENGTH_LIMIT 30
+#else
+#define LLVM_AOT_INLINE_LENGTH_LIMIT INLINE_LENGTH_LIMIT
+#endif
+
 /* Used to LLVM JIT */
 #define LLVM_JIT_INLINE_LENGTH_LIMIT 100
 
