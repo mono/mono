@@ -27,7 +27,7 @@ typedef struct _MonoJitInfo MonoJitInfo;
 
 typedef void (*MonoDomainFunc) (MonoDomain *domain, void* user_data);
 typedef void (*MonoDomainAssemblyFunc) (MonoAssembly *assembly, void* user_data);
-typedef void (*MonoJitInfoFunc)(MonoDomain *domain, MonoMethod* method, MonoJitInfo* jinfo);
+typedef void (*MonoJitInfoFunc)(MonoDomain *domain, MonoMethod* method, MonoJitInfo* jinfo, void* user_data);
 typedef void (*MonoUnityExceptionFunc) (MonoObject* exc);
 
 MONO_API MonoDomain*
