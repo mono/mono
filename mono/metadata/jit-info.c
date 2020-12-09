@@ -806,7 +806,7 @@ mono_jit_info_table_remove (MonoDomain *domain, MonoJitInfo *ji)
  *   Associate the AOT code range [start, end) with IMAGE in the JIT info table.
  */
 void
-mono_jit_info_table_foreach (MonoDomain *domain, MonoDomainFunc func, void *user_data)
+mono_jit_info_table_foreach (MonoDomain *domain, MonoJitInfoFunc func, void *user_data)
 {
 	mono_domain_lock (domain);
 
@@ -817,7 +817,7 @@ mono_jit_info_table_foreach (MonoDomain *domain, MonoDomainFunc func, void *user
 			if (IS_JIT_INFO_TOMBSTONE (ji) || ji->is_trampoline)
 				continue;
 
-			func (domain, ji->d.method, ji);
+			func (domain, ji->d.method, ji, user_data);
 		}
 	}
 
