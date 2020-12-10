@@ -3294,6 +3294,7 @@ leave:
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
 }
 
+#ifndef ENABLE_NETCORE
 void
 ves_icall_RuntimeType_GetGUID (MonoReflectionTypeHandle type_handle, MonoArrayHandle guid_handle, MonoError *error)
 {
@@ -3313,6 +3314,7 @@ ves_icall_RuntimeType_GetGUID (MonoReflectionTypeHandle type_handle, MonoArrayHa
 	guint8 *data = (guint8*) mono_array_addr_with_size_internal (MONO_HANDLE_RAW (guid_handle), 1, 0);
 	mono_metadata_get_class_guid (klass, data, error);
 }
+#endif
 
 MonoArrayHandle
 ves_icall_RuntimeType_GetGenericArguments (MonoReflectionTypeHandle ref_type, MonoBoolean runtimeTypeArray, MonoError *error)
