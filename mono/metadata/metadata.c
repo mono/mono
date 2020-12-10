@@ -7900,11 +7900,11 @@ mono_guid_signature_append_type (GString *res, MonoType *type)
 		mono_signature_append_class_name (res, type->data.klass);
 		break;
 	case MONO_TYPE_SZARRAY:
-		mono_guid_signature_append_type (res, &type->data.klass->_byval_arg);
+		mono_guid_signature_append_type (res, m_class_get_byval_arg (type->data.klass));
 		g_string_append (res, "[]");
 		break;
 	case MONO_TYPE_ARRAY:
-		mono_guid_signature_append_type (res, &type->data.array->eklass->_byval_arg);
+		mono_guid_signature_append_type (res, m_class_get_byval_arg (type->data.array->eklass));
 		g_string_append_c (res, '[');
 		if (type->data.array->rank == 0) g_string_append (res, "??");
 		for (i = 0; i < type->data.array->rank; ++i)
@@ -7926,7 +7926,7 @@ mono_guid_signature_append_type (GString *res, MonoType *type)
 		break;
 	case MONO_TYPE_GENERICINST: {
 		MonoGenericContext *context;
-		mono_guid_signature_append_type (res, &type->data.generic_class->container_class->_byval_arg);
+		mono_guid_signature_append_type (res, m_class_get_byval_arg (type->data.generic_class->container_class));
 		g_string_append (res, "<");
 		context = &type->data.generic_class->context;
 		if (context->class_inst) {
