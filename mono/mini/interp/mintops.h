@@ -62,7 +62,7 @@ typedef enum {
 #define MINT_IS_PATCHABLE_CALL(op) ((op) >= MINT_CALL && (op) <= MINT_VCALL)
 #define MINT_IS_NEWOBJ(op) ((op) >= MINT_NEWOBJ && (op) <= MINT_NEWOBJ_MAGIC)
 #define MINT_IS_LDC_I4(op) ((op) >= MINT_LDC_I4_M1 && (op) <= MINT_LDC_I4)
-#define MINT_IS_UNOP(op) ((op) >= MINT_ADD1_I4 && (op) <= MINT_CONV_R8_R4_SP)
+#define MINT_IS_UNOP(op) ((op) >= MINT_ADD1_I4 && (op) <= MINT_CEQ0_I4)
 #define MINT_IS_BINOP(op) ((op) >= MINT_ADD_I4 && (op) <= MINT_CLT_UN_R8)
 #define MINT_IS_LDFLD(op) ((op) >= MINT_LDFLD_I1 && (op) <= MINT_LDFLD_O)
 

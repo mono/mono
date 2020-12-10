@@ -553,12 +553,15 @@ interp_merge_bblocks (TransformData *td, InterpBasicBlock *bb, InterpBasicBlock 
 
 	// Remove the branch instruction to the invalid bblock
 	if (bb->last_ins) {
-		if (bb->last_ins->opcode == MINT_BR || bb->last_ins->opcode == MINT_BR_S) {
-			g_assert (bb->last_ins->info.target_bb == bbadd);
-			interp_clear_ins (bb->last_ins);
-		} else if (bb->last_ins->opcode == MINT_SWITCH) {
-			// Weird corner case where empty switch can branch by default to next instruction
-			bb->last_ins->opcode = MINT_NOP;
+		InterpInst *last_ins = (bb->last_ins->opcode != MINT_NOP) ? bb->last_ins : interp_prev_ins (bb->last_ins);
+		if (last_ins) {
+			if (last_ins->opcode == MINT_BR || last_ins->opcode == MINT_BR_S) {
+				g_assert (last_ins->info.target_bb == bbadd);
+				interp_clear_ins (last_ins);
+			} else if (last_ins->opcode == MINT_SWITCH) {
+				// Weird corner case where empty switch can branch by default to next instruction
+				last_ins->opcode = MINT_NOP;
+			}
 		}
 	}
 
@@ -1566,10 +1569,8 @@ interp_get_ldc_i4_from_const (TransformData *td, InterpInst *ins, gint32 ct, int
 
 	int new_size = mono_interp_oplen [opcode];
 
-	if (ins == NULL) {
+	if (ins == NULL)
 		ins = interp_add_ins (td, opcode);
-		interp_ins_set_dreg (ins, dreg);
-	}
 
 	int ins_size = mono_interp_oplen [ins->opcode];
 	if (ins_size < new_size) {
@@ -1579,6 +1580,7 @@ interp_get_ldc_i4_from_const (TransformData *td, InterpInst *ins, gint32 ct, int
 	} else {
 		ins->opcode = opcode;
 	}
+	interp_ins_set_dreg (ins, dreg);
 
 	if (new_size == 3)
 		ins->data [0] = (gint8)ct;
@@ -1591,19 +1593,19 @@ interp_get_ldc_i4_from_const (TransformData *td, InterpInst *ins, gint32 ct, int
 static InterpInst*
 interp_inst_replace_with_i8_const (TransformData *td, InterpInst *ins, gint64 ct)
 {
-	g_assert_not_reached ();
+	int size = mono_interp_oplen [ins->opcode];
+	int dreg = ins->dreg;
 
-//	int size = mono_interp_oplen [ins->opcode];
-//
-//	if (size < 5) {
-//		ins = interp_insert_ins (td, ins, MINT_LDC_I8);
-//		interp_clear_ins (ins->prev);
-//	} else {
-//		ins->opcode = MINT_LDC_I8;
-//	}
-//	WRITE64_INS (ins, 0, &ct);
+	if (size < 5) {
+		ins = interp_insert_ins (td, ins, MINT_LDC_I8);
+		interp_clear_ins (ins->prev);
+	} else {
+		ins->opcode = MINT_LDC_I8;
+	}
+	WRITE64_INS (ins, 0, &ct);
+	ins->dreg = dreg;
 
-	return NULL;
+	return ins;
 }
 
 static int
@@ -3001,9 +3003,12 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	td->sp -= csignature->param_count + !!csignature->hasthis;
 	guint32 params_stack_size = tos_offset - get_tos_offset (td);
 
-	// We must not optimize out these locals, storing to them is part of the interp call convention
-	for (int i = 0; i < (csignature->param_count + !!csignature->hasthis); i++)
-		td->locals [td->sp [i].local].flags |= INTERP_LOCAL_FLAG_CALL_ARGS;
+	if (op == -1 || mono_interp_op_dregs [op] == MINT_CALL_ARGS) {
+		// We must not optimize out these locals, storing to them is part of the interp call convention
+		// unless we already intrinsified this call
+		for (int i = 0; i < (csignature->param_count + !!csignature->hasthis); i++)
+			td->locals [td->sp [i].local].flags |= INTERP_LOCAL_FLAG_CALL_ARGS;
+	}
 
 	// We overwrite it with the return local, save it for future use
 	if (csignature->param_count || csignature->hasthis)
@@ -3030,8 +3035,10 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 			res_size = MINT_STACK_SLOT_SIZE;
 		}
 		dreg = td->sp [-1].local;
-		// This dreg needs to be at the same offset as the call args
-		td->locals [dreg].flags |= INTERP_LOCAL_FLAG_CALL_ARGS;
+		if (op == -1 || mono_interp_op_dregs [op] == MINT_CALL_ARGS) {
+			// This dreg needs to be at the same offset as the call args
+			td->locals [dreg].flags |= INTERP_LOCAL_FLAG_CALL_ARGS;
+		}
 	} else {
 		// Create a new dummy local to serve as the dreg of the call
 		// This dreg is only used to resolve the call args offset
@@ -7556,164 +7563,155 @@ interp_local_deadce (TransformData *td, int *local_ref_count)
 	// Kill instructions that don't use stack and are storing into dead locals
 	for (InterpBasicBlock *bb = td->entry_bb; bb != NULL; bb = bb->next_bb) {
 		for (InterpInst *ins = bb->first_ins; ins != NULL; ins = ins->next) {
-			if (!MINT_IS_MOV (ins->opcode))
-				continue;
-			int dreg = ins->dreg;
-			if (td->locals [dreg].flags & INTERP_LOCAL_FLAG_DEAD) {
-				if (td->verbose_level) {
-					g_print ("kill dead ins:\n\t");
-					dump_interp_inst (ins);
+			if (MINT_IS_MOV (ins->opcode) ||
+					MINT_IS_LDC_I4 (ins->opcode) ||
+					ins->opcode == MINT_LDC_I8 ||
+					ins->opcode == MINT_MONO_LDPTR) {
+				int dreg = ins->dreg;
+				if (td->locals [dreg].flags & INTERP_LOCAL_FLAG_DEAD) {
+					if (td->verbose_level) {
+						g_print ("kill dead ins:\n\t");
+						dump_interp_inst (ins);
+					}
+					interp_clear_ins (ins);
+					mono_interp_stats.killed_instructions++;
+					// FIXME This is lazy. We should update the ref count for the sregs and redo deadce.
+					needs_cprop = TRUE;
 				}
-				interp_clear_ins (ins);
-				mono_interp_stats.killed_instructions++;
-				// FIXME This is lazy. We should update the ref count for the sregs and redo deadce.
-				needs_cprop = TRUE;
 			}
 		}
 	}
 	return needs_cprop;
 }
 
-#if 0
-
-#define INTERP_FOLD_UNOP(opcode,stack_type,field,op) \
+#define INTERP_FOLD_UNOP(opcode,val_type,field,op) \
 	case opcode: \
-		g_assert (sp->val.type == stack_type); \
-		result.type = stack_type; \
-		result.field = op sp->val.field; \
+		g_assert (val->type == val_type); \
+		result.type = val_type; \
+		result.field = op val->field; \
 		break;
 
-#define INTERP_FOLD_CONV(opcode,stack_type_dst,field_dst,stack_type_src,field_src,cast_type) \
+#define INTERP_FOLD_CONV(opcode,val_type_dst,field_dst,val_type_src,field_src,cast_type) \
 	case opcode: \
-		g_assert (sp->val.type == stack_type_src); \
-		result.type = stack_type_dst; \
-		result.field_dst = (cast_type)sp->val.field_src; \
+		g_assert (val->type == val_type_src); \
+		result.type = val_type_dst; \
+		result.field_dst = (cast_type)val->field_src; \
 		break;
 
-#define INTERP_FOLD_CONV_FULL(opcode,stack_type_dst,field_dst,stack_type_src,field_src,cast_type,cond) \
+#define INTERP_FOLD_CONV_FULL(opcode,val_type_dst,field_dst,val_type_src,field_src,cast_type,cond) \
 	case opcode: \
-		g_assert (sp->val.type == stack_type_src); \
-		if (!(cond)) goto cfold_failed; \
-		result.type = stack_type_dst; \
-		result.field_dst = (cast_type)sp->val.field_src; \
+		g_assert (val->type == val_type_src); \
+		if (!(cond)) return ins; \
+		result.type = val_type_dst; \
+		result.field_dst = (cast_type)val->field_src; \
 		break;
 
 static InterpInst*
-interp_fold_unop (TransformData *td, StackContentInfo *sp, InterpInst *ins)
+interp_fold_unop (TransformData *td, LocalValue *local_defs, int *local_ref_count, InterpInst *ins)
 {
-	StackValue result;
+	// ins should be an unop, therefore it should have a single dreg and a single sreg
+	int dreg = ins->dreg;
+	int sreg = ins->sregs [0];
+	LocalValue *val = &local_defs [sreg];
+	LocalValue result;
 
-	if (ins->opcode >= MINT_CONV_I4_I8_SP &&
-			ins->opcode <= MINT_CONV_R8_R4_SP) {
-		// Decrement sp so it's easier to access top of the stack
-		sp -= 2;
-		if (sp->val.type != STACK_VALUE_I4 && sp->val.type != STACK_VALUE_I8)
-			goto cfold_failed;
+	if (val->type != LOCAL_VALUE_I4 && val->type != LOCAL_VALUE_I8)
+		return ins;
 
-		switch (ins->opcode) {
-			INTERP_FOLD_CONV (MINT_CONV_I4_I8_SP, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint32);
-			INTERP_FOLD_CONV (MINT_CONV_I8_I4_SP, STACK_VALUE_I8, l, STACK_VALUE_I4, i, gint64);
-			default:
-				goto cfold_failed;
-		}
-	} else {
-		// Decrement sp so it's easier to access top of the stack
-		sp--;
-		if (sp->val.type != STACK_VALUE_I4 && sp->val.type != STACK_VALUE_I8)
-			goto cfold_failed;
+	// Top of the stack is a constant
+	switch (ins->opcode) {
+		INTERP_FOLD_UNOP (MINT_ADD1_I4, LOCAL_VALUE_I4, i, 1+);
+		INTERP_FOLD_UNOP (MINT_ADD1_I8, LOCAL_VALUE_I8, l, 1+);
+		INTERP_FOLD_UNOP (MINT_SUB1_I4, LOCAL_VALUE_I4, i, -1+);
+		INTERP_FOLD_UNOP (MINT_SUB1_I8, LOCAL_VALUE_I8, l, -1+);
+		INTERP_FOLD_UNOP (MINT_NEG_I4, LOCAL_VALUE_I4, i, -);
+		INTERP_FOLD_UNOP (MINT_NEG_I8, LOCAL_VALUE_I8, l, -);
+		INTERP_FOLD_UNOP (MINT_NOT_I4, LOCAL_VALUE_I4, i, ~);
+		INTERP_FOLD_UNOP (MINT_NOT_I8, LOCAL_VALUE_I8, l, ~);
+		INTERP_FOLD_UNOP (MINT_CEQ0_I4, LOCAL_VALUE_I4, i, 0 ==);
 
-		// Top of the stack is a constant
-		switch (ins->opcode) {
-			INTERP_FOLD_UNOP (MINT_ADD1_I4, STACK_VALUE_I4, i, 1+);
-			INTERP_FOLD_UNOP (MINT_ADD1_I8, STACK_VALUE_I8, l, 1+);
-			INTERP_FOLD_UNOP (MINT_SUB1_I4, STACK_VALUE_I4, i, -1+);
-			INTERP_FOLD_UNOP (MINT_SUB1_I8, STACK_VALUE_I8, l, -1+);
-			INTERP_FOLD_UNOP (MINT_NEG_I4, STACK_VALUE_I4, i, -);
-			INTERP_FOLD_UNOP (MINT_NEG_I8, STACK_VALUE_I8, l, -);
-			INTERP_FOLD_UNOP (MINT_NOT_I4, STACK_VALUE_I4, i, ~);
-			INTERP_FOLD_UNOP (MINT_NOT_I8, STACK_VALUE_I8, l, ~);
-			INTERP_FOLD_UNOP (MINT_CEQ0_I4, STACK_VALUE_I4, i, 0 ==);
+		// MOV's are just a copy, if the contents of sreg are known
+		INTERP_FOLD_CONV (MINT_MOV_I1, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint32);
+		INTERP_FOLD_CONV (MINT_MOV_U1, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint32);
+		INTERP_FOLD_CONV (MINT_MOV_I2, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint32);
+		INTERP_FOLD_CONV (MINT_MOV_U2, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint32);
 
-			INTERP_FOLD_CONV (MINT_CONV_I1_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, gint8);
-			INTERP_FOLD_CONV (MINT_CONV_I1_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint8);
-			INTERP_FOLD_CONV (MINT_CONV_U1_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, guint8);
-			INTERP_FOLD_CONV (MINT_CONV_U1_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, guint8);
+		INTERP_FOLD_CONV (MINT_CONV_I1_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint8);
+		INTERP_FOLD_CONV (MINT_CONV_I1_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint8);
+		INTERP_FOLD_CONV (MINT_CONV_U1_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, guint8);
+		INTERP_FOLD_CONV (MINT_CONV_U1_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, guint8);
 
-			INTERP_FOLD_CONV (MINT_CONV_I2_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, gint16);
-			INTERP_FOLD_CONV (MINT_CONV_I2_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint16);
-			INTERP_FOLD_CONV (MINT_CONV_U2_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, guint16);
-			INTERP_FOLD_CONV (MINT_CONV_U2_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, guint16);
+		INTERP_FOLD_CONV (MINT_CONV_I2_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint16);
+		INTERP_FOLD_CONV (MINT_CONV_I2_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint16);
+		INTERP_FOLD_CONV (MINT_CONV_U2_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, guint16);
+		INTERP_FOLD_CONV (MINT_CONV_U2_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, guint16);
 
-			INTERP_FOLD_CONV (MINT_CONV_I4_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint32);
-			INTERP_FOLD_CONV (MINT_CONV_U4_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint32);
+		INTERP_FOLD_CONV (MINT_CONV_I4_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint32);
+		INTERP_FOLD_CONV (MINT_CONV_U4_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint32);
 
-			INTERP_FOLD_CONV (MINT_CONV_I8_I4, STACK_VALUE_I8, l, STACK_VALUE_I4, i, gint32);
-			INTERP_FOLD_CONV (MINT_CONV_I8_U4, STACK_VALUE_I8, l, STACK_VALUE_I4, i, guint32);
+		INTERP_FOLD_CONV (MINT_CONV_I8_I4, LOCAL_VALUE_I8, l, LOCAL_VALUE_I4, i, gint32);
+		INTERP_FOLD_CONV (MINT_CONV_I8_U4, LOCAL_VALUE_I8, l, LOCAL_VALUE_I4, i, guint32);
 
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I1_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, gint8, sp [0].val.i >= G_MININT8 && sp [0].val.i <= G_MAXINT8);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I1_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint8, sp [0].val.l >= G_MININT8 && sp [0].val.l <= G_MAXINT8);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I1_U4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, gint8, sp [0].val.i >= 0 && sp [0].val.i <= G_MAXINT8);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I1_U8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint8, sp [0].val.l >= 0 && sp [0].val.l <= G_MAXINT8);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U1_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, guint8, sp [0].val.i >= 0 && sp [0].val.i <= G_MAXUINT8);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U1_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, guint8, sp [0].val.l >= 0 && sp [0].val.l <= G_MAXUINT8);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I1_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint8, val->i >= G_MININT8 && val->i <= G_MAXINT8);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I1_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint8, val->l >= G_MININT8 && val->l <= G_MAXINT8);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I1_U4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint8, val->i >= 0 && val->i <= G_MAXINT8);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I1_U8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint8, val->l >= 0 && val->l <= G_MAXINT8);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U1_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, guint8, val->i >= 0 && val->i <= G_MAXUINT8);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U1_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, guint8, val->l >= 0 && val->l <= G_MAXUINT8);
 
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I2_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, gint16, sp [0].val.i >= G_MININT16 && sp [0].val.i <= G_MAXINT16);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I2_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, i, gint16, sp [0].val.l >= G_MININT16 && sp [0].val.l <= G_MAXINT16);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I2_U4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, gint16, sp [0].val.i >= 0 && sp [0].val.i <= G_MAXINT16);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I2_U8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint16, sp [0].val.l >= 0 && sp [0].val.l <= G_MAXINT16);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U2_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, guint16, sp [0].val.i >= 0 && sp [0].val.i <= G_MAXUINT16);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U2_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, guint16, sp [0].val.l >= 0 && sp [0].val.l <= G_MAXUINT16);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I2_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint16, val->i >= G_MININT16 && val->i <= G_MAXINT16);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I2_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, i, gint16, val->l >= G_MININT16 && val->l <= G_MAXINT16);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I2_U4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint16, val->i >= 0 && val->i <= G_MAXINT16);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I2_U8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint16, val->l >= 0 && val->l <= G_MAXINT16);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U2_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, guint16, val->i >= 0 && val->i <= G_MAXUINT16);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U2_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, guint16, val->l >= 0 && val->l <= G_MAXUINT16);
 
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I4_U4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, gint32, sp [0].val.i >= 0);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I4_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint32, sp [0].val.l >= G_MININT32 && sp [0].val.l <= G_MAXINT32);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I4_U8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, gint32, sp [0].val.l >= 0 && sp [0].val.l <= G_MAXINT32);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U4_I4, STACK_VALUE_I4, i, STACK_VALUE_I4, i, guint32, sp [0].val.i >= 0);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U4_I8, STACK_VALUE_I4, i, STACK_VALUE_I8, l, guint32, sp [0].val.l >= 0 && sp [0].val.l <= G_MAXINT32);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I4_U4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, gint32, val->i >= 0);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I4_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint32, val->l >= G_MININT32 && val->l <= G_MAXINT32);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I4_U8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, gint32, val->l >= 0 && val->l <= G_MAXINT32);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U4_I4, LOCAL_VALUE_I4, i, LOCAL_VALUE_I4, i, guint32, val->i >= 0);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U4_I8, LOCAL_VALUE_I4, i, LOCAL_VALUE_I8, l, guint32, val->l >= 0 && val->l <= G_MAXINT32);
 
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I8_U8, STACK_VALUE_I8, l, STACK_VALUE_I8, l, gint64, sp [0].val.l >= 0);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U8_I4, STACK_VALUE_I8, l, STACK_VALUE_I4, i, guint64, sp [0].val.i >= 0);
-			INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U8_I8, STACK_VALUE_I8, l, STACK_VALUE_I8, l, guint64, sp [0].val.l >= 0);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_I8_U8, LOCAL_VALUE_I8, l, LOCAL_VALUE_I8, l, gint64, val->l >= 0);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U8_I4, LOCAL_VALUE_I8, l, LOCAL_VALUE_I4, i, guint64, val->i >= 0);
+		INTERP_FOLD_CONV_FULL (MINT_CONV_OVF_U8_I8, LOCAL_VALUE_I8, l, LOCAL_VALUE_I8, l, guint64, val->l >= 0);
 
-			default:
-				goto cfold_failed;
-		}
+		default:
+			return ins;
 	}
 
-	// We were able to compute the result of the ins instruction. We store the
-	// current value for the top of the stack and, if possible, try to replace the
-	// instructions that are part of this unary operation with a single LDC.
+	// We were able to compute the result of the ins instruction. We replace the unop
+	// with a LDC of the constant. We leave alone the sregs of this instruction, for
+	// deadce to kill the instructions initializing them.
 	mono_interp_stats.constant_folds++;
-	if (sp->ins != NULL) {
-		// The instruction that pushed the top of stack can be replaced with the new constant result
-		if (result.type == STACK_VALUE_I4)
-			sp->ins = interp_get_ldc_i4_from_const (td, sp->ins, result.i);
-		else if (result.type == STACK_VALUE_I8)
-			sp->ins = interp_inst_replace_with_i8_const (td, sp->ins, result.l);
-		else
-			g_assert_not_reached ();
-		if (td->verbose_level) {
-			g_print ("Fold unop :\n\t");
-			dump_interp_inst (sp->ins);
-		}
-		mono_interp_stats.killed_instructions++;
-		interp_clear_ins (ins);
-	}
-	sp->val = result;
-	return ins;
 
-cfold_failed:
-	sp->ins = NULL;
-	sp->val.type = STACK_VALUE_NONE;
+	if (result.type == LOCAL_VALUE_I4)
+		ins = interp_get_ldc_i4_from_const (td, ins, result.i, dreg);
+	else if (result.type == LOCAL_VALUE_I8)
+		ins = interp_inst_replace_with_i8_const (td, ins, result.l);
+	else
+		g_assert_not_reached ();
+
+	if (td->verbose_level) {
+		g_print ("Fold unop :\n\t");
+		dump_interp_inst (ins);
+	}
+
+	local_ref_count [sreg]--;
+	local_defs [dreg] = result;
+
 	return ins;
 }
 
-#define INTERP_FOLD_UNOP_BR(_opcode,_stack_type,_cond) \
+#define INTERP_FOLD_UNOP_BR(_opcode,_local_type,_cond) \
 	case _opcode: \
-		g_assert (sp->val.type == _stack_type); \
+		g_assert (val->type == _local_type); \
 		if (_cond) { \
 			ins->opcode = MINT_BR_S; \
 			if (cbb->next_bb != ins->info.target_bb) \
 				interp_unlink_bblocks (cbb, cbb->next_bb); \
+			for (InterpInst *it = ins->next; it != NULL; it = it->next) \
+				interp_clear_ins (it); \
 		} else { \
 			interp_clear_ins (ins); \
 			interp_unlink_bblocks (cbb, ins->info.target_bb); \
@@ -7721,174 +7719,181 @@ cfold_failed:
 		break;
 
 static InterpInst*
-interp_fold_unop_cond_br (TransformData *td, InterpBasicBlock *cbb, StackContentInfo *sp, InterpInst *ins)
+interp_fold_unop_cond_br (TransformData *td, InterpBasicBlock *cbb, LocalValue *local_defs, int *local_ref_count, InterpInst *ins)
 {
-	sp--;
-	// If we can't remove the instruction pushing the constant, don't bother
-	if (sp->ins == NULL)
+	// ins should be an unop conditional branch, therefore it should have a single sreg
+	int sreg = ins->sregs [0];
+	LocalValue *val = &local_defs [sreg];
+
+	if (val->type != LOCAL_VALUE_I4 && val->type != LOCAL_VALUE_I8)
 		return ins;
-	if (sp->val.type != STACK_VALUE_I4 && sp->val.type != STACK_VALUE_I8)
-		return ins;
+
 	// Top of the stack is a constant
 	switch (ins->opcode) {
-		INTERP_FOLD_UNOP_BR (MINT_BRFALSE_I4_S, STACK_VALUE_I4, sp [0].val.i == 0);
-		INTERP_FOLD_UNOP_BR (MINT_BRFALSE_I8_S, STACK_VALUE_I8, sp [0].val.l == 0);
-		INTERP_FOLD_UNOP_BR (MINT_BRTRUE_I4_S, STACK_VALUE_I4, sp [0].val.i != 0);
-		INTERP_FOLD_UNOP_BR (MINT_BRTRUE_I8_S, STACK_VALUE_I8, sp [0].val.l != 0);
+		INTERP_FOLD_UNOP_BR (MINT_BRFALSE_I4_S, LOCAL_VALUE_I4, val->i == 0);
+		INTERP_FOLD_UNOP_BR (MINT_BRFALSE_I8_S, LOCAL_VALUE_I8, val->l == 0);
+		INTERP_FOLD_UNOP_BR (MINT_BRTRUE_I4_S, LOCAL_VALUE_I4, val->i != 0);
+		INTERP_FOLD_UNOP_BR (MINT_BRTRUE_I8_S, LOCAL_VALUE_I8, val->l != 0);
 
 		default:
 			return ins;
 	}
 
+	if (td->verbose_level) {
+		g_print ("Fold unop cond br :\n\t");
+		dump_interp_inst (ins);
+	}
+
 	mono_interp_stats.constant_folds++;
-	mono_interp_stats.killed_instructions++;
-	interp_clear_ins (sp->ins);
-	sp->val.type = STACK_VALUE_NONE;
+	local_ref_count [sreg]--;
 	return ins;
 }
 
-#define INTERP_FOLD_BINOP(opcode,stack_type,field,op) \
+#define INTERP_FOLD_BINOP(opcode,local_type,field,op) \
 	case opcode: \
-		g_assert (sp [0].val.type == stack_type && sp [1].val.type == stack_type); \
-		result.type = stack_type; \
-		result.field = sp [0].val.field op sp [1].val.field; \
+		g_assert (val1->type == local_type && val2->type == local_type); \
+		result.type = local_type; \
+		result.field = val1->field op val2->field; \
 		break;
 
-#define INTERP_FOLD_BINOP_FULL(opcode,stack_type,field,op,cast_type,cond) \
+#define INTERP_FOLD_BINOP_FULL(opcode,local_type,field,op,cast_type,cond) \
 	case opcode: \
-		g_assert (sp [0].val.type == stack_type && sp [1].val.type == stack_type); \
-		if (!(cond)) goto cfold_failed; \
-		result.type = stack_type; \
-		result.field = (cast_type)sp [0].val.field op (cast_type)sp [1].val.field; \
+		g_assert (val1->type == local_type && val2->type == local_type); \
+		if (!(cond)) return ins; \
+		result.type = local_type; \
+		result.field = (cast_type)val1->field op (cast_type)val2->field; \
 		break;
 
-#define INTERP_FOLD_SHIFTOP(opcode,stack_type,field,shift_op,cast_type) \
+#define INTERP_FOLD_SHIFTOP(opcode,local_type,field,shift_op,cast_type) \
 	case opcode: \
-		g_assert (sp [1].val.type == STACK_VALUE_I4); \
-		result.type = stack_type; \
-		result.field = (cast_type)sp [0].val.field shift_op sp [1].val.i; \
+		g_assert (val2->type == LOCAL_VALUE_I4); \
+		result.type = local_type; \
+		result.field = (cast_type)val1->field shift_op val2->i; \
 		break;
 
-#define INTERP_FOLD_RELOP(opcode,stack_type,field,relop,cast_type) \
+#define INTERP_FOLD_RELOP(opcode,local_type,field,relop,cast_type) \
 	case opcode: \
-		g_assert (sp [0].val.type == stack_type && sp [1].val.type == stack_type); \
-		result.type = STACK_VALUE_I4; \
-		result.i = (cast_type) sp [0].val.field relop (cast_type) sp [1].val.field; \
+		g_assert (val1->type == local_type && val2->type == local_type); \
+		result.type = LOCAL_VALUE_I4; \
+		result.i = (cast_type) val1->field relop (cast_type) val2->field; \
 		break;
 
 
 static InterpInst*
-interp_fold_binop (TransformData *td, StackContentInfo *sp, InterpInst *ins)
+interp_fold_binop (TransformData *td, LocalValue *local_defs, int *local_ref_count, InterpInst *ins)
 {
-	StackValue result;
-	// Decrement sp so it's easier to access top of the stack
-	sp -= 2;
-	if (sp [0].val.type != STACK_VALUE_I4 && sp [0].val.type != STACK_VALUE_I8)
-		goto cfold_failed;
-	if (sp [1].val.type != STACK_VALUE_I4 && sp [1].val.type != STACK_VALUE_I8)
-		goto cfold_failed;
+	// ins should be a binop, therefore it should have a single dreg and two sregs
+	int dreg = ins->dreg;
+	int sreg1 = ins->sregs [0];
+	int sreg2 = ins->sregs [1];
+	LocalValue *val1 = &local_defs [sreg1];
+	LocalValue *val2 = &local_defs [sreg2];
+	LocalValue result;
+
+	if (val1->type != LOCAL_VALUE_I4 && val1->type != LOCAL_VALUE_I8)
+		return ins;
+	if (val2->type != LOCAL_VALUE_I4 && val2->type != LOCAL_VALUE_I8)
+		return ins;
 
 	// Top two values of the stack are constants
 	switch (ins->opcode) {
-		INTERP_FOLD_BINOP (MINT_ADD_I4, STACK_VALUE_I4, i, +);
-		INTERP_FOLD_BINOP (MINT_ADD_I8, STACK_VALUE_I8, l, +);
-		INTERP_FOLD_BINOP (MINT_SUB_I4, STACK_VALUE_I4, i, -);
-		INTERP_FOLD_BINOP (MINT_SUB_I8, STACK_VALUE_I8, l, -);
-		INTERP_FOLD_BINOP (MINT_MUL_I4, STACK_VALUE_I4, i, *);
-		INTERP_FOLD_BINOP (MINT_MUL_I8, STACK_VALUE_I8, l, *);
+		INTERP_FOLD_BINOP (MINT_ADD_I4, LOCAL_VALUE_I4, i, +);
+		INTERP_FOLD_BINOP (MINT_ADD_I8, LOCAL_VALUE_I8, l, +);
+		INTERP_FOLD_BINOP (MINT_SUB_I4, LOCAL_VALUE_I4, i, -);
+		INTERP_FOLD_BINOP (MINT_SUB_I8, LOCAL_VALUE_I8, l, -);
+		INTERP_FOLD_BINOP (MINT_MUL_I4, LOCAL_VALUE_I4, i, *);
+		INTERP_FOLD_BINOP (MINT_MUL_I8, LOCAL_VALUE_I8, l, *);
 
-		INTERP_FOLD_BINOP (MINT_AND_I4, STACK_VALUE_I4, i, &);
-		INTERP_FOLD_BINOP (MINT_AND_I8, STACK_VALUE_I8, l, &);
-		INTERP_FOLD_BINOP (MINT_OR_I4, STACK_VALUE_I4, i, |);
-		INTERP_FOLD_BINOP (MINT_OR_I8, STACK_VALUE_I8, l, |);
-		INTERP_FOLD_BINOP (MINT_XOR_I4, STACK_VALUE_I4, i, ^);
-		INTERP_FOLD_BINOP (MINT_XOR_I8, STACK_VALUE_I8, l, ^);
+		INTERP_FOLD_BINOP (MINT_AND_I4, LOCAL_VALUE_I4, i, &);
+		INTERP_FOLD_BINOP (MINT_AND_I8, LOCAL_VALUE_I8, l, &);
+		INTERP_FOLD_BINOP (MINT_OR_I4, LOCAL_VALUE_I4, i, |);
+		INTERP_FOLD_BINOP (MINT_OR_I8, LOCAL_VALUE_I8, l, |);
+		INTERP_FOLD_BINOP (MINT_XOR_I4, LOCAL_VALUE_I4, i, ^);
+		INTERP_FOLD_BINOP (MINT_XOR_I8, LOCAL_VALUE_I8, l, ^);
 
-		INTERP_FOLD_SHIFTOP (MINT_SHL_I4, STACK_VALUE_I4, i, <<, gint32);
-		INTERP_FOLD_SHIFTOP (MINT_SHL_I8, STACK_VALUE_I8, l, <<, gint64);
-		INTERP_FOLD_SHIFTOP (MINT_SHR_I4, STACK_VALUE_I4, i, >>, gint32);
-		INTERP_FOLD_SHIFTOP (MINT_SHR_I8, STACK_VALUE_I8, l, >>, gint64);
-		INTERP_FOLD_SHIFTOP (MINT_SHR_UN_I4, STACK_VALUE_I4, i, >>, guint32);
-		INTERP_FOLD_SHIFTOP (MINT_SHR_UN_I8, STACK_VALUE_I8, l, >>, guint64);
+		INTERP_FOLD_SHIFTOP (MINT_SHL_I4, LOCAL_VALUE_I4, i, <<, gint32);
+		INTERP_FOLD_SHIFTOP (MINT_SHL_I8, LOCAL_VALUE_I8, l, <<, gint64);
+		INTERP_FOLD_SHIFTOP (MINT_SHR_I4, LOCAL_VALUE_I4, i, >>, gint32);
+		INTERP_FOLD_SHIFTOP (MINT_SHR_I8, LOCAL_VALUE_I8, l, >>, gint64);
+		INTERP_FOLD_SHIFTOP (MINT_SHR_UN_I4, LOCAL_VALUE_I4, i, >>, guint32);
+		INTERP_FOLD_SHIFTOP (MINT_SHR_UN_I8, LOCAL_VALUE_I8, l, >>, guint64);
 
-		INTERP_FOLD_RELOP (MINT_CEQ_I4, STACK_VALUE_I4, i, ==, gint32);
-		INTERP_FOLD_RELOP (MINT_CEQ_I8, STACK_VALUE_I8, l, ==, gint64);
-		INTERP_FOLD_RELOP (MINT_CNE_I4, STACK_VALUE_I4, i, !=, gint32);
-		INTERP_FOLD_RELOP (MINT_CNE_I8, STACK_VALUE_I8, l, !=, gint64);
+		INTERP_FOLD_RELOP (MINT_CEQ_I4, LOCAL_VALUE_I4, i, ==, gint32);
+		INTERP_FOLD_RELOP (MINT_CEQ_I8, LOCAL_VALUE_I8, l, ==, gint64);
+		INTERP_FOLD_RELOP (MINT_CNE_I4, LOCAL_VALUE_I4, i, !=, gint32);
+		INTERP_FOLD_RELOP (MINT_CNE_I8, LOCAL_VALUE_I8, l, !=, gint64);
 
-		INTERP_FOLD_RELOP (MINT_CGT_I4, STACK_VALUE_I4, i, >, gint32);
-		INTERP_FOLD_RELOP (MINT_CGT_I8, STACK_VALUE_I8, l, >, gint64);
-		INTERP_FOLD_RELOP (MINT_CGT_UN_I4, STACK_VALUE_I4, i, >, guint32);
-		INTERP_FOLD_RELOP (MINT_CGT_UN_I8, STACK_VALUE_I8, l, >, guint64);
+		INTERP_FOLD_RELOP (MINT_CGT_I4, LOCAL_VALUE_I4, i, >, gint32);
+		INTERP_FOLD_RELOP (MINT_CGT_I8, LOCAL_VALUE_I8, l, >, gint64);
+		INTERP_FOLD_RELOP (MINT_CGT_UN_I4, LOCAL_VALUE_I4, i, >, guint32);
+		INTERP_FOLD_RELOP (MINT_CGT_UN_I8, LOCAL_VALUE_I8, l, >, guint64);
 
-		INTERP_FOLD_RELOP (MINT_CGE_I4, STACK_VALUE_I4, i, >=, gint32);
-		INTERP_FOLD_RELOP (MINT_CGE_I8, STACK_VALUE_I8, l, >=, gint64);
-		INTERP_FOLD_RELOP (MINT_CGE_UN_I4, STACK_VALUE_I4, i, >=, guint32);
-		INTERP_FOLD_RELOP (MINT_CGE_UN_I8, STACK_VALUE_I8, l, >=, guint64);
+		INTERP_FOLD_RELOP (MINT_CGE_I4, LOCAL_VALUE_I4, i, >=, gint32);
+		INTERP_FOLD_RELOP (MINT_CGE_I8, LOCAL_VALUE_I8, l, >=, gint64);
+		INTERP_FOLD_RELOP (MINT_CGE_UN_I4, LOCAL_VALUE_I4, i, >=, guint32);
+		INTERP_FOLD_RELOP (MINT_CGE_UN_I8, LOCAL_VALUE_I8, l, >=, guint64);
 
-		INTERP_FOLD_RELOP (MINT_CLT_I4, STACK_VALUE_I4, i, <, gint32);
-		INTERP_FOLD_RELOP (MINT_CLT_I8, STACK_VALUE_I8, l, <, gint64);
-		INTERP_FOLD_RELOP (MINT_CLT_UN_I4, STACK_VALUE_I4, i, <, guint32);
-		INTERP_FOLD_RELOP (MINT_CLT_UN_I8, STACK_VALUE_I8, l, <, guint64);
+		INTERP_FOLD_RELOP (MINT_CLT_I4, LOCAL_VALUE_I4, i, <, gint32);
+		INTERP_FOLD_RELOP (MINT_CLT_I8, LOCAL_VALUE_I8, l, <, gint64);
+		INTERP_FOLD_RELOP (MINT_CLT_UN_I4, LOCAL_VALUE_I4, i, <, guint32);
+		INTERP_FOLD_RELOP (MINT_CLT_UN_I8, LOCAL_VALUE_I8, l, <, guint64);
 
-		INTERP_FOLD_RELOP (MINT_CLE_I4, STACK_VALUE_I4, i, <=, gint32);
-		INTERP_FOLD_RELOP (MINT_CLE_I8, STACK_VALUE_I8, l, <=, gint64);
-		INTERP_FOLD_RELOP (MINT_CLE_UN_I4, STACK_VALUE_I4, i, <=, guint32);
-		INTERP_FOLD_RELOP (MINT_CLE_UN_I8, STACK_VALUE_I8, l, <=, guint64);
+		INTERP_FOLD_RELOP (MINT_CLE_I4, LOCAL_VALUE_I4, i, <=, gint32);
+		INTERP_FOLD_RELOP (MINT_CLE_I8, LOCAL_VALUE_I8, l, <=, gint64);
+		INTERP_FOLD_RELOP (MINT_CLE_UN_I4, LOCAL_VALUE_I4, i, <=, guint32);
+		INTERP_FOLD_RELOP (MINT_CLE_UN_I8, LOCAL_VALUE_I8, l, <=, guint64);
 
-		INTERP_FOLD_BINOP_FULL (MINT_DIV_I4, STACK_VALUE_I4, i, /, gint32, sp [1].val.i != 0 && (sp [0].val.i != G_MININT32 || sp [1].val.i != -1));
-		INTERP_FOLD_BINOP_FULL (MINT_DIV_I8, STACK_VALUE_I8, l, /, gint64, sp [1].val.l != 0 && (sp [0].val.l != G_MININT64 || sp [1].val.l != -1));
-		INTERP_FOLD_BINOP_FULL (MINT_DIV_UN_I4, STACK_VALUE_I4, i, /, guint32, sp [1].val.i != 0);
-		INTERP_FOLD_BINOP_FULL (MINT_DIV_UN_I8, STACK_VALUE_I8, l, /, guint64, sp [1].val.l != 0);
+		INTERP_FOLD_BINOP_FULL (MINT_DIV_I4, LOCAL_VALUE_I4, i, /, gint32, val2->i != 0 && (val1->i != G_MININT32 || val2->i != -1));
+		INTERP_FOLD_BINOP_FULL (MINT_DIV_I8, LOCAL_VALUE_I8, l, /, gint64, val2->l != 0 && (val1->l != G_MININT64 || val2->l != -1));
+		INTERP_FOLD_BINOP_FULL (MINT_DIV_UN_I4, LOCAL_VALUE_I4, i, /, guint32, val2->i != 0);
+		INTERP_FOLD_BINOP_FULL (MINT_DIV_UN_I8, LOCAL_VALUE_I8, l, /, guint64, val2->l != 0);
 
-		INTERP_FOLD_BINOP_FULL (MINT_REM_I4, STACK_VALUE_I4, i, %, gint32, sp [1].val.i != 0 && (sp [0].val.i != G_MININT32 || sp [1].val.i != -1));
-		INTERP_FOLD_BINOP_FULL (MINT_REM_I8, STACK_VALUE_I8, l, %, gint64, sp [1].val.l != 0 && (sp [0].val.l != G_MININT64 || sp [1].val.l != -1));
-		INTERP_FOLD_BINOP_FULL (MINT_REM_UN_I4, STACK_VALUE_I4, i, %, guint32, sp [1].val.i != 0);
-		INTERP_FOLD_BINOP_FULL (MINT_REM_UN_I8, STACK_VALUE_I8, l, %, guint64, sp [1].val.l != 0);
+		INTERP_FOLD_BINOP_FULL (MINT_REM_I4, LOCAL_VALUE_I4, i, %, gint32, val2->i != 0 && (val1->i != G_MININT32 || val2->i != -1));
+		INTERP_FOLD_BINOP_FULL (MINT_REM_I8, LOCAL_VALUE_I8, l, %, gint64, val2->l != 0 && (val1->l != G_MININT64 || val2->l != -1));
+		INTERP_FOLD_BINOP_FULL (MINT_REM_UN_I4, LOCAL_VALUE_I4, i, %, guint32, val2->i != 0);
+		INTERP_FOLD_BINOP_FULL (MINT_REM_UN_I8, LOCAL_VALUE_I8, l, %, guint64, val2->l != 0);
 
 		default:
-			goto cfold_failed;
+			return ins;
 	}
 
-	// We were able to compute the result of the ins instruction. We store the
-	// current value for the top of the stack and, if possible, try to replace the
-	// instructions that are part of this unary operation with a single LDC.
+	// We were able to compute the result of the ins instruction. We replace the binop
+	// with a LDC of the constant. We leave alone the sregs of this instruction, for
+	// deadce to kill the instructions initializing them.
 	mono_interp_stats.constant_folds++;
-	if (sp [0].ins != NULL && sp [1].ins != NULL) {
-		interp_clear_ins (sp [0].ins);
-		interp_clear_ins (sp [1].ins);
-		mono_interp_stats.killed_instructions += 2;
-		if (result.type == STACK_VALUE_I4)
-			ins = interp_get_ldc_i4_from_const (td, ins, result.i);
-		else if (result.type == STACK_VALUE_I8)
-			ins = interp_inst_replace_with_i8_const (td, ins, result.l);
-		else
-			g_assert_not_reached ();
-		if (td->verbose_level) {
-			g_print ("Fold binop :\n\t");
-			dump_interp_inst (ins);
-		}
-		sp [0].ins = ins;
-	} else {
-		sp [0].ins = NULL;
-	}
-	sp [0].val = result;
-	return ins;
 
-cfold_failed:
-	sp->ins = NULL;
-	sp->val.type = STACK_VALUE_NONE;
+	if (result.type == LOCAL_VALUE_I4)
+		ins = interp_get_ldc_i4_from_const (td, ins, result.i, dreg);
+	else if (result.type == LOCAL_VALUE_I8)
+		ins = interp_inst_replace_with_i8_const (td, ins, result.l);
+	else
+		g_assert_not_reached ();
+
+	if (td->verbose_level) {
+		g_print ("Fold binop :\n\t");
+		dump_interp_inst (ins);
+	}
+
+	local_ref_count [sreg1]--;
+	local_ref_count [sreg2]--;
+	local_defs [dreg] = result;
 	return ins;
 }
 
-#define INTERP_FOLD_BINOP_BR(_opcode,_stack_type,_cond) \
+// Due to poor current design, the branch op might not be the last instruction in the bblock
+// (in case we fallthrough and need to have the stack locals match the ones from next_bb, done
+// in fixup_newbb_stack_locals). If that's the case, clear all these mov's. This helps bblock
+// merging quickly find the MINT_BR_S opcode.
+#define INTERP_FOLD_BINOP_BR(_opcode,_local_type,_cond) \
 	case _opcode: \
-		g_assert (sp [0].val.type == _stack_type); \
-		g_assert (sp [1].val.type == _stack_type); \
+		g_assert (val1->type == _local_type); \
+		g_assert (val2->type == _local_type); \
 		if (_cond) { \
 			ins->opcode = MINT_BR_S; \
 			if (cbb->next_bb != ins->info.target_bb) \
 				interp_unlink_bblocks (cbb, cbb->next_bb); \
+			for (InterpInst *it = ins->next; it != NULL; it = it->next) \
+				interp_clear_ins (it); \
 		} else { \
 			interp_clear_ins (ins); \
 			interp_unlink_bblocks (cbb, ins->info.target_bb); \
@@ -7896,52 +7901,55 @@ cfold_failed:
 		break;
 
 static InterpInst*
-interp_fold_binop_cond_br (TransformData *td, InterpBasicBlock *cbb, StackContentInfo *sp, InterpInst *ins)
+interp_fold_binop_cond_br (TransformData *td, InterpBasicBlock *cbb, LocalValue *local_defs, int *local_ref_count, InterpInst *ins)
 {
-	sp -= 2;
-	// If we can't remove the instructions pushing the constants, don't bother
-	if (sp [0].ins == NULL || sp [1].ins == NULL)
+	// ins should be a conditional binop, therefore it should have only two sregs
+	int sreg1 = ins->sregs [0];
+	int sreg2 = ins->sregs [1];
+	LocalValue *val1 = &local_defs [sreg1];
+	LocalValue *val2 = &local_defs [sreg2];
+
+	if (val1->type != LOCAL_VALUE_I4 && val1->type != LOCAL_VALUE_I8)
 		return ins;
-	if (sp [0].val.type != STACK_VALUE_I4 && sp [0].val.type != STACK_VALUE_I8)
-		return ins;
-	if (sp [1].val.type != STACK_VALUE_I4 && sp [1].val.type != STACK_VALUE_I8)
+	if (val2->type != LOCAL_VALUE_I4 && val2->type != LOCAL_VALUE_I8)
 		return ins;
 
 	switch (ins->opcode) {
-		INTERP_FOLD_BINOP_BR (MINT_BEQ_I4_S, STACK_VALUE_I4, sp [0].val.i == sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BEQ_I8_S, STACK_VALUE_I8, sp [0].val.l == sp [1].val.l);
-		INTERP_FOLD_BINOP_BR (MINT_BGE_I4_S, STACK_VALUE_I4, sp [0].val.i >= sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BGE_I8_S, STACK_VALUE_I8, sp [0].val.l >= sp [1].val.l);
-		INTERP_FOLD_BINOP_BR (MINT_BGT_I4_S, STACK_VALUE_I4, sp [0].val.i > sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BGT_I8_S, STACK_VALUE_I8, sp [0].val.l > sp [1].val.l);
-		INTERP_FOLD_BINOP_BR (MINT_BLT_I4_S, STACK_VALUE_I4, sp [0].val.i < sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BLT_I8_S, STACK_VALUE_I8, sp [0].val.l < sp [1].val.l);
-		INTERP_FOLD_BINOP_BR (MINT_BLE_I4_S, STACK_VALUE_I4, sp [0].val.i <= sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BLE_I8_S, STACK_VALUE_I8, sp [0].val.l <= sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BEQ_I4_S, LOCAL_VALUE_I4, val1->i == val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BEQ_I8_S, LOCAL_VALUE_I8, val1->l == val2->l);
+		INTERP_FOLD_BINOP_BR (MINT_BGE_I4_S, LOCAL_VALUE_I4, val1->i >= val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BGE_I8_S, LOCAL_VALUE_I8, val1->l >= val2->l);
+		INTERP_FOLD_BINOP_BR (MINT_BGT_I4_S, LOCAL_VALUE_I4, val1->i > val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BGT_I8_S, LOCAL_VALUE_I8, val1->l > val2->l);
+		INTERP_FOLD_BINOP_BR (MINT_BLT_I4_S, LOCAL_VALUE_I4, val1->i < val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BLT_I8_S, LOCAL_VALUE_I8, val1->l < val2->l);
+		INTERP_FOLD_BINOP_BR (MINT_BLE_I4_S, LOCAL_VALUE_I4, val1->i <= val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BLE_I8_S, LOCAL_VALUE_I8, val1->l <= val2->l);
 
-		INTERP_FOLD_BINOP_BR (MINT_BNE_UN_I4_S, STACK_VALUE_I4, sp [0].val.i != sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BNE_UN_I8_S, STACK_VALUE_I8, sp [0].val.l != sp [1].val.l);
-		INTERP_FOLD_BINOP_BR (MINT_BGE_UN_I4_S, STACK_VALUE_I4, (guint32)sp [0].val.i >= (guint32)sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BGE_UN_I8_S, STACK_VALUE_I8, (guint64)sp [0].val.l >= (guint64)sp [1].val.l);
-		INTERP_FOLD_BINOP_BR (MINT_BGT_UN_I4_S, STACK_VALUE_I4, (guint32)sp [0].val.i > (guint32)sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BGT_UN_I8_S, STACK_VALUE_I8, (guint64)sp [0].val.l > (guint64)sp [1].val.l);
-		INTERP_FOLD_BINOP_BR (MINT_BLE_UN_I4_S, STACK_VALUE_I4, (guint32)sp [0].val.i <= (guint32)sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BLE_UN_I8_S, STACK_VALUE_I8, (guint64)sp [0].val.l <= (guint64)sp [1].val.l);
-		INTERP_FOLD_BINOP_BR (MINT_BLT_UN_I4_S, STACK_VALUE_I4, (guint32)sp [0].val.i < (guint32)sp [1].val.i);
-		INTERP_FOLD_BINOP_BR (MINT_BLT_UN_I8_S, STACK_VALUE_I8, (guint64)sp [0].val.l < (guint64)sp [1].val.l);
+		INTERP_FOLD_BINOP_BR (MINT_BNE_UN_I4_S, LOCAL_VALUE_I4, val1->i != val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BNE_UN_I8_S, LOCAL_VALUE_I8, val1->l != val2->l);
+		INTERP_FOLD_BINOP_BR (MINT_BGE_UN_I4_S, LOCAL_VALUE_I4, (guint32)val1->i >= (guint32)val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BGE_UN_I8_S, LOCAL_VALUE_I8, (guint64)val1->l >= (guint64)val2->l);
+		INTERP_FOLD_BINOP_BR (MINT_BGT_UN_I4_S, LOCAL_VALUE_I4, (guint32)val1->i > (guint32)val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BGT_UN_I8_S, LOCAL_VALUE_I8, (guint64)val1->l > (guint64)val2->l);
+		INTERP_FOLD_BINOP_BR (MINT_BLE_UN_I4_S, LOCAL_VALUE_I4, (guint32)val1->i <= (guint32)val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BLE_UN_I8_S, LOCAL_VALUE_I8, (guint64)val1->l <= (guint64)val2->l);
+		INTERP_FOLD_BINOP_BR (MINT_BLT_UN_I4_S, LOCAL_VALUE_I4, (guint32)val1->i < (guint32)val2->i);
+		INTERP_FOLD_BINOP_BR (MINT_BLT_UN_I8_S, LOCAL_VALUE_I8, (guint64)val1->l < (guint64)val2->l);
 
 		default:
 			return ins;
 	}
+	if (td->verbose_level) {
+		g_print ("Fold binop cond br :\n\t");
+		dump_interp_inst (ins);
+	}
+
 	mono_interp_stats.constant_folds++;
-	mono_interp_stats.killed_instructions += 2;
-	interp_clear_ins (sp [0].ins);
-	interp_clear_ins (sp [1].ins);
-	sp [0].val.type = STACK_VALUE_NONE;
-	sp [1].val.type = STACK_VALUE_NONE;
+	local_ref_count [sreg1]--;
+	local_ref_count [sreg2]--;
 	return ins;
 }
-#endif
 
 static void
 interp_cprop (TransformData *td)
@@ -7962,6 +7970,9 @@ retry:
 		InterpInst *ins;
 		ins_index = 0;
 
+		// Set cbb since we do some instruction inserting below
+		td->cbb = bb;
+
 		// FIXME This is excessive. Remove this once we have SSA
 		memset (local_defs, 0, td->locals_size * sizeof (LocalValue));
 
@@ -7970,6 +7981,10 @@ retry:
 
 		for (ins = bb->first_ins; ins != NULL; ins = ins->next) {
 			int opcode = ins->opcode;
+
+			if (opcode == MINT_NOP)
+				continue;
+
 			int num_sregs = mono_interp_op_sregs [opcode];
 			int num_dregs = mono_interp_op_dregs [opcode];
 			gint32 *sregs = &ins->sregs [0];
@@ -8013,22 +8028,46 @@ retry:
 			}
 
 			if (opcode == MINT_MOV_4 || opcode == MINT_MOV_8 || opcode == MINT_MOV_VT) {
-				if (dreg == sregs [0]) {
+				int sreg = sregs [0];
+				if (dreg == sreg) {
 					if (td->verbose_level)
 						g_print ("clear redundant mov\n");
 					interp_clear_ins (ins);
-					local_ref_count [sregs [0]]--;
-				} else if (local_defs [sregs [0]].ins != NULL &&
-						(td->locals [sregs [0]].flags & INTERP_LOCAL_FLAG_EXECUTION_STACK) &&
-						!(td->locals [sregs [0]].flags & INTERP_LOCAL_FLAG_CALL_ARGS) &&
+					local_ref_count [sreg]--;
+				} else if (td->locals [sreg].indirects || td->locals [dreg].indirects) {
+					// Don't bother with indirect locals
+				} else if (local_defs [sreg].type == LOCAL_VALUE_I4 || local_defs [sreg].type == LOCAL_VALUE_I8) {
+					// Replace mov with ldc
+					gboolean is_i4 = local_defs [sreg].type == LOCAL_VALUE_I4;
+					g_assert (!td->locals [sreg].indirects);
+					local_defs [dreg].type = local_defs [sreg].type;
+					if (is_i4) {
+						int ct = local_defs [sreg].i;
+						ins = interp_get_ldc_i4_from_const (td, ins, ct, dreg);
+						local_defs [dreg].i = ct;
+					} else {
+						gint64 ct = local_defs [sreg].l;
+						ins = interp_inst_replace_with_i8_const (td, ins, ct);
+						local_defs [dreg].l = ct;
+					}
+					local_defs [dreg].ins = ins;
+					local_ref_count [sreg]--;
+					mono_interp_stats.copy_propagations++;
+					if (td->verbose_level) {
+						g_print ("cprop loc %d -> ct :\n\t", sreg);
+						dump_interp_inst (ins);
+					}
+				} else if (local_defs [sreg].ins != NULL &&
+						(td->locals [sreg].flags & INTERP_LOCAL_FLAG_EXECUTION_STACK) &&
+						!(td->locals [sreg].flags & INTERP_LOCAL_FLAG_CALL_ARGS) &&
 						!(td->locals [dreg].flags & INTERP_LOCAL_FLAG_EXECUTION_STACK) &&
-						interp_prev_ins (ins) == local_defs [sregs [0]].ins) {
+						interp_prev_ins (ins) == local_defs [sreg].ins) {
 					// hackish temporary optimization that won't be necessary in the future
 					// We replace `local1 <- ?, local2 <- local1` with `local2 <- ?, local1 <- local2`
 					// if local1 is execution stack local and local2 is normal global local. This makes
 					// it more likely for `local1 <- local2` to be killed, while before we always needed
 					// to store to the global local, which is likely accessed by other instructions.
-					InterpInst *def = local_defs [sregs [0]].ins;
+					InterpInst *def = local_defs [sreg].ins;
 					int original_dreg = def->dreg;
 
 					def->dreg = dreg;
@@ -8050,16 +8089,37 @@ retry:
 						g_print ("\t");
 						dump_interp_inst (ins);
 					}
-				} else if (!td->locals [sregs [0]].indirects && !td->locals [dreg].indirects) {
+				} else {
 					if (td->verbose_level)
-						g_print ("local copy %d <- %d\n", dreg, sregs [0]);
-					// FIXME if sregs [0] also has a def, use that one directly
+						g_print ("local copy %d <- %d\n", dreg, sreg);
 					local_defs [dreg].type = LOCAL_VALUE_LOCAL;
-					local_defs [dreg].local = sregs [0];
+					local_defs [dreg].local = sreg;
 				}
 			} else if (opcode == MINT_LDLOCA_S) {
 				// The local that we are taking the address of is not a sreg but still referenced
 				local_ref_count [ins->data [1]]++;
+			} else if (MINT_IS_LDC_I4 (opcode)) {
+				local_defs [dreg].type = LOCAL_VALUE_I4;
+				local_defs [dreg].i = interp_get_const_from_ldc_i4 (ins);
+			} else if (opcode == MINT_LDC_I8) {
+				local_defs [dreg].type = LOCAL_VALUE_I8;
+				local_defs [dreg].l = READ64 (&ins->data [0]);
+			} else if (ins->opcode == MINT_MONO_LDPTR) {
+#if SIZEOF_VOID_P == 8
+				local_defs [dreg].type = LOCAL_VALUE_I8;
+				local_defs [dreg].l = (gint64)td->data_items [ins->data [0]];
+#else
+				local_defs [dreg].type = LOCAL_VALUE_I4;
+				local_defs [dreg].i = (gint32)td->data_items [ins->data [0]];
+#endif
+			} else if (MINT_IS_UNOP (opcode) || (opcode >= MINT_MOV_I1 && opcode <= MINT_MOV_U2)) {
+				ins = interp_fold_unop (td, local_defs, local_ref_count, ins);
+			} else if (MINT_IS_UNOP_CONDITIONAL_BRANCH (opcode)) {
+				ins = interp_fold_unop_cond_br (td, bb, local_defs, local_ref_count, ins);
+			} else if (MINT_IS_BINOP (opcode)) {
+				ins = interp_fold_binop (td, local_defs, local_ref_count, ins);
+			} else if (MINT_IS_BINOP_CONDITIONAL_BRANCH (opcode)) {
+				ins = interp_fold_binop_cond_br (td, bb, local_defs, local_ref_count, ins);
 			}
 			ins_index++;
 		}
