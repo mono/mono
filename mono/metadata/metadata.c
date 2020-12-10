@@ -8040,7 +8040,8 @@ mono_generate_v3_guid_for_interface (MonoClass* klass, guint8* guid)
 	}
 
 	byte = 0;
-	if (ctx.bits[0] & 8) mono_md5_update (&ctx, &byte, 1);
+	if (mono_md5_ctx_byte_length (&ctx) & 1)
+		mono_md5_update (&ctx, &byte, 1);
 	mono_md5_final (&ctx, (guchar *)guid);
 
         guid[6] &= 0x0f;
