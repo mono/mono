@@ -7575,12 +7575,22 @@ interp_local_deadce (TransformData *td, int *local_ref_count)
 			if (MINT_IS_MOV (ins->opcode) ||
 					MINT_IS_LDC_I4 (ins->opcode) ||
 					ins->opcode == MINT_LDC_I8 ||
-					ins->opcode == MINT_MONO_LDPTR) {
+					ins->opcode == MINT_MONO_LDPTR ||
+					ins->opcode == MINT_LDLOCA_S) {
 				int dreg = ins->dreg;
 				if (td->locals [dreg].flags & INTERP_LOCAL_FLAG_DEAD) {
 					if (td->verbose_level) {
 						g_print ("kill dead ins:\n\t");
 						dump_interp_inst (ins);
+					}
+
+					if (ins->opcode == MINT_LDLOCA_S) {
+						mono_interp_stats.ldlocas_removed++;
+						td->locals [ins->sregs [0]].indirects--;
+						if (!td->locals [ins->sregs [0]].indirects) {
+							// We can do cprop now through this local. Run cprop again.
+							needs_cprop = TRUE;
+						}
 					}
 					interp_clear_ins (ins);
 					mono_interp_stats.killed_instructions++;
@@ -8106,7 +8116,7 @@ retry:
 				}
 			} else if (opcode == MINT_LDLOCA_S) {
 				// The local that we are taking the address of is not a sreg but still referenced
-				local_ref_count [ins->data [1]]++;
+				local_ref_count [ins->sregs [0]]++;
 			} else if (MINT_IS_LDC_I4 (opcode)) {
 				local_defs [dreg].type = LOCAL_VALUE_I4;
 				local_defs [dreg].i = interp_get_const_from_ldc_i4 (ins);
@@ -8138,6 +8148,43 @@ retry:
 					int dst = newobj_reg_map [2 * i + 1];
 					local_defs [dst] = local_defs [src];
 					local_defs [dst].ins = NULL;
+				}
+			} else if (MINT_IS_LDFLD (opcode) && ins->data [0] == 0) {
+				InterpInst *ldloca = local_defs [sregs [0]].ins;
+				if (ldloca != NULL && ldloca->opcode == MINT_LDLOCA_S &&
+						td->locals [ldloca->sregs [0]].mt == (ins->opcode - MINT_LDFLD_I1)) {
+					int mt = ins->opcode - MINT_LDFLD_I1;
+					int local = ldloca->sregs [0];
+					// Replace LDLOCA + LDFLD with LDLOC, when the loading field represents
+					// the entire local. This is the case with loading the only field of an
+					// IntPtr. We don't handle value type loads.
+					ins->opcode = get_mov_for_type (mt, TRUE);
+					// The dreg of the MOV is the same as the dreg of the LDFLD
+					local_ref_count [sregs [0]]--;
+					sregs [0] = local;
+
+					if (td->verbose_level) {
+						g_print ("Replace ldloca/ldfld pair :\n\t");
+						dump_interp_inst (ins->next);
+					}
+				}
+			} else if (MINT_IS_STFLD (opcode) && ins->data [0] == 0) {
+				InterpInst *ldloca = local_defs [sregs [0]].ins;
+				if (ldloca != NULL && ldloca->opcode == MINT_LDLOCA_S &&
+						td->locals [ldloca->sregs [0]].mt == (ins->opcode - MINT_STFLD_I1)) {
+					int mt = ins->opcode - MINT_STFLD_I1;
+					int local = ldloca->sregs [0];
+
+					ins->opcode = get_mov_for_type (mt, FALSE);
+					// The sreg of the MOV is the same as the second sreg of the STFLD
+					local_ref_count [sregs [0]]--;
+					ins->dreg = local;
+					sregs [0] = sregs [1];
+
+					if (td->verbose_level) {
+						g_print ("Replace ldloca/stfld pair (off %p) :\n\t", ldloca->il_offset);
+						dump_interp_inst (ins);
+					}
 				}
 			}
 			ins_index++;
