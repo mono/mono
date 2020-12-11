@@ -5447,8 +5447,17 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 						MonoMethodHeader *mheader = interp_method_get_header (m, error);
 						goto_if_nok (error, exit);
 
+						// Add local mapping information for cprop to use, in case we inline
+						int param_count = csignature->param_count;
+						int *newobj_reg_map = (int*)mono_mempool_alloc (td->mempool, sizeof (int) * param_count * 2);
+						for (int i = 0; i < param_count; i++) {
+							newobj_reg_map [2 * i] = sp_params [i].local;
+							newobj_reg_map [2 * i + 1] = td->sp [-param_count + i].local;
+						}
+
 						if (interp_inline_method (td, m, mheader, error)) {
 							newobj_fast->data [0] = INLINED_METHOD_FLAG;
+							newobj_fast->info.newobj_reg_map = newobj_reg_map;
 							break;
 						}
 					}
@@ -8120,6 +8129,16 @@ retry:
 				ins = interp_fold_binop (td, local_defs, local_ref_count, ins);
 			} else if (MINT_IS_BINOP_CONDITIONAL_BRANCH (opcode)) {
 				ins = interp_fold_binop_cond_br (td, bb, local_defs, local_ref_count, ins);
+			} else if ((ins->opcode == MINT_NEWOBJ_FAST || ins->opcode == MINT_NEWOBJ_VT_FAST) && ins->data [0] == INLINED_METHOD_FLAG) {
+				// FIXME Drop the CALL_ARGS flag on the params so this will no longer be necessary
+				int param_count = ins->data [3];
+				int *newobj_reg_map = ins->info.newobj_reg_map;
+				for (int i = 0; i < param_count; i++) {
+					int src = newobj_reg_map [2 * i];
+					int dst = newobj_reg_map [2 * i + 1];
+					local_defs [dst] = local_defs [src];
+					local_defs [dst].ins = NULL;
+				}
 			}
 			ins_index++;
 		}

@@ -70,6 +70,9 @@ struct _InterpInst {
 	union {
 		InterpBasicBlock *target_bb;
 		InterpBasicBlock **target_bb_table;
+		// We handle newobj poorly due to not having our own local offset allocator.
+		// We temporarily use this array to let cprop know the values of the newobj args.
+		int *newobj_reg_map;
 	} info;
 	// Variable data immediately following the dreg/sreg information. This is represented exactly
 	// in the final code stream as in this array.
