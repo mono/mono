@@ -562,8 +562,8 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\native-library.h">
       <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClInclude>
-    <ClCompile Include="$MonoSourceLocation)\mono\metadata\memory-manager.c">
-      <Filter>Source Files$MonoRuntimeFilterSubfolder\common</Filter>
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\memory-manager.c">
+      <Filter>Source Files$(MonoRuntimeFilterSubfolder)\common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup Label="config_sources">
