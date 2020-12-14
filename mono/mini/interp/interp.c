@@ -1497,7 +1497,7 @@ interp_to_native_trampoline (gpointer addr, gpointer ccontext)
 #ifdef _MSC_VER
 #pragma optimize ("", off)
 #endif
-static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE gpointer
 ves_pinvoke_method (
 	InterpMethod *imethod,
 	MonoMethodSignature *sig,
@@ -1595,7 +1595,7 @@ ves_pinvoke_method (
 #endif
 	goto exit_pinvoke; // prevent unused label warning in some configurations
 exit_pinvoke:
-	return;
+	return NULL;
 }
 #ifdef _MSC_VER
 #pragma optimize ("", on)
@@ -2122,7 +2122,7 @@ do_icall (MonoMethodSignature *sig, int op, stackval *sp, gpointer ptr, gboolean
 #pragma optimize ("", off)
 #endif
 // Do not inline in case order of frame addresses matters, and maybe other reasons.
-static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE void
+static MONO_NO_OPTIMIZATION MONO_NEVER_INLINE gpointer
 do_icall_wrapper (InterpFrame *frame, MonoMethodSignature *sig, int op, stackval *sp, gpointer ptr, gboolean save_last_error)
 {
 	MonoLMFExt ext;
@@ -2134,7 +2134,7 @@ do_icall_wrapper (InterpFrame *frame, MonoMethodSignature *sig, int op, stackval
 
 	goto exit_icall; // prevent unused label warning in some configurations
 exit_icall:
-	return;
+	return NULL;
 }
 #ifdef _MSC_VER
 #pragma optimize ("", on)
