@@ -1144,6 +1144,7 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 	gsize *bitmap;
 	gsize default_bitmap [4] = {0};
 	MonoGCDescriptor gc_descr;
+	GPtrArray *gc_descr_full = NULL;
 
 	if (!m_class_is_inited (klass))
 		mono_class_init_internal (klass);
@@ -1153,19 +1154,19 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 
 	bitmap = default_bitmap;
 	if (klass == mono_defaults.string_class) {
-		gc_descr = mono_gc_make_descr_for_string (bitmap, 2);
+		gc_descr = mono_gc_make_descr_for_string (bitmap, 2, &gc_descr_full);
 	} else if (m_class_get_rank (klass)) {
 		MonoClass *klass_element_class = m_class_get_element_class (klass);
 		mono_class_compute_gc_descriptor (klass_element_class);
 		if (MONO_TYPE_IS_REFERENCE (m_class_get_byval_arg (klass_element_class))) {
 			gsize abm = 1;
-			gc_descr = mono_gc_make_descr_for_array (m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY, &abm, 1, sizeof (gpointer));
+			gc_descr = mono_gc_make_descr_for_array (m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY, &abm, 1, sizeof (gpointer), &gc_descr_full);
 			/*printf ("new array descriptor: 0x%x for %s.%s\n", class->gc_descr,
 				class->name_space, class->name);*/
 		} else {
 			/* remove the object header */
 			bitmap = mono_class_compute_bitmap (klass_element_class, default_bitmap, sizeof (default_bitmap) * 8, - (int)(MONO_OBJECT_HEADER_BITS), &max_set, FALSE);
-			gc_descr = mono_gc_make_descr_for_array (m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY, bitmap, mono_array_element_size (klass) / sizeof (gpointer), mono_array_element_size (klass));
+			gc_descr = mono_gc_make_descr_for_array (m_class_get_byval_arg (klass)->type == MONO_TYPE_SZARRAY, bitmap, mono_array_element_size (klass) / sizeof (gpointer), mono_array_element_size (klass), &gc_descr_full);
 			/*printf ("new vt array descriptor: 0x%x for %s.%s\n", class->gc_descr,
 				class->name_space, class->name);*/
 		}
@@ -1217,14 +1218,14 @@ mono_class_compute_gc_descriptor (MonoClass *klass)
 			mono_loader_unlock ();
 		}
 
-		gc_descr = mono_gc_make_descr_for_object (bitmap, max_set + 1, m_class_get_instance_size (klass));
+		gc_descr = mono_gc_make_descr_for_object (klass, bitmap, max_set + 1, m_class_get_instance_size (klass), &gc_descr_full);
 	}
 
 	if (bitmap != default_bitmap)
 		g_free (bitmap);
 
 	/* Publish the data */
-	mono_class_publish_gc_descriptor (klass, gc_descr);
+	mono_class_publish_gc_descriptor (klass, gc_descr, gc_descr_full);
 }
 
 /**
@@ -1989,6 +1990,16 @@ alloc_vtable (MonoDomain *domain, size_t vtable_size, size_t imt_table_bytes)
 	return (gpointer*) ((char*)mono_domain_alloc0 (domain, vtable_size) + alloc_offset);
 }
 
+// TODO Delete me, just for debugging
+typedef union {
+	struct {
+    	guint16    m_componentSize;
+    	guint16    m_flags;
+    	guint32    m_baseSize;
+	} fields;
+	guint64 desc;
+} mono_gc_descr;
+
 static MonoVTable *
 mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoError *error)
 {
@@ -2003,6 +2014,7 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	char *t;
 	int i, vtable_slots;
 	size_t imt_table_bytes;
+	size_t gc_descr_full_bytes;
 	int gc_bits;
 	guint32 vtable_size, class_size;
 	gpointer iter;
@@ -2077,27 +2089,43 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	if (class_size)
 		vtable_slots++;
 
-	if (m_class_get_interface_offsets_count (klass)) {
+	mono_class_compute_gc_descriptor (klass);
+
+	if (m_class_get_interface_offsets_count (klass)  || m_class_get_gc_descr_full(klass)) {
 		imt_table_bytes = sizeof (gpointer) * (MONO_IMT_SIZE);
 		/* Interface table for the interpreter */
-		if (use_interpreter)
-			imt_table_bytes *= 2;
+
+		imt_table_bytes *= 2;
+
+		if (m_class_get_gc_descr_full(klass))
+			gc_descr_full_bytes = m_class_get_gc_descr_full(klass)->len * sizeof (gpointer);
+		else
+			gc_descr_full_bytes = 0;
+
 		UnlockedIncrement (&mono_stats.imt_number_of_tables);
 		UnlockedAdd (&mono_stats.imt_tables_size, imt_table_bytes);
 	} else {
 		imt_table_bytes = 0;
+		gc_descr_full_bytes = 0;
 	}
 
-	vtable_size = imt_table_bytes + MONO_SIZEOF_VTABLE + vtable_slots * sizeof (gpointer);
+	vtable_size = gc_descr_full_bytes + imt_table_bytes + MONO_SIZEOF_VTABLE + vtable_slots * sizeof (gpointer);
 
 	UnlockedIncrement (&mono_stats.used_class_count);
 	UnlockedAdd (&mono_stats.class_vtable_size, vtable_size);
 
-	interface_offsets = alloc_vtable (domain, vtable_size, imt_table_bytes);
+	gpointer *gc_descr_full_mem = alloc_vtable (domain, vtable_size, imt_table_bytes);
+
+	if (gc_descr_full_bytes)
+		memcpy (gc_descr_full_mem, m_class_get_gc_descr_full(klass)->pdata, gc_descr_full_bytes);
+
+	interface_offsets = (gpointer*)((char*)gc_descr_full_mem + gc_descr_full_bytes);
+
+
+
 	vt = (MonoVTable*) ((char*)interface_offsets + imt_table_bytes);
 	/* If on interp, skip the interp interface table */
-	if (use_interpreter)
-		interface_offsets = (gpointer*)((char*)interface_offsets + imt_table_bytes / 2);
+	interface_offsets = (gpointer*)((char*)interface_offsets + imt_table_bytes / 2);
 	g_assert (!((gsize)vt & 7));
 
 	vt->klass = klass;
@@ -2113,8 +2141,6 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 		vt->flags |= MONO_VT_FLAG_ARRAY_IS_PRIMITIVE;
 
 	MONO_PROFILER_RAISE (vtable_loading, (vt));
-
-	mono_class_compute_gc_descriptor (klass);
 	/*
 	 * For Boehm:
 	 * We can't use typed allocation in the non-root domains, since the
@@ -2132,6 +2158,13 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 		vt->gc_descr = MONO_GC_DESCRIPTOR_NULL;
 	else
 		vt->gc_descr = m_class_get_gc_descr (klass);
+
+	// DEBUG PRINTING
+    mono_gc_descr descr_for_debug;
+	descr_for_debug.desc = vt->gc_descr;
+	printf( "mono_class_create_runtime_vtable: gc_descr.m_baseSize: %d instance_size: %d\n",  descr_for_debug.fields.m_baseSize, m_class_get_instance_size(klass));
+	// END DEBUG PRINTING
+
 
 	gc_bits = mono_gc_get_vtable_bits (klass);
 	g_assert (!(gc_bits & ~((1 << MONO_VTABLE_AVAILABLE_GC_BITS) - 1)));
