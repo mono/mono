@@ -220,4 +220,6 @@ mono_unity_set_enable_handler_block_guards (mono_bool allow);
 mono_bool
 mono_unity_get_enable_handler_block_guards (void);
 
+MONO_API gboolean mono_unity_class_is_open_constructed_type (MonoClass *klass);
+
 #endif

@@ -296,7 +296,10 @@ MonoClass* mono_unity_class_get_generic_definition(MonoClass* klass)
 MonoClass* mono_unity_class_inflate_generic_class(MonoClass *gklass, MonoGenericContext *context)
 {
 	MonoError error;
-	return mono_class_inflate_generic_class_checked(gklass, context, &error);
+	MonoClass* klass;
+	klass = mono_class_inflate_generic_class_checked(gklass, context, &error);
+	mono_error_cleanup (&error);
+	return klass;
 }
 
 gboolean mono_unity_class_has_parent_unsafe(MonoClass *klass, MonoClass *parent)
@@ -1955,4 +1958,10 @@ MONO_API uint32_t
 mono_unity_allocation_granularity()
 {
 	return (uint32_t)(2 * sizeof(void *));
+}
+
+MONO_API gboolean
+mono_unity_class_is_open_constructed_type (MonoClass *klass)
+{
+	return mono_class_is_open_constructed_type (m_class_get_byval_arg(klass));
 }
