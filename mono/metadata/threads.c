@@ -7060,7 +7060,6 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 
 	return success;
 }
-
 #endif
 
 #ifdef ENABLE_NETCORE
@@ -7153,3 +7152,33 @@ ves_icall_System_Threading_LowLevelLifoSemaphore_ReleaseInternal (gpointer sem_p
 	mono_lifo_semaphore_release (sem, count);
 }
 #endif
+
+mono_bool mono_thread_has_sufficient_execution_stack (void)
+{
+	guint8* stack_addr;
+	guint8* current;
+	size_t stack_size;
+	size_t min_size;
+
+	mono_thread_info_get_stack_bounds (&stack_addr, &stack_size);
+	/* if we have no info we are optimistic and assume there is enough room */
+	if (!stack_addr || !stack_size)
+		return TRUE;
+
+	min_size = stack_size / 2;
+
+	// TODO: It's not always set
+	if (!min_size)
+		return TRUE;
+
+	current = (guint8*)&stack_addr;
+	if (current > stack_addr) {
+		if ((current - stack_addr) < min_size)
+			return FALSE;
+	}
+	else {
+		if (current - (stack_addr - stack_size) < min_size)
+			return FALSE;
+	}
+	return TRUE;
+}

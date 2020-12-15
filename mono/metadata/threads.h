@@ -64,6 +64,8 @@ MONO_API mono_bool mono_thread_is_foreign (MonoThread *thread);
 MONO_API MONO_RT_EXTERNAL_ONLY mono_bool
 mono_thread_detach_if_exiting (void);
 
+MONO_API mono_bool mono_thread_has_sufficient_execution_stack (void);
+
 MONO_END_DECLS
 
 #endif /* _MONO_METADATA_THREADS_H_ */
