@@ -464,7 +464,7 @@
       <Filter>Source Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClCompile>
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\options.c">
-      <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
+      <Filter>Source Files$(MonoUtilsFilterSubFolder)\common</Filter>
     </ClCompile>
     <ClInclude Include="$(MonoSourceLocation)\mono\utils\checked-build.h">
       <Filter>Header Files$(MonoUtilsFilterSubFolder)\common</Filter>
