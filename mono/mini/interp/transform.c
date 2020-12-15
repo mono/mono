@@ -4852,8 +4852,9 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 
 				// Push the return value and `this` argument to the ctor
 				gboolean is_vt = m_class_is_valuetype (klass);
-				int vtsize = mono_class_value_size (klass, NULL);
+				int vtsize = 0;
 				if (is_vt) {
+					vtsize = mono_class_value_size (klass, NULL);
 					if (ret_mt == MINT_TYPE_VT)
 						push_type_vt (td, klass, vtsize);
 					else
