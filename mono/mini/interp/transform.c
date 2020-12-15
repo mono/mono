@@ -8187,7 +8187,8 @@ exit:
 	g_hash_table_destroy (td->patchsite_hash);
 #endif
 	g_ptr_array_free (td->seq_points, TRUE);
-	g_array_free (td->line_numbers, TRUE);
+	if (td->line_numbers)
+		g_array_free (td->line_numbers, TRUE);
 	mono_mempool_destroy (td->mempool);
 }
 
