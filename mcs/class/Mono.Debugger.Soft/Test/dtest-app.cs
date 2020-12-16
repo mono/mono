@@ -19,6 +19,9 @@ using System.Collections;
 using MonoTests.Helpers;
 #endif
 
+[assembly: A]
+[assembly: B]
+
 public class TestsBase
 {
 #pragma warning disable 0414
