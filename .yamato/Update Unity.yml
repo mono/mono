@@ -17,7 +17,7 @@ commands:
     cmd /c cibuildscript
     cmd /c xcopy build %PRTOOLS_BUILD_DIR% /s /Y /E /I
     cd %UNITY_SOURCE_PRTOOLS_DIR%
-    %PRTOOLS_BUILD_DIR%\prtools.exe --update-mbe-unity=%YAMATO_SOURCE_DIR%/collectedbuilds/builds.7z --github-api-token=%GITHUB_TOKEN% --yamato-api-token=%YAMATO_TOKEN% --yamato-long-lived-token
+    %PRTOOLS_BUILD_DIR%\prtools.exe --update-mbe-unity=%YAMATO_SOURCE_DIR%/collectedbuilds/builds.7z --backport=2021.1 --github-api-token=%GITHUB_TOKEN% --yamato-api-token=%YAMATO_TOKEN% --yamato-long-lived-token
     if NOT %errorlevel% == 0 (
       echo "PRTools failed"
       EXIT /B %errorlevel%
