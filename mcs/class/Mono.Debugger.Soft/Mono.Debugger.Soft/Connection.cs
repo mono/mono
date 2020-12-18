@@ -439,7 +439,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 57;
+		internal const int MINOR_VERSION = 58;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -563,6 +563,7 @@ namespace Mono.Debugger.Soft
 			GET_TYPE_FROM_TOKEN = 11,
 			GET_METHOD_FROM_TOKEN = 12,
 			HAS_DEBUG_INFO = 13,
+			GET_CATTRS = 14,
 		}
 
 		enum CmdModule {
@@ -2412,6 +2413,11 @@ namespace Mono.Debugger.Soft
 
 		internal bool Assembly_HasDebugInfo (long id) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.HAS_DEBUG_INFO, new PacketWriter ().WriteId (id)).ReadBool ();
+		}
+
+		internal CattrInfo[] Assembly_GetCustomAttributes (long id, long attr_type_id) {
+			PacketReader r = SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_CATTRS, new PacketWriter ().WriteId (id).WriteId (attr_type_id));
+			return ReadCattrs (r);
 		}
 
 		/*
