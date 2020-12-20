@@ -4311,6 +4311,14 @@ mini_emit_array_store (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, gboole
 		iargs [1] = sp [1];
 		iargs [0] = sp [0];
 
+		MonoClass *array_class = sp [0]->klass;
+		if (array_class && array_class->rank == 1) {
+			MonoClass *eclass = m_class_get_element_class (array_class);
+			if (m_class_is_sealed (eclass))
+				/* Make a non-virtual call if possible */
+				return mono_emit_method_call (cfg, helper, iargs, NULL);
+		}
+
 		return mono_emit_method_call (cfg, helper, iargs, sp [0]);
 	} else {
 		MonoInst *ins;
@@ -6937,16 +6945,20 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		}
 		case MONO_CEE_DUP: {
 			MonoInst *temp, *store;
+			MonoClass *klass;
 			sp--;
 			ins = *sp;
+			klass = ins->klass;
 
 			temp = mono_compile_create_var (cfg, type_from_stack_type (ins), OP_LOCAL);
 			EMIT_NEW_TEMPSTORE (cfg, store, temp->inst_c0, ins);
 
 			EMIT_NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
+			ins->klass = klass;
 			*sp++ = ins;
 
 			EMIT_NEW_TEMPLOAD (cfg, ins, temp->inst_c0);
+			ins->klass = klass;
 			*sp++ = ins;
 
 			inline_costs += 2;
