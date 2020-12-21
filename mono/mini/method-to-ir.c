@@ -4312,7 +4312,7 @@ mini_emit_array_store (MonoCompile *cfg, MonoClass *klass, MonoInst **sp, gboole
 		iargs [0] = sp [0];
 
 		MonoClass *array_class = sp [0]->klass;
-		if (array_class && array_class->rank == 1) {
+		if (array_class && m_class_get_rank (array_class) == 1) {
 			MonoClass *eclass = m_class_get_element_class (array_class);
 			if (m_class_is_sealed (eclass))
 				/* Make a non-virtual call if possible */
