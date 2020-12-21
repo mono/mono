@@ -104,6 +104,19 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
+		public void AddHandlerShouldWrapExceptions ()
+		{
+			EventInfo ev = typeof (ExceptionEvent).GetEvent ("Event");
+			EventHandler dele = (a,b) => {};
+			try {
+				ev.AddEventHandler (new ExceptionEvent (), dele);
+				Assert.Fail ("#1");
+			} catch (TargetInvocationException e) {
+				Assert.AreEqual (typeof (Exception), e.InnerException.GetType ());
+			}
+		}
+
+		[Test]
 		public void RemoveHandleToPrivateEventRaisesInvalidOperationException ()
 		{
 			EventInfo ev = typeof (TestClass).GetEvent ("priv", BindingFlags.NonPublic| BindingFlags.Instance);
@@ -166,6 +179,16 @@ namespace MonoTests.System.Reflection
 
 		public class B : A
 		{
+		}
+
+		public class ExceptionEvent
+		{
+			public event EventHandler Event {
+				add {
+					throw new Exception("This exception should be wrapped by AddEventHandler");
+				}
+				remove { }
+			}
 		}
 
 		public class PrivateEvent
