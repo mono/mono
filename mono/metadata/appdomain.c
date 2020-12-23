@@ -163,7 +163,16 @@ static GENERATE_GET_CLASS_WITH_CACHE (assembly, "System.Reflection", "Assembly")
 static GENERATE_GET_CLASS_WITH_CACHE (app_context, "System", "AppContext");
 #endif
 
+#ifndef ENABLE_NETCORE
 GENERATE_GET_CLASS_WITH_CACHE (appdomain, MONO_APPDOMAIN_CLASS_NAME_SPACE, MONO_APPDOMAIN_CLASS_NAME);
+#else
+MonoClass*
+mono_class_get_appdomain_class (void)
+{
+	return mono_defaults.object_class;
+}
+#endif
+
 GENERATE_GET_CLASS_WITH_CACHE (appdomain_setup, MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE, MONO_APPDOMAIN_SETUP_CLASS_NAME);
 
 static MonoDomain *
@@ -344,7 +353,9 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 		ad = MONO_HANDLE_CAST (MonoAppDomain, mono_object_new_pinned_handle (domain, klass, error));
 		goto_if_nok (error, exit);
 
+#ifndef ENABLE_NETCORE
 		MONO_HANDLE_SETVAL (ad, data, MonoDomain*, domain);
+#endif
 		domain->domain = MONO_HANDLE_RAW (ad);
 		domain->setup = MONO_HANDLE_RAW (setup);
 	}
@@ -473,9 +484,16 @@ mono_check_corlib_version_internal (void)
 	guint32 native_offset;
 	guint32 managed_offset;
 	native_offset = (guint32) MONO_STRUCT_OFFSET (MonoInternalThread, last);
+#ifdef ENABLE_NETCORE
+	MonoClassField *thread_runtime_data = mono_class_get_field_from_name_full (mono_defaults.internal_thread_class, "_runtime", NULL);
+	g_assert (mono_field_get_offset (thread_runtime_data) == MONO_ABI_SIZEOF (MonoObject));
+	MonoClass *thread_managed_struct = mono_class_from_mono_type_internal (thread_runtime_data->type);
+	managed_offset = mono_field_get_offset (mono_class_get_field_from_name_full (thread_managed_struct, "last", NULL));
+#else
 	managed_offset = mono_field_get_offset (mono_class_get_field_from_name_full (mono_defaults.internal_thread_class, "last", NULL));
+#endif
 	if (native_offset != managed_offset)
-		result = g_strdup_printf ("expected InternalThread.last field offset %u, found %u. See InternalThread.last comment", native_offset, managed_offset);
+		result = g_strdup_printf ("expected InternalThread._runtime.last field offset %u, found %u. See InternalThread.last comment", native_offset, managed_offset);
 exit:
 	g_free (version);
 	return result;
@@ -759,7 +777,9 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 
 	MonoAppDomainHandle ad = MONO_HANDLE_CAST (MonoAppDomain, mono_object_new_handle (data, adclass, error));
 	goto_if_nok (error, leave);
+#ifndef ENABLE_NETCORE
 	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, data);
+#endif
 	data->domain = MONO_HANDLE_RAW (ad);
 	data->friendly_name = g_strdup (friendly_name);
 
@@ -2328,6 +2348,7 @@ mono_domain_from_appdomain (MonoAppDomain *appdomain_raw)
 MonoDomain *
 mono_domain_from_appdomain_handle (MonoAppDomainHandle appdomain)
 {
+#ifndef ENABLE_NETCORE
 	HANDLE_FUNCTION_ENTER ();
 	MonoDomain *dom = NULL;
 	if (MONO_HANDLE_IS_NULL (appdomain))
@@ -2343,6 +2364,9 @@ mono_domain_from_appdomain_handle (MonoAppDomainHandle appdomain)
 
 leave:
 	HANDLE_FUNCTION_RETURN_VAL (dom);
+#else
+	return mono_get_root_domain ();
+#endif
 }
 
 

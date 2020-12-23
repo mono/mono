@@ -15,6 +15,7 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/exception-internals.h>
 #include <mono/metadata/gc-internals.h>
+#include <mono/metadata/mono-endian.h>
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/security-core-clr.h>
@@ -743,7 +744,7 @@ struct FoundAttrUD {
 };
 
 static gboolean
-has_wellknown_attribute_func (MonoImage *image, guint32 typeref_scope_token, const char *nspace, const char *name, guint32 method_token, gpointer user_data)
+has_wellknown_attribute_func (MonoImage *image, guint32 typeref_scope_token, const char *nspace, const char *name, guint32 method_token, const char *cattr_blob, gpointer user_data)
 {
 	struct FoundAttrUD *has_attr = (struct FoundAttrUD *)user_data;
 	if (!strcmp (name, has_attr->name) && !strcmp (nspace, has_attr->nspace)) {
@@ -787,13 +788,37 @@ method_has_wellknown_attribute (MonoMethod *method, const char *nspace, const ch
 	return has_attr.has_attr;
 }
 
-
 static gboolean
 class_has_isbyreflike_attribute (MonoClass *klass)
 {
 	return class_has_wellknown_attribute (klass, "System.Runtime.CompilerServices", "IsByRefLikeAttribute", TRUE);
 }
 
+struct FindLayoutAwareAttrUD {
+	const char *cattr_blob;
+};
+
+static gboolean
+has_layout_aware_func (MonoImage *image, guint32 typeref_scope_token, const char *nspace, const char *name, guint32 method_token, const char *cattr_blob, gpointer user_data)
+{
+	if (!strcmp (name, "MonoRuntimeLayoutAwareAttribute") && !(strcmp (nspace, "Mono"))) {
+		((struct FindLayoutAwareAttrUD*)user_data)->cattr_blob = cattr_blob;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/* returns ptr to the blob heap value of the MonoRuntimeLayoutAwareAttribute(string) constructor */
+static const char*
+class_has_runtime_layout_aware_attribute (MonoClass *klass)
+{
+	/* FIXME: implement well known attribute check for dynamic images */
+	if (image_is_dynamic (m_class_get_image (klass)))
+		return FALSE;
+	struct FindLayoutAwareAttrUD ud = {0,};
+	mono_class_metadata_foreach_custom_attr (klass, &has_layout_aware_func, (gpointer)&ud);
+	return ud.cattr_blob;
+}
 
 gboolean
 mono_class_setup_method_has_preserve_base_overrides_attribute (MonoMethod *method)
@@ -1875,6 +1900,92 @@ mono_class_is_gparam_with_nonblittable_parent (MonoClass *klass)
 	return parent_class != mono_defaults.object_class;
 }
 
+/**
+ * decode_layout_aware_cattr_value_blob:
+ *
+ * Assumes that MonoRuntimeLayoutAwareAttribute has a single constructor
+ *  MonoRuntimeLayoutAwareAttribute (string fieldName)
+ *
+ * and that \p cattr_value_blob is a pointer to the value blob encoding the cattr constructor arguments.
+ *
+ * Returns a dynamically allocated copy of \c fieldName, caller should free it with \c g_free
+ */
+static char*
+decode_layout_aware_cattr_value_blob (MonoImage *image, const char *nspace, const char *name, const char *cattr_value_blob)
+{
+	const char *ptr = cattr_value_blob;
+
+	guint32 len = mono_metadata_decode_value (ptr, &ptr);
+	const char *endp = ptr + len;
+
+	// cribbed from custom-attrs.c: load_cattr_value
+	g_assert (len >= 2);
+
+	ptr += 2; // skip prolog
+
+	if (*ptr == (char)0xFF) // NULL
+		return NULL;
+
+	guint32 slen = mono_metadata_decode_value (ptr, &ptr);
+	const char *start = ptr;
+	if (slen == 0 || (endp - ptr) < slen)
+		return NULL;
+	ptr += slen;
+
+	if (ptr + 2 > endp)
+		return NULL;
+	if (read16 (ptr) != 0)
+		g_warning ("Class %s.%s has named arguments on MonoRuntimeLayoutAwareAttribute custom attribute", nspace, name);
+
+	char * res = g_strndup (start, slen);
+
+	return res;
+}
+
+/**
+ * get_runtime_layout_aware_field:
+ *
+ * Given a class that has the MonoRuntimeLayoutAwareAttribute attribute,
+ * find the (exactly one) field that has the same attribute and return it.
+ *
+ * Warns if the class is not auto layout, or if the attribute is on a class
+ * that derives from a class with instance fields.
+ */
+static MonoClassField*
+get_runtime_layout_aware_field (MonoClass *klass, const char *cattr_value_blob)
+{
+	MonoImage *image = m_class_get_image (klass);
+	const int top = mono_class_get_field_count (klass);
+	guint32 layout = mono_class_get_flags (klass) & TYPE_ATTRIBUTE_LAYOUT_MASK;
+	const char *nspace = m_class_get_name_space (klass);
+	const char *name = m_class_get_name (klass);
+	if (layout != TYPE_ATTRIBUTE_AUTO_LAYOUT)
+		g_warning ("Class %s.%s has MonoRuntimeLayoutAwareAttribute but is not auto layout", nspace, name);
+	if (klass->parent && klass->parent->instance_size != MONO_ABI_SIZEOF (MonoObject)) {
+		g_warning ("Class %s.%s has MonoRuntimeLayoutAwareAttribute but is derived from a class that also has fields, attribute will be ignored", nspace, name);
+		return NULL;
+	}
+
+	char *layout_aware_field_name = decode_layout_aware_cattr_value_blob (image, nspace, name, cattr_value_blob);
+	if (!layout_aware_field_name) {
+		g_warning ("Class %s.%s has a MonoRuntimeLayoutAwareAttribute that can't be decoded", nspace, name);
+		return NULL;
+	}
+
+	MonoClassField *found = NULL;
+	for (int i = 0; i < top; ++i) {
+		MonoClassField *field = &klass->fields[i];
+		if (!strcmp (field->name, layout_aware_field_name)) {
+			found = field;
+			break;
+		}
+	}
+	if (!found)
+		g_warning ("Class %s.%s has MonoRutimeLayoutAwareAttribute(\"%s\") attribute but does not have a field with that name", nspace, name, layout_aware_field_name);
+	g_free (layout_aware_field_name);
+	return found;
+}
+
 /*
  * mono_class_layout_fields:
  * @class: a class
@@ -1893,7 +2004,8 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	int i;
 	const int top = mono_class_get_field_count (klass);
 	guint32 layout = mono_class_get_flags (klass) & TYPE_ATTRIBUTE_LAYOUT_MASK;
-	guint32 pass, passes, real_size;
+	int pass, passes;
+	guint32 real_size;
 	gboolean gc_aware_layout = FALSE;
 	gboolean has_static_fields = FALSE;
 	gboolean has_references = FALSE;
@@ -2058,7 +2170,25 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 			real_size = MONO_ABI_SIZEOF (MonoObject);
 		}
 
-		for (pass = 0; pass < passes; ++pass) {
+		MonoClassField *runtime_layout_aware_field;
+		runtime_layout_aware_field = NULL;
+
+		int start_pass;
+		start_pass = 0;
+
+		const char *layout_aware_cattr_blob;
+
+		if (G_UNLIKELY ((layout_aware_cattr_blob = class_has_runtime_layout_aware_attribute (klass)))) {
+			runtime_layout_aware_field = get_runtime_layout_aware_field (klass, layout_aware_cattr_blob);
+			if (G_LIKELY (runtime_layout_aware_field != NULL)) {
+				/* do an extra pass that puts the runtime
+				 * layout aware field first
+				 */
+				start_pass--;
+			}
+		}
+
+		for (pass = start_pass; pass < passes; ++pass) {
 			for (i = 0; i < top; i++){
 				gint32 align;
 				guint32 size;
@@ -2074,13 +2204,22 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 				ftype = mono_type_get_underlying_type (field->type);
 				ftype = mono_type_get_basic_type_from_generic (ftype);
 				if (gc_aware_layout) {
+
 					fields_has_references [i] = type_has_references (klass, ftype);
-					if (fields_has_references [i]) {
-						if (pass == 1)
+
+					if (G_UNLIKELY (runtime_layout_aware_field != NULL &&
+							field == runtime_layout_aware_field)) {
+						/* Process the runtime visible field during an pass before the rest */
+						if (pass != -1)
 							continue;
 					} else {
-						if (pass == 0)
-							continue;
+						if (fields_has_references [i]) {
+							if (pass == 1)
+								continue;
+						} else {
+							if (pass == 0)
+								continue;
+						}
 					}
 				}
 
