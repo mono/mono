@@ -1227,14 +1227,132 @@ get_interp_local_offset (TransformData *td, int local, gboolean resolve_stack_lo
 	return td->locals [local].offset;
 }
 
+/*
+ * ins_offset is the associated offset of this instruction
+ * if ins is null, it means the data belongs to an instruction that was
+ * emitted in the final code
+ * ip is the address where the arguments of the instruction are located
+ */
+static char*
+dump_interp_ins_data (InterpInst *ins, gint32 ins_offset, const guint16 *data, guint16 opcode)
+{
+	GString *str = g_string_new ("");
+	guint32 token;
+	int target;
+
+	switch (mono_interp_opargtype [opcode]) {
+	case MintOpNoArgs:
+		break;
+	case MintOpUShortInt:
+		g_string_append_printf (str, " %u", *(guint16*)data);
+		break;
+	case MintOpTwoShorts:
+		g_string_append_printf (str, " %u,%u", *(guint16*)data, *(guint16 *)(data + 1));
+		break;
+	case MintOpShortAndInt:
+		g_string_append_printf (str, " %u,%u", *(guint16*)data, (guint32)READ32(data + 1));
+		break;
+	case MintOpShortInt:
+		g_string_append_printf (str, " %d", *(gint16*)data);
+		break;
+	case MintOpClassToken:
+	case MintOpMethodToken:
+	case MintOpFieldToken:
+		token = * (guint16 *) data;
+		g_string_append_printf (str, " %u", token);
+		break;
+	case MintOpInt:
+		g_string_append_printf (str, " %d", (gint32)READ32 (data));
+		break;
+	case MintOpLongInt:
+		g_string_append_printf (str, " %" PRId64, (gint64)READ64 (data));
+		break;
+	case MintOpFloat: {
+		gint32 tmp = READ32 (data);
+		g_string_append_printf (str, " %g", * (float *)&tmp);
+		break;
+	}
+	case MintOpDouble: {
+		gint64 tmp = READ64 (data);
+		g_string_append_printf (str, " %g", * (double *)&tmp);
+		break;
+	}
+	case MintOpShortBranch:
+		if (ins) {
+			/* the target IL is already embedded in the instruction */
+			g_string_append_printf (str, " BB%d", ins->info.target_bb->index);
+		} else {
+			target = ins_offset + *(gint16*)data;
+			g_string_append_printf (str, " IR_%04x", target);
+		}
+		break;
+	case MintOpBranch:
+		if (ins) {
+			g_string_append_printf (str, " BB%d", ins->info.target_bb->index);
+		} else {
+			target = ins_offset + (gint32)READ32 (data);
+			g_string_append_printf (str, " IR_%04x", target);
+		}
+		break;
+	case MintOpSwitch: {
+		int sval = (gint32)READ32 (data);
+		int i;
+		g_string_append_printf (str, "(");
+		gint32 p = 2;
+		for (i = 0; i < sval; ++i) {
+			if (i > 0)
+				g_string_append_printf (str, ", ");
+			if (ins) {
+				g_string_append_printf (str, "BB%d", ins->info.target_bb_table [i]->index);
+			} else {
+				g_string_append_printf (str, "IR_%04x", (gint32)READ32 (data + p));
+			}
+			p += 2;
+		}
+		g_string_append_printf (str, ")");
+		break;
+	}
+	default:
+		g_string_append_printf (str, "unknown arg type\n");
+	}
+
+	return g_string_free (str, FALSE);
+}
+
 static void
-dump_mint_code (const guint16 *start, const guint16* end)
+dump_interp_compacted_ins (const guint16 *ip, const guint16 *start)
+{
+	int opcode = *ip;
+	int ins_offset = ip - start;
+
+	g_print ("IR_%04x: %-14s", ins_offset, mono_interp_opname (opcode));
+	ip++;
+
+        if (mono_interp_op_dregs [opcode] == MINT_CALL_ARGS)
+                g_print (" [call_args %d <-", *ip++);
+        else if (mono_interp_op_dregs [opcode] > 0)
+                g_print (" [%d <-", *ip++);
+        else
+                g_print (" [nil <-");
+
+        if (mono_interp_op_sregs [opcode] > 0) {
+                for (int i = 0; i < mono_interp_op_sregs [opcode]; i++)
+                        g_print (" %d", *ip++);
+                g_print ("],");
+        } else {
+                g_print (" nil],");
+        }
+	char *ins = dump_interp_ins_data (NULL, ins_offset, ip, opcode);
+	g_print ("%s\n", ins);
+	g_free (ins);
+}
+
+static void
+dump_interp_code (const guint16 *start, const guint16* end)
 {
 	const guint16 *p = start;
 	while (p < end) {
-		char *ins = mono_interp_dis_mintop ((gint32)(p - start), TRUE, p + 1, *p);
-		g_print ("%s\n", ins);
-		g_free (ins);
+		dump_interp_compacted_ins (p, start);
 		p = mono_interp_dis_mintop_len (p);
 	}
 }
@@ -1242,9 +1360,32 @@ dump_mint_code (const guint16 *start, const guint16* end)
 static void
 dump_interp_inst_no_newline (InterpInst *ins)
 {
-	char *descr = mono_interp_dis_mintop (ins->il_offset, FALSE, &ins->data [0], ins->opcode);
-	g_print ("%s", descr);
-	g_free (descr);
+	int opcode = ins->opcode;
+	g_print ("IL_%04x: %-14s", ins->il_offset, mono_interp_opname (opcode));
+
+        if (mono_interp_op_dregs [opcode] == MINT_CALL_ARGS)
+                g_print (" [call_args %d <-", ins->dreg);
+        else if (mono_interp_op_dregs [opcode] > 0)
+                g_print (" [%d <-", ins->dreg);
+        else
+                g_print (" [nil <-");
+
+        if (mono_interp_op_sregs [opcode] > 0) {
+                for (int i = 0; i < mono_interp_op_sregs [opcode]; i++)
+                        g_print (" %d", ins->sregs [i]);
+                g_print ("],");
+        } else {
+                g_print (" nil],");
+        }
+
+	if (opcode == MINT_LDLOCA_S) {
+		// LDLOCA has special semantics, it has data in sregs [0], but it doesn't have any sregs
+		g_print (" %d", ins->sregs [0]);
+	} else {
+		char *descr = dump_interp_ins_data (ins, ins->il_offset, &ins->data [0], ins->opcode);
+		g_print ("%s", descr);
+		g_free (descr);
+	}
 }
 
 static void
@@ -1278,7 +1419,7 @@ mono_interp_print_code (InterpMethod *imethod)
 	g_free (name);
 
 	start = (guint8*) jinfo->code_start;
-	dump_mint_code ((const guint16*)start, (const guint16*)(start + jinfo->code_size));
+	dump_interp_code ((const guint16*)start, (const guint16*)(start + jinfo->code_size));
 }
 
 /* For debug use */
@@ -8356,7 +8497,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 		g_print ("Runtime method: %s %p\n", mono_method_full_name (method, TRUE), rtm);
 		g_print ("Locals size %d, stack size: %d\n", td->total_locals_size, td->max_stack_size);
 		g_print ("Calculated stack height: %d, stated height: %d\n", td->max_stack_height, header->max_stack);
-		dump_mint_code (td->new_code, td->new_code_end);
+		dump_interp_code (td->new_code, td->new_code_end);
 	}
 
 	/* Check if we use excessive stack space */

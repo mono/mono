@@ -73,7 +73,6 @@ extern unsigned char const mono_interp_oplen[];
 extern int const mono_interp_op_dregs [];
 extern int const mono_interp_op_sregs [];
 extern MintOpArgType const mono_interp_opargtype[];
-extern char* mono_interp_dis_mintop (gint32 ins_offset, gboolean native_offset, const guint16 *ip, guint16 opcode);
 extern const guint16* mono_interp_dis_mintop_len (const guint16 *ip);
 
 // This, instead of an array of pointers, to optimize away a pointer and a relocation per string.
