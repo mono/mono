@@ -2517,21 +2517,25 @@ load_aot_module (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer 
 	 */
 	sort_methods (amodule);
 	gpointer start = NULL;
+
+#if 0
 	for (i = 0; i < amodule->sorted_methods_len; ++i) {
-		//printf ("%s %d\n", amodule->assembly->aname.name, amodule->sorted_methods [i]);
+		printf ("%s %d\n", amodule->assembly->aname.name, amodule->sorted_methods [i]);
 	}
+#endif
+
 	for (i = 0; i < amodule->sorted_methods_len; ++i) {
 		if (start == NULL)
 			start = amodule->sorted_methods [i];
 		if (i > 0 && GPOINTER_TO_UINT (amodule->sorted_methods [i - 1]) + 1 != GPOINTER_TO_UINT (amodule->sorted_methods [i])) {
 			//printf ("%s %d %d\n", amodule->assembly->aname.name, start, amodule->sorted_methods [i - 1]);
-			mono_jit_info_add_aot_module (assembly->image, start, amodule->sorted_methods [i - 1]);
+			mono_jit_info_add_aot_module (assembly->image, start, (guint8*)amodule->sorted_methods [i - 1] + 1);
 			start = amodule->sorted_methods [i];
 		}
 	}
 	if (start != amodule->sorted_methods [amodule->sorted_methods_len - 1]) {
 		//printf ("%s %d %d\n", amodule->assembly->aname.name, start, amodule->sorted_methods [amodule->sorted_methods_len - 1]);
-		mono_jit_info_add_aot_module (assembly->image, start, amodule->sorted_methods [amodule->sorted_methods_len - 1]);
+		mono_jit_info_add_aot_module (assembly->image, start, (guint8*)amodule->sorted_methods [amodule->sorted_methods_len - 1] + 1);
 	}
 #else
 	if (amodule->jit_code_start)
