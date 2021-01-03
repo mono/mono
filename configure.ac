@@ -4591,6 +4591,19 @@ case "$host" in
 			AC_MSG_ERROR([The required utility 'ar' is not found in your PATH. Usually it can be found in /usr/ccs/bin.])
 		fi
 		;;
+	armv7-*mingw*)
+		TARGET=ARM;
+		arch_target=arm;
+		ACCESS_UNALIGNED="no"
+		BTLS_SUPPORTED=no
+		BTLS_PLATFORM=arm
+		;;
+	aarch64-*mingw*)
+		TARGET=ARM64;
+		arch_target=arm64;
+		BTLS_SUPPORTED=no
+		BTLS_PLATFORM=aarch64
+		;;
 	*-mingw*|*-*-cygwin*)
 		# When this is enabled, it leads to very strange crashes at runtime (gcc-3.4.4)
 		have_visibility_hidden=no
