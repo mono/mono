@@ -330,6 +330,10 @@ typedef struct MonoCompileArch {
 #undef MONO_ARCH_USE_SIGACTION
 #endif
 
+#if defined(HOST_WIN32)
+#undef MONO_ARCH_USE_SIGACTION
+#endif
+
 #define MONO_ARCH_NEED_DIV_CHECK 1
 
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
