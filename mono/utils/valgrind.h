@@ -128,12 +128,9 @@
 #  define PLAT_x86_darwin 1
 #elif defined(__APPLE__) && defined(__x86_64__)
 #  define PLAT_amd64_darwin 1
-#elif (defined(__MINGW32__) && !defined(__MINGW64__)) \
-      || defined(__CYGWIN32__) \
-      || (defined(_WIN32) && defined(_M_IX86))
+#elif defined(_WIN32) && defined(__i386__)
 #  define PLAT_x86_win32 1
-#elif defined(__MINGW64__) \
-      || (defined(_WIN64) && defined(_M_X64))
+#elif defined(_WIN32) && defined(__x86_64__)
 #  define PLAT_amd64_win64 1
 #elif defined(__linux__) && defined(__i386__)
 #  define PLAT_x86_linux 1
