@@ -5232,6 +5232,9 @@ AC_SUBST(libsuffix)
 GNUC_PRETTY=
 GNUC_UNUSED=
 BREAKPOINT="G_STMT_START { raise (SIGTRAP); } G_STMT_END"
+if test x$target_win32 = xyes; then
+   BREAKPOINT="G_STMT_START { DebugBreak(); } G_STMT_END"
+fi
 if test x$GCC = xyes; then
    GNUC_UNUSED='__attribute__((__unused__))'
    GNUC_NORETURN='__attribute__((__noreturn__))'
