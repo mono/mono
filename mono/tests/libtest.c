@@ -4970,6 +4970,159 @@ mono_test_managed_marshal_bool_ref (int arg, unsigned int expected, unsigned int
 }
 
 #ifdef WIN32
+LIBTEST_API int STDCALL 
+mono_test_marshal_variant_in_byte_array(VARIANT variant)
+{
+	SAFEARRAY *sa;
+	const unsigned char *byte_array;
+	HRESULT hr;
+
+	if (variant.vt != (VT_ARRAY | VT_UI1))
+	{
+		fprintf(stderr, "variant_in_byte_array(variant.vt): got 0x%x but expected 0x%x\n", variant.vt, VT_ARRAY | VT_UI1);
+		return 1;
+	}
+
+	sa = V_ARRAY(&variant);
+
+	if (!sa)
+	{
+		fprintf(stderr, "variant_in_byte_array(V_ARRAY): got NULL\n");
+		return 2;
+	}
+
+	if (sa->cDims != 1)
+	{
+		fprintf(stderr, "variant_in_byte_array(sa.cDims): got %u but expected 1\n", (unsigned int)sa->cDims);
+		return 3;
+	}
+
+	if (sa->cbElements != 1)
+	{
+		fprintf(stderr, "variant_in_byte_array(sa.cbElements): got %u but expected 1\n", (unsigned int)sa->cbElements);
+		return 4;
+	}
+
+	if (sa->rgsabound[0].cElements != 3)
+	{
+		fprintf(stderr, "variant_in_byte_array(sa.rgsabound.cElements): got %u but expected 3\n", (unsigned int)sa->rgsabound[0].cElements);
+		return 5;
+	}
+
+	if (sa->rgsabound[0].lLbound != 0)
+	{
+		fprintf(stderr, "variant_in_byte_array(sa.rgsabound.lLbound): got %u but expected 0\n", (unsigned int)sa->rgsabound[0].lLbound);
+		return 6;
+	}
+
+	hr = SafeArrayLock(sa);
+	if (hr != S_OK)
+	{
+		fprintf(stderr, "variant_in_byte_array(sa.rgsabound[1].lLbound): failed to lock SAFEARRAY: %08x\n", (int)hr);
+		return 7;
+	}
+
+	byte_array = sa->pvData;
+
+	if (byte_array[0] != 1 ||
+			byte_array[1] != 2 ||
+			byte_array[2] != 3)
+	{
+		fprintf(stderr, "variant_in_byte_array(sa.pvData): got {%u, %u, %u} but expected {1, 2, 3}\n",
+				(unsigned int)byte_array[0], (unsigned int)byte_array[1], (unsigned int)byte_array[2]);
+		SafeArrayUnlock(sa);
+		return 8;
+	}
+
+	SafeArrayUnlock(sa);
+
+	return 0;
+}
+
+LIBTEST_API int STDCALL 
+mono_test_marshal_variant_in_int32_2dim_array(VARIANT variant)
+{
+	SAFEARRAY *sa;
+	const unsigned int *int_array;
+	HRESULT hr;
+
+	if (variant.vt != (VT_ARRAY | VT_I4))
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(variant.vt): got 0x%x but expected 0x%x\n", variant.vt, VT_ARRAY | VT_I4);
+		return 1;
+	}
+
+	sa = V_ARRAY(&variant);
+
+	if (!sa)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(V_ARRAY): got NULL\n");
+		return 2;
+	}
+
+	if (sa->cDims != 2)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(sa.cDims): got %u but expected 2\n", sa->cDims);
+		return 3;
+	}
+
+	if (sa->cbElements != 4)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(sa.cbElements): got %u but expected 4\n", (int)sa->cbElements);
+		return 4;
+	}
+
+	if (sa->rgsabound[0].cElements != 3)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(sa.rgsabound[0].cElements): got %u but expected 3\n", (int)sa->rgsabound[0].cElements);
+		return 5;
+	}
+
+	if (sa->rgsabound[0].lLbound != 0)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(sa.rgsabound[0].lLbound): got %u but expected 0\n", (int)sa->rgsabound[0].lLbound);
+		return 6;
+	}
+
+	if (sa->rgsabound[1].cElements != 2)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(sa.rgsabound[1].cElements): got %u but expected 2\n", (int)sa->rgsabound[1].cElements);
+		return 7;
+	}
+
+	if (sa->rgsabound[1].lLbound != 0)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(sa.rgsabound[1].lLbound): got %u but expected 0\n", (int)sa->rgsabound[1].lLbound);
+		return 8;
+	}
+
+	hr = SafeArrayLock(sa);
+	if (hr != S_OK)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(sa.rgsabound[1].lLbound): failed to lock SAFEARRAY: %08x\n", (int)hr);
+		return 9;
+	}
+
+	int_array = sa->pvData;
+
+	if (int_array[0] != 1 ||
+			int_array[1] != -3 ||
+			int_array[2] != 2 ||
+			int_array[3] != -4 ||
+			int_array[4] != 0x12345678 ||
+			int_array[5] != -5)
+	{
+		fprintf(stderr, "variant_in_int32_2dim_array(sa.pvData): in-memory array got {%d, %d, %d, %d, 0x%x, %d} but expected {1, -3, 2, -4, 0x12345678, -5}\n",
+				int_array[0], int_array[1], int_array[2],
+				int_array[3], int_array[4], int_array[5]);
+		SafeArrayUnlock(sa);
+		return 10;
+	}
+
+	SafeArrayUnlock(sa);
+
+	return 0;
+}
 
 LIBTEST_API int STDCALL 
 mono_test_marshal_safearray_out_1dim_vt_bstr_empty (SAFEARRAY** safearray)

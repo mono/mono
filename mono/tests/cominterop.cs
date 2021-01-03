@@ -57,6 +57,12 @@ public class Tests
 	[DllImport("libtest")]
 	public static extern int mono_test_marshal_variant_in_bstr ([MarshalAs (UnmanagedType.Struct)]object obj);
 
+	[DllImport("libtest")]
+	public static extern int mono_test_marshal_variant_in_byte_array ([MarshalAs (UnmanagedType.Struct)]object obj);
+
+	[DllImport("libtest")]
+	public static extern int mono_test_marshal_variant_in_int32_2dim_array ([MarshalAs (UnmanagedType.Struct)]object obj);
+
 	[DllImport ("libtest")]
 	public static extern int mono_test_marshal_variant_in_bool_true ([MarshalAs (UnmanagedType.Struct)]object obj);
 
@@ -792,6 +798,12 @@ public class Tests
 				}
 				if (mono_test_marshal_safearray_in_ccw(test) != 0)
 					return 97;
+
+				/* array marshalling to VARIANT SAFEARRAY */
+				if (mono_test_marshal_variant_in_byte_array(new byte[]{1,2,3}) != 0)
+					return 206;
+				if (mono_test_marshal_variant_in_int32_2dim_array(new int[,]{{1,2,305419896},{-3,-4,-5}}) != 0)
+					return 207;
 			}
 			#endregion // SafeArray Tests
 
