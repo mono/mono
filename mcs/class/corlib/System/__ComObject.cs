@@ -75,8 +75,25 @@ namespace System
 		~__ComObject ()
 		{	
 			if (hash_table != IntPtr.Zero) {
-				if (synchronization_context != null)
-					synchronization_context.Post ((state) => ReleaseInterfaces (), this);
+				if (synchronization_context != null) {
+					try {
+						synchronization_context.Post ((state) => ReleaseInterfaces (), this);
+					}
+					catch (InvalidOperationException)
+					{
+						// This can happen during process shutdown if the NativeWindow object
+						// for a System.Windows.Forms.Application.MarshalingControl is
+						// finalized before an RCW that uses a
+						// WindowsFormsSynchronizationContext. Since the target thread
+						// isn't running a message loop anymore, there's a good chance
+						// we'd leak the object without any notification, which can also
+						// happen during the process lifetime. Since this only happens
+						// during process shutdown, sometimes the Post above silently
+						// fails, and applications that encounter this will likely leak COM
+						// objects in other circumstances, it does not make sense to release
+						// the COM object in the finalizer thread.
+					}
+				}
 				else
 					ReleaseInterfaces ();
 			}
