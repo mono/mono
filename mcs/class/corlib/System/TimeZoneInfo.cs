@@ -805,7 +805,7 @@ namespace System
 			return GetUtcOffset (dateTimeOffset.UtcDateTime, out isDST);
 		}
 
-		private TimeSpan GetUtcOffset (DateTime dateTime, out bool isDST)
+		private TimeSpan GetUtcOffset (DateTime dateTime, out bool isDST, bool forOffset = false)
 		{
 			isDST = false;
 
@@ -817,7 +817,7 @@ namespace System
 				tz = TimeZoneInfo.Local;
 
 			bool isTzDst;
-			var tzOffset = GetUtcOffsetHelper (dateTime, tz, out isTzDst);
+			var tzOffset = GetUtcOffsetHelper (dateTime, tz, out isTzDst, forOffset);
 
 			if (tz == this) {
 				isDST = isTzDst;
@@ -828,11 +828,11 @@ namespace System
 			if (!TryAddTicks (dateTime, -tzOffset.Ticks, out utcDateTime, DateTimeKind.Utc))
 				return BaseUtcOffset;
 
-			return GetUtcOffsetHelper (utcDateTime, this, out isDST);
+			return GetUtcOffsetHelper (utcDateTime, this, out isDST, forOffset);
 		}
 
 		// This is an helper method used by the method above, do not use this on its own.
-		private static TimeSpan GetUtcOffsetHelper (DateTime dateTime, TimeZoneInfo tz, out bool isDST)
+		private static TimeSpan GetUtcOffsetHelper (DateTime dateTime, TimeZoneInfo tz, out bool isDST, bool forOffset = false)
 		{
 			if (dateTime.Kind == DateTimeKind.Local && tz != TimeZoneInfo.Local)
 				throw new Exception ();
@@ -843,7 +843,7 @@ namespace System
 				return TimeSpan.Zero;
 
 			TimeSpan offset;
-			if (tz.TryGetTransitionOffset(dateTime, out offset, out isDST))
+			if (tz.TryGetTransitionOffset(dateTime, out offset, out isDST, forOffset))
 				return offset;
 
 			if (dateTime.Kind == DateTimeKind.Utc) {
@@ -870,10 +870,12 @@ namespace System
 
 			if (tzRule != null && tz.IsInDST (tzRule, dateTime)) {
 				// Replicate what .NET does when given a time which falls into the hour which is lost when
-				// DST starts. isDST should always be true but the offset should be BaseUtcOffset without the
+				// DST starts. isDST should be false and the offset should be BaseUtcOffset without the
 				// DST delta while in that hour.
-				isDST = true;
+				if (forOffset)
+					isDST = true;
 				if (tz.IsInDST (tzRule, dstUtcDateTime)) {
+					isDST = true;
 					return tz.BaseUtcOffset + tzRule.DaylightDelta;
 				} else {
 					return tz.BaseUtcOffset;
@@ -925,7 +927,33 @@ namespace System
 			AdjustmentRule rule = GetApplicableRule (dateTime);
 			if (rule != null) {
 				DateTime tpoint = TransitionPoint (rule.DaylightTransitionEnd, dateTime.Year);
-				if (dateTime > tpoint - rule.DaylightDelta && dateTime <= tpoint)
+				if (dateTime >= tpoint - rule.DaylightDelta && dateTime < tpoint)
+					return true;
+			}
+				
+			return false;
+		}
+        
+		private bool IsAmbiguousLocalDstFromUtc (DateTime dateTime) 
+		{
+			// This method determines if a dateTime in UTC falls into the Dst side
+			// of the ambiguous local time (the local time that occurs twice).
+            
+			if (dateTime.Kind == DateTimeKind.Local)
+				return false;
+
+			if (this == TimeZoneInfo.Utc)
+				return false;
+
+			AdjustmentRule rule = GetApplicableRule (dateTime);
+			if (rule != null) {
+				DateTime tpoint = TransitionPoint (rule.DaylightTransitionEnd, dateTime.Year);
+				// tpoint is the local time in daylight savings time when daylight savings time will end, convert it to UTC
+				DateTime tpointUtc;
+				if (!TryAddTicks(tpoint, -(BaseUtcOffset.Ticks + rule.DaylightDelta.Ticks), out tpointUtc, DateTimeKind.Utc))
+					return false;
+
+				if (dateTime >= tpointUtc - rule.DaylightDelta && dateTime < tpointUtc)
 					return true;
 			}
 				
@@ -944,7 +972,18 @@ namespace System
 				return true;
 
 			// We might be in the dateTime previous year's DST period
-			return dateTime.Year > 1 && IsInDSTForYear (rule, dateTime, dateTime.Year - 1);
+			if (dateTime.Year > 1 && IsInDSTForYear(rule, dateTime, dateTime.Year - 1))
+				return true;
+            
+			// If we are checking an ambiguous local time, that is the local time that occurs twice during a DST "fall back"
+			// check if it was marked as being in the DST side of the ambiguous time when it was created
+			// We need to re-check IsAmbiguousTime because the IsAmbiguousDaylightSavingTime flag is not cleared when using DateTime.Add/Subtract
+			if (dateTime.Kind == DateTimeKind.Local && IsAmbiguousTime(dateTime))
+			{
+				return dateTime.IsAmbiguousDaylightSavingTime();
+			}
+
+			return false;
 		}
 
 		bool IsInDSTForYear (AdjustmentRule rule, DateTime dateTime, int year)
@@ -953,8 +992,9 @@ namespace System
 			DateTime DST_end = TransitionPoint (rule.DaylightTransitionEnd, year + ((rule.DaylightTransitionStart.Month < rule.DaylightTransitionEnd.Month) ? 0 : 1));
 			if (dateTime.Kind == DateTimeKind.Utc) {
 				DST_start -= BaseUtcOffset;
-				DST_end -= (BaseUtcOffset + rule.DaylightDelta);
+				DST_end -= BaseUtcOffset;
 			}
+			DST_end -= rule.DaylightDelta;
 			return (dateTime >= DST_start && dateTime < DST_end);
 		}
 		
@@ -982,7 +1022,21 @@ namespace System
 
 		public bool IsDaylightSavingTime (DateTimeOffset dateTimeOffset)
 		{
-			return IsDaylightSavingTime (dateTimeOffset.DateTime);
+			var dateTime = dateTimeOffset.DateTime;
+			
+			if (dateTime.Kind == DateTimeKind.Local && IsInvalidTime (dateTime))
+				throw new ArgumentException ("dateTime is invalid and Kind is Local");
+
+			if (this == TimeZoneInfo.Utc)
+				return false;
+			
+			if (!SupportsDaylightSavingTime)
+				return false;
+
+			bool isDst;
+			GetUtcOffset (dateTime, out isDst, true);
+
+			return isDst;
 		}
 
 		internal DaylightTime GetDaylightChanges (int year)
@@ -1219,7 +1273,7 @@ namespace System
 			return null;
 		}
 
-		private bool TryGetTransitionOffset (DateTime dateTime, out TimeSpan offset,out bool isDst)
+		private bool TryGetTransitionOffset (DateTime dateTime, out TimeSpan offset, out bool isDst, bool forOffset = false)
 		{
 			offset = BaseUtcOffset;
 			isDst = false;
@@ -1235,18 +1289,45 @@ namespace System
 					return false;
 			}
 
+			var isUtc = false;
 			if (dateTime.Kind != DateTimeKind.Utc) {
 				if (!TryAddTicks (date, -BaseUtcOffset.Ticks, out date, DateTimeKind.Utc))
 					return false;
-			}
+			} else
+				isUtc = true;
 
-			AdjustmentRule current = GetApplicableRule(date);
+
+			AdjustmentRule current = GetApplicableRule (date);
 			if (current != null) {
-				DateTime tStart = TransitionPoint(current.DaylightTransitionStart, date.Year);
-				DateTime tEnd = TransitionPoint(current.DaylightTransitionEnd, date.Year);
+				DateTime tStart = TransitionPoint (current.DaylightTransitionStart, date.Year);
+				DateTime tEnd = TransitionPoint (current.DaylightTransitionEnd, date.Year);
+				TryAddTicks (tStart, -BaseUtcOffset.Ticks, out tStart, DateTimeKind.Utc);
+				TryAddTicks (tEnd, -BaseUtcOffset.Ticks, out tEnd, DateTimeKind.Utc);
 				if ((date >= tStart) && (date <= tEnd)) {
-					offset = baseUtcOffset + current.DaylightDelta; 
-					isDst = true;
+					if (forOffset)
+						isDst = true;
+					offset = baseUtcOffset; 
+					if (isUtc || (date >= new DateTime (tStart.Ticks + current.DaylightDelta.Ticks, DateTimeKind.Utc)))
+					{
+						offset += current.DaylightDelta;
+						isDst = true;
+					}
+
+					if (date >= new DateTime (tEnd.Ticks - current.DaylightDelta.Ticks, DateTimeKind.Utc))
+					{
+						offset = baseUtcOffset;
+						isDst = false;
+					}
+					
+					// If we are checking an ambiguous local time, that is the local time that occurs twice during a DST "fall back"
+					// check if it was marked as being in the DST side of the ambiguous time when it was created
+					// We need to re-check IsAmbiguousTime because the IsAmbiguousDaylightSavingTime flag is not cleared when using DateTime.Add/Subtract
+					if (!isDst && dateTime.Kind == DateTimeKind.Local && IsAmbiguousTime(dateTime) && dateTime.IsAmbiguousDaylightSavingTime())
+					{
+						offset += current.DaylightDelta;
+						isDst = true;
+					}
+
 					return true;
 				}
 			}
@@ -1255,8 +1336,11 @@ namespace System
 
 		private static DateTime TransitionPoint (TransitionTime transition, int year)
 		{
-			if (transition.IsFixedDateRule)
-				return new DateTime (year, transition.Month, transition.Day) + transition.TimeOfDay.TimeOfDay;
+			if (transition.IsFixedDateRule) {
+				var daysInMonth = DateTime.DaysInMonth (year, transition.Month);
+				var transitionDay = transition.Day <= daysInMonth ? transition.Day : daysInMonth;
+				return new DateTime (year, transition.Month, transitionDay) + transition.TimeOfDay.TimeOfDay;
+			}
 
 			DayOfWeek first = (new DateTime (year, transition.Month, 1)).DayOfWeek;
 			int day = 1 + (transition.Week - 1) * 7 + (transition.DayOfWeek - first + 7) % 7;
@@ -1540,7 +1624,7 @@ namespace System
 			isAmbiguousLocalDst = false;
 			TimeSpan baseOffset = zone.BaseUtcOffset;
 
-			if (zone.IsAmbiguousTime (time)) {
+			if (zone.IsAmbiguousLocalDstFromUtc (time)) {
 				isAmbiguousLocalDst = true;
 //				return baseOffset;
 			}

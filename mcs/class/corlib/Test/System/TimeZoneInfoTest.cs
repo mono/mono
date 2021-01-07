@@ -53,22 +53,72 @@ namespace MonoTests.System
 					return "New Zealand Standard Time";
 				case "Europe/Athens":
 					return "GTB Standard Time";
+				case "Europe/Chisinau":
+					return "E. Europe Standard Time";
+				case "America/New_York":
+					return "Eastern Standard Time";
+				case "America/Chicago":
 				case "US/Eastern":
 					return "Eastern Standard Time";
+				case "US/Central":
+					return "Central Standard Time";
 				case "US/Pacific":
 					return "Pacific Standard Time";
 				case "Australia/Sydney":
 				case "Australia/Melbourne":
 					return "AUS Eastern Standard Time";
 				case "Europe/Brussels":
+				case "Europe/Copenhagen":
+				case "Europe/Paris":
+				case "Europe/Madrid":
 					return "Romance Standard Time";
 				case "Africa/Kinshasa":
 					return "W. Central Africa Standard Time";
 				case "Europe/Rome":
 				case "Europe/Vatican":
+				case "Europe/Vienna":
+				case "Europe/Berlin":
+				case "Europe/Luxembourg":
+				case "Europe/Malta":
+				case "Europe/Monaco":
+				case "Europe/Amsterdam":
+				case "Europe/Oslo":
+				case "Europe/San_Marino":
 					return "W. Europe Standard Time";
 				case "Canada/Eastern":
 					return "Eastern Standard Time";
+				case "Asia/Tehran":
+					return "Iran Standard Time";
+				case "Europe/Guernsey":
+				case "Europe/Dublin":
+				case "Europe/Isle_of_Man":
+				case "Europe/Jersey":
+				case "Europe/Lisbon":
+				case "Europe/London":
+					return "GMT Standard Time";
+				case "America/Havana":
+					return "Cuba Standard Time";
+				case "America/Anchorage":
+					return "Alaskan Standard Time";
+				case "Atlantic/Azores":
+					return "Azores Standard Time";
+				case "Asia/Jerusalem":
+					return "Israel Standard Time";
+				case "Asia/Amman":
+					return "Jordan Standard Time";
+				case "Europe/Tirane":
+				case "Europe/Warsaw":
+					return "Central European Standard Time";
+				case "Europe/Sofia":
+				case "Europe/Tallinn":
+				case "Europe/Riga":
+				case "Europe/Vilnius":
+				case "Europe/Kiev":
+					return "FLE Standard Time";
+				case "Europe/Prague":
+				case "Europe/Budapest":
+				case "Europe/Bratislava":
+					return "Central Europe Standard Time";
 				default:
 					Assert.Fail ($"No mapping defined for zone id '{id}'");
 					return null;
@@ -683,7 +733,7 @@ namespace MonoTests.System
 				DateTime afterDST = new DateTime (2007, 10, 28, 2, 0, 0, DateTimeKind.Unspecified);
 				Assert.IsFalse (london.IsDaylightSavingTime (beforeDST), "Just before DST");
 				Assert.IsTrue (london.IsDaylightSavingTime (startDST), "the first seconds of DST");
-				Assert.IsTrue (london.IsDaylightSavingTime (endDST), "The last seconds of DST");
+				Assert.IsFalse (london.IsDaylightSavingTime (endDST), "The last seconds of DST");
 				Assert.IsFalse (london.IsDaylightSavingTime (afterDST), "Just after DST");
 			}
 		
@@ -760,23 +810,28 @@ namespace MonoTests.System
 			[Test]
 			public void TestAthensDST_InDSTDelta ()
 			{
-				// In .NET GetUtcOffset() returns the BaseUtcOffset for times within the hour
-				// lost when DST starts but IsDaylightSavingTime() returns true.
+				// In .NET/.Net Core GetUtcOffset() returns the BaseUtcOffset for times within the hour
+				// lost when DST starts and IsDaylightSavingTime() returns false for datetime and true for datetimeoffset
 
 				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Athens"));
 
-				var date = new DateTime (2014, 3, 30 , 3, 0, 0);
-				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				var date = new DateTime (2014, 3, 30 , 2, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
+
+				date = new DateTime (2014, 3, 30 , 3, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 				date = new DateTime (2014, 3, 30 , 3, 1, 0);
-				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 				date = new DateTime (2014, 3, 30 , 3, 59, 0);
-				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 				Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 				Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
@@ -804,17 +859,17 @@ namespace MonoTests.System
 				try {
 
 					var date = new DateTime (2014, 3, 30 , 3, 0, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 					date = new DateTime (2014, 3, 30 , 3, 1, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
 					date = new DateTime (2014, 3, 30 , 3, 59, 0);
-					Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+					Assert.IsFalse (tzi.IsDaylightSavingTime (date));
 					Assert.AreEqual (new TimeSpan (2, 0, 0), tzi.GetUtcOffset (date));
 					Assert.IsTrue (tzi.IsDaylightSavingTime (new DateTimeOffset (date, tzi.GetUtcOffset (date))));
 
@@ -841,6 +896,270 @@ namespace MonoTests.System
 				offset = tzi.GetUtcOffset (date);
 				dateOffset = new DateTimeOffset (date, offset);
 				Assert.IsTrue (tzi.IsDaylightSavingTime (dateOffset));
+			}
+
+			// https://github.com/mono/mono/issues/16742
+			[Test]
+			public void Bug_16472 ()
+			{
+				var parsedTime = DateTime.Parse ("1948-02-19T23:00:00Z", CultureInfo.InvariantCulture);
+				var newTime = TimeZoneInfo.ConvertTime (parsedTime, TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Rome")));
+				Assert.AreEqual (1948, newTime.Year);
+			}
+
+			// https://github.com/mono/mono/issues/9664
+			[Test]
+			public void Bug_9664 ()
+			{
+				TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				var date = new DateTime (2019, 3, 9, 21, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				date = new DateTime (2019, 3, 10, 2, 0, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				date = new DateTime (2019, 3, 10, 2, 30, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (-6, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("US/Central"));
+				date = new DateTime (2019, 3, 10, 3, 0, 0);
+				Assert.IsTrue (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (-5, 0, 0), tzi.GetUtcOffset (date));
+
+#if !WINAOT // https://github.com/mono/mono/issues/15439
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Vatican"));
+				date = new DateTime (2018, 10, 28, 2, 15, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (1, 0, 0), tzi.GetUtcOffset (date));
+
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Asia/Tehran"));
+				date = new DateTime (2018, 9, 21, 23, 15, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (3, 30, 0), tzi.GetUtcOffset (date));
+
+				// for Greenwitch Mean Time (Guernsey)
+				tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId ("Europe/Guernsey"));
+				date = new DateTime (2019, 10, 27, 1, 15, 0);
+				Assert.IsFalse (tzi.IsDaylightSavingTime (date));
+				Assert.AreEqual (new TimeSpan (0, 0, 0), tzi.GetUtcOffset (date));
+#endif
+			}
+
+			[Test]
+			public void Bug_16395 ()
+			{
+				// Cuba, Havana (Cuba Standard Time):    Jumps ahead at 12:00 AM on 3/8/2020 to 1:00 AM
+				CheckJumpingIntoDST ("America/Havana",
+									new DateTime (2020, 3, 8, 0, 0, 0), new DateTime (2020, 3, 8, 0, 30, 0), new DateTime (2020, 3, 8, 1, 0, 0), 
+									new TimeSpan (-5, 0, 0), new TimeSpan (-4, 0, 0));
+
+				// US, Kansas City, MO (US Central Time):    Jumps ahead at 2:00 AM on 3/8/2020 to 3:00 AM
+				CheckJumpingIntoDST ("America/Chicago",
+									new DateTime (2020, 3, 8, 2, 0, 0), new DateTime (2020, 3, 8, 2, 30, 0), new DateTime (2020, 3, 8, 3, 0, 0),
+									new TimeSpan (-6, 0, 0), new TimeSpan (-5, 0, 0));
+
+				// Anchorage, AK (Alaska Time):    Jumps ahead at 2:00 AM on 3/8/2020 to 3:00 AM
+				CheckJumpingIntoDST ("America/Anchorage",
+									new DateTime (2020, 3, 8, 2, 0, 0), new DateTime (2020, 3, 8, 2, 30, 0), new DateTime (2020, 3, 8, 3, 0, 0),
+									new TimeSpan (-9, 0, 0), new TimeSpan (-8, 0, 0));
+
+				// Azores ST (Ponta Delgada, Portugal):    Jumps ahead at 12:00 AM on 3/29/2020 to 1:00 AM
+				CheckJumpingIntoDST ("Atlantic/Azores",
+									new DateTime (2020, 3, 29, 0, 0, 0), new DateTime (2020, 3, 29, 0, 30, 0), new DateTime (2020, 3, 29, 1, 0, 0),
+									new TimeSpan (-1, 0, 0), new TimeSpan (0, 0, 0));
+									
+				// Iran, Tehran (Iran ST):    Jumps ahead at 12:00 AM on 3/21/2020 to 1:00 AM
+				CheckJumpingIntoDST ("Asia/Tehran",
+									new DateTime (2020, 3, 21, 0, 0, 0), new DateTime (2020, 3, 21, 0, 30, 0), new DateTime (2020, 3, 21, 1, 0, 0),
+									new TimeSpan (3, 30, 0), new TimeSpan (4, 30, 0));
+									
+				// Israel, Jerusalem (Israel ST):    Jumps ahead at 2:00 AM on 3/27/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Asia/Jerusalem",
+									new DateTime (2020, 3, 27, 2, 0, 0), new DateTime (2020, 3, 27, 2, 30, 0), new DateTime (2020, 3, 27, 3, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// Jordan, Amman (Eastern European ST):    Jumps ahead at 12:00 AM on 3/27/2020 to 1:00 AM
+				CheckJumpingIntoDST ("Asia/Amman",
+									new DateTime (2020, 3, 27, 0, 0, 0), new DateTime (2020, 3, 27, 0, 30, 0), new DateTime (2020, 3, 27, 1, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// Albania, Tirana (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Tirane",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Austria, Vienna (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Vienna",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Belgium, Brussels (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Brussels",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Bulgaria, Sofia (Eastern European ST):    Jumps ahead at 3:00 AM on 3/29/2020 to 4:00 AM
+				CheckJumpingIntoDST ("Europe/Sofia",
+									new DateTime (2020, 3, 29, 3, 0, 0), new DateTime (2020, 3, 29, 3, 30, 0), new DateTime (2020, 3, 29, 4, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// Czechia, Prague (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Prague",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Denmark, Copenhagen (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Copenhagen",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Estonia, Tallinn (Eastern European ST):    Jumps ahead at 3:00 AM on 3/29/2020 to 4:00 AM
+				CheckJumpingIntoDST ("Europe/Tallinn",
+									new DateTime (2020, 3, 29, 3, 0, 0), new DateTime (2020, 3, 29, 3, 30, 0), new DateTime (2020, 3, 29, 4, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// France, Paris (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Paris",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Germany, Berlin (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Berlin",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Greece, Athens (Eastern European ST):    Jumps ahead at 3:00 AM on 3/29/2020 to 4:00 AM
+				CheckJumpingIntoDST ("Europe/Athens",
+									new DateTime (2020, 3, 29, 3, 0, 0), new DateTime (2020, 3, 29, 3, 30, 0), new DateTime (2020, 3, 29, 4, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// Guernsey (UK)    Jumps ahead at 1:00 AM on 3/29/2020 to 2:00 AM
+				CheckJumpingIntoDST ("Europe/Guernsey",
+									new DateTime (2020, 3, 29, 1, 0, 0), new DateTime (2020, 3, 29, 1, 30, 0), new DateTime (2020, 3, 29, 2, 0, 0),
+									new TimeSpan (0, 0, 0), new TimeSpan (1, 0, 0));
+
+				// Holy See, Vatican City (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Vatican",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Hungary, Budapest (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Budapest",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// // Ireland, Dublin (Greenwich Mean Time -> Irish Standard Time):    Jumps ahead at 1:00 AM on 3/29/2020 to 2:00 AM
+				// CheckJumpingIntoDST ("Europe/Dublin",
+				// 					new DateTime (2020, 3, 29, 1, 0, 0), new DateTime (2020, 3, 29, 1, 30, 0), new DateTime (2020, 3, 29, 2, 0, 0),
+				// 					new TimeSpan (0, 0, 0), new TimeSpan (1, 0, 0));
+
+				// UK, Douglas, Isle of Man (GMT+1:00):    Jumps ahead at 1:00 AM on 3/29/2020 to 2:00 AM
+				CheckJumpingIntoDST ("Europe/Isle_of_Man",
+									new DateTime (2020, 3, 29, 1, 0, 0), new DateTime (2020, 3, 29, 1, 30, 0), new DateTime (2020, 3, 29, 2, 0, 0),
+									new TimeSpan (0, 0, 0), new TimeSpan (1, 0, 0));
+
+				// Italy, Rome (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Rome",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Jersey (UK):   Jumps ahead at 1:00 AM on 3/29/2020 to 2:00 AM
+				CheckJumpingIntoDST ("Europe/Jersey",
+									new DateTime (2020, 3, 29, 1, 0, 0), new DateTime (2020, 3, 29, 1, 30, 0), new DateTime (2020, 3, 29, 2, 0, 0),
+									new TimeSpan (0, 0, 0), new TimeSpan (1, 0, 0));
+
+				// Latvia, Riga (Eastern European ST):    Jumps ahead at 3:00 AM on 3/29/2020 to 4:00 AM
+				CheckJumpingIntoDST ("Europe/Riga",
+									new DateTime (2020, 3, 29, 3, 0, 0), new DateTime (2020, 3, 29, 3, 30, 0), new DateTime (2020, 3, 29, 4, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// Lithuania, Vilnius (Eastern European ST):    Jumps ahead at 3:00 AM on 3/29/2020 to 4:00 AM
+				CheckJumpingIntoDST ("Europe/Vilnius",
+									new DateTime (2020, 3, 29, 3, 0, 0), new DateTime (2020, 3, 29, 3, 30, 0), new DateTime (2020, 3, 29, 4, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// Luxembourg, Luxembourg (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Luxembourg",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Malta, Valletta (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Malta",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Moldova, Chişinău (Eastern European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Chisinau",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// Monaco, Monaco (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Monaco",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Netherlands, Amsterdam (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Amsterdam",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Norway, Oslo (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Oslo",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Poland, Warsaw (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Warsaw",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Portugal, Lisbon (Western European ST):    Jumps ahead at 1:00 AM on 3/29/2020 to 2:00 AM
+				CheckJumpingIntoDST ("Europe/Lisbon",
+									new DateTime (2020, 3, 29, 1, 0, 0), new DateTime (2020, 3, 29, 1, 30, 0), new DateTime (2020, 3, 29, 2, 0, 0),
+									new TimeSpan (0, 0, 0), new TimeSpan (1, 0, 0));
+
+				// San Marino, San Marino (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/San_Marino",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Slovakia, Bratislava (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Bratislava",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Spain, Madrid (Central European ST):    Jumps ahead at 2:00 AM on 3/29/2020 to 3:00 AM
+				CheckJumpingIntoDST ("Europe/Madrid",
+									new DateTime (2020, 3, 29, 2, 0, 0), new DateTime (2020, 3, 29, 2, 30, 0), new DateTime (2020, 3, 29, 3, 0, 0),
+									new TimeSpan (1, 0, 0), new TimeSpan (2, 0, 0));
+
+				// Ukraine, Kiev (Eastern European ST):    Jumps ahead at 3:00 AM on 3/29/2020 to 4:00 AM
+				CheckJumpingIntoDST ("Europe/Kiev",
+									new DateTime (2020, 3, 29, 3, 0, 0), new DateTime (2020, 3, 29, 3, 30, 0), new DateTime (2020, 3, 29, 4, 0, 0),
+									new TimeSpan (2, 0, 0), new TimeSpan (3, 0, 0));
+
+				// United Kingdom, London (British ST):    Jumps ahead at 1:00 AM on 3/29/2020 to 2:00 AM
+				CheckJumpingIntoDST ("Europe/London",
+									new DateTime (2020, 3, 29, 1, 0, 0), new DateTime (2020, 3, 29, 1, 30, 0), new DateTime (2020, 3, 29, 2, 0, 0),
+									new TimeSpan (0, 0, 0), new TimeSpan (1, 0, 0));
+			}
+
+			void CheckJumpingIntoDST (string tzId, DateTime dstDeltaStart, DateTime inDstDelta, DateTime dstDeltaEnd, TimeSpan baseOffset, TimeSpan dstOffset)
+			{
+				var tzi = TimeZoneInfo.FindSystemTimeZoneById (MapTimeZoneId (tzId));
+				Assert.IsFalse (tzi.IsDaylightSavingTime (dstDeltaStart), $"{tzId}: #1");
+				Assert.AreEqual (baseOffset, tzi.GetUtcOffset (dstDeltaStart), $"{tzId}: #2");
+
+				Assert.IsFalse (tzi.IsDaylightSavingTime (inDstDelta), $"{tzId}: #3");
+				Assert.AreEqual (baseOffset, tzi.GetUtcOffset (inDstDelta), $"{tzId}: #4");
+
+				Assert.IsTrue (tzi.IsDaylightSavingTime (dstDeltaEnd), $"{tzId}: #5");
+				Assert.AreEqual (dstOffset, tzi.GetUtcOffset (dstDeltaEnd), $"{tzId}: #6");
 			}
 		}
 		
@@ -1175,19 +1494,22 @@ namespace MonoTests.System
 			[Test]
 			public void AmbiguousDates ()
 			{
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 1)));
-				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0)));
 				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 1)));
 			}
 		
 			[Test]
 			public void AmbiguousUTCDates ()
 			{
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 0, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 0, 1, DateTimeKind.Utc)));
 				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 0, 59, 59, DateTimeKind.Utc)));
-				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 0, 0, DateTimeKind.Utc)));
+				Assert.IsTrue (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 1, 59, 59, DateTimeKind.Utc)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 0, DateTimeKind.Utc)));
+				Assert.IsFalse (london.IsAmbiguousTime (new DateTime (2007, 10, 28, 2, 0, 1, DateTimeKind.Utc)));
 			}
 		
 		#if SLOW_TESTS
@@ -1566,7 +1888,6 @@ namespace MonoTests.System
 
 				d = dst1End.Add (-dstOffset);
 				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0,-1))));
-				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d));
 				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,1,0, 1))));
 
 				d = dst2Start.Add (dstOffset);
@@ -1576,7 +1897,6 @@ namespace MonoTests.System
 
 				d = dst2End.Add (-dstOffset);
 				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,0,0,-1))));
-				Assert.AreEqual(dstUtcOffset, cairo.GetUtcOffset (d));
 				Assert.AreEqual(baseUtcOffset, cairo.GetUtcOffset (d.Add (new TimeSpan(0,1,0, 1))));
 			}
 
