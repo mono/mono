@@ -1645,6 +1645,13 @@ int
 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk)
 {
 	g_assert (pUnk);
+#if HOST_WIN32
+	// Changed for Wine Mono - .NET Framework silently ignores the error in this situation.
+	if (IsBadReadPtr(pUnk, sizeof(void*)) ||
+		IsBadReadPtr(&pUnk->vtable->Release, sizeof(void*)) ||
+		IsBadCodePtr((FARPROC)pUnk->vtable->Release))
+		return 0;
+#endif
 	return mono_IUnknown_Release (pUnk);
 }
 
