@@ -54,7 +54,6 @@ my $arch32 = 0;
 my $targetArch = "";
 my $winPerl = "";
 my $winMonoRoot = "";
-my $msBuildVersion = "14.0";
 my $buildDeps = "";
 my $android=0;
 my $androidArch = "";
@@ -104,7 +103,6 @@ GetOptions(
 	'shortprefix=i'=>\$shortPrefix,
 	'winperl=s'=>\$winPerl,
 	'winmonoroot=s'=>\$winMonoRoot,
-	'msbuildversion=s'=>\$msBuildVersion,
 	'checkoutonthefly=i'=>\$checkoutOnTheFly,
 	'builddeps=s'=>\$buildDeps,
 	'forcedefaultbuilddeps=i'=>\$forceDefaultBuildDeps,
@@ -1355,7 +1353,7 @@ if ($build)
 	{
 		if ($^O eq "cygwin")
 		{
-			system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--msbuildversion=$msBuildVersion", "--clean=$clean", "--debug=$debug") eq 0 or die ('failed building mono with VS\n');
+			system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--clean=$clean", "--debug=$debug") eq 0 or die ('failed building mono with VS\n');
 
 			# Copy over the VS built stuff that we want to use instead into the prefix directory
 			my $archNameForBuild = $arch32 ? 'Win32' : 'x64';

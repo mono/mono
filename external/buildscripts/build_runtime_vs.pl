@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 sub CompileVCProj;
 use Cwd 'abs_path';
 use Getopt::Long;
@@ -9,7 +11,7 @@ use File::Path;
 print ">>> PATH in Build VS = $ENV{PATH}\n\n";
 
 my $monoroot = File::Spec->rel2abs(dirname(__FILE__) . "/../..");
-my $monoroot = abs_path($monoroot);
+$monoroot = abs_path($monoroot);
 my $buildsroot = "$monoroot/builds";
 my $buildMachine = $ENV{UNITY_THISISABUILDMACHINE};
 
@@ -18,14 +20,12 @@ my $clean = 0;
 my $arch32 = 0;
 my $debug = 0;
 my $gc = "bdwgc";
-my $msBuildVersion = "";
 
 GetOptions(
 	'build=i'=>\$build,
 	'clean=i'=>\$clean,
 	'arch32=i'=>\$arch32,
 	'debug=i'=>\$debug,
-	'msbuildversion=s'=>\$msBuildVersion,
 	'gc=s'=>\$gc,
 ) or die ("illegal cmdline options");
 
@@ -38,12 +38,14 @@ sub CompileVCProj
 {
 	my $sln = shift;
 	my $config;
+	my $vsInstallRoot = $ENV{"ProgramFiles(x86)"} . "/Microsoft Visual Studio";
 
-	my $msbuild = $ENV{"ProgramFiles(x86)"}."/MSBuild/$msBuildVersion/Bin/MSBuild.exe";
-	
-	if (($ENV{YAMATO_PROJECT_ID}) || ($ENV{USERNAME} eq "bokken"))
+	my $msbuild = "$vsInstallRoot/2019/Professional/MSBuild/Current/Bin/MSBuild.exe";
+
+	if (!(-e -x $msbuild))
 	{
-		$msbuild = $ENV{"ProgramFiles(x86)"}."/Microsoft Visual Studio/2017/Professional/MSBuild/15.0/Bin/MSBuild.exe";
+		print (">>> Unable to find executable MSBuild for vs19 at: $msbuild\nFalling back to vs17\n");
+		$msbuild = "$vsInstallRoot/2017/Professional/MSBuild/15.0/Bin/MSBuild.exe";
 	}
 
     $config = $debug ? "Debug" : "Release";
@@ -51,7 +53,7 @@ sub CompileVCProj
 	my $target = $clean ? "/t:Clean,Build" :"/t:Build";
 	my $properties = "/p:Configuration=$config;Platform=$arch;MONO_TARGET_GC=$gc";
 
-	print ">>> $msbuild $properties $target $sln\n\n";
+	print (">>> $msbuild $properties $target $sln\n\n");
 	system($msbuild, $properties, $target, $sln) eq 0
 			or die("MSBuild failed to build $sln\n");
 }

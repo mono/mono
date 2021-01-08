@@ -35,14 +35,8 @@ my $existingMonoRootPath = '';
 my $arch32 = 0;
 my $winPerl = "perl";
 my $winMonoRoot = $monoroot;
-my $msBuildVersion = "14.0";
 my $buildDeps = "";
 my $stevedoreBuildDeps=1;
-
-if($ENV{YAMATO_PROJECT_ID} || ($ENV{USERNAME} eq "bokken"))
-{
-	$msBuildVersion = "15.0";			
-}
 
 print(">>> Build All Args = @ARGV\n");
 
@@ -55,7 +49,6 @@ GetOptions(
 	'existingmono=s'=>\$existingMonoRootPath,
 	'winperl=s'=>\$winPerl,
 	'winmonoroot=s'=>\$winMonoRoot,
-	'msbuildversion=s'=>\$msBuildVersion,
 	'checkoutonthefly=i'=>\$checkoutOnTheFly,
 	'builddeps=s'=>\$buildDeps,
 	'forcedefaultbuilddeps=i'=>\$forceDefaultBuildDeps,
@@ -108,8 +101,8 @@ if ($build)
 		print(">>> mono-build-deps is not required for windows runtime builds...\n");
 	}
 
-	system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--msbuildversion=$msBuildVersion", "--clean=$clean", "--debug=$debug", "--gc=boehm") eq 0 or die ('failed building mono bdwgc with VS\n');
-	system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--msbuildversion=$msBuildVersion", "--clean=$clean", "--debug=$debug", "--gc=sgen") eq 0 or die ('failed building mono sgen with VS\n');
+	system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--clean=$clean", "--debug=$debug", "--gc=boehm") eq 0 or die ('failed building mono bdwgc with VS\n');
+	system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--clean=$clean", "--debug=$debug", "--gc=sgen") eq 0 or die ('failed building mono sgen with VS\n');
 
 	if (!(-d "$monoroot\\tmp"))
 	{
