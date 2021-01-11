@@ -39,7 +39,7 @@ namespace System.Runtime.InteropServices.ComTypes
 	public interface IEnumFORMATETC
 	{
 		[PreserveSig]
-		int Next (int celt, [MarshalAs (UnmanagedType.LPArray)] [Out] FORMATETC [] rgelt, [MarshalAs (UnmanagedType.LPArray)] [Out] int [] pceltFetched);
+		int Next (int celt, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex=0)] [Out] FORMATETC [] rgelt, [MarshalAs (UnmanagedType.LPArray, SizeConst=1)] [Out] int [] pceltFetched);
 		[PreserveSig]
 		int Skip (int celt);
 		[PreserveSig]

@@ -39,7 +39,7 @@ namespace System.Runtime.InteropServices.ComTypes
 	public interface IEnumSTATDATA
 	{
 		[PreserveSig]
-		int Next (int celt, [MarshalAs (UnmanagedType.LPArray)] [Out] STATDATA [] rgelt, [MarshalAs (UnmanagedType.LPArray)] [Out] int [] pceltFetched);
+		int Next (int celt, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex=0)] [Out] STATDATA [] rgelt, [MarshalAs (UnmanagedType.LPArray, SizeConst=1)] [Out] int [] pceltFetched);
 		[PreserveSig]
 		int Skip (int celt);
 		[PreserveSig]
