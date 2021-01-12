@@ -261,6 +261,11 @@ sgen_thread_pool_create_context (int num_threads, SgenThreadPoolThreadInitFunc i
 
 	sgen_pointer_queue_init (&pool_contexts [contexts_num].job_queue, 0);
 
+	// Job batches normally split into num_threads * 4 jobs. Make room for up to four job batches in the deferred queue (should reduce flushes during minor collections).
+	pool_contexts [context_id].deferred_jobs_len = (num_threads * 4 * 4) + 1;
+	pool_contexts [context_id].deferred_jobs = (void **)sgen_alloc_internal_dynamic (sizeof (void *) * pool_contexts [context_id].deferred_jobs_len, INTERNAL_MEM_THREAD_POOL_JOB, TRUE);
+	pool_contexts [context_id].deferred_jobs_count = 0;
+
 	contexts_num++;
 
 	return context_id;
@@ -324,18 +329,6 @@ sgen_thread_pool_job_alloc (const char *name, SgenThreadPoolJobFunc func, size_t
 	return job;
 }
 
-SgenThreadPoolJobArray
-sgen_thread_pool_job_array_alloc (int num_jobs)
-{
-	return (SgenThreadPoolJobArray)sgen_alloc_internal_dynamic (sizeof (SgenThreadPoolJob *) * num_jobs, INTERNAL_MEM_THREAD_POOL_JOB, TRUE);
-}
-
-void
-sgen_thread_pool_job_array_free (SgenThreadPoolJobArray jobs, int num_jobs)
-{
-	sgen_free_internal_dynamic (jobs, sizeof (SgenThreadPoolJob *) * num_jobs, INTERNAL_MEM_THREAD_POOL_JOB);
-}
-
 void
 sgen_thread_pool_job_free (SgenThreadPoolJob *job)
 {
@@ -353,20 +346,43 @@ sgen_thread_pool_job_enqueue (int context_id, SgenThreadPoolJob *job)
 	mono_os_mutex_unlock (&lock);
 }
 
+/*
+ * LOCKING: Assumes the GC lock is held  (or it will race with sgen_thread_pool_flush_deferred_jobs)
+ */
 void
-sgen_thread_pool_job_array_enqueue (int context_id, SgenThreadPoolJobArray jobs, int num_jobs, gboolean signal)
+sgen_thread_pool_job_enqueue_deferred (int context_id, SgenThreadPoolJob *job)
 {
+	// Fast path assumes the GC lock is held.
+	pool_contexts [context_id].deferred_jobs [pool_contexts [context_id].deferred_jobs_count++] = job;
+	if (pool_contexts [context_id].deferred_jobs_count >= pool_contexts [context_id].deferred_jobs_len) {
+		// Slow path, flush jobs into queue, but don't signal workers.
+		sgen_thread_pool_flush_deferred_jobs (context_id, FALSE);
+	}
+}
+
+/*
+ * LOCKING: Assumes the GC lock is held (or it will race with sgen_thread_pool_job_enqueue_deferred).
+ */
+void
+sgen_thread_pool_flush_deferred_jobs (int context_id, gboolean signal)
+{
+	if (!signal && !sgen_thread_pool_have_deferred_jobs (context_id))
+		return;
+
 	mono_os_mutex_lock (&lock);
-
-	for (int i = 0; i < num_jobs; i++)
-		sgen_pointer_queue_add (&pool_contexts[context_id].job_queue, jobs[i]);
-
+	for (int i = 0; i < pool_contexts [context_id].deferred_jobs_count; i++) {
+		sgen_pointer_queue_add (&pool_contexts[context_id].job_queue, pool_contexts [context_id].deferred_jobs [i]);
+		pool_contexts [context_id].deferred_jobs [i] = NULL;
+	}
+	pool_contexts [context_id].deferred_jobs_count = 0;
 	if (signal)
 		mono_os_cond_broadcast (&work_cond);
-
 	mono_os_mutex_unlock (&lock);
+}
 
-	sgen_thread_pool_job_array_free (jobs, num_jobs);
+gboolean sgen_thread_pool_have_deferred_jobs (int context_id)
+{
+	return pool_contexts [context_id].deferred_jobs_count != 0;
 }
 
 void
@@ -460,18 +476,6 @@ sgen_thread_pool_job_alloc (const char *name, SgenThreadPoolJobFunc func, size_t
 	return job;
 }
 
-SgenThreadPoolJobArray
-sgen_thread_pool_job_array_alloc (int num_jobs)
-{
-	return (SgenThreadPoolJobArray)sgen_alloc_internal_dynamic (sizeof (SgenThreadPoolJob *) * num_jobs, INTERNAL_MEM_THREAD_POOL_JOB, TRUE);
-}
-
-void
-sgen_thread_pool_job_array_free (SgenThreadPoolJobArray jobs, int num_jobs)
-{
-	sgen_free_internal_dynamic (jobs, sizeof (SgenThreadPoolJob *) * num_jobs, INTERNAL_MEM_THREAD_POOL_JOB);
-}
-
 void
 sgen_thread_pool_job_free (SgenThreadPoolJob *job)
 {
@@ -484,8 +488,18 @@ sgen_thread_pool_job_enqueue (int context_id, SgenThreadPoolJob *job)
 }
 
 void
-sgen_thread_pool_job_array_enqueue (int context_id, SgenThreadPoolJobArray jobs, int num_jobs, gboolean signal)
+sgen_thread_pool_job_enqueue_deferred (int context_id, SgenThreadPoolJob *job)
 {
+}
+
+void
+sgen_thread_pool_flush_deferred_jobs (int context_id, gboolean signal)
+{
+}
+
+gboolean sgen_thread_pool_have_deferred_jobs (int context_id)
+{
+	return FALSE;
 }
 
 void

@@ -189,21 +189,30 @@ sgen_workers_enqueue_job (int generation, SgenThreadPoolJob *job, gboolean enque
 	sgen_thread_pool_job_enqueue (worker_contexts [generation].thread_pool_context, job);
 }
 
+/*
+ * LOCKING: Assumes the GC lock is held.
+ */
+
 void
-sgen_workers_enqueue_job_array (int generation, SgenThreadPoolJobArray jobs, int num_jobs, gboolean enqueue, gboolean signal)
+sgen_workers_enqueue_deferred_job (int generation, SgenThreadPoolJob *job, gboolean enqueue)
 {
 	if (!enqueue) {
-		SgenThreadPoolJob *job = NULL;
-		for (int i = 0; i < num_jobs; i++) {
-			job = jobs[i];
-			job->func (NULL, job);
-			sgen_thread_pool_job_free (job);
-		}
-		sgen_thread_pool_job_array_free (jobs, num_jobs);
+		job->func (NULL, job);
+		sgen_thread_pool_job_free (job);
 		return;
 	}
 
-	sgen_thread_pool_job_array_enqueue (worker_contexts[generation].thread_pool_context, jobs, num_jobs, signal);
+	sgen_thread_pool_job_enqueue_deferred (worker_contexts [generation].thread_pool_context, job);
+}
+
+/*
+ * LOCKING: Assumes the GC lock is held.
+ */
+
+void
+sgen_workers_flush_deferred_jobs (int generation, gboolean signal)
+{
+	sgen_thread_pool_flush_deferred_jobs (generation, signal);
 }
 
 static gboolean
@@ -488,6 +497,7 @@ sgen_workers_start_all_workers (int generation, SgenObjectOperations *object_ops
 	WorkerContext *context = &worker_contexts [generation];
 	int i;
 	SGEN_ASSERT (0, !context->started, "Why are we starting to work without finishing previous cycle");
+	SGEN_ASSERT (0, !sgen_thread_pool_have_deferred_jobs (generation), "All deferred jobs should have been flushed");
 
 	context->idle_func_object_ops_par = object_ops_par;
 	context->idle_func_object_ops_nopar = object_ops_nopar;
@@ -646,17 +656,13 @@ sgen_workers_enqueue_job (int generation, SgenThreadPoolJob *job, gboolean enque
 }
 
 void
-sgen_workers_enqueue_job_array (int generation, SgenThreadPoolJobArray jobs, int num_jobs, gboolean enqueue, gboolean signal)
+sgen_workers_enqueue_deferred_job (int generation, SgenThreadPoolJob *job, gboolean enqueue)
 {
-	if (!enqueue) {
-		SgenThreadPoolJob *job = NULL;
-		for (int i = 0; i < num_jobs; i++) {
-			job = jobs[i];
-			job->func (NULL, job);
-			sgen_thread_pool_job_free (job);
-		}
-		sgen_thread_pool_job_array_free (jobs, num_jobs);
-	}
+	sgen_workers_enqueue_job (generation, job, enqueue);
+}
+
+void sgen_workers_flush_deferred_jobs (int generation, gboolean signal)
+{
 }
 
 gboolean

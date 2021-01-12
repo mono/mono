@@ -1657,41 +1657,34 @@ init_gray_queue (SgenGrayQueue *gc_thread_gray_queue)
 }
 
 static void
-enqueue_scan_remembered_set_jobs (SgenGrayQueue *gc_thread_gray_queue, SgenObjectOperations *ops, gboolean enqueue, gboolean signal)
+enqueue_scan_remembered_set_jobs (SgenGrayQueue *gc_thread_gray_queue, SgenObjectOperations *ops, gboolean is_parallel)
 {
 	int i, split_count = sgen_workers_get_job_split_count (GENERATION_NURSERY);
 	size_t num_major_sections = sgen_major_collector.get_num_major_sections ();
-	int num_jobs = split_count * 2 + 1;
-	SgenThreadPoolJobArray job_array;
-	SgenThreadPoolJobArray current_job;
 	ScanJob *sj;
-	ParallelScanJob *psj;
 
-	current_job = job_array = sgen_thread_pool_job_array_alloc (num_jobs);
-	
-	*current_job = sgen_thread_pool_job_alloc ("scan wbroots", job_scan_wbroots, sizeof (ScanJob));
-	sj = (ScanJob*)*current_job++;
+	sj = (ScanJob*)sgen_thread_pool_job_alloc ("scan wbroots", job_scan_wbroots, sizeof (ScanJob));
 	sj->ops = ops;
 	sj->gc_thread_gray_queue = gc_thread_gray_queue;
+	sgen_workers_enqueue_deferred_job (GENERATION_NURSERY, &sj->job, is_parallel);
 
 	for (i = 0; i < split_count; i++) {
-		*current_job = sgen_thread_pool_job_alloc ("scan major remsets", job_scan_major_card_table, sizeof (ParallelScanJob));
-		psj = (ParallelScanJob*)*current_job++;
+		ParallelScanJob *psj;
+		psj = (ParallelScanJob*)sgen_thread_pool_job_alloc ("scan major remsets", job_scan_major_card_table, sizeof (ParallelScanJob));
 		psj->scan_job.ops = ops;
 		psj->scan_job.gc_thread_gray_queue = gc_thread_gray_queue;
 		psj->job_index = i;
 		psj->job_split_count = split_count;
 		psj->data = num_major_sections / split_count;
+		sgen_workers_enqueue_deferred_job (GENERATION_NURSERY, &psj->scan_job.job, is_parallel);
 
-		*current_job = sgen_thread_pool_job_alloc ("scan LOS remsets", job_scan_los_card_table, sizeof (ParallelScanJob));
-		psj = (ParallelScanJob*)*current_job++;
+		psj = (ParallelScanJob*)sgen_thread_pool_job_alloc ("scan LOS remsets", job_scan_los_card_table, sizeof (ParallelScanJob));
 		psj->scan_job.ops = ops;
 		psj->scan_job.gc_thread_gray_queue = gc_thread_gray_queue;
 		psj->job_index = i;
 		psj->job_split_count = split_count;
+		sgen_workers_enqueue_deferred_job (GENERATION_NURSERY, &psj->scan_job.job, is_parallel);
 	}
-
-	sgen_workers_enqueue_job_array (GENERATION_NURSERY, job_array, num_jobs, enqueue, signal);
 }
 
 void
@@ -1699,35 +1692,30 @@ sgen_iterate_all_block_ranges (sgen_cardtable_block_callback callback, gboolean 
 {
 	int i, split_count = sgen_workers_get_job_split_count (GENERATION_NURSERY);
 	size_t num_major_sections = sgen_major_collector.get_num_major_sections ();
-	int num_jobs = split_count * 2 + 1;
-	SgenThreadPoolJobArray job_array;
-	SgenThreadPoolJobArray current_job;
 	ParallelIterateBlockRangesJob *pjob;
 
-	current_job = job_array = sgen_thread_pool_job_array_alloc (num_jobs);
-
-	*current_job = sgen_thread_pool_job_alloc ("iterate wbroots block ranges", job_wbroots_iterate_live_block_ranges, sizeof (ParallelIterateBlockRangesJob));
-	pjob = (ParallelIterateBlockRangesJob*)*current_job++;
+	pjob = (ParallelIterateBlockRangesJob*)sgen_thread_pool_job_alloc ("iterate wbroots block ranges", job_wbroots_iterate_live_block_ranges, sizeof (ParallelIterateBlockRangesJob));
 	pjob->job_index = 0;
 	pjob->job_split_count = split_count;
 	pjob->callback = callback;
+	sgen_workers_enqueue_deferred_job (GENERATION_NURSERY, &pjob->job, is_parallel);
 
 	for (i = 0; i < split_count; i++) {
-		*current_job = sgen_thread_pool_job_alloc ("iterate major block ranges", job_major_collector_iterate_block_ranges, sizeof (ParallelIterateBlockRangesJob));
-		pjob = (ParallelIterateBlockRangesJob*)*current_job++;
+		pjob = (ParallelIterateBlockRangesJob*)sgen_thread_pool_job_alloc ("iterate major block ranges", job_major_collector_iterate_block_ranges, sizeof (ParallelIterateBlockRangesJob));
 		pjob->job_index = i;
 		pjob->job_split_count = split_count;
 		pjob->data = num_major_sections / split_count;
 		pjob->callback = callback;
+		sgen_workers_enqueue_deferred_job (GENERATION_NURSERY, &pjob->job, is_parallel);
 
-		*current_job = sgen_thread_pool_job_alloc ("iterate LOS block ranges", job_los_iterate_live_block_ranges, sizeof (ParallelIterateBlockRangesJob));
-		pjob = (ParallelIterateBlockRangesJob*)*current_job++;
+		pjob = (ParallelIterateBlockRangesJob*)sgen_thread_pool_job_alloc ("iterate LOS block ranges", job_los_iterate_live_block_ranges, sizeof (ParallelIterateBlockRangesJob));
 		pjob->job_index = i;
 		pjob->job_split_count = split_count;
 		pjob->callback = callback;
+		sgen_workers_enqueue_deferred_job (GENERATION_NURSERY, &pjob->job, is_parallel);
 	}
 
-	sgen_workers_enqueue_job_array (GENERATION_NURSERY, job_array, num_jobs, is_parallel, is_parallel);
+	sgen_workers_flush_deferred_jobs (GENERATION_NURSERY, is_parallel);
 
 	if (is_parallel) {
 		sgen_workers_start_all_workers (GENERATION_NURSERY, NULL, NULL, NULL);
@@ -1736,65 +1724,55 @@ sgen_iterate_all_block_ranges (sgen_cardtable_block_callback callback, gboolean 
 }
 
 static void
-enqueue_scan_from_roots_jobs (SgenGrayQueue *gc_thread_gray_queue, char *heap_start, char *heap_end, SgenObjectOperations *ops, gboolean enqueue, gboolean signal)
+enqueue_scan_from_roots_jobs (SgenGrayQueue *gc_thread_gray_queue, char *heap_start, char *heap_end, SgenObjectOperations *ops, gboolean is_parallel)
 {
-	SgenThreadPoolJobArray job_array;
-	SgenThreadPoolJobArray current_job;
-	int num_jobs = 4;
 	ScanFromRegisteredRootsJob *scrrj;
 	ScanThreadDataJob *stdj;
 	ScanFinalizerEntriesJob *sfej;
 
-	if (sgen_current_collection_generation == GENERATION_OLD)
-		num_jobs++;
-
-	current_job = job_array = sgen_thread_pool_job_array_alloc (num_jobs);
-
 	/* registered roots, this includes static fields */
 
-	*current_job = sgen_thread_pool_job_alloc ("scan from registered roots normal", job_scan_from_registered_roots, sizeof (ScanFromRegisteredRootsJob));
-	scrrj = (ScanFromRegisteredRootsJob*)*current_job++;
+	scrrj = (ScanFromRegisteredRootsJob*)sgen_thread_pool_job_alloc ("scan from registered roots normal", job_scan_from_registered_roots, sizeof (ScanFromRegisteredRootsJob));
 	scrrj->scan_job.ops = ops;
 	scrrj->scan_job.gc_thread_gray_queue = gc_thread_gray_queue;
 	scrrj->heap_start = heap_start;
 	scrrj->heap_end = heap_end;
 	scrrj->root_type = ROOT_TYPE_NORMAL;
+	sgen_workers_enqueue_deferred_job (sgen_current_collection_generation, &scrrj->scan_job.job, is_parallel);
 
 	if (sgen_current_collection_generation == GENERATION_OLD) {
 		/* During minors we scan the cardtable for these roots instead */
-		*current_job = sgen_thread_pool_job_alloc ("scan from registered roots wbarrier", job_scan_from_registered_roots, sizeof (ScanFromRegisteredRootsJob));
-		scrrj = (ScanFromRegisteredRootsJob*)*current_job++;
+		scrrj = (ScanFromRegisteredRootsJob*)sgen_thread_pool_job_alloc ("scan from registered roots wbarrier", job_scan_from_registered_roots, sizeof (ScanFromRegisteredRootsJob));
 		scrrj->scan_job.ops = ops;
 		scrrj->scan_job.gc_thread_gray_queue = gc_thread_gray_queue;
 		scrrj->heap_start = heap_start;
 		scrrj->heap_end = heap_end;
 		scrrj->root_type = ROOT_TYPE_WBARRIER;
+		sgen_workers_enqueue_deferred_job (sgen_current_collection_generation, &scrrj->scan_job.job, is_parallel);
 	}
 
 	/* Threads */
 
-	*current_job = sgen_thread_pool_job_alloc ("scan thread data", job_scan_thread_data, sizeof (ScanThreadDataJob));
-	stdj = (ScanThreadDataJob*)*current_job++;
+	stdj = (ScanThreadDataJob*)sgen_thread_pool_job_alloc ("scan thread data", job_scan_thread_data, sizeof (ScanThreadDataJob));
 	stdj->scan_job.ops = ops;
 	stdj->scan_job.gc_thread_gray_queue = gc_thread_gray_queue;
 	stdj->heap_start = heap_start;
 	stdj->heap_end = heap_end;
+	sgen_workers_enqueue_deferred_job (sgen_current_collection_generation, &stdj->scan_job.job, is_parallel);
 
 	/* Scan the list of objects ready for finalization. */
 
-	*current_job = sgen_thread_pool_job_alloc ("scan finalizer entries", job_scan_finalizer_entries, sizeof (ScanFinalizerEntriesJob));
-	sfej = (ScanFinalizerEntriesJob*)*current_job++;
+	sfej = (ScanFinalizerEntriesJob*)sgen_thread_pool_job_alloc ("scan finalizer entries", job_scan_finalizer_entries, sizeof (ScanFinalizerEntriesJob));
 	sfej->scan_job.ops = ops;
 	sfej->scan_job.gc_thread_gray_queue = gc_thread_gray_queue;
 	sfej->queue = &fin_ready_queue;
+	sgen_workers_enqueue_deferred_job (sgen_current_collection_generation, &sfej->scan_job.job, is_parallel);
 
-	*current_job = sgen_thread_pool_job_alloc ("scan critical finalizer entries", job_scan_finalizer_entries, sizeof (ScanFinalizerEntriesJob));
-	sfej = (ScanFinalizerEntriesJob*)*current_job++;
+	sfej = (ScanFinalizerEntriesJob*)sgen_thread_pool_job_alloc ("scan critical finalizer entries", job_scan_finalizer_entries, sizeof (ScanFinalizerEntriesJob));
 	sfej->scan_job.ops = ops;
 	sfej->scan_job.gc_thread_gray_queue = gc_thread_gray_queue;
 	sfej->queue = &critical_fin_queue;
-
-	sgen_workers_enqueue_job_array (sgen_current_collection_generation, job_array, num_jobs, enqueue, signal);
+	sgen_workers_enqueue_deferred_job (sgen_current_collection_generation, &sfej->scan_job.job, is_parallel);
 }
 
 /*
@@ -1908,7 +1886,7 @@ collect_nursery (const char *reason, gboolean is_overflow)
 	SGEN_LOG (2, "Minor scan copy/clear remsets: %lld usecs", (long long)(TV_ELAPSED (atv, btv) / 10));
 
 	TV_GETTIME (atv);
-	enqueue_scan_remembered_set_jobs (&gc_thread_gray_queue, is_parallel ? NULL : object_ops_nopar, is_parallel, FALSE);
+	enqueue_scan_remembered_set_jobs (&gc_thread_gray_queue, is_parallel ? NULL : object_ops_nopar, is_parallel);
 	TV_GETTIME (btv);
 
 	if (!is_parallel) {
@@ -1922,7 +1900,9 @@ collect_nursery (const char *reason, gboolean is_overflow)
 	TV_GETTIME (atv);
 	time_minor_scan_pinned += TV_ELAPSED (btv, atv);
 
-	enqueue_scan_from_roots_jobs (&gc_thread_gray_queue, sgen_nursery_section->data, sgen_nursery_section->end_data, is_parallel ? NULL : object_ops_nopar, is_parallel, TRUE);
+	enqueue_scan_from_roots_jobs (&gc_thread_gray_queue, sgen_nursery_section->data, sgen_nursery_section->end_data, is_parallel ? NULL : object_ops_nopar, is_parallel);
+
+	sgen_workers_flush_deferred_jobs (GENERATION_NURSERY, is_parallel);
 
 	if (is_parallel) {
 		gray_queue_redirect (&gc_thread_gray_queue);
@@ -2186,7 +2166,7 @@ major_copy_or_mark_from_roots (SgenGrayQueue *gc_thread_gray_queue, size_t *old_
 	TV_GETTIME (atv);
 	time_major_scan_pinned += TV_ELAPSED (btv, atv);
 
-	enqueue_scan_from_roots_jobs (gc_thread_gray_queue, heap_start, heap_end, object_ops_nopar, FALSE, FALSE);
+	enqueue_scan_from_roots_jobs (gc_thread_gray_queue, heap_start, heap_end, object_ops_nopar, FALSE);
 
 	TV_GETTIME (btv);
 	time_major_scan_roots += TV_ELAPSED (atv, btv);
