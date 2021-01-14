@@ -757,6 +757,10 @@ namespace System.Drawing
 				throw new System.ArgumentException ("Invalid Argument", "stream");
 
 			ushort dirEntryCount = reader.ReadUInt16();
+
+			if (dirEntryCount == 0)
+				throw new Win32Exception (0, "Zero directory entry count.");
+
 			imageData = new ImageData [dirEntryCount]; 
 			iconDir.idCount = dirEntryCount; 
 			iconDir.idEntries = new IconDirEntry [dirEntryCount];
@@ -812,8 +816,8 @@ Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 					valid++;
 			}
 
-			if (valid == 0) 
-				throw new Win32Exception (0, "No valid icon entry were found.");
+			if (valid == 0)
+				iconDir.idEntries [0].ignore = false;
 
 			// if we havent found the best match, return the one with the
 			// largest size. Is this approach correct??
@@ -823,8 +827,16 @@ Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 					if (iconDir.idEntries [j].bytesInRes >= largestSize && !iconDir.idEntries [j].ignore)	{
 						largestSize = iconDir.idEntries [j].bytesInRes;
 						this.id = (ushort) j;
-						this.iconSize.Height = iconDir.idEntries [j].height;
-						this.iconSize.Width = iconDir.idEntries [j].width;
+						if (iconDir.idEntries[j].height == 0 && iconDir.idEntries[j].width == 0)
+						{
+							this.iconSize.Height = 256;
+							this.iconSize.Width = 256;
+						}
+						else
+						{
+							this.iconSize.Height = iconDir.idEntries [j].height;
+							this.iconSize.Width = iconDir.idEntries [j].width;
+						}
 					}
 				}
 			}
@@ -845,8 +857,48 @@ Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 				IconImage iidata = new IconImage();
 				BitmapInfoHeader bih = new BitmapInfoHeader();
 				stream.Seek (iconDir.idEntries [j].imageOffset, SeekOrigin.Begin);
+				byte [] png_header = new byte[] {0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a};
 				byte [] buffer = new byte [iconDir.idEntries [j].bytesInRes];
 				stream.Read (buffer, 0, buffer.Length);
+
+
+				if (iconDir.idEntries[j].height == 0 && iconDir.idEntries[j].width == 0)
+				{
+					int i;
+
+					for (i = 0; i < 8; ++i)
+						if (png_header[i] != buffer[i])
+							break;
+					if (i == 8)
+					{
+					    /* PNG image, convert it. */
+						Bitmap bmp = new Bitmap(new MemoryStream(buffer));
+						AlphaImage aidata = new AlphaImage ();
+
+						aidata.iconHeader.biSize = 40;
+						aidata.iconHeader.biWidth = bmp.Width;
+						aidata.iconHeader.biHeight = bmp.Height;
+						aidata.iconHeader.biPlanes = 1;
+						aidata.iconHeader.biBitCount = 32;
+						aidata.iconHeader.biCompression = 0;
+						aidata.iconHeader.biSizeImage = 0;
+						aidata.iconHeader.biXPelsPerMeter = 0;
+						aidata.iconHeader.biYPelsPerMeter = 0;
+						aidata.iconHeader.biClrUsed = 0;
+						aidata.iconHeader.biClrImportant = 0;
+
+						BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
+								System.Drawing.Imaging.ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+						int bytes  = Math.Abs(bmpData.Stride) * bmp.Height;
+						IntPtr ptr = bmpData.Scan0;
+						aidata.iconARGB = new byte[bytes];
+						System.Runtime.InteropServices.Marshal.Copy(ptr, aidata.iconARGB, 0, bytes);
+						bmp.UnlockBits(bmpData);
+						imageData [j] = aidata;
+						continue;
+					}
+				}
+
 				BinaryReader bihReader = new BinaryReader (new MemoryStream(buffer));
 				bih.biSize = bihReader.ReadUInt32 ();
 				bih.biWidth = bihReader.ReadInt32 ();

@@ -156,6 +156,10 @@ namespace MonoTests.System.Drawing {
 			Icon ret = new Icon (orig, 0, 0);
 			Assert.AreNotEqual (0, ret.Height);
 			Assert.AreNotEqual (0, ret.Width);
+
+			Icon ret2 = new Icon (orig, 256, 256);
+			Assert.AreNotEqual (256, ret2.Height);
+			Assert.AreNotEqual (256, ret2.Width);
 		}
 
 		[Test]
@@ -494,7 +498,10 @@ namespace MonoTests.System.Drawing {
 		public void Only256InFile ()
 		{
 			using (FileStream fs = File.OpenRead (TestResourceHelper.GetFullPathOfResource ("Test/System.Drawing/bitmaps/only256.ico"))) {
-				Assert.Throws<Win32Exception> (() => new Icon (fs, 0, 0));
+				Icon ic = new Icon (fs, 0, 0);
+
+				Assert.AreEqual(ic.Width, 256, "#B1");
+				Assert.AreEqual(ic.Height, 256, "#B2");
 			}
 		}
 
