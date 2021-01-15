@@ -42,7 +42,7 @@ namespace Mono.Net.Security
 		{
 #if MONOTOUCH
 			is_macosx = true;
-#elif (MONODROID || ORBIS) && !MOBILE_DESKTOP_HOST
+#elif (MONODROID || ORBIS || UNITY_AOT) && !MOBILE_DESKTOP_HOST
 			is_macosx = false;
 #else
 			is_macosx = Environment.OSVersion.Platform != PlatformID.Win32NT && System.IO.File.Exists (OSX509Certificates.SecurityLibrary);
@@ -156,7 +156,7 @@ namespace Mono.Net.Security
 			}
 #else
 			if (is_macosx) {
-#if !ORBIS
+#if !ORBIS && !UNITY_AOT
 				// Attempt to use OSX certificates
 				// Ideally we should return the SecTrustResult
 				OSX509Certificates.SecTrustResult trustResult = OSX509Certificates.SecTrustResult.Deny;

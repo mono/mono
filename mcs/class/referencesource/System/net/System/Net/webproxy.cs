@@ -515,7 +515,7 @@ namespace System.Net {
                 return data;
 
             return new WebProxy (true);
-#elif ORBIS
+#elif ORBIS || UNITY_AOT
             return new WebProxy (true);
 #else
             if (Platform.IsMacOS) {

@@ -2,6 +2,7 @@ use Cwd;
 use Cwd 'abs_path';
 use File::Basename;
 use File::Path;
+use strict;
 
 if($^O ne "darwin")
 {
@@ -16,50 +17,25 @@ my $extraBuildTools = "$monoroot/external/buildscripts/artifacts/Stevedore/mono-
 my $profileRoot = "tmp/lib/mono";
 my $referenceProfile = "$profileRoot/4.7.1-api";
 
-print ">>> Modifying the unityjit-macos profile to match the .NET 4.7.1 API\n";
+my @hostPlatforms = ("win32", "macos", "linux");
+my @compilationVariants = ("unityjit", "unityaot");
 
-$result = system("mono",
-					"$extraBuildTools/ProfileStubber.exe",
-					"--reference-profile=$referenceProfile",
-					"--stub-profile=$profileRoot/unityjit-macos");
-
-if ($result ne 0)
+foreach my $hostPlatform(@hostPlatforms)
 {
-	die("Failed to stub the unityjit-macos profile\n");
-}
+	foreach my $compilationVariant(@compilationVariants)
+	{
+		my $profileName = "$compilationVariant-$hostPlatform";
 
-print ">>> Modifying the unityjit-win32 profile to match the .NET 4.7.1 API\n";
+		print ">>> Modifying the $profileName profile to match the .NET 4.7.1 API\n";
 
-$result = system("mono",
-					"$extraBuildTools/ProfileStubber.exe",
-					"--reference-profile=$referenceProfile",
-					"--stub-profile=$profileRoot/unityjit-win32");
+		my $result = system("mono",
+							"$extraBuildTools/ProfileStubber.exe",
+							"--reference-profile=$referenceProfile",
+							"--stub-profile=$profileRoot/$profileName");
 
-if ($result ne 0)
-{
-	die("Failed to stub the unityjit-win32 profile\n");
-}
-
-print ">>> Modifying the unityjit-linux profile to match the .NET 4.7.1 API\n";
-
-$result = system("mono",
-					"$extraBuildTools/ProfileStubber.exe",
-					"--reference-profile=$referenceProfile",
-					"--stub-profile=$profileRoot/unityjit-linux");
-
-if ($result ne 0)
-{
-	die("Failed to stub the unityjit-linux profile\n");
-}
-
-print ">>> Modifying the unityaot profile to match the .NET 4.7.1 API\n";
-
-$result = system("mono",
-					"$extraBuildTools/ProfileStubber.exe",
-					"--reference-profile=$referenceProfile",
-					"--stub-profile=$profileRoot/unityaot");
-
-if ($result ne 0)
-{
-	die("Failed to stub the unityaot profile\n");
+		if ($result ne 0)
+		{
+			die("Failed to stub the $profileName profile\n");
+		}
+	}
 }

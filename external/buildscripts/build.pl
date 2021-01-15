@@ -1398,10 +1398,7 @@ if ($build)
 		# }
 
 
-		my @hostPlatforms = ();
-		push @hostPlatforms, "win32";
-		push @hostPlatforms, "macos";
-		push @hostPlatforms, "linux";
+		my @hostPlatforms = ("win32", "macos", "linux");
 
 		foreach my $hostPlatform(@hostPlatforms)
 		{
@@ -1410,9 +1407,8 @@ if ($build)
 
 			CopyProfile("unityjit-$hostPlatform");
 			CopyProfile("net_4_x-$hostPlatform");
+			CopyProfile("unityaot-$hostPlatform");
 		}
-
-		CopyProfile("unityaot");
 
 		chdir("$monoroot");
 
@@ -1760,16 +1756,24 @@ chdir ($currentdir);
 sub CopyProfile
 {
 	my ($profileName) = @_;
-
 	my $hostPlatformDestDir = "$monoprefix/lib/mono/$profileName";
-	print(">>> Copying $profileName to $hostPlatformDestDir directory\n");
+	my $sourcePlatformProfile = "$monoroot/mcs/class/lib/$profileName";
 
-	print(">>> Cleaning $hostPlatformDestDir\n");
-	system("rm -rf $hostPlatformDestDir");
+	if (-d $sourcePlatformProfile)
+	{
+		print(">>> Copying $profileName to $hostPlatformDestDir directory\n");
 
-	system("mkdir -p $hostPlatformDestDir") eq 0 or die("failed to make directory $hostPlatformDestDir\n");
-	system("mkdir -p $hostPlatformDestDir/Facades") eq 0 or die("failed to make directory $hostPlatformDestDir/Facades\n");
+		print(">>> Cleaning $hostPlatformDestDir\n");
+		system("rm -rf $hostPlatformDestDir");
 
-	system("cp $monoroot/mcs/class/lib/$profileName/*.dll $hostPlatformDestDir") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName to $hostPlatformDestDir\n");
-	system("cp $monoroot/mcs/class/lib/$profileName/Facades/*.dll $hostPlatformDestDir/Facades") eq 0 or die("Failed copying dlls from $monoroot/mcs/class/lib/$profileName/Facades to $hostPlatformDestDir/Facades\n");
+		system("mkdir -p $hostPlatformDestDir") eq 0 or die("failed to make directory $hostPlatformDestDir\n");
+		system("mkdir -p $hostPlatformDestDir/Facades") eq 0 or die("failed to make directory $hostPlatformDestDir/Facades\n");
+
+		system("cp $sourcePlatformProfile/*.dll $hostPlatformDestDir") eq 0 or die("Failed copying dlls from $sourcePlatformProfile to $hostPlatformDestDir\n");
+		system("cp $sourcePlatformProfile/Facades/*.dll $hostPlatformDestDir/Facades") eq 0 or die("Failed copying dlls from $sourcePlatformProfile/Facades to $hostPlatformDestDir/Facades\n");
+	}
+	else
+	{
+		print (">>> Profile dir: $sourcePlatformProfile did not exist!");
+	}
 }
