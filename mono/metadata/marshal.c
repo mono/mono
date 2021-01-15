@@ -4442,8 +4442,8 @@ mono_marshal_get_strelemref_wrapper_name (MonoStelemrefKind kind)
  *	- Maybe mve some MonoClass field into the vtable to reduce the number of loads
  *	- Add a case for arrays of arrays.
  */
-static MonoMethod*
-get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
+MonoMethod*
+mono_marshal_get_virtual_stelemref_wrapper (MonoStelemrefKind kind)
 {
 	static MonoMethod *cached_methods [STELEMREF_KIND_COUNT] = { NULL }; /*object iface sealed regular*/
 	static MonoMethodSignature *signature;
@@ -4505,7 +4505,7 @@ mono_marshal_get_virtual_stelemref (MonoClass *array_class)
 	g_assert (m_class_get_rank (array_class) == 1);
 	kind = get_virtual_stelemref_kind (m_class_get_element_class (array_class));
 
-	return get_virtual_stelemref_wrapper (kind);
+	return mono_marshal_get_virtual_stelemref_wrapper (kind);
 }
 
 MonoMethod**
@@ -4517,7 +4517,7 @@ mono_marshal_get_virtual_stelemref_wrappers (int *nwrappers)
 	*nwrappers = STELEMREF_KIND_COUNT;
 	res = (MonoMethod **)g_malloc0 (STELEMREF_KIND_COUNT * sizeof (MonoMethod*));
 	for (i = 0; i < STELEMREF_KIND_COUNT; ++i)
-		res [i] = get_virtual_stelemref_wrapper ((MonoStelemrefKind)i);
+		res [i] = mono_marshal_get_virtual_stelemref_wrapper ((MonoStelemrefKind)i);
 	return res;
 }
 
