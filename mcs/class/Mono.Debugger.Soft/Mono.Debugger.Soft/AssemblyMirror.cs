@@ -26,6 +26,7 @@ namespace Mono.Debugger.Soft
 		Dictionary<string, long> typeCache = new Dictionary<string, long> ();
 		Dictionary<uint, long> tokenTypeCache = new Dictionary<uint, long> ();
 		Dictionary<uint, long> tokenMethodCache = new Dictionary<uint, long> ();
+		CustomAttributeDataMirror[] cattrs;
 
 #if ENABLE_CECIL
 		AssemblyDefinition meta;
@@ -234,6 +235,37 @@ namespace Mono.Debugger.Soft
 				has_debug_info = vm.conn.Assembly_HasDebugInfo (id);
 				return has_debug_info.Value;
 			}
+		}
+
+		/* Since protocol version 2.58 */
+		public CustomAttributeDataMirror[] GetCustomAttributes () {
+			return GetCAttrs (null);
+		}
+
+		/* Since protocol version 2.58 */
+		public CustomAttributeDataMirror[] GetCustomAttributes (TypeMirror attributeType) {
+			if (attributeType == null)
+				throw new ArgumentNullException ("attributeType");
+			return GetCAttrs (attributeType);
+		}
+
+		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type) {
+			vm.CheckProtocolVersion (2, 58);
+
+#if ENABLE_CECIL
+			if (cattrs == null && meta != null && !Metadata.HasCustomAttributes)
+				cattrs = new CustomAttributeDataMirror [0];
+#endif
+
+			if (cattrs == null) {
+				CattrInfo[] info = vm.conn.Assembly_GetCustomAttributes (id, 0);
+				cattrs = CustomAttributeDataMirror.Create (vm, info);
+			}
+			var res = new List<CustomAttributeDataMirror> ();
+			foreach (var attr in cattrs)
+				if (type == null || attr.Constructor.DeclaringType == type)
+					res.Add (attr);
+			return res.ToArray ();
 		}
 	}
 }
