@@ -878,7 +878,7 @@ mono_jit_thread_attach (MonoDomain *domain)
 	if (!attached) {
 		// #678164
 		gboolean background = TRUE;
-		mono_thread_attach_external_native_thread (domain, background);
+		mono_thread_attach_external_native_thread (mono_get_root_domain (), background);
 
 		/* mono_jit_thread_attach is external-only and not called by
 		 * the runtime on any of our own threads.  So if we get here,
@@ -891,8 +891,10 @@ mono_jit_thread_attach (MonoDomain *domain)
 	}
 
 	orig = mono_domain_get ();
-	if (orig != domain)
+	if (orig != domain) {
+		mono_thread_push_appdomain_ref (domain);
 		mono_domain_set_fast (domain, TRUE);
+	}
 
 	return orig != domain ? orig : NULL;
 }
@@ -907,8 +909,10 @@ mono_jit_set_domain (MonoDomain *domain)
 {
 	g_assert (!mono_threads_is_blocking_transition_enabled ());
 
-	if (domain)
+	if (domain) {
 		mono_domain_set_fast (domain, TRUE);
+		mono_thread_pop_appdomain_ref ();
+	}
 }
 
 /**
