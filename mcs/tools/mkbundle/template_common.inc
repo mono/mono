@@ -49,6 +49,8 @@ validate_api_struct ()
 	exit (1);
 }
 
+#endif
+
 static void
 init_default_mono_api_struct ()
 {
@@ -62,4 +64,3 @@ init_default_mono_api_struct ()
 #endif // USE_DEFAULT_MONO_API_STRUCT
 }
 
-#endif
