@@ -381,12 +381,13 @@ Provide the path to the mono runtime to use for AOTing assemblies.
 (Experimental) Deduplicate AOT'ed methods based on a unique mangling of method names.
 .TP
 .I "--aot-mode MODE"
-MODE can be either "full" or "llvmonly" at this time.
-Currently, mkbundle supports three AOT modes. The default mode (this option unset)
+MODE can be either "full", "llvmonly" or "hybrid" at this time.
+Currently, mkbundle supports four AOT modes. The default mode (this option unset)
 will AOT methods but will fall back on runtime codegen where it is much faster or offers
 a more full compatibility profile. The "full" setting will generate the necessary stubs to
-not require runtime code generation. The "llvmonly" setting does the same, but forces all codegen
-to go through the llvm backend.
+not require runtime code generation. The "llvmonly" setting does the same as the "full" mode,
+but forces all codegen to go through the llvm backend. The "hybrid" mode allows the IL to be
+stripped, similar to the "full" mode, but without fully disabling JIT.
 
 .SH WINDOWS
 If you are using the old embedding on Windows systems, it possible to use
