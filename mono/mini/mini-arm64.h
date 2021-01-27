@@ -216,10 +216,10 @@ static void mono_arm_restore_jit_protect_mode(jit_protect_mode* previous_jit_pro
     switch (*previous_jit_protect_mode)
     {
     case JPM_ENABLED:
+    case JPM_NONE:
         mono_arm_jit_write_protect_enable();
         break;
     case JPM_DISABLED:
-    case JPM_NONE:
     default:
         mono_arm_jit_write_protect_disable();
     }
