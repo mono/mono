@@ -57,14 +57,14 @@ namespace System.Runtime.InteropServices
 		public static readonly int SystemMaxDBCSCharSize = 2; // don't know what this is
 		public static readonly int SystemDefaultCharSize = Environment.IsRunningOnWindows ? 2 : 1;
 
-#if !MOBILE || WINAOT
+#if !MOBILE || WINAOT || UNITY_AOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int AddRefInternal (IntPtr pUnk);
 #endif
 
 		public static int AddRef (IntPtr pUnk)
 		{
-#if !MOBILE || WINAOT
+#if !MOBILE || WINAOT || UNITY_AOT
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentNullException ("pUnk");
 			return AddRefInternal (pUnk);
@@ -298,7 +298,9 @@ namespace System.Runtime.InteropServices
 
 		public static object CreateWrapperOfType (object o, Type t)
 		{
-#if FULL_AOT_RUNTIME || NETCORE || DISABLE_REMOTING
+#if UNITY_AOT
+			throw new NotImplementedException("Marshal.CreateWrapperOfType is not implemented.");
+#elif FULL_AOT_RUNTIME || NETCORE || DISABLE_REMOTING
 			throw new PlatformNotSupportedException ();
 #else
 			__ComObject co = o as __ComObject;
@@ -395,7 +397,7 @@ namespace System.Runtime.InteropServices
 			FreeHGlobal (s);
 		}
 
-#if !FULL_AOT_RUNTIME && !MONOTOUCH
+#if (!FULL_AOT_RUNTIME && !MONOTOUCH) || UNITY_AOT
 		public static Guid GenerateGuidForType (Type type)
 		{
 			return type.GUID;
@@ -430,15 +432,17 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-#if !MOBILE && !NETCORE
+#if (!MOBILE && !NETCORE) || UNITY_AOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetCCW (object o, Type T);
 
 		private static IntPtr GetComInterfaceForObjectInternal (object o, Type T)
 		{
+#if !UNITY_AOT
 			if (IsComObject (o))
 				return ((__ComObject)o).GetInterface (T);
 			else
+#endif
 				return GetCCW (o, T);
 		}
 #endif
@@ -446,7 +450,7 @@ namespace System.Runtime.InteropServices
 
 		public static IntPtr GetComInterfaceForObject (object o, Type T)
 		{
-#if MOBILE || NETCORE
+#if (MOBILE || NETCORE) && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			IntPtr pItf = GetComInterfaceForObjectInternal (o, T);
@@ -467,7 +471,7 @@ namespace System.Runtime.InteropServices
 			return GetComInterfaceForObject ((object)o, typeof (T));
 		}
 
-#if !FULL_AOT_RUNTIME && !NETCORE && !MONOTOUCH
+#if (!FULL_AOT_RUNTIME && !NETCORE && !MONOTOUCH) || UNITY_AOT
 
 		public static IntPtr GetComInterfaceForObjectInContext (object o, Type t)
 		{
@@ -553,14 +557,14 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static int GetHRForLastWin32Error()
 		{
-#if FULL_AOT_RUNTIME
+#if FULL_AOT_RUNTIME && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			throw new NotImplementedException ();
 #endif
 		}
 
-#if !FULL_AOT_RUNTIME && !MONOTOUCH
+#if (!FULL_AOT_RUNTIME && !MONOTOUCH) || UNITY_AOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetIDispatchForObjectInternal (object o);
 
@@ -610,7 +614,7 @@ namespace System.Runtime.InteropServices
 
 		public static IntPtr GetIUnknownForObject (object o)
 		{
-#if FULL_AOT_RUNTIME || MONOTOUCH
+#if (FULL_AOT_RUNTIME || MONOTOUCH) && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			IntPtr pUnk = GetIUnknownForObjectInternal (o);
@@ -622,7 +626,7 @@ namespace System.Runtime.InteropServices
 
 		public static void GetNativeVariantForObject (object obj, IntPtr pDstNativeVariant)
 		{
-#if FULL_AOT_RUNTIME || NETCORE
+#if (FULL_AOT_RUNTIME || NETCORE) && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			Variant vt = new Variant();
@@ -635,29 +639,31 @@ namespace System.Runtime.InteropServices
 			GetNativeVariantForObject ((object)obj, pDstNativeVariant);
 		}
 
-#if !MOBILE && !FULL_AOT_RUNTIME
+#if (!MOBILE && !FULL_AOT_RUNTIME) || UNITY_AOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern object GetObjectForCCW (IntPtr pUnk);
 #endif
 
 		public static object GetObjectForIUnknown (IntPtr pUnk)
 		{
-#if MOBILE || FULL_AOT_RUNTIME || NETCORE
+#if (MOBILE || FULL_AOT_RUNTIME || NETCORE) && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			object obj = GetObjectForCCW (pUnk);
+#if !UNITY_AOT
 			// was not a CCW
 			if (obj == null) {
 				ComInteropProxy proxy = ComInteropProxy.GetProxy (pUnk, typeof (__ComObject));
 				obj = proxy.GetTransparentProxy ();
 			}
+#endif
 			return obj;
 #endif
 		}
 
 		public static object GetObjectForNativeVariant (IntPtr pSrcNativeVariant)
 		{
-#if FULL_AOT_RUNTIME || NETCORE
+#if (FULL_AOT_RUNTIME || NETCORE) && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			Variant vt = (Variant)Marshal.PtrToStructure(pSrcNativeVariant, typeof(Variant));
@@ -667,7 +673,7 @@ namespace System.Runtime.InteropServices
 
 		public static T GetObjectForNativeVariant<T> (IntPtr pSrcNativeVariant)
 		{
-#if FULL_AOT_RUNTIME || NETCORE
+#if (FULL_AOT_RUNTIME || NETCORE) && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			Variant vt = (Variant)Marshal.PtrToStructure(pSrcNativeVariant, typeof(Variant));
@@ -677,7 +683,7 @@ namespace System.Runtime.InteropServices
 
 		public static object[] GetObjectsForNativeVariants (IntPtr aSrcNativeVariant, int cVars)
 		{
-#if FULL_AOT_RUNTIME || NETCORE
+#if (FULL_AOT_RUNTIME || NETCORE) && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			if (cVars < 0)
@@ -708,7 +714,7 @@ namespace System.Runtime.InteropServices
 
 		public static int GetStartComSlot (Type t)
 		{
-#if FULL_AOT_RUNTIME
+#if FULL_AOT_RUNTIME && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			throw new NotImplementedException ();
@@ -850,7 +856,7 @@ namespace System.Runtime.InteropServices
 			throw new PlatformNotSupportedException ();
 		}
 
-#if !MOBILE
+#if !MOBILE || UNITY_AOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool IsComObject (object o);
 #else
@@ -930,14 +936,14 @@ namespace System.Runtime.InteropServices
 			return (T) PtrToStructure (ptr, typeof (T));
 		}
 
-#if !MOBILE || WINAOT
+#if (!MOBILE || WINAOT) || UNITY_AOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int QueryInterfaceInternal (IntPtr pUnk, ref Guid iid, out IntPtr ppv);
 #endif
 
 		public static int QueryInterface (IntPtr pUnk, ref Guid iid, out IntPtr ppv)
 		{
-#if !MOBILE || WINAOT
+#if (!MOBILE || WINAOT) || UNITY_AOT
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentNullException ("pUnk");
 			return QueryInterfaceInternal (pUnk, ref iid, out ppv);
@@ -1101,7 +1107,7 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr ReAllocHGlobal (IntPtr pv, IntPtr cb);
 
-#if !MOBILE || WINAOT
+#if (!MOBILE || WINAOT) || UNITY_AOT
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ReleaseInternal (IntPtr pUnk);
@@ -1110,7 +1116,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static int Release (IntPtr pUnk)
 		{
-#if !MOBILE || WINAOT
+#if (!MOBILE || WINAOT) || UNITY_AOT
 			if (pUnk == IntPtr.Zero)
 				throw new ArgumentNullException ("pUnk");
 
@@ -1120,14 +1126,14 @@ namespace System.Runtime.InteropServices
 #endif
 		}
 
-#if !FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME || UNITY_AOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ReleaseComObjectInternal (object co);
 #endif
 
 		public static int ReleaseComObject (object o)
 		{
-#if FULL_AOT_RUNTIME
+#if FULL_AOT_RUNTIME && !UNITY_AOT
 			throw new PlatformNotSupportedException ();
 #else
 			if (o == null)
@@ -1951,7 +1957,7 @@ namespace System.Runtime.InteropServices
 		}
 #endif
 
-#if FEATURE_COMINTEROP || MONO_COM
+#if FEATURE_COMINTEROP || MONO_COM || UNITY_AOT
 		// Copied from referencesource/mscorlib/system/runtime/interopservices/marshal.cs
 		//====================================================================
 		// return the raw IUnknown* for a COM Object not related to current 
