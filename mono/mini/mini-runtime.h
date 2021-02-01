@@ -637,7 +637,7 @@ void mini_register_sigterm_handler (void);
 	mono_codeman_disable_write (); \
 	mono_arch_flush_icache ((buf), (size)); \
 	if ((int)type != -1) \
-		MONO_PROFILER_RAISE (jit_code_buffer, ((buf), (size), (type), (arg))); \
+		MONO_PROFILER_RAISE (jit_code_buffer, ((buf), (size), (MonoProfilerCodeBufferType)(type), (arg))); \
 	} while (0)
 
 #endif /* __MONO_MINI_RUNTIME_H__ */
