@@ -22,7 +22,6 @@ typedef struct
 	GHashTable *jump_target_got_slot_hash;
 	GHashTable *jump_target_hash;
 	/* Maps methods/klasses to the address of the given type of trampoline */
-	GHashTable *class_init_trampoline_hash;
 	GHashTable *jump_trampoline_hash;
 	GHashTable *jit_trampoline_hash;
 	GHashTable *delegate_trampoline_hash;
