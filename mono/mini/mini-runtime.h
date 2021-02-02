@@ -437,6 +437,12 @@ jinfo_get_method (MonoJitInfo *ji)
 	return mono_jit_info_get_method (ji);
 }
 
+static inline gpointer
+jinfo_get_ftnptr (MonoJitInfo *ji)
+{
+	return MINI_ADDR_TO_FTNPTR (ji->code_start);
+}
+
 /* main function */
 MONO_API int         mono_main                      (int argc, char* argv[]);
 MONO_API void        mono_set_defaults              (int verbose_level, guint32 opts);
