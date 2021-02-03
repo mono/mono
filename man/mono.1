@@ -405,6 +405,15 @@ Prepends <PREFIX> to the name of tools ran by the AOT compiler, i.e. 'as'/'ld'. 
 example, --tool=prefix=arm-linux-gnueabi- will make the AOT compiler run
 'arm-linux-gnueabi-as' instead of 'as'.
 .TP
+.I ld-name=NAME
+One of the tools used for AOT builds is the linker. Its name differs between various
+systems and it may happen that the assumed default name of the binary is not present.
+If the toolchain used does not have a linker with the default name (e.g. Android NDK
+r22 does not have the default 'ld' linker prefixed with 'tool-prefix' above, instead
+it has prefixed 'ld.gold' and 'ld.bfd' linkers) this option can be used to set the
+linker binary name. It will be prefixed with 'tool-prefix' to form the full linker
+executable name.
+.TP
 .I verbose
 Prints additional information about type loading failures.
 .TP
