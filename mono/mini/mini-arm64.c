@@ -58,6 +58,7 @@ static gboolean ios_abi;
 static gboolean enable_ptrauth;
 
 static __attribute__ ((__warn_unused_result__)) guint8* emit_load_regset (guint8 *code, guint64 regs, int basereg, int offset);
+static guint8* emit_brx (guint8 *code, int reg);
 static guint8* emit_blrx (guint8 *code, int reg);
 
 const char*
@@ -5031,38 +5032,6 @@ emit_store_regset_cfa (MonoCompile *cfg, guint8 *code, guint64 regs, int basereg
 	return code;
 }
 
-static guint8*
-emit_blrx (guint8 *code, int reg)
-{
-	if (enable_ptrauth)
-		arm_blraaz (code, reg);
-	else
-		arm_blrx (code, reg);
-	return code;
-}
-
-guint8*
-mono_arm_emit_blrx (guint8 *code, int reg)
-{
-	return emit_blrx (code, reg);
-}
-
-static guint8*
-emit_brx (guint8 *code, int reg)
-{
-	if (enable_ptrauth)
-		arm_braaz (code, reg);
-	else
-		arm_brx (code, reg);
-	return code;
-}
-
-guint8*
-mono_arm_emit_brx (guint8 *code, int reg)
-{
-	return emit_brx (code, reg);
-}
-
 /*
  * emit_setup_lmf:
  *
@@ -5679,4 +5648,36 @@ mono_arch_load_function (MonoJitICallId jit_icall_id)
 	MONO_AOT_ICALL (mono_arm_throw_exception)
 	}
 	return target;
+}
+
+static guint8*
+emit_blrx (guint8 *code, int reg)
+{
+	if (enable_ptrauth)
+		arm_blraaz (code, reg);
+	else
+		arm_blrx (code, reg);
+	return code;
+}
+
+static guint8*
+emit_brx (guint8 *code, int reg)
+{
+	if (enable_ptrauth)
+		arm_braaz (code, reg);
+	else
+		arm_brx (code, reg);
+	return code;
+}
+
+guint8*
+mono_arm_emit_blrx (guint8 *code, int reg)
+{
+	return emit_blrx (code, reg);
+}
+
+guint8*
+mono_arm_emit_brx (guint8 *code, int reg)
+{
+	return emit_brx (code, reg);
 }
