@@ -231,7 +231,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, buf, S390_CFA_OFFSET);
 	mono_add_unwind_op_same_value (unwind_ops, code, buf, STK_BASE);
 	s390_lmg  (code, s390_r6, s390_r13, STK_BASE, S390_REG_SAVE_OFFSET);
-        for (i = s390_r6; i <= s390_r13; i++)
+	for (i = s390_r6; i <= s390_r13; i++)
 		mono_add_unwind_op_same_value (unwind_ops, code, buf, i);
 	s390_br   (code, s390_r14);
 
@@ -496,7 +496,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	mono_add_unwind_op_def_cfa_offset (unwind_ops, buf, code, S390_CFA_OFFSET);
 	mono_add_unwind_op_same_value (unwind_ops, buf, code, STK_BASE);
 	s390_lmg  (buf, s390_r6, s390_r14, STK_BASE, S390_REG_SAVE_OFFSET);
-        for (i = s390_r6; i <= s390_r14; i++)
+	for (i = s390_r6; i <= s390_r14; i++)
 		mono_add_unwind_op_same_value (unwind_ops, buf, code, i);
 
 	if (MONO_TRAMPOLINE_TYPE_MUST_RETURN(tramp_type)) {

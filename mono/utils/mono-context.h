@@ -33,7 +33,7 @@ typedef struct __darwin_xmm_reg MonoContextSimdReg;
 typedef struct _libc_xmmreg MonoContextSimdReg;
 #elif defined(HOST_WIN32)
 #define MONO_HAVE_SIMD_REG
-//#define MONO_HAVE_SIMD_REG_AVX
+#define MONO_HAVE_SIMD_REG_AVX
 #include <emmintrin.h>
 typedef __m128d MonoContextSimdReg;
 #elif defined(HOST_ANDROID)
