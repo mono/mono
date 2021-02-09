@@ -46,9 +46,9 @@ endif ()
 if (NOT MSVC)
 	if(${CMAKE_SYSTEM_NAME} MATCHES "AIX" OR ${CMAKE_SYSTEM_NAME} MATCHES "OS400")
 		# GCC+XCOFF doesn't support -fvisibility=hidden, and we would prefer XCOFF debugging info.
-		set (C_CXX_FLAGS "-Wall -Wsign-compare -Wmissing-field-initializers -gxcoff")
+		set (C_CXX_FLAGS "-Wall -Wsign-compare -Wmissing-field-initializers -fPIC -gxcoff")
 	else()
-		set (C_CXX_FLAGS "-Wall -Wsign-compare -Wmissing-field-initializers -ggdb -fvisibility=hidden")
+		set (C_CXX_FLAGS "-Wall -Wsign-compare -Wmissing-field-initializers -fPIC -ggdb -fvisibility=hidden")
 	endif()
 
 	set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_CXX_FLAGS} ${BTLS_CFLAGS}")
