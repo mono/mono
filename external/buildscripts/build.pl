@@ -1076,6 +1076,7 @@ if ($build)
 
 		push @configureparams, "--host=$monoHostArch-pc-linux-gnu";
 		push @configureparams, "--disable-parallel-mark";  #this causes crashes
+		push @configureparams, "--enable-minimal=com";
 
 		my $archflags = '';
 		if ($arch32)
@@ -1179,7 +1180,7 @@ if ($build)
 
 		# Need to define because Apple's SIP gets in the way of us telling mono where to find this
 		push @configureparams, "--with-libgdiplus=$addtoresultsdistdir/lib/libgdiplus.dylib";
-		push @configureparams, "--enable-minimal=shared_perfcounters";
+		push @configureparams, "--enable-minimal=com,shared_perfcounters";
 		push @configureparams, "--disable-parallel-mark";
 		push @configureparams, "--enable-verify-defines";
 
