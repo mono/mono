@@ -36,6 +36,11 @@ namespace System.DirectoryServices.Protocols
 	[MonoTODO]
 	public class DirectoryAttributeCollection : CollectionBase
 	{
+		public DirectoryAttributeCollection ()
+		{
+			list = new ArrayList ();
+		}
+
 		internal DirectoryAttributeCollection (DirectoryAttribute [] attributes)
 		{
 			list = new ArrayList (attributes);
