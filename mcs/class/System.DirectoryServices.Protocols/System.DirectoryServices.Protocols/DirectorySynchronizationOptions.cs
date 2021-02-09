@@ -33,7 +33,7 @@ using System;
 namespace System.DirectoryServices.Protocols
 {
 	[Flags]
-	public enum DirectorySynchronizationOptions
+	public enum DirectorySynchronizationOptions : long
 	{
 		None = 0,
 		ObjectSecurity,
