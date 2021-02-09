@@ -513,7 +513,6 @@ common_sources = \
 	mini-gc.c		\
 	debugger-agent.h 	\
 	debugger-engine.h	\
-	debugger-protocol.h	\
 	debugger-agent-stubs.c	\
 	debugger-state-machine.h	\
 	xdebug.c			\
