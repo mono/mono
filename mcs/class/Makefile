@@ -91,7 +91,6 @@ mobile_common_dirs_parallel := \
 	System.Xml.Serialization \
 	Microsoft.CSharp \
 	System.Reflection.Context	\
-	System.Net.Http.WinHttpHandler \
 	System.Runtime.CompilerServices.Unsafe
 
 testing_aot_full_dirs_parallel := \
