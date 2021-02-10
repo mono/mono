@@ -3,10 +3,6 @@
 
 System.Net.NetworkInformation/Win32UnixFactoryPal.cs
 
-../System.Web/System.Web.Util/Helpers.cs
-../System.Web/System.Web.Util/HttpEncoder.cs
-../System.Web/System.Web/HttpUtility.cs
-
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CloseHandle.cs
 
 System.CodeDom/CodeCompileUnit.cs

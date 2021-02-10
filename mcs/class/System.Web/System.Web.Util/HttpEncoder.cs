@@ -167,6 +167,12 @@ namespace System.Web.Util
 			return defaultEncoder.Value;
 #else
 			var cfg = HttpRuntime.Section;
+			// The unityjit profile is only built once for desktop and mobile.
+			// When the jit profile is running on a mobile platform (aka Android) this returns null.
+			// We will simply return the default encoder.
+			if(cfg == null)
+				return Default;
+			
 			string typeName = cfg.EncoderType;
 
 			if (String.Compare (typeName, "System.Web.Util.HttpEncoder", StringComparison.OrdinalIgnoreCase) == 0)

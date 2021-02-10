@@ -78,6 +78,7 @@ mobile_common_dirs_parallel := \
 	System.Numerics.Vectors		\
 	System.Data	\
 	System.Data.DataSetExtensions \
+	System.Web \
 	Mono.Data.Sqlite	\
 	System.Data.Services.Client \
 	System.IO.Compression \

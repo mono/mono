@@ -71,20 +71,26 @@ namespace System.Web.Services.Protocols {
 
 		protected void Encode (TextWriter writer, string name, object value)
 		{
+			writer.Write (UrlEncode (name));
+			writer.Write ("=");
+			writer.Write (UrlEncode (ObjToString (value)));
+		}
+
+		private string UrlEncode (string value)
+		{
 			if (requestEncoding != null)
 			{
-				writer.Write (HttpUtility.UrlEncode (name, requestEncoding));
-				writer.Write ("=");
-				writer.Write (HttpUtility.UrlEncode (ObjToString (value), requestEncoding));
+#if UNITY_AOT && FULL_AOT_RUNTIME
+				return UrlEncoder.UrlEscapeString (value, requestEncoding);
+#else
+				return HttpUtility.UrlEncode (value, requestEncoding);
+#endif
 			}
-			else
-			{
-				writer.Write (HttpUtility.UrlEncode (name));
-				writer.Write ("=");
-				writer.Write (HttpUtility.UrlEncode (ObjToString (value)));
-			}
-				
-		}
+#if UNITY_AOT && FULL_AOT_RUNTIME
+				return UrlEncoder.UrlEscapeStringUnicode (value);
+#else
+				return HttpUtility.UrlEncode (value);
+#endif
 
 		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{

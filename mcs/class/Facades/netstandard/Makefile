@@ -26,7 +26,9 @@ LIB_REFS += System.Transactions System.Runtime.Serialization System.Data System.
 else ifeq ($(PROFILE),xammac_net_4_5)
 LIB_REFS += System.Web.Services System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions
 else ifeq (2.1, $(FRAMEWORK_VERSION))
-ifneq ($(PROFILE),unityaot)
+ifeq ($(PROFILE),unityaot)
+LIB_REFS += System.Web
+else
 LIB_REFS += System.Web.Services System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions
 endif
 LIB_REFS += System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions
