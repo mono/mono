@@ -3998,7 +3998,9 @@ mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type)
 	int i, param_count;
 	g_assert (token);
 
+	MONO_ENTER_GC_UNSAFE;
 	method = mono_get_method_checked (image, token, NULL, NULL, error);
+	MONO_EXIT_GC_UNSAFE;
 	if (!method)
 		g_error ("Could not load vtfixup token 0x%x due to %s", token, mono_error_get_message (error));
 	g_assert (method);
@@ -4029,11 +4031,13 @@ mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type)
 		m.csig = csig;
 		m.image = image;
 
+		MONO_ENTER_GC_UNSAFE;
 		mono_marshal_set_callconv_from_modopt (method, csig, TRUE);
 
 		/* FIXME: Implement VTFIXUP_TYPE_FROM_UNMANAGED_RETAIN_APPDOMAIN. */
 
 		mono_marshal_emit_managed_wrapper (mb, sig, mspecs, &m, method, 0);
+		MONO_EXIT_GC_UNSAFE;
 
 		get_marshal_cb ()->mb_set_dynamic (mb);
 		method = mono_mb_create (mb, csig, sig->param_count + 16, NULL);
