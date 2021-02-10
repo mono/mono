@@ -91,6 +91,7 @@ namespace System.Web.Services.Protocols {
 #else
 				return HttpUtility.UrlEncode (value);
 #endif
+		}
 
 		public override object GetInitializer (LogicalMethodInfo methodInfo)
 		{

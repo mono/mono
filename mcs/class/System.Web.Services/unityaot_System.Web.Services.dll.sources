@@ -1,1 +1,3 @@
 #include mobile_System.Web.Services.dll.sources
+ReferenceSources/Res.cs
+../referencesource/System.Web.Services/System/Web/Services/Protocols/Scalars.cs
