@@ -33,7 +33,7 @@ typedef struct __darwin_xmm_reg MonoContextSimdReg;
 typedef struct _libc_xmmreg MonoContextSimdReg;
 #elif defined(HOST_WIN32)
 #define MONO_HAVE_SIMD_REG
-#define MONO_HAVE_SIMD_REG_AVX
+//#define MONO_HAVE_SIMD_REG_AVX
 #include <emmintrin.h>
 typedef __m128d MonoContextSimdReg;
 #elif defined(HOST_ANDROID)
@@ -914,6 +914,7 @@ typedef struct ucontext MonoContext;
 #define MONO_CONTEXT_SET_BP(ctx,bp) 					\
 	do {		 						\
 		(ctx)->uc_mcontext.gregs[15] = (unsigned long)bp;	\
+		(ctx)->uc_stack.ss_sp	     = (void*)bp;		\
 	} while (0) 
 
 #define MONO_CONTEXT_GET_IP(ctx) (gpointer) (ctx)->uc_mcontext.psw.addr
