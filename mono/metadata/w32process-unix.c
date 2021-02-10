@@ -2028,6 +2028,9 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 
 		static char *handler;
 		static gunichar2 *handler_utf16;
+#ifndef HOST_DARWIN
+		gboolean finished = FALSE;
+#endif
 
 		if (handler_utf16 == (gunichar2 *)-1) {
 			ret = FALSE;
@@ -2053,6 +2056,7 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 				if (handler == NULL){
 					handler_utf16 = (gunichar2 *) -1;
 					ret = FALSE;
+					finished = TRUE;
 				} else {
 					/* kfmclient needs exec argument */
 					char *old = handler;
@@ -2063,9 +2067,8 @@ ves_icall_System_Diagnostics_Process_ShellExecuteEx_internal (MonoW32ProcessStar
 			}
 		}
 		MONO_EXIT_GC_SAFE;
-		if (ret == FALSE){
+		if (finished)
 			goto done;
-		}
 #endif
 		handler_utf16 = g_utf8_to_utf16 (handler, -1, NULL, NULL, NULL);
 		g_free (handler);
