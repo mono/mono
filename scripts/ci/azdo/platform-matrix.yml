@@ -66,7 +66,7 @@ jobs:
 
 # Windows x64
 
-- ${{ if or(containsValue(parameters.platforms, 'windows_x64') }}:
+- ${{ if containsValue(parameters.platforms, 'windows_x64') }}:
   - template: xplat-setup.yml
     parameters:
       jobTemplate: ${{ parameters.jobTemplate }}
@@ -82,7 +82,7 @@ jobs:
 
 # Windows x86
 
-- ${{ if or(containsValue(parameters.platforms, 'windows_x86') }}:
+- ${{ if containsValue(parameters.platforms, 'windows_x86') }}:
   - template: xplat-setup.yml
     parameters:
       jobTemplate: ${{ parameters.jobTemplate }}
