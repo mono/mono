@@ -51,6 +51,7 @@ jobs:
   workspace:
     clean: all
   steps:
+    - script: sudo apt install -y autoconf libtool automake build-essential gettext cmake python3 curl
     - script: CI_TAGS="linux-amd64" scripts/ci/run-jenkins.sh
 
 - job:
@@ -73,4 +74,5 @@ jobs:
   workspace:
     clean: all
   steps:
+    - script: sudo apt install -y autoconf libtool automake build-essential gettext cmake python3 curl
     - script: CI_TAGS="linux-amd64,mcs-compiler" scripts/ci/run-jenkins.sh
