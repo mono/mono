@@ -14,45 +14,45 @@ for dir in acceptance-tests/external/*; do [ -d "$dir" ] && (cd "$dir" && echo "
 
 source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
-if [[ ${CI_TAGS} == *'pull-request'* ]]; then
-	# Skip lanes which are not affected by the PR
-	wget -O pr-contents.diff "${ghprbPullLink}.diff"
-	grep '^diff' pr-contents.diff > pr-files.txt
-	echo "Files affected by the PR:"
-	cat pr-files.txt
+# if [[ ${CI_TAGS} == *'pull-request'* ]]; then
+# 	# Skip lanes which are not affected by the PR
+# 	wget -O pr-contents.diff "${ghprbPullLink}.diff"
+# 	grep '^diff' pr-contents.diff > pr-files.txt
+# 	echo "Files affected by the PR:"
+# 	cat pr-files.txt
 
-	# FIXME: Add more
-	skip=false
-	skip_step=""
-	if ! grep -q -v -e a/netcore -e a/scripts/ci/pipeline-netcore-runtime.yml pr-files.txt; then
-		skip_step="NETCORE"
-		skip=true
-	fi
-	if ! grep -q -v a/mono/mini/mini-ppc pr-files.txt; then
-		skip_step="PPC"
-		skip=true
-	fi
-	if ! grep -q -v a/scripts/ci/provisioning pr-files.txt; then
-		skip_step="CI provisioning scripts"
-		skip=true
-	fi
-	if ! grep -q -v a/sdks/wasm pr-files.txt; then
-		if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]]; then
-			true
-		else
-			skip_step="WASM"
-			skip=true
-		fi
-	fi
-	if [ $skip = true ]; then
-		${TESTCMD} --label="Skipped on ${skip_step}." --timeout=60m --fatal sh -c 'exit 0'
-		if [[ $CI_TAGS == *'apidiff'* ]]; then report_github_status "success" "API Diff" "Skipped." || true; fi
-		if [[ $CI_TAGS == *'csprojdiff'* ]]; then report_github_status "success" "Project Files Diff" "Skipped." || true; fi
-		exit 0
-	fi
+# 	# FIXME: Add more
+# 	skip=false
+# 	skip_step=""
+# 	if ! grep -q -v -e a/netcore -e a/scripts/ci/pipeline-netcore-runtime.yml pr-files.txt; then
+# 		skip_step="NETCORE"
+# 		skip=true
+# 	fi
+# 	if ! grep -q -v a/mono/mini/mini-ppc pr-files.txt; then
+# 		skip_step="PPC"
+# 		skip=true
+# 	fi
+# 	if ! grep -q -v a/scripts/ci/provisioning pr-files.txt; then
+# 		skip_step="CI provisioning scripts"
+# 		skip=true
+# 	fi
+# 	if ! grep -q -v a/sdks/wasm pr-files.txt; then
+# 		if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]]; then
+# 			true
+# 		else
+# 			skip_step="WASM"
+# 			skip=true
+# 		fi
+# 	fi
+# 	if [ $skip = true ]; then
+# 		${TESTCMD} --label="Skipped on ${skip_step}." --timeout=60m --fatal sh -c 'exit 0'
+# 		if [[ $CI_TAGS == *'apidiff'* ]]; then report_github_status "success" "API Diff" "Skipped." || true; fi
+# 		if [[ $CI_TAGS == *'csprojdiff'* ]]; then report_github_status "success" "Project Files Diff" "Skipped." || true; fi
+# 		exit 0
+# 	fi
 
-    rm pr-files.txt
-fi
+#     rm pr-files.txt
+# fi
 
 helix_set_env_vars
 helix_send_build_start_event "build/source/$MONO_HELIX_TYPE/"
