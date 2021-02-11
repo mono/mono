@@ -1,1 +1,47 @@
-#placeholder
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - 20*-*
+  paths:
+    include:
+    - '*'
+    - docs/manpages/*
+    exclude:
+    - .github/*
+    - docs/*
+    - CODE-OF-CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE.TXT
+    - PATENTS.TXT
+    - README.md
+    - SECURITY.md
+    - THIRD-PARTY-NOTICES.TXT
+
+pr:
+  batch: true
+  branches:
+    include:
+    - master
+    - 20*-*
+  paths:
+    include:
+    - '*'
+    - docs/manpages/*
+    exclude:
+    - .github/*
+    - docs/*
+    - CODE-OF-CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE.TXT
+    - PATENTS.TXT
+    - README.md
+    - SECURITY.md
+    - THIRD-PARTY-NOTICES.TXT
+
+pool:
+  name: default
+
+steps:
+- task: NuGetToolInstaller@1
