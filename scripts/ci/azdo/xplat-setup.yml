@@ -70,7 +70,6 @@ jobs:
     osSubgroup: ${{ parameters.osSubgroup }}
     archType: ${{ parameters.archType }}
     platformTag: ${{ parameters.platformTag }}
-    extraCITags: ${{ parameters.extraCITags }}
     platform: ${{ parameters.platform }}
 
     ${{ if ne(parameters.container, '') }}:
