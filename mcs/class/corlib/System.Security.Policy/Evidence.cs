@@ -139,7 +139,18 @@ namespace System.Security.Policy {
 		{
 			AssemblyEvidenceList.Add (id);
 		}
-
+		
+		
+		[ComVisible (false)]
+		public void AddAssemblyEvidence<T>(T evidence) where T : EvidenceBase
+		{
+			if (evidence == null)
+				throw new ArgumentNullException("evidence");
+			
+			AddAssembly (evidence);
+		}
+		
+		
 		[Obsolete]
 		public void AddHost (object id) 
 		{
@@ -148,7 +159,17 @@ namespace System.Security.Policy {
 			}
 			HostEvidenceList.Add (id);
 		}
+		
+		[ComVisible (false)]
+		public void AddHostEvidence<T>(T evidence) where T : EvidenceBase
+		{
+			if (evidence == null)
+				throw new ArgumentNullException("evidence");
+			
+			AddHost (evidence);
+		}
 
+		
 		[ComVisible (false)]
 		public void Clear ()
 		{
