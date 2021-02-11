@@ -232,7 +232,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	mono_add_unwind_op_same_value (unwind_ops, code, buf, STK_BASE);
 	s390_lmg  (code, s390_r6, s390_r13, STK_BASE, S390_REG_SAVE_OFFSET);
 	for (i = s390_r6; i <= s390_r13; i++)
-		mono_add_unwind_op_same_value (unwind_ops, code, buf, i);
+	  mono_add_unwind_op_same_value (unwind_ops, code, buf, i);
 	s390_br   (code, s390_r14);
 
 	g_assertf ((code - buf) <= tramp_size, "%d %d", (int)(code - buf), tramp_size);

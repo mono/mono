@@ -1,5 +1,5 @@
 
-ifneq ($(or $(ENABLE_IOS),$(ENABLE_MAC)),)
+ifneq ($(or $(ENABLE_IOS),$(ENABLE_MAC),$(ENABLE_MACCAT)),)
 
 CheckXcodeDir=$(or $(and $(wildcard $(1))),$(warning Could not find Xcode in "$(1)"))
 

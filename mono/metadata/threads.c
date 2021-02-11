@@ -46,6 +46,7 @@
 #include <mono/utils/os-event.h>
 #include <mono/utils/mono-threads-debug.h>
 #include <mono/utils/unlocked.h>
+#include <mono/utils/ftnptr.h>
 #include <mono/metadata/w32handle.h>
 #include <mono/metadata/w32event.h>
 #include <mono/metadata/w32mutex.h>
@@ -126,6 +127,7 @@ struct _StaticDataFreeList {
 	StaticDataFreeList *next;
 	guint32 offset;
 	guint32 size;
+	gint32 align;
 };
 
 typedef struct {
@@ -236,9 +238,7 @@ static void ref_stack_destroy (gpointer rs);
 
 #if SIZEOF_VOID_P == 4
 /* Spin lock for unaligned InterlockedXXX 64 bit functions on 32bit platforms. */
-#define mono_interlocked_lock() mono_os_mutex_lock (&interlocked_mutex)
-#define mono_interlocked_unlock() mono_os_mutex_unlock (&interlocked_mutex)
-static mono_mutex_t interlocked_mutex;
+mono_mutex_t mono_interlocked_mutex;
 #endif
 
 /* global count of thread interruptions requested */
@@ -939,6 +939,11 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 
 	set_current_thread_for_domain (domain, internal, thread);
 
+#ifdef MONO_METADATA_UPDATE
+	/* Roll up to the latest published metadata generation */
+	mono_metadata_update_thread_expose_published ();
+#endif
+
 	THREAD_DEBUG (g_message ("%s: Attached thread ID %" G_GSIZE_FORMAT " (handle %p)", __func__, internal->tid, internal->handle));
 
 	return TRUE;
@@ -1000,7 +1005,9 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 	thread->abort_state_handle = 0;
 
 	thread->abort_exc = NULL;
+#ifndef ENABLE_NETCORE
 	thread->current_appcontext = NULL;
+#endif
 
 	LOCK_THREAD (thread);
 
@@ -1323,6 +1330,29 @@ start_wrapper (gpointer data)
 	g_assert_not_reached ();
 }
 
+static void
+throw_thread_start_exception (guint32 error_code, MonoError *error)
+{
+	ERROR_DECL (method_error);
+
+	MONO_STATIC_POINTER_INIT (MonoMethod, throw_method)
+
+	throw_method = mono_class_get_method_from_name_checked (mono_defaults.thread_class, "ThrowThreadStartException", 1, 0, method_error);
+	mono_error_assert_ok (method_error);
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, throw_method)
+	g_assert (throw_method);
+
+	char *msg = g_strdup_printf ("0x%x", error_code);
+	MonoException *ex = mono_get_exception_execution_engine (msg);
+	g_free (msg);
+
+	gpointer args [1];
+	args [0] = ex;
+
+	mono_runtime_invoke_checked (throw_method, NULL, args, error);
+}
+
 /*
  * create_thread:
  *
@@ -1405,7 +1435,12 @@ create_thread (MonoThread *thread, MonoInternalThread *internal, MonoObject *sta
 		mono_threads_lock ();
 		mono_g_hash_table_remove (threads_starting_up, thread);
 		mono_threads_unlock ();
+
+#ifdef ENABLE_NETCORE
+		throw_thread_start_exception (mono_w32error_get_last(), error);
+#else
 		mono_error_set_execution_engine (error, "Couldn't create thread. Error 0x%x", mono_w32error_get_last());
+#endif
 		/* ref is not going to be decremented in start_wrapper_internal */
 		mono_atomic_dec_i32 (&start_info->ref);
 		ret = FALSE;
@@ -1906,8 +1941,11 @@ ves_icall_System_Threading_InternalThread_Thread_free_internal (MonoInternalThre
 	mono_threads_close_native_thread_handle (MONO_GPOINTER_TO_NATIVE_THREAD_HANDLE (this_obj->native_handle));
 	this_obj->native_handle = NULL;
 
-	/* Possibly free synch_cs, if the thread already detached also. */
-	dec_longlived_thread_data (this_obj->longlived);
+	/* might be null if the constructor threw an exception */
+	if (this_obj->longlived) {
+		/* Possibly free synch_cs, if the thread already detached also. */
+		dec_longlived_thread_data (this_obj->longlived);
+	}
 
 	mono_thread_name_cleanup (&this_obj->name);
 }
@@ -2580,10 +2618,12 @@ ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject *volatile*loc
 	mono_gc_wbarrier_generic_nostore_internal ((gpointer)location); // FIXME volatile
 }
 
+#ifndef ENABLE_NETCORE
 gpointer ves_icall_System_Threading_Interlocked_Exchange_IntPtr (gpointer *location, gpointer value)
 {
 	return mono_atomic_xchg_ptr(location, value);
 }
+#endif
 
 gfloat ves_icall_System_Threading_Interlocked_Exchange_Single (gfloat *location, gfloat value)
 {
@@ -2649,10 +2689,12 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject *volat
 	mono_gc_wbarrier_generic_nostore_internal ((gpointer)location); // FIXME volatile
 }
 
+#ifndef ENABLE_NETCORE
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand)
 {
 	return mono_atomic_cas_ptr(location, value, comparand);
 }
+#endif
 
 gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single (gfloat *location, gfloat value, gfloat comparand)
 {
@@ -3493,7 +3535,7 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	mono_coop_mutex_init_recursive (&threads_mutex);
 
 #if SIZEOF_VOID_P == 4
-	mono_os_mutex_init (&interlocked_mutex);
+	mono_os_mutex_init (&mono_interlocked_mutex);
 #endif
 	mono_coop_mutex_init_recursive(&joinable_threads_mutex);
 
@@ -3531,13 +3573,12 @@ thread_detach (MonoThreadInfo *info)
 	g_assert (info);
 	g_assert (mono_thread_info_is_current (info));
 
-	if (!mono_thread_info_try_get_internal_thread_gchandle (info, &gchandle))
-		return;
+	if (mono_thread_info_try_get_internal_thread_gchandle (info, &gchandle)) {
+		internal = (MonoInternalThread*)mono_gchandle_get_target_internal (gchandle);
+		g_assert (internal);
 
-	internal = (MonoInternalThread*) mono_gchandle_get_target_internal (gchandle);
-	g_assert (internal);
-
-	mono_thread_detach_internal (internal);
+		mono_thread_detach_internal (internal);
+	}
 
 	mono_gc_thread_detach (info);
 }
@@ -3635,7 +3676,7 @@ mono_thread_cleanup (void)
 	 * called.
 	 */
 	mono_coop_mutex_destroy (&threads_mutex);
-	mono_os_mutex_destroy (&interlocked_mutex);
+	mono_os_mutex_destroy (&mono_interlocked_mutex);
 	mono_os_mutex_destroy (&delayed_free_table_mutex);
 	mono_os_mutex_destroy (&small_id_mutex);
 	mono_coop_cond_destroy (&zero_pending_joinable_thread_event);
@@ -4906,12 +4947,12 @@ alloc_context_static_data_helper (gpointer key, gpointer value, gpointer user)
 }
 
 static StaticDataFreeList*
-search_slot_in_freelist (StaticDataInfo *static_data, guint32 size, guint32 align)
+search_slot_in_freelist (StaticDataInfo *static_data, guint32 size, gint32 align)
 {
 	StaticDataFreeList* prev = NULL;
 	StaticDataFreeList* tmp = static_data->freelist;
 	while (tmp) {
-		if (tmp->size == size) {
+		if (tmp->size == size && tmp->align == align) {
 			if (prev)
 				prev->next = tmp->next;
 			else
@@ -5012,7 +5053,11 @@ mono_get_special_static_data_for_thread (MonoInternalThread *thread, guint32 off
 	if (static_type == SPECIAL_STATIC_OFFSET_TYPE_THREAD) {
 		return get_thread_static_data (thread, offset);
 	} else {
+#ifndef ENABLE_NETCORE
 		return get_context_static_data (thread->current_appcontext, offset);
+#else
+		g_assert_not_reached ();
+#endif
 	}
 }
 
@@ -5069,7 +5114,7 @@ free_context_static_data_helper (gpointer key, gpointer value, gpointer user)
 }
 
 static void
-do_free_special_slot (guint32 offset, guint32 size)
+do_free_special_slot (guint32 offset, guint32 size, gint32 align)
 {
 	guint32 static_type = ACCESS_SPECIAL_STATIC_OFFSET (offset, type);
 	MonoBitSet **sets;
@@ -5102,6 +5147,7 @@ do_free_special_slot (guint32 offset, guint32 size)
 
 		item->offset = offset;
 		item->size = size;
+		item->align = align;
 
 		item->next = info->freelist;
 		info->freelist = item;
@@ -5116,7 +5162,7 @@ do_free_special (gpointer key, gpointer value, gpointer data)
 	gint32 align;
 	guint32 size;
 	size = mono_type_size (field->type, &align);
-	do_free_special_slot (offset, size);
+	do_free_special_slot (offset, size, align);
 }
 
 void
@@ -5606,6 +5652,11 @@ mono_jit_info_match (MonoJitInfo *ji, gpointer ip)
 {
 	if (!ji)
 		return FALSE;
+
+#ifdef MONO_ARCH_ENABLE_PTRAUTH
+	g_assert_not_reached ();
+#endif
+
 	return ji->code_start <= ip && (char*)ip < (char*)ji->code_start + ji->code_size;
 }
 

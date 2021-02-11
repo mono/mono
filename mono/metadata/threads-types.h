@@ -161,8 +161,10 @@ gint64 ves_icall_System_Threading_Interlocked_Exchange_Long(gint64 *location, gi
 ICALL_EXPORT
 void ves_icall_System_Threading_Interlocked_Exchange_Object (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*res);
 
+#ifndef ENABLE_NETCORE
 ICALL_EXPORT
 gpointer ves_icall_System_Threading_Interlocked_Exchange_IntPtr(gpointer *location, gpointer value);
+#endif
 
 ICALL_EXPORT
 gfloat ves_icall_System_Threading_Interlocked_Exchange_Single(gfloat *location, gfloat value);
@@ -182,8 +184,10 @@ gint64 ves_icall_System_Threading_Interlocked_CompareExchange_Long(gint64 *locat
 ICALL_EXPORT
 void ves_icall_System_Threading_Interlocked_CompareExchange_Object (MonoObject *volatile*location, MonoObject *volatile*value, MonoObject *volatile*comparand, MonoObject *volatile*res);
 
+#ifndef ENABLE_NETCORE
 ICALL_EXPORT
 gpointer ves_icall_System_Threading_Interlocked_CompareExchange_IntPtr(gpointer *location, gpointer value, gpointer comparand);
+#endif
 
 ICALL_EXPORT
 gfloat ves_icall_System_Threading_Interlocked_CompareExchange_Single(gfloat *location, gfloat value, gfloat comparand);
@@ -579,5 +583,18 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 
 gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx);
+
+#if SIZEOF_VOID_P == 4
+/* Spin lock for unaligned InterlockedXXX 64 bit functions on 32bit platforms. */
+extern mono_mutex_t mono_interlocked_mutex;
+static inline void
+mono_interlocked_lock(void) { 
+	mono_os_mutex_lock (&mono_interlocked_mutex);
+}
+static inline void
+mono_interlocked_unlock(void) { 
+	mono_os_mutex_unlock (&mono_interlocked_mutex);
+}
+#endif
 
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */

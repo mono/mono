@@ -567,12 +567,14 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void GetInterfaceMapData (Type t, Type iface, out MethodInfo[] targets, out MethodInfo[] methods);		
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static void GetGUID (Type type, byte[] guid);
+
 		public override Guid GUID {
 			get {
-				object[] att = GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), true);
-				if (att.Length == 0)
-					return Guid.Empty;
-				return new Guid(((System.Runtime.InteropServices.GuidAttribute)att[0]).Value);
+				var guid = new byte [16];
+				GetGUID (this, guid);
+				return new Guid (guid);
 			}
 		}
 

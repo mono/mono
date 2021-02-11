@@ -2178,6 +2178,17 @@ public class DebuggerTests
 
 		TypeMirror t = vm.RootDomain.Corlib.GetType ("System.Diagnostics.DebuggerDisplayAttribute");
 		Assert.AreEqual ("DebuggerDisplayAttribute", t.Name);
+
+		TypeMirror ba = m.Assembly.GetType ("BAttribute");
+		Assert.IsNotNull (ba);
+
+		var bs = m.Assembly.GetCustomAttributes (ba);
+		Assert.AreEqual (1, bs.Length);
+
+		var attrs = m.Assembly.GetCustomAttributes ();
+		Assert.IsTrue (attrs.Length >= 2); // compiler generated attributes
+		Assert.IsNotNull (attrs.Single (ca => ca.Constructor.DeclaringType.Name == "AAttribute"));
+		Assert.IsNotNull (attrs.Single (ca => ca.Constructor.DeclaringType.Name == "BAttribute"));
 	}
 
 	[Test]

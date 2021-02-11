@@ -20,9 +20,12 @@ ANDROID_SDK_VERSION_x86_64?=21
 # iOS
 
 XCODE_DIR?=/Applications/Xcode.app/Contents/Developer
+XCODE_VERSION:=$(shell /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" $(XCODE_DIR)/../version.plist)
+XCODE_MAJOR_VERSION:=$(word 1, $(subst ., ,$(XCODE_VERSION)))
 
 # min versions of the targets
 MACOS_VERSION_MIN?=10.9
+MACCAT_IOS_VERSION_MIN?=13.0
 IOS_VERSION_MIN?=7.0
 TVOS_VERSION_MIN?=9.0
 WATCHOS_VERSION_MIN?=2.0
