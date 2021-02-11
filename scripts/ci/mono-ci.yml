@@ -61,7 +61,7 @@ jobs:
     - task: PublishTestResults@2
       inputs:
         testRunner: 'NUnit'
-        testResultsFiles:  'mcs/class/**/TestResult*.xml;mono/**/TestResult*.xml;runtime/**/TestResult*.xml;acceptance-tests/**/TestResult*.xml'
+        testResultsFiles:  'mcs/class/**/TestResult*.xml';'mono/**/TestResult*.xml';'runtime/**/TestResult*.xml';'acceptance-tests/**/TestResult*.xml'
 
 - job:
   displayName: OSX x64
@@ -80,7 +80,7 @@ jobs:
     - task: PublishTestResults@2
       inputs:
         testRunner: 'NUnit'
-        testResultsFiles:  'mcs/class/**/TestResult*.xml;mono/**/TestResult*.xml;runtime/**/TestResult*.xml;acceptance-tests/**/TestResult*.xml'
+        testResultsFiles:  'mcs/class/**/TestResult*.xml';'mono/**/TestResult*.xml';'runtime/**/TestResult*.xml';'acceptance-tests/**/TestResult*.xml'
 
 #
 # MCS-only build
