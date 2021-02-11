@@ -47,7 +47,6 @@ jobs:
   parameters:
     jobTemplate: /scripts/ci/azdo/global-build-job.yml
     platforms:
-    - windows_x86
     - OSX_x64
     - Linux_x64
     jobParameters:
