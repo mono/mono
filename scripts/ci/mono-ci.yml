@@ -48,6 +48,7 @@ jobs:
   displayName: Linux x64
   pool:
     vmImage: ubuntu-20.04
+  timeoutInMinutes: 120
   workspace:
     clean: all
   steps:
@@ -62,6 +63,7 @@ jobs:
   displayName: OSX x64
   pool:
     vmImage: macos-10.15
+  timeoutInMinutes: 120
   workspace:
     clean: all
   steps:
@@ -79,6 +81,7 @@ jobs:
   displayName: Linux x64 mcs
   pool:
     vmImage: ubuntu-20.04
+  timeoutInMinutes: 120
   workspace:
     clean: all
   steps:
