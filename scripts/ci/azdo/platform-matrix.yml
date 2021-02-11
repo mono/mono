@@ -1,0 +1,98 @@
+parameters:
+  jobTemplate: ''
+  platforms: []
+  # When set to false, suppresses reuse of OSX managed build artifacts (for pipelines without an OSX obj)
+  # When set to true, passes the 'platforms' value as a job parameter also named 'platforms'.
+  # Handled as an opt-in parameter to avoid excessive yaml.
+  passPlatforms: false
+  jobParameters: {}
+  variables: []
+
+jobs:
+
+# Linux x64
+
+- ${{ if containsValue(parameters.platforms, 'Linux_x64') }}:
+  - template: xplat-setup.yml
+    parameters:
+      jobTemplate: ${{ parameters.jobTemplate }}
+      variables: ${{ parameters.variables }}
+      osGroup: Linux
+      archType: x64
+      platformTag: linux-amd64
+      platform: Linux_x64
+      container:
+        image: centos-7-20201227183837-5fe0e50
+        registry: mcr
+      jobParameters:
+        ${{ if eq(parameters.passPlatforms, true) }}:
+          platforms: ${{ parameters.platforms }}
+        ${{ insert }}: ${{ parameters.jobParameters }}
+
+# WebAssembly
+
+- ${{ if containsValue(parameters.platforms, 'Browser_wasm') }}:
+  - template: xplat-setup.yml
+    parameters:
+      jobTemplate: ${{ parameters.jobTemplate }}
+      variables: ${{ parameters.variables }}
+      osGroup: Browser
+      archType: wasm
+      platformTag: browser-wasm
+      platform: Browser_wasm
+      container:
+        image: ubuntu-18.04-webassembly-20201218203401-96da775
+        registry: mcr
+      jobParameters:
+        ${{ if eq(parameters.passPlatforms, true) }}:
+          platforms: ${{ parameters.platforms }}
+        ${{ insert }}: ${{ parameters.jobParameters }}
+
+# macOS x64
+
+- ${{ if containsValue(parameters.platforms, 'OSX_x64') }}:
+  - template: xplat-setup.yml
+    parameters:
+      jobTemplate: ${{ parameters.jobTemplate }}
+      variables: ${{ parameters.variables }}
+      osGroup: OSX
+      archType: x64
+      platformTag: osx-amd64
+      platform: OSX_x64
+      jobParameters:
+        ${{ if eq(parameters.passPlatforms, true) }}:
+          platforms: ${{ parameters.platforms }}
+        ${{ insert }}: ${{ parameters.jobParameters }}
+
+# Windows x64
+
+- ${{ if or(containsValue(parameters.platforms, 'windows_x64') }}:
+  - template: xplat-setup.yml
+    parameters:
+      jobTemplate: ${{ parameters.jobTemplate }}
+      variables: ${{ parameters.variables }}
+      osGroup: windows
+      archType: x64
+      platformTag: win-amd64
+      platform: windows_x64
+      jobParameters:
+        ${{ if eq(parameters.passPlatforms, true) }}:
+          platforms: ${{ parameters.platforms }}
+        ${{ insert }}: ${{ parameters.jobParameters }}
+
+# Windows x86
+
+- ${{ if or(containsValue(parameters.platforms, 'windows_x86') }}:
+  - template: xplat-setup.yml
+    parameters:
+      jobTemplate: ${{ parameters.jobTemplate }}
+      variables: ${{ parameters.variables }}
+      osGroup: windows
+      archType: x86
+      platformTag: win-i386
+      platform: windows_x86
+      jobParameters:
+        ${{ if eq(parameters.passPlatforms, true) }}:
+          platforms: ${{ parameters.platforms }}
+        ${{ insert }}: ${{ parameters.jobParameters }}
+

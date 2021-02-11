@@ -40,8 +40,28 @@ pr:
     - SECURITY.md
     - THIRD-PARTY-NOTICES.TXT
 
-pool:
-  name: default
+jobs:
+#
+# Basic build
+#
+- template: /scripts/ci/azdo/platform-matrix.yml
+  parameters:
+    jobTemplate: /scripts/ci/azdo/global-build-job.yml
+    platforms:
+    - windows_x86
+    - OSX_x64
+    - Linux_x64
+    jobParameters:
+      nameSuffix: Standard
 
-steps:
-- task: NuGetToolInstaller@1
+#
+# MCS-only build
+#
+- template: /scripts/ci/azdo/platform-matrix.yml
+  parameters:
+    jobTemplate: /scripts/ci/azdo/global-build-job.yml
+    platforms:
+    - Linux_x64
+    jobParameters:
+      nameSuffix: MCS
+      extraCITags: mcs-compiler
