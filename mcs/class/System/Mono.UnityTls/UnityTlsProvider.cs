@@ -74,6 +74,10 @@ namespace Mono.Unity
 				if (pos > 0)
 					targetHost = targetHost.Substring (0, pos);
 			}
+			else if (targetHost == null)
+			{
+				targetHost = "";
+			}
 
 			// convert cert to native or extract from unityTlsChainImpl.
 			var result = UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE;
