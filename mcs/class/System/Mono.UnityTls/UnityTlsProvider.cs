@@ -62,9 +62,6 @@ namespace Mono.Unity
 					errors |= SslPolicyErrors.RemoteCertificateNotAvailable;
 					return false;
 				}
-
-				if (wantsChain)
-					chain = MNS.SystemCertificateValidator.CreateX509Chain (certificates);
 			}
 			else
 			{
@@ -89,8 +86,7 @@ namespace Mono.Unity
 			// convert cert to native or extract from unityTlsChainImpl.
 			var result = UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE;
 			UnityTls.unitytls_x509list* certificatesNative = null;
-			UnityTls.unitytls_x509list* finalCertificateChainNative = 
-				chain == null ? null : UnityTls.NativeInterface.unitytls_x509list_create (&errorState);
+			UnityTls.unitytls_x509list* finalCertificateChainNative = UnityTls.NativeInterface.unitytls_x509list_create (&errorState);
 			try
 			{
 				// Things the validator provides that we might want to make use of here:
@@ -142,13 +138,12 @@ namespace Mono.Unity
 				UnityTls.NativeInterface.unitytls_x509list_free (certificatesNative);
 			}
 
-			if (finalCertificateChainNative != null) {
-				chain?.Dispose();
-				chain = new X509Chain(new X509ChainImplUnityTls(
-					UnityTls.NativeInterface.unitytls_x509list_get_ref (finalCertificateChainNative, &errorState),
-					reverseOrder: true // the verify callback starts with the root and ends with the leaf. That's the opposite of chain ordering.
-				));
-			}
+			chain?.Dispose();
+			var chainImpl = new X509ChainImplUnityTls(
+				UnityTls.NativeInterface.unitytls_x509list_get_ref (finalCertificateChainNative, &errorState),
+				reverseOrder: true // the verify callback starts with the root and ends with the leaf. That's the opposite of chain ordering.
+			);
+			chain = new X509Chain(chainImpl);
 
 			errors = UnityTlsConversions.VerifyResultToPolicyErrror(result);
 			// There should be a status per certificate, but once again we're following closely the BTLS implementation
@@ -156,7 +151,7 @@ namespace Mono.Unity
 			// which also provides only a single status for the entire chain.
 			// It is notoriously tricky to implement in OpenSSL to get a status for all invididual certificates without finishing the handshake in the process.
 			// This is partially the reason why unitytls_x509verify_X doesn't expose it (TODO!) and likely the reason Mono's BTLS impl ignores this.
-			unityTlsChainImpl?.AddStatus(UnityTlsConversions.VerifyResultToChainStatus(result));
+			chainImpl.AddStatus(UnityTlsConversions.VerifyResultToChainStatus(result));
 			return result == UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_SUCCESS && 
 					errorState.code == UnityTls.unitytls_error_code.UNITYTLS_SUCCESS;
 		}
