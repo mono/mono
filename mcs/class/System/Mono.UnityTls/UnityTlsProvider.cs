@@ -41,6 +41,13 @@ namespace Mono.Unity
 			return new UnityTlsStream (innerStream, leaveInnerStreamOpen, sslStream, settings, this);
 		}
 
+		static UnityTls.unitytls_x509verify_result x509verify_callback(void* userData, UnityTls.unitytls_x509_ref cert, UnityTls.unitytls_x509verify_result result, UnityTls.unitytls_errorstate* errorState)
+		{
+			if (userData != null)
+				UnityTls.NativeInterface.unitytls_x509list_append ((UnityTls.unitytls_x509list*)userData, cert, errorState);
+			return result;
+		}
+
 		internal override bool ValidateCertificate (
 			MNS.ChainValidationHelper validator, string targetHost, bool serverMode,
 			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
@@ -82,6 +89,8 @@ namespace Mono.Unity
 			// convert cert to native or extract from unityTlsChainImpl.
 			var result = UnityTls.unitytls_x509verify_result.UNITYTLS_X509VERIFY_NOT_DONE;
 			UnityTls.unitytls_x509list* certificatesNative = null;
+			UnityTls.unitytls_x509list* finalCertificateChainNative = 
+				chain == null ? null : UnityTls.NativeInterface.unitytls_x509list_create (&errorState);
 			try
 			{
 				// Things the validator provides that we might want to make use of here:
@@ -111,7 +120,8 @@ namespace Mono.Unity
 						var trustCAnativeRef = UnityTls.NativeInterface.unitytls_x509list_get_ref (trustCAnative, &errorState);
 
 						fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
-							result = UnityTls.NativeInterface.unitytls_x509verify_explicit_ca (certificatesNativeRef, trustCAnativeRef, targetHostUtf8Ptr, (size_t)targetHostUtf8.Length, null, null, &errorState);
+							result = UnityTls.NativeInterface.unitytls_x509verify_explicit_ca (
+								certificatesNativeRef, trustCAnativeRef, targetHostUtf8Ptr, (size_t)targetHostUtf8.Length, x509verify_callback, finalCertificateChainNative, &errorState);
 						}
 					}
 					finally {
@@ -119,12 +129,25 @@ namespace Mono.Unity
 					}
 				} else {
 					fixed (byte* targetHostUtf8Ptr = targetHostUtf8) {
-						result = UnityTls.NativeInterface.unitytls_x509verify_default_ca (certificatesNativeRef, targetHostUtf8Ptr, (size_t)targetHostUtf8.Length, null, null, &errorState);
+						result = UnityTls.NativeInterface.unitytls_x509verify_default_ca (
+							certificatesNativeRef, targetHostUtf8Ptr, (size_t)targetHostUtf8.Length, x509verify_callback, finalCertificateChainNative, &errorState);
 					}
 				}
 			}
+			catch {
+				UnityTls.NativeInterface.unitytls_x509list_free (finalCertificateChainNative);
+				throw;
+			}
 			finally	{
 				UnityTls.NativeInterface.unitytls_x509list_free (certificatesNative);
+			}
+
+			if (finalCertificateChainNative != null) {
+				chain?.Dispose();
+				chain = new X509Chain(new X509ChainImplUnityTls(
+					UnityTls.NativeInterface.unitytls_x509list_get_ref (finalCertificateChainNative, &errorState),
+					reverseOrder: true // the verify callback starts with the root and ends with the leaf. That's the opposite of chain ordering.
+				));
 			}
 
 			errors = UnityTlsConversions.VerifyResultToPolicyErrror(result);
