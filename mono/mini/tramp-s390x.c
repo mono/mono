@@ -106,7 +106,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	MonoMemoryManager *mem_manager = m_method_get_mem_manager (domain, m);
 	char trampName[128];
 
-	start = code = mono_mem_manager_code_reserve (mem_manager, 28);
+	start = code = (guint8 *) mono_mem_manager_code_reserve (mem_manager, 28);
 
 	S390_SET  (code, s390_r1, addr);
 	s390_aghi (code, this_pos, MONO_ABI_SIZEOF (MonoObject));
@@ -317,7 +317,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/* Now we'll create in 'buf' the S/390 trampoline code. This
 	   is the trampoline code common to all methods  */
 		
-	code = buf = mono_global_codeman_reserve(512);
+	code = buf = (guint8 *) mono_global_codeman_reserve(512);
 		
 	if (tramp_type == MONO_TRAMPOLINE_JUMP) 
 		has_caller = 0;
@@ -399,7 +399,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/*---------------------------------------------------------------*/	
 	/* save method info						 */	
 	/*---------------------------------------------------------------*/	
-	s390_lg    (buf, s390_r1, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[1]));
+	s390_lg    (buf, s390_r1, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[0]));
 	s390_stg   (buf, s390_r1, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, method));				
 									
 	/*---------------------------------------------------------------*/	
@@ -435,7 +435,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	}
 
 	/* Arg 3: Trampoline argument */
-	s390_lg (buf, s390_r4, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[1]));
+	s390_lg (buf, s390_r4, 0, LMFReg, G_STRUCT_OFFSET(MonoLMF, gregs[0]));
 
 	/* Arg 4: trampoline address. */
 	S390_SET (buf, s390_r5, buf);
@@ -534,7 +534,7 @@ void
 mono_arch_invalidate_method (MonoJitInfo *ji, void *func, gpointer func_arg)
 {
 	/* FIXME: This is not thread safe */
-	guint8 *code = ji->code_start;
+	guint8 *code = (guint8 *) ji->code_start;
 
 	S390_SET  (code, s390_r1, func);
 	S390_SET  (code, s390_r2, func_arg);
@@ -556,7 +556,7 @@ gpointer
 mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_type, MonoMemoryManager *mem_manager, guint32 *code_len)
 {
 	guint8 *code, *buf, *tramp;
-	gint32 displace;
+	gint64 displace;
 
 	tramp = mono_get_trampoline_code (tramp_type);
 
@@ -565,11 +565,16 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	/* purpose is to provide the generic part with the          */
 	/* MonoMethod *method pointer. We'll use r1 to keep it.     */
 	/*----------------------------------------------------------*/
-	code = buf = mono_mem_manager_code_reserve (mem_manager, SPECIFIC_TRAMPOLINE_SIZE);
+	code = buf = (guint8 *) mono_mem_manager_code_reserve (mem_manager, SPECIFIC_TRAMPOLINE_SIZE);
 
-	S390_SET  (buf, s390_r1, arg1);
+	S390_SET  (buf, s390_r0, arg1);
 	displace = (tramp - buf) / 2;
-	s390_jg   (buf, displace);
+	if ((displace >= INT_MIN) && (displace <= INT_MAX))
+		s390_jg   (buf, (gint32) displace);
+	else {
+		S390_SET  (buf, s390_r1, tramp);
+		s390_br   (buf, s390_r1);
+	}
 
 	/* Flush instruction cache, since we've generated code */
 	mono_arch_flush_icache (code, buf - code);
@@ -602,7 +607,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	guint8 *tramp;
 	guint8 *code, *buf;
 	guint8 **rgctx_null_jumps;
-	gint32 displace;
+	gint64 displace;
 	int tramp_size,
 	    depth, 
 	    index, 
@@ -630,11 +635,11 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	else
 		tramp_size += 12;
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = (guint8 *) mono_global_codeman_reserve (tramp_size);
 
 	unwind_ops = mono_arch_get_cie_program ();
 
-	rgctx_null_jumps = g_malloc (sizeof (guint8*) * (depth + 2));
+	rgctx_null_jumps = (guint8 **) g_malloc (sizeof (guint8*) * (depth + 2));
 
 	if (mrgctx) {
 		/* get mrgctx ptr */
@@ -690,7 +695,12 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 
 	/* jump to the actual trampoline */
 	displace = (tramp - code) / 2;
-	s390_jg (code, displace);
+	if ((displace >= INT_MIN) && (displace <= INT_MAX))
+		s390_jg (code, displace);
+	else {
+		S390_SET (code, s390_r1, tramp);
+		s390_br  (code, s390_r1);
+	}
 
 	mono_arch_flush_icache (buf, code - buf);
 	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_GENERICS_TRAMPOLINE, NULL));
@@ -719,17 +729,22 @@ gpointer
 mono_arch_get_static_rgctx_trampoline (MonoMemoryManager *mem_manager, gpointer arg, gpointer addr)
 {
 	guint8 *code, *start;
-	gint32 displace;
+	gint64 displace;
 	int buf_len;
 	MonoDomain *domain = mono_domain_get ();
 
 	buf_len = 32;
 
-	start = code = mono_mem_manager_code_reserve (mem_manager, buf_len);
+	start = code = (guint8 *) mono_mem_manager_code_reserve (mem_manager, buf_len);
 
 	S390_SET  (code, MONO_ARCH_RGCTX_REG, arg);
 	displace = ((uintptr_t) addr - (uintptr_t) code) / 2;
-	s390_jg   (code, displace);
+	if ((displace >= INT_MIN) && (displace <= INT_MAX))
+		s390_jg (code, (gint32) displace);
+	else {
+		S390_SET (code, s390_r1, addr);
+		s390_br (code, s390_r1);
+	}
 	g_assert ((code - start) < buf_len);
 
 	mono_arch_flush_icache (start, code - start);
