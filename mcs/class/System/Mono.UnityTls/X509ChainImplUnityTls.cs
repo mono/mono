@@ -47,7 +47,7 @@ namespace Mono.Unity
 					elements = new X509ChainElementCollection ();
 					UnityTls.unitytls_errorstate errorState = UnityTls.NativeInterface.unitytls_errorstate_create ();
 					var cert = UnityTls.NativeInterface.unitytls_x509list_get_x509 (nativeCertificateChain, (size_t)0, &errorState);
-					for (int i = 0; cert.handle != UnityTls.NativeInterface.UNITYTLS_INVALID_HANDLE; ++i) {
+					for (int i = 1; cert.handle != UnityTls.NativeInterface.UNITYTLS_INVALID_HANDLE; ++i) {
 						size_t certBufferSize = UnityTls.NativeInterface.unitytls_x509_export_der (cert, null, (size_t)0, &errorState);
 						var certBuffer = new byte[(int)certBufferSize];	// Need to reallocate every time since X509Certificate constructor takes no length but only a byte array.
 						fixed(byte* certBufferPtr = certBuffer) {
