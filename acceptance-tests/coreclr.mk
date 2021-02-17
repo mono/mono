@@ -9,9 +9,9 @@ coreclr-validate:
 	$(MAKE) validate-coreclr RESET_VERSIONS=1
 
 coreclr-compile-tests: coreclr-validate
-	$(MAKE) -j4 $(CORECLR_TESTSI_CS)
-	$(MAKE) -j4 $(CORECLR_COREMANGLIB_TESTSI_CS)
-	$(MAKE) -j4 $(CORECLR_TESTSI_IL)
+	$(call makeinbatches, $(CORECLR_TESTSI_CS))
+	$(call makeinbatches, $(CORECLR_COREMANGLIB_TESTSI_CS))
+	$(call makeinbatches, $(CORECLR_TESTSI_IL))
 
 # the CoreCLR tests rely on the coreclr-testlibrary.dll, we need to copy it to the test directory
 coreclr-runtest-basic: coreclr-validate test-runner.exe $(CORECLR_TESTSI_CS) $(CORECLR_TESTSI_IL)
@@ -32,7 +32,7 @@ coreclr-runtest-coremanglib: coreclr-validate test-runner.exe $(CORECLR_COREMANG
 check-coreclr: coreclr-compile-tests coreclr-runtest-basic coreclr-runtest-coremanglib
 
 coreclr-gcstress: coreclr-validate GCStressTests.exe $(CORECLR_STRESSTESTSI_CS)
-	BVT_ROOT=$(realpath $(CORECLR_PATH)/tests/src/GC/Stress/Tests) $(RUNTIME) GCStressTests.exe $(CORECLR_PATH)/tests/src/GC/Stress/$(if $(CI_PR),testmix_gc_pr.config,testmix_gc.config); if [ $$? -ne 100 ]; then exit 1; fi
+	BVT_ROOT=$(realpath $(CORECLR_PATH)/tests/src/GC/Stress/Tests) $(RUNTIME) GCStressTests.exe $(CORECLR_PATH)/tests/src/GC/Stress/testmix_gc_pr.config; if [ $$? -ne 100 ]; then exit 1; fi
 
 # Output a variable in $(2) to the file $(1), separated by newline characters
 # we need to do it in groups of 100 entries to make sure we don't exceed shell char limits
@@ -40,6 +40,12 @@ coreclr-gcstress: coreclr-validate GCStressTests.exe $(CORECLR_STRESSTESTSI_CS)
 define dumpvariabletofile
 echo $(wordlist 1, 100, $(2)) | tr " " "\n" >> $(1)
 $(if $(word 101, $(2)), $(call dumpvariabletofile, $(1), $(wordlist 101, $(words $(2)), $(2))))
+endef
+
+# Run make in batches from a list of targets in $(1) to make sure we don't exceed shell char limits
+define makeinbatches
+$(MAKE) -j4 $(wordlist 1, 100, $(1))
+$(if $(word 101, $(1)), $(call makeinbatches, $(wordlist 101, $(words $(1)), $(1))))
 endef
 
 CORECLR_TEST_CS_SRC=		\

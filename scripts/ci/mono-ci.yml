@@ -39,63 +39,155 @@ pr:
     - SECURITY.md
     - THIRD-PARTY-NOTICES.TXT
 
+variables:
+  - name: pullRequestCITags
+    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      value: 'retry-flaky-tests,pull-request'
+    ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+      value: ''
+
+
 jobs:
 
 #
-# Basic build
+# Linux x64
 #
-- job:
-  displayName: Linux x64
-  pool:
-    vmImage: ubuntu-20.04
-  timeoutInMinutes: 120
-  workspace:
-    clean: all
-  steps:
-    - checkout: self
-      clean: true
-      fetchDepth: 10
-      submodules: recursive
-    - script: sudo apt install -y autoconf libtool automake build-essential gettext cmake python3 curl
-    - script: CI_TAGS="linux-amd64,retry-flaky-tests,pull-request" scripts/ci/run-jenkins.sh # TODO: set pull-request CI tag dynamically
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: 'NUnit'
-        testResultsFiles:  '**/TestResult*.xml'
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64
+    os: linux
+    arch: amd64
 
-- job:
-  displayName: OS X x64
-  pool:
-    vmImage: macos-10.15
-  timeoutInMinutes: 120
-  workspace:
-    clean: all
-  steps:
-    - checkout: self
-      clean: true
-      fetchDepth: 10
-      submodules: recursive
-    - script: brew install autoconf automake libtool pkg-config cmake python3
-    - script: CI_TAGS="osx-amd64,retry-flaky-tests,pull-request" scripts/ci/run-jenkins.sh # TODO: set pull-request CI tag dynamically
-    - task: PublishTestResults@2
-      inputs:
-        testRunner: 'NUnit'
-        testResultsFiles:  '**/TestResult*.xml'
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 - prefix sanity checks
+    os: linux
+    arch: amd64
+    additionalCITags: make-install
+    publishTestResults: false
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 Acceptance Tests
+    os: linux
+    arch: amd64
+    additionalCITags: acceptance-tests
+    publishTestResults: false
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 All Profiles Build
+    os: linux
+    arch: amd64
+    additionalCITags: all-profiles,apidiff,csprojdiff,no-tests
+
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux x64 Bitcode
+#    os: linux
+#    arch: amd64
+#    additionalCITags: bitcode
+#
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux x64 Bitcode+Interpreter
+#    os: linux
+#    arch: amd64
+#    additionalCITags: bitcodeinterp
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 C++
+    os: linux
+    arch: amd64
+    additionalCITags: cxx
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 Checked Private Types Build
+    os: linux
+    arch: amd64
+    additionalCITags: checked-all,no-tests
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 Coop Suspend
+    os: linux
+    arch: amd64
+    additionalCITags: coop-suspend,checked-coop
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 FullAOT
+    os: linux
+    arch: amd64
+    additionalCITags: fullaot
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 FullAOT+Interpreter
+    os: linux
+    arch: amd64
+    additionalCITags: fullaotinterp
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 FullAOT+Interpreter+LLVM
+    os: linux
+    arch: amd64
+    additionalCITags: fullaotinterp_llvm
+
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux x64 FullAOT+LLVM
+#    os: linux
+#    arch: amd64
+#    additionalCITags: fullaot_llvm
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 Interpreter
+    os: linux
+    arch: amd64
+    additionalCITags: interpreter
+    timeoutInMinutes: 180
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 mcs
+    os: linux
+    arch: amd64
+    additionalCITags: mcs-compiler,no-tests
+
 
 #
-# MCS-only build
+# Linux i386
 #
-- job:
-  displayName: Linux x64 mcs
-  pool:
-    vmImage: ubuntu-20.04
-  timeoutInMinutes: 120
-  workspace:
-    clean: all
-  steps:
-    - checkout: self
-      clean: true
-      fetchDepth: 10
-      submodules: recursive
-    - script: sudo apt install -y autoconf libtool automake build-essential gettext cmake python3 curl
-    - script: CI_TAGS="linux-amd64,mcs-compiler,no-tests,pull-request" scripts/ci/run-jenkins.sh # TODO: set pull-request CI tag dynamically
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux i386
+#    os: linux
+#    arch: i386
+#
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux i386 Interpreter
+#    os: linux
+#    arch: i386
+#    additionalCITags: interpreter
+
+#
+# OSX x64
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: OS X x64
+    os: osx
+    arch: amd64
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: OS X x64 C++
+    os: osx
+    arch: amd64
+    additionalCITags: cxx
