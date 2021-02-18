@@ -35,7 +35,7 @@ jobs:
   ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'aarch64')) }}:
     container:
       image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-helix-arm64v8-a45aeeb-20190620155855
-      options: --platform linux/arm64
+      options: --platform linux/arm64 --user 0:0
   timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
   steps:
     - checkout: self
