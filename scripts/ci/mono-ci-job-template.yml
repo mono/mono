@@ -24,9 +24,9 @@ jobs:
   pool:
     ${{ if eq(parameters.os, 'osx') }}:
       vmImage: macos-10.15
-    ${{ if and(eq(parameters.os, 'linux'),ne(parameters.arch, 'aarch64')) }}:
+    ${{ if and(eq(parameters.os, 'linux'),ne(parameters.arch, 'aarch64'),ne(parameters.arch, 'armv7')) }}:
       vmImage: ubuntu-20.04
-    ${{ if and(eq(parameters.os, 'linux'),eq(parameters.arch, 'aarch64')) }}:
+    ${{ if and(eq(parameters.os, 'linux'),or(eq(parameters.arch, 'aarch64'),eq(parameters.arch, 'armv7'))) }}:
       name: MonoARM64
   ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'i386')) }}:
     container:
@@ -36,6 +36,10 @@ jobs:
     container:
       image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-helix-arm64v8-a45aeeb-20190620155855
       options: --platform linux/arm64 --user 0:0
+  ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'armv7')) }}:
+    container:
+      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-helix-arm32v7-bfcd90a-20200121150440
+      options: --platform linux/arm/v7 --user 0:0
   timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
   steps:
     - checkout: self

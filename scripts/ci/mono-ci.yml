@@ -59,6 +59,15 @@ jobs:
     arch: aarch64
 
 #
+# Linux armel
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARMv7
+    os: linux
+    arch: armv7
+
+#
 # Linux x64
 #
 - template: /scripts/ci/mono-ci-job-template.yml
