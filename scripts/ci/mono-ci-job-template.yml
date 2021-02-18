@@ -30,6 +30,10 @@ jobs:
     container:
       image: i386/ubuntu:20.04
       options: --platform linux/386
+  ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'aarch64')) }}:
+    container:
+      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-helix-arm64v8-a45aeeb-20190620155855
+      options: --platform linux/arm64
   timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
   steps:
     - checkout: self
