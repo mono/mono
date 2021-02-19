@@ -1183,6 +1183,7 @@ if ($build)
 		push @configureparams, "--enable-minimal=com,shared_perfcounters";
 		push @configureparams, "--disable-parallel-mark";
 		push @configureparams, "--enable-verify-defines";
+		push @configureparams, "--enable-thread-local-alloc=no";
 
 		print "\n";
 		print ">>> Setting environment:\n";
