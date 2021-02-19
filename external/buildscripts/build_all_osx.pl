@@ -48,9 +48,18 @@ GetOptions(
 	'artifact=i'=>\$artifact,
 	'artifactscommon=i'=>\$artifactsCommon,
 );
+my $embedDirRoot = "$buildsroot/embedruntimes";
+my $embedDirSourceX64 = "$embedDirRoot/osx-tmp-x86_64";
+my $embedDirSourceARM64 = "$embedDirRoot/osx-tmp-arm64";
 
 print(">>> Building x86_64\n");
 system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=x86_64", @passAlongArgs) eq 0 or die ('failing building x86_64');
+
+if ($artifact)
+{
+	# dsymutil generates based off of object files so it needs to be ran before we build the arm variant
+	CopyEmbedRuntimeBinaries($embedDirSourceX64, "$embedDirRoot/osx");
+}
 
 print(">>> Building ARM64\n");
 system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=arm64", @passAlongArgs) eq 0 or die ("failing building ARM64");
@@ -59,12 +68,6 @@ if ($artifact)
 {
 	print(">>> Moving built binaries to final output directories\n");
 
-	# Copy stuff in the embedruntimes directory
-	my $embedDirRoot = "$buildsroot/embedruntimes";
-	my $embedDirSourceX64 = "$embedDirRoot/osx-tmp-x86_64";
-	my $embedDirSourceARM64 = "$embedDirRoot/osx-tmp-arm64";
-
-	CopyEmbedRuntimeBinaries($embedDirSourceX64, "$embedDirRoot/osx");
 	CopyEmbedRuntimeBinaries($embedDirSourceARM64, "$embedDirRoot/osx-arm64");
 
 	# Merge stuff in the monodistribution directory
