@@ -212,6 +212,9 @@ namespace MonoTests.System.Net
 		[Category("NotOnWindows")]
 		public void GetHostAddresses_IPv6 ()
 		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("OS does not support IPv6.");
+
 			var address = Dns.GetHostAddresses("ipv6.google.com");
 		}
 
