@@ -661,6 +661,9 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void JoinMulticastGroup2_Socket_NotBound ()
 		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not enabled.");
+
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
 			using (UdpClient client = new UdpClient (AddressFamily.InterNetworkV6)) {
