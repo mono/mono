@@ -187,7 +187,7 @@ namespace Mono.Btls
 				        var impl = (X509CertificateImplBtls)intermediate [i];
 				        Debug ("SetPrivateCertificate - add intermediate: {0}", impl);
 				        ssl.AddIntermediateCertificate (impl.X509);
-			}
+				}
 		}
 
 		static Exception GetException (MonoBtlsSslError status)
