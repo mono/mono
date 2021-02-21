@@ -451,6 +451,20 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public void PtrToStringBSTRNull ()
+		{
+			try {
+				Marshal.PtrToStringBSTR (IntPtr.Zero);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("ptr", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
 		public void StringToHGlobalAnsiWithNullValues ()
 		{
 			int size = 128;
