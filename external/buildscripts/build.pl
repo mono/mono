@@ -1075,6 +1075,8 @@ if ($build)
 		push @configureparams, "--host=$monoHostArch-pc-linux-gnu";
 		push @configureparams, "--disable-parallel-mark";  #this causes crashes
 		push @configureparams, "--enable-minimal=com";
+		push @configureparams, "--enable-thread-local-alloc=no";
+		push @configureparams, "--enable-verify-defines";
 
 		my $archflags = '';
 		if ($arch32)
