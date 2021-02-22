@@ -86,19 +86,6 @@ try {
             }
         }
 
-        if (isReleaseJob) {
-            stage("Signing") {
-                timeout(time: 30, unit: 'MINUTES') {
-                    // waits until the signing job posts completion signal to this pipeline input
-                    input id: 'FinishedSigning', message: 'Waiting for signing to finish (please be patient)...', submitter: 'monojenkins'
-                    echo "Signing done."
-                }
-            }
-        }
-        else {
-            echo "Not a release job, skipping signing."
-        }
-
         def packageUrlX86 = "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/unsigned/${packageFileNameX86}"
         def packageUrlX64 = "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/unsigned/${packageFileNameX64}";
 
