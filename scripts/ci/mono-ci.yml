@@ -58,6 +58,50 @@ jobs:
     os: linux
     arch: aarch64
 
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARM64 Coop Suspend
+    os: linux
+    arch: aarch64
+    additionalCITags: coop-suspend,checked-coop
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARM64 FullAOT
+    os: linux
+    arch: aarch64
+    additionalCITags: fullaot
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARM64 FullAOT+Interpreter
+    os: linux
+    arch: aarch64
+    additionalCITags: fullaotinterp
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARM64 FullAOT+Interpreter+LLVM
+    os: linux
+    arch: aarch64
+    additionalCITags: fullaotinterp_llvm
+
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux ARM64 FullAOT+LLVM
+#    os: linux
+#    arch: aarch64
+#    additionalCITags: fullaot_llvm
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARM64 Interpreter
+    os: linux
+    arch: aarch64
+    additionalCITags: interpreter
+    timeoutInMinutes: 180
+
+
 #
 # Linux x64
 #
