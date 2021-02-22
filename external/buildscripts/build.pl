@@ -1665,6 +1665,7 @@ if ($artifact)
 
 			system("ln", "-f", "$monoroot/mono/mini/mono-sgen","$distDirArchBin/mono") eq 0 or die("failed symlinking mono executable\n");
 			system("ln", "-f", "$monoroot/tools/pedump/pedump","$distDirArchBin/pedump") eq 0 or die("failed symlinking pedump executable\n");
+			system("ln", "-f", "$monoroot/mono/dis/monodis","$distDirArchBin/monodis") eq 0 or die("failed symlinking monodis executable\n");
 			system('cp', "$monoroot/data/config","$distDirArchEtc/mono/config") eq 0 or die("failed to copy config\n");
 		}
 		elsif($^O eq 'darwin')
