@@ -312,7 +312,7 @@ jobs:
 
   - script: |
       cd $(Build.ArtifactStagingDirectory)
-      az storage blob upload-batch -s mono-signed --destination-path "$MONO_SIGNED_MSI_DIR" --pattern "*.msi" -d build-package-win-mono --account-name xamjenkinsartifact
+      az storage blob upload-batch -s . --destination-path "$MONO_SIGNED_MSI_DIR" --pattern "*.msi" -d build-package-win-mono --account-name xamjenkinsartifact
     displayName: Upload artifacts to blob storage
     env:
       AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
