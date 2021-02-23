@@ -297,7 +297,7 @@ jobs:
             "toolVersion": "1.0"
           },
           {
-            "keyCode": "CP-230865",
+            "keyCode": "CP-230012",
             "operationCode": "SigntoolVerify",
             "parameters": {
               "VerifyAll": "/all"
