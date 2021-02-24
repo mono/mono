@@ -178,10 +178,7 @@ mono_gc_base_init (void)
 	default_push_other_roots = GC_get_push_other_roots ();
 	GC_set_push_other_roots (mono_push_other_roots);
 
-#if !defined(HOST_ANDROID)
-	/* If GC_no_dls is set to true, GC_find_limit is not called. This causes a seg fault on Android. */
 	GC_set_no_dls (TRUE);
-#endif
 
 	debug_opts = mono_gc_debug_get();
 	if (debug_opts)
