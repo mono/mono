@@ -123,6 +123,14 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 			MemoryMappedFile.CreateNew (MkNamedMapping (), 8192);
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void CreateNewAnonymous ()
+		{
+			// Anonymous mapping backed by page file
+			MemoryMappedFile.CreateNew (null, 8192);
+		}
+
 		// Call this twice, it should always work
 		[Test]
 		public void CreateOrOpen_Multiple ()
