@@ -68,6 +68,7 @@
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/reflection-internals.h>
 #include <mono/metadata/w32socket.h>
+#include <mono/metadata/w32socket-internals.h>
 #include <mono/utils/mono-coop-mutex.h>
 #include <mono/utils/mono-coop-semaphore.h>
 #include <mono/utils/mono-error-internals.h>
@@ -1229,7 +1230,13 @@ static int
 socket_transport_accept (int socket_fd)
 {
 	MONO_ENTER_GC_SAFE;
-	conn_fd = accept (socket_fd, NULL, NULL);
+#if defined(HOST_WIN32) && !defined(RUNTIME_IL2CPP)
+	conn_fd = mono_w32socket_accept(socket_fd, NULL, NULL, TRUE);
+	if (conn_fd != -1)
+		mono_w32socket_set_blocking(conn_fd, TRUE);
+#else
+	conn_fd = accept(socket_fd, NULL, NULL);
+#endif
 	MONO_EXIT_GC_SAFE;
 
 	if (conn_fd == -1) {
