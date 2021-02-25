@@ -781,6 +781,9 @@ HANDLES(MARSHAL_54, "GetRawIUnknownForComObjectNoAddRef", ves_icall_System_Runti
 HANDLES(MARSHAL_48, "IsComObject", ves_icall_System_Runtime_InteropServices_Marshal_IsComObject, MonoBoolean, 1, (MonoObject))
 #endif
 HANDLES(MARSHAL_48a, "IsPinnableType", ves_icall_System_Runtime_InteropServices_Marshal_IsPinnableType, MonoBoolean, 1, (MonoReflectionType))
+#ifndef DISABLE_COM
+HANDLES(MARSHAL_24, "IsTypeVisibleFromCom", ves_icall_System_Runtime_InteropServices_Marshal_IsTypeVisibleFromCom, MonoBoolean, 1, (MonoReflectionType))
+#endif
 HANDLES(MARSHAL_12, "OffsetOf", ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf, int, 2, (MonoReflectionType, MonoString))
 HANDLES(MARSHAL_13, "Prelink", ves_icall_System_Runtime_InteropServices_Marshal_Prelink, void, 1, (MonoReflectionMethod))
 HANDLES(MARSHAL_14, "PrelinkAll", ves_icall_System_Runtime_InteropServices_Marshal_PrelinkAll, void, 1, (MonoReflectionType))
