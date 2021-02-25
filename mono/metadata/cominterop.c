@@ -1746,6 +1746,22 @@ ves_icall_System_Runtime_InteropServices_Marshal_IsComObject (MonoObjectHandle o
 #endif
 }
 
+MonoBoolean
+ves_icall_System_Runtime_InteropServices_Marshal_IsTypeVisibleFromCom (MonoReflectionTypeHandle rtype, MonoError *error)
+{
+#ifndef DISABLE_COM
+	if (MONO_HANDLE_IS_NULL (rtype)) {
+		mono_error_set_argument_null (error, "t", "");
+		return 0;
+	}
+
+	MonoClass *klass = mono_class_from_mono_type_internal (MONO_HANDLE_GETVAL (rtype, type));
+	return mono_class_init_checked (klass, error) && cominterop_com_visible (klass);
+#else
+	g_assert_not_reached ();
+#endif
+}
+
 gint32
 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal (MonoObjectHandle object, MonoError *error)
 {

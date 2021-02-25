@@ -821,10 +821,8 @@ namespace System.Runtime.InteropServices
 		}
 
 
-		public static bool IsTypeVisibleFromCom (Type t)
-		{
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool IsTypeVisibleFromCom (Type t);
 
 
 		public static int NumParamBytes (MethodInfo m)
