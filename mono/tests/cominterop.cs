@@ -63,6 +63,9 @@ public class Tests
 	[DllImport ("libtest")]
 	public static extern int mono_test_marshal_variant_in_bool_false ([MarshalAs (UnmanagedType.Struct)]object obj);
 
+	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_variant_in_obj_array (int count, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex=0)]object[] arr);
+
 	[DllImport("libtest")]
 	public static extern int mono_test_marshal_variant_out_sbyte([MarshalAs(UnmanagedType.Struct)]out object obj);
 
@@ -483,6 +486,27 @@ public class Tests
 				return 106;
 			if (mono_test_marshal_variant_out_bstr_byref (out obj) != 0 || (string)obj != "PI")
 				return 107;
+
+			object[] obj_array =
+			{
+				null,
+				(sbyte)42,
+				(byte)42,
+				(short)-313,
+				(ushort)313,
+				(int)-314,
+				(uint)314,
+				(long)-315,
+				(ulong)315,
+				(float)3.14,
+				(double)3.14,
+				(bool)true,
+				(bool)false,
+				"FOO"
+			};
+
+			if (mono_test_marshal_variant_in_obj_array (obj_array.Length, obj_array) != 0)
+				return 108;
 
 			#endregion // VARIANT Tests
 
