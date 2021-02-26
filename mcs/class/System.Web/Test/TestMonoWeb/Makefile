@@ -6,7 +6,7 @@ LOCAL_MCS_FLAGS = /nowarn:0168 /nowarn:0162 /unsafe \
  /r:System.dll /r:System.Web.dll \
  /r:System.Drawing.dll /r:System.Xml.dll
 
-all-local install-local uninstall-local doc-update-local csproj-local:
+all-local install-local uninstall-local doc-update-local:
 
 # it doesn't compile for me.
 # test-local: TestMonoWeb.exe

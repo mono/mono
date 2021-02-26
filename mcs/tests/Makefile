@@ -104,8 +104,6 @@ clean-local:
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs
 
-csproj-local:
-
 %-il.dll: %-il.il
 	$(ILASM) /dll $<
 

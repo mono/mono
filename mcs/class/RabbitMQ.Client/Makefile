@@ -24,7 +24,7 @@ DISTFILES = \
 	docs/specs/qpid-amqp.0-8.stripped.xml \
 	docs/specs/Makefile
 
-all-local install-local clean-local test-local run-test-local run-test-ondotnet-local uninstall-local doc-update-local csproj-local:
+all-local install-local clean-local test-local run-test-local run-test-ondotnet-local uninstall-local doc-update-local:
 
 dist-local: dist-default
 
