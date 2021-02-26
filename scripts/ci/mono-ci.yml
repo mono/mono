@@ -50,6 +50,15 @@ variables:
 jobs:
 
 #
+# Linux armv7
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARM Hard Float
+    os: linux
+    arch: armhf
+
+#
 # Linux aarch64
 #
 - template: /scripts/ci/mono-ci-job-template.yml
