@@ -32,9 +32,12 @@ jobs:
     container:
       image: i386/ubuntu:20.04
       options: --platform linux/386
+  ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'amd64')) }}:
+    container:
+      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mono-amd64-20210223192217-5867980
   ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'aarch64')) }}:
     container:
-      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-helix-arm64v8-a45aeeb-20190620155855
+      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mono-arm64v8-20210223192142-5867980
       options: --platform linux/arm64 --user 0:0
   timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
   steps:
