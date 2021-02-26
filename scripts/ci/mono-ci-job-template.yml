@@ -24,6 +24,8 @@ jobs:
   pool:
     ${{ if eq(parameters.os, 'osx') }}:
       vmImage: macos-10.15
+    ${{ if eq(parameters.os, 'windows') }}:
+      vmImage: windows-2019
     ${{ if and(eq(parameters.os, 'linux'),ne(parameters.arch, 'aarch64')) }}:
       vmImage: ubuntu-20.04
     ${{ if and(eq(parameters.os, 'linux'),eq(parameters.arch, 'aarch64')) }}:
@@ -48,8 +50,21 @@ jobs:
     - ${{ if eq(parameters.os, 'linux')}}:
       - script: sudo apt update && sudo apt install -y autoconf libtool automake build-essential gettext cmake python3 curl wget bc
         displayName: Install dependencies
-    - script: CI_TAGS="${{ parameters.os }}-${{ parameters.arch }},$(pullRequestCITags),${{ parameters.additionalCITags }}" scripts/ci/run-jenkins.sh
-      displayName: Build and Test
+    - ${{ if eq(parameters.os, 'windows')}}:
+      - script: |
+          curl -SL --output %TEMP%\vcbuildtools.exe https://go.microsoft.com/fwlink/?LinkId=691126
+          curl -SL --output %TEMP%\clangc2.exe "http://go.microsoft.com/fwlink/?LinkID=809031&clcid=0x409"
+          curl -SL --output %TEMP%\cygsetup.exe https://cygwin.com/setup-x86_64.exe
+          powershell -Command Start-Process %TEMP%\vcbuildtools.exe -Wait -ArgumentList '/full /quiet /norestart'
+          powershell -Command Start-Process %TEMP%\clangc2.exe -Wait -ArgumentList '/quiet /norestart'
+          powershell -Command Start-Process %TEMP%\cygsetup.exe -Wait -ArgumentList '--quiet-mode --wait --root c:\cygwin --local-package-dir c:\cygwin --site http://mirrors.kernel.org/sourceware/cygwin/ --packages autoconf,automake$
+        displayName: Install dependencies
+    - ${{ if eq(parameters.os, 'windows')}}:
+      - script: c:\cygwin\bin\bash.exe -c PATH=/bin:/usr/bin CI_TAGS="${{ parameters.os }}-${{ parameters.arch }},$(pullRequestCITags),${{ parameters.additionalCITags }}" scripts/ci/run-jenkins.sh
+        displayName: Build and Test
+    - ${{ if ne(parameters.os, 'windows')}}:
+      - script: CI_TAGS="${{ parameters.os }}-${{ parameters.arch }},$(pullRequestCITags),${{ parameters.additionalCITags }}" scripts/ci/run-jenkins.sh
+        displayName: Build and Test
     - script: echo "Found unstable steps, please check previous logs for details." && exit 1
       displayName: Fail build on unstable steps
       condition: eq(variables['BuildHasUnstableSteps'], true)
