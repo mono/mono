@@ -35,6 +35,7 @@ jobs:
   ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'amd64')) }}:
     container:
       image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mono-amd64-20210223192217-5867980
+      options: --platform linux/amd64 --user 0:0
   ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'aarch64')) }}:
     container:
       image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mono-arm64v8-20210223192142-5867980
