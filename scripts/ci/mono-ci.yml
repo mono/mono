@@ -57,6 +57,7 @@ jobs:
     displayName: Linux ARM Hard Float
     os: linux
     arch: armhf
+    timeoutInMinutes: 180
 
 #
 # Linux aarch64
