@@ -51,7 +51,7 @@ endif
 
 test-local:
 
-run-test-local run-test-ondotnet-local csproj-local:
+run-test-local run-test-ondotnet-local:
 
 clean-local:
 	rm -f *.exe *.mdb *.pdb

@@ -47,7 +47,6 @@ source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 # 	if [ $skip = true ]; then
 # 		${TESTCMD} --label="Skipped on ${skip_step}." --timeout=60m --fatal sh -c 'exit 0'
 # 		if [[ $CI_TAGS == *'apidiff'* ]]; then report_github_status "success" "API Diff" "Skipped." || true; fi
-# 		if [[ $CI_TAGS == *'csprojdiff'* ]]; then report_github_status "success" "Project Files Diff" "Skipped." || true; fi
 # 		exit 0
 # 	fi
 
@@ -475,16 +474,4 @@ elif [[ ${CI_TAGS} == *'no-tests'* ]];                 then echo "Skipping tests
 else make check-ci;
 fi
 
-if [[ $CI_TAGS == *'apidiff'* ]]; then
-    if ${TESTCMD} --label=apidiff --timeout=15m --fatal make -w -C mcs -j ${CI_CPU_COUNT} mono-api-diff
-    then report_github_status "success" "API Diff" "No public API changes found." || true
-    else report_github_status "error" "API Diff" "The public API changed." "$BUILD_URL/Public_20API_20Diff/" || true
-    fi
-fi
-if [[ $CI_TAGS == *'csprojdiff'* ]]; then
-    make update-solution-files
-    if ${TESTCMD} --label=csprojdiff --timeout=5m --fatal make -w -C mcs mono-csproj-diff
-    then report_github_status "success" "Project Files Diff" "No csproj file changes found." || true
-    else report_github_status "error" "Project Files Diff" "The csproj files changed." "$BUILD_URL/Project_20Files_20Diff/" || true
-    fi
-fi
+if [[ $CI_TAGS == *'apidiff'* ]]; then ${TESTCMD} --label=apidiff --timeout=15m --fatal make -w -C mcs -j ${CI_CPU_COUNT} mono-api-diff; fi
