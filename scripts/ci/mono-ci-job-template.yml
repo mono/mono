@@ -60,7 +60,7 @@ jobs:
           powershell -Command Start-Process %TEMP%\cygsetup.exe -Wait -ArgumentList '--quiet-mode --wait --root c:\cygwin --local-package-dir c:\cygwin --site http://mirrors.kernel.org/sourceware/cygwin/ --packages autoconf,automake,bison,gcc-core,gcc-g++,mingw64-i686-runtime,mingw64-i686-binutils,mingw64-i686-gcc-core,mingw64-i686-gcc-g++,mingw64-i686-pthreads,mingw64-i686-w32api,mingw64-i686-zlib,mingw64-x86_64-runtime,mingw64-x86_64-binutils,mingw64-x86_64-gcc-core,mingw64-x86_64-gcc-g++,mingw64-x86_64-pthreads,mingw64-x86_64-w32api,mingw64-x86_64-zlib,libtool,make,python,gettext-devel,gettext,intltool,libiconv,pkg-config,git,curl,wget,libxslt,bc,patch,cmake,libxml2-devel,libiconv-devel,zlib-devel,liblzma-devel,libssl-devel,bsdcpio,unzip,wget,p7zip,nohup,yasm'
         displayName: Install dependencies
     - ${{ if eq(parameters.os, 'win')}}:
-      - script: c:\cygwin\bin\bash.exe -c 'PATH=/bin:/usr/bin CI_TAGS="${{ parameters.os }}-${{ parameters.arch }},$(pullRequestCITags),${{ parameters.additionalCITags }}" scripts/ci/run-jenkins.sh'
+      - script: c:\cygwin\bin\bash.exe -c 'PATH=/bin:/usr/bin:$PATH CI_TAGS="${{ parameters.os }}-${{ parameters.arch }},$(pullRequestCITags),${{ parameters.additionalCITags }}" scripts/ci/run-jenkins.sh'
         displayName: Build and Test
     - ${{ if ne(parameters.os, 'win')}}:
       - script: CI_TAGS="${{ parameters.os }}-${{ parameters.arch }},$(pullRequestCITags),${{ parameters.additionalCITags }}" scripts/ci/run-jenkins.sh
