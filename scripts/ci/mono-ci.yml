@@ -200,3 +200,13 @@ jobs:
     os: osx
     arch: amd64
     additionalCITags: cxx
+
+#
+# Windows x64
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Windows x64
+    os: windows
+    arch: amd64
+
