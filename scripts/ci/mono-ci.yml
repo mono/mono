@@ -207,6 +207,6 @@ jobs:
 - template: /scripts/ci/mono-ci-job-template.yml
   parameters:
     displayName: Windows x64
-    os: windows
+    os: win
     arch: amd64
 
