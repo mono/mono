@@ -209,4 +209,4 @@ jobs:
     displayName: Windows x64
     os: win
     arch: amd64
-
+    timeoutInMinutes: 180
