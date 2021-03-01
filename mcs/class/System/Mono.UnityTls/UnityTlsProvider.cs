@@ -16,6 +16,7 @@ using MonoSecurity::Mono.Security.Interface;
 #else
 using Mono.Security.Interface;
 #endif
+using Mono.Util;
 
 using size_t = System.IntPtr;
 
@@ -41,6 +42,7 @@ namespace Mono.Unity
 			return new UnityTlsStream (innerStream, leaveInnerStreamOpen, sslStream, settings, this);
 		}
 
+		[MonoPInvokeCallback (typeof (UnityTls.unitytls_x509verify_callback))]
 		static UnityTls.unitytls_x509verify_result x509verify_callback(void* userData, UnityTls.unitytls_x509_ref cert, UnityTls.unitytls_x509verify_result result, UnityTls.unitytls_errorstate* errorState)
 		{
 			if (userData != null)
