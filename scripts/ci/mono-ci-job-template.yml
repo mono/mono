@@ -40,7 +40,7 @@ jobs:
       options: --platform linux/arm64 --user 0:0
   ${{ if and(eq(parameters.os, 'linux'), eq(parameters.arch, 'armhf')) }}:
     container:
-      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mono-arm32v7-20210223192132-5867980
+      image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mono-arm32v7-20210301133940-7b1af2f
       options: --platform linux/arm/v7 --user 0:0
   timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
   steps:
