@@ -53,7 +53,7 @@ jobs:
     - ${{ if eq(parameters.os, 'win')}}:
       - script: |
           curl -SL --output %TEMP%\vcbuildtools.exe https://go.microsoft.com/fwlink/?LinkId=691126
-          curl -SL --output %TEMP%\clangc2.exe "http://go.microsoft.com/fwlink/?LinkID=809031&clcid=0x409"
+          curl -SL --output %TEMP%\clangc2.exe "https://go.microsoft.com/fwlink/?LinkID=809031"
           curl -SL --output %TEMP%\cygsetup.exe https://cygwin.com/setup-x86_64.exe
           powershell -Command Start-Process %TEMP%\vcbuildtools.exe -Wait -ArgumentList '/full /quiet /norestart'
           powershell -Command Start-Process %TEMP%\clangc2.exe -Wait -ArgumentList '/quiet /norestart'
