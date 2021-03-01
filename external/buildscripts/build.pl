@@ -1583,6 +1583,8 @@ if ($artifact)
 			system("cp", "$monoroot/mono/mini/.libs/libmonoboehm-2.0.so","$embedDirArchDestination/libmonobdwgc-2.0.so") eq 0 or die ("failed copying libmonobdwgc-2.0.so\n");
 			print ">>> Copying libMonoPosixHelper.so\n";
 			system("cp", "$monoroot/support/.libs/libMonoPosixHelper.so","$embedDirArchDestination/libMonoPosixHelper.so") eq 0 or die ("failed copying libMonoPosixHelper.so\n");
+			print ">>> Copying libmono-native.so\n";
+			system("cp", "$monoroot/mono/native/.libs/libmono-native.so","$embedDirArchDestination/libmono-native.so") eq 0 or die ("failed copying libmono-native.so\n");
 		}
 		elsif ($tizen || $tizenEmulator)
 		{
