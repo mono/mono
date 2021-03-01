@@ -42,6 +42,7 @@
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Runtime.InteropServices;
 namespace System {
 	class TermInfoDriver : IConsoleDriver {
@@ -524,7 +525,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				SetBufferSize (BufferWidth, value);
 			}
 		}
 
@@ -542,7 +543,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				SetBufferSize (value, BufferHeight);
 			}
 		}
 
@@ -716,6 +717,24 @@ namespace System {
 			bufferWidth = windowWidth;
 		}
 
+		// Should be called after init
+		//
+		// Only works on some Xterm-based terminals
+		void TrySetWindowDimensions (int width, int height)
+		{
+			if (height == WindowHeight && width == WindowWidth)
+				return;
+
+			if (term.StartsWith ("xterm")) {
+				WriteConsole ("\x1b[8;" + height.ToString () + ";" + width.ToString () + "t");
+
+				// Wait for window to get resized
+				Thread.Sleep (50);
+			} else {
+				throw new NotSupportedException ("Resizing can only work in xterm-based terminals");
+			}
+		}
+
 		
 		public int WindowHeight {
 			get {
@@ -731,7 +750,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				SetWindowSize (WindowWidth, value);
 			}
 		}
 
@@ -745,11 +764,14 @@ namespace System {
 				return 0;
 			}
 			set {
-				if (!inited) {
+				/* if (!inited) {
 					Init ();
-				}
+				}*/
 
-				throw new NotSupportedException ();
+				if (value == 0)
+					return;
+
+				throw new NotSupportedException ("Unix terminals only support window position (0; 0)");
 			}
 		}
 
@@ -763,11 +785,14 @@ namespace System {
 				return 0;
 			}
 			set {
-				if (!inited) {
+				/* if (!inited) {
 					Init ();
-				}
+				} */
 
-				throw new NotSupportedException ();
+				if (value == 0)
+					return;
+
+				throw new NotSupportedException ("Unix terminals only support window position (0; 0)");
 			}
 		}
 
@@ -785,7 +810,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				SetWindowSize (value, WindowHeight);
 			}
 		}
 
@@ -1191,7 +1216,7 @@ namespace System {
 				Init ();
 			}
 
-			throw new NotImplementedException (String.Empty);
+			TrySetWindowDimensions (width, height);
 		}
 
 		public void SetCursorPosition (int left, int top)
@@ -1223,8 +1248,8 @@ namespace System {
 				Init ();
 			}
 
-			// No need to throw exceptions here.
-			//throw new NotSupportedException ();
+			if (left != 0 || top != 0)
+				throw new NotSupportedException ("Unix terminals only support window position (0; 0)");
 		}
 
 		public void SetWindowSize (int width, int height)
@@ -1233,8 +1258,7 @@ namespace System {
 				Init ();
 			}
 
-			// No need to throw exceptions here.
-			//throw new NotSupportedException ();
+			TrySetWindowDimensions (width, height);
 		}
 
 

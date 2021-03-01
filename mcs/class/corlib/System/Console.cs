@@ -548,13 +548,13 @@ namespace System
 
 		public static int BufferHeight {
 			get { return ConsoleDriver.BufferHeight; }
-			[MonoLimitation ("Implemented only on Windows")]
+			[MonoLimitation ("Works only on Windows, or with some Xterm-based terminals")]
 			set { ConsoleDriver.BufferHeight = value; }
 		}
 
 		public static int BufferWidth {
 			get { return ConsoleDriver.BufferWidth; }
-			[MonoLimitation ("Implemented only on Windows")]
+			[MonoLimitation ("Works only on Windows, or with some Xterm-based terminals")]
 			set { ConsoleDriver.BufferWidth = value; }
 		}
 
@@ -616,21 +616,25 @@ namespace System
 
 		public static int WindowHeight {
 			get { return ConsoleDriver.WindowHeight; }
+			[MonoLimitation ("Works only on Windows, or with some Xterm-based terminals")]
 			set { ConsoleDriver.WindowHeight = value; }
 		}
 
 		public static int WindowLeft {
 			get { return ConsoleDriver.WindowLeft; }
+			[MonoLimitation ("Works only on Windows")]
 			set { ConsoleDriver.WindowLeft = value; }
 		}
 
 		public static int WindowTop {
 			get { return ConsoleDriver.WindowTop; }
+			[MonoLimitation ("Works only on Windows")]
 			set { ConsoleDriver.WindowTop = value; }
 		}
 
 		public static int WindowWidth {
 			get { return ConsoleDriver.WindowWidth; }
+			[MonoLimitation ("Works only on Windows, or with some Xterm-based terminals")]
 			set { ConsoleDriver.WindowWidth = value; }
 		}
 
@@ -704,7 +708,7 @@ namespace System
 			ConsoleDriver.ResetColor ();
 		}
 
-		[MonoLimitation ("Only works on windows")]
+		[MonoLimitation ("Works only on Windows, or with some Xterm-based terminals")]
 		public static void SetBufferSize (int width, int height)
 		{
 			ConsoleDriver.SetBufferSize (width, height);
@@ -715,11 +719,13 @@ namespace System
 			ConsoleDriver.SetCursorPosition (left, top);
 		}
 
+		[MonoLimitation ("Works only on Windows")]
 		public static void SetWindowPosition (int left, int top)
 		{
 			ConsoleDriver.SetWindowPosition (left, top);
 		}
 
+		[MonoLimitation ("Works only on Windows, or with some Xterm-based terminals")]
 		public static void SetWindowSize (int width, int height)
 		{
 			ConsoleDriver.SetWindowSize (width, height);
