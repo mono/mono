@@ -92,6 +92,7 @@ jobs:
     arch: amd64
     additionalCITags: acceptance-tests
     publishTestResults: false
+    timeoutInMinutes: 180
 
 - template: /scripts/ci/mono-ci-job-template.yml
   parameters:
