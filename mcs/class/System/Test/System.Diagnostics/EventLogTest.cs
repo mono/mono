@@ -47,6 +47,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Threading;
 
 using Microsoft.Win32;
@@ -75,7 +77,16 @@ namespace MonoTests.System.Diagnostics
 		public void SetUp ()
 		{
 			if (Win32EventLogEnabled)
+			{
+				// EventLog requires admin permissions on Windows
+				WindowsIdentity identity = WindowsIdentity.GetCurrent ();
+				WindowsPrincipal principal = new WindowsPrincipal (identity);
+				if (!principal.IsInRole (WindowsBuiltInRole.Administrator)) {
+					Assert.Ignore ("Not running as Administrator");
+				}
+
 				return;
+			}
 
 			// determine temp directory for eventlog store
 			_temp = new TempDirectory ();
