@@ -224,8 +224,8 @@ jobs:
       AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
 
   - script: |
-      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=PKG-mono" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/$MONO_SIGNED_PKG_DIR/$MONO_PKG_NAME"
-      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=artifacts.json" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/$MONO_SIGNED_PKG_DIR/artifacts.json"
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=PKG-mono" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/$MONO_SIGNED_PKG_DIR/$MONO_PKG_NAME"
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=artifacts.json" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/$MONO_SIGNED_PKG_DIR/artifacts.json"
     displayName: Set success GitHub status
     env:
       GITHUB_TOKEN: $(GITHUB_TOKEN)
@@ -297,7 +297,7 @@ jobs:
             "toolVersion": "1.0"
           },
           {
-            "keyCode": "CP-230865",
+            "keyCode": "CP-230012",
             "operationCode": "SigntoolVerify",
             "parameters": {
               "VerifyAll": "/all"
@@ -312,15 +312,15 @@ jobs:
 
   - script: |
       cd $(Build.ArtifactStagingDirectory)
-      az storage blob upload-batch -s mono-signed --destination-path "$MONO_SIGNED_MSI_DIR" --pattern "*.msi" -d build-package-win-mono --account-name xamjenkinsartifact
+      az storage blob upload-batch -s . --destination-path "$MONO_SIGNED_MSI_DIR" --pattern "*.msi" -d build-package-win-mono --account-name xamjenkinsartifact
     displayName: Upload artifacts to blob storage
     env:
       AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
       AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
 
   - script: |
-      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=MSI-mono_x86" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/$MONO_SIGNED_MSI_DIR/$MONO_MSI_NAME_X86"
-      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=MSI-mono_x64" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/$MONO_SIGNED_MSI_DIR/$MONO_MSI_NAME_X64"
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=MSI-mono_x86" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-win-mono/$MONO_SIGNED_MSI_DIR/$MONO_MSI_NAME_X86"
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=MSI-mono_x64" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-win-mono/$MONO_SIGNED_MSI_DIR/$MONO_MSI_NAME_X64"
     displayName: Set success GitHub status
     env:
       GITHUB_TOKEN: $(GITHUB_TOKEN)

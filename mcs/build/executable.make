@@ -186,21 +186,6 @@ BUILT_SOURCES_cmdline = `echo $(BUILT_SOURCES) | $(PLATFORM_CHANGE_SEPARATOR_CMD
 endif
 endif
 
-csproj-local:
-	config_file=`basename $(PROGRAM) .exe`-$(PROFILE).input; \
-	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
-	(echo $(is_boot); \
-	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(patsubst %,-r:%,$(LIB_REFS)); \
-	echo $(sourcefile); \
-	echo $(PROGRAM); \
-	echo $(BUILT_SOURCES_cmdline); \
-	echo $(build_lib); \
-	echo $(FRAMEWORK_VERSION); \
-	echo $(PROFILE); \
-	echo $(RESOURCE_DEFS); \
-	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
-
-
 ifneq ($(response),$(sourcefile))
 $(response): $(topdir)/build/executable.make $(depsdir)/.stamp
 endif

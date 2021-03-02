@@ -586,21 +586,3 @@ Mono Trademark Use Policy
 =========================
 
 The use of trademarks and logos for Mono can be found [here](https://www.dotnetfoundation.org/legal/mono-tm). 
-
-Maintaining the Class Library Solution Files
-============================================
-
-Mono now ships with a solution file that can be used to build the
-assemblies from an IDE.  Either by opening the topmost `net_4_x.sln`
-file, or to by loading one of the individual `csproj` files located in
-each directory.
-
-These are maintained by extracting the configuration information from
-our Makefiles, which as of May 2016 remain the canonical location for
-configuration information.
-
-When changes are made to the Makefiles, a user would need to run the
-following command to re-generate the solution files at the top level:
-
-	$ make update-solution-files
-

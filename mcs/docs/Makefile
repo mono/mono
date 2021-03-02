@@ -42,7 +42,7 @@ ifdef MCS_MODE
 DISABLE_MCS_DOCS = yes
 endif
 
-csproj-local test-local run-test-local run-test-ondotnet-local doc-update:
+test-local run-test-local run-test-ondotnet-local doc-update:
 
 clean-local:
 	-rm -f $(CLEAN_FILES)
