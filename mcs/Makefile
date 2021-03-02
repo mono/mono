@@ -114,8 +114,6 @@ DISTFILES = \
 
 dist-local: dist-default
 
-csproj-local:
-
 dist-pre:
 	rm -rf $(package)
 	mkdir $(package)
@@ -188,11 +186,3 @@ mono-api-diff:
 	@mkdir -p apidiff
 	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "s/@title@/Public API Diff/g" -e "s/@description@/If the changes are intentional, run <code>make -C mcs mono-api-diff<\/code> locally and commit changes in external\/api-snapshot./g" diff.html.in > apidiff/index.html
 	$(Q) if [ -s temp.patch ]; then echo "Error: Found public API differences, see mcs/apidiff/index.html. If the changes are intentional, please go to external/api-snapshot and commit them."; rm -f temp.patch; exit 1; else echo "No differences found."; rm -f temp.patch; fi
-
-mono-csproj-diff:
-	@echo "Generating csproj diff..."
-	$(Q) git add -A "*.csproj" $(topdir)../bcl.sln
-	$(Q) git diff --no-renames HEAD "*.csproj" $(topdir)../bcl.sln > $(abspath $(topdir))/temp.patch
-	@mkdir -p csprojdiff
-	$(Q) sed -e "/@diffdata@/r temp.patch" -e "/@diffdata@/d" -e "s/@title@/Project Files Diff/g" -e "s/@description@/Use <code>@monojenkins commit csproj<\/code> to commit them./g" diff.html.in > csprojdiff/index.html
-	$(Q) if [ -s temp.patch ]; then echo "Error: Found csproj differences, see mcs/csprojdiff/index.html. If the changes are intentional, please commit them."; rm -f temp.patch; exit 1; else echo "No differences found."; rm -f temp.patch; fi

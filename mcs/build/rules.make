@@ -222,8 +222,6 @@ do-%: %-recursive
 .PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
 
-csproj: do-csproj
-
 # The way this is set up, any profile-specific subdirs list should
 # be listed _before_ including rules.make.  However, the default
 # SUBDIRS list can come after, so don't use the eager := syntax when

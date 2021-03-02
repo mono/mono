@@ -128,7 +128,6 @@
 /mono/utils/*-win* @lateralusX @lambdageek
 
 /msvc @lateralusX @kg @akoeplinger
-/msvc/scripts @akoeplinger @kg
 
 /netcore @marek-safar @akoeplinger @egorbo @vargaz @steveisok
 

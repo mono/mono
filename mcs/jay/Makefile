@@ -37,8 +37,6 @@ uninstall-local:
 	-rm -f $(DESTDIR)$(prefix)/share/man/man1/jay.1
 endif
 
-csproj-local:
-
 clean-local:
 	rm -f jay *.o *.exe *.pdb
 
