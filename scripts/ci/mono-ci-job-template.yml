@@ -17,6 +17,9 @@ parameters:
 - name: additionalCITags
   type: string
   default: ''
+- name: additionalSteps
+  type: stepList
+  default: []
 
 jobs:
 - job:
@@ -56,6 +59,10 @@ jobs:
         displayName: Install dependencies
     - script: CI_TAGS="${{ parameters.os }}-${{ parameters.arch }},$(pullRequestCITags),${{ parameters.additionalCITags }}" scripts/ci/run-jenkins.sh
       displayName: Build and Test
+
+    - ${{ each step in parameters.additionalSteps }}:
+        - ${{ step }}
+
     - script: echo "Found unstable steps, please check previous logs for details." && exit 1
       displayName: Fail build on unstable steps
       condition: eq(variables['BuildHasUnstableSteps'], true)
