@@ -70,5 +70,13 @@ namespace Mono.Debugger.Soft
 				return info.SourceLink;
 			}
 		}
+
+		// Apply a hot reload delta to the current module
+		// Since protocol version 2.60
+		public void ApplyChanges (ArrayMirror dmeta, ArrayMirror dIL, Value dPDB) {
+		    /* dPDB is Value because it can be ArrayMirror or PrimitiveValue (vm, null) */
+		    vm.CheckProtocolVersion (2, 60);
+		    vm.conn.Module_ApplyChanges (id, dmeta.Id, dIL.Id, dPDB.Id);
+		}
 	}
 }

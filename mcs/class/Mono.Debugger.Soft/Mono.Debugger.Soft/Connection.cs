@@ -568,6 +568,7 @@ namespace Mono.Debugger.Soft
 
 		enum CmdModule {
 			GET_INFO = 1,
+			APPLY_CHANGES = 2,
 		}
 
 		enum CmdMethod {
@@ -2357,6 +2358,11 @@ namespace Mono.Debugger.Soft
 			if (Version.AtLeast (2, 48))
 				info.SourceLink = r.ReadString ();
 			return info;
+		}
+
+
+		internal void Module_ApplyChanges (long id, long dmeta_id, long dil_id, long dpdb_id) {
+			SendReceive (CommandSet.MODULE, (int)CmdModule.APPLY_CHANGES, new PacketWriter().WriteId (id).WriteId (dmeta_id).WriteId (dil_id).WriteId (dpdb_id));
 		}
 
 		/*
