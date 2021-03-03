@@ -171,7 +171,7 @@ namespace System.ServiceModel.Channels.Http
 
 			Message msg = null;
 
-			if (ctxi.Request.HttpMethod == "POST" || ctxi.Request.HttpMethod == "PUT")
+			if (ctxi.Request.HttpMethod == "POST" || ctxi.Request.HttpMethod == "PUT" || ctxi.Request.HttpMethod == "PATCH")
 				msg = CreatePostMessage (ctxi);
 			else if (ctxi.Request.HttpMethod == "GET" || ctxi.Request.HttpMethod == "DELETE" || ctxi.Request.HttpMethod == "OPTIONS")
 				msg = Message.CreateMessage (MessageVersion.None, null); // HTTP GET-based request
@@ -198,7 +198,7 @@ namespace System.ServiceModel.Channels.Http
 				return null;
 			}
 
-			if (!Encoder.IsContentTypeSupported (ctxi.Request.ContentType)) {
+			if (ctxi.Request.ContentType == null || !Encoder.IsContentTypeSupported (ctxi.Request.ContentType)) {
 				ctxi.Response.StatusCode = (int) HttpStatusCode.UnsupportedMediaType;
 				ctxi.Response.StatusDescription = String.Format (
 						"Expected content-type '{0}' but got '{1}'", Encoder.ContentType, ctxi.Request.ContentType);
