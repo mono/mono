@@ -412,6 +412,7 @@ typedef enum {
 
 typedef enum {
 	CMD_MODULE_GET_INFO = 1,
+	CMD_MODULE_APPLY_CHANGES = 2, /* unused, reserved */
 } CmdModule;
 
 typedef enum {
