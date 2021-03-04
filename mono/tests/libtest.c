@@ -3533,6 +3533,9 @@ typedef struct
 	int (STDCALL *ArrayOut)(MonoComObject* pUnk, guint32 *array, guint32 *result);
 	int (STDCALL *GetDefInterface1)(MonoComObject* pUnk, MonoDefItfObject **iface);
 	int (STDCALL *GetDefInterface2)(MonoComObject* pUnk, MonoDefItfObject **iface);
+	int (STDCALL *PointClassIn)(MonoComObject* pUnk, const point *pt);
+	void (STDCALL *PointClassInOut)(MonoComObject* pUnk, point *pt);
+	point* (STDCALL *PointClassRet)(MonoComObject* pUnk);
 } MonoIUnknown;
 
 struct MonoComObject
@@ -3703,6 +3706,32 @@ GetDefInterface2(MonoComObject* pUnk, MonoDefItfObject **obj)
 	return S_OK;
 }
 
+LIBTEST_API int STDCALL
+PointClassIn(MonoComObject* pUnk, const point *pt)
+{
+	if (!pt)
+		return 1;
+	if (pt->x != 7 || pt->y != -10)
+		return 1;
+	return 0;
+}
+
+LIBTEST_API void STDCALL
+PointClassInOut(MonoComObject* pUnk, point *pt)
+{
+	pt->x = -pt->x;
+	pt->y = -pt->y;
+}
+
+LIBTEST_API point* STDCALL
+PointClassRet(MonoComObject* pUnk)
+{
+	point *pt = (point*)marshal_alloc (sizeof(point));
+	pt->x = 1337;
+	pt->y = 42;
+	return pt;
+}
+
 static void create_com_object (MonoComObject** pOut);
 
 LIBTEST_API int STDCALL 
@@ -3742,6 +3771,9 @@ static void create_com_object (MonoComObject** pOut)
 	(*pOut)->vtbl->ArrayOut = ArrayOut;
 	(*pOut)->vtbl->GetDefInterface1 = GetDefInterface1;
 	(*pOut)->vtbl->GetDefInterface2 = GetDefInterface2;
+	(*pOut)->vtbl->PointClassIn = PointClassIn;
+	(*pOut)->vtbl->PointClassInOut = PointClassInOut;
+	(*pOut)->vtbl->PointClassRet = PointClassRet;
 }
 
 static MonoComObject* same_object = NULL;
@@ -3848,6 +3880,30 @@ mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)
 	hr = ppUnk[0]->vtbl->SByteIn (ppUnk[0], -100);
 	if (hr != 0)
 		return 4;
+
+	return 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_point_class_ccw_itest (MonoComObject *pUnk)
+{
+	point pt, *ppt;
+
+	if (!pUnk)
+		return 1;
+
+	pt.x = 7;
+	pt.y = -10;
+	if (!pUnk->vtbl->PointClassIn(pUnk, NULL))
+		return 2;
+	if (pUnk->vtbl->PointClassIn(pUnk, &pt) || pt.x != 7 || pt.y != -10)
+		return 3;
+	pUnk->vtbl->PointClassInOut(pUnk, &pt);
+	if (pt.x != -7 || pt.y != 10)
+		return 4;
+	ppt = pUnk->vtbl->PointClassRet(pUnk);
+	if (ppt->x != 1337 || ppt->y != 42)
+		return 5;
 
 	return 0;
 }

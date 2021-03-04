@@ -990,8 +990,10 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 				mspecs[mspec_index]->native = MONO_NATIVE_BSTR;
 			}
 			else if (sig_native->params[i]->type == MONO_TYPE_CLASS) {
-				mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[mspec_index]->native = MONO_NATIVE_INTERFACE;
+				if (mono_cominterop_is_interface (sig_native->params[i]->data.klass)) {
+					mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
+					mspecs[mspec_index]->native = MONO_NATIVE_INTERFACE;
+				}
 			}
 			else if (sig_native->params[i]->type == MONO_TYPE_BOOLEAN) {
 				mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
@@ -1013,8 +1015,10 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 				mspecs[0]->native = MONO_NATIVE_BSTR;
 			}
 			else if (sig->ret->type == MONO_TYPE_CLASS) {
-				mspecs[0] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[0]->native = MONO_NATIVE_INTERFACE;
+				if (mono_cominterop_is_interface (sig->ret->data.klass)) {
+					mspecs[0] = g_new0 (MonoMarshalSpec, 1);
+					mspecs[0]->native = MONO_NATIVE_INTERFACE;
+				}
 			}
 			else if (sig->ret->type == MONO_TYPE_BOOLEAN) {
 				mspecs[0] = g_new0 (MonoMarshalSpec, 1);
@@ -2174,7 +2178,10 @@ cominterop_get_ccw_default_mspec (const MonoType *param_type)
 		native = MONO_NATIVE_BSTR;
 		break;
 	case MONO_TYPE_CLASS:
-		native = MONO_NATIVE_INTERFACE;
+		if (mono_cominterop_is_interface (param_type->data.klass))
+			native = MONO_NATIVE_INTERFACE;
+		else
+			return NULL;
 		break;
 	case MONO_TYPE_BOOLEAN:
 		native = MONO_NATIVE_VARIANTBOOL;
