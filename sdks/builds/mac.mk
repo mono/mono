@@ -65,10 +65,10 @@ endef
 # Cross compiler builds
 #
 # Parameters:
-#  $(1): target (cross64)
+#  $(1): target (crossarm64)
 #  $(2): host arch (x86_64 or aarch64)
 #  $(3): target arch (arm or aarch64)
-#  $(4): device target (target32, target64, ...)
+#  $(4): device target (target64, targetarm64 ...)
 #  $(5): llvm
 #  $(6): offsets dumper abi
 #  $(7): sysroot path
@@ -131,21 +131,21 @@ mac_sysroot = -isysroot $(mac_sysroot_path)
 mac-mac64_SYSROOT=$(mac_sysroot) -mmacosx-version-min=$(MACOS_VERSION_MIN)
 mac-macarm64_SYSROOT=$(mac_sysroot) -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
-mac-cross64_SYSROOT=$(mac_sysroot) -mmacosx-version-min=$(MACOS_VERSION_MIN)
+mac-crossarm64_SYSROOT=$(mac_sysroot) -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
 $(eval $(call MacTemplate,mac64,x86_64,x86_64,$(XCODE_DIR)))
 $(eval $(call MacTemplate,macarm64,aarch64,arm64,$(XCODE_DIR)))
 
-$(eval $(call MacCrossTemplate,cross64,x86_64,aarch64-apple-darwin20.0.0,target64,llvm-llvm64,aarch64-apple-darwin20,$(mac_sysroot_path)))
+$(eval $(call MacCrossTemplate,crossarm64,x86_64,aarch64-apple-darwin20.0.0,macarm64,llvm-llvm64,aarch64-apple-darwin20,$(mac_sysroot_path)))
 
 $(eval $(call BclTemplate,mac,xammac xammac_net_4_5,xammac xammac_net_4_5))
 
-$(mac_BIN_DIR): package-mac-mac64 package-mac-macarm64 package-mac-cross64
+$(mac_BIN_DIR): package-mac-mac64 package-mac-macarm64 package-mac-crossarm64
 	rm -rf $(mac_BIN_DIR)
 	mkdir -p $(mac_BIN_DIR)
 
 	cp $(TOP)/sdks/out/mac-mac64-$(CONFIGURATION)/bin/mono-sgen $(mac_BIN_DIR)/mono-sgen
-	cp $(TOP)/sdks/out/mac-cross64-$(CONFIGURATION)/bin/aarch64-apple-darwin20.0.0-mono-sgen $(mac_BIN_DIR)/aarch64-darwin-mono-sgen
+	cp $(TOP)/sdks/out/mac-crossarm64-$(CONFIGURATION)/bin/aarch64-apple-darwin20.0.0-mono-sgen $(mac_BIN_DIR)/aarch64-darwin-mono-sgen
 
 $(mac_PKG_CONFIG_DIR): package-mac-mac64 package-mac-macarm64
 	rm -rf $(mac_PKG_CONFIG_DIR)
