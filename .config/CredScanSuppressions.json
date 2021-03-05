@@ -4,7 +4,6 @@
   {
     "file": [
       "/data/net_2_0/machine.jvm.config",
-      "/mcs/class/Mono.Security/Test/Mono.Security.Cryptography/CryptoConvertTest.cs",
       "/mcs/class/Mono.Security/Test/Mono.Security.Cryptography/RSAManagedTest.cs",
       "/mcs/class/Mono.ServiceModel.IdentitySelectors/Test/resources/rupert.xml",
       "/mcs/class/System.Data.Linq/examples/DbLinq.Ingres.Example/Program.cs",
