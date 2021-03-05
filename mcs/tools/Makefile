@@ -75,7 +75,7 @@ include ../build/rules.make
 DISTFILES = \
 	removecomments.sh
 
-test-local csproj-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local doc-update-local:
+test-local run-test-local run-test-ondotnet-local all-local install-local uninstall-local doc-update-local:
 	@:
 
 dist-local: dist-default

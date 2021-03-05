@@ -5,12 +5,14 @@
 #
 
 # run the MS test suite
-LANG=en_US.UTF-8 ${TESTCMD} --label=check-ms-test-suite --timeout=10m make -C acceptance-tests check-ms-test-suite
+if [[ ${CI_TAGS} == *'ms-test-suite'* ]]; then
+	LANG=en_US.UTF-8 ${TESTCMD} --label=check-ms-test-suite --timeout=10m make -C acceptance-tests check-ms-test-suite
 
-total_tests=$(find acceptance-tests/ -name TestResult*xml | xargs cat | grep -c "<test-case")
-if [ "$total_tests" -lt "1600" ]
-	then echo "*** NOT ENOUGH TEST RESULTS RECORDED, MARKING FAILURE ***"
-	exit 1
+	total_tests=$(find acceptance-tests/ -name TestResult*xml | xargs cat | grep -c "<test-case")
+	if [ "$total_tests" -lt "1600" ]
+		then echo "*** NOT ENOUGH TEST RESULTS RECORDED, MARKING FAILURE ***"
+		exit 1
+	fi
 fi
 
 # run Roslyn tests, they use Mono from PATH so we need to do a temporary install
