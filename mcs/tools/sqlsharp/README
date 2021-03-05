@@ -58,7 +58,7 @@ CONNECTION AND PROVIDER COMMANDS
 		SQL# \ConnectionString Provider=PostgreSQL;Addr=127.0.0.1;Database=rodrigo
 		
 	Oracle via System.Data.OracleClient
-		SQL# \ConnectionString Data Source=testdb;User ID=scott;Password=tiger
+		SQL# \ConnectionString Data Source=testdb;User ID=scott;Password=PLACEHOLDER
 
     FirebirdSql via FirebirdSql.Data.Firebird (not included with Mono)
  		SQL# \ConnectionString Database=C:\FIREBIRD\EXAMPLES\EMPLOYEE.FDB;User=SYSDBA;Password=masterkey;Dialect=3;Server=localhost
