@@ -595,7 +595,9 @@ namespace MonoTests.Mono.Security.Cryptography {
 			RSA rsa = CryptoConvert.FromCapiKeyBlob (strongNameNUnit, 0);
 			// note the bad D parameters !!!
 			// this only works because CRT is being used
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ("<RSAKeyValue><Modulus>rB8h0TaMs8fWA+5WMdcjOjejCZwhYwuFHUZPS0cC9TOG6FJtvlHPpZLQAg0xfLr2SivPRol1Xw9SqhuaYQNJA7sAaOb8Rvgmx93XbmcNotY9ob4TGaesk+M8VsdexsIJ3WlyLbmRlf0EjT52nboyauEL3UC85zkMjW1LNb8LSs8=</Modulus><Exponent>AQAB</Exponent><P>2d4pGForvc792ztFxhNuzxIihDnXp+qK9F8t/NduhRBdu+JXK4d8a9EGwzpMxLUPlHjCZfXRraZiSQszkH+nzQ==</P><Q>yj9BeGmOrucOUCNZYTtXI0ykzz+1g+cVMSxi+6xzoLEOqmdE4gjcWaxak4MF1+pIR6UycnNa/jg1LBl7MKxpCw==</Q><DP>cMkAjznG4Sjx4/dIRKU0vP/PXJIxIR1bN+y5+uVvsnTpgWVH6SHneE0qahCZQ0/UM/Fb+bqLBJFY2iVxWUGslQ==</DP><DQ>gz6TXPGbLzMv3Z9i5C8e+ABHv1pHj6ZI4VU9kraxfmkH7FsBn3FClUq8qJdRFnGpoBy65Pyo4upUzx5mDAsGSw==</DQ><InverseQ>x+UShV+0d9cicoiB9fkSLqpLDyF4dYzVu0uqX0eCcoGJpk19jtSaMI3Eo8VN6MJAW1zrRy+MA1Fqb9qeThLqZQ==</InverseQ><D>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</D></RSAKeyValue>", rsa.ToXmlString (true), "KeyPair");
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ("<RSAKeyValue><Modulus>rB8h0TaMs8fWA+5WMdcjOjejCZwhYwuFHUZPS0cC9TOG6FJtvlHPpZLQAg0xfLr2SivPRol1Xw9SqhuaYQNJA7sAaOb8Rvgmx93XbmcNotY9ob4TGaesk+M8VsdexsIJ3WlyLbmRlf0EjT52nboyauEL3UC85zkMjW1LNb8LSs8=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", rsa.ToXmlString (false), "PublicKey");
 		}
 	}
