@@ -57,17 +57,17 @@ parallel (
             }
         }
     },
-    "Mac (Xcode 11.3)": {
+    "Mac (Xcode 12.4)": {
         throttle(['provisions-mac-toolchain']) {
-            node ("xcode113") {
-                archive ("mac", "release", "Darwin", "", "", "", "xcode113")
+            node ("xcode124") {
+                archive ("mac", "release", "Darwin", "", "", "", "xcode124")
             }
         }
     },
-    "Mac Catalyst (Xcode 11.3)": {
+    "Mac Catalyst (Xcode 12.4)": {
         throttle(['provisions-mac-toolchain']) {
-            node ("xcode113") {
-                archive ("maccat", "release", "Darwin", "", "", "", "xcode113")
+            node ("xcode124") {
+                archive ("maccat", "release", "Darwin", "", "", "", "xcode124")
             }
         }
     },
