@@ -202,7 +202,7 @@ jobs:
       mono_productid=$(echo $mono_updateinfo | cut -d ' ' -f1)
       mono_releaseid=$(echo $mono_updateinfo | cut -d ' ' -f2)
 
-      jq -n --arg url "https://xamjenkinsartifact.azureedge.net/$MONO_SIGNED_PKG_DIR/$MONO_PKG_NAME" \
+      jq -n --arg url "https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/$MONO_SIGNED_PKG_DIR/$MONO_PKG_NAME" \
             --arg sha256    "$mono_sha" \
             --arg md5       "$mono_mdfive" \
             --arg size      "$mono_size" \
