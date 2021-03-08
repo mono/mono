@@ -9,7 +9,7 @@ class TestClob
 {
 	static string infilename = @"cs-parser.cs";
 	static string outfilename = @"cs-parser2.cs";
-	static string connectionString = "data source=palis;user id=scott;password=tiger"
+	static string connectionString = "data source=palis;user id=scott;password=PLACEHOLDER"
 
 	public static void Main (string[] args) 
 	{

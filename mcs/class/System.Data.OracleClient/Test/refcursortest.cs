@@ -9,7 +9,7 @@
         string connectionString =
           "Data Source=testdb;" +
           "User ID=scott;" +
-          "Password=tiger;";
+          "Password=PLACEHOLDER;";
         OracleConnection connection = null;
         connection = new OracleConnection (connectionString);
         connection.Open ();
