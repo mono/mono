@@ -181,6 +181,13 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             export TVOS_VERSION=13.2
             export WATCHOS_VERSION=6.1
             export WATCHOS64_32_VERSION=6.1
+        elif [[ ${CI_TAGS} == *'xcode124'* ]]; then
+            export XCODE_DIR=/Applications/Xcode124.app/Contents/Developer
+            export MACOS_VERSION=11.1
+            export IOS_VERSION=14.4
+            export TVOS_VERSION=14.3
+            export WATCHOS_VERSION=7.2
+            export WATCHOS64_32_VERSION=7.2
         else
             export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
             export MACOS_VERSION=10.14
@@ -242,6 +249,9 @@ then
     if [[ ${CI_TAGS} == *'xcode113'* ]]; then
         export XCODE_DIR=/Applications/Xcode113.app/Contents/Developer
         export MACOS_VERSION=10.15
+    elif [[ ${CI_TAGS} == *'xcode124'* ]]; then
+        export XCODE_DIR=/Applications/Xcode124.app/Contents/Developer
+        export MACOS_VERSION=11.1
     else
         export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
         export MACOS_VERSION=10.14
@@ -274,6 +284,9 @@ then
     if [[ ${CI_TAGS} == *'xcode113'* ]]; then
         export XCODE_DIR=/Applications/Xcode113.app/Contents/Developer
         export MACOS_VERSION=10.15
+    elif [[ ${CI_TAGS} == *'xcode124'* ]]; then
+        export XCODE_DIR=/Applications/Xcode124.app/Contents/Developer
+        export MACOS_VERSION=11.1
     else
         export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
         export MACOS_VERSION=10.14
