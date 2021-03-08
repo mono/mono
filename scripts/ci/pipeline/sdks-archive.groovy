@@ -7,8 +7,8 @@ if (monoBranch == 'master') {
                 pipelineTriggers([cron('0 3 * * *')])
     ])
 
-    // multi-branch pipelines still get triggered for each commit, skip these builds on master by checking whether this build was timer-triggered
-    if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() == 0) {
+    // multi-branch pipelines still get triggered for each commit, skip these builds on master by checking whether this build was timer-triggered or manually triggered
+    if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() == 0 || currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() == 0) {
         echo "Skipping per-commit build on master."
         return
     }
