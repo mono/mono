@@ -851,6 +851,63 @@ mono_method_search_in_array_class (MonoClass *klass, const char *name, MonoMetho
 }
 
 static MonoMethod *
+get_vararg_pinvoke_method (MonoImage *image, guint32 idx, MonoMethodSignature *sig,
+	guint32 sig_idx, MonoMethod *base_method, MonoError *error)
+{
+	MonoMethod *result;
+	MonoMethodSignature *rsig;
+	const char *ptr;
+
+	error_init (error);
+
+	if (!(base_method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
+		return base_method;
+
+	if (!sig)
+	{
+		sig = (MonoMethodSignature *)find_cached_memberref_sig (image, sig_idx);
+		if (!sig) {
+			if (!mono_verifier_verify_memberref_method_signature (image, sig_idx, error))
+				return NULL;
+
+			ptr = mono_metadata_blob_heap (image, sig_idx);
+			mono_metadata_decode_blob_size (ptr, &ptr);
+
+			sig = mono_metadata_parse_method_signature_full (image, NULL, 0, ptr, NULL, error);
+			if (sig == NULL)
+				return NULL;
+
+			sig = (MonoMethodSignature *)cache_memberref_sig (image, sig_idx, sig);
+		}
+	}
+
+	if (sig->sentinelpos == -1 || sig->sentinelpos == sig->param_count)
+	{
+		/* Not a vararg method with modified signature. */
+		return base_method;
+	}
+
+	rsig = mono_metadata_signature_dup_mempool (image->mempool, sig);
+	rsig->pinvoke = 1;
+	rsig->call_convention = MONO_CALL_C;
+
+	result = (MonoMethod *)mono_image_alloc0 (image, sizeof (MonoMethodPInvoke));
+
+	result->slot = -1;
+	result->klass = base_method->klass;
+	result->flags = base_method->flags;
+	result->iflags = base_method->iflags;
+	result->token = base_method->token;
+	result->name = base_method->name;
+	result->signature = rsig;
+	((MonoMethodPInvoke*)result)->addr = ((MonoMethodPInvoke*)base_method)->addr;
+	((MonoMethodPInvoke*)result)->implmap_idx = ((MonoMethodPInvoke*)base_method)->implmap_idx;
+	((MonoMethodPInvoke*)result)->piflags = ((MonoMethodPInvoke*)base_method)->piflags;
+
+	return result;
+}
+
+static MonoMethod *
 method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typespec_context,
 		       gboolean *used_context, MonoError *error)
 {
@@ -904,6 +961,10 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 		method = mono_get_method_checked (image, MONO_TOKEN_METHOD_DEF | nindex, NULL, NULL, error);
 		if (!method)
 			goto fail;
+		/* If this is a reference adding arguments to a pinvoke method, create a method with new signature */
+		method = get_vararg_pinvoke_method (image, idx, NULL, cols [MONO_MEMBERREF_SIGNATURE], method, error);
+		if (!method)
+			goto fail;
 		return method;
 	}
 	default:
@@ -935,6 +996,11 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 	case MONO_MEMBERREF_PARENT_TYPEREF:
 	case MONO_MEMBERREF_PARENT_TYPEDEF:
 		method = find_method (klass, NULL, mname, sig, klass, error);
+
+		/* If this is a reference adding arguments to a pinvoke method, create a method with new signature */
+		if (is_ok (error))
+			method = get_vararg_pinvoke_method (image, idx, sig, sig_idx, method, error);
+
 		break;
 
 	case MONO_MEMBERREF_PARENT_TYPESPEC: {
