@@ -875,6 +875,7 @@ if ($build)
 		push @configureparams, "mono_cv_uscore=yes";
 		push @configureparams, "ac_cv_header_zlib_h=no" if($runningOnWindows);
 		push @configureparams, "--disable-btls";
+		push @configureparams, "--with-sgen=no";
 	}
 	elsif ($tizen)
 	{
@@ -1579,7 +1580,6 @@ if ($artifact)
 		}
 		elsif ($android)
 		{
-			system("cp", "$monoroot/mono/mini/.libs/libmonosgen-2.0.so","$embedDirArchDestination/libmonosgen-2.0.so") eq 0 or die ("failed copying libmonosgen-2.0.so\n");
 			system("cp", "$monoroot/mono/mini/.libs/libmonoboehm-2.0.so","$embedDirArchDestination/libmonobdwgc-2.0.so") eq 0 or die ("failed copying libmonobdwgc-2.0.so\n");
 			print ">>> Copying libMonoPosixHelper.so\n";
 			system("cp", "$monoroot/support/.libs/libMonoPosixHelper.so","$embedDirArchDestination/libMonoPosixHelper.so") eq 0 or die ("failed copying libMonoPosixHelper.so\n");

@@ -204,9 +204,15 @@ noinst_LTLIBRARIES = $(mini_common_lib)
 
 noinst_LIBRARIES = libmain.a
 
+if SUPPORT_SGEN
 libmain_a_SOURCES = main-sgen.c
+endif
 if SUPPORT_BOEHM
+if SUPPORT_SGEN
 libmain_a_SOURCES += main.c
+else
+libmain_a_SOURCES = main.c
+endif
 endif
 libmain_a_CFLAGS = $(AM_CFLAGS) @CXX_ADD_CFLAGS@
 
@@ -231,10 +237,12 @@ buildver-boehm.h: libmini.la $(monodir)/mono/metadata/libmonoruntime.la
 libmain_a-main.$(OBJEXT): buildver-boehm.h
 endif
 
+if SUPPORT_SGEN
 buildver-sgen.h: libmini.la $(monodir)/mono/metadata/libmonoruntimesgen.la $(monodir)/mono/sgen/libmonosgen.la
 	@echo "const char *build_date = \"$(BUILD_DATE)\";" > buildver-sgen.h
 
 libmain_a-main-sgen.$(OBJEXT): buildver-sgen.h
+endif
 
 if DTRACE_G_REQUIRED
 LIBMONO_DTRACE_OBJECT = .libs/mono-dtrace.$(OBJEXT)
