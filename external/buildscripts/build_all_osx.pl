@@ -118,9 +118,7 @@ if ($artifact)
 
 	for my $file ('libmono-native.dylib')
 	{
-		# TODO: libmono-native.dylib may not get cross-compiled and can't merge into fat binary, something to check back later
-		print(">>> cp $embedDirSourceX64/$file $distDirDestinationLib/$file\n\n");
-		system ('cp', "$embedDirSourceX64/$file", "$distDirDestinationLib/$file");
+		MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file");
 	}
 
 	if ($buildMachine)
