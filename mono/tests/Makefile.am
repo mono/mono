@@ -1119,7 +1119,9 @@ endif
 
 endif
 
-
+if DISABLE_CRASH_REPORTING
+PLATFORM_DISABLED_TESTS += merp-json-valid.exe merp-crash-test.exe
+endif
 
 if HOST_DARWIN
 

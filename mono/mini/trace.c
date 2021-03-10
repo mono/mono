@@ -27,7 +27,7 @@
 #include "trace.h"
 #include <mono/metadata/callspec.h>
 
-#if defined (HOST_ANDROID) || (defined (TARGET_IOS) && defined (TARGET_IOS))
+#if defined (HOST_ANDROID) || defined (TARGET_IOS)
 #  undef printf
 #  define printf(...) g_log("mono", G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
 #  undef fprintf

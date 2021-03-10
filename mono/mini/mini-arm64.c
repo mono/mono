@@ -100,6 +100,8 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 {
 	guint8 *code, *start;
 
+	MINI_BEGIN_CODEGEN ();
+
 	if (has_target) {
 		start = code = mono_global_codeman_reserve (12);
 
@@ -109,9 +111,6 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 		arm_brx (code, ARMREG_IP0);
 
 		g_assert ((code - start) <= 12);
-
-		mono_arch_flush_icache (start, 12);
-		MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 	} else {
 		int size, i;
 
@@ -125,10 +124,8 @@ get_delegate_invoke_impl (gboolean has_target, gboolean param_count, guint32 *co
 		arm_brx (code, ARMREG_IP0);
 
 		g_assert ((code - start) <= size);
-
-		mono_arch_flush_icache (start, size);
-		MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL));
 	}
+	MINI_END_CODEGEN (start, code - start, MONO_PROFILER_CODE_BUFFER_DELEGATE_INVOKE, NULL);
 
 	if (code_size)
 		*code_size = code - start;
@@ -241,7 +238,7 @@ mono_arch_init (void)
 
 	mono_arm_gsharedvt_init ();
 
-#if defined(TARGET_IOS) || defined(TARGET_WATCHOS)
+#if defined(TARGET_IOS) || defined(TARGET_WATCHOS) || defined(TARGET_OSX)
 	ios_abi = TRUE;
 #endif
 }
@@ -1058,7 +1055,11 @@ add_general (CallInfo *cinfo, ArgInfo *ainfo, int size, gboolean sign)
 {
 	if (cinfo->gr >= PARAM_REGS) {
 		ainfo->storage = ArgOnStack;
-		if (ios_abi) {
+		/*
+		 * FIXME: The vararg argument handling code in ves_icall_System_ArgIterator_IntGetNextArg
+		 * assumes every argument is allocated to a separate full size stack slot.
+		 */
+		if (ios_abi && !cinfo->vararg) {
 			/* Assume size == align */
 		} else {
 			/* Put arguments into 8 byte aligned stack slots */
@@ -1326,6 +1327,10 @@ get_call_info (MonoMemPool *mp, MonoMethodSignature *sig)
 
 	cinfo->nargs = n;
 	cinfo->pinvoke = sig->pinvoke;
+	// Constrain this to OSX only for now
+#ifdef TARGET_OSX
+	cinfo->vararg = sig->call_convention == MONO_CALL_VARARG;
+#endif
 
 	/* Return value */
 	add_param (cinfo, &cinfo->ret, sig->ret);
@@ -5333,6 +5338,8 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 		buf = mono_domain_code_reserve (domain, buf_len);
 	code = buf;
 
+	MINI_BEGIN_CODEGEN ();
+
 	/*
 	 * We are called by JITted code, which passes in the IMT argument in
 	 * MONO_ARCH_RGCTX_REG (r27). We need to preserve all caller saved regs
@@ -5402,8 +5409,7 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 
 	g_assert ((code - buf) <= buf_len);
 
-	mono_arch_flush_icache (buf, code - buf);
-	MONO_PROFILER_RAISE (jit_code_buffer, (buf, code - buf, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL));
+	MINI_END_CODEGEN (buf, code - buf, MONO_PROFILER_CODE_BUFFER_IMT_TRAMPOLINE, NULL);
 
 	return buf;
 }
@@ -5443,7 +5449,9 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	} else {
 		/* ip points to an ldrx */
 		code += 4;
+		mono_codeman_enable_write ();
 		arm_blrx (code, ARMREG_IP0);
+		mono_codeman_disable_write ();
 		mono_arch_flush_icache (ip, code - ip);
 	}
 }
@@ -5462,7 +5470,9 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	} else {
 		/* ip points to an ldrx */
 		code += 4;
+		mono_codeman_enable_write ();
 		arm_nop (code);
+		mono_codeman_disable_write ();
 		mono_arch_flush_icache (ip, code - ip);
 	}
 }

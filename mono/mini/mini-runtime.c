@@ -1443,9 +1443,11 @@ mono_resolve_patch_target (MonoMethod *method, MonoDomain *domain, guint8 *code,
 			}
 		}
 
+		mono_codeman_enable_write ();
 		for (i = 0; i < patch_info->data.table->table_size; i++) {
 			jump_table [i] = code + GPOINTER_TO_INT (patch_info->data.table->table [i]);
 		}
+		mono_codeman_disable_write ();
 
 		target = jump_table;
 		break;
@@ -1728,6 +1730,8 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 		patch_info.type = MONO_PATCH_INFO_METHOD_JUMP;
 		patch_info.data.method = method;
 
+		mono_codeman_enable_write ();
+
 #ifdef MONO_ARCH_HAVE_PATCH_CODE_NEW
 		for (tmp = jlist->list; tmp; tmp = tmp->next)
 			mono_arch_patch_code_new (NULL, domain, (guint8 *)tmp->data, &patch_info, addr);
@@ -1740,6 +1744,8 @@ mini_patch_jump_sites (MonoDomain *domain, MonoMethod *method, gpointer addr)
 			mono_error_assert_ok (error);
 		}
 #endif
+
+		mono_codeman_disable_write ();
 	}
 }
 
