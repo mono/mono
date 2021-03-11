@@ -1,4 +1,4 @@
-﻿Create user "LinqUser" with password: linq2
+﻿Create user "LinqUser" with password: [PLACEHOLDER]
 
 In order to install the sql scripts you need to use "psql" located in you \bin directory
  of your PostgreSql installation:

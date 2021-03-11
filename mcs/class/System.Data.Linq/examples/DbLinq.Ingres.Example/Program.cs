@@ -43,7 +43,7 @@ namespace DbLinq.Ingres.Example
             icsb.Server = "(server)";
             icsb.Port = "II7";
             icsb.UserID = "LinqUser";
-            icsb.Password = "linq2";
+            icsb.Password = "[PLACEHOLDER]";
             icsb.Database = "northwind";
             nwind.Northwind db = new nwind.Northwind(new IngresConnection(icsb.ConnectionString));
 
