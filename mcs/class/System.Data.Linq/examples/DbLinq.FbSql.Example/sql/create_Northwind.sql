@@ -7,7 +7,7 @@
 /*DROP USER 'LinqUser'@'%';*/
 
 
-/*## create user LinqUser, password: 'linq2'
+/*## create user LinqUser, password: '[PLACEHOLDER]'
 CREATE USER 'LinqUser'@'%'
   IDENTIFIED BY PASSWORD '*247E8BFCE2F07F00D7FD773390A282540001077B';*/
 
