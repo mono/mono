@@ -322,7 +322,7 @@ namespace MonoTests.System.Data.OleDb
 			}
 			Exception exp=null;
 			BeginCase("Test for bug #3965");
-			OleDbConnection con = new OleDbConnection("Provider=SQLOLEDB.1;Data Source=TESTDIR;User ID=ghuser;Password=ghuser;Persist Security Info=True;Initial Catalog=default_grasshopper_db;Packet Size=4096;Connect Timeout=60");
+			OleDbConnection con = new OleDbConnection("Provider=SQLOLEDB.1;Data Source=TESTDIR;User ID=ghuser;Password=[PLACEHOLDER];Persist Security Info=True;Initial Catalog=default_grasshopper_db;Packet Size=4096;Connect Timeout=60");
 			con.Open();
 			string text = "SELECT     td.TESTCYCL.TC_TEST_ID, td.TESTCYCL.TC_STATUS, td.BUG.BG_STATUS, td.BUG.BG_BUG_ID, td.BUG.BG_USER_03, td.BUG.BG_USER_09,";
 			text+=  " td.BUG.BG_USER_10, td.BUG.BG_SUMMARY,BG_DETECTION_VERSION";
