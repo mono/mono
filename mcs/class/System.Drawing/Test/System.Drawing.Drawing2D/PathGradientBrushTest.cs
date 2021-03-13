@@ -55,7 +55,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (1, pgb.Blend.Factors.Length, "Blend.Factors.Length");
 			Assert.AreEqual (1f, pgb.Blend.Factors[0], "Blend.Factors[0]");
 			Assert.AreEqual (1, pgb.Blend.Positions.Length, "Blend.Positions.Length");
-			Assert.AreEqual (0f, pgb.Blend.Positions[0], 1e-30, "Blend.Positions[0]");
+			// Assert.AreEqual (0f, pgb.Blend.Positions[0], 1e-30, "Blend.Positions[0]"); // undefined on Windows
 			Assert.AreEqual (10.5f, pgb.CenterPoint.X, "CenterPoint.X");
 			Assert.AreEqual (16f, pgb.CenterPoint.Y, "CenterPoint.Y");
 			Assert.IsTrue (pgb.FocusScales.IsEmpty, "FocusScales");
