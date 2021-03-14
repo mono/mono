@@ -393,11 +393,17 @@ namespace WebAssembly.Net.WebSockets {
 					if (messageType == WebSocketMessageType.Binary) {
 						using (var uint8Buffer = Uint8Array.From(buffer)){
 							innerWebSocket.Invoke ("send", uint8Buffer);
+							await Task.Delay(1);
+							while ((int)innerWebSocket.GetObjectProperty("bufferedAmount") != 0)
+								await Task.WhenAny(tcsSend.Task, Task.Delay(200));
 							tcsSend.SetResult (true);
 						}
 					} else if (messageType == WebSocketMessageType.Text) {
 						var strBuffer = Encoding.UTF8.GetString (buffer.Array, buffer.Offset, buffer.Count);
 						innerWebSocket.Invoke ("send", strBuffer);
+						await Task.Delay(1);
+						while ((int)innerWebSocket.GetObjectProperty("bufferedAmount") != 0)
+							await Task.WhenAny(tcsSend.Task, Task.Delay(200));
 						tcsSend.SetResult (true);
 					}
 				} catch (Exception excb) {
