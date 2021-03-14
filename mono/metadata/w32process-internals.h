@@ -58,6 +58,9 @@ gboolean
 mono_w32process_module_get_information (gpointer process, gpointer module, gpointer modinfo, guint32 size);
 
 gboolean
+mono_w32process_get_process_name_fallback (gpointer process, gunichar2 **str, guint32 *len);
+
+gboolean
 mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data);
 
 gboolean

@@ -150,6 +150,66 @@ mono_w32process_module_get_information (gpointer process, gpointer module, gpoin
 }
 #endif /* HAVE_API_SUPPORT_WIN32_GET_MODULE_INFORMATION */
 
+#if HAVE_API_SUPPORT_WIN32_QUERY_FULL_PROCESS_IMAGE_NAME
+gboolean
+mono_w32process_get_process_name_fallback (gpointer process, gunichar2 **pstr, guint32 *plen)
+{
+	gunichar2 *str = NULL;
+	guint32 capacity = MAX_PATH; // tunable
+	DWORD length;
+	gboolean success = FALSE, retry = FALSE;
+
+	while (TRUE)
+	{
+		length = 0;
+		if (capacity > (1 << 24))
+			break;
+		str = g_new (gunichar2, capacity);
+		if (!str)
+			break;
+		length = capacity;
+		success = QueryFullProcessImageNameW (process, 0, str, &length);
+		if (success)
+			break;
+		retry = (GetLastError () == ERROR_INSUFFICIENT_BUFFER);
+		g_free (str);
+		str = NULL;
+		length = 0;
+		if (!retry)
+			break;
+		capacity *= 2;
+	}
+	if (str)
+	{
+		// Translate full path to basename
+		gunichar2 *basename = str, *p = str;
+		guint32 basename_len;
+
+		while (*p)
+		{
+			if (*p == '/' || *p == '\\')
+				basename = p + 1;
+			p++;
+		}
+
+		basename_len = p - basename;
+
+		memmove (str, basename, sizeof(gunichar2) * (basename_len + 1));
+
+		length = basename_len;
+	}
+	*pstr = str;
+	*plen = length;
+	return success;
+}
+#elif !HAVE_API_SUPPORT_WIN32_QUERY_FULL_PROCESS_IMAGE_NAME
+gboolean
+mono_w32process_get_process_name_fallback (gpointer process, gunichar2 **pstr, guint32 *plen)
+{
+	return FALSE;
+}
+#endif /* HAVE_API_SUPPORT_WIN32_QUERY_FULL_PROCESS_IMAGE_NAME */
+
 #if HAVE_API_SUPPORT_WIN32_GET_FILE_VERSION_INFO
 gboolean
 mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
