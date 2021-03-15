@@ -344,6 +344,7 @@ TextWriter sw = Console.Out;
 		[Test]
 		public void HttpWithNonStandardPort ()
 		{
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			string s = "http://monkey:s3kr3t@HOST.domain.Com:8080/dir/../app.xap?option=1";
 			Uri uri = new Uri (s);
 			Assert.AreEqual ("/app.xap", uri.AbsolutePath, "AbsolutePath");
