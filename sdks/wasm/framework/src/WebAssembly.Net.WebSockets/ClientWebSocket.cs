@@ -468,7 +468,7 @@ namespace WebAssembly.Net.WebSockets {
 		private async Task CloseAsyncCore (WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
 		{
 			ThrowOnInvalidState (State,
-			    WebSocketState.Open, WebSocketState.CloseReceived, WebSocketState.CloseSent);
+			    WebSocketState.Open, WebSocketState.CloseReceived, WebSocketState.CloseSent, WebSocketState.Closed);
 
 			WebSocketHelpers.ValidateCloseStatus (closeStatus, statusDescription);
 
