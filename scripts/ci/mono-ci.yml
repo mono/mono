@@ -2,7 +2,7 @@ trigger:
   batch: true
   branches:
     include:
-    - master
+    - main
     - 20*-*
   paths:
     include:
@@ -22,7 +22,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - 20*-*
   paths:
     include:

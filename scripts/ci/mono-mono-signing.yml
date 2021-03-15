@@ -2,9 +2,9 @@ parameters:
 - name: mono_branch
   displayName: Branch
   type: string
-  default: master
+  default: main
   values:
-  - master
+  - main
   - 2020-02
 - name: mono_commit
   displayName: Full commit hash

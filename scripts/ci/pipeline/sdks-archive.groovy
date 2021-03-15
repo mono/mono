@@ -2,14 +2,14 @@ isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
 monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
 jobName = env.JOB_NAME.split('/').first()
 
-if (monoBranch == 'master') {
+if (monoBranch == 'main') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
                 pipelineTriggers([cron('0 3 * * *')])
     ])
 
-    // multi-branch pipelines still get triggered for each commit, skip these builds on master by checking whether this build was timer-triggered or manually triggered
+    // multi-branch pipelines still get triggered for each commit, skip these builds on main by checking whether this build was timer-triggered or manually triggered
     if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() == 0 && currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() == 0) {
-        echo "Skipping per-commit build on master."
+        echo "Skipping per-commit build on main."
         return
     }
 }
@@ -72,8 +72,8 @@ parallel (
         }
     },
     "WASM Linux": {
-        if (monoBranch != 'master') {
-            echo "Skipping WASM build on non-master branch."
+        if (monoBranch != 'main') {
+            echo "Skipping WASM build on non-main branch."
             return
         }
         throttle(['provisions-wasm-toolchain']) {
