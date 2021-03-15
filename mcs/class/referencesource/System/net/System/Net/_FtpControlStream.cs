@@ -488,6 +488,7 @@ namespace System.Net {
                 {
                     domainUserName = "anonymous";
                     password       = "[PLACEHOLDER]";
+                    password += "@";
                 }
 
                 commandList.Add(new PipelineEntry(FormatFtpCommand("USER", domainUserName)));
