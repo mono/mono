@@ -462,8 +462,6 @@ namespace WebAssembly.Net.WebSockets {
 		public override async Task CloseAsync (WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
 		{
 			writeBuffer = null;
-			ThrowIfNotConnected ();
-
 			await CloseAsyncCore (closeStatus, statusDescription, cancellationToken);
 		}
 
