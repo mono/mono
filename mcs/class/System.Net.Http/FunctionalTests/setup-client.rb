@@ -66,7 +66,7 @@ installCertificate()
 #$script:certificatePath = "$($script:testData)\corefx-testdata-master\System.Net.TestData"
 
 #$script:clientPrivateKeyPath = Join-Path $script:certificatePath "testclient1_at_contoso.com.pfx"
-#$script:clientPrivateKeyPassword = "[PLACEHOLDER]"
+#$script:clientPrivateKeyPassword = "PLACEHOLDER"
 
 ##$script:serverPrivateKeyPath = Join-Path $script:certificatePath "contoso.com.pfx"
-#$script:serverPrivateKeyPassword = "[PLACEHOLDER]""
+#$script:serverPrivateKeyPassword = "PLACEHOLDER
