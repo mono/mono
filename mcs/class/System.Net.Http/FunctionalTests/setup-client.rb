@@ -69,4 +69,4 @@ installCertificate()
 #$script:clientPrivateKeyPassword = "PLACEHOLDER"
 
 ##$script:serverPrivateKeyPath = Join-Path $script:certificatePath "contoso.com.pfx"
-#$script:serverPrivateKeyPassword = "PLACEHOLDER
+#$script:serverPrivateKeyPassword = "PLACEHOLDER"
