@@ -383,6 +383,7 @@ convert_proto (MonoProtocolType mono_proto)
 	case ProtocolType_Pup:
 	case ProtocolType_Udp:
 	case ProtocolType_Idp:
+	case ProtocolType_IcmpV6:
 		/* These protocols are known (on my system at least) */
 		return mono_proto;
 	case ProtocolType_ND:
