@@ -157,7 +157,7 @@ mono_custom_attrs_get_attrs (MonoCustomAttrInfo *ainfo, gpointer *iter)
 		return NULL;
 	if (!*iter)
 	{
-		*iter = (gpointer*)1;
+		*iter = GINT_TO_POINTER (1);
 		return ainfo->attrs[0].ctor->klass;
 	}
 
