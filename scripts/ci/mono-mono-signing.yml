@@ -1,0 +1,326 @@
+parameters:
+- name: mono_branch
+  displayName: Branch
+  type: string
+  default: main
+  values:
+  - main
+  - 2020-02
+- name: mono_commit
+  displayName: Full commit hash
+  type: string
+- name: mac_build_number
+  displayName: Mac Jenkins build number
+  type: number
+  default: 0
+- name: windows_build_number
+  displayName: Windows Jenkins build number
+  type: number
+  default: 0
+
+trigger: none
+
+jobs:
+
+## macOS .pkg signing
+
+- job: MonoPkgSigning
+  displayName: Mono .PKG Signing
+  condition: ne(${{ parameters.mac_build_number }}, 0)
+  pool:
+    vmImage: 'macOS-10.15'
+  timeoutInMinutes: 180
+  workspace:
+    clean: all
+
+  steps:
+
+  - checkout: none
+
+  - script: |
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=pending" --raw-field "context=PKG-mono" --raw-field "target_url=$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
+    displayName: Set pending GitHub status
+    env:
+      GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+  - script: |
+      cd $(Build.SourcesDirectory)
+      MONO_SIGNED_PKG_DIR="${{ parameters.mono_branch }}/${{ parameters.mac_build_number }}/${{ parameters.mono_commit }}"
+      az storage blob download-batch -s build-package-osx-mono -d . --pattern "$MONO_SIGNED_PKG_DIR/unsigned/*"
+      cp $MONO_SIGNED_PKG_DIR/unsigned/mac-entitlements.plist .
+      MONO_PKG_NAME=$(cd "$MONO_SIGNED_PKG_DIR/unsigned/" && ls *.pkg)
+      echo "##vso[task.setvariable variable=MONO_PKG_NAME;]$MONO_PKG_NAME"
+      echo "##vso[task.setvariable variable=MONO_SIGNED_PKG_DIR;]$MONO_SIGNED_PKG_DIR"
+      pkgutil --expand "$MONO_SIGNED_PKG_DIR/unsigned/$MONO_PKG_NAME" expanded
+      mkdir payload
+      cd payload
+      tar -xvf ../expanded/mono.pkg/Payload
+    displayName: Download files and extract
+    env:
+      AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
+      AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
+
+  - script: |
+      cd $(Build.SourcesDirectory)/payload
+      mkdir -p $(Build.ArtifactStagingDirectory)/mac_entitled
+      for i in $(find Library -type f); do
+        if file $i | grep Mach-O > /dev/null; then
+          echo "Codesigning $i"
+          codesign -s - -f --options runtime --entitlements $(Build.SourcesDirectory)/mac-entitlements.plist $i
+          ditto -V $i $(Build.ArtifactStagingDirectory)/mac_entitled/$i
+        fi
+      done
+    displayName: Codesign Mach-O files
+
+  - script: |
+      cd $(Build.ArtifactStagingDirectory)
+      hdiutil create mac_entitled_to_sign.dmg -ov -volname "MacEntitledToSign" -fs HFS+ -srcfolder "mac_entitled"
+    displayName: Archive binaries into .dmg for signing
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core SDK 2.1.808'
+    inputs:
+      packageType: sdk
+      version: 2.1.808
+
+  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+    displayName: 'ESRP CodeSigning binaries'
+    inputs:
+      ConnectedServiceName: 'ESRP CodeSigning'
+      FolderPath: '$(Build.ArtifactStagingDirectory)/'
+      Pattern: 'mac_entitled_to_sign.dmg'
+      UseMinimatch: true
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [
+          {
+            "keyCode": "CP-401337-Apple",
+            "operationCode": "MacAppDeveloperSign",
+            "parameters": {
+              "hardening": "Enable"
+            },
+            "toolName": "sign",
+            "toolVersion": "1.0"
+          }
+        ]
+
+  - script: |
+      cd $(Build.ArtifactStagingDirectory)
+      mkdir -p mac_entitled_signed
+      hdiutil attach mac_entitled_to_sign.dmg
+      cp -R /Volumes/MacEntitledToSign/Library mac_entitled_signed
+    displayName: 'Extract binaries after signing'
+
+  - script: |
+      cd $(Build.ArtifactStagingDirectory)/mac_entitled_signed
+      for i in $(find Library -type f); do
+        chmod +x $i
+        ditto -V $i $(Build.SourcesDirectory)/payload/$i
+      done
+    displayName: Replace files with signed ones
+
+  - script: |
+      cd $(Build.SourcesDirectory)
+      pkgbuild --analyze --root $PWD/expanded $PWD/expanded/Info.plist
+      mono_version=$(grep packageIdentifier $PWD/expanded/Distribution | sed -E 's/.*version="([0-9\.]+)".*/\1/g')
+      pkgbuild --root $PWD/payload --component-plist $PWD/expanded/Info.plist --scripts $PWD/expanded/mono.pkg/Scripts --identifier com.xamarin.mono-MDK.pkg --version $mono_version --install-location / $PWD/mono.pkg
+      productbuild --distribution $PWD/expanded/Distribution --resources $PWD/expanded/Resources --package-path $PWD/mono.pkg $PWD/mono-dist.pkg
+      mkdir -p $(Build.ArtifactStagingDirectory)/mono-to-sign
+      mv $PWD/mono-dist.pkg $(Build.ArtifactStagingDirectory)/mono-to-sign/$MONO_PKG_NAME
+    displayName: pkgbuild and productbuild
+
+  - script: |
+      cd $(Build.ArtifactStagingDirectory)
+      hdiutil create mono-to-sign.dmg -ov -volname "MonoToSign" -fs HFS+ -srcfolder "mono-to-sign"
+    displayName: Archive .pkg into .dmg for signing
+
+  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+    displayName: 'ESRP CodeSigning .pkg'
+    inputs:
+      ConnectedServiceName: 'ESRP CodeSigning'
+      FolderPath: '$(Build.ArtifactStagingDirectory)/'
+      Pattern: 'mono-to-sign.dmg'
+      UseMinimatch: true
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [
+          {
+            "keyCode": "CP-401337-Apple",
+            "operationCode": "MacAppDeveloperSign",
+            "parameters": {},
+            "toolName": "sign",
+            "toolVersion": "1.0"
+          }
+        ]
+
+  - script: |
+      cd $(Build.ArtifactStagingDirectory)
+      mkdir -p mono-signed
+      hdiutil attach mono-to-sign.dmg
+      cp -R /Volumes/MonoToSign/$MONO_PKG_NAME mono-signed
+    displayName: 'Extract .pkg after signing'
+
+  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+    displayName: 'ESRP Notarizing .pkg'
+    inputs:
+      ConnectedServiceName: 'ESRP CodeSigning'
+      FolderPath: '$(Build.ArtifactStagingDirectory)/mono-signed/'
+      Pattern: '*.pkg'
+      UseMinimatch: true
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [
+          {
+            "keyCode": "CP-401337-Apple",
+            "operationCode": "MacAppNotarize",
+            "parameters": {
+                "bundleId": "com.xamarin.mono-MDK.pkg"
+            },
+            "toolName": "sign",
+            "toolVersion": "1.0"
+          }
+        ]
+
+  - script: |
+      cd $(Build.ArtifactStagingDirectory)
+      MONO_SIGNED_PKG="$(Build.ArtifactStagingDirectory)/mono-signed/$MONO_PKG_NAME"
+      echo "##vso[task.setvariable variable=MONO_SIGNED_PKG;]$MONO_SIGNED_PKG"
+
+      /usr/sbin/spctl -vvv --assess --type install --ignore-cache --no-cache $MONO_SIGNED_PKG
+      xcrun stapler validate -v $MONO_SIGNED_PKG
+    displayName: Validate .pkg
+
+  - script: |
+      mono_sha=$(shasum --binary --algorithm 256 $MONO_SIGNED_PKG | cut -d ' ' -f 1)
+      mono_mdfive=$(md5 -q $MONO_SIGNED_PKG)
+      mono_size=$(stat -f "%z" $MONO_SIGNED_PKG)
+
+      pkgutil --expand $MONO_SIGNED_PKG temp-mdk-extract
+      mono_updateinfo=$(tar -xf temp-mdk-extract/mono.pkg/Payload --include '*/updateinfo' -O)
+      mono_version=$(tar -xf temp-mdk-extract/mono.pkg/Payload --include '*/VERSION' --exclude '*/share' -O)
+
+      mono_productid=$(echo $mono_updateinfo | cut -d ' ' -f1)
+      mono_releaseid=$(echo $mono_updateinfo | cut -d ' ' -f2)
+
+      jq -n --arg url "https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/$MONO_SIGNED_PKG_DIR/$MONO_PKG_NAME" \
+            --arg sha256    "$mono_sha" \
+            --arg md5       "$mono_mdfive" \
+            --arg size      "$mono_size" \
+            --arg productId "$mono_productid" \
+            --arg releaseId "$mono_releaseid" \
+            --arg version   "$mono_version" \
+            '[{"url": $url, "sha256": $sha256, "md5": $md5, "size": $size, "productId": $productId, "releaseId": $releaseId, "version": $version }]' > $(Build.ArtifactStagingDirectory)/mono-signed/artifacts.json
+    displayName: Create artifacts.json
+
+  - publish: $(Build.ArtifactStagingDirectory)/mono-signed
+    artifact: NotarizedPKG
+
+  - script: |
+      cd $(Build.ArtifactStagingDirectory)
+      az storage blob upload-batch -s mono-signed --destination-path "$MONO_SIGNED_PKG_DIR" --pattern "*" -d build-package-osx-mono --account-name xamjenkinsartifact
+    displayName: Upload artifacts to blob storage
+    env:
+      AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
+      AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
+
+  - script: |
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=PKG-mono" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/$MONO_SIGNED_PKG_DIR/$MONO_PKG_NAME"
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=artifacts.json" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/$MONO_SIGNED_PKG_DIR/artifacts.json"
+    displayName: Set success GitHub status
+    env:
+      GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+## Windows .msi signing
+
+- job: MonoMsiSigning
+  displayName: Mono .MSI Signing
+  condition: ne(${{ parameters.windows_build_number }}, 0)
+  pool:
+    vmImage: 'ubuntu-20.04'
+  timeoutInMinutes: 180
+  workspace:
+    clean: all
+
+  steps:
+
+  - checkout: none
+
+  - script: |
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=pending" --raw-field "context=MSI-mono_x86" --raw-field "target_url=$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=pending" --raw-field "context=MSI-mono_x64" --raw-field "target_url=$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
+    displayName: Set pending GitHub status
+    env:
+      GITHUB_TOKEN: $(GITHUB_TOKEN)
+
+  - script: |
+      cd $(Build.SourcesDirectory)
+      MONO_SIGNED_MSI_DIR="${{ parameters.mono_branch }}/${{ parameters.windows_build_number }}/${{ parameters.mono_commit }}"
+      az storage blob download-batch -s build-package-win-mono -d . --pattern "$MONO_SIGNED_MSI_DIR/unsigned/*.msi"
+      cp $MONO_SIGNED_MSI_DIR/unsigned/*.msi $(Build.ArtifactStagingDirectory)
+      MONO_MSI_NAME_X86=$(cd "$MONO_SIGNED_MSI_DIR/unsigned/" && ls *win32*.msi)
+      MONO_MSI_NAME_X64=$(cd "$MONO_SIGNED_MSI_DIR/unsigned/" && ls *x64*.msi)
+      echo "##vso[task.setvariable variable=MONO_MSI_NAME_X86;]$MONO_MSI_NAME_X86"
+      echo "##vso[task.setvariable variable=MONO_MSI_NAME_X64;]$MONO_MSI_NAME_X64"
+      echo "##vso[task.setvariable variable=MONO_SIGNED_MSI_DIR;]$MONO_SIGNED_MSI_DIR"
+    displayName: Download files
+    env:
+      AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
+      AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core SDK 2.1.808'
+    inputs:
+      packageType: sdk
+      version: 2.1.808
+
+  - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+    displayName: 'ESRP CodeSigning .msi'
+    inputs:
+      ConnectedServiceName: 'ESRP CodeSigning'
+      FolderPath: '$(Build.ArtifactStagingDirectory)/'
+      Pattern: '*.msi'
+      UseMinimatch: true
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [
+          {
+            "keyCode": "CP-230012",
+            "operationCode": "SigntoolSign",
+            "parameters": {
+              "OpusName": "Mono",
+              "OpusInfo": "https://www.mono-project.com",
+              "PageHash": "/NPH",
+              "FileDigest": "/fd sha256",
+              "TimeStamp": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+            },
+            "toolName": "sign",
+            "toolVersion": "1.0"
+          },
+          {
+            "keyCode": "CP-230012",
+            "operationCode": "SigntoolVerify",
+            "parameters": {
+              "VerifyAll": "/all"
+            },
+            "toolName": "sign",
+            "toolVersion": "1.0"
+          }
+        ]
+
+  - publish: $(Build.ArtifactStagingDirectory)
+    artifact: SignedMSI
+
+  - script: |
+      cd $(Build.ArtifactStagingDirectory)
+      az storage blob upload-batch -s . --destination-path "$MONO_SIGNED_MSI_DIR" --pattern "*.msi" -d build-package-win-mono --account-name xamjenkinsartifact
+    displayName: Upload artifacts to blob storage
+    env:
+      AZURE_STORAGE_ACCOUNT: $(AZURE_STORAGE_ACCOUNT)
+      AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
+
+  - script: |
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=MSI-mono_x86" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-win-mono/$MONO_SIGNED_MSI_DIR/$MONO_MSI_NAME_X86"
+      gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=MSI-mono_x64" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-win-mono/$MONO_SIGNED_MSI_DIR/$MONO_MSI_NAME_X64"
+    displayName: Set success GitHub status
+    env:
+      GITHUB_TOKEN: $(GITHUB_TOKEN)

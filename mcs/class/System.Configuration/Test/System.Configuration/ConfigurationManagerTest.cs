@@ -618,7 +618,7 @@ namespace MonoTests.System.Configuration {
 			Assert.IsNotNull (connStringObj);
 			var connString = connStringObj.ConnectionString;
 			Assert.IsFalse (String.IsNullOrEmpty (connString));
-			Assert.AreEqual ("Server=(local);Initial Catalog=someDb;User Id=someUser;Password=somePassword;Application Name=someAppName;Min Pool Size=5;Max Pool Size=500;Connect Timeout=10;Connection Lifetime=29;",
+			Assert.AreEqual ("Server=(local);Initial Catalog=someDb;User Id=someUser;Password=PLACEHOLDER;Application Name=someAppName;Min Pool Size=5;Max Pool Size=500;Connect Timeout=10;Connection Lifetime=29;",
 			                 connString);
 		}
 

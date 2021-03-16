@@ -565,8 +565,6 @@ dist-default: dist-monolite-all-platforms
 
 dist-local: dist-default
 
-csproj-local:
-
 do-clean:
 	$(RM) -rf $(topdir)/class/lib/$(PROFILE)
 

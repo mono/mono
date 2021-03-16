@@ -48,13 +48,13 @@ namespace MonoTests.System.Data.Odbc
 		{
 			OdbcConnectionStringBuilder builder;
 
-			builder = new OdbcConnectionStringBuilder ("Driver={SQL Server};Server=(local);Database=AdventureWorks;Uid=ab;Pwd=pass@word1");
+			builder = new OdbcConnectionStringBuilder ("Driver={SQL Server};Server=(local);Database=AdventureWorks;Uid=ab;Pwd=[PLACEHOLDER]");
 			Assert.AreEqual ("AdventureWorks", builder ["Database"],"#A1");
-			Assert.AreEqual ("pass@word1", builder ["Pwd"], "#A2");
+			Assert.AreEqual ("[PLACEHOLDER]", builder ["Pwd"], "#A2");
 			Assert.AreEqual ("ab", builder ["Uid"], "#A3");
 			Assert.AreEqual ("{SQL Server}", builder ["Driver"], "#A4");
 			Assert.AreEqual ("(local)", builder ["Server"],"#A5");
-			Assert.AreEqual ("Driver={SQL Server};server=(local);database=AdventureWorks;uid=ab;pwd=pass@word1", builder.ConnectionString,"#A5");
+			Assert.AreEqual ("Driver={SQL Server};server=(local);database=AdventureWorks;uid=ab;pwd=[PLACEHOLDER]", builder.ConnectionString,"#A5");
 
 			builder = new OdbcConnectionStringBuilder ("Driver=");
 			Assert.AreEqual (string.Empty, builder.ConnectionString, "#B");

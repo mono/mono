@@ -227,7 +227,21 @@ public class Tests
 	[DllImport ("libtest")]
 	public static extern int mono_test_marshal_variant_out_bool_false_unmanaged (VarRefFunc func);
 
-    [DllImport ("libtest")]
+	public delegate int CheckStructWithVariantFunc ([MarshalAs (UnmanagedType.Struct)] StructWithVariant obj);
+	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_struct_with_variant_in_unmanaged (CheckStructWithVariantFunc func);
+
+	public delegate int CheckStructWithBstrFunc ([MarshalAs (UnmanagedType.Struct)] StructWithBstr obj);
+	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_struct_with_bstr_in_unmanaged (CheckStructWithBstrFunc func);
+
+	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_struct_with_variant_out_unmanaged ([MarshalAs (UnmanagedType.Struct)] StructWithVariant obj);
+
+	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_struct_with_bstr_out_unmanaged ([MarshalAs (UnmanagedType.Struct)] StructWithBstr obj);
+
+	[DllImport ("libtest")]
 	public static extern int mono_test_marshal_com_object_create (out IntPtr pUnk);
 
 	[DllImport ("libtest")]
@@ -362,6 +376,15 @@ public class Tests
 			if (mono_test_marshal_bstr_out_null (out str) != 0 || str != null)
 				return 2;
 
+			var sbfunc = new CheckStructWithBstrFunc(mono_test_marshal_struct_with_bstr_callback);
+			if (mono_test_marshal_struct_with_bstr_in_unmanaged(sbfunc) != 0)
+				return 3;
+
+			StructWithBstr swithB;
+			swithB.data = "this is a test string";
+			if (mono_test_marshal_struct_with_bstr_out_unmanaged (swithB) != 0)
+				return 4;
+
 			#endregion // BSTR Tests
 
 			#region VARIANT Tests
@@ -487,6 +510,15 @@ public class Tests
 			if (mono_test_marshal_variant_out_bstr_byref (out obj) != 0 || (string)obj != "PI")
 				return 107;
 
+			var svfunc = new CheckStructWithVariantFunc(mono_test_marshal_struct_with_variant_callback);
+			if (mono_test_marshal_struct_with_variant_in_unmanaged(svfunc) != 0)
+				return 108;
+
+			StructWithVariant swithV;
+			swithV.data = (object)-123;
+			if (mono_test_marshal_struct_with_variant_out_unmanaged (swithV) != 0)
+				return 109;
+
 			object[] obj_array =
 			{
 				null,
@@ -506,7 +538,7 @@ public class Tests
 			};
 
 			if (mono_test_marshal_variant_in_obj_array (obj_array.Length, obj_array) != 0)
-				return 108;
+				return 110;
 
 			#endregion // VARIANT Tests
 
@@ -1709,6 +1741,24 @@ public class Tests
 	public static int TestIfaceNoIcall (ITestPresSig itest) {
 		return itest.Return22NoICall () == 22 ? 0 : 1;
 	}
+
+        public static int mono_test_marshal_struct_with_variant_callback(StructWithVariant sv)
+        {
+            if (sv.data.GetType() != typeof(int))
+                return 1;
+            if ((int)sv.data != -123)
+                return 2;
+            return 0;
+        }
+
+        public static int mono_test_marshal_struct_with_bstr_callback(StructWithBstr sb)
+        {
+            if (sb.data.GetType() != typeof(string))
+                return 1;
+            if ((string)sb.data != "this is a test string")
+                return 2;
+            return 0;
+        }
 }
 
 [ComVisible (false)]
@@ -1761,4 +1811,16 @@ public class TestVisibleNone3 : ITestVisibleIDispatch, ITestVisibleIUnknown
 
 public class TestVisibleDisp : ITestVisibleIDispatch
 {
+}
+
+public struct StructWithVariant
+{
+	[MarshalAs (UnmanagedType.Struct)]
+	public object data;
+}
+
+public struct StructWithBstr
+{
+	[MarshalAs (UnmanagedType.BStr)]
+	public string data;
 }

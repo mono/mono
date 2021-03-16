@@ -30,6 +30,7 @@ extern alias MonoSecurity;
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
@@ -165,12 +166,28 @@ namespace Mono.Btls
 			ssl.SetCertificate (privateCert.X509);
 			ssl.SetPrivateKey (privateCert.NativePrivateKey);
 			var intermediate = privateCert.IntermediateCertificates;
-			if (intermediate == null)
-				return;
-			for (int i = 0; i < intermediate.Count; i++) {
-				var impl = (X509CertificateImplBtls)intermediate [i];
-				Debug ("SetPrivateCertificate - add intermediate: {0}", impl);
-				ssl.AddIntermediateCertificate (impl.X509);
+
+			if (intermediate == null) {
+				/* Intermediate certificates are lost in the translation from X509Certificate(2) to X509CertificateImplBtls, so we need to restore them somehow. */
+				var chain = new System.Security.Cryptography.X509Certificates.X509Chain (false);
+				/* Let's try to recover as many as we can. */
+				chain.ChainPolicy.RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck;
+				chain.Build (new System.Security.Cryptography.X509Certificates.X509Certificate2 (privateCert.X509.GetRawData (MonoBtlsX509Format.DER), ""));
+				var elems = chain.ChainElements;
+				for (int j = 1; j < elems.Count; j++)
+				{
+					var cert = elems[j].Certificate;
+					/* If self-signed, it's a root and should not be sent. */
+					if (cert.SubjectName.RawData.SequenceEqual (cert.IssuerName.RawData)) break;
+					ssl.AddIntermediateCertificate (MonoBtlsX509.LoadFromData(cert.RawData, MonoBtlsX509Format.DER));
+				}
+			}
+			else {
+				for (int i = 0; i < intermediate.Count; i++) {
+					var impl = (X509CertificateImplBtls)intermediate [i];
+					Debug ("SetPrivateCertificate - add intermediate: {0}", impl);
+					ssl.AddIntermediateCertificate (impl.X509);
+				}
 			}
 		}
 

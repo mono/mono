@@ -2,7 +2,7 @@
 <!-- Represents schema of Northwind sample database.
      Used for NUnit testing of SqlMetal functionality.
      Generated from Mysql via following command:
-     SqlMetal.exe -provider=MySql -database:Northwind -server:localhost -user:LinqUser -password:linq2 -namespace:nwind -dbml:Northwind_from_mysql.dbml -sprocs     
+     SqlMetal.exe -provider=MySql -database:Northwind -server:localhost -user:LinqUser -password:[PLACEHOLDER] -namespace:nwind -dbml:Northwind_from_mysql.dbml -sprocs     
 -->
 
 <Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Northwind" Class="Northwind" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">

@@ -55,6 +55,8 @@ ios-netcore_simtv-*/
 ios-netcore_simwatch-*/
 ios-netcore_simwatch64-*/
 mac-mac64-*/
+mac-macarm64-*/
+mac-crossarm64-*/
 maccat-mac64-*/
 wasm-runtime-*/
 wasm-cross-*/

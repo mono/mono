@@ -79,7 +79,7 @@ clean-local:
 
 dist-local: dist-default
 
-csproj-local install-local uninstall-local:
+nstall-local uninstall-local:
 
 CS0029-26-lib.dll : CS0029-26-lib.cs
 	$(CSCOMPILE) /r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll /target:library /publicsign /keyfile:key.snk /out:$@ $<

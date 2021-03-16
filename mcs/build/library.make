@@ -118,26 +118,6 @@ else
 is_boot=false
 endif
 
-csproj-local: csproj-library csproj-test
-
-intermediate_clean=$(subst /,-,$(intermediate))
-csproj-library:
-	config_file=`basename $(LIBRARY) .dll`-$(intermediate_clean)$(PROFILE).input; \
-	case "$(thisdir)" in *"Facades"*) config_file=Facades_$$config_file;; *"legacy"*) config_file=legacy_$$config_file;; esac; \
-	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
-	(echo $(is_boot); \
-	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) $(KEYFILE_MCS_FLAGS); \
-	echo $(LIBRARY); \
-	echo $(LIBRARY_NAME); \
-	echo $(BUILT_SOURCES_cmdline); \
-	echo $(build_lib); \
-	echo $(FRAMEWORK_VERSION); \
-	echo $(PROFILE); \
-	echo $(RESOURCE_DEFS); \
-	echo $(response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
-
-csproj-test:
-
 install-local: all-local
 test-local: all-local
 uninstall-local:
@@ -238,21 +218,6 @@ include $(topdir)/build/tests.make
 
 ifdef HAVE_CS_TESTS
 DISTFILES += $(test_sourcefile)
-
-csproj-test:
-	config_file=`basename $(LIBRARY) .dll`-tests-$(PROFILE).input; \
-	echo $(thisdir):$$config_file >> $(topdir)/../msvc/scripts/order; \
-	(echo false; \
-	echo $(USE_MCS_FLAGS) -r:$(the_assembly) $(TEST_MCS_FLAGS); \
-	echo $(LIBRARY); \
-	echo $(test_lib); \
-	echo $(BUILT_SOURCES_cmdline); \
-	echo $(test_lib); \
-	echo $(FRAMEWORK_VERSION); \
-	echo $(PROFILE); \
-	echo ""; \
-	echo $(test_response)) > $(topdir)/../msvc/scripts/inputs/$$config_file
-
 endif
 
 # make dist will collect files in .sources files from all profiles

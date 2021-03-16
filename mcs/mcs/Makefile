@@ -9,8 +9,6 @@ include ../build/rules.make
 PROGRAM = mcs.exe
 
 EXTRA_DISTFILES = \
-	mcs.csproj		\
-	mcs.sln		\
 	cs-parser.jay		\
 	mcs.exe.sources
 

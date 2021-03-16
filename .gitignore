@@ -131,7 +131,6 @@ mono.h
 mono-*.tar.*
 mono_crash*
 tmpinst-dir.stamp
-msvc/scripts/inputs/
 extensions-config.h
 *.dylib.dSYM
 *.mlpd

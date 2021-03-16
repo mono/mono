@@ -11,6 +11,12 @@
 #define _GNU_SOURCE
 #endif /* ndef _GNU_SOURCE */
 
+#include <config.h>
+#if defined(TARGET_MACH)
+ /* So we can use the declaration of preadv () */
+#define _DARWIN_C_SOURCE
+#endif
+
 #include "sys-uio.h"
 
 #include <sys/uio.h>

@@ -54,7 +54,7 @@ fi
 STARTTIME=`date +%s`
 echo "*** start: ${LABEL}"
 if [ -n "${FATAL}" ]; then
-    ${TIMEOUTCMD} --signal=ABRT --kill-after=60s ${TIMEOUT} "$@" && echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[42mPassed\e[0m" || (echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[41mFailed\e[0m" && exit 1)
+    ${TIMEOUTCMD} --signal=ABRT --kill-after=60s ${TIMEOUT} "$@" && echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[42mPassed\e[0m" || (echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[41mFailed\e[0m" && echo "##vso[task.logissue type=error] ${LABEL} step failed." && exit 1)
 else
-    ${TIMEOUTCMD} --signal=ABRT --kill-after=60s ${TIMEOUT} "$@" && echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[42mPassed\e[0m" || echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[43mUnstable\e[0m"
+    ${TIMEOUTCMD} --signal=ABRT --kill-after=60s ${TIMEOUT} "$@" && echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[42mPassed\e[0m" || (echo -e "*** end($(echo $(date +%s) - ${STARTTIME} | bc)): ${LABEL}: \e[43mUnstable\e[0m" && echo "##vso[task.logissue type=error] ${LABEL} step failed (unstable)." && echo "##vso[task.setvariable variable=BuildHasUnstableSteps]true")
 fi

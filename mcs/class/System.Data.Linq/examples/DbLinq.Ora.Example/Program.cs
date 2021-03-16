@@ -48,7 +48,7 @@ namespace nwind
     {
         static void Main(string[] args)
         {
-            string connStr = "server=localhost;user=Northwind;password=linq2";
+            string connStr = "server=localhost;user=Northwind;password=PLACEHOLDER";
             insertTest(connStr);
             return;
 
@@ -89,8 +89,8 @@ namespace nwind
             string sql = "BEGIN insert INTO t1 (id1) values (t1_seq.NextVal);\n select t1_seq.CurrVal INTO :1 FROM DUAL; END;";
 #if ORACLE_PROVIDER
             //Oracle provider - download from http://www.oracle.com/technology/software/tech/windows/odpnet/utilsoft_11gbeta.html
-            //Oracle provider (check via TNSPING): "User Id=Scott;Password=tiger;Data Source=orcl9i"
-            connStr = "User Id=Northwind;Password=linq2;Data Source=XE";
+            //Oracle provider (check via TNSPING): "User Id=Scott;Password=PLACEHOLDER;Data Source=orcl9i"
+            connStr = "User Id=Northwind;Password=PLACEHOLDER;Data Source=XE";
 #else
             //Microsoft provider: System.Data.OracleClient
             //see http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=1055859&SiteID=1
@@ -142,7 +142,7 @@ namespace nwind
         //    string sql = @"SELECT ProductID FROM products WHERE ProductName=:p1"; //returns no rows
         //    //string sql = @"SELECT * FROM USER_ALL_TABLES"; //returns many rows
 
-        //    OracleConnection conn = new OracleConnection("server=localhost;user=system;password=linq2");
+        //    OracleConnection conn = new OracleConnection("server=localhost;user=system;password=PLACEHOLDER");
         //    conn.Open();
         //    OracleCommand cmd = new OracleCommand(sql,conn);
         //    cmd.Parameters.Add(":p1", "Pen");

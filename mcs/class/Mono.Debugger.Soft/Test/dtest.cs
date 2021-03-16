@@ -2486,6 +2486,7 @@ public class DebuggerTests
 	[Test]
 	[Category("NotOnWindows")]
 	[Category ("AndroidSdksNotWorking")]
+	[Ignore("https://github.com/mono/mono/issues/20905")] // fails on Linux i386 on CI
 	public void Crash () {
 		string [] existingCrashFileEntries = Directory.GetFiles (".", "mono_crash*.json");
 
