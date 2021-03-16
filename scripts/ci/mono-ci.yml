@@ -2,7 +2,7 @@ trigger:
   batch: true
   branches:
     include:
-    - master
+    - main
     - 20*-*
   paths:
     include:
@@ -22,7 +22,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - 20*-*
   paths:
     include:
@@ -99,6 +99,10 @@ jobs:
     os: linux
     arch: amd64
     additionalCITags: all-profiles,apidiff,csprojdiff,no-tests
+    additionalSteps:
+      - publish: mcs/apidiff
+        artifact: ApiDiff
+        displayName: Public API Diff
 
 #- template: /scripts/ci/mono-ci-job-template.yml
 #  parameters:

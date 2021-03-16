@@ -41,7 +41,7 @@ namespace ClientCode2
         static void Main_(string[] args)
         {
 
-            string connStr = "server=localhost;user id=LinqUser; password=linq2; database=northwind";
+            string connStr = "server=localhost;user id=LinqUser; password=PLACEHOLDER; database=northwind";
             //NpgsqlConnection conn = new NpgsqlConnection(connStr);
             //conn.Open();
             ////string sql = "INSERT City (Name) VALUES ('B'); SELECT @@IDENTITY";

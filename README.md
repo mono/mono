@@ -23,6 +23,10 @@ Join us on [Discord](https://aka.ms/dotnet-discord) in the `#monovm` channel:
 
 ### Build Status
 
+Public CI: [![Azure Pipelines](https://dev.azure.com/dnceng/public/_apis/build/status/mono/mono-ci?branchName=main)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=952&branchName=main)
+
+Legacy Jenkins CI (no longer available publicly):
+
 | OS           | Architecture       | Status                       |
 |--------------|--------------------|------------------------------|
 | Debian 9     | amd64              | [![debian-9-amd64][1]][2]    |

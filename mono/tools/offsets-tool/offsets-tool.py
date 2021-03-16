@@ -7,7 +7,7 @@ import sys
 import argparse
 import clang.cindex
 
-IOS_DEFINES = ["HOST_DARWIN", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "_XOPEN_SOURCE"]
+MACIOS_DEFINES = ["HOST_DARWIN", "TARGET_MACH", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "_XOPEN_SOURCE"]
 ANDROID_DEFINES = ["HOST_ANDROID", "MONO_CROSS_COMPILE", "USE_MONO_CTX", "BIONIC_IOCTL_NO_SIGNEDNESS_OVERLOAD"]
 LINUX_DEFINES = ["HOST_LINUX", "MONO_CROSS_COMPILE", "USE_MONO_CTX"]
 
@@ -133,34 +133,41 @@ class OffsetsTool:
 		# iOS
 		elif "arm-apple-darwin10" == args.abi:
 			require_sysroot (args)
-			self.target = Target ("TARGET_ARM", "TARGET_IOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
+			self.target = Target ("TARGET_ARM", "TARGET_IOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + MACIOS_DEFINES)
 			self.target_args += ["-arch", "arm"]
 			self.target_args += ["-isysroot", args.sysroot]
 		elif "aarch64-apple-darwin10" == args.abi:
 			require_sysroot (args)
-			self.target = Target ("TARGET_ARM64", "TARGET_IOS", IOS_DEFINES)
+			self.target = Target ("TARGET_ARM64", "TARGET_IOS", MACIOS_DEFINES)
 			self.target_args += ["-arch", "arm64"]
 			self.target_args += ["-isysroot", args.sysroot]
 		elif "i386-apple-darwin10" == args.abi:
 			require_sysroot (args)
-			self.target = Target ("TARGET_X86", "", IOS_DEFINES)
+			self.target = Target ("TARGET_X86", "", MACIOS_DEFINES)
 			self.target_args += ["-arch", "i386"]
 			self.target_args += ["-isysroot", args.sysroot]
 		elif "x86_64-apple-darwin10" == args.abi:
 			require_sysroot (args)
-			self.target = Target ("TARGET_AMD64", "", IOS_DEFINES)
+			self.target = Target ("TARGET_AMD64", "", MACIOS_DEFINES)
 			self.target_args += ["-arch", "x86_64"]
+			self.target_args += ["-isysroot", args.sysroot]
+
+		# macOS
+		if "aarch64-apple-darwin20" == args.abi:
+			require_sysroot (args)
+			self.target = Target ("TARGET_ARM64", "TARGET_OSX", MACIOS_DEFINES)
+			self.target_args += ["-arch", "arm64"]
 			self.target_args += ["-isysroot", args.sysroot]
 
 		# watchOS
 		elif "armv7k-apple-darwin" == args.abi:
 			require_sysroot (args)
-			self.target = Target ("TARGET_ARM", "TARGET_WATCHOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + IOS_DEFINES)
+			self.target = Target ("TARGET_ARM", "TARGET_WATCHOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + MACIOS_DEFINES)
 			self.target_args += ["-arch", "armv7k"]
 			self.target_args += ["-isysroot", args.sysroot]
 		elif "aarch64-apple-darwin10_ilp32" == args.abi:
 			require_sysroot (args)
-			self.target = Target ("TARGET_ARM64", "TARGET_WATCHOS", ["MONO_ARCH_ILP32"] + IOS_DEFINES)
+			self.target = Target ("TARGET_ARM64", "TARGET_WATCHOS", ["MONO_ARCH_ILP32"] + MACIOS_DEFINES)
 			self.target_args += ["-arch", "arm64_32"]
 			self.target_args += ["-isysroot", args.sysroot]
 
@@ -212,6 +219,7 @@ class OffsetsTool:
 			args.mono_path + "/mono",
 			args.mono_path + "/mono/eglib",
 			args.target_path,
+			args.target_path + "/mono",
 			args.target_path + "/mono/eglib"
 			]
 		

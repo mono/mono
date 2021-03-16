@@ -64,7 +64,7 @@ namespace DbLinq.MySql.Example
             string dbServer = Environment.GetEnvironmentVariable("DbLinqServer") ?? "localhost";
             // BUG: contexts must to be disposable
             string connStr = String.Format("server={0};user id={1}; password={2}; database={3}"
-                , dbServer, "LinqUser", "linq2", "Northwind");
+                , dbServer, "LinqUser", "[PLACEHOLDER]", "Northwind");
 
             Northwind db = new Northwind(new MySqlConnection(connStr));
 
@@ -175,7 +175,7 @@ namespace DbLinq.MySql.Example
         static void Main2(string[] args)
         {
             string connStr = String.Format("server={0};user id={1}; password={2}; database={3}"
-                , "localhost", "LinqUser", "linq2", "AllTypes");
+                , "localhost", "LinqUser", "[PLACEHOLDER]", "AllTypes");
             AllTypesExample.AllTypes db = new AllTypesExample.AllTypes(connStr);
             
 

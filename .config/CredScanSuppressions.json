@@ -4,15 +4,10 @@
   {
     "file": [
       "/data/net_2_0/machine.jvm.config",
-      "/mcs/class/Mono.Security/Test/Mono.Security.Cryptography/CryptoConvertTest.cs",
       "/mcs/class/Mono.Security/Test/Mono.Security.Cryptography/RSAManagedTest.cs",
       "/mcs/class/Mono.ServiceModel.IdentitySelectors/Test/resources/rupert.xml",
-      "/mcs/class/System.Data.Linq/examples/DbLinq.Ingres.Example/Program.cs",
-      "/mcs/class/System.Data.OracleClient/Test/System.Data.OracleClient.jvm/OracleCommand/OracleCommand_Dispose.cs",
       "/mcs/class/System.Data.OracleClient/Test/testblob.cs",
-      "/mcs/class/System.Data/Test/ProviderTests/Common/ConnectionManager.cs",
       "/mcs/class/System.Data/Test/System.Data.Common/DbConnectionStringBuilderTest.cs",
-      "/mcs/class/System.Data/Test/System.Data.Odbc/OdbcConnectionStringBuilderTest.cs",
       "/mcs/class/System.IdentityModel/Test/Resources/test.pfx",
       "/mcs/class/System.ServiceModel/Test/System.ServiceModel.Security/WSSecurityTokenSerializerTest.cs",
       "/mcs/tools/sqlmetal/src/Build Northwind.bat"

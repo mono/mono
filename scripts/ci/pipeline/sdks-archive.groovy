@@ -2,14 +2,14 @@ isPr = (env.ghprbPullId && !env.ghprbPullId.empty ? true : false)
 monoBranch = (isPr ? "pr" : env.BRANCH_NAME)
 jobName = env.JOB_NAME.split('/').first()
 
-if (monoBranch == 'master') {
+if (monoBranch == 'main') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
                 pipelineTriggers([cron('0 3 * * *')])
     ])
 
-    // multi-branch pipelines still get triggered for each commit, skip these builds on master by checking whether this build was timer-triggered
-    if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() == 0) {
-        echo "Skipping per-commit build on master."
+    // multi-branch pipelines still get triggered for each commit, skip these builds on main by checking whether this build was timer-triggered or manually triggered
+    if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() == 0 && currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() == 0) {
+        echo "Skipping per-commit build on main."
         return
     }
 }
@@ -57,23 +57,23 @@ parallel (
             }
         }
     },
-    "Mac (Xcode 11.3)": {
+    "Mac (Xcode 12.4)": {
         throttle(['provisions-mac-toolchain']) {
-            node ("xcode113") {
-                archive ("mac", "release", "Darwin", "", "", "", "xcode113")
+            node ("xcode124") {
+                archive ("mac", "release", "Darwin", "", "", "", "xcode124")
             }
         }
     },
-    "Mac Catalyst (Xcode 11.3)": {
+    "Mac Catalyst (Xcode 12.4)": {
         throttle(['provisions-mac-toolchain']) {
-            node ("xcode113") {
-                archive ("maccat", "release", "Darwin", "", "", "", "xcode113")
+            node ("xcode124") {
+                archive ("maccat", "release", "Darwin", "", "", "", "xcode124")
             }
         }
     },
     "WASM Linux": {
-        if (monoBranch != 'master') {
-            echo "Skipping WASM build on non-master branch."
+        if (monoBranch != 'main') {
+            echo "Skipping WASM build on non-main branch."
             return
         }
         throttle(['provisions-wasm-toolchain']) {

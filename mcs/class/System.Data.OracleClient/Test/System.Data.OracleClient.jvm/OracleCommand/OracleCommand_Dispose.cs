@@ -83,8 +83,7 @@ public class OracleCommand_Dispose : GHTBase
 	//bool bFound;
 	//try
 	//{
-	//Connect = new OracleConnection("Provider=\"MSDAORA.1\";User
-	//ID=COM;Password=SQL;Data Source=LLO1;HostName=WS10359;Port=1521");
+	//Connect = new OracleConnection("[PLACEHOLDER]");
 	//Connect.Open();
 	//sSQL = "SELECT * FROM PRODUCT WHERE PRO_SKU = //SKU_208//";
 	//DbCommand = new OracleCommand(sSQL, Connect);
