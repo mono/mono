@@ -134,6 +134,8 @@ eventpipe_fire_method_events (
 static
 void
 eventpipe_fire_method_events_func (
+	MonoDomain *domain,
+	MonoMethod *method,
 	MonoJitInfo *ji,
 	gpointer user_data);
 
@@ -388,6 +390,8 @@ eventpipe_fire_method_events (
 static
 void
 eventpipe_fire_method_events_func (
+	MonoDomain *domain,
+	MonoMethod *method,
 	MonoJitInfo *ji,
 	gpointer user_data)
 {

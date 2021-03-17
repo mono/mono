@@ -1070,7 +1070,7 @@ mono_domain_ensure_entry_assembly (MonoDomain *domain, MonoAssembly *assembly)
 MONO_API void
 mono_domain_jit_foreach (MonoDomain *domain, MonoJitInfoFunc func, void *user_data)
 {
-	mono_jit_info_table_foreach (domain, func, user_data);
+	mono_jit_info_table_foreach_internal (domain, func, user_data);
 }
 
 MONO_API void
