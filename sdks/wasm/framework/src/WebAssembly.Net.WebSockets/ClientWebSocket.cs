@@ -21,7 +21,7 @@ namespace WebAssembly.Net.WebSockets {
 
 		private ActionQueue<ReceivePayload> receiveMessageQueue = new ActionQueue<ReceivePayload> ();
 
-		private TaskCompletionSource<bool> tcsClose;
+		private TaskCompletionSource<bool> tcsClose = new TaskCompletionSource<bool>();
 		private WebSocketCloseStatus? innerWebSocketCloseStatus;
 		private string innerWebSocketCloseStatusDescription;
 
@@ -210,7 +210,8 @@ namespace WebAssembly.Net.WebSockets {
 						if (!tcsConnect.Task.IsCanceled && !tcsConnect.Task.IsCompleted && !tcsConnect.Task.IsFaulted) {
 							tcsConnect.SetException (new WebSocketException (WebSocketError.NativeError));
 						} else {
-							tcsClose?.SetResult (true);
+							tcsClose.SetResult (true);
+							tcsClose = new TaskCompletionSource<bool>();
 						}
 
 						closeEvt.Dispose ();
@@ -472,7 +473,6 @@ namespace WebAssembly.Net.WebSockets {
 
 			WebSocketHelpers.ValidateCloseStatus (closeStatus, statusDescription);
 
-			tcsClose = new TaskCompletionSource<bool> ();
 			// Wrap the cancellationToken in a using so that it can be disposed of whether
 			// we successfully connected or failed trying.
 			// Otherwise any timeout/cancellation would apply to the full session.
