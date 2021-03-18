@@ -36,6 +36,7 @@ using System.Xml;
 using System.IO;
 using System.Text;
 using System.Configuration.Internal;
+using System.Security.Cryptography;
 
 namespace System.Configuration {
 
@@ -48,36 +49,55 @@ namespace System.Configuration {
 		static IInternalConfigSystem configSystem = new ClientConfigurationSystem ();
 		static object lockobj = new object ();
 		
-		[MonoTODO ("Evidence and version still needs work")]
 		static string GetAssemblyInfo (Assembly a)
 		{
-			object[] attrs;
-			StringBuilder sb;
-
-			string app_name;
-			string evidence_str;
+			string company_name;
+			string product_name;
 			string version;
+			object[] attrs;
+			byte[] hash;
+			byte[] pkt;
 
+			pkt = a.GetName ().GetPublicKeyToken ();
+
+			// Keep this in sync with System.Configuration.CustomizableFileSettingsProvider.GetCompanyName
+			attrs = a.GetCustomAttributes (typeof (AssemblyCompanyAttribute), true);
+			if ((attrs != null) && attrs.Length > 0) {
+				company_name = ((AssemblyCompanyAttribute)attrs[0]).Company;
+			} else {
+				MethodInfo entryPoint = a.EntryPoint;
+				Type entryType = entryPoint != null ? entryPoint.DeclaringType : null;
+				if (entryType != null && !String.IsNullOrEmpty (entryType.Namespace)) {
+					int end = entryType.Namespace.IndexOf ('.');
+					company_name = end < 0 ? entryType.Namespace : entryType.Namespace.Substring (0, end);
+				}
+				else
+					company_name = "Program";
+			}
+
+			// Keep this in sync with System.Configuration.CustomizableFileSettingsProvider.GetEvidenceHash
+			hash = SHA1.Create ().ComputeHash (pkt != null && pkt.Length > 0 ? pkt : Encoding.UTF8.GetBytes (a.EscapedCodeBase));
+			System.Text.StringBuilder evidence_string = new System.Text.StringBuilder();
+			foreach (byte b in hash)
+				evidence_string.AppendFormat("{0:x2}",b);
+
+			// Keep this in sync with System.Configuration.CustomizableFileSettingsProvider.GetProductName
 			attrs = a.GetCustomAttributes (typeof (AssemblyProductAttribute), false);
-			if (attrs != null && attrs.Length > 0)
-				app_name = ((AssemblyProductAttribute)attrs[0]).Product;
-			else
-				app_name = AppDomain.CurrentDomain.FriendlyName;
+			product_name = String.Format ("{0}_{1}_{2}",
+				(attrs != null && attrs.Length > 0) ? ((AssemblyProductAttribute)attrs[0]).Product : AppDomain.CurrentDomain.FriendlyName,
+				pkt != null && pkt.Length > 0 ? "StrongName" : "Url",
+				evidence_string.ToString ());
 
-			sb = new StringBuilder();
+			// Keep this in sync with System.Configuration.CustomizableFileSettingsProvider.GetProductVersion
+			attrs = a.GetCustomAttributes (typeof (AssemblyInformationalVersionAttribute), false);
+			if (attrs != null && attrs.Length > 0) {
+				version = ((AssemblyInformationalVersionAttribute)attrs[0]).InformationalVersion;
+			} else {
+				attrs = a.GetCustomAttributes (typeof (AssemblyFileVersionAttribute), false);
+				version = (attrs != null && attrs.Length > 0) ? ((AssemblyFileVersionAttribute)attrs[0]).Version : a.GetName ().Version.ToString ();
+			}
 
-			sb.Append ("evidencehere");
-
-			evidence_str = sb.ToString();
-
-			attrs = a.GetCustomAttributes (typeof (AssemblyVersionAttribute), false);
-			if (attrs != null && attrs.Length > 0)
-				version = ((AssemblyVersionAttribute)attrs[0]).Version;
-			else
-				version = "1.0.0.0" /* XXX */;
-
-
-			return Path.Combine (String.Format ("{0}_{1}", app_name, evidence_str), version);
+			return Path.Combine (company_name, product_name, version);
 		}
 
 		internal static Configuration OpenExeConfigurationInternal (ConfigurationUserLevel userLevel, Assembly calling_assembly, string exePath)
