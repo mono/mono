@@ -262,9 +262,10 @@ namespace System.Configuration
 			if (assembly == null)
 				assembly = Assembly.GetCallingAssembly ();
 
+			object [] attrs = assembly.GetCustomAttributes (typeof (AssemblyProductAttribute), false);
 			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
 			return String.Format ("{0}_{1}_{2}",
-				AppDomain.CurrentDomain.FriendlyName,
+				(attrs != null && attrs.Length > 0) ? ((AssemblyProductAttribute)attrs[0]).Product : AppDomain.CurrentDomain.FriendlyName,
 				pkt != null && pkt.Length > 0 ? "StrongName" : "Url",
 				GetEvidenceHash());
 		}
