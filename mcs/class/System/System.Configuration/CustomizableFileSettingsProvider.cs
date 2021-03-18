@@ -95,7 +95,6 @@ namespace System.Configuration
 		private static bool isVersionRevision = false;	// 0x0008	revision
 		private static bool isCompany = true;		// 0x0010	corporate name
 		private static bool isProduct = true;		// 0x0020	product name
-		private static bool isEvidence = false;		// 0x0040	evidence hash
 
 		private static bool userDefine = false;		// 0x8000	ignore all above and use user definition
 
@@ -235,13 +234,6 @@ namespace System.Configuration
 			set { isCompany = value; }
 		}
 
-		// whether the path to include evidence hash.
-		public static bool IsEvidence
-		{
-			get { return isEvidence; }
-			set { isEvidence = value; }
-		}
-
 		// AssemblyCompanyAttribute->Namespace->"Program"
 		private static string GetCompanyName ()
 		{
@@ -336,16 +328,6 @@ namespace System.Configuration
 			}
 
 			if (isProduct) {
-				if (isEvidence) {
-					Assembly assembly = Assembly.GetEntryAssembly ();
-					if (assembly == null)
-						assembly = Assembly.GetCallingAssembly ();
-					byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
-					ProductName = String.Format ("{0}_{1}_{2}",
-						ProductName,
-						pkt != null ? "StrongName" : "Url",
-						GetEvidenceHash());
-				}
 				userRoamingPath = Path.Combine (userRoamingPath, ProductName);
 				userLocalPath = Path.Combine (userLocalPath, ProductName);
 				
