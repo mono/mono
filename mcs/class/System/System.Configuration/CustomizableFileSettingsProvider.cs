@@ -89,10 +89,10 @@ namespace System.Configuration
 		private static string[] ProductVersion;
 
 		// whether to include parts in the folder name or not:
-		private static bool isVersionMajor = false;	// 0x0001	major version
-		private static bool isVersionMinor = false;	// 0x0002	minor version
-		private static bool isVersionBuild = false;	// 0x0004	build version
-		private static bool isVersionRevision = false;	// 0x0008	revision
+		private static bool isVersionMajor = true;	// 0x0001	major version
+		private static bool isVersionMinor = true;	// 0x0002	minor version
+		private static bool isVersionBuild = true;	// 0x0004	build version
+		private static bool isVersionRevision = true;	// 0x0008	revision
 		private static bool isCompany = true;		// 0x0010	corporate name
 		private static bool isProduct = true;		// 0x0020	product name
 
