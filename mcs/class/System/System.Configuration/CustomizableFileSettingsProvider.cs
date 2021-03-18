@@ -296,6 +296,14 @@ namespace System.Configuration
 			if (assembly == null)
 				return string.Empty;
 
+			object [] attrs = assembly.GetCustomAttributes (typeof (AssemblyInformationalVersionAttribute), false);
+			if (attrs != null && attrs.Length > 0)
+				return ((AssemblyInformationalVersionAttribute)attrs[0]).InformationalVersion;
+
+			attrs = assembly.GetCustomAttributes (typeof (AssemblyFileVersionAttribute), false);
+			if (attrs != null && attrs.Length > 0)
+				return ((AssemblyFileVersionAttribute)attrs[0]).Version;
+
 			return assembly.GetName ().Version.ToString ();
 		}
 
