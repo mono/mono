@@ -35,8 +35,6 @@ namespace System.Windows.Forms
 	[DefaultEvent ("Opening")]
 	public class ContextMenuStrip : ToolStripDropDownMenu
 	{
-		internal Control AssociatedControl;
-
 		#region Public Construtors
 		public ContextMenuStrip () : base ()
 		{
@@ -49,9 +47,11 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
+
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Control SourceControl { get; protected set; }
+		
 		#endregion
 
 		#region Protected Methods
@@ -67,11 +67,38 @@ namespace System.Windows.Forms
 				XplatUI.SetTopmost (this.Handle, true);
 		}
 
-		protected override void SetOwnerControl (Control control)
+		protected override void SetOwnerControl (Control newOwner)
 		{
-			base.SetOwnerControl (control);
-			SourceControl = control;
+			base.SetOwnerControl (newOwner);
+			SourceControl = newOwner;
+			OnSetOwnerControlDone (new SetOwnerControlDoneArgs (newOwner));
 		}
+		#endregion
+
+		#region Internal Events
+
+		internal delegate void SetOwnerControlDoneHandler (object sender, SetOwnerControlDoneArgs e);
+		
+		// Is used by UIA API.
+		[Browsable (false)]
+		internal static event SetOwnerControlDoneHandler SetOwnerControlDone; 
+
+		private void OnSetOwnerControlDone (SetOwnerControlDoneArgs e)
+		{
+			if (SetOwnerControlDone != null)
+				SetOwnerControlDone (this, e);
+		}
+
+		internal class SetOwnerControlDoneArgs : EventArgs
+		{
+			public readonly Control NewOwner;
+
+			public SetOwnerControlDoneArgs (Control newOwner)
+			{
+				NewOwner = newOwner;
+			}
+		}
+
 		#endregion
 	}
 }

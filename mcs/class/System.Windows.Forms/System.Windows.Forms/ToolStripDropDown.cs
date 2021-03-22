@@ -375,6 +375,8 @@ namespace System.Windows.Forms
 			// Recursive hide all child dropdowns
 			foreach (ToolStripItem tsi in this.Items)
 				tsi.Dismiss (reason);
+
+			SetOwnerControl (null);
 			
 			this.OnClosed (new ToolStripDropDownClosedEventArgs (reason));
 		}
