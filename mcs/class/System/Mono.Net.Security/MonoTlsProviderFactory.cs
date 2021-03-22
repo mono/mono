@@ -333,6 +333,10 @@ namespace Mono.Net.Security
 			switch (type) {
 			case "default":
 			case "legacy":
+#if UNITY
+				if (Mono.Unity.UnityTls.IsSupported)
+					goto case "unitytls";
+#endif
 #if MONO_FEATURE_APPLETLS
 				if (Platform.IsMacOS)
 					goto case "apple";
@@ -340,10 +344,6 @@ namespace Mono.Net.Security
 #if MONO_FEATURE_BTLS
 				if (IsBtlsSupported ())
 					goto case "btls";
-#endif
-#if UNITY
-				if (Mono.Unity.UnityTls.IsSupported)
-					goto case "unitytls";
 #endif
 				throw new NotSupportedException ("TLS Support not available.");
 #if MONO_FEATURE_APPLETLS
