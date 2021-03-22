@@ -3,7 +3,11 @@
  "suppressions": [
   {
     "file": [
-      "/mcs/class/System.IdentityModel/Test/Resources/test.pfx"
+      "/mcs/class/System.IdentityModel/Test/Resources/test.pfx",
+      "/mcs/class/System.IdentityModel/Test/Resources/test2.pfx",
+      "/mcs/class/System.Security/Test/System.Security.Cryptography.Xml/sample.pfx",
+      "/mcs/class/System.ServiceModel/Test/Resources/test.pfx",
+      "/mcs/class/System.ServiceModel/Test/Resources/test2.pfx"
     ],
     "_justification": "Mostly test files. Other files contain harmless examples or constants."
   },
