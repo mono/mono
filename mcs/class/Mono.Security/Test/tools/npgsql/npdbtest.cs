@@ -22,6 +22,7 @@ public class NpgsqlSslTest {
 
 	public static bool Connect (int protocol, bool ssl, int verbose)
 	{
+		// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 		string cs = "Server=127.0.0.1;Port=5432;Protocol={0};User Id=npgsql_tests;Password=npgsql_tests;Database=npgsql_tests;ssl={1}";
 		cs = String.Format (cs, protocol, ssl);
 		if ((verbose > 0) && !showcs) {
