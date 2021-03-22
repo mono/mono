@@ -68,6 +68,7 @@ namespace BuildProgram
             StevedoreArtifacts.Add(new StevedoreArtifact("android-ndk-linux"));
             StevedoreArtifacts.Add(new StevedoreArtifact("sysroot-gcc-glibc-x64"));
             StevedoreArtifacts.Add(new StevedoreArtifact("toolchain-llvm-centos"));
+            StevedoreArtifacts.Add(new StevedoreArtifact("cmake-linux-x64"));
         }
 
         private static void RegisterCommonNonWindowsArtifacts()

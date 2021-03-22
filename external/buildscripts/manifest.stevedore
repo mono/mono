@@ -16,6 +16,7 @@ unity-internal: mono-build-tools-extra/9de3c42ef81ec4f79b53e7db32d390227d8c43c4_
 unity-internal: android-ndk-linux/r19-unity_c81ed9864399ec6f2d28181a58cc0588481499dddd4970e7e9f4bfbb64e8114e.7z
 unity-internal: sysroot-gcc-glibc-x64/9.1.0-2.17-v0_608efc24a3b402ec57809211b16a6d32d519f891d4038e1fc8509fe300c395b2.7z
 unity-internal: toolchain-llvm-centos/9.0.1-7.7.1908-v0_9c1c26d5205c7ead3cba5a545796579d753c459ac5e16d0690d1b087efa7835d.7z
+testing: cmake-linux-x64/3.20.0_a47b24f0bb16dca4fbd6974c03d5eb82e081318f5c9de75e1416db0020508579.7z
 
 # Common
 unity-internal: MonoBleedingEdge/b8ea873d69f_11313119e2f8a79ea5d21056a99e6a4346037cfb9915548344409bede6995c84.7z
