@@ -1,5 +1,8 @@
 #include mobile_System.dll.sources
 #include corefx.windows.sources
+../System.Web/System.Web/HttpUtility.cs
+../System.Web/System.Web.Util/Helpers.cs
+../System.Web/System.Web.Util/HttpEncoder.cs
 
 System.Net.NetworkInformation/Win32UnixFactoryPal.cs
 

@@ -3,7 +3,3 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 ../System/System/MonoToolsLocator.cs
-
-System.Web/HttpUtility.cs
-System.Web.Util/Helpers.cs
-System.Web.Util/HttpEncoder.cs
