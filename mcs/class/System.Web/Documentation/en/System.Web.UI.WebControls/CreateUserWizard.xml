@@ -501,7 +501,7 @@
                     Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
                 /&gt;
         &lt;/WizardSteps&gt;
-&lt;/asp:CreateUserWizard&gt;</code><![CDATA[SuppressMessage("Microsoft.Security", "CS001:SecretInline", Justification="...")]]>
+&lt;/asp:CreateUserWizard&gt;</code><![CDATA[SuppressMessage("Microsoft.Security", "CS001:SecretInline", Justification="Not a secret.")]]>
     </remarks>
     <summary>
       <attribution license="cc4" from="Microsoft" modified="false" />
