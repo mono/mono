@@ -20,6 +20,7 @@ namespace MonoTests.System.IdentityModel.Tokens.net_4_5 {
 
 		// Put in some non-ascii/latin1 characters to test the encoding scheme
 		// \u018E == Latin capital letter Reversed E
+		// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 		private const string user = "us\u018Er";
 		// \u00BD == Vulgar Fraction one half
 		private const string password = "pass\u00BDword";
