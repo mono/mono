@@ -60,8 +60,8 @@ namespace System.Web.Configuration {
             memoryLimit="60"
             webGarden="false"
             cpuMask="0xffffffff"
-            // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
             userName="machine"
+            // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
             password="AutoGenerate"
             logLevel="Errors"
             clientConnectedCheck="00:00:05"
