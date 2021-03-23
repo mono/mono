@@ -60,6 +60,7 @@ namespace System.Web.Configuration {
             memoryLimit="60"
             webGarden="false"
             cpuMask="0xffffffff"
+            // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
             userName="machine"
             password="AutoGenerate"
             logLevel="Errors"

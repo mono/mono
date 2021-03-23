@@ -1960,6 +1960,7 @@ namespace MonoTests.System.XmlSerialization
 		public void TestSerializePrimitiveTypesContainer ()
 		{
 			Serialize (new PrimitiveTypesContainer ());
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<PrimitiveTypesContainer xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='some:urn'>" +

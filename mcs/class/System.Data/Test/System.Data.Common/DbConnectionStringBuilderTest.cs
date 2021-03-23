@@ -1832,6 +1832,7 @@ namespace MonoTests.System.Data.Common
 			sb["Data Source"] = "testdb";
 			sb["User ID"] = "someuser";
 			sb["Password"] = "abcdef";
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ("Data Source=testdb;User ID=someuser;Password=abcdef", 
 				sb.ConnectionString, "cs#1");
 
@@ -1860,6 +1861,7 @@ namespace MonoTests.System.Data.Common
 			sb["PASSWORD"] = "abcdef1";
 			sb["user id"] = "someuser";
 			sb["Data Source"] = "testdb";
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ("PASSWORD=abcdef1;user id=someuser;Data Source=testdb", 
 				sb.ConnectionString, "cs#6");
 
@@ -1868,8 +1870,10 @@ namespace MonoTests.System.Data.Common
 			sb["PassWord"] = "abcdef2";
 			sb["uSER iD"] = "someuser";
 			sb["DaTa SoUrCe"] = "testdb";
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ("PassWord=abcdef2;uSER iD=someuser;DaTa SoUrCe=testdb", 
 				sb.ConnectionString, "cs#7");
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			sb["passWORD"] = "abc123";
 			Assert.AreEqual ("PassWord=abc123;uSER iD=someuser;DaTa SoUrCe=testdb", 
 				sb.ConnectionString, "cs#8");
@@ -2005,30 +2009,36 @@ namespace MonoTests.System.Data.Common
 			DbConnectionStringBuilder sb;
 
 			sb = new DbConnectionStringBuilder ();
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			sb.ConnectionString = "User ID=SCOTT;Password=TiGeR;Data Source=" + dataSource;
 			Assert.AreEqual (dataSource, sb["Data Source"], "#A1");
 			Assert.AreEqual ("SCOTT", sb["User ID"], "#A2");
 			Assert.AreEqual ("TiGeR", sb["Password"], "#A3");
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ( 
 				"user id=SCOTT;password=TiGeR;data source=\"(DESCRIPTION=(ADDRESS=(PROTOCOL=" +
 				"TCP)(HOST=192.168.1.101)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)" +
 				"(SERVICE_NAME=TESTDB)))\"", sb.ConnectionString, "#A4");
 
 			sb = new DbConnectionStringBuilder (false);
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			sb.ConnectionString = "User ID=SCOTT;Password=TiGeR;Data Source=" + dataSource;
 			Assert.AreEqual (dataSource, sb["Data Source"], "#B1");
 			Assert.AreEqual ("SCOTT", sb["User ID"], "#B2");
 			Assert.AreEqual ("TiGeR", sb["Password"], "#B3");
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ( 
 				"user id=SCOTT;password=TiGeR;data source=\"(DESCRIPTION=(ADDRESS=(PROTOCOL=" +
 				"TCP)(HOST=192.168.1.101)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)" +
 				"(SERVICE_NAME=TESTDB)))\"", sb.ConnectionString, "#B4");
 
 			sb = new DbConnectionStringBuilder (true);
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			sb.ConnectionString = "User ID=SCOTT;Password=TiGeR;Data Source=" + dataSource;
 			Assert.AreEqual (dataSource, sb["Data Source"], "#C1");
 			Assert.AreEqual ("SCOTT", sb["User ID"], "#C2");
 			Assert.AreEqual ("TiGeR", sb["Password"], "#C3");
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ( 
 				"user id=SCOTT;password=TiGeR;data source=(DESCRIPTION=(ADDRESS=(PROTOCOL=" +
 				"TCP)(HOST=192.168.1.101)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)" +
@@ -2041,22 +2051,28 @@ namespace MonoTests.System.Data.Common
 			DbConnectionStringBuilder sb;
 
 			sb = new DbConnectionStringBuilder ();
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			sb.ConnectionString = "PassWord=abcdef2;uSER iD=someuser;DaTa SoUrCe=testdb";
 			sb["Integrated Security"] = "False";
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ( 
 				"password=abcdef2;user id=someuser;data source=testdb;Integrated Security=False",
 				sb.ConnectionString, "#A");
 
 			sb = new DbConnectionStringBuilder (false);
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			sb.ConnectionString = "PassWord=abcdef2;uSER iD=someuser;DaTa SoUrCe=testdb";
 			sb["Integrated Security"] = "False";
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ( 
 				"password=abcdef2;user id=someuser;data source=testdb;Integrated Security=False",
 				sb.ConnectionString, "#B");
 
 			sb = new DbConnectionStringBuilder (true);
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			sb.ConnectionString = "PassWord=abcdef2;uSER iD=someuser;DaTa SoUrCe=testdb";
 			sb["Integrated Security"] = "False";
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual ( 
 				"password=abcdef2;user id=someuser;data source=testdb;Integrated Security=False",
 				sb.ConnectionString, "#C");
