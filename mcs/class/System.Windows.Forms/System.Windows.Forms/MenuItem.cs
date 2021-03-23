@@ -656,7 +656,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return base.ToString () + ", Items.Count: " + MenuItems.Count + ", Text: " + text;
+			return base.ToString () + ", Text: " + text;
 		}
 
 		#endregion Public Methods
