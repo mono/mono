@@ -50,10 +50,10 @@ parallel (
             }
         }
     },
-    "iOS (Xcode 11.3)": {
+    "iOS (Xcode 12.4)": {
         throttle(['provisions-ios-toolchain']) {
-            node ("xcode113") {
-                archive ("ios", "release", "Darwin", "", "", "", "xcode113")
+            node ("xcode124") {
+                archive ("ios", "release", "Darwin", "", "", "", "xcode124")
             }
         }
     },
