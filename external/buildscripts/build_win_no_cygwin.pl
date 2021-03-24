@@ -126,9 +126,9 @@ if ($build)
 	my $archNameForBuild = $arch32 ? 'Win32' : 'x64';
 	my $configDirName = $debug ? "Debug" : "Release";
 
-	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-boehm.exe", "$monoprefix/bin/mono-bdwgc.exe") or die ("failed copying mono-bdwgc.exe\n");
-	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-2.0-boehm.dll", "$monoprefix/bin/mono-2.0-bdwgc.dll") or die ("failed copying mono-2.0-bdwgc.dll\n");
-	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-2.0-boehm.pdb", "$monoprefix/bin/mono-2.0-bdwgc.pdb") or die ("failed copying mono-2.0-bdwgc.pdb\n");
+	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-bdwgc.exe", "$monoprefix/bin/mono-bdwgc.exe") or die ("failed copying mono-bdwgc.exe\n");
+	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-2.0-bdwgc.dll", "$monoprefix/bin/mono-2.0-bdwgc.dll") or die ("failed copying mono-2.0-bdwgc.dll\n");
+	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-2.0-bdwgc.pdb", "$monoprefix/bin/mono-2.0-bdwgc.pdb") or die ("failed copying mono-2.0-bdwgc.pdb\n");
 
 	copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-sgen.exe", "$monoprefix/bin/.") or die ("failed copying mono-sgen.exe\n");
 	copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-2.0-sgen.dll", "$monoprefix/bin/.") or die ("failed copying mono-2.0-sgen.dll\n");
