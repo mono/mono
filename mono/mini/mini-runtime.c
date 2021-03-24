@@ -2601,7 +2601,7 @@ lookup_start:
 			g_assert (vtable);
 			if (!mono_runtime_class_init_full (vtable, error))
 				return NULL;
-			
+
 			code = MINI_ADDR_TO_FTNPTR (info->code_start);
 			return mono_create_ftnptr (target_domain, code);
 		}
