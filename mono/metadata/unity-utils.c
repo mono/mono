@@ -1676,7 +1676,7 @@ mono_unity_type_get_name_foreach_name_chunk_recurse(MonoType *type, gboolean is_
 	}
 	case MONO_TYPE_VAR:
 	case MONO_TYPE_MVAR:
-		if (!mono_generic_param_info(type->data.generic_param)) {
+		if (!mono_generic_param_name(type->data.generic_param)) {
 
 			if (type->type == MONO_TYPE_VAR) {
 				*bufferIter++ = '!';
@@ -1688,7 +1688,7 @@ mono_unity_type_get_name_foreach_name_chunk_recurse(MonoType *type, gboolean is_
 			sprintf(bufferIter, "%d", type->data.generic_param->num);
 		}
 		else
-			nameChunkReport(mono_generic_param_info(type->data.generic_param)->name, userData);
+			nameChunkReport(mono_generic_param_name(type->data.generic_param), userData);
 
 		if (type->byref)
 			*bufferIter++ = '&';

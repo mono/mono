@@ -428,10 +428,9 @@ mono_mempool_foreach_block(MonoMemPool* pool, mono_mempool_block_proc callback, 
 
 	while (current)
 	{
-		gpointer start = (guint8*)current + SIZEOF_MEM_POOL;
-		gpointer end = (guint8*)start + current->size;
+		gpointer end = (guint8*)current + current->size;
 
-		callback(start, end, user_data);
+		callback(current, end, user_data);
 		current = current->next;
 	}
 }
