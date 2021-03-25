@@ -35,6 +35,22 @@ namespace System {
 			DaylightNameIdx
 		};
 
+		private static string GetTimeZoneDirectoryMobile()
+		{
+			string tzDirectory = Environment.GetEnvironmentVariable(TimeZoneDirectoryEnvironmentVariable);
+
+			if (tzDirectory == null)
+			{
+				tzDirectory = DefaultTimeZoneDirectory;
+			}
+			else if (!tzDirectory.EndsWith(Path.DirectorySeparatorChar))
+			{
+				tzDirectory += Path.DirectorySeparatorChar;
+			}
+
+			return tzDirectory;
+		}
+
 		static List<AdjustmentRule> CreateAdjustmentRule (int year, out Int64[] data, out string[] names, string standardNameCurrentYear, string daylightNameCurrentYear)
 		{
 			List<AdjustmentRule> rulesForYear = new List<AdjustmentRule> ();
