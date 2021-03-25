@@ -122,6 +122,13 @@ namespace System
 		private static bool TryGetNameFromPath (string path, out string name)
 		{
 			name = null;
+
+#if UNITY
+			//Avoids calling readlink on webgl, which causes abort due to dlopen
+			if(!File.Exists(path))
+				return false;
+#endif
+
 			var linkPath = readlink (path);
 			if (linkPath != null) {
 				if (Path.IsPathRooted(linkPath))
@@ -176,15 +183,34 @@ namespace System
 			} catch {
 				return Utc;
 			}
-#else		
+#else
+#if UNITY
+			TimeZoneInfo localTimeZoneFallback = null;
+			try {
+				localTimeZoneFallback = CreateLocalUnity();
+			} catch {
+				localTimeZoneFallback = null;
+			}
+
+			if (localTimeZoneFallback == null)
+				localTimeZoneFallback = Utc;
+#endif
 			var tz = Environment.GetEnvironmentVariable ("TZ");
 			if (tz != null) {
 				if (tz == String.Empty)
+#if UNITY
+					return localTimeZoneFallback;
+#else
 					return Utc;
+#endif
 				try {
 					return FindSystemTimeZoneByFileName (tz, Path.Combine (TimeZoneDirectory, tz));
 				} catch {
+#if UNITY
+					return localTimeZoneFallback;
+#else
 					return Utc;
+#endif
 				}
 			}
 
@@ -203,7 +229,11 @@ namespace System
 				}
 			}
 
+#if UNITY
+			return localTimeZoneFallback;
+#else
 			return Utc;
+#endif
 #endif			
 		}
 

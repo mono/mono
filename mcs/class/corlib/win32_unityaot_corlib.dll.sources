@@ -1,4 +1,5 @@
 #include win32_build_corlib.dll.sources
+System/TimeZoneInfo.Unity.cs
 
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.GetFileInformationByHandleEx.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.WinRT.cs

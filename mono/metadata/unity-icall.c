@@ -14,6 +14,7 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/object-internals.h>
+#include <mono/metadata/icall-internals.h>
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
@@ -100,7 +101,8 @@ gmt_offset(struct tm *tm, time_t t)
 guint32
 ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray **data, MonoArray **names, MonoBoolean *daylight_inverted)
 {
-	MonoError error;
+	MonoError lerror;
+	MonoError* error = &lerror;
 #ifndef PLATFORM_WIN32
 	MonoDomain *domain = mono_domain_get ();
 	struct tm start, tt;
@@ -114,8 +116,8 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 	MONO_CHECK_ARG_NULL (data, FALSE);
 	MONO_CHECK_ARG_NULL (names, FALSE);
 
-	mono_gc_wbarrier_generic_store (data, (MonoObject*) mono_array_new_checked (domain, mono_defaults.int64_class, 4, &error));
-	mono_gc_wbarrier_generic_store (names, (MonoObject*) mono_array_new_checked (domain, mono_defaults.string_class, 2, &error));
+	mono_gc_wbarrier_generic_store_internal (data, (MonoObject*) mono_array_new_checked (domain, mono_defaults.int64_class, 4, error));
+	mono_gc_wbarrier_generic_store_internal (names, (MonoObject*) mono_array_new_checked (domain, mono_defaults.string_class, 2, error));
 
 	/* 
 	 * no info is better than crashing: we'll need our own tz data
@@ -136,8 +138,8 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 		t = time (NULL);
 		tt = *localtime (&t);
 		strftime (tzone, sizeof (tzone), "%Z", &tt);
-		mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
-		mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
+		mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, error));
+		mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, error));
 		*daylight_inverted = 0;
 		return 1;
 	}
@@ -176,17 +178,17 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 			/* Write data, if we're already in daylight saving, we're done. */
 			if (is_transitioned) {
 				if (!start.tm_isdst)
-					mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
+					mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, error));
 				else
-					mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
+					mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, error));
 
 				mono_array_set ((*data), gint64, 1, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
 				return 1;
 			} else {
 				if (!start.tm_isdst)
-					mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
+					mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, error));
 				else
-					mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
+					mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, error));
 
 				mono_array_set ((*data), gint64, 0, ((gint64)t1 + EPOCH_ADJUST) * 10000000L);
 				is_transitioned = 1;
@@ -208,8 +210,8 @@ ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray 
 
 	if (!is_transitioned) {
 		strftime (tzone, sizeof (tzone), "%Z", &tt);
-		mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, &error));
-		mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, &error));
+		mono_array_setref ((*names), 0, mono_string_new_checked (domain, tzone, error));
+		mono_array_setref ((*names), 1, mono_string_new_checked (domain, tzone, error));
 		mono_array_set ((*data), gint64, 0, 0);
 		mono_array_set ((*data), gint64, 1, 0);
 		mono_array_set ((*data), gint64, 2, (gint64) gmtoff * 10000000L);

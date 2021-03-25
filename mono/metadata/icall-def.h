@@ -252,6 +252,9 @@ HANDLES(CONSOLE_3, "SetBreak", ves_icall_System_ConsoleDriver_SetBreak, MonoBool
 HANDLES(CONSOLE_4, "SetEcho", ves_icall_System_ConsoleDriver_SetEcho, MonoBoolean, 1, (MonoBoolean))
 HANDLES(CONSOLE_5, "TtySetup", ves_icall_System_ConsoleDriver_TtySetup, MonoBoolean, 4, (MonoString, MonoString, MonoArrayOut, int_ptr_ref))
 
+ICALL_TYPE(TZONE, "System.CurrentSystemTimeZone", TZONE_1)
+ICALL(TZONE_1, "GetTimeZoneData", ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData)
+
 ICALL_TYPE(DTIME, "System.DateTime", DTIME_1)
 NOHANDLES(ICALL(DTIME_1, "GetSystemTimeAsFileTime", ves_icall_System_DateTime_GetSystemTimeAsFileTime))
 

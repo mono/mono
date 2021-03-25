@@ -10,6 +10,10 @@
 #include <glib.h>
 #include <mono/metadata/object-internals.h>
 
+// UNITY
+guint32
+ves_icall_System_CurrentSystemTimeZone_GetTimeZoneData (guint32 year, MonoArray **data, MonoArray **names, MonoBoolean *daylight_inverted);
+
 // On Windows platform implementation of bellow methods are hosted in separate source file
 // icall-windows.c or icall-windows-*.c. On other platforms the implementation is still keept
 // in icall.c still declared as static and in some places even inlined.
