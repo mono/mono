@@ -6211,7 +6211,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 		INLINE_FAILURE ("coverage profiling");
 
-		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
+		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->domain, cfg->method, header->code_size);
 	}
 
 	if ((cfg->gen_sdb_seq_points && cfg->method == method) || cfg->prof_coverage) {

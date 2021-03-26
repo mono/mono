@@ -486,6 +486,7 @@ mono_domain_create (void)
 #endif
 
 	mono_debug_domain_create (domain);
+	mono_profiler_coverage_domain_init (domain);
 
 #ifdef ENABLE_NETCORE
 	mono_alc_create_default (domain);
@@ -1326,6 +1327,8 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	if (domain == mono_root_domain)
 		mono_root_domain = NULL;
+
+	mono_profiler_coverage_domain_free (domain);
 #else
 	g_assert_not_reached ();
 #endif

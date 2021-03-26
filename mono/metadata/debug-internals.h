@@ -106,9 +106,6 @@ mono_debug_free_method_async_debug_info (MonoDebugMethodAsyncInfo *info);
 gboolean
 mono_debug_image_has_debug_info (MonoImage *image);
 
-MonoDebugSourceLocation *
-mono_debug_lookup_source_location_by_il (MonoMethod *method, guint32 il_offset, MonoDomain *domain);
-
 char*
 mono_debug_image_get_sourcelink (MonoImage *image);
 

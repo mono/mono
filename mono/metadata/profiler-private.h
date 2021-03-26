@@ -51,7 +51,7 @@ typedef struct {
 
 	gboolean code_coverage;
 	mono_mutex_t coverage_mutex;
-	GHashTable *coverage_hash;
+	MonoDomainCoverage* coverage_domains;
 
 	MonoProfilerHandle sampling_owner;
 	MonoSemType sampling_semaphore;
@@ -116,7 +116,18 @@ mono_profiler_installed (void)
 }
 
 gboolean mono_profiler_coverage_instrumentation_enabled (MonoMethod *method);
-MonoProfilerCoverageInfo *mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries);
+MonoProfilerCoverageInfo *mono_profiler_coverage_alloc (MonoDomain* domain, MonoMethod *method, guint32 entries);
+
+struct _MonoDomainCoverage
+{
+	MonoDomain* domain;
+	GHashTable* coverage_hash;
+	mono_mutex_t mutex;
+	MonoDomainCoverage* next;
+};
+
+void mono_profiler_coverage_domain_init (MonoDomain* domain);
+void mono_profiler_coverage_domain_free (MonoDomain* domain);
 
 struct _MonoProfilerCallContext {
 	/*
