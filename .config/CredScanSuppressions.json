@@ -11,5 +11,12 @@
     ],
     "_justification": "Mostly test files. Other files contain harmless examples or constants."
   },
+  {
+    "file": [
+      "/mcs/class/ICSharpCode.SharpZipLib/SharpZipLib.key",
+      "/mcs/class/Compat.ICSharpCode.SharpZipLib/SharpZipLib.key"
+    ],
+    "_justification": "Strong-naming keys."
+  }
  ]
 }
