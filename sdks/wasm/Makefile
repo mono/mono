@@ -642,7 +642,7 @@ run-all-%:
 	$(MAKE) -C . run-ch-$*
 	$(MAKE) -C . run-v8-$*
 	$(MAKE) -C . run-sm-$*
-	$(MAKE) -C . run-jsc-$*
+#	$(MAKE) -C . run-jsc-$*   # crashes: https://github.com/mono/mono/issues/20982
 
 run-debugger-tests: build-debugger-test-app build-dbg-testsuite
 	dotnet test DebuggerTestSuite
