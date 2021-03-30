@@ -8,7 +8,7 @@ corefx/TimeZoneInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.StringSerializer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.TransitionTime.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.cs
-../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.Unix.cs
+../../../external/corefx-bugfix/src/Common/src/CoreLib/System/TimeZoneInfo.Unix.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Globalization.Native/Interop.ResultCode.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Globalization.Native/Interop.TimeZoneInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Globalization.Native/Interop.Utils.cs
