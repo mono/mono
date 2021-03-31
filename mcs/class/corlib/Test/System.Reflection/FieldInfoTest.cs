@@ -536,24 +536,70 @@ namespace MonoTests.System.Reflection
 		public static unsafe void* ip;
 
 		[Test]
-		public unsafe void GetSetValuePointers ()
+		public unsafe void GetSetValuePointersStatic ()
 		{
 			Pointer p0 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
 			int *p0i = (int*)Pointer.Unbox (p0);
 			Assert.AreEqual (IntPtr.Zero, new IntPtr (p0i));
 
 			int i = 5;
+
 			void *p = &i;
 			typeof (FieldInfoTest).GetField ("ip").SetValue (null, (IntPtr)p);
-			Pointer p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
 
+			Pointer p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
 			int *pi = (int*)Pointer.Unbox (p2);
 			Assert.AreEqual (5, *pi);
 
 			typeof (FieldInfoTest).GetField ("ip").SetValue (null, (UIntPtr)p);
-			p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
 
+			p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
 			pi = (int*)Pointer.Unbox (p2);
+			Assert.AreEqual (5, *pi);
+
+			FieldInfoTest.ip = p;
+
+			p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip").GetValue (null);
+			pi = (int*)Pointer.Unbox (p2);
+			Assert.AreEqual (5, *pi);
+
+			typeof (FieldInfoTest).GetField ("ip").SetValue (null, (IntPtr)p);
+			pi = (int*)FieldInfoTest.ip;
+			Assert.AreEqual (5, *pi);
+		}
+
+		public unsafe void* ip_inst;
+
+		[Test]
+		public unsafe void GetSetValuePointersInstance ()
+		{
+			Pointer p0 = (Pointer)typeof (FieldInfoTest).GetField ("ip_inst").GetValue (this);
+			int *p0i = (int*)Pointer.Unbox (p0);
+			Assert.AreEqual (IntPtr.Zero, new IntPtr (p0i));
+
+			int i = 5;
+
+			void *p = &i;
+			typeof (FieldInfoTest).GetField ("ip_inst").SetValue (this, (IntPtr)p);
+
+			Pointer p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip_inst").GetValue (this);
+			int *pi = (int*)Pointer.Unbox (p2);
+			Assert.AreEqual (5, *pi);
+
+			typeof (FieldInfoTest).GetField ("ip_inst").SetValue (this, (UIntPtr)p);
+
+			p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip_inst").GetValue (this);
+			pi = (int*)Pointer.Unbox (p2);
+			Assert.AreEqual (5, *pi);
+
+			this.ip_inst = p;
+
+			p2 = (Pointer)typeof (FieldInfoTest).GetField ("ip_inst").GetValue (this);
+			pi = (int*)Pointer.Unbox (p2);
+			Assert.AreEqual (5, *pi);
+
+			typeof (FieldInfoTest).GetField ("ip_inst").SetValue (this, (IntPtr)p);
+			pi = (int*)this.ip_inst;
 			Assert.AreEqual (5, *pi);
 		}
 
