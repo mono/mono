@@ -23,6 +23,15 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		public void CreateFaultWithNumberCode ()
+		{
+			var msgVersion = MessageVersion.CreateVersion (EnvelopeVersion.Soap11, AddressingVersion.None);
+
+			var msg = Message.CreateMessage (XmlReader.Create (new StreamReader (TestResourceHelper.GetFullPathOfResource ("Test/Resources/soap-fault-number.xml"))), 0x10000, msgVersion);
+			MessageFault.CreateFault (msg, 0x10000);
+		}
+
+		[Test]
 		public void CreateFaultMessageVersionNone ()
 		{
 			var msg = Message.CreateMessage (MessageVersion.None, new FaultCode ("DestinationUnreachable"), "typical error", null);

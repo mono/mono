@@ -20,7 +20,7 @@
 			},
 
 			init: function () {
-				this.int_add = Module.mono_bind_static_method ("[sample] Math:IntAdd");
+				this.int_add = Module.mono_bind_static_method ("[sample] SampleMath:IntAdd");
 				this.output = document.getElementById ("output");
 				this.button = document.getElementById ("button");
 
@@ -30,6 +30,6 @@
 		};
       </script>
       <script type="text/javascript" src="runtime.js"></script>
-      <script async type="text/javascript" src="mono.js"></script>
+      <script async type="text/javascript" src="dotnet.js"></script>
   </body>
   </html>

@@ -53,6 +53,10 @@
 #include "external-only.h"
 #include "icall-decl.h"
 
+#if _MSC_VER
+#pragma warning(disable:4312) // FIXME pointer cast to different size
+#endif
+
 typedef struct DomainFinalizationReq {
 	gint32 ref;
 	MonoDomain *domain;
@@ -114,7 +118,7 @@ typedef struct {
 	MonoCoopMutex *mutex;
 } BreakCoopAlertableWaitUD;
 
-static inline void
+static void
 break_coop_alertable_wait (gpointer user_data)
 {
 	BreakCoopAlertableWaitUD *ud = (BreakCoopAlertableWaitUD*)user_data;
@@ -132,7 +136,7 @@ break_coop_alertable_wait (gpointer user_data)
  *   Wait on COND/MUTEX. If ALERTABLE is non-null, the wait can be interrupted.
  * In that case, *ALERTABLE will be set to TRUE, and 0 is returned.
  */
-static inline gint
+static gint
 coop_cond_timedwait_alertable (MonoCoopCond *cond, MonoCoopMutex *mutex, guint32 timeout_ms, gboolean *alertable)
 {
 	BreakCoopAlertableWaitUD *ud;
@@ -557,11 +561,13 @@ ves_icall_System_GC_GetTotalMemory (MonoBoolean forceCollection)
 }
 
 void
-ves_icall_System_GC_KeepAlive (MonoObjectHandle obj, MonoError *error)
+ves_icall_System_GC_GetGCMemoryInfo (gint64* high_memory_load_threshold_bytes,
+									gint64* memory_load_bytes,
+									gint64* total_available_memory_bytes,
+									gint64* heap_size_bytes,
+									gint64* fragmented_bytes)
 {
-	/*
-	 * Does nothing.
-	 */
+	mono_gc_get_gcmemoryinfo (high_memory_load_threshold_bytes, memory_load_bytes, total_available_memory_bytes, heap_size_bytes,  fragmented_bytes);
 }
 
 void
@@ -646,10 +652,10 @@ ves_icall_System_GC_get_ephemeron_tombstone (MonoError *error)
 
 #if ENABLE_NETCORE
 
-gpointer
+MonoGCHandle
 ves_icall_System_GCHandle_InternalAlloc (MonoObjectHandle obj, gint32 type, MonoError *error)
 {
-	guint32 handle = 0;
+	MonoGCHandle handle = NULL;
 
 	switch (type) {
 	case HANDLE_WEAK:
@@ -667,32 +673,31 @@ ves_icall_System_GCHandle_InternalAlloc (MonoObjectHandle obj, gint32 type, Mono
 	default:
 		g_assert_not_reached ();
 	}
-	/* The lowest bit is used to mark pinned handles by netcore's GCHandle class */
-	return GUINT_TO_POINTER (handle << 1);
+	return handle;
 }
 
 void
-ves_icall_System_GCHandle_InternalFree (gpointer handle, MonoError *error)
+ves_icall_System_GCHandle_InternalFree (MonoGCHandle handle, MonoError *error)
 {
-	mono_gchandle_free_internal (GPOINTER_TO_UINT (handle) >> 1);
+	mono_gchandle_free_internal (handle);
 }
 
 MonoObjectHandle
-ves_icall_System_GCHandle_InternalGet (gpointer handle, MonoError *error)
+ves_icall_System_GCHandle_InternalGet (MonoGCHandle handle, MonoError *error)
 {
-	return mono_gchandle_get_target_handle (GPOINTER_TO_UINT (handle) >> 1);
+	return mono_gchandle_get_target_handle (handle);
 }
 
 void
-ves_icall_System_GCHandle_InternalSet (gpointer handle, MonoObjectHandle obj, MonoError *error)
+ves_icall_System_GCHandle_InternalSet (MonoGCHandle handle, MonoObjectHandle obj, MonoError *error)
 {
-	mono_gchandle_set_target_handle (GPOINTER_TO_UINT (handle) >> 1, obj);
+	mono_gchandle_set_target_handle (handle, obj);
 }
 
 #else
 
 MonoObjectHandle
-ves_icall_System_GCHandle_GetTarget (guint32 handle, MonoError *error)
+ves_icall_System_GCHandle_GetTarget (MonoGCHandle handle, MonoError *error)
 {
 	return mono_gchandle_get_target_handle (handle);
 }
@@ -700,8 +705,8 @@ ves_icall_System_GCHandle_GetTarget (guint32 handle, MonoError *error)
 /*
  * if type == -1, change the target of the handle, otherwise allocate a new handle.
  */
-guint32
-ves_icall_System_GCHandle_GetTargetHandle (MonoObjectHandle obj, guint32 handle, gint32 type, MonoError *error)
+MonoGCHandle
+ves_icall_System_GCHandle_GetTargetHandle (MonoObjectHandle obj, MonoGCHandle handle, gint32 type, MonoError *error)
 {
 	if (type == -1) {
 		mono_gchandle_set_target_handle (handle, obj);
@@ -720,24 +725,26 @@ ves_icall_System_GCHandle_GetTargetHandle (MonoObjectHandle obj, guint32 handle,
 	default:
 		g_assert_not_reached ();
 	}
-	return 0;
+	return NULL;
 }
 
 void
-ves_icall_System_GCHandle_FreeHandle (guint32 handle)
+ves_icall_System_GCHandle_FreeHandle (MonoGCHandle handle)
 {
 	mono_gchandle_free_internal (handle);
 }
 
 gpointer
-ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle)
+ves_icall_System_GCHandle_GetAddrOfPinnedObject (MonoGCHandle handle)
 {
 	// Handles seem to only be in the way here, and the object is pinned.
 
 	MonoObject *obj;
+	guint32 gch = MONO_GC_HANDLE_TO_UINT (handle);
 
-	if (MONO_GC_HANDLE_TYPE (handle) != HANDLE_PINNED)
+	if (MONO_GC_HANDLE_TYPE (gch) != HANDLE_PINNED)
 		return (gpointer)-2;
+
 	obj = mono_gchandle_get_target_internal (handle);
 	if (obj) {
 		MonoClass *klass = mono_object_class (obj);
@@ -762,7 +769,7 @@ ves_icall_System_GCHandle_GetAddrOfPinnedObject (guint32 handle)
 }
 
 MonoBoolean
-ves_icall_System_GCHandle_CheckCurrentDomain (guint32 gchandle)
+ves_icall_System_GCHandle_CheckCurrentDomain (MonoGCHandle gchandle)
 {
 	return mono_gchandle_is_in_domain (gchandle, mono_domain_get ());
 }
@@ -992,15 +999,30 @@ finalizer_thread (gpointer unused)
 	return 0;
 }
 
-#ifndef LAZY_GC_THREAD_CREATION
-static
-#endif
-void
-mono_gc_init_finalizer_thread (void)
+static void
+init_finalizer_thread (void)
 {
 	ERROR_DECL (error);
 	gc_thread = mono_thread_create_internal (mono_domain_get (), (gpointer)finalizer_thread, NULL, MONO_THREAD_CREATE_FLAGS_NONE, error);
 	mono_error_assert_ok (error);
+}
+
+/**
+ * mono_gc_init_finalizer_thread:
+ *
+ * If the runtime is compiled with --with-lazy-gc-thread-creation, this
+ * function must be called by embedders to create the finalizer. Otherwise, the
+ * function does nothing and the runtime creates the finalizer thread
+ * automatically.
+ */
+void
+mono_gc_init_finalizer_thread (void)
+{
+#ifndef LAZY_GC_THREAD_CREATION
+	/* do nothing */
+#else
+	init_finalizer_thread ();
+#endif
 }
 
 static void
@@ -1041,7 +1063,7 @@ mono_gc_init (void)
 
 #ifndef LAZY_GC_THREAD_CREATION
 	if (!mono_runtime_get_no_exec ())
-		mono_gc_init_finalizer_thread ();
+		init_finalizer_thread ();
 #endif
 }
 
@@ -1078,7 +1100,7 @@ mono_gc_cleanup (void)
 					ret = guarded_wait (gc_thread->handle, MONO_INFINITE_WAIT, FALSE);
 					g_assert (ret == MONO_THREAD_INFO_WAIT_RET_SUCCESS_0);
 
-					mono_threads_add_joinable_thread ((gpointer)(MONO_UINT_TO_NATIVE_THREAD_ID (gc_thread->tid)));
+					mono_threads_add_joinable_thread ((gpointer)(gsize)MONO_UINT_TO_NATIVE_THREAD_ID (gc_thread->tid));
 					break;
 				}
 
@@ -1191,7 +1213,7 @@ reference_queue_proccess (MonoReferenceQueue *queue)
 	RefQueueEntry *entry;
 	while ((entry = *iter)) {
 		if (queue->should_be_deleted || !mono_gchandle_get_target_internal (entry->gchandle)) {
-			mono_gchandle_free_internal ((guint32)entry->gchandle);
+			mono_gchandle_free_internal (entry->gchandle);
 			ref_list_remove_element (iter, entry);
 			queue->callback (entry->user_data);
 			g_free (entry);
@@ -1246,7 +1268,7 @@ reference_queue_clear_for_domain (MonoDomain *domain)
 		RefQueueEntry *entry;
 		while ((entry = *iter)) {
 			if (entry->domain == domain) {
-				mono_gchandle_free_internal ((guint32)entry->gchandle);
+				mono_gchandle_free_internal (entry->gchandle);
 				ref_list_remove_element (iter, entry);
 				queue->callback (entry->user_data);
 				g_free (entry);

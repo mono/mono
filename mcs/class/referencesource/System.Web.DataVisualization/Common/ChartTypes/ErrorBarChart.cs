@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=â€™Microsoft Corporationâ€™>
+//   Copyright Â© Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -209,7 +209,7 @@ using System.Collections.Generic;
 		virtual public bool ZeroCrossing { get{ return false;} }
 
 		/// <summary>
-		/// True if palette colors should be applied for each data paoint.
+		/// True if palette colors should be applied for each data point.
 		/// Otherwise the color is applied to the series.
 		/// </summary>
 		virtual public bool ApplyPaletteColorsToPoints	{ get { return false; } }
@@ -479,7 +479,7 @@ using System.Collections.Generic;
 					double yValue1 = vAxis.GetLogValue( point.YValues[2] );
 					xValue = hAxis.GetLogValue(xValue);
 					
-					// Check if chart is completly out of the data scaleView
+					// Check if chart is completely out of the data scaleView
 					if(xValue < hAxis.ViewMinimum || 
 						xValue > hAxis.ViewMaximum ||
 						(yValue0 < vAxis.ViewMinimum && yValue1 < vAxis.ViewMinimum) ||
@@ -546,13 +546,13 @@ using System.Collections.Generic;
 					}
 					low = vAxis.GetLinearPosition(low);
 
-					// Remeber pre-calculated point position
+					// Remember pre-calculated point position
 					point.positionRel = new PointF((float)xPosition, (float)Math.Min(high, low));
 
 					if( common.ProcessModePaint )
 					{
 
-						// Check if chart is partialy in the data scaleView
+						// Check if chart is partially in the data scaleView
 						bool	clipRegionSet = false;
 						if(xValue == hAxis.ViewMinimum || xValue == hAxis.ViewMaximum )
 						{
@@ -631,7 +631,7 @@ using System.Collections.Generic;
 						double yValue1 = vAxis.GetLogValue( point.YValues[2] );
 						xValue = hAxis.GetLogValue(xValue);
 					
-						// Check if chart is completly out of the data scaleView
+						// Check if chart is completely out of the data scaleView
 						if(xValue < hAxis.ViewMinimum || 
 							xValue > hAxis.ViewMaximum ||
 							(yValue0 < vAxis.ViewMinimum && yValue1 < vAxis.ViewMinimum) ||
@@ -965,7 +965,7 @@ using System.Collections.Generic;
                         text = point.ReplaceKeywords(point.Label);
                     }
 
-                    // Adjust label positio to the marker size
+                    // Adjust label position to the marker size
                     SizeF markerSizes = new SizeF(0f, 0f);
                     if (point.MarkerStyle != MarkerStyle.None)
                     {
@@ -1232,7 +1232,7 @@ using System.Collections.Generic;
 					double yValue1 = vAxis.GetLogValue( point.YValues[2] );
 					xValue = hAxis.GetLogValue(xValue);
 					
-					// Check if chart is completly out of the data scaleView
+					// Check if chart is completely out of the data scaleView
 					if(xValue < hAxis.ViewMinimum || 
 						xValue > hAxis.ViewMaximum ||
 						(yValue0 < vAxis.ViewMinimum && yValue1 < vAxis.ViewMinimum) ||
@@ -1297,7 +1297,7 @@ using System.Collections.Generic;
 					}
 					low = vAxis.GetLinearPosition(low);
 
-					// Remeber pre-calculated point position
+					// Remember pre-calculated point position
 					point.positionRel = new PointF((float)xPosition, (float)Math.Min(high, low));
 
 					// 3D Transform coordinates
@@ -1309,7 +1309,7 @@ using System.Collections.Generic;
 					if( common.ProcessModePaint )
 					{
 
-						// Check if chart is partialy in the data scaleView
+						// Check if chart is partially in the data scaleView
 						bool	clipRegionSet = false;
 						if(xValue == hAxis.ViewMinimum || xValue == hAxis.ViewMaximum )
 						{
@@ -1401,7 +1401,7 @@ using System.Collections.Generic;
 						double yValue1 = vAxis.GetLogValue( point.YValues[2] );
 						xValue = hAxis.GetLogValue(xValue);
 					
-						// Check if chart is completly out of the data scaleView
+						// Check if chart is completely out of the data scaleView
 						if(xValue < hAxis.ViewMinimum || 
 							xValue > hAxis.ViewMaximum ||
 							(yValue0 < vAxis.ViewMinimum && yValue1 < vAxis.ViewMinimum) ||
@@ -1576,7 +1576,7 @@ using System.Collections.Generic;
 		/// </summary>
 		/// <param name="common">Chart common elements.</param>
 		/// <param name="area">Chart area the series belongs to.</param>
-		/// <param name="series">Sereis of the point.</param>
+		/// <param name="series">Series of the point.</param>
 		/// <param name="point">Point object.</param>
 		/// <param name="pointIndex">Index of the point.</param>
 		/// <param name="yValueIndex">Index of the Y value to get.</param>
@@ -1615,7 +1615,7 @@ using System.Collections.Generic;
 				return;
 			}
 
-			// Parase the value of the ErrorBarType attribute.
+			// Parse the value of the ErrorBarType attribute.
 			double param = double.NaN;
 			ErrorBarType errorBarType = ErrorBarType.StandardError;
 			if(errorBarSeries.IsCustomPropertySet(CustomPropertyName.ErrorBarType))
@@ -1681,7 +1681,7 @@ using System.Collections.Generic;
 				}
 			}
 
-			// Number of poist without empty points
+			// Number of point without empty points
 			pointNumber -= numberOfEmptyPoints;
 
             if (double.IsNaN(param))
@@ -1823,7 +1823,7 @@ using System.Collections.Generic;
 			Chart control = errorBarSeries.Chart;
 			if(control != null)
 			{
-				// Get linked series and check existance
+				// Get linked series and check existence
 				if(control.Series.IndexOf(linkedSeriesName) == -1)
 				{
                     throw (new InvalidOperationException(SR.ExceptionDataSeriesNameNotFound(linkedSeriesName)));
@@ -1834,7 +1834,7 @@ using System.Collections.Generic;
 				errorBarSeries.XAxisType = linkedSeries.XAxisType;
 				errorBarSeries.YAxisType = linkedSeries.YAxisType;
 
-				// Get cennter values from the linked series
+				// Get center values from the linked series
 				errorBarSeries.Points.Clear();
 				foreach(DataPoint point in linkedSeries.Points)
 				{

@@ -597,7 +597,6 @@ again:
 		if (!handles_data [i])
 			continue;
 		if (!mono_w32handle_trylock (handles_data [i])) {
-			/* Bummer */
 
 			for (j = i - 1; j >= 0; j--) {
 				if (!handles_data [j])
@@ -815,6 +814,34 @@ own_if_owned (MonoW32Handle *handle_data, gboolean *abandoned)
 	return TRUE;
 }
 
+gboolean
+mono_w32handle_handle_is_signalled (gpointer handle)
+{
+	MonoW32Handle *handle_data;
+	gboolean res;
+
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
+		return FALSE;
+
+	res = mono_w32handle_issignalled (handle_data);
+	mono_w32handle_unref (handle_data);
+	return res;
+}
+
+gboolean
+mono_w32handle_handle_is_owned (gpointer handle)
+{
+	MonoW32Handle *handle_data;
+	gboolean res;
+
+	if (!mono_w32handle_lookup_and_ref (handle, &handle_data))
+		return FALSE;
+
+	res = mono_w32handle_ops_isowned (handle_data);
+	mono_w32handle_unref (handle_data);
+	return res;
+}
+
 #ifdef HOST_WIN32
 MonoW32HandleWaitRet
 mono_w32handle_wait_one (gpointer handle, guint32 timeout, gboolean alertable)
@@ -1004,7 +1031,7 @@ mono_w32handle_wait_multiple (gpointer *handles, gsize nhandles, gboolean waital
 	alerted = FALSE;
 
 	if (nhandles > MONO_W32HANDLE_MAXIMUM_WAIT_OBJECTS) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_HANDLE, "%s: too many handles: %zd",
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_IO_LAYER_HANDLE, "%s: too many handles: %" G_GSIZE_FORMAT "d",
 			__func__, nhandles);
 
 		return MONO_W32HANDLE_WAIT_RET_FAILED;

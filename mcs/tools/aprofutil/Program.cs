@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using Mono.Options;
+using System.Linq;
 using Mono.Profiler.Aot;
 
 using static System.Console;
 
 namespace aotprofiletool {
 	class MainClass {
-		static readonly string Name = "aotprofile-tool";
+		static readonly string Name = "aprofutil";
 
+		static bool AdbForward;
 		static bool Methods;
 		static bool Modules;
 		static bool Summary;
@@ -18,10 +21,18 @@ namespace aotprofiletool {
 		static bool Verbose;
 
 		static Regex FilterMethod;
+		static Regex SkipMethod;
 		static Regex FilterModule;
+		static Regex SkipModule;
 		static Regex FilterType;
+		static Regex SkipType;
+
+		static int SkipCount = 0;
+		static int TakeCount = int.MaxValue;
 
 		static string Output;
+
+		static int Port = -1;
 
 		static string ProcessArguments (string [] args)
 		{
@@ -43,21 +54,42 @@ namespace aotprofiletool {
 				{ "d|modules",
 					"Show modules in the profile",
 				  v => Modules = true },
+				{ "f|adb-forward",
+					"Set adb socket forwarding for Android",
+				  v => AdbForward = true },
 				{ "filter-method=",
-					"Filter by method with regex VALUE",
+					"Include by method with regex {VALUE}",
 				  v => FilterMethod = new Regex (v) },
+				{ "skip-method=",
+					"Exclude by method with regex {VALUE}",
+				  v => SkipMethod = new Regex (v) },
 				{ "filter-module=",
-					"Filter by module with regex VALUE",
+					"Include by module with regex {VALUE}",
 				  v => FilterModule = new Regex (v) },
+				{ "skip-module=",
+					"Exclude by module with regex {VALUE}",
+				  v => SkipModule = new Regex (v) },
 				{ "filter-type=",
-					"Filter by type with regex VALUE",
+					"Include by type with regex {VALUE}",
 				  v => FilterType = new Regex (v) },
+				{ "skip-type=",
+					"Exclude by type with regex {VALUE}",
+				  v => SkipType = new Regex (v) },
+				{ "take-count=",
+					"Take {VALUE} methods that match",
+				  v => TakeCount = int.Parse (v) },
+				{ "skip-count=",
+					"Skip the first {VALUE} matching methods",
+				  v => SkipCount = int.Parse (v) },
 				{ "m|methods",
 					"Show methods in the profile",
 				  v => Methods = true },
 				{ "o|output=",
-					"Write profile to OUTPUT file",
+					"Write profile to {OUTPUT} file",
 				  v => Output = v },
+				{ "p|port=",
+					"Read profile from aot profiler using local connection on {PORT}",
+				  v => int.TryParse (v, out Port) },
 				{ "s|summary",
 					"Show summary of the profile",
 				  v => Summary = true },
@@ -79,35 +111,92 @@ namespace aotprofiletool {
 				Environment.Exit (0);
 			}
 
-			if (remaining.Count != 1) {
-				Error ("Please specify one <aotprofile-file> to process.");
+			if (remaining.Count != 1 && Port < 0) {
+				Error ("Please specify one <aotprofile-file> to process or network PORT with -p.");
 				Environment.Exit (2);
 			}
 
-			return remaining [0];
+			return remaining.Count > 0 ? remaining [0] : null;
+		}
+
+		static ProfileData ReadProfileFromPort (ProfileReader reader)
+		{
+			ProfileData pd;
+
+			if (AdbForward) {
+				var cmdArgs = $"forward tcp:{Port} tcp:{Port}";
+				if (Verbose)
+					ColorWriteLine ($"Calling 'adb {cmdArgs}'...", ConsoleColor.Yellow);
+
+				System.Diagnostics.Process.Start ("adb", cmdArgs);
+			}
+
+			using (var client = new TcpClient ("127.0.0.1", Port)) {
+				using (var stream = client.GetStream ()) {
+					var msgData = System.Text.Encoding.ASCII.GetBytes ("save\n");
+
+					stream.Write (msgData, 0, msgData.Length);
+
+					if (Verbose)
+						ColorWriteLine ($"Reading from '127.0.0.1:{Port}'...", ConsoleColor.Yellow);
+
+					using (var memoryStream = new MemoryStream (128 * 1024)) {
+						var data = new byte [4 * 1024];
+						int len;
+
+						while ((len = stream.Read (data, 0, data.Length)) > 0) {
+							memoryStream.Write (data, 0, len);
+
+							if (Verbose)
+								ColorWrite ($"Read {len} bytes...\r", ConsoleColor.Yellow);
+						}
+
+						if (Verbose)
+							ColorWriteLine ($"Read total {memoryStream.Length} bytes...", ConsoleColor.Yellow);
+
+						memoryStream.Seek (0, SeekOrigin.Begin);
+
+						pd = reader.ReadAllData (memoryStream);
+					}
+				}
+			}
+
+			return pd;
 		}
 
 		public static void Main (string [] args)
 		{
 			var path = ProcessArguments (args);
 
-			if (!File.Exists (path)) {
-				Error ($"'{path}' doesn't exist.");
-				Environment.Exit (3);
-			}
-
 			if (args.Length == 1) {
 				Modules = Types = Methods = true;
 			}
 
 			var reader = new ProfileReader ();
-			ProfileData pd;
+			ProfileData pd = null;
 
-			using (var stream = new FileStream (path, FileMode.Open)) {
-				if (Verbose)
-					ColorWriteLine ($"Reading '{path}'...", ConsoleColor.Yellow);
+			if (path == null) {
+				if (Port < 0) {
+					Error ($"You should specify path or -p PORT to read the profile.");
+					Environment.Exit (4);
+				} else {
+					try {
+						pd = ReadProfileFromPort (reader);
+					} catch (Exception e) {
+						Error ($"Unable to read profile through local port: {Port}.\n{e}");
+						Environment.Exit (5);
+					}
+				}
+			} else if (!File.Exists (path)) {
+				Error ($"'{path}' doesn't exist.");
+				Environment.Exit (3);
+			} else {
+				using (var stream = new FileStream (path, FileMode.Open)) {
+					if (Verbose)
+						ColorWriteLine ($"Reading '{path}'...", ConsoleColor.Yellow);
 
-				pd = reader.ReadAllData (stream);
+					pd = reader.ReadAllData (stream);
+				}
 			}
 
 			List<MethodRecord> methods = new List<MethodRecord> (pd.Methods);
@@ -115,12 +204,10 @@ namespace aotprofiletool {
 			ICollection<ModuleRecord> modules = new List<ModuleRecord> (pd.Modules);
 
 			if (FilterMethod != null || FilterType != null || FilterModule != null) {
-				methods = new List<MethodRecord> ();
 				types = new HashSet<TypeRecord> ();
 				modules = new HashSet<ModuleRecord> ();
 
-				foreach (var method in pd.Methods) {
-
+				methods = pd.Methods.Where (method => {
 					var type = method.Type;
 					var module = type.Module;
 
@@ -128,24 +215,51 @@ namespace aotprofiletool {
 						var match = FilterModule.Match (module.ToString ());
 
 						if (!match.Success)
-							continue;
+							return false;
+					}
+
+					if (SkipModule != null) {
+						var skip = SkipModule.Match (module.ToString ());
+
+						if (skip.Success)
+							return false;
 					}
 
 					if (FilterType != null) {
 						var match = FilterType.Match (method.Type.ToString ());
 
 						if (!match.Success)
-							continue;
+							return false;
+					}
+
+					if (SkipType != null) {
+						var skip = SkipType.Match (method.Type.ToString ());
+
+						if (skip.Success)
+							return false;
 					}
 
 					if (FilterMethod != null) {
 						var match = FilterMethod.Match (method.ToString ());
 
 						if (!match.Success)
-							continue;
+							return false;
 					}
 
-					methods.Add (method);
+					if (SkipMethod != null)	{
+						var skip = SkipMethod.Match (method.ToString ());
+
+						if (skip.Success)
+							return false;
+					}
+
+					return true;
+				}).Skip (SkipCount).Take (TakeCount).ToList ();
+
+				foreach (var method in methods) {
+					var type = method.Type;
+					var module = type.Module;
+
 					types.Add (type);
 					modules.Add (module);
 				}

@@ -189,6 +189,32 @@ sgen_workers_enqueue_job (int generation, SgenThreadPoolJob *job, gboolean enque
 	sgen_thread_pool_job_enqueue (worker_contexts [generation].thread_pool_context, job);
 }
 
+/*
+ * LOCKING: Assumes the GC lock is held.
+ */
+
+void
+sgen_workers_enqueue_deferred_job (int generation, SgenThreadPoolJob *job, gboolean enqueue)
+{
+	if (!enqueue) {
+		job->func (NULL, job);
+		sgen_thread_pool_job_free (job);
+		return;
+	}
+
+	sgen_thread_pool_job_enqueue_deferred (worker_contexts [generation].thread_pool_context, job);
+}
+
+/*
+ * LOCKING: Assumes the GC lock is held.
+ */
+
+void
+sgen_workers_flush_deferred_jobs (int generation, gboolean signal)
+{
+	sgen_thread_pool_flush_deferred_jobs (generation, signal);
+}
+
 static gboolean
 workers_get_work (WorkerData *data)
 {
@@ -471,6 +497,7 @@ sgen_workers_start_all_workers (int generation, SgenObjectOperations *object_ops
 	WorkerContext *context = &worker_contexts [generation];
 	int i;
 	SGEN_ASSERT (0, !context->started, "Why are we starting to work without finishing previous cycle");
+	SGEN_ASSERT (0, !sgen_thread_pool_have_deferred_jobs (generation), "All deferred jobs should have been flushed");
 
 	context->idle_func_object_ops_par = object_ops_par;
 	context->idle_func_object_ops_nopar = object_ops_nopar;
@@ -593,6 +620,12 @@ sgen_workers_get_job_split_count (int generation)
 	return (worker_contexts [generation].active_workers_num > 1) ? worker_contexts [generation].active_workers_num * 4 : 1;
 }
 
+int
+sgen_workers_get_active_worker_count (int generation)
+{
+	return (worker_contexts [generation].active_workers_num);
+}
+
 void
 sgen_workers_foreach (int generation, SgenWorkerCallback callback)
 {
@@ -622,6 +655,16 @@ sgen_workers_enqueue_job (int generation, SgenThreadPoolJob *job, gboolean enque
 	}
 }
 
+void
+sgen_workers_enqueue_deferred_job (int generation, SgenThreadPoolJob *job, gboolean enqueue)
+{
+	sgen_workers_enqueue_job (generation, job, enqueue);
+}
+
+void sgen_workers_flush_deferred_jobs (int generation, gboolean signal)
+{
+}
+
 gboolean
 sgen_workers_all_done (void)
 {
@@ -630,11 +673,6 @@ sgen_workers_all_done (void)
 
 void
 sgen_workers_assert_gray_queue_is_empty (int generation)
-{
-}
-
-void
-sgen_workers_foreach (int generation, SgenWorkerCallback callback)
 {
 }
 
@@ -649,6 +687,12 @@ int
 sgen_workers_get_job_split_count (int generation)
 {
 	return 1;
+}
+
+int
+sgen_workers_get_active_worker_count (int generation)
+{
+	return 0;
 }
 
 gboolean
@@ -670,11 +714,6 @@ sgen_workers_join (int generation)
 
 void
 sgen_workers_set_num_active_workers (int generation, int num_workers)
-{
-}
-
-void
-sgen_workers_start_all_workers (int generation, SgenObjectOperations *object_ops_nopar, SgenObjectOperations *object_ops_par, SgenWorkersFinishCallback callback)
 {
 }
 

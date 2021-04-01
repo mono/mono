@@ -149,7 +149,11 @@ namespace System
 			return true;
 		}
 
-#if (!MONODROID && !MONOTOUCH && !XAMMAC && !WASM) || MOBILE_DESKTOP_HOST
+#if (!MONODROID && !MONOTOUCH && !XAMMAC) || MOBILE_DESKTOP_HOST
+#if WASM
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void mono_timezone_get_local_name (ref string name);
+#endif
 		static TimeZoneInfo CreateLocal ()
 		{
 #if WIN_PLATFORM
@@ -164,7 +168,15 @@ namespace System
 				return GetLocalTimeZoneInfoWinRTFallback ();
 			}
 #endif
-
+#if WASM
+			string localName = null;
+			mono_timezone_get_local_name (ref localName);
+			try {
+				return FindSystemTimeZoneByFileName (localName, Path.Combine (TimeZoneDirectory, localName));
+			} catch {
+				return Utc;
+			}
+#else		
 			var tz = Environment.GetEnvironmentVariable ("TZ");
 			if (tz != null) {
 				if (tz == String.Empty)
@@ -192,6 +204,7 @@ namespace System
 			}
 
 			return Utc;
+#endif			
 		}
 
 		static TimeZoneInfo FindSystemTimeZoneByIdCore (string id)
@@ -266,7 +279,11 @@ namespace System
 			}
 		}
 #if LIBC
+#if WASM
+		const string DefaultTimeZoneDirectory = "/zoneinfo";
+#else		
 		const string DefaultTimeZoneDirectory = "/usr/share/zoneinfo";
+#endif
 		static string timeZoneDirectory;
 		static string TimeZoneDirectory {
 			get {
@@ -1216,10 +1233,13 @@ namespace System
 					return false;
 			}
 
+			var isUtc = false;
 			if (dateTime.Kind != DateTimeKind.Utc) {
 				if (!TryAddTicks (date, -BaseUtcOffset.Ticks, out date, DateTimeKind.Utc))
 					return false;
-			}
+			} else
+				isUtc = true;
+
 
 			AdjustmentRule current = GetApplicableRule (date);
 			if (current != null) {
@@ -1231,7 +1251,7 @@ namespace System
 					if (forOffset)
 						isDst = true;
 					offset = baseUtcOffset; 
-					if (date >= new DateTime (tStart.Ticks + current.DaylightDelta.Ticks, DateTimeKind.Utc))
+					if (isUtc || (date >= new DateTime (tStart.Ticks + current.DaylightDelta.Ticks, DateTimeKind.Utc)))
 					{
 						offset += current.DaylightDelta;
 						isDst = true;
@@ -1251,8 +1271,11 @@ namespace System
 
 		private static DateTime TransitionPoint (TransitionTime transition, int year)
 		{
-			if (transition.IsFixedDateRule)
-				return new DateTime (year, transition.Month, transition.Day) + transition.TimeOfDay.TimeOfDay;
+			if (transition.IsFixedDateRule) {
+				var daysInMonth = DateTime.DaysInMonth (year, transition.Month);
+				var transitionDay = transition.Day <= daysInMonth ? transition.Day : daysInMonth;
+				return new DateTime (year, transition.Month, transitionDay) + transition.TimeOfDay.TimeOfDay;
+			}
 
 			DayOfWeek first = (new DateTime (year, transition.Month, 1)).DayOfWeek;
 			int day = 1 + (transition.Week - 1) * 7 + (transition.DayOfWeek - first + 7) % 7;

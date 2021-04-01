@@ -173,7 +173,7 @@ emit_nursery_check_ilgen (MonoMethodBuilder *mb, gboolean is_concurrent)
 }
 
 static void
-emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype)
+emit_managed_allocator_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean profiler, int atype)
 {
 #ifdef MANAGED_ALLOCATION
 	int p_var, size_var, real_size_var, thread_var G_GNUC_UNUSED;
@@ -303,8 +303,6 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		mono_mb_patch_branch (mb, pos_leave);
 		/* end catch */
 	} else if (atype == ATYPE_STRING) {
-		int pos;
-
 		/*
 		 * a string allocator method takes the args: (vtable, len)
 		 *
@@ -312,13 +310,19 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		 *
 		 * condition:
 		 *
-		 * bytes <= INT32_MAX - (SGEN_ALLOC_ALIGN - 1)
+		 * bytes <= SIZE_MAX - (SGEN_ALLOC_ALIGN - 1)
 		 *
 		 * therefore:
 		 *
 		 * offsetof (MonoString, chars) + ((len + 1) * 2) <= INT32_MAX - (SGEN_ALLOC_ALIGN - 1)
-		 * len <= (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - offsetof (MonoString, chars)) / 2 - 1
+		 * len <= (SIZE_MAX - (SGEN_ALLOC_ALIGN - 1) - offsetof (MonoString, chars)) / 2 - 1
+		 * 
+		 * On 64-bit platforms SIZE_MAX is so big that the 32-bit string length can
+		 * never reach the maximum size.
 		 */
+#if TARGET_SIZEOF_VOID_P == 4
+		int pos;
+
 		mono_mb_emit_ldarg (mb, 1);
 		mono_mb_emit_icon (mb, (INT32_MAX - (SGEN_ALLOC_ALIGN - 1) - MONO_STRUCT_OFFSET (MonoString, chars)) / 2 - 1);
 		pos = mono_mb_emit_short_branch (mb, MONO_CEE_BLE_UN_S);
@@ -327,8 +331,10 @@ emit_managed_allocater_ilgen (MonoMethodBuilder *mb, gboolean slowpath, gboolean
 		mono_mb_emit_byte (mb, CEE_MONO_NOT_TAKEN);
 		mono_mb_emit_exception (mb, "OutOfMemoryException", NULL);
 		mono_mb_patch_short_branch (mb, pos);
+#endif
 
 		mono_mb_emit_ldarg (mb, 1);
+		mono_mb_emit_byte (mb, CEE_CONV_I);
 		mono_mb_emit_icon (mb, 1);
 		mono_mb_emit_byte (mb, MONO_CEE_SHL);
 		//WE manually fold the above + 2 here
@@ -550,7 +556,7 @@ mono_sgen_mono_ilgen_init (void)
 	MonoSgenMonoCallbacks cb;
 	cb.version = MONO_SGEN_MONO_CALLBACKS_VERSION;
 	cb.emit_nursery_check = emit_nursery_check_ilgen;
-	cb.emit_managed_allocater = emit_managed_allocater_ilgen;
+	cb.emit_managed_allocator = emit_managed_allocator_ilgen;
 	mono_install_sgen_mono_callbacks (&cb);
 }
 #endif

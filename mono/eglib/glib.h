@@ -212,6 +212,9 @@ typedef guint32 gunichar;
  */
 #define G_N_ELEMENTS(s)      (sizeof(s) / sizeof ((s) [0]))
 
+// e.g. strncmp (foo, G_STRING_CONSTANT_AND_LENGTH ("version"))
+#define G_STRING_CONSTANT_AND_LENGTH(x) (x), G_N_ELEMENTS (x) - 1
+
 #define FALSE                0
 #define TRUE                 1
 
@@ -244,13 +247,11 @@ typedef guint32 gunichar;
 #define ABS(a)         ((a) > 0 ? (a) : -(a))
 #endif
 
-#ifndef ALIGN_TO
-#define ALIGN_TO(val,align) ((((gssize)val) + ((align) - 1)) & ~((align) - 1))
-#endif
+#define ALIGN_TO(val,align) ((((gssize)val) + (gssize)((align) - 1)) & (~((gssize)(align - 1))))
 
-#ifndef ALIGN_PTR_TO
-#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (align - 1)) & (~(align - 1)))
-#endif
+#define ALIGN_DOWN_TO(val,align) (((gssize)val) & (~((gssize)(align - 1))))
+
+#define ALIGN_PTR_TO(ptr,align) (gpointer)((((gssize)(ptr)) + (gssize)(align - 1)) & (~((gssize)(align - 1))))
 
 #define G_STRUCT_OFFSET(p_type,field) offsetof(p_type,field)
 
@@ -290,6 +291,7 @@ gpointer g_try_realloc (gpointer obj, gsize size);
 #define g_new(type,size)        ((type *) g_malloc (sizeof (type) * (size)))
 #define g_new0(type,size)       ((type *) g_malloc0 (sizeof (type)* (size)))
 #define g_newa(type,size)       ((type *) alloca (sizeof (type) * (size)))
+#define g_newa0(type,size)      ((type *) memset (alloca (sizeof (type) * (size)), 0, sizeof (type) * (size)))
 
 #define g_memmove(dest,src,len) memmove (dest, src, len)
 #define g_renew(struct_type, mem, n_structs) ((struct_type*)g_realloc (mem, sizeof (struct_type) * n_structs))
@@ -332,9 +334,9 @@ gchar*           g_win32_getlocale(void);
 /*
  * Precondition macros
  */
-#define g_warn_if_fail(x)  G_STMT_START { if (!(x)) { g_warning ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); } } G_STMT_END
-#define g_return_if_fail(x)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); return; } } G_STMT_END
-#define g_return_val_if_fail(x,e)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed", __FILE__, __LINE__, #x); return (e); } } G_STMT_END
+#define g_warn_if_fail(x)  G_STMT_START { if (!(x)) { g_warning ("%s:%d: assertion '%s' failed\n", __FILE__, __LINE__, #x); } } G_STMT_END
+#define g_return_if_fail(x)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed\n", __FILE__, __LINE__, #x); return; } } G_STMT_END
+#define g_return_val_if_fail(x,e)  G_STMT_START { if (!(x)) { g_critical ("%s:%d: assertion '%s' failed\n", __FILE__, __LINE__, #x); return (e); } } G_STMT_END
 
 /*
  * Errors
@@ -376,6 +378,7 @@ gchar       *g_strchomp       (gchar *str);
 void         g_strdown        (gchar *string);
 gchar       *g_strnfill       (gsize length, gchar fill_char);
 gsize        g_strnlen        (const char*, gsize);
+char        *g_str_from_file_region (int fd, guint64 offset, gsize size);
 
 void	     g_strdelimit     (char *string, char delimiter, char new_delimiter);
 gchar       *g_strescape      (const gchar *source, const gchar *exceptions);
@@ -400,6 +403,7 @@ gchar  *g_stpcpy             (gchar *dest, const char *src);
 gchar   g_ascii_tolower      (gchar c);
 gchar   g_ascii_toupper      (gchar c);
 gchar  *g_ascii_strdown      (const gchar *str, gssize len);
+void    g_ascii_strdown_no_alloc (char* dst, const char* src, gsize len);
 gchar  *g_ascii_strup        (const gchar *str, gssize len);
 gint    g_ascii_strncasecmp  (const gchar *s1, const gchar *s2, gsize n);
 gint    g_ascii_strcasecmp   (const gchar *s1, const gchar *s2);
@@ -410,6 +414,32 @@ gint    g_ascii_xdigit_value (gchar c);
 #define g_ascii_isxdigit(c)  (isxdigit (c) != 0)
 gboolean g_utf16_ascii_equal (const gunichar2 *utf16, size_t ulen, const char *ascii, size_t alen);
 gboolean g_utf16_asciiz_equal (const gunichar2 *utf16, const char *ascii);
+
+static inline
+gboolean g_ascii_equal (const char *s1, gsize len1, const char *s2, gsize len2)
+{
+    return len1 == len2 && (s1 == s2 || memcmp (s1, s2, len1) == 0);
+}
+
+static inline
+gboolean g_asciiz_equal (const char *s1, const char *s2)
+{
+    return s1 == s2 || strcmp (s1, s2) == 0;
+}
+
+static inline
+gboolean
+g_ascii_equal_caseinsensitive (const char *s1, gsize len1, const char *s2, gsize len2)
+{
+    return len1 == len2 && (s1 == s2 || g_ascii_strncasecmp (s1, s2, len1) == 0);
+}
+
+static inline
+gboolean
+g_asciiz_equal_caseinsensitive (const char *s1, const char *s2)
+{
+    return s1 == s2 || g_ascii_strcasecmp (s1, s2) == 0;
+}
 
 /* FIXME: g_strcasecmp supports utf8 unicode stuff */
 #ifdef _MSC_VER
@@ -593,6 +623,7 @@ void            g_hash_table_insert_replace  (GHashTable *hash, gpointer key, gp
 guint           g_hash_table_size            (GHashTable *hash);
 GList          *g_hash_table_get_keys        (GHashTable *hash);
 GList          *g_hash_table_get_values      (GHashTable *hash);
+gboolean        g_hash_table_contains (GHashTable *hash, gconstpointer key);
 G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gpointer        g_hash_table_lookup          (GHashTable *hash, gconstpointer key);
 gboolean        g_hash_table_lookup_extended (GHashTable *hash, gconstpointer key, gpointer *orig_key, gpointer *value);
@@ -616,6 +647,7 @@ guint           g_spaced_primes_closest      (guint x);
 
 #define g_hash_table_insert(h,k,v)    g_hash_table_insert_replace ((h),(k),(v),FALSE)
 #define g_hash_table_replace(h,k,v)   g_hash_table_insert_replace ((h),(k),(v),TRUE)
+#define g_hash_table_add(h,k)         g_hash_table_insert_replace ((h),(k),(k),TRUE)
 
 G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 gboolean g_direct_equal (gconstpointer v1, gconstpointer v2);
@@ -694,6 +726,7 @@ void       g_ptr_array_set_size           (GPtrArray *array, gint length);
 gpointer  *g_ptr_array_free               (GPtrArray *array, gboolean free_seg);
 void       g_ptr_array_foreach            (GPtrArray *array, GFunc func, gpointer user_data);
 guint      g_ptr_array_capacity           (GPtrArray *array);
+gboolean   g_ptr_array_find               (GPtrArray *array, gconstpointer needle, guint *index);
 #define    g_ptr_array_index(array,index) (array)->pdata[(index)]
 //FIXME previous missing parens
 
@@ -739,7 +772,7 @@ typedef enum {
 
 G_ENUM_FUNCTIONS (GLogLevelFlags)
 
-void           g_printv               (const gchar *format, va_list args);
+gint           g_printv               (const gchar *format, va_list args);
 void           g_print                (const gchar *format, ...);
 void           g_printerr             (const gchar *format, ...);
 GLogLevelFlags g_log_set_always_fatal (GLogLevelFlags fatal_mask);
@@ -747,10 +780,15 @@ GLogLevelFlags g_log_set_fatal_mask   (const gchar *log_domain, GLogLevelFlags f
 void           g_logv                 (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, va_list args);
 G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void           g_log                  (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, ...);
+void           g_log_disabled         (const gchar *log_domain, GLogLevelFlags log_level, const char *file, int line);
 G_EXTERN_C // Used by MonoPosixHelper or MonoSupportW, at least.
 void           g_assertion_message    (const gchar *format, ...) G_GNUC_NORETURN;
+void           mono_assertion_message_disabled  (const char *file, int line) G_GNUC_NORETURN;
+void           mono_assertion_message  (const char *file, int line, const char *condition) G_GNUC_NORETURN;
+void           mono_assertion_message_unreachable (const char *file, int line) G_GNUC_NORETURN;
 const char *   g_get_assertion_message (void);
 
+#ifndef DISABLE_ASSERT_MESSAGES
 #ifdef HAVE_C99_SUPPORT
 /* The for (;;) tells gc thats g_error () doesn't return, avoiding warnings */
 #define g_error(format, ...)    do { g_log (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, format, __VA_ARGS__); for (;;); } while (0)
@@ -765,6 +803,13 @@ const char *   g_get_assertion_message (void);
 #define g_message(...)  g_log (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
 #define g_debug(...)    g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, __VA_ARGS__)
 #endif  /* ndef HAVE_C99_SUPPORT */
+#else
+#define g_error(...)    do { g_log_disabled (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, __FILE__, __LINE__); for (;;); } while (0)
+#define g_critical(...) g_log_disabled (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL, __FILE__, __LINE__)
+#define g_warning(...)  g_log_disabled (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, __FILE__, __LINE__)
+#define g_message(...)  g_log_disabled (G_LOG_DOMAIN, G_LOG_LEVEL_MESSAGE, __FILE__, __LINE__)
+#define g_debug(...)    g_log_disabled (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, __FILE__, __LINE__)
+#endif
 
 typedef void (*GLogFunc) (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer user_data);
 typedef void (*GPrintFunc) (const gchar *string);
@@ -900,9 +945,10 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 
 /* g_assert is a boolean expression; the precise value is not preserved, just true or false. */
 #ifdef DISABLE_ASSERT_MESSAGES
-#define g_assert(x) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, "<disabled>"), 0))
+// This is smaller than the equivalent mono_assertion_message (..."disabled");
+#define g_assert(x) (G_LIKELY((x)) ? 1 : (mono_assertion_message_disabled (__FILE__, __LINE__), 0))
 #else
-#define g_assert(x) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", __FILE__, __LINE__, #x), 0))
+#define g_assert(x) (G_LIKELY((x)) ? 1 : (mono_assertion_message (__FILE__, __LINE__, #x), 0))
 #endif
 
 #ifdef __cplusplus
@@ -911,7 +957,15 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
 #define g_static_assert(x) g_assert (x)
 #endif
 
-#define  g_assert_not_reached() G_STMT_START { g_assertion_message ("* Assertion: should not be reached at %s:%d\n", __FILE__, __LINE__); eg_unreachable(); } G_STMT_END
+#define  g_assert_not_reached() G_STMT_START { mono_assertion_message_unreachable (__FILE__, __LINE__); eg_unreachable(); } G_STMT_END
+
+#if ENABLE_NETCORE
+#define g_assert_netcore()     /* nothing */
+#define g_assert_not_netcore() g_assert (!"This function should only be called on mono-notnetcore.")
+#else
+#define g_assert_netcore()     g_assert (!"This function should only be called on mono-netcore.")
+#define g_assert_not_netcore() /* nothing */
+#endif
 
 /* f is format -- like printf and scanf
  * Where you might have said:
@@ -930,7 +984,9 @@ GUnicodeBreakType   g_unichar_break_type (gunichar c);
  * format must be a string literal, in order to be concatenated.
  * If this is too restrictive, g_error remains.
  */
-#if defined(_MSC_VER) && (_MSC_VER < 1910)
+#ifdef DISABLE_ASSERT_MESSAGES
+#define g_assertf(x, format, ...) (G_LIKELY((x)) ? 1 : (mono_assertion_message_disabled (__FILE__, __LINE__), 0))
+#elif defined(_MSC_VER) && (_MSC_VER < 1910)
 #define g_assertf(x, format, ...) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met, function:%s, " format "\n", __FILE__, __LINE__, #x, __func__, __VA_ARGS__), 0))
 #else
 #define g_assertf(x, format, ...) (G_LIKELY((x)) ? 1 : (g_assertion_message ("* Assertion at %s:%d, condition `%s' not met, function:%s, " format "\n", __FILE__, __LINE__, #x, __func__, ##__VA_ARGS__), 0))
@@ -948,7 +1004,8 @@ typedef enum {
 	G_CONVERT_ERROR_FAILED,
 	G_CONVERT_ERROR_PARTIAL_INPUT,
 	G_CONVERT_ERROR_BAD_URI,
-	G_CONVERT_ERROR_NOT_ABSOLUTE_PATH
+	G_CONVERT_ERROR_NOT_ABSOLUTE_PATH,
+	G_CONVERT_ERROR_NO_MEMORY
 } GConvertError;
 
 gchar     *g_utf8_strup (const gchar *str, gssize len);
@@ -974,6 +1031,20 @@ size_t     g_utf16_len     (const gunichar2 *);
 #else
 #define u16to8(str) g_utf16_to_utf8(str, (glong)strlen(str), NULL, NULL, NULL)
 #endif
+
+typedef gpointer (*GCustomAllocator) (gsize req_size, gpointer custom_alloc_data);
+
+typedef struct {
+	gpointer buffer;
+	gsize buffer_size;
+	gsize req_buffer_size;
+} GFixedBufferCustomAllocatorData;
+
+gpointer
+g_fixed_buffer_custom_allocator (gsize req_size, gpointer custom_alloc_data);
+
+gunichar2 *g_utf8_to_utf16_custom_alloc (const gchar *str, glong len, glong *items_read, glong *items_written, GCustomAllocator custom_alloc_func, gpointer custom_alloc_data, GError **err);
+gchar *g_utf16_to_utf8_custom_alloc (const gunichar2 *str, glong len, glong *items_read, glong *items_written, GCustomAllocator custom_alloc_func, gpointer custom_alloc_data, GError **err);
 
 /*
  * Path
@@ -1002,6 +1073,19 @@ gboolean  g_shell_parse_argv (const gchar *command_line, gint *argcp, gchar ***a
 gchar    *g_shell_unquote    (const gchar *quoted_string, GError **gerror);
 gchar    *g_shell_quote      (const gchar *unquoted_string);
 
+#ifndef G_OS_WIN32 // Spawn could be implemented but is not.
+
+int eg_getdtablesize (void);
+
+#if !defined (HAVE_FORK) || !defined (HAVE_EXECVE)
+
+#define HAVE_G_SPAWN 0
+
+#else
+
+#define HAVE_G_SPAWN 1
+
+
 /*
  * Spawn
  */
@@ -1021,7 +1105,8 @@ gboolean g_spawn_command_line_sync (const gchar *command_line, gchar **standard_
 gboolean g_spawn_async_with_pipes  (const gchar *working_directory, gchar **argv, gchar **envp, GSpawnFlags flags, GSpawnChildSetupFunc child_setup,
 				gpointer user_data, GPid *child_pid, gint *standard_input, gint *standard_output, gint *standard_error, GError **gerror);
 
-int eg_getdtablesize (void);
+#endif
+#endif
 
 /*
  * Timer
@@ -1385,9 +1470,31 @@ glong     g_utf8_pointer_to_offset (const gchar *str, const gchar *pos);
 
 #define G_HAVE_API_SUPPORT(x) (x)
 #define G_UNSUPPORTED_API "%s:%d: '%s' not supported.", __FILE__, __LINE__
-#define g_unsupported_api(name) G_STMT_START { g_warning (G_UNSUPPORTED_API, name); } G_STMT_END
- 
-G_END_DECLS
+#define g_unsupported_api(name) G_STMT_START { g_debug (G_UNSUPPORTED_API, name); } G_STMT_END
+
+#if _WIN32
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_module_filename (gpointer mod, gunichar2 **pstr, guint32 *plength);
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_module_filename_ex (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength);
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_module_basename (gpointer process, gpointer mod, gunichar2 **pstr, guint32 *plength);
+
+// g_free the result
+// No MAX_PATH limit.
+gboolean
+mono_get_current_directory (gunichar2 **pstr, guint32 *plength);
+#endif
+
+G_END_DECLS // FIXME: There is more extern C than there should be.
 
 static inline
 void

@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 ### buildtree stuff
 
@@ -80,6 +80,11 @@ TESTS_CS = \
 	separatedir/LoadFileMain.cs \
 	mainanddep/LoadFromMain.cs \
 	mainanddep/LoadFileMain.cs
+
+LIBRARIES_CS = src/Dep.cs \
+	src/Mid.cs
+
+EXTRA_DIST += $(TESTS_CS) $(LIBRARIES_CS)
 
 TESTS_EXE = $(TESTS_CS:.cs=.exe)
 

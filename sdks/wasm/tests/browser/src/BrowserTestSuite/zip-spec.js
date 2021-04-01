@@ -272,11 +272,11 @@ describe("The WebAssembly Zip Test Suite",function(){
             var resultNow = new Date();
             try {
               assert.equal(result.length, 3, "result length doesn't match 3");
-              assert.equal(result[0], resultNow.getFullYear() , "result[0] doesn't match current year");
+              assert.equal(result[0], resultNow.getUTCFullYear() , "result[0] doesn't match current year");
               // Month is a zero-based value (where zero indicates the first month of the year)
-              assert.equal(result[1], resultNow.getMonth() + 1, "result[1] doesn't match current month");
-              assert.equal(result[2], resultNow.getDate(), "result[2] doesn't match current day");
-              done()
+              assert.equal(result[1], resultNow.getUTCMonth() + 1, "result[1] doesn't match current month");
+              assert.equal(result[2], resultNow.getUTCDate(), "result[2] doesn't match current day");
+              done();
             } catch (e) {
               done.fail(e);
             }

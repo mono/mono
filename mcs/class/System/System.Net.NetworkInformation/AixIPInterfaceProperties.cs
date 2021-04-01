@@ -54,13 +54,13 @@ namespace System.Net.NetworkInformation {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool ParseRouteInfo_internal(string iface, out string[] gw_addr_list);
+		private extern static bool ParseRouteInfo_icall (string iface, out string[] gw_addr_list);
 
 		public override GatewayIPAddressInformationCollection GatewayAddresses {
 			get {
 				var gateways = new IPAddressCollection ();
 				string[] gw_addrlist;
-				if (!ParseRouteInfo_internal (this.iface.Name.ToString(), out gw_addrlist))
+				if (!ParseRouteInfo_icall (this.iface.Name.ToString(), out gw_addrlist))
 					return new GatewayIPAddressInformationCollection ();
 
 				for(int i=0; i<gw_addrlist.Length; i++) {

@@ -734,7 +734,7 @@ namespace System.IO {
 				if (Environment.IsRunningOnWindows)
 					dirs[i] = dirs[i].TrimEnd ();
 				
-				if (dirs[i] == "." || (i != 0 && dirs[i].Length == 0))
+				if ((!(isUnc && i == 2) && dirs[i] == ".") || (i != 0 && dirs[i].Length == 0))
 					continue;
 				else if (dirs[i] == "..") {
 					// don't overwrite path segments below the limit

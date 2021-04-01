@@ -19,6 +19,9 @@ namespace MonoTests.System.Net.NetworkInformation
 	public class IPInterfacePropertiesTest
 	{
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void AtLeastOneUnicastAddress ()
 		{
 			int numUnicastAddresses = 0;
@@ -112,10 +115,13 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		public void DnsEnabled ()
 		{
 			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-				Assert.Ignore ("IsDnsEnabled is not nessasarily enabled for all interfaces on windows.");
+				Assert.Ignore ("IsDnsEnabled is not necessarily enabled for all interfaces on windows.");
 
 			NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces ();
 			foreach (NetworkInterface adapter in adapters)
@@ -126,6 +132,9 @@ namespace MonoTests.System.Net.NetworkInformation
 		}
 	
 		[Test]
+#if WASM
+		[ExpectedException (typeof (PlatformNotSupportedException))]
+#endif
 		// The code works as expected when part of a regular app. It fails when executed from within an NUnit test
 		// Might be a problem with the test suite. To investigate.
 		[Category("AndroidNotWorking")]

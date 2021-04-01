@@ -175,7 +175,7 @@ namespace TestSuite {
 		public static async Task<object> ZipEnumerateEntriesModifiedTime ()
 		{
 			var requestTcs = new TaskCompletionSource<object> ();
-			var date = DateTimeOffset.Now;
+			var date = DateTimeOffset.UtcNow;
 			using (var memoryStream = await GetArchiveStreamAsync ()) {
 				using (var archive = new ZipArchive (memoryStream, ZipArchiveMode.Update, true)) {
 					var entry = archive.GetEntry ("foo.txt");
@@ -404,7 +404,7 @@ namespace TestSuite {
 		{
 			MemoryStream archiveStream = new MemoryStream ();
 			using (HttpClient client = CreateHttpClient ())
-			using (Stream stream = await client.GetStreamAsync ("base/publish/netstandard2.0/archive.zip")) {
+			using (Stream stream = await client.GetStreamAsync ("base/publish/archive.zip")) {
 				await stream.CopyToAsync (archiveStream);
 			}
 			return archiveStream;
@@ -413,7 +413,7 @@ namespace TestSuite {
 		{
 			MemoryStream archiveStream = new MemoryStream ();
 			using (HttpClient client = CreateHttpClient ())
-			using (Stream stream = await client.GetStreamAsync ("base/publish/netstandard2.0/test.nupkg")) {
+			using (Stream stream = await client.GetStreamAsync ("base/publish/test.nupkg")) {
 				await stream.CopyToAsync (archiveStream);
 			}
 			return archiveStream;

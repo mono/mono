@@ -42,7 +42,7 @@ using System.Threading.Tasks;
 namespace System.IO {
 	[DefaultEvent("Changed")]
 	[IODescription ("")]
-	public class FileSystemWatcher : Component, ISupportInitialize {
+	public partial class FileSystemWatcher : Component, ISupportInitialize {
 
 		#region Fields
 
@@ -61,7 +61,7 @@ namespace System.IO {
 		SearchPattern2 pattern;
 		bool disposed;
 		string mangledFilter;
-		static IFileWatcher watcher;
+		IFileWatcher watcher;
 		object watcher_handle;
 		static object lockobj = new object ();
 

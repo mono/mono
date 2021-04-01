@@ -65,6 +65,7 @@ namespace MonoTests.System.Security.Cryptography.Xml
 			RijndaelManaged aes = new RijndaelManaged ();
 			aes.Mode = CipherMode.CBC;
 			aes.KeySize = 256;
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			aes.Key = Convert.FromBase64String ("o/ilseZu+keLBBWGGPlUHweqxIPc4gzZEFWr2nBt640=");
 			aes.Padding = PaddingMode.Zeros;
 
@@ -99,7 +100,9 @@ namespace MonoTests.System.Security.Cryptography.Xml
 				RijndaelManaged aes = new RijndaelManaged ();
 				aes.Mode = CipherMode.CBC;
 				aes.KeySize = 256;
+				// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 				aes.IV = Convert.FromBase64String ("pBUM5P03rZ6AE4ZK5EyBrw==");
+				// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 				aes.Key = Convert.FromBase64String ("o/ilseZu+keLBBWGGPlUHweqxIPc4gzZEFWr2nBt640=");
 				aes.Padding = PaddingMode.Zeros;
 

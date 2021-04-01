@@ -430,18 +430,6 @@ mono_decompose_opcode (MonoCompile *cfg, MonoInst *ins)
 		ins->opcode = OP_FMOVE;
 		break;
 
-	case OP_FCONV_TO_OVF_I1_UN:
-	case OP_FCONV_TO_OVF_I2_UN:
-	case OP_FCONV_TO_OVF_I4_UN:
-	case OP_FCONV_TO_OVF_I8_UN:
-	case OP_FCONV_TO_OVF_U1_UN:
-	case OP_FCONV_TO_OVF_U2_UN:
-	case OP_FCONV_TO_OVF_U4_UN:
-	case OP_FCONV_TO_OVF_I_UN:
-	case OP_FCONV_TO_OVF_U_UN:
-		mono_cfg_set_exception_invalid_program (cfg, g_strdup_printf ("float conv.ovf.un opcodes not supported."));
-		break;
-
 	case OP_IDIV:
 	case OP_IREM:
 	case OP_IDIV_UN:
@@ -1250,12 +1238,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					EMIT_NEW_VARLOADA_VREG (cfg, dest, ins->dreg, m_class_get_byval_arg (ins->klass));
 
-					if (m_class_get_image (ins->klass) == mono_defaults.corlib && !strcmp (m_class_get_name (ins->klass), "MonoError")) {
-						// Used in icall wrappers, optimize initialization
-						MONO_EMIT_NEW_STORE_MEMBASE_IMM (cfg, OP_STOREI4_MEMBASE_IMM, dest->dreg, MONO_STRUCT_OFFSET (MonoErrorExternal, init), 0);
-					} else {
-						mini_emit_initobj (cfg, dest, NULL, ins->klass);
-					}
+					mini_emit_initobj (cfg, dest, NULL, ins->klass);
 					
 					if (cfg->compute_gc_maps) {
 						MonoInst *tmp;
@@ -1278,7 +1261,9 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 				case OP_STOREV_MEMBASE: {
 					src_var = get_vreg_to_inst (cfg, ins->sreg1);
 
-					if (COMPILE_LLVM (cfg) && !mini_is_gsharedvt_klass (ins->klass) && !cfg->gen_write_barriers)
+					mono_class_init_sizes (ins->klass);
+
+					if (COMPILE_LLVM (cfg) && !mini_is_gsharedvt_klass (ins->klass) && !(cfg->gen_write_barriers && m_class_has_references (ins->klass)))
 						break;
 
 					if (!src_var) {
@@ -1290,7 +1275,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					dreg = alloc_preg (cfg);
 					EMIT_NEW_BIALU_IMM (cfg, dest, OP_ADD_IMM, dreg, ins->inst_destbasereg, ins->inst_offset);
-					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, 0);
+					mini_emit_memory_copy (cfg, dest, src, src_var->klass, src_var->backend.is_pinvoke, ins->flags);
 					break;
 				}
 				case OP_LOADV_MEMBASE: {
@@ -1350,6 +1335,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 
 					if (call->vret_in_reg) {
 						MonoCallInst *call2;
+						int align;
 
 						/* Replace the vcall with a scalar call */
 						MONO_INST_NEW_CALL (cfg, call2, OP_NOP);
@@ -1378,7 +1364,7 @@ mono_decompose_vtype_opts (MonoCompile *cfg)
 						if (dest_var->backend.is_pinvoke)
 							size = mono_class_native_size (mono_class_from_mono_type_internal (dest_var->inst_vtype), NULL);
 						else
-							size = mono_type_size (dest_var->inst_vtype, NULL);
+							size = mono_type_size (dest_var->inst_vtype, &align);
 						switch (size) {
 						case 1:
 							MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STOREI1_MEMBASE_REG, dest->dreg, 0, call2->inst.dreg);
@@ -1555,9 +1541,9 @@ mono_decompose_array_access_opts (MonoCompile *cfg)
 					if (COMPILE_LLVM (cfg)) {
 						int index2_reg = alloc_preg (cfg);
 						MONO_EMIT_NEW_UNALU (cfg, OP_SEXT_I4, index2_reg, ins->sreg2);
-						MONO_EMIT_DEFAULT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, index2_reg, ins->flags & MONO_INST_FAULT);
+						MONO_EMIT_DEFAULT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, index2_reg, ins->flags & MONO_INST_FAULT, ins->inst_p0);
 					} else {
-						MONO_ARCH_EMIT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, ins->sreg2);
+						MONO_ARCH_EMIT_BOUNDS_CHECK (cfg, ins->sreg1, ins->inst_imm, ins->sreg2, ins->inst_p0);
 					}
 					break;
 				case OP_NEWARR:

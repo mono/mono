@@ -1,0 +1,105 @@
+diff --git a/eng/build.sh b/eng/build.sh
+index 32af25330..9a37cbfa4 100755
+--- a/eng/build.sh
++++ b/eng/build.sh
+@@ -256,6 +256,7 @@ function BuildSolution {
+     BuildMessage="Error building bootstrap"
+     MSBuild "$repo_root/proto.proj" \
+       /restore \
++      /p:TargetFramework=netcoreapp3.1 \
+       /p:Configuration=$bootstrap_config \
+       /t:Publish
+ 
+diff --git a/proto.proj b/proto.proj
+index f24b2580e..05db3d0ba 100644
+--- a/proto.proj
++++ b/proto.proj
+@@ -7,13 +7,13 @@
+ 
+   <ItemGroup>
+     <Projects Include="src\fsharp\FSharp.Build\FSharp.Build.fsproj">
+-      <AdditionalProperties Condition="'$(OS)' == 'Unix'">TargetFramework=netcoreapp3.1</AdditionalProperties>
++      <AdditionalProperties Condition="'$(OS)' == 'Unix'">ProtoTargetFramework=netcoreapp3.1</AdditionalProperties>
+     </Projects>
+     <Projects Include="src\fsharp\fsc\fsc.fsproj">
+-      <AdditionalProperties Condition="'$(OS)' == 'Unix'">TargetFramework=netcoreapp3.1</AdditionalProperties>
++      <AdditionalProperties Condition="'$(OS)' == 'Unix'">ProtoTargetFramework=netcoreapp3.1</AdditionalProperties>
+     </Projects>
+     <Projects Include="src\fsharp\fsi\fsi.fsproj">
+-      <AdditionalProperties Condition="'$(OS)' == 'Unix'">TargetFramework=netcoreapp3.1</AdditionalProperties>
++      <AdditionalProperties Condition="'$(OS)' == 'Unix'">ProtoTargetFramework=netcoreapp3.1</AdditionalProperties>
+     </Projects>
+   </ItemGroup>
+ 
+diff --git a/src/fsharp/FSharp.Build/FSharp.Build.fsproj b/src/fsharp/FSharp.Build/FSharp.Build.fsproj
+index c62b2c2d9..603fbe6a8 100644
+--- a/src/fsharp/FSharp.Build/FSharp.Build.fsproj
++++ b/src/fsharp/FSharp.Build/FSharp.Build.fsproj
+@@ -6,7 +6,6 @@
+     <OutputType>Library</OutputType>
+     <TargetFrameworks Condition="'$(ProtoTargetFramework)' != ''">$(ProtoTargetFramework)</TargetFrameworks>
+     <TargetFrameworks Condition="'$(ProtoTargetFramework)' == ''">net472;netcoreapp3.1</TargetFrameworks>
+-    <TargetFrameworks Condition="'$(OS)' == 'Unix'">netcoreapp3.1</TargetFrameworks>
+     <AssemblyName>FSharp.Build</AssemblyName>
+     <NoWarn>$(NoWarn);45;55;62;75;1204</NoWarn>
+     <AllowCrossTargeting>true</AllowCrossTargeting>
+diff --git a/src/fsharp/FSharp.Compiler.Interactive.Settings/FSharp.Compiler.Interactive.Settings.fsproj b/src/fsharp/FSharp.Compiler.Interactive.Settings/FSharp.Compiler.Interactive.Settings.fsproj
+index 75af428f4..4bedb285f 100644
+--- a/src/fsharp/FSharp.Compiler.Interactive.Settings/FSharp.Compiler.Interactive.Settings.fsproj
++++ b/src/fsharp/FSharp.Compiler.Interactive.Settings/FSharp.Compiler.Interactive.Settings.fsproj
+@@ -5,7 +5,6 @@
+   <PropertyGroup>
+     <OutputType>Library</OutputType>
+     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+-    <TargetFrameworks Condition="'$(OS)' == 'Unix'">netstandard2.0</TargetFrameworks>
+     <AssemblyName>FSharp.Compiler.Interactive.Settings</AssemblyName>
+     <NoWarn>$(NoWarn);45;55;62;75;1182;1204</NoWarn>
+     <AllowCrossTargeting>true</AllowCrossTargeting>
+diff --git a/src/fsharp/FSharp.Compiler.Private/FSharp.Compiler.Private.fsproj b/src/fsharp/FSharp.Compiler.Private/FSharp.Compiler.Private.fsproj
+index 78ebbfc4f..2490d884a 100644
+--- a/src/fsharp/FSharp.Compiler.Private/FSharp.Compiler.Private.fsproj
++++ b/src/fsharp/FSharp.Compiler.Private/FSharp.Compiler.Private.fsproj
+@@ -5,7 +5,6 @@
+   <PropertyGroup>
+     <OutputType>Library</OutputType>
+     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
+-    <TargetFrameworks Condition="'$(OS)' == 'Unix'">netstandard2.0</TargetFrameworks>
+     <AssemblyName>FSharp.Compiler.Private</AssemblyName>
+     <NoWarn>$(NoWarn);45;55;62;75;1204</NoWarn>
+     <AllowCrossTargeting>true</AllowCrossTargeting>
+diff --git a/src/fsharp/Microsoft.DotNet.DependencyManager/Microsoft.DotNet.DependencyManager.fsproj b/src/fsharp/Microsoft.DotNet.DependencyManager/Microsoft.DotNet.DependencyManager.fsproj
+index 13e50e196..57d833a4c 100644
+--- a/src/fsharp/Microsoft.DotNet.DependencyManager/Microsoft.DotNet.DependencyManager.fsproj
++++ b/src/fsharp/Microsoft.DotNet.DependencyManager/Microsoft.DotNet.DependencyManager.fsproj
+@@ -6,7 +6,6 @@
+     <OutputType>Library</OutputType>
+     <TargetFrameworks>netstandard2.0;net472</TargetFrameworks>
+     <IsPackable>true</IsPackable>
+-    <TargetFrameworks Condition="'$(OS)' == 'Unix'">netstandard2.0</TargetFrameworks>
+     <AssemblyName>Microsoft.DotNet.DependencyManager</AssemblyName>
+     <NoWarn>$(NoWarn);45;55;62;75;1204</NoWarn>
+     <AllowCrossTargeting>true</AllowCrossTargeting>
+diff --git a/src/fsharp/fsc/fsc.fsproj b/src/fsharp/fsc/fsc.fsproj
+index 776cddc78..872103e29 100644
+--- a/src/fsharp/fsc/fsc.fsproj
++++ b/src/fsharp/fsc/fsc.fsproj
+@@ -6,7 +6,6 @@
+     <OutputType>Exe</OutputType>
+     <TargetFrameworks Condition="'$(ProtoTargetFramework)' != ''">$(ProtoTargetFramework)</TargetFrameworks>
+     <TargetFrameworks Condition="'$(ProtoTargetFramework)' == ''">net472;netcoreapp3.1</TargetFrameworks>
+-    <TargetFrameworks Condition="'$(OS)' == 'Unix'">netcoreapp3.1</TargetFrameworks>
+     <TargetExt>.exe</TargetExt>
+     <NoWarn>$(NoWarn);45;55;62;75;1204</NoWarn>
+     <AllowCrossTargeting>true</AllowCrossTargeting>
+diff --git a/src/fsharp/fsi/fsi.fsproj b/src/fsharp/fsi/fsi.fsproj
+index bb2bcc73b..2a902381f 100644
+--- a/src/fsharp/fsi/fsi.fsproj
++++ b/src/fsharp/fsi/fsi.fsproj
+@@ -6,7 +6,6 @@
+     <OutputType>Exe</OutputType>
+     <TargetFrameworks Condition="'$(ProtoTargetFramework)' != ''">$(ProtoTargetFramework)</TargetFrameworks>
+     <TargetFrameworks Condition="'$(ProtoTargetFramework)' == ''">net472;netcoreapp3.1</TargetFrameworks>
+-    <TargetFrameworks Condition="'$(OS)' == 'Unix'">netcoreapp3.1</TargetFrameworks>
+     <TargetExt>.exe</TargetExt>
+     <NoWarn>$(NoWarn);45;55;62;75;1204</NoWarn>
+     <AllowCrossTargeting>true</AllowCrossTargeting>

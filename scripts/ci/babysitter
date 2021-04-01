@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Mimics GNU timeout, but has special modes which gather test result data and retry failed tests.
 
@@ -184,12 +184,12 @@ cygwin = platform.system().startswith("CYGWIN")
 
 def outgoingPath(path):
 	if cygwin: # Invoke cygpath and strip newline
-		return subprocess.check_output(["cygpath", "-w", path])[:-1]
+		return subprocess.check_output(["cygpath", "-w", path])[:-1].decode(sys.stdin.encoding)
 	return path
 
 def incomingPath(path):
 	if cygwin:
-		return subprocess.check_output(["cygpath", path])[:-1]
+		return subprocess.check_output(["cygpath", path])[:-1].decode(sys.stdin.encoding)
 	return path
 
 # Some of the things we put in global_env are paths. If we're in cygwin, we have to keep separate

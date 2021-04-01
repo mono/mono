@@ -66,6 +66,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if WASM
+		[Ignore ("WASM - libc issue")]
+#endif
 		public void BypassArrayList ()
 		{
 			Uri proxy1 = new Uri ("http://proxy.contoso.com");
@@ -124,6 +127,9 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+#if WASM
+		[Ignore ("WASM - libc issue")]
+#endif
 		public void IsByPassed ()
 		{
 			WebProxy p = new WebProxy ("http://proxy.contoso.com", true);

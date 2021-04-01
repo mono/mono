@@ -356,6 +356,7 @@ namespace System.Windows.Forms
 		{
 			DataGridViewRow row = (DataGridViewRow)MemberwiseClone ();
 
+			row.DefaultCellStyle = (DataGridViewCellStyle)DefaultCellStyle.Clone ();
 			row.HeaderCell = (DataGridViewRowHeaderCell)HeaderCell.Clone ();
 			row.SetIndex (-1);
 			

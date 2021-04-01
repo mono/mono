@@ -36,7 +36,7 @@
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) FALSE
 #endif
 
-static inline MonoBitSet* 
+static MonoBitSet*
 mono_bitset_mp_new_noinit (MonoMemPool *mp,  guint32 max_size)
 {
 	int size = mono_bitset_alloc_size (max_size, 0);
@@ -507,7 +507,7 @@ mono_local_cprop (MonoCompile *cfg)
 	max = cfg->next_vreg;
 	defs = (MonoInst **)mono_mempool_alloc (cfg->mempool, sizeof (MonoInst*) * cfg->next_vreg);
 	def_index = (gint32 *)mono_mempool_alloc (cfg->mempool, sizeof (guint32) * cfg->next_vreg);
-	cfg->cbb = bb_opt = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
+	cfg->cbb = bb_opt = (MonoBasicBlock *)mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoBasicBlock));
 
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 		MonoInst *ins;
@@ -815,7 +815,7 @@ mono_local_cprop (MonoCompile *cfg)
 	}
 }
 
-static inline gboolean
+static gboolean
 reg_is_softreg_no_fpstack (int reg, const char spec)
 {
 	return (spec == 'i' && reg >= MONO_MAX_IREGS)
@@ -826,7 +826,7 @@ reg_is_softreg_no_fpstack (int reg, const char spec)
 		|| (spec == 'v');
 }
 		
-static inline gboolean
+static gboolean
 reg_is_softreg (int reg, const char spec)
 {
 	return (spec == 'i' && reg >= MONO_MAX_IREGS)
@@ -837,7 +837,7 @@ reg_is_softreg (int reg, const char spec)
 		|| (spec == 'v');
 }
 
-static inline gboolean
+static gboolean
 mono_is_simd_accessor (MonoInst *ins)
 {
 	switch (ins->opcode) {

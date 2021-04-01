@@ -61,6 +61,11 @@ namespace MonoTests.System
 		C
 	};
 
+	class GenericEnum<T>
+	{
+		public enum TheEnum { A, B };
+	}
+
 	class SampleGeneric<T> where T : IFace1
 	{
 	}
@@ -2935,6 +2940,7 @@ namespace MonoTests.System
 			Assert.AreEqual (TypeCode.UInt16, Type.GetTypeCode (typeof (ushort)), "#16");
 			Assert.AreEqual (TypeCode.UInt32, Type.GetTypeCode (typeof (uint)), "#17");
 			Assert.AreEqual (TypeCode.UInt64, Type.GetTypeCode (typeof (ulong)), "#18");
+			Assert.AreEqual (TypeCode.Int32, Type.GetTypeCode (typeof (GenericEnum<int>.TheEnum)));
 		}
 
 		[Test]
@@ -5104,6 +5110,16 @@ namespace MonoTests.System
 		public void IsByRefLike_ArrayOfByrefLike_TLE ()
 		{
 			typeof(UserByRefLikeStruct).MakeArrayType ();
+		}
+
+		[Test]
+		public void GetConstructorsOnArrayOfGenericArgumentsToArraySpecialInterfaceGtd ()
+		{
+			// Regression test for https://github.com/mono/mono/issues/7095#issuecomment-470465597
+			// The assertion here isn't very important; what matters is that the runtime doesn't crash.
+			Type ilist_arg = typeof(IList<>).GetGenericArguments () [0];
+			Type ilist_arg_array = ilist_arg.MakeArrayType ();
+			Assert.NotNull (ilist_arg_array.GetConstructors ());
 		}
 
 	}

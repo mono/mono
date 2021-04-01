@@ -27,11 +27,13 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/exception.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/utils/mono-state.h>
 
 #include "mini.h"
 #include "mini-ppc.h"
 #include "mini-runtime.h"
 #include "aot-runtime.h"
+#include "mono/utils/mono-tls-inline.h"
 
 /*
 
@@ -340,7 +342,7 @@ mono_ppc_throw_exception (MonoObject *exc, unsigned long eip, unsigned long esp,
 
 	if (mono_object_isinst_checked (exc, mono_defaults.exception_class, error)) {
 		MonoException *mono_ex = (MonoException*)exc;
-		if (!rethrow) {
+		if (!rethrow && !mono_ex->caught_in_unmanaged) {
 			mono_ex->stack_trace = NULL;
 			mono_ex->trace_ips = NULL;
 		} else if (preserve_ips) {
@@ -581,9 +583,9 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 			for (i = MONO_PPC_FIRST_SAVED_GREG; i < MONO_MAX_IREGS; ++i)
 				regs [i] = ctx->regs [i];
 
-			gboolean success = mono_unwind_frame (unwind_info, unwind_info_len, ji->code_start, 
+			gboolean success = mono_unwind_frame (unwind_info, unwind_info_len, (guint8*)ji->code_start, 
 							   (guint8*)ji->code_start + ji->code_size,
-							   ip, NULL, regs, ppc_lr + 1,
+							   (guint8*)ip, NULL, regs, ppc_lr + 1,
 							   save_locations, MONO_MAX_IREGS, &cfa);
 
 			if (!success)
@@ -622,7 +624,7 @@ mono_arch_unwind_frame (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		/* FIXME: what about trampoline LMF frames?  see exceptions-x86.c */
 
-		*lmf = (*lmf)->previous_lmf;
+		*lmf = (MonoLMF*)(*lmf)->previous_lmf;
 
 		return TRUE;
 	}
@@ -636,7 +638,7 @@ mono_arch_ip_from_context (void *sigctx)
 #ifdef MONO_CROSS_COMPILE
 	g_assert_not_reached ();
 #else
-	os_ucontext *uc = sigctx;
+	os_ucontext *uc = (os_ucontext*)sigctx;
 	return (gpointer)UCONTEXT_REG_NIP(uc);
 #endif
 }
@@ -673,7 +675,8 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 		abort ();
 	}
 	if (!ji)
-		mono_handle_native_crash ("SIGSEGV", sigctx, siginfo);
+		if (mono_dump_start ())
+			mono_handle_native_crash (mono_get_signame (SIGSEGV), (MonoContext*)sigctx, siginfo);
 	/* setup a call frame on the real stack so that control is returned there
 	 * and exception handling can continue.
 	 * The frame looks like:
@@ -684,15 +687,12 @@ mono_arch_handle_altstack_exception (void *sigctx, MONO_SIG_HANDLER_INFO_TYPE *s
 	frame_size = sizeof (MonoContext) + sizeof (gpointer) * 16 + 224;
 	frame_size += 15;
 	frame_size &= ~15;
-	sp = (gpointer)(UCONTEXT_REG_Rn(uc, 1) & ~15);
-	sp = (gpointer)((char*)sp - frame_size);
+	sp = (void**)(UCONTEXT_REG_Rn(uc, 1) & ~15);
+	sp = (void**)((char*)sp - frame_size);
 	/* may need to adjust pointers in the new struct copy, depending on the OS */
 	uc_copy = (MonoContext*)(sp + 16);
 	mono_sigctx_to_monoctx (uc, uc_copy);
-#if defined(__linux__) && !defined(__mono_ppc64__)
-	uc_copy->uc_mcontext.uc_regs = (gpointer)((char*)uc_copy + ((char*)uc->uc_mcontext.uc_regs - (char*)uc));
-#endif
-	g_assert (mono_arch_ip_from_context (uc) == mono_arch_ip_from_context (uc_copy));
+	g_assert (mono_arch_ip_from_context (uc) == MONO_CONTEXT_GET_IP (uc_copy));
 	/* at the return form the signal handler execution starts in altstack_handle_and_restore() */
 	UCONTEXT_REG_LNK(uc) = UCONTEXT_REG_NIP(uc);
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
@@ -788,7 +788,7 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	sp = (host_mgreg_t)(UCONTEXT_REG_Rn(uc, 1) & ~15);
 	sp = (host_mgreg_t)(sp - frame_size);
 	UCONTEXT_REG_Rn(uc, 1) = (host_mgreg_t)sp;
-	setup_ucontext_return (uc, handle_signal_exception);
+	setup_ucontext_return (uc, (gpointer)handle_signal_exception);
 
 	return TRUE;
 #else
@@ -812,11 +812,11 @@ void
 mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), gpointer user_data)
 {
 	uintptr_t sp = (uintptr_t) MONO_CONTEXT_GET_SP(ctx);
-	ctx->regs [PPC_FIRST_ARG_REG] = user_data;
+	ctx->regs [PPC_FIRST_ARG_REG] = (host_mgreg_t)user_data;
 	sp -= PPC_MINIMAL_STACK_SIZE;
-	*(unsigned long *)sp = MONO_CONTEXT_GET_SP(ctx);
+	*(unsigned long *)sp = (uintptr_t) MONO_CONTEXT_GET_SP(ctx);
 	MONO_CONTEXT_SET_BP(ctx, sp);
-	mono_arch_setup_resume_sighandler_ctx(ctx, (unsigned long) async_cb);
+	mono_arch_setup_resume_sighandler_ctx(ctx, (gpointer) async_cb);
 }
 
 void

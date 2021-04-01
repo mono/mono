@@ -1,0 +1,8 @@
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">  
+  <s:Body>
+    <s:Fault>
+      <faultcode>s:1</faultcode>
+      <faultstring xml:lang="en-US">String is empty.</faultstring>      
+    </s:Fault>
+  </s:Body>
+</s:Envelope>

@@ -15,6 +15,7 @@
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetEUid.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetEGid.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.CopyFile.cs
+../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.LChflags.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Unlink.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Link.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.Rename.cs

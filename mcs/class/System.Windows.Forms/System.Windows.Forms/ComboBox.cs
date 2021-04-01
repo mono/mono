@@ -1695,7 +1695,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		void SetSelectedIndex (int value, bool supressAutoScroll)
+		void SetSelectedIndex (int value, bool supressAutoScroll, bool triggerEvents = true)
 		{
 			if (selected_index == value)
 				return;
@@ -1718,9 +1718,11 @@ namespace System.Windows.Forms
 			if (listbox_ctrl != null)
 				listbox_ctrl.HighlightedIndex = value;
 
-			OnSelectedValueChanged (EventArgs.Empty);
-			OnSelectedIndexChanged (EventArgs.Empty);
-			OnSelectedItemChanged (EventArgs.Empty);
+			if (triggerEvents) {
+				OnSelectedValueChanged (EventArgs.Empty);
+				OnSelectedIndexChanged (EventArgs.Empty);
+				OnSelectedItemChanged (EventArgs.Empty);
+			}
 		}
 
 		// If no item is currently selected, and an item is found matching the text 
@@ -2134,9 +2136,7 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException ("index");
 					
 				if (index < owner.SelectedIndex)
-					--owner.SelectedIndex;
-				else if (index == owner.SelectedIndex)
-					owner.SelectedIndex = -1;
+					owner.SetSelectedIndex (owner.SelectedIndex - 1, false, false);
 
 				object removed = object_items [index];
 

@@ -267,7 +267,7 @@ namespace MonoTests.System.Net {
 	}
 
 	[Test]
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 	[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 	public void DefaultWebProxy ()
@@ -326,7 +326,8 @@ namespace MonoTests.System.Net {
 	[Test] //BNC#323452
 	// Throws exception with Status == Timeout. The same code behaves as the test expects when run from a regular app.
 	// Might be an issue with the test suite. To investigate.
-	[Category("AndroidNotWorking")] 
+	[Category("AndroidNotWorking")]
+	[Category("MultiThreaded")]
 	public void TestFailedConnection ()
 	{
 		try {
@@ -353,6 +354,7 @@ namespace MonoTests.System.Net {
 
 	[Test] //BNC#323452
 	[Category ("AndroidNotWorking")] // Fails when ran as part of the entire BCL test suite. Works when only this fixture is ran
+	[Category ("MultiThreaded")]
 	public void TestFailedResolution ()
 	{
 		try {
@@ -377,7 +379,7 @@ namespace MonoTests.System.Net {
 			Assert.IsTrue (e is WebException);
 			//#if NET_2_0 e.Message == "The underlying connection was closed: The remote name could not be resolved."
 			//#if NET_1_1 e.Message == "The remote name could not be resolved: 'thisdomaindoesnotexist.monotestcase.x'"
-			Assert.AreEqual (((WebException)e).Status, WebExceptionStatus.NameResolutionFailure);
+			Assert.AreEqual (WebExceptionStatus.NameResolutionFailure, ((WebException)e).Status);
 			Assert.IsNull (e.InnerException);
 		}
 	}

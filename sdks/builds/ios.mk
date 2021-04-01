@@ -12,12 +12,20 @@
 
 ios_FRAMEWORKS_DIR = $(TOP)/sdks/out/ios-frameworks
 ios_LIBS_DIR = $(TOP)/sdks/out/ios-libs
+ios_NETCORE_LIBS_DIR = $(TOP)/sdks/out/ios-netcore_libs
 ios_SOURCES_DIR = $(TOP)/sdks/out/ios-sources
 ios_TPN_DIR = $(TOP)/sdks/out/ios-tpn
 ios_MONO_VERSION = $(TOP)/sdks/out/ios-mono-version.txt
 
+ifndef DISABLE_CLASSIC
 ios_ARCHIVE += ios-frameworks ios-libs ios-sources ios-tpn ios-mono-version.txt
 ADDITIONAL_PACKAGE_DEPS += $(ios_FRAMEWORKS_DIR) $(ios_LIBS_DIR) $(ios_SOURCES_DIR) $(ios_TPN_DIR) $(ios_MONO_VERSION)
+endif
+
+ifdef ENABLE_NETCORE
+ios_ARCHIVE += ios-netcore_libs
+ADDITIONAL_PACKAGE_DEPS += $(ios_NETCORE_LIBS_DIR)
+endif
 
 ios_PLATFORM_BIN=$(XCODE_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/bin
 
@@ -59,6 +67,9 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
 	ac_cv_func_shm_open_working_with_mmap=no \
+	ac_cv_func_pthread_jit_write_protect_np=no \
+	ac_cv_func_preadv=no \
+	ac_cv_func_pwritev=no \
 	mono_cv_sizeof_sunpath=104 \
 	mono_cv_uscore=yes
 
@@ -82,10 +93,14 @@ _ios-$(1)_CPPFLAGS= \
 	-DSMALL_CONFIG -D_XOPEN_SOURCE -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 \
 
 _ios-$(1)_LDFLAGS= \
-	-Wl,-no_weak_imports \
 	-arch $(3) \
 	-framework CoreFoundation \
 	-lobjc -lc++
+
+# Xcode 12 and later cause issues with no_weak_imports: https://github.com/mono/mono/issues/19393
+ifeq ($(XCODE_MAJOR_VERSION),$(filter $(XCODE_MAJOR_VERSION), 11 10 9))
+_ios-$(1)_LDFLAGS += -Wl,-no_weak_imports
+endif
 
 _ios-$(1)_CONFIGURE_FLAGS = \
 	--disable-boehm \
@@ -152,6 +167,7 @@ tvos_sysroot = -isysroot $(tvos_sysroot_path)
 watchos_sysroot = -isysroot $(watchos_sysroot_path)
 watchos64_32_sysroot = -isysroot $(watchos64_32_sysroot_path)
 
+# --- CLASSIC ----
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 ios-targettv_CONFIGURE_FLAGS = 	--enable-dtrace=no --enable-llvm-runtime --with-bitcode=yes
 ios-targetwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend --enable-llvm-runtime --with-bitcode=yes
@@ -195,6 +211,45 @@ ios-targettv_AC_VARS = \
 ios-targetwatch_AC_VARS = $(ios-targettv_AC_VARS)
 ios-targetwatch64_32_AC_VARS = $(ios-targettv_AC_VARS)
 
+# --- NETCORE ----
+ios-netcore_target32_CONFIGURE_FLAGS = --with-core=only
+ios-netcore_target32s_CONFIGURE_FLAGS = --with-core=only
+ios-netcore_target64_CONFIGURE_FLAGS = --with-core=only
+ios-netcore_targettv_CONFIGURE_FLAGS = $(ios-targettv_CONFIGURE_FLAGS) --with-core=only
+ios-netcore_targetwatch_CONFIGURE_FLAGS = $(ios-targetwatch_CONFIGURE_FLAGS) --with-core=only
+ios-netcore_targetwatch64_32_CONFIGURE_FLAGS = $(ios-targetwatch64_32_CONFIGURE_FLAGS) --with-core=only
+
+ios-netcore_target32_SYSROOT = $(ios-target32_SYSROOT)
+ios-netcore_target32s_SYSROOT = $(ios-target32s_SYSROOT)
+ios-netcore_target64_SYSROOT = $(ios-target64_SYSROOT)
+ios-netcore_targettv_SYSROOT = $(ios-targettv_SYSROOT)
+ios-netcore_targetwatch_SYSROOT = $(ios-targetwatch_SYSROOT)
+ios-netcore_targetwatch64_32_SYSROOT = $(ios-targetwatch64_32_SYSROOT)
+
+ios-netcore_target32_CPPFLAGS = $(ios-target32_CPPFLAGS)
+ios-netcore_target32s_CPPFLAGS = $(ios-target32s_CPPFLAGS)
+ios-netcore_target64_CPPFLAGS = $(ios-target64_CPPFLAGS)
+ios-netcore_targettv_CPPFLAGS = $(ios-targettv_CPPFLAGS)
+ios-netcore_targetwatch_CPPFLAGS = $(ios-targetwatch_CPPFLAGS)
+ios-netcore_targetwatch64_32_CPPFLAGS = $(ios-targetwatch64_32_CPPFLAGS)
+
+ios-netcore_targettv_CFLAGS = $(ios-targettv_CFLAGS)
+ios-netcore_targettv_CXXFLAGS = $(ios-targettv_CXXFLAGS)
+ios-netcore_targetwatch_CFLAGS = $(ios-targetwatch_CFLAGS)
+ios-netcore_targetwatch_CXXFLAGS = $(ios-targetwatch_CXXFLAGS)
+ios-netcore_targetwatch64_32_CFLAGS = $(ios-targetwatch64_32_CFLAGS)
+ios-netcore_targetwatch64_32_CXXFLAGS = $(ios-targetwatch64_32_CXXFLAGS)
+
+ios-netcore_targettv_LDFLAGS = $(ios-targettv_LDFLAGS)
+ios-netcore_targetwatch_LDFLAGS = $(ios-targetwatch_LDFLAGS)
+ios-netcore_targetwatch64_32_LDFLAGS = $(ios-targetwatch64_32_LDFLAGS)
+
+ios-netcore_targettv_AC_VARS = $(ios-targettv_AC_VARS)
+ios-netcore_targetwatch_AC_VARS =$(ios-targetwatch_AC_VARS)
+ios-netcore_targetwatch64_32_AC_VARS = $(ios-targetwatch64_32_AC_VARS)
+
+
+ifndef DISABLE_CLASSIC
 # ios-target32_BITCODE_MARKER=-fembed-bitcode-marker
 $(eval $(call iOSDeviceTemplate,target32,arm-apple-darwin10,armv7))
 $(eval $(call iOSDeviceTemplate,target32s,arm-apple-darwin10,armv7s))
@@ -203,6 +258,18 @@ $(eval $(call iOSDeviceTemplate,target64,aarch64-apple-darwin10,arm64))
 $(eval $(call iOSDeviceTemplate,targettv,aarch64-apple-darwin10,arm64))
 $(eval $(call iOSDeviceTemplate,targetwatch,armv7k-apple-darwin10,armv7k))
 $(eval $(call iOSDeviceTemplate,targetwatch64_32,aarch64-apple-darwin10_ilp32,arm64_32))
+endif
+
+ifdef ENABLE_NETCORE
+# ios-netcore_target32_BITCODE_MARKER=-fembed-bitcode-marker
+$(eval $(call iOSDeviceTemplate,netcore_target32,arm-apple-darwin10,armv7))
+$(eval $(call iOSDeviceTemplate,netcore_target32s,arm-apple-darwin10,armv7s))
+# ios-netcore_target64_BITCODE_MARKER=-fembed-bitcode-marker
+$(eval $(call iOSDeviceTemplate,netcore_target64,aarch64-apple-darwin10,arm64))
+$(eval $(call iOSDeviceTemplate,netcore_targettv,aarch64-apple-darwin10,arm64))
+$(eval $(call iOSDeviceTemplate,netcore_targetwatch,armv7k-apple-darwin10,armv7k))
+$(eval $(call iOSDeviceTemplate,netcore_targetwatch64_32,aarch64-apple-darwin10_ilp32,arm64_32))
+endif
 
 ##
 # Simulator builds
@@ -236,6 +303,9 @@ _ios-$(1)_AC_VARS= \
 	ac_cv_func_futimens=no \
 	ac_cv_func_utimensat=no \
 	ac_cv_func_shm_open_working_with_mmap=no \
+	ac_cv_func_pthread_jit_write_protect_np=no \
+	ac_cv_func_preadv=no \
+	ac_cv_func_pwritev=no \
 	mono_cv_uscore=yes
 
 _ios-$(1)_CFLAGS= \
@@ -282,17 +352,21 @@ ios_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/iPhoneSimulator.platform/Deve
 tvos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/AppleTVSimulator.platform/Developer/SDKs/AppleTVSimulator$(TVOS_VERSION).sdk
 watchos_sim_sysroot = -isysroot $(XCODE_DIR)/Platforms/WatchSimulator.platform/Developer/SDKs/WatchSimulator$(WATCHOS_VERSION).sdk
 
+# --- CLASSIC ----
 ios-sim32_SYSROOT = $(ios_sim_sysroot) -mios-simulator-version-min=$(IOS_VERSION_MIN)
 ios-sim64_SYSROOT = $(ios_sim_sysroot) -mios-simulator-version-min=$(IOS_VERSION_MIN)
 ios-simtv_SYSROOT = $(tvos_sim_sysroot) -mtvos-simulator-version-min=$(TVOS_VERSION_MIN)
 ios-simwatch_SYSROOT = $(watchos_sim_sysroot) -mwatchos-simulator-version-min=$(WATCHOS_VERSION_MIN)
+ios-simwatch64_SYSROOT = $(watchos_sim_sysroot) -mwatchos-simulator-version-min=$(WATCHOS_VERSION_MIN)
 
 ios-simwatch_CONFIGURE_FLAGS = --enable-cooperative-suspend
+ios-simwatch64_CONFIGURE_FLAGS = --enable-cooperative-suspend
 
 ios-sim32_CPPFLAGS = -DHOST_IOS
 ios-sim64_CPPFLAGS = -DHOST_IOS
 ios-simtv_CPPFLAGS = -DHOST_IOS -DHOST_TVOS
 ios-simwatch_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
+ios-simwatch64_CPPFLAGS = -DHOST_IOS -DHOST_WATCHOS
 
 ios-simtv_AC_VARS = \
 	ac_cv_func_pthread_kill=no \
@@ -313,11 +387,56 @@ ios-simwatch_AC_VARS =  \
 	ac_cv_func_execve=no \
 	ac_cv_func_execvp=no \
 	ac_cv_func_signal=no
+ios-simwatch64_AC_VARS =  \
+	ac_cv_func_system=no \
+	ac_cv_func_pthread_kill=no \
+	ac_cv_func_kill=no \
+	ac_cv_func_sigaction=no \
+	ac_cv_func_fork=no \
+	ac_cv_func_execv=no \
+	ac_cv_func_execve=no \
+	ac_cv_func_execvp=no \
+	ac_cv_func_signal=no
 
+# --- NETCORE ----
+ios-netcore_sim32_SYSROOT = $(ios-sim32_SYSROOT)
+ios-netcore_sim64_SYSROOT = $(ios-sim64_SYSROOT)
+ios-netcore_simtv_SYSROOT = $(ios-simtv_SYSROOT)
+ios-netcore_simwatch_SYSROOT = $(ios-simwatch_SYSROOT)
+ios-netcore_simwatch64_SYSROOT = $(ios-simwatch64_SYSROOT)
+
+ios-netcore_sim32_CONFIGURE_FLAGS = --with-core=only
+ios-netcore_sim64_CONFIGURE_FLAGS = --with-core=only
+ios-netcore_simtv_CONFIGURE_FLAGS = --with-core=only
+ios-netcore_simwatch_CONFIGURE_FLAGS = $(ios-simwatch_CONFIGURE_FLAGS) --with-core=only
+ios-netcore_simwatch64_CONFIGURE_FLAGS = $(ios-simwatch64_CONFIGURE_FLAGS) --with-core=only
+
+ios-netcore_sim32_CPPFLAGS = $(ios-sim32_CPPFLAGS)
+ios-netcore_sim64_CPPFLAGS = $(ios-sim64_CPPFLAGS)
+ios-netcore_simtv_CPPFLAGS = $(ios-simtv_CPPFLAGS)
+ios-netcore_simwatch_CPPFLAGS = $(ios-simwatch_CPPFLAGS)
+ios-netcore_simwatch64_CPPFLAGS = $(ios-simwatch64_CPPFLAGS)
+
+ios-netcore_simtv_AC_VARS = $(ios-simtv_AC_VARS)
+ios-netcore_simwatch_AC_VARS = $(ios-simwatch_AC_VARS)
+ios-netcore_simwatch64_AC_VARS = $(ios-simwatch64_AC_VARS)
+
+
+ifndef DISABLE_CLASSIC
 $(eval $(call iOSSimulatorTemplate,sim32,i386-apple-darwin10,i386))
 $(eval $(call iOSSimulatorTemplate,sim64,x86_64-apple-darwin10,x86_64))
 $(eval $(call iOSSimulatorTemplate,simtv,x86_64-apple-darwin10,x86_64))
 $(eval $(call iOSSimulatorTemplate,simwatch,i386-apple-darwin10,i386))
+$(eval $(call iOSSimulatorTemplate,simwatch64,x86_64-apple-darwin10,x86_64))
+endif
+
+ifdef ENABLE_NETCORE
+$(eval $(call iOSSimulatorTemplate,netcore_sim32,i386-apple-darwin10,i386))
+$(eval $(call iOSSimulatorTemplate,netcore_sim64,x86_64-apple-darwin10,x86_64))
+$(eval $(call iOSSimulatorTemplate,netcore_simtv,x86_64-apple-darwin10,x86_64))
+$(eval $(call iOSSimulatorTemplate,netcore_simwatch,i386-apple-darwin10,i386))
+$(eval $(call iOSSimulatorTemplate,netcore_simwatch64,x86_64-apple-darwin10,x86_64))
+endif
 
 ##
 # Cross compiler builds
@@ -380,21 +499,42 @@ $$(eval $$(call CrossRuntimeTemplate,ios,$(1),$(2)-apple-darwin10,$(3),$(4),$(5)
 
 endef
 
+# --- CLASSIC ----
 ios-cross32_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-crosswatch_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-cross64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 ios-crosswatch64_32_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
-ios-cross32-64_SYSROOT=-isysroot $(XCODE_DIR)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOS_VERSION).sdk -mmacosx-version-min=$(MACOS_VERSION_MIN)
 
 ios-crosswatch_CONFIGURE_FLAGS=--enable-cooperative-suspend
 
+# --- NETCORE ----
+ios-netcore_cross32_SYSROOT = $(ios-cross32_SYSROOT)
+ios-netcore_crosswatch_SYSROOT = $(ios-crosswatch_SYSROOT)
+ios-netcore_cross64_SYSROOT = $(ios-cross64_SYSROOT)
+ios-netcore_crosswatch64_32_SYSROOT = $(ios-crosswatch64_32_SYSROOT)
+
+ios-netcore_cross32_CONFIGURE_FLAGS = --with-core=only
+ios-netcore_crosswatch_CONFIGURE_FLAGS = $(ios-crosswatch_CONFIGURE_FLAGS) --with-core=only
+ios-netcore_cross64_CONFIGURE_FLAGS = --with-core=only
+ios-netcore_crosswatch64_32_CONFIGURE_FLAGS = --with-core=only
+
+
+ifndef DISABLE_CLASSIC
 $(eval $(call iOSCrossTemplate,cross32,x86_64,arm-darwin,target32,llvm-llvm64,arm-apple-darwin10,$(ios_sysroot_path)))
 $(eval $(call iOSCrossTemplate,cross64,x86_64,aarch64-darwin,target64,llvm-llvm64,aarch64-apple-darwin10,$(ios_sysroot_path)))
 $(eval $(call iOSCrossTemplate,crosswatch,x86_64,armv7k-unknown-darwin,targetwatch,llvm-llvm64,armv7k-apple-darwin,$(watchos_sysroot_path)))
 $(eval $(call iOSCrossTemplate,crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,targetwatch64_32,llvm-llvm64,aarch64-apple-darwin10_ilp32,$(watchos64_32_sysroot_path)))
+endif
+
+ifdef ENABLE_NETCORE
+$(eval $(call iOSCrossTemplate,netcore_cross32,x86_64,arm-darwin,netcore_target32,llvm-llvm64,arm-apple-darwin10,$(ios_sysroot_path)))
+$(eval $(call iOSCrossTemplate,netcore_cross64,x86_64,aarch64-darwin,netcore_target64,llvm-llvm64,aarch64-apple-darwin10,$(ios_sysroot_path)))
+$(eval $(call iOSCrossTemplate,netcore_crosswatch,x86_64,armv7k-unknown-darwin,netcore_targetwatch,llvm-llvm64,armv7k-apple-darwin,$(watchos_sysroot_path)))
+$(eval $(call iOSCrossTemplate,netcore_crosswatch64_32,x86_64,aarch64-apple-darwin10_ilp32,netcore_targetwatch64_32,llvm-llvm64,aarch64-apple-darwin10_ilp32,$(watchos64_32_sysroot_path)))
+endif
 
 
-$(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-targetwatch64_32 package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib
+$(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-targetwatch64_32 package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch package-ios-simwatch64 $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion80.dylib
 	rm -rf $(ios_FRAMEWORKS_DIR)
 
 	### Mono.framework for devices ###
@@ -407,9 +547,9 @@ $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-ta
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/ios/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/ios/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Mono
 	cp $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(ios_FRAMEWORKS_DIR)/ios/Mono.framework/Info.plist
 	cp $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(ios_FRAMEWORKS_DIR)/tvos/Mono.framework/Info.plist
 	cp $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(ios_FRAMEWORKS_DIR)/watchos/Mono.framework/Info.plist
@@ -420,19 +560,19 @@ $(ios_FRAMEWORKS_DIR): package-ios-target32 package-ios-target32s package-ios-ta
 	mkdir -p $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-sim32-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib $(TOP)/sdks/out/ios-sim64-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simtv-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib -create -output $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/Mono.framework/Mono $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Mono
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework.dSYM $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Mono
 	cp $(TOP)/sdks/builds/ios-Mono.framework-Info.plist $(ios_FRAMEWORKS_DIR)/ios-sim/Mono.framework/Info.plist
 	cp $(TOP)/sdks/builds/ios-Mono.framework-tvos.Info.plist $(ios_FRAMEWORKS_DIR)/tvos-sim/Mono.framework/Info.plist
 	cp $(TOP)/sdks/builds/ios-Mono.framework-watchos.Info.plist $(ios_FRAMEWORKS_DIR)/watchos-sim/Mono.framework/Info.plist
 
 
-$(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-targetwatch64_32 package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib
+$(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64 package-ios-targettv package-ios-targetwatch package-ios-targetwatch64_32 package-ios-sim32 package-ios-sim64 package-ios-simtv package-ios-simwatch package-ios-simwatch64 $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmonosgen-2.0-minversion70.dylib $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmono-profiler-log-minversion70.dylib $(TOP)/sdks/out/ios-target32-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib $(TOP)/sdks/out/ios-target32s-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib $(TOP)/sdks/out/ios-target64-$(CONFIGURATION)/lib/libmono-native-compat-minversion70.dylib
 	rm -rf $(ios_LIBS_DIR)
 
 	### libs for devices ###
@@ -499,20 +639,20 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-compat.dylib  -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib                                                                                                                        $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-unified.dylib -change $(TOP)/sdks/out/ios-targetwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib -change $(TOP)/sdks/out/ios-targetwatch64_32-$(CONFIGURATION)/lib/libmonosgen-2.0.1.dylib @rpath/libmonosgen-2.0.dylib $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/ios/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/ios/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/ios/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/ios/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/tvos/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/tvos/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/tvos/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/tvos/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/tvos/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/tvos/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/watchos/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos/libmono-native-unified.dylib
 
 	### libs for simulators ###
 	mkdir -p $(ios_LIBS_DIR)/ios-sim/
@@ -537,14 +677,14 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simtv-$(CONFIGURATION)/lib/libmono-profiler-log-static.a  -create -output $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.a
 	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simtv-$(CONFIGURATION)/lib/libmonosgen-2.0.a              -create -output $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.a
 
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib          -create -output $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-profiler-log.dylib     -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-native-compat.dylib    -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-native-unified.dylib   -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-native-compat.a        -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.a
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-native-unified.a       -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.a
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-profiler-log-static.a  -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.a
-	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.a              -create -output $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib         $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmonosgen-2.0.dylib         -create -output $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-profiler-log.dylib    $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmono-profiler-log.dylib    -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-native-compat.dylib   $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmono-native-compat.dylib   -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-native-unified.dylib  $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmono-native-unified.dylib  -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-native-compat.a       $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmono-native-compat.a       -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-native-unified.a      $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmono-native-unified.a      -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmono-profiler-log-static.a $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmono-profiler-log-static.a -create -output $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.a
+	$(ios_PLATFORM_BIN)/lipo $(TOP)/sdks/out/ios-simwatch-$(CONFIGURATION)/lib/libmonosgen-2.0.a             $(TOP)/sdks/out/ios-simwatch64-$(CONFIGURATION)/lib/libmonosgen-2.0.a             -create -output $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.a
 
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmonosgen-2.0.dylib        $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-profiler-log.dylib   $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib
@@ -561,20 +701,20 @@ $(ios_LIBS_DIR): package-ios-target32 package-ios-target32s package-ios-target64
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-compat.dylib  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
 	$(ios_PLATFORM_BIN)/install_name_tool -id @rpath/libmono-native-unified.dylib $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/ios-sim/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/ios-sim/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/ios-sim/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/ios-sim/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/ios-sim/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/ios-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/ios-sim/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/tvos-sim/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/tvos-sim/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/tvos-sim/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/tvos-sim/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/tvos-sim/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/tvos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/tvos-sim/libmono-native-unified.dylib
 
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
-	$(ios_PLATFORM_BIN)/dsymutil -t 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib.dSYM        $(ios_LIBS_DIR)/watchos-sim/libmonosgen-2.0.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib.dSYM   $(ios_LIBS_DIR)/watchos-sim/libmono-profiler-log.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib.dSYM  $(ios_LIBS_DIR)/watchos-sim/libmono-native-compat.dylib
+	$(ios_PLATFORM_BIN)/dsymutil -num-threads 4 -o $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib.dSYM $(ios_LIBS_DIR)/watchos-sim/libmono-native-unified.dylib
 
 $(ios_SOURCES_DIR)/mcs/build/common/Consts.cs:  # we use this as a sentinel file to avoid rsyncing everything on each build (slows down iterating)
 	mkdir -p $(ios_SOURCES_DIR)
@@ -595,4 +735,18 @@ $(ios_MONO_VERSION): $(TOP)/configure.ac
 ##
 # BCL builds
 ##
+ifndef DISABLE_CLASSIC
 $(eval $(call BclTemplate,ios,monotouch monotouch_runtime monotouch_tv monotouch_tv_runtime monotouch_watch monotouch_watch_runtime monotouch_tools,monotouch monotouch_tv monotouch_watch))
+endif
+
+ifdef ENABLE_NETCORE
+$(ios_NETCORE_LIBS_DIR): package-ios-netcore_target32 package-ios-netcore_target32s package-ios-netcore_target64 package-ios-netcore_targettv package-ios-netcore_targetwatch package-ios-netcore_targetwatch64_32 package-ios-netcore_sim32 package-ios-netcore_sim64 package-ios-netcore_simtv package-ios-netcore_simwatch
+	cp $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/runtime/netcoreapp-iOSSimulator-Debug-appleuniversal/System.*.dylib $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/runtime/netcoreapp-iOSSimulator-Debug-appleuniversal/System.*.a $(TOP)/sdks/out/ios-netcore_sim64-$(CONFIGURATION)/lib
+	cp $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/runtime/netcoreapp-iOSDevice-Debug-appleuniversal/System.*.dylib $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/runtime/netcoreapp-iOSDevice-Debug-appleuniversal/System.*.a $(TOP)/sdks/out/ios-netcore_target64-$(CONFIGURATION)/lib
+	mkdir -p $(TOP)/sdks/out/ios-netcore_libs/ios/
+	cp $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/runtime/netcoreapp-iOSSimulator-Debug-appleuniversal/*.dll $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/runtime/netcoreapp-iOSSimulator-Debug-appleuniversal/*.pdb $(TOP)/sdks/out/ios-netcore_libs/ios/
+	cp $(TOP)/sdks/builds/ios-netcore_sim64-$(CONFIGURATION)/netcore/config.make $(TOP)/netcore
+	$(MAKE) -C $(TOP)/netcore bcl
+	cp $(TOP)/netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.dll $(TOP)/sdks/out/ios-netcore_libs/ios/
+	cp $(TOP)/netcore/System.Private.CoreLib/bin/x64/System.Private.CoreLib.pdb $(TOP)/sdks/out/ios-netcore_libs/ios/
+endif

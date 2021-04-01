@@ -63,6 +63,12 @@ mono_md5_final (MonoMD5Context *ctx, guchar digest[16])
 	CC_MD5_Final (digest, ctx);
 }
 
+uint64_t
+mono_md5_ctx_byte_length (MonoMD5Context *ctx)
+{
+	return ctx->num;
+}
+
 #if defined(__APPLE__) && defined(__clang__)
 #pragma clang diagnostic pop
 #endif
@@ -233,7 +239,13 @@ mono_md5_final (MonoMD5Context *ctx, guchar digest[16])
 	memcpy (digest, ctx->buf, 16);
 }
 
-
+uint64_t
+mono_md5_ctx_byte_length (MonoMD5Context *ctx)
+{
+	uint64_t lo = ((uint64_t)ctx->bits[0]) >> 3;
+	uint64_t hi = ((uint64_t)ctx->bits[1]) << 29;
+	return hi + lo;
+}
 
 
 /* The four core functions - F1 is optimized somewhat */
@@ -256,7 +268,7 @@ mono_md5_final (MonoMD5Context *ctx, guchar digest[16])
 static void 
 md5_transform (guint32 buf[4], const guint32 in[16])
 {
-	register guint32 a, b, c, d;
+	guint32 a, b, c, d;
 	
 	a = buf[0];
 	b = buf[1];

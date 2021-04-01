@@ -9,4 +9,7 @@ partial class SR
 	public const string SynchronizedCollectionWrongType1 = "A value of type '{0}' cannot be added to the generic collection, because the collection has been parameterized with a different type.";
 	public const string SynchronizedCollectionWrongTypeNull = "A null value cannot be added to the generic collection, because the collection has been parameterized with a value type.";
 	public const string ValueMustBeInRange = "The value of this argument must fall within the range {0} to {1}.";
+	public const string XmlLangAttributeMissing = "Required xml:lang attribute value is missing.";
+	public const string InvalidXmlQualifiedName = "Expected XML qualified name, found '{0}'";
+	public const string UnboundPrefixInQName = "Unbound prefix used in qualified name '{0}'.";
 }

@@ -20,6 +20,7 @@
 #include <mono/metadata/metadata-internals.h>
 #include <mono/metadata/security.h>
 #include <mono/utils/strenc.h>
+#include <mono/utils/w32subset.h>
 #include "reflection-internals.h"
 #include "icall-decl.h"
 
@@ -42,19 +43,23 @@
 
 #if defined(__GNUC__)
 
+#ifdef HAVE_GRP_H
 #ifndef HAVE_GETGRGID_R
 	#warning Non-thread safe getgrgid being used!
 #endif
 #ifndef HAVE_GETGRNAM_R
 	#warning Non-thread safe getgrnam being used!
 #endif
+#endif
+
+#ifdef HAVE_PWD_H
 #ifndef HAVE_GETPWNAM_R
 	#warning Non-thread safe getpwnam being used!
 #endif
 #ifndef HAVE_GETPWUID_R
 	#warning Non-thread safe getpwuid being used!
 #endif
-
+#endif
 #endif /* defined(__GNUC__) */
 #endif /* !HOST_WIN32 */
 
@@ -362,7 +367,7 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_DuplicateToken (
 }
 #endif /* !HOST_WIN32 */
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if HAVE_API_SUPPORT_WIN32_SECURITY
 MonoBoolean
 ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken (gpointer token, MonoError *error)
 {
@@ -402,7 +407,25 @@ ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (Mo
 	return geteuid () == suid;
 #endif
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+#elif !HAVE_EXTERN_DEFINED_WIN32_SECURITY
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsImpersonationContext_SetCurrentToken (gpointer token, MonoError *error)
+{
+	g_unsupported_api ("ImpersonateLoggedOnUser");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "ImpersonateLoggedOnUser");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
+}
+
+MonoBoolean
+ves_icall_System_Security_Principal_WindowsImpersonationContext_RevertToSelf (MonoError *error)
+{
+	g_unsupported_api ("RevertToSelf");
+	mono_error_set_not_supported (error, G_UNSUPPORTED_API, "RevertToSelf");
+	SetLastError (ERROR_NOT_SUPPORTED);
+	return FALSE;
+}
+#endif /* HAVE_API_SUPPORT_WIN32_SECURITY */
 
 /* System.Security.Principal.WindowsPrincipal */
 
@@ -522,7 +545,7 @@ Protect (const gunichar2 *path, gint32 file_mode, gint32 add_dir_mode)
 #ifdef HAVE_CHMOD
 			result = (chmod (utf8_name, mode) == 0);
 #else
-			result = -1;
+			result = -1; // FIXME Huh? This must be TRUE or FALSE.
 #endif
 		}
 		g_free (utf8_name);
@@ -531,14 +554,14 @@ Protect (const gunichar2 *path, gint32 file_mode, gint32 add_dir_mode)
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_CanSecure (const gunichar2 *path, MonoError *error)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_CanSecure (const gunichar2 *path)
 {
 	/* we assume some kind of security is applicable outside Windows */
 	return TRUE;
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (const gunichar2 *path, MonoError *error)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (const gunichar2 *path)
 {
 	gboolean ret = FALSE;
 
@@ -548,7 +571,7 @@ ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsMachineProtected (cons
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const gunichar2 *path, MonoError *error)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const gunichar2 *path)
 {
 	gboolean ret = FALSE;
 
@@ -558,7 +581,7 @@ ves_icall_Mono_Security_Cryptography_KeyPairPersistence_IsUserProtected (const g
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gunichar2 *path, MonoError *error)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gunichar2 *path)
 {
 	gboolean ret = FALSE;
 
@@ -568,7 +591,7 @@ ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectMachine (const gu
 }
 
 MonoBoolean
-ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (const gunichar2 *path, MonoError *error)
+ves_icall_Mono_Security_Cryptography_KeyPairPersistence_ProtectUser (const gunichar2 *path)
 {
 	gboolean ret = FALSE;
 	

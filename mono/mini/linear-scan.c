@@ -268,11 +268,11 @@ compare_by_interval_start_pos_func (gconstpointer a, gconstpointer b)
 #if 0
 #define LSCAN_DEBUG(a) do { a; } while (0)
 #else
-#define LSCAN_DEBUG(a)
+#define LSCAN_DEBUG(a) do { } while (0) /* non-empty to avoid warning */
 #endif
 
 /* FIXME: This is x86 only */
-static inline guint32
+static guint32
 regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
 {
 	MonoInst *ins = cfg->varinfo [vmv->idx];

@@ -41,6 +41,10 @@
 #include <mono/utils/mach-support.h>
 #endif
 
+#if _MSC_VER
+#pragma warning(disable:4312) // FIXME pointer cast to different size
+#endif
+
 /*
 Mutex that makes sure only a single thread can be suspending others.
 Suspend is a very racy operation since it requires restarting until
@@ -79,7 +83,7 @@ static size_t pending_suspends;
 
 static mono_mutex_t join_mutex;
 
-#define mono_thread_info_run_state(info) (((MonoThreadInfo*)info)->thread_state & THREAD_STATE_MASK)
+#define mono_thread_info_run_state(info) (((MonoThreadInfo*)info)->thread_state.state)
 
 /*warn at 50 ms*/
 #define SLEEP_DURATION_BEFORE_WARNING (50)
@@ -337,7 +341,7 @@ mono_threads_wait_pending_operations (void)
 
 //Thread initialization code
 
-static inline void
+static void
 mono_hazard_pointer_clear_all (MonoThreadHazardPointers *hp, int retain)
 {
 	if (retain != 0)
@@ -438,6 +442,53 @@ thread_handle_destroy (gpointer data)
 	g_free (thread_handle);
 }
 
+static gboolean native_thread_id_main_thread_known;
+static MonoNativeThreadId native_thread_id_main_thread;
+
+/**
+ * mono_native_thread_id_main_thread_known:
+ *
+ * If the main thread of the process has interacted with Mono (in the sense
+ * that it has a MonoThreadInfo associated with it), return \c TRUE and write
+ * its MonoNativeThreadId to \c main_thread_tid.
+ *
+ * Otherwise return \c FALSE.
+ */
+gboolean
+mono_native_thread_id_main_thread_known (MonoNativeThreadId *main_thread_tid)
+{
+	if (!native_thread_id_main_thread_known)
+		return FALSE;
+	g_assert (main_thread_tid);
+	*main_thread_tid = native_thread_id_main_thread;
+	return TRUE;
+}
+
+/*
+ * Saves the MonoNativeThreadId (on Linux pthread_t) of the current thread if
+ * it is the main thread.
+ *
+ * The main thread is (on Linux) the one whose OS thread id (on Linux pid_t) is
+ * equal to the process id.
+ *
+ * We have to do this at thread registration time because in embedding
+ * scenarios we can't count on the main thread to be the one that calls
+ * mono_jit_init, or other runtime initialization functions.
+ */
+static void
+native_thread_set_main_thread (void)
+{
+	if (native_thread_id_main_thread_known)
+		return;
+#if defined(__linux__)
+	if (mono_native_thread_os_id_get () == (guint64)getpid ()) {
+		native_thread_id_main_thread = mono_native_thread_id_get ();
+		mono_memory_barrier ();
+		native_thread_id_main_thread_known = TRUE;
+	}
+#endif
+}
+
 static gboolean
 register_thread (MonoThreadInfo *info)
 {
@@ -447,6 +498,7 @@ register_thread (MonoThreadInfo *info)
 
 	info->small_id = mono_thread_info_register_small_id ();
 	mono_thread_info_set_tid (info, mono_native_thread_id_get ());
+	native_thread_set_main_thread ();
 
 	info->handle = g_new0 (MonoThreadHandle, 1);
 	mono_refcount_init (info->handle, thread_handle_destroy);
@@ -464,7 +516,7 @@ register_thread (MonoThreadInfo *info)
 	info->stack_end = staddr + stsize;
 	info->stackdata = g_byte_array_new ();
 
-	info->internal_thread_gchandle = G_MAXUINT32;
+	info->internal_thread_gchandle = NULL;
 
 	info->profiler_signal_ack = 1;
 
@@ -586,6 +638,12 @@ unregister_thread (void *arg)
 	mono_thread_hazardous_try_free (info, free_thread_info);
 
 	mono_thread_small_id_free (small_id);
+	// clear the small_id thread local, in case this thread so that if it is reattached while running other TLS key dtors it will get a new small id
+#ifdef MONO_KEYWORD_THREAD
+	tls_small_id = -1;
+#else
+	mono_native_tls_set_value (small_id_key, NULL);
+#endif
 
 	mono_threads_signal_thread_handle (handle);
 
@@ -733,12 +791,12 @@ mono_thread_info_detach (void)
 }
 
 gboolean
-mono_thread_info_try_get_internal_thread_gchandle (MonoThreadInfo *info, guint32 *gchandle)
+mono_thread_info_try_get_internal_thread_gchandle (MonoThreadInfo *info, MonoGCHandle *gchandle)
 {
 	g_assertf (info, ""); // f includes __func__
 	g_assert (mono_thread_info_is_current (info));
 
-	if (info->internal_thread_gchandle == G_MAXUINT32)
+	if (info->internal_thread_gchandle == NULL)
 		return FALSE;
 
 	*gchandle = info->internal_thread_gchandle;
@@ -746,11 +804,10 @@ mono_thread_info_try_get_internal_thread_gchandle (MonoThreadInfo *info, guint32
 }
 
 void
-mono_thread_info_set_internal_thread_gchandle (MonoThreadInfo *info, guint32 gchandle)
+mono_thread_info_set_internal_thread_gchandle (MonoThreadInfo *info, MonoGCHandle gchandle)
 {
 	g_assertf (info, ""); // f includes __func__
 	g_assert (mono_thread_info_is_current (info));
-	g_assert (gchandle != G_MAXUINT32);
 	info->internal_thread_gchandle = gchandle;
 }
 
@@ -759,7 +816,7 @@ mono_thread_info_unset_internal_thread_gchandle (THREAD_INFO_TYPE *info)
 {
 	g_assertf (info, ""); // f includes __func__
 	g_assert (mono_thread_info_is_current (info));
-	info->internal_thread_gchandle = G_MAXUINT32;
+	info->internal_thread_gchandle = NULL;
 }
 
 /*
@@ -1569,8 +1626,10 @@ mono_thread_info_get_stack_bounds (guint8 **staddr, size_t *stsize)
 	/* Sanity check the result */
 	g_assert ((current > *staddr) && (current < *staddr + *stsize));
 
+#ifndef TARGET_WASM
 	/* When running under emacs, sometimes staddr is not aligned to a page size */
 	*staddr = (guint8*)((gssize)*staddr & ~(mono_pagesize () - 1));
+#endif
 }
 
 gboolean
@@ -1598,7 +1657,7 @@ sleep_interrupt (gpointer data)
 	mono_coop_mutex_unlock (&sleep_mutex);
 }
 
-static inline guint32
+static guint32
 sleep_interruptable (guint32 ms, gboolean *alerted)
 {
 	gint64 now, end;
@@ -1674,8 +1733,8 @@ mono_thread_info_sleep (guint32 ms, gboolean *alerted)
 #endif
 		} while (1);
 	} else {
-		int ret;
 #if defined (HAVE_CLOCK_NANOSLEEP) && !defined(__PASE__)
+		int ret;
 		struct timespec start, target;
 
 		/* Use clock_nanosleep () to prevent time drifting problems when nanosleep () is interrupted by signals */
@@ -1696,6 +1755,7 @@ mono_thread_info_sleep (guint32 ms, gboolean *alerted)
 #elif HOST_WIN32
 		Sleep (ms);
 #else
+		int ret;
 		struct timespec req, rem;
 
 		req.tv_sec = ms / 1000;

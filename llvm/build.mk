@@ -3,11 +3,13 @@ abs_top_srcdir ?= $(abspath $(CURDIR)/..)
 LLVM_BUILD ?= $(abspath $(abs_top_srcdir)/llvm/build)
 LLVM_PREFIX ?= $(abspath $(abs_top_srcdir)/llvm/usr)
 
-# LLVM_BRANCH  := $(shell git -C "$(abs_top_srcdir)/external/llvm" rev-parse --abbrev-ref HEAD)
-LLVM_VERSION := $(shell git -C "$(abs_top_srcdir)/external/llvm" rev-parse HEAD)
+# LLVM_BRANCH  := $(shell git -C "$(abs_top_srcdir)/external/llvm-project/llvm" rev-parse --abbrev-ref HEAD)
+LLVM_VERSION := $(shell git -C "$(abs_top_srcdir)/external/llvm-project/llvm" rev-parse HEAD)
 
 # FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(LLVM_BRANCH)/llvm-osx64-$(LLVM_VERSION).tar.gz
 LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(LLVM_VERSION).tar.gz"
+
+CPU_COUNT := $(shell getconf _NPROCESSORS_ONLN || echo 8)
 
 CMAKE := $(or $(CMAKE),$(shell which cmake))
 NINJA := $(shell which ninja)
@@ -16,7 +18,7 @@ EXTRA_LLVM_ARGS = $(if $(filter $(LLVM_TARGET),wasm32), -DLLVM_BUILD_32_BITS=On 
 	$(if $(STATIC_GCC_LIBS),-DCMAKE_EXE_LINKER_FLAGS="-static")
 
 # -DLLVM_ENABLE_LIBXML2=Off is needed because xml2 is not used and it breaks 32-bit builds on 64-bit Linux hosts
-$(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/llvm/CMakeLists.txt
+$(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/llvm-project/llvm/CMakeLists.txt
 	mkdir -p $(LLVM_BUILD) $(LLVM_PREFIX)
 	cd $(LLVM_BUILD) && $(CMAKE) \
 		$(if $(NINJA),-G Ninja) \
@@ -29,7 +31,7 @@ $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile): $(abs_top_srcdir)/external/ll
 		-DLLVM_TOOLS_TO_BUILD="opt;llc;llvm-config;llvm-dis" \
 		-DLLVM_TARGETS_TO_BUILD="X86;ARM;AArch64" \
 		$(EXTRA_LLVM_ARGS)	\
-		-DLLVM_ENABLE_ASSERTIONS=$(if $(INTERNAL_LLVM_ASSERTS),On,Off) \
+		-DLLVM_ENABLE_ASSERTIONS=$(ENABLE_ASSERTS) \
 		-DLLVM_ENABLE_LIBXML2=Off \
 		-DHAVE_FUTIMENS=0 \
 		$(LLVM_CMAKE_ARGS) \
@@ -43,7 +45,7 @@ configure-llvm: $(LLVM_BUILD)/$(if $(NINJA),build.ninja,Makefile)
 
 .PHONY: build-llvm
 build-llvm: configure-llvm
-	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE)) -C $(LLVM_BUILD)
+	DESTDIR="" $(if $(NINJA),$(NINJA),$(MAKE) -j$(CPU_COUNT)) -C $(LLVM_BUILD)
 
 .PHONY: install-llvm
 install-llvm: build-llvm

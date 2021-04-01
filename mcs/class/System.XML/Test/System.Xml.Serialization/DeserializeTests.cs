@@ -14,6 +14,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using NUnit.Framework;
@@ -1686,28 +1687,40 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual ("b", d.Extra[1]);
 		}
 
-		[Test] // PR #11194
-		public void TestDerrivedClassProperty ()
+		// https://github.com/mono/mono/issues/16918
+		[Test]
+		public void Bug16918 ()
 		{
-			var data = "<layout width=\".25\" height =\".25\" x=\"0\" y=\"0\" id=\"portrait\" class=\"render\"><background color=\"white\"><div x=\".03\" y=\".05\" width=\".94\" height =\".9\" layout=\"proportional_rows\" paddingX=\".01\" paddingY=\".02\"><background color=\"black\"></background><background color=\"gray\" padding=\".1\"><label color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">Test UI</label></background><br brSize=\"1\" /><background class=\"back,Lab\" color=\"green\"><label class=\"Lab\" color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">GREEN</label></background><background color=\"red\"><label class=\"Lab\" color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">RED</label></background><background color=\"blue\"><label class=\"Lab\" color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">TLUE</label></background><background color=\"blue\"><label class=\"Lab\" color=\"white\" font=\"emulogic.ttf\" fontSize=\"15\">BLUE</label></background></div></background></layout>";
+			PropertiesWithSameNameAsTheirType testObject = new PropertiesWithSameNameAsTheirType ()
+			{
+				E1 = E1.Two,
+				E2 = E2.Two,
+				E3 = E3.Two,
+				E4 = E4.Two,
+				E5 = E5.Two
+			};
 
-			XmlAttributeOverrides overrides = PR11194.GenerateLayoutOverrides<PR11194ChildLo>();
+			XmlSerializer serializer = new XmlSerializer (typeof (PropertiesWithSameNameAsTheirType));
 
-			var result = Deserialize(typeof(PR11194ChildLo), data, overrides) as PR11194ChildLo;
+			// serialize
+			string serializedObject;
+			using (MemoryStream memoryStream = new MemoryStream ())
+			{
+				serializer.Serialize (memoryStream, testObject);
+				serializedObject = Encoding.UTF8.GetString (memoryStream.ToArray ());
+			}
 
-			PR11194Parent2 child;
-			Assert.IsNotNull(result, "#11194_1");
-			Assert.AreEqual(1, result.children.Count, "#11194_2");
-			child = result.children[0] as PR11194Parent2;
-			Assert.IsNotNull(child, "#11194_3");
-			Assert.AreEqual(1, child.children.Count, "#11194_4");
-			child = child.children[0] as PR11194Parent2;
-			Assert.IsNotNull(child, "#11194_5");
-			Assert.AreEqual(7, child.children.Count, "#11194_6");
-			child = child.children[1] as PR11194Parent2;
-			Assert.IsNotNull(child, "#11194_7");
-			Assert.AreEqual(1, child.children.Count, "#11194_8");
-			Assert.AreEqual("PR11194ChildL", child.children[0].GetType().Name, "#11194_9");
+			PropertiesWithSameNameAsTheirType deserializedObject;
+			using (MemoryStream memoryStream = new MemoryStream (Encoding.UTF8.GetBytes (serializedObject)))
+			{
+				deserializedObject = (PropertiesWithSameNameAsTheirType)serializer.Deserialize (memoryStream);
+			}
+
+			Assert.AreEqual (testObject.E1, deserializedObject.E1, "#1");
+			Assert.AreEqual (testObject.E2, deserializedObject.E2, "#2");
+			Assert.AreEqual (testObject.E3, deserializedObject.E3, "#3");
+			Assert.AreEqual (testObject.E4, deserializedObject.E4, "#4");
+			Assert.AreEqual (testObject.E5, deserializedObject.E5, "#5");
 		}
 	}
 }

@@ -1,0 +1,216 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - 20*-*
+  paths:
+    include:
+    - '*'
+    - docs/manpages/*
+    exclude:
+    - .github/*
+    - docs/*
+    - CODE-OF-CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE.TXT
+    - PATENTS.TXT
+    - README.md
+    - SECURITY.md
+    - THIRD-PARTY-NOTICES.TXT
+
+pr:
+  branches:
+    include:
+    - main
+    - 20*-*
+  paths:
+    include:
+    - '*'
+    - docs/manpages/*
+    exclude:
+    - .github/*
+    - docs/*
+    - CODE-OF-CONDUCT.md
+    - CONTRIBUTING.md
+    - LICENSE.TXT
+    - PATENTS.TXT
+    - README.md
+    - SECURITY.md
+    - THIRD-PARTY-NOTICES.TXT
+
+variables:
+  - name: pullRequestCITags
+    ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      value: 'retry-flaky-tests,pull-request'
+    ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+      value: ''
+
+
+jobs:
+
+#
+# Linux armv7
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARM Hard Float
+    os: linux
+    arch: armhf
+    timeoutInMinutes: 180
+
+#
+# Linux aarch64
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux ARM64
+    os: linux
+    arch: aarch64
+
+#
+# Linux x64
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64
+    os: linux
+    arch: amd64
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 - prefix sanity checks
+    os: linux
+    arch: amd64
+    additionalCITags: make-install
+    publishTestResults: false
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 Acceptance Tests
+    os: linux
+    arch: amd64
+    additionalCITags: acceptance-tests
+    publishTestResults: false
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 All Profiles Build
+    os: linux
+    arch: amd64
+    additionalCITags: all-profiles,apidiff,csprojdiff,no-tests
+    additionalSteps:
+      - publish: mcs/apidiff
+        artifact: ApiDiff
+        displayName: Public API Diff
+
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux x64 Bitcode
+#    os: linux
+#    arch: amd64
+#    additionalCITags: bitcode
+#
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux x64 Bitcode+Interpreter
+#    os: linux
+#    arch: amd64
+#    additionalCITags: bitcodeinterp
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 C++
+    os: linux
+    arch: amd64
+    additionalCITags: cxx
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 Checked Private Types Build
+    os: linux
+    arch: amd64
+    additionalCITags: checked-all,no-tests
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 Coop Suspend
+    os: linux
+    arch: amd64
+    additionalCITags: coop-suspend,checked-coop
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 FullAOT
+    os: linux
+    arch: amd64
+    additionalCITags: fullaot
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 FullAOT+Interpreter
+    os: linux
+    arch: amd64
+    additionalCITags: fullaotinterp
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 FullAOT+Interpreter+LLVM
+    os: linux
+    arch: amd64
+    additionalCITags: fullaotinterp_llvm
+
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux x64 FullAOT+LLVM
+#    os: linux
+#    arch: amd64
+#    additionalCITags: fullaot_llvm
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 Interpreter
+    os: linux
+    arch: amd64
+    additionalCITags: interpreter
+    timeoutInMinutes: 180
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Linux x64 mcs
+    os: linux
+    arch: amd64
+    additionalCITags: mcs-compiler,no-tests
+
+
+#
+# Linux i386
+#
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux i386
+#    os: linux
+#    arch: i386
+#
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux i386 Interpreter
+#    os: linux
+#    arch: i386
+#    additionalCITags: interpreter
+
+#
+# OSX x64
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: OS X x64
+    os: osx
+    arch: amd64
+
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: OS X x64 C++
+    os: osx
+    arch: amd64
+    additionalCITags: cxx

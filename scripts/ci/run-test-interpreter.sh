@@ -3,9 +3,17 @@
 export TESTCMD=`dirname "${BASH_SOURCE[0]}"`/run-step.sh
 export TEST_WITH_INTERPRETER=1
 
+#if [[ ${CI_TAGS} == *'win-'* ]]
+#then ${TESTCMD} --label=interpreter-whitebox --skip;
+#else ${TESTCMD} --label=interpreter-whitebox --timeout=10m make -C mono/mini interp-whitebox;
+#fi
 ${TESTCMD} --label=interpreter-regression --timeout=10m make -C mono/mini richeck
 ${TESTCMD} --label=mixedmode-regression --timeout=10m make -C mono/mini mixedcheck
-${TESTCMD} --label=fullaotmixed-regression --timeout=20m make -C mono/mini fullaotmixedcheck
+# Interp entry trampolines not yet implemented on x86. This has some full aot limitations
+if [[ ${CI_TAGS} == *'i386'* ]]
+then ${TESTCMD} --label=fullaotmixed-regression --skip
+else ${TESTCMD} --label=fullaotmixed-regression --timeout=20m make -C mono/mini fullaotmixedcheck
+fi
 ${TESTCMD} --label=compile-runtime-tests --timeout=40m make -w -C mono/tests -j ${CI_CPU_COUNT} test
 ${TESTCMD} --label=runtime-interp --timeout=160m make -w -C mono/tests -k testinterp V=1
 ${TESTCMD} --label=corlib --timeout=160m make -w -C mcs/class/corlib run-test V=1

@@ -317,18 +317,23 @@ namespace System.Xaml
 				// FIXME: is this rule correct?
 				var v = pair.Value;
 				if (!String.IsNullOrEmpty (v) && v [0] == '{') {
-					var pai = ParsedMarkupExtensionInfo.Parse (v, xaml_namespace_resolver, sctx);
-					yield return Node (XamlNodeType.StartObject, pai.Type);
-					foreach (var xepair in pai.Arguments) {
-						yield return Node (XamlNodeType.StartMember, xepair.Key);
-						if (xepair.Value is List<string>)
-							foreach (var s in (List<string>) xepair.Value)
-								yield return Node (XamlNodeType.Value, s);
-						else
-							yield return Node (XamlNodeType.Value, xepair.Value);
-						yield return Node (XamlNodeType.EndMember, xepair.Key);
+					if (v.Length > 1 && v [1] == '}') {
+						//Escaped value
+						yield return Node (XamlNodeType.Value, v.Substring (2));
+					} else {
+						var pai = ParsedMarkupExtensionInfo.Parse (v, xaml_namespace_resolver, sctx);
+						yield return Node (XamlNodeType.StartObject, pai.Type);
+						foreach (var xepair in pai.Arguments) {
+							yield return Node (XamlNodeType.StartMember, xepair.Key);
+							if (xepair.Value is List<string>)
+								foreach (var s in (List<string>) xepair.Value)
+									yield return Node (XamlNodeType.Value, s);
+							else
+								yield return Node (XamlNodeType.Value, xepair.Value);
+							yield return Node (XamlNodeType.EndMember, xepair.Key);
+						}
+						yield return Node (XamlNodeType.EndObject, pai.Type);
 					}
-					yield return Node (XamlNodeType.EndObject, pai.Type);
 				}
 				else
 					yield return Node (XamlNodeType.Value, pair.Value);

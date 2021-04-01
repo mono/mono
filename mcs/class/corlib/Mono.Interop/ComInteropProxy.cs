@@ -50,10 +50,10 @@ namespace Mono.Interop
 		private string type_name;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void AddProxy (IntPtr pItf, ComInteropProxy proxy);
+		private extern static void AddProxy (IntPtr pItf, ref ComInteropProxy proxy);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static ComInteropProxy FindProxy (IntPtr pItf);
+		internal extern static void FindProxy (IntPtr pItf, ref ComInteropProxy proxy);
 
 		// Private. Objects must be created with CreateProxy.
 		ComInteropProxy (Type t)
@@ -68,8 +68,12 @@ namespace Mono.Interop
 		{
 			// called from unmanaged code after .ctor is invoked
 			// we need .ctor to create unmanaged object and thus IUnknown property value
-			if (FindProxy (com_object.IUnknown) == null)
-				AddProxy (com_object.IUnknown, this);
+			ComInteropProxy proxy = null;
+			FindProxy (com_object.IUnknown, ref proxy);
+			if (proxy == null) {
+				var self = this;
+				AddProxy (com_object.IUnknown, ref self);
+			}
 			else
 				System.Threading.Interlocked.Increment (ref ref_count);
 		}
@@ -92,7 +96,8 @@ namespace Mono.Interop
 			Guid iid = __ComObject.IID_IUnknown;
 			int hr = Marshal.QueryInterface (pItf, ref iid, out ppv);
 			Marshal.ThrowExceptionForHR (hr);
-			ComInteropProxy obj = FindProxy (ppv);
+			ComInteropProxy obj = null;
+			FindProxy (ppv, ref obj);
 			if (obj == null) {
 				Marshal.Release (ppv);
 				return new ComInteropProxy (ppv);
@@ -110,7 +115,8 @@ namespace Mono.Interop
 		{
 			IntPtr iunknown = __ComObject.CreateIUnknown (t);
 			ComInteropProxy proxy;
-			ComInteropProxy cachedProxy = FindProxy (iunknown);
+			ComInteropProxy cachedProxy = null;
+			FindProxy (iunknown, ref cachedProxy);
 			if (cachedProxy != null) {
 				// check that the COM type of the cached proxy matches
 				// the requested type. See 2nd part of bug #520437.

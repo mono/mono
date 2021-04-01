@@ -341,6 +341,38 @@ namespace Mono.Unix.Native {
 			return fopen_mode;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromMremapFlags")]
+		private static extern int FromMremapFlags (MremapFlags value, out UInt64 rval);
+
+		public static bool TryFromMremapFlags (MremapFlags value, out UInt64 rval)
+		{
+			return FromMremapFlags (value, out rval) == 0;
+		}
+
+		public static UInt64 FromMremapFlags (MremapFlags value)
+		{
+			UInt64 rval;
+			if (FromMremapFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToMremapFlags")]
+		private static extern int ToMremapFlags (UInt64 value, out MremapFlags rval);
+
+		public static bool TryToMremapFlags (UInt64 value, out MremapFlags rval)
+		{
+			return ToMremapFlags (value, out rval) == 0;
+		}
+
+		public static MremapFlags ToMremapFlags (UInt64 value)
+		{
+			MremapFlags rval;
+			if (ToMremapFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
 		[DllImport (LIB, EntryPoint="Mono_Posix_FromStat")]
 		private static extern int FromStat (ref Stat source, IntPtr destination);
 

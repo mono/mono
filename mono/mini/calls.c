@@ -13,6 +13,7 @@
 #include "llvmonly-runtime.h"
 #include "mini-llvm.h"
 #include "jit-icalls.h"
+#include "aot-compiler.h"
 #include <mono/metadata/abi-details.h>
 #include <mono/metadata/class-abi-details.h>
 #include <mono/utils/mono-utils-debug.h>
@@ -425,9 +426,15 @@ can_enter_interp (MonoCompile *cfg, MonoMethod *method, gboolean virtual_)
 {
 	if (method->wrapper_type)
 		return FALSE;
-	/* Virtual calls from corlib can go outside corlib */
-	if ((m_class_get_image (method->klass) == m_class_get_image (cfg->method->klass)) && !virtual_)
-		return FALSE;
+
+	if (m_class_get_image (method->klass) == m_class_get_image (cfg->method->klass)) {
+		/* When using AOT profiling, the method might not be AOTed */
+		if (cfg->compile_aot && mono_aot_can_enter_interp (method))
+			return TRUE;
+		/* Virtual calls from corlib can go outside corlib */
+		if (!virtual_)
+			return FALSE;
+	}
 
 	/* See needs_extra_arg () in mini-llvm.c */
 	if (method->string_ctor)
@@ -589,6 +596,9 @@ mini_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 
 		if (!virtual_ && cfg->llvm_only && cfg->interp && !tailcall && can_enter_interp (cfg, method, FALSE)) {
 			MonoInst *ftndesc = mini_emit_get_rgctx_method (cfg, -1, method, MONO_RGCTX_INFO_METHOD_FTNDESC);
+
+			/* Need wrappers for this signature to be able to enter interpreter */
+			cfg->interp_in_signatures = g_slist_prepend_mempool (cfg->mempool, cfg->interp_in_signatures, sig);
 
 			/* This call might need to enter the interpreter so make it indirect */
 			return mini_emit_llvmonly_calli (cfg, sig, args, ftndesc);

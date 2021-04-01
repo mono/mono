@@ -38,8 +38,8 @@ static const wchar_t *logFileName = L".//mono.log"; // FIXME double slash
  * 	@level - GLogLevelFlags value
  * 	@returns The equivalent character identifier
  */
-static inline char 
-mapLogFileLevel(GLogLevelFlags level) 
+static char
+mapLogFileLevel (GLogLevelFlags level)
 {
 	if (level & G_LOG_LEVEL_ERROR)
 		return ('E');
@@ -120,4 +120,11 @@ mono_log_close_syslog()
 		logFile = NULL;
 	}
 }
+
+#else
+
+#include <mono/utils/mono-compiler.h>
+
+MONO_EMPTY_SOURCE_FILE (mono_log_windows);
+
 #endif

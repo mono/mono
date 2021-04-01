@@ -23,3 +23,7 @@ ifeq ($(HOST_PLATFORM),macos)
 MONO_FEATURE_APPLETLS=1
 ENABLE_GSS=1
 endif
+
+ifeq ($(HOST_PLATFORM),linux)
+ENABLE_GSS=1
+endif

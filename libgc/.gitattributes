@@ -1,4 +1,0 @@
-ltconfig	crlf=input
-install-sh	crlf=input
-/BCC_MAKEFILE -crlf
-/digimars.mak -crlf

@@ -122,7 +122,7 @@ namespace System.Net.Http
 			base.Dispose (disposing);
 		}
 
-		protected internal override async Task SerializeToStreamAsync (Stream stream, TransportContext context)
+		protected override async Task SerializeToStreamAsync (Stream stream, TransportContext context)
 		{
 			// RFC 2046
 			//
@@ -156,7 +156,7 @@ namespace System.Net.Http
 				sb.Clear ();
 				await stream.WriteAsync (buffer, 0, buffer.Length).ConfigureAwait (false);
 
-				await c.SerializeToStreamAsync (stream, context).ConfigureAwait (false);
+				await c.SerializeToStreamAsync_internal (stream, context).ConfigureAwait (false);
 					
 				if (i != nested_content.Count - 1) {
 					sb.Append ('\r').Append ('\n');

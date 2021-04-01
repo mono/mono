@@ -6,6 +6,7 @@
 #define __MONO_ERROR_INTERNALS_H__
 
 #include <mono/metadata/object-forward.h>
+#include <mono/utils/mono-forward.h>
 #include "mono/utils/mono-compiler.h"
 
 /*Keep in sync with MonoError*/
@@ -32,7 +33,7 @@ typedef union _MonoErrorInternal {
 			/* Valid if error_code == MONO_ERROR_EXCEPTION_INSTANCE.
 			 * Generic error specified by a managed instance.
 			 */
-			uint32_t instance_handle;
+			MonoGCHandle instance_handle;
 		} exn;
 		const char *full_message;
 		const char *full_message_with_fields;
@@ -77,6 +78,7 @@ error_init
 
 error_init_reuse
 	This indicates an error has been cleaned up and will be reused.
+	A common usage is to reduce stack pressure, e.g. in the interpreter.
 	Consider also changing mono_error_cleanup to call error_init_internal,
 	and then remove these.
 
@@ -96,6 +98,17 @@ Different names indicate different scenarios, but the same code.
 #define error_init_internal(error) 	((void)((error)->init = 0))
 #define MONO_API_ERROR_INIT(error) 	error_init_internal (error)
 #define error_init_reuse(error) 	error_init_internal (error)
+
+#define ERROR_LOCAL_BEGIN(local, parent, skip_overwrite) do { \
+MonoError local; \
+gboolean local ## _overwrite_temp = skip_overwrite; \
+error_init_internal (&local); \
+if (!local ## _overwrite_temp) \
+	parent = &local; \
+
+#define ERROR_LOCAL_END(local) if (!local ## _overwrite_temp) \
+	mono_error_cleanup (&local); \
+} while (0) \
 
 // Historical deferred initialization was called error_init.
 
@@ -265,6 +278,11 @@ mono_error_set_cannot_unload_appdomain (MonoError *error, const char *message)
 	mono_error_set_generic_error (error, "System", "CannotUnloadAppDomainException", "%s", message);
 }
 
+static inline void
+mono_error_set_platform_not_supported (MonoError *error, const char *message)
+{
+	mono_error_set_generic_error (error, "System", "PlatformNotSupportedException", "%s", message);
+}
 
 MonoException*
 mono_error_prepare_exception (MonoError *error, MonoError *error_out);

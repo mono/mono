@@ -19,7 +19,7 @@ typedef struct BundleMonoAPI
 	void (*mono_register_bundled_assemblies) (const MonoBundledAssembly **assemblies);
 	void (*mono_register_config_for_assembly) (const char* assembly_name, const char* config_xml);
 	void (*mono_jit_set_aot_mode) (MonoAotMode mode);
-	void (*mono_aot_register_module) (void* aot_info);
+	void (*mono_aot_register_module) (void** aot_info);
 	void (*mono_config_parse_memory) (const char *buffer);
 	void (*mono_register_machine_config) (const char *config_xml);
 } BundleMonoAPI;

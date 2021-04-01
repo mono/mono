@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Generate a heap visualization for SGen from the heap dump written by
 # mono if the MONO_GC_DEBUG is set to something like

@@ -8,9 +8,15 @@
   },
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mono/mono.git"
+  },
   "dependencies": {
-    "jsvu": "git+https://github.com/kjpou1/jsvu.git#mono-wasm",
+    "jsvu": "git+https://github.com/GoogleChromeLabs/jsvu.git",
     "lite-server": "^2.5.3",
+    "node": "lts",
+    "npm": "^6.13.7",
     "puppeteer": "^1.17.0"
   }
 }

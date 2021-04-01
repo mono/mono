@@ -38,9 +38,6 @@
 static MiniVerifierMode verifier_mode = MONO_VERIFIER_MODE_OFF;
 static gboolean verify_all = FALSE;
 
-#define CTOR_REQUIRED_FLAGS (METHOD_ATTRIBUTE_SPECIAL_NAME | METHOD_ATTRIBUTE_RT_SPECIAL_NAME)
-#define CTOR_INVALID_FLAGS (METHOD_ATTRIBUTE_STATIC)
-
 /*
  * Set the desired level of checks for the verfier.
  * 
@@ -55,37 +52,6 @@ void
 mono_verifier_enable_verify_all ()
 {
 	verify_all = TRUE;
-}
-
-static gboolean
-mono_method_is_constructor (MonoMethod *method)
-{
-	return ((method->flags & CTOR_REQUIRED_FLAGS) == CTOR_REQUIRED_FLAGS &&
-			!(method->flags & CTOR_INVALID_FLAGS) &&
-			!strcmp (".ctor", method->name));
-}
-
-static gboolean
-mono_class_has_default_constructor (MonoClass *klass)
-{
-	MonoMethod *method;
-	int i;
-
-	mono_class_setup_methods (klass);
-	if (mono_class_has_failure (klass))
-		return FALSE;
-
-	int mcount = mono_class_get_method_count (klass);
-	MonoMethod **klass_methods = m_class_get_methods (klass);
-	for (i = 0; i < mcount; ++i) {
-		method = klass_methods [i];
-		if (mono_method_is_constructor (method) &&
-			mono_method_signature_internal (method) &&
-			mono_method_signature_internal (method)->param_count == 0 &&
-			(method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) == METHOD_ATTRIBUTE_PUBLIC)
-			return TRUE;
-	}
-	return FALSE;
 }
 
 /*
@@ -152,7 +118,7 @@ is_valid_generic_instantiation (MonoGenericContainer *gc, MonoGenericContext *co
 		if ((param_info->flags & GENERIC_PARAMETER_ATTRIBUTE_REFERENCE_TYPE_CONSTRAINT) && m_class_is_valuetype (paramClass))
 			return FALSE;
 
-		if ((param_info->flags & GENERIC_PARAMETER_ATTRIBUTE_CONSTRUCTOR_CONSTRAINT) && !m_class_is_valuetype (paramClass) && !mono_class_has_default_constructor (paramClass))
+		if ((param_info->flags & GENERIC_PARAMETER_ATTRIBUTE_CONSTRUCTOR_CONSTRAINT) && !m_class_is_valuetype (paramClass) && !mono_class_has_default_constructor (paramClass, TRUE))
 			return FALSE;
 
 		if (!param_info->constraints)
@@ -2334,8 +2300,8 @@ handle_enum:
 		if (candidate->type != MONO_TYPE_FNPTR)
 			return FALSE;
 
-		left = mono_type_get_signature (target);
-		right = mono_type_get_signature (candidate);
+		left = mono_type_get_signature_internal (target);
+		right = mono_type_get_signature_internal (candidate);
 		return mono_metadata_signature_equal (left, right) && left->call_convention == right->call_convention;
 	}
 
@@ -2610,7 +2576,7 @@ mono_delegate_type_equal (MonoType *target, MonoType *candidate)
 	case MONO_TYPE_FNPTR:
 		if (candidate->type != MONO_TYPE_FNPTR)
 			return FALSE;
-		return mono_delegate_signature_equal (mono_type_get_signature (target), mono_type_get_signature (candidate), FALSE);
+		return mono_delegate_signature_equal (mono_type_get_signature_internal (target), mono_type_get_signature_internal (candidate), FALSE);
 
 	case MONO_TYPE_GENERICINST: {
 		MonoClass *target_klass;
@@ -4959,6 +4925,10 @@ mono_method_verify (MonoMethod *method, int level)
 		return NULL;
 	}
 
+	// Disable for now
+	if (TRUE)
+		return NULL;
+
 	memset (&ctx, 0, sizeof (VerifyContext));
 
 	//FIXME use mono_method_get_signature_full
@@ -6156,13 +6126,19 @@ gboolean
 mono_verifier_is_enabled_for_class (MonoClass *klass)
 {
 	MonoImage *image = m_class_get_image (klass);
-	return verify_all || (verifier_mode > MONO_VERIFIER_MODE_OFF && !(image->assembly && image->assembly->in_gac) && image != mono_defaults.corlib);
+	return verify_all || (verifier_mode > MONO_VERIFIER_PE_ONLY && !(image->assembly && image->assembly->in_gac) && image != mono_defaults.corlib);
 }
 
 gboolean
 mono_verifier_is_enabled_for_image (MonoImage *image)
 {
-	return verify_all || verifier_mode > MONO_VERIFIER_MODE_OFF;
+	return verify_all || verifier_mode > MONO_VERIFIER_PE_ONLY;
+}
+
+gboolean
+mono_verifier_is_enabled_for_pe_only ()
+{
+	return verify_all || verifier_mode == MONO_VERIFIER_PE_ONLY;
 }
 
 /*

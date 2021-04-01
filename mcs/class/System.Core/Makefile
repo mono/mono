@@ -62,4 +62,6 @@ XTEST_LIB_REFS = System Facades/System.Threading.Tasks Microsoft.CSharp Facades/
 XTEST_LIB_FLAGS = -unsafe -d:FEATURE_COMPILE
 XTEST_RESX_RESOURCE_STRING = ../../../external/corefx/src/System.Collections.Immutable/src/Resources/Strings.resx
 
+XTEST_SPLIT_ASSEMBLIES := $(filter monotouch%, $(PROFILE))
+
 include ../../build/library.make

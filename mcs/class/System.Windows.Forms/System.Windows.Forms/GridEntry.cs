@@ -334,8 +334,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			if (value is string)
 				return (string)value;
 
-			if (PropertyDescriptor != null && PropertyDescriptor.Converter != null &&
-			    PropertyDescriptor.Converter.CanConvertTo ((ITypeDescriptorContext)this, typeof (string))) {
+			if (PropertyDescriptor != null && PropertyDescriptor.Converter != null) {
 				try {
 					return PropertyDescriptor.Converter.ConvertToString ((ITypeDescriptorContext)this, value);
 				} catch {
@@ -490,8 +489,6 @@ namespace System.Windows.Forms.PropertyGridInternal
 					    converter.CanConvertFrom ((ITypeDescriptorContext)this, valueType))
 						value = converter.ConvertFrom ((ITypeDescriptorContext)this, 
 									       CultureInfo.CurrentCulture, value);
-					else
-						conversionError = true;
 				} catch (Exception e) {
 					error = e.Message;
 					conversionError = true;
@@ -552,7 +549,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 						if (IsValueType (this.ParentEntry)) 
 							current_changed = ParentEntry.SetValueCore (propertyOwners[i], out error);
 						else
-							current_changed = Object.Equals (properties[i].GetValue (propertyOwners[i]), value);
+							current_changed = true;
 					}
 				}
 				if (current_changed)

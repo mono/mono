@@ -2073,6 +2073,13 @@ mono_w32file_create(const gunichar2 *name, guint32 fileaccess, guint32 sharemode
 }
 
 gboolean
+mono_w32file_cancel (gpointer handle)
+{
+	mono_w32error_set_last (ERROR_NOT_SUPPORTED);
+	return FALSE;
+}
+
+gboolean
 mono_w32file_close (gpointer handle)
 {
 	if (!mono_fdhandle_close (GPOINTER_TO_INT (handle))) {
@@ -2521,7 +2528,7 @@ CopyFile (const gunichar2 *name, const gunichar2 *dest_name, gboolean fail_if_ex
 	if (fail_if_exists) {
 		dest_fd = _wapi_open (utf8_dest, O_WRONLY | O_CREAT | O_EXCL, st.st_mode);
 	} else {
-		/* FIXME: it kinda sucks that this code path potentially scans
+		/* FIXME: it's bad that this code path potentially scans
 		 * the directory twice due to the weird mono_w32error_set_last()
 		 * behavior. */
 		dest_fd = _wapi_open (utf8_dest, O_WRONLY | O_TRUNC, st.st_mode);
@@ -3827,7 +3834,7 @@ mono_w32file_create_pipe (gpointer *readpipe, gpointer *writepipe, guint32 size)
 #ifdef HAVE_GETFSSTAT
 /* Darwin has getfsstat */
 gint32
-mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
+mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf, MonoError *error)
 {
 	struct statfs *stats;
 	gint size, n, i;
@@ -3868,7 +3875,7 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 }
 #elif _AIX
 gint32
-mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
+mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf, MonoError *error)
 {
 	struct vmount *mounts;
 	// ret will first be the errno cond, then no of structs
@@ -3878,7 +3885,7 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 	total = 0;
 
 	MONO_ENTER_GC_SAFE;
-	ret = mntctl (MCTL_QUERY, sizeof(needsize), &needsize);
+	ret = mntctl (MCTL_QUERY, sizeof(needsize), (char*)&needsize);
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1)
 		return 0;
@@ -3886,7 +3893,7 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 	if (mounts == NULL)
 		return 0;
 	MONO_ENTER_GC_SAFE;
-	ret = mntctl (MCTL_QUERY, needsize, mounts);
+	ret = mntctl (MCTL_QUERY, needsize, (char*)mounts);
 	MONO_EXIT_GC_SAFE;
 	if (ret == -1) {
 		g_free (mounts);
@@ -3901,7 +3908,7 @@ mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
 		} 
 		g_free (dir);
 		total += length + 1;
-		mounts = (void*)mounts + mounts->vmt_length; // next!
+		mounts = (struct vmount *)((char*)mounts + mounts->vmt_length); // next!
 	}
 	if (total < len)
 		buf [total] = 0;
@@ -3969,7 +3976,7 @@ static void append_to_mountpoint (LinuxMountInfoParseState *state);
 static gboolean add_drive_string (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state);
 
 gint32
-mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
+mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf, MonoError *error)
 {
 	gint fd;
 	gint32 ret = 0;
@@ -4241,7 +4248,7 @@ add_drive_string (guint32 len, gunichar2 *buf, LinuxMountInfoParseState *state)
 }
 #else
 gint32
-mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf)
+mono_w32file_get_logical_drive (guint32 len, gunichar2 *buf, MonoError *error)
 {
 	return GetLogicalDriveStrings_Mtab (len, buf);
 }
@@ -4375,7 +4382,6 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 #elif defined(HAVE_STATFS)
 	struct statfs fsstat;
 #endif
-	gboolean isreadonly;
 	gchar *utf8_path_name;
 	gint ret;
 	unsigned long block_size;
@@ -4404,17 +4410,11 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 		MONO_ENTER_GC_SAFE;
 		ret = statvfs (utf8_path_name, &fsstat);
 		MONO_EXIT_GC_SAFE;
-		isreadonly = ((fsstat.f_flag & ST_RDONLY) == ST_RDONLY);
 		block_size = fsstat.f_frsize;
 #elif defined(HAVE_STATFS)
 		MONO_ENTER_GC_SAFE;
 		ret = statfs (utf8_path_name, &fsstat);
 		MONO_EXIT_GC_SAFE;
-#if defined (MNT_RDONLY)
-		isreadonly = ((fsstat.f_flags & MNT_RDONLY) == MNT_RDONLY);
-#elif defined (MS_RDONLY)
-		isreadonly = ((fsstat.f_flags & MS_RDONLY) == MS_RDONLY);
-#endif
 		block_size = fsstat.f_bsize;
 #endif
 	} while(ret == -1 && errno == EINTR);
@@ -4428,19 +4428,13 @@ mono_w32file_get_disk_free_space (const gunichar2 *path_name, guint64 *free_byte
 	}
 
 	/* total number of free bytes for non-root */
-	if (isreadonly)
-		*free_bytes_avail = 0;
-	else
-		*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
+	*free_bytes_avail = block_size * (guint64)fsstat.f_bavail;
 
 	/* total number of bytes available for non-root */
 	*total_number_of_bytes = block_size * (guint64)fsstat.f_blocks;
 
 	/* total number of bytes available for root */
-	if (isreadonly)
-		*total_number_of_free_bytes = 0;
-	else
-		*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
+	*total_number_of_free_bytes = block_size * (guint64)fsstat.f_bfree;
 #endif
 	return(TRUE);
 }
@@ -4734,7 +4728,7 @@ GetDriveTypeFromPath (const gchar *utf8_root_path_name)
 
 #ifndef ENABLE_NETCORE
 guint32
-ves_icall_System_IO_DriveInfo_GetDriveType (const gunichar2 *root_path_name, gint32 root_path_name_length, MonoError *error)
+mono_w32file_get_drive_type (const gunichar2 *root_path_name, gint32 root_path_name_length, MonoError *error)
 {
 	// FIXME Check for embedded nuls here or in managed.
 

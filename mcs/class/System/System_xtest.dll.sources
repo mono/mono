@@ -1,6 +1,7 @@
 ../test-helpers/Configuration.Http.cs
 ../test-helpers/Configuration.Certificates.cs
 ../test-helpers/TestConfiguration.cs
+../test-helpers/NetworkStreamHelper.cs
 
 ../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
 
@@ -96,6 +97,8 @@ System/RemoteExecutorTests.cs
 ../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServerAPM.cs
 ../../../external/corefx/src/Common/tests/System/Net/Sockets/SocketTestServerAsync.cs
 ../../../external/corefx/src/Common/tests/System/Net/Sockets/TestSettings.cs
+../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/NetworkStreamTest.cs
+../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/NetworkStreamTest.netcoreapp.cs
 #../../../external/corefx/src/System.Net.Sockets/tests/FunctionalTests/*.cs:NetworkStreamTest.netcoreapp.cs,SocketTestHelper.netcoreapp.cs,SendReceive.netcoreapp.cs,SocketAsyncEventArgsTest.cs,LoggingTest.cs,SendReceive.cs
 
 # System.Net.Primitives
@@ -110,6 +113,9 @@ System/RemoteExecutorTests.cs
 
 # System.IO.FileSystemWatcher
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Utility/*.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Args.ErrorEventArgs.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Args.FileSystemEventArgs.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Args.RenamedEventArgs.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.unit.cs
 ../../../external/corefx/src/Common/tests/System/IO/TempFile.cs

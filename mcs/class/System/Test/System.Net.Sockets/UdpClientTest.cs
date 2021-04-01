@@ -95,7 +95,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (AddressFamily)
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor2_Family_Invalid ()
@@ -176,7 +176,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32)
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor3_Port_OutOfRange ()
@@ -240,7 +240,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (IPEndPoint)
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor4_LocalEP_Null ()
@@ -313,7 +313,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor5_Family_Invalid ()
@@ -346,7 +346,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor5_Port_OutOfRange ()
@@ -426,7 +426,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor6_HostName_Null ()
@@ -443,7 +443,7 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // .ctor (String, Int32)
-#if FEATURE_NO_BSD_SOCKETS
+#if FEATURE_NO_BSD_SOCKETS && !WASM
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
 		public void Constructor6_Port_OutOfRange ()
@@ -661,6 +661,9 @@ namespace MonoTests.System.Net.Sockets {
 #endif
 		public void JoinMulticastGroup2_Socket_NotBound ()
 		{
+			if (!Socket.OSSupportsIPv6)
+				Assert.Ignore ("IPv6 not enabled.");
+
 			IPAddress mcast_addr = IPAddress.Parse ("ff02::1");
 
 			using (UdpClient client = new UdpClient (AddressFamily.InterNetworkV6)) {

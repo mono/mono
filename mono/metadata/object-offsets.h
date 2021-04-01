@@ -123,6 +123,7 @@ DECL_OFFSET(MonoString, length)
 DECL_OFFSET(MonoString, chars)
 
 DECL_OFFSET(MonoException, message)
+DECL_OFFSET(MonoException, caught_in_unmanaged)
 
 DECL_OFFSET(MonoTypedRef, type)
 DECL_OFFSET(MonoTypedRef, klass)
@@ -135,8 +136,6 @@ DECL_OFFSET(MonoThreadsSync, nest)
 DECL_OFFSET(MonoProfilerCallContext, method)
 DECL_OFFSET(MonoProfilerCallContext, return_value)
 DECL_OFFSET(MonoProfilerCallContext, args)
-
-DECL_OFFSET(MonoErrorExternal, init)
 
 #ifdef HAVE_SGEN_GC
 DECL_OFFSET(SgenClientThreadInfo, in_critical_region)
@@ -161,15 +160,20 @@ DECL_OFFSET(MonoMethodRuntimeGenericContext, class_vtable)
 DECL_OFFSET(MonoJitTlsData, lmf)
 DECL_OFFSET(MonoJitTlsData, class_cast_from)
 DECL_OFFSET(MonoJitTlsData, class_cast_to)
+#ifdef TARGET_WIN32
+DECL_OFFSET(MonoJitTlsData, stack_restore_ctx)
+#endif
 
 DECL_OFFSET(MonoGSharedVtMethodRuntimeInfo, locals_size)
 DECL_OFFSET(MonoGSharedVtMethodRuntimeInfo, entries) //XXX more to fix here
 
+#if !defined(ENABLE_NETCORE)
 DECL_OFFSET(MonoContinuation, stack_used_size)
 DECL_OFFSET(MonoContinuation, saved_stack)
 DECL_OFFSET(MonoContinuation, return_sp)
 DECL_OFFSET(MonoContinuation, lmf)
 DECL_OFFSET(MonoContinuation, return_ip)
+#endif
 
 DECL_OFFSET(MonoDelegateTrampInfo, method)
 DECL_OFFSET(MonoDelegateTrampInfo, invoke_impl)
@@ -185,6 +189,7 @@ DECL_OFFSET(MonoContext, wasm_sp)
 DECL_OFFSET(MonoContext, llvm_exc_reg)
 
 DECL_OFFSET(MonoLMF, lmf_addr)
+DECL_OFFSET(MonoLMF, method)
 
 #elif defined(TARGET_X86)
 DECL_OFFSET(MonoContext, eax)
@@ -213,6 +218,10 @@ DECL_OFFSET(MonoLMF, rsp)
 DECL_OFFSET(MonoLMF, rbp)
 
 DECL_OFFSET(DynCallArgs, res)
+DECL_OFFSET(DynCallArgs, fregs)
+DECL_OFFSET(DynCallArgs, has_fp)
+DECL_OFFSET(DynCallArgs, nstack_args)
+DECL_OFFSET(DynCallArgs, regs)
 
 DECL_OFFSET(MonoLMFTramp, ctx)
 DECL_OFFSET(MonoLMFTramp, lmf_addr)
@@ -235,6 +244,17 @@ DECL_OFFSET(DynCallArgs, fpregs)
 DECL_OFFSET(DynCallArgs, n_stackargs)
 DECL_OFFSET(DynCallArgs, n_fpargs)
 DECL_OFFSET(DynCallArgs, n_fpret)
+#elif defined(TARGET_S390X)
+DECL_OFFSET(MonoLMF, pregs)
+DECL_OFFSET(MonoLMF, lmf_addr)
+DECL_OFFSET(MonoLMF, method)
+DECL_OFFSET(MonoLMF, ebp)
+DECL_OFFSET(MonoLMF, eip)
+DECL_OFFSET(MonoLMF, gregs)
+DECL_OFFSET(MonoLMF, fregs)
+#elif defined(TARGET_RISCV)
+DECL_OFFSET(MonoContext, gregs)
+DECL_OFFSET(MonoContext, fregs)
 #endif
 
 // Shared architecture offfsets
@@ -285,10 +305,26 @@ DECL_OFFSET(CallContext, stack)
 #endif
 
 #if defined(TARGET_X86)
+DECL_OFFSET(CallContext, eax)
+DECL_OFFSET(CallContext, edx)
+DECL_OFFSET(CallContext, fret)
+DECL_OFFSET(CallContext, stack_size)
+DECL_OFFSET(CallContext, stack)
+#endif
+
+#if defined(TARGET_X86)
 DECL_OFFSET(GSharedVtCallInfo, stack_usage)
 DECL_OFFSET(GSharedVtCallInfo, vret_slot)
 DECL_OFFSET(GSharedVtCallInfo, vret_arg_slot)
 DECL_OFFSET(GSharedVtCallInfo, ret_marshal)
+DECL_OFFSET(GSharedVtCallInfo, gsharedvt_in)
+#endif
+
+#if defined(TARGET_AMD64)
+DECL_OFFSET(GSharedVtCallInfo, ret_marshal)
+DECL_OFFSET(GSharedVtCallInfo, vret_arg_reg)
+DECL_OFFSET(GSharedVtCallInfo, vret_slot)
+DECL_OFFSET(GSharedVtCallInfo, stack_usage)
 DECL_OFFSET(GSharedVtCallInfo, gsharedvt_in)
 #endif
 

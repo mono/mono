@@ -183,9 +183,10 @@ namespace Mono.Security.Interface
 		 * - 1: everything up until May 2018
 		 * - 2: the new ServicePointScheduler changes have landed
 		 * - 3: full support for Client Certificates
+		 * - 4: Legacy TLS Removal
 		 *
 		 */
-		internal const int InternalVersion = 3;
+		internal const int InternalVersion = 4;
 
 		#endregion
 	}

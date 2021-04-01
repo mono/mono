@@ -14,10 +14,7 @@
 #include "mono-compiler.h"
 #include "mono-sigcontext.h"
 #include "mono-machine.h"
-
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #define MONO_CONTEXT_OFFSET(field, index, field_type) \
     "i" (offsetof (MonoContext, field) + (index) * sizeof (field_type))
@@ -36,6 +33,7 @@ typedef struct __darwin_xmm_reg MonoContextSimdReg;
 typedef struct _libc_xmmreg MonoContextSimdReg;
 #elif defined(HOST_WIN32)
 #define MONO_HAVE_SIMD_REG
+//#define MONO_HAVE_SIMD_REG_AVX
 #include <emmintrin.h>
 typedef __m128d MonoContextSimdReg;
 #elif defined(HOST_ANDROID)
@@ -275,7 +273,10 @@ MONO_DISABLE_WARNING(4324) // 'struct_name' : structure was padded due to __decl
 
 typedef struct {
 	host_mgreg_t gregs [AMD64_NREG];
-#if defined(MONO_HAVE_SIMD_REG)
+#if defined(MONO_HAVE_SIMD_REG_AVX)
+	// Lower AMD64_XMM_NREG fregs holds lower 128 bit YMM. Upper AMD64_XMM_NREG fregs holds upper 128-bit YMM.
+	MonoContextSimdReg fregs [AMD64_XMM_NREG * 2];
+#elif defined(MONO_HAVE_SIMD_REG)
 	MonoContextSimdReg fregs [AMD64_XMM_NREG];
 #else
 	double fregs [AMD64_XMM_NREG];
@@ -292,11 +293,29 @@ MONO_RESTORE_WARNING
 #define MONO_CONTEXT_GET_BP(ctx) ((gpointer)(gsize)((ctx)->gregs [AMD64_RBP]))
 #define MONO_CONTEXT_GET_SP(ctx) ((gpointer)(gsize)((ctx)->gregs [AMD64_RSP]))
 
-#if defined (HOST_WIN32) && !defined(__GNUC__)
+#if defined(HOST_WIN32) && !defined(__GNUC__)
 /* msvc doesn't support inline assembly, so have to use a separate .asm file */
 // G_EXTERN_C due to being written in assembly.
+#if defined(MONO_HAVE_SIMD_REG_AVX) && defined(__AVX__)
+G_EXTERN_C void mono_context_get_current_avx (void *);
+#define MONO_CONTEXT_GET_CURRENT(ctx) \
+do { \
+	mono_context_get_current_avx((void*)&(ctx)); \
+} while (0)
+#elif defined(MONO_HAVE_SIMD_REG_AVX)
 G_EXTERN_C void mono_context_get_current (void *);
-#define MONO_CONTEXT_GET_CURRENT(ctx) do { mono_context_get_current((void*)&(ctx)); } while (0)
+#define MONO_CONTEXT_GET_CURRENT(ctx) \
+do { \
+	mono_context_get_current((void*)&(ctx)); \
+	memset (&(ctx.fregs [AMD64_XMM_NREG]), 0, sizeof (MonoContextSimdReg) * AMD64_XMM_NREG); \
+} while (0)
+#else
+G_EXTERN_C void mono_context_get_current (void *);
+#define MONO_CONTEXT_GET_CURRENT(ctx) \
+do { \
+	mono_context_get_current((void*)&(ctx)); \
+} while (0)
+#endif
 
 #else
 
@@ -879,7 +898,7 @@ typedef struct {
 
 #include <sys/ucontext.h>
 
-#if __GLIBC_PREREQ(2, 27)
+#if __GLIBC_PREREQ(2, 26)
 typedef ucontext_t MonoContext;
 #else
 typedef struct ucontext MonoContext;
@@ -905,7 +924,24 @@ typedef struct ucontext MonoContext;
 #define MONO_CONTEXT_GET_CURRENT(ctx)	\
 	__asm__ __volatile__(	\
 		"stmg	%%r0,%%r15,0(%0)\n"	\
-		: : "r" (&(ctx).uc_mcontext.gregs[0])	\
+		"std	%%f0,0(%1)\n"		\
+		"std	%%f1,8(%1)\n"		\
+		"std	%%f2,16(%1)\n"		\
+		"std	%%f3,24(%1)\n"		\
+		"std	%%f4,32(%1)\n"		\
+		"std	%%f5,40(%1)\n"		\
+		"std	%%f6,48(%1)\n"		\
+		"std	%%f7,56(%1)\n"		\
+		"std	%%f8,64(%1)\n"		\
+		"std	%%f9,72(%1)\n"		\
+		"std	%%f10,80(%1)\n"		\
+		"std	%%f11,88(%1)\n"		\
+		"std	%%f12,96(%1)\n"		\
+		"std	%%f13,104(%1)\n"		\
+		"std	%%f14,112(%1)\n"		\
+		"std	%%f15,120(%1)\n"		\
+		: : "a" (&(ctx).uc_mcontext.gregs[0]),		\
+		    "a" (&(ctx).uc_mcontext.fpregs.fprs[0])	\
 		: "memory"			\
 	)
 

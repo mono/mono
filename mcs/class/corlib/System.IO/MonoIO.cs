@@ -434,6 +434,21 @@ namespace System.IO
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static bool Cancel_internal (IntPtr handle, out MonoIOError error);
+
+		internal static bool Cancel (SafeHandle safeHandle, out MonoIOError error)
+		{
+			bool release = false;
+			try {
+				safeHandle.DangerousAddRef (ref release);
+				return Cancel_internal (safeHandle.DangerousGetHandle (), out error);
+			} finally {
+				if (release)
+					safeHandle.DangerousRelease ();
+			}
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool Close (IntPtr handle,
 						 out MonoIOError error);
 		

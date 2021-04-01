@@ -5,7 +5,7 @@ from bockbuild.package import Package
 from bockbuild.util.util import *
 
 
-class MonoMasterPackage(Package):
+class MonoMainPackage(Package):
 
     def __init__(self):
         Package.__init__(self, 'mono', None,
@@ -28,7 +28,7 @@ class MonoMasterPackage(Package):
         if Package.profile.name == 'darwin':
             self.configure_flags.extend([
                 '--with-libgdiplus=%s/lib/libgdiplus.dylib' % Package.profile.staged_prefix,
-                '--enable-loadedllvm',
+                '--enable-llvm',
                 'CXXFLAGS=-stdlib=libc++'
             ])
 
@@ -96,4 +96,4 @@ class MonoMasterPackage(Package):
             os.symlink('mono-sgen64', '%s/bin/mono64' % self.staged_profile)
             os.symlink('mono-sgen32', '%s/bin/mono32' % self.staged_profile)
 
-MonoMasterPackage()
+MonoMainPackage()

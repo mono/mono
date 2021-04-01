@@ -77,6 +77,7 @@ mobile_common_dirs_parallel := \
 	System.Numerics	\
 	System.Numerics.Vectors		\
 	System.Data	\
+	System.Data.DataSetExtensions \
 	Mono.Data.Sqlite	\
 	System.Data.Services.Client \
 	System.IO.Compression \
@@ -179,6 +180,7 @@ wasm_dirs_parallel := \
 	System.ServiceModel.Internals	\
 	System.Runtime.Serialization	\
 	System.Data	\
+	System.Data.DataSetExtensions	\
 	System.Xml.Linq	\
 	System.Numerics	\
 	System.Numerics.Vectors		\
@@ -213,6 +215,7 @@ xammac_4_5_dirs_parallel := \
 	System.Transactions	\
 	System.EnterpriseServices	\
 	System.Data	\
+	System.Data.DataSetExtensions	\
 	System.Runtime.Serialization	\
 	System.Xml.Linq	\
 	Mono.Data.Sqlite	\
@@ -561,8 +564,6 @@ get-monolite-latest:
 dist-default: dist-monolite-all-platforms
 
 dist-local: dist-default
-
-csproj-local:
 
 do-clean:
 	$(RM) -rf $(topdir)/class/lib/$(PROFILE)

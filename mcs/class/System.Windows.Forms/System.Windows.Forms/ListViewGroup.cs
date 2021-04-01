@@ -84,15 +84,23 @@ namespace System.Windows.Forms
 			header_alignment = (HorizontalAlignment)info.GetInt32("HeaderAlignment");
 			tag = info.GetValue("Tag", typeof(object));
 
-			int count = info.GetInt32("ListViewItemCount");
-			if (count > 0) {
-				if(items == null)
-				items = new ListView.ListViewItemCollection(list_view_owner);
+			int count = 0;
+			try {
+				count = info.GetInt32("ItemsCount");
+			} catch (SerializationException e) {
+				// Mono backwards compat
+				try {
+ 					count = info.GetInt32("ListViewItemCount");
+				} catch (SerializationException e2) {}
+			}
 
-				for (int i = 0; i < count; i++)
-				{
-					items.Add((ListViewItem)info.GetValue(string.Format("ListViewItem_{0}", i), typeof(ListViewItem)));
-				}
+			if (items == null) {
+				items = new ListView.ListViewItemCollection(list_view_owner);
+			}
+
+			for (int i = 0; i < count; i++)
+			{
+				items.Add((ListViewItem)info.GetValue(string.Format("ListViewItem_{0}", i), typeof(ListViewItem)));
 			}
 		}
 

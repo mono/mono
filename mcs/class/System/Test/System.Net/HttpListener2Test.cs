@@ -364,6 +364,7 @@ namespace MonoTests.System.Net {
 		ManualResetEvent test_evt;
 		bool test14_error;
 		[Test]
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -502,6 +503,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -550,6 +552,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -603,6 +606,7 @@ namespace MonoTests.System.Net {
 		}
 
 		[Test]
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -762,6 +766,7 @@ namespace MonoTests.System.Net {
 		// Test case for bug 341443, an pretty old bug, filed on November of 2007.
 		//
 		[Test]
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

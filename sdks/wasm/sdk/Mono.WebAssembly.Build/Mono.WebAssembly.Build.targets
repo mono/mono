@@ -68,12 +68,20 @@
 			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)threads-debug\</_MonoWasmRuntimePath>
 		</PropertyGroup>
 
+		<PropertyGroup Condition="'$(EnableMonoWasmDynamic)'=='true' And Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)builds\dynamic-release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)builds\dynamic-debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
+		<PropertyGroup Condition="'$(EnableMonoWasmDynamic)'=='true' And !Exists('$(MonoWasmRuntimePath)builds\')">
+			<_MonoWasmRuntimePath>$(MonoWasmRuntimePath)dynamic-release\</_MonoWasmRuntimePath>
+			<_MonoWasmRuntimePath Condition="'$(_MonoWasmDebugRuntime)'=='true'">$(MonoWasmRuntimePath)dynamic-debug\</_MonoWasmRuntimePath>
+		</PropertyGroup>
+
 		<ItemGroup>
-			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.js" TargetPath="mono.js" />
-			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm" TargetPath="mono.wasm" />
-			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.worker.js" TargetPath="mono.worker.js" Condition="'$(EnableMonoWasmThreads)'=='true'"/>
-			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.wasm.map" TargetPath="mono.wasm.map" Condition="'$(_MonoWasmDebugRuntime)'=='true'"/>
-			<_WasmOutput Include="$(_MonoWasmRuntimePath)mono.js.mem" TargetPath="mono.js.mem" Condition="'$(EnableMonoWasmThreads)'=='true'"/>
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)dotnet.js" TargetPath="dotnet.js" />
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)dotnet.wasm" TargetPath="dotnet.wasm" />
+			<_WasmOutput Include="$(_MonoWasmRuntimePath)dotnet.worker.js" TargetPath="dotnet.worker.js" Condition="'$(EnableMonoWasmThreads)'=='true'"/>
 		</ItemGroup>
 
 		<AssignTargetPath
@@ -102,6 +110,7 @@
 			Debug="$(_DebugSymbolsProduced)"
 			I18n="$(MonoWasmI18n)"
 			LinkDescriptions="@(LinkDescription)"
+			BindingsDir="$(MonoWasmBindingsPath)"
 		/>
 
 		<PropertyGroup>

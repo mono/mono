@@ -166,7 +166,21 @@ namespace System.Net
 				} else {
 					try {
 						operation.ThrowIfDisposed (cancellationToken);
-						await socket.ConnectAsync (remote).ConfigureAwait (false);
+
+						/*
+						 * Socket.Tasks.cs from CoreFX introduces a new internal
+						 * BeginConnect(EndPoint) overload, which will replace
+						 * the one we're using from SocketTaskExtensions.cs.
+						 *
+						 * Our implementation of Socket.BeginConnect() does not
+						 * invoke the callback when the request failed synchronously.
+						 *
+						 * Explicitly use our implementation from SocketTaskExtensions.cs here.
+						 */
+						await Task.Factory.FromAsync (
+							(targetEndPoint, callback, state) => ((Socket)state).BeginConnect (targetEndPoint, callback, state),
+							asyncResult => ((Socket)asyncResult.AsyncState).EndConnect (asyncResult),
+							remote, socket).ConfigureAwait (false);
 					} catch (ObjectDisposedException) {
 						throw;
 					} catch (Exception exc) {

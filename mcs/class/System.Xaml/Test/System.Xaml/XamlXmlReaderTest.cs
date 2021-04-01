@@ -720,6 +720,13 @@ namespace MonoTests.System.Xaml
 			Read_ContentPropertyContainer (r);
 		}
 
+		[Test]
+		public void EscapedValue ()
+		{
+			var exception = (Exception)XamlServices.Load(new StringReader("<Exception xmlns=\"clr-namespace:System;assembly=mscorlib\" HelpLink=\"{}{123}\" />"));
+			Assert.AreEqual ("{123}", exception.HelpLink);
+		}
+
 		#region non-common tests
 		[Test]
 		public void Bug680385 ()

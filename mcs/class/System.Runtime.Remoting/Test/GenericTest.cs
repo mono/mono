@@ -172,6 +172,7 @@ namespace MonoTests.Remoting
 			IDictionary props = new Hashtable ();
 			props ["name"] = Guid.NewGuid ().ToString("N");
 			props ["port"] = port;
+			props ["bindTo"] = "127.0.0.1";
 			TcpChannel chan = new TcpChannel (props, null, null);
 			ChannelServices.RegisterChannel (chan);
 			

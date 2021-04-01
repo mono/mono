@@ -57,11 +57,14 @@
 
 #endif
 
+#if _MSC_VER
+#pragma warning(disable:4293) // FIXME negative shift is undefined
+#endif
 
 /* If the bank is mirrored return the true logical bank that the register in the
  * physical register bank is allocated to.
  */
-static inline int translate_bank (MonoRegState *rs, int bank, int hreg) {
+static int translate_bank (MonoRegState *rs, int bank, int hreg) {
 	return is_hreg_mirrored (rs, bank, hreg) ? get_mirrored_bank (bank) : bank;
 }
 
@@ -134,7 +137,7 @@ static const int regbank_spill_var_size[] = {
 
 #define DEBUG(a) MINI_DEBUG(cfg->verbose_level, 3, a;)
 
-static inline void
+static void
 mono_regstate_assign (MonoRegState *rs)
 {
 #ifdef MONO_ARCH_USE_SHARED_FP_SIMD_BANK
@@ -164,7 +167,7 @@ mono_regstate_assign (MonoRegState *rs)
 #endif
 }
 
-static inline int
+static int
 mono_regstate_alloc_int (MonoRegState *rs, regmask_t allow)
 {
 	regmask_t mask = allow & rs->ifree_mask;
@@ -195,7 +198,7 @@ mono_regstate_alloc_int (MonoRegState *rs, regmask_t allow)
 #endif
 }
 
-static inline void
+static void
 mono_regstate_free_int (MonoRegState *rs, int reg)
 {
 	if (reg >= 0) {
@@ -204,7 +207,7 @@ mono_regstate_free_int (MonoRegState *rs, int reg)
 	}
 }
 
-static inline int
+static int
 mono_regstate_alloc_general (MonoRegState *rs, regmask_t allow, int bank)
 {
 	int i;
@@ -225,7 +228,7 @@ mono_regstate_alloc_general (MonoRegState *rs, regmask_t allow, int bank)
 	return -1;
 }
 
-static inline void
+static void
 mono_regstate_free_general (MonoRegState *rs, int reg, int bank)
 {
 	int mirrored_bank;
@@ -314,7 +317,7 @@ resize_spill_info (MonoCompile *cfg, int bank)
  * returns the offset used by spillvar. It allocates a new
  * spill variable if necessary. 
  */
-static inline int
+static int
 mono_spillvar_offset (MonoCompile *cfg, int spillvar, int bank)
 {
 	MonoSpillInfo *info;
@@ -576,7 +579,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		g_string_append_printf (sbuf, " [%d]", (int)(gssize)ins->inst_p1);
 		break;
 	case OP_I8CONST:
-		g_string_append_printf (sbuf, " [%lld]", (long long)ins->inst_l);
+		g_string_append_printf (sbuf, " [%" PRId64 "]", (gint64)ins->inst_l);
 		break;
 	case OP_R8CONST:
 		g_string_append_printf (sbuf, " [%f]", *(double*)ins->inst_p0);
@@ -694,7 +697,7 @@ mono_print_ins_index_strbuf (int i, MonoInst *ins)
 		break;
 	case OP_IL_SEQ_POINT:
 	case OP_SEQ_POINT:
-		g_string_append_printf (sbuf, " il: 0x%x%s", (int)ins->inst_imm, ins->flags & MONO_INST_NONEMPTY_STACK ? ", nonempty-stack" : "");
+		g_string_append_printf (sbuf, "%s il: 0x%x%s", (ins->flags & MONO_INST_SINGLE_STEP_LOC) ? " intr" : "", (int)ins->inst_imm, ins->flags & MONO_INST_NONEMPTY_STACK ? ", nonempty-stack" : "");
 		break;
 	case OP_COND_EXC_EQ:
 	case OP_COND_EXC_GE:
@@ -767,7 +770,7 @@ mono_print_ins (MonoInst *ins)
 	mono_print_ins_index (-1, ins);
 }
 
-static inline void
+static void
 insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst* to_insert)
 {
 	/*
@@ -777,7 +780,7 @@ insert_before_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst* to_insert)
 	mono_bblock_insert_before_ins (bb, ins, to_insert);
 }
 
-static inline void
+static void
 insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst **last, MonoInst* to_insert)
 {
 	/*
@@ -789,7 +792,7 @@ insert_after_ins (MonoBasicBlock *bb, MonoInst *ins, MonoInst **last, MonoInst* 
 	*last = to_insert;
 }
 
-static inline int
+static int
 get_vreg_bank (MonoCompile *cfg, int reg, int bank)
 {
 	if (vreg_is_ref (cfg, reg))
@@ -854,7 +857,7 @@ get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, Mo
 
 	g_assert (bank < MONO_NUM_REGBANKS);
 
-	DEBUG (printf ("\tstart regmask to assign R%d: 0x%08llu (R%d <- R%d R%d R%d)\n", reg, (unsigned long long)regmask, ins->dreg, ins->sreg1, ins->sreg2, ins->sreg3));
+	DEBUG (printf ("\tstart regmask to assign R%d: 0x%08" PRIu64 " (R%d <- R%d R%d R%d)\n", reg, (guint64)regmask, ins->dreg, ins->sreg1, ins->sreg2, ins->sreg3));
 	/* exclude the registers in the current instruction */
 	num_sregs = mono_inst_get_src_registers (ins, sregs);
 	for (i = 0; i < num_sregs; ++i) {
@@ -871,7 +874,7 @@ get_register_spilling (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, Mo
 		DEBUG (printf ("\t\texcluding dreg %s\n", mono_regname_full (ins->dreg, bank)));
 	}
 
-	DEBUG (printf ("\t\tavailable regmask: 0x%08llu\n", (unsigned long long)regmask));
+	DEBUG (printf ("\t\tavailable regmask: 0x%08" PRIu64 "\n", (guint64)regmask));
 	g_assert (regmask); /* need at least a register we can free */
 	sel = 0;
 	/* we should track prev_use and spill the register that's farther */
@@ -965,7 +968,7 @@ create_copy_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, int dest
 	return copy;
 }
 
-static inline const char*
+static const char*
 regbank_to_string (int bank)
 {
 	if (bank == MONO_REG_INT_REF)
@@ -1013,7 +1016,7 @@ enum {
 	MONO_FP_NEEDS_LOAD			= regmask (2)
 };
 
-static inline int
+static int
 alloc_int_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, regmask_t dest_mask, int sym_reg, RegTrack *info)
 {
 	int val;
@@ -1033,7 +1036,7 @@ alloc_int_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *
 	return val;
 }
 
-static inline int
+static int
 alloc_general_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, regmask_t dest_mask, int sym_reg, int bank)
 {
 	int val;
@@ -1049,7 +1052,7 @@ alloc_general_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoIn
 	return val;
 }
 
-static inline int
+static int
 alloc_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins, regmask_t dest_mask, int sym_reg, RegTrack *info, int bank)
 {
 	if (G_UNLIKELY (bank))
@@ -1058,7 +1061,7 @@ alloc_reg (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst **last, MonoInst *ins,
 		return alloc_int_reg (cfg, bb, last, ins, dest_mask, sym_reg, info);
 }
 
-static inline void
+static void
 assign_reg (MonoCompile *cfg, MonoRegState *rs, int reg, int hreg, int bank)
 {
 	if (G_UNLIKELY (bank)) {
@@ -1102,7 +1105,7 @@ assign_reg (MonoCompile *cfg, MonoRegState *rs, int reg, int hreg, int bank)
 	}
 }
 
-static inline regmask_t
+static regmask_t
 get_callee_mask (const char spec)
 {
 	if (G_UNLIKELY (reg_bank (spec)))
@@ -1741,7 +1744,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 
 		if (spec [MONO_INST_CLOB] == 'c') {
-			int j, s, dreg, dreg2, cur_bank;
+			int j, dreg, dreg2, cur_bank;
+			regmask_t s;
 			guint64 clob_mask;
 
 			clob_mask = MONO_ARCH_CALLEE_REGS;
@@ -2415,6 +2419,7 @@ mono_opcode_to_cond (int opcode)
 	case OP_IBGE_UN:
 	case OP_LBGE_UN:
 	case OP_FBGE_UN:
+	case OP_COND_EXC_GE_UN:
 	case OP_CMOV_IGE_UN:
 	case OP_CMOV_LGE_UN:
 		return CMP_GE_UN;
@@ -2707,6 +2712,8 @@ mini_exception_id_by_name (const char *name)
 		return MONO_EXC_ARRAY_TYPE_MISMATCH;
 	if (strcmp (name, "ArgumentException") == 0)
 		return MONO_EXC_ARGUMENT;
+	if (strcmp (name, "ArgumentOutOfRangeException") == 0)
+		return MONO_EXC_ARGUMENT_OUT_OF_RANGE;
 	g_error ("Unknown intrinsic exception %s\n", name);
 	return -1;
 }

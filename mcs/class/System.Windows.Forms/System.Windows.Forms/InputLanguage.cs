@@ -26,7 +26,9 @@
 
 // NOT COMPLETE
 
+using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	public sealed class InputLanguage {
@@ -36,6 +38,15 @@ namespace System.Windows.Forms {
 		private string			layout_name;
 		private static InputLanguage	current_input;
 		private static InputLanguage	default_input;
+
+
+		#region user32.dll functions
+		[DllImport("user32", CharSet = CharSet.Auto)]
+		private static extern IntPtr GetKeyboardLayout(UInt32 idThread);
+
+		[DllImport("user32", CharSet = CharSet.Auto)]
+		private static extern Int32 GetKeyboardLayoutList(Int32 nBuff, IntPtr[] lpList);
+		#endregion	// user32.dll functions
 
 		#region Private Constructor
 		[MonoInternalNote ("Pull Microsofts InputLanguages and enter them here")]
@@ -75,9 +86,23 @@ namespace System.Windows.Forms {
 
 		public static InputLanguageCollection InstalledInputLanguages {
 			get {
-				if (all == null)
-					all = new InputLanguageCollection (new InputLanguage[] { new InputLanguage (IntPtr.Zero, new CultureInfo(string.Empty), "US") });
+				if (all == null) {
+					List<InputLanguage> inputLanguageList = new List<InputLanguage>();
+					if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
+						var keyboardLayoutCount = GetKeyboardLayoutList (0, null);
+						var keyboardLayoutIds = new IntPtr[keyboardLayoutCount];
+						GetKeyboardLayoutList (keyboardLayoutCount, keyboardLayoutIds);
 
+						foreach (var keyboardLayoutId in keyboardLayoutIds) {
+							var languageId = (Int32)keyboardLayoutId & 0xFFFF;
+							CultureInfo cultureInfo = CultureInfo.GetCultureInfo (languageId);
+							inputLanguageList.Add (new InputLanguage (IntPtr.Zero, cultureInfo, cultureInfo.Name));
+						}
+					}
+					if (inputLanguageList.Count == 0)
+						inputLanguageList.Add (new InputLanguage (IntPtr.Zero, new CultureInfo(string.Empty), "US"));
+					all = new InputLanguageCollection (inputLanguageList.ToArray());
+				}
 				return all;
 			}
 		}

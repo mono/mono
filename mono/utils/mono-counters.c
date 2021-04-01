@@ -8,9 +8,11 @@
 #include <stdlib.h>
 #include <glib.h>
 #include "config.h"
-#include "mono-counters.h"
-#include "mono-proclib.h"
-#include "mono-os-mutex.h"
+
+#include "mono/utils/mono-counters.h"
+#include "mono/utils/mono-proclib.h"
+#include "mono/utils/mono-os-mutex.h"
+#include "mono/utils/mono-time.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -26,6 +28,9 @@ struct _MonoCounter {
 
 static MonoCounter *counters = NULL;
 static mono_mutex_t counters_mutex;
+
+static mono_clock_id_t real_time_clock;
+static guint64 real_time_start;
 
 static volatile gboolean initialized = FALSE;
 
@@ -130,6 +135,9 @@ mono_counters_init (void)
 		return;
 
 	mono_os_mutex_init (&counters_mutex);
+
+	mono_clock_init (&real_time_clock);
+	real_time_start = mono_clock_get_time_ns (real_time_clock);
 
 	initialize_system_counters ();
 
@@ -311,6 +319,12 @@ total_time (void)
 	return mono_process_get_data (GINT_TO_POINTER (mono_process_current_pid ()), MONO_PROCESS_TOTAL_TIME);
 }
 
+static guint64
+real_time (void)
+{
+	return mono_clock_get_time_ns (real_time_clock) - real_time_start;
+}
+
 static gint64
 working_set (void)
 {
@@ -346,7 +360,7 @@ paged_bytes (void)
 // cause a failure when registering counters since the same function address will be used by all three functions. Preventing this method from being inlined
 // will make sure the registered callback functions remains unique.
 #ifdef _MSC_VER
-__declspec(noinline)
+#pragma optimize("", off)
 #endif
 static double
 cpu_load (int kind)
@@ -399,6 +413,9 @@ cpu_load_15min (void)
 {
 	return cpu_load (2);
 }
+#ifdef _MSC_VER
+#pragma optimize("", on)
+#endif
 
 #define SYSCOUNTER_TIME (MONO_COUNTER_SYSTEM | MONO_COUNTER_LONG | MONO_COUNTER_TIME | MONO_COUNTER_MONOTONIC | MONO_COUNTER_CALLBACK)
 #define SYSCOUNTER_BYTES (MONO_COUNTER_SYSTEM | MONO_COUNTER_LONG | MONO_COUNTER_BYTES | MONO_COUNTER_VARIABLE | MONO_COUNTER_CALLBACK)
@@ -411,6 +428,7 @@ initialize_system_counters (void)
 	register_internal ("User Time", SYSCOUNTER_TIME, (gpointer) &user_time, sizeof (gint64));
 	register_internal ("System Time", SYSCOUNTER_TIME, (gpointer) &system_time, sizeof (gint64));
 	register_internal ("Total Time", SYSCOUNTER_TIME, (gpointer) &total_time, sizeof (gint64));
+	register_internal ("Real Time", SYSCOUNTER_TIME, (gpointer) &real_time, sizeof (guint64));
 	register_internal ("Working Set", SYSCOUNTER_BYTES, (gpointer) &working_set, sizeof (gint64));
 	register_internal ("Private Bytes", SYSCOUNTER_BYTES, (gpointer) &private_bytes, sizeof (gint64));
 	register_internal ("Virtual Bytes", SYSCOUNTER_BYTES, (gpointer) &virtual_bytes, sizeof (gint64));
@@ -518,6 +536,14 @@ mono_counters_sample (MonoCounter *counter, void *buffer, int buffer_size)
 	return sample_internal (counter, buffer, buffer_size);
 }
 
+// We want to default to g_print if outfile is not specified. This matters because on some platforms (e.g. Android),
+// printing to stdout is not the actual way to see output, and we've wrapped that logic in `g_print`.
+#define FPRINTF_OR_G_PRINT(outfile, ...) if (outfile) { \
+	fprintf (outfile, __VA_ARGS__); \
+} else { \
+	g_print (__VA_ARGS__); \
+}
+
 #define ENTRY_FMT "%-36s: "
 static void
 dump_counter (MonoCounter *counter, FILE *outfile) {
@@ -526,34 +552,36 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 
 	switch (counter->type & MONO_COUNTER_TYPE_MASK) {
 	case MONO_COUNTER_INT:
-		fprintf (outfile, ENTRY_FMT "%d\n", counter->name, *(int*)buffer);
+		FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%d\n", counter->name, *(int*)buffer);
 		break;
 	case MONO_COUNTER_UINT:
-		fprintf (outfile, ENTRY_FMT "%u\n", counter->name, *(guint*)buffer);
+		FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%u\n", counter->name, *(guint*)buffer);
 		break;
 	case MONO_COUNTER_LONG:
-		if ((counter->type & MONO_COUNTER_UNIT_MASK) == MONO_COUNTER_TIME)
-			fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)(*(gint64*)buffer) / 10000.0);
-		else
-			fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, *(long long *)buffer);
+		if ((counter->type & MONO_COUNTER_UNIT_MASK) == MONO_COUNTER_TIME) {
+			FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)(*(gint64*)buffer) / 10000.0);
+		} else {
+			FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%" PRId64 "\n", counter->name, *(gint64 *)buffer);
+		}
 		break;
 	case MONO_COUNTER_ULONG:
-		if ((counter->type & MONO_COUNTER_UNIT_MASK) == MONO_COUNTER_TIME)
-			fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)(*(guint64*)buffer) / 10000.0);
-		else
-			fprintf (outfile, ENTRY_FMT "%llu\n", counter->name, *(unsigned long long *)buffer);
+		if ((counter->type & MONO_COUNTER_UNIT_MASK) == MONO_COUNTER_TIME) {
+			FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)(*(guint64*)buffer) / 10000.0);
+		} else {
+			FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%" PRIu64 "\n", counter->name, *(guint64 *)buffer);
+		}
 		break;
 	case MONO_COUNTER_WORD:
-		fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, (long long)*(gssize*)buffer);
+		FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%" PRId64 "\n", counter->name, (gint64)*(gssize*)buffer);
 		break;
 	case MONO_COUNTER_DOUBLE:
-		fprintf (outfile, ENTRY_FMT "%.4f\n", counter->name, *(double*)buffer);
+		FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%.4f\n", counter->name, *(double*)buffer);
 		break;
 	case MONO_COUNTER_STRING:
-		fprintf (outfile, ENTRY_FMT "%s\n", counter->name, (size == 0) ? "(null)" : (char*)buffer);
+		FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%s\n", counter->name, (size == 0) ? "(null)" : (char*)buffer);
 		break;
 	case MONO_COUNTER_TIME_INTERVAL:
-		fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)(*(gint64*)buffer) / 1000.0);
+		FPRINTF_OR_G_PRINT (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)(*(gint64*)buffer) / 1000.0);
 		break;
 	}
 
@@ -572,6 +600,7 @@ section_names [][12] = {
 	"", // MONO_COUNTER_PERFCOUNTERS - not used.
 	"Profiler",
 	"Interp",
+	"Tiered",
 };
 
 static void
@@ -588,7 +617,7 @@ mono_counters_dump_section (int section, int variance, FILE *outfile)
 /**
  * mono_counters_dump:
  * \param section_mask The sections to dump counters for
- * \param outfile a FILE to dump the results to
+ * \param outfile a FILE to dump the results to; NULL will default to g_print
  * Displays the counts of all the enabled counters registered. 
  * To filter by variance, you can OR one or more variance with the specific section you want.
  * Use \c MONO_COUNTER_SECTION_MASK to dump all categories of a specific variance.
@@ -619,14 +648,18 @@ mono_counters_dump (int section_mask, FILE *outfile)
 
 	for (j = 0, i = MONO_COUNTER_JIT; i < MONO_COUNTER_LAST_SECTION; j++, i <<= 1) {
 		if ((section_mask & i) && (set_mask & i)) {
-			fprintf (outfile, "\n%s statistics\n", section_names [j]);
+			FPRINTF_OR_G_PRINT (outfile, "\n%s statistics\n", section_names [j]);
 			mono_counters_dump_section (i, variance, outfile);
 		}
 	}
 
-	fflush (outfile);
+	if (outfile)
+		fflush (outfile);
+
 	mono_os_mutex_unlock (&counters_mutex);
 }
+
+#undef FPRINTF_OR_G_PRINT
 
 /**
  * mono_counters_cleanup:

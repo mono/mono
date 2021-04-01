@@ -2,16 +2,15 @@ thisdir = class/System.Net.Http/FunctionalTests
 SUBDIRS = 
 include ../../../build/rules.make
 
-ASSEMBLY = System.Net.Http.FunctionalTests
+LIBRARY = System.Net.Http.FunctionalTests.dll
+NO_BUILD = yes
+NO_INSTALL = yes
 
-XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks
+XTEST_LIB_REFS = System System.Core Facades/System.Threading.Tasks System.Net.Http
 USE_XTEST_REMOTE_EXECUTOR = YES
 
 XTEST_LIB_FLAGS = /resource:../../System/Test/TestData/testservereku.contoso.com.pfx
-
-the_assembly = $(topdir)/class/lib/$(PROFILE_DIRECTORY)/System.Net.Http.dll
-
-include ../../../build/tests.make
+include ../../../build/library.make
 
 TEST_RUNTIME := MONO_URI_DOTNETRELATIVEORABSOLUTE=true $(TEST_RUNTIME)
 

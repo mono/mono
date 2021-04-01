@@ -92,14 +92,16 @@ namespace System.Windows.Forms {
 		#region	Protected Methods
 		protected override void OnClick (EventArgs e)
 		{
-			if (dialog_result != DialogResult.None) {
-				Form p = FindForm ();
-
-				if (p != null)
+			Form p = FindForm ();
+			if (p != null) {
+				p.dialog_result_changed = false; // manages the case where the DialogResult of the form is overriden in the button click event.
+				base.OnClick (e);
+				if (dialog_result != DialogResult.None && !p.dialog_result_changed) {
 					p.DialogResult = dialog_result;
+				}
+			} else {
+				base.OnClick (e);
 			}
-			
-			base.OnClick (e);
 		}
 
 		protected override void OnFontChanged (EventArgs e)

@@ -191,7 +191,7 @@ namespace System.Windows.Forms
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;
 		internal SystemResPool ResPool = new SystemResPool ();
-		private MethodInfo update;
+		private int[] knownColorTable;
 
 		protected Theme ()
 		{
@@ -199,13 +199,23 @@ namespace System.Windows.Forms
 
 		private void SetSystemColors (KnownColor kc, Color value)
 		{
-			if (update == null) {
-				Type known_colors = Type.GetType ("System.Drawing.KnownColors, " + Consts.AssemblySystem_Drawing);
-				if (known_colors != null)
-					update = known_colors.GetMethod ("Update", BindingFlags.Static | BindingFlags.Public);
+			if (knownColorTable == null) {
+				Type knownColorTableClass = Type.GetType ("System.Drawing.KnownColorTable, " + Consts.AssemblySystem_Drawing);
+				if (knownColorTableClass != null)
+				{
+					MethodInfo ensureMethod = knownColorTableClass.GetMethod ("EnsureColorTable", BindingFlags.Static | BindingFlags.NonPublic);
+					if (ensureMethod != null) {
+						ensureMethod.Invoke(null, new object[]{});
+						FieldInfo colorTableField = knownColorTableClass.GetField ("s_colorTable", BindingFlags.Static | BindingFlags.NonPublic);
+						if (colorTableField != null) {
+							knownColorTable = colorTableField.GetValue (null) as int[];
+						}
+					}
+				}
 			}
-			if (update != null)
-				update.Invoke (null, new object [2] { (int)kc, value.ToArgb () });
+			if (knownColorTable != null) {
+				knownColorTable[(int)kc] = value.ToArgb();
+			}
 		}
 
 		/* OS Feature support */

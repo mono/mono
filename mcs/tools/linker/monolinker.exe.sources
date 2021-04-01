@@ -8,16 +8,20 @@
 ../../../external/linker/src/linker/Linker/ConsoleLogger.cs
 ../../../external/linker/src/linker/Linker/DirectoryAssemblyResolver.cs
 ../../../external/linker/src/linker/Linker/Driver.cs
+../../../external/linker/src/linker/Linker/IDependencyRecorder.cs
 ../../../external/linker/src/linker/Linker/I18nAssemblies.cs
 ../../../external/linker/src/linker/Linker/ILogger.cs
+../../../external/linker/src/linker/Linker/IReflectionPatternRecorder.cs
 ../../../external/linker/src/linker/Linker/IXApiVisitor.cs
 ../../../external/linker/src/linker/Linker/KnownMembers.cs
 ../../../external/linker/src/linker/Linker/LinkContext.cs
 ../../../external/linker/src/linker/Linker/LoadException.cs
+../../../external/linker/src/linker/Linker/LoggingReflectionPatternRecorder.cs
 ../../../external/linker/src/linker/Linker/MarkException.cs
 ../../../external/linker/src/linker/Linker/MarkingHelpers.cs
 ../../../external/linker/src/linker/Linker/MethodAction.cs
 ../../../external/linker/src/linker/Linker/MethodBodyScanner.cs
+../../../external/linker/src/linker/Linker/OutputException.cs
 ../../../external/linker/src/linker/Linker/OverrideInformation.cs
 ../../../external/linker/src/linker/Linker/MethodDefinitionExtensions.cs
 ../../../external/linker/src/linker/Linker/MethodReferenceExtensions.cs
@@ -28,6 +32,7 @@
 ../../../external/linker/src/linker/Linker/TypePreserve.cs
 ../../../external/linker/src/linker/Linker/TypeReferenceExtensions.cs
 ../../../external/linker/src/linker/Linker/XApiReader.cs
+../../../external/linker/src/linker/Linker/XmlDependencyRecorder.cs
 ../../../external/linker/src/linker/Linker.Steps/BaseStep.cs
 ../../../external/linker/src/linker/Linker.Steps/ClearInitLocals.cs
 ../../../external/linker/src/linker/Linker.Steps/LoadReferencesStep.cs
@@ -51,4 +56,6 @@
 ../../../external/linker/src/linker/Linker.Steps/CodeRewriterStep.cs
 ../../../external/linker/src/linker/Linker.Steps/RemoveFeaturesStep.cs
 ../../../external/linker/src/linker/Linker.Steps/ReflectionBlockedStep.cs
+../../../external/linker/src/linker/Linker.Steps/BodySubstituterStep.cs
+../../../external/linker/src/linker/Linker.Steps/RemoveUnreachableBlocksStep.cs
 

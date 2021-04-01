@@ -127,7 +127,7 @@ class MonoServiceRunner : MarshalByRefObject
 	
 			// Create new AppDomain to run service
 			AppDomainSetup setup = new AppDomainSetup ();
-			setup.ApplicationBase = Environment.CurrentDirectory;
+			setup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
 			setup.ConfigurationFile = Path.Combine (Environment.CurrentDirectory, assembly + ".config");
 			setup.ApplicationName = logname;
 			

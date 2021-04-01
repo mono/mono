@@ -85,7 +85,7 @@ namespace System.Threading
 #if MONO
         public const uint tpQuantum = 30U;
 
-        public static int processorCount => Environment.ProcessorCount;
+        public static int processorCount = Environment.ProcessorCount;
 
         public static bool tpHosted => ThreadPool.IsThreadPoolHosted(); 
 

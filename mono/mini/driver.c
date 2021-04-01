@@ -12,9 +12,7 @@
  */
 
 #include <config.h>
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 #if HAVE_SCHED_SETAFFINITY
 #include <sched.h>
 #endif
@@ -41,6 +39,7 @@
 #include <mono/metadata/profiler-private.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/metadata/environment.h>
+#include <mono/metadata/environment-internals.h>
 #include <mono/metadata/verify.h>
 #include <mono/metadata/verify-internals.h>
 #include <mono/metadata/mono-debug.h>
@@ -53,9 +52,11 @@
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-hwcap.h"
 #include "mono/utils/mono-logger-internals.h"
+#include "mono/utils/options.h"
 #include "mono/metadata/w32handle.h"
 #include "mono/metadata/callspec.h"
 #include "mono/metadata/custom-attrs-internals.h"
+#include <mono/utils/w32subset.h>
 
 #include "mini.h"
 #include "jit.h"
@@ -67,7 +68,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <locale.h>
-#include "version.h"
 #include "debugger-agent.h"
 #if TARGET_OSX
 #   include <sys/resource.h>
@@ -76,8 +76,8 @@
 static FILE *mini_stats_fd;
 
 static void mini_usage (void);
-static void mono_runtime_set_execution_mode (MonoEEMode mode);
-static void mono_runtime_set_execution_mode_full (MonoEEMode mode, gboolean override);
+static void mono_runtime_set_execution_mode (int mode);
+static void mono_runtime_set_execution_mode_full (int mode, gboolean override);
 static int mono_jit_exec_internal (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[]);
 
 #ifdef HOST_WIN32
@@ -202,6 +202,9 @@ static gboolean
 parse_debug_options (const char* p)
 {
 	MonoDebugOptions *opt = mini_get_debug_options ();
+#ifdef ENABLE_NETCORE
+	opt->enabled = TRUE;
+#endif
 
 	do {
 		if (!*p) {
@@ -218,6 +221,11 @@ parse_debug_options (const char* p)
 		} else if (!strncmp (p, "gdb", 3)) {
 			opt->gdb = TRUE;
 			p += 3;
+#ifdef ENABLE_NETCORE
+		} else if (!strncmp (p, "ignore", 6)) {
+			opt->enabled = FALSE;
+			p += 6;
+#endif
 		} else {
 			fprintf (stderr, "Invalid debug option `%s', use --help-debug for details\n", p);
 			return FALSE;
@@ -236,8 +244,8 @@ parse_debug_options (const char* p)
 }
 
 typedef struct {
-	const char name [6];
-	const char desc [18];
+	char name [6];
+	char desc [18];
 	MonoGraphOptions value;
 } GraphName;
 
@@ -282,15 +290,16 @@ mono_parse_default_optimizations (const char* p)
 char*
 mono_opt_descr (guint32 flags) {
 	GString *str = g_string_new ("");
-	int i, need_comma;
+	int i;
+	gboolean need_comma;
 
-	need_comma = 0;
+	need_comma = FALSE;
 	for (i = 0; i < G_N_ELEMENTS (opt_names); ++i) {
 		if (flags & (1 << i) && optflag_get_name (i)) {
 			if (need_comma)
 				g_string_append_c (str, ',');
 			g_string_append (str, optflag_get_name (i));
-			need_comma = 1;
+			need_comma = TRUE;
 		}
 	}
 	return g_string_free (str, FALSE);
@@ -327,6 +336,52 @@ opt_sets [] = {
        MONO_OPT_BRANCH | MONO_OPT_PEEPHOLE | MONO_OPT_COPYPROP | MONO_OPT_CONSPROP | MONO_OPT_DEADCE | MONO_OPT_LOOP | MONO_OPT_INLINE | MONO_OPT_INTRINS | MONO_OPT_EXCEPTION | MONO_OPT_CMOV,
        DEFAULT_OPTIMIZATIONS, 
 };
+
+static const guint32
+interp_opt_sets [] = {
+	INTERP_OPT_NONE,
+	INTERP_OPT_INLINE,
+	INTERP_OPT_CPROP,
+	INTERP_OPT_SUPER_INSTRUCTIONS,
+	INTERP_OPT_INLINE | INTERP_OPT_CPROP,
+	INTERP_OPT_INLINE | INTERP_OPT_SUPER_INSTRUCTIONS,
+	INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS,
+	INTERP_OPT_INLINE | INTERP_OPT_CPROP | INTERP_OPT_SUPER_INSTRUCTIONS | INTERP_OPT_BBLOCKS,
+};
+
+static const char* const
+interp_opflags_names [] = {
+	"inline",
+	"cprop",
+	"super-insn",
+	"bblocks"
+};
+
+static const char*
+interp_optflag_get_name (guint32 i)
+{
+	g_assert (i < G_N_ELEMENTS (interp_opflags_names));
+	return interp_opflags_names [i];
+}
+
+static char*
+interp_opt_descr (guint32 flags)
+{
+	GString *str = g_string_new ("");
+	int i;
+	gboolean need_comma;
+
+	need_comma = FALSE;
+	for (i = 0; i < G_N_ELEMENTS (interp_opflags_names); ++i) {
+		if (flags & (1 << i) && interp_optflag_get_name (i)) {
+			if (need_comma)
+				g_string_append_c (str, ',');
+			g_string_append (str, interp_optflag_get_name (i));
+			need_comma = TRUE;
+		}
+	}
+	return g_string_free (str, FALSE);
+}
 
 typedef int (*TestMethod) (void);
 
@@ -396,7 +451,9 @@ method_should_be_regression_tested (MonoMethod *method, gboolean interp)
 		if (!is_ok (error))
 			continue;
 
-		char *utf8_str = (char*)(void*)typed_args[0]; //this points into image memory that is constant
+		const char *arg = (const char*)typed_args [0];
+		mono_metadata_decode_value (arg, &arg);
+		char *utf8_str = (char*)arg; //this points into image memory that is constant
 		g_free (typed_args);
 		g_free (named_args);
 		g_free (arginfo);
@@ -476,7 +533,7 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 			func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method, error);
 			mono_error_cleanup (error);
 #else
-			g_error ("No JIT or AOT available, regression testing not possible!")
+			g_error ("No JIT or AOT available, regression testing not possible!");
 #endif
 
 #else
@@ -488,10 +545,12 @@ mini_regression_step (MonoImage *image, int verbose, int *total_run, int *total,
 				ERROR_DECL (error);
 				func = (TestMethod)mono_aot_get_method (mono_get_root_domain (), method, error);
 				mono_error_cleanup (error);
-				if (!func)
-					func = (TestMethod)(gpointer)cfg->native_code;
+				if (!func) {
+					func = (TestMethod)MINI_ADDR_TO_FTNPTR (cfg->native_code);
+				}
 #else
-					func = (TestMethod)(gpointer)cfg->native_code;
+				func = (TestMethod)(gpointer)cfg->native_code;
+				func = MINI_ADDR_TO_FTNPTR (func);
 #endif
 				func = (TestMethod)mono_create_ftnptr (mono_get_root_domain (), (gpointer)func);
 			}
@@ -687,7 +746,7 @@ mini_regression_list (int verbose, int count, char *images [])
 }
 
 static void
-interp_regression_step (MonoImage *image, int verbose, int *total_run, int *total, GTimer *timer, MonoDomain *domain)
+interp_regression_step (MonoImage *image, int verbose, int *total_run, int *total, const guint32 *opt_flags, GTimer *timer, MonoDomain *domain)
 {
 	int result, expected, failed, cfailed, run;
 	double elapsed, transform_time;
@@ -695,9 +754,19 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 	MonoObject *result_obj;
 	int local_skip_index = 0;
 
-	g_print ("Test run: image=%s\n", mono_image_get_filename (image));
+	const char *n = NULL;
+	if (opt_flags) {
+		mini_get_interp_callbacks ()->set_optimizations (*opt_flags);
+		n = interp_opt_descr (*opt_flags);
+	} else {
+		n = mono_interp_opts_string;
+	}
+	g_print ("Test run: image=%s, opts=%s\n", mono_image_get_filename (image), n);
+
 	cfailed = failed = run = 0;
 	transform_time = elapsed = 0.0;
+
+	mini_get_interp_callbacks ()->invalidate_transformed (domain);
 
 	g_timer_start (timer);
 	for (i = 0; i < mono_image_get_table_rows (image, MONO_TABLE_METHOD); ++i) {
@@ -725,7 +794,7 @@ interp_regression_step (MonoImage *image, int verbose, int *total_run, int *tota
 				cfailed++;
 				g_print ("Test '%s' execution failed.\n", method->name);
 			} else if (exc != NULL) {
-				g_print ("Exception in Test '%s' occured:\n", method->name);
+				g_print ("Exception in Test '%s' occurred:\n", method->name);
 				mono_object_describe (exc);
 				run++;
 				failed++;
@@ -778,7 +847,14 @@ interp_regression (MonoImage *image, int verbose, int *total_run)
 
 	total = 0;
 	*total_run = 0;
-	interp_regression_step (image, verbose, total_run, &total, timer, domain);
+
+	if (mono_interp_opts_string) {
+		/* explicit option requested*/
+		interp_regression_step (image, verbose, total_run, &total, NULL, timer, domain);
+	} else {
+		for (int opt = 0; opt < G_N_ELEMENTS (interp_opt_sets); ++opt)
+			interp_regression_step (image, verbose, total_run, &total, &interp_opt_sets [opt], timer, domain);
+	}
 
 	g_timer_destroy (timer);
 	return total;
@@ -1249,7 +1325,7 @@ compile_all_methods (MonoAssembly *ass, int verbose, guint32 opts, guint32 recom
 	mono_thread_create_checked (mono_domain_get (), (gpointer)compile_all_methods_thread_main, &args, error);
 	mono_error_assert_ok (error);
 
-	mono_thread_manage ();
+	mono_thread_manage_internal ();
 }
 
 /**
@@ -1544,11 +1620,21 @@ mini_usage (void)
 		"\n"
 		"Development:\n"
 		"    --aot[=<options>]      Compiles the assembly to native code\n"
+#ifdef ENABLE_NETCORE
+		"    --debug=ignore         Disable debugging support (on by default)\n"
+		"    --debug=[<options>]    Disable debugging support or enable debugging extras, use --help-debug for details\n"
+#else
 		"    --debug[=<options>]    Enable debugging support, use --help-debug for details\n"
+#endif
  		"    --debugger-agent=options Enable the debugger agent\n"
 		"    --profile[=profiler]   Runs in profiling mode with the specified profiler module\n"
 		"    --trace[=EXPR]         Enable tracing, use --help-trace for details\n"
+#ifdef __linux__		
 		"    --jitmap               Output a jit method map to /tmp/perf-PID.map\n"
+#endif
+#ifdef ENABLE_JIT_DUMP
+		"    --jitdump              Output a jitdump file to /tmp/jit-PID.dump\n"
+#endif
 		"    --help-devel           Shows more options available to developers\n"
 		"\n"
 		"Runtime:\n"
@@ -1573,6 +1659,9 @@ mini_usage (void)
 		"    --handlers             Install custom handlers, use --help-handlers for details.\n"
 		"    --aot-path=PATH        List of additional directories to search for AOT images.\n"
 	  );
+
+	g_print ("\nOptions:\n");
+	mono_options_print_usage ();
 }
 
 static void
@@ -1603,10 +1692,17 @@ mini_debug_usage (void)
 {
 	fprintf (stdout,
 		 "Debugging options:\n"
+#ifdef ENABLE_NETCORE
+		 "   --debug[=OPTIONS]     Disable debugging support or enable debugging extras, optional OPTIONS is a comma\n"
+#else
 		 "   --debug[=OPTIONS]     Enable debugging support, optional OPTIONS is a comma\n"
+#endif
 		 "                         separated list of options\n"
 		 "\n"
 		 "OPTIONS is composed of:\n"
+#ifdef ENABLE_NETCORE
+		 "    ignore               Disable debugging support (on by default).\n"
+#endif
 		 "    casts                Enable more detailed InvalidCastException messages.\n"
 		 "    mdb-optimizations    Disable some JIT optimizations which are normally\n"
 		 "                         disabled when running inside the debugger.\n"
@@ -1691,6 +1787,29 @@ mono_get_version_info (void)
 
 static gboolean enable_debugging;
 
+static void
+enable_runtime_stats (void)
+{
+	mono_counters_enable (-1);
+	mono_atomic_store_bool (&mono_stats.enabled, TRUE);
+	mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
+}
+
+static MonoMethodDesc *
+parse_qualified_method_name (char *method_name)
+{
+	if (strlen (method_name) == 0) {
+		g_printerr ("Couldn't parse empty method name.");
+		exit (1);
+	}
+	MonoMethodDesc *result = mono_method_desc_new (method_name, TRUE);
+	if (!result) {
+		g_printerr ("Couldn't parse method name: %s\n", method_name);
+		exit (1);
+	}
+	return result;
+}
+
 /**
  * mono_jit_parse_options:
  *
@@ -1716,7 +1835,7 @@ mono_jit_parse_options (int argc, char * argv[])
 	for (i = 0; i < argc; ++i) {
 		if (argv [i] [0] != '-')
 			break;
- 		if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
+		if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
 			sdb_options = g_strdup (argv [i] + 17);
@@ -1744,9 +1863,12 @@ mono_jit_parse_options (int argc, char * argv[])
 
 			opt->break_on_exc = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
-			mono_counters_enable (-1);
-			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
-			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
+			enable_runtime_stats ();
+		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
+			enable_runtime_stats ();
+			if (mono_stats_method_desc)
+				g_free (mono_stats_method_desc);
+			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
 		} else if (strcmp (argv [i], "--break") == 0) {
 			if (i+1 >= argc){
 				fprintf (stderr, "Missing method name in --break command line option\n");
@@ -1767,6 +1889,10 @@ mono_jit_parse_options (int argc, char * argv[])
 #else
 			mono_use_llvm = TRUE;
 #endif
+		} else if (strcmp (argv [i], "--profile") == 0) {
+			mini_add_profiler_argument (NULL);
+		} else if (strncmp (argv [i], "--profile=", 10) == 0) {
+			mini_add_profiler_argument (argv [i] + 10);
 		} else if (argv [i][0] == '-' && argv [i][1] == '-' && mini_parse_debug_option (argv [i] + 2)) {
 		} else {
 			fprintf (stderr, "Unsupported command line option: '%s'\n", argv [i]);
@@ -1884,20 +2010,19 @@ switch_arch (char* argv[], const char* target_arch)
 static void
 apply_root_domain_configuration_file_bindings (MonoDomain *domain, char *root_domain_configuration_file)
 {
+#ifndef ENABLE_NETCORE
 	g_assert (domain->setup == NULL || domain->setup->configuration_file == NULL);
 	g_assert (!domain->assembly_bindings_parsed);
 
 	mono_domain_parse_assembly_bindings (domain, 0, 0, root_domain_configuration_file);
-
+#else
+	g_assert_not_reached ();
+#endif
 }
 
 static void
 mono_check_interp_supported (void)
 {
-#ifdef DISABLE_INTERPRETER
-	g_error ("Mono IL interpreter support is missing\n");
-#endif
-
 #ifdef MONO_CROSS_COMPILE
 	g_error ("--interpreter on cross-compile runtimes not supported\n");
 #endif
@@ -1980,7 +2105,6 @@ mono_main (int argc, char* argv[])
 	MonoAssembly *assembly;
 	MonoMethodDesc *desc;
 	MonoMethod *method;
-	MonoCompile *cfg;
 	MonoDomain *domain;
 	MonoImageOpenStatus open_status;
 	const char* aname, *mname = NULL;
@@ -2001,6 +2125,7 @@ mono_main (int argc, char* argv[])
 #ifdef HOST_WIN32
 	int mixed_mode = FALSE;
 #endif
+	ERROR_DECL (error);
 
 #ifdef MOONLIGHT
 #ifndef HOST_WIN32
@@ -2039,6 +2164,18 @@ mono_main (int argc, char* argv[])
 
 	opt = mono_parse_default_optimizations (NULL);
 
+#ifdef ENABLE_NETCORE
+	enable_debugging = TRUE;
+#endif
+
+	mono_options_parse_options ((const char**)argv + 1, argc - 1, &argc, error);
+	argc ++;
+	if (!is_ok (error)) {
+		g_printerr ("%s", mono_error_get_message (error));
+		mono_error_cleanup (error);
+		return 1;
+	}
+
 	for (i = 1; i < argc; ++i) {
 		if (argv [i] [0] != '-')
 			break;
@@ -2058,7 +2195,7 @@ mono_main (int argc, char* argv[])
 			char *build = mono_get_runtime_build_info ();
 			char *gc_descr;
 
-			g_print ("Mono JIT compiler version %s\nCopyright (C) 2002-2014 Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com\n", build);
+			g_print ("Mono JIT compiler version %s\nCopyright (C) Novell, Inc, Xamarin Inc and Contributors. www.mono-project.com\n", build);
 			g_free (build);
 			char *info = mono_get_version_info ();
 			g_print (info);
@@ -2190,9 +2327,12 @@ mono_main (int argc, char* argv[])
 		} else if (strcmp (argv [i], "--print-vtable") == 0) {
 			mono_print_vtable = TRUE;
 		} else if (strcmp (argv [i], "--stats") == 0) {
-			mono_counters_enable (-1);
-			mono_atomic_store_bool (&mono_stats.enabled, TRUE);
-			mono_atomic_store_bool (&mono_jit_stats.enabled, TRUE);
+			enable_runtime_stats ();
+		} else if (strncmp (argv [i], "--stats=", 8) == 0) {
+			enable_runtime_stats ();
+			if (mono_stats_method_desc)
+				g_free (mono_stats_method_desc);
+			mono_stats_method_desc = parse_qualified_method_name (argv [i] + 8);
 #ifndef DISABLE_AOT
 		} else if (strcmp (argv [i], "--aot") == 0) {
 			error_if_aot_unsupported ();
@@ -2229,6 +2369,10 @@ mono_main (int argc, char* argv[])
 			forced_version = &argv [i][10];
 		} else if (strcmp (argv [i], "--jitmap") == 0) {
 			mono_enable_jit_map ();
+#ifdef ENABLE_JIT_DUMP
+		} else if (strcmp (argv [i], "--jitdump") == 0) {
+			mono_enable_jit_dump ();
+#endif
 		} else if (strcmp (argv [i], "--profile") == 0) {
 			mini_add_profiler_argument (NULL);
 		} else if (strncmp (argv [i], "--profile=", 10) == 0) {
@@ -2271,7 +2415,14 @@ mono_main (int argc, char* argv[])
 			enable_debugging = TRUE;
 			if (!parse_debug_options (argv [i] + 8))
 				return 1;
- 		} else if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
+#ifdef ENABLE_NETCORE
+			MonoDebugOptions *opt = mini_get_debug_options ();
+
+			if (!opt->enabled) {
+				enable_debugging = FALSE;
+			}
+#endif
+		} else if (strncmp (argv [i], "--debugger-agent=", 17) == 0) {
 			MonoDebugOptions *opt = mini_get_debug_options ();
 
 			sdb_options = g_strdup (argv [i] + 17);
@@ -2365,9 +2516,9 @@ mono_main (int argc, char* argv[])
 		} else if (strncmp (argv [i], "--assembly-loader=", strlen("--assembly-loader=")) == 0) {
 			gchar *arg = argv [i] + strlen ("--assembly-loader=");
 			if (strcmp (arg, "strict") == 0)
-				mono_loader_set_strict_strong_names (TRUE);
+				mono_loader_set_strict_assembly_name_check (TRUE);
 			else if (strcmp (arg, "legacy") == 0)
-				mono_loader_set_strict_strong_names (FALSE);
+				mono_loader_set_strict_assembly_name_check (FALSE);
 			else
 				fprintf (stderr, "Warning: unknown argument to --assembly-loader. Should be \"strict\" or \"legacy\"\n");
 		} else if (strncmp (argv [i], MONO_HANDLERS_ARGUMENT, MONO_HANDLERS_ARGUMENT_LEN) == 0) {
@@ -2518,6 +2669,8 @@ mono_main (int argc, char* argv[])
 	}
 
 	mono_set_defaults (mini_verbose_level, opt);
+	mono_set_os_args (argc, argv);
+
 	domain = mini_init (argv [i], forced_version);
 
 	mono_gc_set_stack_end (&domain);
@@ -2610,7 +2763,7 @@ mono_main (int argc, char* argv[])
 			exit (1);
 		}
 
-#if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if defined(HOST_WIN32) && HAVE_API_SUPPORT_WIN32_CONSOLE
 		/* Detach console when executing IMAGE_SUBSYSTEM_WINDOWS_GUI on win32 */
 		if (!enable_debugging && !mono_compile_aot && mono_assembly_get_image_internal (assembly)->image_info->cli_header.nt.pe_subsys_required == IMAGE_SUBSYSTEM_WINDOWS_GUI)
 			FreeConsole ();
@@ -2623,7 +2776,7 @@ mono_main (int argc, char* argv[])
 		main_args.opts = opt;
 		main_args.aot_options = aot_options;
 		main_thread_handler (&main_args);
-		mono_thread_manage ();
+		mono_thread_manage_internal ();
 
 		mini_cleanup (domain);
 
@@ -2651,6 +2804,7 @@ mono_main (int argc, char* argv[])
 	}
 
 #ifndef DISABLE_JIT
+	MonoCompile *cfg;
 	if (action == DO_DRAW) {
 		int part = 0;
 
@@ -2754,7 +2908,9 @@ mono_main (int argc, char* argv[])
 MonoDomain * 
 mono_jit_init (const char *file)
 {
-	return mini_init (file, NULL);
+	MonoDomain *ret = mini_init (file, NULL);
+	MONO_ENTER_GC_SAFE_UNBALANCED; //once it is not executing any managed code yet, it's safe to run the gc
+	return ret;
 }
 
 /**
@@ -2780,7 +2936,16 @@ mono_jit_init (const char *file)
 MonoDomain * 
 mono_jit_init_version (const char *domain_name, const char *runtime_version)
 {
-	return mini_init (domain_name, runtime_version);
+	MonoDomain *ret = mini_init (domain_name, runtime_version);
+	MONO_ENTER_GC_SAFE_UNBALANCED; //once it is not executing any managed code yet, it's safe to run the gc
+	return ret;
+}
+
+MonoDomain * 
+mono_jit_init_version_for_test_only (const char *domain_name, const char *runtime_version)
+{
+	MonoDomain *ret = mini_init (domain_name, runtime_version);
+	return ret;
 }
 
 /**
@@ -2789,11 +2954,16 @@ mono_jit_init_version (const char *domain_name, const char *runtime_version)
 void        
 mono_jit_cleanup (MonoDomain *domain)
 {
-	MONO_ENTER_GC_UNSAFE;
-	mono_thread_manage ();
+	MONO_STACKDATA (dummy);
+	(void) mono_threads_enter_gc_unsafe_region_unbalanced_internal (&dummy);
+
+	// after mini_cleanup everything is cleaned up so MONO_EXIT_GC_UNSAFE
+	// can't work and doesn't make sense.
+
+	mono_thread_manage_internal ();
 
 	mini_cleanup (domain);
-	MONO_EXIT_GC_UNSAFE;
+
 }
 
 void
@@ -2804,7 +2974,7 @@ mono_jit_set_aot_only (gboolean val)
 }
 
 static void
-mono_runtime_set_execution_mode_full (MonoEEMode mode, gboolean override)
+mono_runtime_set_execution_mode_full (int mode, gboolean override)
 {
 	static gboolean mode_initialized = FALSE;
 	if (mode_initialized && !override)
@@ -2853,7 +3023,7 @@ mono_runtime_set_execution_mode_full (MonoEEMode mode, gboolean override)
 		mono_llvm_only = TRUE;
 		break;
 
-	case MONO_EE_MODE_INTERP:
+	case MONO_AOT_MODE_INTERP_ONLY:
 		mono_check_interp_supported ();
 		mono_use_interpreter = TRUE;
 
@@ -2871,7 +3041,7 @@ mono_runtime_set_execution_mode_full (MonoEEMode mode, gboolean override)
 }
 
 static void
-mono_runtime_set_execution_mode (MonoEEMode mode)
+mono_runtime_set_execution_mode (int mode)
 {
 	mono_runtime_set_execution_mode_full (mode, TRUE);
 }
@@ -2889,7 +3059,7 @@ mono_jit_set_aot_mode (MonoAotMode mode)
 	mono_aot_mode = mode;
 	inited = TRUE;
 	
-	mono_runtime_set_execution_mode ((MonoEEMode)mode);
+	mono_runtime_set_execution_mode (mode);
 }
 
 mono_bool
@@ -3076,7 +3246,7 @@ mono_parse_options (const char *options, int *ref_argc, char **ref_argv [], gboo
 	return NULL;
 }
 
-#if defined(HOST_WIN32) && G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if defined(HOST_WIN32) && HAVE_API_SUPPORT_WIN32_COMMAND_LINE_TO_ARGV
 #include <shellapi.h>
 
 static char *
@@ -3131,13 +3301,13 @@ mono_win32_parse_options (const char *options, int *ref_argc, char **ref_argv []
 	return NULL;
 }
 
-static inline char *
+static char *
 mono_parse_response_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
 {
 	return mono_win32_parse_options (options, ref_argc, ref_argv, prepend);
 }
 #else
-static inline char *
+static char *
 mono_parse_response_options (const char *options, int *ref_argc, char **ref_argv [], gboolean prepend)
 {
 	return mono_parse_options (options, ref_argc, ref_argv, prepend);
@@ -3188,4 +3358,3 @@ mono_parse_env_options (int *ref_argc, char **ref_argv [])
 	fprintf (stderr, "%s", ret);
 	exit (1);
 }
-

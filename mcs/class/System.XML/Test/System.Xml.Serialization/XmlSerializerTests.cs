@@ -1960,6 +1960,7 @@ namespace MonoTests.System.XmlSerialization
 		public void TestSerializePrimitiveTypesContainer ()
 		{
 			Serialize (new PrimitiveTypesContainer ());
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"<?xml version='1.0' encoding='utf-16'?>" +
 				"<PrimitiveTypesContainer xmlns:xsi='{1}' xmlns:xsd='{0}' xmlns='some:urn'>" +
@@ -2674,6 +2675,19 @@ namespace MonoTests.System.XmlSerialization
 
 			Serialize (complex);
 			Assert.AreEqual ("<:GenComplexStructOfInt32String http://www.w3.org/2000/xmlns/:xsd='http://www.w3.org/2001/XMLSchema' http://www.w3.org/2000/xmlns/:xsi='http://www.w3.org/2001/XMLSchema-instance'><:something>123</><:simpleclass><:something>456</></><:simplestruct><:something>789</></><:listclass><:somelist><:int>100</><:int>200</></></><:arrayclass><:arr><:int>11</><:int>22</><:int>33</></></><:twoclass><:something1>10</><:something2>Ten</></><:derivedclass><:something1>two</><:something2>2</><:another1>1</><:another2>one</></><:derived2><:something1>4</><:something2>four</><:another1>3</><:another2>three</></><:nestedouter><:outer>5</></><:nestedinner><:inner>six</><:something>6</></></>", WriterText);
+		}
+
+		[Test]
+		public void TestSerializeStreamPreserveUTFChars () {
+			string foo = "BÄR";
+			XmlSerializer serializer = new XmlSerializer (typeof (string));
+
+			MemoryStream stream = new MemoryStream ();
+
+			serializer.Serialize (stream, foo);
+			stream.Position = 0;
+			foo = (string) serializer.Deserialize (stream);
+			Assert.AreEqual("BÄR", foo);
 		}
 
 		[Test] // bug #80759

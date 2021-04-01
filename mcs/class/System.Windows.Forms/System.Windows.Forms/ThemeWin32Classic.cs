@@ -6255,7 +6255,11 @@ namespace System.Windows.Forms
 			}
 
 			// Respect MinimizeBox/MaximizeBox
-			if (form.MinimizeBox == false && form.MaximizeBox == false) {
+			if (form.ControlBox == false) {
+				buttons.MinimizeButton.Visible = false;
+				buttons.MaximizeButton.Visible = false;
+				buttons.CloseButton.Visible = false;
+			} else if (form.MinimizeBox == false && form.MaximizeBox == false) {
 				buttons.MinimizeButton.Visible = false;
 				buttons.MaximizeButton.Visible = false;
 			} else if (form.MinimizeBox == false)

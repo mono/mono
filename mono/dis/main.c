@@ -1951,7 +1951,7 @@ monodis_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *reques
 
        for (tmp = loaded_assemblies; tmp; tmp = tmp->next) {
                MonoAssembly *ass = (MonoAssembly *)tmp->data;
-               if (mono_assembly_names_equal (aname, &ass->aname))
+               if (mono_assembly_check_name_match (aname, &ass->aname))
 		       return ass;
        }
        return NULL;
@@ -2053,8 +2053,8 @@ main (int argc, char *argv [])
 #endif
 	mono_thread_info_runtime_init (&ticallbacks);
 
-	mono_install_assembly_load_hook_v2 (monodis_assembly_load_hook, NULL);
-	mono_install_assembly_search_hook_v2 (monodis_assembly_search_hook, NULL, FALSE, FALSE);
+	mono_install_assembly_load_hook_v2 (monodis_assembly_load_hook, NULL, FALSE);
+	mono_install_assembly_search_hook_v2 (monodis_assembly_search_hook, NULL, FALSE, FALSE, FALSE);
 
 	/*
 	 * If we just have one file, use the corlib version it requires.
@@ -2064,7 +2064,7 @@ main (int argc, char *argv [])
 
 		mono_init_from_assembly (argv [0], filename);
 
-		mono_install_assembly_preload_hook_v2 (monodis_preload, GUINT_TO_POINTER (FALSE), FALSE);
+		mono_install_assembly_preload_hook_v2 (monodis_preload, GUINT_TO_POINTER (FALSE), FALSE, FALSE);
 
 		return disassemble_file (filename);
 	} else {

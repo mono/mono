@@ -18,7 +18,11 @@ gpointer
 mini_llvmonly_load_method (MonoMethod *method, gboolean caller_gsharedvt, gboolean need_unbox, gpointer *out_arg, MonoError *error)
 {
 	gpointer addr = mono_compile_method_checked (method, error);
-	return_val_if_nok (error, NULL);
+
+	if (!is_ok (error)) {
+		mono_error_cleanup (error);
+		error_init_reuse (error);
+	}
 
 	if (addr) {
 		return mini_llvmonly_add_method_wrappers (method, (gpointer)addr, caller_gsharedvt, need_unbox, out_arg);
@@ -768,13 +772,16 @@ mini_llvmonly_resolve_iface_call_gsharedvt (MonoObject *this_obj, int imt_slot, 
 	return res;
 }
 
-static void
-init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoClass *init_class)
+/* Called from LLVM code to initialize a method */
+// FIXME: This should be somewhere else
+void
+mini_llvm_init_method (MonoAotFileInfo *info, gpointer aot_module, gpointer method_info, MonoVTable *vtable)
 {
-	ERROR_DECL (error);
 	gboolean res;
+	MonoAotModule *amodule = (MonoAotModule *)aot_module;
+	ERROR_DECL (error);
 
-	res = mono_aot_init_llvmonly_method (amodule, method_index, init_class, error);
+	res = mono_aot_init_llvm_method (amodule, method_info, vtable ? vtable->klass : NULL, error);
 	if (!res || !is_ok (error)) {
 		MonoException *ex = mono_error_convert_to_exception (error);
 		if (ex) {
@@ -788,50 +795,6 @@ init_llvmonly_method (MonoAotModule *amodule, guint32 method_index, MonoClass *i
 	}
 }
 
-/* Called from generated code to initialize a method */
-void
-mini_llvm_init_method (gpointer aot_module, guint32 method_index)
-{
-	MonoAotModule *amodule = (MonoAotModule *)aot_module;
-
-	init_llvmonly_method (amodule, method_index, NULL);
-}
-
-/* Same for gshared methods with a this pointer */
-void
-mini_llvm_init_gshared_method_this (gpointer aot_module, guint32 method_index, MonoObject *this_obj)
-{
-	MonoAotModule *amodule = (MonoAotModule *)aot_module;
-	MonoClass *klass;
-
-	// FIXME:
-	g_assert (this_obj);
-	klass = this_obj->vtable->klass;
-
-	init_llvmonly_method (amodule, method_index, klass);
-}
-
-/* Same for gshared methods with an mrgctx arg */
-void
-mini_llvm_init_gshared_method_mrgctx (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx)
-{
-	MonoAotModule *amodule = (MonoAotModule *)aot_module;
-
-	init_llvmonly_method (amodule, method_index, rgctx->class_vtable->klass);
-}
-
-/* Same for gshared methods with a vtable arg */
-void
-mini_llvm_init_gshared_method_vtable (gpointer aot_module, guint32 method_index, MonoVTable *vtable)
-{
-	MonoAotModule *amodule = (MonoAotModule *)aot_module;
-	MonoClass *klass;
-
-	klass = vtable->klass;
-
-	init_llvmonly_method (amodule, method_index, klass);
-}
-
 static GENERATE_GET_CLASS_WITH_CACHE (nullref, "System", "NullReferenceException")
 
 void
@@ -842,4 +805,35 @@ mini_llvmonly_throw_nullref_exception (void)
 	guint32 ex_token_index = m_class_get_type_token (klass) - MONO_TOKEN_TYPE_DEF;
 
 	mono_llvm_throw_corlib_exception (ex_token_index);
+}
+
+void
+mini_llvmonly_throw_aot_failed_exception (const char *name)
+{
+	char *msg = g_strdup_printf ("AOT Compilation failed for method '%s'.", name);
+	MonoException *ex = mono_get_exception_execution_engine (msg);
+	g_free (msg);
+	mono_llvm_throw_exception ((MonoObject*)ex);
+}
+
+/*
+ * mini_llvmonly_pop_lmf:
+ *
+ *   Pop LMF off the LMF stack.
+ */
+void
+mini_llvmonly_pop_lmf (MonoLMF *lmf)
+{
+	if (lmf->previous_lmf)
+		mono_set_lmf ((MonoLMF*)lmf->previous_lmf);
+}
+
+gpointer
+mini_llvmonly_get_interp_entry (MonoMethod *method)
+{
+	ERROR_DECL (error);
+
+	MonoFtnDesc *desc = mini_get_interp_callbacks ()->create_method_pointer_llvmonly (method, FALSE, error);
+	mono_error_assert_ok (error);
+	return desc;
 }

@@ -284,8 +284,8 @@ namespace System.Windows.Forms
 		{
 			if (control == null)
 				throw new ArgumentNullException ();
-			if (value < -1)
-				throw new ArgumentException ();
+			if (value < 1)
+				throw new ArgumentOutOfRangeException ();
 
 			column_spans[control] = value;
 
@@ -310,8 +310,8 @@ namespace System.Windows.Forms
 		{
 			if (control == null)
 				throw new ArgumentNullException ();
-			if (value < -1)
-				throw new ArgumentException ();
+			if (value < 1)
+				throw new ArgumentOutOfRangeException ();
 
 			row_spans[control] = value;
 			

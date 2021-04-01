@@ -27,7 +27,11 @@
 #include "trace.h"
 #include <mono/metadata/callspec.h>
 
-#if defined (HOST_ANDROID) || (defined (TARGET_IOS) && defined (TARGET_IOS))
+#if _MSC_VER
+#pragma warning(disable:4312) // FIXME pointer cast to different size
+#endif
+
+#if defined (HOST_ANDROID) || defined (TARGET_IOS)
 #  undef printf
 #  define printf(...) g_log("mono", G_LOG_LEVEL_MESSAGE, __VA_ARGS__)
 #  undef fprintf
@@ -105,23 +109,38 @@ string_to_utf8 (MonoString *s)
 }
 
 /*
- * cpos (ebp + arg_info[n].offset) points to the beginning of the
- * stack slot for this argument.  On little-endian systems, we can
- * simply dereference it. On big-endian systems, we need to adjust
- * cpos upward first if the datatype we're referencing is smaller than
- * a stack slot. Also - one can't assume that gpointer is also the
- * size of a stack slot - use SIZEOF_REGISTER instead. The following
- * helper macro tries to keep down the mess of all the pointer
- * calculations.
+ * This used to be endianness sensitive due to the stack, but since the change
+ * to using the profiler to get an argument, it can be dereferenced as a
+ * pointer of the specified type, regardless of endian.
  */
-#if (G_BYTE_ORDER == G_LITTLE_ENDIAN)
 #define arg_in_stack_slot(cpos, type) ((type *)(cpos))
-#else
-#define arg_in_stack_slot(cpos, type) ((type *)((sizeof(type) < SIZEOF_REGISTER) ? (((gssize)(cpos)) + SIZEOF_REGISTER - sizeof(type)) : (gssize)(cpos)))
-#endif
+
+static gboolean
+is_gshared_vt_wrapper (MonoMethod *m)
+{
+	if (m->wrapper_type != MONO_WRAPPER_OTHER)
+		return FALSE;
+	return !strcmp (m->name, "interp_in") || !strcmp (m->name, "gsharedvt_out_sig");
+}
+
+/* ENTER:i <- interp
+ * ENTER:c <- compiled (JIT or AOT)
+ * ENTER:u <- no JitInfo available
+ */
+static char
+frame_kind (MonoJitInfo *ji)
+{
+	if (!ji)
+		return 'u';
+
+	if (ji->is_interp)
+		return 'i';
+
+	return 'c';
+}
 
 void
-mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx)
+mono_trace_enter_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallContext *ctx)
 {
 	int i;
 	MonoClass *klass;
@@ -139,28 +158,29 @@ mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	while (output_lock != 0 || mono_atomic_cas_i32 (&output_lock, 1, 0) != 0)
 		mono_thread_info_yield ();
 
-	printf ("ENTER: %s(", fname);
+
+	/* FIXME: Might be better to pass the ji itself */
+	if (!ji)
+		ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
+
+	printf ("ENTER:%c %s(", frame_kind (ji), fname);
 	g_free (fname);
 
 	sig = mono_method_signature_internal (method);
 
-	if (method->is_inflated) {
-		/* FIXME: Might be better to pass the ji itself */
-		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
-		if (ji) {
-			gsctx = mono_jit_info_get_generic_sharing_context (ji);
-			if (gsctx && gsctx->is_gsharedvt) {
-				/* Needs a ctx to get precise method */
-				printf (") <gsharedvt>\n");
-				mono_atomic_store_release (&output_lock, 0);
-				return;
-			}
+	if (method->is_inflated && ji) {
+		gsctx = mono_jit_info_get_generic_sharing_context (ji);
+		if (gsctx && gsctx->is_gsharedvt) {
+			/* Needs a ctx to get precise method */
+			printf (") <gsharedvt>\n");
+			mono_atomic_store_release (&output_lock, 0);
+			return;
 		}
 	}
 
 	if (sig->hasthis) {
 		void *this_buf = mini_profiler_context_get_this (ctx);
-		if (m_class_is_valuetype (method->klass)) {
+		if (m_class_is_valuetype (method->klass) || is_gshared_vt_wrapper (method)) {
 			printf ("value:%p", this_buf);
 		} else {
 			MonoObject *o = *(MonoObject**)this_buf;
@@ -266,7 +286,7 @@ mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 			break;
 		case MONO_TYPE_I8:
 		case MONO_TYPE_U8:
-			printf ("0x%016llx", (long long)*arg_in_stack_slot(buf, gint64));
+			printf ("0x%016" PRIx64, (gint64)*arg_in_stack_slot(buf, gint64));
 			break;
 		case MONO_TYPE_R4:
 			printf ("%f", *arg_in_stack_slot(buf, float));
@@ -298,7 +318,7 @@ mono_trace_enter_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 }
 
 void
-mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
+mono_trace_leave_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallContext *ctx)
 {
 	MonoType *type;
 	char *fname;
@@ -313,26 +333,31 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	while (output_lock != 0 || mono_atomic_cas_i32 (&output_lock, 1, 0) != 0)
 		mono_thread_info_yield ();
 
-	printf ("LEAVE: %s", fname);
+	/* FIXME: Might be better to pass the ji itself from the JIT */
+	if (!ji)
+		ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
+
+	printf ("LEAVE:%c %s(", frame_kind (ji), fname);
 	g_free (fname);
 
-	if (method->is_inflated) {
-		/* FIXME: Might be better to pass the ji itself */
-		MonoJitInfo *ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
-		if (ji) {
-			gsctx = mono_jit_info_get_generic_sharing_context (ji);
-			if (gsctx && gsctx->is_gsharedvt) {
-				/* Needs a ctx to get precise method */
-				printf (") <gsharedvt>\n");
-				mono_atomic_store_release (&output_lock, 0);
-				return;
-			}
+	if (method->is_inflated && ji) {
+		gsctx = mono_jit_info_get_generic_sharing_context (ji);
+		if (gsctx && gsctx->is_gsharedvt) {
+			/* Needs a ctx to get precise method */
+			printf (") <gsharedvt>\n");
+			mono_atomic_store_release (&output_lock, 0);
+			return;
 		}
 	}
 
 	type = mini_get_underlying_type (mono_method_signature_internal (method)->ret);
 
 	gpointer buf = mini_profiler_context_get_result (ctx);
+	if (!buf && type->type != MONO_TYPE_VOID) {
+		printf ("result unknown");
+		goto finish;
+	}
+
 	switch (type->type) {
 	case MONO_TYPE_VOID:
 		break;
@@ -371,7 +396,7 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 			} else if  (o->vtable->klass == mono_defaults.int32_class) {
 				printf ("[INT32:%p:%d]", o, *(gint32 *)data);
 			} else if  (o->vtable->klass == mono_defaults.int64_class) {
-				printf ("[INT64:%p:%lld]", o, (long long)*(gint64 *)data);
+				printf ("[INT64:%p:%" PRId64 "]", o, *(gint64 *)data);
 			} else if (o->vtable->klass == mono_defaults.string_class) {
 				char *as;
 				as = string_to_utf8 ((MonoString*)o);
@@ -386,12 +411,12 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	}
 	case MONO_TYPE_I8: {
 		gint64 l =  *arg_in_stack_slot (buf, gint64);
-		printf ("lresult=0x%16llx", (long long)l);
+		printf ("lresult=0x%16" PRIx64, l);
 		break;
 	}
 	case MONO_TYPE_U8: {
 		gint64 l =  *arg_in_stack_slot (buf, gint64);
-		printf ("lresult=0x%16llx", (long long)l);
+		printf ("lresult=0x%16" PRIx64, l);
 		break;
 	}
 	case MONO_TYPE_R4:
@@ -415,9 +440,38 @@ mono_trace_leave_method (MonoMethod *method, MonoProfilerCallContext *ctx)
 	}
 	mini_profiler_context_free_buffer (buf);
 
+finish:
 	//printf (" ip: %p\n", MONO_RETURN_ADDRESS_N (1));
 	printf ("\n");
 	fflush (stdout);
+
+	mono_atomic_store_release (&output_lock, 0);
+}
+
+void
+mono_trace_tail_method (MonoMethod *method, MonoJitInfo *ji, MonoMethod *target)
+{
+	char *fname, *tname;
+
+	if (!trace_spec.enabled)
+		return;
+
+	fname = mono_method_full_name (method, TRUE);
+	tname = mono_method_full_name (target, TRUE);
+	indent (-1);
+
+	while (output_lock != 0 || mono_atomic_cas_i32 (&output_lock, 1, 0) != 0)
+		mono_thread_info_yield ();
+
+	/* FIXME: Might be better to pass the ji itself from the JIT */
+	if (!ji)
+		ji = mini_jit_info_table_find (mono_domain_get (), (char *)MONO_RETURN_ADDRESS (), NULL);
+
+	printf ("TAILC:%c %s->%s\n", frame_kind (ji), fname, tname);
+	fflush (stdout);
+
+	g_free (fname);
+	g_free (tname);
 
 	mono_atomic_store_release (&output_lock, 0);
 }

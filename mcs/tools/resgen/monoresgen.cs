@@ -72,7 +72,9 @@ Options:
 			return new ResourceReader (stream);
 		case ".resx":
 			var reader = new ResXResourceReader (stream);
-			reader.BasePath = Path.GetDirectoryName (name);
+			if (useSourcePath) {
+				reader.BasePath = Path.GetDirectoryName (name);
+			}
 			return reader;
 		default:
 			throw new Exception ("Unknown format in file " + name);

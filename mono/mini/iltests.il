@@ -17,11 +17,138 @@
 
 	.method static public int32 Main(string[] args) il managed {
 		.entrypoint
-		
+
 		ldtoken Tests
 		call       class [mscorlib]System.Type [mscorlib]System.Type::GetTypeFromHandle(valuetype [mscorlib]System.RuntimeTypeHandle)
 		ldarg.0
 		call       int32 [TestDriver]TestDriver::RunTests(class [mscorlib]System.Type, string[])
+		ret
+	}
+
+	.method hidebysig static int32 comp_ptr_i8(void* arg, int64 v) cil managed
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		ceq
+		ret
+	}
+
+	.method hidebysig static int64 add_ptr_i4(void* arg) cil managed
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldc.i4.2
+		add
+		ret
+	}
+
+	.method hidebysig static int64 add_ptr_i8(void* arg, int64 v) cil managed
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		add
+		ret
+	}
+
+	.method hidebysig static int64 and_ptr_i8(void* arg, int64 v) cil managed
+	{
+		.maxstack 2
+
+		ldarg.0
+		ldarg.1
+		and
+		ret
+	}
+
+	.method hidebysig static int32 i8_ptr_arithm_x64() cil managed
+	{
+		.maxstack 3
+
+		ldc.i4.1
+		ldc.i8 0x1111222233334444
+		call int64 class Tests::add_ptr_i4(void*)
+		ldc.i8 0x1111222233334446
+		bne.un FAIL1
+		pop
+
+		ldc.i4.2
+		ldc.i8 0x1111222233334444
+		ldc.i8 0x2
+		call int64 class Tests::add_ptr_i8(void*,int64)
+		ldc.i8 0x1111222233334446
+		bne.un FAIL1
+		pop
+
+		ldc.i4.3
+		ldc.i8 0x1111222233334444
+		ldc.i4 0x2
+		call int64 class Tests::add_ptr_i8(void*,int64)
+		ldc.i8 0x1111222233334446
+		bne.un FAIL1
+		pop
+
+		ldc.i4.4
+		ldc.i8 0x1111222233334444
+		ldc.i8 0x0000FFFF00000000
+		call int64 class Tests::and_ptr_i8(void*,int64)
+		ldc.i8 0x0000222200000000
+		bne.un FAIL1
+		pop
+
+		ldc.i4.5
+		ldc.i8 0x1111222233334444
+		ldc.i4 0xFFFF0000
+		call int64 class Tests::and_ptr_i8(void*,int64)
+		ldc.i8 0x1111222233330000
+		bne.un FAIL1
+		pop
+
+		ldc.i4.6
+		ldc.i8 0x1111222233334444
+		ldc.i4 0xFFFF0000
+		and
+		ldc.i8 0x1111222233330000
+		bne.un FAIL1
+		pop
+
+		ldc.i4.7
+		ldc.i8 0x1111222233334444
+		ldc.i8 0x1111222233334444
+		call int32 class Tests::comp_ptr_i8(void*,int64)
+		ldc.i4.1
+		bne.un FAIL1
+		pop
+
+		ldc.i4.8
+		ldc.i8 0x1111222233334444
+		ldc.i4 0x1111
+		add
+		ldc.i8 0x1111222233335555
+		bne.un FAIL1
+		pop
+
+		ldc.i4.0
+FAIL1:
+		ret
+	}
+
+	.method static public int32 test_0_i8_ptr_arithm() cil managed {
+		.custom instance void [TestDriver]CategoryAttribute::.ctor(string) = ( 01 00 0C 21 49 4E 54 45 52 50 52 45 54 45 52 00 00)  // ...!INTERPRETER.
+		.maxstack 2
+
+		sizeof [mscorlib]System.IntPtr
+		ldc.i4.8
+		bne.un OK1
+		call int32 class Tests::i8_ptr_arithm_x64()
+		ret
+
+OK1:
+		ldc.i4.0
 		ret
 	}
 
@@ -3182,6 +3309,147 @@ L_3:
 		ret
 	 }
 
+	.method private hidebysig static valuetype [mscorlib]System.Nullable`1<int32> ret_some_vt(int32 val) cil managed
+	 {
+		.maxstack 8
+		ldarg.0
+		newobj instance void valuetype [mscorlib]System.Nullable`1<int32>::.ctor(!0)
+		ldarg.0
+		ldc.i4.0
+		ble.s second_vt
+
+		ldarg.0
+		ldc.i4.s 40
+		add
+		newobj instance void valuetype [mscorlib]System.Nullable`1<int32>::.ctor(!0)
+		pop
+		ret
+
+second_vt_2:
+		ldarg.0
+		ldc.i4.s 30
+		add
+		newobj instance void valuetype [mscorlib]System.Nullable`1<int32>::.ctor(!0)
+		ret
+
+second_vt:
+		pop
+		br second_vt_2
+	 }
+
+	// https://github.com/mono/mono/issues/17924
+	.method static public int32 test_0_vt_sp_tracking () cil managed
+	 {
+		.maxstack  2
+		.locals init (valuetype [mscorlib]System.Nullable`1<int32> V_0)
+
+		ldc.i4.s 10
+		call valuetype [mscorlib]System.Nullable`1<int32> Tests::ret_some_vt(int32)
+		stloc.0
+		ldloca.s V_0
+		call instance !0 valuetype [mscorlib]System.Nullable`1<int32>::get_Value()
+		ldc.i4.s 10
+		bne.un.s wrong
+
+		ldc.i4.0
+		ret
+
+wrong:
+		ldc.i4.1
+		ret
+	}
+
+	.class nested private auto ansi beforefieldinit R1_class
+	{
+		.field  public  int32 test_field
+
+		.method public hidebysig  specialname  rtspecialname instance default void '.ctor' ()  cil managed
+		{
+			ret
+		}
+	}
+
+	.method public hidebysig static int32  test_3_ldstloc_opt () cil managed
+	{
+		.locals init (
+			class Tests/R1_class v_0,
+			int32 v_1,
+			class Tests/R1_class v_2
+		)
+
+		/* allocate first object */
+		newobj instance void class Tests/R1_class::.ctor ()
+		stloc.0
+		ldloc.0
+		stloc.2
+
+		br L3
+		/* dead code for interp opt barrier */
+		ldc.i4.1
+		ldc.i4.1
+		add
+		pop
+L3:
+		/* load first object on the stack */
+		ldloc.0
+
+		ldc.i4.3
+		stloc.1
+		ldloc.1
+
+		/* allocate second object */
+		newobj instance void class Tests/R1_class::.ctor ()
+		/* overwrite first object at loc0 with second object */
+		stloc.0
+
+		/* should store '3' into first object.
+		 * in the buggy case it stores '3' into the second object because it delays the load from loc.0 */
+		stfld int32 Tests/R1_class::test_field
+
+		/* load first object on the stack */
+		ldloc.2
+		/* should read '3' */
+		ldfld int32 Tests/R1_class::test_field
+		ret
+	}
+
+	.method public hidebysig static void ldstarg_opt_helper (Tests/R1_class a) cil managed
+	{
+		ldarg.0
+
+		/* allocate second object */
+		newobj instance void class Tests/R1_class::.ctor ()
+		dup
+		ldc.i4.1
+		/* stores '1' in the field */
+		stfld int32 Tests/R1_class::test_field
+		/* overwrite first argument */
+		starg 0
+
+		ldc.i4.3
+		/* stores '3' in the field */
+		stfld int32 Tests/R1_class::test_field  /* might get fused with ldarg.0 at start of method */
+		ret
+	}
+
+	.method public hidebysig static int32  test_3_ldstarg_opt () cil managed
+	{
+		/* allocate first object */
+		newobj instance void class Tests/R1_class::.ctor ()
+		dup
+		ldc.i4.s 0x1337
+		/* stores '0x1337' in the field */
+		stfld int32 Tests/R1_class::test_field
+
+		dup
+		/* passing first object */
+		call void class Tests::ldstarg_opt_helper (Tests/R1_class)
+		/* should read '3' from first object */
+		ldfld int32 Tests/R1_class::test_field
+		ret
+	}
+
+
   .method public hidebysig static int32  test_10_rconv_to_u8_ovf_un() cil managed
   {
     // Code size       20 (0x14)
@@ -3209,4 +3477,397 @@ L_3:
     IL_0012:  ldloc.2
     IL_0013:  ret
   } // end of method Tests::test_10_rconv_to_u8_ovf_un
+
+  .field private static int64 TestLong
+
+/* Disabled until its fixed on i386
+  .method public static int32 test_1_stsfld_conv () cil managed
+  {
+	ldc.i4.2
+	stsfld int64 Tests::TestLong
+	ldsfld int64 Tests::TestLong
+	ldc.i8 2
+	ceq
+	ret
+   }
+*/
+
+	.method public hidebysig static string cmov_try_block_helper (string s) cil managed noinlining
+  	{
+		// Code size       43 (0x2b)
+		.maxstack  2
+		.locals init (bool V_0, string V_1)
+		IL_0000:  nop
+		IL_0001:  ldarg.0
+		IL_0002:  callvirt   instance int32 [mscorlib]System.String::get_Length()
+		IL_0007:  ldc.i4.0
+		IL_0008:  ceq
+		IL_000a:  stloc.0
+		IL_000b:  ldloc.0
+		IL_000c:  brfalse.s  IL_0016
+
+		IL_000e:  ldstr	  "Empty"
+		IL_0013:  stloc.1
+		IL_0014:  br.s	  IL_0029
+
+		IL_0016:  nop
+		.try
+		{
+		  IL_0017:  nop
+		  IL_0018:  ldarg.0
+		  IL_0019:  stloc.1
+		  IL_001a:  leave.s   IL_0029
+		}  // end .try
+		catch [mscorlib]System.Exception
+		{
+		  IL_001c:  pop
+		  IL_001d:  nop
+		  IL_001e:  nop
+		  IL_001f:  leave.s   IL_0021
+		}  // end handler
+		IL_0021:  ldstr  "Should not happen"
+		IL_0026:  stloc.1
+		IL_0027:  br.s   IL_0029
+
+		IL_0029:  ldloc.1
+		IL_002a:  ret
+	}
+
+	.method public hidebysig static int32 test_1_cmov_try_block() cil managed
+	{
+		// Code size       37 (0x25)
+		.maxstack  2
+		.locals init (string V_0, bool V_1, int32 V_2)
+		IL_0000:  nop
+		IL_0001:  ldstr  "abc"
+		IL_0006:  call   string Tests::cmov_try_block_helper(string)
+		IL_000d:  ldstr  "abc"
+		IL_0012:  call   bool [mscorlib]System.String::op_Equality(string,string)
+		IL_0019:  brfalse.s  IL_001f
+
+		IL_001b:  ldc.i4.1
+		IL_001c:  stloc.2
+		IL_001d:  br.s   IL_0023
+
+		IL_001f:  ldc.i4.0
+		IL_0020:  stloc.2
+		IL_0021:  br.s   IL_0023
+
+		IL_0023:  ldloc.2
+		IL_0024:  ret
+	 }
+
+	.method private hidebysig static int32 validate_alloc_array_length_lbound(class [mscorlib]System.Array test_array) cil managed
+	{
+		// Code size       88 (0x58)
+		.maxstack  2
+		.locals init ([0] bool V_0, [1] int32 V_1, [2] bool V_2, [3] bool V_3, [4] bool V_4)
+		IL_0000:  nop
+		IL_0001:  ldarg.0
+		IL_0002:  callvirt   instance int32 [mscorlib]System.Array::get_Length()
+		IL_0007:  ldc.i4.6
+		IL_0008:  ceq
+		IL_000a:  ldc.i4.0
+		IL_000b:  ceq
+		IL_000d:  stloc.0
+		IL_000e:  ldloc.0
+		IL_000f:  brfalse.s  IL_0015
+		IL_0011:  ldc.i4.1
+		IL_0012:  stloc.1
+		IL_0013:  br.s       IL_0056
+		IL_0015:  ldarg.0
+		IL_0016:  callvirt   instance int32 [mscorlib]System.Array::get_Rank()
+		IL_001b:  ldc.i4.1
+		IL_001c:  ceq
+		IL_001e:  ldc.i4.0
+		IL_001f:  ceq
+		IL_0021:  stloc.2
+		IL_0022:  ldloc.2
+		IL_0023:  brfalse.s  IL_0029
+		IL_0025:  ldc.i4.2
+		IL_0026:  stloc.1
+		IL_0027:  br.s       IL_0056
+		IL_0029:  ldarg.0
+		IL_002a:  ldc.i4.0
+		IL_002b:  callvirt   instance int32 [mscorlib]System.Array::GetLowerBound(int32)
+		IL_0030:  ldc.i4 0x2710
+		IL_0031:  cgt.un
+		IL_0033:  stloc.3
+		IL_0034:  ldloc.3
+		IL_0035:  brfalse.s  IL_003b
+		IL_0037:  ldc.i4.3
+		IL_0038:  stloc.1
+		IL_0039:  br.s       IL_0056
+		IL_003b:  ldarg.0
+		IL_003c:  ldc.i4.0
+		IL_003d:  callvirt   instance int32 [mscorlib]System.Array::GetUpperBound(int32)
+		IL_0042:  ldc.i4 0x2715
+		IL_0043:  ceq
+		IL_0045:  ldc.i4.0
+		IL_0046:  ceq
+		IL_0048:  stloc.s    V_4
+		IL_004a:  ldloc.s    V_4
+		IL_004c:  brfalse.s  IL_0052
+		IL_004e:  ldc.i4.4
+		IL_004f:  stloc.1
+		IL_0050:  br.s       IL_0056
+		IL_0052:  ldc.i4.0
+		IL_0053:  stloc.1
+		IL_0054:  br.s       IL_0056
+		IL_0056:  ldloc.1
+		IL_0057:  ret
+	}
+
+	.method public hidebysig static int32  test_0_alloc_array_int16_length_lbound() cil managed
+	{
+		.maxstack  2
+		.locals init ([0] int16[] test_array, [1] int32 V_1)
+		ldc.i4 10000
+		ldc.i4 6
+		newobj instance void int16[10000...10005]::.ctor(int32, int32)
+		call int32 class Tests::validate_alloc_array_length_lbound(class [mscorlib]System.Array)
+		ret
+	}
+
+	.method public hidebysig static int32  test_0_alloc_array_int32_length_lbound() cil managed
+	{
+		.maxstack  2
+		.locals init ([0] int32[] test_array, [1] int32 V_1)
+		ldc.i4 10000
+		ldc.i4 6
+		newobj instance void int32[10000...10005]::.ctor(int32, int32)
+		call int32 class Tests::validate_alloc_array_length_lbound(class [mscorlib]System.Array)
+		ret
+	}
+
+	.method public hidebysig static int32  test_0_alloc_array_int64_length_lbound() cil managed
+	{
+		.maxstack  2
+		.locals init ([0] int64[] test_array, [1] int32 V_1)
+		ldc.i4 10000
+		ldc.i4 6
+		newobj instance void int64[10000...10005]::.ctor(int32, int32)
+		call int32 class Tests::validate_alloc_array_length_lbound(class [mscorlib]System.Array)
+		ret
+	}
+
+	.method public hidebysig static int32  test_0_alloc_array_float32_length_lbound() cil managed
+	{
+		.maxstack  2
+		.locals init ([0] float32[] test_array, [1] int32 V_1)
+		ldc.i4 10000
+		ldc.i4 6
+		newobj instance void float32[10000...10005]::.ctor(int32, int32)
+		call int32 class Tests::validate_alloc_array_length_lbound(class [mscorlib]System.Array)
+		ret
+	}
+
+	.method public hidebysig static int32  test_0_alloc_array_float64_length_lbound() cil managed
+	{
+		.maxstack  2
+		.locals init ([0] float64[] test_array, [1] int32 V_1)
+		ldc.i4 10000
+		ldc.i4 6
+		newobj instance void float64[10000...10005]::.ctor(int32, int32)
+		call int32 class Tests::validate_alloc_array_length_lbound(class [mscorlib]System.Array)
+		ret
+	}
+
+	.method private hidebysig static int32 test_0_two_dimensional_array_bounds() cil managed
+	{
+		.maxstack 5
+		.locals init (int32[,] arr)
+		ldc.i4 100
+		ldc.i4 27
+		ldc.i4 200
+		ldc.i4 31
+		newobj instance void int32[,]::.ctor(int32, int32, int32, int32)
+		stloc arr
+
+		ldc.i4 1
+		ldloc arr
+		ldc.i4 0
+		callvirt instance int32 [mscorlib]System.Array::GetLowerBound(int32)
+		ldc.i4 100
+		bne.un exit
+		pop
+
+		ldc.i4 2
+		ldloc arr
+		ldc.i4 0
+		callvirt instance int32 [mscorlib]System.Array::GetUpperBound(int32)
+		ldc.i4 126
+		bne.un exit
+		pop
+
+		ldc.i4 3
+		ldloc arr
+		ldc.i4 1
+		callvirt instance int32 [mscorlib]System.Array::GetLowerBound(int32)
+		ldc.i4 200
+		bne.un exit
+		pop
+
+		ldc.i4 4
+		ldloc arr
+		ldc.i4 1
+		callvirt instance int32 [mscorlib]System.Array::GetUpperBound(int32)
+		ldc.i4 230
+		bne.un exit
+		pop
+
+		ldc.i4 5
+		ldloc arr
+		ldc.i4 100
+		ldc.i4 200
+		ldc.i4 1234
+		call instance void int32[,]::Set(int32, int32, int32)
+		ldloc arr
+		ldc.i4 100
+		ldc.i4 200
+		call instance int32 int32[,]::Get(int32, int32)
+		ldc.i4 1234
+		bne.un exit
+		pop
+
+		ldc.i4 6
+		ldloc arr
+		ldc.i4 126
+		ldc.i4 230
+		ldc.i4 5678
+		call instance void int32[,]::Set(int32, int32, int32)
+		ldloc arr
+		ldc.i4 126
+		ldc.i4 230
+		call instance int32 int32[,]::Get(int32, int32)
+		ldc.i4 5678
+		bne.un exit
+		pop
+
+		ldc.i4 0
+	exit:
+		ret
+	}
+
+	.method private hidebysig static int32 test_0_five_dimensional_array() cil managed
+	{
+		.maxstack 12
+		.locals init (int32[,,,,] arr)
+		ldc.i4 100
+		ldc.i4 2
+		ldc.i4 200
+		ldc.i4 3
+		ldc.i4 300
+		ldc.i4 4
+		ldc.i4 400
+		ldc.i4 5
+		ldc.i4 500
+		ldc.i4 6
+		newobj instance void int32[,,,,]::.ctor(
+			int32, int32, int32, int32, int32, int32,
+			int32, int32, int32, int32)
+		stloc arr
+
+		ldc.i4 1
+		ldloc arr
+		ldc.i4 0
+		callvirt instance int32 [mscorlib]System.Array::GetLowerBound(int32)
+		ldc.i4 100
+		bne.un exit
+		pop
+
+		ldc.i4 2
+		ldloc arr
+		ldc.i4 0
+		callvirt instance int32 [mscorlib]System.Array::GetUpperBound(int32)
+		ldc.i4 101
+		bne.un exit
+		pop
+
+		ldc.i4 3
+		ldloc arr
+		ldc.i4 4
+		callvirt instance int32 [mscorlib]System.Array::GetLowerBound(int32)
+		ldc.i4 500
+		bne.un exit
+		pop
+
+		ldc.i4 4
+		ldloc arr
+		ldc.i4 4
+		callvirt instance int32 [mscorlib]System.Array::GetUpperBound(int32)
+		ldc.i4 505
+		bne.un exit
+		pop
+
+		ldc.i4 5
+		ldloc arr
+		ldc.i4 100
+		ldc.i4 200
+		ldc.i4 300
+		ldc.i4 400
+		ldc.i4 500
+		ldc.i4 1234
+		call instance void int32[,,,,]::Set(int32, int32, int32, int32, int32, int32)
+		ldloc arr
+		ldc.i4 100
+		ldc.i4 200
+		ldc.i4 300
+		ldc.i4 400
+		ldc.i4 500
+		call instance int32 int32[,,,,]::Get(int32, int32, int32, int32, int32)
+		ldc.i4 1234
+		bne.un exit
+		pop
+
+		ldc.i4 6
+		ldloc arr
+		ldc.i4 101
+		ldc.i4 202
+		ldc.i4 303
+		ldc.i4 404
+		ldc.i4 505
+		ldc.i4 5678
+		call instance void int32[,,,,]::Set(int32, int32, int32, int32, int32, int32)
+		ldloc arr
+		ldc.i4 101
+		ldc.i4 202
+		ldc.i4 303
+		ldc.i4 404
+		ldc.i4 505
+		call instance int32 int32[,,,,]::Get(int32, int32, int32, int32, int32)
+		ldc.i4 5678
+		bne.un exit
+		pop
+
+		ldc.i4 0
+	exit:
+		ret
+	}
+
+	.method public hidebysig static !!T	createinstance_intrins_primitive<.ctor T>() cil managed noinlining
+	{
+		.maxstack	8
+		call			 !!0 [mscorlib]System.Activator::CreateInstance<!!0>()
+		ret
+	}
+
+	.method public static int32 test_0_createinstance_intrins_primitive () cil managed
+	{
+		.maxstack	8
+		call			 !!0 Tests::createinstance_intrins_primitive<bool>()
+		ldc.i4.0
+		beq L1
+		ldc.i4.1
+		ret
+	L1:
+		call			 !!0 Tests::createinstance_intrins_primitive<int64>()
+		ldc.i8 0
+		beq L2
+		ldc.i4.2
+		ret
+	L2:
+		ldc.i4.0
+		ret
+	}
 }

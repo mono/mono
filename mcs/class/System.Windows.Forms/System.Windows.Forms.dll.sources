@@ -29,9 +29,7 @@ System.Windows.Forms.Design/WindowsFormsComponentEditor.cs
 System.Windows.Forms.Internal/Accessor.cs
 System.Windows.Forms.Internal/DebugHelper.cs
 System.Windows.Forms.PropertyGridInternal/PropertiesTab.cs
-System.Windows.Forms.RTF/Charcode.cs
-System.Windows.Forms.RTF/Charset.cs
-System.Windows.Forms.RTF/CharsetFlags.cs
+System.Windows.Forms.RTF/CharsetToCodepage.cs
 System.Windows.Forms.RTF/CharsetType.cs
 System.Windows.Forms.RTF/ClassDelegate.cs
 System.Windows.Forms.RTF/Color.cs
@@ -44,12 +42,9 @@ System.Windows.Forms.RTF/Minor.cs
 System.Windows.Forms.RTF/Picture.cs
 System.Windows.Forms.RTF/RTF.cs
 System.Windows.Forms.RTF/RTFException.cs
-System.Windows.Forms.RTF/StandardCharCode.cs
-System.Windows.Forms.RTF/StandardCharName.cs
 System.Windows.Forms.RTF/Style.cs
 System.Windows.Forms.RTF/StyleElement.cs
 System.Windows.Forms.RTF/StyleType.cs
-System.Windows.Forms.RTF/TextMap.cs
 System.Windows.Forms.RTF/TokenClass.cs
 System.Windows.Forms.Theming/Default/LabelPainter.cs
 System.Windows.Forms.Theming/Default/LinkLabelPainter.cs
@@ -657,6 +652,7 @@ System.Windows.Forms/TableLayoutRowStyleCollection.cs
 System.Windows.Forms/TableLayoutSettings.cs
 System.Windows.Forms/TableLayoutStyle.cs
 System.Windows.Forms/TableLayoutStyleCollection.cs
+System.Windows.Forms/TabStops.cs
 System.Windows.Forms/TextBox.cs
 System.Windows.Forms/TextBoxBase.cs
 System.Windows.Forms/TextBoxRenderer.cs

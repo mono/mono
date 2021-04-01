@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -81,6 +82,8 @@ namespace Mono {
 			return true;
 		}
 
+		static object dump = new object ();
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern string ExceptionToState_internal (Exception exc, out ulong portable_hash, out ulong unportable_hash);
 
@@ -100,7 +103,7 @@ namespace Mono {
 		static extern void DisableMicrosoftTelemetry ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern void EnableMicrosoftTelemetry_internal (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath, IntPtr eventType, IntPtr appPath, IntPtr configDir);
+		static extern void EnableMicrosoftTelemetry_internal (IntPtr appBundleID, IntPtr appSignature, IntPtr appVersion, IntPtr merpGUIPath, IntPtr appPath, IntPtr configDir);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void SendMicrosoftTelemetry_internal (IntPtr payload, ulong portable_hash, ulong unportable_hash);
@@ -143,23 +146,25 @@ namespace Mono {
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
-			string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
-			SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
+			lock (dump)
+			{
+				string payload_str = ExceptionToState_internal (exc, out portable_hash, out unportable_hash);
+				SendMicrosoftTelemetry (payload_str, portable_hash, unportable_hash);
+			}
 		}
 
 		// All must be set except for configDir_str
-		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string eventType_str, string appPath_str, string configDir_str)
+		static void EnableMicrosoftTelemetry (string appBundleID_str, string appSignature_str, string appVersion_str, string merpGUIPath_str, string unused /* eventType_str */, string appPath_str, string configDir_str)
 		{
 			if (RuntimeInformation.IsOSPlatform (OSPlatform.OSX)) {
 				using (var appBundleID_chars = RuntimeMarshal.MarshalString (appBundleID_str))
 				using (var appSignature_chars = RuntimeMarshal.MarshalString (appSignature_str))
 				using (var appVersion_chars = RuntimeMarshal.MarshalString (appVersion_str))
 				using (var merpGUIPath_chars = RuntimeMarshal.MarshalString (merpGUIPath_str))
-				using (var eventType_chars = RuntimeMarshal.MarshalString (eventType_str))
 				using (var appPath_chars = RuntimeMarshal.MarshalString (appPath_str))
 				using (var configDir_chars = RuntimeMarshal.MarshalString (configDir_str))
 				{
-					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value, eventType_chars.Value, appPath_chars.Value, configDir_chars.Value);
+					EnableMicrosoftTelemetry_internal (appBundleID_chars.Value, appSignature_chars.Value, appVersion_chars.Value, merpGUIPath_chars.Value, appPath_chars.Value, configDir_chars.Value);
 				}
 			} else {
 				throw new PlatformNotSupportedException("Merp support is currently only supported on OSX.");
@@ -178,7 +183,11 @@ namespace Mono {
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
-			string payload_str = DumpStateSingle_internal (out portable_hash, out unportable_hash);
+			string payload_str;
+			lock (dump)
+			{
+				payload_str = DumpStateSingle_internal (out portable_hash, out unportable_hash);
+			}
 
 			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
 		}
@@ -188,9 +197,21 @@ namespace Mono {
 		{
 			ulong portable_hash;
 			ulong unportable_hash;
-			string payload_str = DumpStateTotal_internal (out portable_hash, out unportable_hash);
+			string payload_str;
+			lock (dump)
+			{
+				payload_str = DumpStateTotal_internal (out portable_hash, out unportable_hash);
+			}
 
 			return new Tuple<String, ulong, ulong> (payload_str, portable_hash, unportable_hash);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void RegisterReportingForAllNativeLibs_internal ();
+
+		static void RegisterReportingForAllNativeLibs ()
+		{
+			RegisterReportingForAllNativeLibs_internal ();
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -243,6 +264,43 @@ namespace Mono {
 			}
 		}
 
+		static string get_breadcrumb_value (string file_prefix, string directory_str, bool clear)
+		{
+			var allfiles = Directory.GetFiles (directory_str, $"{file_prefix}_*" );
+			if (allfiles.Length == 0)
+				return string.Empty;
+
+			if (allfiles.Length > 1) {
+				// it's impossible to tell which breadcrumb is the last one (let's not trust filesystem timestamps)
+				// delete the multiple files so at least next crash can make sense
+				try {
+					Array.ForEach (allfiles, f => File.Delete (f) );
+				} catch (Exception) { }
+
+				return string.Empty;
+			}
+
+			if (clear)
+				File.Delete (allfiles [0]);
+
+			var filename = Path.GetFileName (allfiles [0]);
+			return filename.Substring (file_prefix.Length + 1);
+		}
+
+		static long CheckCrashReportHash (string directory_str, bool clear)
+		{
+			var value = get_breadcrumb_value ("crash_hash", directory_str, clear);
+			if (value == string.Empty)
+				return 0;
+			else
+				return Convert.ToInt64 (value, 16);
+		}
+
+		static string CheckCrashReportReason (string directory_str, bool clear)
+		{
+			return get_breadcrumb_value ("crash_reason", directory_str, clear);
+		}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void AnnotateMicrosoftTelemetry_internal (IntPtr key, IntPtr val);
 
@@ -251,7 +309,10 @@ namespace Mono {
 			using (var key_chars = RuntimeMarshal.MarshalString (key))
 			using (var val_chars = RuntimeMarshal.MarshalString (val))
 			{
-				AnnotateMicrosoftTelemetry_internal (key_chars.Value, val_chars.Value);
+				lock (dump)
+				{
+					AnnotateMicrosoftTelemetry_internal (key_chars.Value, val_chars.Value);
+				}
 			}
 		}
 	}

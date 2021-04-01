@@ -47,7 +47,7 @@ namespace Mono.Btls
 	class MonoBtlsStream : MNS.MobileAuthenticatedStream
 	{
 		public MonoBtlsStream (Stream innerStream, bool leaveInnerStreamOpen, SslStream owner,
-		                       MonoTlsSettings settings, MonoTlsProvider provider)
+		                       MonoTlsSettings settings, MNS.MobileTlsProvider provider)
 			: base (innerStream, leaveInnerStreamOpen, owner, settings, provider)
 		{
 		}

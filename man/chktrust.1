@@ -7,12 +7,12 @@
 .\"
 .TH Mono "chktrust"
 .SH NAME
-chktrust \- Check the trust of a PE executable.
+chktrust \- Check the trust of a PE binary.
 .SH SYNOPSIS
 .PP
 .B chktrust [options] filename
 .SH DESCRIPTION
-Verify if an PE executable (CLR assembly, Win32 EXE or DLL) has a valid 
+Verify if a PE binary (CLR assembly, Win32 EXE or DLL) has a valid 
 Authenticode(r) signature that can be traced back to a trusted certificate
 authority (CA). This means that
 .TP
@@ -43,4 +43,7 @@ Visit http://lists.ximian.com/mailman/listinfo/mono-list for details.
 .SH WEB SITE
 Visit http://www.mono-project.com for details
 .SH SEE ALSO
-.BR signcode(1), makecert(1), certmgr(1), setreg(1)
+.BR signcode (1),
+.BR makecert (1),
+.BR certmgr (1),
+.BR setreg (1)

@@ -138,6 +138,7 @@ description_for_type (int type)
 	case INTERNAL_MEM_STATISTICS: return "statistics";
 	case INTERNAL_MEM_STAT_PINNED_CLASS: return "pinned-class";
 	case INTERNAL_MEM_STAT_REMSET_CLASS: return "remset-class";
+	case INTERNAL_MEM_STAT_GCHANDLE_CLASS: return "gchandle-class";
 	case INTERNAL_MEM_GRAY_QUEUE: return "gray-queue";
 	case INTERNAL_MEM_MS_TABLES: return "marksweep-tables";
 	case INTERNAL_MEM_MS_BLOCK_INFO: return "marksweep-block-info";
@@ -251,8 +252,8 @@ sgen_dump_internal_mem_usage (FILE *heap_dump_file)
 	/*
 	int i;
 
-	fprintf (heap_dump_file, "<other-mem-usage type=\"large-internal\" size=\"%lld\"/>\n", large_internal_bytes_alloced);
-	fprintf (heap_dump_file, "<other-mem-usage type=\"pinned-chunks\" size=\"%lld\"/>\n", pinned_chunk_bytes_alloced);
+	fprintf (heap_dump_file, "<other-mem-usage type=\"large-internal\" size=\"%" PRIx64 "\"/>\n", large_internal_bytes_alloced);
+	fprintf (heap_dump_file, "<other-mem-usage type=\"pinned-chunks\" size=\"%" PRIx64 "\"/>\n", pinned_chunk_bytes_alloced);
 	for (i = 0; i < INTERNAL_MEM_MAX; ++i) {
 		fprintf (heap_dump_file, "<other-mem-usage type=\"%s\" size=\"%ld\"/>\n",
 				description_for_type (i), unmanaged_allocator.small_internal_mem_bytes [i]);
@@ -263,8 +264,8 @@ sgen_dump_internal_mem_usage (FILE *heap_dump_file)
 void
 sgen_report_internal_mem_usage (void)
 {
-	int i G_GNUC_UNUSED;
 #ifdef HEAVY_STATISTICS
+	int i;
 	printf ("size -> # allocations\n");
 	for (i = 0; i < NUM_ALLOCATORS; ++i)
 		printf ("%d -> %d\n", allocator_sizes [i], allocator_sizes_stats [i]);

@@ -443,7 +443,7 @@ namespace System.Windows.Forms
 					InvalidateDirty ();
 
 					// UIA Framework: Generate UIA Event to indicate LargeChange change
-					OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.LargeIncrement, value));
+					OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.LargeIncrement, value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
 				}
 			}
 		}
@@ -460,7 +460,7 @@ namespace System.Windows.Forms
 				maximum = value;
 
 				// UIA Framework: Generate UIA Event to indicate Maximum change
-				OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.Last, value));
+				OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.Last, value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
 
 				if (maximum < minimum)
 					minimum = maximum;
@@ -534,7 +534,7 @@ namespace System.Windows.Forms
 				minimum = value;
 
 				// UIA Framework: Generate UIA Event to indicate Minimum change
-				OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.First, value));
+				OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.First, value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
 
 				if (minimum > maximum)
 					maximum = minimum;
@@ -561,7 +561,7 @@ namespace System.Windows.Forms
 					InvalidateDirty ();
 
 					// UIA Framework: Generate UIA Event to indicate SmallChange change
-					OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.SmallIncrement, value));
+					OnUIAValueChanged (new ScrollEventArgs (ScrollEventType.SmallIncrement, value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
 				}
 			}
 		}
@@ -768,18 +768,18 @@ namespace System.Windows.Forms
 			ScrollEventArgs event_args;
     			int pos = Math.Min (MaximumAllowed, position + large_change);
 
-    			event_args = new ScrollEventArgs (ScrollEventType.LargeIncrement, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.LargeIncrement, pos, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
     			OnScroll (event_args);
 			Value = event_args.NewValue;
 
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
 			OnScroll (event_args);
     			Value = event_args.NewValue;
 		
 			// UIA Framework event invoked when the "LargeIncrement 
 			// Button" is "clicked" either by using the Invoke Pattern
 			// or the space between the thumb and the bottom/right button
-			OnUIAScroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, Value));
+			OnUIAScroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, Value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
     		}
 
     		private void LargeDecrement ()
@@ -787,18 +787,18 @@ namespace System.Windows.Forms
 			ScrollEventArgs event_args;
     			int pos = Math.Max (Minimum, position - large_change);
 
-    			event_args = new ScrollEventArgs (ScrollEventType.LargeDecrement, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.LargeDecrement, pos, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
     			OnScroll (event_args);
     			Value = event_args.NewValue;
 
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
 			OnScroll (event_args);
     			Value = event_args.NewValue;
     			
 			// UIA Framework event invoked when the "LargeDecrement 
 			// Button" is "clicked" either by using the Invoke Pattern
 			// or the space between the thumb and the top/left button
-			OnUIAScroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, Value));
+			OnUIAScroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, Value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
     		}
 
     		private void OnResizeSB (Object o, EventArgs e)
@@ -1033,7 +1033,7 @@ namespace System.Windows.Forms
 
 						MoveThumb (thumb_rect, thumb_pos.Y);
 
-						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
+						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
 					}
 					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				} else {
@@ -1051,7 +1051,7 @@ namespace System.Windows.Forms
 
 						MoveThumb (thumb_rect, thumb_pos.X);
 
-						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position));
+						OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, position, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
 					}
 					SendWMScroll(ScrollBarCommands.SB_THUMBTRACK);
 				}
@@ -1183,8 +1183,8 @@ namespace System.Windows.Forms
 				Dirty (second_arrow_area);
 				secondbutton_pressed = false;
 			} else if (thumb_pressed == true) {
-				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
-				OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
+				OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
 				SendWMScroll(ScrollBarCommands.SB_THUMBPOSITION);
 				ThumbPressed = false;
 				return;
@@ -1254,11 +1254,11 @@ namespace System.Windows.Forms
 			ScrollEventArgs event_args;
     			int pos = MaximumAllowed;
 
-    			event_args = new ScrollEventArgs (ScrollEventType.Last, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.Last, pos, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
     			OnScroll (event_args);
     			pos = event_args.NewValue;
 
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
 			OnScroll (event_args);
     			pos = event_args.NewValue;
 
@@ -1270,11 +1270,11 @@ namespace System.Windows.Forms
 			ScrollEventArgs event_args;
     			int pos = Minimum;
 
-    			event_args = new ScrollEventArgs (ScrollEventType.First, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.First, pos, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
     			OnScroll (event_args);
     			pos = event_args.NewValue;
 
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, pos, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
 			OnScroll (event_args);
 			pos = event_args.NewValue;
 
@@ -1286,18 +1286,18 @@ namespace System.Windows.Forms
     			ScrollEventArgs event_args;
     			int pos = Math.Min (MaximumAllowed, position + SmallChange);
 
-    			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.SmallIncrement, pos, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
     			OnScroll (event_args);
     			Value = event_args.NewValue;
 
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
 			OnScroll (event_args);
 			Value = event_args.NewValue;
 			
 			// UIA Framework event invoked when the "SmallIncrement 
 			// Button" (a.k.a bottom/right button) is "clicked" either
 			// by using the Invoke Pattern or the button itself
-			OnUIAScroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, Value));
+			OnUIAScroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, Value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
     		}
 
     		private void SmallDecrement ()
@@ -1305,18 +1305,18 @@ namespace System.Windows.Forms
 			ScrollEventArgs event_args;
     			int pos = Math.Max (Minimum, position - SmallChange);
 
-    			event_args = new ScrollEventArgs (ScrollEventType.SmallDecrement, pos);
+			event_args = new ScrollEventArgs (ScrollEventType.SmallDecrement, pos, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
     			OnScroll (event_args);
     			Value = event_args.NewValue;
 
-			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value);
+			event_args = new ScrollEventArgs (ScrollEventType.EndScroll, Value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll));
 			OnScroll (event_args);
 			Value = event_args.NewValue;
 			
 			// UIA Framework event invoked when the "SmallDecrement 
 			// Button" (a.k.a top/left button) is "clicked" either
 			// by using the Invoke Pattern or the button itself
-			OnUIAScroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, Value));
+			OnUIAScroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, Value, (vert ? ScrollOrientation.VerticalScroll : ScrollOrientation.HorizontalScroll)));
     		}
 
     		private void SetHoldButtonClickTimer ()

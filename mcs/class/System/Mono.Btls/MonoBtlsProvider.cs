@@ -50,7 +50,7 @@ using MNS = Mono.Net.Security;
 
 namespace Mono.Btls
 {
-	class MonoBtlsProvider : MonoTlsProvider
+	class MonoBtlsProvider : MNS.MobileTlsProvider
 	{
 		public override Guid ID {
 			get { return MNS.MonoTlsProviderFactory.BtlsId; }
@@ -85,14 +85,7 @@ namespace Mono.Btls
 			get { return SslProtocols.Tls12 | SslProtocols.Tls11 | SslProtocols.Tls; }
 		}
 
-		public override IMonoSslStream CreateSslStream (
-			Stream innerStream, bool leaveInnerStreamOpen,
-			MonoTlsSettings settings = null)
-		{
-			return SslStream.CreateMonoSslStream (innerStream, leaveInnerStreamOpen, this, settings);
-		}
-
-		internal override IMonoSslStream CreateSslStreamInternal (
+		internal override MNS.MobileAuthenticatedStream CreateSslStream (
 			SslStream sslStream, Stream innerStream, bool leaveInnerStreamOpen,
 			MonoTlsSettings settings)
 		{
@@ -104,14 +97,14 @@ namespace Mono.Btls
 			get { return true; }
 		}
 
-		internal override X509Certificate2Impl GetNativeCertificate (
+		internal X509Certificate2Impl GetNativeCertificate (
 			byte[] data, string password, X509KeyStorageFlags flags)
 		{
 			using (var handle = new SafePasswordHandle (password))
 				return GetNativeCertificate (data, handle, flags);
 		}
 
-		internal override X509Certificate2Impl GetNativeCertificate (
+		internal X509Certificate2Impl GetNativeCertificate (
 			X509Certificate certificate)
 		{
 			var impl = certificate.Impl as X509CertificateImplBtls;
@@ -152,9 +145,9 @@ namespace Mono.Btls
 		}
 
 		internal override bool ValidateCertificate (
-			ICertificateValidator2 validator, string targetHost, bool serverMode,
+			MNS.ChainValidationHelper validator, string targetHost, bool serverMode,
 			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
-			ref MonoSslPolicyErrors errors, ref int status11)
+			ref SslPolicyErrors errors, ref int status11)
 		{
 			if (chain != null) {
 				var chainImpl = (X509ChainImplBtls)chain.Impl;
@@ -215,15 +208,15 @@ namespace Mono.Btls
 		}
 
 		void CheckValidationResult (
-			ICertificateValidator validator, string targetHost, bool serverMode,
+			MNS.ChainValidationHelper validator, string targetHost, bool serverMode,
 			X509CertificateCollection certificates, bool wantsChain,
 			X509Chain chain, MonoBtlsX509StoreCtx storeCtx,
-			bool success, ref MonoSslPolicyErrors errors, ref int status11)
+			bool success, ref SslPolicyErrors errors, ref int status11)
 		{
 			status11 = unchecked((int)0);
 			if (success)
 				return;
-			errors = MonoSslPolicyErrors.RemoteCertificateChainErrors;
+			errors = SslPolicyErrors.RemoteCertificateChainErrors;
 			if (!wantsChain || storeCtx == null || chain == null) {
 				status11 = unchecked((int)0x800B010B);
 				return;
@@ -231,12 +224,12 @@ namespace Mono.Btls
 			var error = storeCtx.GetError ();
 			switch (error) {
 			case Mono.Btls.MonoBtlsX509Error.OK:
-				errors = MonoSslPolicyErrors.None;
+				errors = SslPolicyErrors.None;
 				break;
 			case Mono.Btls.MonoBtlsX509Error.CRL_NOT_YET_VALID:
 				break;
 			case MonoBtlsX509Error.HOSTNAME_MISMATCH:
-				errors = MonoSslPolicyErrors.RemoteCertificateNameMismatch;
+				errors = SslPolicyErrors.RemoteCertificateNameMismatch;
 				chain.Impl.AddStatus (X509ChainStatusFlags.UntrustedRoot);
 				status11 = unchecked ((int)0x800B010B);
 				break;

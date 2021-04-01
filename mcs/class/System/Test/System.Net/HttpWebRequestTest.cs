@@ -1399,6 +1399,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // 1st possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1412,6 +1413,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // 2nd possible case of https://bugzilla.novell.com/show_bug.cgi?id=MONO74177
+		[Category("MultiThreaded")]
 		[Category ("RequiresBSDSockets")] // Requires some test refactoring to assert that a PlatformNotSupportedException is thrown, so don't bother (there's plenty of other tests asserting the PlatformNotSupported exceptions).
 		public void TestTimeoutWithEndpointThatDoesntExistThrowsConnectFailureBeforeTimeout ()
 		{
@@ -1667,6 +1669,7 @@ namespace MonoTests.System.Net
 			return Encoding.UTF8.GetBytes (sw.ToString ());
 		}
 		[Test]
+		[Category("MultiThreaded")]
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

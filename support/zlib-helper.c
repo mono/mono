@@ -10,7 +10,7 @@
 #if defined (HAVE_SYS_ZLIB)
 #include <zlib.h>
 #else
-#include "zlib.h"
+#include "../mono/zlib/zlib.h"
 #endif
 
 #include <glib.h>

@@ -57,19 +57,23 @@ g_assert_abort (void)
 		abort ();
 }
 
-void
+gint
 g_printv (const gchar *format, va_list args)
 {
 	char *msg;
+	int ret;
 
-	if (g_vasprintf (&msg, format, args) < 0)
-		return;
+	ret = g_vasprintf (&msg, format, args);
+	if (ret < 0)
+		return -1;
 
 	if (!stdout_handler)
 		stdout_handler = default_stdout_handler;
 
 	stdout_handler (msg);
 	g_free (msg);
+
+	return ret;
 }
 
 void
@@ -79,6 +83,19 @@ g_print (const gchar *format, ...)
 	va_start (args, format);
 	g_printv (format, args);
 	va_end (args);
+}
+
+gint
+g_printf (gchar const *format, ...)
+{
+	va_list args;
+	gint ret;
+
+	va_start (args, format);
+	ret = g_printv (format, args);
+	va_end (args);
+
+	return ret;
 }
 
 void
@@ -166,6 +183,12 @@ g_log (const gchar *log_domain, GLogLevelFlags log_level, const gchar *format, .
 	va_end (args);
 }
 
+void
+g_log_disabled (const gchar *log_domain, GLogLevelFlags log_level, const char *file, int line)
+{
+	g_log (log_domain, log_level, "%s:%d <disabled>", file, line);
+}
+
 static char *failure_assertion = NULL;
 
 const char *
@@ -185,6 +208,30 @@ g_assertion_message (const gchar *format, ...)
 
 	va_end (args);
 	exit (0);
+}
+
+// Emscriptem emulates varargs, and fails to stack pack multiple outgoing varargs areas,
+// so this function serves to remove varargs in its caller and conserve stack.
+void
+mono_assertion_message_disabled (const char *file, int line)
+{
+	mono_assertion_message (file, line, "<disabled>");
+}
+
+// Emscriptem emulates varargs, and fails to stack pack multiple outgoing varargs areas,
+// so this function serves to remove varargs in its caller and conserve stack.
+void
+mono_assertion_message (const char *file, int line, const char *condition)
+{
+	g_assertion_message ("* Assertion at %s:%d, condition `%s' not met\n", file, line, condition);
+}
+
+// Emscriptem emulates varargs, and fails to stack pack multiple outgoing varargs areas,
+// so this function serves to remove varargs in its caller and conserve stack.
+void
+mono_assertion_message_unreachable (const char *file, int line)
+{
+	g_assertion_message ("* Assertion: should not be reached at %s:%d\n", file, line);
 }
 
 #if HOST_ANDROID

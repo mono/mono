@@ -146,13 +146,16 @@ namespace System.Net.Sockets {
         ///    </para>
         /// </devdoc>
         public Socket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType) {
+#if WASM
+            throw new PlatformNotSupportedException ();
+#else
             s_LoggingEnabled = Logging.On;
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Socket", addressFamily);
             InitializeSockets();
 
 #if MONO
             int error;
-            m_Handle = new SafeSocketHandle (Socket_internal (addressFamily, socketType, protocolType, out error), true);
+            m_Handle = new SafeSocketHandle (Socket_icall (addressFamily, socketType, protocolType, out error), true);
 #else
             m_Handle = SafeCloseSocket.CreateWSASocket(
                     addressFamily,
@@ -181,6 +184,7 @@ namespace System.Net.Sockets {
 #endif
 
             if(s_LoggingEnabled)Logging.Exit(Logging.Sockets, this, "Socket", null);
+#endif           
         }
 
 #if !MONO

@@ -1,5 +1,5 @@
 #
-# This is a python script and a set of make targets to implement support for conditional submodules
+# This is a Python script and a set of make targets to implement support for conditional submodules
 # Set the SUBMODULES_CONFIG_FILE make variable to the srcdir path of a SUBMODULES.json file which contains information about the submodules.
 #
 
@@ -10,11 +10,11 @@ SCRIPT=$(top_srcdir)/scripts/submodules/versions.py
 
 define ValidateVersionTemplate
 #$(eval REPOSITORY_$(2):=$(shell test -z $(3) && echo $(1) || echo "$(3)"))
-#$(eval DIRECTORY_$(2):=$(shell python $(SCRIPT) $(SUBMODULES_CONFIG_FILE) get-dir $(1)))
+#$(eval DIRECTORY_$(2):=$(shell $(PYTHON) $(SCRIPT) $(SUBMODULES_CONFIG_FILE) get-dir $(1)))
 #$(eval DIRECTORY_$(2):=$(shell test -z $(DIRECTORY_$(2)) && echo $(1) || echo $(DIRECTORY_$(2))))
-#$(eval MODULE_$(2):=$(shell python $(SCRIPT) $(SUBMODULES_CONFIG_FILE) get-url $(1)))
-#$(eval NEEDED_$(2)_VERSION:=$(shell python $(SCRIPT) $(SUBMODULES_CONFIG_FILE) get-rev $(1)))
-#$(eval $(2)_BRANCH_AND_REMOTE:=$(shell python $(SCRIPT) $(SUBMODULES_CONFIG_FILE) get-remote-branch $(1)))
+#$(eval MODULE_$(2):=$(shell $(PYTHON) $(SCRIPT) $(SUBMODULES_CONFIG_FILE) get-url $(1)))
+#$(eval NEEDED_$(2)_VERSION:=$(shell $(PYTHON) $(SCRIPT) $(SUBMODULES_CONFIG_FILE) get-rev $(1)))
+#$(eval $(2)_BRANCH_AND_REMOTE:=$(shell $(PYTHON) $(SCRIPT) $(SUBMODULES_CONFIG_FILE) get-remote-branch $(1)))
 
 #$(eval $(2)_VERSION:=$$$$(shell cd $($(2)_PATH) 2>/dev/null && git rev-parse HEAD ))
 
@@ -106,17 +106,17 @@ reset:
 
 __bump-version-%:
 	@if [ "$(REV)" = "" ]; then echo "Usage: make bump-version-$* REV=<ref>"; exit 1; fi
-	python $(SCRIPT) $(SUBMODULES_CONFIG_FILE) set-rev $* $(REV)
+	$(PYTHON) $(SCRIPT) $(SUBMODULES_CONFIG_FILE) set-rev $* $(REV)
 	@if [ "$(COMMIT)" = "1" ]; then echo "[submodules] Bump $* to pick up $(REV)." | git commit -F - $(SUBMODULES_CONFIG_FILE); fi
 
 __bump-branch-%:
 	@if [ "$(BRANCH)" = "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
 	@if [ "$(REMOTE_BRANCH)" == "" ]; then echo "Usage: make bump-branch-$* BRANCH=<branch> REMOTE_BRANCH=<remote branch>"; exit 1; fi
-	python $(SCRIPT) $(SUBMODULES_CONFIG_FILE) set-branch $* $(BRANCH)
-	python $(SCRIPT) $(SUBMODULES_CONFIG_FILE) set-remote-branch $* $(REMOTE_BRANCH)
+	$(PYTHON) $(SCRIPT) $(SUBMODULES_CONFIG_FILE) set-branch $* $(BRANCH)
+	$(PYTHON) $(SCRIPT) $(SUBMODULES_CONFIG_FILE) set-remote-branch $* $(REMOTE_BRANCH)
 	@if [ "$(COMMIT)" = "1" ]; then echo "[submodules] Bump $* to switch to $(BRANCH) $(REMOTE BRANCH)." | git commit -F - $(SUBMODULES_CONFIG_FILE); fi
 
 __bump-current-version-%:
 	REV=$(shell cd $(ACCEPTANCE_TESTS_PATH)/$* && git log -1 --pretty=format:%H); \
-	python $(SCRIPT) $(SUBMODULES_CONFIG_FILE) set-rev $* $$REV; \
+	$(PYTHON) $(SCRIPT) $(SUBMODULES_CONFIG_FILE) set-rev $* $$REV; \
 	if [ "$(COMMIT)" = "1" ]; then echo "[submodules] Bump $* to pick up $$REV:" | git commit -F - $(SUBMODULES_CONFIG_FILE); fi

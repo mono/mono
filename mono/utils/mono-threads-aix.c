@@ -30,7 +30,7 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 
 	res = pthread_getthrds_np(&pt, PTHRDSINFO_QUERY_ALL, &pi, ps, rb, &rbv);
 	/* FIXME: are these the right values? */
-	*staddr = (void*)(pi.__pi_stackaddr);
+	*staddr = (guint8*)pi.__pi_stackaddr;
 	/*
 	 * ruby doesn't use stacksize; see:
 	 * github.com/ruby/ruby/commit/a2594be783c727c6034308f5294333752c3845bb
@@ -54,5 +54,11 @@ mono_native_thread_os_id_get (void)
 	err = pthread_getthrds_np (&t, PTHRDSINFO_QUERY_TID, &ti, sizeof (struct __pthrdsinfo), NULL, &size);
 	return (guint64)ti.__pi_tid;
 }
+
+#else
+
+#include <mono/utils/mono-compiler.h>
+
+MONO_EMPTY_SOURCE_FILE (mono_threads_aix);
 
 #endif

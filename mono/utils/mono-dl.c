@@ -21,6 +21,14 @@
 #include <ctype.h>
 #include <string.h>
 #include <glib.h>
+#if defined(ENABLE_NETCORE) && defined(TARGET_ANDROID)
+#include <dlfcn.h>
+#endif
+
+// Contains LIBC_SO definition
+#ifdef HAVE_GNU_LIB_NAMES_H
+#include <gnu/lib-names.h>
+#endif
 
 struct MonoDlFallbackHandler {
 	MonoDlFallbackLoad load_func;
@@ -143,6 +151,57 @@ get_dl_name_from_libtool (const char *libtool_file)
 	return line;
 }
 
+#ifdef ENABLE_NETCORE
+static const char *
+fix_libc_name (const char *name)
+{
+	if (name != NULL && strcmp (name, "libc") == 0) {
+		// Taken from CoreCLR: https://github.com/dotnet/coreclr/blob/6b0dab793260d36e35d66c82678c63046828d01b/src/pal/src/loader/module.cpp#L568-L576
+#if defined (HOST_DARWIN)
+		return "/usr/lib/libc.dylib";
+#elif defined (__FreeBSD__)
+		return "libc.so.7";
+#elif defined (LIBC_SO)
+		return LIBC_SO;
+#else
+		return "libc.so";
+#endif
+	}
+	return name;
+}
+#endif
+
+/**
+ * mono_dl_open_self:
+ * \param error_msg pointer for error message on failure
+ *
+ * Returns a handle to the main program, on android x86 it's not possible to 
+ * call dl_open(null), it returns a null handle, so this function returns RTLD_DEFAULT
+ * handle in this platform.
+ */
+MonoDl*
+mono_dl_open_self (char **error_msg)
+{
+#if defined(ENABLE_NETCORE) && defined(TARGET_ANDROID)
+	MonoDl *module;
+	if (error_msg)
+		*error_msg = NULL;
+	module = (MonoDl *) g_malloc (sizeof (MonoDl));
+	if (!module) {
+		if (error_msg)
+			*error_msg = g_strdup ("Out of memory");
+		return NULL;
+	}
+	mono_refcount_init (module, NULL);
+	module->handle = RTLD_DEFAULT;
+	module->dl_fallback = NULL;
+	module->full_name = NULL;
+	return module;
+#else 
+	return mono_dl_open (NULL, MONO_DL_LAZY, error_msg);
+#endif	
+}
+
 /**
  * mono_dl_open:
  * \param name name of file containing shared module
@@ -154,7 +213,7 @@ get_dl_name_from_libtool (const char *libtool_file)
  * binary image.
  * \p flags can have the \c MONO_DL_LOCAL bit set to avoid exporting symbols
  * from the module to the shared namespace. The \c MONO_DL_LAZY bit can be set
- * to lazily load the symbols instead of resolving everithing at load time.
+ * to lazily load the symbols instead of resolving everything at load time.
  * \p error_msg points to a string where an error message will be stored in
  * case of failure.   The error must be released with \c g_free.
  * \returns a \c MonoDl pointer on success, NULL on failure.
@@ -162,10 +221,17 @@ get_dl_name_from_libtool (const char *libtool_file)
 MonoDl*
 mono_dl_open (const char *name, int flags, char **error_msg)
 {
+	return mono_dl_open_full (name, flags, 0, error_msg);
+}
+
+MonoDl *
+mono_dl_open_full (const char *name, int mono_flags, int native_flags, char **error_msg)
+{
 	MonoDl *module;
 	void *lib;
 	MonoDlFallbackHandler *dl_fallback = NULL;
-	int lflags = mono_dl_convert_flags (flags);
+	int lflags = mono_dl_convert_flags (mono_flags, native_flags);
+	char *found_name;
 
 	if (error_msg)
 		*error_msg = NULL;
@@ -178,8 +244,14 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 	}
 	module->main_module = name == NULL? TRUE: FALSE;
 
+#ifdef ENABLE_NETCORE
+	name = fix_libc_name (name);
+#endif
+
 	// No GC safe transition because this is called early in main.c
 	lib = mono_dl_open_file (name, lflags);
+	if (lib)
+		found_name = g_strdup (name);
 
 	if (!lib) {
 		GSList *node;
@@ -194,6 +266,7 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 			
 			if (lib != NULL){
 				dl_fallback = handler;
+				found_name = g_strdup (name);
 				break;
 			}
 		}
@@ -218,6 +291,8 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 		g_free (lname);
 		if (llname) {
 			lib = mono_dl_open_file (llname, lflags);
+			if (lib)
+				found_name = g_strdup (llname);
 #if defined (_AIX)
 			/*
 			 * HACK: deal with AIX archive members because libtool
@@ -231,6 +306,8 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 				char *llaixname;
 				llaixname = g_strconcat (llname, "(shr_64.o)", (const char*)NULL);
 				lib = mono_dl_open_file (llaixname, lflags);
+				if (lib)
+					found_name = g_strdup (llaixname);
 				/* XXX: try another suffix like (shr.o)? */
 				g_free (llaixname);
 			}
@@ -245,8 +322,10 @@ mono_dl_open (const char *name, int flags, char **error_msg)
 			return NULL;
 		}
 	}
+	mono_refcount_init (module, NULL);
 	module->handle = lib;
 	module->dl_fallback = dl_fallback;
+	module->full_name = found_name;
 	return module;
 }
 
@@ -309,6 +388,7 @@ mono_dl_close (MonoDl *module)
 	} else
 		mono_dl_close_handle (module);
 	
+	g_free (module->full_name);
 	g_free (module);
 }
 

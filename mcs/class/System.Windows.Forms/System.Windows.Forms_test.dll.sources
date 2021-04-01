@@ -26,6 +26,7 @@ System.Windows.Forms/Common.cs
 System.Windows.Forms/CommonDialogsTest.cs
 System.Windows.Forms/ContainerControlTest.cs
 System.Windows.Forms/ContextMenuTest.cs
+System.Windows.Forms/ContextMenuStripTest.cs
 System.Windows.Forms/ControlBindingsCollectionTest.cs
 System.Windows.Forms/ControlBindingsConverterTest.cs
 System.Windows.Forms/ControlCollectionTest.cs

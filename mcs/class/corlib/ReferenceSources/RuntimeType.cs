@@ -567,12 +567,14 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void GetInterfaceMapData (Type t, Type iface, out MethodInfo[] targets, out MethodInfo[] methods);		
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static void GetGUID (Type type, byte[] guid);
+
 		public override Guid GUID {
 			get {
-				object[] att = GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), true);
-				if (att.Length == 0)
-					return Guid.Empty;
-				return new Guid(((System.Runtime.InteropServices.GuidAttribute)att[0]).Value);
+				var guid = new byte [16];
+				GetGUID (this, guid);
+				return new Guid (guid);
 			}
 		}
 
@@ -820,8 +822,9 @@ namespace System
 
 		public override string FullName {
 			get {
-				// https://bugzilla.xamarin.com/show_bug.cgi?id=57938
-				if (IsGenericType && ContainsGenericParameters && !IsGenericTypeDefinition)
+				// See https://github.com/mono/mono/issues/18180 and
+				// https://github.com/dotnet/runtime/blob/f23e2796ab5f6fea71c9fdacac024822280253db/src/coreclr/src/System.Private.CoreLib/src/System/RuntimeType.CoreCLR.cs#L1468-L1472
+				if (ContainsGenericParameters && !GetRootElementType().IsGenericTypeDefinition)
 					return null;
 
 				string fullName;

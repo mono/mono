@@ -732,6 +732,22 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (cmbbox.ItemHeight > 0, "#21");
 		}
 
+		[Test]
+		public void RemoveAt_SelectedIndex ()
+		{
+			ComboBox cmbbox = new ComboBox ();
+			cmbbox.Items.AddRange (new object[] {"1", "2", "3"});
+			cmbbox.SelectedIndex = 0;
+			cmbbox.Items.RemoveAt (0);
+			Assert.AreEqual (0, cmbbox.SelectedIndex, "#A1");
+
+			cmbbox.Items.Clear ();
+			cmbbox.Items.AddRange (new object[] {"1", "2", "3"});
+			cmbbox.SelectedIndex = 2;
+			cmbbox.Items.RemoveAt (0);
+			Assert.AreEqual (1, cmbbox.SelectedIndex, "#A2");
+		}
+
 		//
 		// Exceptions
 		//

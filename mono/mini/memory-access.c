@@ -13,10 +13,15 @@
 #include <mono/utils/mono-memory-model.h>
 
 #include "mini.h"
+#include "mini-runtime.h"
 #include "ir-emit.h"
 #include "jit-icalls.h"
 
+#ifdef ENABLE_NETCORE
+#define MAX_INLINE_COPIES 16
+#else
 #define MAX_INLINE_COPIES 10
+#endif
 #define MAX_INLINE_COPY_SIZE 10000
 
 void 
@@ -255,6 +260,8 @@ create_write_barrier_bitmap (MonoCompile *cfg, MonoClass *klass, unsigned *wb_bi
 			*wb_bitmap |= 1 << ((offset + foffset) / TARGET_SIZEOF_VOID_P);
 		} else {
 			MonoClass *field_class = mono_class_from_mono_type_internal (field->type);
+			if (cfg->gshared)
+				field_class = mono_class_from_mono_type_internal (mini_get_underlying_type (m_class_get_byval_arg (field_class)));
 			if (m_class_has_references (field_class))
 				create_write_barrier_bitmap (cfg, field_class, wb_bitmap, offset + foffset);
 		}
@@ -288,6 +295,9 @@ mini_emit_wb_aware_memcpy (MonoCompile *cfg, MonoClass *klass, MonoInst *iargs[4
 
 	/*tmp = dreg*/
 	EMIT_NEW_UNALU (cfg, iargs [0], OP_MOVE, dest_ptr_reg, destreg);
+
+	if ((need_wb & 0x1) && !mini_debug_options.weak_memory_model)
+		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 
 	while (size >= TARGET_SIZEOF_VOID_P) {
 		MonoInst *load_inst;
@@ -339,7 +349,8 @@ mini_emit_wb_aware_memcpy (MonoCompile *cfg, MonoClass *klass, MonoInst *iargs[4
 }
 
 static void
-mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, int explicit_align, gboolean native)
+mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClass *klass, int explicit_align, gboolean native,
+								gboolean stack_store)
 {
 	MonoInst *iargs [4];
 	int size;
@@ -386,13 +397,16 @@ mini_emit_memory_copy_internal (MonoCompile *cfg, MonoInst *dest, MonoInst *src,
 		NEW_LOAD_MEMBASE (cfg, load, OP_LOAD_MEMBASE, dreg, src->dreg, 0);
 		MONO_ADD_INS (cfg->cbb, load);
 
+		if (!mini_debug_options.weak_memory_model)
+			mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
+
 		NEW_STORE_MEMBASE (cfg, store, OP_STORE_MEMBASE_REG, dest->dreg, 0, dreg);
 		MONO_ADD_INS (cfg->cbb, store);
 
-		mini_emit_write_barrier (cfg, dest, src);
+		mini_emit_write_barrier (cfg, dest, load);
 		return;
-
-	} else if (cfg->gen_write_barriers && (m_class_has_references (klass) || size_ins) && !native) { 	/* if native is true there should be no references in the struct */
+	} else if (cfg->gen_write_barriers && (m_class_has_references (klass) || size_ins) &&
+			   !native && !stack_store) { 	/* if native is true there should be no references in the struct */
 		/* Avoid barriers when storing to the stack */
 		if (!((dest->opcode == OP_ADD_IMM && dest->sreg1 == cfg->frame_reg) ||
 			  (dest->opcode == OP_LDADDR))) {
@@ -445,7 +459,10 @@ mini_emit_memory_load (MonoCompile *cfg, MonoType *type, MonoInst *src, int offs
 {
 	MonoInst *ins;
 
-	if (ins_flag & MONO_INST_UNALIGNED) {
+	/* LLVM can handle unaligned loads and stores, so there's no reason to
+	 * manually decompose an unaligned load here into a memcpy if we're
+	 * using LLVM. */
+	if ((ins_flag & MONO_INST_UNALIGNED) && !COMPILE_LLVM (cfg)) {
 		MonoInst *addr, *tmp_var;
 		int align;
 		int size = mono_type_size (type, &align);
@@ -482,15 +499,18 @@ mini_emit_memory_store (MonoCompile *cfg, MonoType *type, MonoInst *dest, MonoIn
 	if (ins_flag & MONO_INST_VOLATILE) {
 		/* Volatile stores have release semantics, see 12.6.7 in Ecma 335 */
 		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
-	}
+	} else if (!mini_debug_options.weak_memory_model && mini_type_is_reference (type) && cfg->method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER)
+		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_REL);
 
-	if (ins_flag & MONO_INST_UNALIGNED) {
+	MONO_EMIT_NULL_CHECK (cfg, dest->dreg, FALSE);
+
+	if ((ins_flag & MONO_INST_UNALIGNED) && !COMPILE_LLVM (cfg)) {
 		MonoInst *addr, *mov, *tmp_var;
 
 		tmp_var = mono_compile_create_var (cfg, type, OP_LOCAL);
 		EMIT_NEW_TEMPSTORE (cfg, mov, tmp_var->inst_c0, value);
 		EMIT_NEW_VARLOADA (cfg, addr, tmp_var, tmp_var->inst_vtype);
-		mini_emit_memory_copy_internal (cfg, dest, addr, mono_class_from_mono_type_internal (type), 1, FALSE);
+		mini_emit_memory_copy_internal (cfg, dest, addr, mono_class_from_mono_type_internal (type), 1, FALSE, (ins_flag & MONO_INST_STACK_STORE) != 0);
 	} else {
 		MonoInst *ins;
 
@@ -580,7 +600,7 @@ mini_emit_memory_copy (MonoCompile *cfg, MonoInst *dest, MonoInst *src, MonoClas
 		mini_emit_memory_barrier (cfg, MONO_MEMORY_BARRIER_SEQ);
 	}
 
-	mini_emit_memory_copy_internal (cfg, dest, src, klass, explicit_align, native);
+	mini_emit_memory_copy_internal (cfg, dest, src, klass, explicit_align, native, (ins_flag & MONO_INST_STACK_STORE) != 0);
 
 	if (ins_flag & MONO_INST_VOLATILE) {
 		/* Volatile loads have acquire semantics, see 12.6.7 in Ecma 335 */

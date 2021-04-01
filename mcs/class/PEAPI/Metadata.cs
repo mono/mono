@@ -5658,21 +5658,30 @@ namespace PEAPI {
 		char[] name;
 		Hashtable htable = new Hashtable();
 		Hashtable btable = new Hashtable (new ByteArrayHashCodeProvider (), new ByteArrayComparer ());
+		bool addInitByte = false;
+		bool initByteAdded = false;
 
 		internal MetaDataStream(char[] name, bool addInitByte) : base(new MemoryStream()) 
 		{
-			if (addInitByte) { Write((byte)0); size = 1; }
+			this.addInitByte = addInitByte;
 			this.name = name;
 			sizeOfHeader = StreamHeaderSize + (uint)name.Length;
 		}
 
 		internal MetaDataStream(char[] name, System.Text.Encoding enc, bool addInitByte) : base(new MemoryStream(),enc) 
 		{
-			if (addInitByte) { Write((byte)0); size = 1; }
+			this.addInitByte = addInitByte;
 			this.name = name;
 			sizeOfHeader = StreamHeaderSize + (uint)name.Length;
 		}
 
+		void AddInitByte () {
+			if (addInitByte && !initByteAdded) {
+				Write((byte)0);
+				size += 1;
+				initByteAdded = true;
+			}
+		}
 		public uint Start {
 			get { return start; }
 			set { start = value; }
@@ -5706,6 +5715,7 @@ namespace PEAPI {
 
 		internal uint Add(string str, bool prependSize) 
 		{
+			AddInitByte ();
 			Object val = htable[str];
 			uint index = 0;
 			if (val == null) { 
@@ -5723,6 +5733,7 @@ namespace PEAPI {
 		}
 		internal uint Add (byte[] str, bool prependSize) 
 		{
+			AddInitByte ();
 			Object val = btable [str];
 			uint index = 0;
 			if (val == null) {
@@ -5740,6 +5751,7 @@ namespace PEAPI {
 
 		internal uint Add(Guid guid, bool prependSize) 
 		{
+			AddInitByte ();
 			byte [] b = guid.ToByteArray ();
 			if (prependSize) CompressNum ((uint) b.Length);
 			Write(guid.ToByteArray());
@@ -5749,6 +5761,7 @@ namespace PEAPI {
 
 		internal uint Add(byte[] blob) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			CompressNum((uint)blob.Length);
 			Write(blob);
@@ -5758,6 +5771,7 @@ namespace PEAPI {
 
 		internal uint Add(byte val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (1);
 			Write(val);
@@ -5767,6 +5781,7 @@ namespace PEAPI {
 
 		internal uint Add(sbyte val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (1);
 			Write(val);
@@ -5776,6 +5791,7 @@ namespace PEAPI {
 
 		internal uint Add(ushort val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (2);
 			Write(val);
@@ -5785,6 +5801,7 @@ namespace PEAPI {
 
 		internal uint Add(short val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (2);
 			Write(val);
@@ -5794,6 +5811,7 @@ namespace PEAPI {
 
 		internal uint Add(uint val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (4);
 			Write(val);
@@ -5803,6 +5821,7 @@ namespace PEAPI {
 
 		internal uint Add(int val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (4);
 			Write (val);
@@ -5812,6 +5831,7 @@ namespace PEAPI {
 
 		internal uint Add(ulong val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (8);
 			Write(val);
@@ -5821,6 +5841,7 @@ namespace PEAPI {
 
 		internal uint Add(long val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (8);
 			Write(val);
@@ -5830,6 +5851,7 @@ namespace PEAPI {
 
 		internal uint Add(float val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (4);
 			Write(val);
@@ -5839,6 +5861,7 @@ namespace PEAPI {
 
 		internal uint Add(double val, bool prependSize) 
 		{
+			AddInitByte ();
 			uint ix = size;
 			if (prependSize) CompressNum (8);
 			Write(val);

@@ -18,9 +18,7 @@
 #include <unistd.h>
 #endif
 
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #if defined(TARGET_X86)
 
@@ -326,6 +324,9 @@ typedef struct ucontext {
 #endif
 
 #if defined(__linux__)
+
+/* don't rely on glibc to include this for us, musl won't */
+#include <asm/ptrace.h>
 	typedef ucontext_t os_ucontext;
 
 #ifdef __mono_ppc64__
@@ -462,9 +463,19 @@ typedef struct ucontext {
 #elif defined(__APPLE__)
 #include <machine/_mcontext.h>
 #include <sys/_types/_ucontext64.h>
+
 	/* mach/arm/_structs.h */
+#if __has_feature(ptrauth_calls)
+	#define UCONTEXT_REG_PC(ctx) (host_mgreg_t)__darwin_arm_thread_state64_get_pc_fptr (((ucontext64_t*)(ctx))->uc_mcontext64->__ss)
+	#define UCONTEXT_REG_SP(ctx) __darwin_arm_thread_state64_get_sp (((ucontext64_t*)(ctx))->uc_mcontext64->__ss)
+	#define UCONTEXT_REG_LR(ctx) __darwin_arm_thread_state64_get_lr (((ucontext64_t*)(ctx))->uc_mcontext64->__ss)
+	#define UCONTEXT_REG_SET_PC(ctx,val) __darwin_arm_thread_state64_set_pc_fptr (((ucontext64_t*)(ctx))->uc_mcontext64->__ss, (val))
+	#define UCONTEXT_REG_SET_SP(ctx, val) __darwin_arm_thread_state64_set_sp (((ucontext64_t*)(ctx))->uc_mcontext64->__ss, (val))
+#else
 	#define UCONTEXT_REG_PC(ctx) (((ucontext64_t*)(ctx))->uc_mcontext64->__ss.__pc)
 	#define UCONTEXT_REG_SP(ctx) (((ucontext64_t*)(ctx))->uc_mcontext64->__ss.__sp)
+#endif
+
 	#define UCONTEXT_REG_R0(ctx) (((ucontext64_t*)(ctx))->uc_mcontext64->__ss.__x [ARMREG_R0])
 	#define UCONTEXT_GREGS(ctx) (&(((ucontext64_t*)(ctx))->uc_mcontext64->__ss.__x))
 #elif defined(__FreeBSD__)
@@ -474,12 +485,21 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_SP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_sp)
 	#define UCONTEXT_REG_R0(ctx) (((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_x [ARMREG_R0])
 	#define UCONTEXT_GREGS(ctx) (&(((ucontext_t*)(ctx))->uc_mcontext.mc_gpregs.gp_x))
-#else
+#elif !defined(HOST_WIN32)
 #include <ucontext.h>
 	#define UCONTEXT_REG_PC(ctx) (((ucontext_t*)(ctx))->uc_mcontext.pc)
 	#define UCONTEXT_REG_SP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.sp)
 	#define UCONTEXT_REG_R0(ctx) (((ucontext_t*)(ctx))->uc_mcontext.regs [ARMREG_R0])
 	#define UCONTEXT_GREGS(ctx) (&(((ucontext_t*)(ctx))->uc_mcontext.regs))
+#endif
+
+#ifndef UCONTEXT_REG_SET_PC
+#define UCONTEXT_REG_SET_PC(ctx, val) do { \
+	UCONTEXT_REG_PC (ctx) = (val); \
+	 } while (0)
+#define UCONTEXT_REG_SET_SP(ctx, val) do { \
+	UCONTEXT_REG_SP (ctx) = (val); \
+	 } while (0)
 #endif
 
 #elif defined(__mips__)
@@ -537,7 +557,11 @@ typedef struct ucontext
 #  include <ucontext.h>
 # endif
 
-# define UCONTEXT_GREGS(ctx)	(((ucontext_t *)(ctx))->uc_mcontext.gregs)
+# define UCONTEXT_GREGS(ctx)	 (((ucontext_t *)(ctx))->uc_mcontext.gregs)
+# define UCONTEXT_FREGS(ctx)     (((ucontext_t *)(ctx))->uc_mcontext.fpregs->fprs)
+# define UCONTEXT_REG_Rn(ctx, n) (((ucontext_t *)(ctx))->uc_mcontext.gregs[(n)])
+# define UCONTEXT_IP(ctx)         (((ucontext_t *)(ctx))->uc_mcontext.psw.addr)
+
 #endif
 
 #elif defined (TARGET_RISCV)
@@ -554,8 +578,8 @@ typedef struct ucontext
 
 #include <ucontext.h>
 
-#define UCONTEXT_GREGS(ctx) (((ucontext_t *) (ctx))->uc_mcontext.gregs)
-#define UCONTEXT_FREGS(ctx) (((ucontext_t *) (ctx))->uc_mcontext.fpregs)
+#define UCONTEXT_GREGS(ctx) (((ucontext_t *) (ctx))->uc_mcontext.__gregs)
+#define UCONTEXT_FREGS(ctx) (((ucontext_t *) (ctx))->uc_mcontext.__fpregs)
 #define UCONTEXT_REG_PC(ctx) (UCONTEXT_GREGS ((ctx)) [REG_PC])
 #define UCONTEXT_REG_BP(ctx) (UCONTEXT_GREGS ((ctx)) [REG_S0])
 #define UCONTEXT_REG_SP(ctx) (UCONTEXT_GREGS ((ctx)) [REG_SP])

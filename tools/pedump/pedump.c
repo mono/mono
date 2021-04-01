@@ -467,23 +467,23 @@ verify_image_file (const char *fname)
 		mono_assembly_fill_assembly_name (image, &assembly->aname);
 
 		/*Finish initializing the runtime*/
-		mono_install_assembly_load_hook_v2 (pedump_assembly_load_hook, NULL);
-		mono_install_assembly_search_hook_v2 (pedump_assembly_search_hook, NULL, FALSE, FALSE);
+		mono_install_assembly_load_hook_v2 (pedump_assembly_load_hook, NULL, FALSE);
+		mono_install_assembly_search_hook_v2 (pedump_assembly_search_hook, NULL, FALSE, FALSE, FALSE);
 
 		mono_init_version ("pedump", image->version);
 
-		mono_install_assembly_preload_hook_v2 (pedump_preload, GUINT_TO_POINTER (FALSE), FALSE);
+		mono_install_assembly_preload_hook_v2 (pedump_preload, GUINT_TO_POINTER (FALSE), FALSE, FALSE);
 
 		mono_icall_init ();
 		mono_marshal_init ();
 	} else {
 		/*Finish initializing the runtime*/
-		mono_install_assembly_load_hook_v2 (pedump_assembly_load_hook, NULL);
-		mono_install_assembly_search_hook_v2 (pedump_assembly_search_hook, NULL, FALSE, FALSE);
+		mono_install_assembly_load_hook_v2 (pedump_assembly_load_hook, NULL, FALSE);
+		mono_install_assembly_search_hook_v2 (pedump_assembly_search_hook, NULL, FALSE, FALSE, FALSE);
 
 		mono_init_version ("pedump", NULL);
 
-		mono_install_assembly_preload_hook_v2 (pedump_preload, GUINT_TO_POINTER (FALSE), FALSE);
+		mono_install_assembly_preload_hook_v2 (pedump_preload, GUINT_TO_POINTER (FALSE), FALSE, FALSE);
 
 		mono_icall_init ();
 		mono_marshal_init ();
@@ -660,7 +660,7 @@ pedump_assembly_search_hook (MonoAssemblyLoadContext *alc, MonoAssembly *request
 
        for (tmp = loaded_assemblies; tmp; tmp = tmp->next) {
                MonoAssembly *ass = (MonoAssembly *)tmp->data;
-               if (mono_assembly_names_equal (aname, &ass->aname))
+               if (mono_assembly_check_name_match (aname, &ass->aname))
 		       return ass;
        }
        return NULL;

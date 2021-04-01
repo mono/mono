@@ -272,7 +272,7 @@ init_test_set (test_set_t *test_set)
 	if (test_set->init)
 		return;
 	test_set->assembly_data = read_whole_file_and_close (test_set->assembly, &test_set->assembly_size);
-	test_set->image = mono_image_open_from_data_internal (mono_domain_default_alc (mono_root_domain_get ()), test_set->assembly_data, test_set->assembly_size, FALSE, &status, FALSE, FALSE, NULL);
+	test_set->image = mono_image_open_from_data_internal (mono_domain_default_alc (mono_root_domain_get ()), test_set->assembly_data, test_set->assembly_size, FALSE, &status, FALSE, FALSE, NULL, NULL);
 	if (!test_set->image || status != MONO_IMAGE_OK) {
 		printf ("Could not parse image %s\n", test_set->assembly);
 		exit (INVALID_BAD_FILE);
@@ -1015,7 +1015,7 @@ parse_validity (scanner_t *scanner)
 	else if (!strcmp (name, "badrt"))
 		validity = TEST_TYPE_BADRT;
 	else {
-		printf ("Expected either 'valid', 'invalid' or 'badtr' but got '%s' at the begining of a test entry at line %d\n", name, scanner_get_line (scanner));
+		printf ("Expected either 'valid', 'invalid' or 'badtr' but got '%s' at the beginning of a test entry at line %d\n", name, scanner_get_line (scanner));
 		exit (INVALID_VALIDITY_TEST);
 	}
 

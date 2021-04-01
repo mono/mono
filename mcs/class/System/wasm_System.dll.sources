@@ -1,1 +1,4 @@
 #include mobile_System.dll.sources
+#include fsw.pns.sources
+System.Net.WebSockets/WebSocketHandle.wasm.cs
+System.Net.NetworkInformation/NetworkInterface.platformnotsupported.cs

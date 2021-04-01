@@ -28,10 +28,15 @@ typedef enum {
 	MONO_TRACE_IO_LAYER_HANDLE    = 1 << 15,
 	MONO_TRACE_TAILCALL           = 1 << 16,
 	MONO_TRACE_PROFILER           = 1 << 17,
+	MONO_TRACE_TIERED             = 1 << 18,
+	MONO_TRACE_QCALL              = 1 << 19,
+	MONO_TRACE_METADATA_UPDATE    = 1 << 20,
 } MonoTraceMask;
 
+MONO_BEGIN_DECLS
 MONO_API_DATA GLogLevelFlags mono_internal_current_level;
 MONO_API_DATA MonoTraceMask mono_internal_current_mask;
+MONO_END_DECLS
 
 MONO_API void
 mono_trace_init (void);
@@ -159,6 +164,6 @@ void mono_log_write_recorder (const char *log_domain, GLogLevelFlags level, mono
 void mono_log_close_recorder (void);
 void mono_log_dump_recorder (void);
 
-void mono_dump_mem (gpointer d, int len);
+void mono_dump_mem (gconstpointer d, int len);
 
 #endif /* __MONO_LOGGER_INTERNAL_H__ */

@@ -187,7 +187,7 @@ namespace System.Web.Security
 		}
 
 		public bool Expired {
-			get { return DateTime.Now > expiration; }
+			get { return DateTime.UtcNow > expiration.ToUniversalTime(); }
 		}
 
 		public bool IsPersistent {

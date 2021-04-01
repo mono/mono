@@ -73,11 +73,11 @@ namespace System {
 		}
 
 		[DllImport ("__Internal")]
-		extern static IntPtr xamarin_timezone_get_names (ref int count);
+		extern static IntPtr xamarin_timezone_get_names (ref uint count);
 
 		static ReadOnlyCollection<string> GetMonoTouchNames ()
 		{
-			int count = 0;
+			uint count = 0;
 			IntPtr array = xamarin_timezone_get_names (ref count);
 			string [] names = new string [count];
 			for (int i = 0, offset = 0; i < count; i++, offset += IntPtr.Size) {
@@ -90,11 +90,11 @@ namespace System {
 		}
 
 		[DllImport ("__Internal")]
-		extern static IntPtr xamarin_timezone_get_data (string name, ref int size);
+		extern static IntPtr xamarin_timezone_get_data (string name, ref uint size);
 
 		static Stream GetMonoTouchData (string name, bool throw_on_error = true)
 		{
-			int size = 0;
+			uint size = 0;
 			IntPtr data = xamarin_timezone_get_data (name, ref size);
 			if (size <= 0) {
 				if (throw_on_error)

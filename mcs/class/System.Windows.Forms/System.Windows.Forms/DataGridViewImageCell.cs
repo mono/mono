@@ -108,6 +108,7 @@ namespace System.Windows.Forms {
 			cell.defaultNewRowValue = this.defaultNewRowValue;
 			cell.description = this.description;
 			cell.valueIsIcon = this.valueIsIcon;
+			cell.imageLayout = this.imageLayout;
 			return cell;
 		}
 

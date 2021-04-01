@@ -7,7 +7,6 @@ corefx/Mono.SafePasswordHandle.Unix.cs
 ../../../external/corefx/src/System.Security.Cryptography.X509Certificates/src/Microsoft/Win32/SafeHandles/SafePasswordHandle.Unix.cs
 
 System/TimeZoneInfo.MonoTouch.cs
-System/TimeZoneInfo.WebAssembly.cs
 System/TimeZoneInfo.Android.cs
 
 corefx/Interop.GetRandomBytes.Mono.cs

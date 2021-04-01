@@ -1721,14 +1721,22 @@ namespace System.Windows.Forms
 		void CalculateCustomColumnWidth ()
 		{
 			int min_width = Int32.MaxValue;
+			int col_index_of_min = -1;
 			for (int i = 0; i < columns.Count; i++) {
 				int col_width = columns [i].Width;
 
-				if (col_width < min_width)
+				if (col_width < min_width) {
 					min_width = col_width;
+					col_index_of_min = i;
+				}
 			}
 
-			custom_column_width = min_width;
+			if (min_width >= 0) // manual width
+				custom_column_width = min_width;
+			else if (col_index_of_min != -1) // automatic width, either -1 or -2
+				custom_column_width = GetChildColumnSize(col_index_of_min).Width;
+			else
+				custom_column_width = 0;
 		}
 
 		void LayoutIcons (Size item_size, bool left_aligned, int x_spacing, int y_spacing)
@@ -3844,7 +3852,7 @@ namespace System.Windows.Forms
 		{
 			Size item_size = ItemSize;
 			for (int i = 0; i < items.Count; i++) {
-				Rectangle item_rect = items [i].Bounds;
+				Rectangle item_rect = new Rectangle(GetItemLocation(i), item_size);
 				if (item_rect.Contains (x, y))
 					return items [i];
 			}

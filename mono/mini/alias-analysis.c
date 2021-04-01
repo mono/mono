@@ -22,7 +22,7 @@ static gboolean
 is_int_stack_size (int type)
 {
 #if TARGET_SIZEOF_VOID_P == 4
-	return type == STACK_I4 || type == STACK_MP;
+	return type == STACK_I4 || type == STACK_MP || type == STACK_PTR;
 #else
 	return type == STACK_I4;
 #endif
@@ -32,7 +32,7 @@ static gboolean
 is_long_stack_size (int type)
 {
 #if TARGET_SIZEOF_VOID_P == 8
-	return type == STACK_I8 || type == STACK_MP;
+	return type == STACK_I8 || type == STACK_MP || type == STACK_PTR;
 #else
 	return type == STACK_I8;
 #endif
@@ -255,9 +255,16 @@ handle_instruction:
 #endif
 			case OP_STORER8_MEMBASE_REG:
 			case OP_STOREV_MEMBASE:
+				tmp = NULL;
+				if (ins->opcode == OP_STOREV_MEMBASE) {
+					tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->dreg));
+					if (tmp)
+						ins->flags |= MONO_INST_STACK_STORE;
+				}
 				if (ins->inst_offset != 0)
 					continue;
-				tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->dreg));
+				if (!tmp)
+					tmp = (MonoInst *)g_hash_table_lookup (addr_loads, GINT_TO_POINTER (ins->dreg));
 				if (tmp) {
 					if (cfg->verbose_level > 2) { printf ("Found candidate store:"); mono_print_ins (ins); }
 					if (lower_store (cfg, ins, tmp)) {

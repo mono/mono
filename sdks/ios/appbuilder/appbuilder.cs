@@ -18,7 +18,7 @@ public class AppBuilder
 			symbols.Add (String.Format ("mono_aot_module_{0}_info", img.Replace ('.', '_').Replace ('-', '_')));
 		}
 
-		var w = File.CreateText (Path.Combine (builddir, "main.m"));
+		var w = File.CreateText (Path.Combine (builddir, "modules.m"));
 
 		/* copy from <mono/mini/jit.h> */
 		w.WriteLine ("typedef enum {");
@@ -86,7 +86,7 @@ public class AppBuilder
 		string target = null;
 		string appdir = null;
 		string builddir = null;
-		string runtimedir = null;
+		string apptemplatedir = null;
 		string mono_sdkdir = null;
 		string bundle_identifier = null;
 		string bundle_name = null;
@@ -95,18 +95,20 @@ public class AppBuilder
 		string aotdir = null;
 		string exe = null;
 		string signing_identity = null;
-		string profile = null;
+		string team_identifier = null;
+		bool isnetcore = false;
 		bool isdev = false;
-		bool isrelease = false;
+		bool isdebug = false;
 		bool isllvm = false;
 		bool isinterponly = false;
 		bool isinterpmixed = false;
 		var assemblies = new List<string> ();
+		var content_files = new List<string> ();
 		var p = new OptionSet () {
 				{ "target=", s => target = s },
 				{ "appdir=", s => appdir = s },
 				{ "builddir=", s => builddir = s },
-				{ "runtimedir=", s => runtimedir = s },
+				{ "apptemplatedir=", s => apptemplatedir = s },
 				{ "mono-sdkdir=", s => mono_sdkdir = s },
 				{ "sysroot=", s => sysroot = s },
 				{ "aot-cachedir=", s => aotdir = s },
@@ -114,18 +116,21 @@ public class AppBuilder
 				{ "bundle-name=", s => bundle_name = s },
 				{ "bundle-executable=", s => bundle_executable = s },
 				{ "signing-identity=", s => signing_identity = s },
-				{ "profile=", s => profile = s },
+				{ "team-identifier=", s => team_identifier = s },
 				{ "llvm", s => isllvm = true },
+				{ "netcore", s => isnetcore = true },
+				{ "debug", s => isdebug = true },
 				{ "interp-only", s => isinterponly = true },
 				{ "interp-mixed", s => isinterpmixed = true },
 				{ "exe=", s => exe = s },
 				{ "r=", s => assemblies.Add (s) },
+				{ "content=", s => content_files.Add (s) },
 			};
 
 		var new_args = p.Parse (args).ToArray ();
 
 		check_mandatory (target, "--target");
-		check_mandatory (runtimedir, "--runtimedir");
+		check_mandatory (apptemplatedir, "--apptemplatedir");
 		check_mandatory (appdir, "--appdir");
 		check_mandatory (mono_sdkdir, "--mono-sdkdir");
 		check_mandatory (sysroot, "--sysroot");
@@ -134,6 +139,7 @@ public class AppBuilder
 		switch (target) {
 		case "ios-dev64":
 			isdev = true;
+			check_mandatory (team_identifier, "--team-identifier");
 			break;
 		case "ios-sim64":
 			break;
@@ -143,8 +149,8 @@ public class AppBuilder
 			break;
 		}
 
-		if (isllvm)
-			isrelease = true;
+		string runtime = isnetcore ? "ios-netcore_target64-release" : "ios-target64-release";
+		string cross_runtime = isnetcore ? "ios-netcore_cross64-release" : "ios-cross64-release";
 
 		bool isinterpany = isinterponly || isinterpmixed;
 
@@ -159,26 +165,41 @@ public class AppBuilder
 			aot_args = "full";
 		}
 
-		if (!isrelease)
+		if (isdebug)
 			aot_args += ",soft-debug";
 		if (isllvm) {
 			cross_runtime_args = "--llvm";
 			aot_args += ",llvm-path=$mono_sdkdir/llvm-llvm64/bin,llvm-outfile=$llvm_outfile";
+
+			if (isdebug) {
+				Console.WriteLine ("--debug can't be used together with --llvm");
+				Environment.Exit (1);
+			}
 		}
 
 		Directory.CreateDirectory (builddir);
 
 		// Create Info.plist file
-		var lines = File.ReadAllLines (Path.Combine (runtimedir, "Info.plist.in"));
+		var lines = File.ReadAllLines (Path.Combine (apptemplatedir, "Info.plist.in"));
 		for (int i = 0; i < lines.Length; ++i) {
 			string line = lines [i];
 			line = line.Replace ("BUNDLE_IDENTIFIER", bundle_identifier);
 			line = line.Replace ("BUNDLE_EXECUTABLE", bundle_executable);
 			line = line.Replace ("BUNDLE_NAME", bundle_name);
-			line = line.Replace ("PLATFORM", isdev ? "iPhoneOS" : "iPhoneSimulator");
+			line = line.Replace ("BUNDLE_PLATFORM", isdev ? "iPhoneOS" : "iPhoneSimulator");
+			line = line.Replace ("BUNDLE_DTPLATFORMNAME", isdev ? "iphoneos" : "iphonesimulator");
 			lines [i] = line;
 		}
 		File.WriteAllLines (Path.Combine (builddir, "Info.plist"), lines);
+
+		// Create Entitlements.plist file
+		lines = File.ReadAllLines (Path.Combine (apptemplatedir, "Entitlements.plist.in"));
+		for (int i = 0; i < lines.Length; ++i) {
+			string line = lines [i];
+			line = line.Replace ("TEAM_IDENTIFIER", team_identifier);
+			lines [i] = line;
+		}
+		File.WriteAllLines (Path.Combine (builddir, "Entitlements.plist"), lines);
 
 		// Create config.json file
 		string config = "{ \"exe\" : \"" + exe + "\" }";
@@ -188,14 +209,15 @@ public class AppBuilder
 
 		// Defines
 		ninja.WriteLine ($"mono_sdkdir = {mono_sdkdir}");
-		ninja.WriteLine ($"monoios_dir = {runtimedir}");
+		ninja.WriteLine ($"apptemplate_dir = {apptemplatedir}");
 		ninja.WriteLine ($"appdir = {appdir}");
 		ninja.WriteLine ($"sysroot = {sysroot}");
-		ninja.WriteLine ("cross = $mono_sdkdir/ios-cross64-release/bin/aarch64-darwin-mono-sgen");
+		ninja.WriteLine ($"cross = $mono_sdkdir/{cross_runtime}/bin/aarch64-darwin-mono-sgen");
 		ninja.WriteLine ($"builddir = .");
 		if (aotdir != null)
 			ninja.WriteLine ($"aotdir = {aotdir}");
 		ninja.WriteLine ($"signing_identity = {signing_identity}");
+		ninja.WriteLine ("entitlements = $builddir/Entitlements.plist");
 		// Rules
 		ninja.WriteLine ("rule aot");
 		ninja.WriteLine ($"  command = MONO_PATH=$mono_path $cross -O=gsharedvt,float32 --debug {cross_runtime_args} --aot=mtriple=arm64-ios,static,asmonly,direct-icalls,no-direct-calls,dwarfdebug,{aot_args},outfile=$outfile,data-outfile=$data_outfile $src_file");
@@ -234,7 +256,7 @@ public class AppBuilder
 	
 		var ofiles = "";
 		var assembly_names = new List<string> ();
-		var cultures = CultureInfo.GetCultures (CultureTypes.AllCultures).Where (x => !String.IsNullOrEmpty (x.IetfLanguageTag)).Select (x => x.IetfLanguageTag);
+		var cultures = CultureInfo.GetCultures (CultureTypes.AllCultures).Where (x => !String.IsNullOrEmpty (x.IetfLanguageTag)).Select (x => x.IetfLanguageTag).Distinct ();
 		foreach (var assembly in assemblies) {
 			string filename = Path.GetFileName (assembly);
 			var filename_noext = Path.GetFileNameWithoutExtension (filename);
@@ -245,6 +267,12 @@ public class AppBuilder
 				File.Copy (assembly, Path.Combine (aotdir, filename), false);
 
 			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff $builddir/{filename}");
+
+			string pdb = Path.ChangeExtension (assembly, ".pdb");
+			if (isdebug && File.Exists (pdb)) {
+				File.Copy (pdb, Path.Combine (builddir, filename_noext + ".pdb"), true);
+				ninja.WriteLine ($"build $appdir/{filename_noext}.pdb: cpifdiff $builddir/{filename_noext}.pdb");
+			}
 
 			var assembly_dir = Path.GetDirectoryName (assembly);
 			var resource_filename = filename.Replace (".dll", ".resources.dll");
@@ -299,35 +327,36 @@ public class AppBuilder
 			assembly_names.Add (aname.Name);
 		}
 
+		foreach (var file in content_files) {
+			string filename = Path.GetFileName (file);
+			ninja.WriteLine ($"build $appdir/{filename}: cpifdiff {file}");
+		}
+
 		ninja.WriteLine ("build $appdir: mkdir");
 
 		if (isdev) {
-			string libs = "$mono_sdkdir/ios-target64-release/lib/libmonosgen-2.0.a";
+			string libs = $"$mono_sdkdir/{runtime}/lib/libmonosgen-2.0.a";
 			if (isinterpany) {
-				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ee-interp.a";
-				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-icall-table.a";
-				libs += " $mono_sdkdir/ios-target64-release/lib/libmono-ilgen.a";
+				libs += $" $mono_sdkdir/{runtime}/lib/libmono-ee-interp.a";
+				libs += $" $mono_sdkdir/{runtime}/lib/libmono-icall-table.a";
+				libs += $" $mono_sdkdir/{runtime}/lib/libmono-ilgen.a";
 			}
-			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/main.o " + libs + " $monoios_dir/libmonoios.a");
-			ninja.WriteLine ("    forcelibs = -force_load $mono_sdkdir/ios-target64-release/lib/libmono-native-unified.a");
-			ninja.WriteLine ("build $builddir/main.o: compile-objc $builddir/main.m");
+			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/modules.o " + libs + (isnetcore ? " $apptemplate_dir/app-netcore-device.a" : " $apptemplate_dir/app-device.a"));
+			if (isnetcore)
+				ninja.WriteLine ($"    forcelibs = -force_load $mono_sdkdir/{runtime}/lib/System.Native.a -force_load $mono_sdkdir/{runtime}/lib/System.IO.Compression.Native.a -force_load $mono_sdkdir/{runtime}/lib/System.Security.Cryptography.Native.Apple.a");
+			else
+				ninja.WriteLine ($"    forcelibs = -force_load $mono_sdkdir/{runtime}/lib/libmono-native-unified.a");
+			ninja.WriteLine ("build $builddir/modules.o: compile-objc $builddir/modules.m");
 		} else {
-			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp $monoios_dir/runtime");
+			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp " + (isnetcore ? "$apptemplate_dir/app-netcore-simulator" : "$apptemplate_dir/app-simulator"));
 		}
 		ninja.WriteLine ("build $builddir/Info.plist.binary: plutil $builddir/Info.plist");
 		ninja.WriteLine ("build $appdir/Info.plist: cpifdiff $builddir/Info.plist.binary");
 		ninja.WriteLine ("build $appdir/config.json: cpifdiff $builddir/config.json");
-		ninja.WriteLine ("build $builddir/Entitlements.xcent: cpifdiff $monoios_dir/Entitlements.xcent");
-		if (profile != null) {
-			ninja.WriteLine ($"build $builddir/embedded.mobileprovision: cp {profile}");
-			ninja.WriteLine ($"build $appdir/embedded.mobileprovision: cp $builddir/embedded.mobileprovision");
-		}
 		if (isdev)
-			ninja.WriteLine ($"build $appdir/_CodeSignature: codesign $appdir/{bundle_executable} | $builddir/Entitlements.xcent");
+			ninja.WriteLine ($"build $appdir/_CodeSignature: codesign $appdir/{bundle_executable}");
 		else
-			ninja.WriteLine ($"build $appdir/_CodeSignature: codesign-sim $appdir/{bundle_executable} | $builddir/Entitlements.xcent");
-		ninja.WriteLine ("  entitlements=$builddir/Entitlements.xcent");
-		ninja.WriteLine ("build $appdir/Base.lproj: cp-recursive $monoios_dir/Base.lproj");
+			ninja.WriteLine ($"build $appdir/_CodeSignature: codesign-sim $appdir/{bundle_executable}");
 
 		ninja.Close ();
 

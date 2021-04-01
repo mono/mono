@@ -18,10 +18,10 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/utils/json.h>
 
-#define MONO_NATIVE_STATE_PROTOCOL_VERSION "0.0.4"
+#define MONO_NATIVE_STATE_PROTOCOL_VERSION "0.0.6"
 
 typedef enum {
-	MonoSummaryNone,
+	MonoSummaryNone = 0,
 	MonoSummarySetup,
 	MonoSummarySuspendHandshake,
 	MonoSummaryUnmanagedStacks,
@@ -57,7 +57,7 @@ gboolean
 mono_summarize_set_timeline_dir (const char *directory);
 
 void
-mono_summarize_timeline_start (void);
+mono_summarize_timeline_start (const char *dump_reason);
 
 void
 mono_summarize_timeline_phase_log (MonoSummaryStage stage);
@@ -117,5 +117,22 @@ mono_state_alloc_mem (MonoStateMem *mem, long tag, size_t size);
 void
 mono_state_free_mem (MonoStateMem *mem);
 
+char*
+mono_crash_save_failfast_msg (char *msg);
+
+const char*
+mono_crash_get_failfast_msg (void);
+
+void
+mono_create_crash_hash_breadcrumb (MonoThreadSummary *thread);
+
 #endif // DISABLE_CRASH_REPORTING
+
+// Dump context functions (enter/leave)
+
+gboolean
+mono_dump_start (void);
+gboolean
+mono_dump_complete (void);
+
 #endif // MONO_UTILS_NATIVE_STATE

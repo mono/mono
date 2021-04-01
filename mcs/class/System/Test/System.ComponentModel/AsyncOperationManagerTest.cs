@@ -18,6 +18,7 @@ using NUnit.Framework;
 namespace MonoTests.System.ComponentModel
 {
 	[TestFixture]
+	[NUnit.Framework.CategoryAttribute ("NotWasm")]
 	public class AsyncOperationManagerTest
 	{
 		[Test]

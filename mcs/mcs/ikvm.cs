@@ -257,6 +257,7 @@ namespace Mono.CSharp
 			sdk_directory.Add ("4.7", new string [] { "4.7-api", "v4.0.30319" });
 			sdk_directory.Add ("4.7.1", new string [] { "4.7.1-api", "v4.0.30319" });
 			sdk_directory.Add ("4.7.2", new string [] { "4.7.2-api", "v4.0.30319" });
+			sdk_directory.Add ("4.8", new string [] { "4.8-api", "v4.0.30319" });
 			sdk_directory.Add ("4.x", new string [] { "4.5", "net_4_x", "v4.0.30319" });
 		}
 

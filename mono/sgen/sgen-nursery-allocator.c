@@ -209,7 +209,7 @@ verify_alloc_records (void)
 			hole_size = rec->address - rec_end (prev);
 			max_hole = MAX (max_hole, hole_size);
 		}
-		printf ("obj [%p, %p] size %d hole to prev %d reason %s seq %d tid %zx\n", rec->address, rec_end (rec), (int)rec->size, hole_size, get_reason_name (rec), rec->seq, (size_t)rec->tid);
+		printf ("obj [%p, %p] size %d hole to prev %d reason %s seq %d tid %" G_GSIZE_FORMAT "x\n", rec->address, rec_end (rec), (int)rec->size, hole_size, get_reason_name (rec), rec->seq, (size_t)rec->tid);
 		prev = rec;
 	}
 	printf ("SUMMARY total alloc'd %d holes %d max_hole %d\n", total, holes, max_hole);
@@ -219,20 +219,19 @@ verify_alloc_records (void)
 
 /*********************************************************************************/
 
-
-static inline gpointer
+static gpointer
 mask (gpointer n, uintptr_t bit)
 {
 	return (gpointer)(((uintptr_t)n) | bit);
 }
 
-static inline gpointer
+static gpointer
 unmask (gpointer p)
 {
 	return (gpointer)((uintptr_t)p & ~(uintptr_t)0x3);
 }
 
-static inline uintptr_t
+static uintptr_t
 get_mark (gpointer n)
 {
 	return (uintptr_t)n & 0x1;
@@ -651,7 +650,7 @@ static mword fragment_total = 0;
 static void
 add_nursery_frag (SgenFragmentAllocator *allocator, size_t frag_size, char* frag_start, char* frag_end)
 {
-	SGEN_LOG (4, "Found empty fragment: %p-%p, size: %zd", frag_start, frag_end, frag_size);
+	SGEN_LOG (4, "Found empty fragment: %p-%p, size: %" G_GSIZE_FORMAT "d", frag_start, frag_end, frag_size);
 	sgen_binary_protocol_empty (frag_start, frag_size);
 	/* Not worth dealing with smaller fragments: need to tune */
 	if (frag_size >= SGEN_MAX_NURSERY_WASTE) {
@@ -663,7 +662,7 @@ add_nursery_frag (SgenFragmentAllocator *allocator, size_t frag_size, char* frag
 
 #ifdef NALLOC_DEBUG
 		/* XXX convert this into a flight record entry
-		printf ("\tfragment [%p %p] size %zd\n", frag_start, frag_end, frag_size);
+		printf ("\tfragment [%p %p] size %" G_GSIZE_FORMAT "d\n", frag_start, frag_end, frag_size);
 		*/
 #endif
 		sgen_fragment_allocator_add (allocator, frag_start, frag_end);
@@ -794,7 +793,7 @@ sgen_build_nursery_fragments (GCMemSection *nursery_section)
 		SGEN_LOG (1, "Nursery fully pinned");
 		for (pin_entry = pin_start; pin_entry < pin_end; ++pin_entry) {
 			GCObject *p = (GCObject *)*pin_entry;
-			SGEN_LOG (3, "Bastard pinning obj %p (%s), size: %ld", p, sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (p)), (long)sgen_safe_object_get_size (p));
+			SGEN_LOG (3, "Bad pinning obj %p (%s), size: %ld", p, sgen_client_vtable_get_name (SGEN_LOAD_VTABLE (p)), (long)sgen_safe_object_get_size (p));
 		}
 	}
 	return fragment_total;
@@ -829,7 +828,7 @@ sgen_nursery_alloc (size_t size)
 {
 	SGEN_ASSERT (1, size >= (SGEN_CLIENT_MINIMUM_OBJECT_SIZE + CANARY_SIZE) && size <= (SGEN_MAX_SMALL_OBJ_SIZE + CANARY_SIZE), "Invalid nursery object size");
 
-	SGEN_LOG (4, "Searching nursery for size: %zd", size);
+	SGEN_LOG (4, "Searching nursery for size: %" G_GSIZE_FORMAT "d", size);
 	size = SGEN_ALIGN_UP (size);
 
 	HEAVY_STAT (++stat_nursery_alloc_requests);
@@ -840,7 +839,7 @@ sgen_nursery_alloc (size_t size)
 void*
 sgen_nursery_alloc_range (size_t desired_size, size_t minimum_size, size_t *out_alloc_size)
 {
-	SGEN_LOG (4, "Searching for byte range desired size: %zd minimum size %zd", desired_size, minimum_size);
+	SGEN_LOG (4, "Searching for byte range desired size: %" G_GSIZE_FORMAT "d minimum size %" G_GSIZE_FORMAT "d", desired_size, minimum_size);
 
 	HEAVY_STAT (++stat_nursery_alloc_range_requests);
 

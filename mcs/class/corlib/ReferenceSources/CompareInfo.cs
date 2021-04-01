@@ -72,9 +72,6 @@ namespace System.Globalization
 		static bool managedCollation;
 		static bool managedCollationChecked;
 
-#if WASM
-		const bool UseManagedCollation = false;
-#else
 		static bool UseManagedCollation {
 			get {
 				if (!managedCollationChecked) {
@@ -85,13 +82,9 @@ namespace System.Globalization
 				return managedCollation;
 			}
 		}
-#endif
 
 		ISimpleCollator GetCollator ()
 		{
-#if WASM
-			return null;
-#else
 			if (collator != null)
 				return collator;
 
@@ -107,7 +100,6 @@ namespace System.Globalization
 			}
 
 			return collator;
-#endif
 		}
 
 		SortKey CreateSortKeyCore (string source, CompareOptions options)

@@ -1698,6 +1698,16 @@ namespace System.Windows.Forms {
 
 	[StructLayout (LayoutKind.Sequential)]
 	[Serializable]
+	internal struct XRectangle
+	{
+		public short X;
+		public short Y;
+		public ushort Width;
+		public ushort Height;
+	}
+
+	[StructLayout (LayoutKind.Sequential)]
+	[Serializable]
 	internal class XIMCallback
 	{
 		public IntPtr client_data;
@@ -1817,5 +1827,26 @@ namespace System.Windows.Forms {
 		public short y_org;
 		public short width;
 		public short height;
+	}
+
+	internal enum XShapeOperation {
+		ShapeSet,
+		ShapeUnion,
+		ShapeIntersect,
+		ShapeSubtract,
+		ShapeInvert
+	}
+
+	internal enum XShapeKind {
+		ShapeBounding,
+		ShapeClip,
+		//ShapeInput // Not usable without more imports
+	}
+
+	internal enum XOrdering {
+		Unsorted,
+		YSorted,
+		YXSorted,
+		YXBanded
 	}
 }

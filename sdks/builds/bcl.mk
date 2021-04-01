@@ -62,6 +62,9 @@ configure-$(1): configure-$(1)-bcl
 .PHONY: build-$(1)
 build-$(1): build-$(1)-bcl
 
+.PHONY: package-$(1)
+package-$(1): package-$(1)-bcl
+
 .PHONY: archive-$(1)
 archive-$(1): package-$(1)-bcl
 

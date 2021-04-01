@@ -44,11 +44,6 @@
 
 #if HAVE_BOEHM_GC
 
-#undef TRUE
-#undef FALSE
-#define THREAD_LOCAL_ALLOC 1
-#include "private/pthread_support.h"
-
 #if defined(HOST_DARWIN) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
 void *pthread_get_stackaddr_np(pthread_t);
 #endif
@@ -60,9 +55,8 @@ void *pthread_get_stackaddr_np(pthread_t);
 
 static gboolean gc_initialized = FALSE;
 static gboolean gc_dont_gc_env = FALSE;
-static mono_mutex_t mono_gc_lock;
 
-typedef void (*GC_push_other_roots_proc)(void);
+static mono_mutex_t mono_gc_lock;
 
 static GC_push_other_roots_proc default_push_other_roots;
 static GHashTable *roots;
@@ -111,7 +105,9 @@ mono_gc_warning (char *msg, GC_word arg)
 }
 
 static void on_gc_notification (GC_EventType event);
-static void on_gc_heap_resize (size_t new_size);
+
+// GC_word here to precisely match Boehm. Not size_t, not gsize.
+static void on_gc_heap_resize (GC_word new_size);
 
 void
 mono_gc_base_init (void)
@@ -127,67 +123,13 @@ mono_gc_base_init (void)
 	mono_w32handle_init ();
 #endif
 
-	/*
-	 * Handle the case when we are called from a thread different from the main thread,
-	 * confusing libgc.
-	 * FIXME: Move this to libgc where it belongs.
-	 *
-	 * we used to do this only when running on valgrind,
-	 * but it happens also in other setups.
-	 */
-#if defined(HAVE_PTHREAD_GETATTR_NP) && defined(HAVE_PTHREAD_ATTR_GETSTACK)
-	{
-		size_t size;
-		void *sstart;
-		pthread_attr_t attr;
-		pthread_getattr_np (pthread_self (), &attr);
-		pthread_attr_getstack (&attr, &sstart, &size);
-		pthread_attr_destroy (&attr); 
-		/*g_print ("stackbottom pth is: %p\n", (char*)sstart + size);*/
-		/* apparently with some linuxthreads implementations sstart can be NULL,
-		 * fallback to the more imprecise method (bug# 78096).
-		 */
-		if (sstart) {
-			GC_stackbottom = (char*)sstart + size;
-		} else {
-			int dummy;
-			gsize stack_bottom = (gsize)&dummy;
-			stack_bottom += 4095;
-			stack_bottom &= ~4095;
-			GC_stackbottom = (char*)stack_bottom;
-		}
-	}
-#elif defined(HAVE_PTHREAD_GET_STACKSIZE_NP) && defined(HAVE_PTHREAD_GET_STACKADDR_NP)
-		GC_stackbottom = (char*)pthread_get_stackaddr_np (pthread_self ());
-#elif defined(__OpenBSD__)
-#  include <pthread_np.h>
-	{
-		stack_t ss;
-		int rslt;
-
-		rslt = pthread_stackseg_np(pthread_self(), &ss);
-		g_assert (rslt == 0);
-
-		GC_stackbottom = (char*)ss.ss_sp;
-	}
-#else
-	{
-		int dummy;
-		gsize stack_bottom = (gsize)&dummy;
-		stack_bottom += 4095;
-		stack_bottom &= ~4095;
-		/*g_print ("stackbottom is: %p\n", (char*)stack_bottom);*/
-		GC_stackbottom = (char*)stack_bottom;
-	}
-#endif
-
 	roots = g_hash_table_new (NULL, NULL);
-	default_push_other_roots = GC_push_other_roots;
-	GC_push_other_roots = mono_push_other_roots;
+	default_push_other_roots = GC_get_push_other_roots ();
+	GC_set_push_other_roots (mono_push_other_roots);
 
 #if !defined(HOST_ANDROID)
 	/* If GC_no_dls is set to true, GC_find_limit is not called. This causes a seg fault on Android. */
-	GC_no_dls = TRUE;
+	GC_set_no_dls (TRUE);
 #endif
 	{
 		if ((env = g_getenv ("MONO_GC_DEBUG"))) {
@@ -210,8 +152,8 @@ mono_gc_base_init (void)
 	GC_init ();
 
 	GC_set_warn_proc (mono_gc_warning);
-	GC_finalize_on_demand = 1;
-	GC_finalizer_notifier = mono_gc_finalize_notify;
+	GC_set_finalize_on_demand (1);
+	GC_set_finalizer_notifier(mono_gc_finalize_notify);
 
 	GC_init_gcj_malloc (5, NULL);
 	GC_allow_register_threads ();
@@ -259,7 +201,7 @@ mono_gc_base_init (void)
 	mono_thread_info_attach ();
 
 	GC_set_on_collection_event (on_gc_notification);
-	GC_on_heap_resize = on_gc_heap_resize;
+	GC_set_on_heap_resize (on_gc_heap_resize);
 
 	gc_initialized = TRUE;
 }
@@ -267,7 +209,7 @@ mono_gc_base_init (void)
 void
 mono_gc_base_cleanup (void)
 {
-	GC_finalizer_notifier = NULL;
+	GC_set_finalizer_notifier (NULL);
 }
 
 void
@@ -344,7 +286,19 @@ mono_gc_get_generation  (MonoObject *object)
 int
 mono_gc_collection_count (int generation)
 {
-	return GC_gc_no;
+	return GC_get_gc_no ();
+}
+
+void
+mono_gc_stop_world ()
+{
+	g_assert ("mono_gc_stop_world is not supported in Boehm");
+}
+
+void
+mono_gc_restart_world ()
+{
+	g_assert ("mono_gc_restart_world is not supported in Boehm");
 }
 
 /**
@@ -413,6 +367,18 @@ mono_gc_thread_attach (MonoThreadInfo* info)
 }
 
 void
+mono_gc_thread_detach (MonoThreadInfo *p)
+{
+	/* Detach without threads lock as Boehm
+	 * will take it's own lock internally. Note in
+	 * on_gc_notification we take threads lock after
+	 * Boehm already has it's own lock. For consistency
+	 * always take lock ordering of Boehm then threads.
+	 */
+	GC_unregister_my_thread ();
+}
+
+void
 mono_gc_thread_detach_with_lock (MonoThreadInfo *p)
 {
 	MonoNativeThreadId tid;
@@ -435,7 +401,7 @@ mono_gc_thread_in_critical_region (MonoThreadInfo *info)
 gboolean
 mono_object_is_alive (MonoObject* o)
 {
-	return GC_is_marked ((ptr_t)o);
+	return GC_is_marked ((const void *)o);
 }
 
 int
@@ -536,9 +502,9 @@ on_gc_notification (GC_EventType event)
 	}
 }
 
- 
+ // GC_word here to precisely match Boehm. Not size_t, not gsize.
 static void
-on_gc_heap_resize (size_t new_size)
+on_gc_heap_resize (GC_word new_size)
 {
 	guint64 heap_size = GC_get_heap_size ();
 #ifndef DISABLE_PERFCOUNTERS
@@ -768,6 +734,12 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 }
 
 MonoArray*
+mono_gc_alloc_pinned_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
+{
+	return mono_gc_alloc_vector (vtable, size, max_length);
+}
+
+MonoArray*
 mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 {
 	MonoArray *obj;
@@ -906,7 +878,7 @@ mono_gc_wbarrier_arrayref_copy_internal (gpointer dest_ptr, gconstpointer src_pt
 }
 
 void
-mono_gc_wbarrier_generic_store_internal (gpointer ptr, MonoObject* value)
+mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value)
 {
 	*(void**)ptr = value;
 }
@@ -1034,7 +1006,7 @@ mono_gc_get_description (void)
 void
 mono_gc_set_desktop_mode (void)
 {
-	GC_dont_expand = 1;
+	GC_set_dont_expand (1);
 }
 
 gboolean
@@ -1046,7 +1018,7 @@ mono_gc_is_moving (void)
 gboolean
 mono_gc_is_disabled (void)
 {
-	if (GC_dont_gc || gc_dont_gc_env)
+	if (GC_is_disabled () || gc_dont_gc_env)
 		return TRUE;
 	else
 		return FALSE;
@@ -1067,7 +1039,9 @@ mono_gc_get_range_copy_func (void)
 guint8*
 mono_gc_get_card_table (int *shift_bits, gpointer *card_mask)
 {
-	g_assert_not_reached ();
+	*shift_bits = 0;
+	*card_mask = 0;
+	//g_assert_not_reached ();
 	return NULL;
 }
 
@@ -1144,6 +1118,16 @@ mono_gc_set_stack_end (void *stack_end)
 {
 }
 
+void GC_start_blocking ()
+{
+
+}
+
+void GC_end_blocking ()
+{
+
+}
+
 void
 mono_gc_skip_thread_changing (gboolean skip)
 {
@@ -1189,7 +1173,11 @@ mono_gc_pthread_create (pthread_t *new_thread, const pthread_attr_t *attr, void 
 #ifdef HOST_WIN32
 BOOL APIENTRY mono_gc_dllmain (HMODULE module_handle, DWORD reason, LPVOID reserved)
 {
+#ifdef GC_INSIDE_DLL
 	return GC_DllMain (module_handle, reason, reserved);
+#else
+	return TRUE;
+#endif
 }
 #endif
 
@@ -1273,13 +1261,14 @@ mono_gc_toggleref_register_callback (MonoToggleRefStatus (*proccess_toggleref) (
 static MonoToggleRefStatus
 test_toggleref_callback (MonoObject *obj)
 {
-	static MonoClassField *mono_toggleref_test_field;
 	MonoToggleRefStatus status = MONO_TOGGLE_REF_DROP;
 
-	if (!mono_toggleref_test_field) {
+	MONO_STATIC_POINTER_INIT (MonoClassField, mono_toggleref_test_field)
+
 		mono_toggleref_test_field = mono_class_get_field_from_name_full (mono_object_class (obj), "__test", NULL);
 		g_assert (mono_toggleref_test_field);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoClassField*, mono_toggleref_test_field)
 
 	mono_field_get_value_internal (obj, mono_toggleref_test_field, &status);
 	printf ("toggleref-cb obj %d\n", status);
@@ -1319,17 +1308,17 @@ mono_gc_register_finalizer_callbacks (MonoGCFinalizerCallbacks *callbacks)
 
 #define BITMAP_SIZE (sizeof (*((HandleData *)NULL)->bitmap) * CHAR_BIT)
 
-static inline gboolean
+static gboolean
 slot_occupied (HandleData *handles, guint slot) {
 	return handles->bitmap [slot / BITMAP_SIZE] & (1 << (slot % BITMAP_SIZE));
 }
 
-static inline void
+static void
 vacate_slot (HandleData *handles, guint slot) {
 	handles->bitmap [slot / BITMAP_SIZE] &= ~(1 << (slot % BITMAP_SIZE));
 }
 
-static inline void
+static void
 occupy_slot (HandleData *handles, guint slot) {
 	handles->bitmap [slot / BITMAP_SIZE] |= 1 << (slot % BITMAP_SIZE);
 }
@@ -1482,10 +1471,10 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
  * \returns a handle that can be used to access the object from
  * unmanaged code.
  */
-guint32
+MonoGCHandle
 mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 {
-	return alloc_handle (&gc_handles [pinned? HANDLE_PINNED: HANDLE_NORMAL], obj, FALSE);
+	return MONO_GC_HANDLE_FROM_UINT(alloc_handle (&gc_handles [pinned? HANDLE_PINNED: HANDLE_NORMAL], obj, FALSE));
 }
 
 /**
@@ -1509,10 +1498,10 @@ mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
  * \returns a handle that can be used to access the object from
  * unmanaged code.
  */
-guint32
+MonoGCHandle
 mono_gchandle_new_weakref_internal (MonoObject *obj, gboolean track_resurrection)
 {
-	return alloc_handle (&gc_handles [track_resurrection? HANDLE_WEAK_TRACK: HANDLE_WEAK], obj, track_resurrection);
+	return MONO_GC_HANDLE_FROM_UINT (alloc_handle (&gc_handles [track_resurrection? HANDLE_WEAK_TRACK: HANDLE_WEAK], obj, track_resurrection));
 }
 
 /**
@@ -1526,8 +1515,9 @@ mono_gchandle_new_weakref_internal (MonoObject *obj, gboolean track_resurrection
  * NULL for a collected object if using a weakref handle.
  */
 MonoObject*
-mono_gchandle_get_target_internal (guint32 gchandle)
+mono_gchandle_get_target_internal (MonoGCHandle gch)
 {
+	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
 	guint type = MONO_GC_HANDLE_TYPE (gchandle);
 	HandleData *handles = &gc_handles [type];
@@ -1551,8 +1541,9 @@ mono_gchandle_get_target_internal (guint32 gchandle)
 }
 
 void
-mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
+mono_gchandle_set_target (MonoGCHandle gch, MonoObject *obj)
 {
+	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
 	guint type = MONO_GC_HANDLE_TYPE (gchandle);
 	HandleData *handles = &gc_handles [type];
@@ -1597,8 +1588,9 @@ mono_gc_is_null (void)
  * \returns TRUE if the object wrapped by the \p gchandle belongs to the specific \p domain.
  */
 gboolean
-mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
+mono_gchandle_is_in_domain (MonoGCHandle gch, MonoDomain *domain)
 {
+	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
 	guint type = MONO_GC_HANDLE_TYPE (gchandle);
 	HandleData *handles = &gc_handles [type];
@@ -1635,8 +1627,9 @@ mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
  * object wrapped. 
  */
 void
-mono_gchandle_free_internal (guint32 gchandle)
+mono_gchandle_free_internal (MonoGCHandle gch)
 {
+	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	if (!gchandle)
 		return;
 
@@ -1703,6 +1696,12 @@ mono_gchandle_free_domain (MonoDomain *domain)
 
 }
 
+guint64
+mono_gc_get_total_allocated_bytes (MonoBoolean precise) 
+{
+	return 0;
+}
+
 void
 mono_gc_register_obj_with_weak_fields (void *obj)
 {
@@ -1713,6 +1712,20 @@ gboolean
 mono_gc_ephemeron_array_add (MonoObject *obj)
 {
 	return TRUE;
+}
+
+void
+mono_gc_get_gcmemoryinfo (gint64* high_memory_load_threshold_bytes,
+						  gint64* memory_load_bytes,
+						  gint64* total_available_memory_bytes,
+						  gint64* heap_size_bytes,
+						  gint64* fragmented_bytes)
+{
+	*high_memory_load_threshold_bytes = 0;
+	*memory_load_bytes = 0;
+	*total_available_memory_bytes = 0;
+	*heap_size_bytes = 0;
+	*fragmented_bytes = 0;
 }
 
 #else

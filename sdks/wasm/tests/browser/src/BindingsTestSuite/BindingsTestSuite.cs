@@ -258,5 +258,36 @@ namespace BindingsTestSuite
             var arr = new WebAssembly.Core.Array();
             return arr.Pop();
         }
+
+        public static int ParameterTest () 
+        { 
+            return -1;
+        }
+
+        public static int ParameterTest2 (string param1) 
+        { 
+            return -1;
+        }
+        public static bool StringIsNull (string param1) 
+        { 
+            return param1 == null;
+        }
+        public static bool StringIsNullOrEmpty (string param1) 
+        { 
+            return string.IsNullOrEmpty(param1);
+        }
+        public static bool StringArrayIsNull (string[] param1) 
+        { 
+            return param1 == null;
+        }        
+        public static Uri StringToUri (string uri) 
+        { 
+            return new Uri(uri);
+        }
+
+		public unsafe void* PassReturnPtr (void *ptr)
+		{
+			return ptr;
+		}
     }
 }

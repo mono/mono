@@ -428,13 +428,13 @@ class MakeBundle {
 				break;
 			case "--aot-mode":
 				if (i+1 == top) {
-					Console.WriteLine ("Need string of aot mode (full, llvmonly). Omit for normal AOT.");
+					Console.WriteLine ("Need string of aot mode (full, llvmonly, hybrid). Omit for normal AOT.");
 					return 1;
 				}
 
 				aot_mode = args [++i];
-				if (aot_mode != "full" && aot_mode != "llvmonly") {
-					Console.WriteLine ("Need string of aot mode (full, llvmonly). Omit for normal AOT.");
+				if (aot_mode != "full" && aot_mode != "llvmonly" && aot_mode != "hybrid") {
+					Console.WriteLine ("Need string of aot mode (full, llvmonly, hybrid). Omit for normal AOT.");
 					return 1;
 				}
 
@@ -1075,7 +1075,10 @@ typedef struct {
 
 			string enum_aot_mode;
 			switch (aot_mode) {
-			case "full": 
+			case "hybrid":
+				enum_aot_mode = "MONO_AOT_MODE_HYBRID";
+				break;
+			case "full":
 				enum_aot_mode = "MONO_AOT_MODE_FULL";
 				break;
 			case "llvmonly": 
@@ -1579,7 +1582,7 @@ typedef struct {
 				aot_runtime, aot_args, outPath, aot_mode_string, dedup_mode_string, path, all_assemblies.ToString (), Path.GetDirectoryName (path)));
 		}
 
-		if ((aot_mode == "full" || aot_mode == "llvmonly") && cil_strip_path != null) {
+		if ((aot_mode == "full" || aot_mode == "llvmonly" || aot_mode == "hybrid") && cil_strip_path != null) {
 			for (int i=0; i < files.Count; i++) {
 				var in_name = new Uri (files [i]).LocalPath;
 				var cmd = String.Format ("{0} {1} {2}", aot_runtime, cil_strip_path, in_name);

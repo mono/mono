@@ -375,6 +375,7 @@ namespace System.Windows.Forms
 			public void End (PaintEventArgs pe) {
 				Graphics buffered_graphics;
 				buffered_graphics = pe.SetGraphics ((Graphics) real_graphics.Pop ());
+				buffered_graphics.Flush();
 
 				if (pending_disposal) 
 					Dispose ();
@@ -1246,7 +1247,7 @@ namespace System.Windows.Forms
 			} else {
 				if (!active_tracker.OnMouseDown (args)) {
 					Control control = GetRealChildAtPoint (Cursor.Position);
-					if (control != null) {
+					if (control != null && control.Visible && control.Enabled) {
 						Point pt = control.PointToClient (Cursor.Position);
 						XplatUI.SendMessage (control.Handle, 
 							(Msg)m.Msg, 
@@ -1406,8 +1407,7 @@ namespace System.Windows.Forms
 			if (background_image == null) {
 				if (!tbstyle_flat) {
 					Rectangle paintRect = pevent.ClipRectangle;
-					Brush pen = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
-					pevent.Graphics.FillRectangle(pen, paintRect);
+					pevent.Graphics.FillRectangle(BackColorBrush, paintRect);
 				}
 				return;
 			}
@@ -1417,8 +1417,8 @@ namespace System.Windows.Forms
 
 		void DrawBackgroundImage (Graphics g) {
 			Rectangle drawing_rectangle = new Rectangle ();
-			g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
-				
+			g.FillRectangle (BackColorBrush, ClientRectangle);
+			
 			switch (backgroundimage_layout)
 			{
 			case ImageLayout.Tile:
@@ -2267,6 +2267,9 @@ namespace System.Windows.Forms
 					return false;
 				}
 
+				if (!is_visible || !is_enabled)
+					return false;
+
 				parent = this;
 				while (parent != null) {
 					if (!parent.is_visible || !parent.is_enabled) {
@@ -2423,7 +2426,7 @@ namespace System.Windows.Forms
 				if (this.context_menu_strip != value) {
 					this.context_menu_strip = value;
 					if (value != null)
-						value.container = this;
+						value.AssociatedControl = this;
 					OnContextMenuStripChanged (EventArgs.Empty);
 				}
 			}
@@ -2589,6 +2592,16 @@ namespace System.Windows.Forms
 					if (!pea.Handled)
 						OnPaint (pea);
 				}
+
+				// Call DrawToBitmap for all children of the control
+				for (int i=0; i < child_controls.Count; i++) {
+					Rectangle childRect = child_controls[i].ClientRectangle;
+					Bitmap childBitmap = new Bitmap (childRect.Width, childRect.Height);
+					child_controls[i].DrawToBitmap (childBitmap, childRect);
+					g.DrawImage (childBitmap, new Rectangle (child_controls[i].Location, child_controls[i].Size));
+				}
+
+
 			}
 		}
 		
@@ -3455,6 +3468,8 @@ namespace System.Windows.Forms
 				return show_keyboard_cues;
 			}
 		}
+
+		protected SolidBrush BackColorBrush => ThemeEngine.Current.ResPool.GetSolidBrush (BackColor);
 
 		#endregion	// Protected Instance Properties
 
@@ -4828,6 +4843,8 @@ namespace System.Windows.Forms
 					XplatUI.SetVisible (Handle, is_visible, true);
 					if (!is_visible) {
 						if (parent != null && parent.IsHandleCreated) {
+							if (InternalContainsFocus)
+								parent.SelectNextControl(this, true, true, true, true);
 							parent.Invalidate (bounds);
 							parent.Update ();
 						} else {
@@ -5367,6 +5384,12 @@ namespace System.Windows.Forms
 		}
 
 		private void WmMButtonUp (ref Message m) {
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			MouseEventArgs me;
 
 			me = new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Middle, 
@@ -5385,6 +5408,12 @@ namespace System.Windows.Forms
 		}
 
 		private void WmMButtonDown (ref Message m) {
+			// Menu handle.
+			if (XplatUI.IsEnabled (Handle) && active_tracker != null) {
+				ProcessActiveTracker (ref m);
+				return;
+			}
+
 			InternalCapture = true;
 			OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 				mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
@@ -5470,22 +5499,21 @@ namespace System.Windows.Forms
 				return;
 			}
 
-				// If there isn't a regular context menu, show the Strip version
-				if (context_menu == null && context_menu_strip != null) {
-					Point pt;
+			// If there isn't a regular context menu, show the Strip version
+			if (context_menu == null && context_menu_strip != null) {
+				Point pt;
 
-					pt = new Point (LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()));
-					
-					if (pt.X == -1 || pt.Y == -1) { 
-						pt.X = (this.Width / 2) + this.Left; 
-						pt.Y = (this.Height /2) + this.Top; 
-						pt = this.PointToScreen (pt);
-					}
-					
-					context_menu_strip.SetSourceControl (this);
-					context_menu_strip.Show (this, PointToClient (pt));
-					return;
+				pt = new Point (LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()));
+				
+				if (pt.X == -1 || pt.Y == -1) { 
+					pt.X = (this.Width / 2) + this.Left; 
+					pt.Y = (this.Height /2) + this.Top; 
+					pt = this.PointToScreen (pt);
 				}
+				
+				context_menu_strip.Show (this, PointToClient (pt));
+				return;
+			}
 			DefWndProc(ref m);
 		}
 
@@ -6471,7 +6499,6 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (ContextMenuStripChangedEvent, value); }
 			remove { Events.RemoveHandler (ContextMenuStripChangedEvent, value);}
 		}
-
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(true)]

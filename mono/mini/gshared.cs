@@ -1031,6 +1031,28 @@ public class Tests
 		Two
 	};
 
+	class GetHashBase1 {
+		public override int GetHashCode () {
+			return 1;
+		}
+	}
+
+	class GetHashClass1 : GetHashBase1 {
+		public override int GetHashCode () {
+			return 2;
+		}
+	}
+
+	interface GetHashIFace {
+		int get_hash<T, T2> (T t, T2 t2);
+	}
+
+	class GetHashImpl : GetHashIFace {
+		public int get_hash<T, T2> (T t, T2 t2) {
+			return t.GetHashCode ();
+		}
+	}
+
 	public static int test_0_constrained_tostring () {
 		if (to_string<int, int> (1, 1) != "1")
 			return 1;
@@ -1055,6 +1077,9 @@ public class Tests
 			return 3;
 		if (get_hash<string, int> ("A", 1) != "A".GetHashCode ())
 			return 4;
+		GetHashIFace iface = new GetHashImpl ();
+		if (iface.get_hash<GetHashBase1, int> (new GetHashClass1 (), 1) != 2)
+			return 5;
 		return 0;
 	}
 
@@ -2192,6 +2217,59 @@ public class Tests
 		var s = new AStruct () { a = 1, b = 2 };
 		return iface.foo<AStruct> (s);
 	}
+
+	interface IFaceOpenDel {
+		object AMethod<T> ();
+	}
+
+	class ClassOpenDel : IFaceOpenDel {
+		public Nullable<int> field;
+
+		public Nullable<int> getField () {
+			return field;
+		}
+
+		public object AMethod<T> () {
+			var d = (Func<ClassOpenDel, T>)Delegate.CreateDelegate (typeof (Func<ClassOpenDel, T>), typeof (ClassOpenDel).GetMethod ("getField"));
+			return d (this);
+		}
+	}
+
+	// Open instance delegate returning a gsharedvt value
+	public static int test_0_open_delegate () {
+		IFaceOpenDel iface = new ClassOpenDel () { field = 42 };
+		var res = (Nullable<int>)iface.AMethod<Nullable<int>> ();
+		return res == 42 ? 0 : 1;
+	}
+
+#if !__MonoCS__
+	public static int test_0_gsharedvt_out_dim () {
+		var c = new Outer<object>();
+		c.prop = new H ();
+		return (c.Foo () == "abcd") ? 0 : 1;
+	}
+#endif
+
+	class KvpList<T> {
+		public T[] array = new T[4];
+		int size = 0;
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		public void MyAdd(T item) {
+			if (size < (uint)array.Length) {
+				array [size] = item;
+				size++;
+			}
+		}
+	}
+
+	public static int test_0_regress_18455 () {
+		var p = new KvpList<KeyValuePair<int, KeyValuePair<int,int>>> ();
+		KeyValuePair<int, KeyValuePair<int,int>> kvp = new KeyValuePair<int, KeyValuePair<int,int>> (3, new KeyValuePair<int,int> (1, 2));
+
+		p.MyAdd (kvp);
+		return p.array [1].Key == 0 ? 0 : 1;
+	}
 }
 
 // #13191
@@ -2237,6 +2315,29 @@ internal struct SparseArrayBuilder<T>
 
 	public ArrayBuilder<Marker> Markers => _markers;
 }
+
+// #18276
+#if !__MonoCS__
+public class Outer<Q> {
+	public interface ID {
+		string Foo () {
+			return null;
+		}
+	}
+
+	public ID prop;
+
+	public string Foo () {
+		return prop?.Foo();
+	}
+}
+
+public class H : Outer<object>.ID {
+	string Outer<object>.ID.Foo () {
+		return "abcd";
+	}
+}
+#endif
 
 #if !__MOBILE__
 public class GSharedTests : Tests {

@@ -18,6 +18,8 @@ var BindingSupportLib = {
 			module ["mono_method_resolve"] = BINDING.resolve_method_fqn.bind(BINDING);
 			module ["mono_bind_static_method"] = BINDING.bind_static_method.bind(BINDING);
 			module ["mono_call_static_method"] = BINDING.call_static_method.bind(BINDING);
+			module ["mono_bind_assembly_entry_point"] = BINDING.bind_assembly_entry_point.bind(BINDING);
+			module ["mono_call_assembly_entry_point"] = BINDING.call_assembly_entry_point.bind(BINDING);
 		},
 
 		bindings_lazy_init: function () {
@@ -38,6 +40,7 @@ var BindingSupportLib = {
 			this.mono_obj_array_new = Module.cwrap ('mono_wasm_obj_array_new', 'number', ['number']);
 			this.mono_obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
 			this.mono_unbox_enum = Module.cwrap ('mono_wasm_unbox_enum', 'number', ['number']);
+			this.assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point', 'number', ['number']);
 
 			// receives a byteoffset into allocated Heap with a size.
 			this.mono_typed_array_new = Module.cwrap ('mono_wasm_typed_array_new', 'number', ['number','number','number','number']);
@@ -95,27 +98,20 @@ var BindingSupportLib = {
 			this.object_to_string = get_method ("ObjectToString");
 			this.get_date_value = get_method ("GetDateValue");
 			this.create_date_time = get_method ("CreateDateTime");
+			this.create_uri = get_method ("CreateUri");
 
 			this.object_to_enum = get_method ("ObjectToEnum");
 			this.init = true;
-		},		
+		},
 
 		get_js_obj: function (js_handle) {
 			if (js_handle > 0)
 				return this.mono_wasm_require_handle(js_handle);
 			return null;
 		},
-		
-		//FIXME this is wastefull, we could remove the temp malloc by going the UTF16 route
-		//FIXME this is unsafe, cuz raw objects could be GC'd.
-		conv_string: function (mono_obj) {
-			if (mono_obj == 0)
-				return null;
-			var raw = this.mono_string_get_utf8 (mono_obj);
-			var res = Module.UTF8ToString (raw);
-			Module._free (raw);
 
-			return res;
+		conv_string: function (mono_obj) {
+			return MONO.string_decoder.copy (mono_obj);
 		},
 
 		is_nested_array: function (ele) {
@@ -225,6 +221,9 @@ var BindingSupportLib = {
 			case 21: // clr .NET DateTimeOffset
 				var dateoffsetValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
 				return dateoffsetValue;
+			case 22: // clr .NET Uri
+				var uriValue = this.call_method(this.object_to_string, null, "m", [ mono_obj ]);
+				return uriValue;
 			default:
 				throw new Error ("no idea on how to unbox object kind " + type);
 			}
@@ -257,41 +256,63 @@ var BindingSupportLib = {
 			return heapBytes;
 		},
 		js_to_mono_obj: function (js_obj) {
-	  		this.bindings_lazy_init ();
+			this.bindings_lazy_init ();
 
-			if (js_obj == null || js_obj == undefined)
-				return 0;
-			if (typeof js_obj === 'number') {
-				if (parseInt(js_obj) == js_obj)
-					return this.call_method (this.box_js_int, null, "im", [ js_obj ]);
-				return this.call_method (this.box_js_double, null, "dm", [ js_obj ]);
-			}
-			if (typeof js_obj === 'string')
-				return this.js_string_to_mono_string (js_obj);
-
-			if (typeof js_obj === 'boolean')
-				return this.call_method (this.box_js_bool, null, "im", [ js_obj ]);
-
-			if (Promise.resolve(js_obj) === js_obj) {
-				var the_task = this.try_extract_mono_obj (js_obj);
-				if (the_task)
-					return the_task;
-				var tcs = this.create_task_completion_source ();
-
-				js_obj.then (function (result) {
-					BINDING.set_task_result (tcs, result);
-				}, function (reason) {
-					BINDING.set_task_failure (tcs, reason);
-				})
-
-				return this.get_task_and_bind (tcs, js_obj);
+			// determines if the javascript object is a Promise or Promise like which can happen
+			// when using an external Promise library.  The javascript object should be marshalled 
+			// as managed Task objects.
+			// 
+			// Example is when Bluebird is included in a web page using a script tag, it overwrites the 
+			// global Promise object by default with its own version of Promise.
+			function isThenable() {
+				// When using an external Promise library the Promise.resolve may not be sufficient
+				// to identify the object as a Promise.
+				return Promise.resolve(js_obj) === js_obj || 
+						((typeof js_obj === "object" || typeof js_obj === "function") && typeof js_obj.then === "function")
 			}
 
-			if (js_obj.constructor.name === "Date")
-				// We may need to take into account the TimeZone Offset
-				return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
+			switch (true) {
+				case js_obj === null:
+				case typeof js_obj === "undefined":
+					return 0;
+				case typeof js_obj === "number":
+					if (parseInt(js_obj) == js_obj)
+						return this.call_method (this.box_js_int, null, "im", [ js_obj ]);
+					return this.call_method (this.box_js_double, null, "dm", [ js_obj ]);
+				case typeof js_obj === "string":
+					return this.js_string_to_mono_string (js_obj);
+				case typeof js_obj === "boolean":
+					return this.call_method (this.box_js_bool, null, "im", [ js_obj ]);
+				case isThenable() === true:
+					var the_task = this.try_extract_mono_obj (js_obj);
+					if (the_task)
+						return the_task;
+					var tcs = this.create_task_completion_source ();
+					js_obj.then (function (result) {
+						BINDING.set_task_result (tcs, result);
+					}, function (reason) {
+						BINDING.set_task_failure (tcs, reason);
+					})
+					return this.get_task_and_bind (tcs, js_obj);
+				case js_obj.constructor.name === "Date":
+					// We may need to take into account the TimeZone Offset
+					return this.call_method(this.create_date_time, null, "dm", [ js_obj.getTime() ]);
+				default:
+					return this.extract_mono_obj (js_obj);
+			}
+		},
+		js_to_mono_uri: function (js_obj) {
+			this.bindings_lazy_init ();
 
-			return this.extract_mono_obj (js_obj);
+			switch (true) {
+				case js_obj === null:
+				case typeof js_obj === "undefined":
+					return 0;
+				case typeof js_obj === "string":
+					return this.call_method(this.create_uri, null, "sm", [ js_obj ])
+				default:
+					return this.extract_mono_obj (js_obj);
+			}
 		},
 		js_typed_array_to_array : function (js_obj) {
 
@@ -592,70 +613,94 @@ var BindingSupportLib = {
 		call_method: function (method, this_arg, args_marshal, args) {
 			this.bindings_lazy_init ();
 
-			var extra_args_mem = 0;
-			for (var i = 0; i < args.length; ++i) {
-				//long/double memory must be 8 bytes aligned and I'm being lazy here
-				if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd' || args_marshal[i] == 'j' || args_marshal[i] == 'k')
-					extra_args_mem += 8;
-			}
+			// Allocate memory for error
+			var has_args = args !== null && typeof args !== "undefined" && args.length > 0;
+			var has_args_marshal = args_marshal !== null && typeof args_marshal !== "undefined" && args_marshal.length > 0;
 
-			var extra_args_mem = extra_args_mem ? Module._malloc (extra_args_mem) : 0;
-			var extra_arg_idx = 0;
-			var args_mem = Module._malloc (args.length * 4);
-			var eh_throw = Module._malloc (4);
-			for (var i = 0; i < args.length; ++i) {
-				if (args_marshal[i] == 's') {
-					Module.setValue (args_mem + i * 4, this.js_string_to_mono_string (args [i]), "i32");
-				} else if (args_marshal[i] == 'm') {
-					Module.setValue (args_mem + i * 4, args [i], "i32");
-				} else if (args_marshal[i] == 'o') {
-					Module.setValue (args_mem + i * 4, this.js_to_mono_obj (args [i]), "i32");
-				} else if (args_marshal[i] == 'j'  || args_marshal[i] == 'k') {
-					var enumVal = this.js_to_mono_enum(method, i, args[i]);
-		
-					var extra_cell = extra_args_mem + extra_arg_idx;
-					extra_arg_idx += 8;
+			if (has_args_marshal && (!has_args || args.length > args_marshal.length))
+				throw Error("Parameter count mismatch.");
 
-					if (args_marshal[i] == 'j')
-						Module.setValue (extra_cell, enumVal, "i32");
-					else if (args_marshal[i] == 'k')
-						Module.setValue (extra_cell, enumVal, "i64");
+			var args_start = null;
+			var buffer = null;
+			var exception_out = null;
 
-					Module.setValue (args_mem + i * 4, extra_cell, "i32");
-				} else if (args_marshal[i] == 'i' || args_marshal[i] == 'f' || args_marshal[i] == 'l' || args_marshal[i] == 'd') {
-					var extra_cell = extra_args_mem + extra_arg_idx;
-					extra_arg_idx += 8;
+			// check if the method signature needs argument mashalling
+			if (has_args_marshal && has_args) {
+				var i;
 
-					if (args_marshal[i] == 'i')
-						Module.setValue (extra_cell, args [i], "i32");
-					else if (args_marshal[i] == 'l')
-						Module.setValue (extra_cell, args [i], "i64");
-					else if (args_marshal[i] == 'f')
-						Module.setValue (extra_cell, args [i], "float");
-					else
-						Module.setValue (extra_cell, args [i], "double");
-
-					Module.setValue (args_mem + i * 4, extra_cell, "i32");
+				var converters = this.converters;
+				if (!converters) {
+					converters = new Map ();
+					converters.set ('m', { steps: [{ }], size: 0});
+					converters.set ('s', { steps: [{ convert: this.js_string_to_mono_string.bind (this)}], size: 0});
+					converters.set ('o', { steps: [{ convert: this.js_to_mono_obj.bind (this)}], size: 0});
+					converters.set ('u', { steps: [{ convert: this.js_to_mono_uri.bind (this)}], size: 0});
+					converters.set ('k', { steps: [{ convert: this.js_to_mono_enum.bind (this), indirect: 'i64'}], size: 8});
+					converters.set ('j', { steps: [{ convert: this.js_to_mono_enum.bind (this), indirect: 'i32'}], size: 8});
+					converters.set ('i', { steps: [{ indirect: 'i32'}], size: 8});
+					converters.set ('l', { steps: [{ indirect: 'i64'}], size: 8});
+					converters.set ('f', { steps: [{ indirect: 'float'}], size: 8});
+					converters.set ('d', { steps: [{ indirect: 'double'}], size: 8});
+					converters.set ('p', { steps: [{ }], size: 8});
+					this.converters = converters;
 				}
+
+				var converter = converters.get (args_marshal);
+				if (!converter) {
+					var steps = [];
+					var size = 0;
+
+					for (i = 0; i < args_marshal.length; ++i) {
+						var conv = this.converters.get (args_marshal[i]);
+						if (!conv)
+							throw Error ("Unknown parameter type " + type);
+
+						steps.push (conv.steps[0]);
+						size += conv.size;
+					}
+					converter = { steps: steps, size: size };
+					converters.set (args_marshal, converter);
+				}
+
+				// assume at least 8 byte alignment from malloc
+				buffer = Module._malloc (converter.size + (args.length * 4) + 4);
+				var indirect_start = buffer; // buffer + buffer % 8
+				exception_out = indirect_start + converter.size;
+				args_start = exception_out + 4;
+
+				var slot = args_start;
+				var indirect_value = indirect_start;
+				for (i = 0; i < args.length; ++i) {
+					var handler = converter.steps[i];
+					var obj = handler.convert ? handler.convert (args[i], method, i) : args[i];
+
+					if (handler.indirect) {
+						Module.setValue (indirect_value, obj, handler.indirect);
+						obj = indirect_value;
+						indirect_value += 8;
+					}
+
+					Module.setValue (slot, obj, "*");
+					slot += 4;
+				}
+			} else {
+				// only marshal the exception
+				exception_out = buffer = Module._malloc (4);
 			}
-			Module.setValue (eh_throw, 0, "i32");
 
-			var res = this.invoke_method (method, this_arg, args_mem, eh_throw);
+			Module.setValue (exception_out, 0, "*");
 
-			var eh_res = Module.getValue (eh_throw, "i32");
+			var res = this.invoke_method (method, this_arg, args_start, exception_out);
+			var eh_res = Module.getValue (exception_out, "*");
 
-			if (extra_args_mem)
-				Module._free (extra_args_mem);
-			Module._free (args_mem);
-			Module._free (eh_throw);
+			Module._free (buffer);
 
 			if (eh_res != 0) {
 				var msg = this.conv_string (res);
 				throw new Error (msg); //the convention is that invoke_method ToString () any outgoing exception
 			}
 
-			if (args_marshal !== null && typeof args_marshal !== "undefined") 
-			{
+			if (has_args_marshal && has_args) {
 				if (args_marshal.length >= args.length && args_marshal [args.length] === "m")
 					return res;
 			}
@@ -737,6 +782,40 @@ var BindingSupportLib = {
 				return BINDING.call_method (method, null, signature, arguments);
 			};
 		},
+		bind_assembly_entry_point: function (assembly) {
+			this.bindings_lazy_init ();
+
+			var asm = this.assembly_load (assembly);
+			if (!asm)
+				throw new Error ("Could not find assembly: " + assembly);
+
+			var method = this.assembly_get_entry_point(asm);
+			if (!method)
+				throw new Error ("Could not find entry point for assembly: " + assembly);
+
+			if (typeof signature === "undefined")
+				signature = Module.mono_method_get_call_signature (method);
+
+			return function() {
+				return BINDING.call_method (method, null, signature, arguments);
+			};
+		},
+		call_assembly_entry_point: function (assembly, args, signature) {
+			this.bindings_lazy_init ();
+
+			var asm = this.assembly_load (assembly);
+			if (!asm)
+				throw new Error ("Could not find assembly: " + assembly);
+
+			var method = this.assembly_get_entry_point(asm);
+			if (!method)
+				throw new Error ("Could not find entry point for assembly: " + assembly);
+
+			if (typeof signature === "undefined")
+				signature = Module.mono_method_get_call_signature (method);
+
+			return this.call_method (method, null, signature, args);
+		},
 		wasm_get_core_type: function (obj)
 		{
 			return this.call_method (this.get_core_type, null, "so", [ "WebAssembly.Core."+obj.constructor.name ]);
@@ -744,91 +823,9 @@ var BindingSupportLib = {
 		get_wasm_type: function(obj) {
 			var coreType = obj[Symbol.for("wasm type")];
 			if (typeof coreType === "undefined") {
-				switch (obj.constructor.name) {
-					case "Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "ArrayBuffer":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							ArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int8Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int8Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint8Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint8Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint8ClampedArray":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint8ClampedArray.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int16Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int16Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint16Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint16Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Int32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Int32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Uint32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Uint32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						return coreType;
-					case "Float32Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Float32Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Float64Array":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Float64Array.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "Function":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							Function.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "SharedArrayBuffer":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							SharedArrayBuffer.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
-					case "DataView":
-						coreType = this.wasm_get_core_type(obj);
-						if (typeof coreType !== "undefined") {
-							DataView.prototype[Symbol.for("wasm type")] = coreType
-						}
-						break;
+				coreType = this.wasm_get_core_type(obj);
+				if (typeof coreType !== "undefined") {
+					obj.constructor.prototype[Symbol.for("wasm type")] = coreType;
 				}
 		  	}
 			return coreType;
@@ -928,7 +925,7 @@ var BindingSupportLib = {
 			if (typeof ___mono_wasm_global___ === 'object') {
 				return ___mono_wasm_global___;
 			}
-			throw Error('unable to get mono wasm global object.');
+			throw Error('Unable to get mono wasm global object.');
 		},
 	
 	},
@@ -1151,9 +1148,9 @@ var BindingSupportLib = {
 
 		var coreObj = BINDING.mono_wasm_get_global()[js_name];
 
-		if (coreObj === null || typeof coreObj === undefined) {
+		if (coreObj === null || typeof coreObj === "undefined") {
 			setValue (is_exception, 1, "i32");
-			return BINDING.js_string_to_mono_string ("Global object '" + js_name + "' not found.");
+			return BINDING.js_string_to_mono_string ("JavaScript host object '" + js_name + "' not found.");
 		}
 
 		var js_args = BINDING.mono_array_to_js_array(args);

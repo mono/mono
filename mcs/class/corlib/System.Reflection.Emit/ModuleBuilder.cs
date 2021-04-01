@@ -1066,12 +1066,6 @@ namespace System.Reflection.Emit {
 			return new Guid (guid);
 		}
 
-		// Used by mcs, the symbol writer, and mdb through reflection
-		internal static Guid Mono_GetGuid (ModuleBuilder mb)
-		{
-			return mb.GetModuleVersionId ();
-		}
-
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}

@@ -32,11 +32,9 @@
 
 #include <errno.h>
 
-#if defined(HOST_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
+#if !defined(ENABLE_NETCORE) && defined(HOST_ANDROID) && !defined(TARGET_ARM64) && !defined(TARGET_AMD64)
+// tkill was deprecated and removed in the recent versions of Android NDK
 #define USE_TKILL_ON_ANDROID 1
-#endif
-
-#ifdef USE_TKILL_ON_ANDROID
 extern int tkill (pid_t tid, int signal);
 #endif
 
@@ -45,10 +43,6 @@ extern int tkill (pid_t tid, int signal);
 #include <pthread.h>
 
 #include <sys/mman.h>
-#include <limits.h>    /* for PAGESIZE */
-#ifndef PAGESIZE
-#define PAGESIZE 4096
-#endif
 
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
@@ -174,16 +168,25 @@ mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 {
 	THREADS_SUSPEND_DEBUG ("sending signal %d to %p[%p]\n", signum, info, mono_thread_info_get_tid (info));
 
+	const int signal_queue_ovf_retry_count G_GNUC_UNUSED = 5;
+	const gulong signal_queue_ovf_sleep_us G_GNUC_UNUSED = 10 * 1000; /* 10 milliseconds */
+	int retry_count G_GNUC_UNUSED = 0;
 	int result;
 
+#if defined (__linux__)
+redo:
+#endif
+
 #ifdef USE_TKILL_ON_ANDROID
-	int old_errno = errno;
+	{
+		int old_errno = errno;
 
-	result = tkill (info->native_handle, signum);
+		result = tkill (info->native_handle, signum);
 
-	if (result < 0) {
-		result = errno;
-		mono_set_errno (old_errno);
+		if (result < 0) {
+			result = errno;
+			mono_set_errno (old_errno);
+		}
 	}
 #elif defined (HAVE_PTHREAD_KILL)
 	result = pthread_kill (mono_thread_info_get_tid (info), signum);
@@ -209,8 +212,23 @@ mono_threads_pthread_kill (MonoThreadInfo *info, int signum)
 #if defined (__MACH__) && defined (ENOTSUP)
 	    && result != ENOTSUP
 #endif
+#if defined (__linux__)
+	    && !(result == EAGAIN && retry_count < signal_queue_ovf_retry_count)
+#endif
 	    )
 		g_error ("%s: pthread_kill failed with error %d - potential kernel OOM or signal queue overflow", __func__, result);
+
+#if defined (__linux__)
+	if (result == EAGAIN && retry_count < signal_queue_ovf_retry_count) {
+		/* HACK: if the signal queue overflows on linux, try again a couple of times.
+		 * Tries to address https://github.com/dotnet/runtime/issues/32377
+		 */
+		g_warning ("%s: pthread_kill failed with error %d - potential kernel OOM or signal queue overflow, sleeping for %ld microseconds", __func__, result, signal_queue_ovf_sleep_us);
+		g_usleep (signal_queue_ovf_sleep_us);
+		++retry_count;
+		goto redo;
+	}
+#endif
 
 	return result;
 }
@@ -290,6 +308,15 @@ mono_native_thread_set_name (MonoNativeThreadId tid, const char *name)
 		pthread_setname_np (tid, "%s", (void*)n);
 	}
 #elif defined (HAVE_PTHREAD_SETNAME_NP)
+#if defined (__linux__)
+	/* Ignore requests to set the main thread name because it causes the
+	 * value returned by Process.ProcessName to change.
+	 */
+	MonoNativeThreadId main_thread_tid;
+	if (mono_native_thread_id_main_thread_known (&main_thread_tid) &&
+	    mono_native_thread_id_equals (tid, main_thread_tid))
+		return;
+#endif
 	if (!name) {
 		pthread_setname_np (tid, "");
 	} else {
@@ -319,25 +346,35 @@ mono_memory_barrier_process_wide (void)
 	g_assert (status == 0);
 
 	if (memory_barrier_process_wide_helper_page == NULL) {
-		status = posix_memalign(&memory_barrier_process_wide_helper_page, PAGESIZE, PAGESIZE);
+		status = posix_memalign (&memory_barrier_process_wide_helper_page, mono_pagesize (), mono_pagesize ());
 		g_assert (status == 0);
 	}
 
 	// Changing a helper memory page protection from read / write to no access
 	// causes the OS to issue IPI to flush TLBs on all processors. This also
 	// results in flushing the processor buffers.
-	status = mprotect (memory_barrier_process_wide_helper_page, PAGESIZE, PROT_READ | PROT_WRITE);
+	status = mono_mprotect (memory_barrier_process_wide_helper_page, mono_pagesize (), MONO_MMAP_READ | MONO_MMAP_WRITE);
 	g_assert (status == 0);
 
 	// Ensure that the page is dirty before we change the protection so that
 	// we prevent the OS from skipping the global TLB flush.
 	__sync_add_and_fetch ((size_t*)memory_barrier_process_wide_helper_page, 1);
 
-	status = mprotect (memory_barrier_process_wide_helper_page, PAGESIZE, PROT_NONE);
+	status = mono_mprotect (memory_barrier_process_wide_helper_page, mono_pagesize (), MONO_MMAP_NONE);
 	g_assert (status == 0);
 
 	status = pthread_mutex_unlock (&memory_barrier_process_wide_mutex);
 	g_assert (status == 0);
+}
+
+gint32
+mono_native_thread_processor_id_get (void)
+{
+#ifdef HAVE_SCHED_GETCPU
+	return sched_getcpu ();
+#else
+	return -1;
+#endif
 }
 
 #endif /* defined(_POSIX_VERSION) */

@@ -10,6 +10,10 @@
  */
 
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
+
+#ifndef ENABLE_NETCORE
+
 #include <glib.h>
 #include <mono/metadata/threadpool-io.h>
 
@@ -17,6 +21,7 @@
 
 #if defined(HOST_WIN32)
 #include <windows.h>
+#include <mono/utils/networking.h>
 #else
 #include <errno.h>
 #include <fcntl.h>
@@ -26,6 +31,7 @@
 #include <mono/metadata/mono-hash-internals.h>
 #include <mono/metadata/mono-mlist.h>
 #include <mono/metadata/threadpool.h>
+#include <mono/metadata/icall-decl.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-lazy-init.h>
@@ -513,8 +519,8 @@ wakeup_pipes_init (void)
 	g_assert (threadpool_io->wakeup_pipes [1] != INVALID_SOCKET);
 
 	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = inet_addr ("127.0.0.1");
 	server.sin_port = 0;
+	inet_pton (server.sin_family, "127.0.0.1", &server.sin_addr);
 	if (bind (server_sock, (SOCKADDR*) &server, sizeof (server)) == SOCKET_ERROR) {
 		closesocket (server_sock);
 		g_error ("wakeup_pipes_init: bind () failed, error (%d)\n", WSAGetLastError ());
@@ -599,10 +605,11 @@ mono_threadpool_io_cleanup (void)
 	mono_lazy_cleanup (&io_status, cleanup);
 }
 
+#ifndef ENABLE_NETCORE
 void
-ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
+ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJobHandle job_handle, MonoError* error)
 {
-	ERROR_DECL (error);
+	MonoIOSelectorJob* const job = MONO_HANDLE_RAW (job_handle);
 	ThreadPoolIOUpdate *update;
 
 	g_assert (handle);
@@ -624,13 +631,12 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 		return;
 	}
 
-	int fd = GPOINTER_TO_INT (handle);
+	int const fd = GPOINTER_TO_INT (handle);
 
 	if (!threadpool_io->backend.can_register_fd (fd)) {
 		mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 		mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_IO_SELECTOR, "Could not register to wait for file descriptor %d", fd);
 		mono_error_set_not_supported (error, "Could not register to wait for file descriptor %d", fd);
-		mono_error_set_pending_exception (error);
 		return;
 	}
 
@@ -644,6 +650,7 @@ ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
 
 	mono_coop_mutex_unlock (&threadpool_io->updates_lock);
 }
+#endif
 
 void
 ves_icall_System_IOSelector_Remove (gpointer handle)
@@ -708,7 +715,7 @@ mono_threadpool_io_remove_domain_jobs (MonoDomain *domain)
 #else
 
 void
-ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJob *job)
+ves_icall_System_IOSelector_Add (gpointer handle, MonoIOSelectorJobHandle job_handle, MonoError* error)
 {
 	g_assert_not_reached ();
 }
@@ -738,3 +745,7 @@ mono_threadpool_io_remove_domain_jobs (MonoDomain *domain)
 }
 
 #endif
+
+#endif /* !ENABLE_NETCORE */
+
+MONO_EMPTY_SOURCE_FILE (threadpool_io);

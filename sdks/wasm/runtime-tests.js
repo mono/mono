@@ -30,13 +30,11 @@ if (typeof console === "undefined") {
 }
 
 if (typeof console !== "undefined") {
-	var has_console_warn = false;
-	try {
-		if (typeof console.warn !== "undefined")
-			has_console_warn = true;
-	} catch(e) {}
-
-	if (!has_console_warn)
+	if (!console.debug)
+		console.debug = console.log;
+	if (!console.trace)
+		console.trace = console.log;
+	if (!console.warn)
 		console.warn = console.log;
 }
 
@@ -101,6 +99,7 @@ profilers = [];
 setenv = {};
 runtime_args = [];
 enable_gc = false;
+enable_zoneinfo = false;
 while (true) {
 	if (args [0].startsWith ("--profile=")) {
 		var arg = args [0].substring ("--profile=".length);
@@ -122,6 +121,9 @@ while (true) {
 	} else if (args [0] == "--enable-gc") {
 		enable_gc = true;
 		args = args.slice (1);
+	} else if (args [0] == "--enable-zoneinfo") {
+		enable_zoneinfo = true;
+		args = args.slice (1);			
 	} else {
 		break;
 	}
@@ -132,7 +134,7 @@ if (typeof window == "undefined")
   load ("mono-config.js");
 
 var Module = { 
-	mainScriptUrlOrBlob: "mono.js",
+	mainScriptUrlOrBlob: "dotnet.js",
 
 	print: function(x) { print ("WASM: " + x) },
 	printErr: function(x) { print ("WASM-ERR: " + x) },
@@ -156,7 +158,40 @@ var Module = {
 			var f = Module.cwrap ('mono_wasm_enable_on_demand_gc', 'void', []);
 			f ();
 		}
-
+		if (enable_zoneinfo) {
+			// Load the zoneinfo data into the VFS rooted at /zoneinfo
+			FS.mkdir("zoneinfo");
+			Module['FS_createPath']('/', 'zoneinfo', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Indian', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Atlantic', true, true);
+			Module['FS_createPath']('/zoneinfo', 'US', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Brazil', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Pacific', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Arctic', true, true);
+			Module['FS_createPath']('/zoneinfo', 'America', true, true);
+			Module['FS_createPath']('/zoneinfo/America', 'Indiana', true, true);
+			Module['FS_createPath']('/zoneinfo/America', 'Argentina', true, true);
+			Module['FS_createPath']('/zoneinfo/America', 'Kentucky', true, true);
+			Module['FS_createPath']('/zoneinfo/America', 'North_Dakota', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Australia', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Etc', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Asia', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Antarctica', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Europe', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Mexico', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Africa', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Chile', true, true);
+			Module['FS_createPath']('/zoneinfo', 'Canada', true, true);			
+			var zoneInfoData = read ('zoneinfo.data', 'binary');
+			var metadata = JSON.parse(read ("mono-webassembly-zoneinfo-fs-smd.js.metadata", 'utf-8'));
+			var files = metadata.files;
+			for (var i = 0; i < files.length; ++i) {
+				var byteArray = zoneInfoData.subarray(files[i].start, files[i].end);
+				var stream = FS.open(files[i].filename, 'w+');
+				FS.write(stream, byteArray, 0, byteArray.length, 0);
+				FS.close(stream);
+			}
+		}
 		MONO.mono_load_runtime_and_bcl (
 			config.vfs_prefix,
 			config.deploy_prefix,
@@ -192,26 +227,27 @@ var Module = {
 };
 
 if (typeof window == "undefined")
-  load ("mono.js");
+  load ("dotnet.js");
 
 const IGNORE_PARAM_COUNT = -1;
 
 var App = {
     init: function () {
 
-	  var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
-	  var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
-	  var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
-	  var runtime_invoke = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number', 'number']);
-	  var string_from_js = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
-	  var assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point', 'number', ['number']);
-	  var string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'string', ['number']);
-	  var string_array_new = Module.cwrap ('mono_wasm_string_array_new', 'number', ['number']);
-	  var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
-	  var exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
-	  var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
-	  var wasm_set_main_args = Module.cwrap ('mono_wasm_set_main_args', 'void', ['number', 'number']);
-	  var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string'])
+		var assembly_load = Module.cwrap ('mono_wasm_assembly_load', 'number', ['string'])
+		var find_class = Module.cwrap ('mono_wasm_assembly_find_class', 'number', ['number', 'string', 'string'])
+		var find_method = Module.cwrap ('mono_wasm_assembly_find_method', 'number', ['number', 'string', 'number'])
+		var runtime_invoke = Module.cwrap ('mono_wasm_invoke_method', 'number', ['number', 'number', 'number', 'number']);
+		var string_from_js = Module.cwrap ('mono_wasm_string_from_js', 'number', ['string']);
+		var assembly_get_entry_point = Module.cwrap ('mono_wasm_assembly_get_entry_point', 'number', ['number']);
+		var string_get_utf8 = Module.cwrap ('mono_wasm_string_get_utf8', 'string', ['number']);
+		var string_array_new = Module.cwrap ('mono_wasm_string_array_new', 'number', ['number']);
+		var obj_array_set = Module.cwrap ('mono_wasm_obj_array_set', 'void', ['number', 'number', 'number']);
+		var exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
+		var wasm_setenv = Module.cwrap ('mono_wasm_setenv', 'void', ['string', 'string']);
+		var wasm_set_main_args = Module.cwrap ('mono_wasm_set_main_args', 'void', ['number', 'number']);
+		var wasm_strdup = Module.cwrap ('mono_wasm_strdup', 'number', ['string']);
+		var unbox_int = Module.cwrap ('mono_unbox_int', 'number', ['number']);
 
 		Module.wasm_exit = Module.cwrap ('mono_wasm_exit', 'void', ['number']);
 
@@ -224,11 +260,11 @@ var App = {
 		}
 
 		if (args[0] == "--regression") {
-			var exec_regresion = Module.cwrap ('mono_wasm_exec_regression', 'number', ['number', 'string'])
+			var exec_regression = Module.cwrap ('mono_wasm_exec_regression', 'number', ['number', 'string'])
 
 			var res = 0;
 				try {
-					res = exec_regresion (10, args[1]);
+					res = exec_regression (10, args[1]);
 					Module.print ("REGRESSION RESULT: " + res);
 				} catch (e) {
 					Module.print ("ABORT: " + e);
@@ -275,14 +311,17 @@ var App = {
 			try {
 				var invoke_args = Module._malloc (4);
 				Module.setValue (invoke_args, app_args, "i32");
-				var eh_throw = Module._malloc (4);
-				Module.setValue (eh_throw, 0, "i32");
-				var res = runtime_invoke (main_method, 0, invoke_args, eh_throw);
-				var eh_res = Module.getValue (eh_throw, "i32");
-				if (eh_res == 1) {
+				var eh_exc = Module._malloc (4);
+				Module.setValue (eh_exc, 0, "i32");
+				var res = runtime_invoke (main_method, 0, invoke_args, eh_exc);
+				var eh_res = Module.getValue (eh_exc, "i32");
+				if (eh_res != 0) {
 					print ("Exception:" + string_get_utf8 (res));
 					test_exit (1);
 				}
+				var exit_code = unbox_int (res);
+				if (exit_code != 0)
+					test_exit (exit_code);
 			} catch (ex) {
 				print ("JS exception: " + ex);
 				print (ex.stack);

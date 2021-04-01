@@ -227,7 +227,7 @@ Mono_Posix_Syscall_get_utime_omit ()
 }
 
 #if defined(HAVE_FUTIMENS) || defined(HAVE_UTIMENSAT)
-static inline struct timespec*
+static struct timespec*
 copy_utimens (struct timespec* to, struct Mono_Posix_Timespec *from)
 {
 	if (from) {

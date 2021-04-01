@@ -20,3 +20,5 @@ ReferenceSources/DataContractSerializerExtensions.cs
 ReferenceSources/NotImplemented.cs
 
 ../../../external/corefx/src/System.Runtime.Serialization.Primitives/src/System/Runtime/Serialization/ISerializationSurrogateProvider.cs
+
+../corlib/System.Runtime.CompilerServices/PreserveDependencyAttribute.cs

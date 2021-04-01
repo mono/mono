@@ -33,7 +33,7 @@ describe("The WebAssembly Issues Test Suite",function(){
       var _document = karmaHTML.issuesspec.document;
 
 
-      _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:BugInterpRecursion", []);
+      _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:BugInterpRecursion", [null]);
       expect(_document.constructor.name).toEqual('HTMLDocument'); // really nothing to assert here except if a recursion occurs.
 
     }, DEFAULT_TIMEOUT);  
@@ -114,5 +114,24 @@ describe("The WebAssembly Issues Test Suite",function(){
 
     }, DEFAULT_TIMEOUT); 
 
+    it('https://github.com/mono/mono/issues/18933 System.IO.Path.GetFileName does not work - GetFileName.', () => {
+      //karmaHTML.issuesspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.issuesspec.document;
+
+
+      var ret = _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:Issue18933_FileName_Backslash");
+      assert.equal(ret, "File1.txt", "result doesn't match File1.txt");
+
+    }, DEFAULT_TIMEOUT); 
+
+    it('https://github.com/mono/mono/issues/18933 System.IO.Path.GetFileName does not work - DirectoryInfo.', () => {
+      //karmaHTML.issuesspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.issuesspec.document;
+
+
+      var ret = _document.Module.BINDING.call_static_method("[IssuesTestSuite]TestSuite.Program:Issue18933_Directory_Backslash");
+      assert.equal(ret, "File1.txt", "result doesn't match File1.txt");
+
+    }, DEFAULT_TIMEOUT);     
 
   });

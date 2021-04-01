@@ -40,6 +40,12 @@ using System.Threading;
 
 /// Win32 Version
 namespace System.Windows.Forms {
+
+	[AttributeUsage (AttributeTargets.Method)]
+	sealed class MonoPInvokeCallbackAttribute : Attribute {
+		public MonoPInvokeCallbackAttribute (Type t) {}
+	}
+
 	internal class XplatUIWin32 : XplatUIDriver {
 		#region Local Variables
 		private static XplatUIWin32	instance;
@@ -844,7 +850,7 @@ namespace System.Windows.Forms {
 
 			themes_enabled = false;
 
-			wnd_proc = new WndProc(InternalWndProc);
+			wnd_proc = InternalWndProc;
 
 			FosterParentLast = IntPtr.Zero;
 
@@ -1942,7 +1948,8 @@ namespace System.Windows.Forms {
 					  SetWindowPosFlags.SWP_DRAWFRAME);
 		}
 
-		private IntPtr InternalWndProc (IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam)
+		[MonoPInvokeCallback (typeof (WndProc))]
+		static private IntPtr InternalWndProc (IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam)
 		{
 			return NativeWindow.WndProc (hWnd, msg, wParam, lParam);
 		}

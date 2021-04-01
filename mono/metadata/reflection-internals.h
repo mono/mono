@@ -20,10 +20,12 @@ TYPED_HANDLE_DECL (MonoReflectionAssembly)
 TYPED_HANDLE_DECL (MonoReflectionTypeBuilder)
 
 MonoReflectionAssemblyHandle
-mono_domain_try_type_resolve_name (MonoDomain *domain, MonoStringHandle name, MonoError *error);
+mono_domain_try_type_resolve_name (MonoDomain *domain, MonoAssembly *assembly, MonoStringHandle name, MonoError *error);
 
+#ifndef ENABLE_NETCORE
 MonoReflectionAssemblyHandle
 mono_domain_try_type_resolve_typebuilder (MonoDomain *domain, MonoReflectionTypeBuilderHandle typebuilder, MonoError *error);
+#endif
 
 MonoReflectionTypeBuilderHandle
 mono_class_get_ref_info (MonoClass *klass);
@@ -41,10 +43,10 @@ MonoType *
 mono_reflection_type_handle_mono_type (MonoReflectionTypeHandle ref_type, MonoError *error);
 
 MonoType*
-mono_reflection_get_type_checked (MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error);
+mono_reflection_get_type_checked (MonoAssemblyLoadContext *alc, MonoImage *rootimage, MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean search_mscorlib, gboolean *type_resolve, MonoError *error);
 
 MonoType*
-mono_reflection_type_from_name_checked (char *name, MonoImage *image, MonoError *error);
+mono_reflection_type_from_name_checked (char *name, MonoAssemblyLoadContext *alc, MonoImage *image, MonoError *error);
 
 guint32
 mono_reflection_get_token_checked (MonoObjectHandle obj, MonoError *error);
@@ -61,7 +63,7 @@ mono_reflection_get_custom_attrs_data_checked (MonoObjectHandle obj, MonoError *
 MonoArrayHandle
 mono_reflection_get_custom_attrs_by_type_handle (MonoObjectHandle obj, MonoClass *attr_klass, MonoError *error);
 
-MonoArray*
+MonoArrayHandle
 mono_reflection_get_custom_attrs_blob_checked (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues, MonoError *error);
 
 MonoCustomAttrInfo*

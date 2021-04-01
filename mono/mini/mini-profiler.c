@@ -1,7 +1,6 @@
 /*
  * Licensed to the .NET Foundation under one or more agreements.
  * The .NET Foundation licenses this file to you under the MIT license.
- * See the LICENSE file in the project root for more information.
  */
 
 #include <config.h>
@@ -52,13 +51,21 @@ emit_fill_call_ctx (MonoCompile *cfg, MonoInst *method, MonoInst *ret)
 	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, alloc->dreg, MONO_STRUCT_OFFSET (MonoProfilerCallContext, method), method->dreg);
 
 	if (ret) {
-		MonoInst *var = mono_compile_create_var (cfg, mono_method_signature_internal (cfg->method)->ret, OP_LOCAL);
+		MonoType *ret_type = mono_method_signature_internal (cfg->method)->ret;
+		MonoInst *var = mono_compile_create_var (cfg, ret_type, OP_LOCAL);
 
 		MonoInst *store, *addr;
 
 		EMIT_NEW_TEMPSTORE (cfg, store, var->inst_c0, ret);
 		EMIT_NEW_VARLOADA (cfg, addr, var, NULL);
 		MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, alloc->dreg, MONO_STRUCT_OFFSET (MonoProfilerCallContext, return_value), addr->dreg);
+
+		/* Work around a limitation of the register allocator regarding
+		 * FP stack, see https://github.com/mono/mono/pull/17251 */
+		if (cfg->backend->use_fpstack && (ret_type->type == MONO_TYPE_R8 || ret_type->type == MONO_TYPE_R4)) {
+			MonoInst *move_ret_back;
+			EMIT_NEW_VARSTORE (cfg, move_ret_back, ret, ret_type, var);
+		}
 	}
 
 	return alloc;
@@ -84,16 +91,17 @@ mini_profiler_emit_enter (MonoCompile *cfg)
 	if (cfg->current_method != cfg->method)
 		return;
 
-	MonoInst *iargs [2];
+	MonoInst *iargs [3];
 
 	EMIT_NEW_METHODCONST (cfg, iargs [0], cfg->method);
+	EMIT_NEW_PCONST (cfg, iargs [1], NULL);
 
 	if (MONO_CFG_PROFILE (cfg, ENTER_CONTEXT))
-		iargs [1] = emit_fill_call_ctx (cfg, iargs [0], NULL);
+		iargs [2] = emit_fill_call_ctx (cfg, iargs [0], NULL);
 	else
-		EMIT_NEW_PCONST (cfg, iargs [1], NULL);
+		EMIT_NEW_PCONST (cfg, iargs [2], NULL);
 
-	/* void mono_profiler_raise_method_enter (MonoMethod *method, MonoProfilerCallContext *ctx) */
+	/* void mono_profiler_raise_method_enter (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallContext *ctx) */
 	if (trace)
 		mono_emit_jit_icall (cfg, mono_trace_enter_method, iargs);
 	else
@@ -108,16 +116,17 @@ mini_profiler_emit_leave (MonoCompile *cfg, MonoInst *ret)
 	if (!MONO_CFG_PROFILE (cfg, LEAVE) || cfg->current_method != cfg->method || (cfg->compile_aot && !can_encode_method_ref (cfg->method)))
 		return;
 
-	MonoInst *iargs [2];
+	MonoInst *iargs [3];
 
 	EMIT_NEW_METHODCONST (cfg, iargs [0], cfg->method);
+	EMIT_NEW_PCONST (cfg, iargs [1], NULL);
 
 	if (MONO_CFG_PROFILE (cfg, LEAVE_CONTEXT))
-		iargs [1] = emit_fill_call_ctx (cfg, iargs [0], ret);
+		iargs [2] = emit_fill_call_ctx (cfg, iargs [0], ret);
 	else
-		EMIT_NEW_PCONST (cfg, iargs [1], NULL);
+		EMIT_NEW_PCONST (cfg, iargs [2], NULL);
 
-	/* void mono_profiler_raise_method_leave (MonoMethod *method, MonoProfilerCallContext *ctx) */
+	/* void mono_profiler_raise_method_leave (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallContext *ctx) */
 	if (trace)
 		mono_emit_jit_icall (cfg, mono_trace_leave_method, iargs);
 	else
@@ -134,18 +143,19 @@ mini_profiler_emit_tail_call (MonoCompile *cfg, MonoMethod *target)
 
 	g_assert (cfg->current_method == cfg->method);
 
-	MonoInst *iargs [2];
+	MonoInst *iargs [3];
 
 	EMIT_NEW_METHODCONST (cfg, iargs [0], cfg->method);
+	EMIT_NEW_PCONST (cfg, iargs [1], NULL);
 
 	if (target)
-		EMIT_NEW_METHODCONST (cfg, iargs [1], target);
+		EMIT_NEW_METHODCONST (cfg, iargs [2], target); 
 	else
-		EMIT_NEW_PCONST (cfg, iargs [1], NULL);
+		EMIT_NEW_PCONST (cfg, iargs [2], NULL);
 
 	/* void mono_profiler_raise_method_tail_call (MonoMethod *method, MonoMethod *target) */
 	if (trace)
-		mono_emit_jit_icall (cfg, mono_trace_leave_method, iargs);
+		mono_emit_jit_icall (cfg, mono_trace_tail_method, iargs);
 	else
 		mono_emit_jit_icall (cfg, mono_profiler_raise_method_tail_call, iargs);
 }
@@ -353,9 +363,6 @@ gpointer
 mini_profiler_context_get_result (MonoProfilerCallContext *ctx)
 {
 	MonoType *ret = mono_method_signature_internal (ctx->method)->ret;
-
-	if (ctx->interp_frame)
-		ctx->return_value = mini_get_interp_callbacks ()->frame_get_res (ctx->interp_frame);
 
 	if (!ctx->return_value)
 		return NULL;

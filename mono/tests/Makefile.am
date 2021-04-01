@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 SUBDIRS = gc-descriptors . testing_gac assembly-load-reference llvmonly-mixed fullaot-mixed
 
@@ -177,10 +177,13 @@ test-wrench: check-parallel
 
 aotcheck: testaot gshared-aot
 
+if HOST_WIN32
+JITTEST_PROG = $(top_builddir)/runtime/mono-wrapper
+else
 JITTEST_PROG = $(if $(VALGRIND), valgrind $(VALGRIND_ARGS),) $(if $(SGEN),$(top_builddir)/mono/mini/mono-sgen,$(top_builddir)/mono/mini/mono)
+endif
 
 JITTEST_PROG_RUN = MONO_CFG_DIR=$(mono_build_root)/runtime/etc $(LIBTOOL) --mode=execute $(JITTEST_PROG)
-
 
 RUNTIME_ARGS=--config tests-config --optimize=all --debug
 TEST_RUNTIME_ARGS ?= $(RUNTIME_ARGS)
@@ -199,18 +202,18 @@ MKBUNDLE = \
 	$(RUNTIME) $(CLASS)/mkbundle.exe
 
 if FULL_AOT_TESTS
-PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY,FULL_AOT_DESKTOP 
+PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY,FULL_AOT_DESKTOP
 endif
 
 if HYBRID_AOT_TESTS
-PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY 
+PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
 endif
 
 if FULL_AOT_INTERP_TESTS
 PROFILE_MCS_FLAGS = -d:MOBILE,MOBILE_LEGACY
 endif
 
-MCS_NO_UNSAFE = $(TOOLS_RUNTIME) --clr-memory-model $(CSC) -debug:portable \
+MCS_NO_UNSAFE = $(TOOLS_RUNTIME) $(CSC) -debug:portable \
 	-noconfig -nologo \
 	-nowarn:0162 -nowarn:0168 -nowarn:0219 -nowarn:0414 -nowarn:0618 \
 	-nowarn:0169 -nowarn:1690 -nowarn:0649 -nowarn:0612 -nowarn:3021 \
@@ -225,9 +228,9 @@ TEST_RUNNER = ./test-runner.exe
 
 if HOST_WIN32
 if ENABLE_MSVC
-	DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
+DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
 else
-	DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
+DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
 endif
 TEST_RUNNER += --config tests-config --runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(DEFAULT_WIN32_RUNTIME))"
 else
@@ -284,11 +287,13 @@ TESTS_CS_SRC=		\
 	assembly-loadfile-bindingredirect.cs	\
 	assembly-loadfrom-bindingredirect.cs	\
 	assembly-loadfrom-simplename.cs	\
+	assembly-refonly-load-bytes-bindingredirect.cs \
 	assemblyresolve_event.cs	\
 	assemblyresolve_event3.cs	\
 	assemblyresolve_event4.cs	\
 	assemblyresolve_event5.cs	\
 	assemblyresolve_event6.cs	\
+	assemblyresolve_event7.cs	\
 	checked.cs		\
 	char-isnumber.cs	\
 	field-layout.cs		\
@@ -338,6 +343,7 @@ TESTS_CS_SRC=		\
 	pinvoke11.cs		\
 	pinvoke13.cs		\
 	pinvoke17.cs		\
+	pinvoke-detach-1.cs	\
 	invoke.cs		\
 	invoke2.cs		\
 	runtime-invoke.cs		\
@@ -380,6 +386,9 @@ TESTS_CS_SRC=		\
 	params.cs		\
 	reflection.cs		\
 	interface.cs		\
+	interface-2.cs		\
+	dim-generic.cs		\
+	dim-issue-18917.cs		\
 	iface.cs		\
 	iface2.cs		\
 	iface3.cs		\
@@ -416,6 +425,8 @@ TESTS_CS_SRC=		\
 	delegate14.cs		\
 	delegate15.cs		\
 	delegate16.cs		\
+	delegate17.cs		\
+	delegate18.cs		\
 	largeexp.cs		\
 	largeexp2.cs		\
 	marshalbyref1.cs	\
@@ -604,7 +615,7 @@ TESTS_CS_SRC=		\
 	bug-10127.cs	\
 	bug-18026.cs	\
 	allow-synchronous-major.cs	\
-	block_guard_restore_aligment_on_exit.cs	\
+	block_guard_restore_alignment_on_exit.cs	\
 	thread_static_gc_layout.cs \
 	sleep.cs \
 	bug-27147.cs	\
@@ -681,6 +692,7 @@ TESTS_CS_SRC=		\
 	monitor.cs	\
 	generic-xdomain.2.cs	\
 	threadpool-exceptions7.cs	\
+	threadpool-exceptions8.cs \
 	cross-domain.cs	\
 	generic-unloading.2.cs	\
 	namedmutex-destroy-race.cs	\
@@ -696,6 +708,7 @@ TESTS_CS_SRC=		\
 	bug-58782-capture-and-throw.cs \
 	recursive-struct-arrays.cs \
 	struct-explicit-layout.cs \
+	struct-static.cs \
 	bug-59281.cs	\
 	init_array_with_lazy_type.cs \
 	weak-fields.cs \
@@ -715,7 +728,11 @@ TESTS_CS_SRC=		\
 	bug-10837.cs	\
 	bug-gh-9507.cs	\
 	async-generic-enum.cs \
-	last-error.cs
+	null-blob-main.cs \
+	last-error.cs \
+	rgctx-thread-static.cs \
+	ccw-class-iface.cs \
+	bug-gh-17285.cs
 
 # some tests fail to compile on mcs
 if CSC_IS_ROSLYN
@@ -1027,6 +1044,7 @@ TESTS_IL_SRC=			\
 	gh-13057_mono_local_emulate_ops_av.il \
 	module-cctor-entrypoint.il \
 	bug-gh-9706.il \
+	localloc-noinit.il \
 	calli_native.il
 
 # This test crashes the runtime, even with recent fixes.
@@ -1098,9 +1116,17 @@ PLATFORM_DISABLED_TESTS += bug-58782-plain-throw.exe bug-58782-capture-and-throw
 
 # see https://github.com/mono/mono/issues/9739
 PLATFORM_DISABLED_TESTS += verbose.exe
+
+if ENABLE_CXX
+# see https://github.com/mono/mono/issues/18827
+PLATFORM_DISABLED_TESTS += bug-10127.exe
 endif
 
+endif
 
+if DISABLE_CRASH_REPORTING
+PLATFORM_DISABLED_TESTS += merp-json-valid.exe merp-crash-test.exe
+endif
 
 if HOST_DARWIN
 
@@ -1308,6 +1334,7 @@ PROFILE_DISABLED_TESTS += \
 	resolve_method_bug.2.exe \
 	resolve_field_bug.2.exe \
 	resolve_type_bug.2.exe \
+	struct-static.exe \
 	bug-81691.exe \
 	bug-327438.2.exe \
 	newobj-abstract.exe \
@@ -1376,6 +1403,7 @@ PROFILE_DISABLED_TESTS += \
 	monitor.exe	\
 	generic-xdomain.2.exe	\
 	threadpool-exceptions7.exe	\
+	threadpool-exceptions8.exe	\
 	cross-domain.exe	\
 	generic-unloading.2.exe	\
 	appdomain-threadpool-unload.exe
@@ -1410,6 +1438,7 @@ PROFILE_DISABLED_TESTS += \
 	dynamic-method-delegate.exe \
 	dynamic-method-churn.exe \
 	bug-666008.exe \
+	ccw-class-iface.exe \
 	bug-685908.exe
 
 # Test which needs System.Web support
@@ -1445,8 +1474,8 @@ PROFILE_DISABLED_TESTS += \
 	assembly-loadfrom-simplename.exe
 endif
 
-# constraints-load.il: 
-# Failed to load method 0x6000007 from '..../mono/tests/constraints-load.exe' due to 
+# constraints-load.il:
+# Failed to load method 0x6000007 from '..../mono/tests/constraints-load.exe' due to
 # Could not resolve type with token 01000002 assembly:mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089 type:System.BrokenIComparable`1 member:<none>.
 PROFILE_DISABLED_TESTS += \
 	constraints-load.exe \
@@ -1589,6 +1618,7 @@ PROFILE_DISABLED_TESTS += \
 	suspend-stress-test.exe \
 	thread6.exe \
 	threadpool-exceptions7.exe \
+	threadpool-exceptions8.exe	\
 	unhandled-exception-7.exe \
 	unhandled-exception-test-case.2.exe \
 	unload-appdomain-on-shutdown.exe \
@@ -1607,6 +1637,7 @@ PROFILE_DISABLED_TESTS += \
 	bug-80307.exe
 
 PROFILE_DISABLED_TESTS += \
+	struct-static.exe \
 	transparentproxy.exe
 
 # Tests depending on assembly load order. Under Full AOT using WinAOT
@@ -1630,17 +1661,28 @@ REMOTING_DISABLED_TESTS = \
 
 if FULL_AOT_TESTS
 PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
+
+# Test is too sensitive.
+PROFILE_DISABLED_TESTS += localloc-noinit.exe
 endif
 
 if HYBRID_AOT_TESTS
 PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
+
+# Test is too sensitive.
+PROFILE_DISABLED_TESTS += localloc-noinit.exe
 endif
 
 if FULL_AOT_INTERP_TESTS
 PROFILE_DISABLED_TESTS += $(REMOTING_DISABLED_TESTS)
+
+# Test is too sensitive.
+PROFILE_DISABLED_TESTS += localloc-noinit.exe
+
 endif
 
 AOT_DISABLED_TESTS= \
+	localloc-noinit.exe \
 	constraints-load.exe \
 	calli_sig_check.exe
 
@@ -1649,7 +1691,8 @@ CI_DISABLED_TESTS = \
 	main-returns-background-abort-resetabort.exe	\
 	assemblyresolve_event3.exe \
 	finally_guard.exe \
-	generic-xdomain.2.exe
+	generic-xdomain.2.exe \
+	localloc-noinit.exe
 
 # failing tests which we temporarily disable for PRs
 # so they don't interfere with other people's work
@@ -1675,7 +1718,7 @@ CI_PR_DISABLED_TESTS += process-stress-3.exe
 
 if HOST_WIN32
 # https://github.com/mono/mono/issues/12839
-CI_PR_DISABLED_TESTS += block_guard_restore_aligment_on_exit.exe
+CI_PR_DISABLED_TESTS += block_guard_restore_alignment_on_exit.exe
 endif
 
 # appdomain-threadpool-unload.exe creates 100 appdomains, takes too long with llvm
@@ -1686,6 +1729,11 @@ LLVM_DISABLED_TESTS = \
 # https://github.com/mono/mono/issues/6490
 LLVM_DISABLED_TESTS += \
 	weak-fields.exe
+
+if HOST_WIN32
+# https://github.com/mono/mono/issues/19603
+LLVM_DISABLED_TESTS += sgen-bridge.exe
+endif
 
 LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS) $(AOT_BUILD_FLAGS))
 
@@ -1699,7 +1747,7 @@ LLVM = $(filter --llvm, $(MONO_ENV_OPTIONS) $(AOT_BUILD_FLAGS))
 # abort-try-holes.exe is flaky due to unwinding failure to the finally block when aborting
 # appdomain-marshalbyref-assemblyload.exe: https://bugzilla.xamarin.com/show_bug.cgi?id=49308
 # threads-init.exe: runs out of system threads
-# dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/coreclr/issues/15353)
+# dim-constrainedcall.exe: fails on dontnet as well (https://github.com/dotnet/runtime/issues/9378)
 #
 # tailcall-rgctxb.exe
 # tailcall-member-function-in-valuetype.exe
@@ -1907,82 +1955,29 @@ INTERP_DISABLED_TESTS += tailcall/interface-conservestack/9.exe
 # expected InvalidProgramException not thrown
 INTERP_DISABLED_TESTS += calli_sig_check.exe
 
-
-# bug-48015.exe: be careful when re-enabling, it happens that it returns with exit code 0, but doesn't actually execute the test.
+# Test is too sensitive.
+INTERP_DISABLED_TESTS += localloc-noinit.exe
+INTERP_DISABLED_TESTS += dim-diamondshape.exe
+INTERP_DISABLED_TESTS += pinvoke3.exe
+INTERP_DISABLED_TESTS += cominterop.exe
+INTERP_DISABLED_TESTS += ccw-class-iface.exe
 # bug-60862.exe: missing support to map IP->method; only works on platforms with altstack support.
-# bug-60843.exe: something goes wrong when turning the decoded enum value into a boxed enum, so the loaded value ends up being random bytes
-
-if ARM
-INTERP_DISABLED_TESTS += \
-	appdomain-unload-callback.exe \
-	appdomain-unload.exe \
-	assemblyresolve_event6.exe \
-	async-with-cb-throws.exe \
-	block_guard_restore_aligment_on_exit.exe \
-	bug-323114.exe \
-	bug-335131.2.exe \
-	bug-415577.exe \
-	bug-45841-fpstack-exceptions.exe \
-	bug-48015.exe \
-	bug-60862.exe \
-	bug-80307.exe \
-	bug-80392.2.exe \
-	bug445361.exe \
-	calliGenericTest.exe \
-	cominterop.exe \
-	context-static.exe \
-	delegate-async-exit.exe \
-	delegate-delegate-exit.exe \
-	delegate-exit.exe \
-	delegate1.exe \
-	delegate3.exe \
-	delegate5.exe \
-	delegate8.exe \
-	delegate9.exe \
-	dim-diamondshape.exe \
-	dynamic-method-stack-traces.exe \
-	even-odd.exe \
-	exception18.exe \
-	field-access.exe \
-	finalizer-exception.exe \
-	handleref.exe \
-	monitor-abort.exe \
-	nullable_boxing.2.exe \
-	pinvoke2.exe \
-	pinvoke3.exe \
-	remoting2.exe \
-	remoting3.exe \
-	safehandle.2.exe \
-	stackframes-async.2.exe \
-	static-constructor.exe \
-	threadpool-exceptions2.exe \
-	threadpool-exceptions3.exe \
-	threadpool-exceptions4.exe \
-	threadpool-exceptions5.exe \
-	threadpool-exceptions6.exe \
-	thunks.exe \
-	typeload-unaligned.exe \
-	vararg.exe \
-	vararg2.exe \
-	vararg3.exe
-endif
+INTERP_DISABLED_TESTS += bug-60862.exe
+# bug-48015.exe: remoting test that fails on fullaotinterp scenarios
+INTERP_DISABLED_TESTS += bug-48015.exe
 
 if ARM64
 INTERP_DISABLED_TESTS += \
-	bug-48015.exe \
-	bug-80307.exe \
-	dim-diamondshape.exe \
-	pinvoke3.exe
+	bug-80307.exe
+
+# Test is too sensitive.
+DISABLED_TESTS += localloc-noinit.exe
+
 endif
 
-if AMD64
-INTERP_DISABLED_TESTS += \
-	assemblyresolve_event6.exe \
-	bug-48015.exe \
-	bug-60862.exe \
-	cominterop.exe \
-	dim-diamondshape.exe \
-	pinvoke3.exe
+if HOST_WIN32
+# Test is too sensitive?
+DISABLED_TESTS += localloc-noinit.exe
 endif
 
 TESTS_CS=$(filter-out $(DISABLED_TESTS),$(TESTS_CS_SRC:.cs=.exe))
@@ -2078,10 +2073,10 @@ TestingReferenceAssembly.dll: TestingReferenceAssembly.cs
 TestingReferenceReferenceAssembly.dll: TestingReferenceReferenceAssembly.cs TestingReferenceAssembly.dll
 	$(MCS) -r:TestingReferenceAssembly.dll -target:library -out:$@ $<
 
-%.exe$(PLATFORM_AOT_SUFFIX): %.exe 
+%.exe$(PLATFORM_AOT_SUFFIX): %.exe
 	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
 
-%.dll$(PLATFORM_AOT_SUFFIX): %.dll 
+%.dll$(PLATFORM_AOT_SUFFIX): %.dll
 	$(RUNTIME) $(TEST_AOT_BUILD_FLAGS) $<
 
 # mkbundle works on ppc, but the pkg-config POC doesn't when run with make test
@@ -2675,21 +2670,28 @@ endif
 tests-sgen-oom: $(TESTS_SGEN_OOM) $(TESTSAOT_SGEN_OOM) test-runner.exe sgen-cementing-stress.exe sgen-new-threads-dont-join-stw-2.exe sgen-bridge-major-fragmentation.exe
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) $(TEST_RUNNER_ARGS) --testsuite-name $@ --runtime-args "--gc=sgen --gc-debug=max-valloc-size=50M,bridge=Bridge" --disabled "$(DISABLED_TESTS)" --timeout 900 $(TESTS_SGEN_OOM)
 
+if HOST_WIN32
+AOT_CONFIGURATIONS=	\
+	"|regular"
+else
 AOT_CONFIGURATIONS=	\
 	"|regular"	\
 	"--gc=boehm|boehm"
+endif
 
 #LLVM crashes, got to fix it first.
 #	"--llvm|llvm"	\
 #	"--llvm --gc=boehm|llvm+boehm"
 
+AOT_TEMP_DIR=$(top_builddir)/mono/tests/aot-tmp
 
 test-aot:
 	@failed=0; \
 	passed=0; \
 	failed_tests="";\
 	profile=$(DEFAULT_PROFILE);	\
-	tmpfile=`mktemp -t mono_aot_outputXXXXXX` || exit 1;	\
+	rm -rf $(AOT_TEMP_DIR); \
+	mkdir $(AOT_TEMP_DIR); \
 	rm -f test-aot-$${name}.stdout test-aot-$${name}.stderr; \
 	for assembly in $(mcs_topdir)/class/lib/$$profile/*.dll	; do	\
 		asm_name=`basename $$assembly`;	\
@@ -2699,7 +2701,7 @@ test-aot:
 			params=`echo $$conf | cut -d\| -f 1`;	\
 			test_name="$${asm_name}|$${name}";	\
 			echo "  $$test_name";	\
-			if MONO_PATH=$(mcs_topdir)/class/lib/$$profile $(JITTEST_PROG_RUN) $$params --aot=outfile=$$tmpfile $$assembly >> test-aot-$${name}.stdout 2>> test-aot-$${name}.stderr;	\
+			if MONO_PATH=$(mcs_topdir)/class/lib/$$profile $(JITTEST_PROG_RUN) $$params --aot=temp-path=$(AOT_TEMP_DIR),outfile=$(AOT_TEMP_DIR)/$$asm_name $$assembly >> test-aot-$${name}.stdout 2>> test-aot-$${name}.stderr;	\
 			then \
 				passed=`expr $${passed} + 1`; \
 			else \
@@ -2708,7 +2710,7 @@ test-aot:
 			fi \
 		done;	\
 	done;	\
-	rm	$$tmpfile;	\
+	rm -rf $(AOT_TEMP_DIR); \
 	echo "$${passed} test(s) passed. $${failed} test(s) did not pass."; \
 	if [ $${failed} != 0 ]; then echo -e "\nFailed tests:\n"; \
 	for i in $${failed_tests}; do echo $${i}; done; exit 1; fi
@@ -2759,13 +2761,19 @@ test-unhandled-exception: unhandled-exception-test-runner.2.exe
 safehandle.2.exe winx64structs.exe thunks.exe pinvoke3.exe pinvoke2.exe pinvoke-2.2.exe pinvoke17.exe pinvoke13.exe \
 	pinvoke11.exe pinvoke_ppcs.exe pinvoke_ppci.exe pinvoke_ppcf.exe pinvoke_ppcd.exe pinvoke_ppcc.exe pinvoke.exe \
 	marshalbool.exe marshal9.exe marshal5.exe marshal.exe handleref.exe cominterop.exe bug-Xamarin-5278.exe \
-	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe install_eh_callback.exe: libtest.la
+	bug-58782-plain-throw.exe bug-58782-capture-and-throw.exe install_eh_callback.exe ccw-class-iface.exe: libtest.la
+
+EXTRA_DIST += event-il.il
 
 event-get.2.exe$(PLATFORM_AOT_SUFFIX): event-il.exe$(PLATFORM_AOT_SUFFIX)
 event-get.2.exe: event-il.exe
 
+EXTRA_DIST += module-cctor.il
+
 module-cctor-loader.2.exe$(PLATFORM_AOT_SUFFIX): module-cctor.exe$(PLATFORM_AOT_SUFFIX)
 module-cctor-loader.2.exe: module-cctor.exe
+
+EXTRA_DIST += TestingReferenceAssembly.cs TestingReferenceReferenceAssembly.cs
 
 reference-loader.exe$(PLATFORM_AOT_SUFFIX): TestingReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX) TestingReferenceReferenceAssembly.dll$(PLATFORM_AOT_SUFFIX)
 reference-loader.exe: TestingReferenceAssembly.dll TestingReferenceReferenceAssembly.dll
@@ -2774,7 +2782,7 @@ assemblyresolve_asm.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_asm.dll assemblyr
 	MONO_PATH="assemblyresolve_deps:$(CLASS)" $(top_builddir)/runtime/mono-wrapper $(TEST_AOT_BUILD_FLAGS) assemblyresolve_asm.dll
 assemblyresolve_deps/Test.dll$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/Test.dll assemblyresolve_deps/TestBase.dll$(PLATFORM_AOT_SUFFIX)
 
-EXTRA_DIST += assemblyresolve_TestBase.cs assemblyresolve_Test.cs assemblyresolve_asm.cs 
+EXTRA_DIST += assemblyresolve_TestBase.cs assemblyresolve_Test.cs assemblyresolve_asm.cs
 assemblyresolve_deps:
 	mkdir -p assemblyresolve_deps
 assemblyresolve_deps/TestBase.dll: assemblyresolve_deps $(srcdir)/assemblyresolve_TestBase.cs
@@ -2791,7 +2799,7 @@ assemblyresolve_event4.exe$(PLATFORM_AOT_SUFFIX): assemblyresolve_deps/Test.dll$
 assemblyresolve_event4.exe: assemblyresolve_deps/Test.dll assemblyresolve_deps/TestBase.dll
 
 EXTRA_DIST += assemblyresolve_event5_label.cs assemblyresolve_event5_helper.cs
-assemblyresolve_deps/assemblyresolve_event5_label.dll: assemblyresolve_event5_label.cs assemblyresolve_deps 
+assemblyresolve_deps/assemblyresolve_event5_label.dll: assemblyresolve_event5_label.cs assemblyresolve_deps
 	$(MCS) -target:library -out:assemblyresolve_deps/assemblyresolve_event5_label.dll $(srcdir)/assemblyresolve_event5_label.cs
 assemblyresolve_event5_helper.dll: assemblyresolve_event5_helper.cs assemblyresolve_deps/assemblyresolve_event5_label.dll
 	$(MCS) -target:library -out:assemblyresolve_event5_helper.dll -r:assemblyresolve_deps/assemblyresolve_event5_label.dll $(srcdir)/assemblyresolve_event5_helper.cs
@@ -2825,7 +2833,7 @@ EXTRA_DIST += bug-81691-a.cs bug-81691-b.cs
 
 bug-81691.exe$(PLATFORM_AOT_SUFFIX): bug-81691-b.dll$(PLATFORM_AOT_SUFFIX)
 bug-81691.exe bug-81691-a.dll bug-81691-b.dll: $(srcdir)/bug-81691.cs $(srcdir)/bug-81691-a.cs $(srcdir)/bug-81691-b.cs
-	$(MCS) -target:library -out:bug-81691-a.dll $(srcdir)/bug-81691-a.cs 
+	$(MCS) -target:library -out:bug-81691-a.dll $(srcdir)/bug-81691-a.cs
 	$(MCS) -r:bug-81691-a.dll -target:library -out:bug-81691-b.dll $(srcdir)/bug-81691-b.cs
 	$(MCS) -r:bug-81691-b.dll -out:bug-81691.exe $(srcdir)/bug-81691.cs
 	rm -f bug-81691-a.dll
@@ -2953,8 +2961,11 @@ assembly-loadfile-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll asse
 
 assembly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-load-bytes-bindingredirect.exe.config
 
-EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
+assembly-refonly-load-bytes-bindingredirect.exe: assembly-load-dir1/LibStrongName.dll assembly-load-dir2/LibStrongName.dll assembly-refonly-load-bytes-bindingredirect.exe.config
 
+
+EXTRA_DIST += assembly-loadfrom-bindingredirect.exe.config assembly-loadfile-bindingredirect.exe.config assembly-load-bytes-bindingredirect.exe.config
+EXTRA_DIST += assembly-refonly-load-bytes-bindingredirect.exe.config
 
 assembly-load-dir1/LibSimpleName.dll: assembly-load-dir1/LibSimpleName.cs
 	$(MKDIR_P) $(dir $@)
@@ -2996,7 +3007,7 @@ test-generic-sharing-normal: $(TESTS_GSHARED) $(TESTSAOT_GSHARED)
 		if [ x$(AOT) = x1 ]; then $(with_mono_path) $(JITTEST_PROG_RUN) --aot --debug $$fn > /dev/null || exit 1; $(RUNTIME) $$fn > $$fn.stdout || exit 1; fi; \
 	done
 
-test-generic-sharing-managed: test-runner.exe $(TESTS_GSHARED) $(TESTSAOT_GSHARED) 
+test-generic-sharing-managed: test-runner.exe $(TESTS_GSHARED) $(TESTSAOT_GSHARED)
 	$(Q) $(TOOLS_RUNTIME) $(TEST_RUNNER) -j a --testsuite-name "gshared" --disabled "$(DISABLED_TESTS)" --opt-sets "gshared gshared,shared gshared,-inline gshared,-inline,shared" $(TESTS_GSHARED)
 
 test-generic-sharing:
@@ -3012,7 +3023,7 @@ test-async-exceptions : async-exceptions.exe
 EXTRA_DIST += modules.cs modules-m1.cs
 modules-m1.netmodule: modules-m1.cs
 	$(MCS) -out:$@ /target:module $(srcdir)/modules-m1.cs
-modules.exe: modules.cs modules-m1.netmodule $(TEST_DRIVER_DEPEND) 
+modules.exe: modules.cs modules-m1.netmodule $(TEST_DRIVER_DEPEND)
 	$(MCS) -out:$@ /addmodule:modules-m1.netmodule -r:TestDriver.dll $(srcdir)/modules.cs
 
 # Useful if mono is compiled with --enable-shared=no
@@ -3046,6 +3057,8 @@ TESTS_UNHANDLED_EXCEPTION_255_SRC =	\
 	unhandled-exception-8.cs	\
 	threadpool-exceptions2.cs	\
 	threadpool-exceptions5.cs
+
+EXTRA_DIST += $(TESTS_UNHANDLED_EXCEPTION_1_SRC) $(TESTS_UNHANDLED_EXCEPTION_255_SRC)
 
 TESTS_UNHANDLED_EXCEPTION_1=$(filter-out $(DISABLED_TESTS),$(TESTS_UNHANDLED_EXCEPTION_1_SRC:.cs=.exe))
 TESTS_UNHANDLED_EXCEPTION_255=$(filter-out $(DISABLED_TESTS),$(TESTS_UNHANDLED_EXCEPTION_255_SRC:.cs=.exe))
@@ -3122,6 +3135,8 @@ TESTS_STRESS_PROCESS_SRC=	\
 		process-stress-3.cs	\
 		process-leak.cs
 
+EXTRA_DIST += $(TESTS_STRESS_PROCESS_SRC)
+
 TESTS_STRESS_PROCESS=$(filter-out $(DISABLED_TESTS),$(TESTS_STRESS_PROCESS_SRC:.cs=.exe))
 
 if FULL_AOT_TESTS
@@ -3141,7 +3156,9 @@ coreclr-gcstress:
 # Tests for the Mono lldb plugin
 EXTRA_DIST += test_lldb.py test-lldb.cs
 test-lldb: test-lldb.exe
-	python test_lldb.py $(JITTEST_PROG)
+	$(PYTHON) test_lldb.py $(JITTEST_PROG)
+
+if !ENABLE_MSVC_ONLY
 
 noinst_LTLIBRARIES = libtest.la
 
@@ -3159,6 +3176,8 @@ libtest_la_LDFLAGS = -no-undefined -rpath `pwd`
 endif
 libtest_la_SOURCES = libtest.c
 libtest_la_LIBADD = $(top_builddir)/mono/eglib/libeglib.la
+
+endif # !ENABLE_MSVC_ONLY
 
 INTERNALSVISIBLETO_TEST_SRC = \
 	internalsvisibleto-runtimetest.cs \
@@ -3202,14 +3221,14 @@ test-internalsvisibleto: test-runner.exe $(INTERNALSVISIBLETO_TEST) $(INTERNALSV
 	$(TOOLS_RUNTIME) $(TEST_RUNNER) --testsuite-name $@ $(INTERNALSVISIBLETO_TEST)
 
 internalsvisibleto-correctcase.dll internalsvisibleto-wrongcase.dll internalsvisibleto-runtimetest.exe: internalsvisibleto-runtimetest.cs internalsvisibleto-library.cs
-	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase.dll -target:library -d:CORRECT_CASE -d:PERMISSIVE internalsvisibleto-library.cs	
+	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase.dll -target:library -d:CORRECT_CASE -d:PERMISSIVE internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-wrongcase.dll -target:library -d:WRONG_CASE -d:PERMISSIVE internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-runtimetest.exe -warn:0 -r:internalsvisibleto-correctcase.dll -r:internalsvisibleto-wrongcase.dll internalsvisibleto-runtimetest.cs
-	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase.dll -target:library -d:CORRECT_CASE internalsvisibleto-library.cs	
+	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase.dll -target:library -d:CORRECT_CASE internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-wrongcase.dll -target:library -d:WRONG_CASE internalsvisibleto-library.cs
 
 internalsvisibleto-correctcase-2.dll internalsvisibleto-wrongcase-2.dll  internalsvisibleto-compilertest.exe: internalsvisibleto-compilertest.cs internalsvisibleto-library.cs
-	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase-2.dll -target:library -d:CORRECT_CASE internalsvisibleto-library.cs	
+	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase-2.dll -target:library -d:CORRECT_CASE internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-wrongcase-2.dll -target:library -d:WRONG_CASE internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-compilertest.exe -warn:0 -r:internalsvisibleto-correctcase-2.dll -r:internalsvisibleto-wrongcase-2.dll internalsvisibleto-compilertest.cs
 
@@ -3221,13 +3240,23 @@ internalsvisibleto-correctcase-sign2048.dll internalsvisibleto-wrongcase-sign204
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-wrongcase-sign2048.dll -target:library -d:WRONG_CASE -d:SIGN2048 internalsvisibleto-library.cs
 
 internalsvisibleto-correctcase-2-sign2048.dll internalsvisibleto-wrongcase-2-sign2048.dll internalsvisibleto-compilertest-sign2048.exe: internalsvisibleto-compilertest.cs internalsvisibleto-library.cs internalsvisibleto-2048.snk
-	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase-2-sign2048.dll -target:library -d:CORRECT_CASE -d:SIGN2048 internalsvisibleto-library.cs	
+	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-correctcase-2-sign2048.dll -target:library -d:CORRECT_CASE -d:SIGN2048 internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-wrongcase-2-sign2048.dll -target:library -d:WRONG_CASE -d:SIGN2048 internalsvisibleto-library.cs
 	$(Q) $(MCS_NO_UNSAFE) -out:internalsvisibleto-compilertest-sign2048.exe -warn:0 -r:internalsvisibleto-correctcase-2-sign2048.dll -r:internalsvisibleto-wrongcase-2-sign2048.dll -d:SIGN2048 internalsvisibleto-compilertest.cs
 
 EXTRA_DIST += internalsvisibleto-runtimetest.cs internalsvisibleto-compilertest.cs internalsvisibleto-library.cs internalsvisibleto-2048.snk
 
 EXTRA_DIST += weakattribute.cs
+
+EXTRA_DIST += null-blob-null-blob-assm.il null-blob-ref.il null-blob-tgt.cs
+
+null-blob-tgt.dll: null-blob-tgt.cs
+	$(MCS) -target:library -out:$@ $<
+
+null-blob-main.exe: null-blob-main.cs null-blob-tgt.dll null-blob-ref.dll null-blob-null-blob-assm.dll
+	$(MCS) -target:exe -out:$@ $<
+
+null-blob-main.exe$(PLATFORM_AOT_SUFFIX): null-blob-tgt.dll$(PLATFORM_AOT_SUFFIX) null-blob-ref.dll$(PLATFORM_AOT_SUFFIX) null-blob-null-blob-assm.dll$(PLATFORM_AOT_SUFFIX)
 
 # Contains copies of types which don't exist in the desktop profile so tests can use them
 Mono.Runtime.Testing.dll: weakattribute.cs
@@ -3236,6 +3265,6 @@ Mono.Runtime.Testing.dll: weakattribute.cs
 weak-fields.exe: weak-fields.cs Mono.Runtime.Testing.dll
 	$(MCS) -r:Mono.Runtime.Testing.dll -r:$(CLASS)/System.dll -r:$(CLASS)/System.Xml.dll -r:$(CLASS)/System.Core.dll -r:TestDriver.dll $(TEST_DRIVER_HARD_KILL_FEATURE) -out:$@ $<
 
-CLEANFILES = $(TESTS_REGULAR) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll 
+CLEANFILES = $(TESTS_REGULAR) $(TESTS_STRESS) $(TESTSAOT_CS) $(TESTSAOT_IL) $(TESTSAOT_BENCH) $(TESTSAOT_STRESS) *.dll *.stdout *.aotlog *.exe stest.dat LeafAssembly.dll MidAssembly.dll appdomain-marshalbyref-assemblyload2/*.dll
 CLEANFILES += $(TESTS_TAILCALL_COMPILE) $(TESTSAOT_TAILCALL)
 CLEANFILES += $(BUILT_SOURCES)

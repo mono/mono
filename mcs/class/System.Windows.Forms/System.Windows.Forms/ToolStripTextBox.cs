@@ -311,7 +311,7 @@ namespace System.Windows.Forms
 		
 		public override Size GetPreferredSize (Size constrainingSize)
 		{
-			return base.GetPreferredSize (constrainingSize);
+			return new Size(TextBox.Bounds.Width, TextBox.PreferredHeight);
 		}
 
 		public void Paste ()

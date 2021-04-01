@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace System
 {
-    internal enum LogLevel {
+    internal enum BCLDebugLogLevel {
         Trace  = 0,
         Status = 20,
         Warning= 40,
@@ -33,7 +33,7 @@ namespace System
 		}
 
 		[Conditional("_DEBUG")]
-		public static void Log (string switchName, LogLevel level, params object[] messages)
+		public static void Log (string switchName, BCLDebugLogLevel level, params object[] messages)
 		{
 		}
 

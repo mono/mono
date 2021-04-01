@@ -29,7 +29,7 @@
     <PackageReference Include="Mono.WebAssembly.Framework" VersionOverride="$(_MonoWasmFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
     <PackageReference Include="Mono.WebAssembly.Runtime" VersionOverride="$(_MonoWasmRuntimePackageVersion)" Condition="'$(MonoWasmRuntimePath)'=='' Or '$(_MonoWasmRuntimeFromPackage)'=='True'" />
     <PackageReference Include="WebAssembly.Bindings" VersionOverride="$(_MonoWasmBindingsPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
-    <PackageReference Include="WebAssembly.Net.Http" VersionOverride="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+    <PackageReference Include="System.Net.Http.WebAssemblyHttpHandler" VersionOverride="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
     <PackageReference Include="WebAssembly.Net.WebSockets" VersionOverride="$(_MonoWasmClientWebSocketPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
   </ItemGroup>
 
@@ -38,13 +38,13 @@
     <PackageReference Include="Mono.WebAssembly.Framework" Version="$(_MonoWasmFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
     <PackageReference Include="Mono.WebAssembly.Runtime" Version="$(_MonoWasmRuntimePackageVersion)" Condition="'$(MonoWasmRuntimePath)'=='' Or '$(_MonoWasmRuntimeFromPackage)'=='True'" />
     <PackageReference Include="WebAssembly.Bindings" Version="[$(_MonoWasmBindingsPackageVersion)]" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
-    <PackageReference Include="WebAssembly.Net.Http" Version="[$(_MonoWasmHttpHandlerPackageVersion)]" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+    <PackageReference Include="System.Net.Http.WebAssemblyHttpHandler" Version="[$(_MonoWasmHttpHandlerPackageVersion)]" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
     <PackageReference Include="WebAssembly.Net.WebSockets" Version="[$(_MonoWasmClientWebSocketPackageVersion)]" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(MonoWasmBindingsPath)' != '' And '$(DisableImplicitWasmBindingReferences)' != 'True'">
     <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Bindings.dll" />
-    <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Net.Http.dll" />
+    <Reference Include="$(MonoWasmBindingsPath)System.Net.Http.WebAssemblyHttpHandler.dll" />
     <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Net.WebSockets.dll" />
   </ItemGroup>
 

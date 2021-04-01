@@ -995,6 +995,23 @@ namespace MonoTests.Mono.Unix {
 			);
 		}
 
+		[Test]
+		public void TestEmptyString ()
+		{
+			byte[] data = new byte [] {};
+			Encoding enc = new UnixEncoding ();
+
+			string s = enc.GetString (data);
+			Assert.AreEqual (s, "", "#1");
+			char[] chars = enc.GetChars (data);
+			Assert.AreEqual (chars.Length, 0, "#2");
+
+			byte[] b1 = enc.GetBytes ("");
+			Assert.AreEqual (b1.Length, 0, "#3");
+			byte[] b2 = enc.GetBytes (new char[] {});
+			Assert.AreEqual (b2.Length, 0, "#3");
+		}
+
 		private void Compare (string prefix, string start, byte[] end)
 		{
 			byte[] bytes = unix.GetBytes (start);

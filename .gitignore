@@ -18,6 +18,7 @@
 *.vssscc
 *_i.c
 *_p.c
+*.mdb
 *.ncb
 *.suo
 *.tlb
@@ -130,7 +131,6 @@ mono.h
 mono-*.tar.*
 mono_crash*
 tmpinst-dir.stamp
-msvc/scripts/inputs/
 extensions-config.h
 *.dylib.dSYM
 *.mlpd
@@ -139,7 +139,6 @@ llvm/usr/
 sdks/builds/llvm-*/
 sdks/builds/android-*/
 mcs/build/compiler-server.log
-
 
 ##############################################################################
 # Arcade output directories

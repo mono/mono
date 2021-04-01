@@ -52,8 +52,6 @@ namespace Mono.CompilerServices.SymbolWriter
 
 #if !CECIL && !MOBILE
 		ModuleBuilder mb;
-		delegate Guid GetGuidFunc (ModuleBuilder mb);
-		GetGuidFunc get_guid_func;
 		
 		public SymbolWriterImpl (ModuleBuilder mb)
 		{
@@ -62,16 +60,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		
 		public void Close ()
 		{
-			MethodInfo mi = typeof (ModuleBuilder).GetMethod (
-				"Mono_GetGuid",
-				BindingFlags.Static | BindingFlags.NonPublic);
-			if (mi == null)
-				return;
-
-			get_guid_func = (GetGuidFunc) System.Delegate.CreateDelegate (
-				typeof (GetGuidFunc), mi);
-			
-			msw.WriteSymbolFile (get_guid_func (mb));
+			msw.WriteSymbolFile (mb.ModuleVersionId);
 		}
 #else
 		Guid guid;

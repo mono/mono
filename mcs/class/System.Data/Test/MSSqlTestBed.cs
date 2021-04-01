@@ -59,7 +59,7 @@ namespace MonoTests.System.Data
                                         "Server=164.99.168.131;" +
                                         "Database=Northwind;" +
                                         "User ID=sa;" +
-                                        "Password=novell";
+                                        "Password=[PLACEHOLDER]";
                                 conn = new SqlConnection(connectionString);
                 }
 

@@ -136,7 +136,6 @@ corefx/TimeZoneInfo.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.Android.cs
 System/TimeZoneInfo.MonoTouch.cs
-System/TimeZoneInfo.WebAssembly.cs
 System/TimeZoneInfo.Serialization.cs
 System/TimeZoneInfo.WinRT.cs
 ../../build/common/MonoTODOAttribute.cs
@@ -248,6 +247,7 @@ System.Reflection/FieldInfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ImageFileMachine.cs
 System.Reflection/LocalVariableInfo.cs
 System.Reflection/MethodBody.cs
+System.Reflection/MethodInfo.cs
 System.Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/Module.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Reflection/ModuleResolveEventHandler.cs
@@ -1085,11 +1085,9 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/calendardata.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CalendarWeekRule.cs
 ../referencesource/mscorlib/system/globalization/charunicodeinfo.cs
-# TODO: make CoreFX's CharUnicodeInfo BE compatible
-#../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CharUnicodeInfo.cs
-#../../../external/corert/src/System.Private.CoreLib/src/System/Globalization/CharUnicodeInfoData.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CharUnicodeInfo.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CharUnicodeInfoData.cs
 ../referencesource/mscorlib/system/globalization/chineselunisolarcalendar.cs
-#../referencesource/mscorlib/system/globalization/compareinfo.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CultureNotFoundException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/CultureTypes.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Globalization/DaylightTime.cs
@@ -1105,7 +1103,7 @@ ReferenceSources/AppContextDefaultValues.cs
 ../referencesource/mscorlib/system/globalization/gregoriancalendarhelper.cs
 ../referencesource/mscorlib/system/globalization/gregoriancalendartypes.cs
 ../referencesource/mscorlib/system/globalization/hebrewcalendar.cs
-../referencesource/mscorlib/system/globalization/hebrewnumber.cs
+../../../external/corefx/src/Common/src/CoreLib/System/Globalization/HebrewNumber.cs
 ../referencesource/mscorlib/system/globalization/hijricalendar.cs
 ../referencesource/mscorlib/system/globalization/japanesecalendar.cs
 ../referencesource/mscorlib/system/globalization/japaneselunisolarcalendar.cs
@@ -1620,7 +1618,6 @@ corefx/CryptoConfigForwarder.cs
 corefx/DefaultBinder.cs
 corefx/GlobalizationMode.cs
 corefx/Interop.GetRandomBytes.Mono.cs
-corefx/MethodInfo.cs
 corefx/RandomNumberGenerator.cs
 corefx/RuntimeFeature.cs
 corefx/RuntimeImports.cs
@@ -1631,6 +1628,11 @@ corefx/AesGcm.cs
 corefx/IncrementingEventCounter.cs
 corefx/IncrementingPollingCounter.cs
 corefx/PollingCounter.cs
+corefx/NullableAttributes.cs
+corefx/ArrayBufferWriter.cs
+corefx/SequenceReader.cs
+corefx/SequenceReader.Search.cs
+corefx/SequenceReaderExtensions.Binary.cs
 
 corert/DependencyReductionRootAttribute.cs
 corert/AddrofIntrinsics.cs

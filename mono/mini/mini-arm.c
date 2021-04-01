@@ -34,6 +34,7 @@
 #include "mini-runtime.h"
 #include "aot-runtime.h"
 #include "mono/arch/arm/arm-vfp-codegen.h"
+#include "mono/utils/mono-tls-inline.h"
 
 /* Sanity check: This makes no sense */
 #if defined(ARM_FPU_NONE) && (defined(ARM_FPU_VFP) || defined(ARM_FPU_VFP_HARD))
@@ -428,7 +429,7 @@ emit_save_lmf (MonoCompile *cfg, guint8 *code, gint32 lmf_offset)
 		code = emit_tls_get (code, ARMREG_R0, mono_tls_get_tls_offset (TLS_KEY_LMF_ADDR));
 	} else {
 		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_JIT_ICALL_ID,
-							 GUINT_TO_POINTER (MONO_JIT_ICALL_mono_tls_get_lmf_addr));
+							 GUINT_TO_POINTER (MONO_JIT_ICALL_mono_tls_get_lmf_addr_extern));
 		code = emit_call_seq (cfg, code);
 	}
 	/* we build the MonoLMF structure on the stack - see mini-arm.h */
@@ -912,19 +913,6 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 {
 	/* no arm-specific optimizations yet */
 	*exclude_mask = 0;
-	return 0;
-}
-
-/*
- * This function test for all SIMD functions supported.
- *
- * Returns a bitmask corresponding to all supported versions.
- *
- */
-guint32
-mono_arch_cpu_enumerate_simd_versions (void)
-{
-	/* SIMD is currently unimplemented */
 	return 0;
 }
 
@@ -1649,7 +1637,10 @@ arg_get_storage (CallContext *ccontext, ArgInfo *ainfo)
 			return &ccontext->gregs [ainfo->reg];
 		case RegTypeHFA:
 		case RegTypeFP:
-			return &ccontext->fregs [ainfo->reg];
+			if (IS_HARD_FLOAT)
+				return &ccontext->fregs [ainfo->reg];
+			else
+				return &ccontext->gregs [ainfo->reg];
 		case RegTypeBase:
 			return ccontext->stack + ainfo->offset;
 		default:
@@ -1719,7 +1710,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 
 /* Set return value in the ccontext (for n2i return) */
 void
-mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
+mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig, gpointer retp)
 {
 	const MonoEECallbacks *interp_cb;
 	CallInfo *cinfo;
@@ -1733,7 +1724,11 @@ mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 	cinfo = get_call_info (NULL, sig);
 	ainfo = &cinfo->ret;
 
-	if (ainfo->storage != RegTypeStructByAddr) {
+	if (retp) {
+		g_assert (ainfo->storage == RegTypeStructByAddr);
+		interp_cb->frame_arg_to_data ((MonoInterpFrameHandle)frame, sig, -1, retp);
+	} else {
+		g_assert (ainfo->storage != RegTypeStructByAddr);
 		g_assert (!arg_need_temp (ainfo));
 		storage = arg_get_storage (ccontext, ainfo);
 		memset (ccontext, 0, sizeof (CallContext)); // FIXME
@@ -1744,21 +1739,13 @@ mono_arch_set_native_call_context_ret (CallContext *ccontext, gpointer frame, Mo
 }
 
 /* Gets the arguments from ccontext (for n2i entry) */
-void
+gpointer
 mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
 {
 	const MonoEECallbacks *interp_cb = mini_get_interp_callbacks ();
 	CallInfo *cinfo = get_call_info (NULL, sig);
 	gpointer storage;
 	ArgInfo *ainfo;
-
-	if (sig->ret->type != MONO_TYPE_VOID) {
-		ainfo = &cinfo->ret;
-		if (ainfo->storage == RegTypeStructByAddr) {
-			storage = (gpointer)(gsize)ccontext->gregs [cinfo->ret.reg];
-			interp_cb->frame_arg_set_storage ((MonoInterpFrameHandle)frame, sig, -1, storage);
-		}
-	}
 
 	for (int i = 0; i < sig->param_count + sig->hasthis; i++) {
 		ainfo = &cinfo->args [i];
@@ -1773,7 +1760,15 @@ mono_arch_get_native_call_context_args (CallContext *ccontext, gpointer frame, M
 		interp_cb->data_to_frame_arg ((MonoInterpFrameHandle)frame, sig, i, storage);
 	}
 
+	storage = NULL;
+	if (sig->ret->type != MONO_TYPE_VOID) {
+		ainfo = &cinfo->ret;
+		if (ainfo->storage == RegTypeStructByAddr)
+			storage = (gpointer)(gsize)ccontext->gregs [cinfo->ret.reg];
+	}
+
 	g_free (cinfo);
+	return storage;
 }
 
 /* Gets the return value from ccontext (for i2n exit) */
@@ -5908,6 +5903,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			code = emit_r4_to_int (cfg, code, ins->dreg, ins->sreg1, 2, FALSE);
 			break;
 		case OP_RCONV_TO_I4:
+		case OP_RCONV_TO_I:
 			code = emit_r4_to_int (cfg, code, ins->dreg, ins->sreg1, 4, TRUE);
 			break;
 		case OP_RCONV_TO_U4:
@@ -6983,10 +6979,12 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	if (large_offsets)
 		size += 4 * count; /* The ARM_ADD_REG_IMM to pop the stack */
 
-	if (fail_tramp)
-		code = mono_method_alloc_generic_virtual_trampoline (domain, size);
-	else
-		code = mono_domain_code_reserve (domain, size);
+	if (fail_tramp) {
+		code = mono_method_alloc_generic_virtual_trampoline (mono_domain_ambient_memory_manager (domain), size);
+	} else {
+		MonoMemoryManager *mem_manager = m_class_get_mem_manager (domain, vtable->klass);
+		code = mono_mem_manager_code_reserve (mem_manager, size);
+	}
 	start = code;
 
 	unwind_ops = mono_arch_get_cie_program ();

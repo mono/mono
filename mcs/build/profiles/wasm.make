@@ -30,7 +30,7 @@ PROFILE_MCS_FLAGS = \
 	-nostdlib \
 	$(PLATFORM_DEBUG_FLAGS)
 
-API_BIN_PROFILE = build/monotouch
+API_BIN_PROFILE = build/monowasm
 FRAMEWORK_VERSION = 2.1
 
 # the tuner takes care of the install
@@ -44,4 +44,5 @@ NO_CONSOLE = yes
 NO_MULTIPLE_APPDOMAINS = yes
 NO_THREAD_ABORT = yes
 NO_THREAD_SUSPEND_RESUME = yes
+PROFILE_DISABLE_BTLS = yes
 WASM = yes

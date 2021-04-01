@@ -1,0 +1,5 @@
+System.IO/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.UnknownUnix.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+../../../external/corefx/src/System.Net.WebSockets.Client/src/System/Net/WebSockets/WebSocketHandle.Managed.cs
+../referencesource/System/net/System/Net/NetworkInformation/NetworkInterface.cs

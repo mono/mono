@@ -531,10 +531,12 @@ namespace System.Windows.Forms
 		public new string [] Lines {
 			get {
 				string text = Text;
+				if (!is_empty_mask)
+					text = provider.ToDisplayString ();
 				if (text == null || text == string.Empty)
 					return new string [] {};
 				
-				return Text.Split (new string [] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
+				return text.Split (new string [] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
 			}
 			set {
 				// Do nothing, not supported by MTB.

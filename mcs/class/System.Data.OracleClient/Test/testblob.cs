@@ -9,7 +9,7 @@ class TestBlob
 {
 	static string infilename = @"../../../tools/mono-win32-setup-dark.bmp";
 	static string outfilename = @"mono-win32-setup-dark2.bmp";
-	static string connectionString = "Data Source=testdb;User ID=scott;Password=tiger";
+	static string connectionString = "Data Source=testdb;User ID=scott;Password=PLACEHOLDER";
 	static byte[] bytes1 = null;
 
 	public static void Main (string[] args) 

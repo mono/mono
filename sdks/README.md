@@ -34,23 +34,29 @@ Unless you have a very particular need, the BCL build should be left enabled as 
 
 To build Mono for Android, iOS or WebAssembly, the build scripts can be found in `sdks/builds/`. 
 
+For Android, you need to copy `sdks/Make.config.sample` to `sdks/Make.config` and set
+
+```
+ENABLE_ANDROID = 1
+```
+
 The `make` targets are as follow:
 
 ```bash
 # Android
-mono$ make -C sdks/builds provision-android && make -C sdks/android accept-android-license
-mono$ make -C sdks/builds provision-mxe
-mono$ make -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
+make -C sdks/builds provision-android && make -C sdks/android accept-android-license
+make -C sdks/builds provision-mxe
+make -C sdks/builds archive-android NINJA= IGNORE_PROVISION_ANDROID=1 IGNORE_PROVISION_MXE=1
 
 # iOS
-mono$ make -C sdks/builds archive-ios NINJA=
+make -C sdks/builds archive-ios NINJA=
 
 # WebAssembly
-mono$ make -C sdks/builds provision-wasm
-mono$ make -C sdks/builds archive-wasm  NINJA=
+make -C sdks/builds provision-wasm
+make -C sdks/builds archive-wasm  NINJA=
 
 # Mac
-mono$ make -C sdks/builds archive-mac [upcoming]
+make -C sdks/builds archive-mac [upcoming]
 ```
 
 # WebAssembly

@@ -46,7 +46,7 @@ mono_check_mode_enabled (MonoCheckMode query)
 			gchar **env_split = g_strsplit (env_string, ",", 0);
 			for (gchar **env_component = env_split; *env_component; env_component++)
 			{
-				mono_bool check_all = g_str_equal (*env_component, "all");
+				mono_bool G_GNUC_UNUSED check_all = g_str_equal (*env_component, "all");
 #ifdef ENABLE_CHECKED_BUILD_GC
 				if (check_all || g_str_equal (*env_component, "gc"))
 					env_check_mode |= MONO_CHECK_MODE_GC;
@@ -129,7 +129,7 @@ backtrace_mutex_trylock (void)
 static void
 backtrace_mutex_unlock (void)
 {
-	return mono_os_mutex_unlock (&backtrace_mutex);
+	mono_os_mutex_unlock (&backtrace_mutex);
 }
 
 static CheckState*
@@ -144,14 +144,14 @@ get_state (void)
 	return state;
 }
 
-static inline void
+static void
 ringbuf_unpack (gint32 ringbuf, guint16 *buf_start, guint16 *buf_end)
 {
 	*buf_start = (guint16) (ringbuf >> 16);
 	*buf_end = (guint16) (ringbuf & 0x00FF);
 }
 
-static inline gint32
+static gint32
 ringbuf_pack (guint16 buf_start, guint16 buf_end)
 {
 	return ((((gint32)buf_start) << 16) | ((gint32)buf_end));
@@ -361,14 +361,15 @@ assert_gc_safe_mode (const char *file, int lineno)
 		return;
 
 	MonoThreadInfo *cur = mono_thread_info_current ();
-	int state;
 
 	if (!cur)
 		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but thread is not attached", file, lineno);
 
-	switch (state = mono_thread_info_current_state (cur)) {
+	int state = mono_thread_info_current_state (cur);
+	switch (state) {
 	case STATE_BLOCKING:
 	case STATE_BLOCKING_SELF_SUSPENDED:
+	case STATE_BLOCKING_SUSPEND_REQUESTED:
 		break;
 	default:
 		mono_fatal_with_history ("%s:%d: Expected GC Safe mode but was in %s state", file, lineno, mono_thread_state_name (state));
@@ -382,12 +383,12 @@ assert_gc_unsafe_mode (const char *file, int lineno)
 		return;
 
 	MonoThreadInfo *cur = mono_thread_info_current ();
-	int state;
 
 	if (!cur)
 		mono_fatal_with_history ("%s:%d: Expected GC Unsafe mode but thread is not attached", file, lineno);
 
-	switch (state = mono_thread_info_current_state (cur)) {
+	int state = mono_thread_info_current_state (cur);
+	switch (state) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
 		break;
@@ -403,16 +404,17 @@ assert_gc_neutral_mode (const char *file, int lineno)
 		return;
 
 	MonoThreadInfo *cur = mono_thread_info_current ();
-	int state;
 
 	if (!cur)
 		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but thread is not attached", file, lineno);
 
-	switch (state = mono_thread_info_current_state (cur)) {
+	int state = mono_thread_info_current_state (cur);
+	switch (state) {
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
 	case STATE_BLOCKING:
 	case STATE_BLOCKING_SELF_SUSPENDED:
+	case STATE_BLOCKING_SUSPEND_REQUESTED:
 		break;
 	default:
 		mono_fatal_with_history ("%s:%d: Expected GC Neutral mode but was in %s state", file, lineno, mono_thread_state_name (state));

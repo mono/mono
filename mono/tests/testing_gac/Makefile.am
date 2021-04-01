@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 ### buildtree stuff
 
@@ -25,15 +25,15 @@ TEST_RUNTIME = MONO_PATH=$(CLASS) $(RUNTIME)
 TOOLS_RUNTIME= MONO_PATH=$(mcs_topdir)/class/lib/build $(RUNTIME)
 
 # These tests are testing strict assembly strong-name resolution
-TEST_RUNNER = ../test-runner.exe --runtime $(RUNTIME) --runtime-args "--assembly-loader=strict"
+TEST_RUNNER = ../test-runner.exe --runtime-args "--assembly-loader=strict"
 
 if HOST_WIN32
 if ENABLE_MSVC
-	DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
+DEFAULT_WIN32_RUNTIME=$(shell cygpath -w -a $(top_builddir)/@mono_runtime@ | sed 's/\\/\\\\/g')
 else
-	DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
+DEFAULT_WIN32_RUNTIME=$(top_builddir)/runtime/mono-wrapper)
 endif
-TEST_RUNNER_ARGS=--runtime $(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(DEFAULT_WIN32_RUNTIME))
+TEST_RUNNER_ARGS=--runtime "$(if $(MONO_EXECUTABLE),$(shell cygpath -w -a $(MONO_EXECUTABLE) | sed 's/\\/\\\\/g'),$(DEFAULT_WIN32_RUNTIME))"
 else
 TEST_RUNNER_ARGS=--runtime $(if $(MONO_EXECUTABLE),$(MONO_EXECUTABLE),mono)
 endif
@@ -62,6 +62,7 @@ BASE_MONO_PATH=$(CLASS)
 V1_SRC= v1/gactestlib.cs
 V2_SRC= v2/gactestlib.cs
 APP_V1_SRC = v1/app.cs v1/app-refl-load.cs
+APP_BOTH_SRC = app-both.cs
 
 APP_SIGNED_V1_EXE = app-v1.exe app-refl-load-v1.exe
 
@@ -97,7 +98,7 @@ SIGN= -delaysign -keyfile:$(SIGNING_KEY)
 
 ### autotools stuff
 
-EXTRA_DIST= README $(SIGNING_KEY) $(GACTESTLIB_SRCS) 
+EXTRA_DIST= README $(SIGNING_KEY) $(GACTESTLIB_SRCS) $(APP_V1_SRC) $(APP_BOTH_SRC)
 
 ### Test cases
 

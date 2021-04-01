@@ -86,7 +86,9 @@ namespace System.ServiceModel
             int j;
             for (j = s.Length; j > 0 && IsWhitespace(s[j - 1]); j--);
 
+#if !MONO
             Fx.Assert(j > i, "Logic error in XmlUtil.Trim().");
+#endif
 
             if (i != 0 || j != s.Length)
             {

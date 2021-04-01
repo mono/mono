@@ -22,7 +22,6 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/mono-config.h>
 #include <mono/utils/mono-mmap.h>
-#include <mono/utils/mono-dl.h>
 #include "mini.h"
 #include "mini-runtime.h"
 
@@ -35,6 +34,9 @@
 #  ifndef BUILDVER_INCLUDED
 #    include "buildver-boehm.h"
 #  endif
+#endif
+#ifdef TARGET_OSX
+#include <mach-o/loader.h>
 #endif
 
 //#define TEST_ICALL_SYMBOL_MAP 1
@@ -99,100 +101,6 @@ mono_main_with_options (int argc, char *argv [])
  */
 #define STREAM_INT(x) GUINT32_TO_LE((*(uint32_t*)x))
 #define STREAM_LONG(x) GUINT64_TO_LE((*(uint64_t*)x))
-
-/**
- * Loads a chunk of data from the file pointed to by the
- * @fd starting at the file offset @offset for @size bytes
- * and returns an allocated version of that string, or NULL
- * on error.
- */
-static char *
-load_from_region (int fd, uint64_t offset, uint64_t size)
-{
-	char *buffer;
-	off_t loc;
-	int status;
-	
-	do {
-		loc = lseek (fd, offset, SEEK_SET);
-	} while (loc == -1 && errno == EINTR);
-	if (loc == -1)
-		return NULL;
-	buffer = g_malloc (size + 1);
-	if (buffer == NULL)
-		return NULL;
-	buffer [size] = 0;
-	do {
-		status = read (fd, buffer, size);
-	} while (status == -1 && errno == EINTR);
-	if (status == -1){
-		g_free (buffer);
-		return NULL;
-	}
-	return buffer;
-}
-
-/* Did we initialize the temporary directory for dynamic libraries */
-static int bundle_save_library_initialized;
-
-/* List of bundled libraries we unpacked */
-static GSList *bundle_library_paths;
-
-/* Directory where we unpacked dynamic libraries */
-static char *bundled_dylibrary_directory;
-
-#ifdef HAVE_ATEXIT
-static void
-delete_bundled_libraries (void)
-{
-	GSList *list;
-
-	for (list = bundle_library_paths; list != NULL; list = list->next){
-		unlink ((const char*)list->data);
-	}
-	rmdir (bundled_dylibrary_directory);
-}
-#endif
-
-static void
-bundle_save_library_initialize (void)
-{
-	bundle_save_library_initialized = 1;
-	char *path = g_build_filename (g_get_tmp_dir (), "mono-bundle-XXXXXX", (const char*)NULL);
-	bundled_dylibrary_directory = g_mkdtemp (path);
-	g_free (path);
-	if (bundled_dylibrary_directory == NULL)
-		return;
-#ifdef HAVE_ATEXIT
-	atexit (delete_bundled_libraries);
-#endif
-}
-
-static void
-save_library (int fd, uint64_t offset, uint64_t size, const char *destfname)
-{
-	MonoDl *lib;
-	char *file, *buffer, *err, *internal_path;
-	if (!bundle_save_library_initialized)
-		bundle_save_library_initialize ();
-	
-	file = g_build_filename (bundled_dylibrary_directory, destfname, (const char*)NULL);
-	buffer = load_from_region (fd, offset, size);
-	g_file_set_contents (file, buffer, size, NULL);
-
-	lib = mono_dl_open (file, MONO_DL_LAZY, &err);
-	if (lib == NULL){
-		fprintf (stderr, "Error loading shared library: %s %s\n", file, err);
-		exit (1);
-	}
-	// Register the name with "." as this is how it will be found when embedded
-	internal_path = g_build_filename (".", destfname, (const char*)NULL);
- 	mono_loader_register_module (internal_path, lib);
-	g_free (internal_path);
-	bundle_library_paths = g_slist_append (bundle_library_paths, file);
-	
-	g_free (buffer);
-}
 
 #ifndef HOST_WIN32
 static gboolean
@@ -274,8 +182,68 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 		goto doclose;
 	if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
 		goto doclose;
-	if (memcmp (sigbuffer+sizeof(uint64_t), "xmonkeysloveplay", 16) != 0)
-		goto doclose;
+	// First, see if "xmonkeysloveplay" is at the end of file
+	if (memcmp (sigbuffer + sizeof (uint64_t), "xmonkeysloveplay", 16) == 0)
+		goto found;
+
+#ifdef TARGET_OSX
+	{
+		/*
+		 * If "xmonkeysloveplay" is not at the end of file,
+		 * on Mac OS X, we try a little harder, by actually
+		 * reading the binary's header structure, to see
+		 * if it is located at the end of a LC_SYMTAB section.
+		 *
+		 * This is because Apple code-signing appends a
+		 * LC_CODE_SIGNATURE section to the binary, so
+		 * for a signed binary, "xmonkeysloveplay" is no
+		 * longer at the end of file.
+		 *
+		 * The rest is sanity-checks for the header and section structures.
+		 */
+		struct mach_header_64 bin_header;
+		if ((sigstart = lseek (fd, 0, SEEK_SET)) == -1)
+			goto doclose;
+		// Find and check binary header
+		if (read (fd, &bin_header, sizeof (bin_header)) == -1)
+			goto doclose;
+		if (bin_header.magic != MH_MAGIC_64)
+			goto doclose;
+
+		off_t total = bin_header.sizeofcmds;
+		uint32_t count = bin_header.ncmds;
+		while (total > 0 && count > 0) {
+			struct load_command lc;
+			off_t sig_stored = lseek (fd, 0, SEEK_CUR); // get current offset
+			if (read (fd, &lc, sizeof (lc)) == -1)
+				goto doclose;
+			if (lc.cmd == LC_SYMTAB) {
+				struct symtab_command stc;
+				if ((sigstart = lseek (fd, -sizeof (lc), SEEK_CUR)) == -1)
+					goto doclose;
+				if (read (fd, &stc, sizeof (stc)) == -1)
+					goto doclose;
+
+				// Check the end of the LC_SYMTAB section for "xmonkeysloveplay"
+				if ((sigstart = lseek (fd, -(16 + sizeof (uint64_t)) + stc.stroff + stc.strsize, SEEK_SET)) == -1)
+					goto doclose;
+				if (read (fd, sigbuffer, sizeof (sigbuffer)) == -1)
+					goto doclose;
+				if (memcmp (sigbuffer + sizeof (uint64_t), "xmonkeysloveplay", 16) == 0)
+					goto found;
+			}
+			if ((sigstart = lseek (fd, sig_stored + lc.cmdsize, SEEK_SET)) == -1)
+				goto doclose;
+			total -= sizeof (lc.cmdsize);
+			count--;
+		}
+	}
+#endif
+
+	// did not find "xmonkeysloveplay" at end of file or end of LC_SYMTAB section
+	goto doclose;
+
+found:
 	directory_location = GUINT64_FROM_LE ((*(uint64_t *) &sigbuffer [0]));
 	if (lseek (fd, directory_location, SEEK_SET) == -1)
 		goto doclose;
@@ -327,24 +295,24 @@ probe_embedded (const char *program, int *ref_argc, char **ref_argv [])
 			char *config = kind + strlen ("config:");
 			char *aname = g_strdup (config);
 			aname [strlen(aname)-strlen(".config")] = 0;
-			mono_register_config_for_assembly (aname, load_from_region (fd, offset, item_size));
+			mono_register_config_for_assembly (aname, g_str_from_file_region (fd, offset, item_size));
 		} else if (strncmp (kind, "systemconfig:", strlen ("systemconfig:")) == 0){
-			mono_config_parse_memory (load_from_region (fd, offset, item_size));
+			mono_config_parse_memory (g_str_from_file_region (fd, offset, item_size));
 		} else if (strncmp (kind, "options:", strlen ("options:")) == 0){
-			mono_parse_options_from (load_from_region (fd, offset, item_size), ref_argc, ref_argv);
+			mono_parse_options_from (g_str_from_file_region (fd, offset, item_size), ref_argc, ref_argv);
 		} else if (strncmp (kind, "config_dir:", strlen ("config_dir:")) == 0){
 			char *mono_path_value = g_getenv ("MONO_PATH");
-			mono_set_dirs (mono_path_value, load_from_region (fd, offset, item_size));
+			mono_set_dirs (mono_path_value, g_str_from_file_region (fd, offset, item_size));
 			g_free (mono_path_value);
 		} else if (strncmp (kind, "machineconfig:", strlen ("machineconfig:")) == 0) {
-			mono_register_machine_config (load_from_region (fd, offset, item_size));
+			mono_register_machine_config (g_str_from_file_region (fd, offset, item_size));
 		} else if (strncmp (kind, "env:", strlen ("env:")) == 0){
-			char *data = load_from_region (fd, offset, item_size);
+			char *data = g_str_from_file_region (fd, offset, item_size);
 			uint8_t count = *data++;
 			char *value = data + count + 1;
 			g_setenv (data, value, FALSE);
 		} else if (strncmp (kind, "library:", strlen ("library:")) == 0){
-			save_library (fd, offset, item_size, kind + strlen ("library:"));
+			mono_loader_save_bundled_library (fd, offset, item_size, kind + strlen ("library:"));
 		} else {
 			fprintf (stderr, "Unknown stream on embedded package: %s\n", kind);
 			exit (1);
@@ -384,17 +352,22 @@ ICALL_EXPORT int ves_icall_Interop_Sys_DoubleToString (double, char*, char*, int
 
 #include <shellapi.h>
 
+#ifdef _WINDOWS
+int APIENTRY
+wWinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
+#else
 int
-main (void)
+main (int _argc, char* _argv[])
+#endif
 {
-	TCHAR szFileName[MAX_PATH];
+	gunichar2 *module_file_name;
+	guint32 length;
 	int argc;
 	gunichar2** argvw;
 	gchar** argv;
 	int i;
-	DWORD count;
-	
-	argvw = CommandLineToArgvW (GetCommandLine (), &argc);
+
+	argvw = CommandLineToArgvW (GetCommandLineW (), &argc);
 	argv = g_new0 (gchar*, argc + 1);
 	for (i = 0; i < argc; i++)
 		argv [i] = g_utf16_to_utf8 (argvw [i], -1, NULL, NULL, NULL);
@@ -402,8 +375,9 @@ main (void)
 
 	LocalFree (argvw);
 
-	if ((count = GetModuleFileName (NULL, szFileName, MAX_PATH)) != 0){
-		char *entry = g_utf16_to_utf8 (szFileName, count, NULL, NULL, NULL);
+	if (mono_get_module_filename (NULL, &module_file_name, &length)) {
+		char *entry = g_utf16_to_utf8 (module_file_name, length, NULL, NULL, NULL);
+		g_free (module_file_name);
 		probe_embedded (entry, &argc, &argv);
 	}
 

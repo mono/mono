@@ -36,7 +36,7 @@ using System.Threading;
 
 namespace System.Net.Sockets
 {
-	public class SocketAsyncEventArgs : EventArgs, IDisposable
+	public partial class SocketAsyncEventArgs : EventArgs, IDisposable
 	{
 		bool disposed;
 
@@ -56,29 +56,7 @@ namespace System.Net.Sockets
 			set;
 		}
 
-		public byte[] Buffer {
-			get;
-			private set;
-		}
-
-		public Memory<byte> MemoryBuffer => Buffer;
-
-		IList<ArraySegment<byte>> m_BufferList;
-		public IList<ArraySegment<byte>> BufferList {
-			get { return m_BufferList; }
-			set {
-				if (Buffer != null && value != null)
-					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
-				m_BufferList = value;
-			}
-		}
-
 		public int BytesTransferred {
-			get;
-			private set;
-		}
-
-		public int Count {
 			get;
 			private set;
 		}
@@ -89,11 +67,6 @@ namespace System.Net.Sockets
 		}
 
 		public SocketAsyncOperation LastOperation {
-			get;
-			private set;
-		}
-
-		public int Offset {
 			get;
 			private set;
 		}
@@ -155,6 +128,10 @@ namespace System.Net.Sockets
 		public SocketAsyncEventArgs ()
 		{
 			SendPacketsSendSize = -1;
+		}
+
+		internal SocketAsyncEventArgs (bool flowExecutionContext)
+		{
 		}
 
 		~SocketAsyncEventArgs ()
@@ -219,43 +196,6 @@ namespace System.Net.Sockets
 			EventHandler<SocketAsyncEventArgs> handler = e.Completed;
 			if (handler != null)
 				handler (e.current_socket, e);
-		}
-
-		internal void CopyBufferFrom (SocketAsyncEventArgs source)
-		{
-			Buffer = source.Buffer;
-			Offset = source.Offset;
-			Count = source.Count;
-		}
-
-		public void SetBuffer (int offset, int count)
-		{
-			SetBuffer (Buffer, offset, count);
-		}
-
-		public void SetBuffer (byte[] buffer, int offset, int count)
-		{
-			if (buffer != null) {
-				if (BufferList != null)
-					throw new ArgumentException ("Buffer and BufferList properties cannot both be non-null.");
-				
-				int buflen = buffer.Length;
-				if (offset < 0 || (offset != 0 && offset >= buflen))
-					throw new ArgumentOutOfRangeException ("offset");
-
-				if (count < 0 || count > buflen - offset)
-					throw new ArgumentOutOfRangeException ("count");
-
-				Count = count;
-				Offset = offset;
-			}
-
-			Buffer = buffer;
-		}
-
-		public void SetBuffer(Memory<byte> buffer)
-		{
-			SetBuffer(buffer.ToArray(), 0, buffer.Length);
 		}
 
 		internal void StartOperationCommon (Socket socket)

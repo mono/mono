@@ -1,4 +1,6 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
+
+if !ENABLE_MSVC_ONLY
 
 AM_CPPFLAGS = $(GLIB_CFLAGS) -I$(top_srcdir)
 
@@ -35,7 +37,12 @@ noinst_LIBRARIES += libmonodismain.a
 endif
 endif
 
+endif # !ENABLE_MSVC_ONLY
+
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@)
+
+if !ENABLE_MSVC_ONLY
+
 libmonodis_a_CFLAGS = $(CFLAGS) @CXX_ADD_CFLAGS@
 libmonodismain_a_CFLAGS = $(CFLAGS) @CXX_ADD_CFLAGS@
 
@@ -57,13 +64,15 @@ libmonodismain_a_SOURCES =	\
 
 monodis_SOURCES =
 
+BUNDLE_ZLIB_PATH=$(top_builddir)/mono/zlib/libz.la
+
 if HAVE_SYS_ZLIB
 Z_LIBS= -lz
 else
 if HAVE_STATIC_ZLIB
 Z_LIBS=$(STATIC_ZLIB_PATH)
 else
-Z_LIBS=
+Z_LIBS=$(BUNDLE_ZLIB_PATH)
 endif
 endif
 
@@ -85,3 +94,25 @@ endif
 man_MANS = monodis.1
 
 EXTRA_DIST = $(man_MANS)
+
+endif # !ENABLE_MSVC_ONLY
+
+if ENABLE_MSVC_ONLY
+
+if SUPPORT_SGEN
+mono_bin_suffix = sgen
+else
+mono_bin_suffix =
+endif
+
+all-local:
+
+	make -C $(top_srcdir)/msvc monodis
+	cp -f $(mono_msvc_build_bin_dir)/monodis-$(mono_bin_suffix)$(EXEEXT) ./monodis$(EXEEXT)
+
+clean-local:
+
+	make -C $(top_srcdir)/msvc clean-monodis
+	rm ./monodis$(EXEEXT)
+
+endif # ENABLE_MSVC_ONLY

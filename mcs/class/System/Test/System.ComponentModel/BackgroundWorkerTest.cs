@@ -81,6 +81,9 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+#if WASM
+		[NUnit.Framework.CategoryAttribute ("MultiThreaded")]
+#endif
 		public void CancelBackgroundWorker ()
 		{
 			BackgroundWorker bw = new BackgroundWorker ();
@@ -117,6 +120,9 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+#if WASM
+		[NUnit.Framework.CategoryAttribute ("MultiThreaded")]
+#endif
 		public void ExceptionBackgroundWorker ()
 		{
 			BackgroundWorker bw = new BackgroundWorker ();
@@ -154,6 +160,9 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+#if WASM
+		[NUnit.Framework.CategoryAttribute ("MultiThreaded")]
+#endif
 		public void CompleteBackgroundWorker ()
 		{
 			BackgroundWorker bw = new BackgroundWorker ();

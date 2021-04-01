@@ -1,7 +1,6 @@
 /*
  * Licensed to the .NET Foundation under one or more agreements.
  * The .NET Foundation licenses this file to you under the MIT license.
- * See the LICENSE file in the project root for more information.
  */
 
 #ifndef __MONO_PROFILER_PRIVATE_H__
@@ -98,11 +97,13 @@ typedef struct {
 extern MonoProfilerState mono_profiler_state;
 
 typedef struct {
+	guchar *cil_code;
+	guint32 count;
+} MonoProfilerCoverageInfoEntry;
+
+typedef struct {
 	guint32 entries;
-	struct {
-		guchar *cil_code;
-		guint32 count;
-	} data [1];
+	MonoProfilerCoverageInfoEntry data [MONO_ZERO_LEN_ARRAY];
 } MonoProfilerCoverageInfo;
 
 void mono_profiler_started (void);
@@ -158,7 +159,7 @@ mono_profiler_clauses_enabled (void)
 }
 
 #define _MONO_PROFILER_EVENT(name, ...) \
-	ICALL_DECL_EXPORT void mono_profiler_raise_ ## name (__VA_ARGS__);
+	ICALL_EXPORT void mono_profiler_raise_ ## name (__VA_ARGS__);
 #define MONO_PROFILER_EVENT_0(name, type) \
 	_MONO_PROFILER_EVENT(name, void)
 #define MONO_PROFILER_EVENT_1(name, type, arg1_type, arg1_name) \

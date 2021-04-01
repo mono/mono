@@ -86,8 +86,8 @@ namespace Mono.Security {
 			Buffer.BlockCopy (data, (2 + nLenLength), m_aValue, 0, nLength);
 
 			if ((m_nTag & 0x20) == 0x20) {
-				int nStart = (2 + nLenLength);
-				Decode (data, ref nStart, data.Length);
+				int nStart = 0;
+				Decode (m_aValue, ref nStart, m_aValue.Length);
 			}
 		}
 
@@ -312,7 +312,7 @@ namespace Mono.Security {
 		public override string ToString()
 		{
 			StringBuilder hexLine = new StringBuilder ();
-            
+
 			// Add tag
 			hexLine.AppendFormat ("Tag: {0} {1}", m_nTag.ToString ("X2"), Environment.NewLine);
 

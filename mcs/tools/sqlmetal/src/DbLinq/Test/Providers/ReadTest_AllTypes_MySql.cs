@@ -22,7 +22,7 @@ namespace Test_NUnit_MySql
         public AllTypes CreateDB()
         {
             string DbServer = Environment.GetEnvironmentVariable("DbLinqServer") ?? "localhost";
-            string connStr = string.Format("server={0};user id=LinqUser; password=linq2; database=AllTypes", DbServer);
+            string connStr = string.Format("server={0};user id=LinqUser; password=PLACEHOLDER; database=AllTypes", DbServer);
 
             //return CreateDB(System.Data.ConnectionState.Closed);
             AllTypes db = new AllTypes(new MySql.Data.MySqlClient.MySqlConnection(connStr));

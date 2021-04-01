@@ -41,7 +41,7 @@ namespace System.Data.Query.PlanCompiler
         /// Whether any rule was applied that may have caused modifications such that projection pruning 
         /// may be useful
         /// </summary>
-        internal bool ProjectionPrunningRequired { get { return this.m_projectionPrunningRequired; } }
+        internal bool ProjectionPruningRequired { get { return this.m_projectionPruningRequired; } }
 
         /// <summary>
         /// Whether any rule was applied that may have caused modifications such that reapplying
@@ -50,7 +50,7 @@ namespace System.Data.Query.PlanCompiler
         internal bool ReapplyNullabilityRules { get { return this.m_reapplyNullabilityRules; } }
 
         /// <summary>
-        /// Remap the given subree using the current remapper
+        /// Remap the given subtree using the current remapper
         /// </summary>
         /// <param name="subTree"></param>
         internal void RemapSubtree(Node subTree)
@@ -285,7 +285,7 @@ namespace System.Data.Query.PlanCompiler
         /// </summary>
         /// <param name="varDefListNode">The varDefListOp subtree</param>
         /// <param name="varRefMap">ref counts for each referenced var</param>
-        /// <returns>mapping from Var->replacement xpressions</returns>
+        /// <returns>mapping from Var->replacement expressions</returns>
         internal Dictionary<Var, Node> GetVarMap(Node varDefListNode, Dictionary<Var, int> varRefMap)
         {
             VarDefListOp varDefListOp = (VarDefListOp)varDefListNode.Op;
@@ -413,7 +413,7 @@ namespace System.Data.Query.PlanCompiler
         private readonly VarRemapper m_remapper;
         private readonly Dictionary<Node, Node> m_suppressions;
         private readonly VarVec m_remappedVars;
-        private bool m_projectionPrunningRequired = false;
+        private bool m_projectionPruningRequired = false;
         private bool m_reapplyNullabilityRules = false;
         private Stack<Node> m_relOpAncestors = new Stack<Node>();
 #if DEBUG
@@ -488,7 +488,7 @@ namespace System.Data.Query.PlanCompiler
         /// Callback function to invoke *after* rules are applied
         /// Recomputes the node info, if this node has changed
         /// If the rule is among the rules after which projection pruning may be beneficial, 
-        /// m_projectionPrunningRequired is set to true.
+        /// m_projectionPruningRequired is set to true.
         /// If the rule is among the rules after which reapplying the nullability rules may be beneficial,
         /// m_reapplyNullabilityRules is set to true.
         /// </summary>
@@ -502,9 +502,9 @@ namespace System.Data.Query.PlanCompiler
                 appliedRules.Append(rule.MethodName);
                 appliedRules.AppendLine();
 #endif
-                if (!this.m_projectionPrunningRequired && TransformationRules.RulesRequiringProjectionPruning.Contains(rule))
+                if (!this.m_projectionPruningRequired && TransformationRules.RulesRequiringProjectionPruning.Contains(rule))
                 {
-                    this.m_projectionPrunningRequired = true;
+                    this.m_projectionPruningRequired = true;
                 }
                 if (!this.m_reapplyNullabilityRules && TransformationRules.RulesRequiringNullabilityRulesToBeReapplied.Contains(rule))
                 {
@@ -609,7 +609,7 @@ namespace System.Data.Query.PlanCompiler
 
         /// <summary>
         /// A lookup table built only from rules that rely on nullability of vars and other rules 
-        /// that may be able to perform simplificatios if these have been applied.
+        /// that may be able to perform simplification if these have been applied.
         /// The lookup table is an array indexed by OpType and each entry has a list of rules.
         /// </summary>
         internal static readonly ReadOnlyCollection<ReadOnlyCollection<InternalTrees.Rule>> NullabilityRulesTable = BuildLookupTableForRules(NullabilityRules);
@@ -778,14 +778,14 @@ namespace System.Data.Query.PlanCompiler
            
             // If any rule has been applied after which reapplying nullability rules may be useful,
             // reapply nullability rules.
-            bool projectionPrunningRequired;
-            if (Process(compilerState, rulesTable, out projectionPrunningRequired))
+            bool projectionPruningRequired;
+            if (Process(compilerState, rulesTable, out projectionPruningRequired))
             {
-                bool projectionPrunningRequired2;
-                Process(compilerState, NullabilityRulesTable, out projectionPrunningRequired2);
-                projectionPrunningRequired = projectionPrunningRequired || projectionPrunningRequired2;
+                bool projectionPruningRequired2;
+                Process(compilerState, NullabilityRulesTable, out projectionPruningRequired2);
+                projectionPruningRequired = projectionPruningRequired || projectionPruningRequired2;
             }
-            return projectionPrunningRequired;
+            return projectionPruningRequired;
         }
 
         /// <summary>
@@ -800,7 +800,7 @@ namespace System.Data.Query.PlanCompiler
             RuleProcessor ruleProcessor = new RuleProcessor();
             TransformationRulesContext context = new TransformationRulesContext(compilerState);
             compilerState.Command.Root = ruleProcessor.ApplyRulesToSubtree(context, rulesTable, compilerState.Command.Root);
-            projectionPruningRequired = context.ProjectionPrunningRequired;
+            projectionPruningRequired = context.ProjectionPruningRequired;
             return context.ReapplyNullabilityRules;
         }
     }
@@ -1017,7 +1017,7 @@ namespace System.Data.Query.PlanCompiler
         ///     WHEN W1 THEN T1 
         ///     WHEN W2 THEN T2 ... 
         ///     ELSE (CASE 
-        ///             WHEN WN1 THEN TN1, … 
+        ///             WHEN WN1 THEN TN1,
         ///             ELSE E) 
         ///             
         /// Is transformed into 
@@ -1096,7 +1096,7 @@ namespace System.Data.Query.PlanCompiler
 
             // Make sure that the terminal character of the pattern is a '%' character. Also
             // ensure that this character does not occur anywhere else. And finally, ensure
-            // that the pattern is atmost one character longer than the string itself
+            // that the pattern is at most one character longer than the string itself
             int wildCardIndex = pattern.IndexOf('%');
             if ((wildCardIndex == -1) ||
                 (wildCardIndex != pattern.Length - 1) ||
@@ -2189,7 +2189,7 @@ namespace System.Data.Query.PlanCompiler
             NodeInfo nodeInfo = context.Command.GetNodeInfo(n);
 
             // We cannot eliminate this node because it can break other rules, 
-            // e.g. ProcessApplyOverAnything which relies on existance of external refs to substitute
+            // e.g. ProcessApplyOverAnything which relies on existence of external refs to substitute
             // CrossApply(x, y) => CrossJoin(x, y). See SQLBU #481719.
             if (!nodeInfo.ExternalReferences.IsEmpty)
             {
@@ -2283,7 +2283,7 @@ namespace System.Data.Query.PlanCompiler
 
             // Note: Even if we don't have any local var definitions left, we should not remove
             // this project yet because: 
-            //  (1) this project node may be prunning out some outputs;
+            //  (1) this project node may be pruning out some outputs;
             //  (2) the rule Rule_ProjectWithNoLocalDefs, would do that later anyway.
 
             // Create a new vardeflist node, and set that as Child1 for the projectOp
@@ -2634,7 +2634,7 @@ namespace System.Data.Query.PlanCompiler
         /// <param name="context">RuleProcessing context</param>
         /// <param name="applyNode">The ApplyOp subtree</param>
         /// <param name="newNode">transformed subtree</param>
-        /// <returns>Transfomation status</returns>
+        /// <returns>Transformation status</returns>
         static bool ProcessCrossApplyOverProject(RuleProcessingContext context, Node applyNode, out Node newNode)
         {
             newNode = applyNode;
@@ -2699,7 +2699,7 @@ namespace System.Data.Query.PlanCompiler
         /// <param name="context">RuleProcessing context</param>
         /// <param name="applyNode">The ApplyOp subtree</param>
         /// <param name="newNode">transformed subtree</param>
-        /// <returns>Transfomation status</returns>
+        /// <returns>Transformation status</returns>
         static bool ProcessOuterApplyOverProject(RuleProcessingContext context, Node applyNode, out Node newNode)
         {
             newNode = applyNode;
@@ -2737,7 +2737,7 @@ namespace System.Data.Query.PlanCompiler
             //
 
             // Dev10 #480443: If any of the definitions changes we need to recompute the node info.
-            bool anyVarDefChagned = false;
+            bool anyVarDefChanged = false;
             foreach (Node varDefNode in varDefListNode.Children)
             {
                 PlanCompiler.Assert(varDefNode.Op.OpType == OpType.VarDef, "Expected VarDefOp. Found " + varDefNode.Op.OpType + " instead");
@@ -2772,12 +2772,12 @@ namespace System.Data.Query.PlanCompiler
                     }
                     varDefNode.Child0 = currentDefinition;
                     command.RecomputeNodeInfo(varDefNode);
-                    anyVarDefChagned = true;
+                    anyVarDefChanged = true;
                 }
             }
 
             // Recompute node info if needed
-            if (anyVarDefChagned)
+            if (anyVarDefChanged)
             {
                 command.RecomputeNodeInfo(varDefListNode);
             }
@@ -3002,7 +3002,7 @@ namespace System.Data.Query.PlanCompiler
         }
 
         /// <summary>
-        /// A visitor that calculates the number of output columns for a subree 
+        /// A visitor that calculates the number of output columns for a subtree 
         /// with a given root
         /// </summary>
         internal class OutputCountVisitor : BasicOpVisitorOfT<int>
@@ -3015,7 +3015,7 @@ namespace System.Data.Query.PlanCompiler
 
             #region Public Methods
             /// <summary>
-            /// Calculates the number of output columns for the subree 
+            /// Calculates the number of output columns for the subtree 
             /// rooted at the given node
             /// </summary>
             /// <param name="node"></param>
@@ -3178,7 +3178,7 @@ namespace System.Data.Query.PlanCompiler
 
             /// <summary>
             /// Public entry point.
-            /// Remaps the subree rooted at the given tree
+            /// Remaps the subtree rooted at the given tree
             /// </summary>
             /// <param name="root"></param>
             /// <param name="command"></param>
@@ -3964,7 +3964,7 @@ namespace System.Data.Query.PlanCompiler
         /// of agg1, agg2, .. aggm, such that the references to c1, ... ck are 
         /// replaced by their definitions.
         /// 
-        /// We only do this if each c1, ..ck is refereneced (in aggregates) at most once or it is a constant. 
+        /// We only do this if each c1, ..ck is referenced (in aggregates) at most once or it is a constant. 
         /// </summary>
         /// <param name="context">Rule processing context</param>
         /// <param name="projectNode">Current ProjectOp node</param>
@@ -4038,7 +4038,7 @@ namespace System.Data.Query.PlanCompiler
         }
 
         /// <summary>
-        /// Replaces each occurance of the given vars with their definitions.
+        /// Replaces each occurrence of the given vars with their definitions.
         /// </summary>
         internal class VarRefReplacer : BasicOpVisitorOfNode
         {
@@ -4053,7 +4053,7 @@ namespace System.Data.Query.PlanCompiler
 
             /// <summary>
             /// "Public" entry point. In the subtree rooted at the given root, 
-            /// replace each occurance of the given vars with their definitions, 
+            /// replace each occurrence of the given vars with their definitions, 
             /// where each key-value pair in the dictionary is a var-definition pair.
             /// </summary>
             /// <param name="varReplacementTable"></param>
@@ -4110,7 +4110,7 @@ namespace System.Data.Query.PlanCompiler
 
             /// <summary>
             /// Public entry point. Returns true if at least one of the given vars occurs more than 
-            /// once in the subree rooted at the given root.
+            /// once in the subtree rooted at the given root.
             /// </summary>
             /// <param name="varVec"></param>
             /// <param name="root"></param>
@@ -4376,7 +4376,7 @@ namespace System.Data.Query.PlanCompiler
         #region ConstrainedSortOpOverEmptySet
         internal static readonly SimpleRule Rule_ConstrainedSortOpOverEmptySet = new SimpleRule(OpType.ConstrainedSort, ProcessConstrainedSortOpOverEmptySet);
         /// <summary>
-        /// If the ConstrainedSortOp's input is guaranteed to produce no rows, remove the ConstrainedSortOp completly:
+        /// If the ConstrainedSortOp's input is guaranteed to produce no rows, remove the ConstrainedSortOp completely:
         ///    CSort(EmptySet) => EmptySet
         /// </summary>
         /// <param name="context">Rule processing context</param>
@@ -4387,7 +4387,7 @@ namespace System.Data.Query.PlanCompiler
         {
             ExtendedNodeInfo nodeInfo = ((TransformationRulesContext)context).Command.GetExtendedNodeInfo(n.Child0);
 
-            //If the input has no rows, remove the ConstraintSortOp node completly
+            //If the input has no rows, remove the ConstraintSortOp node completely
             if (nodeInfo.MaxRows == RowCount.Zero)
             {
                 newNode = n.Child0;

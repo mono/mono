@@ -7,7 +7,7 @@ namespace System.Net {
             public const string UploadFile =    "STOR";        // uploads a file
             public const string DeleteFile =    "DELE";         // deletes a file
             public const string AppendFile =    "APPE";      // append a file
-            public const string GetFileSize =   "SIZE";        // determines if a file is in existance
+            public const string GetFileSize =   "SIZE";        // determines if a file is in existence
             public const string UploadFileWithUniqueName = "STOU";
             public const string MakeDirectory = "MKD";
             public const string RemoveDirectory = "RMD";

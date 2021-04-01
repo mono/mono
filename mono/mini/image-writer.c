@@ -78,10 +78,14 @@
 #define AS_POINTER_DIRECTIVE ".quad"
 #elif defined(TARGET_ARM64)
 
+#ifdef MONO_ARCH_ILP32
+#define AS_POINTER_DIRECTIVE AS_INT32_DIRECTIVE
+#else
 #ifdef TARGET_ASM_APPLE
 #define AS_POINTER_DIRECTIVE ".quad"
 #else
 #define AS_POINTER_DIRECTIVE ".xword"
+#endif
 #endif
 
 #else
@@ -163,7 +167,7 @@ struct _MonoImageWriter {
 };
 
 static G_GNUC_UNUSED int
-ilog2(register int value)
+ilog2(int value)
 {
 	int count = -1;
 	while (value & ~0xf) count += 4, value >>= 4;
@@ -406,11 +410,14 @@ create_reloc (MonoImageWriter *acfg, const char *end, const char* start, int off
 	BinReloc *reloc;
 	reloc = (BinReloc *)mono_mempool_alloc0 (acfg->mempool, sizeof (BinReloc));
 	reloc->val1 = mono_mempool_strdup (acfg->mempool, end);
-	if (strcmp (start, ".") == 0) {
-		reloc->val2_section = acfg->cur_section;
-		reloc->val2_offset = acfg->cur_section->cur_offset;
-	} else {
-		reloc->val2 = mono_mempool_strdup (acfg->mempool, start);
+	if (start)
+	{
+		if (strcmp (start, ".") == 0) {
+			reloc->val2_section = acfg->cur_section;
+			reloc->val2_offset = acfg->cur_section->cur_offset;
+		} else {
+			reloc->val2 = mono_mempool_strdup (acfg->mempool, start);
+		}
 	}
 	reloc->offset = offset;
 	reloc->section = acfg->cur_section;
@@ -418,6 +425,13 @@ create_reloc (MonoImageWriter *acfg, const char *end, const char* start, int off
 	reloc->next = acfg->relocations;
 	acfg->relocations = reloc;
 	return reloc;
+}
+
+static void
+bin_writer_emit_symbol (MonoImageWriter *acfg, const char *symbol)
+{
+	create_reloc (acfg, symbol, NULL, 0);
+	acfg->cur_section->cur_offset += 4;
 }
 
 static void
@@ -1696,7 +1710,7 @@ asm_writer_emit_section_change (MonoImageWriter *acfg, const char *section_name,
 #endif
 }
 
-static inline
+static
 const char *get_label (const char *s)
 {
 #ifdef TARGET_ASM_APPLE
@@ -1862,7 +1876,7 @@ static void
 asm_writer_emit_pointer (MonoImageWriter *acfg, const char *target)
 {
 	asm_writer_emit_unset_mode (acfg);
-	asm_writer_emit_alignment (acfg, sizeof (target_mgreg_t));
+	asm_writer_emit_alignment (acfg, TARGET_SIZEOF_VOID_P);
 	asm_writer_emit_pointer_unaligned (acfg, target);
 }
 
@@ -1892,7 +1906,7 @@ asm_writer_emit_bytes (MonoImageWriter *acfg, const guint8* buf, int size)
 	}
 }
 
-static inline void
+static void
 asm_writer_emit_int16 (MonoImageWriter *acfg, int value)
 {
 	if (acfg->mode != EMIT_WORD) {
@@ -1906,7 +1920,7 @@ asm_writer_emit_int16 (MonoImageWriter *acfg, int value)
 	fprintf (acfg->fp, "%d", value);
 }
 
-static inline void
+static void
 asm_writer_emit_int32 (MonoImageWriter *acfg, int value)
 {
 	if (acfg->mode != EMIT_LONG) {
@@ -1918,6 +1932,23 @@ asm_writer_emit_int32 (MonoImageWriter *acfg, int value)
 	else
 		fprintf (acfg->fp, ",");
 	fprintf (acfg->fp, "%d", value);
+}
+
+static void
+asm_writer_emit_symbol (MonoImageWriter *acfg, const char *symbol)
+{
+	if (acfg->mode != EMIT_LONG) {
+		acfg->mode = EMIT_LONG;
+		acfg->col_count = 0;
+	}
+
+	symbol = get_label (symbol);
+
+	if ((acfg->col_count++ % 8) == 0)
+		fprintf (acfg->fp, "\n\t%s ", AS_INT32_DIRECTIVE);
+	else
+		fprintf (acfg->fp, ",");
+	fprintf (acfg->fp, "%s", symbol);
 }
 
 static void
@@ -2206,6 +2237,19 @@ mono_img_writer_emit_int32 (MonoImageWriter *acfg, int value)
 		asm_writer_emit_int32 (acfg, value);
 #else
 	asm_writer_emit_int32 (acfg, value);
+#endif
+}
+
+void
+mono_img_writer_emit_symbol (MonoImageWriter *acfg, const char *symbol)
+{
+#ifdef USE_BIN_WRITER
+	if (acfg->use_bin_writer)
+		bin_writer_emit_symbol (acfg, symbol);
+	else
+		asm_writer_emit_symbol (acfg, symbol);
+#else
+	asm_writer_emit_symbol (acfg, symbol);
 #endif
 }
 

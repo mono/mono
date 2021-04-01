@@ -8,6 +8,7 @@
 
 #define MONO_MAX_IREGS 1
 #define MONO_MAX_FREGS 1
+#define MONO_MAX_XREGS 1
 
 #define WASM_REG_0 0
 
@@ -23,6 +24,7 @@
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 #define MONO_ARCH_NEED_DIV_CHECK 1
+#define MONO_ARCH_NO_CODEMAN 1
 
 #define MONO_ARCH_EMULATE_FREM 1
 #define MONO_ARCH_EMULATE_FCONV_TO_U8 1
@@ -34,13 +36,13 @@
 //mini-codegen stubs - this doesn't do anything
 #define MONO_ARCH_CALLEE_REGS (1 << 0)
 #define MONO_ARCH_CALLEE_FREGS (1 << 1)
-#define MONO_ARCH_CALLEE_SAVED_FREGS (1 << 2)
-#define MONO_ARCH_CALLEE_SAVED_REGS (1 << 3)
+#define MONO_ARCH_CALLEE_XREGS (1 << 2)
+#define MONO_ARCH_CALLEE_SAVED_FREGS (1 << 3)
+#define MONO_ARCH_CALLEE_SAVED_REGS (1 << 4)
 #define MONO_ARCH_INST_FIXED_REG(desc) FALSE
 #define MONO_ARCH_INST_IS_REGPAIR(desc) FALSE
 #define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (-1)
 #define MONO_ARCH_INST_SREG2_MASK(ins) 0
-
 
 struct MonoLMF {
 	/* 
@@ -50,15 +52,14 @@ struct MonoLMF {
 	gpointer previous_lmf;
 	gpointer lmf_addr;
 
-	/* This is set to signal this is the top lmf entry */
-	gboolean top_entry;
+	MonoMethod *method;
 };
 
 typedef struct {
 	gpointer cinfo;
 } MonoCompileArch;
 
-#define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf) do { (lmf)->top_entry = TRUE; } while (0)
+#define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf) do { } while (0)
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->llvm_exc_reg = (gsize)exc; } while (0)
 
@@ -88,19 +89,9 @@ typedef struct {
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
 
-#define MONO_ARCH_EMULATE_FREM 1
-#define MONO_ARCH_FLOAT32_SUPPORTED 1
-
-//mini-codegen stubs - this doesn't do anything
-#define MONO_ARCH_CALLEE_REGS (1 << 0)
-#define MONO_ARCH_CALLEE_FREGS (1 << 1)
-#define MONO_ARCH_CALLEE_SAVED_FREGS (1 << 2)
-#define MONO_ARCH_CALLEE_SAVED_REGS (1 << 3)
-#define MONO_ARCH_INST_FIXED_REG(desc) FALSE
-#define MONO_ARCH_INST_IS_REGPAIR(desc) FALSE
-#define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (-1)
-#define MONO_ARCH_INST_SREG2_MASK(ins) 0
-
+#ifdef ENABLE_NETCORE
+#define MONO_ARCH_SIMD_INTRINSICS 1
+#endif
 
 #define MONO_ARCH_INTERPRETER_SUPPORTED 1
 #define MONO_ARCH_HAS_REGISTER_ICALL 1
@@ -112,12 +103,15 @@ typedef struct {
 void mono_wasm_debugger_init (void);
 
 // sdks/wasm/driver.c is C and uses this
-G_EXTERN_C void mono_wasm_enable_debugging (void);
+G_EXTERN_C void mono_wasm_enable_debugging (int log_level);
 
 void mono_wasm_breakpoint_hit (void);
 void mono_wasm_set_timeout (int timeout, int id);
 
 void mono_wasm_single_step_hit (void);
 void mono_wasm_breakpoint_hit (void);
+void mono_wasm_user_break (void);
+
+int mono_wasm_assembly_already_added (const char *assembly_name);
 
 #endif /* __MONO_MINI_WASM_H__ */  

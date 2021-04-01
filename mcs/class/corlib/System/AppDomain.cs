@@ -758,7 +758,7 @@ namespace System {
 				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			string cb = assemblyRef.CodeBase;
-			if (cb.ToLower (CultureInfo.InvariantCulture).StartsWith ("file://"))
+			if (cb.StartsWith ("file://", StringComparison.OrdinalIgnoreCase))
 				cb = new Mono.Security.Uri (cb).LocalPath;
 
 			try {
@@ -1000,11 +1000,17 @@ namespace System {
 		}
 
 #if MONO_FEATURE_MULTIPLE_APPDOMAINS
+#if MONODROID
+		[Obsolete ("AppDomain.CreateDomain will no longer be supported in .NET 5 and later.  Consider AssemblyLoadContext when it becomes available https://docs.microsoft.com/en-us/dotnet/core/dependency-loading/understanding-assemblyloadcontext")]
+#endif
 		public static AppDomain CreateDomain (string friendlyName)
 		{
 			return CreateDomain (friendlyName, null, null);
 		}
-		
+
+#if MONODROID
+		[Obsolete ("AppDomain.CreateDomain will no longer be supported in .NET 5 and later.  Consider AssemblyLoadContext when it becomes available https://docs.microsoft.com/en-us/dotnet/core/dependency-loading/understanding-assemblyloadcontext")]
+#endif
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo)
 		{
 			return CreateDomain (friendlyName, securityInfo, null);
@@ -1015,6 +1021,9 @@ namespace System {
 
 		[MonoLimitationAttribute ("Currently it does not allow the setup in the other domain")]
 		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
+#if MONODROID
+		[Obsolete ("AppDomain.CreateDomain will no longer be supported in .NET 5 and later.  Consider AssemblyLoadContext when it becomes available https://docs.microsoft.com/en-us/dotnet/core/dependency-loading/understanding-assemblyloadcontext")]
+#endif
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
 		{
 			if (friendlyName == null)

@@ -12,6 +12,7 @@
  */
 
 #include <config.h>
+#include <gmodule.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/assembly-internals.h>
 #include <mono/metadata/class-internals.h>
@@ -48,12 +49,10 @@
 #include <mono/utils/mono-error-internals.h>
 #include <mono/utils/mono-publib.h>
 #include <mono/utils/os-event.h>
+#include <mono/utils/w32subset.h>
 #include "log.h"
 #include "helper.h"
 
-#ifdef HAVE_DLFCN_H
-#include <dlfcn.h>
-#endif
 #include <fcntl.h>
 #ifdef HAVE_LINK_H
 #include <link.h>
@@ -312,7 +311,9 @@ struct _MonoProfiler {
 	LARGE_INTEGER pcounter_freq;
 #endif
 
+#if HAVE_API_SUPPORT_WIN32_PIPE_OPEN_CLOSE && !defined (HOST_WIN32)
 	int pipe_output;
+#endif
 	int command_port;
 	int server_socket;
 
@@ -651,11 +652,21 @@ buffer_lock (void)
 		 */
 		MonoThreadInfo *info = mono_thread_info_current_unchecked ();
 		if (info) {
+			/* Why do we enter Unsafe and then Safe?  Because we
+			 * might be called from a native-to-managed wrapper
+			 * from a P/Invoke.  In that case the thread is already
+			 * in GC Safe, and the state machine doesn't allow
+			 * recursive GC Safe transitions.  (On the other hand
+			 * it's ok to enter GC Unsafe multiple times - the
+			 * state machine will tell us it's a noop.).
+			 */
+			MONO_ENTER_GC_UNSAFE_WITH_INFO (info);
 			MONO_ENTER_GC_SAFE_WITH_INFO (info);
 
 			buffer_lock_helper ();
 
 			MONO_EXIT_GC_SAFE_WITH_INFO;
+			MONO_EXIT_GC_UNSAFE_WITH_INFO;
 		} else
 			buffer_lock_helper ();
 	}
@@ -2422,7 +2433,7 @@ add_code_pointer (uintptr_t ip)
 }
 
 static void
-dump_usym (const char *name, uintptr_t value, uintptr_t size)
+dump_usym (char *name, uintptr_t value, uintptr_t size)
 {
 	int len = strlen (name) + 1;
 
@@ -2442,42 +2453,34 @@ dump_usym (const char *name, uintptr_t value, uintptr_t size)
 	EXIT_LOG;
 }
 
-static const char*
-symbol_for (uintptr_t code)
+static gboolean
+symbol_for (uintptr_t code, char *sname, size_t slen)
 {
-#ifdef HAVE_DLADDR
-	Dl_info di;
-
-	if (dladdr ((void *) code, &di))
-		if (di.dli_sname)
-			return di.dli_sname;
-#endif
-
-	return NULL;
+	return g_module_address ((void *) code, NULL, 0, NULL, sname, slen, NULL);
 }
 
 static void
 dump_unmanaged_coderefs (void)
 {
 	int i;
-	const char* last_symbol;
+	char last_symbol [256];
 	uintptr_t addr, page_end;
 
 	for (i = 0; i < size_code_pages; ++i) {
-		const char* sym;
+		char sym [256];
 		if (!code_pages [i] || code_pages [i] & 1)
 			continue;
-		last_symbol = NULL;
+		last_symbol [0] = '\0';
 		addr = CPAGE_ADDR (code_pages [i]);
 		page_end = addr + CPAGE_SIZE;
 		code_pages [i] |= 1;
 		/* we dump the symbols for the whole page */
 		for (; addr < page_end; addr += 16) {
-			sym = symbol_for (addr);
-			if (sym && sym == last_symbol)
+			gboolean symret = symbol_for (addr, sym, 256);
+			if (symret && strncmp (sym, last_symbol, 256) == 0)
 				continue;
-			last_symbol = sym;
-			if (!sym)
+			g_strlcpy (last_symbol, sym, 256);
+			if (sym [0] == '\0')
 				continue;
 			dump_usym (sym, addr, 0); /* let's not guess the size */
 		}
@@ -2926,8 +2929,8 @@ signal_helper_thread (char c)
 	if (client_socket != INVALID_SOCKET) {
 		struct sockaddr_in client_addr;
 		client_addr.sin_family = AF_INET;
-		client_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 		client_addr.sin_port = htons(log_profiler.command_port);
+		inet_pton (client_addr.sin_family, "127.0.0.1", &client_addr.sin_addr);
 
 		gulong non_blocking = 1;
 		ioctlsocket (client_socket, FIONBIO, &non_blocking);
@@ -3064,9 +3067,11 @@ log_shutdown (MonoProfiler *prof)
 	if (prof->gzfile)
 		gzclose (prof->gzfile);
 #endif
+#if HAVE_API_SUPPORT_WIN32_PIPE_OPEN_CLOSE && !defined (HOST_WIN32)
 	if (prof->pipe_output)
 		pclose (prof->file);
 	else
+#endif
 		fclose (prof->file);
 
 	mono_conc_hashtable_destroy (prof->method_table);
@@ -3150,7 +3155,7 @@ profiler_thread_begin_function (const char *name8, const gunichar2* name16, size
 	mono_thread_info_attach ();
 	MonoProfilerThread *thread = init_thread (FALSE);
 
-	mono_thread_attach (mono_get_root_domain ());
+	mono_thread_internal_attach (mono_get_root_domain ());
 
 	MonoInternalThread *internal = mono_thread_internal_current ();
 
@@ -3199,7 +3204,7 @@ profiler_thread_check_detach (MonoProfilerThread *thread)
 		thread->did_detach = TRUE;
 
 		mono_thread_info_set_flags (MONO_THREAD_INFO_FLAGS_NONE);
-		mono_thread_detach (mono_thread_current ());
+		mono_thread_internal_detach (mono_thread_current ());
 
 		mono_os_sem_post (&log_profiler.detach_threads_sem);
 	}
@@ -3300,9 +3305,11 @@ helper_thread (void *arg)
 			int fd = accept (log_profiler.server_socket, NULL, NULL);
 
 			if (fd != -1) {
+#ifndef HOST_WIN32
 				if (fd >= FD_SETSIZE)
 					mono_profhelper_close_socket_fd (fd);
 				else
+#endif
 					g_array_append_val (command_sockets, fd);
 			}
 		}
@@ -4083,7 +4090,7 @@ create_profiler (const char *args, const char *filename, GPtrArray *filters)
 
 	//If filename begin with +, append the pid at the end
 	if (filename && *filename == '+')
-		filename = g_strdup_printf ("%s.%d", filename + 1, getpid ());
+		filename = g_strdup_printf ("%s.%d", filename + 1, (int)process_id ());
 
 	if (!filename) {
 		if (log_config.do_report)
@@ -4102,8 +4109,12 @@ create_profiler (const char *args, const char *filename, GPtrArray *filters)
 		}
 	}
 	if (*nf == '|') {
+#if HAVE_API_SUPPORT_WIN32_PIPE_OPEN_CLOSE && !defined (HOST_WIN32)
 		log_profiler.file = popen (nf + 1, "w");
 		log_profiler.pipe_output = 1;
+#else
+		mono_profiler_printf_err ("Platform doesn't support popen");
+#endif
 	} else if (*nf == '#') {
 		int fd = strtol (nf + 1, NULL, 10);
 		log_profiler.file = fdopen (fd, "a");

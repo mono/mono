@@ -611,6 +611,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 
 			// Test if properties are set correctly
 			string str = "server=localhost1;database=db;user id=user;";
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			str += "password=pwd;Workstation ID=workstation;Packet Size=512;";
 			str += "Connect Timeout=10";
 			conn.ConnectionString = str;
@@ -804,6 +805,7 @@ namespace MonoTests.System.Data.Connected.SqlClient
 		[Category("NotWorking")]
 		public void ChangePasswordTest ()
 		{
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			string tmpPassword = "modifiedbymonosqlclient";
 			SqlConnection.ChangePassword (connectionString, tmpPassword);
 			SqlConnectionStringBuilder connBuilder = new SqlConnectionStringBuilder (connectionString);

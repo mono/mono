@@ -296,3 +296,4 @@ System.ServiceModel.Security.Tokens/SecurityTokenReferenceStyle.cs
 System.ServiceModel.Security.Tokens/SecureConversationSecurityTokenParameters.cs
 System.ServiceModel.Security.Tokens/SupportingTokenParameters.cs
 System.ServiceModel.Security.Tokens/UserNameSecurityTokenParameters.cs
+../referencesource/System.ServiceModel/System/ServiceModel/XmlUtil.cs

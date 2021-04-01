@@ -26,6 +26,7 @@
 #include "mono/sgen/sgen-client.h"
 #include "mono/sgen/gc-internal-agnostic.h"
 #include "mono/utils/mono-memory-model.h"
+#include "mono/utils/mono-tls-inline.h"
 
 //#define CARDTABLE_STATS
 
@@ -440,17 +441,24 @@ sgen_card_table_clear_cards (void)
 }
 
 static void
-sgen_card_table_start_scan_remsets (void)
+sgen_card_table_start_scan_remsets (gboolean is_parallel)
 {
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
 	/*FIXME we should have a bit on each block/los object telling if the object have marked cards.*/
 	/*First we copy*/
-	sgen_major_collector_iterate_block_ranges (move_cards_to_shadow_table);
-	sgen_los_iterate_live_block_ranges (move_cards_to_shadow_table);
-	sgen_wbroots_iterate_live_block_ranges (move_cards_to_shadow_table);
+	if (is_parallel) {
+		sgen_iterate_all_block_ranges (move_cards_to_shadow_table, is_parallel);
+	} else {
+		sgen_major_collector_iterate_block_ranges (move_cards_to_shadow_table);
+		sgen_los_iterate_live_block_ranges (move_cards_to_shadow_table);
+		sgen_wbroots_iterate_live_block_ranges (move_cards_to_shadow_table);
+	}
 
 	/*Then we clear*/
-	sgen_card_table_clear_cards ();
+	if (is_parallel)
+		sgen_iterate_all_block_ranges (clear_cards, is_parallel);
+	else
+		sgen_card_table_clear_cards ();
 #endif
 }
 
@@ -520,7 +528,7 @@ sgen_card_table_dump_obj_card (GCObject *object, size_t size, void *dummy)
 
 #define MWORD_MASK (sizeof (mword) - 1)
 
-static inline int
+static int
 find_card_offset (mword card)
 {
 /*XXX Use assembly as this generates some pretty bad code */

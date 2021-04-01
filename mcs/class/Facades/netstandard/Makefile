@@ -22,13 +22,13 @@ ifeq ($(PROFILE),build)
 LIB_MCS_FLAGS += -d:SYSTEM_WEB_IMPLEMENTATION
 else ifeq ($(PROFILE),wasm)
 LIB_MCS_FLAGS += -d:SYSTEM_WEB_IMPLEMENTATION -unsafe
-LIB_REFS += System.Transactions System.Runtime.Serialization System.Data
+LIB_REFS += System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions
 else ifeq ($(PROFILE),xammac_net_4_5)
-LIB_REFS += System.Web.Services System.Transactions System.Runtime.Serialization System.Data
+LIB_REFS += System.Web.Services System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions
 else ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_REFS += System.Web.Services System.Transactions System.Runtime.Serialization System.Data
+LIB_REFS += System.Web.Services System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions
 else
-LIB_REFS += System.Web System.Transactions System.Runtime.Serialization System.Data
+LIB_REFS += System.Web System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions
 endif
 
 ifneq (,$(filter build net_4_x, $(PROFILE)))

@@ -273,6 +273,8 @@ namespace System.Windows.Forms
 					ItemCheckEventArgs icea = new ItemCheckEventArgs (Index,
 							new_value, current_value);
 					owner.OnItemCheck (icea);
+					// consumers can update NewValue (e.g. to prevent checking an entry)
+					new_value = icea.NewValue;
 
 					if (new_value != current_value) {
 						// force re-population of list

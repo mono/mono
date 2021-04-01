@@ -3,12 +3,10 @@
 ../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
 ../../../external/corefx/src/Common/tests/System/Threading/Tasks/TaskTimeoutExtensions.cs
 
-# System.Linq
-# TODO: ../../../external/corefx/src/System.Linq/tests/*.cs
 
-# System.Linq.Queryable
-../../../external/corefx/src/System.Linq.Queryable/tests/*.cs
-../../../external/corefx/src/Common/tests/System/Linq/SkipTakeData.cs
+#split monotouch
+#split monotouch_tv
+#split monotouch_watch
 
 # System.Linq.Expressions
 ../../../external/corefx/src/System.Linq.Expressions/tests/Array/*.cs:NewArrayBoundsTests.cs,ArrayAccessTests.cs,ArrayIndexTests.cs
@@ -56,7 +54,19 @@
 ../../../external/corefx/src/System.Linq.Expressions/tests/Unary/IncDecAssign/*.cs
 ../../../external/corefx/src/System.Linq.Expressions/tests/*.cs:StackSpillerTests.cs,ReadOnlyCollectionBuilderTests.cs
 
-# System.Linq.Expressions
+
+#split monotouch
+#split monotouch_tv
+#split monotouch_watch
+
+# System.Linq
+# TODO: ../../../external/corefx/src/System.Linq/tests/*.cs
+
+# System.Linq.Queryable
+../../../external/corefx/src/System.Linq.Queryable/tests/*.cs
+../../../external/corefx/src/Common/tests/System/Linq/SkipTakeData.cs
+
+# System.Linq.Parallel
 ../../../external/corefx/src/System.Linq.Parallel/tests/Combinatorial/*.cs
 ../../../external/corefx/src/System.Linq.Parallel/tests/Helpers/*.cs
 ../../../external/corefx/src/System.Linq.Parallel/tests/QueryOperators/*.cs:DefaultIfEmptyTests.cs,SingleSingleOrDefaultTests.cs

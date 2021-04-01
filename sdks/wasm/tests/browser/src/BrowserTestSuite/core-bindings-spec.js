@@ -199,95 +199,181 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
 
     }, DEFAULT_TIMEOUT);  
 
-    it('BindingTestSuite: Should return new Uint8ClampedArray from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+    if (typeof SharedArrayBuffer === "undefined") 
+    {
+      xit('BindingTestSuite: Should return new Uint8ClampedArray from a SharedArrayBuffer.', () => {
+      }, DEFAULT_TIMEOUT); 
+    }
+    else {
+      it('BindingTestSuite: Should return new Uint8ClampedArray from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined") {}
+          
+        else {
+          var _document = karmaHTML.corebindingsspec.document;
 
 
-      var clamped = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Uint8ClampedArrayFromSharedArrayBuffer", [new SharedArrayBuffer(50)]);
-      assert.equal(clamped.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(clamped), "[object Uint8ClampedArray]", "TypedArray is not of type Uint8ClampedArray" )
+          var clamped = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Uint8ClampedArrayFromSharedArrayBuffer", [new SharedArrayBuffer(50)]);
+          assert.equal(clamped.length, 50, "result does not match length of 50.");
+          assert.equal(Object.prototype.toString.call(clamped), "[object Uint8ClampedArray]", "TypedArray is not of type Uint8ClampedArray" )
+        }
+      }, DEFAULT_TIMEOUT);  
+    }
 
-    }, DEFAULT_TIMEOUT);  
+    if (typeof SharedArrayBuffer === "undefined") 
+    {
+      xit('BindingTestSuite: Should return new Uint8Array from a SharedArrayBuffer.', () => {
+      }, DEFAULT_TIMEOUT); 
+    }
+    else {
 
-    it('BindingTestSuite: Should return new Uint8Array from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+      it('BindingTestSuite: Should return new Uint8Array from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined")
+          this.skip();
 
-      var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Uint8ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(50)]);
-      assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Uint8Array]", "TypedArray is not of type Uint8Array" )
+        var _document = karmaHTML.corebindingsspec.document;
 
-    }, DEFAULT_TIMEOUT);    
+        var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Uint8ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(50)]);
+        assert.equal(arr.length, 50, "result does not match length of 50.");
+        assert.equal(Object.prototype.toString.call(arr), "[object Uint8Array]", "TypedArray is not of type Uint8Array" )
 
-    it('BindingTestSuite: Should return new Uint16Array from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+      }, DEFAULT_TIMEOUT);    
+    }
 
-      var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Uint16ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(50)]);
-      assert.equal(arr.length, 25, "result does not match length of 25.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Uint16Array]", "TypedArray is not of type Uint16Array" )
+    if (typeof SharedArrayBuffer === "undefined") 
+    {
+      xit('BindingTestSuite: Should return new Uint16Array from a SharedArrayBuffer.', () => {
+      }, DEFAULT_TIMEOUT); 
+    }
+    else {
 
-    }, DEFAULT_TIMEOUT);    
+      it('BindingTestSuite: Should return new Uint16Array from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined")
+          this.skip();
 
-    it('BindingTestSuite: Should return new Uint32Array from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+        var _document = karmaHTML.corebindingsspec.document;
 
-      var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Uint32ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
-      assert.equal(arr.length, 10, "result does not match length of 10.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Uint32Array]", "TypedArray is not of type Uint32Array" )
+        var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Uint16ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(50)]);
+        assert.equal(arr.length, 25, "result does not match length of 25.");
+        assert.equal(Object.prototype.toString.call(arr), "[object Uint16Array]", "TypedArray is not of type Uint16Array" )
 
-    }, DEFAULT_TIMEOUT);    
+      }, DEFAULT_TIMEOUT);    
 
-    it('BindingTestSuite: Should return new Int8Array from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+      it('BindingTestSuite: Should return new Uint32Array from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined")
+          this.skip();
 
-      var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Int8ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(50)]);
-      assert.equal(arr.length, 50, "result does not match length of 50.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Int8Array]", "TypedArray is not of type Int8Array" )
+        var _document = karmaHTML.corebindingsspec.document;
 
-    }, DEFAULT_TIMEOUT);    
+        var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Uint32ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
+        assert.equal(arr.length, 10, "result does not match length of 10.");
+        assert.equal(Object.prototype.toString.call(arr), "[object Uint32Array]", "TypedArray is not of type Uint32Array" )
 
-    it('BindingTestSuite: Should return new Int16Array from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+      }, DEFAULT_TIMEOUT); 
+    }   
 
-      var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Int16ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
-      assert.equal(arr.length, 20, "result does not match length of 20.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Int16Array]", "TypedArray is not of type Int16Array" )
+    if (typeof SharedArrayBuffer === "undefined") 
+    {
+      xit('BindingTestSuite: Should return new Int8Array from a SharedArrayBuffer.', () => {
+      }, DEFAULT_TIMEOUT); 
+    }
+    else {
 
-    }, DEFAULT_TIMEOUT);    
+      it('BindingTestSuite: Should return new Int8Array from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined")
+          this.skip();
 
-    it('BindingTestSuite: Should return new Int32Array from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+        var _document = karmaHTML.corebindingsspec.document;
 
-      var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Int32ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
-      assert.equal(arr.length, 10, "result does not match length of 10.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Int32Array]", "TypedArray is not of type Int32Array" )
+        var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Int8ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(50)]);
+        assert.equal(arr.length, 50, "result does not match length of 50.");
+        assert.equal(Object.prototype.toString.call(arr), "[object Int8Array]", "TypedArray is not of type Int8Array" )
 
-    }, DEFAULT_TIMEOUT);    
+      }, DEFAULT_TIMEOUT);  
+    }  
 
-    it('BindingTestSuite: Should return new Float32Array from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+    if (typeof SharedArrayBuffer === "undefined") 
+    {
+      xit('BindingTestSuite: Should return new Int16Array from a SharedArrayBuffer.', () => {
+      }, DEFAULT_TIMEOUT); 
+    }
+    else {
+      it('BindingTestSuite: Should return new Int16Array from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined")
+          this.skip();
 
-      var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Float32ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
-      assert.equal(arr.length, 10, "result does not match length of 10.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Float32Array]", "TypedArray is not of type Float32Array" )
+        var _document = karmaHTML.corebindingsspec.document;
 
-    }, DEFAULT_TIMEOUT);    
+        var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Int16ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
+        assert.equal(arr.length, 20, "result does not match length of 20.");
+        assert.equal(Object.prototype.toString.call(arr), "[object Int16Array]", "TypedArray is not of type Int16Array" )
 
-    it('BindingTestSuite: Should return new Float64Array from a SharedArrayBuffer.', () => {
-      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
-      var _document = karmaHTML.corebindingsspec.document;
+      }, DEFAULT_TIMEOUT);   
+    } 
 
-      var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Float64ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
-      assert.equal(arr.length, 5, "result does not match length of 5.");
-      assert.equal(Object.prototype.toString.call(arr), "[object Float64Array]", "TypedArray is not of type Float64Array" )
-    }, DEFAULT_TIMEOUT);  
+    if (typeof SharedArrayBuffer === "undefined") 
+    {
+      xit('BindingTestSuite: Should return new Int32Array from a SharedArrayBuffer.', () => {
+      }, DEFAULT_TIMEOUT); 
+    }
+    else {
+      it('BindingTestSuite: Should return new Int32Array from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined")
+          this.skip();
+
+        var _document = karmaHTML.corebindingsspec.document;
+
+        var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Int32ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
+        assert.equal(arr.length, 10, "result does not match length of 10.");
+        assert.equal(Object.prototype.toString.call(arr), "[object Int32Array]", "TypedArray is not of type Int32Array" )
+
+      }, DEFAULT_TIMEOUT);    
+    }
+
+    if (typeof SharedArrayBuffer === "undefined") 
+    {
+      xit('BindingTestSuite: Should return new Float32Array from a SharedArrayBuffer.', () => {
+      }, DEFAULT_TIMEOUT); 
+    }
+    else {
+      it('BindingTestSuite: Should return new Float32Array from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined")
+          this.skip();
+        
+        var _document = karmaHTML.corebindingsspec.document;
+
+        var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Float32ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
+        assert.equal(arr.length, 10, "result does not match length of 10.");
+        assert.equal(Object.prototype.toString.call(arr), "[object Float32Array]", "TypedArray is not of type Float32Array" )
+
+      }, DEFAULT_TIMEOUT);    
+    }
+
+    if (typeof SharedArrayBuffer === "undefined") 
+    {
+      xit('BindingTestSuite: Should return new Float32Array from a SharedArrayBuffer.', () => {
+      }, DEFAULT_TIMEOUT); 
+    }
+    else {
+      it('BindingTestSuite: Should return new Float64Array from a SharedArrayBuffer.', () => {
+        //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+        if (typeof SharedArrayBuffer === "undefined")
+          this.skip();
+
+        var _document = karmaHTML.corebindingsspec.document;
+
+        var arr = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:Float64ArrayFromSharedArrayBuffer", [new SharedArrayBuffer(40)]);
+        assert.equal(arr.length, 5, "result does not match length of 5.");
+        assert.equal(Object.prototype.toString.call(arr), "[object Float64Array]", "TypedArray is not of type Float64Array" )
+      }, DEFAULT_TIMEOUT);  
+    }
     
     it('BindingTestSuite: Should return Sum of two int values from Function.Call.', () => {
       //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
@@ -541,6 +627,91 @@ describe("The WebAssembly Core Bindings Test Suite",function(){
       var pop = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ArrayPop", []);
       assert.equal(pop, undefined, "result does not match expected value unidentified.");
       assert.equal(pop, null, "result does not match expected value null.");
-    }, DEFAULT_TIMEOUT);  
+    }, DEFAULT_TIMEOUT); 
 
+    it('BindingTestSuite: Should error with Parameter count mismatch #1.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      try {
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest", ["hello"]);
+        assert.equal(result, 0, "result should have been Parameter count mismatch.");
+      } catch (e) {
+      }
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should error with Parameter count mismatch #2.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      try {
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest2", []);
+        assert.equal(result, 0, "result should have been Parameter count mismatch.");
+      } catch (e) {
+      }
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should error with Parameter count mismatch #3.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+      try {
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest2");
+        assert.equal(result, 0, "result should have been Parameter count mismatch.");
+      } catch (e) {
+      }
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should NOT error with Parameter count mismatch #1.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest", []);
+        assert.equal(result, -1, "result does not match expected result.");
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should NOT error with Parameter count mismatch #2.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest");
+        assert.equal(result, -1, "result does not match expected result.");
+    }, DEFAULT_TIMEOUT); 
+
+    it('BindingTestSuite: Should NOT error with Parameter count mismatch #3.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:ParameterTest2", [null]);
+        assert.equal(result, -1, "result does not match expected result.");
+    }, DEFAULT_TIMEOUT);
+
+    it('BindingTestSuite: Should marshal null string argument as null.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringIsNull", [null]);
+        assert.isTrue(result);
+    }, DEFAULT_TIMEOUT);     
+
+    it('BindingTestSuite: Should return true for string.IsNullOrEmpty.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringIsNullOrEmpty", [null]);
+        assert.isTrue(result);
+    }, DEFAULT_TIMEOUT);     
+
+    it('BindingTestSuite: Should return true for null string[].', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringArrayIsNull", [null]);
+        assert.isTrue(result);
+    }, DEFAULT_TIMEOUT);     
+    it('BindingTestSuite: Should return Uri as string.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+        var result = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:StringToUri", ["ws://localhost"]);
+        assert.equal(result, "ws://localhost/", "result does not match value ws://localhost/.");
+    }, DEFAULT_TIMEOUT);     
+
+    it('BindingTestSuite: Should pass/return pointer types.', () => {
+      //karmaHTML.corebindingsspec.document gives the access to the Document object of 'http-spec.html' file
+      var _document = karmaHTML.corebindingsspec.document;
+
+      var res = _document.Module.BINDING.call_static_method("[BindingsTestSuite]BindingsTestSuite.Program:PassReturnPtr", [42]);
+      assert.equal(res, 42, "");
+    }, DEFAULT_TIMEOUT);
   });

@@ -42,11 +42,11 @@ namespace System.Runtime.InteropServices
 	public struct GCHandle 
 	{
 		// fields
-		private int handle;
+		private IntPtr handle;
 
 		private GCHandle(IntPtr h)
 		{
-			handle = (int)h;
+			handle = h;
 		}
 		
 		// Constructors
@@ -59,7 +59,7 @@ namespace System.Runtime.InteropServices
 			// MS does not crash/throw on (most) invalid GCHandleType values (except -1)
 			if ((type < GCHandleType.Weak) || (type > GCHandleType.Pinned))
 				type = GCHandleType.Normal;
-			handle = GetTargetHandle (value, 0, type);
+			handle = GetTargetHandle (value, IntPtr.Zero, type);
 		}
 
 		// Properties
@@ -68,7 +68,7 @@ namespace System.Runtime.InteropServices
 		{ 
 			get
 			{
-				return (handle != 0);
+				return (handle != IntPtr.Zero);
 			}
 		}
 
@@ -111,10 +111,10 @@ namespace System.Runtime.InteropServices
 		{
 			// Copy the handle instance member to a local variable. This is required to prevent
 			// race conditions releasing the handle.
-			int local_handle = handle;
+			IntPtr local_handle = handle;
 
 			// Free the handle if it hasn't already been freed.
-			if (local_handle != 0 && Interlocked.CompareExchange (ref handle, 0, local_handle) == local_handle) {
+			if (local_handle != IntPtr.Zero && Interlocked.CompareExchange (ref handle, IntPtr.Zero, local_handle) == local_handle) {
 				FreeHandle (local_handle);
 			}
 			else {
@@ -131,25 +131,25 @@ namespace System.Runtime.InteropServices
 		{
 			if (value == IntPtr.Zero)
 				throw new InvalidOperationException ("GCHandle value cannot be zero");
-			if (!CheckCurrentDomain ((int)value))
+			if (!CheckCurrentDomain (value))
 				throw new ArgumentException ("GCHandle value belongs to a different domain");
 			return new GCHandle (value);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool CheckCurrentDomain (int handle);
+		private extern static bool CheckCurrentDomain (IntPtr handle);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static object GetTarget(int handle);
+		private extern static object GetTarget(IntPtr handle);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static int GetTargetHandle(object obj, int handle, GCHandleType type);
+		private extern static IntPtr GetTargetHandle(object obj, IntPtr handle, GCHandleType type);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void FreeHandle(int handle);
+		private extern static void FreeHandle(IntPtr handle);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static IntPtr GetAddrOfPinnedObject(int handle);
+		private extern static IntPtr GetAddrOfPinnedObject(IntPtr handle);
 
 		public static bool operator ==(GCHandle a, GCHandle b)
 		{

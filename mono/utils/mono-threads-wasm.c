@@ -2,7 +2,7 @@
 
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-mmap.h>
-
+#include <mono/utils/mono-compiler.h>
 
 #if defined (USE_WASM_BACKEND)
 
@@ -10,6 +10,7 @@
 #include <mono/utils/mono-mmap.h>
 
 #include <emscripten.h>
+#include <emscripten/stack.h>
 #include <glib.h>
 
 #define round_down(addr, val) ((void*)((addr) & ~((val) - 1)))
@@ -18,19 +19,14 @@ EMSCRIPTEN_KEEPALIVE
 static int
 wasm_get_stack_base (void)
 {
-	// Return the bottom limit of the stack
-	return EM_ASM_INT ({
-		return STACK_MAX;
-	});
+	return emscripten_stack_get_end ();
 }
 
 EMSCRIPTEN_KEEPALIVE
 static int
 wasm_get_stack_size (void)
 {
-	return EM_ASM_INT ({
-		return TOTAL_STACK;
-	});
+	return (guint8*)emscripten_stack_get_base () - (guint8*)emscripten_stack_get_end ();
 }
 
 int
@@ -110,6 +106,12 @@ mono_native_thread_os_id_get (void)
 #endif
 }
 
+gint32
+mono_native_thread_processor_id_get (void)
+{
+	return -1;
+}
+
 MONO_API gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 {
@@ -145,10 +147,10 @@ mono_threads_platform_yield (void)
 void
 mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 {
+	int tmp;
 #ifdef __EMSCRIPTEN_PTHREADS__
 	pthread_attr_t attr;
 	gint res;
-	int tmp;
 
 	*staddr = NULL;
 	*stsize = (size_t)-1;
@@ -173,13 +175,13 @@ mono_threads_platform_get_stack_bounds (guint8 **staddr, size_t *stsize)
 		*staddr = (guint8*)wasm_get_stack_base ();
 		*stsize = wasm_get_stack_size ();
 	}
-
-	g_assert (&tmp > *staddr);
-	g_assert (&tmp < (char*)*staddr + *stsize);
 #else
 	*staddr = (guint8*)wasm_get_stack_base ();
 	*stsize = wasm_get_stack_size ();
 #endif
+
+	g_assert ((guint8*)&tmp > *staddr);
+	g_assert ((guint8*)&tmp < (guint8*)*staddr + *stsize);
 }
 
 gboolean
@@ -312,5 +314,9 @@ void
 mono_memory_barrier_process_wide (void)
 {
 }
+
+#else
+
+MONO_EMPTY_SOURCE_FILE (mono_threads_wasm);
 
 #endif

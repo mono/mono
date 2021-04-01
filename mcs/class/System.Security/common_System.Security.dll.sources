@@ -99,5 +99,25 @@ System.Security.Cryptography.Pkcs/EnvelopedCms.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SignerInfoCollection.cs
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Pkcs/SignerInfoEnumerator.cs
 
+
+# System.Security.Cryptography.Pkcs NotSupported
+System.Security.Cryptography.Pkcs/Pkcs12Builder.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12CertBag.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12ConfidentialityMode.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12Info.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12IntegrityMode.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12KeyBag.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12SafeBag.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12SafeContents.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12SafeContentsBag.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12SecretBag.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs12ShroudedKeyBag.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs8PrivateKeyInfo.NotSupported.cs
+System.Security.Cryptography.Pkcs/Pkcs9LocalKeyId.NotSupported.cs
+System.Security.Cryptography.Pkcs/Rfc3161TimestampRequest.NotSupported.cs
+System.Security.Cryptography.Pkcs/Rfc3161TimestampToken.NotSupported.cs
+System.Security.Cryptography.Pkcs/Rfc3161TimestampTokenInfo.NotSupported.cs
+
+
 # System.Security.Cryptography.Xml
 ../../../external/corefx/src/System.Security.Cryptography.Pkcs/src/System/Security/Cryptography/Xml/X509IssuerSerial.cs

@@ -94,12 +94,13 @@ static int map_hw_reg_to_dwarf_reg [ppc_lr + 1] = { 0, 1, 2, 3, 4, 5, 6, 7, 8,
 #elif defined (TARGET_S390X)
 /*
  * 0-15 = GR0-15
- * 16-31 = FP0-15
+ * 16-31 = FP0-15 (f0, f2, f4, f6, f1, f3, f5, f7, f8, f10, f12, f14, f9, f11, f13, f15)
  */
 static int map_hw_reg_to_dwarf_reg [] = {  0,  1,  2,  3,  4,  5,  6,  7, 
 					   8,  9, 10, 11, 12, 13, 14, 15,
-					  16, 17, 18, 19, 20, 21, 22, 23, 
-					  24, 25, 26, 27, 28, 29, 30, 31};
+					  16, 20, 17, 21, 18, 22, 19, 23,
+					  24, 28, 25, 29, 26, 30, 27, 31};
+
 #define NUM_DWARF_REGS 32
 #define DWARF_DATA_ALIGN (-8)
 #define DWARF_PC_REG (mono_hw_reg_to_dwarf_reg (14))
@@ -176,18 +177,16 @@ mono_hw_reg_to_dwarf_reg (int reg)
 	if (NUM_HW_REGS == 0) {
 		g_assert_not_reached ();
 		return -1;
-	} else {
-		return map_hw_reg_to_dwarf_reg [reg];
 	}
+
+	return map_hw_reg_to_dwarf_reg [reg];
 }
 
 static void
 init_dwarf_reg_map (void)
 {
-	int i;
-
 	g_assert (NUM_HW_REGS > 0);
-	for (i = 0; i < NUM_HW_REGS; ++i) {
+	for (int i = 0; i < NUM_HW_REGS; ++i) {
 		map_dwarf_reg_to_hw_reg [mono_hw_reg_to_dwarf_reg (i)] = i;
 	}
 
@@ -251,7 +250,7 @@ encode_sleb128 (gint32 value, guint8 *buf, guint8 **endbuf)
 	*endbuf = p;
 }
 
-static inline guint32
+static guint32
 decode_uleb128 (guint8 *buf, guint8 **endbuf)
 {
 	guint8 *p = buf;
@@ -273,25 +272,25 @@ decode_uleb128 (guint8 *buf, guint8 **endbuf)
 	return res;
 }
 
-static inline gint32
+static gint32
 decode_sleb128 (guint8 *buf, guint8 **endbuf)
 {
 	guint8 *p = buf;
 	gint32 res = 0;
 	int shift = 0;
 
-	while (TRUE) {
-		guint8 b = *p;
+	guint8 b;
+
+	do {
+		b = *p;
 		p ++;
 
 		res = res | (((int)(b & 0x7f)) << shift);
 		shift += 7;
-		if (!(b & 0x80)) {
-			if (shift < 32 && (b & 0x40))
-				res |= - (1 << shift);
-			break;
-		}
-	}
+	} while (b & 0x80);
+
+	if (shift < 32 && (b & 0x40))
+		res |= - (1 << shift);
 
 	*endbuf = p;
 
@@ -312,6 +311,7 @@ mono_print_unwind_info (guint8 *unwind_info, int unwind_info_len)
 		switch (op) {
 		case DW_CFA_advance_loc:
 			pos += *p & 0x3f;
+			printf ("CFA: [%x] advance loc\n",pos);
 			p ++;
 			break;
 		case DW_CFA_offset:
@@ -344,6 +344,11 @@ mono_print_unwind_info (guint8 *unwind_info, int unwind_info_len)
 				reg = decode_uleb128 (p, &p);
 				offset = decode_sleb128 (p, &p) * DWARF_DATA_ALIGN;
 				printf ("CFA: [%x] offset_extended_sf: %s at cfa-0x%x\n", pos, mono_arch_regname (mono_dwarf_reg_to_hw_reg (reg)), -offset);
+				break;
+			case DW_CFA_offset_extended:
+				reg = decode_uleb128 (p, &p);
+				offset = decode_uleb128 (p, &p) * DWARF_DATA_ALIGN;
+				printf ("CFA: [%x] offset_extended: %s at cfa-0x%x\n", pos, mono_arch_regname (mono_dwarf_reg_to_hw_reg (reg)), -offset);
 				break;
 			case DW_CFA_same_value:
 				reg = decode_uleb128 (p, &p);
@@ -395,17 +400,14 @@ mono_print_unwind_info (guint8 *unwind_info, int unwind_info_len)
 guint8*
 mono_unwind_ops_encode_full (GSList *unwind_ops, guint32 *out_len, gboolean enable_extensions)
 {
-	GSList *l;
 	MonoUnwindOp *op;
-	int loc;
+	int loc = 0;
 	guint8 buf [4096];
 	guint8 *p, *res;
 
 	p = buf;
 
-	loc = 0;
-	l = unwind_ops;
-	for (; l; l = l->next) {
+	for (GSList *l = unwind_ops; l; l = l->next) {
 		int reg;
 
 		op = (MonoUnwindOp *)l->data;
@@ -424,14 +426,14 @@ mono_unwind_ops_encode_full (GSList *unwind_ops, guint32 *out_len, gboolean enab
 				*p ++ = DW_CFA_advance_loc4;
 				guint32 v = (guint32)(op->when - loc);
 				memcpy (p, &v, 4);
-				g_assert (read32 (p) == (guint32)(op->when - loc));
+				g_assert (read32 (p) == GUINT32_TO_LE((guint32)(op->when - loc)));
 				p += 4;
 				loc = op->when;
 			} else if (op->when - loc >= 256) {
 				*p ++ = DW_CFA_advance_loc2;
 				guint16 v = (guint16)(op->when - loc);
 				memcpy (p, &v, 2);
-				g_assert (read16 (p) == (guint32)(op->when - loc));
+				g_assert (read16 (p) == GUINT16_TO_LE((guint32)(op->when - loc)));
 				p += 2;
 				loc = op->when;
 			} else if (op->when - loc >= 32) {
@@ -522,11 +524,9 @@ mono_unwind_ops_encode (GSList *unwind_ops, guint32 *out_len)
 static G_GNUC_UNUSED void
 print_dwarf_state (int cfa_reg, int cfa_offset, int ip, int nregs, Loc *locations, guint8 *reg_saved)
 {
-	int i;
-
 	printf ("\t%x: cfa=r%d+%d ", ip, cfa_reg, cfa_offset);
 
-	for (i = 0; i < nregs; ++i)
+	for (int i = 0; i < nregs; ++i)
 		if (reg_saved [i] && locations [i].loc_type == LOC_OFFSET)
 			printf ("r%d@%d(cfa) ", i, locations [i].offset);
 	printf ("\n");
@@ -732,14 +732,12 @@ mono_unwind_init (void)
 void
 mono_unwind_cleanup (void)
 {
-	int i;
-
 	mono_os_mutex_destroy (&unwind_mutex);
 
 	if (!cached_info)
 		return;
 
-	for (i = 0; i < cached_info_next; ++i) {
+	for (int i = 0; i < cached_info_next; ++i) {
 		MonoUnwindInfo *cached = cached_info [i];
 
 		g_free (cached);
@@ -944,7 +942,7 @@ static void
 decode_lsda (guint8 *lsda, guint8 *code, MonoJitExceptionInfo *ex_info, gpointer *type_info, guint32 *ex_info_len, int *this_reg, int *this_offset)
 {
 	guint8 *p;
-	int i, ncall_sites, this_encoding;
+	int ncall_sites, this_encoding;
 	guint32 mono_magic, version;
 
 	p = lsda;
@@ -980,7 +978,7 @@ decode_lsda (guint8 *lsda, guint8 *code, MonoJitExceptionInfo *ex_info, gpointer
 	if (ex_info_len)
 		*ex_info_len = ncall_sites;
 
-	for (i = 0; i < ncall_sites; ++i) {
+	for (int i = 0; i < ncall_sites; ++i) {
 		int block_start_offset, block_size, landing_pad;
 		guint8 *tinfo;
 
@@ -1167,8 +1165,7 @@ mono_unwind_decode_fde (guint8 *fde, guint32 *out_len, guint32 *code_len, MonoJi
 	while (p < cie + cie_len + 4) {
 		if (*p == DW_CFA_nop)
 			break;
-		else
-			decode_cie_op (p, &p);
+		decode_cie_op (p, &p);
 	}
 	memcpy (buf + i, cie_cfi, p - cie_cfi);
 	i += p - cie_cfi;
@@ -1177,8 +1174,7 @@ mono_unwind_decode_fde (guint8 *fde, guint32 *out_len, guint32 *code_len, MonoJi
 	while (p < fde + fde_len + 4) {
 		if (*p == DW_CFA_nop)
 			break;
-		else
-			decode_cie_op (p, &p);
+		decode_cie_op (p, &p);
 	}
 	memcpy (buf + i, fde_cfi, p - fde_cfi);
 	i += p - fde_cfi;
@@ -1256,11 +1252,8 @@ mono_unwind_decode_llvm_mono_fde (guint8 *fde, int fde_len, guint8 *cie, guint8 
 
 	/* Compute size of CIE unwind info it is DW_CFA_nop terminated */
 	p = cie_cfi;
-	while (TRUE) {
-		if (*p == DW_CFA_nop)
-			break;
-		else
-			decode_cie_op (p, &p);
+	while (*p != DW_CFA_nop) {
+	    decode_cie_op (p, &p);
 	}
 	cie_cfi_len = p - cie_cfi;
 	fde_cfi_len = (fde + fde_len - fde_cfi);

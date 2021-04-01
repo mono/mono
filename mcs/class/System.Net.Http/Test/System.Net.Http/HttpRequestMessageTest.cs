@@ -61,13 +61,17 @@ namespace MonoTests.System.Net.Http
 			Assert.AreEqual (HttpMethod.Get, m.Method, "#3");
 			Assert.IsNotNull (m.Properties, "#4");
 			Assert.IsNull (m.RequestUri, "#5");
+#if !MONOTOUCH_WATCH			
 			if (HttpClientTestHelpers.UsingSocketsHandler) {
+#endif				
 				Assert.AreEqual (new Version (2, 0), m.Version, "#6");
 				Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 2.0, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#7");
+#if !MONOTOUCH_WATCH
 			} else {
 				Assert.AreEqual (new Version (1, 1), m.Version, "#6");
 				Assert.AreEqual ("Method: GET, RequestUri: '<null>', Version: 1.1, Content: <null>, Headers:\r\n{\r\n}", m.ToString (), "#7");
 			}
+#endif			
 		}
 
 		[Test]
@@ -95,8 +99,6 @@ namespace MonoTests.System.Net.Http
 		[Test]
 		public void Ctor_RelativeUri ()
 		{
-			var client = new HttpClient ();
-			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
 			var uri = new Uri ("Computer", UriKind.Relative);
 			var req = new HttpRequestMessage (HttpMethod.Get, uri);
 			// HttpRequestMessage does not rewrite it here.
@@ -120,8 +122,6 @@ namespace MonoTests.System.Net.Http
 		[Test]
 		public void Ctor_RelativeUriString ()
 		{
-			var client = new HttpClient ();
-			client.BaseAddress = new Uri ("http://en.wikipedia.org/wiki/");
 			var req = new HttpRequestMessage (HttpMethod.Get, "Computer");
 			// HttpRequestMessage does not rewrite it here.
 			Assert.IsFalse (req.RequestUri.IsAbsoluteUri);
@@ -670,10 +670,14 @@ namespace MonoTests.System.Net.Http
 
 			// .NET encloses the "Age: vv" with two whitespaces.
 			var normalized = Regex.Replace (message.ToString (), @"\s", "");
+#if !MONOTOUCH_WATCH						
 			if (HttpClientTestHelpers.UsingSocketsHandler)
+#endif			
 				Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:2.0,Content:<null>,Headers:{Age:vv}", normalized, "#3");
+#if !MONOTOUCH_WATCH							
 			else
 				Assert.AreEqual ("Method:GET,RequestUri:'<null>',Version:1.1,Content:<null>,Headers:{Age:vv}", normalized, "#3");
+#endif				
 		}
 
 		[Test]

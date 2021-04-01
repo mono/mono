@@ -21,10 +21,14 @@
 //
 // Ported from C++ to C and adjusted to Mono runtime
 
+#include <config.h>
+#include <mono/utils/mono-compiler.h>
+
+#ifndef ENABLE_NETCORE
+
 #include <stdlib.h>
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
 #include <math.h>
-#include <config.h>
 #include <glib.h>
 
 #include <mono/metadata/class-internals.h>
@@ -102,7 +106,7 @@ static ThreadPool threadpool;
 		} while (mono_atomic_cas_i32 (&threadpool.counters.as_gint32, (var).as_gint32, __old.as_gint32) != __old.as_gint32); \
 	} while (0)
 
-static inline ThreadPoolCounter
+static ThreadPoolCounter
 COUNTER_READ (void)
 {
 	ThreadPoolCounter counter;
@@ -110,13 +114,13 @@ COUNTER_READ (void)
 	return counter;
 }
 
-static inline void
+static void
 domains_lock (void)
 {
 	mono_coop_mutex_lock (&threadpool.domains_lock);
 }
 
-static inline void
+static void
 domains_unlock (void)
 {
 	mono_coop_mutex_unlock (&threadpool.domains_lock);
@@ -159,8 +163,6 @@ cleanup (void)
 gboolean
 mono_threadpool_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, MonoError *error)
 {
-	static MonoClass *threadpool_class = NULL;
-	static MonoMethod *unsafe_queue_custom_work_item_method = NULL;
 	MonoDomain *current_domain;
 	MonoBoolean f;
 	gpointer args [2];
@@ -168,13 +170,19 @@ mono_threadpool_enqueue_work_item (MonoDomain *domain, MonoObject *work_item, Mo
 	error_init (error);
 	g_assert (work_item);
 
-	if (!threadpool_class)
+	MONO_STATIC_POINTER_INIT (MonoClass, threadpool_class)
+
 		threadpool_class = mono_class_load_from_name (mono_defaults.corlib, "System.Threading", "ThreadPool");
 
-	if (!unsafe_queue_custom_work_item_method) {
+	MONO_STATIC_POINTER_INIT_END (MonoClass, threadpool_class)
+
+	MONO_STATIC_POINTER_INIT (MonoMethod, unsafe_queue_custom_work_item_method)
+
 		unsafe_queue_custom_work_item_method = mono_class_get_method_from_name_checked (threadpool_class, "UnsafeQueueCustomWorkItem", 2, 0, error);
 		mono_error_assert_ok (error);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, unsafe_queue_custom_work_item_method)
+
 	g_assert (unsafe_queue_custom_work_item_method);
 
 	f = FALSE;
@@ -285,10 +293,13 @@ try_invoke_perform_wait_callback (MonoObject** exc, MonoError *error)
 	HANDLE_FUNCTION_RETURN_VAL (res);
 }
 
-static gsize
-set_thread_name (MonoInternalThread *thread)
+static void
+mono_threadpool_set_thread_name (MonoInternalThread *thread)
 {
-	return mono_thread_set_name_constant_ignore_error (thread, "Thread Pool Worker", MonoSetThreadNameFlag_Reset);
+	mono_thread_set_name_constant_ignore_error (
+		thread,
+		"Thread Pool Worker",
+		MonoSetThreadNameFlag_Reset | MonoSetThreadNameFlag_RepeatedlyButOptimized);
 }
 
 static void
@@ -326,10 +337,8 @@ worker_callback (void)
 	 */
 	mono_defaults.threadpool_perform_wait_callback_method->save_lmf = TRUE;
 
-	gsize name_generation = thread->name.generation;
 	/* Set the name if this is the first call to worker_callback on this thread */
-	if (name_generation == 0)
-	   name_generation = set_thread_name (thread);
+	mono_threadpool_set_thread_name (thread);
 
 	domains_lock ();
 
@@ -362,13 +371,7 @@ worker_callback (void)
 
 		domains_unlock ();
 
-		// Any thread can set any other thread name at any time.
-		// So this is unavoidably racy.
-		// This only partly fights against that -- i.e. not atomic and not a loop.
-		// It is reliable against the thread setting its own name, and somewhat
-		// reliable against other threads setting this thread's name.
-		if (name_generation != thread->name.generation)
-			name_generation = set_thread_name (thread);
+		mono_threadpool_set_thread_name (thread);
 
 		mono_thread_clear_and_set_state (thread,
 			(MonoThreadState)~ThreadState_Background,
@@ -396,8 +399,7 @@ worker_callback (void)
 		mono_thread_pop_appdomain_ref ();
 
 		/* Reset name after every callback */
-		if (name_generation != thread->name.generation)
-			name_generation = set_thread_name (thread);
+		mono_threadpool_set_thread_name (thread);
 
 		domains_lock ();
 
@@ -441,15 +443,17 @@ mono_threadpool_cleanup (void)
 MonoAsyncResult *
 mono_threadpool_begin_invoke (MonoDomain *domain, MonoObject *target, MonoMethod *method, gpointer *params, MonoError *error)
 {
-	static MonoClass *async_call_klass = NULL;
 	MonoMethodMessage *message;
 	MonoAsyncResult *async_result;
 	MonoAsyncCall *async_call;
 	MonoDelegate *async_callback = NULL;
 	MonoObject *state = NULL;
 
-	if (!async_call_klass)
+	MONO_STATIC_POINTER_INIT (MonoClass, async_call_klass)
+
 		async_call_klass = mono_class_load_from_name (mono_defaults.corlib, "System", "MonoAsyncCall");
+
+	MONO_STATIC_POINTER_INIT_END (MonoClass, async_call_klass)
 
 	error_init (error);
 
@@ -725,20 +729,6 @@ ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative (gint32 worker_threads
 	return TRUE;
 }
 
-#ifdef ENABLE_NETCORE
-gint32
-ves_icall_System_Threading_ThreadPool_GetThreadCount (MonoError *error)
-{
-	return mono_threadpool_worker_get_threads_count ();
-}
-
-gint64
-ves_icall_System_Threading_ThreadPool_GetCompletedWorkItemCount (MonoError *error)
-{
-	return mono_threadpool_worker_get_completed_threads_count ();
-}
-#endif
-
 void
 ves_icall_System_Threading_ThreadPool_InitializeVMTp (MonoBoolean *enable_worker_tracking, MonoError *error)
 {
@@ -832,3 +822,7 @@ ves_icall_System_Threading_ThreadPool_RequestWorkerThread (MonoError *error)
 	mono_refcount_dec (&threadpool);
 	return TRUE;
 }
+
+#endif /* !ENABLE_NETCORE */
+
+MONO_EMPTY_SOURCE_FILE (threadpool);

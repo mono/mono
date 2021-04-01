@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
+//	Karl Scowen	<contact@scowencomputers.co.nz>
 //
 //
 
@@ -44,6 +45,10 @@ namespace System.Windows.Forms
 		private string		link_text;	// The full link text e.g. this might be 
 							// word-wrapped to "w" but this would be
 							// "www.example.com"
+		private bool		visible;
+		private TextPositioning	text_position;	// Normal / superscript / subscript
+		private Font		small_font;			// Cached font for superscript / subscript
+		private float		char_offset;		// Shift the text baseline up or down
 
 		// Payload; text
 		private int		start;		// start, in chars; index into Line.text
@@ -53,7 +58,8 @@ namespace System.Windows.Forms
 		private int		height;		// Height in pixels of the text this tag describes
 		private int		ascent;		// Ascent of the font for this tag
 		private int		descent;	// Descent of the font for this tag
-		private int		shift;		// Shift down for this tag, to stay on baseline
+		private int		shift;		// Shift down for this tag, to stay on baseline.
+							// Measured from top of line to top of tag.
 
 		// Administrative
 		private Line		line;		// The line we're on
@@ -69,6 +75,7 @@ namespace System.Windows.Forms
 			link_font = null;
 			is_link = false;
 			link_text = null;
+			visible = true;
 		}
 		#endregion	// Constructors
 
@@ -113,6 +120,16 @@ namespace System.Windows.Forms
 					return link_font;
 				}
 
+				if (TextPosition != TextPositioning.Normal) {
+					if (small_font == null)
+						small_font = new Font (font.FontFamily, font.Size * 0.583F, font.Style);
+
+					if (IsLink)
+						return new Font (small_font, font.Style | FontStyle.Underline);
+					else
+						return small_font;
+				}
+
 				return font;
 			}
 		}
@@ -122,18 +139,41 @@ namespace System.Windows.Forms
 			set { 
 				if (font != value) {
 					link_font = null;
+					small_font = null;
 					font = value;
 	
 					height = Font.Height;
 					XplatUI.GetFontMetrics (Hwnd.GraphicsContext, Font, out ascent, out descent);
+					float scale_factor = font.GetHeight () / font.FontFamily.GetLineSpacing (font.Style);
+					ascent = (int) Math.Ceiling (ascent * scale_factor);
+					descent = (int) Math.Ceiling (descent * scale_factor);
 					line.recalc = true;
 				}
 			}
 		}
 
+		public TextPositioning TextPosition {
+			get { return text_position; }
+			set { text_position = value; }
+		}
+
+		public float CharOffset {
+			get { return char_offset; }
+			set { char_offset = value; }
+		}
+
 		public int Height {
 			get { return height; }
 			set { height = value; }
+		}
+
+		public int DrawnHeight {
+			get {
+				if (text_position != TextPositioning.Normal)
+					return (int) (height * 0.583F);
+
+				return height;
+			}
 		}
 
 		public virtual bool IsTextTag {
@@ -186,7 +226,7 @@ namespace System.Windows.Forms
 						throw new Exception("New tag makes an insane tag");
 				}
 #endif
-				start = value; 
+				start = value;
 			}
 		}
 
@@ -206,9 +246,14 @@ namespace System.Windows.Forms
 			}
 		}
 
+		public bool Visible {
+			get { return visible; }
+			set { visible = value; }
+		}
+
 		public float Width {
 			get {
-				if (Length == 0)
+				if (Length == 0 || !visible)
 					return 0;
 				return line.widths [start + Length - 1] - (start != 0 ? line.widths [start - 1] : 0);
 			}
@@ -219,6 +264,15 @@ namespace System.Windows.Forms
 				if (start == 0)
 					return line.X;
 				return line.X + line.widths [start - 1];
+			}
+		}
+
+		public int OffsetY {
+			get {
+				if (text_position == TextPositioning.Subscript)
+					return (int) (height * 0.45F);
+
+				return 0;
 			}
 		}
 
@@ -253,8 +307,8 @@ namespace System.Windows.Forms
 			new_tag = new LineTag(line, pos);
 			new_tag.CopyFormattingFrom (this);
 
-			new_tag.next = this.next;
-			this.next = new_tag;
+			new_tag.Next = this.next;
+			this.Next = new_tag;
 			new_tag.previous = this;
 
 			if (new_tag.next != null)
@@ -269,7 +323,7 @@ namespace System.Windows.Forms
 			if (!this.Equals (other))
 				return false;
 
-			this.next = other.next;
+			this.Next = other.next;
 			
 			if (this.next != null)
 				this.next.previous = this;
@@ -282,6 +336,9 @@ namespace System.Windows.Forms
 			Font = other.font;
 			color = other.color;
 			back_color = other.back_color;
+			TextPosition = other.text_position;
+			CharOffset = other.CharOffset;
+			Visible = other.Visible;
 		}
 
 		public void Delete ()
@@ -312,6 +369,8 @@ namespace System.Windows.Forms
 		
 		public virtual void Draw (Graphics dc, Color color, float x, float y, int start, int end)
 		{
+			if (text_position == TextPositioning.Subscript)
+				y += OffsetY;
 			TextBoxTextRenderer.DrawText (dc, line.text.ToString (start, end).Replace ("\r", string.Empty), FontToDisplay, color, x, y, false);
 		}
 		
@@ -328,6 +387,14 @@ namespace System.Windows.Forms
 		public virtual void Draw (Graphics dc, Color color, float xoff, float y, int drawStart, int drawEnd,
 					  string text, out Rectangle measuredText, bool measureText)
 		{
+			if (!visible) {
+				measuredText = new Rectangle ();
+				return;
+			}
+
+			if (text_position == TextPositioning.Subscript)
+				y += OffsetY;
+
 			if (measureText) {
 				int xstart = (int)line.widths [drawStart] + (int)xoff;
 				int xend = (int)line.widths [drawEnd] - (int)line.widths [drawStart];
@@ -342,7 +409,7 @@ namespace System.Windows.Forms
 			while (drawStart < drawEnd) {
 				int tab_index = text.IndexOf ("\t", drawStart);
 				
-				if (tab_index == -1)
+				if (tab_index == -1 || tab_index > drawEnd)
 					tab_index = drawEnd;
 
 				TextBoxTextRenderer.DrawText (dc, text.Substring (drawStart, tab_index - drawStart).Replace ("\r", string.Empty), FontToDisplay, color, xoff + line.widths [drawStart], y, false);
@@ -380,7 +447,16 @@ namespace System.Windows.Forms
 			if (this.LinkText != other.LinkText)
 				return false;
 
-			if (this.font.Equals (other.font) && this.color.Equals (other.color))
+			if (this.TextPosition != other.TextPosition)
+				return false;
+
+			if (this.CharOffset != other.CharOffset)
+				return false;
+
+			if (this.Visible != other.Visible)
+				return false;
+
+			if (this.font.Equals (other.font) && this.color.Equals (other.color) && this.back_color.Equals (other.back_color))
 				return true;
 
 			return false;
@@ -409,11 +485,17 @@ namespace System.Windows.Forms
 			return null;
 		}
 
+		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor, FormatSpecified specified)
+		{
+			return FormatText (line, formatStart, length, font, color, backColor, TextPositioning.Normal, 0, true, specified);
+		}
+
 		/// <summary>Applies 'font' and 'brush' to characters starting at 'start' for 'length' chars; 
 		/// Removes any previous tags overlapping the same area; 
 		/// returns true if lineheight has changed</summary>
 		/// <param name="formatStart">1-based character position on line</param>
-		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor, FormatSpecified specified)
+		public static bool FormatText (Line line, int formatStart, int length, Font font, Color color, Color backColor,
+		                               TextPositioning text_position, float char_offset, bool visible, FormatSpecified specified)
 		{
 			LineTag tag;
 			LineTag start_tag;
@@ -422,7 +504,7 @@ namespace System.Windows.Forms
 			bool retval = false;		// Assume line-height doesn't change
 
 			// Too simple?
-			if (((FormatSpecified.Font & specified) == FormatSpecified.Font) && font.Height != line.height)
+			if (((FormatSpecified.Font & specified) == FormatSpecified.Font) && font.Height != line.TextHeight)
 				retval = true;
 
 			line.recalc = true;		// This forces recalculation of the line in RecalculateDocument
@@ -436,7 +518,7 @@ namespace System.Windows.Forms
 
 			// Common special case
 			if ((formatStart == 1) && (length == tag.Length)) {
-				SetFormat (tag, font, color, backColor, specified);
+				SetFormat (tag, font, color, backColor, text_position, char_offset, visible, specified);
 				return retval;
 			}
 
@@ -444,7 +526,7 @@ namespace System.Windows.Forms
 			// we only need one new tag
 			if  (formatStart == 1 && length == 0) {
 				line.tags.Break (1);
-				SetFormat (line.tags, font, color, backColor, specified);
+				SetFormat (line.tags, font, color, backColor, text_position, char_offset, visible, specified);
 				return retval;
 			}
 
@@ -455,7 +537,7 @@ namespace System.Windows.Forms
 			// Find Tag will return tag 0 at position 3, but we should just
 			// use the empty tag after..
 			if (start_tag.End == formatStart && length == 0 && start_tag.Next != null && start_tag.Next.Length == 0) {
-				SetFormat (start_tag.Next, font, color, backColor, specified);
+				SetFormat (start_tag.Next, font, color, backColor, text_position, char_offset, visible, specified);
 				return retval;
 			}
 
@@ -463,13 +545,22 @@ namespace System.Windows.Forms
 			while (start_tag.End == formatStart && start_tag.Next != null)
 				start_tag = start_tag.Next;
 
-			tag = start_tag.Break (formatStart);
+			if (start_tag.Start == formatStart && start_tag.Length == length) {
+				SetFormat (start_tag, font, color, backColor, text_position, char_offset, visible, specified);
+				return retval;
+			}
+
+			// Break the tag if needed -- we don't need to break for the start if we're starting at its start.
+			if (start_tag.Start != formatStart)
+				tag = start_tag.Break (formatStart);
+			else
+				tag = start_tag;
 
 			// empty selection style at end of line - its the only situation
 			// where the rest of the tag would be empty, since we moved to the
 			// begining of next non empty tag
 			if (tag.Length == 0) {
-				SetFormat (tag, font, color, backColor, specified);
+				SetFormat (tag, font, color, backColor, text_position, char_offset, visible, specified);
 				return retval;
 			}
 
@@ -477,25 +568,27 @@ namespace System.Windows.Forms
 			// after our new (now) empty one..
 			if (length == 0) {
 				tag.Break (formatStart);
-				SetFormat (tag, font, color, backColor, specified);
+				SetFormat (tag, font, color, backColor, text_position, char_offset, visible, specified);
 				return retval;
 			}
 
+			bool atEnd = false;
 			while (tag != null && tag.End <= end) {
-				SetFormat (tag, font, color, backColor, specified);
+				SetFormat (tag, font, color, backColor, text_position, char_offset, visible, specified);
+				atEnd |= tag.End == end;
 				tag = tag.next;
 			}
 
 			// did the last tag conveniently fit?
-			if (tag != null && tag.End == end)
+			if (atEnd || (tag != null && tag.End == end))
 				return retval;
 
-			/// Now do the last tag
+			// Now do the last tag
 			end_tag = FindTag (line, end-1);
 
 			if (end_tag != null) {
 				end_tag.Break (end);
-				SetFormat (end_tag, font, color, backColor, specified);
+				SetFormat (end_tag, font, color, backColor, text_position, char_offset, visible, specified);
 			}
 
 			return retval;
@@ -509,6 +602,7 @@ namespace System.Windows.Forms
 			int low = start;
 			int high = low + Length;
 			int length_no_ending = line.TextLengthWithoutEnding ();
+			float char_mid;
 
 			if (Length == 0)
 				return low-1;
@@ -517,7 +611,8 @@ namespace System.Windows.Forms
 				return 0;
 
 			if (x < line.widths [low]) {
-				if (low == 1 && x > (line.widths [1] / 2))
+				char_mid = (line.widths [1] + line.widths [0]) / 2;
+				if (low == 1 && x >= char_mid)
 					return low;
 				return low - 1;
 			}
@@ -535,9 +630,9 @@ namespace System.Windows.Forms
 					high = mid;
 			}
 
-			float char_width = line.widths[high] - line.widths[low];
+			char_mid = (line.widths [high] + line.widths [low]) / 2;
 
-			if ((x - line.widths[low]) >= (char_width / 2))
+			if (x >= char_mid)
 				return high;
 			else
 				return low;	
@@ -569,6 +664,12 @@ namespace System.Windows.Forms
 
 		private static void SetFormat (LineTag tag, Font font, Color color, Color back_color, FormatSpecified specified)
 		{
+			SetFormat (tag, font, color, back_color, TextPositioning.Normal, 0, true, specified);
+		}
+
+		private static void SetFormat (LineTag tag, Font font, Color color, Color back_color, TextPositioning text_position,
+		                               float char_offset, bool visible, FormatSpecified specified)
+		{
 			if ((FormatSpecified.Font & specified) == FormatSpecified.Font) {
 				tag.Font = font;
 			}
@@ -577,28 +678,52 @@ namespace System.Windows.Forms
 			if ((FormatSpecified.BackColor & specified) == FormatSpecified.BackColor) {
 				tag.back_color = back_color;
 			}
+			if ((FormatSpecified.TextPosition & specified) == FormatSpecified.TextPosition)
+				tag.TextPosition = text_position;
+			if ((FormatSpecified.CharOffset & specified) == FormatSpecified.CharOffset)
+				tag.CharOffset = char_offset;
+			if ((FormatSpecified.Visibility & specified) == FormatSpecified.Visibility)
+				tag.Visible = visible;
 			// Console.WriteLine ("setting format:   {0}  {1}   new color {2}", color.Color, specified, tag.color.Color);
 		}
 
 		public virtual SizeF SizeOfPosition (Graphics dc, int pos)
 		{
-			if (pos >= line.TextLengthWithoutEnding () && line.document.multiline)
+			if ((pos >= line.TextLengthWithoutEnding () && line.document.multiline) || !visible)
 				return SizeF.Empty;
 
 			string text = line.text.ToString (pos, 1);
-			switch ((int) text [0]) {
+			switch ((int)text [0]) {
 			case '\t':
 				if (!line.document.multiline)
 					goto case 10;
-				SizeF res = TextBoxTextRenderer.MeasureText (dc, " ", font); 
-				res.Width *= 8.0F;
+				SizeF res = TextBoxTextRenderer.MeasureText (dc, " ", FontToDisplay); // This way we get the height, not that it is ever used...
+				float left = line.widths [pos];
+				float right = -1;
+				TabStopCollection stops = line.tab_stops;
+				float tabPos;
+				for (int i = 0; i < stops.Count; i++) {
+					tabPos = stops [i].Position;
+					if (tabPos >= left) {
+						if (tabPos <= line.document.viewport_width - line.RightIndent)
+							break; // Can't use tabs that are past the end of the line.
+
+						right = stops [i].CalculateRight (line, pos);
+						break;
+					}
+				}
+				if (right < 0) {
+					float maxWidth = dc.DpiX / 2; // tab stops are 1/2"
+					right = (float)(Math.Floor (left / maxWidth) + 1) * maxWidth;
+				}
+				res.Width = right - left;
 				return res;
 			case 10:
 			case 13:
-				return TextBoxTextRenderer.MeasureText (dc, "\u000D", font);
+				return TextBoxTextRenderer.MeasureText (dc, "\u000D", FontToDisplay);
 			}
-			
-			return TextBoxTextRenderer.MeasureText (dc, text, font);
+
+			return TextBoxTextRenderer.MeasureText (dc, text, FontToDisplay);
 		}
 
 		public virtual string Text ()

@@ -304,6 +304,16 @@ mono_if_conversion (MonoCompile *cfg)
 		MonoBasicBlock *bb1, *bb2;
 
 	restart:
+		if (!(bb->out_count == 2 && !bb->extended))
+			continue;
+
+		bb1 = bb->out_bb [0];
+		bb2 = bb->out_bb [1];
+
+		/* If either bb1 or bb2 is a try block, abort the optimization attempt. */
+		if (bb1->try_start || bb2->try_start)
+			continue;
+
 		/* Look for the IR code generated from cond ? a : b
 		 * which is:
 		 * BB:
@@ -315,12 +325,6 @@ mono_if_conversion (MonoCompile *cfg)
 		 * <var> <- <b>
 		 * br BB3
 		 */
-		if (!(bb->out_count == 2 && !bb->extended))
-			continue;
-
-		bb1 = bb->out_bb [0];
-		bb2 = bb->out_bb [1];
-
 		if (bb1->in_count == 1 && bb2->in_count == 1 && bb1->out_count == 1 && bb2->out_count == 1 && bb1->out_bb [0] == bb2->out_bb [0]) {
 			MonoInst *compare, *branch, *ins1, *ins2, *cmov, *move, *tmp;
 			MonoBasicBlock *true_bb, *false_bb;
@@ -1248,7 +1252,7 @@ mono_optimize_branches (MonoCompile *cfg)
 	int filter = FILTER_IL_SEQ_POINT;
 
 	/*
-	 * Some crazy loops could cause the code below to go into an infinite
+	 * Possibly some loops could cause the code below to go into an infinite
 	 * loop, see bug #53003 for an example. To prevent this, we put an upper
 	 * bound on the number of iterations.
 	 */

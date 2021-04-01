@@ -1,2 +1,2 @@
 #!/bin/sh
-exec @bindir@/mono --gc-params=nursery-size=64m --clr-memory-model $MONO_OPTIONS @mono_instdir@/4.5/csc.exe "$@"
+exec @bindir@/mono --gc-params=nursery-size=64m $MONO_OPTIONS @mono_instdir@/4.5/csc.exe "$@"

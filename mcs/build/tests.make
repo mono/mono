@@ -89,26 +89,32 @@ endif
 test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_test.dll)
 test_lib_output = $(test_lib_dir)/$(test_lib)
 
-test_sourcefile_base_excludes = $(test_lib).exclude.sources
+test_library = $(ASSEMBLY:$(ASSEMBLY_EXT)=)_test$(ASSEMBLY_EXT)
+test_response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).response
+test_makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).makefrag
 
-test_pdb = $(test_lib:.dll=.pdb)
 test_flags = $(test_nunit_ref) $(TEST_MCS_FLAGS) $(TEST_LIB_MCS_FLAGS)
 ifndef NO_BUILD
 test_flags += -r:$(the_assembly)
 test_assembly_dep = $(the_assembly)
 endif
-tests_CLEAN_FILES += $(test_lib_output) $(test_lib_output:$(ASSEMBLY_EXT)=.pdb)
+
+tests_CLEAN_FILES += $(test_lib_output) $(test_response) $(test_makefrag)
 
 xtest_sourcefile_base = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
-xtest_sourcefile_base_excludes_full = $(PROFILE_PLATFORM)_$(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.exclude.sources)
-xtest_sourcefile_base_excludes = $(xtest_sourcefile_base_excludes_full:_%=%)
 
 xunit_test_lib = $(PROFILE)_$(ASSEMBLY:$(ASSEMBLY_EXT)=_xunit-test.dll)
 xtest_lib_output = $(test_lib_dir)/$(xunit_test_lib)
 
-xtest_response = $(depsdir)/$(xunit_test_lib).response
-xtest_makefrag = $(depsdir)/$(xunit_test_lib).makefrag
-xtest_flags = -r:$(the_assembly) $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS) /unsafe
+xtest_library = $(ASSEMBLY:$(ASSEMBLY_EXT)=)_xtest$(ASSEMBLY_EXT)
+xtest_response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(xtest_library).response
+xtest_makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(xtest_library).makefrag
+xtest_flags = $(xunit_libs_ref) $(XTEST_MCS_FLAGS) $(XTEST_LIB_MCS_FLAGS) /unsafe
+
+ifndef NO_BUILD
+xtest_flags += -r:$(the_assembly)
+xtest_assembly_dep =  $(the_assembly)
+endif
 
 ifeq ($(wildcard $(xtest_sourcefile_base)),)
 xtest_sourcefile_base = $(ASSEMBLY:$(ASSEMBLY_EXT)=_xtest.dll.sources)
@@ -128,7 +134,7 @@ $(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
 	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
 
 $(topdir)/build/deps/nunit-$(PROFILE).stamp:
-	cd ${topdir}/tools/nunit-lite && $(MAKE)
+	$(MAKE) -C ${topdir}/tools/nunit-lite
 	echo "stamp" >$@
 
 tests_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
@@ -139,6 +145,10 @@ test_assemblies :=
 
 ifdef HAVE_CS_TESTS
 test_assemblies += $(test_lib_output)
+
+ifdef TEST_SPLIT_ASSEMBLIES
+test_assemblies += $(test_lib_output:.dll=.part1.dll) $(test_lib_output:.dll=.part2.dll) $(test_lib_output:.dll=.part3.dll)
+endif
 
 check: run-test
 test-local: $(test_assemblies) $(test_lib_dir)/nunit-excludes.txt
@@ -262,44 +272,42 @@ endif
 TEST_FILES =
 
 ifdef HAVE_CS_TESTS
-TEST_FILES += `sed -e '/^$$/d' -e 's,^../,,' -e '/^\#.*$$/d' -et -e 's,^,Test/,' $(test_sourcefile_base)`
-endif
 
-ifdef HAVE_CS_TESTS
+TEST_FILES += `sed -e '/^$$/d' -e 's,^../,,' -e '/^\#.*$$/d' -et -e 's,^,Test/,' $(test_sourcefile_base)`
 
 $(test_lib_dir):
 	mkdir -p $@
 
-test_library = $(ASSEMBLY:$(ASSEMBLY_EXT)=)_test$(ASSEMBLY_EXT)
-
-test_sourcefile = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).sources
-$(test_sourcefile): $(test_sourcefile_base) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources) $(depsdir)/.stamp
-	$(GENSOURCES) --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
-
-test_response = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).response
-$(test_response): $(test_sourcefile) $(topdir)/build/tests.make $(depsdir)/.stamp
-	$(PLATFORM_CHANGE_SEPARATOR_CMD) <$(test_sourcefile) >$@
-
-test_makefrag = $(depsdir)/$(PROFILE_PLATFORM)_$(PROFILE)_$(test_library).makefrag
-$(test_makefrag): $(test_sourcefile) $(topdir)/build/tests.make $(depsdir)/.stamp
-	@echo Creating $@ ...
-	@sed 's,^,$(build_lib): ,' $< >$@
-	@if test ! -f $(test_sourcefile).makefrag; then :; else \
-	   cat $(test_sourcefile).makefrag >> $@ ; \
-	   echo '$@: $(test_sourcefile).makefrag' >> $@; \
-	   echo '$(test_sourcefile).makefrag:' >> $@; fi
-
 $(test_lib_output): $(test_assembly_dep) $(test_response) $(test_nunit_dep) $(test_lib_output).nunitlite.config | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response)
 
-tests_CLEAN_FILES += $(test_sourcefile) $(test_response) $(test_makefrag)
+ifdef TEST_SPLIT_ASSEMBLIES
+$(test_lib_output:.dll=.part1.dll): $(test_lib_output) $(test_response).part1
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response).part1
 
+$(test_lib_output:.dll=.part2.dll): $(test_lib_output) $(test_response).part2
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response).part2
 
+$(test_lib_output:.dll=.part3.dll): $(test_lib_output) $(test_response).part3
+ifneq ($(wildcard $(test_response).part3),)
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) -target:library -out:$@ $(test_flags) $(LOCAL_TEST_COMPILER_ONDOTNET_FLAGS) @$(test_response).part3
+endif
+
+# part3 is optional so we need this empty target to silence make if it doesn't exist
+$(test_response).part3: ;
+
+tests_CLEAN_FILES += $(test_response).part1 $(test_response).part2 $(test_response).part3
+endif
+
+$(test_response): $(test_sourcefile_base) $(wildcard *_test.dll.sources) $(wildcard *_test.dll.exclude.sources) $(topdir)/build/tests.make $(depsdir)/.stamp
+	$(GENSOURCES) --basedir:./Test --strict --platformsdir:$(topdir)/build "$@" "$(test_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
+
+$(test_makefrag): $(test_response)
+	@echo Creating $@ ...
+	@sed 's,^,$(test_lib_output) $(test_lib_output:.dll=.part1.dll) $(test_lib_output:.dll=.part2.dll) $(test_lib_output:.dll=.part3.dll): ,' $< >$@
 
 -include $(test_makefrag)
 
-build-test-lib: $(test_lib_output)
-	@echo Building testing lib
 
 endif
 
@@ -336,8 +344,15 @@ ifdef COVERAGE
 XTEST_COVERAGE_FLAGS = -O=-aot --profile=coverage:output=$(topdir)/class/lib/$(PROFILE_DIRECTORY)/coverage_xunit_$(ASSEMBLY).xml
 endif
 
+xtest_assemblies += $(xtest_lib_output)
+
+ifdef XTEST_SPLIT_ASSEMBLIES
+xtest_assemblies += $(xtest_lib_output:.dll=.part1.dll) $(xtest_lib_output:.dll=.part2.dll) $(xtest_lib_output:.dll=.part3.dll)
+endif
+
+
 check: run-xunit-test-local
-xunit-test-local: $(xtest_lib_output) $(test_lib_dir)/xunit-excludes.txt $(test_lib_dir)/Xunit.NetCore.Extensions.dll $(test_lib_dir)/xunit.execution.dotnet.dll
+xunit-test-local: $(xtest_assemblies) $(test_lib_dir)/xunit-excludes.txt $(test_lib_dir)/Xunit.NetCore.Extensions.dll $(test_lib_dir)/xunit.execution.dotnet.dll
 run-xunit-test-local: run-xunit-test-lib
 
 $(test_lib_dir)/xunit-excludes.txt: $(topdir)/build/tests.make | $(test_lib_dir)
@@ -360,23 +375,37 @@ run-xunit-test-lib: xunit-test-local
 $(XTEST_REMOTE_EXECUTOR): $(topdir)/../external/corefx/src/Common/tests/System/Diagnostics/RemoteExecutorConsoleApp/RemoteExecutorConsoleApp.cs | $(test_lib_dir)
 	$(TEST_COMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll $< -out:$@
 
-$(xtest_lib_output): $(the_assembly) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
+$(xtest_lib_output): $(xtest_assembly_dep) $(xtest_response) $(xunit_libs_dep) $(xunit_src) $(XTEST_REMOTE_EXECUTOR) | $(test_lib_dir)
 	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response) $(xunit_src)
 
-xtest_response_preprocessed = $(xtest_response)_preprocessed
+ifdef XTEST_SPLIT_ASSEMBLIES
+$(xtest_lib_output:.dll=.part1.dll): $(xtest_lib_output) $(xtest_response).part1
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response).part1 $(xunit_src)
+
+$(xtest_lib_output:.dll=.part2.dll): $(xtest_lib_output) $(xtest_response).part2
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response).part2 $(xunit_src)
+
+$(xtest_lib_output:.dll=.part3.dll): $(xtest_lib_output) $(xtest_response).part3
+ifneq ($(wildcard $(xtest_response).part3),)
+	$(TEST_COMPILE) $(LIBRARY_FLAGS) $(XTEST_LIB_FLAGS) -target:library -out:$@ $(xtest_flags) @$(xtest_response).part3 $(xunit_src)
+endif
+
+# part3 is optional so we need this empty target to silence make if it doesn't exist
+$(xtest_response).part3: ;
+
+xtests_CLEAN_FILES += $(xtest_response).part1 $(xtest_response).part2 $(xtest_response).part3
+endif
 
 # This handles .excludes/.sources pairs, as well as resolving the
-# includes that occur in .sources files
-$(xtest_response): $(xtest_sourcefile_base) $(wildcard *xtest.dll.sources) $(wildcard $(xtest_sourcefile_base_excludes))
-	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(xtest_sourcefile_base)" "$(xtest_sourcefile_base_excludes)"
+# includes that occur in .sources files. It also handles splitting test assemblies into multiple parts.
+$(xtest_response): $(xtest_sourcefile_base) $(wildcard *_xtest.dll.sources) $(wildcard *_xtest.dll.exclude.sources) $(topdir)/build/tests.make $(depsdir)/.stamp
+	$(GENSOURCES) --strict --platformsdir:$(topdir)/build "$@" "$(xtest_library)" "$(PROFILE_PLATFORM)" "$(PROFILE)"
 
 $(xtest_makefrag): $(xtest_response)
 	@echo Creating $@ ...
-	@sed 's,^,$(xtest_lib_output): ,' $< >$@
+	@sed 's,^,$(xtest_lib_output) $(xtest_lib_output:.dll=.part1.dll) $(xtest_lib_output:.dll=.part2.dll) $(xtest_lib_output:.dll=.part3.dll): ,' $< >$@
 
 -include $(xtest_makefrag)
 
 endif
 
-
-.PHONY: patch-nunitlite-appconfig

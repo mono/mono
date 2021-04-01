@@ -38,6 +38,26 @@ struct _MonoDebugLocalsInfo {
 	MonoDebugCodeBlock *code_blocks;
 };
 
+/* IMAGE_DEBUG_DIRECTORY structure */
+typedef struct
+{
+	gint32 characteristics;
+	gint32 time_date_stamp;
+	gint16 major_version;
+	gint16 minor_version;
+	gint32 type;
+	gint32 size_of_data;
+	gint32 address;
+	gint32 pointer;
+}  ImageDebugDirectory;
+
+typedef enum {
+	DEBUG_DIR_ENTRY_CODEVIEW = 2,
+	DEBUG_DIR_REPRODUCIBLE = 16,
+	DEBUG_DIR_ENTRY_PPDB = 17,
+	DEBUG_DIR_PDB_CHECKSUM = 19
+} DebugDirectoryEntryType;
+
 /*
 * Information about method await yield and resume offsets retrieved from a symbol file.
 */
@@ -75,7 +95,7 @@ void            mono_debugger_unlock                        (void);
 void
 mono_debug_get_seq_points (MonoDebugMethodInfo *minfo, char **source_file,
 			   GPtrArray **source_file_list, int **source_files,
-			   MonoSymSeqPoint **seq_points, int *n_seq_points) MONO_LLVM_INTERNAL;
+			   MonoSymSeqPoint **seq_points, int *n_seq_points);
 
 MONO_API void
 mono_debug_free_locals (MonoDebugLocalsInfo *info);

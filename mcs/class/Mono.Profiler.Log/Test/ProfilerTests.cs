@@ -508,7 +508,7 @@ namespace MonoTests.Mono.Profiler.Log {
 			});
 		}
 
-		[Fact (Skip = "https://github.com/mono/mono/issues/8709")]
+		[Fact]
 		public void HeapshotDataIsValid ()
 		{
 			new ProfilerTestRun ("simple-allocation", "heapshot").Run (events => {

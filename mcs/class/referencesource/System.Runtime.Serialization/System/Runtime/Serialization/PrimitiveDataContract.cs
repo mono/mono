@@ -10,6 +10,9 @@ namespace System.Runtime.Serialization
     using System.Reflection;
     using System.Xml;
     using System.Security;
+#if MONO
+    using System.Runtime.CompilerServices;
+#endif
 
 #if USE_REFEMIT
     public abstract class PrimitiveDataContract : DataContract
@@ -70,6 +73,35 @@ namespace System.Runtime.Serialization
 
         internal MethodInfo XmlFormatWriterMethod
         {
+#if MONO
+            [PreserveDependency ("WriteChar", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteBoolean", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteSignedByte", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUnsignedByte", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteShort", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUnsignedShort", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteInt", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUnsignedInt", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteLong", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUnsignedLong", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteFloat", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteDouble", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteDecimal", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteDateTime", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteString", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteBase64", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteAnyType", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteTimeSpan", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteGuid", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUri", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteQName", "System.Runtime.Serialization.XmlWriterDelegator")]
+
+            [PreserveDependency ("WriteString", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+            [PreserveDependency ("WriteBase64", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+            [PreserveDependency ("WriteAnyType", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+            [PreserveDependency ("WriteUri", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+            [PreserveDependency ("WriteQName", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+#endif
             [Fx.Tag.SecurityNote(Critical = "Fetches the critical XmlFormatWriterMethod property.",
                 Safe = "XmlFormatWriterMethod only needs to be protected for write; initialized in getter if null.")]
             [SecuritySafeCritical]
@@ -88,6 +120,35 @@ namespace System.Runtime.Serialization
 
         internal MethodInfo XmlFormatContentWriterMethod
         {
+#if MONO
+            [PreserveDependency ("WriteChar", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteBoolean", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteSignedByte", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUnsignedByte", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteShort", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUnsignedShort", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteInt", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUnsignedInt", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteLong", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUnsignedLong", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteFloat", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteDouble", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteDecimal", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteDateTime", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteString", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteBase64", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteAnyType", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteTimeSpan", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteGuid", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteUri", "System.Runtime.Serialization.XmlWriterDelegator")]
+            [PreserveDependency ("WriteQName", "System.Runtime.Serialization.XmlWriterDelegator")]
+
+            [PreserveDependency ("WriteString", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+            [PreserveDependency ("WriteBase64", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+            [PreserveDependency ("WriteAnyType", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+            [PreserveDependency ("WriteUri", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+            [PreserveDependency ("WriteQName", "System.Runtime.Serialization.XmlObjectSerializerWriteContext")]
+#endif
             [Fx.Tag.SecurityNote(Critical = "Fetches the critical XmlFormatContentWriterMethod property.",
                 Safe = "XmlFormatContentWriterMethod only needs to be protected for write; initialized in getter if null.")]
             [SecuritySafeCritical]
@@ -106,6 +167,29 @@ namespace System.Runtime.Serialization
 
         internal MethodInfo XmlFormatReaderMethod
         {
+#if MONO
+            [PreserveDependency ("ReadElementContentAsChar", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsBoolean", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsSignedByte", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsUnsignedByte", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsShort", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsUnsignedShort", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsInt", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsUnsignedInt", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsLong", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsUnsignedLong", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsFloat", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsDouble", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsDecimal", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsDateTime", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsString", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsBase64", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsAnyType", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsTimeSpan", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsGuid", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsUri", "System.Runtime.Serialization.XmlReaderDelegator")]
+            [PreserveDependency ("ReadElementContentAsQName", "System.Runtime.Serialization.XmlReaderDelegator")]
+#endif
             [Fx.Tag.SecurityNote(Critical = "Fetches the critical XmlFormatReaderMethod property.",
                 Safe = "XmlFormatReaderMethod only needs to be protected for write; initialized in getter if null.")]
             [SecuritySafeCritical]

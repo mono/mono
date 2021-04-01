@@ -243,6 +243,7 @@ namespace System.Diagnostics {
 					}
 
 					var filename = frame.GetSecureFileName ();
+#if !WASM
 					if (filename[0] == '<') {
 						var mvid = frame.GetMethod ().Module.ModuleVersionId.ToString ("N");
 						var aotid = GetAotId ();
@@ -252,6 +253,7 @@ namespace System.Diagnostics {
 							filename = string.Format ("<{0}#{1}>", mvid, aotid);
 						}
 					}
+#endif
 
 					sb.AppendFormat (" in {0}:{1} ", filename, frame.GetFileLineNumber ());
 				}

@@ -103,11 +103,16 @@ short **derives;
 char *nullable;
 
 #if defined(_WIN32) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
-extern char* mktemp();
-#define mkstemp mktemp
+#define unlink _unlink
+int
+mkstemp (char *template_name)
+{
+	_mktemp (template_name);
+	return -1;
+}
+#else
+extern char* getenv (const char*);
 #endif
-
-extern char *getenv();
 
 void
 done (int k)

@@ -9,20 +9,23 @@
 #include <glib.h>
 
 #if defined(HOST_WIN32)
+#include <mono/utils/mono-compiler.h>
+MONO_PRAGMA_WARNING_PUSH()
+MONO_PRAGMA_WARNING_DISABLE (4115) // warning C4115: 'IRpcStubBuffer': named type definition in parentheses
 #include <winsock2.h>
 #include <windows.h>
 #include <objbase.h>
-#include "mono/metadata/marshal-windows-internals.h"
+MONO_PRAGMA_WARNING_POP()
+#include "mono/metadata/marshal-internals.h"
+#include <mono/utils/w32subset.h>
 #include "icall-decl.h"
 
-#if G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT)
+#if HAVE_API_SUPPORT_WIN32_GLOBAL_ALLOC_FREE
+
 void*
-mono_marshal_alloc_hglobal (size_t size, MonoError *error)
+mono_marshal_alloc_hglobal (size_t size)
 {
-	void* p = GlobalAlloc (GMEM_FIXED, size);
-	if (!p)
-		mono_error_set_out_of_memory (error, "");
-	return p;
+	return GlobalAlloc (GMEM_FIXED, size);
 }
 
 gpointer
@@ -36,7 +39,25 @@ mono_marshal_free_hglobal (gpointer ptr)
 {
 	GlobalFree (ptr);
 }
-#endif /* G_HAVE_API_SUPPORT(HAVE_CLASSIC_WINAPI_SUPPORT) */
+#elif !HAVE_EXTERN_DEFINED_WIN32_GLOBAL_ALLOC_FREE
+void *
+mono_marshal_alloc_hglobal (size_t size)
+{
+	return HeapAlloc (GetProcessHeap (), 0, size);
+}
+
+gpointer
+mono_marshal_realloc_hglobal (gpointer ptr, size_t size)
+{
+	return HeapReAlloc (GetProcessHeap (), 0, ptr, size);
+}
+
+void
+mono_marshal_free_hglobal (gpointer ptr)
+{
+	HeapFree (GetProcessHeap (), 0, ptr);
+}
+#endif /* HAVE_API_SUPPORT_WIN32_GLOBAL_ALLOC_FREE */
 
 void*
 mono_marshal_alloc_co_task_mem (size_t size)
@@ -57,25 +78,34 @@ mono_marshal_realloc_co_task_mem (gpointer ptr, size_t size)
 }
 
 char*
-ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length, MonoError *error)
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length);
+
+char*
+ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length)
 {
+	g_assert_not_netcore ();
+
 	// FIXME pass mono_utf16_to_utf8 an allocator to avoid double alloc/copy.
 
+	ERROR_DECL (error);
+	size_t len = 0;
+	char* ret = NULL;
 	char* tres = mono_utf16_to_utf8 (s, length, error);
-	return_val_if_nok (error, NULL);
-	if (!tres)
-		return tres;
+	if (!tres || !is_ok (error))
+		goto exit;
 
 	/*
 	 * mono_utf16_to_utf8() returns a memory area at least as large as length,
 	 * even if it contains NULL characters. The copy we allocate here has to be equally
 	 * large.
 	 */
-	size_t len = MAX (strlen (tres) + 1, length);
-	char* ret = (char*)ves_icall_System_Runtime_InteropServices_Marshal_AllocHGlobal (len, error);
+	len = MAX (strlen (tres) + 1, length);
+	ret = (char*)mono_marshal_alloc_hglobal_error (len, error);
 	if (ret)
 		memcpy (ret, tres, len);
+exit:
 	g_free (tres);
+	mono_error_set_pending_exception (error);
 	return ret;
 }
 
@@ -98,7 +128,7 @@ mono_string_to_utf8str_impl (MonoStringHandle s, MonoError *error)
 
 	// FIXME pass g_utf16_to_utf8 an allocator to avoid double alloc/copy.
 
-	uint32_t gchandle = 0;
+	MonoGCHandle gchandle = NULL;
 	tmp = g_utf16_to_utf8 (mono_string_handle_pin_chars (s, &gchandle), mono_string_handle_length (s), NULL, &len, &gerror);
 	mono_gchandle_free_internal (gchandle);
 	if (gerror) {

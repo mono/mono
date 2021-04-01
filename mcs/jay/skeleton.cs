@@ -92,7 +92,7 @@ t  }
 .    int [] tokens = yyExpectingTokens (state);
 .    string [] result = new string[tokens.Length];
 .    for (int n = 0; n < tokens.Length;  n++)
-.      result[n++] = yyNames[tokens [n]];
+.      result[n] = yyNames[tokens [n]];
 .    return result;
 .  }
 .

@@ -429,13 +429,9 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		static Encoding DefaultEncoding = Encoding.Default;
-
 		public void Serialize (Stream stream, object o)
 		{
-			XmlTextWriter xmlWriter = new XmlTextWriter (stream, DefaultEncoding);
-			xmlWriter.Formatting = Formatting.Indented;
-			Serialize (xmlWriter, o, null);
+			Serialize (stream, o, null);
 		}
 
 		public void Serialize (TextWriter textWriter, object o)
@@ -452,7 +448,7 @@ namespace System.Xml.Serialization
 
 		public void Serialize (Stream stream, object o, XmlSerializerNamespaces	namespaces)
 		{
-			XmlTextWriter xmlWriter	= new XmlTextWriter (stream, DefaultEncoding);
+			XmlTextWriter xmlWriter	= new XmlTextWriter (stream, Encoding.UTF8);
 			xmlWriter.Formatting = Formatting.Indented;
 			Serialize (xmlWriter, o, namespaces);
 		}

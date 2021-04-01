@@ -1,4 +1,4 @@
-include $(top_srcdir)/mk/common.mk
+MAKEFLAGS := $(MAKEFLAGS) --no-builtin-rules
 
 if SUPPORT_SGEN
 sgen_dirs = sgen
@@ -13,44 +13,29 @@ native_dirs = native
 endif
 
 if ENABLE_NETCORE
-btls_dirs = 
+btls_dirs =
+managed_unit_test_dirs =
+native_unit_test_dirs =
+culture_dirs =
+else
+managed_unit_test_dirs = tests
+native_unit_test_dirs = unit-tests
+culture_dirs = culture
 endif
 
 if ENABLE_NETCORE
-SUBDIRS = eglib arch utils sgen metadata mini profiler
+SUBDIRS = eglib arch utils sgen zlib metadata mini profiler $(native_unit_test_dirs)
 else
 
 if CROSS_COMPILING
-SUBDIRS = $(btls_dirs) eglib arch utils cil $(sgen_dirs) metadata mini dis profiler $(native_dirs)
+SUBDIRS = $(btls_dirs) $(culture_dirs) eglib arch utils cil zlib $(sgen_dirs) metadata mini dis profiler $(native_dirs)
 else
 if INSTALL_MONOTOUCH
-SUBDIRS = $(btls_dirs) eglib arch utils $(sgen_dirs) metadata mini profiler $(native_dirs)
-
-monotouch-do-build:
-	@list='$(SUBDIRS)'; for subdir in $$list; do \
-	  case "x$$subdir" in \
-		xmetadata ) target="monotouch-do-build" ;; \
-		xmini ) target="monotouch-do-build" ;; \
-		* ) target="all" ;; \
-	  esac; \
-	  echo "Making $$target in $$subdir"; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
-    done;
-
-monotouch-do-clean:
-	@list='$(SUBDIRS)'; for subdir in $$list; do \
-	  case "x$$subdir" in \
-		xmetadata ) target="monotouch-do-clean" ;; \
-		xmini ) target="monotouch-do-clean" ;; \
-		* ) target="clean" ;; \
-	  esac; \
-	  echo "Making $$target in $$subdir"; \
-	  (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$target); \
-    done;
+SUBDIRS = $(btls_dirs) $(culture_dirs) eglib arch utils zlib $(sgen_dirs) metadata mini profiler $(native_dirs)
 else
-SUBDIRS = $(btls_dirs) eglib arch utils cil $(sgen_dirs) metadata mini dis tests unit-tests benchmark profiler $(native_dirs)
+SUBDIRS = $(btls_dirs) $(culture_dirs) eglib arch utils cil zlib $(sgen_dirs) metadata mini dis $(managed_unit_test_dirs) $(native_unit_test_dirs) benchmark profiler $(native_dirs)
 endif
 endif
 endif
 
-DIST_SUBDIRS = btls native eglib arch utils cil $(sgen_dirs) metadata mini dis tests unit-tests benchmark profiler
+DIST_SUBDIRS = btls $(culture_dirs) native eglib arch utils cil zlib $(sgen_dirs) metadata mini dis $(managed_unit_test_dirs) $(native_unit_test_dirs) benchmark profiler

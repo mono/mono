@@ -2723,7 +2723,7 @@ namespace Test.OracleClient
 		public static void TestPersistSucurityInfo1() 
 		{
 			Console.WriteLine("\nTestPersistSucurityInfo1 - persist security info=false");
-			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=tiger;persist security info=false");
+			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=PLACEHOLDER;persist security info=false");
 			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
 			con.Open();
 			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
@@ -2735,7 +2735,7 @@ namespace Test.OracleClient
 		public static void TestPersistSucurityInfo2() 
 		{
 			Console.WriteLine("\nTestPersistSucurityInfo2 - persist security info=true");
-			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=tiger;persist security info=true");
+			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=PLACEHOLDER;persist security info=true");
 			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
 			con.Open();
 			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
@@ -2747,7 +2747,7 @@ namespace Test.OracleClient
 		public static void TestPersistSucurityInfo3() 
 		{
 			Console.WriteLine("\nTestPersistSucurityInfo3 - use default for persist security info which is false");
-			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=tiger");
+			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=PLACEHOLDER");
 			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
 			con.Open();
 			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
@@ -2759,7 +2759,7 @@ namespace Test.OracleClient
 		public static void TestPersistSucurityInfo4() 
 		{
 			Console.WriteLine("\nTestPersistSucurityInfo4 - persist security info=false with password at front");
-			OracleConnection con = new OracleConnection(";password=tiger;data source=palis;user id=scott;persist security info=false");
+			OracleConnection con = new OracleConnection(";password=PLACEHOLDER;data source=palis;user id=scott;persist security info=false");
 			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
 			con.Open();
 			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
@@ -2771,7 +2771,7 @@ namespace Test.OracleClient
 		public static void TestPersistSucurityInfo5() 
 		{
 			Console.WriteLine("\nTestPersistSucurityInfo5 - persist security info=false");
-			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=tiger;persist security info=false");
+			OracleConnection con = new OracleConnection("data source=palis;user id=scott;password=PLACEHOLDER;persist security info=false");
 			Console.WriteLine("ConnectionString before open: " + con.ConnectionString);
 			con.Open();
 			Console.WriteLine("ConnectionString after open: " + con.ConnectionString);
@@ -3330,7 +3330,8 @@ namespace Test.OracleClient
 			Console.WriteLine("Closed.");
 
 			conStr = conStr + ";pooling=true;min pool size=4;max pool size=" + MAX_CONNECTIONS.ToString ();
-			ConnectionPoolingTest1 ();			ConnectionPoolingTest2 ();
+			ConnectionPoolingTest1 ();
+			ConnectionPoolingTest2 ();
 
 			// Need to have an external authentication user setup in Linux and oracle
 			// before running this test

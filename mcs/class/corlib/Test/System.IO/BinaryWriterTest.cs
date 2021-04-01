@@ -419,6 +419,24 @@ public class BinaryWriterTest {
 		Assert.AreEqual (0, bytes [45], "test#47");
 		Assert.AreEqual (0, bytes [46], "test#48");		
 	}
+
+	[Test]
+	public void WriteDecimalAndReadBack()
+	{
+		// This value is the same used in BinaryReader.ReadDecimal, which will be
+		// problematic if BinaryWriter or BinaryReader are endianness-confused.
+		Decimal writeDec = -18295873486192640;
+		using (var ms = new MemoryStream(32)) {
+			using (var bw = new BinaryWriter(ms, new UTF8Encoding(), true)) {
+				bw.Write(writeDec);
+			}
+			ms.Position = 0;
+			using (var br = new BinaryReader(ms)) {
+				Decimal readDec = br.ReadDecimal();
+				Assert.AreEqual (readDec, writeDec, "test#01");
+			}
+		}
+	}
 	
 	[Test]
 	public void WriteFloat ()

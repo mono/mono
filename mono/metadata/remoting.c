@@ -116,14 +116,14 @@ mono_compile_method_icall (MonoMethod *method);
 #define register_icall(func, sig, save) \
 	(mono_register_jit_icall_info (&mono_get_jit_icall_info ()->func, func, #func, (sig), (save), NULL))
 
-static inline void
+static void
 remoting_lock (void)
 {
 	g_assert (remoting_mutex_inited);
 	mono_os_mutex_lock (&remoting_mutex);
 }
 
-static inline void
+static void
 remoting_unlock (void)
 {
 	g_assert (remoting_mutex_inited);
@@ -306,7 +306,7 @@ mono_mb_emit_contextbound_check (MonoMethodBuilder *mb, int branch_code)
 }
 #endif /* !DISABLE_JIT */
 
-static inline MonoMethod*
+static MonoMethod*
 mono_marshal_remoting_find_in_cache (MonoMethod *method, int wrapper_type)
 {
 	MonoMethod *res = NULL;
@@ -334,7 +334,7 @@ mono_marshal_remoting_find_in_cache (MonoMethod *method, int wrapper_type)
 }
 
 /* Create the method from the builder and place it in the cache */
-static inline MonoMethod*
+static MonoMethod*
 mono_remoting_mb_create_and_cache (MonoMethod *key, MonoMethodBuilder *mb, 
 								   MonoMethodSignature *sig, int max_stack, WrapperInfo *info)
 {
@@ -761,9 +761,10 @@ mono_marshal_get_xappdomain_dispatch (MonoMethod *method, int *marshal_types, in
 
 	mono_mb_emit_ldarg (mb, 1);
 	mono_mb_emit_byte (mb, CEE_LDIND_REF);
-	mono_mb_emit_byte (mb, CEE_DUP);
 	pos = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
 	
+	mono_mb_emit_ldarg (mb, 1);
+	mono_mb_emit_byte (mb, CEE_LDIND_REF);
 	mono_marshal_emit_xdomain_copy_value (mb, byte_array_class);
 	mono_mb_emit_managed_call (mb, method_rs_deserialize, NULL);
 	
@@ -1449,7 +1450,6 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 	WrapperInfo *info;
 	char *name;
 	int t, pos0, pos1 = 0;
-	static MonoMethod* tp_load = NULL;
 
 	type = mono_type_get_underlying_type (type);
 
@@ -1481,12 +1481,16 @@ mono_marshal_get_ldfld_wrapper (MonoType *type)
 		return res;
 
 #ifndef DISABLE_REMOTING
-	if (!tp_load) {
+
+	MONO_STATIC_POINTER_INIT (MonoMethod, tp_load)
+
 		ERROR_DECL (error);
 		tp_load = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "LoadRemoteFieldNew", -1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (tp_load != NULL);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, tp_load)
+
 #endif
 
 	/* we add the %p pointer value of klass because class names are not unique */
@@ -1752,7 +1756,6 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 	WrapperInfo *info;
 	char *name;
 	int t, pos;
-	static MonoMethod *tp_store = NULL;
 
 	type = mono_type_get_underlying_type (type);
 	t = type->type;
@@ -1783,12 +1786,16 @@ mono_marshal_get_stfld_wrapper (MonoType *type)
 		return res;
 
 #ifndef DISABLE_REMOTING
-	if (!tp_store) {
-		ERROR_DECL (error);
+
+	MONO_STATIC_POINTER_INIT (MonoMethod, tp_store)
+
+ 		ERROR_DECL (error);
 		tp_store = mono_class_get_method_from_name_checked (mono_defaults.transparent_proxy_class, "StoreRemoteField", -1, 0, error);
 		mono_error_assert_ok (error);
 		g_assert (tp_store != NULL);
-	}
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, tp_store)
+
 #endif
 
 	/* we add the %p pointer value of klass because class names are not unique */
@@ -2086,7 +2093,7 @@ mono_marshal_xdomain_copy_value_handle (MonoObjectHandle val, MonoError *error)
 	case MONO_TYPE_U8:
 	case MONO_TYPE_R4:
 	case MONO_TYPE_R8: {
-		uint32_t gchandle = mono_gchandle_from_handle (val, TRUE);
+		MonoGCHandle gchandle = mono_gchandle_from_handle (val, TRUE);
 		MonoObjectHandle res = MONO_HANDLE_NEW (MonoObject, mono_value_box_checked (domain, klass, ((char*)MONO_HANDLE_RAW (val)) + sizeof(MonoObject), error)); /* FIXME use handles in mono_value_box_checked */
 		mono_gchandle_free_internal (gchandle);
 		goto_if_nok (error, leave);
@@ -2095,7 +2102,7 @@ mono_marshal_xdomain_copy_value_handle (MonoObjectHandle val, MonoError *error)
 	}
 	case MONO_TYPE_STRING: {
 		MonoStringHandle str = MONO_HANDLE_CAST (MonoString, val);
-		uint32_t gchandle = mono_gchandle_from_handle (val, TRUE);
+		MonoGCHandle gchandle = mono_gchandle_from_handle (val, TRUE);
 		MonoStringHandle res = mono_string_new_utf16_handle (domain, mono_string_chars_internal (MONO_HANDLE_RAW (str)), mono_string_handle_length (str), error);
 		mono_gchandle_free_internal (gchandle);
 		goto_if_nok (error, leave);

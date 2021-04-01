@@ -22,9 +22,7 @@
 #ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
 #endif
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
@@ -128,6 +126,7 @@ mono_mem_account_type_name (MonoMemAccountType type)
 		"SGen binary protocol",
 		"exceptions",
 		"profiler",
+		"interp stack",
 		"other"
 	};
 
@@ -290,7 +289,7 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 		return NULL;
 #endif
 
-#if defined(__APPLE__) && defined(MAP_JIT)
+#if defined(__APPLE__) && defined(MAP_JIT) && defined(TARGET_OSX)
 	if (get_darwin_version () >= DARWIN_VERSION_MOJAVE) {
 		/* Check for hardened runtime */
 		static int is_hardened_runtime;
@@ -306,6 +305,12 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 		}
 		if ((flags & MONO_MMAP_JIT) && (use_mmap_jit || is_hardened_runtime == 1))
 			mflags |= MAP_JIT;
+#if defined(HOST_ARM64)
+		/* Patching code on apple silicon seems to cause random crashes without this flag */
+		/* No __builtin_available in old versions of Xcode that could be building Mono on x86 or amd64 */
+		if (__builtin_available (macOS 11, *))
+			mflags |= MAP_JIT;
+#endif
 	}
 #endif
 
@@ -393,8 +398,8 @@ mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **re
 #ifdef HOST_WASM
 	if (length == 0)
 		/* emscripten throws an exception on 0 length */
-		*error_message = g_stdrup_printf ("%s failed file:%s length:0x%zx offset:0x%lluX error:%s\n",
-			__func__, filepath ? filepath : "", length, offset, "mmaps of zero length are not permitted with emscripten");
+		*error_message = g_stdrup_printf ("%s failed file:%s length:0x%" G_GSIZE_FORMAT "x offset:0x%" PRIu64 "X error:%s\n",
+			__func__, filepath ? filepath : "", length, (guint64)offset, "mmaps of zero length are not permitted with emscripten");
 		return NULL;
 #endif
 
@@ -404,8 +409,8 @@ mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **re
 	END_CRITICAL_SECTION;
 	if (ptr == MAP_FAILED) {
 		if (error_message) {
-			*error_message = g_strdup_printf ("%s failed file:%s length:0x%zX offset:0x%lluX error:%s(0x%X)\n",
-				__func__, filepath ? filepath : "", length, (unsigned long long)offset, g_strerror (errno), errno);
+			*error_message = g_strdup_printf ("%s failed file:%s length:0x%" G_GSIZE_FORMAT "X offset:0x%" PRIu64 "X error:%s(0x%X)\n",
+				__func__, filepath ? filepath : "", length, (guint64)offset, g_strerror (errno), errno);
 		}
 		return NULL;
 	}

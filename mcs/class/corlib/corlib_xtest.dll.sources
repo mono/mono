@@ -15,11 +15,18 @@ corefx/GlobalizationMode.cs
 ../../../external/corefx/src/Common/tests/System/Security/Cryptography/ByteUtils.cs
 ../../../external/corefx/src/Common/tests/System/ShouldNotBeInvokedException.cs
 
+../../../external/corefx/src/System.Reflection/tests/Common.cs
+
+../../../external/corefx/src/System.Reflection/tests/TypeInfoTests.cs
+
+
+#split monotouch
+#split monotouch_tv
+#split monotouch_watch
+
 #../../../external/corefx/src/System.Globalization/tests/CompareInfo/*.cs:
 
 ../../../external/corefx/src/System.Reflection.Emit/tests/Utilities.cs
-
-../../../external/corefx/src/System.Reflection/tests/Common.cs
 
 ../../../external/corefx/src/System.Reflection/tests/*.cs:AssemblyTests.cs,AssemblyTests.netcoreapp.cs,AssemblyNameTests.cs,MethodInfoTests.cs
 ../../../external/corefx/src/System.Reflection.Extensions/tests/Definitions/PropertyDefinitions.cs
@@ -207,56 +214,74 @@ corefx/GlobalizationMode.cs
 # FIXME: this is internal in corlib
 ../../../external/corefx/src/Common/src/System/MutableDecimal.cs
 
-# System.Collections
-../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs
-../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs
-../../../external/corefx/src/Common/tests/System/Collections/TestBase.Generic.cs
-../../../external/corefx/src/Common/tests/System/Collections/TestingTypes.cs
-../../../external/corefx/src/Common/tests/System/Collections/IList.NonGeneric.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/IList.Generic.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/ICollection.NonGeneric.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/ICollection.Generic.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/IDictionary.NonGeneric.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/IDictionary.Generic.Tests.cs
-#../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Serialization.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Tests.cs
-#../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.Generic.Serialization.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.Generic.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/ISet.Generic.Tests.cs
-../../../external/corefx/src/Common/tests/System/Collections/IGenericSharedAPI.Tests.cs
-../../../external/corefx/src/Common/tests/System/EnumTypes.cs
-../../../external/corefx/src/Common/tests/System/ObjectCloner.cs
-../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
-../../../external/corefx/src/System.Collections/tests/Generic/SortedSet/*.cs:SortedSet.TreeSubSet.Tests.cs
-../../../external/corefx/src/System.Collections/tests/Generic/Stack/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/SortedList/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/SortedDictionary/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/Queue/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/List/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/LinkedList/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/HashCollisionScenarios/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/*.cs
-../../../external/corefx/src/System.Collections/tests/Generic/Comparers/*.cs:EqualityComparer.Tests.cs
-../../../external/corefx/src/System.Collections/tests/BitArray/*.cs:BitArray_GetSetTests.cs
-../../../external/corefx/src/System.Collections/tests/*.cs
 
-# System.Collections.NonGeneric
-#../../../external/corefx/src/System.Collections.NonGeneric/tests/ArrayList/*.cs
-../../../external/corefx/src/System.Collections.NonGeneric/tests/Hashtable/*.cs
-../../../external/corefx/src/System.Collections.NonGeneric/tests/*.cs:SortedListTests.cs,CollectionBaseTests.cs,DictionaryBaseTests.cs,ArrayListTests.cs,ReadOnlyCollectionBaseTests.cs
+#split monotouch
+#split monotouch_tv
+#split monotouch_watch
 
-# System.Collections.Concurrent
-../../../external/corefx/src/System.Collections.Concurrent/tests/ConcurrentDictionary/*.cs
-../../../external/corefx/src/System.Collections.Concurrent/tests/*.cs:ProducerConsumerCollectionTests.cs,EtwTests.cs,ConcurrentBagTests.cs,ConcurrentQueueTests.cs,ConcurrentStackTests.cs
+# System.Runtime.Extensions
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/Diagnostics/*.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/Runtime/Versioning/*.cs:VersioningHelperTests.cs
+../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs,Environment.MachineName.cs
 
-# System.Collections.Specialized
-../../../external/corefx/src/System.Collections.Specialized/tests/StringDictionary/*.cs
-../../../external/corefx/src/System.Collections.Specialized/tests/NameObjectCollectionBase/*.cs:NameObjectCollectionBase.KeysTests.cs,NameObjectCollectionBase.CopyToTests.cs
-#../../../external/corefx/src/System.Collections.Specialized/tests/NameValueCollection/*.cs
-../../../external/corefx/src/System.Collections.Specialized/tests/ListDictionary/*.cs
-../../../external/corefx/src/System.Collections.Specialized/tests/HybridDictionary/*.cs
-../../../external/corefx/src/System.Collections.Specialized/tests/OrderedDictionary/*.cs
-../../../external/corefx/src/System.Collections.Specialized/tests/*.cs:StringCollectionTests.cs
+# System.Runtime.InteropServices
+../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/CompilerServices/*.cs
+../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/InteropServices/*.cs:MarshalTests.cs,GCHandleTests.cs,SafeBufferTests.cs,ComEventsHelperTests.cs,RuntimeEnvironmentTests.cs,DispatchWrapperTests.cs,ArrayWithOffsetTests.cs,SetWin32ContextInIDispatchAttributeTests.cs,ComAwareEventInfoTests.cs,IDispatchImplAttributeTests.cs,ComAwareEventInfoTests.Windows.cs,MarshalTests.Windows.cs
+
+# System.IO.MemoryStream
+../../../external/corefx/src/System.IO/tests/MemoryStream/*.cs
+../../../external/corefx/src/Common/tests/System/IO/DelegateStream.cs
+
+# System.IO.UnmanagedMemoryStream
+../../../external/corefx/src/System.IO.UnmanagedMemoryStream/tests/*.cs
+
+# System.IO.TextReader/StreamReader
+../../../external/corefx/src/System.IO/tests/TextReader/*.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/*.cs
+../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
+
+# System.IO.Stream
+../../../external/corefx/src/Common/tests/System/IO/CallTrackingStream.cs
+../../../external/corefx/src/System.IO/tests/Stream/*.cs
+
+# System.IO.BufferedStream
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.CloseTests.cs
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.WriteTests.cs
+../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.FlushTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriterTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriter.WriteTests.cs
+../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriter.WriteByteCharTests.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/StreamReaderTests.cs
+../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
+../../../external/corefx/src/Common/tests/System/IO/WrappedMemoryStream.cs
+../../../external/corefx/src/System.IO/tests/BufferedStream/*.cs
+
+# FileSystem Helper (not used on Windows)
+../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.Unix.cs
+
+# System.IO.FileInfo
+../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
+../../../external/corefx/src/Common/tests/System/IO/PathFeatures.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/TestData.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FSAssert.cs
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AdminHelpers.cs
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TheoryExtensions.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/Base/*.cs:StaticGetSetTimes.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/File/*.cs:GetSetTimes.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileStream/ctor_*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/PortedCommon/*.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.cs
+../../../external/corefx/src/System.IO.FileSystem/tests/FileInfo/*.cs:GetSetTimes.cs
+
+# System.IO.Directory
+../../../external/corefx/src/System.IO.FileSystem/tests/Directory/*.cs:GetSetTimes.cs
+
+# System.IO.DirectoryInfo
+../../../external/corefx/src/System.IO.FileSystem/tests/DirectoryInfo/*.cs:GetSetTimes.cs
+
+# System.IO.TextWriter/StreamWriter
+../../../external/corefx/src/System.IO/tests/TextReader/*.cs
+../../../external/corefx/src/System.IO/tests/StreamReader/*.cs
 
 # System.Runtime
 ../../../external/corefx/src/System.Runtime/tests/System/AccessViolationExceptionTests.cs
@@ -269,8 +294,6 @@ corefx/GlobalizationMode.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeZoneNotFoundExceptionTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/TimeSpanTests.netcoreapp.cs
-../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.cs
-../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/BooleanTests.cs
 ../../../external/corefx/src/System.Runtime/tests/System/BooleanTests.netcoreapp.cs
 ../../../external/corefx/src/System.Runtime/tests/System/ByteTests.cs
@@ -341,66 +364,63 @@ corefx/GlobalizationMode.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Text/*.cs
 ../../../external/corefx/src/System.Runtime/tests/System/Runtime/CompilerServices/*.cs:RuntimeHelpersTests.netcoreapp.cs,ConditionalWeakTableTests.netcoreapp.cs,ConditionalWeakTableTests.cs
 
-# System.Runtime.Extensions
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/Diagnostics/*.cs
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/Runtime/Versioning/*.cs:VersioningHelperTests.cs
-../../../external/corefx/src/System.Runtime.Extensions/tests/System/*.cs:AppDomainTests.cs,Environment.Exit.cs,Environment.GetCommandLineArgs.cs,Environment.GetEnvironmentVariable.cs,Environment.SetEnvironmentVariable.cs,EnvironmentTests.cs,Environment.StackTrace.cs,MarshalByRefObjectTest.cs,StringComparer.cs,StringComparer.netcoreapp.cs,UnloadingAndProcessExitTests.netcoreapp.cs,Environment.UserDomainName.cs,Environment.MachineName.cs
 
-# System.Runtime.InteropServices
-../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/CompilerServices/*.cs
-../../../external/corefx/src/System.Runtime.InteropServices/tests/System/Runtime/InteropServices/*.cs:MarshalTests.cs,GCHandleTests.cs,SafeBufferTests.cs,ComEventsHelperTests.cs,RuntimeEnvironmentTests.cs,DispatchWrapperTests.cs,ArrayWithOffsetTests.cs,SetWin32ContextInIDispatchAttributeTests.cs,ComAwareEventInfoTests.cs,IDispatchImplAttributeTests.cs,ComAwareEventInfoTests.Windows.cs,MarshalTests.Windows.cs
+#split monotouch
+#split monotouch_tv
+#split monotouch_watch
 
-# System.IO.MemoryStream
-../../../external/corefx/src/System.IO/tests/MemoryStream/*.cs
-../../../external/corefx/src/Common/tests/System/IO/DelegateStream.cs
 
-# System.IO.UnmanagedMemoryStream
-../../../external/corefx/src/System.IO.UnmanagedMemoryStream/tests/*.cs
+../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.cs
+../../../external/corefx/src/System.Runtime/tests/System/ArraySegmentTests.netcoreapp.cs
 
-# System.IO.TextReader/StreamReader
-../../../external/corefx/src/System.IO/tests/TextReader/*.cs
-../../../external/corefx/src/System.IO/tests/StreamReader/*.cs
-../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
+# System.Collections
+../../../external/corefx/src/Common/tests/System/Collections/CollectionAsserts.cs
+../../../external/corefx/src/Common/tests/System/Collections/TestBase.NonGeneric.cs
+../../../external/corefx/src/Common/tests/System/Collections/TestBase.Generic.cs
+../../../external/corefx/src/Common/tests/System/Collections/TestingTypes.cs
+../../../external/corefx/src/Common/tests/System/EnumTypes.cs
+../../../external/corefx/src/Common/tests/System/ObjectCloner.cs
+../../../external/corefx/src/Common/tests/System/Diagnostics/DebuggerAttributes.cs
+../../../external/corefx/src/Common/tests/System/Collections/IList.NonGeneric.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IList.Generic.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/ICollection.NonGeneric.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/ICollection.Generic.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IDictionary.NonGeneric.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IDictionary.Generic.Tests.cs
+#../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Serialization.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.NonGeneric.Tests.cs
+#../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.Generic.Serialization.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IEnumerable.Generic.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/ISet.Generic.Tests.cs
+../../../external/corefx/src/Common/tests/System/Collections/IGenericSharedAPI.Tests.cs
+../../../external/corefx/src/System.Collections/tests/Generic/SortedSet/*.cs:SortedSet.TreeSubSet.Tests.cs
+../../../external/corefx/src/System.Collections/tests/Generic/Stack/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/SortedList/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/SortedDictionary/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/Queue/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/List/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/LinkedList/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/HashCollisionScenarios/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/Dictionary/*.cs
+../../../external/corefx/src/System.Collections/tests/Generic/Comparers/*.cs:EqualityComparer.Tests.cs
+../../../external/corefx/src/System.Collections/tests/BitArray/*.cs:BitArray_GetSetTests.cs
+../../../external/corefx/src/System.Collections/tests/*.cs
 
-# System.IO.Stream
-../../../external/corefx/src/Common/tests/System/IO/CallTrackingStream.cs
-../../../external/corefx/src/System.IO/tests/Stream/*.cs
+# System.Collections.NonGeneric
+#../../../external/corefx/src/System.Collections.NonGeneric/tests/ArrayList/*.cs
+../../../external/corefx/src/System.Collections.NonGeneric/tests/Hashtable/*.cs
+../../../external/corefx/src/System.Collections.NonGeneric/tests/*.cs:SortedListTests.cs,CollectionBaseTests.cs,DictionaryBaseTests.cs,ArrayListTests.cs,ReadOnlyCollectionBaseTests.cs
 
-# System.IO.BufferedStream
-../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.CloseTests.cs
-../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.WriteTests.cs
-../../../external/corefx/src/System.IO/tests/StreamWriter/StreamWriter.FlushTests.cs
-../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriterTests.cs
-../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriter.WriteTests.cs
-../../../external/corefx/src/System.IO/tests/BinaryWriter/BinaryWriter.WriteByteCharTests.cs
-../../../external/corefx/src/System.IO/tests/StreamReader/StreamReaderTests.cs
-../../../external/corefx/src/System.IO/tests/TestDataProvider/TestDataProvider.cs
-../../../external/corefx/src/Common/tests/System/IO/WrappedMemoryStream.cs
-../../../external/corefx/src/System.IO/tests/BufferedStream/*.cs
+# System.Collections.Concurrent
+../../../external/corefx/src/System.Collections.Concurrent/tests/ConcurrentDictionary/*.cs
+../../../external/corefx/src/System.Collections.Concurrent/tests/*.cs:ProducerConsumerCollectionTests.cs,EtwTests.cs,ConcurrentBagTests.cs,ConcurrentQueueTests.cs,ConcurrentStackTests.cs
 
-# FileSystem Helper (not used on Windows)
-../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.Unix.cs
+# System.Collections.Specialized
+../../../external/corefx/src/System.Collections.Specialized/tests/StringDictionary/*.cs
+../../../external/corefx/src/System.Collections.Specialized/tests/NameObjectCollectionBase/*.cs:NameObjectCollectionBase.KeysTests.cs,NameObjectCollectionBase.CopyToTests.cs
+#../../../external/corefx/src/System.Collections.Specialized/tests/NameValueCollection/*.cs
+../../../external/corefx/src/System.Collections.Specialized/tests/ListDictionary/*.cs
+../../../external/corefx/src/System.Collections.Specialized/tests/HybridDictionary/*.cs
+../../../external/corefx/src/System.Collections.Specialized/tests/OrderedDictionary/*.cs
+../../../external/corefx/src/System.Collections.Specialized/tests/*.cs:StringCollectionTests.cs
 
-# System.IO.FileInfo
-../../../external/corefx/src/Common/tests/System/IO/TempFile.cs
-../../../external/corefx/src/Common/tests/System/IO/PathFeatures.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/TestData.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/FSAssert.cs
-../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AdminHelpers.cs
-../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/TheoryExtensions.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/Base/*.cs:StaticGetSetTimes.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/File/*.cs:GetSetTimes.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/FileStream/ctor_*.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/PortedCommon/*.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/FileSystemTest.cs
-../../../external/corefx/src/System.IO.FileSystem/tests/FileInfo/*.cs:GetSetTimes.cs
-
-# System.IO.Directory
-../../../external/corefx/src/System.IO.FileSystem/tests/Directory/*.cs:GetSetTimes.cs
-
-# System.IO.DirectoryInfo
-../../../external/corefx/src/System.IO.FileSystem/tests/DirectoryInfo/*.cs:GetSetTimes.cs
-
-# System.IO.TextWriter/StreamWriter
-../../../external/corefx/src/System.IO/tests/TextReader/*.cs
-../../../external/corefx/src/System.IO/tests/StreamReader/*.cs

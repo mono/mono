@@ -56,7 +56,7 @@ namespace System.Net.Sockets
 		const string TIMEOUT_EXCEPTION_MSG = "A connection attempt failed because the connected party did not properly respond" +
 			"after a period of time, or established connection failed because connected host has failed to respond";
 
-		/* true if we called Close_internal */
+		/* true if we called Close_icall */
 		bool is_closed;
 
 		bool is_listening;
@@ -148,7 +148,9 @@ namespace System.Net.Sockets
 					this.DontFragment = false;
 					if (protocolType == ProtocolType.Tcp)
 						this.NoDelay = false;
-				} else if (addressFamily == AddressFamily.InterNetworkV6) {
+				// The socket was created successfully; enable IPV6_V6ONLY by default for normal AF_INET6 sockets.
+				// This fails on raw sockets so we just let them be in default state.
+				} else if (addressFamily == AddressFamily.InterNetworkV6 && socketType != SocketType.Raw) {
 					this.DualMode = true;
 				}
 
@@ -163,7 +165,7 @@ namespace System.Net.Sockets
 
 		/* Creates a new system socket, returning the handle */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern IntPtr Socket_internal (AddressFamily family, SocketType type, ProtocolType proto, out int error);
+		extern static IntPtr Socket_icall (AddressFamily family, SocketType type, ProtocolType proto, out int error);
 
 #endregion
 
@@ -188,7 +190,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				return Available_internal (safeHandle.DangerousGetHandle (), out error);
+				return Available_icall (safeHandle.DangerousGetHandle (), out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -197,7 +199,7 @@ namespace System.Net.Sockets
 
 		/* Returns the amount of data waiting to be read on socket */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int Available_internal (IntPtr socket, out int error);
+		extern static int Available_icall (IntPtr socket, out int error);
 
 		// FIXME: import from referencesource
 		public bool EnableBroadcast {
@@ -296,7 +298,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				return LocalEndPoint_internal (safeHandle.DangerousGetHandle (), family, out error);
+				return LocalEndPoint_icall (safeHandle.DangerousGetHandle (), family, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -305,7 +307,7 @@ namespace System.Net.Sockets
 
 		/* Returns the local endpoint details in addr and port */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static SocketAddress LocalEndPoint_internal (IntPtr socket, int family, out int error);
+		extern static SocketAddress LocalEndPoint_icall (IntPtr socket, int family, out int error);
 
 		public bool Blocking {
 			get { return is_blocking; }
@@ -327,7 +329,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				Blocking_internal (safeHandle.DangerousGetHandle (), block, out error);
+				Blocking_icall (safeHandle.DangerousGetHandle (), block, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -335,7 +337,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static void Blocking_internal(IntPtr socket, bool block, out int error);
+		internal extern static void Blocking_icall (IntPtr socket, bool block, out int error);
 
 		public bool Connected {
 			get { return is_connected; }
@@ -382,7 +384,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				return RemoteEndPoint_internal (safeHandle.DangerousGetHandle (), family, out error);
+				return RemoteEndPoint_icall (safeHandle.DangerousGetHandle (), family, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -391,7 +393,7 @@ namespace System.Net.Sockets
 
 		/* Returns the remote endpoint details in addr and port */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static SocketAddress RemoteEndPoint_internal (IntPtr socket, int family, out int error);
+		extern static SocketAddress RemoteEndPoint_icall (IntPtr socket, int family, out int error);
 
 		internal SafeHandle SafeHandle
 		{
@@ -419,7 +421,7 @@ namespace System.Net.Sockets
 			Socket [] sockets = list.ToArray ();
 
 			int error;
-			Select_internal (ref sockets, microSeconds, out error);
+			Select_icall (ref sockets, microSeconds, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
@@ -480,7 +482,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Select_internal (ref Socket [] sockets, int microSeconds, out int error);
+		extern static void Select_icall (ref Socket [] sockets, int microSeconds, out int error);
 
 #endregion
 
@@ -514,7 +516,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				return Poll_internal (safeHandle.DangerousGetHandle (), mode, timeout, out error);
+				return Poll_icall (safeHandle.DangerousGetHandle (), mode, timeout, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -522,7 +524,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
+		extern static bool Poll_icall (IntPtr socket, SelectMode mode, int timeout, out int error);
 
 #endregion
 
@@ -740,7 +742,7 @@ namespace System.Net.Sockets
 
 			sockares.CheckIfThrowDelayedException ();
 
-			buffer = sockares.Buffer;
+			buffer = sockares.Buffer.ToArray ();
 			bytesTransferred = sockares.Total;
 
 			return sockares.AcceptedSocket;
@@ -750,7 +752,7 @@ namespace System.Net.Sockets
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				var ret = Accept_internal (safeHandle.DangerousGetHandle (), out error, blocking);
+				var ret = Accept_icall (safeHandle.DangerousGetHandle (), out error, blocking);
 				return new SafeSocketHandle (ret, true);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
@@ -759,7 +761,7 @@ namespace System.Net.Sockets
 
 		/* Creates a new system socket, returning the handle */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static IntPtr Accept_internal (IntPtr sock, out int error, bool blocking);
+		extern static IntPtr Accept_icall (IntPtr sock, out int error, bool blocking);
 
 #endregion
 
@@ -797,7 +799,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				Bind_internal (safeHandle.DangerousGetHandle (), sa, out error);
+				Bind_icall (safeHandle.DangerousGetHandle (), sa, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -806,7 +808,7 @@ namespace System.Net.Sockets
 
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void Bind_internal(IntPtr sock, SocketAddress sa, out int error);
+		private extern static void Bind_icall (IntPtr sock, SocketAddress sa, out int error);
 
 #endregion
 
@@ -833,7 +835,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				Listen_internal (safeHandle.DangerousGetHandle (), backlog, out error);
+				Listen_icall (safeHandle.DangerousGetHandle (), backlog, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -841,7 +843,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Listen_internal (IntPtr sock, int backlog, out int error);
+		extern static void Listen_icall (IntPtr sock, int backlog, out int error);
 
 #endregion
 
@@ -999,7 +1001,7 @@ namespace System.Net.Sockets
 			}
 		});
 
-		public IAsyncResult BeginConnect (string host, int port, AsyncCallback requestCallback, object state)
+		public IAsyncResult BeginConnect (string host, int port, AsyncCallback callback, object state)
 		{
 			ThrowIfDisposedAndClosed ();
 
@@ -1012,32 +1014,23 @@ namespace System.Net.Sockets
 			if (is_listening)
 				throw new InvalidOperationException ();
 
-			var callback = new AsyncCallback ((result) => {
-				var resultTask = ((Task<IPAddress[]>)result);
-				BeginConnect (resultTask.Result, port, requestCallback, resultTask.AsyncState);
-			});
-			return ConvertToApm<IPAddress[]> (Dns.GetHostAddressesAsync (host), callback, state);
-		}
+			var sockares = new SocketAsyncResult (this, callback, state, SocketOperation.Connect) {
+				Port = port
+			};
 
-		private static IAsyncResult ConvertToApm<T> (Task<T> task, AsyncCallback callback, object state)
-		{
-			if (task == null)
-				throw new ArgumentNullException ("task");
-
-			var tcs = new TaskCompletionSource<T> (state);
-			task.ContinueWith (t =>
-			{
+			var dnsRequest = Dns.GetHostAddressesAsync (host);
+			dnsRequest.ContinueWith (t => {
 				if (t.IsFaulted)
-					tcs.TrySetException (t.Exception.InnerExceptions);
+					sockares.Complete (t.Exception.InnerException);
 				else if (t.IsCanceled)
-					tcs.TrySetCanceled ();
-				else
-					tcs.TrySetResult (t.Result);
-
-				if (callback != null)
-					callback (tcs.Task);
+					sockares.Complete (new OperationCanceledException ());
+				else {
+					sockares.Addresses = t.Result;
+					BeginMConnect (sockares);
+				}
 			}, TaskScheduler.Default);
-			return tcs.Task;
+
+			return sockares;
 		}
 
 		public IAsyncResult BeginConnect (EndPoint remoteEP, AsyncCallback callback, object state)
@@ -1092,6 +1085,9 @@ namespace System.Net.Sockets
 					sockares.CurrentAddress++;
 					sockares.EndPoint = new IPEndPoint (sockares.Addresses [i], sockares.Port);
 
+					if (!sockares.socket.CanTryAddressFamily(sockares.EndPoint.AddressFamily))
+						continue;
+
 					return BeginSConnect (sockares);
 				} catch (Exception e) {
 					exc = e;
@@ -1130,7 +1126,7 @@ namespace System.Net.Sockets
 				// an error. Better to just close the socket and move on.
 				sockares.socket.connect_in_progress = false;
 				sockares.socket.m_Handle.Dispose ();
-				sockares.socket.m_Handle = new SafeSocketHandle (sockares.socket.Socket_internal (sockares.socket.addressFamily, sockares.socket.socketType, sockares.socket.protocolType, out error), true);
+				sockares.socket.m_Handle = new SafeSocketHandle (Socket_icall (sockares.socket.addressFamily, sockares.socket.socketType, sockares.socket.protocolType, out error), true);
 				if (error != 0) {
 					sockares.Complete (new SocketException (error), true);
 					return false;
@@ -1224,7 +1220,7 @@ namespace System.Net.Sockets
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				Connect_internal (safeHandle.DangerousGetHandle (), sa, out error, blocking);
+				Connect_icall (safeHandle.DangerousGetHandle (), sa, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
@@ -1232,7 +1228,7 @@ namespace System.Net.Sockets
 
 		/* Connects to the remote address */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Connect_internal(IntPtr sock, SocketAddress sa, out int error, bool blocking);
+		extern static void Connect_icall (IntPtr sock, SocketAddress sa, out int error, bool blocking);
 
 		/* Returns :
 		 *  - false when it is ok to use RemoteEndPoint
@@ -1369,7 +1365,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				Disconnect_internal (safeHandle.DangerousGetHandle (), reuse, out error);
+				Disconnect_icall (safeHandle.DangerousGetHandle (), reuse, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -1377,7 +1373,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void Disconnect_internal (IntPtr sock, bool reuse, out int error);
+		extern static void Disconnect_icall (IntPtr sock, bool reuse, out int error);
 
 #endregion
 
@@ -1394,6 +1390,29 @@ namespace System.Net.Sockets
 			unsafe {
 				fixed (byte* pbuffer = buffer) {
 					ret = Receive_internal (m_Handle, &pbuffer[offset], size, socketFlags, out nativeError, is_blocking);
+				}
+			}
+
+			errorCode = (SocketError) nativeError;
+			if (errorCode != SocketError.Success && errorCode != SocketError.WouldBlock && errorCode != SocketError.InProgress) {
+				is_connected = false;
+				is_bound = false;
+			} else {
+				is_connected = true;
+			}
+
+			return ret;
+		}
+
+		int Receive (Memory<byte> buffer, int offset, int size, SocketFlags socketFlags, out SocketError errorCode)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			int nativeError;
+			int ret;
+			unsafe {
+				using (var handle = buffer.Slice (offset, size).Pin ()) {
+					ret = Receive_internal (m_Handle, (byte*)handle.Pointer, size, socketFlags, out nativeError, is_blocking);
 				}
 			}
 
@@ -1486,10 +1505,10 @@ namespace System.Net.Sockets
 			// LAME SPEC: the ArgumentException is never thrown, instead an NRE is
 			// thrown when e.Buffer and e.BufferList are null (works fine when one is
 			// set to a valid object)
-			if (e.Buffer == null && e.BufferList == null)
+			if (e.MemoryBuffer.Equals (default) && e.BufferList == null)
 				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
-			if (e.Buffer == null) {
+			if (e.BufferList != null) {
 				InitSocketAsyncEventArgs (e, ReceiveAsyncCallback, e, SocketOperation.ReceiveGeneric);
 
 				e.socket_async_result.Buffers = e.BufferList;
@@ -1498,7 +1517,7 @@ namespace System.Net.Sockets
 			} else {
 				InitSocketAsyncEventArgs (e, ReceiveAsyncCallback, e, SocketOperation.Receive);
 
-				e.socket_async_result.Buffer = e.Buffer;
+				e.socket_async_result.Buffer = e.MemoryBuffer;
 				e.socket_async_result.Offset = e.Offset;
 				e.socket_async_result.Size = e.Count;
 
@@ -1554,8 +1573,8 @@ namespace System.Net.Sockets
 
 			try {
 				unsafe {
-					fixed (byte* pbuffer = sockares.Buffer) {
-						total = Receive_internal (sockares.socket.m_Handle, &pbuffer[sockares.Offset], sockares.Size, sockares.SockFlags, out sockares.error, sockares.socket.is_blocking);
+					using (var pbuffer = sockares.Buffer.Slice (sockares.Offset, sockares.Size).Pin ()) {
+						total = Receive_internal (sockares.socket.m_Handle, (byte*)pbuffer.Pointer, sockares.Size, sockares.SockFlags, out sockares.error, sockares.socket.is_blocking);
 					}
 				}
 			} catch (Exception e) {
@@ -1627,27 +1646,27 @@ namespace System.Net.Sockets
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return Receive_internal (safeHandle.DangerousGetHandle (), bufarray, count, flags, out error, blocking);
+				return Receive_array_icall (safeHandle.DangerousGetHandle (), bufarray, count, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static unsafe int Receive_internal (IntPtr sock, WSABUF* bufarray, int count, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Receive_array_icall (IntPtr sock, WSABUF* bufarray, int count, SocketFlags flags, out int error, bool blocking);
 
 		static unsafe int Receive_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return Receive_internal (safeHandle.DangerousGetHandle (), buffer, count, flags, out error, blocking);
+				return Receive_icall (safeHandle.DangerousGetHandle (), buffer, count, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static unsafe int Receive_internal(IntPtr sock, byte* buffer, int count, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Receive_icall (IntPtr sock, byte* buffer, int count, SocketFlags flags, out int error, bool blocking);
 
 #endregion
 
@@ -1680,6 +1699,44 @@ namespace System.Net.Sockets
 			unsafe {
 				fixed (byte* pbuffer = buffer) {
 					cnt = ReceiveFrom_internal (m_Handle, &pbuffer[offset], size, socketFlags, ref sockaddr, out nativeError, is_blocking);
+				}
+			}
+
+			errorCode = (SocketError) nativeError;
+			if (errorCode != SocketError.Success) {
+				if (errorCode != SocketError.WouldBlock && errorCode != SocketError.InProgress) {
+					is_connected = false;
+				} else if (errorCode == SocketError.WouldBlock && is_blocking) { // This might happen when ReceiveTimeout is set
+					errorCode = SocketError.TimedOut;
+				}
+
+				return 0;
+			}
+
+			is_connected = true;
+			is_bound = true;
+
+			/* If sockaddr is null then we're a connection oriented protocol and should ignore the
+			 * remoteEP parameter (see MSDN documentation for Socket.ReceiveFrom(...) ) */
+			if (sockaddr != null) {
+				/* Stupidly, EndPoint.Create() is an instance method */
+				remoteEP = remoteEP.Create (sockaddr);
+			}
+
+			seed_endpoint = remoteEP;
+
+			return cnt;
+		}
+
+		int ReceiveFrom (Memory<byte> buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, out SocketError errorCode)
+		{
+			SocketAddress sockaddr = remoteEP.Serialize();
+
+			int nativeError;
+			int cnt;
+			unsafe {
+				using (var handle = buffer.Slice (offset, size).Pin ()) {
+					cnt = ReceiveFrom_internal (m_Handle, (byte*)handle.Pointer, size, socketFlags, ref sockaddr, out nativeError, is_blocking);
 				}
 			}
 
@@ -1829,14 +1886,14 @@ namespace System.Net.Sockets
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return ReceiveFrom_internal (safeHandle.DangerousGetHandle (), buffer, count, flags, ref sockaddr, out error, blocking);
+				return ReceiveFrom_icall (safeHandle.DangerousGetHandle (), buffer, count, flags, ref sockaddr, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static unsafe int ReceiveFrom_internal(IntPtr sock, byte* buffer, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error, bool blocking);
+		extern static unsafe int ReceiveFrom_icall (IntPtr sock, byte* buffer, int count, SocketFlags flags, ref SocketAddress sockaddr, out int error, bool blocking);
 
 #endregion
 
@@ -1989,10 +2046,10 @@ namespace System.Net.Sockets
 
 			ThrowIfDisposedAndClosed ();
 
-			if (e.Buffer == null && e.BufferList == null)
+			if (e.MemoryBuffer.Equals (default) && e.BufferList == null)
 				throw new NullReferenceException ("Either e.Buffer or e.BufferList must be valid buffers.");
 
-			if (e.Buffer == null) {
+			if (e.BufferList != null) {
 				InitSocketAsyncEventArgs (e, SendAsyncCallback, e, SocketOperation.SendGeneric);
 
 				e.socket_async_result.Buffers = e.BufferList;
@@ -2001,7 +2058,7 @@ namespace System.Net.Sockets
 			} else {
 				InitSocketAsyncEventArgs (e, SendAsyncCallback, e, SocketOperation.Send);
 
-				e.socket_async_result.Buffer = e.Buffer;
+				e.socket_async_result.Buffer = e.MemoryBuffer;
 				e.socket_async_result.Offset = e.Offset;
 				e.socket_async_result.Size = e.Count;
 
@@ -2059,8 +2116,8 @@ namespace System.Net.Sockets
 
 			try {
 				unsafe {
-					fixed (byte *pbuffer = sockares.Buffer) {
-						total = Socket.Send_internal (sockares.socket.m_Handle, &pbuffer[sockares.Offset], sockares.Size, sockares.SockFlags, out sockares.error, false);
+					using (var pbuffer = sockares.Buffer.Slice (sockares.Offset, sockares.Size).Pin ()) {
+						total = Socket.Send_internal (sockares.socket.m_Handle, (byte*)pbuffer.Pointer, sockares.Size, sockares.SockFlags, out sockares.error, false);
 					}
 				}
 			} catch (Exception e) {
@@ -2154,27 +2211,27 @@ namespace System.Net.Sockets
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return Send_internal (safeHandle.DangerousGetHandle (), bufarray, count, flags, out error, blocking);
+				return Send_array_icall (safeHandle.DangerousGetHandle (), bufarray, count, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static unsafe int Send_internal (IntPtr sock, WSABUF* bufarray, int count, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Send_array_icall (IntPtr sock, WSABUF* bufarray, int count, SocketFlags flags, out int error, bool blocking);
 
 		static unsafe int Send_internal (SafeSocketHandle safeHandle, byte* buffer, int count, SocketFlags flags, out int error, bool blocking)
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return Send_internal (safeHandle.DangerousGetHandle (), buffer, count, flags, out error, blocking);
+				return Send_icall (safeHandle.DangerousGetHandle (), buffer, count, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static unsafe int Send_internal(IntPtr sock, byte* buffer, int count, SocketFlags flags, out int error, bool blocking);
+		extern static unsafe int Send_icall (IntPtr sock, byte* buffer, int count, SocketFlags flags, out int error, bool blocking);
 
 #endregion
 
@@ -2194,6 +2251,35 @@ namespace System.Net.Sockets
 			unsafe {
 				fixed (byte *pbuffer = buffer) {
 					ret = SendTo_internal (m_Handle, &pbuffer[offset], size, socketFlags, remoteEP.Serialize (), out error, is_blocking);
+				}
+			}
+
+			SocketError err = (SocketError) error;
+			if (err != 0) {
+				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
+					is_connected = false;
+				throw new SocketException (error);
+			}
+
+			is_connected = true;
+			is_bound = true;
+			seed_endpoint = remoteEP;
+
+			return ret;
+		}
+
+		int SendTo (Memory<byte> buffer, int offset, int size, SocketFlags socketFlags, EndPoint remoteEP)
+		{
+			ThrowIfDisposedAndClosed ();
+
+			if (remoteEP == null)
+				throw new ArgumentNullException("remoteEP");
+
+			int error;
+			int ret;
+			unsafe {
+				using (var pbuffer = buffer.Slice (offset, size).Pin ()) {
+					ret = SendTo_internal (m_Handle, (byte*)pbuffer.Pointer, size, socketFlags, remoteEP.Serialize (), out error, is_blocking);
 				}
 			}
 
@@ -2315,14 +2401,14 @@ namespace System.Net.Sockets
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return SendTo_internal (safeHandle.DangerousGetHandle (), buffer, count, flags, sa, out error, blocking);
+				return SendTo_icall (safeHandle.DangerousGetHandle (), buffer, count, flags, sa, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static unsafe int SendTo_internal (IntPtr sock, byte* buffer, int count, SocketFlags flags, SocketAddress sa, out int error, bool blocking);
+		extern static unsafe int SendTo_icall (IntPtr sock, byte* buffer, int count, SocketFlags flags, SocketAddress sa, out int error, bool blocking);
 
 #endregion
 
@@ -2378,14 +2464,14 @@ namespace System.Net.Sockets
 		{
 			try {
 				safeHandle.RegisterForBlockingSyscall ();
-				return SendFile_internal (safeHandle.DangerousGetHandle (), filename, pre_buffer, post_buffer, flags, out error, blocking);
+				return SendFile_icall (safeHandle.DangerousGetHandle (), filename, pre_buffer, post_buffer, flags, out error, blocking);
 			} finally {
 				safeHandle.UnRegisterForBlockingSyscall ();
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static bool SendFile_internal (IntPtr sock, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags, out int error, bool blocking);
+		extern static bool SendFile_icall (IntPtr sock, string filename, byte [] pre_buffer, byte [] post_buffer, TransmitFileOptions flags, out int error, bool blocking);
 
 		delegate void SendFileHandler (string fileName, byte [] preBuffer, byte [] postBuffer, TransmitFileOptions flags);
 
@@ -2443,7 +2529,7 @@ namespace System.Net.Sockets
 #region DuplicateAndClose
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern bool Duplicate_internal(IntPtr handle, int targetProcessId, out IntPtr duplicateHandle, out MonoIOError error);
+		static extern bool Duplicate_icall (IntPtr handle, int targetProcessId, out IntPtr duplicateHandle, out MonoIOError error);
 
 		[MonoLimitation ("We do not support passing sockets across processes, we merely allow this API to pass the socket across AppDomains")]
 		public SocketInformation DuplicateAndClose (int targetProcessId)
@@ -2456,7 +2542,7 @@ namespace System.Net.Sockets
 				(useOverlappedIO ? SocketInformationOptions.UseOnlyOverlappedIO : 0);
 
 			IntPtr duplicateHandle;
-			if (!Duplicate_internal (Handle, targetProcessId, out duplicateHandle, out MonoIOError error))
+			if (!Duplicate_icall (Handle, targetProcessId, out duplicateHandle, out MonoIOError error))
 				throw MonoIO.GetException (error);
 
 			si.ProtocolInformation = Mono.DataConverter.Pack ("iiiil", (int)addressFamily, (int)socketType, (int)protocolType, is_bound ? 1 : 0, (long)duplicateHandle);
@@ -2523,7 +2609,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				GetSocketOption_arr_internal (safeHandle.DangerousGetHandle (), level, name, ref byte_val, out error);
+				GetSocketOption_arr_icall (safeHandle.DangerousGetHandle (), level, name, ref byte_val, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -2531,14 +2617,14 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void GetSocketOption_arr_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error);
+		extern static void GetSocketOption_arr_icall (IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error);
 
 		static void GetSocketOption_obj_internal (SafeSocketHandle safeHandle, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error)
 		{
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				GetSocketOption_obj_internal (safeHandle.DangerousGetHandle (), level, name, out obj_val, out error);
+				GetSocketOption_obj_icall (safeHandle.DangerousGetHandle (), level, name, out obj_val, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -2546,7 +2632,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void GetSocketOption_obj_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error);
+		extern static void GetSocketOption_obj_icall (IntPtr socket, SocketOptionLevel level, SocketOptionName name, out object obj_val, out int error);
 
 #endregion
 
@@ -2632,7 +2718,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				SetSocketOption_internal (safeHandle.DangerousGetHandle (), level, name, obj_val, byte_val, int_val, out error);
+				SetSocketOption_icall (safeHandle.DangerousGetHandle (), level, name, obj_val, byte_val, int_val, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -2640,7 +2726,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static void SetSocketOption_internal (IntPtr socket, SocketOptionLevel level, SocketOptionName name, object obj_val, byte [] byte_val, int int_val, out int error);
+		extern static void SetSocketOption_icall (IntPtr socket, SocketOptionLevel level, SocketOptionName name, object obj_val, byte [] byte_val, int int_val, out int error);
 
 #endregion
 
@@ -2667,7 +2753,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				return IOControl_internal (safeHandle.DangerousGetHandle (), ioctl_code, input, output, out error);
+				return IOControl_icall (safeHandle.DangerousGetHandle (), ioctl_code, input, output, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -2678,7 +2764,7 @@ namespace System.Net.Sockets
 		 * and Winsock are FIONREAD, FIONBIO and SIOCATMARK. Anything else will depend on the system
 		 * except SIO_KEEPALIVE_VALS which is properly handled on both windows and linux. */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern static int IOControl_internal (IntPtr sock, int ioctl_code, byte [] input, byte [] output, out int error);
+		extern static int IOControl_icall (IntPtr sock, int ioctl_code, byte [] input, byte [] output, out int error);
 
 #endregion
 
@@ -2697,7 +2783,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static void Close_internal (IntPtr socket, out int error);
+		internal extern static void Close_icall (IntPtr socket, out int error);
 
 #endregion
 
@@ -2734,7 +2820,7 @@ namespace System.Net.Sockets
 			bool release = false;
 			try {
 				safeHandle.DangerousAddRef (ref release);
-				Shutdown_internal (safeHandle.DangerousGetHandle (), how, out error);
+				Shutdown_icall (safeHandle.DangerousGetHandle (), how, out error);
 			} finally {
 				if (release)
 					safeHandle.DangerousRelease ();
@@ -2742,7 +2828,7 @@ namespace System.Net.Sockets
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static void Shutdown_internal (IntPtr socket, SocketShutdown how, out int error);
+		internal extern static void Shutdown_icall (IntPtr socket, SocketShutdown how, out int error);
 
 #endregion
 
@@ -2775,7 +2861,7 @@ namespace System.Net.Sockets
 
 			/* We don't want to receive any more data */
 			int error;
-			Shutdown_internal (handle, SocketShutdown.Receive, out error);
+			Shutdown_icall (handle, SocketShutdown.Receive, out error);
 
 			if (error != 0)
 				return;
@@ -2784,14 +2870,14 @@ namespace System.Net.Sockets
 			int ms = linger_timeout % 1000;
 			if (ms > 0) {
 				/* If the other end closes, this will return 'true' with 'Available' == 0 */
-				Poll_internal (handle, SelectMode.SelectRead, ms * 1000, out error);
+				Poll_icall (handle, SelectMode.SelectRead, ms * 1000, out error);
 				if (error != 0)
 					return;
 			}
 
 			if (seconds > 0) {
 				LingerOption linger = new LingerOption (true, seconds);
-				SetSocketOption_internal (handle, SocketOptionLevel.Socket, SocketOptionName.Linger, linger, null, 0, out error);
+				SetSocketOption_icall (handle, SocketOptionLevel.Socket, SocketOptionName.Linger, linger, null, 0, out error);
 				/* Not needed, we're closing upon return */
 				//if (error != 0)
 				//	return;

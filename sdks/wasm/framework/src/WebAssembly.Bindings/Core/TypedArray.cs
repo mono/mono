@@ -218,8 +218,8 @@ namespace WebAssembly.Core {
 		protected static void ValidateFromSource (ReadOnlySpan<U> source)
 		{
 			// target array has to be instantiated.
-			if (source == null || source.Length == 0) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null and must have a length");
+			if (source == null) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null.");
 			}
 
 		}
@@ -228,8 +228,8 @@ namespace WebAssembly.Core {
 		protected static void ValidateFromSource (U [] source, int offset, int count)
 		{
 			// target array has to be instantiated.
-			if (source == null || source.Length == 0) {
-				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null and must have a length");
+			if (source == null) {
+				throw new System.ArgumentException ($"Invalid argument: {nameof (source)} can not be null.");
 			}
 
 			// offset can not be past the end of the array

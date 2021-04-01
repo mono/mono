@@ -58,13 +58,13 @@ fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 	MonoObject *exc;
 
 #if ENABLE_NETCORE
-	MonoClass *appcontext_class;
-	MonoMethod *procexit_method;
+	MONO_STATIC_POINTER_INIT (MonoMethod, procexit_method)
 
-	appcontext_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "AppContext");
-	g_assert (appcontext_class);
-	
-	procexit_method = mono_class_get_method_from_name_checked (appcontext_class, "OnProcessExit", 0, 0, error);
+		procexit_method = mono_class_get_method_from_name_checked (mono_defaults.appcontext_class, "OnProcessExit", 0, 0, error);
+		mono_error_assert_ok (error);
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, procexit_method)
+
 	g_assert (procexit_method);
 	
 	mono_runtime_try_invoke (procexit_method, NULL, NULL, &exc, error);
@@ -80,7 +80,7 @@ fire_process_exit_event (MonoDomain *domain, gpointer user_data)
 	if (delegate == NULL)
 		return;
 
-	pa [0] = domain;
+	pa [0] = domain->domain;
 	pa [1] = NULL;
 	mono_runtime_delegate_try_invoke (delegate, pa, &exc, error);
 	mono_error_cleanup (error);
@@ -121,7 +121,7 @@ mono_runtime_try_shutdown (void)
 	/*TODO move the follow to here:
 	mono_thread_suspend_all_other_threads (); OR  mono_thread_wait_all_other_threads
 
-	mono_runtime_quit ();
+	mono_runtime_quit_internal ();
 	*/
 
 	return TRUE;

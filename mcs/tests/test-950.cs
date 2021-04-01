@@ -6,7 +6,7 @@ public class B
 	{
 		int a = 1_0_3;
 		double b = 0__0e+1_1;
-		int c = 0b__1_0;
-		int d = 0x__F_0;
+		int c = 0b0__1_0;
+		int d = 0x0__F_0;
 	}
 }

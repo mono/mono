@@ -23,6 +23,7 @@ TEST_CASES := \
 	mscorlib/test-string-03.cs \
 	mscorlib/test-task-01.cs \
 	System/test-security.cs \
+	System/test-typeconverter.cs \
 	System.Core/test-plinq-01.cs
 
 ifdef INCLUDE_DISABLED
@@ -43,6 +44,12 @@ TEST_CASES += \
 	mscorlib/test-reflection.cs \
 	System.Core/test-queryable-01.cs \
 	System.Core/test-queryable-02.cs
+endif
+
+ifdef MCS_MODE
+NO_INSTALL=1
+NO_BUILD=1
+NO_TEST=1
 endif
 
 TESTS_COMPILER = $(MCS) -nologo -noconfig -unsafe -nostdlib -debug:portable -r:$(topdir)/class/lib/$(PROFILE_DIRECTORY)/mscorlib.dll
@@ -103,7 +110,8 @@ BINARY_TEST_CASES = \
 endif
 
 ifeq ($(PROFILE),wasm)
-LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw
+LINKER_PROFILE_OPTIONS += --exclude-feature remoting --exclude-feature com --exclude-feature etw -d $(topdir)/../external/binary-reference-assemblies/build/monowasm \
+--substitutions $(topdir)/../sdks/wasm/src/linker-subs.xml
 
 BINARY_TEST_CASES_ROOT:=../../../external/illinker-test-assets/wasm/
 
@@ -116,7 +124,7 @@ endif
 
 LINKER_OUTPUT := illink-output-$(PROFILE_DIRECTORY)
 PROFILE_PATH = $(topdir)/class/lib/$(PROFILE_DIRECTORY)
-LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -out $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
+LINKER = MONO_PATH=$(topdir)/class/lib/$(BUILD_TOOLS_PROFILE) $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/monolinker.exe -c link -o $(LINKER_OUTPUT) -b true -d $(PROFILE_PATH)
 LINKER_DEFAULT = $(LINKER) -l none $(LINKER_PROFILE_OPTIONS)
 TEST_EXEC = MONO_PATH=$(LINKER_OUTPUT) $(RUNTIME) $(RUNTIME_FLAGS) --debug -O=-aot
 

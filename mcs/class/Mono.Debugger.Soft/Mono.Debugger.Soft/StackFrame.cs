@@ -39,6 +39,8 @@ namespace Mono.Debugger.Soft
 					if (vm.Version.AtLeast (2, 38)) {
 						try {
 							domain = vm.GetDomain (vm.conn.StackFrame_GetDomain (thread.Id, Id));
+						} catch (InvalidStackFrameException) {
+							domain = Thread.Domain;
 						} catch (AbsentInformationException) {
 							domain = Thread.Domain;
 						}

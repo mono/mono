@@ -49,11 +49,7 @@ validate_api_struct ()
 	exit (1);
 }
 
-#ifdef USE_DEFAULT_MONO_API_STRUCT
-// We don't export in jit.h
-// So declare here, and get it from mono
-void mono_aot_register_module (void *aot_info);
-#endif // USE_DEFAULT_MONO_API_STRUCT
+#endif
 
 static void
 init_default_mono_api_struct ()
@@ -68,4 +64,3 @@ init_default_mono_api_struct ()
 #endif // USE_DEFAULT_MONO_API_STRUCT
 }
 
-#endif

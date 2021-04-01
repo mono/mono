@@ -43,6 +43,7 @@ target_link_libraries( # Specifies the target library.
                        ${CMAKE_CURRENT_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libmonosgen-2.0.so
                        ${CMAKE_CURRENT_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libMonoPosixHelper.so
                        ${CMAKE_CURRENT_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libmono-native.so
+                       ${CMAKE_CURRENT_SOURCE_DIR}/src/main/jniLibs/${ANDROID_ABI}/libmono-btls-shared.so
 
                        # Links the target library to the log library
                        # included in the NDK.

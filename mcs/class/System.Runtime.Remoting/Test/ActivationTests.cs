@@ -30,7 +30,10 @@ namespace MonoTests.Remoting
 		{
 			try
 			{
-				tcp =  new TcpChannel (0);
+				Hashtable tcpOptions = new Hashtable ();
+				tcpOptions ["port"] = 0;
+				tcpOptions ["bindTo"] = "127.0.0.1";
+				tcp =  new TcpChannel (tcpOptions, null, null);
 				
 				Hashtable options = new Hashtable ();
 				options ["timeout"] = 10000; // 10s
@@ -42,8 +45,8 @@ namespace MonoTests.Remoting
 				AppDomain domain = BaseCallTest.CreateDomain ("testdomain_activation");
 				server = (ActivationServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.ActivationServer");
 				
-				var tcpUrlPrefix = $"tcp://localhost:{server.TcpPort}";
-				var httpUrlPrefix = $"http://localhost:{server.HttpPort}";
+				var tcpUrlPrefix = $"tcp://127.0.0.1:{server.TcpPort}";
+				var httpUrlPrefix = $"http://127.0.0.1:{server.HttpPort}";
 				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject1), tcpUrlPrefix);
 				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject2), httpUrlPrefix);
 				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall1), tcpUrlPrefix + "/wkoSingleCall1");
@@ -169,8 +172,14 @@ namespace MonoTests.Remoting
 		{
 			TcpPort = NetworkHelpers.FindFreePort ();
 			HttpPort = NetworkHelpers.FindFreePort ();
-			tcp =  new TcpChannel (TcpPort);
-			http =  new HttpChannel (HttpPort);
+			IDictionary tcpProps = new Hashtable ();
+			IDictionary httpProps = new Hashtable ();
+			tcpProps ["port"] = TcpPort;
+			tcpProps ["bindTo"] = "127.0.0.1";
+			httpProps ["port"] = HttpPort;
+			httpProps ["bindTo"] = "127.0.0.1";
+			tcp =  new TcpChannel (tcpProps, null, null);
+			http =  new HttpChannel (httpProps, null, null);
 			
 			ChannelServices.RegisterChannel (tcp);
 			ChannelServices.RegisterChannel (http);
