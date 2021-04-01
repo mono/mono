@@ -180,6 +180,7 @@ selector_thread_wakeup_drain_pipes (void)
 {
 	gchar buffer [128];
 	gint received;
+	static gint warnings_issued = 0;
 
 	for (;;) {
 #if !defined(HOST_WIN32)
@@ -192,11 +193,16 @@ selector_thread_wakeup_drain_pipes (void)
 			 * some unices (like AIX) send ERESTART, which doesn't
 			 * exist on some other OSes errno
 			 */
-			if (errno != EINTR && errno != EAGAIN && errno != ERESTART)
+			if (errno != EINTR && errno != EAGAIN && errno != ERESTART) {
 #else
-			if (errno != EINTR && errno != EAGAIN)
+			if (errno != EINTR && errno != EAGAIN) {
 #endif
-				g_warning ("selector_thread_wakeup_drain_pipes: read () failed, error (%d) %s\n", errno, g_strerror (errno));
+				// limit amount of spam we write
+				if (warnings_issued < 100) {
+					g_warning ("selector_thread_wakeup_drain_pipes: read () failed, error (%d) %s\n", errno, g_strerror (errno));
+					warnings_issued++;
+				}
+			}
 			break;
 		}
 #else
@@ -204,8 +210,13 @@ selector_thread_wakeup_drain_pipes (void)
 		if (received == 0)
 			break;
 		if (received == SOCKET_ERROR) {
-			if (WSAGetLastError () != WSAEINTR && WSAGetLastError () != WSAEWOULDBLOCK)
-				g_warning ("selector_thread_wakeup_drain_pipes: recv () failed, error (%d)\n", WSAGetLastError ());
+			if (WSAGetLastError () != WSAEINTR && WSAGetLastError () != WSAEWOULDBLOCK) {
+				// limit amount of spam we write
+				if (warnings_issued < 100) {
+					g_warning ("selector_thread_wakeup_drain_pipes: recv () failed, error (%d)\n", WSAGetLastError ());
+					warnings_issued++;
+				}
+			}
 			break;
 		}
 #endif
