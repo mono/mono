@@ -6950,13 +6950,13 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 			res = FALSE;
 			break;
 		case RegTypeStructByAddr :
-			if (ainfo[i].reg == STK_BASE) 
+			if (ainfo[i].reg == STK_BASE || ainfo[i].reg == S390_LAST_ARG_REG)
 				res = FALSE;
 			else
 				res = TRUE;
 			break;
 		case RegTypeStructByVal :
-			if (ainfo[i].reg == STK_BASE) 
+			if (ainfo[i].reg == STK_BASE || ainfo[i].reg == S390_LAST_ARG_REG)
 				res = FALSE;
 			else {
 				switch(ainfo[i].size) {
