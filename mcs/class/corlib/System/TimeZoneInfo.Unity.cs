@@ -176,7 +176,7 @@ namespace System {
 		}
 	}
 
-	partial class TimeZone
+	partial class CurrentSystemTimeZone
 	{
 		// Internal method to get timezone data.
 		//    data[0]:  start of daylight saving time (in DateTime ticks).
