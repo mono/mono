@@ -10109,6 +10109,17 @@ field_access_end:
 				*sp = mono_decompose_opcode (cfg, ins);
 			}
 
+#ifdef TARGET_S390X
+			if (sp [0]->type == STACK_I4 && TARGET_SIZEOF_VOID_P == 8) {
+				MONO_INST_NEW (cfg, ins, OP_ICONV_TO_I8);
+				ins->sreg1 = sp [0]->dreg;
+				ins->type = STACK_I8;
+				ins->dreg = alloc_ireg (cfg);
+				MONO_ADD_INS (cfg->cbb, ins);
+				*sp = mono_decompose_opcode (cfg, ins);
+			}
+#endif
+ 
 			if (context_used) {
 				MonoInst *args [3];
 				MonoClass *array_class = mono_class_create_array (klass, 1);
