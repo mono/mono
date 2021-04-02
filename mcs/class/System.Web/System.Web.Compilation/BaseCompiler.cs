@@ -39,6 +39,10 @@ using System.Web.UI;
 using System.Web.Configuration;
 using System.IO;
 
+#if UNITY_JIT
+using Compiler=System.Web.Configuration.Compiler;
+#endif
+
 namespace System.Web.Compilation
 {
 	abstract class BaseCompiler

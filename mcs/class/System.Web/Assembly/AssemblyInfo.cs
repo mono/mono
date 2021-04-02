@@ -140,7 +140,7 @@ using System.Web.UI;
 [assembly: WebResource ("WebUIValidation_2.0.js", "text/javascript")]
 #endif
 
-#if UNITY_AOT && FULL_AOT_RUNTIME
+#if (UNITY_AOT && FULL_AOT_RUNTIME) || UNITY_JIT
 [assembly: TypeForwardedTo (typeof (System.Web.HttpUtility))]
 [assembly: TypeForwardedTo (typeof (System.Web.Util.HttpEncoder))]
 #endif
