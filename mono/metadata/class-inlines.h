@@ -219,6 +219,12 @@ m_method_is_pinvoke (MonoMethod *method)
 }
 
 static inline gboolean
+m_method_is_static (MonoMethod *method)
+{
+	return (method->flags & METHOD_ATTRIBUTE_STATIC) != 0;
+}
+
+static inline gboolean
 m_method_is_wrapper (MonoMethod *method)
 {
 	return method->wrapper_type != 0;

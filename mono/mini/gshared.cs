@@ -2248,6 +2248,16 @@ public class Tests
 		c.prop = new H ();
 		return (c.Foo () == "abcd") ? 0 : 1;
 	}
+
+	// FIXME:
+	[Category ("!BITCODE")]
+	public static int test_0_gsharedvt_out_dim_static () {
+		var c = new Outer<object>();
+		c.prop = new H ();
+		Console.WriteLine (c.CallStatic ());
+		return 0;
+		//return (c.Foo () == "abcd") ? 0 : 1;
+	}
 #endif
 
 	class KvpList<T> {
@@ -2323,12 +2333,24 @@ public class Outer<Q> {
 		string Foo () {
 			return null;
 		}
+
+		static Type StaticFoo () {
+			return typeof (Q);
+		}
+
+		Type CallStaticFoo () {
+			return StaticFoo ();
+		}
 	}
 
 	public ID prop;
 
 	public string Foo () {
 		return prop?.Foo();
+	}
+
+	public Type CallStatic () {
+		return prop?.CallStaticFoo();
 	}
 }
 

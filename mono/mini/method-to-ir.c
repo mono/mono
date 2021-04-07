@@ -7607,7 +7607,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				context_used = mini_method_check_context_used (cfg, cmethod);
 
-				if (context_used && mono_class_is_interface (cmethod->klass)) {
+				if (context_used && mono_class_is_interface (cmethod->klass) && !(cmethod->flags & METHOD_ATTRIBUTE_STATIC)) {
 					/* Generic method interface
 					   calls are resolved via a
 					   helper function and don't
