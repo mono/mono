@@ -700,6 +700,14 @@ namespace System
                 return Utc;
             }
 
+#if (UNITY_AOT && FULL_AOT_RUNTIME) || UNITY_JIT
+            // Not all platforms we support reading timezones from disk but can report Local
+            if (string.Equals(id, LocalId, StringComparison.OrdinalIgnoreCase))
+            {
+                return Local;
+            }
+#endif
+
             if (id == null)
             {
                 throw new ArgumentNullException(nameof(id));
