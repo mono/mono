@@ -167,7 +167,7 @@ sgen_gc_descr_has_references (SgenDescriptor desc)
 #if defined(__GNUC__) && SIZEOF_VOID_P==4
 #define GNUC_BUILTIN_CTZ(bmap)	__builtin_ctz(bmap)
 #elif defined(__GNUC__) && SIZEOF_VOID_P==8
-#define GNUC_BUILTIN_CTZ(bmap)	__builtin_ctzl(bmap)
+#define GNUC_BUILTIN_CTZ(bmap)	__builtin_ctzll(bmap)
 #endif
 
 /* code using these macros must define a HANDLE_PTR(ptr) macro that does the work */
