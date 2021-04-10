@@ -5953,9 +5953,8 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			break;
 		}
 
-		if ((t->attrs & (PARAM_ATTRIBUTE_IN | PARAM_ATTRIBUTE_OUT)) == PARAM_ATTRIBUTE_OUT) {
-			mono_mb_emit_byte (mb, MONO_CUSTOM_PREFIX);
-			mono_mb_emit_op (mb, CEE_MONO_NEWOBJ, klass);
+		if (t->attrs & PARAM_ATTRIBUTE_OUT) {
+			mono_mb_emit_byte (mb, CEE_LDNULL);
 			mono_mb_emit_stloc (mb, conv_arg);
 			break;
 		}
