@@ -2,3 +2,6 @@
 
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.GetFileInformationByHandleEx.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.WinRT.cs
+../../../external/corefx-bugfix/src/Common/src/Interop/Windows/kernel32/Interop.CopyFile.Uap.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CopyFile2.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.COPYFILE2_EXTENDED_PARAMETERS.cs

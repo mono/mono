@@ -17,7 +17,7 @@
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FILE_TIME.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FileAttributes.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CreateFile.cs
-../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CopyFile.cs
+../../../external/corefx-bugfix/src/Common/src/Interop/Windows/kernel32/Interop.CopyFile.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CopyFileEx.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.DeleteFile.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.GetFileAttributesEx.cs
@@ -36,7 +36,7 @@
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FILE_INFO_BY_HANDLE_CLASS.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CloseHandle.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.SetFileInformationByHandle.cs
-../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.DeleteVolumeMountPoint.cs
+../../../external/corefx-bugfix/src/Common/src/Interop/Windows/kernel32/Interop.DeleteVolumeMountPoint.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.SetThreadErrorMode.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.GetLogicalDrive.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FormatMessage.cs
@@ -57,13 +57,13 @@
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/Win32Marshal.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathInternal.Windows.cs
 ../../../external/corefx/src/Common/src/CoreLib/Internal/IO/File.Windows.cs
-../../../external/corefx/src/Common/src/System/IO/DriveInfoInternal.Win32.cs
+../../../external/corefx-bugfix/src/Common/src/System/IO/DriveInfoInternal.Win32.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileSystem.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileSystemInfo.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.Win32.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEntry.Windows.cs
-../../../external/corefx/src/System.IO.FileSystem/src/System/IO/DisableMediaInsertionPrompt.cs
+../../../external/corefx-bugfix/src/System.IO.FileSystem/src/System/IO/DisableMediaInsertionPrompt.cs
 
 ../../../external/corefx/src/Common/src/System/Memory/FixedBufferExtensions.cs
 
