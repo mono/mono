@@ -49,6 +49,10 @@ using System.Web.Hosting;
 using System.Web.Util;
 using System.Runtime.Versioning;
 
+#if UNITY_JIT
+using Compiler=System.Web.Configuration.Compiler;
+#endif
+
 namespace System.Web.Compilation
 {
 	public sealed class BuildManager
