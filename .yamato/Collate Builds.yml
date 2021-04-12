@@ -20,7 +20,7 @@ triggers:
   pull_requests:
     - targets:
         only:
-          - "unity-master"
+          - "unity-master-new-unitychanges"
   cancel_old_ci: true
   recurring:
     - branch: unity-master-new-unitychanges
