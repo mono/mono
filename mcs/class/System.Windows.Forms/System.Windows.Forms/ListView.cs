@@ -5156,8 +5156,6 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
-				if (owner != null && owner.VirtualMode)
-					throw new InvalidOperationException ();
 				if (is_main_collection && owner != null) {
 					owner.SetFocusedItem (-1);
 					owner.h_scroll.Value = owner.v_scroll.Value = 0;
