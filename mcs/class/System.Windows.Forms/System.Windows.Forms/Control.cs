@@ -2425,8 +2425,6 @@ namespace System.Windows.Forms
 			set { 
 				if (this.context_menu_strip != value) {
 					this.context_menu_strip = value;
-					if (value != null)
-						value.AssociatedControl = this;
 					OnContextMenuStripChanged (EventArgs.Empty);
 				}
 			}
