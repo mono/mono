@@ -6316,9 +6316,12 @@ namespace System.Windows.Forms {
 
 		internal override bool Text(IntPtr handle, string text)
 {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+            var classHints = new XClassHint
+            {
+                res_name = text,
+                res_class = text
+            };
 
 			lock (XlibLock) {
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_NAME, UTF8_STRING, 8,
@@ -6330,7 +6333,10 @@ namespace System.Windows.Forms {
 				// to compound text if it's in a
 				// different charset.
 				XStoreName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, text);
+
+				XSetClassHint(DisplayHandle, hwnd.whole_window, ref classHints);
 			}
+
 			return true;
 		}
 
@@ -6578,6 +6584,14 @@ namespace System.Windows.Forms {
 			return _XFlush(display);
 		}
 
+		[DllImport ("libX11", EntryPoint="XSetClassHint")]
+		internal extern static int _XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint);
+		internal static int XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint)
+		{
+			DebugHelper.TraceWriteLine ("XSetClassHint");
+			return _XSetClassHint(display, window, ref class_hint);
+		}
+		
 		[DllImport ("libX11", EntryPoint="XSetWMName")]
 		internal extern static int _XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop);
 		internal static int XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop)
@@ -7410,6 +7424,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XFlush")]
 		internal extern static int XFlush(IntPtr display);
+
+        [DllImport("libX11", EntryPoint="XSetClassHint")]
+        internal extern static int XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint);
 
 		[DllImport ("libX11", EntryPoint="XSetWMName")]
 		internal extern static int XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop);
