@@ -27,8 +27,9 @@
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.AdjustmentRule.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.StringSerializer.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.TransitionTime.cs
-../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.Win32.cs
-../../../external/corefx/src/Common/src/CoreLib/System/TimeZoneInfo.cs
+../../../external/corefx-bugfix/src/Common/src/CoreLib/System/TimeZoneInfo.WinRT.cs
+../../../external/corefx-bugfix/src/Common/src/CoreLib/System/TimeZoneInfo.Win32.cs
+../../../external/corefx-bugfix/src/Common/src/CoreLib/System/TimeZoneInfo.cs
 
 ../../../external/corert/src/Runtime.Base/src/System/Runtime/InteropServices/NativeCallableAttribute.cs
 
