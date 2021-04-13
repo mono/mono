@@ -223,22 +223,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 			get {
 				if (PropertyDescriptor == null || PropertyOwner == null)
 					return null;
-
 				return PropertyDescriptor.GetValue (PropertyOwner);
 			}
 		}
 
 		public string ValueText {
-			get { 
-				string text = null;
-				try {
-					text = ConvertToString (this.Value);
-					if (text == null)
-						text = String.Empty;
-				} catch {
-					text = String.Empty;
-				}
-				return text;
+			get {
+				var text = ConvertToString (this.Value);
+				return text ?? String.Empty;
 			}
 		}
 
@@ -331,20 +323,20 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		private string ConvertToString (object value)
 		{
-			if (value is string)
-				return (string)value;
+			var converter = GetConverter();
+			var convertContext = (ITypeDescriptorContext)this;
 
-			if (PropertyDescriptor != null && PropertyDescriptor.Converter != null) {
+			var convertedValue = (string)null;
+			if (converter != null && converter.CanConvertTo (convertContext, typeof (string))) {
 				try {
-					return PropertyDescriptor.Converter.ConvertToString ((ITypeDescriptorContext)this, value);
+					convertedValue = converter.ConvertToString (convertContext, value);
 				} catch {
 					// XXX: Happens too often...
 					// property_grid.ShowError ("Property value of '" + property_descriptor.Name + "' is not convertible to string.");
-					return null;
 				}
 			}
 
-			return null;
+			return (convertedValue != null) ? convertedValue : (value as string);
 		}
 
 		public bool HasCustomEditor {
@@ -702,7 +694,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			UITypeEditor editor = GetEditor ();
 			if (editor != null) {
 				try {
-					editor.PaintValue (this.Value, gfx, rect);
+					editor.PaintValue (this.ValueText, gfx, rect);
 				} catch {
 					// Some of our Editors throw NotImplementedException
 				}
