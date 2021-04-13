@@ -26,6 +26,7 @@
 using System;
 using System.Threading;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace System.Windows.Forms {
 	[DefaultProperty("Interval")]
@@ -35,7 +36,7 @@ namespace System.Windows.Forms {
 
 		private bool enabled;
 		private int interval = 100;
-		private DateTime expires;
+		private long expires;
 		internal Thread thread;
 		internal bool Busy;
 		internal IntPtr window;
@@ -63,7 +64,7 @@ namespace System.Windows.Forms {
 					enabled = value;
 					if (value) {
 						// Use AddTicks so we get some rounding
-						expires = DateTime.UtcNow.AddMilliseconds (interval > Minimum ? interval : Minimum);
+						expires = StopWatchNowMilliseconds + (interval > Minimum ? interval : Minimum);
 
 						thread = Thread.CurrentThread;
 						XplatUI.SetTimer (this);
@@ -73,6 +74,11 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+		}
+
+		internal static long StopWatchNowMilliseconds
+		{
+			get { return Stopwatch.GetTimestamp() * 1000 / Stopwatch.Frequency; }
 		}
 
 		[DefaultValue (100)]
@@ -91,7 +97,7 @@ namespace System.Windows.Forms {
 				interval = value;
 								
 				// Use AddTicks so we get some rounding
-				expires = DateTime.UtcNow.AddMilliseconds (interval > Minimum ? interval : Minimum);
+				expires = StopWatchNowMilliseconds + (interval > Minimum ? interval : Minimum);
 									
 				if (enabled == true) {				
 					XplatUI.KillTimer (this);
@@ -125,7 +131,7 @@ namespace System.Windows.Forms {
 			Enabled = false;
 		}
 
-		internal DateTime Expires {
+		internal long Expires {
 			get {
 				return expires;
 			}
@@ -138,9 +144,9 @@ namespace System.Windows.Forms {
 			return base.ToString () + ", Interval: " + Interval;
 		}
 
-		internal void Update (DateTime update)
+		internal void Update (long update)
 		{
-			expires = update.AddMilliseconds (interval > Minimum ? interval : Minimum);
+			expires = update + (interval > Minimum ? interval : Minimum);
 		}
 
 		internal void FireTick ()
