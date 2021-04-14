@@ -158,7 +158,7 @@ los_consistency_check (void)
 
 	FOREACH_LOS_OBJECT_NO_LOCK (obj) {
 		mword obj_size = sgen_los_object_size (obj);
-		char *end = obj->data + obj_size;
+		char *end = (char*)obj->data + obj_size;
 		int start_index, num_chunks;
 
 		memory_usage += obj_size;
