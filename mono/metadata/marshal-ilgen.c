@@ -1087,7 +1087,7 @@ emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_obje
 	MonoMarshalType *info;
 	int i;
 
-	if (m_class_get_parent (klass))
+	if (!m_class_is_blittable (klass) && m_class_get_parent (klass))
 		emit_struct_conv_full (mb, m_class_get_parent (klass), to_object, offset_of_first_nonstatic_field (klass), string_encoding);
 
 	info = mono_marshal_load_type_info (klass);
