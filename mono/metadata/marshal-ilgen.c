@@ -5953,12 +5953,6 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			break;
 		}
 
-		if (t->attrs & PARAM_ATTRIBUTE_OUT) {
-			mono_mb_emit_byte (mb, CEE_LDNULL);
-			mono_mb_emit_stloc (mb, conv_arg);
-			break;
-		}
-
 		/* Set src */
 		mono_mb_emit_ldarg (mb, argnum);
 		if (t->byref) {
@@ -5990,8 +5984,9 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_ldflda (mb, MONO_ABI_SIZEOF (MonoObject));
 		mono_mb_emit_stloc (mb, 1); 
 
-		/* emit valuetype conversion code */
-		emit_struct_conv (mb, klass, TRUE);
+		/* emit valuetype conversion code if needed */
+		if ((t->attrs & (PARAM_ATTRIBUTE_IN | PARAM_ATTRIBUTE_OUT)) != PARAM_ATTRIBUTE_OUT)
+			emit_struct_conv (mb, klass, TRUE);
 
 		mono_mb_patch_branch (mb, pos);
 		break;
@@ -6044,7 +6039,9 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		} else {
 			/* byval [Out] marshalling */
 
-			/* FIXME: Handle null */
+			/* Check for null */
+			mono_mb_emit_ldloc (mb, argnum);
+			pos = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
 			/* Set src */
 			mono_mb_emit_ldloc (mb, conv_arg);
@@ -6057,6 +6054,8 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			
 			/* emit valuetype conversion code */
 			emit_struct_conv (mb, klass, FALSE);
+
+			mono_mb_patch_branch (mb, pos);
 		}			
 		break;
 

@@ -278,6 +278,9 @@ public class Tests
 	public static extern int mono_test_marshal_array_ccw_itest (int count, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex=0)] ITest[] ppUnk);
 
 	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_point_class_ccw_itest ([MarshalAs (UnmanagedType.Interface)]ITest itest);
+
+	[DllImport ("libtest")]
 	public static extern int mono_test_marshal_retval_ccw_itest ([MarshalAs (UnmanagedType.Interface)]ITest itest, bool test_null);
 
 	[DllImport ("libtest")]
@@ -687,6 +690,9 @@ public class Tests
 				}
 			}
 
+			if (mono_test_marshal_point_class_ccw_itest (test) != 0)
+				return 209;
+
 			#endregion // COM Callable Wrapper Tests
 
 			#region SAFEARRAY tests
@@ -1044,6 +1050,24 @@ public class Tests
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		[return: MarshalAs (UnmanagedType.Interface)]
 		TestDefaultInterfaceClass2 GetDefInterface2();
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		int PointClassIn ([In] Point pt);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		void PointClassInOut ([In, Out] Point pt);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		int PointClassOut ([Out] Point pt);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		Point PointClassRet ();
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		void PointClassWithIface ([In, Out] PointWithIface pt);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		int PointClassWithoutExplicitLayout ([MarshalAs(UnmanagedType.Interface), In, Out] PointWithoutExplicitLayout pt);
 	}
 
 	[ComImport ()]
@@ -1164,6 +1188,24 @@ public class Tests
 		public virtual extern TestDefaultInterfaceClass1 GetDefInterface1();
 		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		public virtual extern TestDefaultInterfaceClass2 GetDefInterface2();
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		public virtual extern int PointClassIn ([In] Point pt);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		public virtual extern void PointClassInOut ([In, Out] Point pt);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		public virtual extern int PointClassOut ([Out] Point pt);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		public virtual extern Point PointClassRet ();
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		public virtual extern void PointClassWithIface ([In, Out] PointWithIface pt);
+		[MethodImplAttribute (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+		[PreserveSig ()]
+		public virtual extern int PointClassWithoutExplicitLayout ([MarshalAs(UnmanagedType.Interface), In, Out] PointWithoutExplicitLayout pt);
 	}
 
 	[System.Runtime.InteropServices.GuidAttribute ("00000000-0000-0000-0000-000000000002")]
@@ -1515,6 +1557,46 @@ public class Tests
 		{
 			return new TestDefaultInterfaceClass2();
 		}
+
+		public int PointClassIn (Point pt)
+		{
+			if (pt == null)
+				return 1;
+			if (pt.x != 7 || pt.y != -10)
+				return 1;
+			return 0;
+		}
+
+		public void PointClassInOut (Point pt)
+		{
+			pt.x = -pt.x;
+			pt.y = -pt.y;
+		}
+
+		public int PointClassOut (Point pt)
+		{
+			if (pt == null)
+				return 1;
+			pt.x = 13;
+			pt.y = -13;
+			return 0;
+		}
+
+		public Point PointClassRet ()
+		{
+			return new Point(1337, 42);
+		}
+
+		public void PointClassWithIface (PointWithIface pt)
+		{
+			pt.x *= 2;
+			pt.y *= -2;
+		}
+
+		public int PointClassWithoutExplicitLayout (PointWithoutExplicitLayout pt)
+		{
+			return 0;
+		}
 	}
 
 	[ComVisible (true)]
@@ -1665,6 +1747,29 @@ public class Tests
 			itest.DoubleIn (3.14);
 			itest.ITestIn (itest);
 			itest.ITestOut (out itest2);
+
+			Point pt = new Point(7, -10);
+			if (itest.PointClassIn (pt) != 0 || pt.x != 7 || pt.y != -10)
+				return 1;
+			itest.PointClassInOut (pt);
+			if (pt.x != -7 || pt.y != 10)
+				return 1;
+			if (itest.PointClassOut (null) == 0)
+				return 1;
+			if (itest.PointClassOut (pt) != 0 || pt.x != 13 || pt.y != -13)
+				return 1;
+			pt = itest.PointClassRet ();
+			if (pt.x != 1337 || pt.y != 42)
+				return 1;
+
+			PointWithIface pt2 = new PointWithIface(10, 20);
+			itest.PointClassWithIface (pt2);
+			if (pt2.x != 20 || pt2.y != -40)
+				return 1;
+
+			PointWithoutExplicitLayout pt3 = new PointWithoutExplicitLayout(30, 40);
+			if (itest.PointClassWithoutExplicitLayout (pt3) != 0)
+				return 1;
 		}
 		catch (Exception ex) {
 			return 1;
@@ -1823,4 +1928,46 @@ public struct StructWithBstr
 {
 	[MarshalAs (UnmanagedType.BStr)]
 	public string data;
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public class Point
+{
+	public double x;
+	public double y;
+
+	public Point (double x, double y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+}
+
+[ComVisible (true)]
+[Guid ("00000000-0000-0000-0000-000000000004")]
+[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+public interface IPoint
+{
+	void Nop ();
+}
+
+[ComVisible (true)]
+[ComDefaultInterfaceAttribute (typeof (IPoint))]
+[System.Runtime.InteropServices.GuidAttribute ("00000000-0000-0000-0000-000000000005")]
+[System.Runtime.InteropServices.ClassInterfaceAttribute (ClassInterfaceType.None)]
+[StructLayout(LayoutKind.Sequential)]
+public class PointWithIface : Point, IPoint
+{
+	public PointWithIface (double x, double y) : base(x, y) { }
+	public void Nop () { }
+}
+
+[ComVisible (true)]
+[ComDefaultInterfaceAttribute (typeof (IPoint))]
+[System.Runtime.InteropServices.GuidAttribute ("00000000-0000-0000-0000-000000000006")]
+[System.Runtime.InteropServices.ClassInterfaceAttribute (ClassInterfaceType.None)]
+public class PointWithoutExplicitLayout : Point, IPoint
+{
+	public PointWithoutExplicitLayout (double x, double y) : base(x, y) { }
+	public void Nop () { }
 }
