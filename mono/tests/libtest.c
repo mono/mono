@@ -3533,6 +3533,12 @@ typedef struct
 	int (STDCALL *ArrayOut)(MonoComObject* pUnk, guint32 *array, guint32 *result);
 	int (STDCALL *GetDefInterface1)(MonoComObject* pUnk, MonoDefItfObject **iface);
 	int (STDCALL *GetDefInterface2)(MonoComObject* pUnk, MonoDefItfObject **iface);
+	int (STDCALL *PointClassIn)(MonoComObject* pUnk, const point *pt);
+	void (STDCALL *PointClassInOut)(MonoComObject* pUnk, point *pt);
+	int (STDCALL *PointClassOut)(MonoComObject* pUnk, point *pt);
+	point* (STDCALL *PointClassRet)(MonoComObject* pUnk);
+	void (STDCALL *PointClassWithIface)(MonoComObject* pUnk, point *pt);
+	int (STDCALL *PointClassWithoutExplicitLayout)(MonoComObject* pUnk, MonoComObject *obj);
 } MonoIUnknown;
 
 struct MonoComObject
@@ -3703,6 +3709,67 @@ GetDefInterface2(MonoComObject* pUnk, MonoDefItfObject **obj)
 	return S_OK;
 }
 
+LIBTEST_API int STDCALL
+PointClassIn(MonoComObject* pUnk, const point *pt)
+{
+	if (!pt)
+		return 1;
+	if (pt->x != 7 || pt->y != -10)
+		return 2;
+	return 0;
+}
+
+LIBTEST_API void STDCALL
+PointClassInOut(MonoComObject* pUnk, point *pt)
+{
+	pt->x = -pt->x;
+	pt->y = -pt->y;
+}
+
+LIBTEST_API int STDCALL
+PointClassOut(MonoComObject* pUnk, point *pt)
+{
+	if (!pt)
+		return 1;
+	pt->x = 13;
+	pt->y = -13;
+	return 0;
+}
+
+LIBTEST_API point* STDCALL
+PointClassRet(MonoComObject* pUnk)
+{
+	point *pt = (point*)marshal_alloc (sizeof(point));
+	pt->x = 1337;
+	pt->y = 42;
+	return pt;
+}
+
+LIBTEST_API void STDCALL
+PointClassWithIface(MonoComObject* pUnk, point *pt)
+{
+	pt->x *= 2;
+	pt->y *= -2;
+}
+
+LIBTEST_API int STDCALL
+PointClassWithoutExplicitLayout(MonoComObject* pUnk, MonoComObject *obj)
+{
+	MonoComObject *unk = NULL, *unk2 = NULL;
+	if (obj->vtbl->QueryInterface(obj, &IID_IMonoUnknown, (gpointer*)&unk) != 0)
+		return 1;
+	if (unk == obj || unk->vtbl->QueryInterface(unk, &IID_IMonoUnknown, (gpointer*)&unk2) != 0)
+	{
+		unk->vtbl->Release(unk);
+		return 2;
+	}
+	unk->vtbl->Release(unk);
+	unk->vtbl->Release(unk2);
+	if (unk != unk2)
+		return 3;
+	return 0;
+}
+
 static void create_com_object (MonoComObject** pOut);
 
 LIBTEST_API int STDCALL 
@@ -3742,6 +3809,12 @@ static void create_com_object (MonoComObject** pOut)
 	(*pOut)->vtbl->ArrayOut = ArrayOut;
 	(*pOut)->vtbl->GetDefInterface1 = GetDefInterface1;
 	(*pOut)->vtbl->GetDefInterface2 = GetDefInterface2;
+	(*pOut)->vtbl->PointClassIn = PointClassIn;
+	(*pOut)->vtbl->PointClassInOut = PointClassInOut;
+	(*pOut)->vtbl->PointClassOut = PointClassOut;
+	(*pOut)->vtbl->PointClassRet = PointClassRet;
+	(*pOut)->vtbl->PointClassWithIface = PointClassWithIface;
+	(*pOut)->vtbl->PointClassWithoutExplicitLayout = PointClassWithoutExplicitLayout;
 }
 
 static MonoComObject* same_object = NULL;
@@ -3848,6 +3921,37 @@ mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)
 	hr = ppUnk[0]->vtbl->SByteIn (ppUnk[0], -100);
 	if (hr != 0)
 		return 4;
+
+	return 0;
+}
+
+LIBTEST_API int STDCALL
+mono_test_marshal_point_class_ccw_itest (MonoComObject *pUnk)
+{
+	point pt, *ppt;
+
+	if (!pUnk)
+		return 1;
+
+	pt.x = 7;
+	pt.y = -10;
+	if (!pUnk->vtbl->PointClassIn(pUnk, NULL))
+		return 2;
+	if (pUnk->vtbl->PointClassIn(pUnk, &pt) || pt.x != 7 || pt.y != -10)
+		return 3;
+	pUnk->vtbl->PointClassInOut(pUnk, &pt);
+	if (pt.x != -7 || pt.y != 10)
+		return 4;
+	if (!pUnk->vtbl->PointClassOut(pUnk, NULL))
+		return 5;
+	if (pUnk->vtbl->PointClassOut(pUnk, &pt) || pt.x != 13 || pt.y != -13)
+		return 6;
+	ppt = pUnk->vtbl->PointClassRet(pUnk);
+	if (ppt->x != 1337 || ppt->y != 42)
+		return 7;
+	pUnk->vtbl->PointClassWithIface(pUnk, &pt);
+	if (pt.x != 26 || pt.y != 26)
+		return 8;
 
 	return 0;
 }

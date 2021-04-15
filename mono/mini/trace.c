@@ -260,6 +260,19 @@ mono_trace_enter_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 		case MONO_TYPE_OBJECT: {
 			o = *arg_in_stack_slot(buf, MonoObject *);
 			if (o) {
+				klass = NULL;
+				if (type->type == MONO_TYPE_CLASS || type->type == MONO_TYPE_OBJECT)
+					klass = type->data.klass;
+				else if (type->type == MONO_TYPE_GENERICINST)
+					klass = type->data.generic_class->container_class;
+				if (klass) {
+					klass = mono_class_get_generic_type_definition (klass);
+					if (m_class_get_class_kind (klass) == MONO_CLASS_DEF || m_class_get_class_kind (klass) == MONO_CLASS_GTD)
+						if (!mono_class_is_auto_layout (klass))
+							o = NULL;
+				}
+			}
+			if (o) {
 				klass = o->vtable->klass;
 
 				gpointer data = mono_object_get_data (o);
