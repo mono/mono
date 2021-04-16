@@ -3035,11 +3035,11 @@ namespace System.Windows.Forms
 				case Msg.WM_RBUTTONDOWN:
 					if (!Focused)
 						owner.Select (false, true);
-                    break;
-                case Msg.WM_RBUTTONUP:
-                    m.HWnd = owner.Handle;
-                    break;
-                default:
+					break;
+				case Msg.WM_RBUTTONUP:
+					m.HWnd = owner.Handle;
+					break;
+				default:
 					break;
 				}
 				base.WndProc (ref m);
