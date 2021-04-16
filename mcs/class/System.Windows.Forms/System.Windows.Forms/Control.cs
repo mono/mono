@@ -5482,7 +5482,7 @@ namespace System.Windows.Forms
 		}
 
 		private void WmContextMenu (ref Message m) {
-			if (context_menu != null) {
+			if (context_menu != null && m.WParam == m.HWnd) {
 				Point	pt;
 
 				pt = new Point(LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
@@ -5498,7 +5498,7 @@ namespace System.Windows.Forms
 			}
 
 			// If there isn't a regular context menu, show the Strip version
-			if (context_menu == null && context_menu_strip != null) {
+			if (context_menu == null && context_menu_strip != null && m.WParam == m.HWnd) {
 				Point pt;
 
 				pt = new Point (LowOrder ((int)m.LParam.ToInt32 ()), HighOrder ((int)m.LParam.ToInt32 ()));
