@@ -7782,7 +7782,16 @@ namespace System.Net.Sockets {
                 e.StartOperationCommon(this);
                 e.StartOperationWrapperConnect(multipleConnectAsync);
 
-                retval = multipleConnectAsync.StartConnectAsync(e, dnsEP);
+                try
+                {
+                    retval = multipleConnectAsync.StartConnectAsync(e, dnsEP);
+                }
+                catch
+                {
+                    // Clear in-use flag on event args object.
+                    Interlocked.Exchange(ref e.in_progress, 0);
+                    throw;
+                }
             } 
             else {
                 // Throw if remote address family doesn't match socket.
@@ -7880,7 +7889,16 @@ namespace System.Net.Sockets {
                 e.StartOperationCommon(attemptSocket);
                 e.StartOperationWrapperConnect(multipleConnectAsync);
 
-                retval = multipleConnectAsync.StartConnectAsync(e, dnsEP);
+                try
+                {
+                    retval = multipleConnectAsync.StartConnectAsync(e, dnsEP);
+                }
+                catch
+                {
+                    // Clear in-use flag on event args object.
+                    Interlocked.Exchange(ref e.in_progress, 0);
+                    throw;
+                }
             } else {
                 Socket attemptSocket = new Socket(endPointSnapshot.AddressFamily, socketType, protocolType);
                 retval = attemptSocket.ConnectAsync(e);
