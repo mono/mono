@@ -45,7 +45,7 @@ namespace System.ServiceModel.Dispatcher
 			= new ClientOperation.ClientOperationCollection ();
 		IClientOperationSelector selector;
 		Uri via;
-		bool validate, manual_addressing;
+		bool validate, manual_addressing, message_version_none_faults_enabled;
 		string contract_name, contract_ns;
 		int max_fault_size = 0x10000; // FIXME: not verified.
 
@@ -138,10 +138,9 @@ namespace System.ServiceModel.Dispatcher
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public bool MessageVersionNoneFaultsEnabled {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return message_version_none_faults_enabled; }
+			set { message_version_none_faults_enabled = value; }
 		}
 	}
 }
