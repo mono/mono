@@ -98,9 +98,8 @@ namespace System.ServiceModel.Dispatcher
 		}
 #endif
 
-		[MonoTODO]
 		public ICollection<ClientOperation> ClientOperations {
-			get { throw new NotImplementedException (); }
+			get { return operations; }
 		}
 
 		public ICollection<IClientMessageInspector> ClientMessageInspectors {
