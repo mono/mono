@@ -43,6 +43,7 @@ namespace System.ServiceModel.Dispatcher
 			= new SynchronizedCollection<IClientMessageInspector> ();
 		ClientOperation.ClientOperationCollection operations
 			= new ClientOperation.ClientOperationCollection ();
+		ClientOperation unhandled_operation;
 		IClientOperationSelector selector;
 		Uri via;
 		bool validate, manual_addressing, message_version_none_faults_enabled;
@@ -131,14 +132,32 @@ namespace System.ServiceModel.Dispatcher
 			set { via = value; }
 		}
 
-		[MonoTODO]
 		public ClientOperation UnhandledClientOperation {
-			get { throw new NotImplementedException (); }
+			get {
+				if (unhandled_operation is null) {
+					unhandled_operation = new ClientOperation(this, "*", "*", "*");
+					unhandled_operation.Formatter = new unhandled_operation_formatter();
+					unhandled_operation.DeserializeReply = false;
+					unhandled_operation.SerializeRequest = false;
+				}
+				return unhandled_operation;
+			}
 		}
 		
 		public bool MessageVersionNoneFaultsEnabled {
 			get { return message_version_none_faults_enabled; }
 			set { message_version_none_faults_enabled = value; }
+		}
+	}
+
+	internal sealed class unhandled_operation_formatter : IClientMessageFormatter
+	{
+		public object DeserializeReply(Message message, object[] parameters) {
+			return message;
+		}
+
+		public Message SerializeRequest(MessageVersion version, object[] parameters) {
+			return (Message)parameters[0];
 		}
 	}
 }

@@ -201,6 +201,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			Assert.AreEqual (0, r.ClientMessageInspectors.Count, "#6");
 			Assert.AreEqual (0, r.ClientOperations.Count, "#7");
 			Assert.IsNull (r.OperationSelector, "#8");
+			Assert.IsNotNull (r.UnhandledClientOperation, "#9");
 
 			MyClientMessageInspector inspector1 = new MyClientMessageInspector();
 			MyClientMessageInspector inspector2 = new MyClientMessageInspector();
@@ -231,6 +232,20 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			r.ClientOperations.CopyTo(operations, 0);
 			Assert.AreEqual (operation1, operations[0], "operations #7");
 			Assert.AreEqual (operation2, operations[1], "operations #8");
+
+			Assert.AreEqual ("*", r.UnhandledClientOperation.Name, "unhandled #1");
+			Assert.AreEqual ("*", r.UnhandledClientOperation.Action, "unhandled #2");
+			Assert.AreEqual ("*", r.UnhandledClientOperation.ReplyAction, "unhandled #3");
+			Assert.AreEqual (r, r.UnhandledClientOperation.Parent, "unhandled #4");
+			Assert.IsNotNull (r.UnhandledClientOperation.Formatter, "unhandled #5");
+			Assert.IsFalse (r.UnhandledClientOperation.DeserializeReply, "unhandled #6");
+			Assert.IsFalse (r.UnhandledClientOperation.SerializeRequest, "unhandled #7");
+			Assert.IsNull (r.UnhandledClientOperation.BeginMethod, "unhandled #8");
+			Assert.IsNull (r.UnhandledClientOperation.EndMethod, "unhandled #9");
+			Assert.IsNull (r.UnhandledClientOperation.SyncMethod, "unhandled #10");
+			Assert.AreEqual (0, r.UnhandledClientOperation.ParameterInspectors.Count, "unhandled #11");
+			Assert.AreEqual (0, r.UnhandledClientOperation.ClientParameterInspectors.Count, "unhandled #12");
+			Assert.AreEqual (0, r.UnhandledClientOperation.FaultContractInfos.Count, "unhandled #13");
 		}
 	}
 
