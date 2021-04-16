@@ -876,7 +876,7 @@ namespace System.Windows.Forms
 				case Msg.WM_RBUTTONDOWN:
 					if (keyboard_capture != null) {
 						Control c2 = Control.FromHandle (msg.hwnd);
-						var contextMenuStrip = keyboard_capture.GetTopLevelToolStrip () as ContextMenuStrip;
+						var menuStrip = keyboard_capture.GetTopLevelToolStrip () as ToolStrip;
 
 						// The target is not a winforms control (an embedded control, perhaps), so
 						// release everything
@@ -901,13 +901,13 @@ namespace System.Windows.Forms
 						}
 
 						var iter_OwnerItem = (c2 as ToolStripDropDown)?.OwnerItem;
-						while (iter_OwnerItem != null && iter_OwnerItem.Owner != contextMenuStrip) {
+						while (iter_OwnerItem != null && iter_OwnerItem.Owner != menuStrip) {
 							iter_OwnerItem = iter_OwnerItem.OwnerItem;
 						}
-						var contextMenuStripIsOwnerOf_c2 = (iter_OwnerItem != null);
+						var menuStripIsOwnerOf_c2 = (iter_OwnerItem != null);
 						
-						if (c2 != contextMenuStrip && !contextMenuStripIsOwnerOf_c2)
-							contextMenuStrip.Dismiss ();
+						if (c2 != menuStrip && !menuStripIsOwnerOf_c2)
+							menuStrip.Dismiss ();
 					}
 					goto default;
 
