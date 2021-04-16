@@ -103,9 +103,8 @@ namespace System.ServiceModel.Dispatcher
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public ICollection<IClientMessageInspector> ClientMessageInspectors {
-			get { throw new NotImplementedException (); }
+			get { return inspectors; }
 		}
 
 		public bool ManualAddressing {
