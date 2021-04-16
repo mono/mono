@@ -185,6 +185,36 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				h.Close ();
 			}
 		}
+
+		[Test]
+		public void TestClientRuntime ()
+		{
+			DispatchRuntime d = new EndpointDispatcher (
+				new EndpointAddress ("http://localhost:30158"), "IFoo", "urn:foo").DispatchRuntime;
+			ClientRuntime r = d.CallbackClientRuntime;
+
+			Assert.AreEqual (d, r.CallbackDispatchRuntime, "#1");
+			Assert.AreEqual (0, r.ChannelInitializers.Count, "#2");
+			Assert.AreEqual (0, r.InteractiveChannelInitializers.Count, "#3");
+			Assert.AreEqual (0, r.MessageInspectors.Count, "#4");
+			Assert.AreEqual (0, r.Operations.Count, "#5");
+			Assert.AreEqual (0, r.ClientMessageInspectors.Count, "#6");
+
+			MyClientMessageInspector inspector1 = new MyClientMessageInspector();
+			MyClientMessageInspector inspector2 = new MyClientMessageInspector();
+			MyClientMessageInspector[] inspectors = new MyClientMessageInspector[2];
+			r.MessageInspectors.Add (inspector1);
+			Assert.AreEqual (1, r.MessageInspectors.Count, "inspectors #1");
+			Assert.AreEqual (1, r.ClientMessageInspectors.Count, "inspectors #2");
+			r.ClientMessageInspectors.Add (inspector2);
+			Assert.AreEqual (2, r.MessageInspectors.Count, "inspectors #3");
+			Assert.AreEqual (2, r.ClientMessageInspectors.Count, "inspectors #4");
+			Assert.AreEqual (inspector1, r.MessageInspectors[0], "inspectors #5");
+			Assert.AreEqual (inspector2, r.MessageInspectors[1], "inspectors #6");
+			r.ClientMessageInspectors.CopyTo(inspectors, 0);
+			Assert.AreEqual (inspector1, inspectors[0], "inspectors #7");
+			Assert.AreEqual (inspector2, inspectors[1], "inspectors #8");
+		}
 	}
 
 
@@ -235,6 +265,18 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			res.string_res += "BeforeSendReply , ";
 			res.AddCurrentOperationContextInfo ();
 		}
+
+		#endregion
+	}
+
+	public class MyClientMessageInspector : IClientMessageInspector
+	{
+		public MyClientMessageInspector () { }
+
+		#region IClientMessageInspector Members
+
+		public void AfterReceiveReply (ref Message reply, object correlationState) { }
+		public object BeforeSendRequest (ref Message request, IClientChannel channel) { return null; }
 
 		#endregion
 	}
