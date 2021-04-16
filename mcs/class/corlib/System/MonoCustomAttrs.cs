@@ -183,6 +183,9 @@ namespace System
 			if (inherit && GetBase (obj) == null)
 				inherit = false;
 
+			if (obj is RuntimeParameterInfo)
+				inherit = false;
+
 			// if AttributeType is sealed, and Inherited is set to false, then 
 			// there's no use in scanning base types 
 			if ((attributeType != null && attributeType.IsSealed) && inherit) {
