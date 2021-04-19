@@ -1031,6 +1031,10 @@ HANDLES(NATIVEC_3, "OpenEvent_icall", ves_icall_System_Threading_Events_OpenEven
 NOHANDLES(ICALL(NATIVEC_4, "ResetEvent_internal",  ves_icall_System_Threading_Events_ResetEvent_internal))
 NOHANDLES(ICALL(NATIVEC_5, "SetEvent_internal",    ves_icall_System_Threading_Events_SetEvent_internal))
 
+ICALL_TYPE(OSSYNCCONTEXT, "System.Threading.OSSpecificSynchronizationContext", OSSYNCCONTEXT_1)
+HANDLES(ICALL(OSSYNCCONTEXT_1, "GetOSContext", ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext))
+ICALL(OSSYNCCONTEXT_2, "PostInternal", ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal)
+
 ICALL_TYPE(SEMA, "System.Threading.Semaphore", SEMA_1)
 NOHANDLES(ICALL(SEMA_1, "CreateSemaphore_icall", ves_icall_System_Threading_Semaphore_CreateSemaphore_icall))
 NOHANDLES(ICALL(SEMA_2, "OpenSemaphore_icall", ves_icall_System_Threading_Semaphore_OpenSemaphore_icall))
