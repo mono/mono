@@ -1604,6 +1604,8 @@ if ($artifact)
 			system("cp", "$monoroot/support/.libs/libMonoPosixHelper.so","$embedDirArchDestination/libMonoPosixHelper.so") eq 0 or die ("failed copying libMonoPosixHelper.so\n");
 			print ">>> Copying libmono-native.so\n";
 			system("cp", "$monoroot/mono/native/.libs/libmono-native.so","$embedDirArchDestination/libmono-native.so") eq 0 or die ("failed copying libmono-native.so\n");
+			print ">>> Copying libmono-btls-shared.so\n";
+			system("cp", "$monoroot/mono/btls/build-shared/libmono-btls-shared.so","$embedDirArchDestination/libmono-btls-shared.so") eq 0 or die ("failed copying libmono-btls-shared.so\n");
 
 			if ($buildMachine)
 			{
