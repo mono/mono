@@ -343,6 +343,10 @@ HANDLES(ENV_17, "internalGetEnvironmentVariable_native", ves_icall_System_Enviro
 HANDLES(ENV_18, "internalGetGacPath", ves_icall_System_Environment_GetGacPath, MonoString, 0, ())
 HANDLES(ENV_19, "internalGetHome", ves_icall_System_Environment_InternalGetHome, MonoString, 0, ())
 NOHANDLES(ICALL(ENV_20, "set_ExitCode", mono_environment_exitcode_set))
+
+ICALL_TYPE(EXCEPTION, "System.Exception", EXCEPTION_1)
+NOHANDLES(ICALL(EXCEPTION_1, "ReportUnhandledException", ves_icall_System_Exception_ReportUnhandledException))
+
 ICALL_TYPE(GC, "System.GC", GC_10)
 NOHANDLES(ICALL(GC_10, "GetAllocatedBytesForCurrentThread", ves_icall_System_GC_GetAllocatedBytesForCurrentThread))
 NOHANDLES(ICALL(GC_0, "GetCollectionCount", ves_icall_System_GC_GetCollectionCount))
@@ -356,9 +360,6 @@ HANDLES(GC_6b, "_ReRegisterForFinalize", ves_icall_System_GC_ReRegisterForFinali
 HANDLES(GC_7, "_SuppressFinalize", ves_icall_System_GC_SuppressFinalize, void, 1, (MonoObject))
 HANDLES(GC_9, "get_ephemeron_tombstone", ves_icall_System_GC_get_ephemeron_tombstone, MonoObject, 0, ())
 HANDLES(GC_8, "register_ephemeron_array", ves_icall_System_GC_register_ephemeron_array, void, 1, (MonoObject))
-
-ICALL_TYPE(EXCEPTION, "System.Exception", EXCEPTION_1)
-HANDLES(ICALL(EXCEPTION_1, "ReportUnhandledException", ves_icall_System_Exception_ReportUnhandledException))
 
 ICALL_TYPE(CALDATA, "System.Globalization.CalendarData", CALDATA_1)
 HANDLES(CALDATA_1, "fill_calendar_data", ves_icall_System_Globalization_CalendarData_fill_calendar_data, MonoBoolean, 3, (MonoCalendarData, MonoString, gint32))
@@ -1035,8 +1036,8 @@ NOHANDLES(ICALL(NATIVEC_4, "ResetEvent_internal",  ves_icall_System_Threading_Ev
 NOHANDLES(ICALL(NATIVEC_5, "SetEvent_internal",    ves_icall_System_Threading_Events_SetEvent_internal))
 
 ICALL_TYPE(OSSYNCCONTEXT, "System.Threading.OSSpecificSynchronizationContext", OSSYNCCONTEXT_1)
-HANDLES(ICALL(OSSYNCCONTEXT_1, "GetOSContext", ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext))
-ICALL(OSSYNCCONTEXT_2, "PostInternal", ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal)
+NOHANDLES(ICALL(OSSYNCCONTEXT_1, "GetOSContext", ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext))
+NOHANDLES(ICALL(OSSYNCCONTEXT_2, "PostInternal", ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal))
 
 ICALL_TYPE(SEMA, "System.Threading.Semaphore", SEMA_1)
 NOHANDLES(ICALL(SEMA_1, "CreateSemaphore_icall", ves_icall_System_Threading_Semaphore_CreateSemaphore_icall))

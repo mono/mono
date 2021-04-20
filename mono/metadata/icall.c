@@ -9861,5 +9861,5 @@ void
 ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal (gpointer callback, gpointer arg)
 {
 	/* This isn't actually reachable since ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext always returns NULL */
-	mono_set_pending_exception (mono_get_exception_not_implemented ("System.Threading.InteropServices.OSSpecificSynchronizationContext.PostInternal internal call is not implemented."));
+	mono_set_pending_exception (mono_exception_from_name_msg (mono_get_corlib (), "System", "NotImplementedException", "System.Threading.InteropServices.OSSpecificSynchronizationContext.PostInternal internal call is not implemented."));
 }
