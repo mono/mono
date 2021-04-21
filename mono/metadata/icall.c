@@ -9850,3 +9850,16 @@ ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_CloseNLSocket (gpoint
 #undef ICALL
 #undef NOHANDLES
 #undef MONO_HANDLE_REGISTER_ICALL
+
+MonoObjectHandle
+ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext ()
+{
+	return NULL_HANDLE;
+}
+
+void
+ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal (gpointer callback, gpointer arg)
+{
+	/* This isn't actually reachable since ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext always returns NULL */
+	mono_set_pending_exception (mono_exception_from_name_msg (mono_get_corlib (), "System", "NotImplementedException", "System.Threading.InteropServices.OSSpecificSynchronizationContext.PostInternal internal call is not implemented."));
+}
