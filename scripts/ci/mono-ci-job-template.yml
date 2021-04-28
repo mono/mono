@@ -7,7 +7,7 @@ parameters:
   type: string
 - name: timeoutInMinutes
   type: number
-  default: 120
+  default: 180
 - name: publishTestResults
   type: boolean
   default: true
