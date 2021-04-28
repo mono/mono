@@ -122,7 +122,7 @@ namespace System.Windows.Forms
 
 		#endregion Public Properties
 
-		#region Private Properties
+		#region Internal Properties
 
 		// UIA Framework Note: Used to obtain menu bounds
 		internal Rectangle Rect {
@@ -164,10 +164,17 @@ namespace System.Windows.Forms
 				Menu top = this;
 				while (top.parent_menu != null)
 					top = top.parent_menu;
-
 				return top.tracker;
 			}
 		}
+
+		// `IsOpened` is used by UIA API.
+		internal bool IsOpened {
+			get {
+				return Wnd != null && Wnd.Visible;
+			}
+		}
+
 		#endregion Private Properties
 
 		#region Public Methods

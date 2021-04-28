@@ -239,6 +239,8 @@ namespace System.Net {
 
         private static readonly GeneralAsyncDelegate m_AsyncCallback = new GeneralAsyncDelegate(AsyncCallbackWrapper);
         private static readonly CreateConnectionDelegate m_CreateConnectionCallback = new CreateConnectionDelegate(CreateFtpConnection);
+        
+        // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Anonymous FTP credential in production code.")]
         private static readonly NetworkCredential DefaultFtpNetworkCredential = new NetworkCredential("anonymous", "anonymous@", String.Empty);
         private static readonly int s_DefaultTimeout = WebRequest.DefaultTimeout;
         private static readonly TimerThread.Queue s_DefaultTimerQueue = TimerThread.GetOrCreateQueue(s_DefaultTimeout);

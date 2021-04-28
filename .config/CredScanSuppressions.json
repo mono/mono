@@ -3,16 +3,20 @@
  "suppressions": [
   {
     "file": [
-      "/data/net_2_0/machine.jvm.config",
-      "/mcs/class/Mono.Security/Test/Mono.Security.Cryptography/RSAManagedTest.cs",
-      "/mcs/class/Mono.ServiceModel.IdentitySelectors/Test/resources/rupert.xml",
-      "/mcs/class/System.Data.OracleClient/Test/testblob.cs",
-      "/mcs/class/System.Data/Test/System.Data.Common/DbConnectionStringBuilderTest.cs",
       "/mcs/class/System.IdentityModel/Test/Resources/test.pfx",
-      "/mcs/class/System.ServiceModel/Test/System.ServiceModel.Security/WSSecurityTokenSerializerTest.cs",
-      "/mcs/tools/sqlmetal/src/Build Northwind.bat"
+      "/mcs/class/System.IdentityModel/Test/Resources/test2.pfx",
+      "/mcs/class/System.Security/Test/System.Security.Cryptography.Xml/sample.pfx",
+      "/mcs/class/System.ServiceModel/Test/Resources/test.pfx",
+      "/mcs/class/System.ServiceModel/Test/Resources/test2.pfx"
     ],
     "_justification": "Mostly test files. Other files contain harmless examples or constants."
   },
+  {
+    "file": [
+      "/mcs/class/ICSharpCode.SharpZipLib/SharpZipLib.key",
+      "/mcs/class/Compat.ICSharpCode.SharpZipLib/SharpZipLib.key"
+    ],
+    "_justification": "Strong-naming keys."
+  }
  ]
 }

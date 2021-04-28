@@ -834,8 +834,7 @@ namespace System.Windows.Forms
 				case Msg.WM_SYSCHAR:
 				case Msg.WM_KEYUP:
 				case Msg.WM_SYSKEYUP:
-					Control c;
-					c = Control.FromHandle(msg.hwnd);
+					Control c = Control.FromHandle(msg.hwnd);
 
 					// If we have a control with keyboard capture (usually a *Strip)
 					// give it the message, and then drop the message
@@ -877,6 +876,7 @@ namespace System.Windows.Forms
 				case Msg.WM_RBUTTONDOWN:
 					if (keyboard_capture != null) {
 						Control c2 = Control.FromHandle (msg.hwnd);
+						var contextMenuStrip = keyboard_capture.GetTopLevelToolStrip () as ContextMenuStrip;
 
 						// The target is not a winforms control (an embedded control, perhaps), so
 						// release everything
@@ -899,8 +899,16 @@ namespace System.Windows.Forms
 						while (keyboard_capture != null && !keyboard_capture.ClientRectangle.Contains (keyboard_capture.PointToClient (c2_point))) {
 							keyboard_capture.Dismiss ();
 						}
+
+						var iter_OwnerItem = (c2 as ToolStripDropDown)?.OwnerItem;
+						while (iter_OwnerItem != null && iter_OwnerItem.Owner != contextMenuStrip) {
+							iter_OwnerItem = iter_OwnerItem.OwnerItem;
+						}
+						var contextMenuStripIsOwnerOf_c2 = (iter_OwnerItem != null);
+						
+						if (c2 != contextMenuStrip && !contextMenuStripIsOwnerOf_c2)
+							contextMenuStrip.Dismiss ();
 					}
-					
 					goto default;
 
 				case Msg.WM_QUIT:

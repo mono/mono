@@ -4,14 +4,8 @@ jobName = env.JOB_NAME.split('/').first()
 
 if (monoBranch == 'main') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
-                pipelineTriggers([cron('0 3 * * *')])
+                disableConcurrentBuilds()
     ])
-
-    // multi-branch pipelines still get triggered for each commit, skip these builds on main by checking whether this build was timer-triggered or manually triggered
-    if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() == 0 && currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() == 0) {
-        echo "Skipping per-commit build on main."
-        return
-    }
 }
 
 parallel (
@@ -39,21 +33,21 @@ parallel (
     "Android Linux (Debug)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-10-amd64-exclusive") {
-                archive ("android", "debug", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8 rsync python3-pip", "/mnt/scratch")
+                archive ("android", "debug", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 adoptopenjdk-8-hotspot rsync python3-pip", "/mnt/scratch")
             }
         }
     },
     "Android Linux (Release)": {
         throttle(['provisions-android-toolchain']) {
             node ("debian-10-amd64-exclusive") {
-                archive ("android", "release", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 zulu-8 rsync python3-pip", "/mnt/scratch")
+                archive ("android", "release", "Linux", "debian-10-amd64multiarchi386-preview", "g++-mingw-w64 gcc-mingw-w64 lib32stdc++6 lib32z1 libz-mingw-w64-dev linux-libc-dev:i386 zlib1g-dev zlib1g-dev:i386 adoptopenjdk-8-hotspot rsync python3-pip", "/mnt/scratch")
             }
         }
     },
-    "iOS (Xcode 11.3)": {
+    "iOS (Xcode 12.4)": {
         throttle(['provisions-ios-toolchain']) {
-            node ("xcode113") {
-                archive ("ios", "release", "Darwin", "", "", "", "xcode113")
+            node ("xcode124") {
+                archive ("ios", "release", "Darwin", "", "", "", "xcode124")
             }
         }
     },

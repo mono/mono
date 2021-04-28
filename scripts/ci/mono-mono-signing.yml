@@ -1,6 +1,6 @@
 parameters:
 - name: mono_branch
-  displayName: Branch
+  displayName: Branch of build
   type: string
   default: main
   values:
@@ -38,12 +38,14 @@ jobs:
   - checkout: none
 
   - script: |
+      set -e
       gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=pending" --raw-field "context=PKG-mono" --raw-field "target_url=$(System.TeamFoundationCollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
     displayName: Set pending GitHub status
     env:
       GITHUB_TOKEN: $(GITHUB_TOKEN)
 
   - script: |
+      set -e
       cd $(Build.SourcesDirectory)
       MONO_SIGNED_PKG_DIR="${{ parameters.mono_branch }}/${{ parameters.mac_build_number }}/${{ parameters.mono_commit }}"
       az storage blob download-batch -s build-package-osx-mono -d . --pattern "$MONO_SIGNED_PKG_DIR/unsigned/*"
@@ -61,10 +63,15 @@ jobs:
       AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
 
   - script: |
+      set -e
       cd $(Build.SourcesDirectory)/payload
       mkdir -p $(Build.ArtifactStagingDirectory)/mac_entitled
       for i in $(find Library -type f); do
         if file $i | grep Mach-O > /dev/null; then
+          if [ "$(basename $i)" == "Microsoft.CodeAnalysis.CSharp.dll.dylib" ]; then
+            echo "Remove i386 slice from $i"
+            lipo -remove i386 $i -o $i
+          fi
           echo "Codesigning $i"
           codesign -s - -f --options runtime --entitlements $(Build.SourcesDirectory)/mac-entitlements.plist $i
           ditto -V $i $(Build.ArtifactStagingDirectory)/mac_entitled/$i
@@ -73,6 +80,7 @@ jobs:
     displayName: Codesign Mach-O files
 
   - script: |
+      set -e
       cd $(Build.ArtifactStagingDirectory)
       hdiutil create mac_entitled_to_sign.dmg -ov -volname "MacEntitledToSign" -fs HFS+ -srcfolder "mac_entitled"
     displayName: Archive binaries into .dmg for signing
@@ -105,6 +113,7 @@ jobs:
         ]
 
   - script: |
+      set -e
       cd $(Build.ArtifactStagingDirectory)
       mkdir -p mac_entitled_signed
       hdiutil attach mac_entitled_to_sign.dmg
@@ -112,6 +121,7 @@ jobs:
     displayName: 'Extract binaries after signing'
 
   - script: |
+      set -e
       cd $(Build.ArtifactStagingDirectory)/mac_entitled_signed
       for i in $(find Library -type f); do
         chmod +x $i
@@ -120,6 +130,7 @@ jobs:
     displayName: Replace files with signed ones
 
   - script: |
+      set -e
       cd $(Build.SourcesDirectory)
       pkgbuild --analyze --root $PWD/expanded $PWD/expanded/Info.plist
       mono_version=$(grep packageIdentifier $PWD/expanded/Distribution | sed -E 's/.*version="([0-9\.]+)".*/\1/g')
@@ -130,6 +141,7 @@ jobs:
     displayName: pkgbuild and productbuild
 
   - script: |
+      set -e
       cd $(Build.ArtifactStagingDirectory)
       hdiutil create mono-to-sign.dmg -ov -volname "MonoToSign" -fs HFS+ -srcfolder "mono-to-sign"
     displayName: Archive .pkg into .dmg for signing
@@ -154,6 +166,7 @@ jobs:
         ]
 
   - script: |
+      set -e
       cd $(Build.ArtifactStagingDirectory)
       mkdir -p mono-signed
       hdiutil attach mono-to-sign.dmg
@@ -182,6 +195,7 @@ jobs:
         ]
 
   - script: |
+      set -e
       cd $(Build.ArtifactStagingDirectory)
       MONO_SIGNED_PKG="$(Build.ArtifactStagingDirectory)/mono-signed/$MONO_PKG_NAME"
       echo "##vso[task.setvariable variable=MONO_SIGNED_PKG;]$MONO_SIGNED_PKG"
@@ -191,6 +205,7 @@ jobs:
     displayName: Validate .pkg
 
   - script: |
+      set -e
       mono_sha=$(shasum --binary --algorithm 256 $MONO_SIGNED_PKG | cut -d ' ' -f 1)
       mono_mdfive=$(md5 -q $MONO_SIGNED_PKG)
       mono_size=$(stat -f "%z" $MONO_SIGNED_PKG)
@@ -216,6 +231,7 @@ jobs:
     artifact: NotarizedPKG
 
   - script: |
+      set -e
       cd $(Build.ArtifactStagingDirectory)
       az storage blob upload-batch -s mono-signed --destination-path "$MONO_SIGNED_PKG_DIR" --pattern "*" -d build-package-osx-mono --account-name xamjenkinsartifact
     displayName: Upload artifacts to blob storage
@@ -224,6 +240,7 @@ jobs:
       AZURE_STORAGE_KEY: $(AZURE_STORAGE_KEY)
 
   - script: |
+      set -e
       gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=PKG-mono" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/$MONO_SIGNED_PKG_DIR/$MONO_PKG_NAME"
       gh api repos/mono/mono/statuses/${{ parameters.mono_commit }} --raw-field "state=success" --raw-field "context=artifacts.json" --raw-field "target_url=https://xamjenkinsartifact.azureedge.net/build-package-osx-mono/$MONO_SIGNED_PKG_DIR/artifacts.json"
     displayName: Set success GitHub status

@@ -1479,11 +1479,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		int NextTimeout (ArrayList timers, DateTime now) {
+		int NextTimeout (ArrayList timers, long now) {
 			int timeout = int.MaxValue; 
 
 			foreach (Timer timer in timers) {
-				int next = (int) (timer.Expires - now).TotalMilliseconds;
+				int next = (int) (timer.Expires - now);
 				if (next < 0) {
 					return 0; // Have a timer that has already expired
 				}
@@ -1501,7 +1501,7 @@ namespace System.Windows.Forms {
 			return timeout;
 		}
 
-		void CheckTimers (ArrayList timers, DateTime now) {
+		void CheckTimers (ArrayList timers, long now) {
 			int count;
 
 			count = timers.Count;
@@ -1691,11 +1691,11 @@ namespace System.Windows.Forms {
 		}
 
 		void UpdateMessageQueue (XEventQueue queue, bool allowIdle) {
-			DateTime	now;
+			long	now;
 			int		pending;
 			Hwnd		hwnd;
 
-			now = DateTime.UtcNow;
+			now = Timer.StopWatchNowMilliseconds;
 
 			lock (XlibLock) {
 				pending = XPending (DisplayHandle);
@@ -5168,7 +5168,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			CheckTimers(queue.timer_list, DateTime.UtcNow);
+			CheckTimers(queue.timer_list, Timer.StopWatchNowMilliseconds);
 
 			if (!pending) {
 				return false;
@@ -6316,9 +6316,12 @@ namespace System.Windows.Forms {
 
 		internal override bool Text(IntPtr handle, string text)
 {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
+            var classHints = new XClassHint
+            {
+                res_name = text,
+                res_class = text
+            };
 
 			lock (XlibLock) {
 				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_NAME, UTF8_STRING, 8,
@@ -6330,7 +6333,10 @@ namespace System.Windows.Forms {
 				// to compound text if it's in a
 				// different charset.
 				XStoreName(DisplayHandle, Hwnd.ObjectFromHandle(handle).whole_window, text);
+
+				XSetClassHint(DisplayHandle, hwnd.whole_window, ref classHints);
 			}
+
 			return true;
 		}
 
@@ -6578,6 +6584,14 @@ namespace System.Windows.Forms {
 			return _XFlush(display);
 		}
 
+		[DllImport ("libX11", EntryPoint="XSetClassHint")]
+		internal extern static int _XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint);
+		internal static int XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint)
+		{
+			DebugHelper.TraceWriteLine ("XSetClassHint");
+			return _XSetClassHint(display, window, ref class_hint);
+		}
+		
 		[DllImport ("libX11", EntryPoint="XSetWMName")]
 		internal extern static int _XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop);
 		internal static int XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop)
@@ -7410,6 +7424,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XFlush")]
 		internal extern static int XFlush(IntPtr display);
+
+        [DllImport("libX11", EntryPoint="XSetClassHint")]
+        internal extern static int XSetClassHint(IntPtr display, IntPtr window, ref XClassHint class_hint);
 
 		[DllImport ("libX11", EntryPoint="XSetWMName")]
 		internal extern static int XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop);

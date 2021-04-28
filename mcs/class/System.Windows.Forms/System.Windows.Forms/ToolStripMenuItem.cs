@@ -83,6 +83,8 @@ namespace System.Windows.Forms
 		public ToolStripMenuItem (string text, Image image, EventHandler onClick, Keys shortcutKeys)
 			: this (text, image, onClick, string.Empty)
 		{
+			if (shortcutKeys != null)
+				shortcut_keys = shortcutKeys;
 		}
 
 		public ToolStripMenuItem (string text, Image image, EventHandler onClick, string name)

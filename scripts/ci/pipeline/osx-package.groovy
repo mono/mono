@@ -11,14 +11,8 @@ utils = null
 
 if (monoBranch == 'main') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
-                pipelineTriggers([cron('0 3 * * *')])
+                disableConcurrentBuilds()
     ])
-
-    // multi-branch pipelines still get triggered for each commit, skip these builds on main by checking whether this build was timer-triggered or manually triggered
-    if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() == 0 && currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause').size() == 0) {
-        echo "Skipping per-commit build on main."
-        return
-    }
 }
 
 try {
