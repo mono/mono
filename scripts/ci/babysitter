@@ -300,7 +300,7 @@ def failure_annotate(test):
 	return "%s (failure #%d of %d allowed)" % (test, failcount[test], failmax)
 
 def pluralize(lst):
-	return "s" if len(lst) > 1 else ""
+	return "s" if len(list(lst)) > 1 else ""
 
 ### Run command
 
