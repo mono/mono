@@ -76,6 +76,10 @@ jobs:
     - ${{ each step in parameters.additionalSteps }}:
         - ${{ step }}
 
+    - ${{ if eq(parameters.os, 'win')}}:
+      - script: c:\cygwin\bin\bash.exe -c 'unlink mono/mini/mono.exe'
+        displayName: Remove mono.exe symlink
+
     - script: echo "Found unstable steps, please check previous logs for details." && exit 1
       displayName: Fail build on unstable steps
       condition: eq(variables['BuildHasUnstableSteps'], true)
