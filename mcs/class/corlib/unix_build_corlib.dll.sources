@@ -27,6 +27,7 @@
 ../../../external/corefx/src/Common/src/Microsoft/Win32/SafeHandles/SafeDirectoryHandle.Unix.cs
 
 corefx/DriveInfoInternal.Unix.cs
+corefx/Interop.ReadDir.Mono.cs
 
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.GetRandomBytes.cs
 ../../../external/corefx/src/Common/src/CoreLib/Interop/Unix/System.Native/Interop.ReadDir.cs
