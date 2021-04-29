@@ -8118,6 +8118,33 @@ mono_test_MerpCrashSignalIll (void)
 #endif
 }
 
+void*
+foreign_thread_crash_body (void* ud)
+{
+	while (1) {
+		fprintf (stderr, "alive\n");
+		sleep (2);
+	}
+	return NULL;
+}
+
+
+LIBTEST_API void libtest_kill_foreign_thread_crash (void)
+{
+
+#ifndef WIN32
+	pthread_t t;
+	int res;
+
+	res = pthread_create (&t, NULL, foreign_thread_crash_body, NULL);
+
+	sleep (1);
+	pthread_kill (t, SIGABRT);
+
+	pthread_join (t, NULL);
+#endif
+}
+
 #ifdef __cplusplus
 } // extern C
 #endif
