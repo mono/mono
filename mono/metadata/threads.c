@@ -6562,6 +6562,7 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 
 	int current_idx;
 	MonoNativeThreadId current = mono_native_thread_id_get ();
+	g_async_safe_printf ("Thread %p in summarize_execute\n", (gpointer)(intptr_t)current);
 	gboolean thread_given_control = summarizer_state_init (&state, current, &current_idx);
 
 	g_assert (this_thread_controls == thread_given_control);
@@ -6574,6 +6575,12 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 	}
 
 	if (this_thread_controls) {
+		MonoThreadInfo *info = mono_thread_info_current_unchecked ();
+		if (!info)
+			g_async_safe_printf ("Thread %p not attached to the runtime\n", (gpointer)(intptr_t)current);
+		int small_id = mono_thread_info_get_small_id();
+		if (small_id < 0)
+			g_async_safe_printf ("Thread %p (info=%p) has no small id\n", (gpointer)(intptr_t)current, info);
 		g_assert (working_mem);
 
 		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
@@ -6660,6 +6667,7 @@ mono_threads_summarize (MonoContext *ctx, gchar **out, MonoStackHash *hashes, gb
 	static gint64 request_available_to_run = 1;
 	gint64 this_request_id = mono_atomic_inc_i64 ((volatile gint64 *) &next_pending_request_id);
 
+	g_async_safe_printf ("Thread %p starting summarize_execute\n", (gpointer)(intptr_t)mono_native_thread_id_get ());
 	// This is a global queue of summary requests. 
 	// It's not safe to signal a thread while they're in the
 	// middle of a dump. Dladdr is not reentrant. It's the one lock
