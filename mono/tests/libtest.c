@@ -8493,6 +8493,31 @@ mono_test_attach_invoke_foreign_thread (const char *assm_name, const char *name_
 #endif
 }
 
+void*
+foreign_thread_crash_body (void* ud)
+{
+	while (1) {
+		fprintf (stderr, "alive\n");
+		sleep (2);
+	}
+	return NULL;
+}
+
+
+LIBTEST_API void libtest_kill_foreign_thread_crash (void)
+{
+
+	pthread_t t;
+	int res;
+
+	res = pthread_create (&t, NULL, foreign_thread_crash_body, NULL);
+
+	sleep (1);
+	pthread_kill (t, SIGABRT);
+
+	pthread_join (t, NULL);
+}
+
 #ifndef HOST_WIN32
 struct names_and_mutex {
 	/* if del is NULL, use names, otherwise just call del */
