@@ -4222,8 +4222,11 @@ thread_startup (MonoProfiler *prof, uintptr_t tid)
 	}
 
 	tls = (DebuggerTlsData *)mono_native_tls_get_value (debugger_tls_id);
-	g_assert (!tls);
-	// FIXME: Free this somewhere
+	if (tls) {
+		if (!tls->terminated)
+			MONO_GC_UNREGISTER_ROOT (tls->thread);
+		g_free (tls);
+	}
 	tls = g_new0 (DebuggerTlsData, 1);
 	MONO_GC_REGISTER_ROOT_SINGLE (tls->thread, MONO_ROOT_SOURCE_DEBUGGER, NULL, "Debugger Thread Reference");
 	tls->thread = thread;
