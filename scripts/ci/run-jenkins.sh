@@ -425,14 +425,20 @@ if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	echo ./autogen.sh CFLAGS="$CFLAGS $EXTRA_CFLAGS" CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS" LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS" $EXTRA_CONF_FLAGS
 	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh CFLAGS="$CFLAGS $EXTRA_CFLAGS" CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS" LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS" $EXTRA_CONF_FLAGS
 fi
+
+if [[ ${CI_TAGS} == *'msvc142'* ]]; then
+    export VS_PLATFORMTOOLSETVERSION=v142
+else
+    export VS_PLATFORMTOOLSETVERSION=v140
+fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
     then
-	# only build boehm on w32 (only windows platform supporting boehm).
-    ${TESTCMD} --label=make-msvc --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "boehm" "/p:PlatformToolset=v142 ${MSBUILD_CXX}"
+    # only build boehm on w32 (only windows platform supporting boehm).
+    ${TESTCMD} --label=make-msvc --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "boehm" "/p:PlatformToolset=${VS_PLATFORMTOOLSETVERSION} ${MSBUILD_CXX}"
 fi
 if [[ ${CI_TAGS} == *'win-'* ]];
     then
-    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "sgen" "/p:PlatformToolset=v142 ${MSBUILD_CXX}"
+    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "sgen" "/p:PlatformToolset=${VS_PLATFORMTOOLSETVERSION} ${MSBUILD_CXX}"
 fi
 
 if [[ ${CI_TAGS} == *'win-amd64'* ]];
