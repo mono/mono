@@ -77,7 +77,8 @@ jobs:
         - ${{ step }}
 
     - ${{ if eq(parameters.os, 'win')}}:
-      - script: c:\cygwin\bin\bash.exe -c 'unlink mono/mini/mono.exe'
+      - script: c:\cygwin\bin\bash.exe -c 'unlink mono/mini/mono.exe || true'
+        condition: succeededOrFailed()
         displayName: Remove mono.exe symlink
 
     - script: echo "Found unstable steps, please check previous logs for details." && exit 1
