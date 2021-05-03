@@ -2885,52 +2885,6 @@ mono_test_marshal_variant_in_bool_false (VARIANT variant)
 	return 1;
 }
 
-LIBTEST_API int STDCALL
-mono_test_marshal_variant_in_obj_array (int count, VARIANT *arr)
-{
-	gchar *bstr_utf8;
-	gint32 result;
-
-	if (!arr || count != 14)
-		return 1;
-
-	if (arr[0].vt != VT_EMPTY)
-		return 2;
-	if (arr[1].vt != VT_I1 || arr[1].cVal != 42)
-		return 3;
-	if (arr[2].vt != VT_UI1 || arr[2].bVal != 42)
-		return 4;
-	if (arr[3].vt != VT_I2 || arr[3].iVal != -313)
-		return 5;
-	if (arr[4].vt != VT_UI2 || arr[4].uiVal != 313)
-		return 6;
-	if (arr[5].vt != VT_I4 || arr[5].lVal != -314)
-		return 7;
-	if (arr[6].vt != VT_UI4 || arr[6].ulVal != 314)
-		return 8;
-	if (arr[7].vt != VT_I8 || arr[7].llVal != -315)
-		return 9;
-	if (arr[8].vt != VT_UI8 || arr[8].ullVal != 315)
-		return 10;
-	if (arr[9].vt != VT_R4 || (arr[9].fltVal - 3.14)/3.14 > .001)
-		return 11;
-	if (arr[10].vt != VT_R8 || (arr[10].dblVal - 3.14)/3.14 > .001)
-		return 12;
-	if (arr[11].vt != VT_BOOL || arr[11].boolVal != VARIANT_TRUE)
-		return 13;
-	if (arr[12].vt != VT_BOOL || arr[12].boolVal != VARIANT_FALSE)
-		return 14;
-	if (arr[13].vt != VT_BSTR)
-		return 15;
-	bstr_utf8 = g_utf16_to_utf8 (arr[13].bstrVal, -1, NULL, NULL, NULL);
-	result = strcmp ("FOO", bstr_utf8);
-	g_free (bstr_utf8);
-	if (result)
-		return 15;
-
-	return 0;
-}
-
 LIBTEST_API int STDCALL 
 mono_test_marshal_variant_out_sbyte(VARIANT* variant)
 {
