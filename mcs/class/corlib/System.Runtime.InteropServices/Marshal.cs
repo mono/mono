@@ -706,15 +706,14 @@ namespace System.Runtime.InteropServices
 		}
 
 
-#if !FULL_AOT_RUNTIME
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static int GetStartComSlot (Type t);
-#else
 		public static int GetStartComSlot (Type t)
 		{
+#if FULL_AOT_RUNTIME
 			throw new PlatformNotSupportedException ();
-		}
+#else
+			throw new NotImplementedException ();
 #endif
+		}
 
 #if !FULL_AOT_RUNTIME && !MONOTOUCH
 
