@@ -1212,7 +1212,7 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void CreateEventSource1_Log_InvalidCustomerLog ()
 		{
-			if (EventLogImplType != NULL_IMPL)
+			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
 				Assert.Ignore ("No EventLogImplType.");
 
@@ -1349,7 +1349,7 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void CreateEventSource1_Log_NotUnique ()
 		{
-			if (EventLogImplType != NULL_IMPL)
+			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
 				Assert.Ignore ("No EventLogImplType.");
 
