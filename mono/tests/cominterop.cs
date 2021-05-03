@@ -358,7 +358,6 @@ public class Tests
 
 	public static int Main ()
 	{
-		bool pass;
 		bool isWindows = !(((int)Environment.OSVersion.Platform == 4) ||
 			((int)Environment.OSVersion.Platform == 128));
 
@@ -843,25 +842,6 @@ public class Tests
 			IntPtr pDisp = Marshal.GetIDispatchForObject(test_vis);
 			if (pDisp == IntPtr.Zero)
 				return 300;
-
-			pass = false;
-			try
-			{
-				Marshal.IsTypeVisibleFromCom(null);
-			}
-			catch (ArgumentNullException)
-			{
-				pass = true;
-			}
-			if (!pass)
-				return 301;
-
-			if (!Marshal.IsTypeVisibleFromCom(typeof(int)))
-				return 302;
-			if (!Marshal.IsTypeVisibleFromCom(typeof(TestVisible)))
-				return 303;
-			if (Marshal.IsTypeVisibleFromCom(typeof(TestInvisible)))
-				return 304;
 			#endregion 
 		}
 
@@ -1787,11 +1767,6 @@ public class Tests
                 return 2;
             return 0;
         }
-}
-
-[ComVisible (false)]
-public class TestInvisible
-{
 }
 
 public class TestVisible
