@@ -290,22 +290,6 @@ mono_marshal_unlock_internal (void)
 	mono_marshal_unlock ();
 }
 
-G_GNUC_UNUSED
-MonoMethod*
-mono_get_Marshal_GetNativeVariantForObject (void)
-{
-	MONO_STATIC_POINTER_INIT (MonoMethod, get_native_variant_for_object)
-
-		ERROR_DECL (error);
-		get_native_variant_for_object = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0, error);
-		mono_error_assert_ok (error);
-
-	MONO_STATIC_POINTER_INIT_END (MonoMethod, get_native_variant_for_object)
-
-	g_assert (get_native_variant_for_object);
-	return get_native_variant_for_object;
-}
-
 // This is a JIT icall, it sets the pending exception (in wrapper) and return NULL on error.
 gpointer
 mono_delegate_to_ftnptr_impl (MonoDelegateHandle delegate, MonoError *error)

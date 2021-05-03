@@ -379,9 +379,6 @@ mono_marshal_init_tls (void);
 void
 mono_marshal_cleanup (void);
 
-MonoMethod*
-mono_get_Marshal_GetNativeVariantForObject (void);
-
 gint32
 mono_class_native_size (MonoClass *klass, guint32 *align);
 

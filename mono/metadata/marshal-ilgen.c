@@ -1067,6 +1067,19 @@ mono_get_Marshal_GetObjectForNativeVariant (void)
 	return get_object_for_native_variant;
 }
 
+// FIXME There are multiple caches of "GetNativeVariantForObject".
+G_GNUC_UNUSED
+static MonoMethod*
+mono_get_Marshal_GetNativeVariantForObject (void)
+{
+	MONO_STATIC_POINTER_INIT (MonoMethod, get_native_variant_for_object)
+		get_native_variant_for_object = get_method_nofail (mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0);
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, get_native_variant_for_object)
+
+	g_assert (get_native_variant_for_object);
+	return get_native_variant_for_object;
+}
+
 static void
 emit_struct_conv_full (MonoMethodBuilder *mb, MonoClass *klass, gboolean to_object,
 						int offset_of_first_child_field, MonoMarshalNative string_encoding)
