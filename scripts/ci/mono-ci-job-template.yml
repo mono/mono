@@ -77,7 +77,7 @@ jobs:
         - ${{ step }}
 
     - ${{ if eq(parameters.os, 'win')}}:
-      - script: c:\cygwin\bin\bash.exe -c 'unlink mono/mini/mono.exe || true'
+      - script: del /f /q mono\mini\mono.exe
         condition: succeededOrFailed()
         displayName: Remove mono.exe symlink
 
