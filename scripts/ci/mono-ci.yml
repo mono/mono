@@ -270,3 +270,69 @@ jobs:
     os: win
     arch: amd64
     timeoutInMinutes: 240
+
+# disabled as we won't switch to C++ in mono/mono
+#
+# Windows x64 C++
+#
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Windows x64 C++
+#    os: win
+#    arch: amd64
+#    timeoutInMinutes: 240
+#    additionalCITags: cxx
+
+#
+# Windows x64 Cooperative Suspend
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Windows x64 Cooperative Suspend
+    os: win
+    arch: amd64
+    timeoutInMinutes: 240
+    additionalCITags: coop-suspend,checked-coop
+
+#
+# Windows x64 FullAOT
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Windows x64 FullAOT
+    os: win
+    arch: amd64
+    timeoutInMinutes: 240
+    additionalCITags: winaot
+
+#
+# Windows x64 FullAOT+LLVM
+#
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Windows x64 FullAOT+LLVM
+#    os: win
+#    arch: amd64
+#    timeoutInMinutes: 240
+#    additionalCITags: winaot_llvm
+
+#
+# Windows x64 Interpreter
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Windows x64 Interpreter
+    os: win
+    arch: amd64
+    timeoutInMinutes: 240
+    additionalCITags: interpreter
+
+#
+# Windows i386
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Windows i386
+    os: win
+    arch: i386
+    timeoutInMinutes: 240
