@@ -7074,9 +7074,6 @@ emit_call (MonoCompile *cfg, guint8 *code, MonoJumpInfoType type, gconstpointer 
 static guint8*
 emit_thunk (guint8 *code, gconstpointer target)
 {
-	// guint8 *p;
-
-	// code = p = (guint8 *) ((((uintptr_t)code + 7) >> 3) << 3);
 	*(guint64*)code = (guint64)target;
 	code += sizeof (guint64);
 
@@ -7112,7 +7109,6 @@ create_thunk (MonoCompile *cfg, guint8 *ip, guint8 *code, gpointer target)
 		cfg->arch.thunks = cfg->thunks;
 		cfg->arch.thunks_size = cfg->thunk_area;
 	}
-	// thunks = (guint8 *) ((((uintptr_t) cfg->arch.thunks + 7) >> 3) << 3);
 	thunks = (guint8 *) cfg->arch.thunks;
 	thunks_size = cfg->arch.thunks_size;
 	if (!thunks_size) {
