@@ -114,6 +114,7 @@ setup-llvm-$(1):
 .PHONY: package-llvm-$(1)
 package-llvm-$(1): $$(TOP)/external/llvm-project/llvm/cmake/modules/$(3).cmake setup-llvm-$(1)
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
+		CPU_COUNT=1 \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)" \
 		LLVM_CMAKE_ARGS="$$(_llvm-$(1)_CMAKE_ARGS)"
