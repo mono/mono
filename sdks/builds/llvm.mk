@@ -7,7 +7,7 @@
 define LLVMProvisionTemplate
 _$(1)-$(2)_HASH = $$(shell git -C $(3) rev-parse HEAD)
 _$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH)-$$(UNAME).tar.gz
-_$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
+_$(1)-$(2)_URL = "https://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
 
 $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
 	curl --location --silent --show-error $$(_$(1)-$(2)_URL) | tar -xvzf - -C $$(dir $$@)
