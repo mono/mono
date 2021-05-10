@@ -3104,7 +3104,7 @@ test-appdomain-unload: appdomain-loader.exe appdomain-tester.exe
 	MONO_DEBUG_ASSEMBLY_UNLOAD=1 $(RUNTIME) appdomain-loader.exe > appdomain-loader.exe.4.stdout || exit 1;
 endif
 
-EXTRA_DIST += console-output.cs console-output.exe.stderr.expected console-output.exe.stdout.expected
+EXTRA_DIST += console-output.cs
 test-console-output: console-output.exe
 	@$(RUNTIME) console-output.exe 1>console-output.exe.stdout
 	@$(RUNTIME) console-output.exe 2>console-output.exe.stderr
