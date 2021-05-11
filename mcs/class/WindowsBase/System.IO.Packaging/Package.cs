@@ -429,6 +429,10 @@ namespace System.IO.Packaging {
 			if (packageMode == FileMode.CreateNew && stream.Length > 0)
 				throw new IOException ("Cannot use CreateNew when stream contains data");
 
+			// Truncate stream if needed
+			if (packageMode == FileMode.Create && stream.Length > 0)
+				stream.SetLength(0);
+
 			if (packageMode == FileMode.Append || packageMode == FileMode.Truncate)
 			{
 				if (stream.CanWrite)
