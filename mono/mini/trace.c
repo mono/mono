@@ -259,15 +259,6 @@ mono_trace_enter_method (MonoMethod *method, MonoJitInfo *ji, MonoProfilerCallCo
 		case MONO_TYPE_CLASS:
 		case MONO_TYPE_OBJECT: {
 			o = *arg_in_stack_slot(buf, MonoObject *);
-			if (o && type->data.klass && type->data.klass != mono_defaults.object_class) {
-				MonoClass *tmp = type->data.klass;
-				MonoGenericClass *generic;
-				while ((generic = mono_class_try_get_generic_class (tmp)))
-					tmp = generic->container_class;
-				if (m_class_get_class_kind (tmp) == MONO_CLASS_DEF || m_class_get_class_kind (tmp) == MONO_CLASS_GTD)
-					if (!mono_class_is_auto_layout (tmp))
-						o = NULL;
-			}
 			if (o) {
 				klass = o->vtable->klass;
 
