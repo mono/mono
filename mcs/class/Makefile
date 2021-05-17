@@ -228,6 +228,7 @@ xammac_4_5_dirs_parallel := \
 	System.Messaging	        \
 	System.Web.Services \
 	System.ServiceModel	\
+	System.ServiceModel.Discovery \
 	System.ServiceModel.Web	\
 	System.Json	\
 	System.Data.Services.Client \
