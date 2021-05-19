@@ -211,6 +211,22 @@ namespace System
 			// Do not change this to call SetGenericValue_icall directly, due to special casing in the runtime.
 			SetGenericValueImpl (index, ref item);
 		}
+		
+		#if UNITY_AOT
+		
+		// This is a replaced by an intrinsic.
+		internal void GetGenericValueImpl<T> (int pos, out T value)
+		{
+            throw new NotImplementedException("GetGenericValueImpl should be remapped to an intrinsic");
+		}
+
+		// This is a replaced by an intrinsic.
+		internal void SetGenericValueImpl<T> (int pos, ref T value)
+		{
+            throw new NotImplementedException("SetGenericValueImpl should be remapped to an intrinsic");
+		}
+		
+		#else
 
 		// CAUTION! No bounds checking!
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -233,6 +249,7 @@ namespace System
 			var self = this;
 			SetGenericValue_icall (ref self, pos, ref value);
 		}
+		#endif
 
 		internal struct InternalEnumerator<T> : IEnumerator<T>
 		{
