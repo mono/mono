@@ -15,7 +15,7 @@ my $monoroot = abs_path($monoroot);
 my $extraBuildTools = "$monoroot/external/buildscripts/artifacts/Stevedore/mono-build-tools-extra";
 
 my $profileRoot = "tmp/lib/mono";
-my $referenceProfile = "$profileRoot/4.7.1-api";
+my $referenceProfile = "$profileRoot/4.8-api";
 
 my @hostPlatforms = ("win32", "macos", "linux");
 my @compilationVariants = ("unityjit", "unityaot");
@@ -26,7 +26,7 @@ foreach my $hostPlatform(@hostPlatforms)
 	{
 		my $profileName = "$compilationVariant-$hostPlatform";
 
-		print ">>> Modifying the $profileName profile to match the .NET 4.7.1 API\n";
+		print ">>> Modifying the $profileName profile to match the .NET 4.8 API\n";
 
 		my $result = system("mono",
 							"$extraBuildTools/ProfileStubber.exe",
