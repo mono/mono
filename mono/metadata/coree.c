@@ -479,7 +479,7 @@ ValidImage:
 	UnmapViewOfFile(DosHeader);
 	CloseHandle(MapHandle);
 
-	ModuleHandle = LoadLibrary(FileName);
+	ModuleHandle = LoadLibraryEx(FileName, NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
 
 	CloseHandle(FileHandle);
 	return ModuleHandle;
