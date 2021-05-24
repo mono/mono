@@ -20,7 +20,8 @@ you must run this script on the DB2 machine
 "C:\Program Files\IBM\SQLLIB\BIN\DB2CMD.exe" DB2SETCP.BAT DB2.EXE -td@ -vf ghtdb.sp.db2.sql
 "C:\Program Files\IBM\SQLLIB\BIN\DB2CMD.exe" DB2SETCP.BAT DB2.EXE -tvf ghtdb.data.db2.sql
 
-in order to create the testing database, on SQLServer, run:
+in order to create the testing database, on SQLServer, run (please ignore the SupressMessage, which is just directing the credscan tool to not flag this line):
+[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="The credentials are part of a readme and not security issues.")]
 Run the scripts with a user wich have administrator permissions. (by default user:sa, password:sa).
 
 osql -S <database> -U <username> -P <password> -i GHTDB.MSSQL.sql

@@ -3429,11 +3429,7 @@ mono_field_set_value_internal (MonoObject *obj, MonoClassField *field, void *val
 		return;
 
 	dest = (char*)obj + field->offset;
-#if ENABLE_NETCORE
 	mono_copy_value (field->type, dest, value, value && field->type->type == MONO_TYPE_PTR);
-#else
-	mono_copy_value (field->type, dest, value, FALSE);
-#endif
 }
 
 /**
@@ -3478,7 +3474,7 @@ mono_field_static_set_value_internal (MonoVTable *vt, MonoClassField *field, voi
 	} else {
 		dest = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}
-	mono_copy_value (field->type, dest, value, FALSE);
+	mono_copy_value (field->type, dest, value, value && field->type->type == MONO_TYPE_PTR);
 }
 
 /**
@@ -3745,12 +3741,7 @@ mono_field_get_value_object_checked (MonoDomain *domain, MonoClassField *field, 
 			mono_field_get_value_internal (obj, field, v);
 		}
 
-#if ENABLE_NETCORE
 		args [0] = ptr;
-#else
-		/* MONO_TYPE_PTR is passed by value to runtime_invoke () */
-		args [0] = ptr ? *ptr : NULL;
-#endif
 		args [1] = mono_type_get_object_checked (mono_domain_get (), type, error);
 		goto_if_nok (error, return_null);
 

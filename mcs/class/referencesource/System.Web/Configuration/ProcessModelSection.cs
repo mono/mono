@@ -61,6 +61,7 @@ namespace System.Web.Configuration {
             webGarden="false"
             cpuMask="0xffffffff"
             userName="machine"
+            // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
             password="AutoGenerate"
             logLevel="Errors"
             clientConnectedCheck="00:00:05"

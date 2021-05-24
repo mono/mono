@@ -7,7 +7,7 @@
 define LLVMProvisionTemplate
 _$(1)-$(2)_HASH = $$(shell git -C $(3) rev-parse HEAD)
 _$(1)-$(2)_PACKAGE = $(1)-$(2)-$$(_$(1)-$(2)_HASH)-$$(UNAME).tar.gz
-_$(1)-$(2)_URL = "http://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
+_$(1)-$(2)_URL = "https://xamjenkinsartifact.blob.core.windows.net/mono-sdks/$$(_$(1)-$(2)_PACKAGE)"
 
 $$(TOP)/sdks/out/$(1)-$(2)/.stamp-download:
 	curl --location --silent --show-error $$(_$(1)-$(2)_URL) | tar -xvzf - -C $$(dir $$@)
@@ -114,6 +114,7 @@ setup-llvm-$(1):
 .PHONY: package-llvm-$(1)
 package-llvm-$(1): $$(TOP)/external/llvm-project/llvm/cmake/modules/$(3).cmake setup-llvm-$(1)
 	$$(MAKE) -C $$(TOP)/llvm -f build.mk install-llvm \
+		CPU_COUNT=1 \
 		LLVM_BUILD="$$(TOP)/sdks/builds/llvm-$(1)" \
 		LLVM_PREFIX="$$(TOP)/sdks/out/llvm-$(1)" \
 		LLVM_CMAKE_ARGS="$$(_llvm-$(1)_CMAKE_ARGS)"

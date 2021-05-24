@@ -737,6 +737,12 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail ("#A3");
 			} catch (InvalidOperationException) {
 			}
+			try {
+				lvw.Items.Clear();
+				
+			} catch (Exception ex) {
+				Assert.AreNotEqual (typeof (InvalidOperationException), ex.GetType (), "#A4");
+			}
 		}
 
 		[Test]

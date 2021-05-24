@@ -1193,6 +1193,7 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
 			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
 			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>rMQOBSW86u8MIn/EDEppMQD5P+nhbFSXd04YxkqV4NRYKVwXXR0eVrxJPeD5n7sB+Ya2ppXd4QQyAVJOj4Yw9w==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_3, x.RawData, "RawData");
@@ -1457,6 +1458,7 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
 			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
 			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>xYEHousPuP/4+BzuMv+/EjVq+WvIvi/7Pq8EUUqs3RApqM1AW2YemO/yTHf6j4bRIWeSRErEicmDz4ifb+IyNQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 			Assert.AreEqual (cert_9, x.RawData, "RawData");
@@ -1929,6 +1931,7 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 			Assert.AreEqual (expectedNotBefore.Ticks, x.NotBefore.ToUniversalTime ().Ticks, "NotBefore#1");
 			Assert.AreEqual (DateTimeKind.Local, x.NotBefore.Kind, "NotBefore#2");
 			Assert.AreEqual (expectedNotBefore.ToLocalTime (), x.NotBefore, "NotBefore#3");
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			Assert.IsNull (x.PrivateKey, "PrivateKey");
 			Assert.AreEqual ("<RSAKeyValue><Modulus>xUbN2uJyxWNb5awqOmH6Yx/DyTKCnb2DVlAHZkW0bP9KaDe0a6OSHqg1xwbL4TkitQ6he3szFm+nFOVRGn1BtQ==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>", x.PublicKey.Key.ToXmlString (false), "PublicKey");
 

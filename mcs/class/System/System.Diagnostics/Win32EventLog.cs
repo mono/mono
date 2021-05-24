@@ -261,7 +261,7 @@ namespace System.Diagnostics
 			ReadEventLog (index, buffer, ref bytesRead, ref minBufferNeeded);
 
 			MemoryStream ms = new MemoryStream (buffer);
-			BinaryReader br = new BinaryReader (ms);
+			BinaryReader br = new BinaryReader (ms, Encoding.Unicode);
 
 			// skip first 8 bytes
 			br.ReadBytes (8);
@@ -796,7 +796,7 @@ namespace System.Diagnostics
 
 		private class PInvoke
 		{
-			[DllImport ("advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, SetLastError=true)]
 			public static extern int ClearEventLog (IntPtr hEventLog, string lpBackupFileName);
 
 			[DllImport ("advapi32.dll", SetLastError=true)]
@@ -811,10 +811,10 @@ namespace System.Diagnostics
 			[DllImport ("kernel32", SetLastError=true)]
 			public static extern bool FreeLibrary (IntPtr hModule);
 
-			[DllImport ("advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, SetLastError=true)]
 			public static extern int GetNumberOfEventLogRecords (IntPtr hEventLog, ref int NumberOfRecords);
 
-			[DllImport ("advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, SetLastError=true)]
 			public static extern int GetOldestEventLogRecord (IntPtr hEventLog, ref int OldestRecord);
 
 			[DllImport ("kernel32", SetLastError=true)]
@@ -823,7 +823,7 @@ namespace System.Diagnostics
 			[DllImport ("kernel32", SetLastError=true)]
 			public static extern IntPtr LocalFree (IntPtr hMem);
 
-			[DllImport ("advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, EntryPoint = "LookupAccountSidW", SetLastError=true)]
 			public static extern bool LookupAccountSid (
 				string lpSystemName,
 				[MarshalAs (UnmanagedType.LPArray)] byte [] Sid,
@@ -833,21 +833,21 @@ namespace System.Diagnostics
 				ref uint cchReferencedDomainName,
 				out SidNameUse peUse);
 
-			[DllImport ("advapi32.dll", SetLastError = true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
 			public static extern int NotifyChangeEventLog (IntPtr hEventLog, IntPtr hEvent);
 
-			[DllImport ("advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, SetLastError=true)]
 			public static extern IntPtr OpenEventLog (string machineName, string logName);
 
-			[DllImport ("advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, SetLastError=true)]
 			public static extern IntPtr RegisterEventSource (string machineName, string sourceName);
 
-			[DllImport ("advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, SetLastError=true)]
 			public static extern int ReportEvent (IntPtr hHandle, ushort wType,
 				ushort wCategory, uint dwEventID, IntPtr sid, ushort wNumStrings,
 				uint dwDataSize, string [] lpStrings, byte [] lpRawData);
 
-			[DllImport ("advapi32.dll", SetLastError=true)]
+			[DllImport ("advapi32.dll", CharSet = CharSet.Unicode, SetLastError=true)]
 			public static extern int ReadEventLog (IntPtr hEventLog, ReadFlags dwReadFlags, int dwRecordOffset, byte [] buffer, int nNumberOfBytesToRead, ref int pnBytesRead, ref int pnMinNumberOfBytesNeeded);
 
 			public const int ERROR_INSUFFICIENT_BUFFER = 122;

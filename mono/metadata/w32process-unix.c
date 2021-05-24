@@ -3360,7 +3360,7 @@ mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
 	gpointer file_map;
 	gpointer versioninfo;
 	void *map_handle;
-	gint32 map_size;
+	guint32 map_size;
 	gsize datasize;
 
 	g_assert (data);

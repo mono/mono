@@ -3105,12 +3105,14 @@ test-appdomain-unload: appdomain-loader.exe appdomain-tester.exe
 	MONO_DEBUG_ASSEMBLY_UNLOAD=1 $(RUNTIME) appdomain-loader.exe > appdomain-loader.exe.4.stdout || exit 1;
 endif
 
-EXTRA_DIST += console-output.cs console-output.exe.stderr.expected console-output.exe.stdout.expected
+EXTRA_DIST += console-output.cs
 test-console-output: console-output.exe
 	@$(RUNTIME) console-output.exe 1>console-output.exe.stdout
 	@$(RUNTIME) console-output.exe 2>console-output.exe.stderr
-	@diff -w console-output.exe.stdout $(srcdir)/console-output.exe.stdout.expected \
-		&& diff -w console-output.exe.stderr $(srcdir)/console-output.exe.stderr.expected
+	@grep -q "Testing Console.Out" console-output.exe.stdout     || (echo "Error: expected string not in console-output.exe.stdout" && exit 1)
+	@grep -q "Testing Console.Error" console-output.exe.stderr   || (echo "Error: expected string not in console-output.exe.stderr" && exit 1)
+	@! grep -q "Testing Console.Out" console-output.exe.stderr   || (echo "Error: unexpected string in console-output.exe.stderr" && exit 1)
+	@! grep -q "Testing Console.Error" console-output.exe.stdout || (echo "Error: unexpected string in console-output.exe.stdout" && exit 1)
 
 test-pedump: test-runner.exe
 	$(with_mono_path) $(mono_build_root)/tools/pedump/pedump --verify error test-runner.exe

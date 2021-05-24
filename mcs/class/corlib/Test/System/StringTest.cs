@@ -3221,6 +3221,10 @@ public class StringTest
 
 		// Test replacing null characters (bug #67395)
 		Assert.AreEqual ("is this ok ?", "is \0 ok ?".Replace ("\0", "this"), "should not strip content after nullchar");
+
+		// System.String.Replace fails with NotImplementedException https://github.com/mono/mono/issues/20948
+		Assert.AreEqual ("Original", s1.Replace("o", "O", StringComparison.CurrentCulture), "Replace(string, string, StringComparison)");
+		Assert.AreEqual ("Original", s1.Replace("o", "O", false, CultureInfo.CurrentCulture), "Replace(string, string, bool, CultureInfo)");
 	}
 
 	[Test]

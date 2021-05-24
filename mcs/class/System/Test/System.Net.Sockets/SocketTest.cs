@@ -3769,6 +3769,7 @@ namespace MonoTests.System.Net.Sockets
 		// Test case for https://bugzilla.novell.com/show_bug.cgi?id=443346
 		// See also https://bugzilla.xamarin.com/show_bug.cgi?id=52157
 		[Test]
+		[Category("NotOnWindows")] // doesn't work anymore in Win10
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif

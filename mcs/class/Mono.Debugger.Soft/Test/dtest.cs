@@ -5248,6 +5248,7 @@ public class DebuggerTests
 	}
   
 	[Test]
+	[Category("NotWorking")]
 	public void InvokeSingleStepMultiThread () {
 		vm.Detach ();
 		Start (dtest_app_path, "ss_multi_thread");

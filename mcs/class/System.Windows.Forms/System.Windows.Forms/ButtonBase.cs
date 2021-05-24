@@ -571,7 +571,7 @@ namespace System.Windows.Forms {
 
 				if (ClientRectangle.Contains (mevent.Location))
 					if (!ValidationFailed) {
-						OnClick (EventArgs.Empty);
+						OnClick (mevent);
 						OnMouseClick (mevent);
 					}
 			}

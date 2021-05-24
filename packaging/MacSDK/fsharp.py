@@ -6,7 +6,7 @@ class FsharpPackage(GitHubTarballPackage):
         GitHubTarballPackage.__init__(self,
             'dotnet', 'fsharp',
             '5.0.0',
-            '03283e07f6bd5717797acb288cf6044cedca2202',
+            '9cf3dbdf4e83816a8feb2eab0dd48465d130f902', # release/dev16.8
             configure='',
             override_properties={ 'make': 'version= ./build.sh -c Release && version= ./.dotnet/dotnet restore setup/Swix/Microsoft.FSharp.SDK/Microsoft.FSharp.SDK.csproj --packages fsharp-nugets' })
 

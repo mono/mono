@@ -4299,7 +4299,7 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				(td->sp > td->stack && (td->sp [-1].type == STACK_TYPE_O || td->sp [-1].type == STACK_TYPE_VT)) ? (td->sp [-1].klass == NULL ? "?" : m_class_get_name (td->sp [-1].klass)) : "");
 		}
 
-		if (sym_seq_points && mono_bitset_test_fast (seq_point_locs, td->ip - header->code)) {
+		if (td->gen_sdb_seq_points && ((!sym_seq_points && td->stack == td->sp) || (sym_seq_points && mono_bitset_test_fast (seq_point_locs, td->ip - header->code)))) {
 			if (in_offset == 0 || (header->num_clauses && !td->cbb->last_ins))
 				interp_add_ins (td, MINT_SDB_INTR_LOC);
 			last_seq_point = interp_add_ins (td, MINT_SDB_SEQ_POINT);
@@ -5052,6 +5052,13 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				interp_add_conv (td, td->sp - 1, NULL, STACK_TYPE_I, MINT_CONV_I8_R8);
 #else
 				interp_add_conv (td, td->sp - 1, NULL, STACK_TYPE_I, MINT_CONV_I4_R8);
+#endif
+				break;
+			case STACK_TYPE_R4:
+#if SIZEOF_VOID_P == 8
+				interp_add_conv (td, td->sp - 1, NULL, STACK_TYPE_I, MINT_CONV_I8_R4);
+#else
+				interp_add_conv (td, td->sp - 1, NULL, STACK_TYPE_I, MINT_CONV_I4_R4);
 #endif
 				break;
 			case STACK_TYPE_I4:

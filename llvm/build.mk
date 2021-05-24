@@ -6,10 +6,10 @@ LLVM_PREFIX ?= $(abspath $(abs_top_srcdir)/llvm/usr)
 # LLVM_BRANCH  := $(shell git -C "$(abs_top_srcdir)/external/llvm-project/llvm" rev-parse --abbrev-ref HEAD)
 LLVM_VERSION := $(shell git -C "$(abs_top_srcdir)/external/llvm-project/llvm" rev-parse HEAD)
 
-# FIXME: URL should be http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(LLVM_BRANCH)/llvm-osx64-$(LLVM_VERSION).tar.gz
-LLVM_DOWNLOAD_LOCATION = "http://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(LLVM_VERSION).tar.gz"
+# FIXME: URL should be https://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-$(LLVM_BRANCH)/llvm-osx64-$(LLVM_VERSION).tar.gz
+LLVM_DOWNLOAD_LOCATION = "https://xamjenkinsartifact.blob.core.windows.net/build-package-osx-llvm-release60/llvm-osx64-$(LLVM_VERSION).tar.gz"
 
-CPU_COUNT := $(shell getconf _NPROCESSORS_ONLN || echo 8)
+CPU_COUNT ?= $(shell getconf _NPROCESSORS_ONLN || echo 8)
 
 CMAKE := $(or $(CMAKE),$(shell which cmake))
 NINJA := $(shell which ninja)

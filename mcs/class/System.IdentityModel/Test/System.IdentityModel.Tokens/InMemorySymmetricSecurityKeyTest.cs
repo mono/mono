@@ -51,9 +51,11 @@ namespace MonoTests.System.IdentityModel.Tokens
 
 		static InMemorySymmetricSecurityKeyTest ()
 		{
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			cert = new X509Certificate2 (TestResourceHelper.GetFullPathOfResource ("Test/Resources/test.pfx"), "mono");
 			// randomly generated with RijndaelManaged
 			// GenerateIV() and GenerateKey().
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			raw = Convert.FromBase64String ("eX2EeE969RCv/5Lx8OIGLHtJrSD5PzVzO3tTy9JxU58=");
 		}
 

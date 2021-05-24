@@ -57,7 +57,6 @@ jobs:
     displayName: Linux ARM Hard Float
     os: linux
     arch: armhf
-    timeoutInMinutes: 180
 
 #
 # Linux aarch64
@@ -173,7 +172,6 @@ jobs:
     os: linux
     arch: amd64
     additionalCITags: interpreter
-    timeoutInMinutes: 180
 
 - template: /scripts/ci/mono-ci-job-template.yml
   parameters:
@@ -214,3 +212,13 @@ jobs:
     os: osx
     arch: amd64
     additionalCITags: cxx
+
+#
+# Windows x64
+#
+- template: /scripts/ci/mono-ci-job-template.yml
+  parameters:
+    displayName: Windows x64
+    os: win
+    arch: amd64
+    timeoutInMinutes: 240
