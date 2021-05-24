@@ -20,10 +20,10 @@ triggers:
   pull_requests:
     - targets:
         only:
-          - "unity-master-new-unitychanges"
+          - "unity-master"
   cancel_old_ci: true
   recurring:
-    - branch: unity-master-new-unitychanges
+    - branch: unity-master
       frequency: daily # Should run between midnight and 6AM UTC
 
 artifacts: 
