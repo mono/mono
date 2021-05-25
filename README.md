@@ -1,3 +1,93 @@
+Unity
+============================
+This is Unity Technologies fork of the open source mono project.
+
+### Versions
+Each Unity release upto 2019.2 contains two versions of Mono. One older version (Mono) is embedded into the Editor and Players. Another newer version (MonoBleedingEdge) is used to run tools and tests.
+
+In newer Unity versions (2017.1+) this MonoBleedingEdge version can be used in the Editor and Players via enabling an Experimental player setting.
+
+Unity versions 2019.3+ contain only MonoBleedingEdge.
+
+### Branch Naming Convention
+Branches for released Unity versions are of the form unity-\<version\>\[-mbe\]. The '-mbe' suffix indicates the branch is for the MonoBleedingEdge version of Mono mentioned above.
+
+### Branches
+
+#### Trunk
+* [unity-master (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-master)
+
+#### 2021.2 pre-upgrade
+* [unity-2021.2-mbe-pre-upgrade](https://github.com/Unity-Technologies/mono/tree/unity-2021.2-mbe-pre-upgrade)
+
+#### 2021.1
+* [unity-2021.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2021.1-mbe)
+
+#### 2020.3
+* [unity-2020.3-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2020.3-mbe)
+
+#### 2020.2
+* [unity-2020.2-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2020.2-mbe)
+
+#### 2020.1
+* [unity-2020.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2020.1-mbe)
+
+#### 2019.4
+* [unity-2019.4-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2019.4-mbe)
+
+#### 2019.3
+* [unity-2019.3-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2019.3-mbe)
+
+#### 2019.2
+* [unity-2019.2](https://github.com/Unity-Technologies/mono/tree/unity-2019.2)
+* [unity-2019.2-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2019.2-mbe)
+
+#### 2019.1
+* [unity-2019.1](https://github.com/Unity-Technologies/mono/tree/unity-2019.1)
+* [unity-2019.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2019.1-mbe)
+
+#### 2018.4
+* [unity-2018.4](https://github.com/Unity-Technologies/mono/tree/unity-2018.4)
+* [unity-2018.4-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2018.4-mbe)
+
+#### 2018.3
+* [unity-2018.3](https://github.com/Unity-Technologies/mono/tree/unity-2018.3)
+* [unity-2018.3-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2018.3-mbe)
+
+#### 2018.2
+* [unity-2018.2](https://github.com/Unity-Technologies/mono/tree/unity-2018.2)
+* [unity-2018.2-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2018.2-mbe)
+
+#### 2018.1
+* [unity-2018.1](https://github.com/Unity-Technologies/mono/tree/unity-2018.1)
+* [unity-2018.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2018.1-mbe)
+
+#### 2017.4
+* [unity-2017.4](https://github.com/Unity-Technologies/mono/tree/unity-2017.4)
+* [unity-2017.4-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.4-mbe)
+
+#### 2017.3
+* [unity-2017.3](https://github.com/Unity-Technologies/mono/tree/unity-2017.3)
+* [unity-2017.3-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.3-mbe)
+
+#### 2017.2
+* [unity-2017.2](https://github.com/Unity-Technologies/mono/tree/unity-2017.2)
+* [unity-2017.2-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.2-mbe)
+
+#### 2017.1
+* [unity-2017.1](https://github.com/Unity-Technologies/mono/tree/unity-2017.1)
+* [unity-2017.1-mbe](https://github.com/Unity-Technologies/mono/tree/unity-2017.1-mbe)
+
+#### 5.6
+* [unity-5.6](https://github.com/Unity-Technologies/mono/tree/unity-5.6)
+* [unity-5.6-mbe](https://github.com/Unity-Technologies/mono/tree/unity-5.6-mbe)
+
+
+
+
+Mono
+============================
+
 Mono is a software platform designed to allow developers to easily
 create cross platform applications.  It is an open source
 implementation of Microsoft's .NET Framework based on the ECMA
