@@ -270,11 +270,13 @@ public class MyScrollBar : HScrollBar
 		     m.LParam = (IntPtr)0x1a051a;
 		     this.WndProc(ref m);
 
+#if DISABLED // hard-coded pointer value???
 		     m.Msg = 233;
 		     m.HWnd = this.Handle;
 		     m.WParam = (IntPtr)0x1;
 		     m.LParam = (IntPtr)0x12eb34;
 		     this.WndProc(ref m);
+#endif
 	     }
     }
    [TestFixture]
@@ -1303,11 +1305,13 @@ public class MyScrollBar2 : HScrollBar
 		m.LParam = (IntPtr)0x1a051a;
 		this.WndProc (ref m);
 
+#if DISABLED // hard-coded pointer value???
 		m.Msg = 233;
 		m.HWnd = this.Handle;
 		m.WParam = (IntPtr)0x1;
 		m.LParam = (IntPtr)0x12eb34;
 		this.WndProc (ref m);
+#endif
 	}
     }
 
