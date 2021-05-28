@@ -584,6 +584,10 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx);
 
+void
+mono_summarizer_create_leader_thread (void);
+
+
 #if SIZEOF_VOID_P == 4
 /* Spin lock for unaligned InterlockedXXX 64 bit functions on 32bit platforms. */
 extern mono_mutex_t mono_interlocked_mutex;
