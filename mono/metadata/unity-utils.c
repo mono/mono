@@ -1102,6 +1102,11 @@ void* mono_unity_get_field_address(MonoObject *obj, MonoVTable *vt, MonoClassFie
 	return src;
 }
 
+MONO_API MonoClassField* mono_unity_field_from_token_checked(MonoImage *image, guint32 token, MonoClass **retklass, MonoGenericContext *context, MonoError *error)
+{
+	return mono_field_from_token_checked(image, token, retklass, context, error);
+}
+
 gboolean mono_unity_thread_state_init_from_handle(MonoThreadUnwindState *tctx, MonoThreadInfo *info, void* fixme)
 {
 	tctx->valid = TRUE;
