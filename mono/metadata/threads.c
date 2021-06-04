@@ -6352,8 +6352,13 @@ summarizer_supervisor_end (SummarizerSupervisorState *state)
 #endif
 
 typedef struct _MonoSummarizerOriginator {
+	/* in data */
+	SummarizerGlobalState *state;
 	MonoNativeThreadId originator_tid;
 	MonoContext *originator_ctx;
+	/* out data */
+	/* index of originator thread in list of threads collected by the leader */
+	int originator_index;
 } MonoSummarizerOriginator;
 
 /**
@@ -6397,12 +6402,6 @@ typedef struct _MonoSummarizerLeader {
 static MonoSummarizerLeader summarizer_leader_data;
 
 static void
-read_start_payload (void);
-
-static void
-kick_off_summarize (void);
-
-static void
 summarizer_leader_done_write (char b)
 {
 	int res;
@@ -6426,6 +6425,9 @@ summarizer_leader_done_read (void)
 	} while (nread < sizeof (buf));
 	return (int)buf;
 }
+
+static void
+summarizer_leader_collect_thread_ids (SummarizerGlobalState *state);
 
 static void
 summarizer_leader (void)
@@ -6457,13 +6459,9 @@ summarizer_leader (void)
 		/* allow interruptions */
 		while (mono_os_sem_wait (&summarizer_leader_data.begin_crash_report, MONO_SEM_FLAGS_ALERTABLE) < 0);
 		MONO_EXIT_GC_SAFE;
-
-		/* copy the crash originator data */
-
-		read_start_payload();
 		
 		/* collect a crash report */
-		kick_off_summarize();
+		summarizer_leader_collect_thread_ids (summarizer_leader_data.originator.state);
 
 		/* wake up originator */
 		summarizer_leader_done_write (1);
@@ -6496,47 +6494,39 @@ mono_summarizer_create_leader_thread (void)
 
 	summarizer_leader_data.leader_tid = thread_get_tid (leader);
 }
-
 static void
-read_start_payload (void)
+summarizer_originator_prepare (MonoSummarizerOriginator *orig, SummarizerGlobalState *state, MonoNativeThreadId tid, MonoContext *ctx)
 {
-	MonoNativeThreadId originator = summarizer_leader_data.originator.originator_tid;
-	MonoContext* originator_ctx = summarizer_leader_data.originator.originator_ctx;
-	g_async_safe_printf ("crash summarizer leader read: crash in %p (ctx = %p)\n", (gpointer)(intptr_t)(originator), (gpointer)originator_ctx);
-}
-
-static void
-kick_off_summarize (void)
-{
-	g_async_safe_printf ("summarizer leader collecting info\n");
-}
-
-
-static void
-summarizer_originator_prepare (MonoSummarizerOriginator *orig, MonoNativeThreadId tid, MonoContext *ctx)
-{
+	orig->state = state;
 	orig->originator_tid = tid;
 	orig->originator_ctx = ctx;
 }
 
-/* returns true if crash reporting was attempted successfully, false otherwise. */
-static gboolean
-summarizer_originate_crash_report (MonoNativeThreadId originator_tid, MonoContext *ctx, gboolean wait_if_busy)
+/* returns 0 if leader is not running and crash reporting should be done on the originator thread.
+ * returns <0 if leader could not collect a crash report.
+ * otherwise returns the index assigned to the originator thread in the crash summary.
+ */
+static int
+summarizer_originate_crash_report (SummarizerGlobalState *state, MonoNativeThreadId originator_tid, MonoContext *ctx)
 {
 	/* FIXME: we already have a mechanism for gating requests in mono_threads_summarize, don't need another one here */
 	if (!summarizer_leader_is_running ()) {
 		/* FIXME: in that case, just gather the crash report on the main thread - it's early during startup */
 		g_async_safe_printf ("crash summarizer leader thread is not running, aborting");
-		return FALSE;
+		return 0;
 	}
 
-	summarizer_originator_prepare (&summarizer_leader_data.originator, originator_tid, ctx);
+	summarizer_originator_prepare (&summarizer_leader_data.originator, state, originator_tid, ctx);
 	/* we're intentionally not switching to GC Safe mode in case we crashed in the coop state machine */
 	mono_os_sem_post (&summarizer_leader_data.begin_crash_report);
 
 	int res = summarizer_leader_done_read ();
-	return (res > 0);
+	if (res <= 0)
+		return res;
+	else
+		return summarizer_leader_data.originator.originator_index;
 }
+
 
 static void
 collect_thread_id (gpointer key, gpointer value, gpointer user)
@@ -6569,24 +6559,45 @@ collect_thread_ids (MonoNativeThreadId *thread_ids, int max_threads)
 	return ud.nthreads;
 }
 
+
+/*
+ * Try to initialize the global summarizer thread.  At this point the caller
+ * doesn't know if it's the crash originator, or if another crash is in
+ * progress and the current thread was asked to summarize its state.  Returns
+ * TRUE if the current thread is to be the crash originator, returns FALSE if
+ * there's already a crash collection in progress.
+ */
 static gboolean
-summarizer_state_init (SummarizerGlobalState *state, MonoNativeThreadId current, int *my_index)
+summarizer_state_init (SummarizerGlobalState *state)
 {
 	gint32 started_state = mono_atomic_cas_i32 (&state->has_owner, 1 /* set */, 0 /* compare */);
 	gboolean not_started = started_state == 0;
-	if (not_started) {
-		state->nthreads = collect_thread_ids (state->thread_array, MAX_NUM_THREADS);
+	if (not_started)
 		mono_os_sem_init (&state->update, 0);
-	}
+	return not_started;
+}
 
+static void
+summarizer_state_collect_thread_ids (SummarizerGlobalState *state)
+{
+	state->nthreads = collect_thread_ids (state->thread_array, MAX_NUM_THREADS);
+}
+
+static void
+summarizer_leader_collect_thread_ids (SummarizerGlobalState *state)
+{
+	summarizer_state_collect_thread_ids (state);
+}
+
+static void
+summarizer_state_get_index_current_thread (SummarizerGlobalState *state, MonoNativeThreadId current, int *my_index)
+{
 	for (int i = 0; i < state->nthreads; i++) {
 		if (state->thread_array [i] == current) {
 			*my_index = i;
 			break;
 		}
 	}
-
-	return not_started;
 }
 
 static void
@@ -6750,17 +6761,35 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 	int current_idx;
 	MonoNativeThreadId current = mono_native_thread_id_get ();
 	g_async_safe_printf ("Thread %p in summarize_execute\n", (gpointer)(intptr_t)current);
-	gboolean thread_given_control = summarizer_state_init (&state, current, &current_idx);
+	gboolean thread_given_control = summarizer_state_init (&state);
 
 	g_assert (this_thread_controls == thread_given_control);
 
-	/* FIXME: split up taking control as the originator from collecting threads, which will be done by the leader */
-	if (thread_given_control) {
-		gboolean success = summarizer_originate_crash_report (current, ctx, FALSE /* don't wait */);
+	/* if true, the crash leader is not running yet - collect the report on the current originating thread */
+	gboolean collect_synchronously = FALSE;
+	if (this_thread_controls) {
+		int res = summarizer_originate_crash_report (&state, current, ctx);
 				
-		if (!success)
+		if (res == 0) {
+			/* collect the crash report synchronously */
+			collect_synchronously = TRUE;
+		} else if (res < 0) {
+			g_async_safe_printf ("Crash summary leader could not collect thread data.  No crash report will be created.\n");
+			/* something went wrong */
 			return FALSE;
+		} else {
+			/* get the thread index from the crash leader */
+			current_idx = res;
+		}
 	}
+
+	if (this_thread_controls) {
+		if (!collect_synchronously)
+			summarizer_state_collect_thread_ids (&state);
+	}
+
+	if (!this_thread_controls || collect_synchronously)
+		summarizer_state_get_index_current_thread (&state, current, &current_idx);
 
 	if (state.nthreads == 0) {
 		if (!silent)
@@ -6770,6 +6799,10 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 	}
 
 	if (this_thread_controls) {
+		if (!collect_synchronously) {
+			/* TODO: crash leader signals the other threads */
+			/* N.B. crash leader should not signal the originator thread - it's going to dump by itself, below */
+		}
 		MonoThreadInfo *info = mono_thread_info_current_unchecked ();
 		if (!info)
 			g_async_safe_printf ("Thread %p not attached to the runtime\n", (gpointer)(intptr_t)current);
@@ -6815,8 +6848,11 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 		if (!state.silent)
 			g_async_safe_printf("Finished thread summarizer pause from 0x%" G_GSIZE_FORMAT "x.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 
+		/* TODO: summarizer_state_term needs to be done by the crash leader - it's walking managed stacks and sometimes mallocing, apparently */
+		/* TODO: need to separate originating a crash report from waiting for the crash leader to tell us it's done.  But we also need to get our assigned index from the crash leader. or give it access to "this_thread" below which is the originator's summary.  */
 		// Dump and cleanup all the stack memory
 		summarizer_state_term (&state, out, working_mem, provided_size, this_thread);
+
 	} else {
 		// Wait here, keeping our stack memory alive
 		// for the dumper
