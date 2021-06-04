@@ -89,14 +89,26 @@ namespace System {
 		}
 #endif
 
+		// UNITY: runtime replaces this with intrinsic
 		public static bool IsMacOS {
 			get {
 				if (!checkedOS)
+#if UNITY
+					try {
+						CheckOS();
+					}
+					catch (DllNotFoundException) {
+						// libc does not exist, so this is not MacOS
+						isMacOS = false;
+					}
+#else
 					CheckOS();
+#endif
 				return isMacOS;
 			}
 		}
 
+		// UNITY: runtime replaces this with intrinsic
 		public static bool IsFreeBSD {
 			get {
 				if (!checkedOS)
