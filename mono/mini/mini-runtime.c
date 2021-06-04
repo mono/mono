@@ -3351,6 +3351,8 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
 			return;
 		}
+		/* thread not registered with the runtime, make sure we return now. */
+		return;
 	}
 #endif
 
