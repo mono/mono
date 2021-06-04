@@ -57,8 +57,17 @@ namespace System.Net.NetworkInformation {
 		public override string DomainName {
 			get {
 				byte [] bytes = new byte [256];
-				if (getdomainname (bytes, 256) != 0)
-					throw new NetworkInformationException ();
+#if UNITY
+				try
+				{
+#endif
+					if (getdomainname (bytes, 256) != 0)
+						throw new NetworkInformationException ();
+#if UNITY
+				} catch (EntryPointNotFoundException) {
+					return String.Empty;
+				}
+#endif
 				int len = Array.IndexOf<byte> (bytes, 0);
 				return Encoding.ASCII.GetString (bytes, 0, len < 0 ? 256 : len);
 			}
@@ -143,6 +152,17 @@ namespace System.Net.NetworkInformation {
 
 #if MONODROID
 	sealed class AndroidIPGlobalProperties : UnixIPGlobalProperties
+	{
+		public override string DomainName {
+			get {
+				return String.Empty;
+			}
+		}
+	}
+#endif
+
+#if UNITY
+	sealed class UnixNoLibCIPGlobalProperties : UnixIPGlobalProperties
 	{
 		public override string DomainName {
 			get {
@@ -389,6 +409,11 @@ namespace System.Net.NetworkInformation {
 	}
 
 	internal static class UnixIPGlobalPropertiesFactoryPal {
+#if UNITY
+        // defaults to false, but may be replaced by intrinsic in runtime
+        static bool PlatformNeedsLibCWorkaround { get; }
+#endif
+
 		public static IPGlobalProperties Create ()
 		{
 #if MONODROID
@@ -398,6 +423,10 @@ namespace System.Net.NetworkInformation {
 #elif MONO
 			switch (Environment.OSVersion.Platform) {
 			case PlatformID.Unix:
+#if UNITY
+                if (PlatformNeedsLibCWorkaround)
+                    return new UnixNoLibCIPGlobalProperties();
+#endif
 				MibIPGlobalProperties impl = null;
 				if (Directory.Exists (MibIPGlobalProperties.ProcDir)) {
 					impl = new MibIPGlobalProperties (MibIPGlobalProperties.ProcDir);
