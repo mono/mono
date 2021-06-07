@@ -6683,6 +6683,24 @@ enum LeaderCommand {
 	LEADER_COMMAND_PROCEED = 1,
 };
 
+#define STATE_CASE(x) case x: return #x
+
+static const char *
+leader_state_name (int leader_state) {
+	switch (leader_state) {
+#define STATE_CASE(x) case x: return #x
+		STATE_CASE(LEADER_STATE_READY);
+		STATE_CASE(LEADER_STATE_COLLECTING_IDS);
+		STATE_CASE(LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS);
+		STATE_CASE(LEADER_STATE_SUSPEND_OTHERS);
+		STATE_CASE(LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK);
+		STATE_CASE(LEADER_STATE_SUMMARIZER_STATE_TERM);
+#undef STATE_CASE
+	default:
+		return "<unknown leader state>";
+	}
+}
+
 static gboolean
 summarizer_leader_wait_for_command (int *leader_command, int *leader_state)
 {
@@ -6745,6 +6763,7 @@ summarizer_leader (void)
 	mono_atomic_store_i32 (&summarizer_leader_data.leader_running, 1);
 	int leader_state = LEADER_STATE_READY;
 	while (TRUE) {
+		g_async_safe_printf ("leader in state %s\n", leader_state_name (leader_state));
 		switch (leader_state) {
 		case LEADER_STATE_READY: {
 			MONO_ENTER_GC_SAFE;
@@ -7186,14 +7205,6 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 	if (this_thread_controls) {
 		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
 		state.silent = silent;
-		MonoThreadInfo *info = mono_thread_info_current_unchecked ();
-		if (!info)
-			g_async_safe_printf ("Thread %p not attached to the runtime\n", (gpointer)(intptr_t)current);
-		int small_id = mono_thread_info_get_small_id();
-		if (small_id < 0)
-			g_async_safe_printf ("Thread %p (info=%p) has no small id\n", (gpointer)(intptr_t)current, info);
-		g_assert (working_mem);
-
 		if (!collect_synchronously) {
 			/*
 			 * crash leader signals the other threads, but not the
