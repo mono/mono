@@ -117,12 +117,13 @@ jobs:
 #    arch: amd64
 #    additionalCITags: bitcodeinterp
 
-- template: /scripts/ci/mono-ci-job-template.yml
-  parameters:
-    displayName: Linux x64 C++
-    os: linux
-    arch: amd64
-    additionalCITags: cxx
+# disabled as we won't switch to C++ in mono/mono
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux x64 C++
+#    os: linux
+#    arch: amd64
+#    additionalCITags: cxx
 
 - template: /scripts/ci/mono-ci-job-template.yml
   parameters:
@@ -206,12 +207,13 @@ jobs:
     os: osx
     arch: amd64
 
-- template: /scripts/ci/mono-ci-job-template.yml
-  parameters:
-    displayName: OS X x64 C++
-    os: osx
-    arch: amd64
-    additionalCITags: cxx
+# disabled as we won't switch to C++ in mono/mono
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: OS X x64 C++
+#    os: osx
+#    arch: amd64
+#    additionalCITags: cxx
 
 #
 # Windows x64
