@@ -6587,6 +6587,11 @@ typedef struct _MonoSummarizerOriginator {
 	SummarizerGlobalState *state;
 	MonoNativeThreadId originator_tid;
 	MonoContext *originator_ctx;
+	gchar *working_mem; /* in-data: memory for the summary report and its size */
+	size_t provided_size;
+	gchar **out; /* pointer into working_mem containing the output string */
+	/* in data - set after the originator dumps itself, while leader is waiting for all threads */
+	MonoThreadSummary *originator_summary;
 	/* out data */
 	/* index of originator thread in list of threads collected by the leader */
 	int originator_index;
@@ -6628,7 +6633,7 @@ typedef struct _MonoSummarizerLeader {
 	MonoSemType leader_commanded;
 	int leader_command;
 	/* pipe to communicate back from the summarizer leader to the originator */
-	int respone_fds[2];
+	int response_fds[2];
 	/* Only one orignator at a time, gated by mono_threads_summarize tickets */
 	MonoSummarizerOriginator originator;
 } MonoSummarizerLeader;
@@ -6637,20 +6642,20 @@ static MonoSummarizerLeader summarizer_leader_data;
 
 /* Called by the leader to respond to send responses to the originator */
 static void
-summarizer_leader_respone_write (char b)
+summarizer_leader_response_write (char b)
 {
 	int res;
-	while ((res = write (summarizer_leader_data.done_fds[1], &b, sizeof (b))) < 0 && errno == EINTR);
+	while ((res = write (summarizer_leader_data.response_fds[1], &b, sizeof (b))) < 0 && errno == EINTR);
 }
 
 /* Called by the originator to receive (blocking) responses from the leader */
 static int
-summarizer_leader_respone_read (void)
+summarizer_leader_response_read (void)
 {
 	char buf;
 	int nread = 0;
 	do {
-		int res = read(summarizer_leader_data.done_fds[0], &buf, sizeof (buf));
+		int res = read(summarizer_leader_data.response_fds[0], &buf, sizeof (buf));
 		if (res < 0) {
 			if (errno == EINTR)
 				continue;
@@ -6662,13 +6667,23 @@ summarizer_leader_respone_read (void)
 	return (int)buf;
 }
 
+
+enum LeaderState {
+	LEADER_STATE_READY = 0,
+	LEADER_STATE_COLLECTING_IDS,
+	LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS,
+	LEADER_STATE_SUSPEND_OTHERS,
+	LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK,
+	LEADER_STATE_SUMMARIZER_STATE_TERM,
+};
+
 enum LeaderCommand {
 	LEADER_COMMAND_ZERO = 0, /* not used */
 	LEADER_COMMAND_CANCEL = -1,
 	LEADER_COMMAND_PROCEED = 1,
-}
+};
 
-gboolean
+static gboolean
 summarizer_leader_wait_for_command (int *leader_command, int *leader_state)
 {
 	MONO_ENTER_GC_SAFE;
@@ -6686,7 +6701,7 @@ summarizer_leader_wait_for_command (int *leader_command, int *leader_state)
 
 
 /* Called by the originator to post commands to the leader.  Usually just to proceed to the next state */
-void
+static void
 summarizer_leader_post_command (int command)
 {
 	summarizer_leader_data.leader_command = command;
@@ -6696,15 +6711,12 @@ summarizer_leader_post_command (int command)
 
 static void
 summarizer_leader_collect_thread_ids (SummarizerGlobalState *state);
-
-enum LeaderState {
-	LEADER_STATE_READY = 0,
-	LEADER_STATE_COLLECTING_IDS,
-	LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS,
-	LEADER_STATE_SUSPEND_OTHERS,
-	LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK,
-	LEADER_STATE_SUMMARIZER_STATE_TERM,
-};
+static void
+summarizer_leader_suspend_others (SummarizerGlobalState *state, MonoNativeThreadId originator, int originator_idx);
+static void
+summarizer_leader_set_originator_summary (MonoThreadSummary *orignator_summary);
+static void
+summarizer_state_wait_and_term (MonoNativeThreadId caller_tid, SummarizerGlobalState *state, gchar **out, gchar *working_mem, size_t provided_size, MonoThreadSummary *originator_summary);
 
 static void
 summarizer_leader (void)
@@ -6739,7 +6751,7 @@ summarizer_leader (void)
 			/* allow interruptions */
 			while (mono_os_sem_wait (&summarizer_leader_data.begin_crash_report, MONO_SEM_FLAGS_ALERTABLE) < 0);
 			MONO_EXIT_GC_SAFE;
-			leader_state = LEADER_STATE_COLLECTING;
+			leader_state = LEADER_STATE_COLLECTING_IDS;
 			break;
 		}
 		case LEADER_STATE_COLLECTING_IDS: {
@@ -6747,7 +6759,7 @@ summarizer_leader (void)
 			summarizer_leader_collect_thread_ids (summarizer_leader_data.originator.state);
 
 			/* wake up originator */
-			summarizer_leader_respone_write (1);
+			summarizer_leader_response_write (1);
 
 			leader_state = LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS;
 			break;
@@ -6761,8 +6773,8 @@ summarizer_leader (void)
 			break;
 		}
 		case LEADER_STATE_SUSPEND_OTHERS: {
-			suspend_others();
-			summarizer_leader_write_response (1);
+			summarizer_leader_suspend_others(summarizer_leader_data.originator.state, summarizer_leader_data.originator.originator_tid, summarizer_leader_data.originator.originator_index);
+			summarizer_leader_response_write (1);
 			leader_state = LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK;
 			break;
 		}
@@ -6775,7 +6787,7 @@ summarizer_leader (void)
 			break;
 		}
 		case LEADER_STATE_SUMMARIZER_STATE_TERM: {
-			summarizer_state_term (...);
+			summarizer_state_wait_and_term (summarizer_leader_data.leader_tid, summarizer_leader_data.originator.state, summarizer_leader_data.originator.out, summarizer_leader_data.originator.working_mem, summarizer_leader_data.originator.provided_size, summarizer_leader_data.originator.originator_summary);
 			summarizer_leader_response_write (1);
 			leader_state = LEADER_STATE_READY;
 			break;
@@ -6804,7 +6816,7 @@ summarizer_leader_init (void)
 	mono_os_sem_init (&summarizer_leader_data.begin_crash_report, 0);
 	mono_os_sem_init (&summarizer_leader_data.leader_commanded, 0);
 	/* Can't create the leader thread early on because MonoInternalThread needs the corlib InternalThread type */
-	int res = pipe (summarizer_leader_data.done_fds);
+	int res = pipe (summarizer_leader_data.response_fds);
 	g_assert (!res);
 }
 
@@ -6819,19 +6831,29 @@ mono_summarizer_create_leader_thread (void)
 	summarizer_leader_data.leader_tid = thread_get_tid (leader);
 }
 static void
-summarizer_originator_prepare (MonoSummarizerOriginator *orig, SummarizerGlobalState *state, MonoNativeThreadId tid, MonoContext *ctx)
+summarizer_originator_prepare (MonoSummarizerOriginator *orig, SummarizerGlobalState *state, MonoNativeThreadId tid, MonoContext *ctx, gchar **out, gchar *working_mem, size_t provided_size)
 {
 	orig->state = state;
 	orig->originator_tid = tid;
 	orig->originator_ctx = ctx;
+	orig->out = out;
+	orig->working_mem = working_mem;
+	orig->provided_size = provided_size;
 }
+
+static void
+summarizer_leader_set_originator_summary (MonoThreadSummary *originator_summary)
+{
+	summarizer_leader_data.originator.originator_summary = originator_summary;
+}
+
 
 /* returns 0 if leader is not running and crash reporting should be done on the originator thread.
  * returns <0 if leader could not collect a crash report.
  * otherwise returns the index assigned to the originator thread in the crash summary.
  */
 static int
-summarizer_originate_crash_report (SummarizerGlobalState *state, MonoNativeThreadId originator_tid, MonoContext *ctx)
+summarizer_originate_crash_report (SummarizerGlobalState *state, MonoNativeThreadId originator_tid, MonoContext *ctx, gchar **out, gchar *working_mem, size_t provided_size)
 {
 	/* FIXME: we already have a mechanism for gating requests in mono_threads_summarize, don't need another one here */
 	if (!summarizer_leader_is_running ()) {
@@ -6840,11 +6862,11 @@ summarizer_originate_crash_report (SummarizerGlobalState *state, MonoNativeThrea
 		return 0;
 	}
 
-	summarizer_originator_prepare (&summarizer_leader_data.originator, state, originator_tid, ctx);
+	summarizer_originator_prepare (&summarizer_leader_data.originator, state, originator_tid, ctx, out, working_mem, provided_size);
 	/* we're intentionally not switching to GC Safe mode in case we crashed in the coop state machine */
 	mono_os_sem_post (&summarizer_leader_data.begin_crash_report);
 
-	int res = summarizer_leader_respone_read ();
+	int res = summarizer_leader_response_read ();
 	if (res <= 0)
 		return res;
 	else
@@ -6950,6 +6972,12 @@ summarizer_signal_other_threads (SummarizerGlobalState *state, MonoNativeThreadI
 		g_error ("pthread_kill () is not supported by this platform");
 	#endif
 	}
+}
+
+static void
+summarizer_leader_suspend_others (SummarizerGlobalState *state, MonoNativeThreadId originator, int originator_idx)
+{
+	summarizer_signal_other_threads (state, originator, originator_idx);
 }
 
 // Returns true when there are shared global references to "this_thread"
@@ -7083,8 +7111,16 @@ summarizer_state_wait (MonoThreadSummary *thread)
 }
 
 static void
-summarizer_summarize_other_thread (SummarizerGlobalState *state, gchar *working_mem, MonoNativeThreadId originator, int originator_idx)
+summarizer_state_wait_and_term (MonoNativeThreadId caller_tid, SummarizerGlobalState *state, gchar **out, gchar *working_mem, size_t provided_size, MonoThreadSummary *originator_summary)
 {
+	// Wait up to 2 seconds for all of the other threads to catch up
+	summary_timedwait (state, 2);
+
+	if (!state->silent)
+		g_async_safe_printf("Finished thread summarizer pause from 0x%" G_GSIZE_FORMAT "x.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (caller_tid));
+
+	// Dump and cleanup all the stack memory
+	summarizer_state_term (state, out, working_mem, provided_size, originator_summary);
 }
 
 static gboolean
@@ -7102,7 +7138,7 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 	/* if true, the crash leader is not running yet - collect the report on the current originating thread */
 	gboolean collect_synchronously = FALSE;
 	if (this_thread_controls) {
-		int res = summarizer_originate_crash_report (&state, current, ctx);
+		int res = summarizer_originate_crash_report (&state, current, ctx, out, working_mem, provided_size);
 		
 		/*
 		 * We need to coordinate the originator and the leader in a few
@@ -7149,7 +7185,7 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 
 	if (this_thread_controls) {
 		mono_summarize_timeline_phase_log (MonoSummarySuspendHandshake);
-		state->silent = silent;
+		state.silent = silent;
 		MonoThreadInfo *info = mono_thread_info_current_unchecked ();
 		if (!info)
 			g_async_safe_printf ("Thread %p not attached to the runtime\n", (gpointer)(intptr_t)current);
@@ -7159,11 +7195,14 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 		g_assert (working_mem);
 
 		if (!collect_synchronously) {
-			/* TODO: crash leader signals the other threads */
-			/* N.B. crash leader should not signal the originator thread - it's going to dump by itself, below */
+			/*
+			 * crash leader signals the other threads, but not the
+			 * originator thread - we're going to dump by
+			 * ourselves, below.
+			 */
 			summarizer_leader_post_command (LEADER_COMMAND_PROCEED);
 		} else {
-			summarizer_signal_other_threads (state, originator, originator_idx);
+			summarizer_signal_other_threads (&state, current, current_idx);
 		}
 		mono_summarize_timeline_phase_log (MonoSummaryUnmanagedStacks);
 	}
@@ -7197,15 +7236,9 @@ mono_threads_summarize_execute_internal (MonoContext *ctx, gchar **out, MonoStac
 		if (!state.silent)
 			g_async_safe_printf("Entering thread summarizer pause from 0x%" G_GSIZE_FORMAT "x\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
 		if (collect_synchronously) {
-			// Wait up to 2 seconds for all of the other threads to catch up
-			summary_timedwait (&state, 2);
-
-			if (!state.silent)
-				g_async_safe_printf("Finished thread summarizer pause from 0x%" G_GSIZE_FORMAT "x.\n", (gsize)MONO_NATIVE_THREAD_ID_TO_UINT (current));
-
-			// Dump and cleanup all the stack memory
-			summarizer_state_term (&state, out, working_mem, provided_size, this_thread);
+			summarizer_state_wait_and_term (current, &state, out, working_mem, provided_size, this_thread);
 		} else {
+			summarizer_leader_set_originator_summary (this_thread);
 			summarizer_leader_post_command (LEADER_COMMAND_PROCEED);
 			/* blocks here until leader is done, keeping
 			 * originator's stack memory alive for the dumper */
