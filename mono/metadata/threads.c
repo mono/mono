@@ -7140,16 +7140,19 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 	mono_summarize_timeline_phase_log (MonoSummaryManagedStacks);
 	for (int i=0; i < state->nthreads; i++) {
 		threads [i] = summarizer_try_read_thread (state, i);
+		LEADER_LOG("managed stack for thread %d (%p) \"%s\"\n", i, threads[i] ? (gpointer)threads[i]->native_thread_id : (gpointer)NULL, threads[i] && threads[i]->name[0] != '\0' ? threads[i]->name : "");
 		if (!threads [i])
 			continue;
 
-		// We are doing this dump on the controlling thread because this isn't
+		// We are doing this dump on the leader or controlling thread because this isn't
 		// an async context sometimes. There's still some reliance on malloc here, but it's
-		// much more stable to do it all from the controlling thread.
+		// much more stable to do it all from the leader or controlling thread.
 		//
 		// This is non-null, checked in mono_threads_summarize
 		// with early exit there
 		mono_get_eh_callbacks ()->mono_summarize_managed_stack (threads [i]);
+
+		LEADER_LOG("finished managed stack for thread %d (%p)\n", i, threads[i] ? (gpointer)threads[i]->native_thread_id : (gpointer)NULL);
 	}
 
 	/* The value of the breadcrumb should match the "StackHash" value written by `mono_merp_write_fingerprint_payload` */
