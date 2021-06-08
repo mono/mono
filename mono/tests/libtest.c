@@ -8215,6 +8215,32 @@ mono_test_MerpCrashSignalIll (void)
 #endif
 }
 
+void*
+foreign_thread_crash_body (void* ud)
+{
+	while (1) {
+		fprintf (stderr, "alive\n");
+		sleep (2);
+	}
+	return NULL;
+}
+
+
+LIBTEST_API void libtest_MerpCrashOnForeignThread (void)
+{
+
+	pthread_t t;
+	int res;
+
+	res = pthread_create (&t, NULL, foreign_thread_crash_body, NULL);
+
+	sleep (1);
+	pthread_kill (t, SIGILL);
+
+	pthread_join (t, NULL);
+}
+
+
 typedef struct _TestAutoDual _TestAutoDual;
 
 typedef struct
@@ -8491,31 +8517,6 @@ mono_test_attach_invoke_foreign_thread (const char *assm_name, const char *name_
 	// TODO: Win32 version of this test
 	return 1;
 #endif
-}
-
-void*
-foreign_thread_crash_body (void* ud)
-{
-	while (1) {
-		fprintf (stderr, "alive\n");
-		sleep (2);
-	}
-	return NULL;
-}
-
-
-LIBTEST_API void libtest_kill_foreign_thread_crash (void)
-{
-
-	pthread_t t;
-	int res;
-
-	res = pthread_create (&t, NULL, foreign_thread_crash_body, NULL);
-
-	sleep (1);
-	pthread_kill (t, SIGABRT);
-
-	pthread_join (t, NULL);
 }
 
 #ifndef HOST_WIN32

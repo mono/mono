@@ -66,6 +66,7 @@ class C
 			Crashers.Add(new Crasher ("MerpCrashSignalSegv", MerpCrashSignalSegv));
 			Crashers.Add(new Crasher ("MerpCrashSignalIll", MerpCrashSignalIll));
 			Crashers.Add(new Crasher ("MerpCrashTestBreadcrumbs", MerpCrashTestBreadcrumbs, validator: ValidateBreadcrumbs));
+			Crashers.Add(new Crasher ("MerpCrashOnForeignThread", MerpCrashOnForeignThread));
 		}
 
 		public static void 
@@ -245,6 +246,14 @@ class C
 			mono_test_MerpCrashSignalSegv ();
 		}
 
+		[DllImport("libtest")]
+		public static extern void mono_test_MerpCrashOnForeignThread ();
+
+		public static void
+		MerpCrashOnForeignThread ()
+		{
+			mono_test_MerpCrashOnForeignThread ();
+		}
 
 		private static object jsonGetKey (object o, string key) => (o as Dictionary<string,object>)[key];
 		private static object jsonGetKeys (object o, params string[] keys) {
