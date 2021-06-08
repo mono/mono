@@ -8215,6 +8215,7 @@ mono_test_MerpCrashSignalIll (void)
 #endif
 }
 
+#ifndef HOST_WIN32
 void*
 foreign_thread_crash_body (void* ud)
 {
@@ -8224,11 +8225,12 @@ foreign_thread_crash_body (void* ud)
 	}
 	return NULL;
 }
-
+#endif
 
 LIBTEST_API void libtest_MerpCrashOnForeignThread (void)
 {
 
+#ifndef HOST_WIN32
 	pthread_t t;
 	int res;
 
@@ -8238,6 +8240,7 @@ LIBTEST_API void libtest_MerpCrashOnForeignThread (void)
 	pthread_kill (t, SIGILL);
 
 	pthread_join (t, NULL);
+#endif
 }
 
 
