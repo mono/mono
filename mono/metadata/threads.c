@@ -6351,21 +6351,6 @@ summarizer_supervisor_end (SummarizerSupervisorState *state)
 }
 #endif
 
-typedef struct _MonoSummarizerOriginator {
-	/* in data */
-	SummarizerGlobalState *state;
-	MonoNativeThreadId originator_tid;
-	MonoContext *originator_ctx;
-	gchar *working_mem; /* in-data: memory for the summary report and its size */
-	size_t provided_size;
-	gchar **out; /* pointer into working_mem containing the output string */
-	/* in data - set after the originator dumps itself, while leader is waiting for all threads */
-	MonoThreadSummary *originator_summary;
-	/* out data */
-	/* index of originator thread in list of threads collected by the leader */
-	int originator_index;
-} MonoSummarizerOriginator;
-
 /**
  *
  * Why a summarizer leader thread?
@@ -6389,11 +6374,28 @@ typedef struct _MonoSummarizerOriginator {
  *   - leader thread starts, toggles leader_running and waits for begin_crash_report
  * - to report a crash:
  *   - mono_threads_summarize gates the crashes so only one thread originates a crash report at a time
- *   - originating thread writes its info to the leader and posts to begin_crash_report and waits for report_complete.
+ *   - originating thread writes its info to the leader and posts to begin_crash_report.
  *   - leader wakes up, copies the originator data, starts collecting a crash report
- *   - leader posts to report_complete to signal the originator that it is done
+ *   - leader and originator coordinate via leader_commanded and the response_fds to collect a crash report
  *   - orignator returns to mono_threads_summarize, unblocks the next crash originator, if any, and then returns (which sends off the crash report in some way).
  */
+
+typedef struct _MonoSummarizerOriginator {
+	/* in data */
+	SummarizerGlobalState *state;
+	MonoNativeThreadId originator_tid;
+	MonoContext *originator_ctx;
+	gchar *working_mem; /* in-data: memory for the summary report and its size */
+	size_t provided_size;
+	gchar **out; /* pointer into working_mem containing the output string */
+	/* in data - set after the originator dumps itself, while leader is waiting for all threads */
+	MonoThreadSummary *originator_summary;
+	/* out data */
+	/* index of originator thread in list of threads collected by the leader */
+	int originator_index;
+} MonoSummarizerOriginator;
+
+
 typedef struct _MonoSummarizerLeader {
 	MonoNativeThreadId leader_tid;
 	int32_t leader_running; /* only atomic reads */
@@ -6409,6 +6411,7 @@ typedef struct _MonoSummarizerLeader {
 
 static MonoSummarizerLeader summarizer_leader_data;
 
+/* Leader state machine */
 enum LeaderState {
 	LEADER_STATE_READY = 0,
 	LEADER_STATE_COLLECTING_IDS,
@@ -6418,6 +6421,7 @@ enum LeaderState {
 	LEADER_STATE_SUMMARIZER_STATE_TERM,
 };
 
+/* Commands from crash originator to the crash leader */
 enum LeaderCommand {
 	LEADER_COMMAND_ZERO = 0, /* not used */
 	LEADER_COMMAND_CANCEL = -1,
@@ -6425,6 +6429,7 @@ enum LeaderCommand {
 	LEADER_COMMAND_PROCEED_TO_TERM = 2,
 };
 
+/* Responses from the crash leader to the crash originator */
 enum LeaderResponse {
 	LEADER_RESPONSE_IDS_COLLECTED = 1,
 	LEADER_RESPONSE_THREADS_SUSPENDED = 2,
@@ -6439,7 +6444,7 @@ enum LeaderResponse {
 #define LEADER_LOG(...) /*empty*/
 #endif
 
-/* Called by the leader to respond to send responses to the originator */
+/* Called by the leader to send responses to the originator */
 static void
 summarizer_leader_response_write (char b)
 {
@@ -6486,6 +6491,7 @@ leader_state_name (int leader_state) {
 	}
 }
 
+/* Called by the leader to wait for a command from the crash originator */
 static gboolean
 summarizer_leader_wait_for_command (int *leader_command, int *leader_state)
 {
