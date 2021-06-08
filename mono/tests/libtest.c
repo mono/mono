@@ -8129,7 +8129,7 @@ foreign_thread_crash_body (void* ud)
 }
 
 
-LIBTEST_API void libtest_kill_foreign_thread_crash (void)
+LIBTEST_API void libtest_MerpCrashOnForeignThread (void)
 {
 
 #ifndef WIN32
@@ -8139,7 +8139,7 @@ LIBTEST_API void libtest_kill_foreign_thread_crash (void)
 	res = pthread_create (&t, NULL, foreign_thread_crash_body, NULL);
 
 	sleep (1);
-	pthread_kill (t, SIGABRT);
+	pthread_kill (t, SIGILL);
 
 	pthread_join (t, NULL);
 #endif
