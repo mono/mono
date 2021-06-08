@@ -6436,7 +6436,7 @@ enum LeaderResponse {
 	LEADER_RESPONSE_STACKS_WALKED = 3,
 };
 
-#define LEADER_DEBUG
+#undef LEADER_DEBUG
 
 #ifdef LEADER_DEBUG
 #define LEADER_LOG(...) g_async_safe_printf (__VA_ARGS__)
