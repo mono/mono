@@ -345,8 +345,10 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 
 	mono_thread_attach (domain);
 
+#ifndef DISABLE_CRASH_REPORTING
 	if (!mono_runtime_get_no_exec ()) 
 		mono_summarizer_create_leader_thread ();
+#endif
 	
 	mono_type_initialization_init ();
 
