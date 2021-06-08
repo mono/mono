@@ -19,3 +19,14 @@ corefx/TimeZoneInfo.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.Serialization.cs
 System/TimeZoneInfo.WinRT.cs
+
+System.Security.Principal/GenericPrincipal.cs
+System.Security.Principal/IdentityNotMappedException.cs
+System.Security.Principal/IdentityReferenceCollection.cs
+System.Security.Principal/IdentityReference.cs
+System.Security.Principal/NTAccount.cs
+System.Security.Principal/SecurityIdentifier.cs
+System.Security.Principal/WellKnownSidType.cs
+System.Security.Principal/WindowsBuiltInRole.cs
+System.Security.Principal/WindowsIdentity.cs
+System.Security.Principal/WindowsPrincipal.cs
