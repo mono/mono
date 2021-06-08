@@ -732,7 +732,6 @@ TESTS_CS_SRC=		\
 	last-error.cs \
 	rgctx-thread-static.cs \
 	ccw-class-iface.cs \
-	crashy-crashy.cs \
 	bug-gh-17285.cs
 
 # some tests fail to compile on mcs
