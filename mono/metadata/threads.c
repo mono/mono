@@ -6775,8 +6775,6 @@ summarizer_leader (void)
 
 	mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
 
-	/* FIXME: should we block signals on this thread? Seems like we should at least block SIGTERM */
-
 	/* This thread is always in async context */
 	mono_thread_info_set_is_async_context (TRUE);
 	
@@ -6904,7 +6902,16 @@ summarizer_originate_crash_report (SummarizerGlobalState *state, MonoNativeThrea
 	/* FIXME: we already have a mechanism for gating requests in mono_threads_summarize, don't need another one here */
 	if (!summarizer_leader_is_running ()) {
 		/* FIXME: in that case, just gather the crash report on the main thread - it's early during startup */
-		g_async_safe_printf ("crash summarizer leader thread is not running, aborting");
+		g_async_safe_printf ("crash summarizer leader thread is not running. collecting crash report syncronously.\n");
+		return 0;
+	}
+
+	if (mono_native_thread_id_equals (originator_tid, summarizer_leader_data.leader_tid)) {
+		g_async_safe_printf ("crash summarizer leader thread crashed.  collecting a crash report synchronously\n");
+		/* Make it look like there's no summarizer leader */
+		mono_atomic_store_i32 (&summarizer_leader_data.leader_running, 0);
+		memset (&summarizer_leader_data.leader_tid, 0, sizeof (summarizer_leader_data.leader_tid));
+		/* Collect the crash report synchronously on this thread */
 		return 0;
 	}
 
