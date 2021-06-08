@@ -55,7 +55,8 @@ class C
 			Crashers.Add(new Crasher ("MerpCrashExceptionHook", MerpCrashUnhandledExceptionHook));
 
 			// Specific Edge Cases
-			Crashers.Add(new Crasher ("MerpCrashDladdr", MerpCrashDladdr));
+			//FIXME: crash in dlopen holds the global dyld lock, which we need for stack walks.
+			//Crashers.Add(new Crasher ("MerpCrashDladdr", MerpCrashDladdr));
 			Crashers.Add(new Crasher ("MerpCrashSnprintf", MerpCrashSnprintf));
 			Crashers.Add(new Crasher ("MerpCrashDomainUnload", MerpCrashDomainUnload));
 			Crashers.Add(new Crasher ("MerpCrashUnbalancedGCSafe", MerpCrashUnbalancedGCSafe));
