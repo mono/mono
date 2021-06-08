@@ -8130,7 +8130,7 @@ foreign_thread_crash_body (void* ud)
 }
 #endif
 
-LIBTEST_API void libtest_MerpCrashOnForeignThread (void)
+LIBTEST_API void mono_test_MerpCrashOnForeignThread (void)
 {
 
 #ifndef HOST_WIN32
