@@ -1010,7 +1010,7 @@ namespace System.Net
 
 					WebConnection.Debug ($"HWR GET RESPONSE LOOP: Req={ID} Op={operation?.ID} {auth_state.NtlmAuthState}");
 
-					writeStream = await operation.GetRequestStreamInternal ();
+					writeStream = await operation.GetRequestStreamInternal ().ConfigureAwait (false);
 					await writeStream.WriteRequestAsync (cancellationToken).ConfigureAwait (false);
 
 					stream = await operation.GetResponseStream ();
