@@ -803,7 +803,7 @@ namespace System.Security.Principal
             hr = 0;
             bool success = Interop.Advapi32.OpenThreadToken(desiredAccess, WinSecurityContext.Both, out safeTokenHandle);
             if (!success)
-                hr = Marshal.GetHRForLastWin32Error();
+                hr = GetHRForWin32Error(Marshal.GetLastWin32Error());
             if (!success && hr == GetHRForWin32Error(Interop.Errors.ERROR_NO_TOKEN))
             {
                 // No impersonation
