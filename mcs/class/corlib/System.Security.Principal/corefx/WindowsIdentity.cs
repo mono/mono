@@ -31,6 +31,7 @@ namespace System.Security.Principal
         private SecurityIdentifier _owner = null;
         private SecurityIdentifier _user = null;
         private IdentityReferenceCollection _groups = null;
+		private SerializationInfo _info;
 
         private SafeAccessTokenHandle _safeTokenHandle = SafeAccessTokenHandle.InvalidHandle;
         private string _authType = null;
@@ -286,17 +287,47 @@ namespace System.Security.Principal
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2229", Justification = "Public API has already shipped.")]
         public WindowsIdentity(SerializationInfo info, StreamingContext context)
         {
-            throw new PlatformNotSupportedException();
+			_info = info;
         }
+
+		private WindowsAccountType GetAccountType()
+		{
+			if (IsAnonymous)
+				return WindowsAccountType.Anonymous;
+			if (IsGuest)
+				return WindowsAccountType.Guest;
+			if (IsSystem)
+				return WindowsAccountType.System;
+			return WindowsAccountType.Normal;
+		}
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            throw new PlatformNotSupportedException();
+			info.AddValue ("m_userToken", Token);
+			// can be null when not resolved
+			info.AddValue ("m_name", _name);
+			info.AddValue ("m_type", _authType);
+			info.AddValue ("m_acctType", GetAccountType());
+			info.AddValue ("m_isAuthenticated", IsAuthenticated);
         }
 
         void IDeserializationCallback.OnDeserialization(object sender)
         {
-            throw new PlatformNotSupportedException();
+			CreateFromToken((IntPtr) _info.GetValue ("m_userToken", typeof (IntPtr)));
+			// can't trust this alone - we must validate the token
+			string m_name = _info.GetString ("m_name");
+			if (m_name != null) {
+				// validate token by comparing names
+				if (GetName() != m_name)
+					throw new SerializationException ("Token-Name mismatch.");
+			}
+			else {
+				// validate token by getting name
+				GetName();
+			}
+			_authType = _info.GetString ("m_type");
+			// ignoring m_acctType
+			_isAuthenticated = _info.GetBoolean ("m_isAuthenticated") ? 1 : 0;
         }
 
         //
