@@ -851,7 +851,7 @@ nameof(binaryForm));
             {
                 throw new OutOfMemoryException();
             }
-            else if (Error == Interop.Errors.ERROR_NON_ACCOUNT_SID)
+            else if (Error == Interop.Errors.ERROR_NON_ACCOUNT_SID || Error == Interop.Errors.ERROR_INVALID_SID)
             {
                 ResultSid = null;
             }
