@@ -45,6 +45,7 @@ class InterpToNativeGenerator {
 		"IIIIIIIIIIIIII",
 		"IILIIII",
 		"IIIL",
+		"IIIIL",
 		"IF",
 		"ID",
 		"IIF",
