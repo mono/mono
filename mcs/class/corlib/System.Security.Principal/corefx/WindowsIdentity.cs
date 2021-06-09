@@ -220,6 +220,26 @@ namespace System.Security.Principal
             _isAuthenticated = isAuthenticated;
         }
 
+		public WindowsIdentity(IntPtr userToken, string type, WindowsAccountType acctType) : this(userToken, type, -1)
+		{
+			// FIXME: Are we supposed to use acctType in construction?
+			if (GetAccountType() != acctType)
+			{
+				throw new SecurityException("userToken does not match acctType");
+			}
+		}
+
+		public WindowsIdentity(IntPtr userToken, string type, WindowsAccountType acctType, bool isAuthenticated) :
+			this(userToken, type, acctType)
+		{
+			_isAuthenticated = isAuthenticated ? 1 : 0;
+		}
+
+		public WindowsIdentity(string sUserPrincipalName, string type) : this(sUserPrincipalName)
+		{
+			_authType = type;
+		}
+
         private static SafeAccessTokenHandle DuplicateAccessToken(IntPtr accessToken)
         {
             if (accessToken == IntPtr.Zero)
