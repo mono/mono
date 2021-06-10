@@ -448,7 +448,7 @@ static void
 verify_pe_optional_header (VerifyContext *ctx)
 {
 	guint32 offset = pe_header_offset (ctx);
-	guint32 header_size, file_alignment;
+	guint32 header_size, section_alignment, file_alignment;
 	const char *pe_header = ctx->data + offset;
 	const char *pe_optional_header = pe_header + 20;
 
@@ -484,12 +484,18 @@ verify_pe_optional_header (VerifyContext *ctx)
 	/* LAMESPEC MS plays around this value and ignore it during validation
 	if (read32 (pe_optional_header + 28) != 0x400000)
 	ADD_ERROR (ctx, g_strdup_printf ("Invalid Image base %x", read32 (pe_optional_header + 28)));*/
-	if (read32 (pe_optional_header + 32) != 0x2000)
-		ADD_ERROR (ctx, g_strdup_printf ("Invalid Section Aligmnent %x", read32 (pe_optional_header + 32)));
+	section_alignment = read32(pe_optional_header + 32);
 	file_alignment = read32 (pe_optional_header + 36);
-	if (file_alignment != 0x200 && file_alignment != 0x1000)
+	
+	// a power of 2 between 512 and 64 K, inclusive
+	if (file_alignment != 0x200 && file_alignment != 0x400 && file_alignment != 0x800 && file_alignment != 0x1000 &&
+	    file_alignment != 0x2000 && file_alignment != 0x4000 && file_alignment != 0x8000 && file_alignment != 0x10000)
 		ADD_ERROR (ctx, g_strdup_printf ("Invalid file Aligmnent %x", file_alignment));
 	/* All the junk in the middle is irrelevant, specially for mono. */
+
+	// must be greater than or equal to FileAlignment
+	if (section_alignment < file_alignment)
+		ADD_ERROR(ctx, g_strdup_printf("Invalid Section Aligmnent %x", read32(pe_optional_header + 32)));
 
 	if (header_size != 224 + ctx->pe64)
 		ADD_ERROR (ctx, g_strdup_printf ("Invalid optional header size %d", header_size));
@@ -622,6 +628,7 @@ verify_import_table (VerifyContext *ctx)
 	guint32 offset = it.translated_offset;
 	const char *ptr = ctx->data + offset;
 	guint32 name_rva, ilt_rva, iat_rva;
+	char mscoreeBuff[SIZE_OF_MSCOREE + 1];
 
 	// Having no import table is structurally valid
 	if (it.rva == 0 && it.size == 0)
@@ -654,8 +661,12 @@ verify_import_table (VerifyContext *ctx)
 		g_assert (name_rva != INVALID_OFFSET);
 		ptr = ctx->data + name_rva;
 	
-		if (memcmp ("mscoree.dll", ptr, SIZE_OF_MSCOREE))
-			ADD_ERROR (ctx, g_strdup_printf ("Invalid Import Table Name: '%s'", ptr));
+		if (memcmp("mscoree.dll", ptr, SIZE_OF_MSCOREE)) {
+			memcpy(mscoreeBuff, ptr, SIZE_OF_MSCOREE);
+			mscoreeBuff[SIZE_OF_MSCOREE] = 0;
+			if (g_strcasecmp ("mscoree.dll", mscoreeBuff))
+				ADD_ERROR(ctx, g_strdup_printf("Invalid Import Table Name: '%s'", ptr));
+		}
 	}
 	
 	if (ilt_rva) {
