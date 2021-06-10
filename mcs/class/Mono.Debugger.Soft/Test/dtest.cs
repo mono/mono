@@ -49,6 +49,7 @@ public class DebuggerTests
 	public static string agent_args = Environment.GetEnvironmentVariable ("DBG_AGENT_ARGS");
 
 	public static string dtest_app_path = "dtest-app.exe";
+	public static string dtest_app_opt_path = "dtest-app-opt.exe";
 	public static string dtest_excfilter_path = "dtest-excfilter.exe";
 
 	// Not currently used, but can be useful when debugging individual tests.
@@ -467,7 +468,7 @@ public class DebuggerTests
 			string pdbPath = Path.ChangeExtension (location, "pdb");
 			Assert.IsFalse (assemblyMirror.HasPdb);
 			Assert.IsFalse (assemblyMirror.HasFetchedPdb);
-			
+
 			var pdbFromMemory = assemblyMirror.GetPdbBlob ();
 			if (!File.Exists (pdbPath)) {
 				Assert.IsTrue (assemblyMirror.HasFetchedPdb);
@@ -477,7 +478,7 @@ public class DebuggerTests
 			Assert.IsTrue (pdbFromMemory != null && pdbFromMemory.Length > 0);
 			var pdbFromDisk = File.ReadAllBytes (pdbPath);
 			Assert.IsTrue (pdbFromMemory.SequenceEqual (pdbFromDisk));
-			
+
 			Assert.IsTrue (assemblyMirror.HasPdb);
 			Assert.IsTrue (assemblyMirror.HasFetchedPdb);
 
@@ -491,7 +492,7 @@ public class DebuggerTests
 					var methodMirror = assemblyMirror.GetMethod (method.MetadataToken.ToUInt32 ());
 					Assert.AreEqual (method.Name, methodMirror.Name);
 					Assert.AreEqual (method.MetadataToken.ToInt32 (), methodMirror.MetadataToken);
-					
+
 					if (methodCount++ > 10)
 						break;
 				}
@@ -501,7 +502,7 @@ public class DebuggerTests
 			}
 		}
 	}
-	
+
 	[Test]
 	public void IsDynamicAssembly () {
 		vm.Detach ();
@@ -1751,7 +1752,7 @@ public class DebuggerTests
 		Assert.AreEqual ("Int32", t.GetElementType ().Name);
 		Assert.AreEqual (false, t.IsPrimitive);
 
-		// primitive types 
+		// primitive types
 		t = frame.Method.GetParameters ()[5].ParameterType;
 		Assert.AreEqual (true, t.IsPrimitive);
 
@@ -2519,7 +2520,7 @@ public class DebuggerTests
 					vm = null;
 				}
 			}
-			if (success) 
+			if (success)
 				break;
 			//try again because of unreliability of the crash reporter.
 			TearDown();
@@ -2578,7 +2579,7 @@ public class DebuggerTests
 		step_req.Enable ();
 
 		Location l;
-		
+
 		while (true) {
 			vm.Resume ();
 
@@ -2594,7 +2595,7 @@ public class DebuggerTests
 		step_req.Enable ();
 		vm.Resume ();
 		e = GetNextEvent ();
-		Assert.IsTrue (e is StepEvent);		
+		Assert.IsTrue (e is StepEvent);
 
 		l = e.Thread.GetFrames ()[0].Location;
 
@@ -2618,7 +2619,7 @@ public class DebuggerTests
 
 		Assert.AreEqual ("dtest-app.cs", Path.GetFileName (l.SourceFile));
 		Assert.AreEqual ("ln1", l.Method.Name);
-		
+
 		int line_base = l.LineNumber;
 
 		e = step_once ();
@@ -2944,16 +2945,16 @@ public class DebuggerTests
 		AssertValue("aaa", str);
 
 		// Argument checking
-		
+
 		// null thread
 		AssertThrows<ArgumentNullException> (delegate {
 				m = t.GetMethod ("invoke_pass_ref");
-				v = this_obj.InvokeMethod (null, m, new Value [] { vm.CreateValue (null) });				
+				v = this_obj.InvokeMethod (null, m, new Value [] { vm.CreateValue (null) });
 			});
 
 		// null method
 		AssertThrows<ArgumentNullException> (delegate {
-				v = this_obj.InvokeMethod (e.Thread, null, new Value [] { vm.CreateValue (null) });				
+				v = this_obj.InvokeMethod (e.Thread, null, new Value [] { vm.CreateValue (null) });
 			});
 
 		// invalid number of arguments
@@ -3451,7 +3452,7 @@ public class DebuggerTests
 		req = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.ArgumentException"));
 		req.Enable ();
 
-		// Skip the throwing of the second OverflowException	   
+		// Skip the throwing of the second OverflowException
 		vm.Resume ();
 
 		e = GetNextEvent ();
@@ -3685,7 +3686,7 @@ public class DebuggerTests
 		Event e = run_until ("domains");
 
 		vm.Resume ();
-		
+
 		e = GetNextEvent ();
 		Assert.IsInstanceOfType (typeof (AppDomainCreateEvent), e);
 
@@ -4124,7 +4125,7 @@ public class DebuggerTests
 		Assert.AreEqual ('F', c [0]);
 		Assert.AreEqual ('O', c [1]);
 
-		AssertThrows<ArgumentException> (delegate () {		
+		AssertThrows<ArgumentException> (delegate () {
 				s.GetChars (2, 2);
 			});
 	}
@@ -4579,7 +4580,7 @@ public class DebuggerTests
 		e = run_until ("threadpool_bp");
 		var req = create_step (e);
 		e = step_out (); // leave threadpool_bp
-		
+
 		e = step_out (); // leave threadpool_io
 	}
 
@@ -4640,7 +4641,7 @@ public class DebuggerTests
 		assert_location(e, "ss_nested_arg3");
 	}
 
-	
+
 	[Test]
 	public void StepOverOnExitFromArgsAfterStepInMethodParameter3() {
 		Event e = run_until ("ss_nested_twice_with_two_args_wrapper");
@@ -5144,7 +5145,7 @@ public class DebuggerTests
 		vm.Resume ();
 		Event ev = GetNextEvent ();
 		var l = ev.Thread.GetFrames ()[0].Location;
-				
+
 		Assert.IsInstanceOfType (typeof (ExceptionEvent), ev);
 		req2.Disable ();
 		run_until ("test_new_exception_filter2");
@@ -5200,7 +5201,7 @@ public class DebuggerTests
 		vm.Exit (0);
 		vm = null;
 	}
-	
+
 	[Test]
 	public void TestAsyncDebugGenerics () {
 		Event e = run_until ("test_async_debug_generics");
@@ -5210,6 +5211,23 @@ public class DebuggerTests
 		e = step_in_await ("MoveNext", e);
 		e = step_in_await ("MoveNext", e);
 	}
+
+
+	[Test]
+	public void TestAsyncDebugGenericsValueType () {
+		vm.Detach ();
+		Start (dtest_app_opt_path);
+		vm.EnableEvents (EventType.UserBreak);
+		vm.Resume ();
+		var e = GetNextEvent ();
+		Assert.IsTrue (e is UserBreakEvent);
+		e = step_over_await ("MoveNext", e);
+		e = step_over_await ("MoveNext", e);
+		e = step_over_await ("MoveNext", e);
+		vm.Exit (0);
+		vm = null;
+	}
+
 
 	[Test]
 	public void InvalidPointer_GetValue () {
@@ -5234,7 +5252,7 @@ public class DebuggerTests
 			Assert.IsInstanceOfType (typeof (ArgumentException), ex);
 		}
 	}
-  
+
 	[Test]
 	public void InvalidArgumentAssemblyGetType () {
 		Event e = run_until ("test_invalid_argument_assembly_get_type");
@@ -5246,7 +5264,7 @@ public class DebuggerTests
 			Assert.AreEqual(ex.ErrorMessage, "Unexpected assembly-qualified type \"System.Collections.Generic.Dictionary<double, float>.Main\" was provided");
 		}
 	}
-  
+
 	[Test]
 	[Category("NotWorking")]
 	public void InvokeSingleStepMultiThread () {
@@ -5268,17 +5286,17 @@ public class DebuggerTests
 			var thread = e.Thread;
 			var l = thread.GetFrames ()[0].Location;
 			var frame = thread.GetFrames()[0];
-			
+
 			if (l.LineNumber == firstLineFound)
 				line_first_counter--;
 			if (l.LineNumber == firstLineFound + 1)
 				line_second_counter--;
 			if (l.LineNumber == firstLineFound + 2)
-				line_third_counter--;				
+				line_third_counter--;
 
-			if (req.GetId() != breakpoint.req.GetId()) 
+			if (req.GetId() != breakpoint.req.GetId())
 				req.Disable ();
-			
+
 			req = create_step (e);
 			((StepEventRequest)req).Size = StepSize.Line;
 			try {
@@ -5288,7 +5306,7 @@ public class DebuggerTests
 				}
 				else
 					e = step_over_or_breakpoint ();
-				req =  e.Request;		
+				req =  e.Request;
 			}
 			catch (Exception z){
 				//expected vmdeath
@@ -5300,7 +5318,7 @@ public class DebuggerTests
 		Assert.AreEqual(0, line_third_counter);
 		vm = null;
 	}
-	
+
 	[Test]
 	public void CheckSuspendPolicySentWhenLaunchSuspendYes () {
 		vm.Exit (0);
@@ -5339,25 +5357,25 @@ public class DebuggerTests
 
 		e = step_once ();
 		e = step_over ();
-		e = step_over ();		
-		e = step_over ();				
-		e = step_over ();			
-		e = step_over ();				
-		e = step_over ();				
-			
+		e = step_over ();
+		e = step_over ();
+		e = step_over ();
+		e = step_over ();
+		e = step_over ();
+
 		StackFrame frame = e.Thread.GetFrames () [0];
 		var l = frame.Method.GetLocal ("someLocalString");
 		var l1 = frame.Method.GetLocal ("aList");
 		TypeMirror t = l1.Type;
 		var m = t.GetMethod ("get_Count");
-		var contentOrig1 =  frame.GetValue (l1);	
+		var contentOrig1 =  frame.GetValue (l1);
 		var v = (contentOrig1 as ObjectMirror).InvokeMethod (e.Thread, m, null);
-		var contentOrig =  frame.GetValue (l);					
+		var contentOrig =  frame.GetValue (l);
 		var str = vm.RootDomain.CreateString ("test1");
 		frame.SetValue (l, str);
-		contentOrig =  frame.GetValue (l);		
+		contentOrig =  frame.GetValue (l);
 		e.Thread.GetFrames ();
-		contentOrig =  frame.GetValue (l);		
+		contentOrig =  frame.GetValue (l);
 		AssertValue ("test1", contentOrig);
 	}
 
