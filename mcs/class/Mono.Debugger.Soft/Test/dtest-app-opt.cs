@@ -17,7 +17,6 @@ public class Tests
 
 	async static Task<T> ExecuteAsync_Broken<T>()
 	{
-		Debugger.Break();
 		await Task.Delay(2);
 		return default;
 	}

@@ -5215,16 +5215,18 @@ public class DebuggerTests
 
 	[Test]
 	public void TestAsyncDebugGenericsValueType () {
-		vm.Detach ();
-		Start (dtest_app_opt_path);
-		vm.EnableEvents (EventType.UserBreak);
-		vm.Resume ();
-		var e = GetNextEvent ();
-		Assert.IsTrue (e is UserBreakEvent);
-		e = step_over_await ("MoveNext", e);
-		e = step_over_await ("MoveNext", e);
-		e = step_over_await ("MoveNext", e);
-		vm.Exit (0);
+		vm.Detach();
+		Start(dtest_app_opt_path);
+		MethodMirror async_method = entry_point.DeclaringType.GetMethod("test_async_debug_generics");
+		Assert.IsNotNull(async_method);
+		vm.SetBreakpoint(async_method, 0);
+		vm.Resume();
+		var e = GetNextEvent();
+		Assert.AreEqual(EventType.Breakpoint, e.EventType);
+		e = step_in_await("MoveNext", e);
+		e = step_in_await("MoveNext", e);
+		e = step_in_await("MoveNext", e);
+		vm.Exit(0);
 		vm = null;
 	}
 
