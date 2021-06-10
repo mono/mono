@@ -1970,3 +1970,9 @@ mono_unity_class_is_open_constructed_type (MonoClass *klass)
 {
 	return mono_class_is_open_constructed_type (m_class_get_byval_arg(klass));
 }
+
+MONO_API gboolean
+mono_unity_class_has_failure(const MonoClass* klass)
+{
+	return mono_class_has_failure(klass);
+}
