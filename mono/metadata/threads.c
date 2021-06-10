@@ -6642,16 +6642,6 @@ typedef struct _MonoSummarizerLeader {
 
 static MonoSummarizerLeader summarizer_leader_data;
 
-/* Leader state machine */
-enum LeaderState {
-	LEADER_STATE_READY = 0,
-	LEADER_STATE_COLLECTING_IDS,
-	LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS,
-	LEADER_STATE_SUSPEND_OTHERS,
-	LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK,
-	LEADER_STATE_SUMMARIZER_STATE_TERM,
-};
-
 /* Commands from crash originator to the crash leader */
 enum LeaderCommand {
 	LEADER_COMMAND_ZERO = 0, /* not used */
@@ -6704,36 +6694,16 @@ summarizer_leader_response_read (void)
 	return (int)buf;
 }
 
-#define STATE_CASE(x) case x: return #x
-
-static const char *
-leader_state_name (int leader_state) {
-	switch (leader_state) {
-#define STATE_CASE(x) case x: return #x
-		STATE_CASE(LEADER_STATE_READY);
-		STATE_CASE(LEADER_STATE_COLLECTING_IDS);
-		STATE_CASE(LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS);
-		STATE_CASE(LEADER_STATE_SUSPEND_OTHERS);
-		STATE_CASE(LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK);
-		STATE_CASE(LEADER_STATE_SUMMARIZER_STATE_TERM);
-#undef STATE_CASE
-	default:
-		return "<unknown leader state>";
-	}
-}
-
 /* Called by the leader to wait for a command from the crash originator */
 static gboolean
-summarizer_leader_wait_for_command (int *leader_command, int *leader_state)
+summarizer_leader_wait_for_command (int *leader_command)
 {
 	MONO_ENTER_GC_SAFE;
 	/* allow interruptions */
 	while (mono_os_sem_wait (&summarizer_leader_data.leader_commanded, MONO_SEM_FLAGS_ALERTABLE) < 0);
 	MONO_EXIT_GC_SAFE;
-	mono_memory_barrier ();
 	*leader_command = summarizer_leader_data.leader_command;
 	if (*leader_command == LEADER_COMMAND_CANCEL) {
-		*leader_state = LEADER_STATE_READY;
 		return FALSE;
 	}
 	return TRUE;
@@ -6745,7 +6715,6 @@ static void
 summarizer_leader_post_command (int command)
 {
 	summarizer_leader_data.leader_command = command;
-	mono_memory_barrier ();
 	mono_os_sem_post (&summarizer_leader_data.leader_commanded);
 }
 
@@ -6785,20 +6754,15 @@ summarizer_leader (void)
 	mono_thread_info_set_is_async_context (TRUE);
 	
 	mono_atomic_store_i32 (&summarizer_leader_data.leader_running, 1);
-	int leader_state = LEADER_STATE_READY;
 	while (TRUE) {
-		LEADER_LOG ("leader in state %s\n", leader_state_name (leader_state));
-		switch (leader_state) {
-		case LEADER_STATE_READY: {
+		/*case LEADER_STATE_READY:*/ {
 			MONO_ENTER_GC_SAFE;
 			/* allow interruptions */
 			while (mono_os_sem_wait (&summarizer_leader_data.begin_crash_report, MONO_SEM_FLAGS_ALERTABLE) < 0);
 			MONO_EXIT_GC_SAFE;
 			LEADER_LOG ("Crash report leader %p beginning collection for originator %p\n", (gpointer)(intptr_t)summarizer_leader_data.leader_tid, (gpointer)(intptr_t)summarizer_leader_data.originator.originator_tid);
-			leader_state = LEADER_STATE_COLLECTING_IDS;
-			break;
 		}
-		case LEADER_STATE_COLLECTING_IDS: {
+		/*case LEADER_STATE_COLLECTING_IDS:*/ {
 			/* collect a crash report */
 			summarizer_leader_collect_thread_ids (summarizer_leader_data.originator.state);
 
@@ -6810,42 +6774,27 @@ summarizer_leader (void)
 			/* wake up originator */
 			summarizer_leader_response_write (LEADER_RESPONSE_IDS_COLLECTED);
 
-			leader_state = LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS;
-			break;
 		}
-		case LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS: {
+		/*case LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS:*/ {
 			int cmd;
-			if (!summarizer_leader_wait_for_command (&cmd, &leader_state))
-				break;
+			if (!summarizer_leader_wait_for_command (&cmd))
+				continue; /* restart */
 			g_assert (cmd == LEADER_COMMAND_PROCEED_TO_SUSPEND);
-			leader_state = LEADER_STATE_SUSPEND_OTHERS;
-			break;
 		}
-		case LEADER_STATE_SUSPEND_OTHERS: {
+		/*case LEADER_STATE_SUSPEND_OTHERS:*/ {
 			summarizer_leader_suspend_others(summarizer_leader_data.originator.state, summarizer_leader_data.originator.originator_tid, summarizer_leader_data.originator.originator_index);
 			summarizer_leader_response_write (LEADER_RESPONSE_THREADS_SUSPENDED);
-			leader_state = LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK;
-			break;
 		}
-		case LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK: {
+		/*case LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK:*/ {
 			int cmd;
-			if (!summarizer_leader_wait_for_command (&cmd, &leader_state))
-				break;
+			if (!summarizer_leader_wait_for_command (&cmd))
+				continue;
 			g_assert (cmd == LEADER_COMMAND_PROCEED_TO_TERM);
-			leader_state = LEADER_STATE_SUMMARIZER_STATE_TERM;
-			break;
 		}
-		case LEADER_STATE_SUMMARIZER_STATE_TERM: {
+		/*case LEADER_STATE_SUMMARIZER_STATE_TERM:*/ {
 			summarizer_state_wait_and_term (summarizer_leader_data.leader_tid, summarizer_leader_data.originator.state, summarizer_leader_data.originator.out, summarizer_leader_data.originator.working_mem, summarizer_leader_data.originator.provided_size, summarizer_leader_data.originator.originator_summary);
-			LEADER_LOG ("leader finished reporting; back to LEADER_STATE_READY\n");
+			LEADER_LOG ("Crash report leader finished reporting.  Ready for next crash\n");
 			summarizer_leader_response_write (LEADER_RESPONSE_STACKS_WALKED);
-			leader_state = LEADER_STATE_READY;
-			break;
-		}
-		default:
-			g_async_safe_printf ("Unexpected crash report leader state %d, resetting to LEADER_STATE_READY", leader_state);
-			leader_state = LEADER_STATE_READY;
-			break;
 		}
 	}
 }
@@ -7157,6 +7106,7 @@ summarizer_state_term (SummarizerGlobalState *state, gchar **out, gchar *mem, si
 
 	/* The value of the breadcrumb should match the "StackHash" value written by `mono_merp_write_fingerprint_payload` */
 	mono_create_crash_hash_breadcrumb (controlling);
+	LEADER_LOG("wrote hash breadcrumb for controlling thread %p", controlling ? (gpointer)controlling->native_thread_id : (gpointer)NULL);
 
 	MonoStateWriter writer;
 	memset (&writer, 0, sizeof (writer));
