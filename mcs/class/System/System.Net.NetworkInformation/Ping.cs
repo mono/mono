@@ -249,11 +249,11 @@ namespace System.Net.NetworkInformation {
 				var sw = Stopwatch.StartNew ();
 
 				// receive
-				bytes = new byte [100];
+				bytes = new byte [bytes.Length + 40];
 				do {
 					EndPoint endpoint = target;
 					SocketError error = 0;
-					int rc = s.ReceiveFrom (bytes, 0, 100, SocketFlags.None,
+					int rc = s.ReceiveFrom (bytes, 0, bytes.Length, SocketFlags.None,
 							ref endpoint, out error);
 
 					if (error != SocketError.Success) {
