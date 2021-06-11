@@ -23,10 +23,8 @@ namespace System.ComponentModel
 				int result = FormatMessage (0x1200 /* FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_FROM_SYSTEM */,
 					IntPtr.Zero, (uint)error, 0, sb, sb.Capacity, null);
 
-				if (result == 0)
-					return "Error looking up error string";
-
-				return sb.ToString ();
+				if (result != 0)
+					return sb.ToString ();
 			}
 #endif
 
