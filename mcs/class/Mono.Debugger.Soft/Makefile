@@ -29,13 +29,16 @@ test_output_dir=$(topdir)/class/lib/$(PROFILE)/tests
 $(test_output_dir):
 	mkdir -p $@
 
-build-dtest: $(test_output_dir)/dtest-app.exe $(test_output_dir)/dtest-excfilter.exe
+build-dtest: $(test_output_dir)/dtest-app.exe $(test_output_dir)/dtest-excfilter.exe $(test_output_dir)/dtest-app-opt.exe
 
 $(test_output_dir)/dtest-excfilter.exe: Test/dtest-excfilter.il | $(test_output_dir)
 	$(ILASM) -out:$@ /exe /debug Test/dtest-excfilter.il
 
 $(test_output_dir)/dtest-app.exe: Test/dtest-app.cs $(TEST_HELPERS_SOURCES) | $(test_output_dir)
 	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Runtime.CompilerServices.Unsafe.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) $(DTEST_APP_FLAGS) -optimize- Test/dtest-app.cs $(TEST_HELPERS_SOURCES)
+
+$(test_output_dir)/dtest-app-opt.exe: Test/dtest-app-opt.cs $(TEST_HELPERS_SOURCES) | $(test_output_dir)
+	$(CSCOMPILE) -r:$(topdir)/class/lib/$(PROFILE)/mscorlib.dll -r:$(topdir)/class/lib/$(PROFILE)/System.Core.dll -r:$(topdir)/class/lib/$(PROFILE)/System.dll -sourcelink:Test/sourcelink.json -out:$@ -unsafe $(PLATFORM_DEBUG_FLAGS) $(DTEST_APP_FLAGS) -optimize+ Test/dtest-app-opt.cs $(TEST_HELPERS_SOURCES)
 
 TEST_HELPERS_SOURCES = \
 	../test-helpers/NetworkHelpers.cs \

@@ -49,6 +49,7 @@ public class DebuggerTests
 	public static string agent_args = Environment.GetEnvironmentVariable ("DBG_AGENT_ARGS");
 
 	public static string dtest_app_path = "dtest-app.exe";
+	public static string dtest_app_opt_path = "dtest-app-opt.exe";
 	public static string dtest_excfilter_path = "dtest-excfilter.exe";
 
 	// Not currently used, but can be useful when debugging individual tests.
@@ -5210,6 +5211,25 @@ public class DebuggerTests
 		e = step_in_await ("MoveNext", e);
 		e = step_in_await ("MoveNext", e);
 	}
+
+
+	[Test]
+	public void TestAsyncDebugGenericsValueType () {
+		vm.Detach();
+		Start(dtest_app_opt_path);
+		MethodMirror async_method = entry_point.DeclaringType.GetMethod("test_async_debug_generics");
+		Assert.IsNotNull(async_method);
+		vm.SetBreakpoint(async_method, 0);
+		vm.Resume();
+		var e = GetNextEvent();
+		Assert.AreEqual(EventType.Breakpoint, e.EventType);
+		e = step_in_await("MoveNext", e);
+		e = step_in_await("MoveNext", e);
+		e = step_in_await("MoveNext", e);
+		vm.Exit(0);
+		vm = null;
+	}
+
 
 	[Test]
 	public void InvalidPointer_GetValue () {
