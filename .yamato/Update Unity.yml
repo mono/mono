@@ -13,7 +13,7 @@ commands:
     git clone git@github.cds.internal.unity3d.com:unity/prtools.git
     cd prtools
     git checkout master
-    nuget.exe restore PRTools.sln --configfile NuGet.Config
+    nuget.exe restore PRTools.sln -configFile NuGet.Config
     cmd /c cibuildscript
     cmd /c xcopy build %PRTOOLS_BUILD_DIR% /s /Y /E /I
     cd %UNITY_SOURCE_PRTOOLS_DIR%
