@@ -205,7 +205,7 @@
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Filters/NotFilter.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Filters/OrFilter.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Filters/SimpleCategoryExpression.cs
-../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/Filters/SimpleNameFilter.cs
+SimpleNameFilter.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/IApplyToContext.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/IApplyToTest.cs
 ../../../../external/nunit-lite/NUnitLite-1.0.0/src/framework/Internal/InvalidTestFixtureException.cs
