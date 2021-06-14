@@ -490,12 +490,12 @@ verify_pe_optional_header (VerifyContext *ctx)
 	// a power of 2 between 512 and 64 K, inclusive
 	if (file_alignment != 0x200 && file_alignment != 0x400 && file_alignment != 0x800 && file_alignment != 0x1000 &&
 	    file_alignment != 0x2000 && file_alignment != 0x4000 && file_alignment != 0x8000 && file_alignment != 0x10000)
-		ADD_ERROR (ctx, g_strdup_printf ("Invalid file Aligmnent %x", file_alignment));
+		ADD_ERROR (ctx, g_strdup_printf ("Invalid file Alignment %x", file_alignment));
 	/* All the junk in the middle is irrelevant, specially for mono. */
 
 	// must be greater than or equal to FileAlignment
 	if (section_alignment < file_alignment)
-		ADD_ERROR(ctx, g_strdup_printf("Invalid Section Aligmnent %x", read32(pe_optional_header + 32)));
+		ADD_ERROR(ctx, g_strdup_printf("Invalid Section Alignment %x", read32(pe_optional_header + 32)));
 
 	if (header_size != 224 + ctx->pe64)
 		ADD_ERROR (ctx, g_strdup_printf ("Invalid optional header size %d", header_size));
