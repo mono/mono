@@ -2072,12 +2072,9 @@ handle_enum:
 		case MONO_TYPE_U2:
 		case MONO_TYPE_I4:
 		case MONO_TYPE_U4:
-			if (args [i]->type != STACK_I4 && args [i]->type != STACK_PTR)
-				return TRUE;
-			continue;
 		case MONO_TYPE_I:
 		case MONO_TYPE_U:
-		/* Wine Mono hack: Allow 64-bit ints as "native int" arguments on 64-bit */
+		/* Wine Mono hack: Allow 64-bit ints as int arguments on 64-bit */
 		case MONO_TYPE_PTR:
 		case MONO_TYPE_FNPTR:
 			if (args [i]->type != STACK_I4 && !(SIZEOF_VOID_P == 8 && args [i]->type == STACK_I8) &&
