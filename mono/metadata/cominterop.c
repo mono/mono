@@ -213,11 +213,8 @@ cominterop_get_ccw_object (MonoCCWInterface* ccw_entry, gboolean verify);
 static MonoObjectHandle
 cominterop_get_ccw_handle (MonoCCWInterface* ccw_entry, gboolean verify);
 
-static MonoObject*
-cominterop_set_ccw_object_domain (MonoObject *object, MonoDomain **prev_domain);
-
 static void
-cominterop_restore_domain (MonoDomain *domain);
+cominterop_set_ccw_domain (MonoCCWInterface* ccw_entry);
 
 /* SAFEARRAY marshalling */
 static gboolean
@@ -673,8 +670,7 @@ mono_cominterop_init (void)
 
 	register_icall (cominterop_type_from_handle, mono_icall_sig_object_ptr, FALSE);
 
-	register_icall (cominterop_set_ccw_object_domain, mono_icall_sig_object_object_ptr, FALSE);
-	register_icall (cominterop_restore_domain, mono_icall_sig_void_ptr, FALSE);
+	register_icall (cominterop_set_ccw_domain, mono_icall_sig_void_ptr, FALSE);
 
 	/* SAFEARRAY marshalling */
 	register_icall (mono_marshal_safearray_begin, mono_icall_sig_int32_ptr_ptr_ptr_ptr_ptr_int32, FALSE);
@@ -2141,33 +2137,20 @@ cominterop_get_domain_for_appdomain (MonoAppDomain *ad_raw)
 	HANDLE_FUNCTION_RETURN_VAL (result);
 }
 
-static MonoObject*
-cominterop_set_ccw_object_domain (MonoObject *object, MonoDomain **prev_domain)
+static void
+cominterop_set_ccw_domain (MonoCCWInterface* ccw_entry)
 {
-	MonoDomain *current = mono_domain_get (), *obj_domain;
+	MonoDomain *obj_domain;
+	MonoObject *object;
+
+	object = cominterop_get_ccw_object (ccw_entry, FALSE);
 
 	if (mono_object_class (object) == mono_defaults.appdomain_class)
 		obj_domain = cominterop_get_domain_for_appdomain ((MonoAppDomain *)object);
 	else
 		obj_domain = mono_object_domain (object);
 
-	if (obj_domain != current) {
-		*prev_domain = current;
-		mono_domain_set_internal_with_options (obj_domain, FALSE);
-	}
-	else
-		*prev_domain = NULL;
-
-	return object;
-}
-
-static void
-cominterop_restore_domain (MonoDomain *domain)
-{
-	if (!domain)
-		return;
-
-	mono_domain_set_internal_with_options (domain, FALSE);
+	mono_domain_set_internal_with_options (obj_domain, FALSE);
 }
 
 static void
@@ -2715,10 +2698,9 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 	MonoMethodSignature *sig, *sig_native;
 	MonoExceptionClause *main_clause = NULL;
 	int hr = 0, retval = 0;
-	int pos_leave, domain_var;
+	int pos_leave;
 	int i;
 	gboolean const preserve_sig = (method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG) != 0;
-	MonoType *int_type = mono_get_int_type ();
 
 	MONO_STATIC_POINTER_INIT (MonoMethod, get_hr_for_exception)
 
@@ -2765,16 +2747,10 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 	main_clause = g_new0 (MonoExceptionClause, 1);
 	main_clause->try_offset = mono_mb_get_label (mb);
 
-	domain_var = mono_mb_add_local (mb, int_type);
-
 	/* the CCW -> object conversion */
 	mono_mb_emit_ldarg (mb, 0);
 	mono_mb_emit_icon (mb, FALSE);
 	mono_mb_emit_icall (mb, cominterop_get_ccw_object);
-
-	/* Object is left on stack */
-	mono_mb_emit_ldloc_addr (mb, domain_var);
-	mono_mb_emit_icall (mb, cominterop_set_ccw_object_domain);
 
 	for (i = 0; i < sig->param_count; i++)
 		mono_mb_emit_ldarg (mb, i+1);
@@ -2830,9 +2806,6 @@ cominterop_get_managed_wrapper_adjusted (MonoMethod *method)
 
 	if (!preserve_sig || !MONO_TYPE_IS_VOID (sig->ret))
 		mono_mb_emit_ldloc (mb, hr);
-
-	mono_mb_emit_ldloc (mb, domain_var);
-	mono_mb_emit_icall (mb, cominterop_restore_domain);
 
 	mono_mb_emit_byte (mb, CEE_RET);
 #endif /* DISABLE_JIT */
