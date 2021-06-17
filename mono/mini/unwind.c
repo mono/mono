@@ -15,6 +15,7 @@
 #include <mono/utils/freebsd-dwarf.h>
 #include <mono/utils/hazard-pointer.h>
 #include <mono/utils/mono-logger-internals.h>
+#include <mono/utils/bit-count.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/mono-endian.h>
 
@@ -782,6 +783,8 @@ mono_unwind_cleanup (void)
 
 	/* make sure debit matches credit */
 	g_assert (cached_count == 0);
+
+	unwind_info_size = 0;
 }
 
 static guint16
@@ -798,15 +801,12 @@ hash_unwind_info (guint8 *data, guint32 len)
 	return (guint16)a;
 }
 
-static MonoUnwindInfo *
-make_cached_unwind_info (guint8 *data, guint32 len)
+static void *
+unwind_info_malloc(size_t sz)
 {
-	MonoUnwindInfo *info = (MonoUnwindInfo *)g_malloc(sizeof (MonoUnwindInfo) + len);
-	info->len = len;
-	memcpy(info->data, data, len);
-	return info;
+	unwind_info_size += sz;
+	return g_malloc(sz);
 }
-
 
 /*
  * mono_cache_unwind_info
@@ -856,8 +856,7 @@ mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 	/* Continue looking for match til ranges end. Note that there may remain more than
 	 * single range as while we worked not under lock - extra range(s) could be allocated.
 	 */
-	while ( cached_info [range_index] ) {
-		range = cached_info [range_index];
+	while ( ( range = cached_info [range_index] ) != NULL ) {
 		for (i = 0; i < range_size && base_index + i < cached_count; ++i) {
 			if (CACHED_UNWIND_INFO_HASH(range, i) == hash) {
 				info = CACHED_UNWIND_INFO(range, range_size, i);
@@ -869,40 +868,47 @@ mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 		}
 		if (i < range_size) {
 			/* Not found but still have room in current (last) range:
-			 * need to store allocated cached info within current range
+			 * will store allocated cached info within current range
 			 */
-			info = make_cached_unwind_info (unwind_info, unwind_info_len);
-			CACHED_UNWIND_INFO_HASH(range, i) = hash;
-			CACHED_UNWIND_INFO(range, range_size, i) = info;
-			/* Ensure things are in memory before they're accounted,
-			 * its needed cuz mono_get_cached_unwind_info doesnt use
-			 * unwind_(un)lock */
-			mono_memory_barrier ();
-			cached_count ++;
-			unwind_unlock ();
-			return base_index + i;
+			break;
 		}
 		base_index += range_size;
 		range_size <<= 1;
 		range_index ++;
 	}
 
-	/* ensure no overflows */
-	g_assert( range_size != 0 );
-	 /* +1 cuz we always need one empty range at the end */
-	g_assert( range_index + 1 < sizeof(cached_info) / sizeof(cached_info[0]) );
+	if (!range) { /* need to initialize new range */
+		/* ensure no overflows */
+		g_assert( range_size != 0 );
+		 /* +1 cuz we always need one empty range at the end */
+		g_assert( range_index + 1 < sizeof(cached_info) / sizeof(cached_info[0]) );
 
-	/* need to add extra range and store cached info as its very first entry */
-	range = g_malloc ( (sizeof(guint8 *) + sizeof(guint32)) * range_size );
-	info = make_cached_unwind_info ( unwind_info, unwind_info_len );
-	CACHED_UNWIND_INFO_HASH(range, 0) = hash;
-	CACHED_UNWIND_INFO(range, range_size, 0) = info;
-	cached_info [range_index] = range;
-	/* ensure things are in memory before they're accounted */
+		/* allocate and add new range */
+		range = unwind_info_malloc( (sizeof(guint8 *) + sizeof(guint32)) * range_size );
+
+		cached_info [range_index] = range;
+
+		/* it will be very first element in new range */
+		i = 0;
+	}
+
+	info = (MonoUnwindInfo *) unwind_info_malloc( sizeof (MonoUnwindInfo) + unwind_info_len );
+	info->len = unwind_info_len;
+	memcpy(info->data, unwind_info, unwind_info_len);
+
+	CACHED_UNWIND_INFO_HASH(range, i) = hash;
+	CACHED_UNWIND_INFO(range, range_size, i) = info;
+	/* Ensure things are in memory before they're accounted,
+	 * its needed cuz mono_get_cached_unwind_info doesnt use
+	 * unwind_(un)lock */
 	mono_memory_barrier ();
+//	g_assert( base_index + i == cached_count );
+	g_assert(cached_count != (guint32)-1);
+
 	cached_count ++;
+
 	unwind_unlock ();
-	return base_index;
+	return base_index + i;
 }
 
 /*
@@ -913,33 +919,23 @@ mono_get_cached_unwind_info (guint32 index, guint32 *unwind_info_len)
 {
 	CachedUnwindInfoRangePtr range;
 	MonoUnwindInfo *info;
-	guint32 range_index = 0;
-	guint32 range_size = CACHED_UNWIND_INFO_RANGE0_SIZE;
+	guint32 range_index;
+	guint32 range_size;
 
-	/* need to deduce range index and index within range from given 'global' index
-	 * for this we have two options: use __builtin_clz (that is implemented as
-	 * CLZ on ARM or BSR on Intel instruction) or manually count bits, if there
-	 * is no CLZ helper available.
-	 */
-#ifdef __GNUC__
-	if (index >= CACHED_UNWIND_INFO_RANGE0_SIZE) {
-		range_index = (sizeof(unsigned int) * 8 -
-			__builtin_clz ( (index >> CACHED_UNWIND_INFO_RANGE0_POF2) + 1)) - 1;
-		range_size <<= range_index;
-		index -= ((1 << range_index) - 1) << CACHED_UNWIND_INFO_RANGE0_POF2;
-	}
-#else
-	while (index >= range_size) {
-		index -= range_size;
-		range_size <<= 1;
-		range_index ++;
-	}
-#endif
+	/* need to deduce range index and index within range from given 'global' index */
+	range_index = (sizeof(unsigned int) * 8 -
+		leading_zero_bit_count_32 ( (index >> CACHED_UNWIND_INFO_RANGE0_POF2) + 1)) - 1;
+
+	range_size = ( CACHED_UNWIND_INFO_RANGE0_SIZE << range_index );
+
+	index -= ((1 << range_index) - 1) << CACHED_UNWIND_INFO_RANGE0_POF2;
+
 	/* Don't need to do any synchronization cuz cached info data
 	 * is never free'd as well as never removed once added
 	 */
 	range = cached_info [range_index];
 	info = CACHED_UNWIND_INFO(range, range_size, index);
+
 	*unwind_info_len = info->len;
 	return info->data;
 }

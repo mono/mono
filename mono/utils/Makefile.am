@@ -139,6 +139,7 @@ monoutils_sources = \
 	gc_wrapper.h		\
 	mono-error.c	\
 	mono-error-internals.h	\
+	bit-count.h	\
 	monobitset.h	\
 	mono-codeman.h	\
 	mono-counters.h	\
