@@ -403,6 +403,10 @@ namespace System.Security.Principal
                     try
                     {
                         int status = Interop.SspiCli.LsaGetLogonSessionData(ref authId, ref pLogonSessionData);
+
+						if (status == unchecked((int)(0xC0000002))) // not implemented in Wine
+							return "Negotiate";
+
                         if (status < 0) // non-negative numbers indicate success
                             throw GetExceptionFromNtStatus(status);
 
