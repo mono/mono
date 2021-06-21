@@ -96,7 +96,7 @@ namespace System.Web.UI {
 			else
 				value = _value.ToString (colon + 1, semicolon - colon - 1).Trim ();
 
-			style.Add (key, value);
+			style[key] = value;
 			if (semicolon == -1 || semicolon + 1 == _value.Length)
 				return -1;
 
