@@ -6657,7 +6657,8 @@ enum LeaderResponse {
 	LEADER_RESPONSE_STACKS_WALKED = 3,
 };
 
-#undef LEADER_DEBUG
+/* Uncomment to get additional debugging code in the crash leader */
+/* #define LEADER_DEBUG */
 
 #ifdef LEADER_DEBUG
 #define LEADER_LOG(...) g_async_safe_printf (__VA_ARGS__)
@@ -6755,47 +6756,46 @@ summarizer_leader (void)
 	
 	mono_atomic_store_i32 (&summarizer_leader_data.leader_running, 1);
 	while (TRUE) {
-		/*case LEADER_STATE_READY:*/ {
-			MONO_ENTER_GC_SAFE;
-			/* allow interruptions */
-			while (mono_os_sem_wait (&summarizer_leader_data.begin_crash_report, MONO_SEM_FLAGS_ALERTABLE) < 0);
-			MONO_EXIT_GC_SAFE;
-			LEADER_LOG ("Crash report leader %p beginning collection for originator %p\n", (gpointer)(intptr_t)summarizer_leader_data.leader_tid, (gpointer)(intptr_t)summarizer_leader_data.originator.originator_tid);
-		}
-		/*case LEADER_STATE_COLLECTING_IDS:*/ {
-			/* collect a crash report */
-			summarizer_leader_collect_thread_ids (summarizer_leader_data.originator.state);
+		/* Leader ready to receive crashe report requests */
+		MONO_ENTER_GC_SAFE;
+		/* allow interruptions */
+		while (mono_os_sem_wait (&summarizer_leader_data.begin_crash_report, MONO_SEM_FLAGS_ALERTABLE) < 0);
+		MONO_EXIT_GC_SAFE;
+		LEADER_LOG ("Crash report leader %p beginning collection for originator %p\n", (gpointer)(intptr_t)summarizer_leader_data.leader_tid, (gpointer)(intptr_t)summarizer_leader_data.originator.originator_tid);
 
-			summarizer_leader_data.originator.originator_index = -1;
-			summarizer_state_get_index_for_thread (summarizer_leader_data.originator.state, summarizer_leader_data.originator.originator_tid, &summarizer_leader_data.originator.originator_index);
-			if (summarizer_leader_data.originator.originator_index == -1)
-				summarizer_leader_adjust_tids_for_foreign_originator ();
+		/* Leader is collecting thread ids for a crash */
 
-			/* wake up originator */
-			summarizer_leader_response_write (LEADER_RESPONSE_IDS_COLLECTED);
+		/* collect a crash report */
+		summarizer_leader_collect_thread_ids (summarizer_leader_data.originator.state);
 
-		}
-		/*case LEADER_STATE_WAIT_BEFORE_SUSPEND_OTHERS:*/ {
-			int cmd;
-			if (!summarizer_leader_wait_for_command (&cmd))
-				continue; /* restart */
-			g_assert (cmd == LEADER_COMMAND_PROCEED_TO_SUSPEND);
-		}
-		/*case LEADER_STATE_SUSPEND_OTHERS:*/ {
-			summarizer_leader_suspend_others(summarizer_leader_data.originator.state, summarizer_leader_data.originator.originator_tid, summarizer_leader_data.originator.originator_index);
-			summarizer_leader_response_write (LEADER_RESPONSE_THREADS_SUSPENDED);
-		}
-		/*case LEADER_STATE_WAIT_FOR_ORIGINATOR_STACK:*/ {
-			int cmd;
-			if (!summarizer_leader_wait_for_command (&cmd))
-				continue;
-			g_assert (cmd == LEADER_COMMAND_PROCEED_TO_TERM);
-		}
-		/*case LEADER_STATE_SUMMARIZER_STATE_TERM:*/ {
-			summarizer_state_wait_and_term (summarizer_leader_data.leader_tid, summarizer_leader_data.originator.state, summarizer_leader_data.originator.out, summarizer_leader_data.originator.working_mem, summarizer_leader_data.originator.provided_size, summarizer_leader_data.originator.originator_summary);
-			LEADER_LOG ("Crash report leader finished reporting.  Ready for next crash\n");
-			summarizer_leader_response_write (LEADER_RESPONSE_STACKS_WALKED);
-		}
+		summarizer_leader_data.originator.originator_index = -1;
+		summarizer_state_get_index_for_thread (summarizer_leader_data.originator.state, summarizer_leader_data.originator.originator_tid, &summarizer_leader_data.originator.originator_index);
+		if (summarizer_leader_data.originator.originator_index == -1)
+			summarizer_leader_adjust_tids_for_foreign_originator ();
+
+		/* wake up originator */
+		summarizer_leader_response_write (LEADER_RESPONSE_IDS_COLLECTED);
+
+		/* Leader is waiting for report originator before suspending the other threads */
+		int cmd;
+		if (!summarizer_leader_wait_for_command (&cmd))
+			continue; /* restart */
+		g_assert (cmd == LEADER_COMMAND_PROCEED_TO_SUSPEND);
+
+		/* Leader is suspending other threads */
+		summarizer_leader_suspend_others(summarizer_leader_data.originator.state, summarizer_leader_data.originator.originator_tid, summarizer_leader_data.originator.originator_index);
+		summarizer_leader_response_write (LEADER_RESPONSE_THREADS_SUSPENDED);
+
+		/* Pause leader until originator populates its stack data */
+
+		if (!summarizer_leader_wait_for_command (&cmd))
+			continue;
+		g_assert (cmd == LEADER_COMMAND_PROCEED_TO_TERM);
+
+		/* Finish up the crash report */
+		summarizer_state_wait_and_term (summarizer_leader_data.leader_tid, summarizer_leader_data.originator.state, summarizer_leader_data.originator.out, summarizer_leader_data.originator.working_mem, summarizer_leader_data.originator.provided_size, summarizer_leader_data.originator.originator_summary);
+		LEADER_LOG ("Crash report leader finished reporting.  Ready for next crash\n");
+		summarizer_leader_response_write (LEADER_RESPONSE_STACKS_WALKED);
 	}
 }
 
