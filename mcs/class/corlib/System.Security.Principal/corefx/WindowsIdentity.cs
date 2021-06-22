@@ -939,6 +939,7 @@ namespace System.Security.Principal
                 case Interop.Errors.ERROR_INVALID_HANDLE:
                     throw new ArgumentException(SR.Argument_InvalidImpersonationToken);
                 case Interop.Errors.ERROR_INVALID_PARAMETER:
+                case Interop.Errors.ERROR_INVALID_FUNCTION: /* Not implemented in Wine */
                     if (nullOnInvalidParam)
                     {
                         safeLocalAllocHandle.Dispose();
