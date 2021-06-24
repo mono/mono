@@ -1751,6 +1751,10 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 	// Summarize unmanaged stack
 	// 
 #ifdef HAVE_BACKTRACE_SYMBOLS
+	MonoDomain *domain = mono_domain_get ();
+
+	gboolean has_jit_tls = mono_tls_get_jit_tls () != NULL;
+
 	intptr_t frame_ips [MONO_MAX_SUMMARY_FRAMES];
 
 	out->num_unmanaged_frames = backtrace ((void **)frame_ips, MONO_MAX_SUMMARY_FRAMES);
@@ -1761,11 +1765,16 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 		const char* module_buf = frame->unmanaged_data.module;
 		int success = mono_get_portable_ip (ip, &frame->unmanaged_data.ip, &frame->unmanaged_data.offset, &module_buf, (char *) frame->str_descr);
 
+		/* If the thread is not attached to the JIT, (ie crashed native
+		 * thread), don't try to look for managed method info - it will
+		 * assert in mono_jit_info_table_find_internal */
+		if (!has_jit_tls)
+			continue;
+
 		/* attempt to look up any managed method at that ip */
 		/* TODO: Trampolines - follow examples from mono_print_method_from_ip() */
 
 		MonoJitInfo *ji;
-		MonoDomain *domain = mono_domain_get ();
 		MonoDomain *target_domain;
 		ji = mini_jit_info_table_find_ext (domain, (char *)ip, TRUE, &target_domain);
 		if (ji) {
@@ -1796,7 +1805,7 @@ mono_summarize_unmanaged_stack (MonoThreadSummary *out)
 
 	MonoThreadInfo *thread = mono_thread_info_current_unchecked ();
 	out->info_addr = (intptr_t) thread;
-	out->jit_tls = thread->jit_data;
+	out->jit_tls = thread ? thread->jit_data : NULL;
 	out->domain = mono_domain_get ();
 
 	if (!out->ctx) {
