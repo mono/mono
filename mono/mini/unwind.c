@@ -820,6 +820,8 @@ mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 		 */
 
 		new_table = g_new0 (MonoUnwindInfo, new_cached_info_size );
+
+		/* include array allocations into statistics of memory totally consumed by unwind info */
 		unwind_info_size += sizeof (MonoUnwindInfo) * new_cached_info_size ;
 
 		if (cached_info_size) {
@@ -832,19 +834,23 @@ mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 
 		cached_info = new_table;
 
-		cached_info_size = new_cached_info_size ;
+		cached_info_size = new_cached_info_size;
 	}
 
 	i = cached_info_next;
+
+	/* construct temporary element at array's edge without allocated info copy - it will be used for hashtable lookup */
 	cached_info [ i ].len = unwind_info_len;
 	cached_info [ i ].info = unwind_info;
 
 	gpointer orig_key;
 	if (!g_hash_table_lookup_extended(cached_info_ht, (gconstpointer)(gsize)i, &orig_key, NULL) ) {
+		/* hashtable lookup didnt find match - now need to really add new element with allocated copy of unwind info */
 		cached_info [ i ].info = g_new(guint8, unwind_info_len);
 		memcpy(cached_info [ i ].info, unwind_info, unwind_info_len);
 
-		unwind_info_size+= sizeof(void *) * 3;
+		/* include allocated memory in stats, note that hashtable allocates struct of 3 pointers per each entry */
+		unwind_info_size+= sizeof(void *) * 3 + unwind_info_len;
 		g_hash_table_insert_replace (cached_info_ht, (gpointer)(gsize)i, NULL, TRUE);
 
 		cached_info_next = i + 1;
