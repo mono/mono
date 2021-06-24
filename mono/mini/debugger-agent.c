@@ -5028,6 +5028,10 @@ ss_clear_for_assembly (SingleStepReq *req, MonoAssembly *assembly)
 static void
 mono_debugger_agent_send_crash (char *json_dump, MonoStackHash *hashes, int pause)
 {
+	/* Did we crash on an unattached thread?  Can't do runtime notifications from there */
+	if (!mono_thread_info_current_unchecked ())
+		return;
+
 	MONO_ENTER_GC_UNSAFE;
 #ifndef DISABLE_CRASH_REPORTING
 	int suspend_policy;
