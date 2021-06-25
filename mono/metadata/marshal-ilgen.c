@@ -702,7 +702,7 @@ conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 	// LPStr
 	// In Mono, LPSTR was historically treated as UTF8STR
 	case MONO_MARSHAL_CONV_STR_LPSTR:
-		return MONO_JIT_ICALL_mono_string_to_utf8str;
+		return MONO_JIT_ICALL_mono_string_to_ansistr;
 	case MONO_MARSHAL_CONV_LPSTR_STR:
 		*ind_store_type = CEE_STIND_REF;
 		return MONO_JIT_ICALL_ves_icall_string_new_wrapper;

@@ -134,4 +134,37 @@ mono_string_to_utf8str_impl (MonoStringHandle s, MonoError *error)
 	}
 }
 
+gpointer
+mono_string_to_ansistr_impl (MonoStringHandle s, MonoError *error)
+{
+	char *as = NULL;
+	gunichar2 *ws;
+	glong len, wlen;
+
+	if (MONO_HANDLE_IS_NULL (s))
+		return NULL;
+
+	wlen = mono_string_handle_length (s);
+
+	if (!wlen) {
+		as = (char*)CoTaskMemAlloc (1);
+		g_assert (as);
+		as [0] = '\0';
+		return as;
+	}
+
+	MonoGCHandle gchandle = NULL;
+	ws = mono_string_handle_pin_chars (s, &gchandle);
+	len = WideCharToMultiByte (CP_ACP, 0, ws, wlen+1, NULL, 0, NULL, NULL);
+	if (len)
+	{
+		as = (char*)CoTaskMemAlloc (len);
+		g_assert (as);
+		if (as)
+			WideCharToMultiByte (CP_ACP, 0, ws, wlen+1, as, len, NULL, NULL);
+	}
+	mono_gchandle_free_internal (gchandle);
+	return as;
+}
+
 #endif /* HOST_WIN32 */

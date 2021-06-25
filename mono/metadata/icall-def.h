@@ -1200,3 +1200,5 @@ MONO_HANDLE_REGISTER_ICALL (ves_icall_mono_marshal_xdomain_copy_value, MonoObjec
 MONO_HANDLE_REGISTER_ICALL (ves_icall_mono_string_from_utf16, MonoString, 1, (const_gunichar2_ptr))
 MONO_HANDLE_REGISTER_ICALL (ves_icall_mono_string_to_utf8, char_ptr, 1, (MonoString))
 MONO_HANDLE_REGISTER_ICALL (ves_icall_string_new_wrapper, MonoString, 1, (const_char_ptr))
+
+MONO_HANDLE_REGISTER_ICALL (mono_string_to_ansistr, gpointer, 1, (MonoString))

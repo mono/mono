@@ -284,6 +284,7 @@ MONO_JIT_ICALL (mono_string_from_byvalwstr) \
 MONO_JIT_ICALL (mono_string_from_tbstr) \
 MONO_JIT_ICALL (mono_string_new_len_wrapper) \
 MONO_JIT_ICALL (mono_string_new_wrapper_internal) \
+MONO_JIT_ICALL (mono_string_to_ansistr) \
 MONO_JIT_ICALL (mono_string_to_ansibstr) \
 MONO_JIT_ICALL (mono_string_to_bstr) \
 MONO_JIT_ICALL (mono_string_to_byvalstr) \
