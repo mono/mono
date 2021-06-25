@@ -4836,8 +4836,9 @@ MonoException*
 mono_thread_get_undeniable_exception (void)
 {
 	MonoInternalThread *thread = mono_thread_internal_current ();
+	MonoException *exc = (MonoException*)mono_atomic_cas_ptr ((volatile gpointer *)&thread->abort_exc, NULL, NULL);
 
-	if (!(thread && thread->abort_exc && !is_running_protected_wrapper ()))
+	if (!(thread && exc && !is_running_protected_wrapper ()))
 		return NULL;
 
 	// We don't want to have our exception effect calls made by
@@ -4850,9 +4851,9 @@ mono_thread_get_undeniable_exception (void)
 	 * FIXME: Clear the abort exception and return an AppDomainUnloaded 
 	 * exception if the thread no longer references a dying appdomain.
 	 */ 
-	thread->abort_exc->trace_ips = NULL;
-	thread->abort_exc->stack_trace = NULL;
-	return thread->abort_exc;
+	exc->trace_ips = NULL;
+	exc->stack_trace = NULL;
+	return exc;
 }
 
 #if MONO_SMALL_CONFIG
