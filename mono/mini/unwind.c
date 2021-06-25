@@ -738,22 +738,24 @@ mono_unwind_cleanup (void)
 	if (!cached_info)
 		return;
 
-	for (int i = 0; i < cached_info_next; ++i) {
+	for (int i = 0; i < cached_info_next; ++i)
 		g_free (cached_info [i].info);
-	}
+
 	g_free (cached_info);
+
+	cached_info = NULL;
+	cached_info_next = 0;
+	cached_info_size = 0;
+
+	g_hash_table_destroy (cached_info_ht);
+	cached_info_ht = NULL;
 
 	for (GSList *cursor = cached_info_list; cursor != NULL; cursor = cursor->next)
 		g_free (cursor->data);
 
 	g_slist_free (cached_info_list);
 
-	cached_info = NULL;
-	cached_info_next = cached_info_size = 0;
 	cached_info_list = NULL;
-
-	g_hash_table_destroy(cached_info_ht);
-	cached_info_ht = NULL;
 
 	unwind_info_size = 0;
 }
@@ -762,13 +764,12 @@ mono_unwind_cleanup (void)
 static guint
 cached_info_hash(gconstpointer key)
 {
-	const guint8 *info = cached_info[GPOINTER_TO_UINT(key)].info;
-	const guint len = cached_info[GPOINTER_TO_UINT(key)].len;
 	guint i, a;
+	const guint8 *info = cached_info [GPOINTER_TO_UINT (key)].info;
+	const guint len = cached_info [GPOINTER_TO_UINT (key)].len;
 
-	for (i = a = 0; i != len; ++i) {
-		a ^= (((guint)info[i]) << (i & 0xf));
-	}
+	for (i = a = 0; i != len; ++i)
+		a ^= (((guint)info [i]) << (i & 0xf));
 
 	return a;
 }
@@ -776,14 +777,13 @@ cached_info_hash(gconstpointer key)
 static gboolean
 cached_info_eq(gconstpointer a, gconstpointer b)
 {
-	const guint32 lena = cached_info[GPOINTER_TO_UINT(a)].len;
-	const guint32 lenb = cached_info[GPOINTER_TO_UINT(b)].len;
+	const guint32 lena = cached_info [GPOINTER_TO_UINT (a)].len;
+	const guint32 lenb = cached_info [GPOINTER_TO_UINT (b)].len;
 	if (lena == lenb) {
-		const guint8 *infoa = cached_info[GPOINTER_TO_UINT(a)].info;
-		const guint8 *infob = cached_info[GPOINTER_TO_UINT(b)].info;
-		if (memcmp(infoa, infob, lena) == 0) {
+		const guint8 *infoa = cached_info [GPOINTER_TO_UINT (a)].info;
+		const guint8 *infob = cached_info [GPOINTER_TO_UINT (b)].info;
+		if (memcmp (infoa, infob, lena) == 0)
 			return TRUE;
-		}
 	}
 
 	return FALSE;
@@ -802,31 +802,31 @@ cached_info_eq(gconstpointer a, gconstpointer b)
 guint32
 mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 {
+	gpointer orig_key;
 	guint32 i;
 	unwind_lock ();
 
-	if (!cached_info_ht) {
-		cached_info_ht = g_hash_table_new(cached_info_hash, cached_info_eq);
-	}
+	if (!cached_info_ht)
+		cached_info_ht = g_hash_table_new (cached_info_hash, cached_info_eq);
 
 	if (cached_info_next >= cached_info_size) {
 		MonoUnwindInfo *new_table;
 		int new_cached_info_size = cached_info_size ? cached_info_size * 2 : 16;
-		g_assert(new_cached_info_size > cached_info_size);
+
+		/* ensure no integer overflow */
+		g_assert (new_cached_info_size > cached_info_size);
 
 		/*
 		 * Avoid freeing the old table so mono_get_cached_unwind_info ()
 		 * doesn't need locks/hazard pointers.
 		 */
-
 		new_table = g_new0 (MonoUnwindInfo, new_cached_info_size );
 
 		/* include array allocations into statistics of memory totally consumed by unwind info */
 		unwind_info_size += sizeof (MonoUnwindInfo) * new_cached_info_size ;
 
-		if (cached_info_size) {
-			memcpy (new_table, cached_info, cached_info_size * sizeof (MonoUnwindInfo));
-		}
+		if (cached_info_size)
+			memcpy (new_table, cached_info, sizeof (MonoUnwindInfo) * cached_info_size);
 
 		mono_memory_barrier ();
 
@@ -840,26 +840,26 @@ mono_cache_unwind_info (guint8 *unwind_info, guint32 unwind_info_len)
 	i = cached_info_next;
 
 	/* construct temporary element at array's edge without allocated info copy - it will be used for hashtable lookup */
-	cached_info [ i ].len = unwind_info_len;
-	cached_info [ i ].info = unwind_info;
+	cached_info [i].len = unwind_info_len;
+	cached_info [i].info = unwind_info;
 
-	gpointer orig_key;
-	if (!g_hash_table_lookup_extended(cached_info_ht, (gconstpointer)(gsize)i, &orig_key, NULL) ) {
+	if (!g_hash_table_lookup_extended (cached_info_ht, GUINT_TO_POINTER (i), &orig_key, NULL) ) {
 		/* hashtable lookup didnt find match - now need to really add new element with allocated copy of unwind info */
-		cached_info [ i ].info = g_new(guint8, unwind_info_len);
-		memcpy(cached_info [ i ].info, unwind_info, unwind_info_len);
+		cached_info [i].info = g_new (guint8, unwind_info_len);
+		memcpy (cached_info [i].info, unwind_info, unwind_info_len);
 
 		/* include allocated memory in stats, note that hashtable allocates struct of 3 pointers per each entry */
-		unwind_info_size+= sizeof(void *) * 3 + unwind_info_len;
-		g_hash_table_insert_replace (cached_info_ht, (gpointer)(gsize)i, NULL, TRUE);
+		unwind_info_size += sizeof (void *) * 3 + unwind_info_len;
+		g_hash_table_insert_replace (cached_info_ht, GUINT_TO_POINTER (i), NULL, TRUE);
 
 		cached_info_next = i + 1;
 
 	} else {
-		i = (guint32)(gsize)orig_key;
+		i = GPOINTER_TO_UINT (orig_key);
 	}
 
 	unwind_unlock ();
+
 	return i;
 }
 
