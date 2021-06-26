@@ -277,6 +277,7 @@ MONO_JIT_ICALL (mono_resume_unwind) \
 MONO_JIT_ICALL (mono_rethrow_preserve_exception) \
 MONO_JIT_ICALL (mono_string_builder_to_utf16) \
 MONO_JIT_ICALL (mono_string_builder_to_utf8) \
+MONO_JIT_ICALL (mono_string_from_ansistr) \
 MONO_JIT_ICALL (mono_string_from_ansibstr) \
 MONO_JIT_ICALL (mono_string_from_bstr_icall) \
 MONO_JIT_ICALL (mono_string_from_byvalstr) \

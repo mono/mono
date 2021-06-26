@@ -167,4 +167,38 @@ mono_string_to_ansistr_impl (MonoStringHandle s, MonoError *error)
 	return as;
 }
 
+MonoStringHandle
+mono_string_from_ansistr_impl (const char *text, MonoError *error)
+{
+	MonoString *result;
+	glong len;
+	gunichar2 *wtext;
+
+	if (!text)
+		return NULL_HANDLE_STRING;
+
+	len = MultiByteToWideChar(CP_ACP, 0, text, -1, NULL, 0);
+
+	if (!len)
+		return NULL_HANDLE_STRING;
+
+	wtext = g_malloc(len * sizeof(*wtext));
+
+	if (!wtext)
+		return NULL_HANDLE_STRING;
+
+	if (!MultiByteToWideChar(CP_ACP, 0, text, -1, wtext, len))
+	{
+		g_free(wtext);
+		return NULL_HANDLE_STRING;
+	}
+
+	result = mono_string_from_utf16_checked(wtext, error);
+	g_free(wtext);
+
+	return_val_if_nok (error, NULL_HANDLE_STRING);
+
+	return MONO_HANDLE_NEW (MonoString, result);
+}
+
 #endif /* HOST_WIN32 */
