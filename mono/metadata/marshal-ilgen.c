@@ -5758,7 +5758,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 					mono_mb_emit_icall (mb, mono_string_utf16_to_builder2);
 					break;
 				case MONO_NATIVE_LPSTR:
-					mono_mb_emit_icall (mb, mono_string_utf8_to_builder2);
+					mono_mb_emit_icall (mb, mono_string_ansi_to_builder2);
 					break;
 				case MONO_NATIVE_UTF8STR:
 					mono_mb_emit_icall (mb, mono_string_utf8_to_builder2);
@@ -5942,7 +5942,10 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			g_assert (encoding != -1);
 
 			mono_mb_emit_ldarg (mb, argnum);
-			mono_mb_emit_icall (mb, mono_string_utf8_to_builder2);
+			if (encoding == MONO_NATIVE_LPSTR)
+				mono_mb_emit_icall (mb, mono_string_ansi_to_builder2);
+			else
+				mono_mb_emit_icall (mb, mono_string_utf8_to_builder2);
 			mono_mb_emit_stloc (mb, conv_arg);
 			break;
 		}

@@ -264,6 +264,7 @@ mono_marshal_init (void)
 		register_icall (mono_marshal_set_last_error_windows, mono_icall_sig_void_int32, TRUE);
 		register_icall (mono_marshal_clear_last_error, mono_icall_sig_void, TRUE);
 		register_icall (mono_string_ansi_to_builder, mono_icall_sig_void_ptr_ptr, FALSE);
+		register_icall (mono_string_ansi_to_builder2, mono_icall_sig_object_ptr, FALSE);
 		register_icall (mono_string_utf8_to_builder, mono_icall_sig_void_ptr_ptr, FALSE);
 		register_icall (mono_string_utf8_to_builder2, mono_icall_sig_object_ptr, FALSE);
 		register_icall (mono_string_utf16_to_builder, mono_icall_sig_void_ptr_ptr, FALSE);
@@ -789,7 +790,7 @@ mono_array_to_byte_byvalarray_impl (gpointer native_arr, MonoArrayHandle arr, gu
 	g_free (as);
 }
 
-static MonoStringBuilderHandle
+MonoStringBuilderHandle
 mono_string_builder_new (int starting_string_length, MonoError *error)
 {
 	static MonoClass *string_builder_class;
@@ -1083,6 +1084,12 @@ void
 mono_string_ansi_to_builder_impl (MonoStringBuilderHandle sb, const char *text, MonoError *error)
 {
 	return mono_string_utf8_to_builder_impl (sb, text, error);
+}
+
+MonoStringBuilderHandle
+mono_string_ansi_to_builder2_impl (const char *text, MonoError *error)
+{
+	return mono_string_utf8_to_builder2_impl (text, error);
 }
 
 #endif

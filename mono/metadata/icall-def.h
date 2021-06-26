@@ -1205,3 +1205,5 @@ MONO_HANDLE_REGISTER_ICALL (mono_string_to_ansistr, gpointer, 1, (MonoString))
 MONO_HANDLE_REGISTER_ICALL (mono_string_from_ansistr, MonoString, 1, (const_char_ptr))
 MONO_HANDLE_REGISTER_ICALL (mono_string_builder_to_ansi, char_ptr, 1, (MonoStringBuilder))
 MONO_HANDLE_REGISTER_ICALL (mono_string_ansi_to_builder, void, 2, (MonoStringBuilder, const_char_ptr))
+MONO_HANDLE_REGISTER_ICALL (mono_string_ansi_to_builder2, MonoStringBuilder, 1, (const_char_ptr))
+

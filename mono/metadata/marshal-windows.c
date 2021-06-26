@@ -271,4 +271,21 @@ mono_string_ansi_to_builder_impl (MonoStringBuilderHandle sb, const char *text, 
 	g_free (ut);
 }
 
+MonoStringBuilderHandle
+mono_string_ansi_to_builder2_impl (const char *text, MonoError *error)
+{
+	if (!text)
+		return NULL_HANDLE_STRING_BUILDER;
+
+	const gsize len = strlen (text);
+
+	MonoStringBuilderHandle sb = mono_string_builder_new (len, error);
+	return_val_if_nok (error, NULL_HANDLE_STRING_BUILDER);
+
+	mono_string_ansi_to_builder_impl (sb, text, error);
+	return_val_if_nok (error, NULL_HANDLE_STRING_BUILDER);
+
+	return sb;
+}
+
 #endif /* HOST_WIN32 */

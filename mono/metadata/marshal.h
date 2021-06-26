@@ -622,6 +622,9 @@ mono_marshal_boolean_managed_conv_in_get_conv_arg_class (MonoMarshalSpec *spec, 
 void
 mono_string_utf16_to_builder_copy (MonoStringBuilderHandle sb, const gunichar2 *text, size_t string_len, MonoError *error);
 
+MonoStringBuilderHandle
+mono_string_builder_new (int starting_string_length, MonoError *error);
+
 gboolean
 mono_pinvoke_is_unicode (MonoMethodPInvoke *piinfo);
 

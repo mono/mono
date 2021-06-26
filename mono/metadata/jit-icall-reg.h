@@ -276,6 +276,7 @@ MONO_JIT_ICALL (mono_resolve_vcall_gsharedvt) \
 MONO_JIT_ICALL (mono_resume_unwind) \
 MONO_JIT_ICALL (mono_rethrow_preserve_exception) \
 MONO_JIT_ICALL (mono_string_ansi_to_builder) \
+MONO_JIT_ICALL (mono_string_ansi_to_builder2) \
 MONO_JIT_ICALL (mono_string_builder_to_ansi) \
 MONO_JIT_ICALL (mono_string_builder_to_utf16) \
 MONO_JIT_ICALL (mono_string_builder_to_utf8) \
