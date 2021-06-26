@@ -243,4 +243,32 @@ exit:
 	return res;
 }
 
+void
+mono_string_ansi_to_builder_impl (MonoStringBuilderHandle sb, const char *text, MonoError *error)
+{
+	if (!MONO_HANDLE_BOOL (sb) || !text)
+		return;
+
+	glong len = MultiByteToWideChar(CP_ACP, 0, text, -1, NULL, 0);
+
+	if (!len)
+		return;
+
+	gunichar2* ut = g_malloc(len * sizeof(*ut));
+
+	MultiByteToWideChar(CP_ACP, 0, text, -1, ut, len);
+
+	len -= 1; // exclude NULL terminator
+
+	int capacity = mono_string_builder_capacity (sb);
+
+	if (len > capacity)
+		len = capacity;
+
+	MONO_HANDLE_SETRAW (sb, chunkPrevious, NULL);
+	mono_string_utf16_to_builder_copy (sb, ut, len, error);
+
+	g_free (ut);
+}
+
 #endif /* HOST_WIN32 */

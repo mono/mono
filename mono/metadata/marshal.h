@@ -619,6 +619,9 @@ mono_marshal_boolean_conv_in_get_local_type (MonoMarshalSpec *spec, guint8 *ldc_
 MonoClass*
 mono_marshal_boolean_managed_conv_in_get_conv_arg_class (MonoMarshalSpec *spec, guint8 *ldop/*out*/);
 
+void
+mono_string_utf16_to_builder_copy (MonoStringBuilderHandle sb, const gunichar2 *text, size_t string_len, MonoError *error);
+
 gboolean
 mono_pinvoke_is_unicode (MonoMethodPInvoke *piinfo);
 

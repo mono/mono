@@ -710,7 +710,7 @@ conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 		return MONO_JIT_ICALL_mono_string_builder_to_ansi;
 	case MONO_MARSHAL_CONV_LPSTR_SB:
 		*ind_store_type = CEE_STIND_REF;
-		return MONO_JIT_ICALL_mono_string_utf8_to_builder;
+		return MONO_JIT_ICALL_mono_string_ansi_to_builder;
 
 	// LPTStr
 	// FIXME: This is how LPTStr was handled on legacy, but it's not correct and for netcore we should implement this more properly.
