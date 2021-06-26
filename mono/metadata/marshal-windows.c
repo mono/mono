@@ -201,4 +201,46 @@ mono_string_from_ansistr_impl (const char *text, MonoError *error)
 	return MONO_HANDLE_NEW (MonoString, result);
 }
 
+gchar*
+mono_string_builder_to_ansi_impl (MonoStringBuilderHandle sb, MonoError *error)
+{
+	char *res = NULL;
+	gunichar2 *str_utf16 = NULL;
+	glong byte_count = 0;
+	guint len = 0, wlen;
+
+	if (!MONO_HANDLE_BOOL (sb))
+		goto exit;
+
+	str_utf16 = mono_string_builder_to_utf16_impl (sb, error);
+	goto_if_nok (error, exit);
+
+	wlen = mono_string_builder_string_length (sb);
+
+	if (wlen)
+	{
+		byte_count = WideCharToMultiByte(CP_ACP, 0, str_utf16, wlen, NULL, 0, NULL, NULL);
+		if (!byte_count) {
+			g_printerr("%i %p %i\n", GetLastError(), str_utf16, wlen);
+			mono_error_set_execution_engine (error, "Failed to convert StringBuilder from utf16 to CP_ACP");
+			goto exit;
+		}
+	}
+
+	len = mono_string_builder_capacity (sb) + 1;
+	res = (char *)mono_marshal_alloc (MAX (byte_count + 1, len), error);
+	if (!is_ok (error)) {
+		res = NULL;
+		goto exit;
+	}
+
+	if (wlen)
+		WideCharToMultiByte(CP_ACP, 0, str_utf16, wlen, res, byte_count, NULL, NULL);
+	res [byte_count] = 0;
+
+exit:
+	mono_marshal_free (str_utf16);
+	return res;
+}
+
 #endif /* HOST_WIN32 */

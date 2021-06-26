@@ -707,7 +707,7 @@ conv_to_icall (MonoMarshalConv conv, int *ind_store_type)
 		*ind_store_type = CEE_STIND_REF;
 		return MONO_JIT_ICALL_mono_string_from_ansistr;
 	case MONO_MARSHAL_CONV_SB_LPSTR:
-		return MONO_JIT_ICALL_mono_string_builder_to_utf8;
+		return MONO_JIT_ICALL_mono_string_builder_to_ansi;
 	case MONO_MARSHAL_CONV_LPSTR_SB:
 		*ind_store_type = CEE_STIND_REF;
 		return MONO_JIT_ICALL_mono_string_utf8_to_builder;

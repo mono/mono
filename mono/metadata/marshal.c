@@ -246,6 +246,7 @@ mono_marshal_init (void)
 		register_icall (mono_string_to_utf8str, mono_icall_sig_ptr_obj, FALSE);
 		register_icall (mono_string_to_ansibstr, mono_icall_sig_ptr_object, FALSE);
 		register_icall (mono_string_to_tbstr, mono_icall_sig_ptr_object, FALSE);
+		register_icall (mono_string_builder_to_ansi, mono_icall_sig_ptr_object, FALSE);
 		register_icall (mono_string_builder_to_utf8, mono_icall_sig_ptr_object, FALSE);
 		register_icall (mono_string_builder_to_utf16, mono_icall_sig_ptr_object, FALSE);
 		register_icall (mono_array_to_savearray, mono_icall_sig_ptr_object, FALSE);
@@ -1069,6 +1070,12 @@ MonoStringHandle
 mono_string_from_ansistr_impl (const char *text, MonoError *error)
 {
 	return ves_icall_string_new_wrapper_impl (text, error);
+}
+
+gchar*
+mono_string_builder_to_ansi_impl (MonoStringBuilderHandle sb, MonoError *error)
+{
+	return mono_string_builder_to_utf8_impl (sb, error);
 }
 
 #endif
