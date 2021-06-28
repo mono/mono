@@ -52,7 +52,15 @@ mono_ldftn (MonoMethod *method)
 
 		addr = mini_add_method_trampoline (method, addr, mono_method_needs_static_rgctx_invoke (method, FALSE), FALSE);
 		return addr;
-	}
+	} else if (method->is_inflated && mono_method_needs_static_rgctx_invoke (method, FALSE)) {
+		addr = mono_compile_method_checked (method, error);
+		if (!is_ok (error)) {
+			mono_error_set_pending_exception (error);
+			return NULL;
+		}
+		addr = mini_add_method_trampoline (method, addr, TRUE, FALSE);
+		return mono_create_ftnptr (mono_domain_get (), addr);
+        }
 
 	/* if we need the address of a native-to-managed wrapper, just compile it now, trampoline needs thread local
 	 * variables that won't be there if we run on a thread that's not attached yet. */
