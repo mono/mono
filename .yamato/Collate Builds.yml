@@ -23,7 +23,7 @@ triggers:
           - "unity-master"
   branches:
     only:
-      - "master"
+      - "unity-master"
   cancel_old_ci: true
   recurring:
     - branch: unity-master
