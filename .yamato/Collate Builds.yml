@@ -21,6 +21,9 @@ triggers:
     - targets:
         only:
           - "unity-master"
+  branches:
+    only:
+      - "master"
   cancel_old_ci: true
   recurring:
     - branch: unity-master
