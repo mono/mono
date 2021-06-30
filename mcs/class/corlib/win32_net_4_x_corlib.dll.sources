@@ -56,6 +56,9 @@ corefx/Registry.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegQueryValueEx.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/advapi32/Interop.RegSetValueEx.cs
 
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.MultiByteToWideChar.cs
+../../../external/corefx/src/Common/src/CoreLib/Interop/Windows/Kernel32/Interop.WideCharToMultiByte.cs
+
 System.Security.Principal/corefx/IdentityReference.cs
 System.Security.Principal/corefx/GenericPrincipal.cs
 System.Security.Principal/corefx/WindowsIdentity.cs
