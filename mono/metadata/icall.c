@@ -2974,6 +2974,23 @@ fail:
 }
 
 static gboolean
+method_is_reabstracted (MonoMethod *method)
+{
+	/* only on interfaces */
+	/* method is marked "final abstract" */
+	/* FIXME: we need some other way to detect reabstracted methods.  "final" is an incidental detail of the spec. */
+	return m_method_is_final (method) && m_method_is_abstract (method);
+}
+
+static gboolean
+method_is_dim (MonoMethod *method)
+{
+	/* only valid on interface methods*/
+	/* method is marked "virtual" but not "virtual abstract" */
+	return m_method_is_virtual (method) && !m_method_is_abstract (method);
+}
+
+static gboolean
 set_interface_map_data_method_object (MonoDomain *domain, MonoMethod *method, MonoClass *iclass, int ioffset, MonoClass *klass, MonoArrayHandle targets, MonoArrayHandle methods, int i, MonoError *error)
 {
 	HANDLE_FUNCTION_ENTER ();
@@ -3006,9 +3023,25 @@ set_interface_map_data_method_object (MonoDomain *domain, MonoMethod *method, Mo
 		}
 	}
 
-	if (foundMethod->flags & METHOD_ATTRIBUTE_ABSTRACT)
+	/*
+	 * if the iterface method is reabstracted, and either the found implementation method is abstract, or the found
+	 * implementation method is from another DIM (meaning neither klass nor any of its ancestor classes implemented
+	 * the method), then say the target method is null.
+	 */
+	if (method_is_reabstracted (method) &&
+	    (m_method_is_abstract (foundMethod) ||
+	     (mono_class_is_interface (foundMethod->klass) && method_is_dim (foundMethod))))
 		MONO_HANDLE_ARRAY_SETREF (targets, i, NULL_HANDLE);
-	else {
+	else if (mono_class_is_interface (foundMethod->klass) && method_is_reabstracted (foundMethod) && !m_class_is_abstract (klass)) {
+		/* if the method we found is a reabstracted DIM method, but the class isn't abstract, return NULL */
+		/*
+		 * (C# doesn't seem to allow constructing such types, it requires the whole class to be abstract - in
+		 * which case we are supposed to return the reabstracted interface method.  But in IL we can make a
+		 * non-abstract class with reabstracted interface methods - which is supposed to fail with an
+		 * EntryPointNotFoundException at invoke time, but does not prevent the class from loading.)
+		 */
+		MONO_HANDLE_ARRAY_SETREF (targets, i, NULL_HANDLE);
+	} else {
 		MONO_HANDLE_ASSIGN (member, mono_method_get_object_handle (domain, foundMethod, mono_class_is_interface (foundMethod->klass) ? foundMethod->klass : klass, error));
 		goto_if_nok (error, leave);
 		MONO_HANDLE_ARRAY_SETREF (targets, i, member);
