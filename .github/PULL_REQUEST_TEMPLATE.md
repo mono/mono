@@ -3,7 +3,35 @@
 <!--
 Thank you for your Pull Request!
 
-If you are new to contributing to Mono, please try to do your best at conforming to our coding guidelines http://www.mono-project.com/community/contributing/coding-guidelines/ but don't worry if you get something wrong. One of the project members will help you to get things landed.
+Here are a few things to think about (see below for more details). Please check each option after the PR is created.
+-->
 
-Does your pull request fix any of the existing issues? Please use the following format: Fixes #issue-number
+- Should this pull request have release notes?
+  - [ ] Yes
+  - [ ] No
+- Do these changes need to be back ported?
+  - [ ] Yes
+  - [ ] No
+
+Reviewers: please consider these questions as well! :heart:
+
+<!-- Use this section if the pull request has release notes.
+**Release notes**
+
+Fixed case XXXXXX @username:
+Mono: Your release notes go here.
+
+Other options: Internal, Changed, Improved, Feature. 
+-->
+
+<!-- Use this section is the pull request should be back ported.
+**Backports**
+
+List the versions of Unity where this change should be back ported here.
+-->
+
+<!-- Use this section if the pull request requires other changes in the Unity repository.
+**Unity repository changes**
+
+List any Unity repository PRs.
 -->
