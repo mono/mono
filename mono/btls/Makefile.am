@@ -58,7 +58,7 @@ all-local: build-shared/libmono-btls-shared$(libsuffix)
 
 build-shared/$(BUILDFILE):
 	-mkdir -p build-shared
-	(cd build-shared && CC="$(CC)" CXX="$(CXX)" "$(CMAKE)" $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_SHARED_LIBS=1 "$(abs_top_srcdir)/mono/btls")
+	(cd build-shared && CC="$(CC)" CXX="$(CXX)" $(CMAKE) $(CMAKE_ARGS) $(BTLS_CMAKE_ARGS) -DBUILD_SHARED_LIBS=1 "$(abs_top_srcdir)/mono/btls")
 
 if NINJA
 build-shared/libmono-btls-shared$(libsuffix): build-shared/$(BUILDFILE) $(MONO_BTLS_SOURCES_FILES)
