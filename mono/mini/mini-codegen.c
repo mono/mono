@@ -1456,8 +1456,30 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 						DEBUG (printf ("\tshortcut assignment of R%d to %s\n", sreg, mono_arch_regname (dest_sreg)));
 						assign_reg (cfg, rs, sreg, dest_sreg, 0);
 					} else if (val < -1) {
-						/* FIXME: */
-						g_assert_not_reached ();
+						/* Argument spilled, need to load from stack */
+						MonoInst *load;
+						int k, spill;
+
+						MONO_INST_NEW (cfg, load, regbank_load_ops [0]);
+
+						spill = -val - 1;
+
+						load->dreg = dest_sreg;
+						load->inst_basereg = cfg->frame_reg;
+						load->inst_offset = mono_spillvar_offset (cfg, spill, get_vreg_bank (cfg, sreg, 0));
+
+						insert_before_ins (bb, ins, load);
+						DEBUG (printf ("\tload %s from spilled reg (%d at 0x%08lx(%%ebp)) R%d\n", mono_regname_full (dest_sreg, 0), spill, (long)load->inst_offset, sreg));
+						for (k = 0; k < num_sregs; ++k) {
+							if (k != j)
+								sreg_masks [k] &= ~ (regmask (dest_sreg));
+						}
+						/*
+						 * Prevent the dreg from being allocated to dest_sreg
+						 * too, since it could force sreg1 to be allocated to
+						 * the same reg on x86.
+						 */
+						dreg_mask &= ~ (regmask (dest_sreg));
 					} else {
 						/* Argument already in hard reg, need to copy */
 						MonoInst *copy = create_copy_ins (cfg, bb, tmp, dest_sreg, val, NULL, ip, 0);
