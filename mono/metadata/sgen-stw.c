@@ -317,7 +317,7 @@ sgen_unified_suspend_stop_world (void)
 		gint restart_counter = 0;
 
 		FOREACH_THREAD_EXCLUDE (info, MONO_THREAD_INFO_FLAGS_NO_GC) {
-			guint8 suspend_count;
+			gint suspend_count;
 
 			int reason = 0;
 			if (info->client_info.suspend_done || !sgen_is_thread_in_current_stw (info, &reason)) {
@@ -340,7 +340,7 @@ sgen_unified_suspend_stop_world (void)
 
 			suspend_count = mono_thread_info_suspend_count (info);
 			if (suspend_count != 1)
-				g_error ("[%p] suspend_count = %02x, but should be 1", mono_thread_info_get_tid (info), (unsigned int)suspend_count);
+				g_error ("[%p] suspend_count = %d, but should be 1", mono_thread_info_get_tid (info), suspend_count);
 
 			info->client_info.skip = !mono_thread_info_begin_pulse_resume_and_request_suspension (info);
 			if (!info->client_info.skip)
