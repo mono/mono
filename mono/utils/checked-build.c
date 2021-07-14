@@ -203,12 +203,12 @@ collect_backtrace (gpointer out_data[])
 	/* Suppose we're using hybrid suspend and T1 is in GC Unsafe and T2 is
 	 * GC Safe.  T1 will be coop suspended, and T2 will be async suspended.
 	 * Suppose T1 is in RUNNING, and T2 just changed from RUNNING to
-	 * BLOCKING and it is in trace_state_change to record this fact.
+	 * BLOCKING and it is in trace_state_change_with_func to record this fact.
 	 *
 	 * suspend initiator: switches T1 to ASYNC_SUSPEND_REQUESTED
 	 * suspend initiator: switches T2 to BLOCKING_SUSPEND_REQUESTED and sends a suspend signal
 	 * T1: calls mono_threads_transition_state_poll (),
-	 * T1: switches to SELF_SUSPENDED and starts trace_state_change ()
+	 * T1: switches to SELF_SUSPENDED and starts trace_state_change_with_func ()
 	 * T2: is still in checked_build_thread_transition for the RUNNING->BLOCKING transition and calls backtrace ()
 	 * T2: suspend signal lands while T2 is in backtrace() holding a lock; T2 switches to BLOCKING_ASYNC_SUSPENDED () and waits for resume
 	 * T1: calls backtrace (), waits for the lock ()
