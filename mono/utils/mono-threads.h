@@ -168,11 +168,11 @@ enum {
 };
 
 typedef union {
-	uint16_t raw;
+	int32_t raw; // FIXME: why 32 bits when the struct is 16
 	struct {
-		uint8_t state : 7;
-		uint8_t no_safepoints : 1;
-		uint8_t suspend_count;
+		int32_t state : 7;
+		int32_t no_safepoints : 1;
+		int32_t suspend_count;
 	};
 } MonoThreadStateMachine;
 
