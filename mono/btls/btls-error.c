@@ -60,6 +60,4 @@ mono_btls_error_get_reason (int error)
         default:
             return 0;
     }
-
-    return reason;
 }
