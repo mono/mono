@@ -996,9 +996,9 @@ mono_thread_info_is_live (MonoThreadInfo *info)
 	case STATE_STARTING:
 	case STATE_DETACHED:
 		return FALSE;
-	default:
-		return TRUE;
 	}
+
+	return TRUE;
 }
 
 int
@@ -1031,9 +1031,9 @@ mono_thread_is_gc_unsafe_mode (void)
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
 		return TRUE;
-	default:
-		return FALSE;
 	}
+
+	return FALSE;
 }
 
 gboolean
