@@ -51,10 +51,9 @@ mono_btls_error_get_reason (int error)
     if (ERR_GET_LIB (error) == ERR_LIB_SYS)
         return -1;
 
-    switch (ERR_GET_REASON (error)) {
-        case SSL_R_NO_RENEGOTIATION:
-            return 100;
-        default:
-            return 0;
-    }
+    if (ERR_GET_REASON (error) == SSL_R_NO_RENEGOTIATION)
+        return 100;
+
+    return 0;
+
 }
