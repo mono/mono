@@ -298,7 +298,7 @@ retry_state_change:
 		 * In preemptive suspend of a blocking thread since there's a single suspend initiator active at a time,
 		 * we would expect a finish_async_suspension or a done/abort blocking before the next suspension request
 		 */
-		if (suspend_count <= 0 || suspend_count >= THREAD_SUSPEND_COUNT_MAX))
+		if (suspend_count <= 0 || suspend_count >= THREAD_SUSPEND_COUNT_MAX)
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0 and < THREAD_SUSPEND_COUNT_MAX", suspend_count);
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE");
@@ -344,7 +344,7 @@ mono_threads_transition_peek_blocking_suspend_requested (MonoThreadInfo *info)
 	case STATE_BLOCKING_SELF_SUSPENDED:
 	case STATE_BLOCKING_ASYNC_SUSPENDED:
 	case STATE_BLOCKING_SUSPEND_REQUESTED:
-		if (suspend_count <= 0 || suspend_count >= THREAD_SUSPEND_COUNT_MAX))
+		if (suspend_count <= 0 || suspend_count >= THREAD_SUSPEND_COUNT_MAX)
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0 and < THREAD_SUSPEND_COUNT_MAX", suspend_count);
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE");
@@ -429,7 +429,6 @@ Returns one of the following values:
 - InitSelfResume: The thread is blocked on self suspend and should be resumed 
 - InitAsyncResume: The thread is blocked on async suspend and should be resumed
 - ResumeInitBlockingResume: The thread was suspended on the exit path of blocking state and should be resumed
-      FIXME: ResumeInitBlockingResume is just InitSelfResume by a different name.
 
 [2] This threading system uses an unsigned suspend count. Which means a resume cannot be
 used as a suspend permit and cancel each other.
