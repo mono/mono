@@ -263,7 +263,7 @@ retry_state_change:
 
 	switch (cur_state) {
 	case STATE_RUNNING: //Post an async suspend request
-		if (suspend_count != 0)
+		if (!(suspend_count == 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be == 0", suspend_count);
 		if (thread_state_cas (&info->thread_state, build_thread_state (STATE_ASYNC_SUSPEND_REQUESTED, 1, no_safepoints), raw_state) != raw_state)
 			goto retry_state_change;
