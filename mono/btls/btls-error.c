@@ -48,10 +48,13 @@ mono_btls_error_get_error_string_n (int error, char *buf, int len)
 int
 mono_btls_error_get_reason (int error)
 {
-    if (ERR_GET_LIB (error) == ERR_LIB_SYS)
+     const uint32_t lib = ERR_GET_LIB (error);
+     const uint32_t reason = ERR_GET_REASON (error);
+
+    if (lib == ERR_LIB_SYS)
         return -1;
 
-    if (ERR_GET_REASON (error) == SSL_R_NO_RENEGOTIATION)
+    if (reason == SSL_R_NO_RENEGOTIATION)
         return 100;
 
     return 0;
