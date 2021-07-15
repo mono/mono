@@ -453,7 +453,7 @@ retry_state_change:
 	UNWRAP_THREAD_STATE (raw_state, cur_state, suspend_count, no_safepoints, info);
 	switch (cur_state) {
 	case STATE_RUNNING: //Thread already running.
-		if (suspend_count != 0)
+		if (!(suspend_count == 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be == 0", suspend_count);
 		trace_state_change_with_func ("RESUME", info, raw_state, cur_state, no_safepoints, 0, "");
 		return ResumeError; //Resume failed because thread was not blocked
