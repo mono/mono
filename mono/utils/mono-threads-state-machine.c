@@ -298,7 +298,7 @@ retry_state_change:
 		 * In preemptive suspend of a blocking thread since there's a single suspend initiator active at a time,
 		 * we would expect a finish_async_suspension or a done/abort blocking before the next suspension request
 		 */
-		if (suspend_count <= 0 || suspend_count >= THREAD_SUSPEND_COUNT_MAX)
+		if (!(suspend_count > 0 && suspend_count < THREAD_SUSPEND_COUNT_MAX))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0 and < THREAD_SUSPEND_COUNT_MAX", suspend_count);
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE");
