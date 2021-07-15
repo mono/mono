@@ -344,7 +344,7 @@ sgen_unified_suspend_stop_world (void)
 
 			info->client_info.skip = !mono_thread_info_begin_pulse_resume_and_request_suspension (info);
 			if (!info->client_info.skip)
-				restart_counter++;
+				restart_counter += 1;
 
 			THREADS_STW_DEBUG ("[GC-STW-RESTART] RESTART thread %p skip %s\n", mono_thread_info_get_tid (info), info->client_info.skip ? "true" : "false");
 		} FOREACH_THREAD_END
