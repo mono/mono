@@ -666,7 +666,7 @@ retry_state_change:
 		return FALSE; //let self suspend wait
 
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-		if (suspend_count <= 0)
+		if (!(suspend_count > 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
 		/* Don't expect to see no_safepoints, ever, with async */
 		if (no_safepoints)
