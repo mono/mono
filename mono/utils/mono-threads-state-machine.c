@@ -45,7 +45,7 @@ build_thread_state (int thread_state, int suspend_count, gboolean no_safepoints)
 {
 	g_assert (suspend_count >= 0 && suspend_count <= THREAD_SUSPEND_COUNT_MAX);
 	g_assert (thread_state >= 0 && thread_state <= STATE_MAX);
-	no_safepoints = (no_safepoints != 0); // ensure it's 0 or 1
+	no_safepoints = !!no_safepoints; // ensure it's 0 or 1
 
 	/* need a predictable value for the unused bits so that
 	 * thread_state_cas does not fail.
