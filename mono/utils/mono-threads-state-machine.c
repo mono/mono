@@ -344,7 +344,7 @@ mono_threads_transition_peek_blocking_suspend_requested (MonoThreadInfo *info)
 	case STATE_BLOCKING_SELF_SUSPENDED:
 	case STATE_BLOCKING_ASYNC_SUSPENDED:
 	case STATE_BLOCKING_SUSPEND_REQUESTED:
-		if (suspend_count <= 0 || suspend_count >= THREAD_SUSPEND_COUNT_MAX)
+		if (!(suspend_count > 0 && suspend_count < THREAD_SUSPEND_COUNT_MAX))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0 and < THREAD_SUSPEND_COUNT_MAX", suspend_count);
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE");
