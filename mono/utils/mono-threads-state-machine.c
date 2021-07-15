@@ -1029,9 +1029,9 @@ mono_thread_is_gc_unsafe_mode (void)
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
 		return TRUE;
+	default:
+		return FALSE;
 	}
-
-	return FALSE;
 }
 
 gboolean
