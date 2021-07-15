@@ -390,7 +390,7 @@ retry_state_change:
 	case STATE_RUNNING:
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE in RUNNING with STATE_POLL");
-		if (suspend_count != 0)
+		if (!(suspend_count == 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be == 0", suspend_count);
 		trace_state_change_with_func ("STATE_POLL", info, raw_state, cur_state, no_safepoints, 0, "");
 		return SelfSuspendResumed; //We're fine, don't suspend
