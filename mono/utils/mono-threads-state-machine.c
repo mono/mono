@@ -981,9 +981,8 @@ mono_thread_info_is_running (MonoThreadInfo *info)
 	case STATE_BLOCKING_SUSPEND_REQUESTED:
 	case STATE_BLOCKING:
 		return TRUE;
-	default:
-		return FALSE;
 	}
+	return FALSE;
 }
 
 /**
@@ -997,7 +996,6 @@ mono_thread_info_is_live (MonoThreadInfo *info)
 	case STATE_DETACHED:
 		return FALSE;
 	}
-
 	return TRUE;
 }
 
@@ -1031,9 +1029,9 @@ mono_thread_is_gc_unsafe_mode (void)
 	case STATE_RUNNING:
 	case STATE_ASYNC_SUSPEND_REQUESTED:
 		return TRUE;
+	default:
+		return FALSE;
 	}
-
-	return FALSE;
 }
 
 gboolean
