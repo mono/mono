@@ -465,7 +465,7 @@ retry_state_change:
 		trace_state_change_with_func ("RESUME", info, raw_state, cur_state, no_safepoints, 0, "");
 		return ResumeError;
 	case STATE_BLOCKING_SUSPEND_REQUESTED:
-		if (suspend_count <= 0)
+		if (!(suspend_count > 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE");
