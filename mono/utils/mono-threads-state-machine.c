@@ -982,7 +982,6 @@ mono_thread_info_is_running (MonoThreadInfo *info)
 	case STATE_BLOCKING:
 		return TRUE;
 	}
-
 	return FALSE;
 }
 
@@ -997,7 +996,6 @@ mono_thread_info_is_live (MonoThreadInfo *info)
 	case STATE_DETACHED:
 		return FALSE;
 	}
-
 	return TRUE;
 }
 
