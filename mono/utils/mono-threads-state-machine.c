@@ -981,9 +981,9 @@ mono_thread_info_is_running (MonoThreadInfo *info)
 	case STATE_BLOCKING_SUSPEND_REQUESTED:
 	case STATE_BLOCKING:
 		return TRUE;
-	default:
-		return FALSE;
 	}
+
+	return FALSE;
 }
 
 /**
