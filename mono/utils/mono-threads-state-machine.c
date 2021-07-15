@@ -720,7 +720,7 @@ retry_state_change:
 	switch (cur_state) {
 
 	case STATE_RUNNING: //transition to blocked
-		if (suspend_count != 0)
+		if (!(suspend_count == 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be == 0", suspend_count);
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE in state RUNNING with DO_BLOCKING");
