@@ -185,7 +185,7 @@ retry_state_change:
 	UNWRAP_THREAD_STATE (raw_state, cur_state, suspend_count, no_safepoints, info);
 	switch (cur_state) {
 	case STATE_STARTING:
-		if (suspend_count != 0)
+		if (!(suspend_count == 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be == 0", suspend_count);
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE");
