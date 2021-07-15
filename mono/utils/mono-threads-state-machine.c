@@ -730,7 +730,7 @@ retry_state_change:
 		return DoBlockingContinue;
 
 	case STATE_ASYNC_SUSPEND_REQUESTED:
-		if (suspend_count <= 0)
+		if (!(suspend_count > 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE in state ASYNC_SUSPEND_REQUESTED with DO_BLOCKING");
