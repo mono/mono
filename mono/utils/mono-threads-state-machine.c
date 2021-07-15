@@ -398,7 +398,7 @@ retry_state_change:
 	case STATE_ASYNC_SUSPEND_REQUESTED: //Async suspend requested, service it with a self suspend
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE in ASYNS_SUSPEND_REQUESTED with STATE_POLL");
-		if (suspend_count <= 0)
+		if (!(suspend_count > 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
 		if (thread_state_cas (&info->thread_state, build_thread_state (STATE_SELF_SUSPENDED, suspend_count, no_safepoints), raw_state) != raw_state)
 			goto retry_state_change;
