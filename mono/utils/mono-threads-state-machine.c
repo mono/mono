@@ -501,7 +501,7 @@ retry_state_change:
 	case STATE_SELF_SUSPENDED:
 		if (no_safepoints)
 			mono_fatal_with_history ("no_safepoints = TRUE, but should be FALSE");
-		if (suspend_count <= 0)
+		if (!(suspend_count > 0))
 			mono_fatal_with_history ("suspend_count = %d, but should be > 0", suspend_count);
 		if (suspend_count > 1) {
 			if (thread_state_cas (&info->thread_state, build_thread_state (cur_state, suspend_count - 1, no_safepoints), raw_state) != raw_state)
