@@ -98,6 +98,31 @@ Code shared between the DISABLE_COM and !DISABLE_COM
 #define register_icall(func, sig, save) \
 	(mono_register_jit_icall_info (&mono_get_jit_icall_info ()->func, func, #func, (sig), (save), #func))
 
+static mono_bstr
+mono_string_ptr_to_bstr (MonoString* string)
+{
+	return string && mono_string_chars_internal (string)
+	       ? mono_ptr_to_bstr (mono_string_chars_internal (string), mono_string_length_internal (string))
+	       : NULL;
+}
+
+static mono_bstr
+mono_utf8_to_bstr (const char* str)
+{
+	if (!str)
+		return NULL;
+	GError* gerror = NULL;
+	glong items_written;
+	gunichar2* ut = g_utf8_to_utf16 (str, -1, NULL, &items_written, &gerror);
+	if (gerror) {
+		g_error_free (gerror);
+		return NULL;
+	}
+	mono_bstr ret = mono_ptr_to_bstr (ut, items_written);
+	g_free (ut);
+	return ret;
+}
+
 mono_bstr
 mono_string_to_bstr_impl (MonoStringHandle s, MonoError *error)
 {
@@ -1691,10 +1716,99 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 #define MONO_S_OK 0x00000000L
 #define MONO_E_NOINTERFACE 0x80004002L
 #define MONO_E_NOTIMPL 0x80004001L
-#define MONO_E_OUTOFMEMORY         0x8007000eL
-#define MONO_E_INVALIDARG          0x80070057L
-#define MONO_E_DISP_E_UNKNOWNNAME  0x80020006L
-#define MONO_E_DISPID_UNKNOWN      (gint32)-1
+#define MONO_E_FAIL 0x80004005L
+#define MONO_E_OUTOFMEMORY             0x8007000eL
+#define MONO_E_INVALIDARG              0x80070057L
+#define MONO_E_DISP_E_MEMBERNOTFOUND   0x80020003L
+#define MONO_E_DISP_E_PARAMNOTFOUND    0x80020004L
+#define MONO_E_DISP_E_UNKNOWNNAME      0x80020006L
+#define MONO_E_DISP_E_EXCEPTION        0x80020009L
+#define MONO_E_DISP_E_BADPARAMCOUNT    0x8002000eL
+#define MONO_E_DISPID_UNKNOWN          (gint32)-1
+
+#ifndef HOST_WIN32
+typedef struct {
+	guint16 vt;
+	guint16 wReserved1;
+	guint16 wReserved2;
+	guint16 wReserved3;
+	union {
+		gint64 llVal;
+		gint32 lVal;
+		guint8 bVal;
+		gint16 iVal;
+		float  fltVal;
+		double dblVal;
+		gint16 boolVal;
+		gunichar2* bstrVal;
+		gint8 cVal;
+		guint16 uiVal;
+		guint32 ulVal;
+		guint64 ullVal;
+		gpointer punkVal;
+		gpointer parray;
+		gpointer byref;
+		struct {
+			gpointer pvRecord;
+			gpointer pRecInfo;
+		};
+	};
+} VARIANT;
+
+enum VARENUM {
+	VT_EMPTY = 0,
+	VT_NULL = 1,
+	VT_I2 = 2,
+	VT_I4 = 3,
+	VT_R4 = 4,
+	VT_R8 = 5,
+	VT_CY = 6,
+	VT_DATE = 7,
+	VT_BSTR = 8,
+	VT_DISPATCH = 9,
+	VT_ERROR = 10,
+	VT_BOOL = 11,
+	VT_VARIANT = 12,
+	VT_UNKNOWN = 13,
+	VT_DECIMAL = 14,
+	VT_I1 = 16,
+	VT_UI1 = 17,
+	VT_UI2 = 18,
+	VT_UI4 = 19,
+	VT_I8 = 20,
+	VT_UI8 = 21,
+	VT_INT = 22,
+	VT_UINT = 23,
+	VT_RECORD = 36,
+	VT_ARRAY = 0x2000,
+	VT_BYREF = 0x4000,
+	VT_TYPEMASK = 0x0fff
+};
+
+typedef struct {
+	VARIANT* rgvarg;
+	gint32* rgdispidNamedArgs;
+	guint32 cArgs;
+	guint32 cNamedArgs;
+} DISPPARAMS;
+
+typedef struct {
+	guint16 wCode;
+	guint16 wReserved;
+	gunichar2* bstrSource;
+	gunichar2* bstrDescription;
+	gunichar2* bstrHelpFile;
+	guint32 dwHelpContext;
+	gpointer pvReserved;
+	gpointer pfnDeferredFillIn;
+	gint32 scode;
+} EXCEPINFO;
+
+#define DISPATCH_METHOD 1
+#define DISPATCH_PROPERTYGET 2
+#define DISPATCH_PROPERTYPUT 4
+#define DISPATCH_PROPERTYPUTREF 8
+#endif
 
 int
 ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk)
@@ -1922,6 +2036,20 @@ ves_icall_System_Runtime_InteropServices_Marshal_IsTypeVisibleFromCom (MonoRefle
 
 	MonoClass *klass = mono_class_from_mono_type_internal (MONO_HANDLE_GETVAL (rtype, type));
 	return mono_class_init_checked (klass, error) && cominterop_com_visible (klass);
+#else
+	g_assert_not_reached ();
+#endif
+}
+
+MonoBoolean
+ves_icall_System_Runtime_InteropServices_Marshal_IsTypeMarshalledAsInterfaceInternal (MonoReflectionTypeHandle rtype, MonoError *error)
+{
+#ifndef DISABLE_COM
+	MonoType *t = MONO_HANDLE_GETVAL (rtype, type);
+	if (t->type != MONO_TYPE_CLASS)
+		return FALSE;
+	MonoClass *klass = t->data.klass;
+	return mono_class_init_checked (klass, error) && cominterop_class_marshalled_as_interface (klass);
 #else
 	g_assert_not_reached ();
 #endif
@@ -3251,6 +3379,11 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 	return MONO_E_DISP_E_UNKNOWNNAME;
 }
 
+static int STDCALL
+cominterop_ccw_invoke_impl (MonoCCWInterface* ccwe, gint32 dispIdMember, gpointer riid, guint32 lcid,
+			    guint16 wFlags, DISPPARAMS* pDispParams, VARIANT* pVarResult,
+			    EXCEPINFO* pExcepInfo, guint32* puArgErr);
+
 static int STDCALL 
 cominterop_ccw_invoke (MonoCCWInterface* ccwe, guint32 dispIdMember,
 								   gpointer riid, guint32 lcid,
@@ -3258,7 +3391,170 @@ cominterop_ccw_invoke (MonoCCWInterface* ccwe, guint32 dispIdMember,
 								   gpointer pVarResult, gpointer pExcepInfo,
 								   guint32 *puArgErr)
 {
-	return MONO_E_NOTIMPL;
+	int result;
+	gpointer dummy;
+	gpointer orig_domain = mono_threads_attach_coop (mono_domain_get(), &dummy);
+	MONO_ENTER_GC_UNSAFE;
+	result = cominterop_ccw_invoke_impl (ccwe, dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
+	MONO_EXIT_GC_UNSAFE;
+	mono_threads_detach_coop (orig_domain, &dummy);
+	return result;
+}
+
+static int STDCALL
+cominterop_ccw_invoke_impl (MonoCCWInterface* ccwe, gint32 dispIdMember, gpointer riid, guint32 lcid,
+			    guint16 wFlags, DISPPARAMS* pDispParams, VARIANT* pVarResult,
+			    EXCEPINFO* pExcepInfo, guint32* puArgErr)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	int ret = MONO_S_OK;
+	VARIANT* argmap_stack_buf [8], **argmap = argmap_stack_buf;
+	guint32 i, arg, argpos, argc, named_argc;
+	MonoMethodSignature* sig;
+	MonoMethod* method;
+	gboolean setter;
+
+	if (!mono_domain_get ())
+		mono_thread_attach_external_native_thread (mono_get_root_domain (), FALSE);
+
+	if (pVarResult)
+		memset (pVarResult, 0, sizeof (*pVarResult));
+
+	if (!pDispParams || pDispParams->cArgs < pDispParams->cNamedArgs ||
+	    (pDispParams->cArgs && !pDispParams->rgvarg) ||
+	    (pDispParams->cNamedArgs && !pDispParams->rgdispidNamedArgs))
+		return MONO_E_INVALIDARG;
+
+	named_argc = pDispParams->cNamedArgs;
+	switch (wFlags) {
+	case DISPATCH_PROPERTYGET:
+	case DISPATCH_METHOD:
+	case DISPATCH_METHOD | DISPATCH_PROPERTYGET:
+		setter = FALSE;
+		break;
+	case DISPATCH_PROPERTYPUTREF:
+	case DISPATCH_PROPERTYPUT:
+	case DISPATCH_PROPERTYPUT | DISPATCH_PROPERTYPUTREF:
+		pVarResult = NULL;
+		named_argc = 0;
+		setter = TRUE;
+		break;
+	default:
+		return MONO_E_INVALIDARG;
+	}
+
+	/* find the method */
+	for (i = 0; i < ccwe->methods_count; i++)
+		if (dispIdMember == ccwe->methods [i].dispid && setter == (ccwe->methods [i].type == ccw_method_setter))
+			break;
+	if (i >= ccwe->methods_count)
+		return MONO_E_DISP_E_MEMBERNOTFOUND;
+
+	method = (ccwe->methods [i].type == ccw_method_getter) ? ccwe->methods [i].prop->get :
+	         (ccwe->methods [i].type == ccw_method_setter) ? ccwe->methods [i].prop->set : ccwe->methods [i].method;
+	sig = mono_method_signature_internal (method);
+
+	/* Invoke always uses the managed signature, regardless of PreserveSig */
+	argc = pDispParams->cArgs;
+	if (argc != sig->param_count)
+		return MONO_E_DISP_E_BADPARAMCOUNT;
+	for (i = 0; i < named_argc; i++) {
+		if (pDispParams->rgdispidNamedArgs [i] >= argc) {
+			if (puArgErr)
+				*puArgErr = i;
+			return MONO_E_DISP_E_PARAMNOTFOUND;
+		}
+	}
+	if (sig->ret->byref)
+		return 0x8013151a;  /* COR_E_MEMBERACCESS */
+
+	if (argc > sizeof (argmap_stack_buf) / sizeof (argmap_stack_buf [0]))
+		argmap = (VARIANT**)g_malloc (argc * sizeof(*argmap));
+	memset (argmap, 0, argc * sizeof (*argmap));
+
+	for (i = 0; i < argc; i++) {
+		if (i < named_argc) {
+			arg = pDispParams->rgdispidNamedArgs [i];
+			if (argmap [arg]) {
+				ret = MONO_E_INVALIDARG;
+				break;
+			}
+			argpos = i;
+		}
+		else {
+			if (i == named_argc) {
+				argpos = argc;
+				arg = -1;
+			}
+			while (argmap [++arg]) { }  /* find next unnamed arg */
+			argpos--;
+		}
+		VARIANT* v = &pDispParams->rgvarg [argpos];
+		guint32 vt = v->vt & ~VT_BYREF;
+		if (vt == VT_VARIANT) {
+			if (v->vt & VT_BYREF)
+				vt = ((VARIANT*)v->byref)->vt & ~VT_BYREF;
+			if (vt == VT_VARIANT) {
+				ret = MONO_E_INVALIDARG;
+				break;
+			}
+		}
+		argmap [arg] = v;
+	}
+
+	if (ret == MONO_S_OK) {
+		ERROR_DECL (error);
+		MonoObject* object = mono_gchandle_get_target_internal (ccwe->ccw->gc_handle);
+		MonoDomain* obj_domain, *prev_domain = mono_domain_get ();
+		MonoObject* res = NULL, *exc = NULL;
+
+		MONO_STATIC_POINTER_INIT (MonoMethod, ccw_invoke_internal)
+
+			ccw_invoke_internal = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "CCWInvokeInternal", 4, METHOD_ATTRIBUTE_STATIC, error);
+			mono_error_assert_ok (error);
+
+		MONO_STATIC_POINTER_INIT_END (MonoMethod, ccw_invoke_internal)
+
+		if (mono_object_class (object) == mono_defaults.appdomain_class)
+			obj_domain = cominterop_get_domain_for_appdomain ((MonoAppDomain*)object);
+		else
+			obj_domain = mono_object_domain (object);
+		if (obj_domain != prev_domain)
+			mono_domain_set_internal_with_options (obj_domain, FALSE);
+
+		MonoReflectionMethod* method_info = mono_method_get_object_checked (obj_domain, method, NULL, error);
+		if (is_ok (error)) {
+			gpointer args [4] = { method_info, object, argmap, &pVarResult };
+			res = mono_runtime_try_invoke (ccw_invoke_internal, NULL, args, &exc, error);
+		}
+
+		if (obj_domain != prev_domain)
+			mono_domain_set_internal_with_options (prev_domain, FALSE);
+
+		if (!exc && !is_ok (error))
+			exc = (MonoObject*)mono_error_convert_to_exception (error);
+		else
+			mono_error_cleanup (error);
+		if (exc) {
+			if (pExcepInfo) {
+				MonoException* ex = (MonoException*)exc;
+				memset (pExcepInfo, 0, sizeof (*pExcepInfo));
+				pExcepInfo->bstrSource = mono_string_ptr_to_bstr (ex->source);
+				pExcepInfo->bstrDescription = mono_string_ptr_to_bstr (ex->message);
+				pExcepInfo->bstrHelpFile = mono_string_ptr_to_bstr (ex->help_link);
+				if (!pExcepInfo->bstrSource)
+					pExcepInfo->bstrSource = mono_utf8_to_bstr (mono_image_get_name (m_class_get_image (method->klass)));
+				pExcepInfo->scode = ex->hresult ? ex->hresult : MONO_E_FAIL;
+			}
+			ret = MONO_E_DISP_E_EXCEPTION;
+		}
+		else if (res)
+			ret = *(gint32*)mono_object_get_data (res);
+	}
+
+	if (argmap != argmap_stack_buf)
+		g_free (argmap);
+	return ret;
 }
 
 #ifndef HOST_WIN32
@@ -3275,7 +3571,6 @@ typedef struct tagSAFEARRAYBOUND {
 	ULONG cElements;
 	LONG lLbound;
 }SAFEARRAYBOUND,*LPSAFEARRAYBOUND;
-#define VT_VARIANT 12
 
 typedef guint32 (STDCALL *SafeArrayGetDimFunc)(gpointer psa);
 typedef int (STDCALL *SafeArrayGetLBoundFunc)(gpointer psa, guint32 nDim, glong* plLbound);

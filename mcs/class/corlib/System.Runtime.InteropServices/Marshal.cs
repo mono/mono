@@ -2100,5 +2100,229 @@ namespace System.Runtime.InteropServices
 
 			return pMem;
 		}
+
+#if !DISABLE_COM && FEATURE_COMINTEROP && !MOBILE && !NETCORE
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static bool IsTypeMarshalledAsInterfaceInternal(Type t);
+
+		unsafe private static object ConvertInputArgument(ParameterInfo parm, Variant* varg)
+		{
+			short vt = varg->vt;
+			object arg;
+
+			if (vt == (short)VarEnum.VT_EMPTY)
+			{
+				if (parm.HasDefaultValue)
+					return parm.DefaultValue;
+				if (parm.IsOptional)
+					return null;
+			}
+
+			Type t = parm.ParameterType.UnderlyingSystemType;
+			if (t.IsByRef)
+				t = t.GetElementType();
+			if (t.IsEnum)
+				t = Enum.GetUnderlyingType(t);
+			if (vt == ((short)VarEnum.VT_VARIANT | (short)VarEnum.VT_BYREF))
+			{
+				varg = (Variant*)varg->pdispVal;
+				vt = varg->vt;
+			}
+			bool vtbyref = (vt & (short)VarEnum.VT_BYREF) != 0;
+			vt &= ~((short)VarEnum.VT_BYREF);
+
+			if (t == typeof (object) || t.IsInterface ||
+			   (t.IsClass && t != typeof (string) && t != typeof (StringBuilder) && t != typeof (BStrWrapper)))
+			{
+				UnmanagedType marshalAs = (UnmanagedType)0;
+				object[] attr = parm.GetCustomAttributes(typeof (MarshalAsAttribute), true);
+				if (attr.Length > 0)
+					marshalAs = ((MarshalAsAttribute)attr[0]).Value;
+
+				if (marshalAs == UnmanagedType.Struct)
+				{
+					throw new ArgumentException();  // FIXME
+				}
+				if (t.IsArray || marshalAs == UnmanagedType.SafeArray || marshalAs == UnmanagedType.LPArray)
+				{
+					throw new ArgumentException();  // FIXME
+				}
+				if (t == typeof (DBNull))
+				{
+					if (vt != (short)VarEnum.VT_NULL && vt != (short)VarEnum.VT_EMPTY)
+						throw new ArgumentException();
+					return DBNull.Value;
+				}
+				if (t.IsSubclassOf(typeof (Delegate)))
+				{
+					throw new ArgumentException();  // FIXME: what to do here???
+				}
+				if (t.IsSubclassOf(typeof (SafeHandle)))
+				{
+					throw new ArgumentException();  // what to do here???
+				}
+				if (IsTypeMarshalledAsInterfaceInternal(t) || marshalAs == UnmanagedType.IDispatch ||
+				    marshalAs == UnmanagedType.IUnknown || marshalAs == UnmanagedType.Interface)
+				{
+					if (vt != (short)VarEnum.VT_UNKNOWN && vt != (short)VarEnum.VT_DISPATCH)
+						throw new ArgumentException();
+					IntPtr unk = vtbyref ? *((IntPtr*)varg->pdispVal) : varg->pdispVal;
+					return unk != IntPtr.Zero ? GetObjectForIUnknown(unk) : null;
+				}
+				if (t == typeof (object))
+					return GetObjectForNativeVariant((IntPtr)varg);
+				throw new ArgumentException();
+			}
+			else if (t.IsValueType)
+			{
+				if (t == typeof (HandleRef))
+					throw new ArgumentException();  // what to do here???
+			}
+
+			arg = GetObjectForNativeVariant((IntPtr)varg);
+			if (!t.IsInstanceOfType(arg))
+				arg = Convert.ChangeType(arg, t);
+			return arg;
+		}
+
+		unsafe private static void ConvertOutputArgument(ParameterInfo parm, Variant* varg, object arg)
+		{
+			Variant v = default (Variant);
+			short vt = varg->vt;
+
+			if (vt == ((short)VarEnum.VT_VARIANT | (short)VarEnum.VT_BYREF))
+			{
+				varg = (Variant*)varg->pdispVal;
+				vt = varg->vt;
+			}
+			bool vtbyref = (vt & (short)VarEnum.VT_BYREF) != 0;
+			vt &= ~((short)VarEnum.VT_BYREF);
+
+			Type t = null;
+			switch ((VarEnum)vt)
+			{
+			case VarEnum.VT_BSTR:
+				IntPtr* bstrref = vtbyref ? ((IntPtr*)varg->bstrVal) : &varg->bstrVal;
+				FreeBSTR(*bstrref);
+				v.SetValue(arg);
+				if (v.vt == (short)VarEnum.VT_BSTR)
+				{
+					*bstrref = v.bstrVal;
+					break;
+				}
+				*bstrref = IntPtr.Zero;
+				t = typeof (string);
+				goto default;
+			case VarEnum.VT_UNKNOWN:
+			case VarEnum.VT_DISPATCH: {
+				IntPtr itf = IntPtr.Zero;
+				try
+				{
+					itf = GetIDispatchForObject(arg);
+				}
+				catch
+				{
+				}
+				if (itf == IntPtr.Zero)
+				{
+					if (vt == (short)VarEnum.VT_DISPATCH)
+						break;
+					itf = GetIUnknownForObject(arg);
+				}
+				IntPtr* unkref = vtbyref ? ((IntPtr*)varg->pdispVal) : &varg->pdispVal;
+				IntPtr old = *unkref;
+				if (old != IntPtr.Zero)
+					Release(old);
+				*unkref = itf;
+				break;
+			}
+			case VarEnum.VT_I1: t = typeof (sbyte); goto default;
+			case VarEnum.VT_UI1: t = typeof (byte); goto default;
+			case VarEnum.VT_I2: t = typeof (short); goto default;
+			case VarEnum.VT_UI2: t = typeof (ushort); goto default;
+			case VarEnum.VT_INT:
+			case VarEnum.VT_ERROR:
+			case VarEnum.VT_I4: t = typeof (int); goto default;
+			case VarEnum.VT_UINT:
+			case VarEnum.VT_UI4: t = typeof (uint); goto default;
+			case VarEnum.VT_I8: t = typeof (long); goto default;
+			case VarEnum.VT_UI8: t = typeof (ulong); goto default;
+			case VarEnum.VT_BOOL: t = typeof (bool); goto default;
+			case VarEnum.VT_R4: t = typeof (float); goto default;
+			case VarEnum.VT_R8: t = typeof (double); goto default;
+			case VarEnum.VT_CY:
+			case VarEnum.VT_DECIMAL: t = typeof (Decimal); goto default;
+			case VarEnum.VT_DATE: t = typeof (DateTime); goto default;
+			default:
+				if (t is null)
+					break;
+				if (!t.IsInstanceOfType(arg))
+					arg = Convert.ChangeType(arg, t);
+				if (vtbyref)
+					Variant.SetValueAt(arg, vt, varg->pdispVal);
+				else
+				{
+					if (vt == (short)VarEnum.VT_CY)
+						arg = Decimal.ToOACurrency((Decimal)arg);
+					v.SetValue(arg);
+					v.vt = vt;
+					*varg = v;
+				}
+				break;
+			}
+		}
+
+		unsafe internal static int CCWInvokeInternal(MethodInfo m, object obj, Variant** argmap, IntPtr result)
+		{
+			ParameterInfo[] parms = m.GetParameters();
+			object[] args = new object[parms.Length];
+
+			try
+			{
+				foreach (ParameterInfo parm in parms)
+				{
+					int argpos = parm.Position;
+					args[argpos] = ConvertInputArgument(parm, argmap[argpos]);
+				}
+
+				object res = m.Invoke(obj, args);
+				if (result != IntPtr.Zero)
+					GetNativeVariantForObject(res, result);
+
+				// convert byref args back
+				foreach (ParameterInfo parm in parms)
+				{
+					Type t = parm.ParameterType.UnderlyingSystemType;
+					int argpos = parm.Position;
+					Variant* varg = argmap[argpos];
+
+					// if either isn't byref, there's nothing to do
+					if ((!t.IsByRef && !t.IsByRefLike) || (varg->vt & (short)VarEnum.VT_BYREF) == 0)
+						continue;
+					try
+					{
+						ConvertOutputArgument(parm, varg, args[argpos]);
+					}
+					catch
+					{
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				if (e is TargetInvocationException)
+				{
+					TargetInvocationException ex = (TargetInvocationException)e;
+					if (!(ex.InnerException is null))
+						throw ex.InnerException;
+				}
+				else if (e is OverflowException)
+					return unchecked ((int)0x8002000A);  // DISP_E_OVERFLOW
+				return unchecked ((int)0x80070057);  // E_INVALIDARG
+			}
+
+			return 0;
+		}
+#endif
 	}
 }
