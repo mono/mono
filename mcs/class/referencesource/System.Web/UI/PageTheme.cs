@@ -15,6 +15,7 @@ namespace System.Web.UI {
     using System.Web.Util;
     using System.Xml;
     using System.Security.Permissions;
+    
 
     internal class FileLevelPageThemeBuilder : RootBuilder {
 
@@ -25,7 +26,7 @@ namespace System.Web.UI {
             // Don't allow any literal contents at theme top level
             if (s != null) {
                 if (!Util.IsWhiteSpaceString(s)) {
-                    throw new HttpException(SR.GetString(SR.Literal_content_not_allowed, SR.GetString(SR.Page_theme_skin_file), s.Trim()));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Literal_content_not_allowed, System.Web.SR.GetString(System.Web.SR.Page_theme_skin_file), s.Trim()));
                 }
             }
 
@@ -39,13 +40,13 @@ namespace System.Web.UI {
             // Only allow controls at theme top level
             Type ctrlType = subBuilder.ControlType;
             if (!typeof(Control).IsAssignableFrom(ctrlType)) {
-                throw new HttpException(SR.GetString(SR.Page_theme_only_controls_allowed, ctrlType == null ? 
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Page_theme_only_controls_allowed, ctrlType == null ? 
                     String.Empty : ctrlType.ToString()));
             }
 
             // Check if the control theme type is themeable.
             if (InPageTheme && !ThemeableAttribute.IsTypeThemeable(subBuilder.ControlType)) {
-                throw new HttpParseException(SR.GetString(SR.Type_theme_disabled, subBuilder.ControlType.FullName),
+                throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Type_theme_disabled, subBuilder.ControlType.FullName),
                     null, subBuilder.VirtualPath, null, subBuilder.Line);
             }
 
@@ -72,7 +73,7 @@ namespace System.Web.UI {
         }
 
         internal void Initialize(Page page, bool styleSheetTheme) {
-            Debug.Assert(page != null);
+            System.Web.Util.Debug.Assert(page != null);
             _page = page;
             _styleSheetTheme = styleSheetTheme;
         }
@@ -103,7 +104,7 @@ namespace System.Web.UI {
             skin = (ControlSkin)ControlSkins[CreateSkinKey(control.GetType(), skinId)];
 
             // Don't throw if ControlSkin corresponds to the skinID does not exist.
-            Debug.Assert(skin == null || skin.ControlType == control.GetType());
+            System.Web.Util.Debug.Assert(skin == null || skin.ControlType == control.GetType());
 
             if (skin != null) {
                 skin.ApplySkin(control);
@@ -113,7 +114,7 @@ namespace System.Web.UI {
         internal void SetStyleSheet() {
             if (LinkedStyleSheets != null && LinkedStyleSheets.Length > 0) {
                 if (Page.Header == null)
-                    throw new InvalidOperationException(SR.GetString(SR.Page_theme_requires_page_header));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Page_theme_requires_page_header));
 
                 int index = 0;
                 foreach(string styleSheetPath in LinkedStyleSheets) {

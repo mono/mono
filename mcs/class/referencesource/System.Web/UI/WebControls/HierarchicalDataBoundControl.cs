@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls {
             if (_currentDataSourceValid && !DesignMode) {
                 // Ensure that both DataSourceID as well as DataSource are not set at the same time
                 if (!_currentDataSourceIsFromControl && DataSourceID != null && DataSourceID.Length != 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.DataControl_MultipleDataSources, ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_MultipleDataSources, ID));
                 }
                 // If the current view is correct, there is no need to reconnect
                 return _currentHierarchicalDataSource;
@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
             else {
                 // Ensure that both DataSourceID as well as DataSource are not set at the same time
                 if (DataSource != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.DataControl_MultipleDataSources, ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_MultipleDataSources, ID));
                 }
             }
 
@@ -91,14 +91,14 @@ namespace System.Web.UI.WebControls {
         protected virtual HierarchicalDataSourceView GetData(string viewPath) {
             string currentViewPath = viewPath;
             IHierarchicalDataSource ds = ConnectToHierarchicalDataSource();
-            Debug.Assert(_currentDataSourceValid);
+            System.Web.Util.Debug.Assert(_currentDataSourceValid);
 
-            Debug.Assert(ds != null);
+            System.Web.Util.Debug.Assert(ds != null);
 
             // IHierarchicalDataSource was found, extract the appropriate view and return it
             HierarchicalDataSourceView view = ds.GetHierarchicalView(currentViewPath);
             if (view == null) {
-                throw new InvalidOperationException(SR.GetString(SR.HierarchicalDataControl_ViewNotFound, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.HierarchicalDataControl_ViewNotFound, ID));
             }
             return view;
         }
@@ -119,11 +119,11 @@ namespace System.Web.UI.WebControls {
                 // Try to find a DataSource control with the ID specified in DataSourceID
                 Control control = DataBoundControlHelper.FindControl(this, dataSourceID);
                 if (control == null) {
-                    throw new HttpException(SR.GetString(SR.HierarchicalDataControl_DataSourceDoesntExist, ID, dataSourceID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.HierarchicalDataControl_DataSourceDoesntExist, ID, dataSourceID));
                 }
                 ds = control as IHierarchicalDataSource;
                 if (ds == null) {
-                    throw new HttpException(SR.GetString(SR.HierarchicalDataControl_DataSourceIDMustBeHierarchicalDataControl, ID, dataSourceID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.HierarchicalDataControl_DataSourceIDMustBeHierarchicalDataControl, ID, dataSourceID));
                 }
             }
             return ds;
@@ -231,7 +231,7 @@ namespace System.Web.UI.WebControls {
                 (dataSource is IHierarchicalDataSource)) {
                 return;
             }
-            throw new InvalidOperationException(SR.GetString(SR.HierarchicalDataBoundControl_InvalidDataSource));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.HierarchicalDataBoundControl_InvalidDataSource));
         }
     }
 }

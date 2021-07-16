@@ -93,7 +93,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_AllowClose),
+        WebSysDescription(System.Web.SR.WebPart_AllowClose),
         ]
         public virtual bool AllowClose {
             get {
@@ -109,7 +109,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_AllowConnect),
+        WebSysDescription(System.Web.SR.WebPart_AllowConnect),
         ]
         public virtual bool AllowConnect {
             get {
@@ -129,7 +129,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_AllowEdit),
+        WebSysDescription(System.Web.SR.WebPart_AllowEdit),
         ]
         public virtual bool AllowEdit {
             get {
@@ -147,7 +147,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_AllowHide),
+        WebSysDescription(System.Web.SR.WebPart_AllowHide),
         ]
         public virtual bool AllowHide {
             get {
@@ -166,7 +166,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_AllowMinimize),
+        WebSysDescription(System.Web.SR.WebPart_AllowMinimize),
         ]
         public virtual bool AllowMinimize {
             get {
@@ -185,7 +185,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_AllowZoneChange),
+        WebSysDescription(System.Web.SR.WebPart_AllowZoneChange),
         ]
         public virtual bool AllowZoneChange {
             get {
@@ -201,7 +201,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_AuthorizationFilter),
+        WebSysDescription(System.Web.SR.WebPart_AuthorizationFilter),
         ]
         public virtual string AuthorizationFilter {
             get {
@@ -218,7 +218,7 @@ namespace System.Web.UI.WebControls.WebParts {
         UrlProperty(),
         WebCategory("WebPartAppearance"),
         Personalizable(PersonalizationScope.Shared),
-        WebSysDescription(SR.WebPart_CatalogIconImageUrl),
+        WebSysDescription(System.Web.SR.WebPart_CatalogIconImageUrl),
         ]
         public virtual string CatalogIconImageUrl {
             get {
@@ -226,7 +226,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
             set {
                 if (CrossSiteScriptingValidation.IsDangerousUrl(value)) {
-                    throw new ArgumentException(SR.GetString(SR.WebPart_BadUrl, value), "value");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_BadUrl, value), "value");
                 }
                 _catalogIconImageUrl = value;
             }
@@ -326,7 +326,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     // has not been set.
                     string displayTitle = Title;
                     if (String.IsNullOrEmpty(displayTitle)) {
-                        displayTitle = SR.GetString(SR.Part_Untitled);
+                        displayTitle = System.Web.SR.GetString(System.Web.SR.Part_Untitled);
                     }
                     return displayTitle;
                 }
@@ -338,7 +338,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_ExportMode),
+        WebSysDescription(System.Web.SR.WebPart_ExportMode),
         ]
         public virtual WebPartExportMode ExportMode {
             get {
@@ -348,7 +348,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 if (ControlState >= ControlState.Loaded &&
                     (WebPartManager == null ||
                      (WebPartManager.Personalization.Scope == PersonalizationScope.User && IsShared))) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPart_CantSetExportMode));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPart_CantSetExportMode));
                 }
                 if (value < WebPartExportMode.None || value > WebPartExportMode.NonSensitiveData) {
                     throw new ArgumentOutOfRangeException("value");
@@ -401,7 +401,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_HelpMode),
+        WebSysDescription(System.Web.SR.WebPart_HelpMode),
         ]
         public virtual WebPartHelpMode HelpMode {
             get {
@@ -425,7 +425,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_HelpUrl),
+        WebSysDescription(System.Web.SR.WebPart_HelpUrl),
         ]
         public virtual string HelpUrl {
             get {
@@ -433,7 +433,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
             set {
                 if (CrossSiteScriptingValidation.IsDangerousUrl(value)) {
-                    throw new ArgumentException(SR.GetString(SR.WebPart_BadUrl, value), "value");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_BadUrl, value), "value");
                 }
                 _helpUrl = value;
             }
@@ -449,7 +449,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable,
         Themeable(false),
         WebCategory("WebPartAppearance"),
-        WebSysDescription(SR.WebPart_Hidden),
+        WebSysDescription(System.Web.SR.WebPart_Hidden),
         ]
         public virtual bool Hidden {
             get {
@@ -482,14 +482,14 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         Localizable(true),
         WebCategory("WebPartAppearance"),
-        WebSysDefaultValue(SR.WebPart_DefaultImportErrorMessage),
+        WebSysDefaultValue(System.Web.SR.WebPart_DefaultImportErrorMessage),
         Personalizable(PersonalizationScope.Shared),
-        WebSysDescription(SR.WebPart_ImportErrorMessage),
+        WebSysDescription(System.Web.SR.WebPart_ImportErrorMessage),
         ]
         public virtual string ImportErrorMessage {
             get {
                 return (_importErrorMessage != null) ?
-                    _importErrorMessage : SR.GetString(SR.WebPart_DefaultImportErrorMessage);
+                    _importErrorMessage : System.Web.SR.GetString(System.Web.SR.WebPart_DefaultImportErrorMessage);
             }
             set {
                 _importErrorMessage = value;
@@ -567,7 +567,7 @@ namespace System.Web.UI.WebControls.WebParts {
         UrlProperty(),
         WebCategory("WebPartAppearance"),
         Personalizable(PersonalizationScope.Shared),
-        WebSysDescription(SR.WebPart_TitleIconImageUrl),
+        WebSysDescription(System.Web.SR.WebPart_TitleIconImageUrl),
         ]
         public virtual string TitleIconImageUrl {
             get {
@@ -575,7 +575,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
             set {
                 if (CrossSiteScriptingValidation.IsDangerousUrl(value)) {
-                    throw new ArgumentException(SR.GetString(SR.WebPart_BadUrl, value), "value");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_BadUrl, value), "value");
                 }
                 _titleIconImageUrl = value;
             }
@@ -588,7 +588,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Personalizable(PersonalizationScope.Shared),
         Themeable(false),
         WebCategory("WebPartBehavior"),
-        WebSysDescription(SR.WebPart_TitleUrl),
+        WebSysDescription(System.Web.SR.WebPart_TitleUrl),
         ]
         public virtual string TitleUrl {
             get {
@@ -596,7 +596,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
             set {
                 if (CrossSiteScriptingValidation.IsDangerousUrl(value)) {
-                    throw new ArgumentException(SR.GetString(SR.WebPart_BadUrl, value), "value");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_BadUrl, value), "value");
                 }
                 _titleUrl = value;
             }
@@ -741,12 +741,12 @@ namespace System.Web.UI.WebControls.WebParts {
         internal override void PreRenderRecursiveInternal() {
             if (IsStandalone) {
                 if (Hidden) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPart_NotStandalone, "Hidden", ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPart_NotStandalone, "Hidden", ID));
                 }
             }
             else {
                 if (!Visible) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPart_OnlyStandalone, "Visible", ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPart_OnlyStandalone, "Visible", ID));
                 }
             }
             base.PreRenderRecursiveInternal();
@@ -786,7 +786,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         protected void SetPersonalizationDirty() {
             if (WebPartManager == null) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManagerRequired));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManagerRequired));
             }
 
             WebPartManager.Personalization.SetDirty(this);
@@ -800,17 +800,17 @@ namespace System.Web.UI.WebControls.WebParts {
                 throw new ArgumentNullException("control");
             }
             if (control.Page == null) {
-                throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "Page"), "control");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "Page"), "control");
             }
 
             WebPartManager wpm = WebPartManager.GetCurrentWebPartManager(control.Page);
             if (wpm == null) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartManagerRequired));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManagerRequired));
             }
 
             WebPart webPart = wpm.GetGenericWebPart(control);
             if (webPart == null) {
-                throw new ArgumentException(SR.GetString(SR.WebPart_NonWebPart), "control");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_NonWebPart), "control");
             }
 
             webPart.SetPersonalizationDirty();
@@ -839,7 +839,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 if (control != null) {
                     return control;
                 } else {
-                    throw new InvalidOperationException(SR.GetString(SR.GenericWebPart_ChildControlIsNull));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.GenericWebPart_ChildControlIsNull));
                 }
             }
             else {

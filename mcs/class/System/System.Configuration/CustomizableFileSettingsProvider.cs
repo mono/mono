@@ -99,6 +99,11 @@ namespace System.Configuration
 
 		private static bool userDefine = false;		// 0x8000	ignore all above and use user definition
 
+		private const string applicationSettingsGroupName   = "applicationSettings";
+        private const string userSettingsGroupName          = "userSettings";
+        private const string applicationSettingsGroupPrefix = applicationSettingsGroupName + "/";
+        private const string userSettingsGroupPrefix        = userSettingsGroupName + "/";
+
 		private static UserConfigLocationOption userConfig = UserConfigLocationOption.Company_Product;
 
 		public override void Initialize (string name, NameValueCollection config)
@@ -621,6 +626,8 @@ namespace System.Configuration
 			userSection = cnf as ClientSettingsSection;
 			if (userSection == null) {
 				userSection = new ClientSettingsSection ();
+				userSection.SectionInformation.AllowExeDefinition = ConfigurationAllowExeDefinition.MachineToLocalUser;
+				userSection.SectionInformation.RequirePermission = false;
 				userGroup.Sections.Add (class_name, userSection);
 			}
 
@@ -686,6 +693,7 @@ namespace System.Configuration
 
 			SettingsPropertyValue value = new SettingsPropertyValue (prop);
 			value.IsDirty = false;
+			
 			if (element.Value.ValueXml != null) {
 				switch (value.Property.SerializeAs) {
 				case SettingsSerializeAs.Xml:
@@ -704,7 +712,7 @@ namespace System.Configuration
 			try
 			{
 				if (allowOverwrite)
-					values.Remove (element.Name);
+					values.Remove (element.Name);				
 				values.Add (value);
 			} catch (ArgumentException ex) {
 				throw new ConfigurationErrorsException (string.Format (
@@ -715,27 +723,17 @@ namespace System.Configuration
 		}
 
 		private void LoadProperties (ExeConfigurationFileMap exeMap, SettingsPropertyCollection collection, ConfigurationUserLevel level, string sectionGroupName, bool allowOverwrite, string groupName)
-		{
+		{			
+			string prefix = (sectionGroupName == userSettingsGroupName) ? userSettingsGroupPrefix : applicationSettingsGroupPrefix;
+            
 			Configuration config = ConfigurationManager.OpenMappedExeConfiguration (exeMap,level);
-			
-			ConfigurationSectionGroup sectionGroup = config.GetSectionGroup (sectionGroupName);
-			if (sectionGroup != null) {
-				foreach (ConfigurationSection configSection in sectionGroup.Sections) {
-					if (configSection.SectionInformation.Name != groupName)
-						continue;
-
-					ClientSettingsSection clientSection = configSection as ClientSettingsSection;
-					if (clientSection == null)
-						continue;
-
-					foreach (SettingElement element in clientSection.Settings) {
-						LoadPropertyValue(collection, element, allowOverwrite);
-					}
-					// Only the first one seems to be processed by MS
-					break;
-				}
-			}
-
+            ClientSettingsSection section = config.GetSection(prefix + groupName) as ClientSettingsSection;
+ 
+            if (section != null) {
+                foreach (SettingElement setting in section.Settings) {
+					LoadPropertyValue(collection, setting, allowOverwrite);
+                }
+            }
 		}
 
 		public override void SetPropertyValues (SettingsContext context, SettingsPropertyValueCollection collection)
@@ -758,6 +756,9 @@ namespace System.Configuration
 			values = new SettingsPropertyValueCollection ();
 			string groupName = context ["GroupName"] as string;
 			groupName = NormalizeInvalidXmlChars (groupName); // we likely saved the element removing the non valid xml chars.
+			
+			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false, groupName);
+			
 			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false, groupName);
 			LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "userSettings", false, groupName);
 

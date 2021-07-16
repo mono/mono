@@ -21,6 +21,7 @@ namespace System.Web.Configuration {
     using System.Threading;
     using System.Globalization;
     using System.Security.Permissions;
+    
 
     [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
     internal sealed class RemoteWebConfigurationHost : DelegatingConfigHost
@@ -43,7 +44,7 @@ namespace System.Web.Configuration {
         internal RemoteWebConfigurationHost() {}
 
         public override void Init(IInternalConfigRoot configRoot, params object[] hostInitParams) {
-            throw ExceptionUtil.UnexpectedError("RemoteWebConfigurationHost::Init");
+            throw System.Web.Util.ExceptionUtil.UnexpectedError("RemoteWebConfigurationHost::Init");
         }
 
         public override void InitForConfiguration(ref string locationSubPath, out string configPath, out string locationConfigPath,
@@ -105,7 +106,7 @@ namespace System.Web.Configuration {
             }
 
             if (filePaths == null) {
-                throw ExceptionUtil.UnexpectedError("RemoteWebConfigurationHost::InitForConfiguration");
+                throw System.Web.Util.ExceptionUtil.UnexpectedError("RemoteWebConfigurationHost::InitForConfiguration");
             }
 
             //
@@ -115,7 +116,7 @@ namespace System.Web.Configuration {
             string[] parts = filePaths.Split(RemoteWebConfigurationHostServer.FilePathsSeparatorParams);
 
             if (parts.Length < 7 || (parts.Length - 5) % 2 != 0) {
-                throw ExceptionUtil.UnexpectedError("RemoteWebConfigurationHost::InitForConfiguration");
+                throw System.Web.Util.ExceptionUtil.UnexpectedError("RemoteWebConfigurationHost::InitForConfiguration");
             }
 
             // convert empty strings to nulls
@@ -174,6 +175,9 @@ namespace System.Web.Configuration {
 
 #else // !FEATURE_PAL: set dummy config path
             string appPath = null;
+            string appSiteName = null;
+            string appSiteID = null;
+            WebConfigurationFileMap configFileMap = new WebConfigurationFileMap();
             _ConfigPath = configPath;
 #endif // !FEATURE_PAL
 
@@ -337,7 +341,7 @@ namespace System.Web.Configuration {
             typeName = protectionProvider.GetType().AssemblyQualifiedName;
             ps = protectedConfigSection.Providers[protectionProvider.Name];
             if (ps == null)
-                throw ExceptionUtil.ParameterInvalid("protectionProvider");
+                throw System.Web.Util.ExceptionUtil.ParameterInvalid("protectionProvider");
 
             nvc = ps.Parameters;
             if (nvc == null)
@@ -416,10 +420,10 @@ namespace System.Web.Configuration {
             //////////////////////////////////////////////////////////////////
             // Step 1: Make sure that either username & password OR token is supplied
             if ((string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password)) || (!string.IsNullOrEmpty(userName) && string.IsNullOrEmpty(password)))
-                throw ExceptionUtil.ParameterNullOrEmpty("password");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("password");
 
             if (!string.IsNullOrEmpty(userName) && tokenHandle != IntPtr.Zero)
-                throw ExceptionUtil.ParameterInvalid("tokenHandle");
+                throw System.Web.Util.ExceptionUtil.ParameterInvalid("tokenHandle");
 
             //////////////////////////////////////////////////////////////////
             // Step 2: Create token if not supplied
@@ -483,7 +487,7 @@ namespace System.Web.Configuration {
                 return CreateRemoteObjectOn32BitPlatform(server, username, domain, password);
             } catch (COMException ex) {
                 if ((uint)ex.ErrorCode == 0x80040154)
-                    throw new Exception(SR.GetString(SR.Make_sure_remote_server_is_enabled_for_config_access));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.Make_sure_remote_server_is_enabled_for_config_access));
                 throw;
             }
         }
@@ -520,7 +524,7 @@ namespace System.Web.Configuration {
                 cs = new COSERVERINFO(server, captr);
                 hr = UnsafeNativeMethods.CoCreateInstanceEx(ref clsid, IntPtr.Zero, (int)ClsCtx.RemoteServer, cs, 1, amqi);
                 if ((uint)hr == 0x80040154)
-                        throw new Exception(SR.GetString(SR.Make_sure_remote_server_is_enabled_for_config_access));
+                        throw new Exception(System.Web.SR.GetString(System.Web.SR.Make_sure_remote_server_is_enabled_for_config_access));
                 if (hr < 0)
                     Marshal.ThrowExceptionForHR(hr);
                 if (amqi[0].hr < 0)
@@ -580,7 +584,7 @@ namespace System.Web.Configuration {
                 cs = new COSERVERINFO_X64(server, captr);
                 hr = UnsafeNativeMethods.CoCreateInstanceEx(ref clsid, IntPtr.Zero, (int)ClsCtx.RemoteServer, cs, 1, amqi);
                 if ((uint)hr == 0x80040154)
-                    throw new Exception(SR.GetString(SR.Make_sure_remote_server_is_enabled_for_config_access));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.Make_sure_remote_server_is_enabled_for_config_access));
                 if (hr < 0)
                     Marshal.ThrowExceptionForHR(hr);
                 if (amqi[0].hr < 0)

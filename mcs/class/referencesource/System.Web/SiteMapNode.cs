@@ -24,6 +24,7 @@ namespace System.Web {
     using System.Web.UI;
     using System.Web.UI.WebControls;
     using System.Web.Util;
+    
 
     /// <devdoc>
     /// <para></para>
@@ -101,7 +102,7 @@ namespace System.Web {
             }
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "Attributes"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "Attributes"));
                 }
 
                 _attributes = value;
@@ -135,7 +136,7 @@ namespace System.Web {
 
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "Item"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "Item"));
                 }
 
                 if (_attributes == null) {
@@ -155,7 +156,7 @@ namespace System.Web {
             }
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "ChildNodes"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "ChildNodes"));
                 }
 
                 _childNodes = value;
@@ -184,7 +185,7 @@ namespace System.Web {
             }
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "Description"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "Description"));
                 }
 
                 _description = value;
@@ -230,7 +231,7 @@ namespace System.Web {
             }
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "ParentNode"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "ParentNode"));
                 }
 
                 _parentNode = value;
@@ -275,7 +276,7 @@ namespace System.Web {
             }
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "ResourceKey"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "ResourceKey"));
                 }
 
                 _resourceKey = value;
@@ -288,7 +289,7 @@ namespace System.Web {
             }
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "Roles"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "Roles"));
                 }
 
                 _roles = value;
@@ -300,7 +301,7 @@ namespace System.Web {
                 SiteMapNode root = _provider.RootProvider.RootNode;
                 if (root == null) {
                     String name = ((ProviderBase)_provider.RootProvider).Name;
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapProvider_Invalid_RootNode, name));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapProvider_Invalid_RootNode, name));
                 }
 
                 return root;
@@ -335,7 +336,7 @@ namespace System.Web {
             }
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "Title"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "Title"));
                 }
 
                 _title = value;
@@ -348,7 +349,7 @@ namespace System.Web {
             }
             set {
                 if (_readonly) {
-                    throw new InvalidOperationException(SR.GetString(SR.SiteMapNode_readonly, "Url"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapNode_readonly, "Url"));
                 }
 
                 if (value != null) {
@@ -370,11 +371,11 @@ namespace System.Web {
                 return null;
             }
 
-            if (!UrlPath.IsValidVirtualPathWithoutProtocol(url)) {
+            if (!System.Web.Util.UrlPath.IsValidVirtualPathWithoutProtocol(url)) {
                 return null;
             }
 
-            if (UrlPath.IsAbsolutePhysicalPath(url)) {
+            if (System.Web.Util.UrlPath.IsAbsolutePhysicalPath(url)) {
                 return null;
             }
 
@@ -383,8 +384,8 @@ namespace System.Web {
                 return null;
             }
 
-            if (UrlPath.IsRelativeUrl(url) && !UrlPath.IsAppRelativePath(url)) {
-                url = UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, url);
+            if (System.Web.Util.UrlPath.IsRelativeUrl(url) && !System.Web.Util.UrlPath.IsAppRelativePath(url)) {
+                url = System.Web.Util.UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, url);
             }
 
             // Remove the query string from url so the path can be validated by Authorization module.
@@ -488,7 +489,7 @@ namespace System.Web {
                     if (text == null && throwIfNotFound) {
                         // throw if default value is not specified.
                         throw new InvalidOperationException(
-                            SR.GetString(SR.Res_not_found_with_class_and_key, keys[0], keys[1])); ;
+                            System.Web.SR.GetString(System.Web.SR.Res_not_found_with_class_and_key, keys[0], keys[1])); ;
                     }
                 }
             }

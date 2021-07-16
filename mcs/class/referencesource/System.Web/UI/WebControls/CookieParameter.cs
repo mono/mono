@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Parameter"),
-        WebSysDescription(SR.CookieParameter_CookieName),
+        WebSysDescription(System.Web.SR.CookieParameter_CookieName),
         ]
         public string CookieName {
             get {
@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls {
         /// </summary>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.Parameter_ValidateInput),
+        WebSysDescription(System.Web.SR.Parameter_ValidateInput),
         DefaultValue(true)
         ]
         public bool ValidateInput {

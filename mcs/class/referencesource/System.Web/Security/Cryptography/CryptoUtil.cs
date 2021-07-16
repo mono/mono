@@ -46,18 +46,25 @@ namespace System.Web.Security.Cryptography {
         // is written in such a manner that it should take the same amount of time to execute regardless of
         // whether the result is success or failure. The modulus operation is intended to make the check take the
         // same amount of time, even if the buffers are of different lengths.
+        // Use bit-wise integer operations (instead of if/conditional or boolean
+        // operations) to prevent compiler optimizations and to keep consistent time
+        // spent in each iteration.
         //
         // !! DO NOT CHANGE THIS METHOD WITHOUT SECURITY 
-        [MethodImpl(MethodImplOptions.NoOptimization)]
+        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         public static bool BuffersAreEqual(byte[] buffer1, int buffer1Offset, int buffer1Count, byte[] buffer2, int buffer2Offset, int buffer2Count) {
-            Debug.ValidateArrayBounds(buffer1, buffer1Offset, buffer1Count);
-            Debug.ValidateArrayBounds(buffer2, buffer2Offset, buffer2Count);
+            System.Web.Util.Debug.ValidateArrayBounds(buffer1, buffer1Offset, buffer1Count);
+            System.Web.Util.Debug.ValidateArrayBounds(buffer2, buffer2Offset, buffer2Count);
 
-            bool success = (buffer1Count == buffer2Count); // can't possibly be successful if the buffers are of different lengths
-            for (int i = 0; i < buffer1Count; i++) {
-                success &= (buffer1[buffer1Offset + i] == buffer2[buffer2Offset + (i % buffer2Count)]);
+            if (buffer1Count != buffer2Count)
+                return false;
+            int success = 0;
+            unchecked {
+                for (int i = 0; i < buffer1Count; i++) {
+                    success = success | (buffer1[buffer1Offset + i] - buffer2[buffer2Offset + i]);
+                }
             }
-            return success;
+            return (0 == success);
         }
 
         /// <summary>
@@ -77,7 +84,7 @@ namespace System.Web.Security.Cryptography {
         /// <param name="count">The number of bytes in the buffer to include in the hash.</param>
         /// <returns>The binary hash (32 bytes) of the buffer segment.</returns>
         public static byte[] ComputeSHA256Hash(byte[] buffer, int offset, int count) {
-            Debug.ValidateArrayBounds(buffer, offset, count);
+            System.Web.Util.Debug.ValidateArrayBounds(buffer, offset, count);
 
             using (SHA256 sha256 = CryptoAlgorithms.CreateSHA256()) {
                 return sha256.ComputeHash(buffer, offset, count);

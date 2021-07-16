@@ -8,7 +8,7 @@
 
     internal sealed class ParsedRoute {
         public ParsedRoute(IList<PathSegment> pathSegments) {
-            Debug.Assert(pathSegments != null);
+            System.Web.Util.Debug.Assert(pathSegments != null);
 
             PathSegments = pathSegments;
         }
@@ -262,7 +262,7 @@
                                     }
                                 }
                                 else {
-                                    Debug.Fail("Invalid path subsegment type");
+                                    System.Web.Util.Debug.Fail("Invalid path subsegment type");
                                 }
                             }
                         }
@@ -281,7 +281,7 @@
                         }
                     }
                     else {
-                        Debug.Fail("Invalid path segment type");
+                        System.Web.Util.Debug.Fail("Invalid path segment type");
                     }
                 }
             }
@@ -360,13 +360,13 @@
                                     }
                                 }
                                 else {
-                                    Debug.Fail("Invalid path subsegment type");
+                                    System.Web.Util.Debug.Fail("Invalid path subsegment type");
                                 }
                             }
                         }
                     }
                     else {
-                        Debug.Fail("Invalid path segment type");
+                        System.Web.Util.Debug.Fail("Invalid path segment type");
                     }
                 }
             }
@@ -450,7 +450,7 @@
                     ContentPathSegment contentPathSegment = pathSegment as ContentPathSegment;
                     if (contentPathSegment != null) {
                         if (contentPathSegment.IsCatchAll) {
-                            Debug.Assert(i == (PathSegments.Count - 1), "If we're processing a catch-all, we should be on the last route segment.");
+                            System.Web.Util.Debug.Assert(i == (PathSegments.Count - 1), "If we're processing a catch-all, we should be on the last route segment.");
                             MatchCatchAll(contentPathSegment, requestPathSegments.Skip(i), defaultValues, matchedValues);
                             usedCatchAllParameter = true;
                         }
@@ -461,7 +461,7 @@
                         }
                     }
                     else {
-                        Debug.Fail("Invalid path segment type");
+                        System.Web.Util.Debug.Fail("Invalid path segment type");
                     }
                 }
             }
@@ -582,7 +582,7 @@
                         newLastIndex = indexOfLiteral;
                     }
                     else {
-                        Debug.Fail("Invalid path segment type");
+                        System.Web.Util.Debug.Fail("Invalid path segment type");
                     }
                 }
 
@@ -598,7 +598,7 @@
                         }
                         else {
                             parameterStartIndex = newLastIndex;
-                            Debug.Fail("indexOfLastSegementUsed should always be 0 from the check above");
+                            System.Web.Util.Debug.Fail("indexOfLastSegementUsed should always be 0 from the check above");
                         }
                         parameterTextLength = lastIndex;
                     }

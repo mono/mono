@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(_defaultFormatString),
         Localizable(true),
-        WebSysDescription(SR.LoginName_FormatString)
+        WebSysDescription(System.Web.SR.LoginName_FormatString)
         ]
         public virtual string FormatString {
             get {
@@ -55,7 +55,7 @@ namespace System.Web.UI.WebControls {
         internal string UserName {
             get {
                 if (DesignMode) {
-                    return SR.GetString(SR.LoginName_DesignModeUserName);
+                    return System.Web.SR.GetString(System.Web.SR.LoginName_DesignModeUserName);
                 }
                 else {
                     return LoginUtil.GetUserName(this);
@@ -101,7 +101,7 @@ namespace System.Web.UI.WebControls {
                         writer.Write(String.Format(CultureInfo.CurrentCulture, formatString, userName));
                     }
                     catch (FormatException e) {
-                        throw new FormatException(SR.GetString(SR.LoginName_InvalidFormatString), e);
+                        throw new FormatException(System.Web.SR.GetString(System.Web.SR.LoginName_InvalidFormatString), e);
                     }
                 }
             }

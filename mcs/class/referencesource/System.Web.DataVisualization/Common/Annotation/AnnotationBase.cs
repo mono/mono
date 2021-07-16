@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -892,8 +892,11 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeAppearance"),
 		DefaultValue(typeof(Color), "Black"),
         SRDescription("DescriptionAttributeForeColor"),
-        TypeConverter(typeof(ColorConverter)),
+        TypeConverter(typeof(ColorConverter))
+#if !FEATURE_PAL		
+		,
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		virtual public Color ForeColor
 		{
@@ -971,8 +974,11 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeAppearance"),
 		DefaultValue(typeof(Color), "Black"),
         SRDescription("DescriptionAttributeLineColor"),
-        TypeConverter(typeof(ColorConverter)),
+        TypeConverter(typeof(ColorConverter))
+#if !FEATURE_PAL		
+		,
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		virtual public Color LineColor
 		{
@@ -1057,8 +1063,11 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
         SRDescription("DescriptionAttributeBackColor"),
 		NotifyParentPropertyAttribute(true),
-        TypeConverter(typeof(ColorConverter)),
+        TypeConverter(typeof(ColorConverter))
+#if !FEATURE_PAL
+		,
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		virtual public Color BackColor
 		{
@@ -1089,8 +1098,11 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeAppearance"),
 		DefaultValue(ChartHatchStyle.None),
 		NotifyParentPropertyAttribute(true),
-		SRDescription("DescriptionAttributeBackHatchStyle"),
+		SRDescription("DescriptionAttributeBackHatchStyle")
+#if !FEATURE_PAL		
+		,
 		Editor(Editors.HatchStyleEditor.Editor, Editors.HatchStyleEditor.Base)
+#endif
 		]
 		virtual public ChartHatchStyle BackHatchStyle
 		{
@@ -1120,8 +1132,11 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeAppearance"),
 		DefaultValue(GradientStyle.None),
 		NotifyParentPropertyAttribute(true),
-       	SRDescription("DescriptionAttributeBackGradientStyle"),
+       	SRDescription("DescriptionAttributeBackGradientStyle")
+#if !FEATURE_PAL		   
+		,
 		Editor(Editors.GradientEditor.Editor, Editors.GradientEditor.Base)
+#endif
 		]		
 		virtual public GradientStyle BackGradientStyle
 		{
@@ -1155,8 +1170,11 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
 		NotifyParentPropertyAttribute(true),
         SRDescription("DescriptionAttributeBackSecondaryColor"),
-        TypeConverter(typeof(ColorConverter)),
+        TypeConverter(typeof(ColorConverter))
+#if !FEATURE_PAL		
+		,
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		] 
 		virtual public Color BackSecondaryColor
 		{
@@ -1182,8 +1200,11 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeAppearance"),
 		DefaultValue(typeof(Color), "128,0,0,0"),
         SRDescription("DescriptionAttributeShadowColor"),
-        TypeConverter(typeof(ColorConverter)), 
+        TypeConverter(typeof(ColorConverter))
+#if !FEATURE_PAL		
+		, 
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		virtual public Color ShadowColor
 		{
@@ -1359,7 +1380,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden),
 		SerializationVisibilityAttribute(SerializationVisibility.Hidden),
 		SRDescription("DescriptionAttributeAxisX"),
+#if !FEATURE_PAL
 		Editor(Editors.AnnotationAxisUITypeEditor.Editor, Editors.AnnotationAxisUITypeEditor.Base),
+#endif
 		TypeConverter(typeof(AnnotationAxisValueConverter)),
 		]
 		virtual public Axis AxisX
@@ -1403,7 +1426,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden),
 		SerializationVisibilityAttribute(SerializationVisibility.Hidden),
 		SRDescription("DescriptionAttributeAxisY"),
+#if !FEATURE_PAL
 		Editor(Editors.AnnotationAxisUITypeEditor.Editor, Editors.AnnotationAxisUITypeEditor.Base),
+#endif
 		TypeConverter(typeof(AnnotationAxisValueConverter)),
 		]
 		virtual public Axis AxisY
@@ -1503,7 +1528,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden),
 		SerializationVisibilityAttribute(SerializationVisibility.Hidden),
 		SRDescription("DescriptionAttributeAnchorDataPoint"),
+#if !FEATURE_PAL
 		Editor(Editors.AnchorPointUITypeEditor.Editor, Editors.AnchorPointUITypeEditor.Base),
+#endif
 		TypeConverter(typeof(AnchorPointValueConverter)),
 		]
 		virtual public DataPoint AnchorDataPoint

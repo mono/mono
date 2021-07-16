@@ -36,7 +36,7 @@ namespace System.Web.Configuration {
             : base(StringComparer.OrdinalIgnoreCase) {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

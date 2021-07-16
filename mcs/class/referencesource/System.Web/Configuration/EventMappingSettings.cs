@@ -53,7 +53,7 @@ namespace System.Web.Configuration {
         Type _type;  // The real type
 
         internal Type RealType {
-            get { Debug.Assert(_type != null, "_type != null"); return _type; }
+            get { System.Web.Util.Debug.Assert(_type != null, "_type != null"); return _type; }
             set { _type = value; }
         }
 
@@ -85,7 +85,7 @@ namespace System.Web.Configuration {
             Type = type;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

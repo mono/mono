@@ -30,6 +30,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
@@ -98,6 +99,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest.CopyResource (GetType (), "MasterTypeTest2.aspx", "MasterTypeTest2.aspx");
 			WebTest.CopyResource (GetType (), "MyDerived.master", "MyDerived.master");
 			WebTest.CopyResource (GetType (), "MyPageWithDerivedMaster.aspx", "MyPageWithDerivedMaster.aspx");
+            WebTest.CopyResource (GetType (), "MyPageWithMasterInvalidPlaceHolder.aspx", "MyPageWithMasterInvalidPlaceHolder.aspx");
 		}
 
 		[SetUp]
@@ -141,7 +143,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		// Bug #325114
 		[Test]
 		[Category ("NunitWeb")]
-		[ExpectedException (typeof(HttpException))]
+		[ExpectedException(typeof(HttpException))]
 		public void MasterPage_ContentPlaceHolder_Not_Found ()
 		{
 			Render_Helper (StandardUrl.PAGE_WITH_MASTER_INVALID_PLACE_HOLDER);
@@ -152,6 +154,28 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (_RenderDefault));
 			t.Request.Url = url;
 			string PageRenderHtml = t.Run ();
+
+			if (url == StandardUrl.PAGE_WITH_MASTER_INVALID_PLACE_HOLDER) {
+				Assert.AreEqual(t.Response.StatusCode, HttpStatusCode.InternalServerError, "Master#1");
+				return;
+			}
+			else if (url == StandardUrl.PAGE_WITH_DERIVED_MASTER) {
+				if (PageRenderHtml.IndexOf ("Derived header text") < 0) {
+					Assert.Fail ("Master#8");
+				}
+
+				if (PageRenderHtml.IndexOf ("Derived master page text ") < 0) {
+					Assert.Fail ("Master#9");
+				}
+
+				if (PageRenderHtml.IndexOf ("Master header text") < 0) {
+					Assert.Fail ("Master#10");
+				}
+			}
+			else {
+				Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master header text"), "Master#1");
+				Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master dynamic text"), "Master#4");
+			}
 			
 			
 			if (PageRenderHtml.IndexOf ("Page main text") < 0) {
@@ -173,23 +197,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				Assert.Fail ("Master#7");
 			}
 
-			if (url == StandardUrl.PAGE_WITH_DERIVED_MASTER) {
-				if (PageRenderHtml.IndexOf ("Derived header text") < 0) {
-					Assert.Fail ("Master#8");
-				}
-
-				if (PageRenderHtml.IndexOf ("Derived master page text ") < 0) {
-					Assert.Fail ("Master#9");
-				}
-
-				if (PageRenderHtml.IndexOf ("Master header text") < 0) {
-					Assert.Fail ("Master#10");
-				}
-			}
-			else {
-				Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master header text"), "Master#1");
-				Assert.AreEqual (-1, PageRenderHtml.IndexOf ("Master dynamic text"), "Master#4");
-			}
+			
 		}
 
 		[Test]

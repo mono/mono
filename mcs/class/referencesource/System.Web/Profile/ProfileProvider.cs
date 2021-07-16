@@ -22,6 +22,7 @@ namespace System.Web.Profile
     using System.Configuration.Provider;
     using System.Reflection;
     using System.CodeDom;
+    
 
     public  abstract class ProfileProvider : SettingsProvider
     {
@@ -48,7 +49,7 @@ namespace System.Web.Profile
 
             if( !( provider is ProfileProvider ) )
             {
-                throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, typeof(ProfileProvider).ToString()), "provider");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, typeof(ProfileProvider).ToString()), "provider");
             }
 
             base.Add( provider );

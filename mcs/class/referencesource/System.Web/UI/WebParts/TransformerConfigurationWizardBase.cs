@@ -74,7 +74,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[])savedState;
                 if (myState.Length != controlStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_ControlState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_ControlState));
                 }
 
                 if (myState[oldProviderNamesIndex] != null) {
@@ -138,7 +138,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
 
             // We should always have at least 1 WizardStep before we Render
-            Debug.Assert(WizardSteps.Count > 0);
+            System.Web.Util.Debug.Assert(WizardSteps.Count > 0);
         }
 
         private string[] ConvertSchemaToArray(PropertyDescriptorCollection schema) {

@@ -21,7 +21,7 @@ namespace System.Web.UI.WebControls.WebParts {
                                             string username,
                                             DateTime lastActivityDate) :
                                             base(path, lastUpdatedDate, size) {
-            _username = StringUtil.CheckAndTrimString(username, "username");
+            _username = System.Web.Util.StringUtil.CheckAndTrimString(username, "username");
             _lastActivityDate = lastActivityDate.ToUniversalTime();
         }
 

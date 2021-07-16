@@ -16,6 +16,7 @@ namespace System.Web {
     using System.Security.Permissions;
     using System.Web.UI;
     using System.Web.UI.WebControls;
+    
 
     public class SiteMapNodeCollection : IHierarchicalEnumerable, IList {
 
@@ -81,7 +82,7 @@ namespace System.Web {
 
         private ArrayList List {
             get {
-                Debug.Assert(!(this is ReadOnlySiteMapNodeCollection), "List should not be called on ReadOnlySiteMapNodeCollection.");
+                System.Web.Util.Debug.Assert(!(this is ReadOnlySiteMapNodeCollection), "List should not be called on ReadOnlySiteMapNodeCollection.");
 
                 if (_innerList == null) {
                     _innerList = new ArrayList(_initialSize);
@@ -197,7 +198,7 @@ namespace System.Web {
 
             if (!(value is SiteMapNode)) {
                 throw new ArgumentException(
-                    SR.GetString(SR.SiteMapNodeCollection_Invalid_Type, value.GetType().ToString()));
+                    System.Web.SR.GetString(System.Web.SR.SiteMapNodeCollection_Invalid_Type, value.GetType().ToString()));
             }
         }
 
@@ -357,21 +358,21 @@ namespace System.Web {
 
 
             public override int Add(SiteMapNode value) {
-                throw new NotSupportedException(SR.GetString(SR.Collection_readonly));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Collection_readonly));
             }
 
 
             public override void AddRange(SiteMapNode[] value) {
-                throw new NotSupportedException(SR.GetString(SR.Collection_readonly));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Collection_readonly));
             }
 
 
             public override void AddRange(SiteMapNodeCollection value) {
-                throw new NotSupportedException(SR.GetString(SR.Collection_readonly));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Collection_readonly));
             }
 
             public override void Clear() {
-                throw new NotSupportedException(SR.GetString(SR.Collection_readonly));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Collection_readonly));
             }
 
             public override bool Contains(SiteMapNode node) {
@@ -387,7 +388,7 @@ namespace System.Web {
                     return _internalCollection[index];
                 }
                 set {
-                    throw new NotSupportedException(SR.GetString(SR.Collection_readonly));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Collection_readonly));
                 }
             }
 
@@ -400,15 +401,15 @@ namespace System.Web {
             }
 
             public override void Insert(int index, SiteMapNode value) {
-                throw new NotSupportedException(SR.GetString(SR.Collection_readonly));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Collection_readonly));
             }
 
             public override void Remove(SiteMapNode value) {
-                throw new NotSupportedException(SR.GetString(SR.Collection_readonly));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Collection_readonly));
             }
 
             public override void RemoveAt(int index) {
-                throw new NotSupportedException(SR.GetString(SR.Collection_readonly));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Collection_readonly));
             }
         }
     }

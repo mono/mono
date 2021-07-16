@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 return String.Empty;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls.WebParts {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebPartManager_StaticConnections),
+        WebSysDescription(System.Web.SR.WebPartManager_StaticConnections),
         ]
         public ProxyWebPartConnectionCollection StaticConnections {
             get {
@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.ControlNonVisual, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ControlNonVisual, this.GetType().Name));
             }
         }
 
@@ -106,18 +106,18 @@ namespace System.Web.UI.WebControls.WebParts {
         EditorBrowsable(EditorBrowsableState.Never),
         ]
         public override void Focus() {
-            throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
         }
 
         protected internal override void OnInit(EventArgs e) {
             base.OnInit(e);
 
             Page page = Page;
-            Debug.Assert(page != null);
+            System.Web.Util.Debug.Assert(page != null);
             if ((page != null) && !DesignMode) {
                 WebPartManager webPartManager = WebPartManager.GetCurrentWebPartManager(page);
                 if (webPartManager == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartManagerRequired));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartManagerRequired));
                 }
                 StaticConnections.SetWebPartManager(webPartManager);
             }

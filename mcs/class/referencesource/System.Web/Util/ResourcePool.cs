@@ -29,7 +29,7 @@ namespace System.Web.Util {
             _max = max;
             _callback = new TimerCallback(this.TimerProc);
 
-            Debug.Validate("ResourcePool", this);
+            System.Web.Util.Debug.Validate("ResourcePool", this);
         }
 
         public void Dispose() {
@@ -53,7 +53,7 @@ namespace System.Web.Util {
                             _timer.Dispose();
                         }
 
-                        Debug.Trace("ResourcePool", "Disposed");
+                        System.Web.Util.Debug.Trace("ResourcePool", "Disposed");
                         _disposed = true;
                     }
                 }
@@ -66,12 +66,12 @@ namespace System.Web.Util {
             // avoid lock in common case
             if (_resources.Count != 0) {
                 lock (this) {
-                    Debug.Validate("ResourcePool", this);
+                    System.Web.Util.Debug.Validate("ResourcePool", this);
 
                     if (!_disposed) {
                         if (_resources.Count == 0) {
                             result = null;
-                            Debug.Trace("ResourcePool", "RetrieveResource returned null");
+                            System.Web.Util.Debug.Trace("ResourcePool", "RetrieveResource returned null");
                         } else {
                             result = _resources[_resources.Count-1];
                             _resources.RemoveAt(_resources.Count-1);
@@ -80,7 +80,7 @@ namespace System.Web.Util {
                             }
                         }
 
-                        Debug.Validate("ResourcePool", this);
+                        System.Web.Util.Debug.Validate("ResourcePool", this);
                     }
                 }
             }
@@ -91,7 +91,7 @@ namespace System.Web.Util {
         internal void StoreResource(IDisposable o) {
 
             lock (this) {
-                Debug.Validate("ResourcePool", this);
+                System.Web.Util.Debug.Validate("ResourcePool", this);
 
                 if (!_disposed) {
                     if (_resources.Count < _max) {
@@ -100,7 +100,7 @@ namespace System.Web.Util {
                         if (_timer == null) {
 
 #if DBG
-                            if (!Debug.IsTagPresent("Timer") || Debug.IsTagEnabled("Timer"))
+                            if (!System.Web.Util.Debug.IsTagPresent("Timer") || System.Web.Util.Debug.IsTagEnabled("Timer"))
 #endif
                             {
                                 _timer = new Timer(_callback, null, _interval, _interval);
@@ -108,12 +108,12 @@ namespace System.Web.Util {
                         }
                     }
 
-                    Debug.Validate("ResourcePool", this);
+                    System.Web.Util.Debug.Validate("ResourcePool", this);
                 }
             }
 
             if (o != null) {
-                Debug.Trace("ResourcePool", "StoreResource reached max=" + _max);
+                System.Web.Util.Debug.Trace("ResourcePool", "StoreResource reached max=" + _max);
                 o.Dispose();
             }
         }
@@ -122,7 +122,7 @@ namespace System.Web.Util {
             IDisposable[] a = null;
 
             lock (this) {
-                Debug.Validate("ResourcePool", this);
+                System.Web.Util.Debug.Validate("ResourcePool", this);
 
                 if (!_disposed) {
                     if (_resources.Count == 0) {
@@ -131,7 +131,7 @@ namespace System.Web.Util {
                             _timer = null;
                         }
 
-                        Debug.Validate("ResourcePool", this);
+                        System.Web.Util.Debug.Validate("ResourcePool", this);
                         return;
                     }
 
@@ -143,8 +143,8 @@ namespace System.Web.Util {
                     // next time the timer proc is called.
                     _iDisposable = _resources.Count;
 
-                    Debug.Trace("ResourcePool", "Timer disposing " + a.Length + "; remaining=" + _resources.Count);
-                    Debug.Validate("ResourcePool", this);
+                    System.Web.Util.Debug.Trace("ResourcePool", "Timer disposing " + a.Length + "; remaining=" + _resources.Count);
+                    System.Web.Util.Debug.Validate("ResourcePool", this);
                 }
             }
 
@@ -162,14 +162,14 @@ namespace System.Web.Util {
 
 #if DBG
         internal void DebugValidate() {
-            Debug.CheckValid(_resources != null, "_resources != null");
+            System.Web.Util.Debug.CheckValid(_resources != null, "_resources != null");
 
-            Debug.CheckValid(0 <= _iDisposable && _iDisposable <= _resources.Count,
+            System.Web.Util.Debug.CheckValid(0 <= _iDisposable && _iDisposable <= _resources.Count,
                              "0 <= _iDisposable && _iDisposable <= _resources.Count" +
                              ";_iDisposable=" + _iDisposable +
                              ";_resources.Count=" + _resources.Count);
 
-            Debug.CheckValid(_interval > TimeSpan.Zero, "_interval > TimeSpan.Zero" +
+            System.Web.Util.Debug.CheckValid(_interval > TimeSpan.Zero, "_interval > TimeSpan.Zero" +
                              ";_interval=" + _interval);
         }
 #endif

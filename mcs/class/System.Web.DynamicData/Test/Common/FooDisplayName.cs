@@ -7,7 +7,7 @@ using System.Text;
 namespace MonoTests.Common
 {
 	[DisplayName ("My name is FooDisplayName, and I am friendly")]
-	class FooDisplayName
+	public class FooDisplayName
 	{
 		public string Column1 { get; set; }
 		public int Column2 { get; set; }

@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls.WebParts {
         WebCategory("Appearance"),
         DefaultValue(typeof(Color), ""),
         TypeConverterAttribute(typeof(WebColorConverter)),
-        WebSysDescription(SR.WebPartMenuStyle_ShadowColor)
+        WebSysDescription(System.Web.SR.WebPartMenuStyle_ShadowColor)
         ]
         public Color ShadowColor {
             get {

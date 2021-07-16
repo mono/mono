@@ -142,7 +142,7 @@ namespace System.Data.Linq.SqlClient {
 
         private void OnInfoMessage(object sender, SqlInfoMessageEventArgs args) {
             if (this.provider.Log != null) {
-                this.provider.Log.WriteLine(Strings.LogGeneralInfoMessage(args.Source, args.Message));
+                this.provider.Log.WriteLine(SR.Format(SR.LogGeneralInfoMessage, args.Source, args.Message));
             }
         }
 

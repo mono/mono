@@ -7,7 +7,7 @@ using System.Web.UI;
 
 namespace MonoTests.Common
 {
-	class AFieldTemplate : ITemplate
+	public class AFieldTemplate : ITemplate
 	{
 		public List <Control> Controls { get; private set; }
 

@@ -55,7 +55,7 @@ namespace System.Web.UI.WebControls.Adapters {
 
                 if (singleParagraph) {
                     foreach (String errorMessage in errorMessages) {
-                        Debug.Assert(errorMessage != null && errorMessage.Length > 0, "Bad Error Messages");
+                        System.Web.Util.Debug.Assert(errorMessage != null && errorMessage.Length > 0, "Bad Error Messages");
                         writer.WriteEncodedText(errorMessage);
                         WriteSeparator(writer);
                     }
@@ -64,7 +64,7 @@ namespace System.Web.UI.WebControls.Adapters {
                 else {
                     ArrayList arr = new ArrayList();
                     foreach (String errorMessage in errorMessages) {
-                        Debug.Assert(errorMessage != null && errorMessage.Length > 0, "Bad Error Messages");
+                        System.Web.Util.Debug.Assert(errorMessage != null && errorMessage.Length > 0, "Bad Error Messages");
                         arr.Add(errorMessage);
                     }
 

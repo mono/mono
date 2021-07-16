@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -13,7 +13,7 @@
 //
 //  Purpose:	LabelStyle and CustomLabel classes are used to determine 
 //              chart axis labels. Labels can be automatically 
-//              generated based on the series data or be “manually” 
+//              generated based on the series data or be ï¿½manuallyï¿½ 
 //              set by the user.
 //
 //	Reviewed:	AG - Jul 31, 2002
@@ -632,7 +632,9 @@ using System.Drawing.Text;
 		SRDescription("DescriptionAttributeUrl"),
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
         Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base)
+#endif
 		]
 		public string Url
 		{
@@ -696,7 +698,9 @@ using System.Drawing.Text;
 		SRDescription("DescriptionAttributeCustomLabel_ImageUrl"),
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
         Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base),
+#endif
         System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")
 		]
 		public string ImageUrl
@@ -763,7 +767,9 @@ using System.Drawing.Text;
 		Bindable(true),
 		DefaultValue(""),
 		SRDescription("DescriptionAttributeCustomLabel_Image"),
+#if !FEATURE_PAL
         Editor(Editors.ImageValueEditor.Editor, Editors.ImageValueEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -792,7 +798,9 @@ using System.Drawing.Text;
 		NotifyParentPropertyAttribute(true),
         SRDescription("DescriptionAttributeImageTransparentColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -844,7 +852,9 @@ using System.Drawing.Text;
 		Bindable(true),
 		DefaultValue(GridTickTypes.None),
 		SRDescription("DescriptionAttributeCustomLabel_GridTicks"),
+#if !FEATURE_PAL
         Editor(Editors.FlagsEnumUITypeEditor.Editor, Editors.FlagsEnumUITypeEditor.Base)
+#endif
 		]
 		public GridTickTypes GridTicks
 		{
@@ -946,7 +956,9 @@ using System.Drawing.Text;
         SRDescription("DescriptionAttributeForeColor"),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -974,7 +986,9 @@ using System.Drawing.Text;
 		SRDescription("DescriptionAttributeCustomLabel_MarkColor"),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -2770,7 +2784,9 @@ using System.Drawing.Text;
         SRDescription("DescriptionAttributeFontColor"),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif

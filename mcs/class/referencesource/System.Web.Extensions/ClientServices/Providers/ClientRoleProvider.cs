@@ -12,7 +12,6 @@ namespace System.Web.ClientServices.Providers
     using System.Data;
     using System.Data.OleDb;
     using System.IO;
-    using System.Windows.Forms;
     using System.Collections.Specialized;
     using System.Net;
     using System.Web.ClientServices;
@@ -168,18 +167,20 @@ namespace System.Web.ClientServices.Providers
                 cookies = ((ClientFormsIdentity)identity).AuthenticationCookies;
 
             if (_UsingWFCService) {
+#if MONO
                 throw new NotImplementedException();
-
-//                 CustomBinding binding = ProxyHelper.GetBinding();
-//                 ChannelFactory<RolesService> channelFactory = new ChannelFactory<RolesService>(binding, new EndpointAddress(GetServiceUri())); //(@"http://localhost/AuthSvc/service.svc"));
-//                 RolesService clientService = channelFactory.CreateChannel();
-//                 using (new OperationContextScope((IContextChannel)clientService)) {
-//                     ProxyHelper.AddCookiesToWCF(cookies, GetServiceUri(), _CurrentUser, _ConnectionString, _ConnectionStringProvider);
-//                     _Roles = clientService.GetRolesForCurrentUser();
-//                     if (_Roles == null)
-//                         _Roles = new string[0];
-//                     ProxyHelper.GetCookiesFromWCF(cookies, GetServiceUri(), _CurrentUser, _ConnectionString, _ConnectionStringProvider);
-//                 }
+#else
+                CustomBinding binding = ProxyHelper.GetBinding();
+                ChannelFactory<RolesService> channelFactory = new ChannelFactory<RolesService>(binding, new EndpointAddress(GetServiceUri())); //(@"http://localhost/AuthSvc/service.svc"));
+                RolesService clientService = channelFactory.CreateChannel();
+                using (new OperationContextScope((IContextChannel)clientService)) {
+                    ProxyHelper.AddCookiesToWCF(cookies, GetServiceUri(), _CurrentUser, _ConnectionString, _ConnectionStringProvider);
+                    _Roles = clientService.GetRolesForCurrentUser();
+                    if (_Roles == null)
+                        _Roles = new string[0];
+                    ProxyHelper.GetCookiesFromWCF(cookies, GetServiceUri(), _CurrentUser, _ConnectionString, _ConnectionStringProvider);
+                }
+#endif
             } else {
                 object o = ProxyHelper.CreateWebRequestAndGetResponse(GetServiceUri() + "/GetRolesForCurrentUser",
                                                                       ref cookies,

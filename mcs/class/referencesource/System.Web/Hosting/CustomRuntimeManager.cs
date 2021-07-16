@@ -88,7 +88,7 @@ namespace System.Web.Hosting {
                 object dummy;
                 bool removed = _customRuntimeManager._activeRegistrations.TryRemove(this, out dummy);
 
-                Debug.Assert(removed, "Entry did not exist in the dictionary; was it removed twice?");
+                System.Web.Util.Debug.Assert(removed, "Entry did not exist in the dictionary; was it removed twice?");
             }
         }
     }

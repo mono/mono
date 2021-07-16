@@ -17,6 +17,7 @@ namespace System.Web {
     using System.Web.Hosting;
     using System.Web.Util;
 
+
     [
     System.Runtime.InteropServices.ComVisible(false),
     System.Security.SuppressUnmanagedCodeSecurityAttribute()
@@ -1320,6 +1321,20 @@ namespace System.Web {
         internal static int ERROR_FILE_NOT_FOUND = 0x00000002;
 #endif // FEATURE_pAL
 
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct MEMORYSTATUSEX {
+        // The length field must be set to the size of this data structure.
+        internal int length;
+        internal int memoryLoad;
+        internal ulong totalPhys;
+        internal ulong availPhys;
+        internal ulong totalPageFile;
+        internal ulong availPageFile;
+        internal ulong totalVirtual;
+        internal ulong availVirtual;
+        internal ulong availExtendedVirtual;
     }
 }
 

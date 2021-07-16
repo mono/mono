@@ -19,6 +19,7 @@ namespace System.Web.Compilation {
 #endif // !FEATURE_PAL
     using System.Web.UI;
     using System.Web.Util;
+    
 
 
     public abstract class ExpressionBuilder {
@@ -68,7 +69,7 @@ namespace System.Web.Compilation {
 
             System.Web.Configuration.ExpressionBuilder builder = config.ExpressionBuilders[expressionPrefix];
             if (builder == null) {
-                throw new HttpParseException(SR.GetString(SR.InvalidExpressionPrefix, expressionPrefix));
+                throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.InvalidExpressionPrefix, expressionPrefix));
             }
 
             Type expressionBuilderType = null;
@@ -82,10 +83,10 @@ namespace System.Web.Compilation {
             if (expressionBuilderType == null) {
                 expressionBuilderType = builder.TypeInternal;
             }
-            Debug.Assert(expressionBuilderType != null, "expressionBuilderType should not be null");
+            System.Web.Util.Debug.Assert(expressionBuilderType != null, "expressionBuilderType should not be null");
 
             if (!typeof(ExpressionBuilder).IsAssignableFrom(expressionBuilderType)) {
-                throw new HttpParseException(SR.GetString(SR.ExpressionBuilder_InvalidType, expressionBuilderType.FullName));
+                throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.ExpressionBuilder_InvalidType, expressionBuilderType.FullName));
             }
             ExpressionBuilder expressionBuilder = (ExpressionBuilder)HttpRuntime.FastCreatePublicInstance(expressionBuilderType);
 

@@ -146,7 +146,7 @@ namespace System.Web.Compilation {
 
         public override CodeExpression GetCodeExpression(BoundPropertyEntry entry,
             object parsedData, ExpressionBuilderContext context) {
-            Debug.Fail("This should never be called");
+            System.Web.Util.Debug.Fail("This should never be called");
             return null;
         }
     }

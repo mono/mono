@@ -26,11 +26,11 @@ namespace System.Web.UI {
 
         public WebResourceAttribute(string webResource, string contentType) {
             if (String.IsNullOrEmpty(webResource)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("webResource");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("webResource");
             }
 
             if (String.IsNullOrEmpty(contentType)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("contentType");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("contentType");
             }
 
             _contentType = contentType;

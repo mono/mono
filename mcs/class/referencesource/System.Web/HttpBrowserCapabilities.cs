@@ -17,6 +17,7 @@ namespace System.Web {
     using System.Text.RegularExpressions;
     using System.Web.Configuration;
     using System.Security.Permissions;
+    
 
 
     /// <devdoc>
@@ -150,7 +151,7 @@ namespace System.Web {
         }
 
         Exception BuildParseError(Exception e, string capsKey) {
-            string message = SR.GetString(SR.Invalid_string_from_browser_caps, e.Message, capsKey, this[capsKey]);
+            string message = System.Web.SR.GetString(System.Web.SR.Invalid_string_from_browser_caps, e.Message, capsKey, this[capsKey]);
 
             // to show ConfigurationException in stack trace
             ConfigurationException configEx = new ConfigurationErrorsException(message, e);

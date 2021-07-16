@@ -19,10 +19,10 @@ namespace System.Web.UI {
 
         public TagPrefixAttribute(string namespaceName, string tagPrefix) {
             if (String.IsNullOrEmpty(namespaceName)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("namespaceName");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("namespaceName");
             }
             if (String.IsNullOrEmpty(tagPrefix)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("tagPrefix");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("tagPrefix");
             }
 
             this.namespaceName = namespaceName;

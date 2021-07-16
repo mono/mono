@@ -26,6 +26,7 @@ namespace System.Web.Configuration.Common {
     using System.Web.Compilation;
     using System.Security;
     using System.Security.Permissions;
+    
 
     /*
      * Single Entry of request to class
@@ -41,10 +42,10 @@ namespace System.Web.Configuration.Common {
             _type = SecureGetType(typeName, propertyName, configElement);
             if (!typeof(IHttpModule).IsAssignableFrom(_type)) {
                 if (configElement == null) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Type_not_module, typeName)); 
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Type_not_module, typeName)); 
                 }
                 else {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Type_not_module, typeName),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Type_not_module, typeName),
                               configElement.ElementInformation.Properties["type"].Source, configElement.ElementInformation.Properties["type"].LineNumber);
                 }
             }
@@ -59,7 +60,7 @@ namespace System.Web.Configuration.Common {
         }
 
         internal /*public*/ IHttpModule Create() {
-            return (IHttpModule)HttpRuntime.CreateNonPublicInstance(_type);
+            return (IHttpModule)HttpRuntime.CreateNonPublicInstanceByWebObjectActivator(_type);
         }
 
         [PermissionSet(SecurityAction.Assert, Unrestricted=true)]

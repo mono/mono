@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -229,7 +229,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), "Black"),
         SRDescription("DescriptionAttributeForeColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		override public Color ForeColor
 		{
@@ -276,7 +278,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		override public Color BackColor
 		{
@@ -298,7 +302,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Browsable(false),
 		DefaultValue(ChartHatchStyle.None),
 		NotifyParentPropertyAttribute(true),
+#if !FEATURE_PAL
 		Editor(Editors.HatchStyleEditor.Editor, Editors.HatchStyleEditor.Base)
+#endif
 		]
 		override public ChartHatchStyle BackHatchStyle
 		{
@@ -320,7 +326,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Browsable(false),
 		DefaultValue(GradientStyle.None),
 		NotifyParentPropertyAttribute(true),
+#if !FEATURE_PAL
 		Editor(Editors.GradientEditor.Editor, Editors.GradientEditor.Base)
+#endif
 		]		
 		override public GradientStyle BackGradientStyle
 		{
@@ -343,7 +351,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		] 
 		override public Color BackSecondaryColor
 		{
@@ -502,7 +512,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributePosition"),
 		SRDescription("DescriptionAttributePathPoints"),
 		EditorBrowsableAttribute(EditorBrowsableState.Never),
+#if !FEATURE_PAL
 		Editor(Editors.ChartCollectionEditor.Editor, Editors.ChartCollectionEditor.Base),
+#endif
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -1274,7 +1286,9 @@ namespace System.Web.UI.DataVisualization.Charting
         SRDescription("DescriptionAttributeBackColor"),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		override public Color BackColor
 		{
@@ -1306,7 +1320,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(ChartHatchStyle.None),
 		NotifyParentPropertyAttribute(true),
 		SRDescription("DescriptionAttributeBackHatchStyle"),
+#if !FEATURE_PAL
 		Editor(Editors.HatchStyleEditor.Editor, Editors.HatchStyleEditor.Base)
+#endif
 		]
 		override public ChartHatchStyle BackHatchStyle
 		{
@@ -1338,7 +1354,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(GradientStyle.None),
 		NotifyParentPropertyAttribute(true),
                 SRDescription("DescriptionAttributeBackGradientStyle"),
+#if !FEATURE_PAL
 		Editor(Editors.GradientEditor.Editor, Editors.GradientEditor.Base)
+#endif
 		]		
 		override public GradientStyle BackGradientStyle
 		{
@@ -1373,7 +1391,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		NotifyParentPropertyAttribute(true),
         SRDescription("DescriptionAttributeBackSecondaryColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		] 
 		override public Color BackSecondaryColor
 		{

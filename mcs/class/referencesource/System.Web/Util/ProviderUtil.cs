@@ -44,7 +44,7 @@ namespace System.Web.Util {
             catch (Exception e){
                 if (e is ArgumentException || e is FormatException || e is OverflowException) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_provider_positive_attributes, attrib, providerName));
+                        System.Web.SR.GetString(System.Web.SR.Invalid_provider_positive_attributes, attrib, providerName));
                 }
                 else {
                     throw;
@@ -54,7 +54,7 @@ namespace System.Web.Util {
             
             if (t < 0) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_provider_positive_attributes, attrib, providerName));
+                    System.Web.SR.GetString(System.Web.SR.Invalid_provider_positive_attributes, attrib, providerName));
 
             }
 
@@ -84,7 +84,7 @@ namespace System.Web.Util {
                 catch (Exception e){
                     if (e is ArgumentException || e is FormatException || e is OverflowException) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Invalid_provider_positive_attributes, attrib, providerName));
+                            System.Web.SR.GetString(System.Web.SR.Invalid_provider_positive_attributes, attrib, providerName));
                     }
                     else {
                         throw;
@@ -94,7 +94,7 @@ namespace System.Web.Util {
                 
                 if (t < 0) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_provider_positive_attributes, attrib, providerName));
+                        System.Web.SR.GetString(System.Web.SR.Invalid_provider_positive_attributes, attrib, providerName));
 
                 }
             }
@@ -125,7 +125,7 @@ namespace System.Web.Util {
                 catch (Exception e){
                     if (e is ArgumentException || e is FormatException || e is OverflowException) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Invalid_provider_non_zero_positive_attributes, attrib, providerName));
+                            System.Web.SR.GetString(System.Web.SR.Invalid_provider_non_zero_positive_attributes, attrib, providerName));
                     }
                     else {
                         throw;
@@ -135,7 +135,7 @@ namespace System.Web.Util {
                 
                 if (t <= 0) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_provider_non_zero_positive_attributes, attrib, providerName));
+                        System.Web.SR.GetString(System.Web.SR.Invalid_provider_non_zero_positive_attributes, attrib, providerName));
 
                 }
             }
@@ -161,7 +161,7 @@ namespace System.Web.Util {
                 val = false;
             }
             else {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_provider_attribute, attrib, providerName, s));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_provider_attribute, attrib, providerName, s));
             }
         }
 
@@ -180,7 +180,7 @@ namespace System.Web.Util {
             // If it's (null and required) -OR- (empty string) we throw
             if ((s == null && required) || (s.Length == 0)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Provider_missing_attribute, attrib, providerName));
+                    System.Web.SR.GetString(System.Web.SR.Provider_missing_attribute, attrib, providerName));
             }
 
             val = s;
@@ -192,7 +192,7 @@ namespace System.Web.Util {
                 string attribUnrecognized = config.GetKey(0);
                 if (!String.IsNullOrEmpty(attribUnrecognized))
                     throw new ConfigurationErrorsException(
-                                    SR.GetString(SR.Unexpected_provider_attribute, attribUnrecognized, providerName));
+                                    System.Web.SR.GetString(System.Web.SR.Unexpected_provider_attribute, attribUnrecognized, providerName));
             }
         }
     }

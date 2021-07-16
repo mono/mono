@@ -58,7 +58,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(false),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.ListControl_AppendDataBoundItems),
+        WebSysDescription(System.Web.SR.ListControl_AppendDataBoundItems),
         ]
         public virtual bool AppendDataBoundItems {
             get {
@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.ListControl_AutoPostBack),
+        WebSysDescription(System.Web.SR.ListControl_AutoPostBack),
         Themeable(false),
         ]
         public virtual bool AutoPostBack {
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(false),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.AutoPostBackControl_CausesValidation)
+        WebSysDescription(System.Web.SR.AutoPostBackControl_CausesValidation)
         ]
         public virtual bool CausesValidation {
             get {
@@ -124,7 +124,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.ListControl_DataTextField)
+        WebSysDescription(System.Web.SR.ListControl_DataTextField)
         ]
         public virtual string DataTextField {
             get {
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.ListControl_DataTextFormatString)
+        WebSysDescription(System.Web.SR.ListControl_DataTextFormatString)
         ]
         public virtual string DataTextFormatString {
             get {
@@ -170,7 +170,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.ListControl_DataValueField)
+        WebSysDescription(System.Web.SR.ListControl_DataValueField)
         ]
         public virtual string DataValueField {
             get {
@@ -207,7 +207,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         Editor("System.Web.UI.Design.WebControls.ListItemsCollectionEditor," + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         MergableProperty(false),
-        WebSysDescription(SR.ListControl_Items),
+        WebSysDescription(System.Web.SR.ListControl_Items),
         PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public virtual ListItemCollection Items {
@@ -285,7 +285,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebControl_SelectedIndex),
+        WebSysDescription(System.Web.SR.WebControl_SelectedIndex),
         ]
         public virtual int SelectedIndex {
             get {
@@ -302,7 +302,7 @@ namespace System.Web.UI.WebControls {
                         value = -1;
                     }
                     else {
-                        throw new ArgumentOutOfRangeException("value", SR.GetString(SR.ListControl_SelectionOutOfRange, ID, "SelectedIndex"));
+                        throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.ListControl_SelectionOutOfRange, ID, "SelectedIndex"));
                     }
                 }
 
@@ -316,7 +316,7 @@ namespace System.Web.UI.WebControls {
                     // if we're in a postback and our state is loaded but the selection doesn't exist in the list of items,
                     // throw saying we couldn't find the selected item.
                     if (_stateLoaded) {
-                        throw new ArgumentOutOfRangeException("value", SR.GetString(SR.ListControl_SelectionOutOfRange, ID, "SelectedIndex"));
+                        throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.ListControl_SelectionOutOfRange, ID, "SelectedIndex"));
                     }
                 }
                 // always save the selectedindex
@@ -355,7 +355,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Browsable(false),
         DefaultValue(null),
-        WebSysDescription(SR.ListControl_SelectedItem),
+        WebSysDescription(System.Web.SR.ListControl_SelectedItem),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public virtual ListItem SelectedItem{
@@ -377,7 +377,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         Themeable(false),
-        WebSysDescription(SR.ListControl_SelectedValue),
+        WebSysDescription(System.Web.SR.ListControl_SelectedValue),
         WebCategory("Behavior"),
         ]
         public virtual string SelectedValue {
@@ -400,7 +400,7 @@ namespace System.Web.UI.WebControls {
                     bool loaded = Page != null && Page.IsPostBack && _stateLoaded;
 
                     if (loaded && selectItem == null) {
-                        throw new ArgumentOutOfRangeException("value", SR.GetString(SR.ListControl_SelectionOutOfRange, ID, "SelectedValue"));
+                        throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.ListControl_SelectionOutOfRange, ID, "SelectedValue"));
                     }
 
                     if (selectItem != null) {
@@ -419,7 +419,7 @@ namespace System.Web.UI.WebControls {
         Themeable(false),
         DefaultValue(""),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.ListControl_Text),
+        WebSysDescription(System.Web.SR.ListControl_Text),
         WebCategory("Behavior"),
         ]
         public virtual string Text {
@@ -443,7 +443,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.PostBackControl_ValidationGroup)
+        WebSysDescription(System.Web.SR.PostBackControl_ValidationGroup)
         ]
         public virtual string ValidationGroup {
             get {
@@ -462,7 +462,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.ListControl_OnSelectedIndexChanged)
+        WebSysDescription(System.Web.SR.ListControl_OnSelectedIndexChanged)
         ]
         public event EventHandler SelectedIndexChanged {
             add {
@@ -480,7 +480,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.ListControl_TextChanged)
+        WebSysDescription(System.Web.SR.ListControl_TextChanged)
         ]
         public event EventHandler TextChanged {
             add {
@@ -596,7 +596,7 @@ namespace System.Web.UI.WebControls {
 
             // view could be null when a user implements his own GetData().
             if (null == view) {
-                throw new InvalidOperationException(SR.GetString(SR.DataControl_ViewNotFound, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_ViewNotFound, ID));
             }
 
             // DevDiv 1036362: enable async model binding for ListControl
@@ -730,11 +730,11 @@ namespace System.Web.UI.WebControls {
 
                 cachedSelectedValueIndex = Items.FindByValueInternal(cachedSelectedValue, true);
                 if (-1 == cachedSelectedValueIndex) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.ListControl_SelectionOutOfRange, ID, "SelectedValue"));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.ListControl_SelectionOutOfRange, ID, "SelectedValue"));
                 }
 
                 if ((cachedSelectedIndex != -1) && (cachedSelectedIndex != cachedSelectedValueIndex)) {
-                    throw new ArgumentException(SR.GetString(SR.Attributes_mutually_exclusive, "SelectedIndex", "SelectedValue"));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Attributes_mutually_exclusive, "SelectedIndex", "SelectedValue"));
                 }
 
                 SelectedIndex = cachedSelectedValueIndex;
@@ -893,7 +893,7 @@ namespace System.Web.UI.WebControls {
 
         protected internal virtual void VerifyMultiSelect() {
             if (!IsMultiSelectInternal) {
-                throw new HttpException(SR.GetString(SR.Cant_Multiselect_In_Single_Mode));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_Multiselect_In_Single_Mode));
             }
         }
     }

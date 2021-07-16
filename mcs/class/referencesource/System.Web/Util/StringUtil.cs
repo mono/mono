@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// <copyright file="StringUtil.cs" company="Microsoft">
+// <copyright file="System.Web.Util.StringUtil.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
 //------------------------------------------------------------------------------
@@ -40,12 +40,12 @@ internal static class StringUtil {
         string trimmedValue = paramValue.Trim();
         if (trimmedValue.Length == 0) {
             throw new ArgumentException(
-                SR.GetString(SR.PersonalizationProviderHelper_TrimmedEmptyString,
+                System.Web.SR.GetString(System.Web.SR.PersonalizationProviderHelper_TrimmedEmptyString,
                                                  paramName));
         }
         if (lengthToCheck > -1 && trimmedValue.Length > lengthToCheck) {
             throw new ArgumentException(
-                SR.GetString(SR.StringUtil_Trimmed_String_Exceed_Maximum_Length,
+                System.Web.SR.GetString(System.Web.SR.StringUtil_Trimmed_String_Exceed_Maximum_Length,
                                                  paramValue, paramName, lengthToCheck.ToString(CultureInfo.InvariantCulture)));
         }
         return trimmedValue;
@@ -71,9 +71,9 @@ internal static class StringUtil {
         if (length < 0)
             throw new ArgumentOutOfRangeException("length");
         if ((s1 == null ? 0 : s1.Length) - offset1 < length)
-            throw new ArgumentOutOfRangeException(SR.GetString(SR.InvalidOffsetOrCount, "offset1", "length"));
+            throw new ArgumentOutOfRangeException(System.Web.SR.GetString(System.Web.SR.InvalidOffsetOrCount, "offset1", "length"));
         if ((s2 == null ? 0 : s2.Length) - offset2 < length)
-            throw new ArgumentOutOfRangeException(SR.GetString(SR.InvalidOffsetOrCount, "offset2", "length"));
+            throw new ArgumentOutOfRangeException(System.Web.SR.GetString(System.Web.SR.InvalidOffsetOrCount, "offset2", "length"));
         if (String.IsNullOrEmpty(s1) || String.IsNullOrEmpty(s2))
             return true;
 
@@ -209,15 +209,15 @@ internal static class StringUtil {
         // We do not verify the parameters in this function, as the callers are assumed
         // to have done so. This is important for users such as HttpWriter that already
         // do the argument checking, and are called several times per request.
-        Debug.Assert(len >= 0, "len >= 0");
+        System.Web.Util.Debug.Assert(len >= 0, "len >= 0");
 
-        Debug.Assert(src != null, "src != null");
-        Debug.Assert(srcIndex >= 0, "srcIndex >= 0");
-        Debug.Assert(srcIndex + len <= src.Length, "src");
+        System.Web.Util.Debug.Assert(src != null, "src != null");
+        System.Web.Util.Debug.Assert(srcIndex >= 0, "srcIndex >= 0");
+        System.Web.Util.Debug.Assert(srcIndex + len <= src.Length, "src");
 
-        Debug.Assert(dest != null, "dest != null");
-        Debug.Assert(destIndex >= 0, "destIndex >= 0");
-        Debug.Assert(destIndex + len <= dest.Length, "dest");
+        System.Web.Util.Debug.Assert(dest != null, "dest != null");
+        System.Web.Util.Debug.Assert(destIndex >= 0, "destIndex >= 0");
+        System.Web.Util.Debug.Assert(destIndex + len <= dest.Length, "dest");
 
         int cb = len * sizeof(char);
         fixed (char * pchSrc = src, pchDest = dest) {
@@ -227,7 +227,15 @@ internal static class StringUtil {
             memcpyimpl(pbSrc, pbDest, cb);
         }
     }
+#else
+    internal unsafe static void UnsafeStringCopy(string src, int srcIndex, char[] dest, int destIndex, int len) {
+        // need to just do a .net version for now.
+        if (src != null) {
+            src.CopyTo(srcIndex, dest, destIndex, len);
+        }
+    }
 #endif
+
     internal static bool StringArrayEquals(string[] a, string [] b) {
         if ((a == null) != (b == null)) {
             return false;
@@ -276,7 +284,7 @@ internal static class StringUtil {
             }
         }
     }
-#if !MONO
+
     internal static int GetNonRandomizedHashCode(string s, bool ignoreCase = false) {
         // Preserve the default behavior when string hash randomization is off
         if (!AppSettings.UseRandomizedStringHashAlgorithm) {
@@ -291,9 +299,11 @@ internal static class StringUtil {
         return GetStringHashCode(s);
     }
 
+//#if !MONO
+
     // Need StringComparer implementation. It's very expensive to port the actual BCL code here
     // Instead use the default AppDomain, because it doesn't have string hash randomization enabled.
-    // Marshal the call to reuse the default StringComparer behavior. 
+    // Marshal the call to reuse the default StringComparer behavior.
     // PERF isn't optimal, so apply consideration!
     [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "We carefully control the callers.")]
     internal static int GetNonRandomizedStringComparerHashCode(string s) {
@@ -316,7 +326,16 @@ internal static class StringUtil {
         // Fall back to non-compat result
         return GetStringHashCode(s.ToLower(CultureInfo.InvariantCulture));
     }
-#endif
+//#else
+    // Need StringComparer implementation. It's very expensive to port the actual BCL code here
+    // Instead use the default AppDomain, because it doesn't have string hash randomization enabled.
+    // Marshal the call to reuse the default StringComparer behavior.
+    // PERF isn't optimal, so apply consideration!
+//    [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "We carefully control the callers.")]
+//    internal static int GetNonRandomizedStringComparerHashCode(string s) {
+//        return -1;
+//    }
+//#endif
     internal static int GetNullTerminatedByteArray(Encoding enc, string s, out byte[] bytes)
     {
         bytes = null;
@@ -331,7 +350,7 @@ internal static class StringUtil {
 
     internal unsafe static void memcpyimpl(byte* src, byte* dest, int len) {
 #if !MONO        
-        Debug.Assert(len >= 0, "Negative length in memcpyimpl!");
+        System.Web.Util.Debug.Assert(len >= 0, "Negative length in memcpyimpl!");
 #endif
 
 #if FEATURE_PAL

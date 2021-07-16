@@ -16,6 +16,7 @@ namespace System.Web.Configuration {
     using System.Web.UI;
     using System.Web.Util;
     using System.Xml;
+    
 
     /*                <!-- pages Attributes:
           buffer="[true|false]"                         // Default: true
@@ -217,7 +218,7 @@ namespace System.Web.Configuration {
         /*
         }
 */
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -255,7 +256,7 @@ namespace System.Web.Configuration {
                         // throw here cause this is a bad value
                         string PropName = _propEnableSessionState.Name;
                         string LegalValues = "true, false, ReadOnly";
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_enum_attribute, PropName, LegalValues));
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_enum_attribute, PropName, LegalValues));
                 }
                 return (PagesEnableSessionState)temp;
             }
@@ -465,9 +466,9 @@ namespace System.Web.Configuration {
                     String masterPageFile = MasterPageFile;
 
                     if (!String.IsNullOrEmpty(masterPageFile)) {
-                        if (UrlPath.IsAbsolutePhysicalPath(masterPageFile)) {
+                        if (System.Web.Util.UrlPath.IsAbsolutePhysicalPath(masterPageFile)) {
                             throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Physical_path_not_allowed, masterPageFile),
+                                System.Web.SR.GetString(System.Web.SR.Physical_path_not_allowed, masterPageFile),
                                 ElementInformation.Properties["masterPageFile"].Source,
                                 ElementInformation.Properties["masterPageFile"].LineNumber);
                         }
@@ -485,18 +486,18 @@ namespace System.Web.Configuration {
 
                         if (!Util.VirtualFileExistsWithAssert(masterPageVirtualPath)) {
                             throw new ConfigurationErrorsException(
-                                SR.GetString(SR.FileName_does_not_exist, masterPageFile),
+                                System.Web.SR.GetString(System.Web.SR.FileName_does_not_exist, masterPageFile),
                                 ElementInformation.Properties["masterPageFile"].Source,
                                 ElementInformation.Properties["masterPageFile"].LineNumber);
                         }
 
-                        string extension = UrlPath.GetExtension(masterPageFile);
+                        string extension = System.Web.Util.UrlPath.GetExtension(masterPageFile);
                         Type buildProviderType =
                             CompilationUtil.GetBuildProviderTypeFromExtension(_virtualPath, extension, BuildProviderAppliesTo.Web, false);
 
                         if (!typeof(MasterPageBuildProvider).IsAssignableFrom(buildProviderType)) {
                             throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Bad_masterPage_ext),
+                                System.Web.SR.GetString(System.Web.SR.Bad_masterPage_ext),
                                 ElementInformation.Properties["masterPageFile"].Source,
                                 ElementInformation.Properties["masterPageFile"].LineNumber);
                         }
@@ -532,7 +533,7 @@ namespace System.Web.Configuration {
                 if (!_themeChecked) {
                     if ((!String.IsNullOrEmpty(themeName)) && (!Util.ThemeExists(themeName))) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Page_theme_not_found, themeName), 
+                            System.Web.SR.GetString(System.Web.SR.Page_theme_not_found, themeName), 
                             ElementInformation.Properties["theme"].Source, 
                             ElementInformation.Properties["theme"].LineNumber);
                     }
@@ -561,7 +562,7 @@ namespace System.Web.Configuration {
                     if (!String.IsNullOrEmpty(styleSheetThemeName) && 
                         (!Util.ThemeExists(styleSheetThemeName))) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Page_theme_not_found, styleSheetThemeName), 
+                            System.Web.SR.GetString(System.Web.SR.Page_theme_not_found, styleSheetThemeName), 
                             ElementInformation.Properties["styleSheetTheme"].Source, 
                             ElementInformation.Properties["styleSheetTheme"].LineNumber);
                     }
@@ -752,7 +753,7 @@ namespace System.Web.Configuration {
         internal static ICollection DefaultTagNamespaceRegisterEntries {
             get {
                 TagNamespaceRegisterEntry aspEntry = new TagNamespaceRegisterEntry("asp", "System.Web.UI.WebControls", AssemblyRef.SystemWeb);
-                TagNamespaceRegisterEntry mobileEntry = new TagNamespaceRegisterEntry("mobile", "System.Web.UI.MobileControls", AssemblyRef.SystemWebMobile);
+                TagNamespaceRegisterEntry mobileEntry = new TagNamespaceRegisterEntry("mobile", "System.Web.UI.MobileControls", "System.Web.Mobile, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
                 return new TagNamespaceRegisterEntry[] { aspEntry, mobileEntry };
             }
@@ -771,7 +772,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override void DeserializeSection(XmlReader reader) {
+        protected internal override void DeserializeSection(XmlReader reader) {
             WebContext context;
 
             base.DeserializeSection(reader);
@@ -787,7 +788,7 @@ namespace System.Web.Configuration {
 
         // This is called as the last step of the deserialization process before the newly created section is seen by the consumer.
         // We can use it to change defaults on-the-fly.
-        protected override void SetReadOnly() {
+        protected internal override void SetReadOnly() {
             // Unless overridden, set <pages controlRenderingCompatibilityVersion="4.5" />
             ConfigUtil.SetFX45DefaultValue(this, _propControlRenderingCompatibilityVersion, VersionUtil.Framework45);
 

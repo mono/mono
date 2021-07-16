@@ -26,6 +26,7 @@ namespace System.Web.Profile {
     using  System.Web.Hosting;
     using  System.Web.DataAccess;
     using  System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -40,15 +41,14 @@ namespace System.Web.Profile {
 
 
         public override void Initialize(string name, NameValueCollection config)
-        {
-            HttpRuntime.CheckAspNetHostingPermission (AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
+        {            
             if (config == null)
                throw new ArgumentNullException("config");
             if (name == null || name.Length < 1)
                 name = "SqlProfileProvider";
             if (string.IsNullOrEmpty(config["description"])) {
                 config.Remove("description");
-                config.Add("description", SR.GetString(SR.ProfileSqlProvider_description));
+                config.Add("description", System.Web.SR.GetString(System.Web.SR.ProfileSqlProvider_description));
             }
             base.Initialize(name, config);
 
@@ -62,7 +62,7 @@ namespace System.Web.Profile {
 
             if( _AppName.Length > 256 )
             {
-                throw new ProviderException(SR.GetString(SR.Provider_application_name_too_long));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long));
             }
 
             _CommandTimeout = SecUtility.GetIntValue( config, "commandTimeout", 30, true, 0 );
@@ -75,7 +75,7 @@ namespace System.Web.Profile {
             {
                 string attribUnrecognized = config.GetKey(0);
                 if (!String.IsNullOrEmpty(attribUnrecognized))
-                    throw new ProviderException(SR.GetString(SR.Provider_unrecognized_attribute, attribUnrecognized));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unrecognized_attribute, attribUnrecognized));
             }
         }
 
@@ -98,7 +98,7 @@ namespace System.Web.Profile {
             set {
                 if ( value.Length > 256 )
                 {
-                    throw new ProviderException( SR.GetString(SR.Provider_application_name_too_long)  );
+                    throw new ProviderException( System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long)  );
                 }
                 _AppName = value;
 
@@ -278,7 +278,7 @@ namespace System.Web.Profile {
             if ( profiles.Count < 1 )
             {
                 throw new ArgumentException(
-                    SR.GetString(SR.Parameter_collection_empty,
+                    System.Web.SR.GetString(System.Web.SR.Parameter_collection_empty,
                         "profiles" ),
                     "profiles" );
             }
@@ -487,14 +487,14 @@ namespace System.Web.Profile {
         private ProfileInfoCollection GetProfilesForQuery(SqlParameter [] args, ProfileAuthenticationOption authenticationOption, int pageIndex, int pageSize, out int totalRecords)
         {
             if ( pageIndex < 0 )
-                throw new ArgumentException(SR.GetString(SR.PageIndex_bad), "pageIndex");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_bad), "pageIndex");
             if ( pageSize < 1 )
-                throw new ArgumentException(SR.GetString(SR.PageSize_bad), "pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageSize_bad), "pageSize");
 
             long upperBound = (long)pageIndex * pageSize + pageSize - 1;
             if ( upperBound > Int32.MaxValue )
             {
-                throw new ArgumentException(SR.GetString(SR.PageIndex_PageSize_bad), "pageIndex and pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_PageSize_bad), "pageIndex and pageSize");
             }
 
             try {

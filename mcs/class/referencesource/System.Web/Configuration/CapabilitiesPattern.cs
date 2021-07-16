@@ -19,6 +19,7 @@ namespace System.Web.Configuration {
     using System.Web.Compilation;
     using System.Web.Hosting;
     using System.Security.Permissions;
+    
 
     //
     // Represents a single pattern to be expanded
@@ -85,7 +86,7 @@ namespace System.Web.Configuration {
                     match = errorPat.Match(text, textpos);
 
                     throw new ArgumentException(
-                                               SR.GetString(SR.Unrecognized_construct_in_pattern, match.ToString(), text));
+                                               System.Web.SR.GetString(System.Web.SR.Unrecognized_construct_in_pattern, match.ToString(), text));
                 }
 
                 textpos = match.Index + match.Length;

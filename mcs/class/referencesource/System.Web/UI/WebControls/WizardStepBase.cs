@@ -21,7 +21,7 @@ namespace System.Web.UI.WebControls {
 
             if (parentBuilder.ControlType == null ||
                 !(typeof(WizardStepCollection).IsAssignableFrom(parentBuilder.ControlType))) {
-                throw new HttpException(SR.GetString(SR.WizardStep_WrongContainment));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.WizardStep_WrongContainment));
             }
 
             base.SetParentBuilder(parentBuilder);
@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls {
         Themeable(false),
         Filterable(false),
         DefaultValue(true),
-        WebSysDescription(SR.WizardStep_AllowReturn)
+        WebSysDescription(System.Web.SR.WizardStep_AllowReturn)
         ]
         public virtual bool AllowReturn {
             get {
@@ -76,11 +76,11 @@ namespace System.Web.UI.WebControls {
                 // VSWhidbey 407127. Need to validate control ID here since WiardStepBase does not have a designer.
                 if (Owner != null && Owner.DesignMode) {
                     if (!CodeGenerator.IsValidLanguageIndependentIdentifier(value)) {
-                        throw new ArgumentException(SR.GetString(SR.Invalid_identifier, value));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_identifier, value));
                     }
 
                     if (value != null && value.Equals(Owner.ID, StringComparison.OrdinalIgnoreCase)) {
-                        throw new ArgumentException(SR.GetString(SR.Id_already_used, value));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Id_already_used, value));
                     }
 
                     foreach (WizardStepBase step in Owner.WizardSteps) {
@@ -89,7 +89,7 @@ namespace System.Web.UI.WebControls {
                         }
 
                         if (step.ID != null && step.ID.Equals(value, StringComparison.OrdinalIgnoreCase)) {
-                            throw new ArgumentException(SR.GetString(SR.Id_already_used, value));
+                            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Id_already_used, value));
                         }
                     }
                 }
@@ -102,7 +102,7 @@ namespace System.Web.UI.WebControls {
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         WebCategory("Appearance"),
-        WebSysDescription(SR.WizardStep_Name)
+        WebSysDescription(System.Web.SR.WizardStep_Name)
         ]
         public virtual String Name {
             get {
@@ -130,7 +130,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(WizardStepType.Auto),
-        WebSysDescription(SR.WizardStep_StepType)
+        WebSysDescription(System.Web.SR.WizardStep_StepType)
         ]
         public virtual WizardStepType StepType {
             get {
@@ -158,7 +158,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDescription(SR.WizardStep_Title)
+        WebSysDescription(System.Web.SR.WizardStep_Title)
         ]
         public virtual string Title {
             get {
@@ -209,7 +209,7 @@ namespace System.Web.UI.WebControls {
             base.OnLoad(e);
 
             if (Owner == null && !DesignMode) {
-                throw new InvalidOperationException(SR.GetString(SR.WizardStep_WrongContainment));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WizardStep_WrongContainment));
             }
         }
 

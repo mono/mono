@@ -23,6 +23,7 @@ namespace System.Web.ClientServices.Providers
     using System.Collections.ObjectModel;
     using System.Web.Resources;
     using System.Web.Script.Serialization;
+    using System.Web.Util;
     using System.IO;
     using System.Diagnostics.CodeAnalysis;
 
@@ -75,7 +76,8 @@ namespace System.Web.ClientServices.Providers
                     if (returnType == null)
                         return null;
 
-                    JavaScriptSerializer        js            = new JavaScriptSerializer(new SimpleTypeResolver());
+                    JavaScriptTypeResolver resolver = AppSettings.UseLegacyClientServicesJsonHandling ? (JavaScriptTypeResolver) new SimpleTypeResolver() : (JavaScriptTypeResolver) new DictionaryTypeResolver();
+                    JavaScriptSerializer        js            = new JavaScriptSerializer(resolver);
                     string                      responseJson  = GetResponseString(response);
                     Dictionary<string, object>  wrapperObject = js.DeserializeObject(responseJson) as Dictionary<string, object>;
 

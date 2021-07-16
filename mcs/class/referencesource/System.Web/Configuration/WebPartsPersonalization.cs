@@ -20,6 +20,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Xml;
     using System.Security.Permissions;
+    
 
     public sealed class WebPartsPersonalization : ConfigurationElement {
 
@@ -75,7 +76,7 @@ namespace System.Web.Configuration {
         }
 
         /// <internalonly />
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -93,14 +94,14 @@ namespace System.Web.Configuration {
                 StringCollection verbs = rule.Verbs;
                 if (verbs.Count == 0) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.WebPartsSection_NoVerbs),
+                        System.Web.SR.GetString(System.Web.SR.WebPartsSection_NoVerbs),
                         rule.ElementInformation.Properties["verbs"].Source,
                         rule.ElementInformation.Properties["verbs"].LineNumber);
                 }
                 foreach (string verb in verbs) {
                     if (verb != "enterSharedScope" && verb != "modifyState") {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.WebPartsSection_InvalidVerb, verb),
+                            System.Web.SR.GetString(System.Web.SR.WebPartsSection_InvalidVerb, verb),
                             rule.ElementInformation.Properties["verbs"].Source,
                             rule.ElementInformation.Properties["verbs"].LineNumber);
                     }

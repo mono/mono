@@ -24,7 +24,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Appearance"),
-        WebSysDescription(SR.PolygonHotSpot_Coordinates),
+        WebSysDescription(System.Web.SR.PolygonHotSpot_Coordinates),
         ]
         public String Coordinates {
             get {

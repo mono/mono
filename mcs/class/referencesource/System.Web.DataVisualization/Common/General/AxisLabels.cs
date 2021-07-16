@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -111,7 +111,9 @@ namespace System.Web.UI.DataVisualization.Charting
 #else
 		PersistenceMode(PersistenceMode.InnerProperty),
 #endif
+#if !FEATURE_PAL
         Editor(Editors.ChartCollectionEditor.Editor, Editors.ChartCollectionEditor.Base)
+#endif
 		]
 		public CustomLabelsCollection CustomLabels
 		{

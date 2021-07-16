@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.EditorZoneBase_ApplyVerb),
+        WebSysDescription(System.Web.SR.EditorZoneBase_ApplyVerb),
         ]
         public virtual WebPartVerb ApplyVerb {
             get {
@@ -67,7 +67,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.EditorZoneBase_CancelVerb),
+        WebSysDescription(System.Web.SR.EditorZoneBase_CancelVerb),
         ]
         public virtual WebPartVerb CancelVerb {
             get {
@@ -122,7 +122,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     if (!DesignMode) {
                         foreach (EditorPart editorPart in editorParts) {
                             if (String.IsNullOrEmpty(editorPart.ID)) {
-                                throw new InvalidOperationException(SR.GetString(SR.EditorZoneBase_NoEditorPartID));
+                                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.EditorZoneBase_NoEditorPartID));
                             }
                         }
                     }
@@ -139,14 +139,14 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.EditorZoneBase_DefaultEmptyZoneText)
+        WebSysDefaultValue(System.Web.SR.EditorZoneBase_DefaultEmptyZoneText)
         ]
         public override string EmptyZoneText {
             // Must look at viewstate directly instead of the property in the base class,
             // so we can distinguish between an unset property and a property set to String.Empty.
             get {
                 string s = (string)ViewState["EmptyZoneText"];
-                return((s == null) ? SR.GetString(SR.EditorZoneBase_DefaultEmptyZoneText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.EditorZoneBase_DefaultEmptyZoneText) : s);
             }
             set {
                 ViewState["EmptyZoneText"] = value;
@@ -156,13 +156,13 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         Localizable(true),
         WebCategory("Behavior"),
-        WebSysDefaultValue(SR.EditorZoneBase_DefaultErrorText),
-        WebSysDescription(SR.EditorZoneBase_ErrorText),
+        WebSysDefaultValue(System.Web.SR.EditorZoneBase_DefaultErrorText),
+        WebSysDescription(System.Web.SR.EditorZoneBase_ErrorText),
         ]
         public virtual string ErrorText {
             get {
                 string s = (string)ViewState["ErrorText"];
-                return((s == null) ? SR.GetString(SR.EditorZoneBase_DefaultErrorText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.EditorZoneBase_DefaultErrorText) : s);
             }
             set {
                 ViewState["ErrorText"] = value;
@@ -170,12 +170,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.EditorZoneBase_DefaultHeaderText)
+        WebSysDefaultValue(System.Web.SR.EditorZoneBase_DefaultHeaderText)
         ]
         public override string HeaderText {
             get {
                 string s = (string)ViewState["HeaderText"];
-                return((s == null) ? SR.GetString(SR.EditorZoneBase_DefaultHeaderText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.EditorZoneBase_DefaultHeaderText) : s);
             }
             set {
                 ViewState["HeaderText"] = value;
@@ -183,12 +183,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.EditorZoneBase_DefaultInstructionText),
+        WebSysDefaultValue(System.Web.SR.EditorZoneBase_DefaultInstructionText),
         ]
         public override string InstructionText {
             get {
                 string s = (string)ViewState["InstructionText"];
-                return((s == null) ? SR.GetString(SR.EditorZoneBase_DefaultInstructionText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.EditorZoneBase_DefaultInstructionText) : s);
             }
             set {
                 ViewState["InstructionText"] = value;
@@ -201,7 +201,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.EditorZoneBase_OKVerb),
+        WebSysDescription(System.Web.SR.EditorZoneBase_OKVerb),
         ]
         public virtual WebPartVerb OKVerb {
             get {
@@ -229,7 +229,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private void ApplyAndSyncChanges() {
             WebPart webPartToEdit = WebPartToEdit;
-            Debug.Assert(webPartToEdit != null);
+            System.Web.Util.Debug.Assert(webPartToEdit != null);
             if (webPartToEdit != null) {
                 EditorPartCollection editorParts = EditorParts;
                 foreach (EditorPart editorPart in editorParts) {
@@ -293,7 +293,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[]) savedState;
                 if (myState.Length != viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[baseIndex]);

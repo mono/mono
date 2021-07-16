@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls {
                 case 2:
                     return new PolygonHotSpot();
                 default:
-                    throw new ArgumentOutOfRangeException(SR.GetString(SR.HotSpotCollection_InvalidTypeIndex));
+                    throw new ArgumentOutOfRangeException(System.Web.SR.GetString(System.Web.SR.HotSpotCollection_InvalidTypeIndex));
             }        
         }
 
@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls {
         protected override void OnValidate(object o) {
             base.OnValidate(o);
             if (!(o is HotSpot))
-                throw new ArgumentException(SR.GetString(SR.HotSpotCollection_InvalidType));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.HotSpotCollection_InvalidType));
         }
 
 

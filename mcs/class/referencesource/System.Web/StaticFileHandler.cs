@@ -22,6 +22,7 @@ namespace System.Web {
     using System.Web.Util;
     using System.Globalization;
     
+    
     internal struct ByteRange {
         internal long Offset;
         internal long Length;
@@ -79,14 +80,14 @@ namespace System.Web {
 
         private static FileInfo GetFileInfo(string virtualPathWithPathInfo, string physicalPath, HttpResponse response) {
             // Check whether the file exists
-            if (!FileUtil.FileExists(physicalPath)) {
+            if (!System.Web.Util.FileUtil.FileExists(physicalPath)) {
                 throw new HttpException(HttpStatus.NotFound, 
-                                        SR.GetString(SR.File_does_not_exist));
+                                        System.Web.SR.GetString(System.Web.SR.File_does_not_exist));
             }
             // To prevent the trailing dot problem, error out all file names with trailing dot.
             if (physicalPath[physicalPath.Length-1] == '.') {
                 throw new HttpException(HttpStatus.NotFound,
-                                        SR.GetString(SR.File_does_not_exist));
+                                        System.Web.SR.GetString(System.Web.SR.File_does_not_exist));
             }
 
             FileInfo fileInfo;
@@ -96,26 +97,26 @@ namespace System.Web {
             catch (IOException ioEx) {
                 if (!HttpRuntime.HasFilePermission(physicalPath))
                     throw new HttpException(HttpStatus.NotFound, 
-                                            SR.GetString(SR.Error_trying_to_enumerate_files));
+                                            System.Web.SR.GetString(System.Web.SR.Error_trying_to_enumerate_files));
                 else
                     throw new HttpException(HttpStatus.NotFound, 
-                                            SR.GetString(SR.Error_trying_to_enumerate_files), 
+                                            System.Web.SR.GetString(System.Web.SR.Error_trying_to_enumerate_files), 
                                             ioEx);
             }
             catch (SecurityException  secEx) {
                 if (!HttpRuntime.HasFilePermission(physicalPath))
                     throw new HttpException(HttpStatus.Unauthorized,
-                                            SR.GetString(SR.File_enumerator_access_denied));
+                                            System.Web.SR.GetString(System.Web.SR.File_enumerator_access_denied));
                 else
                     throw new HttpException(HttpStatus.Unauthorized,
-                                            SR.GetString(SR.File_enumerator_access_denied),
+                                            System.Web.SR.GetString(System.Web.SR.File_enumerator_access_denied),
                                             secEx);
             }
 
             // To be consistent with IIS, we won't serve out hidden files
             if ((((int)fileInfo.Attributes) & ((int)FileAttributes.Hidden)) != 0) {
                 throw new HttpException(HttpStatus.NotFound,
-                                        SR.GetString(SR.File_is_hidden));
+                                        System.Web.SR.GetString(System.Web.SR.File_is_hidden));
             }
 
             // If the file is a directory, then it must not have a slash in
@@ -123,10 +124,10 @@ namespace System.Web {
             // mappings are missing and we will just return 403.  Otherwise, 
             // we will redirect the client to the URL with this slash.
             if ((((int)fileInfo.Attributes) & ((int)FileAttributes.Directory)) != 0) {
-                if (StringUtil.StringEndsWith(virtualPathWithPathInfo, '/')) {
+                if (System.Web.Util.StringUtil.StringEndsWith(virtualPathWithPathInfo, '/')) {
                     // Just return 403
                     throw new HttpException(HttpStatus.Forbidden,
-                                            SR.GetString(SR.Missing_star_mapping));
+                                            System.Web.SR.GetString(System.Web.SR.Missing_star_mapping));
                 }
                 else {
                     // Redirect to a slash suffixed URL which will be 
@@ -178,7 +179,7 @@ namespace System.Web {
         // specifier (offset and length) returned by this function is satisfiable if and only if isSatisfiable is true.
         private static bool GetNextRange(string rangeHeader, ref int startIndex, long fileLength, out long offset, out long length, out bool isSatisfiable) {
             // startIndex is first char after '=', or first char after ','
-            Debug.Assert(startIndex < rangeHeader.Length, "startIndex < rangeHeader.Length");
+            System.Web.Util.Debug.Assert(startIndex < rangeHeader.Length, "startIndex < rangeHeader.Length");
 
             offset = 0;
             length = 0;
@@ -308,9 +309,9 @@ namespace System.Web {
             }
             
             if (virtualFile == null) {
-                Debug.Trace("StaticFileHandler", "Virtual file " + virtualPath + " not found");
+                System.Web.Util.Debug.Trace("StaticFileHandler", "Virtual file " + virtualPath + " not found");
                 throw new HttpException( HttpStatus.NotFound, 
-                                         SR.GetString(SR.File_does_not_exist) );
+                                         System.Web.SR.GetString(System.Web.SR.File_does_not_exist) );
             }
 
             // if we have a MapPathBasedVirtualFile, we can handle it the normal way
@@ -318,7 +319,7 @@ namespace System.Web {
                 return handled;
             }
 
-            Debug.Trace("StaticFileHandler", "Using VirtualPathProvider for " + virtualPath);
+            System.Web.Util.Debug.Trace("StaticFileHandler", "Using VirtualPathProvider for " + virtualPath);
 
             response.WriteVirtualFile(virtualFile);
             response.ContentType = MimeMapping.GetMimeMapping(virtualPath);
@@ -402,7 +403,7 @@ namespace System.Web {
                     int byteCount = byteRanges.Length * Marshal.SizeOf(byteRanges[0]);
                     unsafe {
                         fixed (ByteRange * src = byteRanges, dst = buffer) {
-                            StringUtil.memcpyimpl((byte*)src, (byte*)dst, byteCount);
+                            System.Web.Util.StringUtil.memcpyimpl((byte*)src, (byte*)dst, byteCount);
                         }
                     }
                     byteRanges = buffer;
@@ -502,7 +503,7 @@ namespace System.Web {
                 physicalPath = request.MapPath(overrideVirtualPath);
             }
 
-            Debug.Trace("StaticFileHandler", "Path= " + virtualPathWithPathInfo + ", PhysicalPath= " + physicalPath);
+            System.Web.Util.Debug.Trace("StaticFileHandler", "Path= " + virtualPathWithPathInfo + ", PhysicalPath= " + physicalPath);
 
             fileInfo = GetFileInfo(virtualPathWithPathInfo, physicalPath, response);
 
@@ -533,7 +534,7 @@ namespace System.Web {
 
             // is this a Range request?
             rangeHeader = request.Headers["Range"];
-            if (StringUtil.StringStartsWithIgnoreCase(rangeHeader, "bytes")
+            if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(rangeHeader, "bytes")
                 && ProcessRangeRequest(context,
                                        physicalPath,
                                        fileLength,
@@ -587,7 +588,7 @@ namespace System.Web {
                 // status such that the auth modules do their thing
                 if (IsSecurityError(e.ErrorCode)) {
                     throw new HttpException(HttpStatus.Unauthorized, 
-                                            SR.GetString(SR.Resource_access_forbidden));
+                                            System.Web.SR.GetString(System.Web.SR.Resource_access_forbidden));
                 }
                 throw;
             }

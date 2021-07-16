@@ -25,6 +25,7 @@ namespace System.Web.Configuration {
     using System.Text;
     using System.Runtime.InteropServices;
     using Microsoft.Build.Utilities;
+    
 
     //
     // Configuration host for web applications.
@@ -69,7 +70,7 @@ namespace System.Web.Configuration {
         static internal string DefaultSiteName {
             get {
                 if (s_defaultSiteName == null) {
-                    s_defaultSiteName = SR.GetString(SR.DefaultSiteName);
+                    s_defaultSiteName = System.Web.SR.GetString(System.Web.SR.DefaultSiteName);
                 }
 
                 return s_defaultSiteName;
@@ -94,7 +95,7 @@ namespace System.Web.Configuration {
                 // However, we allow a site parameter if the caller is opening
                 // a location tag.  See VSWhidbey 548361.
                 if (!String.IsNullOrEmpty(site) && String.IsNullOrEmpty(locationSubPath)) {
-                    throw ExceptionUtil.ParameterInvalid("site");
+                    throw System.Web.Util.ExceptionUtil.ParameterInvalid("site");
                 }
 
                 if (webLevel == WebLevel.Machine) {
@@ -110,7 +111,7 @@ namespace System.Web.Configuration {
                     configMapPath.ResolveSiteArgument(site, out appSiteName, out appSiteID);
 
                     if (String.IsNullOrEmpty(appSiteID)) {
-                        throw new InvalidOperationException(SR.GetString(SR.Config_failed_to_resolve_site_id, site));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Config_failed_to_resolve_site_id, site));
                     }
                 }
                 else {
@@ -125,7 +126,7 @@ namespace System.Web.Configuration {
                         configMapPath.GetDefaultSiteNameAndID(out appSiteName, out appSiteID);
                     }
 
-                    Debug.Assert(!String.IsNullOrEmpty(appSiteID), "No appSiteID found when site argument is null");
+                    System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(appSiteID), "No appSiteID found when site argument is null");
                 }
 
                 configPath = GetConfigPathFromSiteIDAndVPath(appSiteID, virtualPath);
@@ -216,13 +217,13 @@ namespace System.Web.Configuration {
                 }
             }
 
-            Debug.Assert(configMapPath == null || useConfigMapPath, "non-null configMapPath without useConfigMapPath == true");
+            System.Web.Util.Debug.Assert(configMapPath == null || useConfigMapPath, "non-null configMapPath without useConfigMapPath == true");
 
             Host.Init(configRoot, hostInitParams);
 
             ChooseAndInitConfigMapPath(useConfigMapPath, configMapPath, fileMap);
 
-            appPath = UrlPath.RemoveSlashFromPathIfNeeded(appPath);
+            appPath = System.Web.Util.UrlPath.RemoveSlashFromPathIfNeeded(appPath);
             _appPath = VirtualPath.CreateAbsoluteAllowNull(appPath);
             _appSiteName = appSiteName;
             _appSiteID = appSiteID;
@@ -338,8 +339,7 @@ namespace System.Web.Configuration {
 
             return configPath.Substring(indexVPath);
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
+        
         void IInternalConfigWebHost.GetSiteIDAndVPathFromConfigPath(string configPath, out string siteID, out string vpath) {
             VirtualPath virtualPath;
             WebConfigurationHost.GetSiteIDAndVPathFromConfigPath(configPath, out siteID, out virtualPath);
@@ -371,8 +371,7 @@ namespace System.Web.Configuration {
                 vpath = VirtualPath.CreateAbsolute(configPath.Substring(indexVPath));
             }
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
+        
         string IInternalConfigWebHost.GetConfigPathFromSiteIDAndVPath(string siteID, string vpath) {
             return WebConfigurationHost.GetConfigPathFromSiteIDAndVPath(
                 siteID, VirtualPath.CreateAbsoluteAllowNull(vpath));
@@ -381,7 +380,7 @@ namespace System.Web.Configuration {
         static internal string GetConfigPathFromSiteIDAndVPath(string siteID, VirtualPath vpath) {
 #if DBG
             // Do not inadverte expand app-relative paths using appdomain
-            Debug.Assert(vpath == null || vpath.VirtualPathStringIfAvailable != null || vpath.AppRelativeVirtualPathStringIfAvailable == null,
+            System.Web.Util.Debug.Assert(vpath == null || vpath.VirtualPathStringIfAvailable != null || vpath.AppRelativeVirtualPathStringIfAvailable == null,
                         "vpath == null || vpath.VirtualPathStringIfAvailable != null || vpath.AppRelativeVirtualPathStringIfAvailable == null");
 #endif
 
@@ -436,7 +435,7 @@ namespace System.Web.Configuration {
                 return true;
 
             // vpaths that correspond to directories are required
-            return FileUtil.DirectoryExists(physicalPath, true);
+            return System.Web.Util.FileUtil.DirectoryExists(physicalPath, true);
         }
 
         // stream support
@@ -466,7 +465,7 @@ namespace System.Web.Configuration {
                     return null;
 
                 bool exists, isDirectory;
-                FileUtil.PhysicalPathStatus(directory, true, false, out exists, out isDirectory);
+                System.Web.Util.FileUtil.PhysicalPathStatus(directory, true, false, out exists, out isDirectory);
                 if (exists && isDirectory) {
                     // DevDiv Bugs 152256:  Illegal characters {",|} in path prevent configuration system from working.
                     // We need to catch this exception and return null as System.IO.Path.Combine fails to combine paths
@@ -585,7 +584,7 @@ namespace System.Web.Configuration {
                 default:
                     // If we have extended ConfigurationAllowDefinition
                     // make sure to update this switch accordingly
-                    throw ExceptionUtil.UnexpectedError("WebConfigurationHost::IsDefinitionAllowed");
+                    throw System.Web.Util.ExceptionUtil.UnexpectedError("WebConfigurationHost::IsDefinitionAllowed");
             }
         }
 
@@ -593,18 +592,18 @@ namespace System.Web.Configuration {
             if (!IsDefinitionAllowed(configPath, allowDefinition, allowExeDefinition)) {
                 switch (allowDefinition) {
                     case ConfigurationAllowDefinition.MachineOnly:
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Config_allow_definition_error_machine), errorInfo.Filename, errorInfo.LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_allow_definition_error_machine), errorInfo.Filename, errorInfo.LineNumber);
 
                     case ConfigurationAllowDefinition.MachineToWebRoot:
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Config_allow_definition_error_webroot), errorInfo.Filename, errorInfo.LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_allow_definition_error_webroot), errorInfo.Filename, errorInfo.LineNumber);
 
                     case ConfigurationAllowDefinition.MachineToApplication:
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Config_allow_definition_error_application), errorInfo.Filename, errorInfo.LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_allow_definition_error_application), errorInfo.Filename, errorInfo.LineNumber);
 
                     default:
                         // If we have extended ConfigurationAllowDefinition
                         // make sure to update this switch accordingly
-                        throw ExceptionUtil.UnexpectedError("WebConfigurationHost::VerifyDefinitionAllowed");
+                        throw System.Web.Util.ExceptionUtil.UnexpectedError("WebConfigurationHost::VerifyDefinitionAllowed");
                 }
             }
         }
@@ -614,7 +613,7 @@ namespace System.Web.Configuration {
                 return WebApplicationLevel.AboveApplication;
 
 #if DBG
-            Debug.Assert(_inited, "_inited");
+            System.Web.Util.Debug.Assert(_inited, "_inited");
 #endif
 
             // Disable handling of path level when we don't have an application path.
@@ -624,13 +623,13 @@ namespace System.Web.Configuration {
             string siteID;
             VirtualPath path;
             GetSiteIDAndVPathFromConfigPath(configPath, out siteID, out path);
-            if (!StringUtil.EqualsIgnoreCase(_appSiteID, siteID))
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase(_appSiteID, siteID))
                 return WebApplicationLevel.AboveApplication;
 
             if (_appPath == path)
                 return WebApplicationLevel.AtApplication;
 
-            if (UrlPath.IsEqualOrSubpath(_appPath.VirtualPathString, path.VirtualPathString))
+            if (System.Web.Util.UrlPath.IsEqualOrSubpath(_appPath.VirtualPathString, path.VirtualPathString))
                 return WebApplicationLevel.BelowApplication;
 
             return WebApplicationLevel.AboveApplication;
@@ -669,7 +668,7 @@ namespace System.Web.Configuration {
 
         public override string GetConfigPathFromLocationSubPath(string configPath, string locationSubPath) {
 #if DBG
-            Debug.Assert(_inited, "_inited");
+            System.Web.Util.Debug.Assert(_inited, "_inited");
 #endif
 
             string locationConfigPath;
@@ -696,7 +695,7 @@ namespace System.Web.Configuration {
                     virtualPath = VirtualPath.CreateAbsolute(locationSubPath.Substring(firstSlash));
                 }
 
-                if (StringUtil.EqualsIgnoreCase(site, _appSiteID) || StringUtil.EqualsIgnoreCase(site, _appSiteName)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(site, _appSiteID) || System.Web.Util.StringUtil.EqualsIgnoreCase(site, _appSiteName)) {
                     siteID = _appSiteID;
                 }
                 else {
@@ -727,12 +726,16 @@ namespace System.Web.Configuration {
         }
 
         public override bool IsFullTrustSectionWithoutAptcaAllowed(IInternalConfigRecord configRecord) {
+#if (MONO || FEATURE_PAL)
+            return true;
+#else
             if (HostingEnvironment.IsHosted) {
                 return HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Unrestricted);
             }
             else {
                 return Host.IsFullTrustSectionWithoutAptcaAllowed(configRecord);
             }
+#endif
         }
 
         public override void GetRestrictedPermissions(IInternalConfigRecord configRecord, out PermissionSet permissionSet, out bool isHostReady) {
@@ -750,7 +753,7 @@ namespace System.Web.Configuration {
 
         const string SysWebName = "system.web";
         public override bool PrefetchSection(string sectionGroupName, string sectionName) {
-            if (    StringUtil.StringStartsWith(sectionGroupName, SysWebName)
+            if (    System.Web.Util.StringUtil.StringStartsWith(sectionGroupName, SysWebName)
                 && (sectionGroupName.Length == SysWebName.Length || sectionGroupName[SysWebName.Length] == '/')) {
 
                 return true;
@@ -847,17 +850,17 @@ namespace System.Web.Configuration {
             Configuration configuration;
 
             if (!IsValidSiteArgument(site)) {
-                throw ExceptionUtil.ParameterInvalid("site");
+                throw System.Web.Util.ExceptionUtil.ParameterInvalid("site");
             }
 
             locationSubPath = ConfigurationFactory.NormalizeLocationSubPath(locationSubPath, null);
 
             bool isRemote = !String.IsNullOrEmpty(server)
                 && server != "."
-                && !StringUtil.EqualsIgnoreCase(server, "127.0.0.1")
-                && !StringUtil.EqualsIgnoreCase(server, "::1")
-                && !StringUtil.EqualsIgnoreCase(server, "localhost")
-                && !StringUtil.EqualsIgnoreCase(server, Environment.MachineName);
+                && !System.Web.Util.StringUtil.EqualsIgnoreCase(server, "127.0.0.1")
+                && !System.Web.Util.StringUtil.EqualsIgnoreCase(server, "::1")
+                && !System.Web.Util.StringUtil.EqualsIgnoreCase(server, "localhost")
+                && !System.Web.Util.StringUtil.EqualsIgnoreCase(server, Environment.MachineName);
 
 
             if (isRemote) {
@@ -867,13 +870,13 @@ namespace System.Web.Configuration {
             else {
                  if (String.IsNullOrEmpty(server)) {
                     if (!String.IsNullOrEmpty(userName))
-                        throw ExceptionUtil.ParameterInvalid("userName");
+                        throw System.Web.Util.ExceptionUtil.ParameterInvalid("userName");
 
                     if (!String.IsNullOrEmpty(password))
-                        throw ExceptionUtil.ParameterInvalid("password");
+                        throw System.Web.Util.ExceptionUtil.ParameterInvalid("password");
 
                     if (tokenHandle != (IntPtr) 0)
-                        throw ExceptionUtil.ParameterInvalid("tokenHandle");
+                        throw System.Web.Util.ExceptionUtil.ParameterInvalid("tokenHandle");
                 }
 
                 // Create a copy of the fileMap, so that it cannot be altered by
@@ -895,7 +898,7 @@ namespace System.Web.Configuration {
         }
 
 
-        private static string GetMachineConfigPathFromTargetFrameworkMoniker(string moniker) {
+        internal static string GetMachineConfigPathFromTargetFrameworkMoniker(string moniker) {
             TargetDotNetFrameworkVersion ver = GetTargetFrameworkVersionEnumFromMoniker(moniker);
             if (ver == TargetDotNetFrameworkVersion.VersionLatest)
                 return null;
@@ -905,7 +908,7 @@ namespace System.Web.Configuration {
             return machineConfig;
         }
 
-        private static TargetDotNetFrameworkVersion GetTargetFrameworkVersionEnumFromMoniker(string moniker)
+        internal static TargetDotNetFrameworkVersion GetTargetFrameworkVersionEnumFromMoniker(string moniker)
         {
             // 
 

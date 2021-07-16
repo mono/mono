@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(PartChromeState.Normal),
         WebCategory("WebPartAppearance"),
-        WebSysDescription(SR.Part_ChromeState),
+        WebSysDescription(System.Web.SR.Part_ChromeState),
         ]
         public virtual PartChromeState ChromeState {
             get {
@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(PartChromeType.Default),
         WebCategory("WebPartAppearance"),
-        WebSysDescription(SR.Part_ChromeType),
+        WebSysDescription(System.Web.SR.Part_ChromeType),
         ]
         public virtual PartChromeType ChromeType {
             get {
@@ -87,7 +87,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DefaultValue(""),
         Localizable(true),
         WebCategory("WebPartAppearance"),
-        WebSysDescription(SR.Part_Description),
+        WebSysDescription(System.Web.SR.Part_Description),
         ]
         public virtual string Description {
             get {
@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Localizable(true),
         WebSysDefaultValue(""),
         WebCategory("WebPartAppearance"),
-        WebSysDescription(SR.Part_Title),
+        WebSysDescription(System.Web.SR.Part_Title),
         ]
         public virtual string Title {
             get {

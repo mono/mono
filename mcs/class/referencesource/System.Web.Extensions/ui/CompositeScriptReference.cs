@@ -26,8 +26,10 @@ namespace System.Web.UI {
         [
         ResourceDescription("CompositeScriptReference_Scripts"),
         Category("Behavior"),
+#if !MONO
         Editor("System.Web.UI.Design.CollectionEditorBase, " +
             AssemblyRef.SystemWebExtensionsDesign, typeof(UITypeEditor)),
+#endif
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         NotifyParentProperty(true),

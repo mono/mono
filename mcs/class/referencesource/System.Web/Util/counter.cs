@@ -7,6 +7,7 @@
 namespace System.Web.Util {
     using System;
     using System.Web;
+    using System.Diagnostics;
     using System.Runtime.InteropServices;
 
 
@@ -28,7 +29,7 @@ namespace System.Web.Util {
         internal static long Value {
             get {
                 long count = 0;
-                SafeNativeMethods.QueryPerformanceCounter(ref count);
+                count = Stopwatch.GetTimestamp();
                 return count;
             }
         }
@@ -40,7 +41,7 @@ namespace System.Web.Util {
         internal static long Frequency {
             get {
                 long freq = 0;
-                SafeNativeMethods.QueryPerformanceFrequency(ref freq);
+                freq = Stopwatch.Frequency;
                 return freq;
             }
         }

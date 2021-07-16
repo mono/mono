@@ -38,8 +38,8 @@ namespace System.Web.Configuration {
                 }
             }
             set {
-                Debug.Assert(BuildManager.PreStartInitStage == PreStartInitStage.DuringPreStartInit);
-                Debug.Assert(value == AuthenticationMode.Forms, "Only Forms mode can be set to override config");
+                System.Web.Util.Debug.Assert(BuildManager.PreStartInitStage == PreStartInitStage.DuringPreStartInit);
+                System.Web.Util.Debug.Assert(value == AuthenticationMode.Forms, "Only Forms mode can be set to override config");
                 s_explicitMode = value;
             }
         }
@@ -49,8 +49,8 @@ namespace System.Web.Configuration {
                 return String.Empty;
             }
 
-            if (UrlPath.IsRelativeUrl(loginUrl)) {
-                loginUrl = UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, loginUrl);
+            if (System.Web.Util.UrlPath.IsRelativeUrl(loginUrl)) {
+                loginUrl = System.Web.Util.UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, loginUrl);
             }
 
             return loginUrl;
@@ -74,7 +74,7 @@ namespace System.Web.Configuration {
 
             String requestPath = context.Request.Path;
 
-            if (StringUtil.EqualsIgnoreCase(requestPath, loginUrl)) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(requestPath, loginUrl)) {
                 return true;
             }
 
@@ -84,12 +84,12 @@ namespace System.Web.Configuration {
                 // encoding is unknown try UTF-8 first, then request encoding
 
                 decodedLoginUrl = HttpUtility.UrlDecode(loginUrl);
-                if (StringUtil.EqualsIgnoreCase(requestPath, decodedLoginUrl)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(requestPath, decodedLoginUrl)) {
                     return true;
                 }
 
                 decodedLoginUrl = HttpUtility.UrlDecode(loginUrl, context.Request.ContentEncoding);
-                if (StringUtil.EqualsIgnoreCase(requestPath, decodedLoginUrl)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(requestPath, decodedLoginUrl)) {
                     return true;
                 }
             }

@@ -80,7 +80,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator {
         // Note: it is important to add all local variables at the top level for CodeDom Subset compliance.
         topLevelStatements.Insert(0, dependencies);
 
-        Debug.Assert(Parser.SourceDependencies != null);
+        System.Web.Util.Debug.Assert(Parser.SourceDependencies != null);
 
         StringSet virtualDependencies = new StringSet();
         virtualDependencies.AddCollection(Parser.SourceDependencies);
@@ -101,7 +101,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator {
                 new CodeArrayIndexerExpression(
                     new CodeVariableReferenceExpression(dependenciesLocalName),
                     new CodeExpression[] {new CodePrimitiveExpression(i++)});
-            string src = UrlPath.MakeVirtualPathAppRelative(virtualDependency);
+            string src = System.Web.Util.UrlPath.MakeVirtualPathAppRelative(virtualDependency);
             addFileDep.Right = new CodePrimitiveExpression(src);
             trueStatements.Add(addFileDep);
         }
@@ -137,24 +137,24 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator {
                     new CodeThisReferenceExpression(), "Server"),
                 "ScriptTimeout");
             setScriptTimeout.Right = new CodePrimitiveExpression(DebugScriptTimeout);
-            _ctor.Statements.Add(setScriptTimeout);
+            InitMethod.Statements.Add(setScriptTimeout);
 
         }
 
         if (Parser.TransactionMode != 0 /*TransactionOption.Disabled*/) {
-            _ctor.Statements.Add(new CodeAssignStatement(
+            InitMethod.Statements.Add(new CodeAssignStatement(
                 new CodePropertyReferenceExpression(new CodeThisReferenceExpression(), "TransactionMode"),
                 new CodePrimitiveExpression(Parser.TransactionMode)));
         }
 
         if (Parser.AspCompatMode) {
-            _ctor.Statements.Add(new CodeAssignStatement(
+            InitMethod.Statements.Add(new CodeAssignStatement(
                 new CodePropertyReferenceExpression(new CodeThisReferenceExpression(), "AspCompatMode"),
                 new CodePrimitiveExpression(Parser.AspCompatMode)));
         }
 
         if (Parser.AsyncMode) {
-            _ctor.Statements.Add(new CodeAssignStatement(
+            InitMethod.Statements.Add(new CodeAssignStatement(
                 new CodePropertyReferenceExpression(new CodeThisReferenceExpression(), "AsyncMode"),
                 new CodePrimitiveExpression(Parser.AsyncMode)));
         }
@@ -308,7 +308,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator {
                 // Add the statement to the "true" clause
                 outputCacheSettingsCondition.TrueStatements.Add(assignOutputCacheSettings);
 
-                _ctor.Statements.Add(outputCacheSettingsCondition);
+                InitMethod.Statements.Add(outputCacheSettingsCondition);
             }
         }
     }
@@ -580,7 +580,7 @@ internal class PageCodeDomTreeGenerator : TemplateControlCodeDomTreeGenerator {
             methodInfo = Parser.BaseType.GetMethod("ProcessRequest",
                 BindingFlags.Public | BindingFlags.Instance,
                 null, new Type[] { typeof(HttpContext) }, null);
-            Debug.Assert(methodInfo != null);
+            System.Web.Util.Debug.Assert(methodInfo != null);
         }
 
         _sourceDataClass.BaseTypes.Add(new CodeTypeReference(typeof(IHttpHandler)));

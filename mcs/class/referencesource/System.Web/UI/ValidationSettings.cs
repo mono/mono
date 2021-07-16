@@ -20,7 +20,7 @@ namespace System.Web.UI {
                         _unobtrusiveValidationMode = (BinaryCompatibility.Current.TargetsAtLeastFramework45) ? UnobtrusiveValidationMode.WebForms : UnobtrusiveValidationMode.None;
                     }
                     else {
-                        Debug.Assert(value is UnobtrusiveValidationMode);
+                        System.Web.Util.Debug.Assert(value is UnobtrusiveValidationMode);
                         _unobtrusiveValidationMode = (UnobtrusiveValidationMode)value;
                     }
                 }

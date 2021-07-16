@@ -8,6 +8,7 @@ namespace System.Web.UI {
     using System.Collections;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
 
     /// <summary>
@@ -82,7 +83,7 @@ namespace System.Web.UI {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -96,7 +97,7 @@ namespace System.Web.UI {
                 return String.Empty;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -114,7 +115,7 @@ namespace System.Web.UI {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.ControlNonVisual, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ControlNonVisual, this.GetType().Name));
             }
         }
 
@@ -163,7 +164,7 @@ namespace System.Web.UI {
         EditorBrowsable(EditorBrowsableState.Never),
         ]
         public override void Focus() {
-            throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
         }
 
         protected abstract DataSourceView GetView(string viewName);

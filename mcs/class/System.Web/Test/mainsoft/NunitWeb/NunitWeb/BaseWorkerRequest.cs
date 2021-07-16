@@ -15,7 +15,7 @@ namespace MonoTests.SystemWeb.Framework
 	/// </summary>
 	/// <seealso cref="System.Web.Hosting.SimpleWorkerRequest"/>
 	/// <seealso cref="IForeignData"/>
-	public class BaseWorkerRequest : SimpleWorkerRequest, IForeignData
+	public class BaseWorkerRequest : CoreWorkerRequest, IForeignData
 	{
 		string _userAgent;
 		/// <summary>

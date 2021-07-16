@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.Binding_DataMember),
+        WebSysDescription(System.Web.SR.Binding_DataMember),
         ]
         public string DataMember {
             get {
@@ -51,7 +51,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(-1),
         TypeConverter("System.Web.UI.Design.WebControls.TreeNodeBindingDepthConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Data"),
-        WebSysDescription(SR.TreeNodeBinding_Depth),
+        WebSysDescription(System.Web.SR.TreeNodeBinding_Depth),
         ]
         public int Depth {
             get {
@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("Databindings")]
-        [WebSysDescription(SR.TreeNodeBinding_FormatString)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_FormatString)]
         public string FormatString {
             get {
                 string s = (string)ViewState["FormatString"];
@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_ImageToolTip)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_ImageToolTip)]
         public string ImageToolTip {
             get {
                 string s = (string)ViewState["ImageToolTip"];
@@ -111,7 +111,7 @@ namespace System.Web.UI.WebControls {
         ///     Get and sets the fieldname to use for the ImageToolTip property in a TreeNode
         /// </devdoc>
         [DefaultValue("")]
-        [TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign), WebSysDescription(SR.TreeNodeBinding_ImageToolTipField)]
+        [TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign), WebSysDescription(System.Web.SR.TreeNodeBinding_ImageToolTipField)]
         [WebCategory("Databindings")]
         public string ImageToolTipField {
             get {
@@ -137,7 +137,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_ImageUrl)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_ImageUrl)]
         public string ImageUrl {
             get {
                 string s = (string)ViewState["ImageUrl"];
@@ -159,7 +159,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.TreeNodeBinding_ImageUrlField),
+        WebSysDescription(System.Web.SR.TreeNodeBinding_ImageUrlField),
         ]
         public string ImageUrlField {
             get {
@@ -184,7 +184,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_NavigateUrl)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_NavigateUrl)]
         public string NavigateUrl {
             get {
                 string s = (string)ViewState["NavigateUrl"];
@@ -206,7 +206,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.TreeNodeBinding_NavigateUrlField),
+        WebSysDescription(System.Web.SR.TreeNodeBinding_NavigateUrlField),
         ]
         public string NavigateUrlField {
             get {
@@ -230,7 +230,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("DefaultProperties"),
-        WebSysDescription(SR.TreeNodeBinding_PopulateOnDemand),
+        WebSysDescription(System.Web.SR.TreeNodeBinding_PopulateOnDemand),
         ]
         public bool PopulateOnDemand {
             get {
@@ -251,7 +251,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue(TreeNodeSelectAction.Select)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_SelectAction)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_SelectAction)]
         public TreeNodeSelectAction SelectAction {
             get {
                 object o = ViewState["SelectAction"];
@@ -271,7 +271,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue(typeof(Nullable<bool>), "")]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_ShowCheckBox)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_ShowCheckBox)]
         public bool? ShowCheckBox {
             get {
                 object o = ViewState["ShowCheckBox"];
@@ -291,7 +291,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_Target)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_Target)]
         public string Target {
             get {
                 string s = (string)ViewState["Target"];
@@ -309,7 +309,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.TreeNodeBinding_TargetField),
+        WebSysDescription(System.Web.SR.TreeNodeBinding_TargetField),
         ]
         public string TargetField {
             get {
@@ -333,7 +333,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_Text)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_Text)]
         public string Text {
             get {
                 string s = (string)ViewState["Text"];
@@ -358,7 +358,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.TreeNodeBinding_TextField),
+        WebSysDescription(System.Web.SR.TreeNodeBinding_TextField),
         ]
         public string TextField {
             get {
@@ -382,7 +382,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_ToolTip)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_ToolTip)]
         public string ToolTip {
             get {
                 string s = (string)ViewState["ToolTip"];
@@ -404,7 +404,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.TreeNodeBinding_ToolTipField),
+        WebSysDescription(System.Web.SR.TreeNodeBinding_ToolTipField),
         ]
         public string ToolTipField {
             get {
@@ -428,7 +428,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.TreeNodeBinding_Value)]
+        [WebSysDescription(System.Web.SR.TreeNodeBinding_Value)]
         public string Value {
             get {
                 string s = (string)ViewState["Value"];
@@ -453,7 +453,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.TreeNodeBinding_ValueField),
+        WebSysDescription(System.Web.SR.TreeNodeBinding_ValueField),
         ]
         public string ValueField {
             get {
@@ -492,7 +492,7 @@ namespace System.Web.UI.WebControls {
 
         public override string ToString() {
             return (String.IsNullOrEmpty(DataMember) ?
-                    SR.GetString(SR.TreeNodeBinding_EmptyBindingText) :
+                    System.Web.SR.GetString(System.Web.SR.TreeNodeBinding_EmptyBindingText) :
                     DataMember);
         }
 

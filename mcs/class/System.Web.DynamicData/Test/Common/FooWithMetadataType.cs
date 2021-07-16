@@ -8,7 +8,7 @@ using System.Text;
 namespace MonoTests.Common
 {
 	[MetadataType (typeof (FooMetaDataType))]
-	class FooWithMetadataType
+	public class FooWithMetadataType
 	{
 		[DefaultValue ("Value")]
 		[Description ("Description")]

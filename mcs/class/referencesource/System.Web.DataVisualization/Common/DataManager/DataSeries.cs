@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -590,7 +590,7 @@ using System.Diagnostics.CodeAnalysis;
                 _emptyPointCustomProperties.SetDefault(true);
                 _emptyPointCustomProperties.pointCustomProperties = true;
 //
-#if !SQLRS_CONTROL 
+#if !SQLRS_CONTROL  
 			    // Use transparent colors for empty points
 			    emptyPointAttributes.Color = Color.Transparent;
 			    emptyPointAttributes.BorderColor = Color.Transparent;
@@ -1788,11 +1788,13 @@ using System.Diagnostics.CodeAnalysis;
 		Bindable(true),
 		SRDescription("DescriptionAttributeSeries_ValueMemberX"),
 		DefaultValue(""),
+#if !FEATURE_PAL
         #if !Microsoft_CONTROL
         TypeConverter(Editors.SeriesDataFieldXConvertor.Convertor)
         #else
         TypeConverter(typeof(SeriesDataSourceMemberConverter))
         #endif
+#endif
 		]
 		public string XValueMember
 		{
@@ -1829,6 +1831,7 @@ using System.Diagnostics.CodeAnalysis;
 		Bindable(true),
 		SRDescription("DescriptionAttributeSeries_ValueMembersY"),
 		DefaultValue(""),
+#if !FEATURE_PAL
         #if !Microsoft_CONTROL
         TypeConverter(Editors.SeriesDataFieldYConvertor.Convertor),
         Editor(Editors.SeriesDataFieldValueAxisUITypeEditor.Editor, Editors.SeriesDataFieldValueAxisUITypeEditor.Base)
@@ -1836,6 +1839,7 @@ using System.Diagnostics.CodeAnalysis;
         TypeConverter(typeof(SeriesDataSourceMemberConverter)),
         Editor(Editors.SeriesDataSourceMemberValueAxisUITypeEditor.Editor, Editors.SeriesDataSourceMemberValueAxisUITypeEditor.Base)
         #endif
+#endif
         ]
 		public string YValueMembers
 		{
@@ -2051,7 +2055,9 @@ using System.Diagnostics.CodeAnalysis;
         Themeable(false),
 		PersistenceMode(PersistenceMode.InnerProperty),
 #endif
+#if !FEATURE_PAL
         Editor(Editors.DataPointCollectionEditor.Editor, Editors.DataPointCollectionEditor.Base)
+#endif
 		]
 		public DataPointCollection Points
 		{
@@ -2104,7 +2110,9 @@ using System.Diagnostics.CodeAnalysis;
 		Bindable(true),
 		SRDescription("DescriptionAttributePalette"),
 		DefaultValue(ChartColorPalette.None),
-       Editor(Editors.ColorPaletteEditor.Editor, Editors.ColorPaletteEditor.Base)
+#if !FEATURE_PAL
+       	Editor(Editors.ColorPaletteEditor.Editor, Editors.ColorPaletteEditor.Base)
+#endif
 		]
 		public ChartColorPalette Palette
 		{
@@ -2365,7 +2373,9 @@ using System.Diagnostics.CodeAnalysis;
 		SRDescription("DescriptionAttributeSeries_Type"),
 		DefaultValue(SeriesChartType.Column),
 		RefreshProperties(RefreshProperties.All),
+#if !FEATURE_PAL
         Editor(Editors.ChartTypeEditor.Editor, Editors.ChartTypeEditor.Base)
+#endif
 		]
 		public SeriesChartType ChartType
 		{
@@ -2414,7 +2424,9 @@ using System.Diagnostics.CodeAnalysis;
 		SRDescription("DescriptionAttributeSeries_Type"),
 		DefaultValue(ChartTypeNames.Column),
         TypeConverter(typeof(ChartTypeConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartTypeEditor.Editor, Editors.ChartTypeEditor.Base),
+#endif
 		RefreshProperties(RefreshProperties.All),
         SerializationVisibilityAttribute(SerializationVisibility.Hidden),
 		DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)

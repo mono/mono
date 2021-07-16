@@ -303,7 +303,7 @@ namespace System.Web {
         private IBufferAllocator _allocator;
 
         public BufferAllocatorWrapper(IBufferAllocator allocator) {
-            Debug.Assert(allocator != null);
+            System.Web.Util.Debug.Assert(allocator != null);
 
             _allocator = allocator;
         }

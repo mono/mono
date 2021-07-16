@@ -63,7 +63,7 @@ namespace System.Web.Configuration {
             return HashCodeCombiner.CombineHashCodes(StatusCode, Redirect.GetHashCode());
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

@@ -16,6 +16,7 @@ using System.Security;
 using System.Security.Permissions;
 using Debug=System.Web.Util.Debug;
 
+
 internal class StringResourceManager {
 
     internal const int RESOURCE_TYPE = 0xEBB;
@@ -37,8 +38,43 @@ internal class StringResourceManager {
             (InternalSecurityPermissions.PathDiscovery(HttpRuntime.CodegenDirInternal)).Assert();
         }
 
-        string dllPath = t.Module.FullyQualifiedName;
+#if (!MONO || !FEATURE_PAL)
+        IntPtr pv = ReadSafeStringResourceWin(t);
+#else
+        BinaryReader reader = null;
+        String dllPath = t.Module.FullyQualifiedName;
 
+        try 
+        {
+            reader = new BinaryReader(new FileStream(dllPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, false), Encoding.UTF8);
+            int magicNum = reader.ReadInt32();
+            int ver = reader.ReadInt32();
+            int numBytesToSkip = reader.ReadInt32();
+        }
+        catch(Exception e) 
+        {
+            dllPath = "";
+        }
+        finally 
+        {
+            if (reader != null) 
+            {
+                reader.Dispose();
+            }
+        }
+
+        IntPtr pv = new IntPtr();
+        int resSize = 0;
+#endif
+
+        return new SafeStringResource(pv, resSize);
+    }
+
+#if (!MONO || !FEATURE_PAL)
+
+    private static IntPtr ReadSafeStringResourceWin(Type t) 
+    {
+        string dllPath = t.Module.FullyQualifiedName;
 
         IntPtr hModule = UnsafeNativeMethods.GetModuleHandle(dllPath);
         if (hModule == IntPtr.Zero) {
@@ -47,14 +83,14 @@ internal class StringResourceManager {
             // directly, but to limit the risk, we only do it as a fall back (VSWhidbey 394621)
             hModule = Marshal.GetHINSTANCE(t.Module);
             if (hModule == IntPtr.Zero) {
-                throw new HttpException(SR.GetString(SR.Resource_problem,
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Resource_problem,
                     "GetModuleHandle", HttpException.HResultFromLastError(Marshal.GetLastWin32Error()).ToString(CultureInfo.InvariantCulture)));
             }
         }
 
         IntPtr hrsrc = UnsafeNativeMethods.FindResource(hModule, (IntPtr)RESOURCE_ID, (IntPtr)RESOURCE_TYPE);
         if (hrsrc == IntPtr.Zero) {
-            throw new HttpException(SR.GetString(SR.Resource_problem,
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Resource_problem,
                 "FindResource", HttpException.HResultFromLastError(Marshal.GetLastWin32Error()).ToString(CultureInfo.InvariantCulture)));
         }
 
@@ -62,13 +98,13 @@ internal class StringResourceManager {
 
         IntPtr hglob = UnsafeNativeMethods.LoadResource(hModule, hrsrc);
         if (hglob == IntPtr.Zero) {
-            throw new HttpException(SR.GetString(SR.Resource_problem,
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Resource_problem,
                 "LoadResource", HttpException.HResultFromLastError(Marshal.GetLastWin32Error()).ToString(CultureInfo.InvariantCulture)));
         }
 
         IntPtr pv = UnsafeNativeMethods.LockResource(hglob);
         if (pv == IntPtr.Zero) {
-            throw new HttpException(SR.GetString(SR.Resource_problem,
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Resource_problem,
                 "LockResource", HttpException.HResultFromLastError(Marshal.GetLastWin32Error()).ToString(CultureInfo.InvariantCulture)));
         }
 
@@ -78,8 +114,10 @@ internal class StringResourceManager {
             throw new InvalidOperationException();
         }
 
-        return new SafeStringResource(pv, resSize);
+        return pv;
     }
+#endif 
+
 }
 
 internal class StringResourceBuilder {
@@ -156,7 +194,7 @@ internal class StringResourceBuilder {
 
             // Make sure the stream has the size we expect
             #if DEBUG
-            Debug.Assert(strm.Position-startPos == _offset, "strm.Position-startPos == _offset");
+            System.Web.Util.Debug.Assert(strm.Position-startPos == _offset, "strm.Position-startPos == _offset");
             #endif
         }
     }

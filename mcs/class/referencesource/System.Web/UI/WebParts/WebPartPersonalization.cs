@@ -18,6 +18,7 @@ namespace System.Web.UI.WebControls.WebParts {
     using System.Web.UI;
     using System.Web.Util;
     using System.Web.Hosting;
+    
 
     [TypeConverterAttribute(typeof(EmptyStringExpandableObjectConverter))]
     public class WebPartPersonalization {
@@ -78,7 +79,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(true),
         NotifyParentProperty(true),
-        WebSysDescription(SR.WebPartPersonalization_Enabled)
+        WebSysDescription(System.Web.SR.WebPartPersonalization_Enabled)
         ]
         public virtual bool Enabled {
             get {
@@ -87,7 +88,7 @@ namespace System.Web.UI.WebControls.WebParts {
             set {
                 if (!WebPartManager.DesignMode && _initializedSet && (value != Enabled)) {
                     throw new InvalidOperationException(
-                        SR.GetString(SR.WebPartPersonalization_MustSetBeforeInit, "Enabled", "WebPartPersonalization"));
+                        System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_MustSetBeforeInit, "Enabled", "WebPartPersonalization"));
                 }
 
                 _enabled = value;
@@ -102,18 +103,18 @@ namespace System.Web.UI.WebControls.WebParts {
         public virtual bool HasPersonalizationState {
             get {
                 if (_provider == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartPersonalization_CantUsePropertyBeforeInit,
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_CantUsePropertyBeforeInit,
                                                         "HasPersonalizationState", "WebPartPersonalization"));
                 }
 
                 Page page = WebPartManager.Page;
                 if (page == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.PropertyCannotBeNull, "WebPartManager.Page"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "WebPartManager.Page"));
                 }
 
                 HttpRequest request = page.RequestInternal;
                 if (request == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.PropertyCannotBeNull, "WebPartManager.Page.Request"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "WebPartManager.Page.Request"));
                 }
 
                 PersonalizationStateQuery query = new PersonalizationStateQuery();
@@ -135,7 +136,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(PersonalizationScope.User),
         NotifyParentProperty(true),
-        WebSysDescription(SR.WebPartPersonalization_InitialScope)
+        WebSysDescription(System.Web.SR.WebPartPersonalization_InitialScope)
         ]
         public virtual PersonalizationScope InitialScope {
             get {
@@ -148,7 +149,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
                 if (!WebPartManager.DesignMode && _initializedSet && (value != InitialScope)) {
                     throw new InvalidOperationException(
-                        SR.GetString(SR.WebPartPersonalization_MustSetBeforeInit, "InitialScope", "WebPartPersonalization"));
+                        System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_MustSetBeforeInit, "InitialScope", "WebPartPersonalization"));
                 }
 
                 _initialScope = value;
@@ -208,7 +209,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(""),
         NotifyParentProperty(true),
-        WebSysDescription(SR.WebPartPersonalization_ProviderName)
+        WebSysDescription(System.Web.SR.WebPartPersonalization_ProviderName)
         ]
         public virtual string ProviderName {
             get {
@@ -218,7 +219,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 if (!WebPartManager.DesignMode && _initializedSet &&
                     !String.Equals(value, ProviderName, StringComparison.Ordinal)) {
                     throw new InvalidOperationException(
-                        SR.GetString(SR.WebPartPersonalization_MustSetBeforeInit, "ProviderName", "WebPartPersonalization"));
+                        System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_MustSetBeforeInit, "ProviderName", "WebPartPersonalization"));
                 }
 
                 _providerName = value;
@@ -299,7 +300,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
 
             // If customPersonalizable is null, then info.CustomProperties should also be null
-            Debug.Assert(!(customPersonalizable == null && info.CustomProperties != null));
+            System.Web.Util.Debug.Assert(!(customPersonalizable == null && info.CustomProperties != null));
 
             if (customPersonalizable != null && info.CustomProperties != null && info.CustomProperties.Count > 0) {
                 customPersonalizable.Load(info.CustomProperties);
@@ -322,7 +323,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
 
             if ((scope == PersonalizationScope.Shared) && (!CanEnterSharedScope)) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartPersonalization_CannotEnterSharedScope));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_CannotEnterSharedScope));
             }
 
             _currentScope = scope;
@@ -341,7 +342,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 throw new ArgumentNullException("webPartB");
             }
             if (webPartA.GetType() != webPartB.GetType()) {
-                throw new ArgumentException(SR.GetString(SR.WebPartPersonalization_SameType, "webPartA", "webPartB"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_SameType, "webPartA", "webPartB"));
             }
 
             CopyPersonalizationState((Control)webPartA, (Control)webPartB);
@@ -349,19 +350,19 @@ namespace System.Web.UI.WebControls.WebParts {
             GenericWebPart genericWebPartA = webPartA as GenericWebPart;
             GenericWebPart genericWebPartB = webPartB as GenericWebPart;
             // Assert that the GenericWebParts are either both null or both non-null
-            Debug.Assert((genericWebPartA == null) == (genericWebPartB == null));
+            System.Web.Util.Debug.Assert((genericWebPartA == null) == (genericWebPartB == null));
             if (genericWebPartA != null && genericWebPartB != null) {
                 Control childControlA = genericWebPartA.ChildControl;
                 Control childControlB = genericWebPartB.ChildControl;
 
                 if (childControlA == null) {
-                    throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "ChildControl"), "webPartA");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "ChildControl"), "webPartA");
                 }
                 if (childControlB == null) {
-                    throw new ArgumentException(SR.GetString(SR.PropertyCannotBeNull, "ChildControl"), "webPartB");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "ChildControl"), "webPartB");
                 }
                 if (childControlA.GetType() != childControlB.GetType()) {
-                    throw new ArgumentException(SR.GetString(SR.WebPartPersonalization_SameType, "webPartA.ChildControl", "webPartB.ChildControl"));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_SameType, "webPartA.ChildControl", "webPartB.ChildControl"));
                 }
 
                 CopyPersonalizationState(childControlA, childControlB);
@@ -387,7 +388,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 // Use the default provider
                 _provider = PersonalizationAdministration.Provider;
                 // The default provider can never be null
-                Debug.Assert(_provider != null);
+                System.Web.Util.Debug.Assert(_provider != null);
             }
             else {
                 // Look for a provider with the specified name
@@ -397,7 +398,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 }
                 else {
                     throw new ProviderException(
-                        SR.GetString(SR.WebPartPersonalization_ProviderNotFound, providerName));
+                        System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_ProviderNotFound, providerName));
                 }
             }
         }
@@ -410,10 +411,10 @@ namespace System.Web.UI.WebControls.WebParts {
             if (!value) {
                 string message;
                 if (ensureModifiable) {
-                    message = SR.GetString(SR.WebPartPersonalization_PersonalizationNotModifiable);
+                    message = System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_PersonalizationNotModifiable);
                 }
                 else {
-                    message = SR.GetString(SR.WebPartPersonalization_PersonalizationNotEnabled);
+                    message = System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_PersonalizationNotEnabled);
                 }
                 throw new InvalidOperationException(message);
             }
@@ -421,7 +422,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private void EnsurePersonalizationState() {
             if (_personalizationState == null) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartPersonalization_PersonalizationStateNotLoaded));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_PersonalizationStateNotLoaded));
             }
         }
 
@@ -474,7 +475,7 @@ namespace System.Web.UI.WebControls.WebParts {
         // Returns null if there is no personalized value for AuthorizationFilter
         protected internal virtual string GetAuthorizationFilter(string webPartID) {
             if (String.IsNullOrEmpty(webPartID)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("webPartID");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("webPartID");
             }
 
             EnsureEnabled(false);
@@ -498,23 +499,23 @@ namespace System.Web.UI.WebControls.WebParts {
         /// </devdoc>
         protected virtual PersonalizationScope Load() {
             if (!Enabled) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartPersonalization_PersonalizationNotEnabled));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_PersonalizationNotEnabled));
             }
 
             // Determine the provider early, as it is needed to continue execution.
             // Provider is used to detect user's capabilities, load personalization state
             // and determine initial scope.
             DeterminePersonalizationProvider();
-            Debug.Assert(_provider != null);
+            System.Web.Util.Debug.Assert(_provider != null);
 
             Page page = WebPartManager.Page;
             if (page == null) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertyCannotBeNull, "WebPartManager.Page"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "WebPartManager.Page"));
             }
 
             HttpRequest request = page.RequestInternal;
             if (request == null) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertyCannotBeNull, "WebPartManager.Page.Request"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "WebPartManager.Page.Request"));
             }
 
             // Ask the provider to load information about what are the capabilities of
@@ -528,7 +529,7 @@ namespace System.Web.UI.WebControls.WebParts {
             if (_personalizationState == null) {
                 // We can't assume that _personalizationState will be non-null, because
                 // it depends on the provider implementation.
-                throw new ProviderException(SR.GetString(SR.WebPartPersonalization_CannotLoadPersonalization));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_CannotLoadPersonalization));
             }
 
             return _provider.DetermineInitialScope(WebPartManager, _personalizationState);
@@ -539,7 +540,7 @@ namespace System.Web.UI.WebControls.WebParts {
             EnsureEnabled(/* ensureModifiable */ true);
 
             if (_provider == null) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartPersonalization_CantCallMethodBeforeInit,
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_CantCallMethodBeforeInit,
                                                     "ResetPersonalizationState", "WebPartPersonalization"));
             }
 
@@ -548,7 +549,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             Page page = WebPartManager.Page;
             if (page == null) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertyCannotBeNull, "WebPartManager.Page"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "WebPartManager.Page"));
             }
 
             // Transfer execution to a new instance of the same page.  The new page will execute
@@ -573,7 +574,7 @@ namespace System.Web.UI.WebControls.WebParts {
             EnsurePersonalizationState();
 
             if (_provider == null) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartPersonalization_CantCallMethodBeforeInit,
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartPersonalization_CantCallMethodBeforeInit,
                                                     "Save", "WebPartPersonalization"));
             }
 
@@ -611,7 +612,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             Page page = WebPartManager.Page;
             if (page == null) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertyCannotBeNull, "WebPartManager.Page"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "WebPartManager.Page"));
             }
             if (page.IsExportingWebPart) {
                 // If the page is exporting, the page determines the desired scope, and it is not meaningful
@@ -657,7 +658,7 @@ namespace System.Web.UI.WebControls.WebParts {
         private void TransferToCurrentPage(Page page) {
             HttpRequest request = page.RequestInternal;
             if (request == null) {
-                throw new InvalidOperationException(SR.GetString(SR.PropertyCannotBeNull, "WebPartManager.Page.Request"));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertyCannotBeNull, "WebPartManager.Page.Request"));
             }
 
             string path = request.CurrentExecutionFilePath;

@@ -8,6 +8,7 @@ namespace System.Web.Security.Cryptography {
     using System;
     using System.Security.Cryptography;
     using System.Web.Configuration;
+    
 
     // Can create cryptographic algorithms from a given <machineKey> element
 
@@ -53,7 +54,7 @@ namespace System.Web.Security.Cryptography {
 #pragma warning restore 618
                     }
                 },
-                errorResourceString: SR.Wrong_decryption_enum);
+                errorResourceString: System.Web.SR.Wrong_decryption_enum);
         }
 
         public KeyedHashAlgorithm GetValidationAlgorithm() {
@@ -85,7 +86,7 @@ namespace System.Web.Security.Cryptography {
                             return null; // unknown
                     }
                 },
-                errorResourceString: SR.Wrong_validation_enum_FX45);
+                errorResourceString: System.Web.SR.Wrong_validation_enum_FX45);
         }
 
         // Contains common logic for creating encryption / validation factories, including
@@ -126,7 +127,7 @@ namespace System.Web.Security.Cryptography {
             // If we reached this point, there was a failure:
             // the factory returned null, threw, or did something else unexpected.
             throw ConfigUtil.MakeConfigurationErrorsException(
-                message: SR.GetString(errorResourceString),
+                message: System.Web.SR.GetString(errorResourceString),
                 innerException: factoryCreationException, // can be null
                 configProperty: _machineKeySection.ElementInformation.Properties[configAttributeName]);
         }

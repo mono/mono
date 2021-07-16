@@ -19,6 +19,7 @@ namespace System.Web.UI.WebControls {
 
     using System.IO;
     using System.Reflection;
+    
 
 
 
@@ -99,7 +100,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         DefaultValue(""),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.Calendar_Caption)
+        WebSysDescription(System.Web.SR.Calendar_Caption)
         ]
         public virtual string Caption {
             get {
@@ -115,7 +116,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(TableCaptionAlign.NotSet),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.WebControl_CaptionAlign)
+        WebSysDescription(System.Web.SR.WebControl_CaptionAlign)
         ]
         public virtual TableCaptionAlign CaptionAlign {
             get {
@@ -138,7 +139,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(2),
-        WebSysDescription(SR.Calendar_CellPadding)
+        WebSysDescription(System.Web.SR.Calendar_CellPadding)
         ]
         public int CellPadding {
             get {
@@ -161,7 +162,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(0),
-        WebSysDescription(SR.Calendar_CellSpacing)
+        WebSysDescription(System.Web.SR.Calendar_CellSpacing)
         ]
         public int CellSpacing {
             get {
@@ -182,7 +183,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Styles"),
-        WebSysDescription(SR.Calendar_DayHeaderStyle),
+        WebSysDescription(System.Web.SR.Calendar_DayHeaderStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty)
@@ -206,7 +207,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(DayNameFormat.Short),
-        WebSysDescription(SR.Calendar_DayNameFormat)
+        WebSysDescription(System.Web.SR.Calendar_DayNameFormat)
         ]
         public DayNameFormat DayNameFormat {
             get {
@@ -228,7 +229,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.Calendar_DayStyle),
+        WebSysDescription(System.Web.SR.Calendar_DayStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty)
@@ -253,7 +254,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(FirstDayOfWeek.Default),
-        WebSysDescription(SR.Calendar_FirstDayOfWeek)
+        WebSysDescription(System.Web.SR.Calendar_FirstDayOfWeek)
         ]
         public FirstDayOfWeek FirstDayOfWeek {
             get {
@@ -279,7 +280,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue("&gt;"),
-        WebSysDescription(SR.Calendar_NextMonthText)
+        WebSysDescription(System.Web.SR.Calendar_NextMonthText)
         ]
         public string NextMonthText {
             get {
@@ -299,7 +300,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(NextPrevFormat.CustomText),
-        WebSysDescription(SR.Calendar_NextPrevFormat)
+        WebSysDescription(System.Web.SR.Calendar_NextPrevFormat)
         ]
         public NextPrevFormat NextPrevFormat {
             get {
@@ -321,7 +322,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Styles"),
-        WebSysDescription(SR.Calendar_NextPrevStyle),
+        WebSysDescription(System.Web.SR.Calendar_NextPrevStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty)
@@ -346,7 +347,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.Calendar_OtherMonthDayStyle),
+        WebSysDescription(System.Web.SR.Calendar_OtherMonthDayStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty)
@@ -374,7 +375,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue("&lt;"),
-        WebSysDescription(SR.Calendar_PrevMonthText)
+        WebSysDescription(System.Web.SR.Calendar_PrevMonthText)
         ]
         public string PrevMonthText {
             get {
@@ -399,7 +400,7 @@ namespace System.Web.UI.WebControls {
         [
         Bindable(true, BindingDirection.TwoWay),
         DefaultValue(typeof(DateTime), "1/1/0001"),
-        WebSysDescription(SR.Calendar_SelectedDate)
+        WebSysDescription(System.Web.SR.Calendar_SelectedDate)
         ]
         public DateTime SelectedDate {
             get {
@@ -425,7 +426,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Browsable(false),
-        WebSysDescription(SR.Calendar_SelectedDates),
+        WebSysDescription(System.Web.SR.Calendar_SelectedDates),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public SelectedDatesCollection SelectedDates {
@@ -447,7 +448,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.Calendar_SelectedDayStyle),
+        WebSysDescription(System.Web.SR.Calendar_SelectedDayStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty)
@@ -472,7 +473,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(CalendarSelectionMode.Day),
-        WebSysDescription(SR.Calendar_SelectionMode)
+        WebSysDescription(System.Web.SR.Calendar_SelectionMode)
         ]
         public CalendarSelectionMode SelectionMode {
             get {
@@ -497,7 +498,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue("&gt;&gt;"),
-        WebSysDescription(SR.Calendar_SelectMonthText)
+        WebSysDescription(System.Web.SR.Calendar_SelectMonthText)
         ]
         public string SelectMonthText {
             get {
@@ -515,7 +516,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Styles"),
-        WebSysDescription(SR.Calendar_SelectorStyle),
+        WebSysDescription(System.Web.SR.Calendar_SelectorStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty)
@@ -541,7 +542,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue("&gt;"),
-        WebSysDescription(SR.Calendar_SelectWeekText)
+        WebSysDescription(System.Web.SR.Calendar_SelectWeekText)
         ]
         public string SelectWeekText {
             get {
@@ -561,7 +562,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(true),
-        WebSysDescription(SR.Calendar_ShowDayHeader)
+        WebSysDescription(System.Web.SR.Calendar_ShowDayHeader)
         ]
         public bool ShowDayHeader {
             get {
@@ -581,7 +582,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(false),
-        WebSysDescription(SR.Calendar_ShowGridLines)
+        WebSysDescription(System.Web.SR.Calendar_ShowGridLines)
         ]
         public bool ShowGridLines {
             get {
@@ -602,7 +603,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(true),
-        WebSysDescription(SR.Calendar_ShowNextPrevMonth)
+        WebSysDescription(System.Web.SR.Calendar_ShowNextPrevMonth)
         ]
         public bool ShowNextPrevMonth {
             get {
@@ -622,7 +623,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(true),
-        WebSysDescription(SR.Calendar_ShowTitle)
+        WebSysDescription(System.Web.SR.Calendar_ShowTitle)
         ]
         public bool ShowTitle {
             get {
@@ -642,7 +643,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(TitleFormat.MonthYear),
-        WebSysDescription(SR.Calendar_TitleFormat)
+        WebSysDescription(System.Web.SR.Calendar_TitleFormat)
         ]
         public TitleFormat TitleFormat {
             get {
@@ -664,7 +665,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Styles"),
-        WebSysDescription(SR.Calendar_TitleStyle),
+        WebSysDescription(System.Web.SR.Calendar_TitleStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
@@ -689,7 +690,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Styles"),
         DefaultValue(null),
-        WebSysDescription(SR.Calendar_TodayDayStyle),
+        WebSysDescription(System.Web.SR.Calendar_TodayDayStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty)
@@ -711,7 +712,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Browsable(false),
-        WebSysDescription(SR.Calendar_TodaysDate),
+        WebSysDescription(System.Web.SR.Calendar_TodaysDate),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public DateTime TodaysDate {
@@ -728,7 +729,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(true),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.Table_UseAccessibleHeader)
+        WebSysDescription(System.Web.SR.Table_UseAccessibleHeader)
         ]
         public virtual bool UseAccessibleHeader {
             get {
@@ -748,7 +749,7 @@ namespace System.Web.UI.WebControls {
         [
         Bindable(true),
         DefaultValue(typeof(DateTime), "1/1/0001"),
-        WebSysDescription(SR.Calendar_VisibleDate)
+        WebSysDescription(System.Web.SR.Calendar_VisibleDate)
         ]
         public DateTime VisibleDate {
             get {
@@ -767,7 +768,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Styles"),
-        WebSysDescription(SR.Calendar_WeekendDayStyle),
+        WebSysDescription(System.Web.SR.Calendar_WeekendDayStyle),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty)
@@ -790,7 +791,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Calendar_OnDayRender)
+        WebSysDescription(System.Web.SR.Calendar_OnDayRender)
         ]
         public event DayRenderEventHandler DayRender {
             add {
@@ -810,7 +811,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Calendar_OnSelectionChanged)
+        WebSysDescription(System.Web.SR.Calendar_OnSelectionChanged)
         ]
         public event EventHandler SelectionChanged {
             add {
@@ -829,7 +830,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Calendar_OnVisibleMonthChanged)
+        WebSysDescription(System.Web.SR.Calendar_OnVisibleMonthChanged)
         ]
         public event MonthChangedEventHandler VisibleMonthChanged {
             add {
@@ -1004,7 +1005,7 @@ namespace System.Web.UI.WebControls {
 
         private bool IsTheSameYearMonth(DateTime date1, DateTime date2) {
 #if DEBUG
-            Debug.Assert(threadCalendarInitialized);
+            System.Web.Util.Debug.Assert(threadCalendarInitialized);
 #endif
             return (threadCalendar.GetEra(date1) == threadCalendar.GetEra(date2) &&
                     threadCalendar.GetYear(date1) == threadCalendar.GetYear(date2) &&
@@ -1013,14 +1014,14 @@ namespace System.Web.UI.WebControls {
 
         private bool IsMinSupportedYearMonth(DateTime date) {
 #if DEBUG
-            Debug.Assert(threadCalendarInitialized);
+            System.Web.Util.Debug.Assert(threadCalendarInitialized);
 #endif
             return IsTheSameYearMonth(minSupportedDate, date);
         }
 
         private bool IsMaxSupportedYearMonth(DateTime date) {
 #if DEBUG
-            Debug.Assert(threadCalendarInitialized);
+            System.Web.Util.Debug.Assert(threadCalendarInitialized);
 #endif
             return IsTheSameYearMonth(maxSupportedDate, date);
         }
@@ -1284,7 +1285,7 @@ namespace System.Web.UI.WebControls {
             bool useAccessibleHeader = UseAccessibleHeader;
             if (useAccessibleHeader) {
                 if (table.Attributes["title"] == null) {
-                    table.Attributes["title"] = SR.GetString(SR.Calendar_TitleText);
+                    table.Attributes["title"] = System.Web.SR.GetString(System.Web.SR.Calendar_TitleText);
                 }
             }
 
@@ -1387,7 +1388,7 @@ namespace System.Web.UI.WebControls {
 
                     string selectMonthTitle = null;
                     if (useAccessibleHeader) {
-                        selectMonthTitle = SR.GetString(SR.Calendar_SelectMonthTitle);
+                        selectMonthTitle = System.Web.SR.GetString(System.Web.SR.Calendar_SelectMonthTitle);
                     }
                     RenderCalendarCell(writer, monthSelectorStyle, SelectMonthText, selectMonthTitle, buttonsActive, monthSelectKey);
                 }
@@ -1424,7 +1425,7 @@ namespace System.Web.UI.WebControls {
                         dayName = dtf.GetShortestDayName((DayOfWeek)dayOfWeek);
                         break;
                     default:
-                        Debug.Assert(false, "Unknown DayNameFormat value!");
+                        System.Web.Util.Debug.Assert(false, "Unknown DayNameFormat value!");
                         goto case DayNameFormat.Short;
                 }
 
@@ -1500,7 +1501,7 @@ namespace System.Web.UI.WebControls {
                     numOfFirstDaysToSkip += 7;
                 }
             }
-            Debug.Assert(numOfFirstDaysToSkip < 7);
+            System.Web.Util.Debug.Assert(numOfFirstDaysToSkip < 7);
 
             // For the last or second last supported month, initialize variables
             // to identify the last supported date of the current calendar.
@@ -1542,7 +1543,7 @@ namespace System.Web.UI.WebControls {
                     string selectWeekTitle = null;
                     if (useAccessibleHeader) {
                         int weekOfMonth = iRow + 1;
-                        selectWeekTitle = SR.GetString(SR.Calendar_SelectWeekTitle, weekOfMonth.ToString(CultureInfo.InvariantCulture));
+                        selectWeekTitle = System.Web.SR.GetString(System.Web.SR.Calendar_SelectWeekTitle, weekOfMonth.ToString(CultureInfo.InvariantCulture));
                     }
                     RenderCalendarCell(writer, weekSelectorStyle, selectWeekText, selectWeekTitle, buttonsActive, weekSelectKey);
                 }
@@ -1647,7 +1648,7 @@ namespace System.Web.UI.WebControls {
                         RenderCalendarCell(writer, cellStyle, dayNumberText, dayTitle, daysSelectable, absoluteDay.ToString(CultureInfo.InvariantCulture));
                     }
 
-                    Debug.Assert(!passedLastSupportedDate);
+                    System.Web.Util.Debug.Assert(!passedLastSupportedDate);
                     if (lastOrSecondLastMonth && d.Month == maxSupportedDate.Month && d.Day == maxSupportedDate.Day) {
                         passedLastSupportedDate = true;
                     }
@@ -1723,7 +1724,7 @@ namespace System.Web.UI.WebControls {
 
                     string previousMonthTitle = null;
                     if (useAccessibleHeader) {
-                        previousMonthTitle = SR.GetString(SR.Calendar_PreviousMonthTitle);
+                        previousMonthTitle = System.Web.SR.GetString(System.Web.SR.Calendar_PreviousMonthTitle);
                     }
                     RenderCalendarCell(writer, nextPrevStyle, prevMonthText, previousMonthTitle, buttonsActive, prevMonthKey);
                 }
@@ -1757,7 +1758,7 @@ namespace System.Web.UI.WebControls {
                     titleText = visibleDate.ToString(titlePattern, CultureInfo.CurrentCulture);
                     break;
                 default:
-                    Debug.Assert(false, "Unknown TitleFormat value!");
+                    System.Web.Util.Debug.Assert(false, "Unknown TitleFormat value!");
                     goto case TitleFormat.MonthYear;
             }
             RenderCalendarCell(writer, cellMainStyle, titleText, null, false, null);
@@ -1785,7 +1786,7 @@ namespace System.Web.UI.WebControls {
 
                     string nextMonthTitle = null;
                     if (useAccessibleHeader) {
-                        nextMonthTitle = SR.GetString(SR.Calendar_NextMonthTitle);
+                        nextMonthTitle = System.Web.SR.GetString(System.Web.SR.Calendar_NextMonthTitle);
                     }
                     RenderCalendarCell(writer, nextPrevStyle, nextMonthText, nextMonthTitle, buttonsActive, nextMonthKey);
                 }
@@ -1829,7 +1830,7 @@ namespace System.Web.UI.WebControls {
 
         private void SelectRange(DateTime dateFrom, DateTime dateTo) {
 
-            Debug.Assert(dateFrom <= dateTo, "Bad Date Range");
+            System.Web.Util.Debug.Assert(dateFrom <= dateTo, "Bad Date Range");
 
             // see if this range differs in any way from the current range
             // these checks will determine this because the colleciton is sorted

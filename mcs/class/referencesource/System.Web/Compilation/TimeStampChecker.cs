@@ -26,7 +26,7 @@ namespace System.Web.Compilation {
                 // Create it on demand
                 if (tsc == null) {
                     tsc = new TimeStampChecker();
-                    Debug.Trace("TimeStampChecker", "Creating new TimeStampChecker");
+                    System.Web.Util.Debug.Trace("TimeStampChecker", "Creating new TimeStampChecker");
                     System.Runtime.Remoting.Messaging.CallContext.SetData(CallContextSlotName, tsc);
                 }
 
@@ -46,20 +46,20 @@ namespace System.Web.Compilation {
 
                 // Already found to have changed before
                 if (storedValue == DateTime.MaxValue) {
-                    Debug.Trace("TimeStampChecker", "AddFileInternal: Same time stamp (" + path + ")");
+                    System.Web.Util.Debug.Trace("TimeStampChecker", "AddFileInternal: Same time stamp (" + path + ")");
                     return;
                 }
 
                 // If it's different, set it to MaxValue as marker of being invalid
                 if (storedValue != lastWriteTimeUtc) {
                     _timeStamps[virtualPath] = DateTime.MaxValue;
-                    Debug.Trace("TimeStampChecker", "AddFileInternal: Changed time stamp (" + path + ")");
+                    System.Web.Util.Debug.Trace("TimeStampChecker", "AddFileInternal: Changed time stamp (" + path + ")");
                 }
             }
             else {
                 // New path: just add it
                 _timeStamps[virtualPath] = lastWriteTimeUtc;
-                Debug.Trace("TimeStampChecker", "AddFileInternal: New path (" + path + ")");
+                System.Web.Util.Debug.Trace("TimeStampChecker", "AddFileInternal: New path (" + path + ")");
             }
         }
 
@@ -71,7 +71,7 @@ namespace System.Web.Compilation {
         }
 
         private bool CheckFilesStillValidInternal(string key, ICollection virtualPaths) {
-            Debug.Trace("TimeStampChecker", "CheckFilesStillValidInternal (" + key + ")");
+            System.Web.Util.Debug.Trace("TimeStampChecker", "CheckFilesStillValidInternal (" + key + ")");
 
             foreach (string virtualPath in virtualPaths) {
 
@@ -85,13 +85,13 @@ namespace System.Web.Compilation {
 
                 // If it changed, then it's not valid
                 if (lastWriteTimeUtc != storedValue) {
-                    Debug.Trace("TimeStampChecker", "CheckFilesStillValidInternal: File (" + path + ") has changed!");
+                    System.Web.Util.Debug.Trace("TimeStampChecker", "CheckFilesStillValidInternal: File (" + path + ") has changed!");
 
                     return false;
                 }
             }
 
-            Debug.Trace("TimeStampChecker", "CheckFilesStillValidInternal (" + key + ") is still valid");
+            System.Web.Util.Debug.Trace("TimeStampChecker", "CheckFilesStillValidInternal (" + key + ") is still valid");
             return true;
         }
     }

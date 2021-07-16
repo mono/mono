@@ -44,14 +44,14 @@ namespace System.Web.Util {
         GCHandle _handle;
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         public DisposableGCHandleRef(T t) {
-            Debug.Assert(t != null);
+            System.Web.Util.Debug.Assert(t != null);
             _handle = GCHandle.Alloc(t);
         }
 
         public T Target {
             [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
             get {
-                Debug.Assert(_handle.IsAllocated);
+                System.Web.Util.Debug.Assert(_handle.IsAllocated);
                 return (T)_handle.Target;
             }
         }
@@ -59,7 +59,7 @@ namespace System.Web.Util {
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         public void Dispose() {
             Target.Dispose();
-            Debug.Assert(_handle.IsAllocated);
+            System.Web.Util.Debug.Assert(_handle.IsAllocated);
             if (_handle.IsAllocated) {
                 _handle.Free();
             }

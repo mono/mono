@@ -34,10 +34,10 @@ public class PageHandlerFactory : IHttpHandlerFactory2 {
     }
 
     public virtual IHttpHandler GetHandler(HttpContext context, string requestType, string virtualPath, string path) {
-        Debug.Trace("PageHandlerFactory", "PageHandlerFactory: " + virtualPath);
+        System.Web.Util.Debug.Trace("PageHandlerFactory", "PageHandlerFactory: " + virtualPath);
 
         // This should never get called in ISAPI mode but currently is in integrated mode
-        // Debug.Assert(false);
+        // System.Web.Util.Debug.Assert(false);
 
         return GetHandlerHelper(context, requestType, VirtualPath.CreateNonRelative(virtualPath), path);
     }

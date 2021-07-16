@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Caching;
 using System.Web.Util;
 
+
 namespace System.Web.Caching {
     internal sealed class DependencyChangeMonitor: ChangeMonitor, ICacheDependencyChanged {
         private CacheDependency _dependency;
@@ -23,7 +24,7 @@ namespace System.Web.Caching {
             }
             if (!dependency.Use()) {
                 throw new InvalidOperationException(
-                    SR.GetString(SR.Cache_dependency_used_more_that_once));
+                    System.Web.SR.GetString(System.Web.SR.Cache_dependency_used_more_that_once));
             }
             _dependency = dependency;
             _dependency.SetCacheDependencyChanged(this);

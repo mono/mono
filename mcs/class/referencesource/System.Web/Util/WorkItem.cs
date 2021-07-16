@@ -38,7 +38,7 @@ public class WorkItem {
     public static void Post(WorkItemCallback callback) {
 #if !FEATURE_PAL // ROTORTODO
         if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-            throw new PlatformNotSupportedException(SR.GetString(SR.RequiresNT));
+            throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.RequiresNT));
 #else // !FEATURE_PAL
         throw new NotImplementedException("ROTORTODO");
 #endif // !FEATURE_PAL
@@ -85,7 +85,7 @@ internal class WrappedWorkItemCallback {
 
         if (UnsafeNativeMethods.PostThreadPoolWorkItem(_wrapperCallback) != 1) {
             _rootedThis.Free();
-            throw new HttpException(SR.GetString(SR.Cannot_post_workitem));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_post_workitem));
         }
     }
 

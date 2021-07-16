@@ -56,7 +56,7 @@ namespace System.Web.Configuration {
             _info = new ConfigurationBuildProviderInfo(this);
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -67,10 +67,10 @@ namespace System.Web.Configuration {
         // them different depending on order in the persisted string.
         public override bool Equals(object provider) {
             BuildProvider o = provider as BuildProvider;
-            return (o != null && StringUtil.EqualsIgnoreCase(Extension, o.Extension) && Type == o.Type);
+            return (o != null && System.Web.Util.StringUtil.EqualsIgnoreCase(Extension, o.Extension) && Type == o.Type);
         }
         public override int GetHashCode() {
-            return HashCodeCombiner.CombineHashCodes(StringUtil.GetNonRandomizedHashCode(Extension.ToLower(CultureInfo.InvariantCulture)),
+            return HashCodeCombiner.CombineHashCodes(System.Web.Util.StringUtil.GetNonRandomizedHashCode(Extension.ToLower(CultureInfo.InvariantCulture)),
                                                      Type.GetHashCode());
         }
 
@@ -99,7 +99,7 @@ namespace System.Web.Configuration {
 
         internal BuildProviderInfo BuildProviderInfo {
             get {
-                Debug.Assert(_info != null);
+                System.Web.Util.Debug.Assert(_info != null);
                 return _info;
             }
         }
@@ -110,7 +110,7 @@ namespace System.Web.Configuration {
             private Type _type;
 
             public ConfigurationBuildProviderInfo(BuildProvider buildProvider) {
-                Debug.Assert(buildProvider != null);
+                System.Web.Util.Debug.Assert(buildProvider != null);
                 _buildProvider = buildProvider;
             }
 

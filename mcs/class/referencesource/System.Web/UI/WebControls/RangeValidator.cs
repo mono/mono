@@ -30,7 +30,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.RangeValidator_MaximumValue)
+        WebSysDescription(System.Web.SR.RangeValidator_MaximumValue)
         ]
         public string MaximumValue {
             get {
@@ -50,7 +50,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.RangeValidator_MinmumValue)
+        WebSysDescription(System.Web.SR.RangeValidator_MinmumValue)
         ]
         public string MinimumValue {
             get {
@@ -103,11 +103,11 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override bool EvaluateIsValid() {
 
-            Debug.Assert(PropertiesValid, "Should have already been checked");
+            System.Web.Util.Debug.Assert(PropertiesValid, "Should have already been checked");
 
             // Get the peices of text from the control(s).
             string text = GetControlValidationValue(ControlToValidate);
-            Debug.Assert(text != null, "Should have already caught this!");
+            System.Web.Util.Debug.Assert(text != null, "Should have already caught this!");
 
             // Special case: if the string is blank, we don't try to validate it. The input should be
             // trimmed for coordination with the RequiredFieldValidator.
@@ -134,7 +134,7 @@ namespace System.Web.UI.WebControls {
             string maximumValue = MaximumValue;
             if (!CanConvert(maximumValue, Type, CultureInvariantValues)) {
                 throw new HttpException(
-                                       SR.GetString(SR.Validator_value_bad_type,
+                                       System.Web.SR.GetString(System.Web.SR.Validator_value_bad_type,
                                                                        new string [] {
                                                                            maximumValue,
                                                                            "MaximumValue",
@@ -145,7 +145,7 @@ namespace System.Web.UI.WebControls {
             string minumumValue = MinimumValue;
             if (!CanConvert(minumumValue, Type, CultureInvariantValues)) {
                 throw new HttpException(
-                                       SR.GetString(SR.Validator_value_bad_type,
+                                       System.Web.SR.GetString(System.Web.SR.Validator_value_bad_type,
                                                                        new string [] {
                                                                            minumumValue,
                                                                            "MinimumValue",
@@ -158,7 +158,7 @@ namespace System.Web.UI.WebControls {
                         maximumValue, CultureInvariantValues,
                         ValidationCompareOperator.GreaterThan, Type))  {
                 throw new HttpException(
-                                       SR.GetString(SR.Validator_range_overalap,
+                                       System.Web.SR.GetString(System.Web.SR.Validator_range_overalap,
                                                                        new string [] {
                                                                            maximumValue,
                                                                            minumumValue,

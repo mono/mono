@@ -21,7 +21,7 @@ namespace System.Web.Management {
 
         public override void Initialize(string name, NameValueCollection config)
         {
-            Debug.Trace("TraceWebEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("TraceWebEventProvider", "Initializing: name=" + name);
             base.Initialize(name, config);
 
             ProviderUtil.CheckUnrecognizedAttributes(config, name);

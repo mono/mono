@@ -81,12 +81,14 @@ namespace System.Web.DynamicData {
         internal string GetTemplatePath(long cacheKey, Func<string> templatePathFactoryFunction) {
             // Check if we already have it cached
             string virtualPath = this[cacheKey];
-
+            
             // null is a valid value, so we also need to check whether the key exists
             if (virtualPath == null && !ContainsKey(cacheKey)) {
                 // It's not cached, so compute it and cache it.  Make sure multiple writers are serialized
                 virtualPath = templatePathFactoryFunction();
+#if (!MONO)
                 this[cacheKey] = virtualPath;
+#endif
             }
 
             return virtualPath;

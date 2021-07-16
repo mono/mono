@@ -81,7 +81,7 @@ namespace System.Web.UI {
             }
             else {
                 // In case of a field, there should only be one (unlike properties)
-                Debug.Assert(Name.IndexOf('.') < 0, "_name.IndexOf('.') < 0");
+                System.Web.Util.Debug.Assert(Name.IndexOf('.') < 0, "_name.IndexOf('.') < 0");
                 leftExpr = new CodeFieldReferenceExpression(ctrlRefExpr, Name);
             }
 

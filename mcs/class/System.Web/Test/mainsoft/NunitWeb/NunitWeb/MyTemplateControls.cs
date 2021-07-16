@@ -36,11 +36,7 @@ namespace MyTemplateControls
       container = new TestContainerControl (this);
     }
     
-    protected 
-#if INSIDE_SYSTEM_WEB
-    internal 
-#endif
-    override void CreateChildControls ()
+    protected override void CreateChildControls ()
     {
       Controls.Clear ();
       container.AddItem ();

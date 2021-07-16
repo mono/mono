@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebControl_CommandName),
+        WebSysDescription(System.Web.SR.WebControl_CommandName),
         Themeable(false),
         ]
         public string CommandName {
@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebControl_CommandArgument),
+        WebSysDescription(System.Web.SR.WebControl_CommandArgument),
         ]
         public string CommandArgument {
             get {
@@ -102,7 +102,7 @@ namespace System.Web.UI.WebControls {
         Themeable(false),
         DefaultValue(true),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Button_CausesValidation)
+        WebSysDescription(System.Web.SR.Button_CausesValidation)
         ]
         public virtual bool CausesValidation {
             get {
@@ -121,7 +121,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.WebControl_Enabled)
+        WebSysDescription(System.Web.SR.WebControl_Enabled)
         ]
         public override bool Enabled {
             get {
@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls {
                 return base.GenerateEmptyAlternateText;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.Property_Set_Not_Supported, "GenerateEmptyAlternateText", this.GetType().ToString()));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Property_Set_Not_Supported, "GenerateEmptyAlternateText", this.GetType().ToString()));
             }
         }
 
@@ -154,7 +154,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Button_OnClientClick),
+        WebSysDescription(System.Web.SR.Button_OnClientClick),
         Themeable(false),
         ]
         public virtual string OnClientClick {
@@ -177,7 +177,7 @@ namespace System.Web.UI.WebControls {
         Themeable(false),
         UrlProperty("*.aspx"),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Button_PostBackUrl),
+        WebSysDescription(System.Web.SR.Button_PostBackUrl),
         ]
         public virtual string PostBackUrl {
             get {
@@ -213,7 +213,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.PostBackControl_ValidationGroup)
+        WebSysDescription(System.Web.SR.PostBackControl_ValidationGroup)
         ]
         public virtual string ValidationGroup {
             get {
@@ -231,7 +231,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.ImageButton_OnClick)
+        WebSysDescription(System.Web.SR.ImageButton_OnClick)
         ]
         public event ImageClickEventHandler Click {
             add {
@@ -261,7 +261,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.ImageButton_OnCommand)
+        WebSysDescription(System.Web.SR.ImageButton_OnCommand)
         ]
         public event CommandEventHandler Command {
             add {

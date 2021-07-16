@@ -123,13 +123,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultAnswerLabelText),
-        WebSysDescription(SR.PasswordRecovery_AnswerLabelText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultAnswerLabelText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_AnswerLabelText)
         ]
         public virtual string AnswerLabelText {
             get {
                 object obj = ViewState["AnswerLabelText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultAnswerLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultAnswerLabelText) : (string)obj;
             }
             set {
                 ViewState["AnswerLabelText"] = value;
@@ -143,14 +143,14 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultAnswerRequiredErrorMessage),
-        WebSysDescription(SR.LoginControls_AnswerRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultAnswerRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.LoginControls_AnswerRequiredErrorMessage)
         ]
         public virtual string AnswerRequiredErrorMessage {
             get {
                 object obj = ViewState["AnswerRequiredErrorMessage"];
                 return (obj == null) ?
-                    SR.GetString(SR.PasswordRecovery_DefaultAnswerRequiredErrorMessage) : (string)obj;
+                    System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultAnswerRequiredErrorMessage) : (string)obj;
             }
             set {
                 ViewState["AnswerRequiredErrorMessage"] = value;
@@ -161,7 +161,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(1),
-        WebSysDescription(SR.Login_BorderPadding),
+        WebSysDescription(System.Web.SR.Login_BorderPadding),
         SuppressMessage("Microsoft.Security", "CA2119:SealMethodsThatSatisfyPrivateInterfaces",
             Justification = "Interface denotes existence of property, not used for security.")
         ]
@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value < -1) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.PasswordRecovery_InvalidBorderPadding));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.PasswordRecovery_InvalidBorderPadding));
                 }
                 ViewState["BorderPadding"] = value;
             }
@@ -188,7 +188,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.PasswordRecovery_SubmitButtonStyle)
+        WebSysDescription(System.Web.SR.PasswordRecovery_SubmitButtonStyle)
         ]
         public Style SubmitButtonStyle {
             get {
@@ -209,7 +209,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.PasswordRecovery_SubmitButtonType)
+        WebSysDescription(System.Web.SR.PasswordRecovery_SubmitButtonType)
         ]
         public virtual ButtonType SubmitButtonType {
             get {
@@ -258,7 +258,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_FailureTextStyle)
+        WebSysDescription(System.Web.SR.WebControl_FailureTextStyle)
         ]
         public TableItemStyle FailureTextStyle {
             get {
@@ -279,13 +279,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultGeneralFailureText),
-        WebSysDescription(SR.PasswordRecovery_GeneralFailureText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultGeneralFailureText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_GeneralFailureText)
         ]
         public virtual string GeneralFailureText {
             get {
                 object obj = ViewState["GeneralFailureText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultGeneralFailureText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultGeneralFailureText) : (string)obj;
             }
             set {
                 ViewState["GeneralFailureText"] = value;
@@ -300,7 +300,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.ChangePassword_HelpPageText)
+        WebSysDescription(System.Web.SR.ChangePassword_HelpPageText)
         ]
         public virtual string HelpPageText {
             get {
@@ -315,7 +315,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginControls_HelpPageIconUrl),
+        WebSysDescription(System.Web.SR.LoginControls_HelpPageIconUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -336,7 +336,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginControls_HelpPageUrl),
+        WebSysDescription(System.Web.SR.LoginControls_HelpPageUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -360,7 +360,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_HyperLinkStyle)
+        WebSysDescription(System.Web.SR.WebControl_HyperLinkStyle)
         ]
         public TableItemStyle HyperLinkStyle {
             get {
@@ -384,7 +384,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_InstructionTextStyle)
+        WebSysDescription(System.Web.SR.WebControl_InstructionTextStyle)
         ]
         public TableItemStyle InstructionTextStyle {
             get {
@@ -408,7 +408,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_LabelStyle)
+        WebSysDescription(System.Web.SR.LoginControls_LabelStyle)
         ]
         public TableItemStyle LabelStyle {
             get {
@@ -432,7 +432,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         Themeable(false),
-        WebSysDescription(SR.PasswordRecovery_MailDefinition)
+        WebSysDescription(System.Web.SR.PasswordRecovery_MailDefinition)
         ]
         public MailDefinition MailDefinition {
             get {
@@ -454,7 +454,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Data"),
         DefaultValue(""),
         Themeable(false),
-        WebSysDescription(SR.MembershipProvider_Name)
+        WebSysDescription(System.Web.SR.MembershipProvider_Name)
         ]
         public virtual string MembershipProvider {
             get {
@@ -492,13 +492,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultQuestionFailureText),
-        WebSysDescription(SR.PasswordRecovery_QuestionFailureText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultQuestionFailureText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_QuestionFailureText)
         ]
         public virtual string QuestionFailureText {
             get {
                 object obj = ViewState["QuestionFailureText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultQuestionFailureText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultQuestionFailureText) : (string)obj;
             }
             set {
                 ViewState["QuestionFailureText"] = value;
@@ -512,13 +512,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultQuestionInstructionText),
-        WebSysDescription(SR.PasswordRecovery_QuestionInstructionText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultQuestionInstructionText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_QuestionInstructionText)
         ]
         public virtual string QuestionInstructionText {
             get {
                 object obj = ViewState["QuestionInstructionText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultQuestionInstructionText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultQuestionInstructionText) : (string)obj;
             }
             set {
                 ViewState["QuestionInstructionText"] = value;
@@ -532,13 +532,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultQuestionLabelText),
-        WebSysDescription(SR.PasswordRecovery_QuestionLabelText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultQuestionLabelText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_QuestionLabelText)
         ]
         public virtual string QuestionLabelText {
             get {
                 object obj = ViewState["QuestionLabelText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultQuestionLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultQuestionLabelText) : (string)obj;
             }
             set {
                 ViewState["QuestionLabelText"] = value;
@@ -552,13 +552,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultQuestionTitleText),
-        WebSysDescription(SR.PasswordRecovery_QuestionTitleText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultQuestionTitleText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_QuestionTitleText)
         ]
         public virtual string QuestionTitleText {
             get {
                 object obj = ViewState["QuestionTitleText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultQuestionTitleText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultQuestionTitleText) : (string)obj;
             }
             set {
                 ViewState["QuestionTitleText"] = value;
@@ -573,7 +573,7 @@ namespace System.Web.UI.WebControls {
         Browsable(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(PasswordRecovery)),
-        WebSysDescription(SR.PasswordRecovery_QuestionTemplate)
+        WebSysDescription(System.Web.SR.PasswordRecovery_QuestionTemplate)
         ]
         public virtual ITemplate QuestionTemplate {
             get {
@@ -591,7 +591,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.PasswordRecovery_QuestionTemplateContainer)
+        WebSysDescription(System.Web.SR.PasswordRecovery_QuestionTemplateContainer)
         ]
         public Control QuestionTemplateContainer {
             get {
@@ -607,7 +607,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.ChangePassword_ChangePasswordButtonImageUrl),
+        WebSysDescription(System.Web.SR.ChangePassword_ChangePasswordButtonImageUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -628,13 +628,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultSubmitButtonText),
-        WebSysDescription(SR.ChangePassword_ChangePasswordButtonText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultSubmitButtonText),
+        WebSysDescription(System.Web.SR.ChangePassword_ChangePasswordButtonText)
         ]
         public virtual string SubmitButtonText {
             get {
                 object obj = ViewState["SubmitButtonText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultSubmitButtonText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultSubmitButtonText) : (string)obj;
             }
             set {
                 ViewState["SubmitButtonText"] = value;
@@ -649,7 +649,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginControls_SuccessPageUrl),
+        WebSysDescription(System.Web.SR.LoginControls_SuccessPageUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         Themeable(false),
         UrlProperty()
@@ -671,7 +671,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.PasswordRecovery_SuccessTemplate),
+        WebSysDescription(System.Web.SR.PasswordRecovery_SuccessTemplate),
         TemplateContainer(typeof(PasswordRecovery))
         ]
         public virtual ITemplate SuccessTemplate {
@@ -690,7 +690,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.PasswordRecovery_SuccessTemplateContainer)
+        WebSysDescription(System.Web.SR.PasswordRecovery_SuccessTemplateContainer)
         ]
         public Control SuccessTemplateContainer {
             get {
@@ -706,13 +706,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultSuccessText),
-        WebSysDescription(SR.PasswordRecovery_SuccessText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultSuccessText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_SuccessText)
         ]
         public virtual string SuccessText {
             get {
                 object obj = ViewState["SuccessText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultSuccessText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultSuccessText) : (string)obj;
             }
             set {
                 ViewState["SuccessText"] = value;
@@ -729,7 +729,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.PasswordRecovery_SuccessTextStyle)
+        WebSysDescription(System.Web.SR.PasswordRecovery_SuccessTextStyle)
         ]
         public TableItemStyle SuccessTextStyle {
             get {
@@ -746,7 +746,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(true),
-        WebSysDescription(SR.LoginControls_RenderOuterTable),
+        WebSysDescription(System.Web.SR.LoginControls_RenderOuterTable),
         SuppressMessage("Microsoft.Security", "CA2119:SealMethodsThatSatisfyPrivateInterfaces",
             Justification = "Interface denotes existence of property, not used for security.")
         ]
@@ -776,7 +776,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_TextBoxStyle)
+        WebSysDescription(System.Web.SR.LoginControls_TextBoxStyle)
         ]
         public Style TextBoxStyle {
             get {
@@ -797,7 +797,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(LoginTextLayout.TextOnLeft),
-        WebSysDescription(SR.LoginControls_TextLayout)
+        WebSysDescription(System.Web.SR.LoginControls_TextLayout)
         ]
         public virtual LoginTextLayout TextLayout {
             get {
@@ -823,7 +823,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_TitleTextStyle)
+        WebSysDescription(System.Web.SR.LoginControls_TitleTextStyle)
         ]
         public TableItemStyle TitleTextStyle {
             get {
@@ -845,7 +845,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.UserName_InitialValue)
+        WebSysDescription(System.Web.SR.UserName_InitialValue)
         ]
         public virtual string UserName {
             get {
@@ -876,13 +876,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultUserNameFailureText),
-        WebSysDescription(SR.PasswordRecovery_UserNameFailureText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultUserNameFailureText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_UserNameFailureText)
         ]
         public virtual string UserNameFailureText {
             get {
                 object obj = ViewState["UserNameFailureText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultUserNameFailureText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultUserNameFailureText) : (string)obj;
             }
             set {
                 ViewState["UserNameFailureText"] = value;
@@ -896,13 +896,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultUserNameInstructionText),
-        WebSysDescription(SR.PasswordRecovery_UserNameInstructionText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultUserNameInstructionText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_UserNameInstructionText)
         ]
         public virtual string UserNameInstructionText {
             get {
                 object obj = ViewState["UserNameInstructionText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultUserNameInstructionText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultUserNameInstructionText) : (string)obj;
             }
             set {
                 ViewState["UserNameInstructionText"] = value;
@@ -916,13 +916,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultUserNameLabelText),
-        WebSysDescription(SR.PasswordRecovery_UserNameLabelText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultUserNameLabelText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_UserNameLabelText)
         ]
         public virtual string UserNameLabelText {
             get {
                 object obj = ViewState["UserNameLabelText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultUserNameLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultUserNameLabelText) : (string)obj;
             }
             set {
                 ViewState["UserNameLabelText"] = value;
@@ -936,14 +936,14 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultUserNameRequiredErrorMessage),
-        WebSysDescription(SR.ChangePassword_UserNameRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultUserNameRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.ChangePassword_UserNameRequiredErrorMessage)
         ]
         public virtual string UserNameRequiredErrorMessage {
             get {
                 object obj = ViewState["UserNameRequiredErrorMessage"];
                 return (obj == null) ?
-                    SR.GetString(SR.PasswordRecovery_DefaultUserNameRequiredErrorMessage) : (string)obj;
+                    System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultUserNameRequiredErrorMessage) : (string)obj;
             }
             set {
                 ViewState["UserNameRequiredErrorMessage"] = value;
@@ -958,7 +958,7 @@ namespace System.Web.UI.WebControls {
         Browsable(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(PasswordRecovery)),
-        WebSysDescription(SR.PasswordRecovery_UserNameTemplate)
+        WebSysDescription(System.Web.SR.PasswordRecovery_UserNameTemplate)
         ]
         public virtual ITemplate UserNameTemplate {
             get {
@@ -976,7 +976,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.PasswordRecovery_UserNameTemplateContainer)
+        WebSysDescription(System.Web.SR.PasswordRecovery_UserNameTemplateContainer)
         ]
         public Control UserNameTemplateContainer {
             get {
@@ -992,13 +992,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.PasswordRecovery_DefaultUserNameTitleText),
-        WebSysDescription(SR.PasswordRecovery_UserNameTitleText)
+        WebSysDefaultValue(System.Web.SR.PasswordRecovery_DefaultUserNameTitleText),
+        WebSysDescription(System.Web.SR.PasswordRecovery_UserNameTitleText)
         ]
         public virtual string UserNameTitleText {
             get {
                 object obj = ViewState["UserNameTitleText"];
-                return (obj == null) ? SR.GetString(SR.PasswordRecovery_DefaultUserNameTitleText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultUserNameTitleText) : (string)obj;
             }
             set {
                 ViewState["UserNameTitleText"] = value;
@@ -1011,7 +1011,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.ChangePassword_ValidatorTextStyle)
+        WebSysDescription(System.Web.SR.ChangePassword_ValidatorTextStyle)
         ]
         public Style ValidatorTextStyle {
             get {
@@ -1032,7 +1032,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.PasswordRecovery_AnswerLookupError)
+        WebSysDescription(System.Web.SR.PasswordRecovery_AnswerLookupError)
         ]
         public event EventHandler AnswerLookupError {
             add {
@@ -1049,7 +1049,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.PasswordRecovery_VerifyingAnswer)
+        WebSysDescription(System.Web.SR.PasswordRecovery_VerifyingAnswer)
         ]
         public event LoginCancelEventHandler VerifyingAnswer {
             add {
@@ -1066,7 +1066,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.PasswordRecovery_SendingMail)
+        WebSysDescription(System.Web.SR.PasswordRecovery_SendingMail)
         ]
         public event MailMessageEventHandler SendingMail {
             add {
@@ -1079,7 +1079,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.CreateUserWizard_SendMailError)
+        WebSysDescription(System.Web.SR.CreateUserWizard_SendMailError)
         ]
         public event SendMailErrorEventHandler SendMailError {
             add {
@@ -1096,7 +1096,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.PasswordRecovery_VerifyingUser)
+        WebSysDescription(System.Web.SR.PasswordRecovery_VerifyingUser)
         ]
         public event LoginCancelEventHandler VerifyingUser {
             add {
@@ -1113,7 +1113,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.PasswordRecovery_UserLookupError)
+        WebSysDescription(System.Web.SR.PasswordRecovery_UserLookupError)
         ]
         public event EventHandler UserLookupError {
             add {
@@ -1188,13 +1188,13 @@ namespace System.Web.UI.WebControls {
                     password = user.ResetPassword(answer, /*throwOnError*/ false);
                 }
                 else {
-                    throw new HttpException(SR.GetString(SR.PasswordRecovery_RecoveryNotSupported));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.PasswordRecovery_RecoveryNotSupported));
                 }
 
                 if (password != null) {
                     LoginUtil.SendPasswordMail(email, user.UserName, password, MailDefinition,
-                                               SR.GetString(SR.PasswordRecovery_DefaultSubject),
-                                               SR.GetString(SR.PasswordRecovery_DefaultBody),
+                                               System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultSubject),
+                                               System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultBody),
                                                OnSendingMail, OnSendMailError, this);
                     PerformSuccessAction();
                 }
@@ -1256,13 +1256,13 @@ namespace System.Web.UI.WebControls {
                         password = user.ResetPassword(/*throwOnError*/ false);
                     }
                     else {
-                        throw new HttpException(SR.GetString(SR.PasswordRecovery_RecoveryNotSupported));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.PasswordRecovery_RecoveryNotSupported));
                     }
 
                     if (password != null) {
                         LoginUtil.SendPasswordMail(email, user.UserName, password, MailDefinition,
-                                                   SR.GetString(SR.PasswordRecovery_DefaultSubject),
-                                                   SR.GetString(SR.PasswordRecovery_DefaultBody),
+                                                   System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultSubject),
+                                                   System.Web.SR.GetString(System.Web.SR.PasswordRecovery_DefaultBody),
                                                    OnSendingMail, OnSendMailError, this);
                         PerformSuccessAction();
                     }
@@ -1396,7 +1396,7 @@ namespace System.Web.UI.WebControls {
             else {
                 object[] myState = (object[])savedState;
                 if (myState.Length != _viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[0]);
@@ -1865,7 +1865,7 @@ namespace System.Web.UI.WebControls {
             }
 
             WebControl answerTextBox = (WebControl)container.AnswerTextBox;
-            Debug.Assert(answerTextBox != null, "AnswerTextBox cannot be null for the DefaultTemplate");
+            System.Web.Util.Debug.Assert(answerTextBox != null, "AnswerTextBox cannot be null for the DefaultTemplate");
             if (_textBoxStyle != null) {
                 answerTextBox.ApplyStyle(TextBoxStyle);
             }
@@ -2064,7 +2064,7 @@ namespace System.Web.UI.WebControls {
                 }
 
                 WebControl userNameTextBox = (WebControl)container.UserNameTextBox;
-                Debug.Assert(userNameTextBox != null, "UserNameTextBox cannot be null for the DefaultTemplate");
+                System.Web.Util.Debug.Assert(userNameTextBox != null, "UserNameTextBox cannot be null for the DefaultTemplate");
                 if (_textBoxStyle != null) {
                     userNameTextBox.ApplyStyle(TextBoxStyle);
                 }
@@ -2278,7 +2278,7 @@ namespace System.Web.UI.WebControls {
                 answerRequired.ValidationGroup = validationGroup;
                 answerRequired.ControlToValidate = answerTextBox.ID;
                 answerRequired.Display = _requiredFieldValidatorDisplay;
-                answerRequired.Text = SR.GetString(SR.LoginControls_DefaultRequiredFieldValidatorText);
+                answerRequired.Text = System.Web.SR.GetString(System.Web.SR.LoginControls_DefaultRequiredFieldValidatorText);
                 answerRequired.Enabled = enableValidation;
                 answerRequired.Visible = enableValidation;
                 questionContainer.AnswerRequired = answerRequired;
@@ -2594,7 +2594,7 @@ namespace System.Web.UI.WebControls {
                 userNameRequired.ValidationGroup = validationGroup;
                 userNameRequired.ControlToValidate = userNameTextBox.ID;
                 userNameRequired.Display = _requiredFieldValidatorDisplay;
-                userNameRequired.Text = SR.GetString(SR.LoginControls_DefaultRequiredFieldValidatorText);
+                userNameRequired.Text = System.Web.SR.GetString(System.Web.SR.LoginControls_DefaultRequiredFieldValidatorText);
                 userNameRequired.Enabled = enableValidation;
                 userNameRequired.Visible = enableValidation;
                 userNameContainer.UserNameRequired = userNameRequired;
@@ -2843,7 +2843,7 @@ namespace System.Web.UI.WebControls {
                         return _answerTextBox;
                     }
                     else {
-                        return FindRequiredControl<IEditableTextControl>(_answerID, SR.PasswordRecovery_NoAnswerTextBox);
+                        return FindRequiredControl<IEditableTextControl>(_answerID, System.Web.SR.PasswordRecovery_NoAnswerTextBox);
                     }
                 }
                 set {
@@ -3139,7 +3139,7 @@ namespace System.Web.UI.WebControls {
                         return _userNameTextBox;
                     }
                     else {
-                        return FindRequiredControl<IEditableTextControl>(_userNameID, SR.PasswordRecovery_NoUserNameTextBox);
+                        return FindRequiredControl<IEditableTextControl>(_userNameID, System.Web.SR.PasswordRecovery_NoUserNameTextBox);
                     }
                 }
                 set {

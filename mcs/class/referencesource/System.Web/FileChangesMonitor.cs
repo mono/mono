@@ -19,6 +19,7 @@ namespace System.Web {
     using System.Web.Hosting;
     using System.Web.Util;
     using Microsoft.Win32;
+    
 
 
     // Type of the callback to the subscriber of a file change event in FileChangesMonitor.StartMonitoringFile
@@ -79,7 +80,7 @@ namespace System.Web {
             sb.Append(indent + "FileMonitorTarget\n");
             sb.Append(i2 + "       Callback: " + Callback.Target + "(HC=" + Callback.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")\n");
             sb.Append(i2 + "          Alias: " + Alias + "\n");
-            sb.Append(i2 + "StartMonitoring: " + Debug.FormatUtcDate(UtcStartMonitoring) + "\n");
+            sb.Append(i2 + "StartMonitoring: " + System.Web.Util.Debug.FormatUtcDate(UtcStartMonitoring) + "\n");
             sb.Append(i2 + "          _refs: " + _refs + "\n");
 
             return sb.ToString();
@@ -166,7 +167,7 @@ namespace System.Web {
             if (fOK != 0) {
                 // If no size is needed, return a non-null marker
                 if (lengthNeeded == 0) {
-                   Debug.Trace("GetDacl", "Returning null dacl");
+                   System.Web.Util.Debug.Trace("GetDacl", "Returning null dacl");
                    return s_nullDacl;
                 }
                 
@@ -178,7 +179,7 @@ namespace System.Web {
                 
                 // Check if need to redo the call with larger buffer
                 if (hr != HResults.E_INSUFFICIENT_BUFFER) {
-                    Debug.Trace("GetDacl", "Error in first call to GetFileSecurity: 0x" + hr.ToString("x", NumberFormatInfo.InvariantInfo));
+                    System.Web.Util.Debug.Trace("GetDacl", "Error in first call to GetFileSecurity: 0x" + hr.ToString("x", NumberFormatInfo.InvariantInfo));
                     return null;
                 }
 
@@ -188,7 +189,7 @@ namespace System.Web {
                 if (fOK == 0) {
 #if DBG
                     hr = HttpException.HResultFromLastError(Marshal.GetLastWin32Error());
-                    Debug.Trace("GetDacl", "Error in second to GetFileSecurity: 0x" + hr.ToString("x", NumberFormatInfo.InvariantInfo));
+                    System.Web.Util.Debug.Trace("GetDacl", "Error in second to GetFileSecurity: 0x" + hr.ToString("x", NumberFormatInfo.InvariantInfo));
 #endif
 
                     return null;
@@ -200,14 +201,14 @@ namespace System.Web {
                 lock (s_interned.SyncRoot) {
                     interned = (byte[]) s_interned[dacl];
                     if (interned == null) {
-                        Debug.Trace("GetDacl", "Interning new dacl, length " + dacl.Length);
+                        System.Web.Util.Debug.Trace("GetDacl", "Interning new dacl, length " + dacl.Length);
                         interned = dacl;
                         s_interned[interned] = interned;
                     }
                 }
             }
 
-            Debug.Trace("GetDacl", "Returning dacl, length " + dacl.Length);
+            System.Web.Util.Debug.Trace("GetDacl", "Returning dacl, length " + dacl.Length);
             return interned;
         }
     }
@@ -325,7 +326,7 @@ namespace System.Web {
             FileMonitorTarget target = (FileMonitorTarget)_targets[callbackTarget];
 #if DBG            
             if (FileChangesMonitor.s_enableRemoveTargetAssert) {
-                Debug.Assert(target != null, "removing file monitor target that was never added or already been removed");
+                System.Web.Util.Debug.Assert(target != null, "removing file monitor target that was never added or already been removed");
             }
 #endif
             if (target != null && target.Release() == 0) {
@@ -363,7 +364,7 @@ namespace System.Web {
             }
             sb.Append("\n");
             sb.Append(i2 + "LastAction="); sb.Append(_lastAction);
-            sb.Append("; LastCompletion="); sb.Append(Debug.FormatUtcDate(_utcLastCompletion));
+            sb.Append("; LastCompletion="); sb.Append(System.Web.Util.Debug.FormatUtcDate(_utcLastCompletion));
             sb.Append("\n");
 
             if (_fad != null) {
@@ -417,7 +418,7 @@ namespace System.Web {
         internal static int ActiveDirMonCompletions { get { return _activeDirMonCompletions; } }
 
         internal DirMonCompletion(DirectoryMonitor dirMon, string dir, bool watchSubtree, uint notifyFilter) {
-            Debug.Trace("FileChangesMonitor", "DirMonCompletion::ctor " + dir + " " + watchSubtree.ToString() + " " + notifyFilter.ToString(NumberFormatInfo.InvariantInfo));
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "DirMonCompletion::ctor " + dir + " " + watchSubtree.ToString() + " " + notifyFilter.ToString(NumberFormatInfo.InvariantInfo));
 
             int                             hr;
             NativeFileChangeNotification    myCallback;
@@ -465,7 +466,7 @@ namespace System.Web {
         }
 
         void Dispose(bool disposing) {
-            Debug.Trace("FileChangesMonitor", "DirMonCompletion::Dispose");
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "DirMonCompletion::Dispose");
             // this is here because callbacks from native code can cause
             // this to be invoked from multiple threads concurrently, and
             // I don't want contention on _ndirMonCompletionHandleLock,
@@ -502,7 +503,7 @@ namespace System.Web {
             }
 
 #if DBG
-            Debug.Trace("FileChangesMonitorOnFileChange", "Action=" + action + "; Dir=" + _dirMon.Directory + "; fileName=" +  Debug.ToStringMaybeNull(fileName) + "; completion=" + Debug.FormatUtcDate(utcCompletion) + ";_ndirMonCompletionPtr=0x" + _ndirMonCompletionPtr.ToString("x"));
+            System.Web.Util.Debug.Trace("FileChangesMonitorOnFileChange", "Action=" + action + "; Dir=" + _dirMon.Directory + "; fileName=" +  System.Web.Util.Debug.ToStringMaybeNull(fileName) + "; completion=" + System.Web.Util.Debug.FormatUtcDate(utcCompletion) + ";_ndirMonCompletionPtr=0x" + _ndirMonCompletionPtr.ToString("x"));
 #endif
 
             //
@@ -810,7 +811,7 @@ namespace System.Web {
 
 #if DBG
             if (fileMon != null) {
-                Debug.Dump("FileChangesMonitor", HttpRuntime.FileChangesMonitor);
+                System.Web.Util.Debug.Dump("FileChangesMonitor", HttpRuntime.FileChangesMonitor);
             }
 #endif
         }
@@ -881,7 +882,7 @@ namespace System.Web {
             // the LastAccessTime correctly.
             if (fad.UtcLastAccessTime.AddSeconds(60) < target.UtcStartMonitoring) {
 #if DBG
-               Debug.Trace("FileChangesMonitorIsChangeAfterStart", "LastAccessTime is more than 60 seconds before monitoring started.");
+               System.Web.Util.Debug.Trace("FileChangesMonitorIsChangeAfterStart", "LastAccessTime is more than 60 seconds before monitoring started.");
 #endif
                 return true;
             }
@@ -890,7 +891,7 @@ namespace System.Web {
             // we started monitoring.
             if (utcCompletion > target.UtcStartMonitoring) {
 #if DBG
-               Debug.Trace("FileChangesMonitorIsChangeAfterStart", "Notification came after we started monitoring.");
+               System.Web.Util.Debug.Trace("FileChangesMonitorIsChangeAfterStart", "Notification came after we started monitoring.");
 #endif
                 return true;
             }
@@ -899,7 +900,7 @@ namespace System.Web {
             // It must be more recent than the LastWriteTime.
             if (fad.UtcLastAccessTime < fad.UtcLastWriteTime) {
 #if DBG
-               Debug.Trace("FileChangesMonitorIsChangeAfterStart", "UtcLastWriteTime is greater then UtcLastAccessTime.");
+               System.Web.Util.Debug.Trace("FileChangesMonitorIsChangeAfterStart", "UtcLastWriteTime is greater then UtcLastAccessTime.");
 #endif
                 return true;
             }
@@ -908,7 +909,7 @@ namespace System.Web {
             // then the system is FAT32 and LastAccessTime is unusable.
             if (fad.UtcLastAccessTime.TimeOfDay == TimeSpan.Zero) {
 #if DBG
-               Debug.Trace("FileChangesMonitorIsChangeAfterStart", "UtcLastAccessTime is midnight -- FAT32 likely.");
+               System.Web.Util.Debug.Trace("FileChangesMonitorIsChangeAfterStart", "UtcLastAccessTime is midnight -- FAT32 likely.");
 #endif
                  return true;
             }
@@ -918,13 +919,13 @@ namespace System.Web {
             // we know a change did not occur to the file contents.
             if (fad.UtcLastAccessTime >= target.UtcStartMonitoring) {
 #if DBG
-               Debug.Trace("FileChangesMonitorIsChangeAfterStart", "UtcLastAccessTime is greater than UtcStartMonitoring.");
+               System.Web.Util.Debug.Trace("FileChangesMonitorIsChangeAfterStart", "UtcLastAccessTime is greater than UtcStartMonitoring.");
 #endif
                 return true;
             }
 
 #if DBG
-               Debug.Trace("FileChangesMonitorIsChangeAfterStart", "Change is before start of monitoring.  Data:\n FileAttributesData: \nUtcCreationTime: "
+               System.Web.Util.Debug.Trace("FileChangesMonitorIsChangeAfterStart", "Change is before start of monitoring.  Data:\n FileAttributesData: \nUtcCreationTime: "
                + fad.UtcCreationTime + " UtcLastAccessTime: " + fad.UtcLastAccessTime + " UtcLastWriteTime: " + fad.UtcLastWriteTime + "\n FileMonitorTarget:\n UtcStartMonitoring: "
                + target.UtcStartMonitoring + "\nUtcCompletion: " + utcCompletion);
 #endif
@@ -944,7 +945,7 @@ namespace System.Web {
             
             // first search for match within s_dirsToMonitor
             for (int i = 0; i < FileChangesMonitor.s_dirsToMonitor.Length; i++) {
-                if (StringUtil.StringStartsWithIgnoreCase(fileName, FileChangesMonitor.s_dirsToMonitor[i])) {
+                if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(fileName, FileChangesMonitor.s_dirsToMonitor[i])) {
                     fileMon = (FileMonitor)_fileMons[FileChangesMonitor.s_dirsToMonitor[i]];
                     return fileMon != null;
                 }
@@ -1005,8 +1006,8 @@ namespace System.Web {
                     if (_fileMons.Count > 0) {
                         if (action == FileAction.Error || action == FileAction.Overwhelming) {
                             // Overwhelming change -- notify all file monitors
-                            Debug.Assert(fileName == null, "fileName == null");
-                            Debug.Assert(action != FileAction.Overwhelming, "action != FileAction.Overwhelming");
+                            System.Web.Util.Debug.Assert(fileName == null, "fileName == null");
+                            System.Web.Util.Debug.Assert(action != FileAction.Overwhelming, "action != FileAction.Overwhelming");
 
                             if (action == FileAction.Overwhelming) {
                                 //increase file notification buffer size, but only once per app instance
@@ -1032,7 +1033,7 @@ namespace System.Web {
                             fileMon = null;
                         }
                         else {
-                            Debug.Assert((int) action >= 1 && fileName != null && fileName.Length > 0,
+                            System.Web.Util.Debug.Assert((int) action >= 1 && fileName != null && fileName.Length > 0,
                                         "(int) action >= 1 && fileName != null && fileName.Length > 0");
 
                             // Find the file monitor
@@ -1078,8 +1079,8 @@ namespace System.Web {
                                         hr = FindFileData.FindFile(path, out ffd);
                                     }
                                     if (hr == HResults.S_OK) {
-                                        Debug.Assert(StringUtil.EqualsIgnoreCase(fileMon.FileNameLong, ffd.FileNameLong),
-                                                    "StringUtil.EqualsIgnoreCase(fileMon.FileNameLong, ffd.FileNameLong)");
+                                        System.Web.Util.Debug.Assert(System.Web.Util.StringUtil.EqualsIgnoreCase(fileMon.FileNameLong, ffd.FileNameLong),
+                                                    "System.Web.Util.StringUtil.EqualsIgnoreCase(fileMon.FileNameLong, ffd.FileNameLong)");
 
                                         string oldFileNameShort = fileMon.FileNameShort;
                                         byte[] dacl = FileSecurity.GetDacl(path);
@@ -1134,7 +1135,7 @@ namespace System.Web {
                     string fullPath = Path.Combine(Directory, fileName);
                     if (!HttpRuntime.FileChangesMonitor.IsDirNameMonitored(fullPath, fileName)) {
 #if DBG
-                        Debug.Trace("FileChangesMonitorIgnoreSubdirChange", 
+                        System.Web.Util.Debug.Trace("FileChangesMonitorIgnoreSubdirChange", 
                                     "*** Ignoring SubDirChange " + DateTime.Now.ToString("hh:mm:ss.fff", CultureInfo.InvariantCulture) 
                                     + ": fullPath=" + fullPath + ", action=" + action.ToString());
 #endif
@@ -1142,7 +1143,7 @@ namespace System.Web {
                     }
 #if DBG
                     else {
-                        Debug.Trace("FileChangesMonitorIgnoreSubdirChange", 
+                        System.Web.Util.Debug.Trace("FileChangesMonitorIgnoreSubdirChange", 
                                     "*** SubDirChange " + DateTime.Now.ToString("hh:mm:ss.fff", CultureInfo.InvariantCulture) 
                                     + ": fullPath=" + fullPath + ", action=" + action.ToString());
                     }
@@ -1151,7 +1152,7 @@ namespace System.Web {
 
                 // Fire the event
                 if (targets != null && !ignoreThisChangeNotification) {
-                    Debug.Dump("FileChangesMonitor", HttpRuntime.FileChangesMonitor);
+                    System.Web.Util.Debug.Dump("FileChangesMonitor", HttpRuntime.FileChangesMonitor);
 
                     lock (s_notificationQueue.SyncRoot) {
                         for (i = 0, n = targets.Count; i < n; i++) {
@@ -1192,7 +1193,7 @@ namespace System.Web {
 
                             }
                             else {
-                                Debug.Assert(action == FileAction.Modified, "action == FileAction.Modified");
+                                System.Web.Util.Debug.Assert(action == FileAction.Modified, "action == FileAction.Modified");
                                 if (utcCompletion == utcLastCompletion) {
                                     // File attributes and ACLs will not have changed if the completion is the same
                                     // as the last, since we get the attributes after all changes in the completion
@@ -1262,9 +1263,9 @@ namespace System.Web {
 
                             if (isSignificantChange) {
 #if DBG
-                                Debug.Trace("FileChangesMonitorCallback", "Firing change event, reason=" + reasonFire + 
-                                    "\n\tArgs: Action=" + action +     ";     Completion=" + Debug.FormatUtcDate(utcCompletion) + "; fileName=" + fileName + 
-                                    "\n\t  LastAction=" + lastAction + "; LastCompletion=" + Debug.FormatUtcDate(utcLastCompletion) + 
+                                System.Web.Util.Debug.Trace("FileChangesMonitorCallback", "Firing change event, reason=" + reasonFire + 
+                                    "\n\tArgs: Action=" + action +     ";     Completion=" + System.Web.Util.Debug.FormatUtcDate(utcCompletion) + "; fileName=" + fileName + 
+                                    "\n\t  LastAction=" + lastAction + "; LastCompletion=" + System.Web.Util.Debug.FormatUtcDate(utcLastCompletion) + 
                                     "\nfadOld=" + ((fadOld != null) ? fadOld.DebugDescription("\t") : "<null>") +
                                     "\nfileMon=" + ((fileMon != null) ? fileMon.DebugDescription("\t") : "<null>") + 
                                     "\n" + target.DebugDescription("\t"));
@@ -1274,9 +1275,9 @@ namespace System.Web {
                             }
 #if DBG
                             else {
-                                Debug.Trace("FileChangesMonitorCallback", "Ignoring change event, reason=" + reasonIgnore +
-                                    "\n\tArgs: Action=" + action +     ";     Completion=" + Debug.FormatUtcDate(utcCompletion) + "; fileName=" + fileName + 
-                                    "\n\t  LastAction=" + lastAction + "; LastCompletion=" + Debug.FormatUtcDate(utcLastCompletion) + 
+                                System.Web.Util.Debug.Trace("FileChangesMonitorCallback", "Ignoring change event, reason=" + reasonIgnore +
+                                    "\n\tArgs: Action=" + action +     ";     Completion=" + System.Web.Util.Debug.FormatUtcDate(utcCompletion) + "; fileName=" + fileName + 
+                                    "\n\t  LastAction=" + lastAction + "; LastCompletion=" + System.Web.Util.Debug.FormatUtcDate(utcLastCompletion) + 
                                     "\nfadOld=" + ((fadOld != null) ? fadOld.DebugDescription("\t") : "<null>") +
                                     "\nfileMon=" + ((fileMon != null) ? fileMon.DebugDescription("\t") : "<null>") + 
                                     "\n" + target.DebugDescription("\t"));
@@ -1292,12 +1293,12 @@ namespace System.Web {
                 }
             }
             catch (Exception ex) {
-                Debug.Trace(Debug.TAG_INTERNAL, 
+                System.Web.Util.Debug.Trace(System.Web.Util.Debug.TAG_INTERNAL, 
                             "Exception thrown processing file change notification" +
                             " action=" + action.ToString() +
                             " fileName" + fileName);
 
-                Debug.TraceException(Debug.TAG_INTERNAL, ex);
+                System.Web.Util.Debug.TraceException(System.Web.Util.Debug.TAG_INTERNAL, ex);
             }
         }
 
@@ -1321,19 +1322,19 @@ namespace System.Web {
                             break;
 
                         try {
-                            Debug.Trace("FileChangesMonitorFireNotification", "Firing change event" + 
+                            System.Web.Util.Debug.Trace("FileChangesMonitorFireNotification", "Firing change event" + 
                                 "\n\tArgs: Action=" + nqi.Action + "; fileName=" + nqi.Filename + "; Target=" + nqi.Callback.Target + "(HC=" + nqi.Callback.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
 
                             // Call the callback
                             nqi.Callback(null, new FileChangeEvent(nqi.Action, nqi.Filename)); 
                         }
                         catch (Exception ex) {
-                            Debug.Trace(Debug.TAG_INTERNAL, 
+                            System.Web.Util.Debug.Trace(System.Web.Util.Debug.TAG_INTERNAL, 
                                         "Exception thrown in file change callback" +
                                         " action=" + nqi.Action.ToString() +
                                         " fileName" + nqi.Filename);
 
-                            Debug.TraceException(Debug.TAG_INTERNAL, ex);
+                            System.Web.Util.Debug.TraceException(System.Web.Util.Debug.TAG_INTERNAL, ex);
                         }
                     }
 
@@ -1450,25 +1451,25 @@ namespace System.Web {
             switch (hr) {
                 case HResults.E_FILENOTFOUND:
                 case HResults.E_PATHNOTFOUND:
-                    message = SR.Directory_does_not_exist_for_monitoring;
+                    message = System.Web.SR.Directory_does_not_exist_for_monitoring;
                     break;
 
                 case HResults.E_ACCESSDENIED:
-                    message = SR.Access_denied_for_monitoring;
+                    message = System.Web.SR.Access_denied_for_monitoring;
                     logEvent = true;
                     break;
 
                 case HResults.E_INVALIDARG:
-                    message = SR.Invalid_file_name_for_monitoring;
+                    message = System.Web.SR.Invalid_file_name_for_monitoring;
                     break;
 
                 case HResults.ERROR_TOO_MANY_CMDS:
-                    message = SR.NetBios_command_limit_reached;
+                    message = System.Web.SR.NetBios_command_limit_reached;
                     logEvent = true;
                     break;
 
                 default:
-                    message = SR.Failed_to_start_monitoring;
+                    message = System.Web.SR.Failed_to_start_monitoring;
                     break;
             }
 
@@ -1476,13 +1477,13 @@ namespace System.Web {
             if (logEvent) {
                 // Need to raise an eventlog too.
                 UnsafeNativeMethods.RaiseFileMonitoringEventlogEvent(
-                    SR.GetString(message, HttpRuntime.GetSafePath(path)) + 
+                    System.Web.SR.GetString(message, HttpRuntime.GetSafePath(path)) + 
                     "\n\r" + 
-                    SR.GetString(SR.App_Virtual_Path, HttpRuntime.AppDomainAppVirtualPath),
+                    System.Web.SR.GetString(System.Web.SR.App_Virtual_Path, HttpRuntime.AppDomainAppVirtualPath),
                     path, HttpRuntime.AppDomainAppVirtualPath, hr);
             }
             
-            return new HttpException(SR.GetString(message, HttpRuntime.GetSafePath(path)), hr);
+            return new HttpException(System.Web.SR.GetString(message, HttpRuntime.GetSafePath(path)), hr);
         }
 
         internal static string GetFullPath(string alias) {
@@ -1495,7 +1496,7 @@ namespace System.Web {
             }
 
             string path = Path.GetFullPath(alias);
-            path = FileUtil.RemoveTrailingDirectoryBackSlash(path);
+            path = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(path);
 
             return path;
         }
@@ -1563,7 +1564,7 @@ namespace System.Web {
             }
             // is it one of the special directories (bin, App_Code, etc) or a subfolder?
             foreach (string specialDirName in s_dirsToMonitor) {
-                if (StringUtil.StringStartsWithIgnoreCase(dirName, specialDirName)) {
+                if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(dirName, specialDirName)) {
                     // a special directory?
                     if (dirName.Length == specialDirName.Length) {
                         return true;
@@ -1668,7 +1669,7 @@ namespace System.Web {
         // Request to monitor a file, which may or may not exist.
         //
         internal DateTime StartMonitoringFile(string alias, FileChangeEventHandler callback) {
-            Debug.Trace("FileChangesMonitor", "StartMonitoringFile\n" + "\tArgs: File=" + alias + "; Callback=" + callback.Target + "(HC=" + callback.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "StartMonitoringFile\n" + "\tArgs: File=" + alias + "; Callback=" + callback.Target + "(HC=" + callback.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
 
             FileMonitor         fileMon;
             DirectoryMonitor    dirMon;
@@ -1708,7 +1709,7 @@ namespace System.Web {
                     else {
                         addAlias = true;
 
-                        if (alias.Length == 0 || !UrlPath.IsAbsolutePhysicalPath(alias)) {
+                        if (alias.Length == 0 || !System.Web.Util.UrlPath.IsAbsolutePhysicalPath(alias)) {
                             throw CreateFileMonitoringException(HResults.E_INVALIDARG, alias);
                         }
 
@@ -1723,7 +1724,7 @@ namespace System.Web {
                             file = fullPathName.Substring(_appPathInternal.Length+1);
                         }
                         else {
-                            dir = UrlPath.GetDirectoryOrRootName(fullPathName);
+                            dir = System.Web.Util.UrlPath.GetDirectoryOrRootName(fullPathName);
                             file = Path.GetFileName(fullPathName);
                             if (String.IsNullOrEmpty(file)) {
                                 // not a file
@@ -1745,7 +1746,7 @@ namespace System.Web {
                 FileAttributesData fad;
                 fileMon.DirectoryMonitor.GetFileAttributes(file, out fad);
 
-                Debug.Dump("FileChangesMonitor", this);
+                System.Web.Util.Debug.Dump("FileChangesMonitor", this);
 
                 if (fad != null) {
                     return fad.UtcLastWriteTime;
@@ -1761,7 +1762,7 @@ namespace System.Web {
         // file.
         //
         internal DateTime StartMonitoringPath(string alias, FileChangeEventHandler callback, out FileAttributesData fad) {
-            Debug.Trace("FileChangesMonitor", "StartMonitoringPath\n" + "\tArgs: File=" + alias + "; Callback=" + callback.Target + "(HC=" + callback.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "StartMonitoringPath\n" + "\tArgs: File=" + alias + "; Callback=" + callback.Target + "(HC=" + callback.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
 
             FileMonitor         fileMon = null;
             DirectoryMonitor    dirMon = null;
@@ -1771,7 +1772,7 @@ namespace System.Web {
             fad = null;
 
             if (alias == null) {
-                throw new HttpException(SR.GetString(SR.Invalid_file_name_for_monitoring, String.Empty));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, String.Empty));
             }
             
             if (IsFCNDisabled) {
@@ -1806,8 +1807,8 @@ namespace System.Web {
 
                         addAlias = true;
 
-                        if (alias.Length == 0 || !UrlPath.IsAbsolutePhysicalPath(alias)) {
-                            throw new HttpException(SR.GetString(SR.Invalid_file_name_for_monitoring, HttpRuntime.GetSafePath(alias)));
+                        if (alias.Length == 0 || !System.Web.Util.UrlPath.IsAbsolutePhysicalPath(alias)) {
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, HttpRuntime.GetSafePath(alias)));
                         }
 
                         fullPathName = GetFullPath(alias);
@@ -1828,7 +1829,7 @@ namespace System.Web {
                         }
 
                         // try treaing the path as a file
-                        dir = UrlPath.GetDirectoryOrRootName(fullPathName);
+                        dir = System.Web.Util.UrlPath.GetDirectoryOrRootName(fullPathName);
                         file = Path.GetFileName(fullPathName);
                         if (!String.IsNullOrEmpty(file)) {
                             dirMon = FindDirectoryMonitor(dir, false, false);
@@ -1878,7 +1879,7 @@ namespace System.Web {
                     _lockDispose.ReleaseReaderLock();
                 }
 
-                Debug.Dump("FileChangesMonitor", this);
+                System.Web.Util.Debug.Dump("FileChangesMonitor", this);
 
                 if (fad != null) {
                     return fad.UtcLastWriteTime;
@@ -1894,10 +1895,10 @@ namespace System.Web {
         //
 
         internal void StartMonitoringDirectoryRenamesAndBinDirectory(string dir, FileChangeEventHandler callback) {
-            Debug.Trace("FileChangesMonitor", "StartMonitoringDirectoryRenamesAndBinDirectory\n" + "\tArgs: File=" + dir + "; Callback=" + callback.Target + "(HC=" + callback.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "StartMonitoringDirectoryRenamesAndBinDirectory\n" + "\tArgs: File=" + dir + "; Callback=" + callback.Target + "(HC=" + callback.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
 
             if (String.IsNullOrEmpty(dir)) {
-                throw new HttpException(SR.GetString(SR.Invalid_file_name_for_monitoring, String.Empty));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, String.Empty));
             }
 
             if (IsFCNDisabled) {
@@ -1905,7 +1906,7 @@ namespace System.Web {
             }
 
 #if DBG
-            Debug.Assert(_dirs.Count == 0, "This function must be called before monitoring other directories, otherwise monitoring of UNC directories will be unreliable on Windows2000 Server.");
+            System.Web.Util.Debug.Assert(_dirs.Count == 0, "This function must be called before monitoring other directories, otherwise monitoring of UNC directories will be unreliable on Windows2000 Server.");
 #endif
             using (new ApplicationImpersonationContext()) {
                 _lockDispose.AcquireReaderLock();
@@ -1947,7 +1948,7 @@ namespace System.Web {
         // Monitor a directory that causes an appdomain shutdown when it changes
         //
         internal void StartListeningToLocalResourcesDirectory(VirtualPath virtualDir) {
-            Debug.Trace("FileChangesMonitor", "StartListeningToVirtualSubdirectory\n" + "\tArgs: virtualDir=" + virtualDir);
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "StartListeningToVirtualSubdirectory\n" + "\tArgs: virtualDir=" + virtualDir);
 
             if (IsFCNDisabled) {
                 return;
@@ -1956,8 +1957,8 @@ namespace System.Web {
             // In some situation (not well understood yet), we get here with either
             // _callbackRenameOrCriticaldirChange or _dirMonSpecialDirs being null (VSWhidbey #215040).
             // When that happens, just return.
-            //Debug.Assert(_callbackRenameOrCriticaldirChange != null);
-            //Debug.Assert(_dirMonSpecialDirs != null);
+            //System.Web.Util.Debug.Assert(_callbackRenameOrCriticaldirChange != null);
+            //System.Web.Util.Debug.Assert(_dirMonSpecialDirs != null);
             if (_callbackRenameOrCriticaldirChange == null || _dirMonSpecialDirs == null)
                 return;
 
@@ -1970,7 +1971,7 @@ namespace System.Web {
 
                     // Get the physical path, and split it into the parent dir and the dir name
                     string dir = virtualDir.MapPath();
-                    dir = FileUtil.RemoveTrailingDirectoryBackSlash(dir);
+                    dir = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(dir);
                     string name = Path.GetFileName(dir);
                     dir = Path.GetDirectoryName(dir);
 
@@ -1992,7 +1993,7 @@ namespace System.Web {
             string dirRootSubDir;
             DirectoryMonitor dirMonSubDir;
 
-            if (StringUtil.StringEndsWith(dirRoot, '\\')) {
+            if (System.Web.Util.StringUtil.StringEndsWith(dirRoot, '\\')) {
                 dirRootSubDir = dirRoot + dirToListenTo;
             }
             else {
@@ -2003,7 +2004,7 @@ namespace System.Web {
                 dirMonSubDir = _dirMonAppPathInternal;
 
                 dirToListenTo = dirRootSubDir.Substring(_appPathInternal.Length+1);
-                Debug.Trace("ListenToSubDir", dirRoot + " " + dirToListenTo);
+                System.Web.Util.Debug.Trace("ListenToSubDir", dirRoot + " " + dirToListenTo);
                 dirMonSubDir.StartMonitoringFileWithAssert(dirToListenTo, new FileChangeEventHandler(this.OnCriticaldirChange), dirRootSubDir);
             }
             else if (Directory.Exists(dirRootSubDir)) {
@@ -2045,14 +2046,14 @@ namespace System.Web {
                     return;
                 }
 
-                Debug.Trace("FileChangesMonitor", "OnSubdirChange\n" + "\tArgs: Action=" + e.Action + "; fileName=" + e.FileName);
+                System.Web.Util.Debug.Trace("FileChangesMonitor", "OnSubdirChange\n" + "\tArgs: Action=" + e.Action + "; fileName=" + e.FileName);
                 FileChangeEventHandler handler = _callbackRenameOrCriticaldirChange;
                 if (    handler != null &&
                         (e.Action == FileAction.Error || e.Action == FileAction.Overwhelming || e.Action == FileAction.RenamedOldName || e.Action == FileAction.Removed)) {
-                    Debug.Trace("FileChangesMonitor", "Firing subdir change event\n" + "\tArgs: Action=" + e.Action + "; fileName=" + e.FileName + "; Target=" + handler.Target + "(HC=" + handler.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
+                    System.Web.Util.Debug.Trace("FileChangesMonitor", "Firing subdir change event\n" + "\tArgs: Action=" + e.Action + "; fileName=" + e.FileName + "; Target=" + handler.Target + "(HC=" + handler.Target.GetHashCode().ToString("x", NumberFormatInfo.InvariantInfo) + ")");
                     
                     HttpRuntime.SetShutdownMessage(
-                        SR.GetString(SR.Directory_rename_notification, e.FileName));
+                        System.Web.SR.GetString(System.Web.SR.Directory_rename_notification, e.FileName));
                     
                     handler(this, e);
                 }
@@ -2070,8 +2071,8 @@ namespace System.Web {
                     return;
                 }
 
-                Debug.Trace("FileChangesMonitor", "OnCriticaldirChange\n" + "\tArgs: Action=" + e.Action + "; fileName=" + e.FileName);
-                HttpRuntime.SetShutdownMessage(SR.GetString(SR.Change_notification_critical_dir));
+                System.Web.Util.Debug.Trace("FileChangesMonitor", "OnCriticaldirChange\n" + "\tArgs: Action=" + e.Action + "; fileName=" + e.FileName);
+                HttpRuntime.SetShutdownMessage(System.Web.SR.GetString(System.Web.SR.Change_notification_critical_dir));
                 FileChangeEventHandler handler = _callbackRenameOrCriticaldirChange;
                 if (handler != null) {
                     handler(this, e);
@@ -2086,7 +2087,7 @@ namespace System.Web {
         // Request to stop monitoring a file.
         //
         internal void StopMonitoringFile(string alias, object target) {
-            Debug.Trace("FileChangesMonitor", "StopMonitoringFile\n" + "File=" + alias + "; Callback=" + target);
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "StopMonitoringFile\n" + "File=" + alias + "; Callback=" + target);
 
             if (IsFCNDisabled) {
                 return;
@@ -2097,7 +2098,7 @@ namespace System.Web {
             string              fullPathName, file = null, dir;
 
             if (alias == null) {
-                throw new HttpException(SR.GetString(SR.Invalid_file_name_for_monitoring, String.Empty));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, String.Empty));
             }
 
             using (new ApplicationImpersonationContext()) {
@@ -2114,17 +2115,17 @@ namespace System.Web {
                         file = fileMon.FileNameLong;
                     }
                     else {
-                        if (alias.Length == 0 || !UrlPath.IsAbsolutePhysicalPath(alias)) {
-                            throw new HttpException(SR.GetString(SR.Invalid_file_name_for_monitoring, HttpRuntime.GetSafePath(alias)));
+                        if (alias.Length == 0 || !System.Web.Util.UrlPath.IsAbsolutePhysicalPath(alias)) {
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, HttpRuntime.GetSafePath(alias)));
                         }
 
                         // Lookup the directory monitor
                         fullPathName = GetFullPath(alias);
-                        dir = UrlPath.GetDirectoryOrRootName(fullPathName);
+                        dir = System.Web.Util.UrlPath.GetDirectoryOrRootName(fullPathName);
                         file = Path.GetFileName(fullPathName);
                         if (String.IsNullOrEmpty(file)) {
                             // not a file
-                            throw new HttpException(SR.GetString(SR.Invalid_file_name_for_monitoring, HttpRuntime.GetSafePath(alias)));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, HttpRuntime.GetSafePath(alias)));
                         }
 
                         dirMon = FindDirectoryMonitor(dir, false, false);
@@ -2144,7 +2145,7 @@ namespace System.Web {
         // Request to stop monitoring a file.
         // 
         internal void StopMonitoringPath(String alias, object target) {
-            Debug.Trace("FileChangesMonitor", "StopMonitoringFile\n" + "File=" + alias + "; Callback=" + target);
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "StopMonitoringFile\n" + "File=" + alias + "; Callback=" + target);
 
             if (IsFCNDisabled) {
                 return;
@@ -2155,7 +2156,7 @@ namespace System.Web {
             string              fullPathName, file = null, dir;
 
             if (alias == null) {
-                throw new HttpException(SR.GetString(SR.Invalid_file_name_for_monitoring, String.Empty));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, String.Empty));
             }
 
             using (new ApplicationImpersonationContext()) {
@@ -2172,8 +2173,8 @@ namespace System.Web {
                         file = fileMon.FileNameLong;
                     }
                     else {
-                        if (alias.Length == 0 || !UrlPath.IsAbsolutePhysicalPath(alias)) {
-                            throw new HttpException(SR.GetString(SR.Invalid_file_name_for_monitoring, HttpRuntime.GetSafePath(alias)));
+                        if (alias.Length == 0 || !System.Web.Util.UrlPath.IsAbsolutePhysicalPath(alias)) {
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, HttpRuntime.GetSafePath(alias)));
                         }
 
                         // try treating the path as a directory
@@ -2181,7 +2182,7 @@ namespace System.Web {
                         dirMon = FindDirectoryMonitor(fullPathName, false, false);
                         if (dirMon == null) {
                             // try treaing the path as a file
-                            dir = UrlPath.GetDirectoryOrRootName(fullPathName);
+                            dir = System.Web.Util.UrlPath.GetDirectoryOrRootName(fullPathName);
                             file = Path.GetFileName(fullPathName);
                             if (!String.IsNullOrEmpty(file)) {
                                 dirMon = FindDirectoryMonitor(dir, false, false);
@@ -2214,7 +2215,7 @@ namespace System.Web {
              }
 
              if (IsFCNDisabled) {
-                 if (alias.Length == 0 || !UrlPath.IsAbsolutePhysicalPath(alias)) {
+                 if (alias.Length == 0 || !System.Web.Util.UrlPath.IsAbsolutePhysicalPath(alias)) {
                      throw FileChangesMonitor.CreateFileMonitoringException(HResults.E_INVALIDARG, alias);
                  }
 
@@ -2240,13 +2241,13 @@ namespace System.Web {
                             file = fileMon.FileNameLong;
                         }
                         else {
-                            if (alias.Length == 0 || !UrlPath.IsAbsolutePhysicalPath(alias)) {
+                            if (alias.Length == 0 || !System.Web.Util.UrlPath.IsAbsolutePhysicalPath(alias)) {
                                 throw FileChangesMonitor.CreateFileMonitoringException(HResults.E_INVALIDARG, alias);
                             }
 
                             // Lookup the directory monitor
                             fullPathName = GetFullPath(alias);
-                            dir = UrlPath.GetDirectoryOrRootName(fullPathName);
+                            dir = System.Web.Util.UrlPath.GetDirectoryOrRootName(fullPathName);
                             file = Path.GetFileName(fullPathName);
                             if (!String.IsNullOrEmpty(file)) {
                                 dirMon = FindDirectoryMonitor(dir, false, false);
@@ -2271,7 +2272,7 @@ namespace System.Web {
         // Request to stop monitoring everything -- release all native resources
         //
         internal void Stop() {
-            Debug.Trace("FileChangesMonitor", "Stop!");
+            System.Web.Util.Debug.Trace("FileChangesMonitor", "Stop!");
 
              if (IsFCNDisabled) {
                  return;
@@ -2326,7 +2327,7 @@ namespace System.Web {
                 }
             }
 
-            Debug.Dump("FileChangesMonitor", this);
+            System.Web.Util.Debug.Dump("FileChangesMonitor", this);
         }
 
 #if DBG
@@ -2366,31 +2367,129 @@ namespace System.Web {
 #endif
 
 #else // !FEATURE_PAL stubbing
+        internal FileChangesMonitor(FcnMode mode) {
+
+        }
 
         internal static string[] s_dirsToMonitor = new string[] {
         };
 
+        // Will clean this up with file watchers and what not...
+
         internal DateTime StartMonitoringFile(string alias, FileChangeEventHandler callback)
         {
-            return DateTime.Now;
+            FindFileData ffd = null;
+
+            if (alias == null) {
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, String.Empty));
+            }
+            else if (!FileChangesMonitor.IsPathAFile(alias)) {
+                //don't bother tracking directories yet...
+                return DateTime.MinValue;
+            }
+            
+            string fullPathName = FileChangesMonitor.GetFullPath(alias);
+            
+            try {
+                FindFileData.FindFile(fullPathName, out ffd);
+            }
+            catch(FileNotFoundException) {
+                return DateTime.MinValue;
+            }
+            
+            return ffd.FileAttributesData.UtcLastWriteTime;
         }
         
         internal DateTime StartMonitoringPath(string alias, FileChangeEventHandler callback)
         {
-            return DateTime.Now;
+            FindFileData ffd = null;
+
+            if (alias == null) {
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, String.Empty));
+            }
+            else if (!FileChangesMonitor.IsPathAFile(alias)) {
+                //don't bother tracking directories yet...
+                return DateTime.MinValue;
+            }
+            
+            string fullPathName = FileChangesMonitor.GetFullPath(alias);
+            
+            try {
+                FindFileData.FindFile(fullPathName, out ffd);
+            }
+            catch(FileNotFoundException) {
+                return DateTime.MinValue;
+            }
+            
+            
+            return ffd.FileAttributesData.UtcLastWriteTime;
         }
 
-        internal void StopMonitoringPath(String alias, object target) 
+        internal DateTime StartMonitoringPath(string alias, FileChangeEventHandler callback, out FileAttributesData data) {
+            data = null;
+            FindFileData ffd = null;
+
+            if (alias == null) {
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_file_name_for_monitoring, String.Empty));
+            }
+            else if (!FileChangesMonitor.IsPathAFile(alias)) {
+                //don't bother tracking directories yet...
+                return DateTime.MinValue;
+            }
+
+            string fullPathName = FileChangesMonitor.GetFullPath(alias);
+
+            try {
+                FindFileData.FindFile(fullPathName, out ffd);
+            }
+            catch(FileNotFoundException) {
+                return DateTime.MinValue;
+            }
+            
+            data = ffd.FileAttributesData;
+            return ffd.FileAttributesData.UtcLastWriteTime;
+        }
+
+        internal void StopMonitoringPath(String alias, object target)
         {
         }
 
         internal void StartMonitoringDirectoryRenamesAndBinDirectory(string dir, FileChangeEventHandler callback) 
         {
         }
+
+        internal void StopMonitoringFile(string alias, object target) {
+
+        }
         
         internal void Stop() 
         {
-        }                
+        }
+
+        // Dev10 927283: We were appending to HttpRuntime._shutdownMessage in DirectoryMonitor.OnFileChange when
+        // we received overwhelming changes and errors, but not all overwhelming file change notifications result
+        // in a shutdown.  The fix is to only append to _shutdownMessage when the domain is being shutdown.
+        internal static string GenerateErrorMessage(FileAction action, String fileName = null) {
+            string message = null;
+            if (action == FileAction.Overwhelming) {
+                message = "Overwhelming Change Notification in ";
+            }
+            else if (action == FileAction.Error) {
+                message = "File Change Notification Error in ";
+            }
+            else {
+                return null;
+            }
+            return (fileName != null) ? message + Path.GetDirectoryName(fileName) : message;
+        }
+
+        internal static bool IsPathAFile(string alias) {
+            return !string.IsNullOrEmpty(Path.GetFileName(alias));
+        }
+
+        internal static string GetFullPath(string alias) {
+            return Path.GetFullPath(alias);
+        }
 
 #endif // !FEATURE_PAL
     }

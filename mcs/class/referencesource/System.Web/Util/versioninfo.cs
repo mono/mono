@@ -34,7 +34,7 @@ namespace System.Web.Util {
 
         [FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
         internal static string GetFileVersion(String filename) {
-#if !FEATURE_PAL // FEATURE_PAL does not fully support FileVersionInfo
+#if !FEATURE_PAL || MONO // FEATURE_PAL does not fully support FileVersionInfo
             try {
                 FileVersionInfo ver = FileVersionInfo.GetVersionInfo(filename);
                 return string.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}.{3}",
@@ -61,7 +61,7 @@ namespace System.Web.Util {
                 return null;
 
             String fileName = buf.ToString();
-            if (StringUtil.StringStartsWith(fileName, "\\\\?\\")) // on Whistler GetModuleFileName migth return this
+            if (System.Web.Util.StringUtil.StringStartsWith(fileName, "\\\\?\\")) // on Whistler GetModuleFileName migth return this
                 fileName = fileName.Substring(4);
             return fileName;
 #else // !FEATURE_PAL
@@ -89,19 +89,24 @@ namespace System.Web.Util {
         }
 
         internal static string EngineVersion {
-#if !FEATURE_PAL // FEATURE_PAL does not enable IIS-based hosting features
+#if !FEATURE_PAL || MONO // FEATURE_PAL does not enable IIS-based hosting features
             get {
                 if (_engineVersion == null) {
                     lock(_lock) {
                         if (_engineVersion == null)
+#if MONO
+                            _engineVersion = GetFileVersion(Assembly.GetExecutingAssembly().Location);
+#else
                             _engineVersion = GetLoadedModuleVersion(ModName.ENGINE_FULL_NAME);
+#endif
                     }
                 }
 
                 return _engineVersion;
 #else // !FEATURE_PAL
             // ROTORTODO
-            return "1.2.0.0";
+            get {
+                return "1.2.0.0";
 #endif // !FEATURE_PAL
             }
         }

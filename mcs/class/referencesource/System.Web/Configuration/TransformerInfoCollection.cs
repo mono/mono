@@ -20,6 +20,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Xml;
     using System.Security.Permissions;
+    
 
     [ConfigurationCollection(typeof(TransformerInfo))]
     public sealed class TransformerInfoCollection : ConfigurationElementCollection {
@@ -33,7 +34,7 @@ namespace System.Web.Configuration {
         }
 
         /// <internalonly />
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -88,7 +89,7 @@ namespace System.Web.Configuration {
 
                             if (transformerType.IsSubclassOf(typeof(WebPartTransformer)) == false) {
                                 throw new ConfigurationErrorsException(
-                                    SR.GetString(SR.Type_doesnt_inherit_from_type, 
+                                    System.Web.SR.GetString(System.Web.SR.Type_doesnt_inherit_from_type, 
                                         ti.Type, 
                                         typeof(WebPartTransformer).FullName),
                                     ti.ElementInformation.Properties["type"].Source, 
@@ -103,7 +104,7 @@ namespace System.Web.Configuration {
                             }
                             catch (Exception e) {
                                 throw new ConfigurationErrorsException(
-                                    SR.GetString(SR.Transformer_attribute_error, e.Message),
+                                    System.Web.SR.GetString(System.Web.SR.Transformer_attribute_error, e.Message),
                                     e, 
                                     ti.ElementInformation.Properties["type"].Source, 
                                     ti.ElementInformation.Properties["type"].LineNumber);
@@ -122,7 +123,7 @@ namespace System.Web.Configuration {
 
                                     if ((consumerType == existingConsumerType) && (providerType == existingProviderType)) {
                                         throw new ConfigurationErrorsException(
-                                            SR.GetString(SR.Transformer_types_already_added, 
+                                            System.Web.SR.GetString(System.Web.SR.Transformer_types_already_added, 
                                                 (string)entry.Key, 
                                                 ti.Name),
                                             ti.ElementInformation.Properties["type"].Source, 

@@ -17,6 +17,7 @@ namespace System.Web.Management {
     using System.Threading;
     using System.Web.Hosting;
     using System.Security.Permissions;
+    
 
     public enum EventNotificationType
     {
@@ -129,7 +130,7 @@ namespace System.Web.Management {
 
         internal WebEventBuffer(BufferedWebEventProvider provider, string bufferMode,
                         WebEventBufferFlushCallback callback) {
-            Debug.Assert(callback != null, "callback != null");
+            System.Web.Util.Debug.Assert(callback != null, "callback != null");
 
             _provider = provider;
             
@@ -139,7 +140,7 @@ namespace System.Web.Management {
 
             BufferModeSettings bufferModeInfo = bufferModes[bufferMode];
             if (bufferModeInfo == null) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Health_mon_buffer_mode_not_found, bufferMode));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Health_mon_buffer_mode_not_found, bufferMode));
             }
 
             if (bufferModeInfo.RegularFlushInterval == TimeSpan.MaxValue) {
@@ -184,7 +185,7 @@ namespace System.Web.Management {
                 SetTimer(GetNextRegularFlushDueTimeInMs());
             }
 
-            Debug.Trace("WebEventBuffer",   
+            System.Web.Util.Debug.Trace("WebEventBuffer",   
                         "\n_regularFlushIntervalMs=" + _regularFlushIntervalMs +
                         "\n_urgentFlushThreshold=" + _urgentFlushThreshold +
                         "\n_maxBufferSize=" + _maxBufferSize +
@@ -249,7 +250,7 @@ namespace System.Web.Management {
             // premature firing.
             nextRegularFlushFromStartTime = ((nowFromStartTime + regularFlushIntervalms + 499) / regularFlushIntervalms) * regularFlushIntervalms;
 
-            Debug.Assert(nextRegularFlushFromStartTime >= nowFromStartTime);
+            System.Web.Util.Debug.Assert(nextRegularFlushFromStartTime >= nowFromStartTime);
 
             return nextRegularFlushFromStartTime - nowFromStartTime;
         }
@@ -321,11 +322,11 @@ namespace System.Web.Management {
             bool        nextFlushIsUrgent = false;
 
             lock(_buffer) {
-                Debug.Assert(max > 0, "max > 0");
+                System.Web.Util.Debug.Assert(max > 0, "max > 0");
 
                 if (_buffer.Count == 0) {
                     // We have nothing in the buffer.  Don't flush this time.
-                    Debug.Trace("WebEventBufferExtended", "Flush: buffer is empty, don't flush");
+                    System.Web.Util.Debug.Trace("WebEventBufferExtended", "Flush: buffer is empty, don't flush");
                     flushThisTime = false;
                 }
 
@@ -360,11 +361,11 @@ namespace System.Web.Management {
 
                     // Calculate how long we have to wait when scheduling the flush
                     if (AnticipateBurst(nowUtc)) {
-                        Debug.Trace("WebEventBuffer", "Flush: Called by AddEvent.  Waiting for burst");
+                        System.Web.Util.Debug.Trace("WebEventBuffer", "Flush: Called by AddEvent.  Waiting for burst");
                         waitTime = _burstWaitTimeMs;
                     }
                     else {
-                        Debug.Trace("WebEventBuffer", "Flush: Called by AddEvent.  Schedule an immediate flush");
+                        System.Web.Util.Debug.Trace("WebEventBuffer", "Flush: Called by AddEvent.  Schedule an immediate flush");
                         waitTime = 0;
                     }
                     
@@ -372,11 +373,11 @@ namespace System.Web.Management {
                     long    msSinceLastScheduledFlush = (long)(nowUtc - _lastScheduledFlushTime).TotalMilliseconds;
                     if (msSinceLastScheduledFlush + waitTime < _urgentFlushIntervalMs ) {
                         
-                        Debug.Trace("WebEventBuffer", "Flush: Called by AddEvent.  Have to wait longer because of _urgentFlushIntervalMs.");
+                        System.Web.Util.Debug.Trace("WebEventBuffer", "Flush: Called by AddEvent.  Have to wait longer because of _urgentFlushIntervalMs.");
                         waitTime = _urgentFlushIntervalMs - msSinceLastScheduledFlush;
                     }
                     
-                    Debug.Trace("WebEventBuffer", "Wait time=" + waitTime +
+                    System.Web.Util.Debug.Trace("WebEventBuffer", "Wait time=" + waitTime +
                         "; nowUtc=" + PrintTime(nowUtc) +
                         "; _lastScheduledFlushTime=" + PrintTime(_lastScheduledFlushTime) + 
                         "; _urgentFlushIntervalMs=" + _urgentFlushIntervalMs);
@@ -384,7 +385,7 @@ namespace System.Web.Management {
                     break;
                 }
                 
-                Debug.Trace("WebEventBuffer", "Flush called: max=" + max + 
+                System.Web.Util.Debug.Trace("WebEventBuffer", "Flush called: max=" + max + 
                     "; reason=" + reason);
                     
                 if (flushThisTime) {
@@ -407,7 +408,7 @@ namespace System.Web.Management {
 #endif
 
                 if (flushThisTime) {
-                    Debug.Assert(reason != FlushCallReason.UrgentFlushThresholdExceeded, "reason != FlushCallReason.UrgentFlushThresholdExceeded");
+                    System.Web.Util.Debug.Assert(reason != FlushCallReason.UrgentFlushThresholdExceeded, "reason != FlushCallReason.UrgentFlushThresholdExceeded");
 
                     if (toFlush > 0) {
                         // Move the to-be-flushed events to an array                
@@ -433,7 +434,7 @@ namespace System.Web.Management {
                             notificationType = EventNotificationType.Flush;
                         }
                         else {
-                            Debug.Assert(!(!_regularTimeoutUsed && !_urgentFlushScheduled),
+                            System.Web.Util.Debug.Assert(!(!_regularTimeoutUsed && !_urgentFlushScheduled),
                                 "It's impossible to have a non-regular flush and yet the flush isn't urgent");
 
                             notificationType = _regularTimeoutUsed ? 
@@ -447,13 +448,13 @@ namespace System.Web.Management {
                     // If we still have at least _urgentFlushThreshold left, set timer
                     // to flush asap.
                     if (eventsInBuffer >= _urgentFlushThreshold) {
-                        Debug.Trace("WebEventBuffer", "Flush: going to flush " + toFlush + " events, but still have at least _urgentFlushThreshold left. Schedule a flush");
+                        System.Web.Util.Debug.Trace("WebEventBuffer", "Flush: going to flush " + toFlush + " events, but still have at least _urgentFlushThreshold left. Schedule a flush");
                         scheduleNextFlush = true;
                         nextFlushIsUrgent = true;
                         waitTime = _urgentFlushIntervalMs;
                     }
                     else {
-                        Debug.Trace("WebEventBuffer", "Flush: going to flush " + toFlush + " events");
+                        System.Web.Util.Debug.Trace("WebEventBuffer", "Flush: going to flush " + toFlush + " events");
                     }
                 }
 
@@ -469,7 +470,7 @@ namespace System.Web.Management {
                         // If next regular flush is closer than next urgent flush,
                         // use regular flush instead.
                         if (nextRegular < waitTime) {
-                            Debug.Trace("WebEventBuffer", "Switch to use regular timeout");
+                            System.Web.Util.Debug.Trace("WebEventBuffer", "Switch to use regular timeout");
                             waitTime = nextRegular;
                             _regularTimeoutUsed = true;
                         }
@@ -484,7 +485,7 @@ namespace System.Web.Management {
                     SetTimer(waitTime);
                     _urgentFlushScheduled = nextFlushIsUrgent;
 #if DBG
-                    Debug.Trace("WebEventBuffer", "Flush: Registered for a flush.  Waittime = " + waitTime + "ms" +
+                    System.Web.Util.Debug.Trace("WebEventBuffer", "Flush: Registered for a flush.  Waittime = " + waitTime + "ms" +
                         "; _nextFlush=" + PrintTime(_nextFlush) +
                         "; _urgentFlushScheduled=" + _urgentFlushScheduled);
 #endif
@@ -494,8 +495,8 @@ namespace System.Web.Management {
                 // Cleanup.  If we are called by a timer callback, but we haven't scheduled for the next
                 // one (can only happen if _regularFlushIntervalMs == Infinite), we should dispose the timer
                 if (reason == FlushCallReason.Timer && !scheduleNextFlush) {
-                    Debug.Trace("WebEventBuffer", "Flush: Disposing the timer");
-                    Debug.Assert(_regularFlushIntervalMs == Infinite, "We can dispose the timer only if _regularFlushIntervalMs == Infinite");
+                    System.Web.Util.Debug.Trace("WebEventBuffer", "Flush: Disposing the timer");
+                    System.Web.Util.Debug.Assert(_regularFlushIntervalMs == Infinite, "We can dispose the timer only if _regularFlushIntervalMs == Infinite");
                     ((IDisposable)_timer).Dispose();
                     _timer = null;
                     _urgentFlushScheduled = false;
@@ -509,11 +510,11 @@ namespace System.Web.Management {
 
             // Now call the providers to flush the events
             if (events != null) {
-                Debug.Assert(lastFlushTime != DateTime.MaxValue, "lastFlushTime != DateTime.MaxValue");
-                Debug.Assert(discardedSinceLastFlush != -1, "discardedSinceLastFlush != -1");
-                Debug.Assert(eventsInBuffer != -1, "eventsInBuffer != -1");
+                System.Web.Util.Debug.Assert(lastFlushTime != DateTime.MaxValue, "lastFlushTime != DateTime.MaxValue");
+                System.Web.Util.Debug.Assert(discardedSinceLastFlush != -1, "discardedSinceLastFlush != -1");
+                System.Web.Util.Debug.Assert(eventsInBuffer != -1, "eventsInBuffer != -1");
 
-                Debug.Trace("WebEventBufferSummary", "_threadsInFlush=" + _threadsInFlush);
+                System.Web.Util.Debug.Trace("WebEventBufferSummary", "_threadsInFlush=" + _threadsInFlush);
 
                 using (new ApplicationImpersonationContext()) {
                     try {
@@ -538,7 +539,7 @@ namespace System.Web.Management {
 #pragma warning disable 1058
                     catch { // non compliant exceptions are caught and logged as Unknown
                         try {
-                            _provider.LogException(new Exception(SR.GetString(SR.Provider_Error)));
+                            _provider.LogException(new Exception(System.Web.SR.GetString(System.Web.SR.Provider_Error)));
                         }
                         catch {
                             // Ignore all errors
@@ -558,7 +559,7 @@ namespace System.Web.Management {
 #endif
                 // If we have filled up the buffer, remove items using FIFO order.
                 if (_buffer.Count == _maxBufferSize) {
-                    Debug.Trace("WebEventBuffer", "Buffer is full.  Need to remove one from the tail");
+                    System.Web.Util.Debug.Trace("WebEventBuffer", "Buffer is full.  Need to remove one from the tail");
                     _buffer.Dequeue();
                     _discardedSinceLastFlush++;
 #if DBG
@@ -593,7 +594,7 @@ namespace System.Web.Management {
 
 #if DBG
         void DebugUpdateStats(bool flushThisTime, DateTime now, int toFlush, FlushCallReason reason) {
-            Debug.Assert(_totalAdded == _totalAbandoned + _totalFlushed + _buffer.Count, 
+            System.Web.Util.Debug.Assert(_totalAdded == _totalAbandoned + _totalFlushed + _buffer.Count, 
                     "_totalAdded == _totalAbandoned + _totalFlushed + _buffer.Count");
             
             _totalFlushed += toFlush;
@@ -602,7 +603,7 @@ namespace System.Web.Management {
                 return;
             }
             
-            Debug.Trace("WebEventBufferSummary", 
+            System.Web.Util.Debug.Trace("WebEventBufferSummary", 
                 "_Added=" + _totalAdded + "; deleted=" + _totalAbandoned +
                 "; Flushed=" + _totalFlushed + "; buffer=" + _buffer.Count +
                 "; toFlush=" + toFlush +
@@ -617,7 +618,7 @@ namespace System.Web.Management {
                     return;
                 }
                 
-                Debug.Assert((now - _lastUrgentFlush).TotalMilliseconds + 499 > _urgentFlushIntervalMs, 
+                System.Web.Util.Debug.Assert((now - _lastUrgentFlush).TotalMilliseconds + 499 > _urgentFlushIntervalMs, 
                     "(now - _lastUrgentFlush).TotalMilliseconds + 499 > _urgentFlushIntervalMs" +
                     "\n_lastUrgentFlush=" + PrintTime(_lastUrgentFlush) +
                     "\nnow=" + PrintTime(now) +
@@ -629,7 +630,7 @@ namespace System.Web.Management {
                 /*
                 // It's a regular callback
                 if (_lastRegularFlush != DateTime.MinValue) {
-                    Debug.Assert(Math.Abs((now - _lastRegularFlush).TotalMilliseconds - _regularFlushIntervalMs) < 2000, 
+                    System.Web.Util.Debug.Assert(Math.Abs((now - _lastRegularFlush).TotalMilliseconds - _regularFlushIntervalMs) < 2000, 
                         "Math.Abs((now - _lastRegularFlush).TotalMilliseconds - _regularFlushIntervalMs) < 2000" +
                         "\n_lastRegularFlush=" + PrintTime(_lastRegularFlush) +
                         "\nnow=" + PrintTime(now) +

@@ -38,7 +38,7 @@ namespace MonoTests.System.Web.Security
 			Assert.IsFalse (FormsAuthentication.RequireSSL, "RequireSSL");
 			Assert.IsTrue (FormsAuthentication.SlidingExpiration, "SlidingExpiration");
 			// MSDN: The default is an empty string ("") but null.
-			Assert.AreEqual ("", FormsAuthentication.CookieDomain, "CookieDomain");
+			Assert.AreEqual (true, String.IsNullOrEmpty(FormsAuthentication.CookieDomain), "CookieDomain");
 			Assert.AreEqual (HttpCookieMode.UseDeviceProfile, FormsAuthentication.CookieMode, "CookieMode");
 			Assert.IsTrue (FormsAuthentication.CookiesSupported, "CookiesSupported");
 			Assert.AreEqual ("/NunitWeb/default.aspx", FormsAuthentication.DefaultUrl);
@@ -101,11 +101,12 @@ namespace MonoTests.System.Web.Security
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void HashPasswordForStoringInConfigFile_SHA256 ()
 		{
-			FormsAuthentication.HashPasswordForStoringInConfigFile ("mono", "SHA256");
+			string s = FormsAuthentication.HashPasswordForStoringInConfigFile ("mono", "SHA256");
+			Assert.AreEqual("D7DE34B17B4691AA77AB8C17AFDD440B004BC87D5D9AB991A8296D032FADB867", s);
 		}
+
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public void RedirectToLoginPage ()

@@ -19,7 +19,7 @@ namespace System.Web.Hosting {
         private readonly Action _workItemCompleteCallback;
 
         internal BackgroundWorkScheduler(Action<BackgroundWorkScheduler> unregisterCallback, Action<AppDomain, Exception> logCallback, Action workItemCompleteCallback = null) {
-            Debug.Assert(unregisterCallback != null);
+            System.Web.Util.Debug.Assert(unregisterCallback != null);
             _unregisterCallback = unregisterCallback;
             _logCallback = logCallback;
             _workItemCompleteCallback = workItemCompleteCallback;
@@ -56,7 +56,7 @@ namespace System.Web.Hosting {
         }
 
         public void ScheduleWorkItem(Func<CancellationToken, Task> workItem) {
-            Debug.Assert(workItem != null);
+            System.Web.Util.Debug.Assert(workItem != null);
 
             if (_cancellationTokenHelper.IsCancellationRequested) {
                 return; // we're not going to run this work item

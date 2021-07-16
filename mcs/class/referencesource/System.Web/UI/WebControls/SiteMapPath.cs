@@ -48,7 +48,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.SiteMapPath_CurrentNodeStyle)
+        WebSysDescription(System.Web.SR.SiteMapPath_CurrentNodeStyle)
         ]
         public Style CurrentNodeStyle {
             get {
@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(SiteMapNodeItem)),
-        WebSysDescription(SR.SiteMapPath_CurrentNodeTemplate)
+        WebSysDescription(System.Web.SR.SiteMapPath_CurrentNodeTemplate)
         ]
         public virtual ITemplate CurrentNodeTemplate {
             get {
@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.SiteMapPath_NodeStyle)
+        WebSysDescription(System.Web.SR.SiteMapPath_NodeStyle)
         ]
         public Style NodeStyle {
             get {
@@ -114,7 +114,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(SiteMapNodeItem)),
-        WebSysDescription(SR.SiteMapPath_NodeTemplate)
+        WebSysDescription(System.Web.SR.SiteMapPath_NodeTemplate)
         ]
         public virtual ITemplate NodeTemplate {
             get {
@@ -133,7 +133,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(-1),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SiteMapPath_ParentLevelsDisplayed)
+        WebSysDescription(System.Web.SR.SiteMapPath_ParentLevelsDisplayed)
         ]
         public virtual int ParentLevelsDisplayed {
             get {
@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(PathDirection.RootToCurrent),
         WebCategory("Appearance"),
-        WebSysDescription(SR.SiteMapPath_PathDirection)
+        WebSysDescription(System.Web.SR.SiteMapPath_PathDirection)
         ]
         public virtual PathDirection PathDirection {
             get {
@@ -178,7 +178,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(_defaultSeparator),
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDescription(SR.SiteMapPath_PathSeparator)
+        WebSysDescription(System.Web.SR.SiteMapPath_PathSeparator)
         ]
         public virtual string PathSeparator {
             get {
@@ -200,7 +200,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.SiteMapPath_PathSeparatorStyle)
+        WebSysDescription(System.Web.SR.SiteMapPath_PathSeparatorStyle)
         ]
         public Style PathSeparatorStyle {
             get {
@@ -224,7 +224,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(SiteMapNodeItem)),
-        WebSysDescription(SR.SiteMapPath_PathSeparatorTemplate)
+        WebSysDescription(System.Web.SR.SiteMapPath_PathSeparatorTemplate)
         ]
         public virtual ITemplate PathSeparatorTemplate {
             get {
@@ -239,7 +239,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.SiteMapPath_Provider)
+        WebSysDescription(System.Web.SR.SiteMapPath_Provider)
         ]
         public SiteMapProvider Provider {
             get {
@@ -252,14 +252,14 @@ namespace System.Web.UI.WebControls {
                     _provider = SiteMap.Provider;
 
                     if (_provider == null) {
-                        throw new HttpException(SR.GetString(SR.SiteMapDataSource_DefaultProviderNotFound));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.SiteMapDataSource_DefaultProviderNotFound));
                     }
                 }
                 else {
                     _provider = SiteMap.Providers[SiteMapProvider];
 
                     if (_provider == null) {
-                        throw new HttpException(SR.GetString(SR.SiteMapDataSource_ProviderNotFound, SiteMapProvider));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.SiteMapDataSource_ProviderNotFound, SiteMapProvider));
                     }
                 }
 
@@ -274,7 +274,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Appearance"),
-        WebSysDescription(SR.SiteMapPath_RenderCurrentNodeAsLink)
+        WebSysDescription(System.Web.SR.SiteMapPath_RenderCurrentNodeAsLink)
         ]
         public virtual bool RenderCurrentNodeAsLink {
             get {
@@ -297,7 +297,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.SiteMapPath_RootNodeStyle)
+        WebSysDescription(System.Web.SR.SiteMapPath_RootNodeStyle)
         ]
         public Style RootNodeStyle {
             get {
@@ -321,7 +321,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(SiteMapNodeItem)),
-        WebSysDescription(SR.SiteMapPath_RootNodeTemplate)
+        WebSysDescription(System.Web.SR.SiteMapPath_RootNodeTemplate)
         ]
         public virtual ITemplate RootNodeTemplate {
             get {
@@ -336,13 +336,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Accessibility"),
-        WebSysDefaultValue(SR.SiteMapPath_Default_SkipToContentText),
-        WebSysDescription(SR.SiteMapPath_SkipToContentText)
+        WebSysDefaultValue(System.Web.SR.SiteMapPath_Default_SkipToContentText),
+        WebSysDescription(System.Web.SR.SiteMapPath_SkipToContentText)
         ]
         public virtual String SkipLinkText {
             get {
                 string s = ViewState["SkipLinkText"] as String;
-                return s == null ? SR.GetString(SR.SiteMapPath_Default_SkipToContentText) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.SiteMapPath_Default_SkipToContentText) : s;
             }
             set {
                 ViewState["SkipLinkText"] = value;
@@ -354,7 +354,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(true),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SiteMapPath_ShowToolTips)
+        WebSysDescription(System.Web.SR.SiteMapPath_ShowToolTips)
         ]
         public virtual bool ShowToolTips {
             get {
@@ -375,7 +375,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SiteMapPath_SiteMapProvider)
+        WebSysDescription(System.Web.SR.SiteMapPath_SiteMapProvider)
         ]
         public virtual string SiteMapProvider {
             get {
@@ -391,7 +391,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.DataControls_OnItemCreated)
+        WebSysDescription(System.Web.SR.DataControls_OnItemCreated)
         ]
         public event SiteMapNodeItemEventHandler ItemCreated {
             add {
@@ -408,7 +408,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.SiteMapPath_OnItemDataBound)
+        WebSysDescription(System.Web.SR.SiteMapPath_OnItemDataBound)
         ]
         public event SiteMapNodeItemEventHandler ItemDataBound {
             add {
@@ -500,7 +500,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private void CopyStyle(Style toStyle, Style fromStyle) {
-            Debug.Assert(toStyle != null);
+            System.Web.Util.Debug.Assert(toStyle != null);
 
             // Review: How to change the default value of Font.Underline?
             if (fromStyle != null && fromStyle.IsSet(System.Web.UI.WebControls.Style.PROP_FONT_UNDERLINE))
@@ -538,7 +538,7 @@ namespace System.Web.UI.WebControls {
         ///    sub-hierarchy of child controls.</para>
         /// </devdoc>
         protected virtual void InitializeItem(SiteMapNodeItem item) {
-            Debug.Assert(_mergedCurrentNodeStyle != null && _mergedRootNodeStyle != null);
+            System.Web.Util.Debug.Assert(_mergedCurrentNodeStyle != null && _mergedRootNodeStyle != null);
 
             ITemplate template = null;
             Style style = null;
@@ -620,7 +620,7 @@ namespace System.Web.UI.WebControls {
             if (savedState != null) {
                 object[] myState = (object[])savedState;
 
-                Debug.Assert(myState.Length == 5);
+                System.Web.Util.Debug.Assert(myState.Length == 5);
 
                 base.LoadViewState(myState[0]);
 

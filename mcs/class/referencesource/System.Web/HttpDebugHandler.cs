@@ -20,6 +20,7 @@ namespace System.Web {
     using System.Web.Configuration;
     using System.Web.Hosting;
     using System.Web.Util;
+    
 /*
 This is just a temporary code to get some timings for the Http Debug request.  To enable it, add the following
 to the app's "web.config" file:
@@ -150,7 +151,7 @@ to the app's "web.config" file:
 #endif
 
                 if (!HttpRuntime.DebuggingEnabled) {
-                    context.Response.Write(SR.GetString(SR.Debugging_forbidden, context.Request.Path));
+                    context.Response.Write(System.Web.SR.GetString(System.Web.SR.Debugging_forbidden, context.Request.Path));
                     context.Response.StatusCode = 403;
                     return;
                 }
@@ -159,21 +160,21 @@ to the app's "web.config" file:
                 string command = context.Request.Headers["Command"];
 
                 if (command == null) {
-                    Debug.Trace("AutoAttach", "No debug command!!");
-                    context.Response.Write(SR.GetString(SR.Invalid_Debug_Request));
+                    System.Web.Util.Debug.Trace("AutoAttach", "No debug command!!");
+                    context.Response.Write(System.Web.SR.GetString(System.Web.SR.Invalid_Debug_Request));
                     context.Response.StatusCode = 500;
                     return;
                 }
 
-                Debug.Trace("AutoAttach", "Debug command: " + command);
+                System.Web.Util.Debug.Trace("AutoAttach", "Debug command: " + command);
 
-                if (StringUtil.EqualsIgnoreCase(command, "stop-debug")) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(command, "stop-debug")) {
                     context.Response.Write("OK");
                     return;
                 }
 
-                if (!StringUtil.EqualsIgnoreCase(command, "start-debug")) {
-                    context.Response.Write(SR.GetString(SR.Invalid_Debug_Request));
+                if (!System.Web.Util.StringUtil.EqualsIgnoreCase(command, "start-debug")) {
+                    context.Response.Write(System.Web.SR.GetString(System.Web.SR.Invalid_Debug_Request));
                     context.Response.StatusCode = 500;
                     return;
                 }
@@ -182,13 +183,13 @@ to the app's "web.config" file:
                 string authType = context.WorkerRequest.GetServerVariable("AUTH_TYPE"); // go the metal
                 string logonUser  = context.WorkerRequest.GetServerVariable("LOGON_USER");
 
-                Debug.Trace("AutoAttach", "Authentication type string: " + ((authType != null) ? authType : "NULL"));
-                Debug.Trace("AutoAttach", "Logon user string: " + ((logonUser != null) ? logonUser : "NULL"));
+                System.Web.Util.Debug.Trace("AutoAttach", "Authentication type string: " + ((authType != null) ? authType : "NULL"));
+                System.Web.Util.Debug.Trace("AutoAttach", "Logon user string: " + ((logonUser != null) ? logonUser : "NULL"));
 
-                if (String.IsNullOrEmpty(logonUser) || String.IsNullOrEmpty(authType) || StringUtil.EqualsIgnoreCase(authType, "basic")) 
+                if (String.IsNullOrEmpty(logonUser) || String.IsNullOrEmpty(authType) || System.Web.Util.StringUtil.EqualsIgnoreCase(authType, "basic")) 
                 {
-                    Debug.Trace("AutoAttach", "Invalid logon_user or auth_type string.");
-                    context.Response.Write(SR.GetString(SR.Debug_Access_Denied, context.Request.Path));
+                    System.Web.Util.Debug.Trace("AutoAttach", "Invalid logon_user or auth_type string.");
+                    context.Response.Write(System.Web.SR.GetString(System.Web.SR.Debug_Access_Denied, context.Request.Path));
                     context.Response.StatusCode = 401;
                     return;
                 }
@@ -196,10 +197,10 @@ to the app's "web.config" file:
                 // Get the session ID
                 String sessId = context.Request.Form["DebugSessionID"];
 
-                Debug.Trace("AutoAttach", "DebugSessionID: " + ((sessId != null) ? sessId : "NULL"));
+                System.Web.Util.Debug.Trace("AutoAttach", "DebugSessionID: " + ((sessId != null) ? sessId : "NULL"));
 
                 if (String.IsNullOrEmpty(sessId)) {
-                    context.Response.Write(SR.GetString(SR.Invalid_Debug_ID));
+                    context.Response.Write(System.Web.SR.GetString(System.Web.SR.Invalid_Debug_ID));
                     context.Response.StatusCode = 500;
                     return;
                 }
@@ -213,16 +214,16 @@ to the app's "web.config" file:
                 bool isClsIdOk = false;
                 if (clsId != null) {
                     for (int i = 0; i < validClsIds.Length; i++) {
-                        if (StringUtil.EqualsIgnoreCase(clsId, validClsIds[i])) {
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(clsId, validClsIds[i])) {
                             isClsIdOk = true;
                             break;
                         }
                     }
                 }
                 if (isClsIdOk == false) {
-                    context.Response.Write(SR.GetString(SR.Debug_Access_Denied, context.Request.Path));
+                    context.Response.Write(System.Web.SR.GetString(System.Web.SR.Debug_Access_Denied, context.Request.Path));
                     context.Response.StatusCode = 401;
-                    Debug.Trace("AutoAttach", "Debug attach not attempted because of invalid CLSID.");
+                    System.Web.Util.Debug.Trace("AutoAttach", "Debug attach not attempted because of invalid CLSID.");
                     return;
                 }
 
@@ -239,20 +240,20 @@ to the app's "web.config" file:
 
                 // If it's not S_OK, then we got a problem
                 if (rc != 0) {
-                    Debug.Trace("AutoAttach", "Debug attach failed! Return code: " + rc);
-                    context.Response.Write(SR.GetString(SR.Error_Attaching_with_MDM, "0x" + rc.ToString("X8", CultureInfo.InvariantCulture)));
+                    System.Web.Util.Debug.Trace("AutoAttach", "Debug attach failed! Return code: " + rc);
+                    context.Response.Write(System.Web.SR.GetString(System.Web.SR.Error_Attaching_with_MDM, "0x" + rc.ToString("X8", CultureInfo.InvariantCulture)));
                     context.Response.StatusCode = 500;
                     return;
                 }
 
-                Debug.Trace("AutoAttach", "Debug attach successful!");
+                System.Web.Util.Debug.Trace("AutoAttach", "Debug attach successful!");
 
                 // Everything ok -- increment counter, return something (not 204)
                 PerfCounters.IncrementCounter(AppPerfCounter.DEBUGGING_REQUESTS);
                 context.Response.Write("OK");
             }
             finally {
-                Debug.Trace("AutoAttach","Http Debug attach done!");
+                System.Web.Util.Debug.Trace("AutoAttach","Http Debug attach done!");
 
 #if PERF
                 HttpDebugHandlerTimeLog.PrintTickDelta("Leaving HttpDebugHandler");

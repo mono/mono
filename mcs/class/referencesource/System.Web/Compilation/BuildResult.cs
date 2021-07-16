@@ -46,6 +46,8 @@ using System.Web.Hosting;
 using System.Web.Util;
 using System.Web.UI;
 using System.Web.Configuration;
+using System.Diagnostics.CodeAnalysis;
+
 
 internal enum BuildResultTypeCode {
     Invalid=-1,
@@ -113,7 +115,7 @@ internal abstract class BuildResult {
                 break;
 
             default:
-                Debug.Assert(false, "code=" + code);
+                System.Web.Util.Debug.Assert(false, "code=" + code);
                 return null;
         }
 
@@ -168,7 +170,7 @@ internal abstract class BuildResult {
         }
 
         set {
-            Debug.Assert(_virtualPathDependenciesHash == null);
+            System.Web.Util.Debug.Assert(_virtualPathDependenciesHash == null);
             _virtualPathDependenciesHash = value;
         }
     }
@@ -182,7 +184,7 @@ internal abstract class BuildResult {
         if (!DependenciesHashComputed) {
 
             // We shouldn't already have a hash
-            Debug.Assert(_virtualPathDependenciesHash == null);
+            System.Web.Util.Debug.Assert(_virtualPathDependenciesHash == null);
 
             // Sort the source dependencies to make the hash code predictable
             if (_virtualPathDependencies != null)
@@ -204,8 +206,8 @@ internal abstract class BuildResult {
 
     internal void SetVirtualPathDependencies(ArrayList sourceDependencies) {
 
-        Debug.Assert(_virtualPathDependencies == null);
-        Debug.Assert(sourceDependencies != null);
+        System.Web.Util.Debug.Assert(_virtualPathDependencies == null);
+        System.Web.Util.Debug.Assert(sourceDependencies != null);
 
         _virtualPathDependencies = sourceDependencies;
     }
@@ -335,7 +337,7 @@ internal abstract class BuildResult {
 
         // This should never be called on a BuildResult that has already been
         // determined to be out of date.
-        Debug.Assert(_lock >= 0);
+        System.Web.Util.Debug.Assert(_lock >= 0);
         if (_lock < 0)
             return false;
 
@@ -343,14 +345,14 @@ internal abstract class BuildResult {
         DateTime now = DateTime.Now;
         // Due to bug 214038, CBM can be called multiple times in a very short time.
         if (now < _nextUpToDateCheck && !BuildManagerHost.InClientBuildManager) {
-            Debug.Trace("BuildResult", "IsUpToDate: true since called less than 2 seconds ago. "
+            System.Web.Util.Debug.Trace("BuildResult", "IsUpToDate: true since called less than 2 seconds ago. "
                 + _nextUpToDateCheck + "," + now);
             return true;
         }
 
         // If we don't get the lock, just say it's up to date without checking
         if (Interlocked.CompareExchange(ref _lock, 1, 0) != 0) {
-            Debug.Trace("BuildResult", "IsUpToDate returning true because it didn't get the lock");
+            System.Web.Util.Debug.Trace("BuildResult", "IsUpToDate returning true because it didn't get the lock");
             return true;
         }
 
@@ -367,14 +369,14 @@ internal abstract class BuildResult {
 
         // Check if we're up to date.  A null hash code means the cache should not be used.
         if (newHashCode == null || newHashCode != _virtualPathDependenciesHash) {
-            Debug.Trace("BuildResult", "IsUpToDate: '" + VirtualPath + "' is out of date");
+            System.Web.Util.Debug.Trace("BuildResult", "IsUpToDate: '" + VirtualPath + "' is out of date");
 
             // Set the lock to -1 to mark that we're not up to date
             _lock = -1;
             return false;
         }
 
-        Debug.Trace("BuildResult", "IsUpToDate: '" + VirtualPath + "' is up to date");
+        System.Web.Util.Debug.Trace("BuildResult", "IsUpToDate: '" + VirtualPath + "' is up to date");
 
         // We're up to date.  Remember the time we checked, and reset the lock
         _nextUpToDateCheck = now.AddSeconds(UpdateInterval);
@@ -418,7 +420,7 @@ internal class BuildResultCustomString: BuildResultCompiledAssembly {
     internal BuildResultCustomString() {}
 
     internal BuildResultCustomString(Assembly a, string customString) : base(a) {
-        Debug.Assert(customString != null);
+        System.Web.Util.Debug.Assert(customString != null);
         _customString = customString;
     }
 
@@ -430,7 +432,7 @@ internal class BuildResultCustomString: BuildResultCompiledAssembly {
 
         // Retrieve the custom string
         _customString = pfr.GetAttribute("customString");
-        Debug.Assert(_customString != null);
+        System.Web.Util.Debug.Assert(_customString != null);
     }
 
     internal override void SetPreservedAttributes(PreservationFileWriter pfw) {
@@ -495,7 +497,7 @@ internal abstract class BuildResultCompiledAssemblyBase: BuildResult {
             return a;
         }
         catch {
-            Debug.Trace("BuildResult", "GetPreservedAssembly: couldn't load assembly '" + assemblyName + "'; deleting associated files.");
+            System.Web.Util.Debug.Trace("BuildResult", "GetPreservedAssembly: couldn't load assembly '" + assemblyName + "'; deleting associated files.");
 
             // Remove the assembly and all the associated files
             pfr.DiskCache.RemoveAssemblyAndRelatedFiles(assemblyName);
@@ -539,9 +541,9 @@ internal abstract class BuildResultCompiledAssemblyBase: BuildResult {
     internal static bool AssemblyIsInCodegenDir(Assembly a) {
         string path = Util.GetAssemblyCodeBase(a);
         FileInfo f = new FileInfo(path);
-        string assemblyDir = FileUtil.RemoveTrailingDirectoryBackSlash(f.Directory.FullName);
+        string assemblyDir = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(f.Directory.FullName);
         if (s_codegenDir == null) {
-            s_codegenDir = FileUtil.RemoveTrailingDirectoryBackSlash(HttpRuntime.CodegenDir);
+            s_codegenDir = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(HttpRuntime.CodegenDir);
         }
 
         // check if the assembly is directly under codegen
@@ -556,7 +558,7 @@ internal abstract class BuildResultCompiledAssemblyBase: BuildResult {
         // If the file does not exist, or if it has a .delete file,
         // then it should not be used
         string path = Util.GetAssemblyCodeBase(a);
-        return (!FileUtil.FileExists(path) || DiskBuildResultCache.HasDotDeleteFile(path));
+        return (!System.Web.Util.FileUtil.FileExists(path) || DiskBuildResultCache.HasDotDeleteFile(path));
     }
 
 
@@ -662,11 +664,11 @@ internal class BuildResultMainCodeAssembly: BuildResultCompiledAssembly {
 
             // Get the Type that contains the method
             Type appInitializeType = ResultAssembly.GetType(appInitializeClass);
-            Debug.Assert(appInitializeType != null);
+            System.Web.Util.Debug.Assert(appInitializeType != null);
 
             // Find the method
             _appInitializeMethod = FindAppInitializeMethod(appInitializeType);
-            Debug.Assert(_appInitializeMethod != null);
+            System.Web.Util.Debug.Assert(_appInitializeMethod != null);
         }
     }
 
@@ -682,7 +684,7 @@ internal class BuildResultMainCodeAssembly: BuildResultCompiledAssembly {
 
     private void FindAppInitializeMethod() {
 
-        Debug.Assert(_appInitializeMethod == null);
+        System.Web.Util.Debug.Assert(_appInitializeMethod == null);
 
         // Look in all the public types in the assembly
         foreach (Type t in ResultAssembly.GetExportedTypes()) {
@@ -694,7 +696,7 @@ internal class BuildResultMainCodeAssembly: BuildResultCompiledAssembly {
 
                 // Make sure we didn't already have one
                 if (_appInitializeMethod != null) {
-                    throw new HttpException(SR.GetString(SR.Duplicate_appinitialize, _appInitializeMethod.ReflectedType.FullName, t.FullName));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Duplicate_appinitialize, _appInitializeMethod.ReflectedType.FullName, t.FullName));
                 }
 
                 // Keep track of the method
@@ -716,10 +718,8 @@ internal class BuildResultMainCodeAssembly: BuildResultCompiledAssembly {
     // Call the AppInitialize method if there is one
     internal void CallAppInitializeMethod() {
         if (_appInitializeMethod != null) {
-            using (new ApplicationImpersonationContext()) {
-                using (HostingEnvironment.SetCultures()) {
-                    _appInitializeMethod.Invoke(null, null);
-                }
+            using (HostingEnvironment.SetCultures()) {
+                _appInitializeMethod.Invoke(null, null);
             }
         }
     }
@@ -762,9 +762,9 @@ internal class BuildResultResourceAssembly : BuildResultCompiledAssembly {
         }
 
         set {
-            Debug.Assert(_resourcesDependenciesHash == null);
+            System.Web.Util.Debug.Assert(_resourcesDependenciesHash == null);
             _resourcesDependenciesHash = value;
-            Debug.Assert(_resourcesDependenciesHash != null);
+            System.Web.Util.Debug.Assert(_resourcesDependenciesHash != null);
         }
     }
 
@@ -807,7 +807,7 @@ internal class BuildResultCompiledType : BuildResultCompiledAssemblyBase, ITyped
 
     internal override Assembly ResultAssembly {
         get { return _builtType.Assembly; }
-        set { Debug.Assert(false); }
+        set { System.Web.Util.Debug.Assert(false); }
     }
 
     internal override bool HasResultAssembly { get { return _builtType != null; } }
@@ -877,7 +877,7 @@ internal class BuildResultCompiledType : BuildResultCompiledAssemblyBase, ITyped
         // If the fast factory is not available, just call CreateInstance
         // 
         if (_instObj == null) {
-            return HttpRuntime.CreatePublicInstance(ResultType);
+            return HttpRuntime.CreatePublicInstanceByWebObjectActivator(ResultType);
         }
 
         // Call it to instantiate the object
@@ -913,7 +913,7 @@ internal class BuildResultCompiledType : BuildResultCompiledAssemblyBase, ITyped
 
         // Get the assembly and type
         Assembly a = GetPreservedAssembly(pfr);
-        Debug.Assert(a != null);
+        System.Web.Util.Debug.Assert(a != null);
         string typeName = pfr.GetAttribute("type");
         ResultType = a.GetType(typeName, true /*throwOnError*/);
     }
@@ -979,7 +979,7 @@ internal abstract class BuildResultNoCompileTemplateControl : BuildResult, IType
     }
 
     internal override BuildResultTypeCode GetCode() {
-        Debug.Assert(false, "BuildResultNoCompileTemplateControl");
+        System.Web.Util.Debug.Assert(false, "BuildResultNoCompileTemplateControl");
         return BuildResultTypeCode.Invalid;
     }
 
@@ -1094,7 +1094,7 @@ internal class BuildResultNoCompilePage: BuildResultNoCompileTemplateControl {
                 foreach (string dependency in pageParser.SourceDependencies) {
                     _fileDependencies[i++] = dependency;
                 }
-                Debug.Assert(i == pageParser.SourceDependencies.Count);
+                System.Web.Util.Debug.Assert(i == pageParser.SourceDependencies.Count);
             }
         }
 
@@ -1255,7 +1255,7 @@ internal class BuildResultCodeCompileUnit : BuildResult {
         String _ccuPreservationFileName = pfr.GetAttribute(fileNameAttribute);
         _ccuPreservationFileName = Path.Combine(HttpRuntime.CodegenDirInternal, _ccuPreservationFileName);
 
-        Debug.Assert(FileUtil.FileExists(_ccuPreservationFileName), _ccuPreservationFileName);
+        System.Web.Util.Debug.Assert(System.Web.Util.FileUtil.FileExists(_ccuPreservationFileName), _ccuPreservationFileName);
 
         using (FileStream stream = File.Open(_ccuPreservationFileName, FileMode.Open)) {
             BinaryFormatter formatter = new BinaryFormatter();

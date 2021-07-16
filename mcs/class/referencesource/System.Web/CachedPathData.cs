@@ -19,6 +19,8 @@ namespace System.Web {
     using System.Web.Util;
     using System.Web.UI;
     using System.Security.Permissions;
+    using SafeBitVector32 = System.Web.Util.SafeBitVector32;
+    
 
     // Data about a path that is cached across requests
     class CachedPathData {
@@ -138,7 +140,7 @@ namespace System.Web {
                     return GetApplicationPathData();
                 }
                 else {
-                    throw new ArgumentException(SR.GetString(SR.Cross_app_not_allowed,
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cross_app_not_allowed,
                         (virtualPath != null) ? virtualPath.VirtualPathString : "null"));
                 }
             }
@@ -165,8 +167,8 @@ namespace System.Web {
         // Example of configPath = "machine/webroot/1/fxtest/sub/foo.aspx"
         // The configPath parameter must be lower case.
         static private CachedPathData GetConfigPathData(string configPath) {
-            Debug.Assert(ConfigPathUtility.IsValid(configPath), "ConfigPathUtility.IsValid(configPath)");
-            Debug.Assert(configPath == configPath.ToLower(CultureInfo.InvariantCulture), "configPath == configPath.ToLower(CultureInfo.InvariantCulture)");
+            System.Web.Util.Debug.Assert(ConfigPathUtility.IsValid(configPath), "ConfigPathUtility.IsValid(configPath)");
+            System.Web.Util.Debug.Assert(configPath == configPath.ToLower(CultureInfo.InvariantCulture), "configPath == configPath.ToLower(CultureInfo.InvariantCulture)");
             bool exists = false;
             bool isDirectory = false;
             bool isRemovable = IsCachedPathDataRemovable(configPath);
@@ -181,7 +183,7 @@ namespace System.Web {
                 string parentConfigPath = ConfigPathUtility.GetParent(configPath);
                 CachedPathData pathParentData = GetConfigPathData(parentConfigPath);
                 if (!String.IsNullOrEmpty(physicalFilePath)) {
-                    FileUtil.PhysicalPathStatus(physicalFilePath, false, false, out exists, out isDirectory);
+                    System.Web.Util.FileUtil.PhysicalPathStatus(physicalFilePath, false, false, out exists, out isDirectory);
                 }
                 CachedPathData pathData = new CachedPathData(configPath, virtualFilePath, physicalFilePath, exists);
                 pathData.Init(pathParentData);
@@ -244,7 +246,7 @@ namespace System.Web {
                     // to handle the case where a file is deleted and replaced
                     // with a directory of the same name.
                     if (!String.IsNullOrEmpty(physicalPath)) {
-                        FileUtil.PhysicalPathStatus(physicalPath, false, false, out exists, out isDirectory);
+                        System.Web.Util.FileUtil.PhysicalPathStatus(physicalPath, false, false, out exists, out isDirectory);
                         if (exists && !isDirectory) {
                             fileDependencies = new string[1] {physicalPath};
                         }
@@ -355,7 +357,7 @@ namespace System.Web {
                     // NOTE: It is important to reinsert the item into the cache AFTER dropping
                     // the lock on dataAdd, in order to prevent the possibility of deadlock.
                     //
-                    Debug.Assert(dataAdd._flags[FInited], "_flags[FInited]");
+                    System.Web.Util.Debug.Assert(dataAdd._flags[FInited], "_flags[FInited]");
                     if (!initCompleted || (dataAdd.ConfigRecord != null && dataAdd.ConfigRecord.HasInitErrors)) {
                         //
                         // Create a new dependency object as the old one cannot be reused.
@@ -411,7 +413,7 @@ namespace System.Web {
             // Throw "404 Not Found" if the path is suspicious and 
             // the implementation of MapPath has not already done so.
             //
-            FileUtil.CheckSuspiciousPhysicalPath(physicalPath);
+            System.Web.Util.FileUtil.CheckSuspiciousPhysicalPath(physicalPath);
 
             return physicalPath;
         }
@@ -492,7 +494,7 @@ namespace System.Web {
         }
 
         static string CreateKey(string configPath) {
-            Debug.Assert(configPath == configPath.ToLower(CultureInfo.InvariantCulture), "configPath == configPath.ToLower(CultureInfo.InvariantCulture)");
+            System.Web.Util.Debug.Assert(configPath == configPath.ToLower(CultureInfo.InvariantCulture), "configPath == configPath.ToLower(CultureInfo.InvariantCulture)");
             return CacheInternal.PrefixPathData + configPath;
         }
 
@@ -500,7 +502,7 @@ namespace System.Web {
         void Init(CachedPathData parentData) {
             // Note that _runtimeConfig will be set to the singleton instance of ErrorRuntimeConfig
             // if a ThreadAbortException is thrown during this method.
-            Debug.Assert(_runtimeConfig == RuntimeConfig.GetErrorRuntimeConfig(), "_runtimeConfig == RuntimeConfig.GetErrorRuntimeConfig()");
+            System.Web.Util.Debug.Assert(_runtimeConfig == RuntimeConfig.GetErrorRuntimeConfig(), "_runtimeConfig == RuntimeConfig.GetErrorRuntimeConfig()");
 
             if (!HttpConfigurationSystem.UseHttpConfigurationSystem) {
                 // 
@@ -510,7 +512,7 @@ namespace System.Web {
             }
             else {
                 IInternalConfigRecord configRecord = HttpConfigurationSystem.GetUniqueConfigRecord(_configPath);
-                Debug.Assert(configRecord != null, "configRecord != null");
+                System.Web.Util.Debug.Assert(configRecord != null, "configRecord != null");
 
                 if (configRecord.ConfigPath.Length == _configPath.Length) {
                     //
@@ -523,7 +525,7 @@ namespace System.Web {
                     //
                     // The config record is the same as an ancestor's, so use the parent's RuntimeConfig.
                     //
-                    Debug.Assert(parentData != null, "parentData != null");
+                    System.Web.Util.Debug.Assert(parentData != null, "parentData != null");
                     _runtimeConfig = parentData._runtimeConfig;
                 }
             }
@@ -573,9 +575,9 @@ namespace System.Web {
             }
 
             // If we're here, the paths were different, which normally should not happen.
-            Debug.Assert(false, "ValidatePath optimization failed: Request.PhysicalPath=" 
+            System.Web.Util.Debug.Assert(false, "ValidatePath optimization failed: Request.PhysicalPath=" 
                          + physicalPath + "; _physicalPath=" + _physicalPath);            
-            FileUtil.CheckSuspiciousPhysicalPath(physicalPath);
+            System.Web.Util.FileUtil.CheckSuspiciousPhysicalPath(physicalPath);
         }
 
         internal bool CompletedFirstRequest {

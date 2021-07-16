@@ -16,7 +16,7 @@ namespace System.Web.Util {
         // Useful for synchronous methods which have a Task instance they know to be already completed
         // and where they want to let the exception propagate upward.
         public static void ThrowIfFaulted(this Task task) {
-            Debug.Assert(task.IsCompleted, "The Task passed to this method must be marked as completed so that this method doesn't block.");
+            System.Web.Util.Debug.Assert(task.IsCompleted, "The Task passed to this method must be marked as completed so that this method doesn't block.");
             task.GetAwaiter().GetResult();
         }
 

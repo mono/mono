@@ -58,9 +58,9 @@ namespace System.Web.Util {
 #if DEBUG
                 VerifyMaskAndOffset(mask, offset);
 #endif                
-                Debug.Assert(value >= 0, "Value must be non-negative.");
+                System.Web.Util.Debug.Assert(value >= 0, "Value must be non-negative.");
 
-                Debug.Assert(((value << offset) & ~mask) == 0, "Value must fit within the mask.");
+                System.Web.Util.Debug.Assert(((value << offset) & ~mask) == 0, "Value must fit within the mask.");
                 
                 data = (data & ~mask) | (value << offset);
             }
@@ -68,14 +68,14 @@ namespace System.Web.Util {
 
 #if DEBUG
         private void VerifyMaskAndOffset(int mask, int offset) {
-            Debug.Assert(mask > 0, "Mask must be nonempty and non-negative.");
+            System.Web.Util.Debug.Assert(mask > 0, "Mask must be nonempty and non-negative.");
 
             // Offset must be between 0 and 30 inclusive, since only 31 bits are available and at least one bit must be used.
-            Debug.Assert(offset >= 0 && offset <= 30, "Offset must be between 0 and 30 inclusive.");
+            System.Web.Util.Debug.Assert(offset >= 0 && offset <= 30, "Offset must be between 0 and 30 inclusive.");
 
-            Debug.Assert((mask & ((1 << offset) - 1)) == 0, "All mask bits to the right of the offset index must be zero.");
+            System.Web.Util.Debug.Assert((mask & ((1 << offset) - 1)) == 0, "All mask bits to the right of the offset index must be zero.");
             
-            Debug.Assert(((mask >> offset) & 1) == 1, "The mask bit at the offset index must be one.");
+            System.Web.Util.Debug.Assert(((mask >> offset) & 1) == 1, "The mask bit at the offset index must be one.");
         }
 #endif
 

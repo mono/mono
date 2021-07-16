@@ -1,0 +1,436 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="AreaChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD//////5mZ
+        mZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZkiIiIpmZmZmZmZmZIiIiL5mZ
+        mZmZmZmSIiIi/yKZmZmZmZkiIiIv/yIimZmZmZIiIiL//yIiIpmZmSIiIi///yIiL/+Z//IiIv///yIv
+        ///////yL////y///////////////////////////////////////////////w==
+</value>
+  </data>
+  <data name="RadarChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        /w///////w////////D///IiIP////////8CIiqqAv////////8gqqqgov////////8qCqoKov//////
+        //KqoKCqov////////KqoACqqi///////yqgCgoAqi///////yAKqgqqAC//////8AqqqgqiIgD/////
+        DyIqqiIv//8P///////yIg///////////////w///////////////w///////w==
+</value>
+  </data>
+  <data name="ErrorBarChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        //////////////////mZmf/////////////5//////////8iIi/5////9VVV////L//5//////X/////
+        L//5/0RET/X/////L//5//9P//X/////L//5//9P//X/////L//5//9P//X/////L/mZmf9P9VVV////
+        L/////9P////////L////0RET/////8iIi///////////////////////////w==
+</value>
+  </data>
+  <data name="KagiChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        /////////////////////////5mZ///5mZ///////5/5///5/5///////5/5///5/5/yIi///y/5///5
+        /5/y/y///y/5///5/5/y/y///y/5//Ii/y/y/y///y/5/////y/y/y///y/5/////yIi/y/yIi/5////
+        /////y/y///5/////////y/y/////////////yIi/////////////////////w==
+</value>
+  </data>
+  <data name="RangeColumnChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD////////y
+        Iv8iL/mZ/yIv///yIv8iL/mZ/yIv//////////mZ/yIv//////9ET/mZ///////5mf9ET/mZ/5mf///5
+        mf9ET/mZ/5mf///5mf/////////////////////////////0RP+Zn/Ii/0RP///0RP+Zn////0RP///0
+        RP+Zn////0RP///0RP////RE///////0RP////RE/////////////////////w==
+</value>
+  </data>
+  <data name="RangeChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD//////5kA
+        /////////////wmZAAD///////////AJmZkAD//////////wCZmZkAAP////////8AmZmZmQAP//////
+        //AJmZmZmQAA///////wCZmZmZmZAP//////8AmZmZmZmf////////AJmZmZmf/////////wCZmZmf//
+        ////////8AmZmf////////////AJmf/////////////wCf//////////////8A==
+</value>
+  </data>
+  <data name="StockChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ///////////////////5//////X////////5////9VX////////5mf////X////////5//////X/////
+        L//5//9ET/VV////L/mZ//9P//X///8iL//5/0RP//X/////L//5//9P////////Ii/5//9P////////
+        L/////9P////////L///////////////L////////////////////////////w==
+</value>
+  </data>
+  <data name="CandlestickChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ///////////////////5//////X////////5/////1Vf//////+Zn////1Vf//////+Zn////1Vf////
+        L/+Zn/RE/1Vf///yIv+Zn/RE//X////yIv/5//RE//X////yIv/5//9P///////yIv/5//9P///////y
+        Iv////9P///////yIv//////////////L////////////////////////////w==
+</value>
+  </data>
+  <data name="StepLineChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        /////////////////////////////////////////////yIiL/mZmZ//IiIv////L/n//5//L/8v////
+        L/n//5//L/8v////L/n//5//L/8iIpmZmZn//5//L///////L////5mZmZ//////IiIiL///L5/5mf//
+        ////L///L5/5////////L///L5mZ////////IiIiL////////////////////w==
+</value>
+  </data>
+  <data name="ThreeLineBreakChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        //////////////9ET///////9ET///9PT/////9ERERET/9ERET///9ET/9PT///9PT///9ET/9PT///
+        9PT/9ERET/9PT///9PT/9ET///9PT///9ERERET///9PT/////9PT/////9PT/////9PT/////9PT///
+        //9PT/////9ET/////9PT/////////////9ET////////////////////////w==
+</value>
+  </data>
+  <data name="PolarChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ////8P//////////////8P///////////w//+Zn/D/////////D/kP+Z//////////8J8P8J////////
+        /5mQ8PD5/////////5//gI+f////////AJAAAACQAA///////5//gI+f/////////5/w8PCf////////
+        /5mZ8P8P//////////D/mZ/w/////////w//8PmZn///////////8P///////w==
+</value>
+  </data>
+  <data name="PyramidChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ////////////////////8AD///////////8ADAwA/////////wDMzAzMAA//////AMzMwgLMzMAP////
+        8MzCIgIizMD//////wIiIgIiIg////////AiIgIiIP////////8CKQkiD//////////wmQmQ////////
+        ////CQkP////////////8AD//////////////w///////////////////////w==
+</value>
+  </data>
+  <data name="BarChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        /////////////////////////////1VVVVVVVVVV/////1VVVVVVVVVV/////////////////////0RE
+        RERERP///////0RERERERP///////////////////////5mZmZn//////////5mZmZn/////////////
+        /////////////yIiIiIiIiIi/////yIiIiIiIiIi/////////////////////w==
+</value>
+  </data>
+  <data name="LineChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD///////+f
+        //////////////+f///////////////5////////////+f/5////////L///ny//n///mf/y8v/5//L/
+        n/mZ/5Iv/y+f//L/+Z///yn///n///8v////8vn///kv//8v////L/+f/5/y///y///y///5+f//L///
+        L/Iv////n///8v//Ly//////////////8v///////////////////////////w==
+</value>
+  </data>
+  <data name="BubbleChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        //////////////////+Zn/////9V//////mZmf////VVX////5mZmZ////VVX////5mZmZ////9V////
+        /5mZmZ////////////mZmf////////////+Zn//0RP////////////9ERE////8i//////9ERE////Ii
+        L/////9ERE////IiL//////0RP////8i/////////////////////////////w==
+</value>
+  </data>
+  <data name="PointAndFigureChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        //////////////8v8v+Z/////5n////yL/n/n///+f+f///yL/n/n///+f+f//8v8v+Z/////5n///8v
+        8v+Z/y/y/5n////yL/n/n/Iv+f+f///yL/n/n/Iv+f+f//8v8v+Z/y/y/5n///8v8v///y/y/5n////y
+        L/////Iv+f+f///yL/////Iv+f+f//8v8v///y/y/5n//////////////////w==
+</value>
+  </data>
+  <data name="SplineChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        /////////////////////////////////////////////5////////8iL/+ZmZ////////L/+Zn///n/
+        /////y//ny////n/////8v/5//L//y+f////L//5//8v//Kf//8i//+f///y///5IiL///n/////Iv//
+        n////5//////////+Z//mf////////////mZ/////////////////////////w==
+</value>
+  </data>
+  <data name="DoughnutChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ////AAAP//////////8AVQRAD/////////BVVQREQP///////wVVVQRECQ///////wVVVQRAmQ//////
+        8FVVAPAJmZD/////8FVVD/8JmZD/////8FVVD/8JmZD/////8FUAAPAJmZD//////wAiIgIJmQ//////
+        /wIiIiIgmQ////////AiIiIiAP////////8AIiIgD///////////AAAP/////w==
+</value>
+  </data>
+  <data name="FastLineChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ////////////////////////////////////////////+f/M////////L///n//M////mf/y8v/5///M
+        ///5/5Iv/y+f///M//+f/yn///n////MzM//8vn///kv///M////L/+f/5/y///M///y///5+f//L//M
+        ////////n///8v/MzMz//////////////////////////////////////////w==
+</value>
+  </data>
+  <data name="BoxPlotChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        //////////////////+Zn//////////////5/////1Vf///yIvmZmf////X/////L/n/+f//9VVV//8i
+        Iin/+fRE9f/1//8v/yn/+f9P9VVV//8v/ymZmURET/X///8v/y/5/0//T/X///8iIi+Zn0RET1Vf////
+        L/////9P////////L/////RE///////yIv///////////////////////////w==
+</value>
+  </data>
+  <data name="100%StackedColumnChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD////////y
+        Iv8iL/Ii/yIv///yIv8iL/Ii/yIv///5mf8iL/mZ/yIv///5mf+Zn/mZ/yIv///5mf+Zn/mZ/yIv///0
+        RP+Zn/mZ/yIv///0RP+Zn/RE/5mf///0RP+Zn/RE/5mf///0RP9ET/VV/0RP///1Vf9ET/VV/0RP///1
+        Vf9ET/VV/1Vf///1Vf9ET/VV/1Vf///1Vf9VX/VV/1Vf///1Vf9VX/VV/1Vf/w==
+</value>
+  </data>
+  <data name="SplineAreaChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD//////5mZ
+        mZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZkiIimZ
+        mZmZmZmZkiIiIimZmZmZmZmZIiIiIiKZmZmZmZmSIiIiIiKZmZmZmZmSIiIiIvIpmZmZmZnyIiIiIv/y
+        mZmZmZ//8iIiIv//+ZmZmf////IiIv////mZ/////////////////////////w==
+</value>
+  </data>
+  <data name="SplineRangeChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD//////5kA
+        /////////////5mZAP///////////wmZmQD///////////CZmZkAAAAAAP////8JmZmZmZmZmQD////w
+        mZmZmZmZmZkP////AJmZmZmZmZmQ/////wAACZmZmZmZD///////8AAJmZmZkP/////////wCZmZmf//
+        ////////8JmZmf///////////wmZmf///////////wmZmf////////////CZmQ==
+</value>
+  </data>
+  <data name="StackedColumnChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD////////y
+        Iv8iL/Ii/yIv///yIv8iL/mZ/yIv///5mf+Zn/RE/yIv///5mf+Zn/RE/5mf///0RP+Zn/VV/5mf///0
+        RP9ET////0RP///0RP9ET////0RP///1Vf9ET////0RP///1Vf9VX////1Vf///1Vf9VX////1Vf////
+        //9VX////1Vf//////9VX////1Vf/////////////////////////////////w==
+</value>
+  </data>
+  <data name="100%StackedBarChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        /////////////////////////////yIiIpmZREVVVVVV/yIiIpmZREVVVVVV/////////////////yIi
+        KZlERERERFVV/yIiKZlERERERFVV/////////////////yIiIimZmZREVVVV/yIiIimZmZREVVVV////
+        /////////////yIpmZlERVVVVVVV/yIpmZlERVVVVVVV/////////////////w==
+</value>
+  </data>
+  <data name="PieChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ////AAAP//////////8AVQRAD/////////BVVQREQP///////wVVVQRECQ///////wVVVQRAmQ//////
+        8FVVVQQJmZD/////8FVVVQCZmZD/////8FVVUAmZmZD/////8FUAAiCZmZD//////wAiIiIJmQ//////
+        /wIiIiIgmQ////////AiIiIiAP////////8AIiIgD///////////AAAP/////w==
+</value>
+  </data>
+  <data name="StackedBarChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        /////////////////////////////yIiIpmZRFVV/////yIiIpmZRFVV/////////////////////yIi
+        KZREVf///////yIiKZREVf///////////////////////yKZlEX//////////yKZlEX/////////////
+        /////////////yIpmZlERVVV/////yIpmZlERVVV/////////////////////w==
+</value>
+  </data>
+  <data name="StackedAreaChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD//////yIi
+        IiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIpIiIiIiIiIiIiIiIpmS
+        IiIimSIiIiIiIpmZkiKZmZkiIiIiIpmZmZmZmZmSIiIiKfmZmZmZmZmZIiIpmf/5mZmZ//mZmSmZn///
+        +Z/////5mZmf////////////+Z///////////////////////////////////w==
+</value>
+  </data>
+  <data name="FastPointChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ///////////////////////////////////////////////M//+Z///////////M//mZn//////////M
+        //mZn//////////M//+Z//RP///////MzM///0RE///////M/////0RE///////M//////RP///////M
+        /////////1X////MzMz/////9VVf////////////9VVf/////////////1X//w==
+</value>
+  </data>
+  <data name="100%StackedAreaChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD//////yIi
+        IiIiIiIiIiIiIiIiIiIiIiIiIiIiIkIiIiIiIiIiIiIiIkRCIiIiRCIiIiIiIkREQiJEREQiIiIiIkRE
+        RERERERCIiIiJJlEREREmUREIiIkRJmZlESZmZRERCRESZmZmZmZmZlEREREmZmZmZmZmZmURERJmZmZ
+        mZmZmZmZRESZmZmZmZmZmZmZlEmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmZmQ==
+</value>
+  </data>
+  <data name="RenkoChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        //////////////////////////////9ET/////9ET/////9PT/////9ET/////9PT/////9ET/////9E
+        RET/9ERERET/////9PT/9ET/9PT/////9PT/9ET/9PT/////9ERERET/9ERET/////9PT/////9PT///
+        //9PT/////9PT/////9ET/////9ET////////////////////////////////w==
+</value>
+  </data>
+  <data name="ColumnChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD////////y
+        Iv+Zn/RE/1Vf///yIv+Zn/RE/1Vf///yIv+Zn/RE/1Vf///yIv+Zn/RE/1Vf///yIv+Zn/RE/1Vf///y
+        Iv+Zn////1Vf///yIv+Zn////1Vf///yIv+Zn////1Vf///yIv+Zn////1Vf///yIv+Zn////1Vf////
+        //+Zn////1Vf//////+Zn////1Vf/////////////////////////////////w==
+</value>
+  </data>
+  <data name="RangeBarChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        /////////////5mZmZmZ//mZmZmZ/5mZmZmZ//mZmZmZ/5mZmZmZ//mZmZmZ////////////////////
+        //IiIiL///////////IiIiL///////////IiIiL//////////////////////yIiIv/////yIiIi/yIi
+        Iv/////yIiIi/yIiIv/////yIiIi/////////////////////////////////w==
+</value>
+  </data>
+  <data name="PointChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        //////////////////////////////////////////////////+Z//////////////mZn///////////
+        //mZn/////////////+Z//RP/////////////0RE/////////////0RE///////yL/////RP//////8i
+        Iv///////1X///8iIv//////9VVf///yL///////9VVf/////////////1X//w==
+</value>
+  </data>
+  <data name="FunnelChartType" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        Qk0eAQAAAAAAAHYAAAAoAAAAGAAAAA4AAAABAAQAAAAAAAAAAADEDgAAxA4AABAAAAAQAAAAAAAA/wAA
+        gP8AgAD/AICA/4AAAP+AAID/gIAA/8DAwP+AgID/AAD//wD/AP8A/////wAA//8A/////wD/////////
+        ///////////////////wAA/////////////wzA/////////////wzA/////////////wzA//////////
+        //8CIiD///////////8CIiD///////////AiIiIP//////////AiIiIP/////////wmZmZmQ////////
+        /wmZmZmQ////////8JmZmZmZD///////8AAAAAAAD////////////////////w==
+</value>
+  </data>
+</root>

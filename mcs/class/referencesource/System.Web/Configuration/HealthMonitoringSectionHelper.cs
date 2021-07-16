@@ -20,6 +20,7 @@ namespace System.Web.Configuration {
     using System.Web.Management;
     using System.Web.Compilation;
     using System.Security.Permissions;
+    
 
     internal class HealthMonitoringSectionHelper {
         static HealthMonitoringSectionHelper s_helper;
@@ -132,12 +133,12 @@ namespace System.Web.Configuration {
                     attribute = "startEventCode";
                     if (eventMappingSettings.ElementInformation.Properties[attribute].LineNumber == 0) {
                         attribute = "endEventCode";
-                        Debug.Assert(eventMappingSettings.ElementInformation.Properties[attribute].LineNumber != 0,
+                        System.Web.Util.Debug.Assert(eventMappingSettings.ElementInformation.Properties[attribute].LineNumber != 0,
                                     "eventMappingSettings.ElementInformation.Properties[attribute].LineNumber != 0");
                     }
 
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Event_name_invalid_code_range),
+                        System.Web.SR.GetString(System.Web.SR.Event_name_invalid_code_range),
                         eventMappingSettings.ElementInformation.Properties[attribute].Source, eventMappingSettings.ElementInformation.Properties[attribute].LineNumber);
                 }
 
@@ -160,7 +161,7 @@ namespace System.Web.Configuration {
                     ProviderSettings providerSettings = _section.Providers[provider];
                     if (providerSettings == null) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Health_mon_provider_not_found, provider),
+                            System.Web.SR.GetString(System.Web.SR.Health_mon_provider_not_found, provider),
                                 rule.ElementInformation.Properties["provider"].Source,
                                 rule.ElementInformation.Properties["provider"].LineNumber);
                     }
@@ -170,7 +171,7 @@ namespace System.Web.Configuration {
                 if (!String.IsNullOrEmpty(profile)) {
                     if (_section.Profiles[profile] == null) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Health_mon_profile_not_found, profile),
+                            System.Web.SR.GetString(System.Web.SR.Health_mon_profile_not_found, profile),
                                 rule.ElementInformation.Properties["profile"].Source,
                                 rule.ElementInformation.Properties["profile"].LineNumber);
                     }
@@ -178,7 +179,7 @@ namespace System.Web.Configuration {
 
                 if (_section.EventMappings[rule.EventName] == null) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Event_name_not_found, rule.EventName),
+                        System.Web.SR.GetString(System.Web.SR.Event_name_not_found, rule.EventName),
                             rule.ElementInformation.Properties["eventName"].Source, rule.ElementInformation.Properties["eventName"].LineNumber);
                 }
 
@@ -187,20 +188,20 @@ namespace System.Web.Configuration {
 
         void DisplayRuleInfo(RuleInfo ruleInfo) {
 #if DEBUG
-            Debug.Trace("BuildRuleInfos", "====================== Rule Info =======================");
-            Debug.Trace("BuildRuleInfos", "name:" + ruleInfo._ruleSettings.Name);
-            Debug.Trace("BuildRuleInfos", "type:" + ruleInfo._eventMappingSettings.RealType.Name);
-            Debug.Trace("BuildRuleInfos", "minInstances:" + ruleInfo._minInstances);
-            Debug.Trace("BuildRuleInfos", "maxLimit:" + ruleInfo._maxLimit);
-            Debug.Trace("BuildRuleInfos", "minInterval:" + ruleInfo._minInterval);
-            Debug.Trace("BuildRuleInfos", "provider:" + ruleInfo._ruleSettings.Provider);
-            Debug.Trace("BuildRuleInfos", "referenced provider:" + (ruleInfo._referencedProvider == null ? String.Empty : ruleInfo._referencedProvider.GetType().Name));
-            Debug.Trace("BuildRuleInfos", "=========================================================");
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "====================== Rule Info =======================");
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "name:" + ruleInfo._ruleSettings.Name);
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "type:" + ruleInfo._eventMappingSettings.RealType.Name);
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "minInstances:" + ruleInfo._minInstances);
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "maxLimit:" + ruleInfo._maxLimit);
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "minInterval:" + ruleInfo._minInterval);
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "provider:" + ruleInfo._ruleSettings.Provider);
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "referenced provider:" + (ruleInfo._referencedProvider == null ? String.Empty : ruleInfo._referencedProvider.GetType().Name));
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "=========================================================");
 #endif
         }
 
         void BuildRuleInfos() {
-            Debug.Trace("BuildRuleInfos", "BuildRuleInfos called");
+            System.Web.Util.Debug.Trace("BuildRuleInfos", "BuildRuleInfos called");
 
             // Each ruleInfo is an object that takes the information
             // stored in a ruleSettings and merge it with values from profileSettings.
@@ -235,7 +236,7 @@ namespace System.Web.Configuration {
             String providerName;
             WebEventProvider provider;
 
-            Debug.Assert(ruleInfo._referencedProvider == null, "ruleInfo._referencedProvider == null");
+            System.Web.Util.Debug.Assert(ruleInfo._referencedProvider == null, "ruleInfo._referencedProvider == null");
 
             providerName = ruleInfo._ruleSettings.Provider;
             if (String.IsNullOrEmpty(providerName)) {
@@ -243,7 +244,7 @@ namespace System.Web.Configuration {
             }
 
             provider = _providerInstances[providerName];
-            Debug.Assert(provider != null, "provider != null");
+            System.Web.Util.Debug.Assert(provider != null, "provider != null");
 
             ruleInfo._referencedProvider = provider;
         }
@@ -253,7 +254,7 @@ namespace System.Web.Configuration {
 
             if (ruleInfo._ruleSettings.ElementInformation.Properties["profile"].ValueOrigin != PropertyValueOrigin.Default) {
                 profileSettings = _section.Profiles[ruleInfo._ruleSettings.Profile];
-                Debug.Assert(profileSettings != null, "profileSettings != null");
+                System.Web.Util.Debug.Assert(profileSettings != null, "profileSettings != null");
             }
 
             if (profileSettings != null && ruleInfo._ruleSettings.ElementInformation.Properties["minInstances"].ValueOrigin == PropertyValueOrigin.Default) {
@@ -306,7 +307,7 @@ namespace System.Web.Configuration {
 
             // Create a public instance of the custom evaluator
             if (_customEvaluatorInstances[ruleInfo._customEvaluatorType] == null) {
-                _customEvaluatorInstances[ruleInfo._customEvaluatorType] = HttpRuntime.CreatePublicInstance(ruleInfo._customEvaluatorType);
+                _customEvaluatorInstances[ruleInfo._customEvaluatorType] = HttpRuntime.CreatePublicInstanceByWebObjectActivator(ruleInfo._customEvaluatorType);
             }
         }
 
@@ -333,7 +334,7 @@ namespace System.Web.Configuration {
                 }
 
                 if (type != null) {
-                    Debug.Assert(type == eventType, 
+                    System.Web.Util.Debug.Assert(type == eventType, 
                         "For system events, we assume each event code will map only to one event type. " +
                         "Eventcode= " + eventCode + "; stored type= " + type.ToString() +
                         "; raised event type= " + eventType);
@@ -368,7 +369,7 @@ namespace System.Web.Configuration {
                     foundFiringRuleInfos = _cachedMatchedRules[index0, index1];
                 }
                 else {
-                    Debug.Assert(customWebEventKey != null);
+                    System.Web.Util.Debug.Assert(customWebEventKey != null);
                     foundFiringRuleInfos = (ArrayList)_cachedMatchedRulesForCustomEvents[customWebEventKey];
                 }
 
@@ -422,16 +423,16 @@ namespace System.Web.Configuration {
 
 
 #if DBG
-                Debug.Trace("FindRuleInfos", "------------------------------------------------");
-                Debug.Trace("FindRuleInfos", "Find ruleInfos for event with type=" + eventType.ToString() +
+                System.Web.Util.Debug.Trace("FindRuleInfos", "------------------------------------------------");
+                System.Web.Util.Debug.Trace("FindRuleInfos", "Find ruleInfos for event with type=" + eventType.ToString() +
                     ", EventCode=" + eventCode);
                 
                 foreach(FiringRuleInfo info in matchedRules) {
-                    Debug.Trace("FindRuleInfos", "Provider=" + info._ruleInfo._ruleSettings.Provider +
+                    System.Web.Util.Debug.Trace("FindRuleInfos", "Provider=" + info._ruleInfo._ruleSettings.Provider +
                         "; eventNameType=" + info._ruleInfo._eventMappingSettings.RealType.ToString() +
                         "; _indexOfFirstRuleInfoWithSameProvider=" + info._indexOfFirstRuleInfoWithSameProvider);
                 }
-                Debug.Trace("FindRuleInfos", "------------------------------------------------");
+                System.Web.Util.Debug.Trace("FindRuleInfos", "------------------------------------------------");
 #endif
 
                 // save matchedRules in the cache
@@ -439,7 +440,7 @@ namespace System.Web.Configuration {
                     _cachedMatchedRules[index0, index1] = matchedRules;
                 }
                 else {
-                    Debug.Assert(customWebEventKey != null);
+                    System.Web.Util.Debug.Assert(customWebEventKey != null);
                     _cachedMatchedRulesForCustomEvents[customWebEventKey] = matchedRules;
                 }
 
@@ -537,13 +538,13 @@ namespace System.Web.Configuration {
                     string typeName = providerSettings.Type;
 
                     type = BuildManager.GetType(typeName, false);
-                    Debug.Assert(type != null, "type != null");
+                    System.Web.Util.Debug.Assert(type != null, "type != null");
 
                     if (typeof(IInternalWebEventProvider).IsAssignableFrom(type)) {
                         provider = (WebEventProvider)HttpRuntime.CreateNonPublicInstance(type);
                     }
                     else {
-                        provider = (WebEventProvider)HttpRuntime.CreatePublicInstance(type);
+                        provider = (WebEventProvider)HttpRuntime.CreatePublicInstanceByWebObjectActivator(type);
                     }
 
                     using (new ProcessImpersonationContext()) {
@@ -562,14 +563,14 @@ namespace System.Web.Configuration {
                         }
                     }
 
-                    Debug.Trace("ProviderInstances", "Create a provider instance: " +
+                    System.Web.Util.Debug.Trace("ProviderInstances", "Create a provider instance: " +
                         "name=" + providerSettings.Name + ";type=" + typeName);
 
                     _instances[providerName] = provider;
                 }
                 else {
                     provider = o as WebEventProvider;
-                    Debug.Assert(provider != null, "provider != null");
+                    System.Web.Util.Debug.Assert(provider != null, "provider != null");
                 }
 
                 return provider;
@@ -592,7 +593,7 @@ namespace System.Web.Configuration {
                 }
 
                 foreach (object o in list) {
-                    Debug.Trace("ProviderInstances", "Remove " + (string)o + " from providers");
+                    System.Web.Util.Debug.Trace("ProviderInstances", "Remove " + (string)o + " from providers");
                     _instances.Remove(o);
                 }
             }

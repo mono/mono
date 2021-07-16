@@ -12,7 +12,7 @@ namespace System.Web.Configuration {
     using System.Security;
     using System.Security.Permissions;
     using System.Web.Hosting;
-
+     
     public static class WebConfigurationManager {
 
         public static NameValueCollection AppSettings {
@@ -41,7 +41,7 @@ namespace System.Web.Configuration {
                 return HttpConfigurationSystem.GetSection(sectionName, path);
             }
             else {
-                throw new InvalidOperationException(SR.GetString(SR.Config_GetSectionWithPathArgInvalid));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Config_GetSectionWithPathArgInvalid));
             }
         }
 

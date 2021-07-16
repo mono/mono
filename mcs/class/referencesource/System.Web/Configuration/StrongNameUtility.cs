@@ -11,6 +11,7 @@ namespace System.Web.Configuration {
     using System.Runtime.InteropServices;
     using System.Security.Permissions;
     using Microsoft.Runtime.Hosting;
+    
 
     internal class StrongNameUtility {
 
@@ -34,12 +35,12 @@ namespace System.Web.Configuration {
             }
 
             try {
-                Debug.Assert(keyBlob != IntPtr.Zero);
+                System.Web.Util.Debug.Assert(keyBlob != IntPtr.Zero);
 
                 // make sure the key size makes sense
-                Debug.Assert(generatedSize > 0 && generatedSize <= Int32.MaxValue);
+                System.Web.Util.Debug.Assert(generatedSize > 0 && generatedSize <= Int32.MaxValue);
                 if (generatedSize <= 0 || generatedSize > Int32.MaxValue) {
-                    throw new InvalidOperationException(SR.GetString(SR.Browser_InvalidStrongNameKey));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Browser_InvalidStrongNameKey));
                 }
 
                 // get the key into managed memory
