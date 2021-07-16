@@ -451,6 +451,20 @@ namespace MonoTests.System.Runtime.InteropServices
 		}
 
 		[Test]
+		public void PtrToStringBSTRNull ()
+		{
+			try {
+				Marshal.PtrToStringBSTR (IntPtr.Zero);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("ptr", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
 		public void StringToHGlobalAnsiWithNullValues ()
 		{
 			int size = 128;
@@ -860,6 +874,73 @@ namespace MonoTests.System.Runtime.InteropServices
 			get {
 				return (Type.GetType ("System.MonoType", false) != null);
 			}
+		}
+
+		internal struct BRECORD
+		{
+			public IntPtr pvRecord;
+			public IntPtr pRecInfo;
+		}
+
+		[StructLayout(LayoutKind.Explicit)]
+		internal struct VariantStruct
+		{
+			[FieldOffset(0)]
+			public short vt;
+
+			[FieldOffset(8)]
+			public IntPtr ptr;
+
+			[FieldOffset(8)]
+			public long l;
+
+			[FieldOffset(8)]
+			public BRECORD brecord;
+		}
+
+		[Test]
+		public void TestStringToVariant () {
+			IntPtr nativeVariant = Marshal.AllocCoTaskMem (Marshal.SizeOf(typeof(VariantStruct)));
+
+			try {
+				Marshal.GetNativeVariantForObject ("test string", nativeVariant);
+			} catch (PlatformNotSupportedException e) { // FULLAOT
+				Marshal.FreeCoTaskMem (nativeVariant);
+				return;
+			}
+
+			VariantStruct variantStruct = (VariantStruct)Marshal.PtrToStructure (nativeVariant, typeof(VariantStruct));
+			Marshal.FreeCoTaskMem (nativeVariant);
+
+			Assert.AreEqual ((short)VarEnum.VT_BSTR, variantStruct.vt);
+			Assert.AreEqual ("test string", Marshal.PtrToStringBSTR (variantStruct.ptr));
+
+			Marshal.FreeBSTR (variantStruct.ptr);
+		}
+
+		[Test]
+		public void TestVariantToString () {
+			VariantStruct variantStruct = default(VariantStruct);
+
+			variantStruct.vt = (short)VarEnum.VT_BSTR;
+			variantStruct.ptr = Marshal.StringToBSTR ("test string");
+
+			IntPtr nativeVariant = Marshal.AllocCoTaskMem (Marshal.SizeOf (typeof(VariantStruct)));
+			Marshal.StructureToPtr (variantStruct, nativeVariant, false);
+			try {
+				Assert.AreEqual ("test string", Marshal.GetObjectForNativeVariant (nativeVariant));
+			} catch (PlatformNotSupportedException e) { // FULLAOT
+				Marshal.FreeBSTR (variantStruct.ptr);
+				Marshal.FreeCoTaskMem (nativeVariant);
+				return;
+			}
+
+			Marshal.FreeBSTR (variantStruct.ptr);
+			variantStruct.ptr = IntPtr.Zero;
+			Marshal.StructureToPtr (variantStruct, nativeVariant, false);
+			Assert.IsNull (Marshal.GetObjectForNativeVariant (nativeVariant));
+
+			Marshal.FreeCoTaskMem (nativeVariant);
 		}
 
 #if !MOBILE
