@@ -122,7 +122,7 @@ namespace MonoTests.System.Security.Policy {
 			for (int i=0; i<100; i++) {
 				obj = String.Format ("asmb-{0}", i+1);
 				comparray[i] = obj;
-				evidence.AddAssembly ( obj );
+				evidence.AddHost( obj );
 				Assert.AreEqual (evidence.Count, i+1);
 			}
 
