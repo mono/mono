@@ -3349,6 +3349,12 @@ big_up (gconstpointer datablock, guint32 size)
 #endif
 
 gboolean
+mono_w32process_get_process_name_fallback (gpointer process, gunichar2 **pstr, guint32 *plen)
+{
+	return FALSE;
+}
+
+gboolean
 mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
 {
 	gpointer file_map;
