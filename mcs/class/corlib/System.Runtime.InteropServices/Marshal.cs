@@ -2105,8 +2105,9 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static bool IsTypeMarshalledAsInterfaceInternal(Type t);
 
-		unsafe private static object ConvertInputArgument(ParameterInfo parm, Variant* varg)
+		unsafe private static object ConvertInputArgument(ParameterInfo parm, Variant* varg, out bool asVariant)
 		{
+			asVariant = false;
 			short vt = varg->vt;
 			object arg;
 
@@ -2141,7 +2142,8 @@ namespace System.Runtime.InteropServices
 
 				if (marshalAs == UnmanagedType.Struct)
 				{
-					throw new ArgumentException();  // FIXME
+					asVariant = true;
+					return GetObjectForNativeVariant((IntPtr)varg);
 				}
 				if (t.IsArray || marshalAs == UnmanagedType.SafeArray || marshalAs == UnmanagedType.LPArray)
 				{
@@ -2185,7 +2187,7 @@ namespace System.Runtime.InteropServices
 			return arg;
 		}
 
-		unsafe private static void ConvertOutputArgument(ParameterInfo parm, Variant* varg, object arg)
+		unsafe private static void ConvertOutputArgument(ParameterInfo parm, Variant* varg, object arg, bool asVariant)
 		{
 			Variant v = default (Variant);
 			short vt = varg->vt;
@@ -2193,6 +2195,14 @@ namespace System.Runtime.InteropServices
 			if (vt == ((short)VarEnum.VT_VARIANT | (short)VarEnum.VT_BYREF))
 			{
 				varg = (Variant*)varg->pdispVal;
+				if (asVariant)
+				{
+					v = *varg;
+					v.Clear();
+					v.SetValue(arg);
+					*varg = v;
+					return;
+				}
 				vt = varg->vt;
 			}
 			bool vtbyref = (vt & (short)VarEnum.VT_BYREF) != 0;
@@ -2276,13 +2286,14 @@ namespace System.Runtime.InteropServices
 		{
 			ParameterInfo[] parms = m.GetParameters();
 			object[] args = new object[parms.Length];
+			bool[] asVariant = new bool[parms.Length];
 
 			try
 			{
 				foreach (ParameterInfo parm in parms)
 				{
 					int argpos = parm.Position;
-					args[argpos] = ConvertInputArgument(parm, argmap[argpos]);
+					args[argpos] = ConvertInputArgument(parm, argmap[argpos], out asVariant[argpos]);
 				}
 
 				object res = m.Invoke(obj, args);
@@ -2301,7 +2312,7 @@ namespace System.Runtime.InteropServices
 						continue;
 					try
 					{
-						ConvertOutputArgument(parm, varg, args[argpos]);
+						ConvertOutputArgument(parm, varg, args[argpos], asVariant[argpos]);
 					}
 					catch
 					{
