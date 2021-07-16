@@ -1538,7 +1538,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 	}
 
 	case MARSHAL_ACTION_MANAGED_CONV_OUT: {
-		if (t->byref && t->attrs & PARAM_ATTRIBUTE_OUT) {
+		if (t->byref) {
 			guint32 pos_null = 0;
 
 			mono_mb_emit_ldarg (mb, argnum);
