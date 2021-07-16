@@ -806,6 +806,9 @@ NOHANDLES(ICALL(MARSHAL_22, "QueryInterfaceInternal", ves_icall_System_Runtime_I
 NOHANDLES(ICALL(MARSHAL_43, "ReAllocCoTaskMem", ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem))
 NOHANDLES(ICALL(MARSHAL_23, "ReAllocHGlobal", ves_icall_System_Runtime_InteropServices_Marshal_ReAllocHGlobal))
 #ifndef DISABLE_COM
+HANDLES(MARSHAL_28a, "RecordCheckGuidInternal", ves_icall_System_Runtime_InteropServices_Marshal_RecordCheckGuidInternal, MonoBoolean, 2, (gpointer, MonoReflectionType))
+HANDLES(MARSHAL_28b, "RecordClearInternal", ves_icall_System_Runtime_InteropServices_Marshal_RecordClearInternal, void, 2, (gpointer, gpointer))
+HANDLES(MARSHAL_28c, "RecordCreateInternal", ves_icall_System_Runtime_InteropServices_Marshal_RecordCreateInternal, gpointer, 1, (gpointer))
 HANDLES(MARSHAL_49, "ReleaseComObjectInternal", ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal, gint32, 1, (MonoObject))
 #endif
 #if !defined (DISABLE_COM) || defined (HOST_WIN32)

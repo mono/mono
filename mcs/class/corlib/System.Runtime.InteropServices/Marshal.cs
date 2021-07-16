@@ -2105,6 +2105,15 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static bool IsTypeMarshalledAsInterfaceInternal(Type t);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static bool RecordCheckGuidInternal(IntPtr recinfo, Type t);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static void RecordClearInternal(IntPtr recinfo, IntPtr recdata);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static IntPtr RecordCreateInternal(IntPtr recinfo);
+
 		unsafe private static object ConvertInputArgument(ParameterInfo parm, Variant* varg, out bool asVariant)
 		{
 			asVariant = false;
@@ -2171,6 +2180,13 @@ namespace System.Runtime.InteropServices
 					IntPtr unk = vtbyref ? *((IntPtr*)varg->pdispVal) : varg->pdispVal;
 					return unk != IntPtr.Zero ? GetObjectForIUnknown(unk) : null;
 				}
+				if (vt == (short)VarEnum.VT_RECORD)
+				{
+					// pointer to struct
+					if (!RecordCheckGuidInternal(varg->bRecord.pRecInfo, t))
+						throw new ArgumentException();
+					return varg->bRecord.pvRecord != IntPtr.Zero ? PtrToStructure(varg->bRecord.pvRecord, t) : null;
+				}
 				if (t == typeof (object))
 					return GetObjectForNativeVariant((IntPtr)varg);
 				throw new ArgumentException();
@@ -2179,8 +2195,16 @@ namespace System.Runtime.InteropServices
 			{
 				if (t == typeof (HandleRef))
 					throw new ArgumentException();  // what to do here???
+				if (vt == (short)VarEnum.VT_RECORD)
+				{
+					if (varg->bRecord.pvRecord == IntPtr.Zero || !RecordCheckGuidInternal(varg->bRecord.pRecInfo, t))
+						throw new ArgumentException();
+					return PtrToStructure(varg->bRecord.pvRecord, t);
+				}
 			}
 
+			if (vt == (short)VarEnum.VT_RECORD)
+				throw new ArgumentException();
 			arg = GetObjectForNativeVariant((IntPtr)varg);
 			if (!t.IsInstanceOfType(arg))
 				arg = Convert.ChangeType(arg, t);
@@ -2204,6 +2228,21 @@ namespace System.Runtime.InteropServices
 					return;
 				}
 				vt = varg->vt;
+
+				// a VT_VARIANT pointing to a byref VT_RECORD changes what it points to
+				if (vt == ((short)VarEnum.VT_RECORD | (short)VarEnum.VT_BYREF))
+				{
+					IntPtr recinfo = varg->bRecord.pRecInfo;
+					Type argtype = arg.GetType().UnderlyingSystemType;
+					if (!argtype.IsValueType && RecordCheckGuidInternal(recinfo, argtype))
+					{
+						IntPtr recdata = RecordCreateInternal(recinfo);
+						if (recdata != IntPtr.Zero)
+							StructureToPtr(arg, recdata, false);
+						varg->bRecord.pvRecord = recdata;
+						return;
+					}
+				}
 			}
 			bool vtbyref = (vt & (short)VarEnum.VT_BYREF) != 0;
 			vt &= ~((short)VarEnum.VT_BYREF);
@@ -2246,6 +2285,13 @@ namespace System.Runtime.InteropServices
 				*unkref = itf;
 				break;
 			}
+			case VarEnum.VT_RECORD:
+				if (RecordCheckGuidInternal(varg->bRecord.pRecInfo, arg.GetType().UnderlyingSystemType))
+				{
+					RecordClearInternal(varg->bRecord.pRecInfo, varg->bRecord.pvRecord);
+					StructureToPtr(arg, varg->bRecord.pvRecord, false);
+				}
+				break;
 			case VarEnum.VT_I1: t = typeof (sbyte); goto default;
 			case VarEnum.VT_UI1: t = typeof (byte); goto default;
 			case VarEnum.VT_I2: t = typeof (short); goto default;
