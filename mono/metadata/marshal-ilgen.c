@@ -2452,7 +2452,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	MonoClass *klass = mono_class_from_mono_type_internal (t);
 	MonoMarshalNative encoding;
 
-	encoding = mono_marshal_get_string_encoding (m->piinfo, spec);
+	encoding = mono_marshal_get_string_encoding (m, spec);
 	MonoType *int_type = mono_get_int_type ();
 	MonoType *object_type = mono_get_object_type ();
 
@@ -2483,11 +2483,11 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 			if (eklass == mono_defaults.string_class) {
 				is_string = TRUE;
-				conv = mono_marshal_get_string_to_ptr_conv (m->piinfo, spec);
+				conv = mono_marshal_get_string_to_ptr_conv (m, spec);
 			}
 			else if (eklass == mono_class_try_get_stringbuilder_class ()) {
 				is_string = TRUE;
-				conv = mono_marshal_get_stringbuilder_to_ptr_conv (m->piinfo, spec);
+				conv = mono_marshal_get_stringbuilder_to_ptr_conv (m, spec);
 			}
 			else
 				conv = MONO_MARSHAL_CONV_INVALID;
@@ -2595,7 +2595,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		gboolean need_convert, need_free;
 		/* Unicode character arrays are implicitly marshalled as [Out] under MS.NET */
 		need_convert = ((eklass == mono_defaults.char_class) && (encoding == MONO_NATIVE_LPWSTR)) || (eklass == mono_class_try_get_stringbuilder_class ()) || (t->attrs & PARAM_ATTRIBUTE_OUT);
-		need_free = mono_marshal_need_free (m_class_get_byval_arg (eklass), m->piinfo, spec);
+		need_free = mono_marshal_need_free (m_class_get_byval_arg (eklass), m, spec);
 
 		if ((t->attrs & PARAM_ATTRIBUTE_OUT) && spec && spec->native == MONO_NATIVE_LPARRAY && spec->data.array_data.param_num != -1) {
 			int param_num = spec->data.array_data.param_num;
@@ -2663,7 +2663,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 			if (eklass == mono_class_try_get_stringbuilder_class ()) {
 				gboolean need_free2;
-				MonoMarshalConv conv = mono_marshal_get_ptr_to_stringbuilder_conv (m->piinfo, spec, &need_free2);
+				MonoMarshalConv conv = mono_marshal_get_ptr_to_stringbuilder_conv (m, spec, &need_free2);
 
 				g_assert (conv != MONO_MARSHAL_CONV_INVALID);
 
@@ -2822,12 +2822,12 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		if (eklass == mono_defaults.string_class) {
 			is_string = TRUE;
 			gboolean need_free;
-			conv = mono_marshal_get_ptr_to_string_conv (m->piinfo, spec, &need_free);
+			conv = mono_marshal_get_ptr_to_string_conv (m, spec, &need_free);
 		}
 		else if (eklass == mono_class_try_get_stringbuilder_class ()) {
 			is_string = TRUE;
 			gboolean need_free;
-			conv = mono_marshal_get_ptr_to_stringbuilder_conv (m->piinfo, spec, &need_free);
+			conv = mono_marshal_get_ptr_to_stringbuilder_conv (m, spec, &need_free);
 		}
 		else
 			conv = MONO_MARSHAL_CONV_INVALID;
@@ -2993,11 +2993,11 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 #ifndef DISABLE_NONBLITTABLE
 		if (eklass == mono_defaults.string_class) {
 			is_string = TRUE;
-			conv = mono_marshal_get_string_to_ptr_conv (m->piinfo, spec);
+			conv = mono_marshal_get_string_to_ptr_conv (m, spec);
 		}
 		else if (eklass == mono_class_try_get_stringbuilder_class ()) {
 			is_string = TRUE;
-			conv = mono_marshal_get_stringbuilder_to_ptr_conv (m->piinfo, spec);
+			conv = mono_marshal_get_stringbuilder_to_ptr_conv (m, spec);
 		}
 		else
 			conv = MONO_MARSHAL_CONV_INVALID;
@@ -3096,7 +3096,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 
 		if (eklass == mono_defaults.string_class) {
 			is_string = TRUE;
-			conv = mono_marshal_get_string_to_ptr_conv (m->piinfo, spec);
+			conv = mono_marshal_get_string_to_ptr_conv (m, spec);
 		}
 		else {
 			g_assert_not_reached ();
@@ -4848,7 +4848,7 @@ emit_marshal_asany_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	MonoType *int_type = mono_get_int_type ();
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN: {
-		MonoMarshalNative encoding = mono_marshal_get_string_encoding (m->piinfo, NULL);
+		MonoMarshalNative encoding = mono_marshal_get_string_encoding (m, NULL);
 
 		g_assert (t->type == MONO_TYPE_OBJECT);
 		g_assert (!t->byref);
@@ -4867,7 +4867,7 @@ emit_marshal_asany_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		break;
 
 	case MARSHAL_ACTION_CONV_OUT: {
-		MonoMarshalNative encoding = mono_marshal_get_string_encoding (m->piinfo, NULL);
+		MonoMarshalNative encoding = mono_marshal_get_string_encoding (m, NULL);
 
 		mono_mb_emit_ldarg (mb, argnum);
 		mono_mb_emit_ldloc (mb, conv_arg);
@@ -5179,8 +5179,8 @@ emit_marshal_string_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 					 MarshalAction action)
 {
 	MonoMethodBuilder *mb = m->mb;
-	MonoMarshalNative encoding = mono_marshal_get_string_encoding (m->piinfo, spec);
-	MonoMarshalConv conv = mono_marshal_get_string_to_ptr_conv (m->piinfo, spec);
+	MonoMarshalNative encoding = mono_marshal_get_string_encoding (m, spec);
+	MonoMarshalConv conv = mono_marshal_get_string_to_ptr_conv (m, spec);
 	gboolean need_free;
 
 	MonoType *int_type = mono_get_int_type ();
@@ -5211,7 +5211,7 @@ emit_marshal_string_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		break;
 
 	case MARSHAL_ACTION_CONV_OUT:
-		conv = mono_marshal_get_ptr_to_string_conv (m->piinfo, spec, &need_free);
+		conv = mono_marshal_get_ptr_to_string_conv (m, spec, &need_free);
 		if (conv == MONO_MARSHAL_CONV_INVALID) {
 			char *msg = g_strdup_printf ("string marshalling conversion %d not implemented", encoding);
 			mono_mb_emit_exception_marshal_directive (mb, msg);
@@ -5269,7 +5269,7 @@ emit_marshal_string_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	case MARSHAL_ACTION_CONV_RESULT:
 		mono_mb_emit_stloc (mb, 0);
 				
-		conv = mono_marshal_get_ptr_to_string_conv (m->piinfo, spec, &need_free);
+		conv = mono_marshal_get_ptr_to_string_conv (m, spec, &need_free);
 		if (conv == MONO_MARSHAL_CONV_INVALID) {
 			char *msg = g_strdup_printf ("string marshalling conversion %d not implemented", encoding);
 			mono_mb_emit_exception_marshal_directive (mb, msg);
@@ -5295,7 +5295,7 @@ emit_marshal_string_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				break;
 		}
 
-		conv = mono_marshal_get_ptr_to_string_conv (m->piinfo, spec, &need_free);
+		conv = mono_marshal_get_ptr_to_string_conv (m, spec, &need_free);
 		if (conv == MONO_MARSHAL_CONV_INVALID) {
 			char *msg = g_strdup_printf ("string marshalling conversion %d not implemented", encoding);
 			mono_mb_emit_exception_marshal_directive (mb, msg);
@@ -5637,8 +5637,8 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_stloc (mb, conv_arg);
 			}
 		} else if (klass == mono_class_try_get_stringbuilder_class ()) {
-			MonoMarshalNative encoding = mono_marshal_get_string_encoding (m->piinfo, spec);
-			MonoMarshalConv conv = mono_marshal_get_stringbuilder_to_ptr_conv (m->piinfo, spec);
+			MonoMarshalNative encoding = mono_marshal_get_string_encoding (m, spec);
+			MonoMarshalConv conv = mono_marshal_get_stringbuilder_to_ptr_conv (m, spec);
 
 #if 0			
 			if (t->byref) {
@@ -5736,8 +5736,8 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			MonoMarshalNative encoding;
 			MonoMarshalConv conv;
 
-			encoding = mono_marshal_get_string_encoding (m->piinfo, spec);
-			conv = mono_marshal_get_ptr_to_stringbuilder_conv (m->piinfo, spec, &need_free);
+			encoding = mono_marshal_get_string_encoding (m, spec);
+			conv = mono_marshal_get_ptr_to_stringbuilder_conv (m, spec, &need_free);
 
 			g_assert (encoding != -1);
 
@@ -5929,7 +5929,7 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		if (klass == mono_class_try_get_stringbuilder_class ()) {
 			MonoMarshalNative encoding;
 
-			encoding = mono_marshal_get_string_encoding (m->piinfo, spec);
+			encoding = mono_marshal_get_string_encoding (m, spec);
 
 			// FIXME:
 			g_assert (encoding == MONO_NATIVE_LPSTR || encoding == MONO_NATIVE_UTF8STR);
