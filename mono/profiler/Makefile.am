@@ -43,8 +43,11 @@ suppression_DATA = mono-profiler-coverage.suppression
 #
 # See: https://bugzilla.xamarin.com/show_bug.cgi?id=57011
 if !ENABLE_COOP_SUSPEND
-check_targets = run-test
+check_targets = run-test testinline
 endif
+
+check_LTLIBRARIES = \
+	libmono-profiler-testinline.la
 
 endif
 endif
@@ -149,6 +152,14 @@ libmono_profiler_vtune_static_la_CFLAGS = $(VTUNE_CFLAGS)
 libmono_profiler_vtune_static_la_LIBADD = $(VTUNE_LIBS)
 endif
 
+libmono_profiler_testinline_la_SOURCES = test_inline.c
+libmono_profiler_testinline_la_LIBADD = $(libmono_dep) $(GLIB_LIBS) $(LIBICONV)
+#the rpath hack coerces libtool into producing a shared lib for a test
+#it basically specifies to libtool where the library will eventually
+#be installed, but since it's a test lib, we don't install it. Without
+#-rpath, libtool does not create a shared library.
+libmono_profiler_testinline_la_LDFLAGS = $(prof_ldflags) -rpath /dev/null
+
 mprof_report_SOURCES = mprof-report.c
 mprof_report_LDADD = $(glib_libs) $(zlib_dep)
 mprof_report_LDFLAGS = -no-undefined
@@ -177,6 +188,10 @@ PLOG_TESTS_SRC = \
 
 PLOG_TESTS = $(PLOG_TESTS_SRC:.cs=.exe)
 
+PINLINE_TESTS_SRC=test-prof-inline.cs
+
+PINLINE_TESTS=$(PINLINE_TESTS_SRC:.cs=.exe)
+
 CLASS = $(mcs_topdir)/class/lib/$(DEFAULT_PROFILE)
 TOOLS_RUNTIME = MONO_PATH=$(mcs_topdir)/class/lib/build $(top_builddir)/runtime/mono-wrapper
 MCS = $(TOOLS_RUNTIME) $(CSC) -lib:$(CLASS) -unsafe -nologo -noconfig -nowarn:0162 -nowarn:0168 -nowarn:0219 -debug:portable
@@ -199,6 +214,10 @@ test-bundle-local:
 
 run-test: test
 	MONO_PATH=$(CLASS) perl $(srcdir)/ptestrunner.pl $(top_builddir) nunit TestResult-profiler.xml
+
+testinline: $(PINLINE_TESTS) libmono-profiler-testinline.la
+	MONO_PATH=$(CLASS) $(srcdir)/profile_test_runner.sh $(top_builddir)/mono/mini/mono testinline:bar:1 test-prof-inline.exe
+	MONO_PATH=$(CLASS) $(srcdir)/profile_test_runner.sh $(top_builddir)/mono/mini/mono testinline:foo:2 test-prof-inline.exe
 
 check-local: $(check_targets)
 
