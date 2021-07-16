@@ -107,6 +107,103 @@ namespace System
 		[FieldOffset(0)]
 		public DECIMAL decVal;
 
+		public static void SetValueAt(object obj, int vt, IntPtr addr)
+		{
+			Type t = obj.GetType();
+			switch ((VarEnum)vt)
+			{
+			case VarEnum.VT_I1:
+				*((sbyte*)addr) = (sbyte)obj;
+				break;
+			case VarEnum.VT_UI1:
+				*((byte*)addr) = (byte)obj;
+				break;
+			case VarEnum.VT_I2:
+				*((short*)addr) = (short)obj;
+				break;
+			case VarEnum.VT_UI2:
+				*((ushort*)addr) = (ushort)obj;
+				break;
+			case VarEnum.VT_INT:
+			case VarEnum.VT_I4:
+				*((int*)addr) = (int)obj;
+				break;
+			case VarEnum.VT_UINT:
+			case VarEnum.VT_UI4:
+				*((uint*)addr) = (uint)obj;
+				break;
+			case VarEnum.VT_I8:
+				*((long*)addr) = (long)obj;
+				break;
+			case VarEnum.VT_UI8:
+				*((ulong*)addr) = (ulong)obj;
+				break;
+			case VarEnum.VT_R4:
+				*((float*)addr) = (float)obj;
+				break;
+			case VarEnum.VT_R8:
+				*((double*)addr) = (double)obj;
+				break;
+			case VarEnum.VT_BOOL:
+				*((short*)addr) = (short)((bool)obj ? -1 : 0);
+				break;
+			case VarEnum.VT_BSTR:
+				if (t == typeof(BStrWrapper))
+					*((IntPtr*)addr) = Marshal.StringToBSTR(((BStrWrapper)obj).WrappedObject);
+				else
+					*((IntPtr*)addr) = Marshal.StringToBSTR((string)obj);
+				break;
+			case VarEnum.VT_CY:
+				if (t == typeof(CurrencyWrapper))
+					*((long*)addr) = Decimal.ToOACurrency(((CurrencyWrapper)obj).WrappedObject);
+				else
+					*((long*)addr) = Decimal.ToOACurrency((Decimal)obj);
+				break;
+			case VarEnum.VT_DATE:
+				*((double*)addr) = ((DateTime)obj).ToOADate();
+				break;
+			case VarEnum.VT_DECIMAL:
+			{
+				int[] parts = Decimal.GetBits((Decimal)obj);
+				DECIMAL* dec = (DECIMAL*)addr;
+				dec->scale = (byte)((parts[3] >> 16) & 0x7F);
+				dec->sign = (byte)(parts[3] >> 24);
+				dec->Hi32 = parts[2];
+				dec->Lo64 = (uint)parts[0] | ((ulong)(uint)parts[1] << 32);
+				break;
+			}
+			case VarEnum.VT_ERROR:
+				if (t == typeof(ErrorWrapper))
+					*((int*)addr) = ((ErrorWrapper)obj).ErrorCode;
+				else
+					*((int*)addr) = (int)obj;
+				break;
+			case VarEnum.VT_VARIANT:
+			{
+				Variant v = default(Variant);
+				v.SetValue(obj);
+				*((Variant*)addr) = v;
+				break;
+			}
+#if FEATURE_COMINTEROP
+			case VarEnum.VT_UNKNOWN:
+				if (t == typeof(UnknownWrapper))
+					*((IntPtr*)addr) = Marshal.GetIUnknownForObject(((UnknownWrapper)obj).WrappedObject);
+				else
+					*((IntPtr*)addr) = Marshal.GetIUnknownForObject(obj);
+				break;
+			case VarEnum.VT_DISPATCH:
+				if (t == typeof(DispatchWrapper))
+					*((IntPtr*)addr) = Marshal.GetIDispatchForObject(((DispatchWrapper)obj).WrappedObject);
+				else
+					*((IntPtr*)addr) = Marshal.GetIDispatchForObject(obj);
+				break;
+#endif
+			default:
+				throw new NotImplementedException(string.Format("Variant.SetValueAt couldn't handle VT {0}", vt));
+			}
+		}
+
 		public void SetValue(object obj) {
 			vt = (short)VarEnum.VT_EMPTY;
 			if (obj == null)
