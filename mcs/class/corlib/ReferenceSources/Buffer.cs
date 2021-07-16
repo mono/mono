@@ -93,7 +93,7 @@ namespace System
 				dst += uint.MaxValue;
 			}
 
-			Memmove (dst, src, (uint) sourceBytesToCopy);
+			Memmove (dst, src, checked((uint) sourceBytesToCopy));
 		}
 
 		[CLSCompliantAttribute (false)]
