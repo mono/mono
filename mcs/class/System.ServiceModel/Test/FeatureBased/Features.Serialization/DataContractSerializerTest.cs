@@ -13,8 +13,8 @@ using System.IO;
 namespace MonoTests.Features.Serialization
 {
 	[TestFixture]
-    public class DataContractSerializerTest : TestFixtureBase<DataContractTesterContractClient, DataContractTester, MonoTests.Features.Contracts.IDataContractTesterContract>
-	{		
+	public class DataContractSerializerTest : TestFixtureBase<DataContractTesterContractClient, DataContractTester, MonoTests.Features.Contracts.IDataContractTesterContract>
+	{
 
 		[Test]
 		public void TestPrimitiveComplexType () {
@@ -83,6 +83,85 @@ namespace MonoTests.Features.Serialization
 			var ret = (NS1.NS3.Type1) ser.ReadObject (XmlReader.Create (new StringReader (t)));
 			Assert.IsNotNull (ret.AType, "#1");
 			Assert.AreEqual (ret.AType.Description, "A description", "#2");
+		}
+
+		[Test]
+		public void TestResolverCalledWritingObject ()
+		{
+			// object to be serialized
+			var obj = new TestDcsResolverNs.TestDcsResolverType1 { ObjProp = new TestDcsResolverNs.TestDcsResolverType2 { TestProp = "TestVal" } };
+			// dcs with custom resolver
+			var dcs = new DataContractSerializer (typeof (TestDcsResolverNs.TestDcsResolverType1), null, int.MaxValue, false, false, null,
+												  new TestDcsResolverNs.TestDcsResolver ());
+			// serialize obj to a string
+			var builder = new StringBuilder ();
+			using (var writer = XmlWriter.Create (builder)) {
+				dcs.WriteObject (writer, obj);
+			}
+			var output = builder.ToString ();
+			// check that output contains both DummyNs and DummyName from custom resolver
+			Assert.IsTrue (output.Contains (TestDcsResolverNs.TestDcsResolver.DummyNs), "TestDummyNs");
+			Assert.IsTrue (output.Contains (TestDcsResolverNs.TestDcsResolver.DummyName), "TestDummyName");
+		}
+
+		[Test]
+		public void TestWritingDerivedInObjectProperty ()
+		{
+			// NOTE: The mono implementation of DCS diverges from .net in that the mono implementation allows
+			// serialization of any type if it is in a property of type Object. The .net implementation will
+			// throw an exception if a property contains anything other than the declared type unless the
+			// object type is specified as a known type or a custom data contract resolver is supplied.
+			// If the mono implementation is brought in-line with the .net implementation, then this test
+			// will fail. The test should be removed or ignored at that point. It is included here to
+			// ensure that until then the current functionality is not unintentionally changed.
+
+			// object to be serialized
+			var obj = new TestDcsResolverNs.TestDcsResolverType1 { ObjProp = new TestDcsResolverNs.TestDcsResolverType2 { TestProp = "TestVal" } };
+			var dcs = new DataContractSerializer (typeof (TestDcsResolverNs.TestDcsResolverType1), null, int.MaxValue, false, false, null, null);
+			// serialize obj to a string
+			var builder = new StringBuilder ();
+			using (var writer = XmlWriter.Create (builder)) {
+				Assert.DoesNotThrow (() => dcs.WriteObject (writer, obj), "TestWrite");
+			}
+		}
+	}
+}
+
+namespace TestDcsResolverNs {
+	[DataContract]
+	public class TestDcsResolverType1 {
+		[DataMember]
+		public object ObjProp { get; set; }
+	}
+
+	[DataContract]
+	public class TestDcsResolverType2 {
+		[DataMember]
+		public string TestProp { get; set; }
+	}
+
+	public class TestDcsResolver : DataContractResolver {
+		public const string DummyName = "DummyName";
+		public const string DummyNs = "DummyNs";
+
+		public override bool TryResolveType (Type t, Type dt, DataContractResolver ktr, out XmlDictionaryString tn, out XmlDictionaryString tns)
+		{
+			// call known type resolver first
+			if (ktr.TryResolveType (t, dt, null, out tn, out tns))
+				return true;
+
+			// set dummy name and namespace so it's easy to look
+			// for in test
+			var d = new XmlDictionary ();
+			tn = d.Add (DummyName);
+			tns = d.Add (DummyNs);
+
+			return true;
+		}
+
+		public override Type ResolveName (string tn, string tns, Type dt, DataContractResolver ktr)
+		{
+			return ktr.ResolveName (tn, tns, dt, null);
 		}
 	}
 }
