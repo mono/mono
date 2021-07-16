@@ -3131,7 +3131,7 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_ldloc (mb, src);
 		mono_mb_emit_byte (mb, CEE_LDLEN);
 
-		if (eklass == mono_defaults.string_class) {
+		if (eklass == mono_defaults.char_class) {
 			/* Make the array bigger for the terminating null */
 			mono_mb_emit_byte (mb, CEE_LDC_I4_1);
 			mono_mb_emit_byte (mb, CEE_ADD);
