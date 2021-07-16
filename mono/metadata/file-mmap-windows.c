@@ -261,8 +261,6 @@ open_handle (void *handle, const gunichar2 *mapName, gint mapName_length, int mo
 void*
 mono_mmap_open_file (const gunichar2 *path, gint path_length, int mode, const gunichar2 *mapName, gint mapName_length, gint64 *capacity, int access, int options, int *ioerror, MonoError *error)
 {
-	g_assert (path != NULL || mapName != NULL);
-
 	HANDLE hFile = INVALID_HANDLE_VALUE;
 	HANDLE result = NULL;
 	gboolean delete_on_error = FALSE;
