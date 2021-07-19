@@ -1271,8 +1271,8 @@ make_generic_param_class (MonoGenericParam *param)
 	// Count non-NULL items in pinfo->constraints
 	count = 0;
 	if (!is_anonymous)
-		for (ptr = pinfo->constraints; ptr && *ptr; ptr++, count++)
-			;
+		for (ptr = pinfo->constraints; ptr && *ptr; ptr++)
+			count++;
 
 	pos = 0;
 	if ((count > 0) && !MONO_CLASS_IS_INTERFACE_INTERNAL (pinfo->constraints [0])) {
@@ -1284,7 +1284,7 @@ make_generic_param_class (MonoGenericParam *param)
 		CHECKED_METADATA_WRITE_PTR ( klass->parent , mono_defaults.object_class );
 	}
 
-	if (count - pos > 0) {
+	if (count > pos) {
 		klass->interface_count = count - pos;
 		CHECKED_METADATA_WRITE_PTR_LOCAL ( klass->interfaces , (MonoClass **)mono_image_alloc0 (image, sizeof (MonoClass *) * (count - pos)) );
 		klass->interfaces_inited = TRUE;
@@ -1324,7 +1324,7 @@ make_generic_param_class (MonoGenericParam *param)
 
 	mono_class_setup_supertypes (klass);
 
-	if (count - pos > 0) {
+	if (count > pos) {
 		mono_class_setup_vtable (klass->parent);
 		if (mono_class_has_failure (klass->parent))
 			mono_class_set_type_load_failure (klass, "Failed to setup parent interfaces");
