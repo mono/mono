@@ -54,6 +54,7 @@ namespace MonoTests.System.Windows.Forms
 				int page_count = 1;
 				document.BeginPrint += (sender, e) => page_number = 0;
 				document.PrintPage += (sender, e) => e.HasMorePages = ++page_number < page_count;
+				var printController = document.PrintController;
 
 				p.Document = document;
 				p.Refresh ();
@@ -63,6 +64,7 @@ namespace MonoTests.System.Windows.Forms
 				p.InvalidatePreview ();
 				p.Refresh ();
 				Assert.AreEqual (4, p.StartPage);
+				Assert.AreEqual(printController, document.PrintController);
 			}
 		}
 	}

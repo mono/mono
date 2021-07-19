@@ -181,6 +181,9 @@ class InterpToNativeGenerator {
 		"IFFF",
 		"IFFFF",
 		"VLII",
+		"IIIIL",
+		"LIIIL",
+		"IILL",
 	};
  
 	static string TypeToSigType (char c) {

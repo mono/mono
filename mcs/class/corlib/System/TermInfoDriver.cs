@@ -42,6 +42,7 @@
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Runtime.InteropServices;
 namespace System {
 	class TermInfoDriver : IConsoleDriver {
@@ -524,7 +525,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				SetBufferSize (BufferWidth, value);
 			}
 		}
 
@@ -542,7 +543,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				SetBufferSize (value, BufferHeight);
 			}
 		}
 
@@ -716,6 +717,29 @@ namespace System {
 			bufferWidth = windowWidth;
 		}
 
+		// Should be called after init
+		//
+		// Only works on some Xterm-based terminals
+		void TrySetWindowDimensions (int width, int height)
+		{
+			if (width <= 0)
+				throw new ArgumentOutOfRangeException ("width", "Value must be higher than 0");
+			if (height <= 0)
+				throw new ArgumentOutOfRangeException ("height", "Value must be highet than 0");
+
+			if (height == WindowHeight && width == WindowWidth)
+				return;
+
+			if (term.StartsWith ("xterm")) {
+				WriteConsole ("\x1b[8;" + height.ToString () + ";" + width.ToString () + "t");
+
+				// Wait for window to get resized
+				Thread.Sleep (50);
+			} else {
+				throw new PlatformNotSupportedException ("Resizing can only work in xterm-based terminals");
+			}
+		}
+
 		
 		public int WindowHeight {
 			get {
@@ -731,7 +755,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				SetWindowSize (WindowWidth, value);
 			}
 		}
 
@@ -749,7 +773,10 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				if (value == 0)
+					return;
+
+				throw new ArgumentOutOfRangeException ("Unix terminals only support window position (0; 0)");
 			}
 		}
 
@@ -767,7 +794,10 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				if (value == 0)
+					return;
+
+				throw new ArgumentOutOfRangeException ("Unix terminals only support window position (0; 0)");
 			}
 		}
 
@@ -785,7 +815,7 @@ namespace System {
 					Init ();
 				}
 
-				throw new NotSupportedException ();
+				SetWindowSize (value, WindowHeight);
 			}
 		}
 
@@ -817,7 +847,7 @@ namespace System {
 				Init ();
 			}
 
-			throw new NotImplementedException ();
+			throw new PlatformNotSupportedException ("Implemented only on Windows");
 		}
 
 		void AddToBuffer (int b)
@@ -1191,7 +1221,7 @@ namespace System {
 				Init ();
 			}
 
-			throw new NotImplementedException (String.Empty);
+			TrySetWindowDimensions (width, height);
 		}
 
 		public void SetCursorPosition (int left, int top)
@@ -1202,15 +1232,15 @@ namespace System {
 
 			CheckWindowDimensions ();
 			if (left < 0 || left >= bufferWidth)
-				throw new ArgumentOutOfRangeException ("left", "Value must be positive and below the buffer width.");
+				throw new ArgumentOutOfRangeException ("left", left.ToString (), "Value must be positive and below the buffer width.");
 
 			if (top < 0 || top >= bufferHeight)
-				throw new ArgumentOutOfRangeException ("top", "Value must be positive and below the buffer height.");
+				throw new ArgumentOutOfRangeException ("top", top.ToString (), "Value must be positive and below the buffer height.");
 
 			// Either CursorAddress or nothing.
 			// We might want to play with up/down/left/right/home when ca is not available.
 			if (cursorAddress == null)
-				throw new NotSupportedException ("This terminal does not suport setting the cursor position.");
+				throw new IOException ("This terminal does not suport setting the cursor position.");
 
 			WriteConsole (ParameterizedStrings.Evaluate (cursorAddress, top, left));
 			cursorLeft = left;
@@ -1223,8 +1253,8 @@ namespace System {
 				Init ();
 			}
 
-			// No need to throw exceptions here.
-			//throw new NotSupportedException ();
+			if (left != 0 || top != 0)
+				throw new ArgumentOutOfRangeException ("Unix terminals only support window position (0; 0)");
 		}
 
 		public void SetWindowSize (int width, int height)
@@ -1233,8 +1263,7 @@ namespace System {
 				Init ();
 			}
 
-			// No need to throw exceptions here.
-			//throw new NotSupportedException ();
+			TrySetWindowDimensions (width, height);
 		}
 
 
