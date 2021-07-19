@@ -1366,22 +1366,13 @@ enum_retvalue:
 	}
 
 	/*----------------------------------------------------------*/
-	/* If we are passing a structure back then if it won't be   */
-	/* in a register(s) then we make room at the end of the     */
-	/* parameters that may have been placed on the stack        */
+	/* If we are passing a structure back then we make room at  */
+	/* the end of the parameters that may have been placed on   */
+	/* the stack        					    */
 	/*----------------------------------------------------------*/
 	if (cinfo->struct_ret) {
 		cinfo->ret.offset = sz->stack_size;
-		switch (cinfo->ret.size) {
-		case 0:
-		case 1:
-		case 2:
-		case 4:
-		case 8:
-			break;
-		default:
-			sz->stack_size   += S390_ALIGN(cinfo->ret.size, align);
-		}
+		sz->stack_size   += S390_ALIGN(cinfo->ret.size, align);
 	}
 
 	cinfo->lastgr   = gr;
@@ -5717,10 +5708,7 @@ if ((strcmp(method->klass->name_space,"") == 0) &&
 		ArgInfo *ainfo     = &cinfo->ret;
 		inst               = cfg->vret_addr;
 		inst->backend.size = ainfo->vtsize;
-		if (inst->opcode == OP_REGVAR)
-			s390_lgr (code, inst->dreg, ainfo->reg);
-		else
-			s390_stg (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
+		s390_stg (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
 	}
 
 	/**
