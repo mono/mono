@@ -38,6 +38,7 @@ typedef struct MonoCompileArch {
 	int	    fpSize;		/** Size of floating point save area */
 	MonoInst    *ss_tramp_var;	/** Single-step variable */
 	MonoInst    *bp_tramp_var;	/** Breakpoint variable */
+	CallInfo    *cinfo;		/** Caller information */
 	guint8 	    *thunks;		/** Thunking area */
 	int 	    thunks_size;	/** Size of thunking area */
 } MonoCompileArch;

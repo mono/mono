@@ -1145,8 +1145,6 @@ enum_retvalue:
 			cinfo->struct_ret = 1;
 			cinfo->ret.size   = size;
 			cinfo->ret.vtsize = size;
-			// cinfo->ret.reg = s390_r2;
-			// sz->code_size += 4;
 	    }
 			break;
 		case MONO_TYPE_VOID:
@@ -1431,7 +1429,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 
 	sig   = mono_method_signature_internal (cfg->method);
 	
-	cinfo = get_call_info (cfg->mempool, sig);
+	cinfo = cfg->arch.cinfo;
 
 	/*--------------------------------------------------------------*/
 	/* local vars are at a positive offset from the stack pointer 	*/
@@ -1658,8 +1656,13 @@ void
 mono_arch_create_vars (MonoCompile *cfg)
 {
 	MonoMethodSignature *sig = mono_method_signature_internal (cfg->method);
+	CallInfo *cinfo;
 
-	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
+	if (!cfg->arch.cinfo)
+		cfg->arch.cinfo = get_call_info (cfg->mempool, sig);
+	cinfo = cfg->arch.cinfo;
+
+	if (cinfo->struct_ret) {
 		cfg->vret_addr = mono_compile_create_var (cfg, mono_get_int_type (), OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
@@ -5702,13 +5705,16 @@ if ((strcmp(method->klass->name_space,"") == 0) &&
 	sig = mono_method_signature_internal (method);
 	pos = 0;
 
-	cinfo = get_call_info (cfg->mempool, sig);
+	cinfo = cfg->arch.cinfo;
 
 	if (cinfo->struct_ret) {
 		ArgInfo *ainfo     = &cinfo->ret;
 		inst               = cfg->vret_addr;
 		inst->backend.size = ainfo->vtsize;
-		s390_stg (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
+		if (inst->opcode == OP_REGVAR)
+			s390_lgr (code, inst->dreg, ainfo->reg);
+		else
+			s390_stg (code, ainfo->reg, 0, inst->inst_basereg, inst->inst_offset);
 	}
 
 	/**
@@ -6001,6 +6007,7 @@ void
 mono_arch_emit_epilog (MonoCompile *cfg)
 {
 	MonoMethod *method = cfg->method;
+	CallInfo *cinfo = cfg->arch.cinfo;
 	guint8 *code;
 	int max_epilog_size = 96, i;
 	int fpOffset = 0;
@@ -6035,6 +6042,9 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			}
 		}
 	}
+
+	if ((cinfo->struct_ret) && (cfg->vret_addr->opcode == OP_REGVAR))
+		s390_lgr (code, cinfo->ret.reg, cfg->vret_addr->dreg);
 
 	s390_lmg (code, s390_r6, s390_r14, STK_BASE, S390_REG_SAVE_OFFSET);
 	for (i = s390_r6; i < s390_r15; i++) 
@@ -6209,8 +6219,12 @@ mono_arch_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMetho
 		// unary float (overloaded)
 		else if (fsig->param_count == 1 && fsig->params [0]->type == MONO_TYPE_R4) {
 			if (strcmp (cmethod->name, "Abs") == 0) {
-				opcode = OP_ABSF;
-				stack_type = STACK_R4;
+				if (cfg->r4fp) {
+					opcode = OP_ABSF;
+					stack_type = STACK_R4;
+				} else {
+					opcode = OP_ABS;
+				}
 			}
 		}
 		// binary double
