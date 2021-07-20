@@ -6007,7 +6007,6 @@ void
 mono_arch_emit_epilog (MonoCompile *cfg)
 {
 	MonoMethod *method = cfg->method;
-	CallInfo *cinfo = cfg->arch.cinfo;
 	guint8 *code;
 	int max_epilog_size = 96, i;
 	int fpOffset = 0;
@@ -6043,9 +6042,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		}
 	}
 
-	if ((cinfo->struct_ret) && (cfg->vret_addr->opcode == OP_REGVAR))
-		s390_lgr (code, cinfo->ret.reg, cfg->vret_addr->dreg);
-
 	s390_lmg (code, s390_r6, s390_r14, STK_BASE, S390_REG_SAVE_OFFSET);
 	for (i = s390_r6; i < s390_r15; i++) 
 		mono_emit_unwind_op_same_value (cfg, code, i);
@@ -6058,7 +6054,6 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	code = (guint8 *) ((((uintptr_t) code + 7) >> 3) << 3);
 
 	set_code_cursor (cfg, code);
-
 }
 
 /*========================= End of Function ========================*/
