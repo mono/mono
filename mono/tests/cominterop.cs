@@ -293,6 +293,9 @@ public class Tests
 	public static extern int mono_test_cominterop_ccw_get_ids_of_names ([MarshalAs (UnmanagedType.Interface)] IOtherTest itest);
 
 	[DllImport("libtest")]
+	public static extern int mono_test_cominterop_ccw_invoke ([MarshalAs (UnmanagedType.Interface)] IOtherTest itest);
+
+	[DllImport("libtest")]
 	public static extern int mono_test_cominterop_ccw_queryinterface_foreign_thread ([MarshalAs (UnmanagedType.Interface)] ITest itest);
 
 	[DllImport ("libtest")]
@@ -704,6 +707,9 @@ public class Tests
 
 			if (mono_test_cominterop_ccw_get_ids_of_names (otherTest) != 0)
 				return 210;
+
+			if (mono_test_cominterop_ccw_invoke (otherTest) != 0)
+				return 211;
 
 			#endregion // COM Callable Wrapper Tests
 
