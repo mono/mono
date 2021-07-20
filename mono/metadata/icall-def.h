@@ -1136,6 +1136,11 @@ ICALL_TYPE(VALUET, "System.ValueType", VALUET_1)
 HANDLES(VALUET_1, "InternalEquals", ves_icall_System_ValueType_Equals, MonoBoolean, 3, (MonoObject, MonoObject, MonoArrayOut))
 HANDLES(VALUET_2, "InternalGetHashCode", ves_icall_System_ValueType_InternalGetHashCode, gint32, 2, (MonoObject, MonoArrayOut))
 
+ICALL_TYPE(VARIANT, "System.Variant", VARIANT_1)
+HANDLES(VARIANT_1, "SafeArrayDestroyInternal", ves_icall_System_Variant_SafeArrayDestroyInternal, void, 1, (gpointer))
+HANDLES(VARIANT_2, "SafeArrayFromArrayInternal", ves_icall_System_Variant_SafeArrayFromArrayInternal, gpointer, 2, (MonoArray, gint32_ref))
+HANDLES(VARIANT_3, "SafeArrayToArrayInternal", ves_icall_System_Variant_SafeArrayToArrayInternal, MonoArray, 2, (gpointer, gint32))
+
 ICALL_TYPE(WEBIC, "System.Web.Util.ICalls", WEBIC_1)
 HANDLES_REUSE_WRAPPER(WEBIC_1, "GetMachineConfigPath", ves_icall_System_Configuration_DefaultConfig_get_machine_config_path, MonoString, 0, ())
 HANDLES(WEBIC_2, "GetMachineInstallDirectory", ves_icall_System_Web_Util_ICalls_get_machine_install_dir, MonoString, 0, ())
