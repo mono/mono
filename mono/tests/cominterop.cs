@@ -311,6 +311,12 @@ public class Tests
 	public static extern int mono_test_marshal_safearray_out_4dim_vt_i4 ([MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)]out Array array);
 
 	[DllImport("libtest")]
+	public static extern int mono_test_marshal_safearray_variant_out_4dim_vt_i4 (out IntPtr variant);
+
+	[DllImport("libtest")]
+	public static extern int mono_test_marshal_safearray_variant_clear (IntPtr variant);
+
+	[DllImport("libtest")]
 	public static extern int mono_test_marshal_safearray_in_byval_1dim_empty ([In, MarshalAs (UnmanagedType.SafeArray, SafeArraySubType = VarEnum.VT_VARIANT)] Array array);
 
 	[DllImport("libtest")]
@@ -706,7 +712,8 @@ public class Tests
 			if (isWindows) {
 
 				/* out */
-				Array array;
+				Array array, varray;
+				IntPtr varArray;
 				if ((mono_test_marshal_safearray_out_1dim_vt_bstr_empty (out array) != 0) || (array.Rank != 1) || (array.Length != 0))
 					return 62;
 
@@ -746,6 +753,23 @@ public class Tests
 								if (index != (int)array.GetValue (new long[] { l, k, j, i }))
 									return 70;
 								++index;
+							}
+						}
+					}
+				}
+
+				if ((mono_test_marshal_safearray_variant_out_4dim_vt_i4 (out varArray) != 0))
+					return 70;
+				varray = (Array)Marshal.GetObjectForNativeVariant (varArray);
+				mono_test_marshal_safearray_variant_clear (varArray);
+
+				for (int i = array.GetLowerBound (3); i <= array.GetUpperBound (3); ++i) {
+					for (int j = array.GetLowerBound (2); j <= array.GetUpperBound (2); ++j) {
+						for (int k = array.GetLowerBound (1); k <= array.GetUpperBound (1); ++k) {
+							for (int l = array.GetLowerBound (0); l <= array.GetUpperBound (0); ++l) {
+								long[] idx = new long[] { l, k, j, i };
+								if ((int)array.GetValue (idx) != (int)varray.GetValue (idx))
+									return 70;
 							}
 						}
 					}
