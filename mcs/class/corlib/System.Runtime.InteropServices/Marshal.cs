@@ -1810,7 +1810,6 @@ namespace System.Runtime.InteropServices
 		internal static int SetErrorInfo (int dwReserved, IErrorInfo errorInfo)
 		{
 			int retVal = 0;
-			errorInfo = null;
 
 			if (SetErrorInfoNotAvailable)
 				return -1;
