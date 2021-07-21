@@ -1982,7 +1982,8 @@ switch_arch (char* argv[], const char* target_arch)
 	gsize arch_offset;
 
 	if ((strcmp (target_arch, "32") == 0 && strcmp (MONO_ARCHITECTURE, "x86") == 0) ||
-		(strcmp (target_arch, "64") == 0 && strcmp (MONO_ARCHITECTURE, "amd64") == 0)) {
+		(strcmp (target_arch, "64") == 0 && (strcmp (MONO_ARCHITECTURE, "amd64") == 0 ||
+			strcmp (MONO_ARCHITECTURE, "arm64") == 0))) {
 		return; /* matching arch loaded */
 	}
 
