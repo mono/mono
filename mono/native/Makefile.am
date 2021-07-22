@@ -62,8 +62,8 @@ macos_sources = $(unix_sources)
 ios_sources = \
 	pal-icalls.h \
 	pal-icalls.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
+	../../external/corefx-bugfix/src/Native/Unix/System.Native/pal_io.c \
+	../../external/corefx-bugfix/src/Native/Unix/System.Native/pal_io.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_tcpstate.c \
@@ -86,8 +86,8 @@ android_sources = \
 	pal-android.c \
 	pal-icalls.h \
 	pal-icalls.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
+	../../external/corefx-bugfix/src/Native/Unix/System.Native/pal_io.c \
+	../../external/corefx-bugfix/src/Native/Unix/System.Native/pal_io.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_random.c \
@@ -97,8 +97,8 @@ android_sources = \
 unix_sources = \
 	pal-icalls.h \
 	pal-icalls.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_io.c \
-	../../external/corefx/src/Native/Unix/System.Native/pal_io.h \
+	../../external/corefx-bugfix/src/Native/Unix/System.Native/pal_io.c \
+	../../external/corefx-bugfix/src/Native/Unix/System.Native/pal_io.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networking.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.c \
