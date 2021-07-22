@@ -338,6 +338,21 @@ enum NotifyEvents
     PAL_IN_ISDIR = 0x40000000,
 };
 
+#define READDIR_SORT 1
+
+struct DIRWrapper
+{
+    DIR* dir;
+#if READDIR_SORT
+    void* result;
+    size_t curIndex;
+    size_t numEntries;
+#if !HAVE_REWINDDIR
+    char* dirPath;
+#endif
+#endif
+};
+
 
 int32_t SystemNative_Stat2(const char* path, struct FileStatus* output);
 int32_t SystemNative_FStat2(intptr_t fd, struct FileStatus* output);
@@ -416,17 +431,17 @@ DLLEXPORT int32_t SystemNative_GetReadDirRBufferSize(void);
  *
  * Returns 0 when data is retrieved; returns -1 when end-of-stream is reached; returns an error code on failure
  */
-DLLEXPORT int32_t SystemNative_ReadDirR(DIR* dir, uint8_t* buffer, int32_t bufferSize, struct DirectoryEntry* outputEntry);
+DLLEXPORT int32_t SystemNative_ReadDirR(struct DIRWrapper* dirWrapper, uint8_t* buffer, int32_t bufferSize, struct DirectoryEntry* outputEntry);
 
 /**
  * Returns a DIR struct containing info about the current path or NULL on failure; sets errno on fail.
  */
-DLLEXPORT DIR* SystemNative_OpenDir(const char* path);
+DLLEXPORT struct DIRWrapper* SystemNative_OpenDir(const char* path);
 
 /**
  * Closes the directory stream opened by opendir and returns 0 on success. On fail, -1 is returned and errno is set
  */
-DLLEXPORT int32_t SystemNative_CloseDir(DIR* dir);
+DLLEXPORT int32_t SystemNative_CloseDir(struct DIRWrapper* dirWrapper);
 
 /**
  * Creates a pipe. Implemented as shim to pipe(2) or pipe2(2) if available.
