@@ -3451,10 +3451,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_RCONV_TO_R8:
 			s390_ldebr (code, ins->dreg, ins->sreg1);
 			break;
+		case OP_RMOVE:
+			if (ins->dreg != ins->sreg1)
+				s390_ler   (code, ins->dreg, ins->sreg1);
+			break;
 		case OP_FMOVE:
-			if (ins->dreg != ins->sreg1) {
+			if (ins->dreg != ins->sreg1)
 				s390_ldr   (code, ins->dreg, ins->sreg1);
-			}
 			break;
 		case OP_MOVE_F_TO_I8: 
 			s390_lgdr (code, ins->dreg, ins->sreg1);
