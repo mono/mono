@@ -168,12 +168,30 @@ typedef struct {
 #endif
 } MonoCCW;
 
+enum ccw_method_type {
+	ccw_method_method,
+	ccw_method_getter,
+	ccw_method_setter
+};
+
+struct ccw_method
+{
+	gint32 dispid;
+	enum ccw_method_type type;
+	union {
+		MonoMethod* method;  // for type == ccw_method_method
+		MonoProperty* prop;  // for type == ccw_method_getter or ccw_method_setter
+	};
+};
+
 /* This type is the actual pointer passed to unmanaged code
  * to represent a COM interface.
  */
 typedef struct {
 	gpointer vtable;
 	MonoCCW* ccw;
+	struct ccw_method* methods;
+	unsigned int methods_count;
 } MonoCCWInterface;
 
 /* IUnknown */
@@ -237,6 +255,20 @@ mono_marshal_safearray_set_value (gpointer safearray, gpointer indices, gpointer
 
 static void
 mono_marshal_safearray_free_indices (gpointer indices);
+
+static MonoProperty*
+mono_get_property_from_method (MonoMethod* method)
+{
+	if (!(method->flags & METHOD_ATTRIBUTE_SPECIAL_NAME))
+		return NULL;
+	MonoClass *klass = method->klass;
+	MonoProperty* prop;
+	gpointer iter = NULL;
+	while ((prop = mono_class_get_properties (klass, &iter)))
+		if (prop->get == method || prop->set == method)
+			return prop;
+	return NULL;
+}
 
 MonoClass*
 mono_class_try_get_com_object_class (void)
@@ -1659,6 +1691,7 @@ mono_cominterop_emit_marshal_com_interface (EmitMarshalContext *m, int argnum,
 #define MONO_S_OK 0x00000000L
 #define MONO_E_NOINTERFACE 0x80004002L
 #define MONO_E_NOTIMPL 0x80004001L
+#define MONO_E_OUTOFMEMORY         0x8007000eL
 #define MONO_E_INVALIDARG          0x80070057L
 #define MONO_E_DISP_E_UNKNOWNNAME  0x80020006L
 #define MONO_E_DISPID_UNKNOWN      (gint32)-1
@@ -2264,6 +2297,35 @@ cominterop_get_default_iface (MonoClass *klass)
 }
 
 static gboolean
+cominterop_get_method_dispid_attr (MonoMethod* method, gint32* dispid)
+{
+	ERROR_DECL (error);
+	gboolean ret = FALSE;
+	MonoCustomAttrInfo *cinfo;
+
+	MONO_STATIC_POINTER_INIT (MonoClass, ComDispIdAttribute)
+
+		ComDispIdAttribute = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute");
+
+	MONO_STATIC_POINTER_INIT_END (MonoClass, ComDispIdAttribute)
+
+	cinfo = mono_custom_attrs_from_method_checked (method, error);
+	mono_error_assert_ok (error);
+	if (cinfo) {
+		MonoObject *result = mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, error);
+		mono_error_assert_ok (error);
+		if (result) {
+			*dispid = *(gint32*)mono_object_get_data (result);
+			ret = TRUE;
+		}
+		if (!cinfo->cached)
+			mono_custom_attrs_free (cinfo);
+	}
+
+	return ret;
+}
+
+static gboolean
 cominterop_class_method_is_visible (MonoMethod *method)
 {
 	guint16 flags = method->flags;
@@ -2377,6 +2439,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 	MonoClass* iface = NULL;
 	int start_slot = 3;
 	int method_count = 0;
+	int vtable_size = 0;
 	GList *ccw_list, *ccw_list_item;
 	MonoCustomAttrInfo *cinfo = NULL;
 
@@ -2458,28 +2521,46 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 	else {
 		/* auto-dual object */
 		start_slot = 7;
+	}
 
-		MonoClass *klass_iter;
-		for (klass_iter = iface; klass_iter; klass_iter = m_class_get_parent (klass_iter)) {
-			int mcount = mono_class_get_method_count (klass_iter);
-			if (mcount && !m_class_get_methods (klass_iter))
-				mono_class_setup_methods (klass_iter);
-
-			for (i = 0; i < mcount; ++i) {
-				MonoMethod *method = m_class_get_methods (klass_iter) [i];
-				if (cominterop_class_method_is_visible (method))
-					++method_count;
-			}
-
-			/* FIXME: accessors for public fields */
+	vtable_size = method_count;
+	if (start_slot >= 7) {
+		gboolean is_dispatch_iface = FALSE;
+		if (iface == mono_class_get_idispatch_class ()) {
+			iface = (itf == mono_class_get_idispatch_class ()) ? klass : itf;
+			is_dispatch_iface = TRUE;
 		}
+
+		method_count = 0;
+		if (mono_class_is_interface (iface))
+			method_count += mono_class_get_method_count (iface);
+		else {
+			MonoClass* klass_iter;
+			for (klass_iter = iface; klass_iter; klass_iter = m_class_get_parent (klass_iter)) {
+				int mcount = mono_class_get_method_count (klass_iter);
+				if (mcount && !m_class_get_methods (klass_iter))
+					mono_class_setup_methods (klass_iter);
+
+				for (i = 0; i < mcount; ++i) {
+					MonoMethod *method = m_class_get_methods (klass_iter) [i];
+					if (cominterop_class_method_is_visible (method))
+						++method_count;
+				}
+
+				/* FIXME: accessors for public fields */
+			}
+		}
+		vtable_size = is_dispatch_iface ? 0 : method_count;
 	}
 
 	ccw_entry = (MonoCCWInterface *)g_hash_table_lookup (ccw->vtable_hash, itf);
 
 	if (!ccw_entry) {
-		int vtable_index = method_count-1+start_slot;
-		vtable = (void **)mono_image_alloc0 (m_class_get_image (klass), sizeof (gpointer)*(method_count+start_slot));
+		struct ccw_method* methods = NULL;
+		gint32 depth, prevdepth;
+		if (method_count)
+			methods = g_new (struct ccw_method, method_count);
+		vtable = (void **)mono_image_alloc0 (m_class_get_image (klass), sizeof (gpointer)*(vtable_size+start_slot));
 		vtable [0] = (gpointer)cominterop_ccw_queryinterface;
 		vtable [1] = (gpointer)cominterop_ccw_addref;
 		vtable [2] = (gpointer)cominterop_ccw_release;
@@ -2495,9 +2576,10 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 				mono_class_setup_methods (iface);
 
 			for (i = method_count - 1; i >= 0; i--) {
-				vtable [vtable_index--] = cominterop_get_ccw_method (iface, m_class_get_methods (iface) [i], error);
-				return_val_if_nok (error, NULL);
+				methods [i].method = m_class_get_methods (iface) [i];
+				methods [i].dispid = 0;
 			}
+			depth = 2;
 		}
 		else {
 			/* Auto-dual object. The methods on an auto-dual interface are
@@ -2519,7 +2601,9 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 
 			mono_class_setup_vtable (iface);
 
+			int index = method_count - 1;
 			MonoClass *klass_iter;
+			depth = 0;
 			for (klass_iter = iface; klass_iter; klass_iter = m_class_get_parent (klass_iter)) {
 				mono_class_setup_vtable (klass_iter);
 
@@ -2527,8 +2611,8 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 				for (i = mono_class_get_method_count (klass_iter) - 1; i >= 0; i--) {
 					MonoMethod *method = m_class_get_methods (klass_iter) [i];
 					if (cominterop_class_method_is_visible (method) && !(method->flags & METHOD_ATTRIBUTE_VIRTUAL)) {
-						vtable [vtable_index--] = cominterop_get_ccw_method (iface, method, error);
-						return_val_if_nok (error, NULL);
+						methods [index].method = method;
+						methods [index--].dispid = depth;
 					}
 				}
 
@@ -2541,12 +2625,8 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 						int offset = mono_class_interface_offset (iface, ic);
 						g_assert (offset >= 0);
 						for (j = mono_class_get_method_count (ic) - 1; j >= 0; j--) {
-							MonoMethod *method = m_class_get_methods (ic) [j];
-							vtable [vtable_index--] = cominterop_get_ccw_method (iface, m_class_get_vtable (iface) [offset + method->slot], error);
-							if (!is_ok (error)) {
-								g_ptr_array_free (ifaces, TRUE);
-								return NULL;
-							}
+							methods [index].method = m_class_get_vtable (iface) [offset + m_class_get_methods (ic) [j]->slot];
+							methods [index--].dispid = depth;
 						}
 					}
 					g_ptr_array_free (ifaces, TRUE);
@@ -2555,11 +2635,55 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 				/* 1. Virtual methods */
 				for (i = mono_class_get_method_count (klass_iter) - 1; i >= 0; i--) {
 					MonoMethod *method = m_class_get_methods (klass_iter) [i];
-					if (cominterop_class_method_is_visible (method) && (method->flags & METHOD_ATTRIBUTE_VIRTUAL)
-						&& !cominterop_get_method_interface (method)) {
-						vtable [vtable_index--] = cominterop_get_ccw_method (iface, m_class_get_vtable (iface) [method->slot], error);
-						return_val_if_nok (error, NULL);
+					if (cominterop_class_method_is_visible (method) && (method->flags & METHOD_ATTRIBUTE_VIRTUAL)) {
+						MonoClass *ic = cominterop_get_method_interface (method);
+						if (!ic || !MONO_CLASS_IS_INTERFACE_INTERNAL (ic)) {
+							methods [index].method = m_class_get_vtable (iface) [method->slot];
+							methods [index--].dispid = depth;
+						}
 					}
+				}
+				depth++;
+			}
+		}
+
+		/* Fill the vtable */
+		for (i = 0; i < vtable_size; i++) {
+			vtable [i + start_slot] = cominterop_get_ccw_method (iface, methods [i].method, error);
+			if (!is_ok (error)) {
+				g_free (methods);
+				return NULL;
+			}
+		}
+
+		/* Now assign proper dispids to the methods and possibly convert them to props */
+		prevdepth = -1;
+		for (i = 0, j = 0; i < method_count; i++, j++) {
+			MonoMethod* method = methods [i].method;
+			if (prevdepth != methods [i].dispid) {
+				prevdepth = methods [i].dispid;
+				j = 0;
+			}
+			MonoProperty* prop = mono_get_property_from_method (method);
+			if (prop) {
+				methods [i].type = (method == prop->get) ? ccw_method_getter : ccw_method_setter;
+				methods [i].prop = prop;
+			}
+			else
+				methods [i].type = ccw_method_method;
+
+			if (!cominterop_get_method_dispid_attr (method, &methods [i].dispid))
+				methods [i].dispid = 0x60000000 | ((depth - methods [i].dispid) << 16) | j;
+		}
+
+		/* Make sure that property set methods have the same dispid as the get methods */
+		for (i = 0; i < method_count; i++) {
+			if (methods [i].type != ccw_method_setter || !methods [i].prop->get)
+				continue;
+			for (j = 0; j < method_count; j++) {
+				if (methods [j].type == ccw_method_getter && methods [j].prop == methods [i].prop) {
+					methods [i].dispid = methods [j].dispid;
+					break;
 				}
 			}
 		}
@@ -2567,6 +2691,8 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		ccw_entry = g_new0 (MonoCCWInterface, 1);
 		ccw_entry->ccw = ccw;
 		ccw_entry->vtable = vtable;
+		ccw_entry->methods = methods;
+		ccw_entry->methods_count = method_count;
 		g_hash_table_insert (ccw->vtable_hash, itf, ccw_entry);
 		g_hash_table_insert (ccw_interface_hash, ccw_entry, ccw);
 	}
@@ -2596,8 +2722,10 @@ cominterop_get_ccw (MonoObject* object_raw, MonoClass* itf)
 static gboolean
 mono_marshal_free_ccw_entry (gpointer key, gpointer value, gpointer user_data)
 {
+	MonoCCWInterface* ccwe = value;
 	g_hash_table_remove (ccw_interface_hash, value);
 	g_assert (value);
+	g_free (ccwe->methods);
 	g_free (value);
 	return TRUE;
 }
@@ -3063,59 +3191,65 @@ cominterop_ccw_get_ids_of_names_impl (MonoCCWInterface* ccwe, gpointer riid,
 				      guint32 lcid, gint32 *rgDispId)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
-	ERROR_DECL (error);
-	MonoCustomAttrInfo *cinfo = NULL;
-	int i,ret = MONO_S_OK;
-	MonoMethod* method;
-	gchar* methodname;
-	MonoClass *klass = NULL;
-	MonoCCW* ccw = ccwe->ccw;
-	MonoObject* object = mono_gchandle_get_target_internal (ccw->gc_handle);
+	int i, j, ret = MONO_S_OK;
+	gchar* req_name;
 
-	/* Handle DispIdAttribute */
-
-	MONO_STATIC_POINTER_INIT (MonoClass, ComDispIdAttribute)
-
-		ComDispIdAttribute = mono_class_load_from_name (mono_defaults.corlib, "System.Runtime.InteropServices", "DispIdAttribute");
-
-	MONO_STATIC_POINTER_INIT_END (MonoClass, ComDispIdAttribute)
-
-	g_assert (object);
-	klass = mono_object_class (object);
+	if (!cNames)
+		return ret;
+	if (!rgszNames || !rgDispId)
+		return MONO_E_INVALIDARG;
 
 	if (!mono_domain_get ())
 		mono_thread_attach_external_native_thread (mono_get_root_domain (), FALSE);
 
-	for (i=0; i < cNames; i++) {
-		methodname = mono_unicode_to_external (rgszNames[i]);
+	req_name = mono_unicode_to_external (rgszNames [0]);
 
-		method = mono_class_get_method_from_name_checked(klass, methodname, -1, 0, error);
-		if (method && is_ok (error)) {
-			cinfo = mono_custom_attrs_from_method_checked (method, error);
-			mono_error_assert_ok (error); /* FIXME what's reasonable to do here */
-			if (cinfo) {
-				MonoObject *result = mono_custom_attrs_get_attr_checked (cinfo, ComDispIdAttribute, error);
-				mono_error_assert_ok (error); /*FIXME proper error handling*/;
+	for (i = ccwe->methods_count; i--;) {
+		MonoMethod* method = NULL;
+		const char* name;
+		if (ccwe->methods [i].type == ccw_method_method) {
+			method = ccwe->methods [i].method;
+			name = method->name;
+		}
+		else
+			name = ccwe->methods [i].prop->name;
 
-				if (result)
-					rgDispId[i] = *(gint32*)mono_object_unbox_internal (result);
-				else
-					rgDispId[i] = (gint32)method->token;
-
-				if (!cinfo->cached)
-					mono_custom_attrs_free (cinfo);
+		if (!g_strcasecmp (req_name, name)) {
+			rgDispId [0] = ccwe->methods [i].dispid;
+			g_free (req_name);
+			if (cNames > 1) {
+				unsigned int argc = method ? mono_method_signature_internal (method)->param_count : 0;
+				const char** arg_names = NULL;
+				if (argc) {
+					arg_names = (const char**)g_try_malloc (argc * sizeof (*arg_names));
+					if (!arg_names)
+						return MONO_E_OUTOFMEMORY;
+					mono_method_get_param_names (method, arg_names);
+				}
+				for (i = 1; i < cNames; i++) {
+					req_name = mono_unicode_to_external (rgszNames [i]);
+					for (j = 0; j < argc; j++) {
+						if (!g_strcasecmp (req_name, arg_names [j])) {
+							rgDispId [i] = j;
+							break;
+						}
+					}
+					if (j >= argc) {
+						rgDispId [i] = MONO_E_DISPID_UNKNOWN;
+						ret = MONO_E_DISP_E_UNKNOWNNAME;
+					}
+					g_free (req_name);
+				}
+				g_free (arg_names);
 			}
-			else
-				rgDispId[i] = (gint32)method->token;
-		} else {
-			mono_error_cleanup (error);
-			error_init (error); /* reuse for next iteration */
-			rgDispId[i] = MONO_E_DISPID_UNKNOWN;
-			ret = MONO_E_DISP_E_UNKNOWNNAME;
+			return ret;
 		}
 	}
 
-	return ret;
+	g_free (req_name);
+	for (i = 0; i < cNames; i++)
+		rgDispId[i] = MONO_E_DISPID_UNKNOWN;
+	return MONO_E_DISP_E_UNKNOWNNAME;
 }
 
 static int STDCALL 
