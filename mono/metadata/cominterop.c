@@ -173,8 +173,6 @@ GENERATE_GET_CLASS_WITH_CACHE (iunknown,      "Mono.Interop", "IUnknown")
 
 GENERATE_GET_CLASS_WITH_CACHE (com_object, "System", "__ComObject")
 GENERATE_GET_CLASS_WITH_CACHE (variant,    "System", "Variant")
-static GENERATE_GET_CLASS_WITH_CACHE (date_time, "System", "DateTime");
-static GENERATE_GET_CLASS_WITH_CACHE (decimal, "System", "Decimal");
 
 static GENERATE_GET_CLASS_WITH_CACHE (interface_type_attribute, "System.Runtime.InteropServices", "InterfaceTypeAttribute")
 static GENERATE_GET_CLASS_WITH_CACHE (com_visible_attribute, "System.Runtime.InteropServices", "ComVisibleAttribute")
@@ -4525,12 +4523,6 @@ mono_marshal_safearray_get_value (gpointer safearray, gpointer indices)
 	return result;
 }
 
-static int
-mono_marshal_safearray_get_value_internal (gpointer safearray, gpointer indices, gpointer* result)
-{
-	return mono_marshal_win_safearray_get_value (safearray, indices, result);
-}
-
 #else /* HOST_WIN32 */
 
 static gpointer
@@ -4550,15 +4542,6 @@ mono_marshal_safearray_get_value (gpointer safearray, gpointer indices)
 		g_assert_not_reached ();
 	}
 	return result;
-}
-
-static int
-mono_marshal_safearray_get_value_internal (gpointer safearray, gpointer indices, gpointer* result)
-{
-	if (com_provider == MONO_COM_MS && init_com_provider_ms ())
-		return safe_array_ptr_of_index_ms (safearray, (glong *)indices, result);
-
-	g_assert_not_reached ();
 }
 #endif /* HOST_WIN32 */
 
@@ -4644,14 +4627,14 @@ mono_marshal_safearray_end (gpointer safearray, gpointer indices)
 #ifdef HOST_WIN32
 #if HAVE_API_SUPPORT_WIN32_SAFE_ARRAY
 static gboolean
-mono_marshal_win_safearray_create_internal (guint32 vt, UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
+mono_marshal_win_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
 {
-	*newsafearray = SafeArrayCreate (vt, cDims, rgsabound);
+	*newsafearray = SafeArrayCreate (VT_VARIANT, cDims, rgsabound);
 	return TRUE;
 }
 #elif !HAVE_EXTERN_DEFINED_WIN32_SAFE_ARRAY
 static gboolean
-mono_marshal_win_safearray_create_internal (guint32 vt, UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
+mono_marshal_win_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
 {
 	g_unsupported_api ("SafeArrayCreate");
 	SetLastError (ERROR_NOT_SUPPORTED);
@@ -4661,15 +4644,15 @@ mono_marshal_win_safearray_create_internal (guint32 vt, UINT cDims, SAFEARRAYBOU
 #endif /* HAVE_API_SUPPORT_WIN32_SAFE_ARRAY */
 
 static gboolean
-mono_marshal_safearray_create_internal_impl (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
+mono_marshal_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
 {
-	return mono_marshal_win_safearray_create_internal (VT_VARIANT, cDims, rgsabound, newsafearray);
+	return mono_marshal_win_safearray_create_internal (cDims, rgsabound, newsafearray);
 }
 
 #else /* HOST_WIN32 */
 
 static gboolean
-mono_marshal_safearray_create_internal_impl (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
+mono_marshal_safearray_create_internal (UINT cDims, SAFEARRAYBOUND *rgsabound, gpointer *newsafearray)
 {
 	*newsafearray = safe_array_create_ms (VT_VARIANT, cDims, rgsabound);
 	return TRUE;
@@ -4709,23 +4692,7 @@ mono_marshal_safearray_create (MonoArray *input, gpointer *newsafearray, gpointe
 		bounds [0].lLbound = 0;
 	}
 
-	return mono_marshal_safearray_create_internal_impl (dim, bounds, newsafearray);
-}
-
-static gpointer
-mono_marshal_safearray_create_internal (guint32 vt, guint32 cDims, SAFEARRAYBOUND* rgsabound)
-{
-#ifdef HOST_WIN32
-	gpointer safearray;
-	mono_marshal_win_safearray_create_internal (vt, cDims, rgsabound, &safearray);
-	return safearray;
-#else
-	if (com_provider == MONO_COM_MS && init_com_provider_ms ())
-		return safe_array_create_ms (vt, cDims, rgsabound);
-
-	g_warning ("Unable to create SafeArray (SafeArrayCreate not available).\n");
-	return NULL;
-#endif
+	return mono_marshal_safearray_create_internal (dim, bounds, newsafearray);
 }
 
 /* This is an icall */
@@ -4774,251 +4741,6 @@ static
 void mono_marshal_safearray_free_indices (gpointer indices)
 {
 	g_free (indices);
-}
-
-void
-ves_icall_System_Variant_SafeArrayDestroyInternal (gpointer safearray, MonoError *error)
-{
-	mono_marshal_safearray_end (safearray, NULL);
-}
-
-gpointer
-ves_icall_System_Variant_SafeArrayFromArrayInternal (MonoArrayHandle rarray, gint32 *ref_vt, MonoError *error)
-{
-	MonoClass* eclass = m_class_get_element_class (mono_handle_class (rarray));
-	MonoArray* array = MONO_HANDLE_RAW (rarray);
-	guint32 vt = VT_UNKNOWN;
-	SAFEARRAYBOUND* bnd;
-	gpointer val;
-	glong* idx;
-
-	if (eclass == mono_defaults.sbyte_class)
-		vt = VT_I1;
-	else if (eclass == mono_defaults.byte_class)
-		vt = VT_UI1;
-	else if (eclass == mono_defaults.int16_class)
-		vt = VT_I2;
-	else if (eclass == mono_defaults.uint16_class)
-		vt = VT_UI2;
-	else if (eclass == mono_defaults.int32_class)
-		vt = VT_I4;
-	else if (eclass == mono_defaults.uint32_class)
-		vt = VT_UI4;
-	else if (eclass == mono_defaults.int64_class)
-		vt = VT_I8;
-	else if (eclass == mono_defaults.uint64_class)
-		vt = VT_UI8;
-	else if (eclass == mono_defaults.single_class)
-		vt = VT_R4;
-	else if (eclass == mono_defaults.double_class)
-		vt = VT_R8;
-	else if (eclass == mono_defaults.boolean_class)
-		vt = VT_BOOL;
-	else if (eclass == mono_defaults.string_class)
-		vt = VT_BSTR;
-	else if (eclass == mono_defaults.object_class)
-		vt = VT_VARIANT;
-	else if (eclass == mono_class_get_date_time_class ())
-		vt = VT_DATE;
-	else if (eclass == mono_class_get_decimal_class ())
-		vt = VT_DECIMAL;
-	else if (m_class_get_image (eclass) == mono_defaults.corlib &&
-	         !strcmp (m_class_get_name_space (eclass), "System.Runtime.InteropServices")) {
-		const char* name = m_class_get_name (eclass);
-		if (!strcmp (name, "BStrWrapper"))
-			vt = VT_BSTR;
-		else if (!strcmp (name, "CurrencyWrapper"))
-			vt = VT_CY;
-		else if (!strcmp (name, "ErrorWrapper"))
-			vt = VT_ERROR;
-		else if (!strcmp (name, "DispatchWrapper"))
-			vt = VT_DISPATCH;
-	}
-	else if (!mono_class_is_transparent_proxy (eclass) && cominterop_can_support_dispatch (eclass))
-		vt = VT_DISPATCH;
-
-	guint32 i, d, dim = m_class_get_rank (mono_object_class (array));
-	bnd = g_malloc (dim * (sizeof (*bnd) + sizeof (*idx)));
-	idx = (glong*)(bnd + dim);
-
-	/* initialize the indices with lower bounds */
-	if (dim > 1) {
-		for (d = 0; d < dim; d++) {
-			bnd [d].lLbound = idx [d] = array->bounds [d].lower_bound;
-			bnd [d].cElements = array->bounds [d].length;
-		}
-	}
-	else {
-		bnd [0].lLbound = idx [0] = 0;
-		bnd [0].cElements = mono_array_length_internal (array);
-	}
-
-	gpointer safearray = mono_marshal_safearray_create_internal (vt, dim, bnd);
-	if (!safearray) {
-		mono_error_set_error (error, MONO_ERROR_GENERIC, "Failed to create SafeArray");
-		goto leave;
-	}
-	if (!bnd [0].cElements)
-		goto leave;
-
-	MONO_STATIC_POINTER_INIT (MonoMethod, get_value)
-
-		ERROR_DECL (error);
-		get_value = mono_class_get_method_from_name_checked (mono_defaults.array_class, "GetValueImpl", 1, 0, error);
-		mono_error_assert_ok (error);
-
-	MONO_STATIC_POINTER_INIT_END (MonoMethod, get_value)
-
-	MONO_STATIC_POINTER_INIT (MonoMethod, set_value_at)
-
-		ERROR_DECL (error);
-		set_value_at = mono_class_get_method_from_name_checked (mono_class_get_variant_class (), "SetValueAt", 3, METHOD_ATTRIBUTE_STATIC, error);
-		mono_error_assert_ok (error);
-
-	MONO_STATIC_POINTER_INIT_END (MonoMethod, set_value_at)
-
-	for (i = 0, d = 0; d < dim; i++) {
-		if (mono_marshal_safearray_get_value_internal (safearray, idx, &val) >= 0) {
-			gpointer arg [1] = { &i };
-			MonoObject* obj = mono_runtime_invoke_checked (get_value, (MonoObject*)array, arg, error);
-			if (mono_error_set_pending_exception (error)) {
-				ves_icall_System_Variant_SafeArrayDestroyInternal (safearray, error);
-				safearray = NULL;
-				goto leave;
-			}
-
-			gpointer args [3] = { obj, &vt, &val };
-			mono_runtime_invoke_checked (set_value_at, NULL, args, error);
-			if (mono_error_set_pending_exception (error)) {
-				ves_icall_System_Variant_SafeArrayDestroyInternal (safearray, error);
-				safearray = NULL;
-				goto leave;
-			}
-		}
-
-		/* advance to next element */
-		for (d = dim; d--;) {
-			if (idx [d] < bnd [d].lLbound + bnd [d].cElements - 1) {
-				idx [d]++;
-				break;
-			}
-			idx [d] = bnd [d].lLbound;
-		}
-	}
-leave:
-	*ref_vt = vt;
-	g_free (bnd);
-	return safearray;
-}
-
-MonoArrayHandle
-ves_icall_System_Variant_SafeArrayToArrayInternal (gpointer safearray, gint32 vt, MonoError *error)
-{
-	MonoArray* array = NULL;
-	MonoClass* klass;
-	uintptr_t* sizes;
-	intptr_t* bounds;
-	gpointer val;
-	glong* idx;
-
-	switch (vt) {
-	case VT_I1: klass = mono_defaults.sbyte_class; break;
-	case VT_UI1: klass = mono_defaults.byte_class; break;
-	case VT_I2: klass = mono_defaults.int16_class; break;
-	case VT_UI2: klass = mono_defaults.uint16_class; break;
-	case VT_ERROR:
-	case VT_INT:
-	case VT_I4: klass = mono_defaults.int32_class; break;
-	case VT_UINT:
-	case VT_UI4: klass = mono_defaults.uint32_class; break;
-	case VT_I8: klass = mono_defaults.int64_class; break;
-	case VT_UI8: klass = mono_defaults.uint64_class; break;
-	case VT_R4: klass = mono_defaults.single_class; break;
-	case VT_R8: klass = mono_defaults.double_class; break;
-	case VT_BOOL: klass = mono_defaults.boolean_class; break;
-	case VT_BSTR: klass = mono_defaults.string_class; break;
-	case VT_CY:
-	case VT_DECIMAL: klass = mono_class_get_decimal_class (); break;
-	case VT_DATE: klass = mono_class_get_date_time_class (); break;
-	case VT_DISPATCH:
-	case VT_UNKNOWN:
-	case VT_VARIANT: klass = mono_defaults.object_class; break;
-	default:
-		mono_error_set_argument (error, "vt", "Unsupported SafeArray element type");
-		return NULL_HANDLE_ARRAY;
-	}
-	guint32 i, d, dim = mono_marshal_safearray_get_dim (safearray);
-
-	sizes = g_malloc (dim * (sizeof (*sizes) + sizeof (*bounds) + sizeof (*idx)));
-	bounds = (intptr_t*)(sizes + dim);
-	idx = (glong*)(bounds + dim);
-
-	/* initialize the indices with lower bounds */
-	gboolean bounded = FALSE;
-	for (d = 0; d < dim; d++) {
-		glong lbnd, ubnd;
-		if (mono_marshal_safe_array_get_lbound (safearray, d + 1, &lbnd) < 0 ||
-		    mono_marshal_safe_array_get_ubound (safearray, d + 1, &ubnd) < 0) {
-			mono_error_set_error (error, MONO_ERROR_GENERIC, "Failed to get SafeArray bounds for dimension %u", d);
-			goto leave;
-		}
-		if (ubnd < lbnd) {
-			if (d != 0 || dim != 1 || ubnd != lbnd - 1) {
-				mono_error_set_error (error, MONO_ERROR_GENERIC, "Invalid SafeArray bounds for dimension %u", d);
-				goto leave;
-			}
-		}
-		if (lbnd)
-			bounded = TRUE;
-		idx [d] = lbnd;
-		sizes [d] = ubnd - lbnd + 1;
-		bounds [d] = lbnd;
-	}
-
-	klass = mono_class_create_bounded_array (klass, dim, bounded);
-	array = mono_array_new_full_checked (mono_domain_get (), klass, sizes, bounds, error);
-	if (mono_error_set_pending_exception (error))
-		goto leave;
-	if (!sizes [0])
-		goto leave;
-
-	MonoMethod* set_value = mono_get_Array_SetValueImpl ();
-
-	MONO_STATIC_POINTER_INIT (MonoMethod, get_value_at)
-
-		ERROR_DECL (error);
-		get_value_at = mono_class_get_method_from_name_checked (mono_class_get_variant_class (), "GetValueAt", 2, METHOD_ATTRIBUTE_STATIC, error);
-		mono_error_assert_ok (error);
-
-	MONO_STATIC_POINTER_INIT_END (MonoMethod, get_value_at)
-
-	for (i = 0, d = 0; d < dim; i++) {
-		MonoObject* obj = NULL;
-		if (mono_marshal_safearray_get_value_internal (safearray, idx, &val) >= 0) {
-			gpointer args [2] = { &vt, &val };
-			obj = mono_runtime_invoke_checked (get_value_at, NULL, args, error);
-			if (mono_error_set_pending_exception (error))
-				goto leave;
-		}
-
-		gpointer args [2] = { obj, &i };
-		obj = mono_runtime_invoke_checked (set_value, (MonoObject*)array, args, error);
-		if (mono_error_set_pending_exception (error))
-			goto leave;
-
-		/* advance to next element */
-		for (d = dim; d--;) {
-			if (idx [d] < bounds [d] + sizes [d] - 1) {
-				idx [d]++;
-				break;
-			}
-			idx [d] = bounds [d];
-		}
-	}
-
-leave:
-	g_free (sizes);
-	return MONO_HANDLE_NEW (MonoArray, array);
 }
 
 #else /* DISABLE_COM */

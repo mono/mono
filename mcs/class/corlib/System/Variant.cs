@@ -27,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System
@@ -201,12 +200,6 @@ namespace System
 				break;
 #endif
 			default:
-				if (((VarEnum)vt & VarEnum.VT_ARRAY) != 0)
-				{
-					int tmp;
-					*((IntPtr*)addr) = SafeArrayFromArrayInternal((Array)obj, out tmp);
-					break;
-				}
 				throw new NotImplementedException(string.Format("Variant.SetValueAt couldn't handle VT {0}", vt));
 			}
 		}
@@ -321,12 +314,6 @@ namespace System
 				pdispVal = Marshal.GetIDispatchForObject(((DispatchWrapper)obj).WrappedObject);
 			}
 #endif
-			else if (t.UnderlyingSystemType.IsArray)
-			{
-				int tmp;
-				pdispVal = SafeArrayFromArrayInternal((Array)obj, out tmp);
-				vt = (short)(tmp | (int)VarEnum.VT_ARRAY);
-			}
 			else
 			{
 #if !FEATURE_COMINTEROP
@@ -428,18 +415,6 @@ namespace System
 				break;
 			}
 #endif
-			case VarEnum.VT_VARIANT:
-			{
-				Variant v = *((Variant*)addr);
-				obj = v.GetValue();
-				break;
-			}
-			default:
-				if (((VarEnum)vt & VarEnum.VT_ARRAY) != 0)
-				{
-					obj = SafeArrayToArrayInternal(*((IntPtr*)addr), vt & ~(short)VarEnum.VT_ARRAY);
-				}
-				break;
 			}
 			return obj;
 		}
@@ -514,10 +489,6 @@ namespace System
 				{
 					obj = GetValueAt(vt & ~(short)VarEnum.VT_BYREF, pdispVal);
 				}
-				else if (((VarEnum)vt & VarEnum.VT_ARRAY) != 0)
-				{
-					obj = SafeArrayToArrayInternal(pdispVal, vt & ~(short)VarEnum.VT_ARRAY);
-				}
 				break;
 			}
 			return obj;
@@ -533,23 +504,8 @@ namespace System
 				if (pdispVal != IntPtr.Zero)
 					Marshal.Release (pdispVal);
 			}
-			else if (((VarEnum)vt & VarEnum.VT_ARRAY) != 0) {
-				SafeArrayDestroyInternal (pdispVal);
-			}
 #endif
-			vt = (short)VarEnum.VT_EMPTY;
 		}
-
-#if !DISABLE_COM
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static void SafeArrayDestroyInternal (IntPtr safearray);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static IntPtr SafeArrayFromArrayInternal (Array array, out int vt);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static Array SafeArrayToArrayInternal (IntPtr safearray, int vt);
-#endif
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

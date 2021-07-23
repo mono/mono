@@ -5296,28 +5296,6 @@ mono_test_marshal_safearray_out_4dim_vt_i4 (SAFEARRAY** safearray)
 	return hr;
 }
 
-LIBTEST_API int STDCALL
-mono_test_marshal_safearray_variant_out_4dim_vt_i4 (VARIANT** var)
-{
-	*var = marshal_alloc (sizeof (VARIANT));
-
-	HRESULT hr = mono_test_marshal_safearray_out_4dim_vt_i4 (&(*var)->parray);
-	if (hr != S_OK)
-	{
-		marshal_free (*var);
-		return hr;
-	}
-	(*var)->vt = VT_ARRAY | VT_VARIANT;
-	return hr;
-}
-
-LIBTEST_API void STDCALL
-mono_test_marshal_safearray_variant_clear (VARIANT* var)
-{
-	VariantClear (var);
-	marshal_free (var);
-}
-
 LIBTEST_API int STDCALL 
 mono_test_marshal_safearray_in_byval_1dim_empty (SAFEARRAY* safearray)
 {
