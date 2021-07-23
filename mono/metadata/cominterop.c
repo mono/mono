@@ -1810,34 +1810,6 @@ typedef struct {
 #define DISPATCH_PROPERTYPUTREF 8
 #endif
 
-typedef struct
-{
-	const struct _MonoIRecordInfoVTable *vtable;
-} MonoIRecordInfo;
-
-typedef struct _MonoIRecordInfoVTable
-{
-	int (STDCALL *QueryInterface)(MonoIRecordInfo* pRecInfo, gconstpointer riid, gpointer* ppv);
-	int (STDCALL *AddRef)(MonoIRecordInfo* pRecInfo);
-	int (STDCALL *Release)(MonoIRecordInfo* pRecInfo);
-	int (STDCALL *RecordInit)(MonoIRecordInfo* pRecInfo, gpointer rec);
-	int (STDCALL *RecordClear)(MonoIRecordInfo* pRecInfo, gpointer rec);
-	int (STDCALL *RecordCopy)(MonoIRecordInfo* pRecInfo, gpointer rec, gpointer dest);
-	int (STDCALL *GetGuid)(MonoIRecordInfo* pRecInfo, guint8* guid);
-	int (STDCALL *GetName)(MonoIRecordInfo* pRecInfo, gunichar2** name);
-	int (STDCALL *GetSize)(MonoIRecordInfo* pRecInfo, guint32* size);
-	int (STDCALL *GetTypeInfo)(MonoIRecordInfo* pRecInfo, gpointer ppTypeInfo);
-	int (STDCALL *GetField)(MonoIRecordInfo* pRecInfo, gpointer data, gunichar2* name, VARIANT* var);
-	int (STDCALL *GetFieldNoCopy)(MonoIRecordInfo* pRecInfo, gpointer data, gunichar2* name, VARIANT* var, gpointer* ppvDataCArray);
-	int (STDCALL *PutField)(MonoIRecordInfo* pRecInfo, guint32 flags, gpointer data, gunichar2* name, VARIANT* var);
-	int (STDCALL *PutFieldNoCopy)(MonoIRecordInfo* pRecInfo, guint32 flags, gpointer data, gunichar2* name, VARIANT* var);
-	int (STDCALL *GetFieldNames)(MonoIRecordInfo* pRecInfo, guint32* num_names, gunichar2** names);
-	int (STDCALL *IsMatchingType)(MonoIRecordInfo* pRecInfo, MonoIRecordInfo* pRecInfo2);
-	gpointer (STDCALL *RecordCreate)(MonoIRecordInfo* pRecInfo);
-	int (STDCALL *RecordCreateCopy)(MonoIRecordInfo* pRecInfo, gpointer source, gpointer* dest);
-	int (STDCALL *RecordDestroy)(MonoIRecordInfo* pRecInfo, gpointer rec);
-} MonoIRecordInfoVTable;
-
 int
 ves_icall_System_Runtime_InteropServices_Marshal_AddRefInternal (MonoIUnknown *pUnk)
 {
@@ -3583,44 +3555,6 @@ cominterop_ccw_invoke_impl (MonoCCWInterface* ccwe, gint32 dispIdMember, gpointe
 	if (argmap != argmap_stack_buf)
 		g_free (argmap);
 	return ret;
-}
-
-MonoBoolean
-ves_icall_System_Runtime_InteropServices_Marshal_RecordCheckGuidInternal (gpointer recinfo, MonoReflectionTypeHandle rtype, MonoError *error)
-{
-#ifndef DISABLE_COM
-	MonoClass *klass = mono_class_from_mono_type_internal (MONO_HANDLE_GETVAL (rtype, type));
-	if (!mono_class_init_checked (klass, error))
-		return FALSE;
-	guint8 guid [16];
-	MonoIRecordInfo *rec = (MonoIRecordInfo*)recinfo;
-	return rec && rec->vtable->GetGuid (rec, guid) >= 0 && cominterop_class_guid_equal (guid, klass);
-#else
-	g_assert_not_reached ();
-#endif
-}
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_RecordClearInternal (gpointer recinfo, gpointer recdata, MonoError *error)
-{
-#ifndef DISABLE_COM
-	MonoIRecordInfo *rec = (MonoIRecordInfo*)recinfo;
-	if (recdata)
-		rec->vtable->RecordClear (rec, recdata);
-#else
-	g_assert_not_reached ();
-#endif
-}
-
-gpointer
-ves_icall_System_Runtime_InteropServices_Marshal_RecordCreateInternal (gpointer recinfo, MonoError *error)
-{
-#ifndef DISABLE_COM
-	MonoIRecordInfo *rec = (MonoIRecordInfo*)recinfo;
-	return rec->vtable->RecordCreate (rec);
-#else
-	g_assert_not_reached ();
-#endif
 }
 
 #ifndef HOST_WIN32

@@ -512,8 +512,8 @@ namespace System
 	internal unsafe struct BRECORD
 	{
         #pragma warning disable 169
-		public IntPtr pvRecord;
-		public IntPtr pRecInfo;
+		IntPtr pvRecord;
+		IntPtr pRecInfo;
         #pragma warning restore 169
 	}
 }
