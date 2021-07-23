@@ -290,9 +290,6 @@ public class Tests
 	public static extern int mono_test_cominterop_ccw_queryinterface ([MarshalAs (UnmanagedType.Interface)] IOtherTest itest);
 
 	[DllImport("libtest")]
-	public static extern int mono_test_cominterop_ccw_get_ids_of_names ([MarshalAs (UnmanagedType.Interface)] IOtherTest itest);
-
-	[DllImport("libtest")]
 	public static extern int mono_test_cominterop_ccw_queryinterface_foreign_thread ([MarshalAs (UnmanagedType.Interface)] ITest itest);
 
 	[DllImport ("libtest")]
@@ -695,9 +692,6 @@ public class Tests
 
 			if (mono_test_marshal_point_class_ccw_itest (test) != 0)
 				return 209;
-
-			if (mono_test_cominterop_ccw_get_ids_of_names (otherTest) != 0)
-				return 210;
 
 			#endregion // COM Callable Wrapper Tests
 
@@ -1608,108 +1602,10 @@ public class Tests
 	[ComVisible (true)]
 	public interface IOtherTest
 	{
-		// properties need to go first since mcs puts them there
-		byte prop { get; set; }
-		ref int propref { get; }
-
-		void method (short sh, ref string str, int i);
-		void boolrefs ([MarshalAs (UnmanagedType.I1)] ref bool bool1, [MarshalAs (UnmanagedType.VariantBool)] ref bool bool2, [MarshalAs (UnmanagedType.Bool)] ref bool bool3);
-		int ifaceref ([MarshalAs (UnmanagedType.Interface)] ref object obj);
-		void variantref ([MarshalAs (UnmanagedType.Struct)] ref object obj);
-		bool valuetype (StructWith3Ints val);
-		void valuetyperef ([In, Out] ref StructWith3Ints val);
-		[return: MarshalAs (UnmanagedType.LPStr)]
-		string lpstrref ([MarshalAs (UnmanagedType.LPStr)] ref string str);
-		[return: MarshalAs (UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)]
-		string[] lparrayref ([MarshalAs (UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeConst=2)] ref string[] array);
-		[PreserveSig ()]
-		int pressig (short x, out uint y);
 	}
 
 	public class OtherTest: IOtherTest
 	{
-		public int x;
-
-		public void method (short sh, ref string str, int i)
-		{
-			if (sh == -10 && i == 42 && str == "original")
-				str = "replaced";
-			if (str == "throw")
-				throw new ArgumentException ("test exception", "str");
-		}
-
-		public void boolrefs ([MarshalAs (UnmanagedType.I1)] ref bool bool1, [MarshalAs (UnmanagedType.VariantBool)] ref bool bool2, [MarshalAs (UnmanagedType.Bool)] ref bool bool3)
-		{
-			bool1 = !bool1;
-			bool2 = !bool2;
-			bool3 = !bool3;
-		}
-
-		public int ifaceref ([MarshalAs (UnmanagedType.Interface)] ref object obj)
-		{
-			if (null == obj)
-				throw new ArgumentNullException ("obj");
-			if (!(obj is ITest))
-				throw new ArgumentException ("Not ITest", "obj");
-			obj = new OtherTest ();
-			return -13;
-		}
-
-		public void variantref ([MarshalAs (UnmanagedType.Struct)] ref object obj)
-		{
-			if (null == obj)
-				throw new ArgumentNullException ("obj");
-			if (obj is string && ((string)obj) == "test string")
-				obj = (ushort)50;
-			else if (obj is int && ((int)obj) == 42)
-				obj = (float)1.0;
-			else
-				throw new ArgumentException ("Bad variant", "obj");
-		}
-
-		public bool valuetype (StructWith3Ints val)
-		{
-			val.z++;
-			return val.x == 7 && val.y == 11 && val.z == 13;
-		}
-
-		public void valuetyperef ([In, Out] ref StructWith3Ints val)
-		{
-			val.x += 3;
-			val.y -= 10;
-			val.z *= 2;
-		}
-
-		[return: MarshalAs (UnmanagedType.LPStr)]
-		public string lpstrref ([MarshalAs (UnmanagedType.LPStr)] ref string str)
-		{
-			str = String.Concat (str, ".");
-			return String.Concat ("> ", str);
-		}
-
-		[return: MarshalAs (UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr)]
-		public string[] lparrayref ([MarshalAs (UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeConst=2)] ref string[] array)
-		{
-			array = new string[] { String.Concat ("@", array[0]), String.Concat ("#", array[1]) };
-			return new string[] { "ret", "val" };
-		}
-
-		[PreserveSig ()]
-		public int pressig (short x, out uint y)
-		{
-			if (x == 1010)
-				throw new ArgumentException ("test exception", "x");
-			y = 99;
-			return -1010;
-		}
-
-		public byte prop
-		{
-			get { return (byte)x; }
-			set { x = (int)value; }
-		}
-
-		public ref int propref => ref x;
 	}
 
 	public static int mono_test_marshal_variant_in_callback (VarEnum vt, object obj)
@@ -2032,12 +1928,6 @@ public struct StructWithBstr
 {
 	[MarshalAs (UnmanagedType.BStr)]
 	public string data;
-}
-
-[Guid ("deadbeef-0000-0000-0000-000000000007")]
-public struct StructWith3Ints
-{
-	public int x, y, z;
 }
 
 [StructLayout(LayoutKind.Sequential)]

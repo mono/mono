@@ -3553,7 +3553,6 @@ struct MonoDefItfObject
 };
 
 static GUID IID_ITest = {0, 0, 0, {0,0,0,0,0,0,0,1}};
-static GUID IID_IMonoNULL = {0, 0, 0, {0,0,0,0,0,0,0,0}};
 static GUID IID_IMonoUnknown = {0, 0, 0, {0xc0,0,0,0,0,0,0,0x46}};
 static GUID IID_IMonoDispatch = {0x00020400, 0, 0, {0xc0,0,0,0,0,0,0,0x46}};
 static GUID IID_INotImplemented = {0x12345678, 0, 0, {0x9a, 0xbc, 0xde, 0xf0, 0, 0, 0, 0}};
@@ -8199,42 +8198,6 @@ mono_test_cominterop_ccw_queryinterface (MonoComObject *pUnk)
 
 	// Return true if we can't get INotImplemented
 	return pUnk == NULL && hr == S_OK;
-}
-
-LIBTEST_API int STDCALL
-mono_test_cominterop_ccw_get_ids_of_names (IDispatch *pDisp)
-{
-	static const gunichar2 Invoke[] = { 'I','n','v','o','k','e',0 };
-	static const gunichar2 method[] = { 'm','e','T','H','o','d',0 };
-	static const gunichar2 boolrefs[] = { 'b','o','o','l','R','e','F','S',0 };
-	static const gunichar2 ifaceref[] = { 'i','F','a','C','e','R','e','f',0 };
-	static const gunichar2 variantref[] = { 'V','A','r','i','a','N','T','r','E','f',0 };
-	static const gunichar2 valuetype[] = { 'v','a','L','U','e','t','Y','p','E',0 };
-	static const gunichar2 valuetyperef[] = { 'v','a','l','u','e','t','y','p','e','R','e','f',0 };
-	static const gunichar2 pressig[] = { 'P','r','e','s','S','i','g',0 };
-	static const gunichar2 prop[] = { 'p','R','o','p',0 };
-	static const gunichar2 propref[] = { 'p','r','o','P','r','E','f',0 };
-	static const gunichar2 arg_str[] = { 's','T','r',0 };
-	static const gunichar2 arg_sh[] = { 'S','H',0 };
-	static const gunichar2* const names[] = { method, boolrefs, ifaceref, variantref, valuetype, valuetyperef, pressig, prop, propref };
-	static const gunichar2* const method_names[] = { method, arg_str, arg_sh };
-	static const gunichar2* const invalid[] = { Invoke };
-	gint32 dispid[3];
-	int i;
-
-	for (i = 0; i < sizeof (names) / sizeof (names[0]); i++) {
-		if (pDisp->lpVtbl->GetIDsOfNames (pDisp, &IID_IMonoNULL, (void*)(names + i), 1, 0x00000800, (void*)dispid) != S_OK)
-			return 1;
-		if (dispid[0] <= 0)
-			return 2;
-	}
-	if (pDisp->lpVtbl->GetIDsOfNames (pDisp, &IID_IMonoNULL, (void*)method_names, 3, 0x00000800, (void*)dispid) != S_OK)
-		return 3;
-	if (dispid[0] <= 0 || dispid[1] != 1 || dispid[2] != 0)
-		return 4;
-	if (pDisp->lpVtbl->GetIDsOfNames (pDisp, &IID_IMonoNULL, (void*)invalid, 1, 0x00000800, (void*)dispid) != 0x80020006)
-		return 5;
-	return 0;
 }
 
 typedef struct ccw_qi_shared_data {
