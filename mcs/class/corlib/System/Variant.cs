@@ -94,19 +94,6 @@ namespace System
 		[FieldOffset(8)]
 		public BRECORD bRecord;
 
-		[StructLayout(LayoutKind.Sequential)]
-		internal unsafe struct DECIMAL
-		{
-			public ushort wReserved;
-			public byte scale;
-			public byte sign;
-			public int Hi32;
-			public ulong Lo64;
-		}
-
-		[FieldOffset(0)]
-		public DECIMAL decVal;
-
 		public void SetValue(object obj) {
 			vt = (short)VarEnum.VT_EMPTY;
 			if (obj == null)
@@ -131,7 +118,7 @@ namespace System
 				vt = (short)VarEnum.VT_I2;
 				iVal = (short)obj;
 			}
-			else if (t == typeof(ushort) || t == typeof(char))
+			else if (t == typeof(ushort))
 			{
 				vt = (short)VarEnum.VT_UI2;
 				uiVal = (ushort)obj;
@@ -180,30 +167,6 @@ namespace System
 			{
 				vt = (short)VarEnum.VT_BSTR;
 				bstrVal = Marshal.StringToBSTR(((BStrWrapper)obj).WrappedObject);
-			}
-			else if (t == typeof (CurrencyWrapper))
-			{
-				vt = (short)VarEnum.VT_CY;
-				llVal = Decimal.ToOACurrency(((CurrencyWrapper)obj).WrappedObject);
-			}
-			else if (t == typeof (DateTime))
-			{
-				vt = (short)VarEnum.VT_DATE;
-				dblVal = ((DateTime)obj).ToOADate();
-			}
-			else if (t == typeof (Decimal))
-			{
-				vt = (short)VarEnum.VT_DECIMAL;
-				int[] parts = Decimal.GetBits((Decimal)obj);
-				decVal.scale = (byte)((parts[3] >> 16) & 0x7F);
-				decVal.sign = (byte)(parts[3] >> 24);
-				decVal.Hi32 = parts[2];
-				decVal.Lo64 = (uint)parts[0] | ((ulong)(uint)parts[1] << 32);
-			}
-			else if (t == typeof (ErrorWrapper))
-			{
-				vt = (short)VarEnum.VT_ERROR;
-				lVal = ((ErrorWrapper)obj).ErrorCode;
 			}
 #if FEATURE_COMINTEROP
 			else if (t == typeof (UnknownWrapper))
@@ -259,12 +222,9 @@ namespace System
 			case VarEnum.VT_UI2:
 				obj = (ushort)Marshal.ReadInt16(addr);
 				break;
-			case VarEnum.VT_ERROR:
-			case VarEnum.VT_INT:
 			case VarEnum.VT_I4:
 				obj = Marshal.ReadInt32(addr);
 				break;
-			case VarEnum.VT_UINT:
 			case VarEnum.VT_UI4:
 				obj = (uint)Marshal.ReadInt32(addr);
 				break;
@@ -284,7 +244,6 @@ namespace System
 				obj = !(Marshal.ReadInt16(addr) == 0);
 				break;
 			case VarEnum.VT_BSTR:
-				obj = Marshal.PtrToStringBSTR(Marshal.ReadIntPtr(addr));
 			{
 				IntPtr ptr = Marshal.ReadIntPtr (addr);
 				if (ptr != IntPtr.Zero)
@@ -293,20 +252,6 @@ namespace System
 					obj = null;
 				break;
 			}
-			case VarEnum.VT_CY:
-				obj = Decimal.FromOACurrency(Marshal.ReadInt64(addr));
-				break;
-			case VarEnum.VT_DATE:
-				obj = DateTime.FromOADate((double)Marshal.PtrToStructure(addr, typeof(double)));
-				break;
-			case VarEnum.VT_DECIMAL:
-			{
-				DECIMAL* dec = (DECIMAL*)addr;
-				obj = new Decimal((int)dec->Lo64, (int)(dec->Lo64 >> 32), dec->Hi32, dec->sign != 0, dec->scale);
-				break;
-			}
-			case VarEnum.VT_RECORD:
-				throw new NotImplementedException("VT_RECORD not implemented");
 // GetObjectForIUnknown is excluded from Marshal using FULL_AOT_RUNTIME
 #if !DISABLE_COM
 			case VarEnum.VT_UNKNOWN:
@@ -338,12 +283,9 @@ namespace System
 			case VarEnum.VT_UI2:
 				obj = uiVal;
 				break;
-			case VarEnum.VT_ERROR:
-			case VarEnum.VT_INT:
 			case VarEnum.VT_I4:
 				obj = lVal;
 				break;
-			case VarEnum.VT_UINT:
 			case VarEnum.VT_UI4:
 				obj = ulVal;
 				break;
@@ -368,17 +310,6 @@ namespace System
 				else
 					obj = null;
 				break;
-			case VarEnum.VT_CY:
-				obj = Decimal.FromOACurrency(llVal);
-				break;
-			case VarEnum.VT_DATE:
-				obj = DateTime.FromOADate(dblVal);
-				break;
-			case VarEnum.VT_DECIMAL:
-				obj = new Decimal((int)decVal.Lo64, (int)(decVal.Lo64 >> 32), decVal.Hi32, decVal.sign != 0, decVal.scale);
-				break;
-			case VarEnum.VT_RECORD:
-				throw new NotImplementedException("VT_RECORD not implemented");
 #if FEATURE_COMINTEROP
 			case VarEnum.VT_UNKNOWN:
 			case VarEnum.VT_DISPATCH:
