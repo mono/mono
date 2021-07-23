@@ -2114,55 +2114,6 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr RecordCreateInternal(IntPtr recinfo);
 
-		private static Array GetWrapperArray(Array array, VarEnum vt)
-		{
-			switch (vt)
-			{
-			case VarEnum.VT_CY:
-			case VarEnum.VT_ERROR:
-			case VarEnum.VT_DISPATCH:
-			case VarEnum.VT_UNKNOWN:
-				break;
-			default:
-				return array;
-			}
-
-			int i, rank = array.Rank;
-			int[] lengths = new int[rank];
-			int[] bounds = new int[rank];
-			for (i = 0; i < rank; i++)
-			{
-				lengths[i] = array.GetLength(i);
-				bounds[i] = array.GetLowerBound(i);
-			}
-			i = 0;
-			Array conv = array;
-			switch (vt)
-			{
-			case VarEnum.VT_CY:
-				conv = Array.CreateInstance(typeof (CurrencyWrapper), lengths, bounds);
-				foreach (object o in array)
-					conv.SetValueImpl(new CurrencyWrapper(o), i++);
-				break;
-			case VarEnum.VT_ERROR:
-				conv = Array.CreateInstance(typeof (ErrorWrapper), lengths, bounds);
-				foreach (object o in array)
-					conv.SetValueImpl(new ErrorWrapper(o), i++);
-				break;
-			case VarEnum.VT_DISPATCH:
-				conv = Array.CreateInstance(typeof (DispatchWrapper), lengths, bounds);
-				foreach (object o in array)
-					conv.SetValueImpl(new DispatchWrapper(o), i++);
-				break;
-			case VarEnum.VT_UNKNOWN:
-				conv = Array.CreateInstance(typeof (UnknownWrapper), lengths, bounds);
-				foreach (object o in array)
-					conv.SetValueImpl(new UnknownWrapper(o), i++);
-				break;
-			}
-			return conv;
-		}
-
 		unsafe private static object ConvertInputArgument(ParameterInfo parm, Variant* varg, out bool asVariant)
 		{
 			asVariant = false;
@@ -2205,9 +2156,7 @@ namespace System.Runtime.InteropServices
 				}
 				if (t.IsArray || marshalAs == UnmanagedType.SafeArray || marshalAs == UnmanagedType.LPArray)
 				{
-					if ((vt & (short)VarEnum.VT_ARRAY) == 0)
-						throw new ArgumentException();
-					return GetObjectForNativeVariant((IntPtr)varg);
+					throw new ArgumentException();  // FIXME
 				}
 				if (t == typeof (DBNull))
 				{
@@ -2254,7 +2203,7 @@ namespace System.Runtime.InteropServices
 				}
 			}
 
-			if (vt == (short)VarEnum.VT_RECORD || (vt & (short)VarEnum.VT_ARRAY) != 0)
+			if (vt == (short)VarEnum.VT_RECORD)
 				throw new ArgumentException();
 			arg = GetObjectForNativeVariant((IntPtr)varg);
 			if (!t.IsInstanceOfType(arg))
@@ -2362,23 +2311,7 @@ namespace System.Runtime.InteropServices
 			case VarEnum.VT_DATE: t = typeof (DateTime); goto default;
 			default:
 				if (t is null)
-				{
-					if ((vt & (short)VarEnum.VT_ARRAY) == 0)
-						break;
-					arg = GetWrapperArray((Array)arg, (VarEnum)(vt & ~((short)VarEnum.VT_ARRAY)));
-					v.SetValue(arg);
-					if (vt != v.vt)
-					{
-						v.Clear();
-						break;
-					}
-					IntPtr* arrref = vtbyref ? ((IntPtr*)varg->pdispVal) : &varg->pdispVal;
-					IntPtr array = v.pdispVal;
-					v.pdispVal = *arrref;
-					v.Clear();
-					*arrref = array;
 					break;
-				}
 				if (!t.IsInstanceOfType(arg))
 					arg = Convert.ChangeType(arg, t);
 				if (vtbyref)
@@ -2411,49 +2344,8 @@ namespace System.Runtime.InteropServices
 
 				object res = m.Invoke(obj, args);
 				if (result != IntPtr.Zero)
-				{
-					if (!(res is null) && res.GetType().UnderlyingSystemType.IsArray)
-					{
-						ParameterInfo ret = m.ReturnParameter;
-						MarshalAsAttribute marshalAsAttr = null;
-						UnmanagedType marshalAs = (UnmanagedType)0;
-						object[] attr = ret.GetCustomAttributes(typeof (MarshalAsAttribute), true);
-						if (attr.Length > 0)
-						{
-							marshalAsAttr = (MarshalAsAttribute)attr[0];
-							marshalAs = marshalAsAttr.Value;
-						}
-
-						VarEnum vt = VarEnum.VT_EMPTY;
-						if (marshalAs == UnmanagedType.SafeArray)
-						{
-							vt = marshalAsAttr.SafeArraySubType;
-						}
-						else if (marshalAs == UnmanagedType.LPArray)
-						{
-							switch (marshalAsAttr.ArraySubType)
-							{
-							case UnmanagedType.Currency: vt = VarEnum.VT_CY; break;
-							case UnmanagedType.Error: vt = VarEnum.VT_ERROR; break;
-							case UnmanagedType.IDispatch: vt = VarEnum.VT_DISPATCH; break;
-							case UnmanagedType.Interface:
-							case UnmanagedType.IUnknown: vt = VarEnum.VT_UNKNOWN; break;
-							}
-						}
-						else if (!ret.ParameterType.UnderlyingSystemType.IsArray)
-						{
-							// System.Array or object marshalled as interface
-							Variant* vres = (Variant*)result;
-							vres->vt = (short)(marshalAs == UnmanagedType.IUnknown ? VarEnum.VT_UNKNOWN : VarEnum.VT_DISPATCH);
-							vres->pdispVal = GetIDispatchForObject(res);
-							goto process_output_args;
-						}
-						res = GetWrapperArray((Array)res, vt);
-					}
 					GetNativeVariantForObject(res, result);
-				}
 
-			process_output_args:
 				// convert byref args back
 				foreach (ParameterInfo parm in parms)
 				{
