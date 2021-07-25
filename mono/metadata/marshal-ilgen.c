@@ -1928,7 +1928,7 @@ gc_safe_transition_builder_add_locals (GCSafeTransitionBuilder *builder)
 	/* local 4, the local to be used when calling the suspend funcs */
 	builder->coop_gc_var = mono_mb_add_local (builder->mb, int_type);
 #ifndef DISABLE_COM
-	if (!builder->func_param && MONO_CLASS_IS_IMPORT (builder->mb->method->klass)) {
+	if (!builder->func_param && mono_cominterop_is_rcw_method (builder->mb->method)) {
 		builder->coop_cominterop_fnptr = mono_mb_add_local (builder->mb, int_type);
 	}
 #endif
@@ -1945,14 +1945,14 @@ gc_safe_transition_builder_emit_enter (GCSafeTransitionBuilder *builder, MonoMet
 
 	// Perform an extra, early lookup of the function address, so any exceptions
 	// potentially resulting from the lookup occur before entering blocking mode.
-	if (!builder->func_param && !MONO_CLASS_IS_IMPORT (builder->mb->method->klass) && aot) {
+	if (!builder->func_param && !mono_cominterop_is_rcw_method (builder->mb->method) && aot) {
 		mono_mb_emit_byte (builder->mb, MONO_CUSTOM_PREFIX);
 		mono_mb_emit_op (builder->mb, CEE_MONO_ICALL_ADDR, method);
 		mono_mb_emit_byte (builder->mb, CEE_POP); // Result not needed yet
 	}
 
 #ifndef DISABLE_COM
-	if (!builder->func_param && MONO_CLASS_IS_IMPORT (builder->mb->method->klass)) {
+	if (!builder->func_param && mono_cominterop_is_rcw_method (builder->mb->method)) {
 		mono_mb_emit_cominterop_get_function_pointer (builder->mb, method);
 		mono_mb_emit_stloc (builder->mb, builder->coop_cominterop_fnptr);
 	}
@@ -2065,7 +2065,7 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 		gc_safe_transition_builder_add_locals (&gc_safe_transition_builder);
 
 #ifdef ENABLE_NETCORE
-	if (!func && !aot && !func_param && !MONO_CLASS_IS_IMPORT (mb->method->klass)) {
+	if (!func && !aot && !func_param && !mono_cominterop_is_rcw_method (mb->method)) {
 		/*
 		 * On netcore, its possible to register pinvoke resolvers at runtime, so
 		 * a pinvoke lookup can fail, and then succeed later. So if the
@@ -2157,7 +2157,7 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 			mono_mb_emit_byte (mb, CEE_MONO_SAVE_LAST_ERROR);
 		}
 		mono_mb_emit_calli (mb, csig);
-	} else if (MONO_CLASS_IS_IMPORT (mb->method->klass)) {
+	} else if (mono_cominterop_is_rcw_method (mb->method)) {
 #ifndef DISABLE_COM
 		mono_mb_emit_ldloc (mb, gc_safe_transition_builder.coop_cominterop_fnptr);
 		if (piinfo->piflags & PINVOKE_ATTRIBUTE_SUPPORTS_LAST_ERROR) {

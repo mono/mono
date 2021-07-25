@@ -149,7 +149,7 @@ namespace Mono.Interop
             if (co == null)
                 throw new NotSupportedException ("Only RCWs are currently supported");
 
-            if ((fromType.Attributes & TypeAttributes.Import) == 0)
+            if ((fromType.Attributes & (TypeAttributes.Import|TypeAttributes.Interface)) == 0)
                 return false;
 
             if (co.GetInterface (fromType, false) == IntPtr.Zero)

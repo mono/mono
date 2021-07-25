@@ -3409,7 +3409,7 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	if ((res = mono_marshal_find_in_cache (cache, method)))
 		return res;
 
-	if (MONO_CLASS_IS_IMPORT (method->klass)) {
+	if (mono_cominterop_is_rcw_method (method)) {
 		/* The COM code is not AOT compatible, it calls mono_custom_attrs_get_attr_checked () */
 		if (aot)
 			return method;

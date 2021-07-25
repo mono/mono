@@ -1130,6 +1130,21 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 	return res;
 }
 
+gboolean
+mono_cominterop_is_rcw_method (MonoMethod *method)
+{
+	if (MONO_CLASS_IS_IMPORT(method->klass))
+		return TRUE;
+	
+	if (MONO_CLASS_IS_INTERFACE_INTERNAL(method->klass) &&
+		((method->iflags & METHOD_IMPL_ATTRIBUTE_CODE_TYPE_MASK) != METHOD_IMPL_ATTRIBUTE_RUNTIME))
+	{
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 /**
  * mono_cominterop_get_native_wrapper:
  * \param method managed method
@@ -1164,7 +1179,7 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 	/* if method klass is import, that means method
 	 * is really a com call. let interop system emit it.
 	*/
-	if (MONO_CLASS_IS_IMPORT(method->klass)) {
+	if (mono_cominterop_is_rcw_method(method)) {
 		/* FIXME: we have to call actual class .ctor
 		 * instead of just __ComObject .ctor.
 		 */
@@ -1249,11 +1264,10 @@ mono_cominterop_get_native_wrapper (MonoMethod *method)
 		
 		
 	}
-	/* Does this case ever get hit? */
 	else {
-		char *msg = g_strdup ("non imported interfaces on \
-			imported classes is not yet implemented.");
-		mono_mb_emit_exception (mb, "NotSupportedException", msg);
+		/* interface method with MethodCodeType.Runtime but no ComImport on interface */
+		char *msg = g_strdup ("ECall methods must be packaged into a system module.");
+		mono_mb_emit_exception_full (mb, "System.Security", "SecurityException", msg);
 	}
 #endif /* DISABLE_JIT */
 

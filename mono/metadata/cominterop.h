@@ -74,6 +74,9 @@ gboolean
 mono_cominterop_is_interface (MonoClass* klass);
 
 gboolean
+mono_cominterop_is_rcw_method (MonoMethod *method);
+
+gboolean
 mono_cominterop_method_com_visible (MonoMethod *method);
 
 #endif /* __MONO_COMINTEROP_H__ */
