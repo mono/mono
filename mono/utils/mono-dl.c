@@ -221,7 +221,12 @@ mono_dl_open_self (char **error_msg)
 MonoDl*
 mono_dl_open (const char *name, int flags, char **error_msg)
 {
-	return mono_dl_open_full (name, flags, 0, error_msg);
+#ifdef HOST_WIN32
+	const int native_flags = LOAD_WITH_ALTERED_SEARCH_PATH;
+#else
+	const int native_flags = 0;
+#endif
+	return mono_dl_open_full (name, flags, native_flags, error_msg);
 }
 
 MonoDl *
