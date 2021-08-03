@@ -856,7 +856,7 @@ namespace System.Runtime.InteropServices
 			throw new PlatformNotSupportedException ();
 		}
 
-#if !MOBILE || UNITY_AOT
+#if (!MOBILE && !UNITY) || UNITY_AOT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static bool IsComObject (object o);
 #else
