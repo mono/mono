@@ -4884,17 +4884,13 @@ ves_icall_System_Variant_SafeArrayDestroyInternal (gpointer safearray, MonoError
 	mono_marshal_safearray_end (safearray, NULL);
 }
 
-gpointer
-ves_icall_System_Variant_SafeArrayFromArrayInternal (MonoArrayHandle rarray, gint32 *ref_vt, MonoError *error)
+static gpointer
+mono_marshal_safearray_from_array (MonoArrayHandle rarray, guint32 vt, MonoError *error)
 {
-	MonoClass* eclass = m_class_get_element_class (mono_handle_class (rarray));
 	MonoArray* array = MONO_HANDLE_RAW (rarray);
-	guint32 vt;
 	SAFEARRAYBOUND* bnd;
 	gpointer val;
 	glong* idx;
-
-	vt = vt_from_class (eclass);
 
 	guint32 i, d, dim = m_class_get_rank (mono_object_class (array));
 	bnd = g_malloc (dim * (sizeof (*bnd) + sizeof (*idx)));
@@ -4965,9 +4961,19 @@ ves_icall_System_Variant_SafeArrayFromArrayInternal (MonoArrayHandle rarray, gin
 		}
 	}
 leave:
-	*ref_vt = vt;
 	g_free (bnd);
 	return safearray;
+}
+
+gpointer
+ves_icall_System_Variant_SafeArrayFromArrayInternal (MonoArrayHandle rarray, gint32 *ref_vt, MonoError *error)
+{
+	MonoClass* eclass = m_class_get_element_class (mono_handle_class (rarray));
+	guint32 vt;
+
+	*ref_vt = vt = vt_from_class (eclass);
+
+	return mono_marshal_safearray_from_array (rarray, vt, error);
 }
 
 MonoArrayHandle
