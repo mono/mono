@@ -2386,6 +2386,56 @@ cominterop_setup_marshal_context (EmitMarshalContext *m, MonoMethod *method)
 	m->csig = csig;
 }
 
+static MonoMarshalVariant vt_from_class (MonoClass *klass)
+{
+	if (klass == mono_defaults.sbyte_class)
+		return MONO_VARIANT_I1;
+	else if (klass == mono_defaults.byte_class)
+		return MONO_VARIANT_UI1;
+	else if (klass == mono_defaults.int16_class)
+		return MONO_VARIANT_I2;
+	else if (klass == mono_defaults.uint16_class)
+		return MONO_VARIANT_UI2;
+	else if (klass == mono_defaults.int32_class)
+		return MONO_VARIANT_I4;
+	else if (klass == mono_defaults.uint32_class)
+		return MONO_VARIANT_UI4;
+	else if (klass == mono_defaults.int64_class)
+		return MONO_VARIANT_I8;
+	else if (klass == mono_defaults.uint64_class)
+		return MONO_VARIANT_UI8;
+	else if (klass == mono_defaults.single_class)
+		return MONO_VARIANT_R4;
+	else if (klass == mono_defaults.double_class)
+		return MONO_VARIANT_R8;
+	else if (klass == mono_defaults.boolean_class)
+		return MONO_VARIANT_BOOL;
+	else if (klass == mono_defaults.string_class)
+		return MONO_VARIANT_BSTR;
+	else if (klass == mono_defaults.object_class)
+		return MONO_VARIANT_VARIANT;
+	else if (klass == mono_class_get_date_time_class ())
+		return MONO_VARIANT_DATE;
+	else if (klass == mono_class_get_decimal_class ())
+		return MONO_VARIANT_DECIMAL;
+	else if (m_class_get_image (klass) == mono_defaults.corlib &&
+	         !strcmp (m_class_get_name_space (klass), "System.Runtime.InteropServices")) {
+		const char* name = m_class_get_name (klass);
+		if (!strcmp (name, "BStrWrapper"))
+			return MONO_VARIANT_BSTR;
+		else if (!strcmp (name, "CurrencyWrapper"))
+			return MONO_VARIANT_CY;
+		else if (!strcmp (name, "ErrorWrapper"))
+			return MONO_VARIANT_ERROR;
+		else if (!strcmp (name, "DispatchWrapper"))
+			return MONO_VARIANT_DISPATCH;
+	}
+	else if (!mono_class_is_transparent_proxy (klass) && cominterop_can_support_dispatch (klass))
+		return MONO_VARIANT_DISPATCH;
+
+	return MONO_VARIANT_UNKNOWN;
+}
+
 static MonoMarshalSpec*
 cominterop_get_ccw_default_mspec (const MonoType *param_type)
 {
@@ -2410,12 +2460,8 @@ cominterop_get_ccw_default_mspec (const MonoType *param_type)
 		native = MONO_NATIVE_VARIANTBOOL;
 		break;
 	case MONO_TYPE_SZARRAY:
-		/* object[] -> SAFEARRAY(VARIANT) */
 		native = MONO_NATIVE_SAFEARRAY;
-		if (param_type->data.array->eklass == mono_defaults.object_class)
-			elem_type = MONO_VARIANT_VARIANT;
-		else
-			return NULL;
+		elem_type = vt_from_class (param_type->data.array->eklass);
 		break;
 	default:
 		return NULL;
@@ -4025,6 +4071,20 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 										MarshalAction action)
 {
 	MonoMethodBuilder *mb = m->mb;
+	MonoMarshalVariant elem_type = spec->data.safearray_data.elem_type;
+
+	if (elem_type == 0)
+	{
+		MonoClass *klass = mono_class_from_mono_type_internal (t);
+		MonoClass *eklass = m_class_get_element_class (klass);
+		elem_type = vt_from_class (eklass);
+	}
+
+	if (elem_type != MONO_VARIANT_VARIANT) {
+		char *msg = g_strdup ("Only SAFEARRAY(VARIANT) marshalling to managed code is implemented.");
+		mono_mb_emit_exception_full (mb, "System.Runtime.InteropServices", "MarshalDirectiveException", msg);
+		return conv_arg;
+	}
 
 #ifndef DISABLE_JIT
 	switch (action) {
@@ -4829,55 +4889,12 @@ ves_icall_System_Variant_SafeArrayFromArrayInternal (MonoArrayHandle rarray, gin
 {
 	MonoClass* eclass = m_class_get_element_class (mono_handle_class (rarray));
 	MonoArray* array = MONO_HANDLE_RAW (rarray);
-	guint32 vt = VT_UNKNOWN;
+	guint32 vt;
 	SAFEARRAYBOUND* bnd;
 	gpointer val;
 	glong* idx;
 
-	if (eclass == mono_defaults.sbyte_class)
-		vt = VT_I1;
-	else if (eclass == mono_defaults.byte_class)
-		vt = VT_UI1;
-	else if (eclass == mono_defaults.int16_class)
-		vt = VT_I2;
-	else if (eclass == mono_defaults.uint16_class)
-		vt = VT_UI2;
-	else if (eclass == mono_defaults.int32_class)
-		vt = VT_I4;
-	else if (eclass == mono_defaults.uint32_class)
-		vt = VT_UI4;
-	else if (eclass == mono_defaults.int64_class)
-		vt = VT_I8;
-	else if (eclass == mono_defaults.uint64_class)
-		vt = VT_UI8;
-	else if (eclass == mono_defaults.single_class)
-		vt = VT_R4;
-	else if (eclass == mono_defaults.double_class)
-		vt = VT_R8;
-	else if (eclass == mono_defaults.boolean_class)
-		vt = VT_BOOL;
-	else if (eclass == mono_defaults.string_class)
-		vt = VT_BSTR;
-	else if (eclass == mono_defaults.object_class)
-		vt = VT_VARIANT;
-	else if (eclass == mono_class_get_date_time_class ())
-		vt = VT_DATE;
-	else if (eclass == mono_class_get_decimal_class ())
-		vt = VT_DECIMAL;
-	else if (m_class_get_image (eclass) == mono_defaults.corlib &&
-	         !strcmp (m_class_get_name_space (eclass), "System.Runtime.InteropServices")) {
-		const char* name = m_class_get_name (eclass);
-		if (!strcmp (name, "BStrWrapper"))
-			vt = VT_BSTR;
-		else if (!strcmp (name, "CurrencyWrapper"))
-			vt = VT_CY;
-		else if (!strcmp (name, "ErrorWrapper"))
-			vt = VT_ERROR;
-		else if (!strcmp (name, "DispatchWrapper"))
-			vt = VT_DISPATCH;
-	}
-	else if (!mono_class_is_transparent_proxy (eclass) && cominterop_can_support_dispatch (eclass))
-		vt = VT_DISPATCH;
+	vt = vt_from_class (eclass);
 
 	guint32 i, d, dim = m_class_get_rank (mono_object_class (array));
 	bnd = g_malloc (dim * (sizeof (*bnd) + sizeof (*idx)));

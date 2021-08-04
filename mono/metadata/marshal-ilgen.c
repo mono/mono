@@ -2788,11 +2788,6 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			break;
 		case MONO_NATIVE_SAFEARRAY:
 #ifndef DISABLE_COM
-			if (spec->data.safearray_data.elem_type != MONO_VARIANT_VARIANT) {
-				char *msg = g_strdup ("Only SAFEARRAY(VARIANT) marshalling to managed code is implemented.");
-				mono_mb_emit_exception_marshal_directive (mb, msg);
-				return conv_arg;
-			}
 			return mono_cominterop_emit_marshal_safearray (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 #endif
 		default: {
