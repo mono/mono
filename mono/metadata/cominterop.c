@@ -739,6 +739,7 @@ mono_cominterop_init (void)
 	register_icall (mono_marshal_safearray_create, mono_icall_sig_int32_object_ptr_ptr_ptr, FALSE);
 	register_icall (mono_marshal_safearray_set_value, mono_icall_sig_void_ptr_ptr_ptr, FALSE);
 	register_icall (mono_marshal_safearray_free_indices, mono_icall_sig_void_ptr, FALSE);
+	register_icall (mono_marshal_safearray_from_array, mono_icall_sig_ptr_object_int32, FALSE);
 #endif // DISABLE_COM
 	/*FIXME
 
@@ -4080,114 +4081,27 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 		elem_type = vt_from_class (eklass);
 	}
 
-	if (elem_type != MONO_VARIANT_VARIANT) {
-		char *msg = g_strdup ("Only SAFEARRAY(VARIANT) marshalling to managed code is implemented.");
-		mono_mb_emit_exception_full (mb, "System.Runtime.InteropServices", "MarshalDirectiveException", msg);
-		return conv_arg;
-	}
-
 #ifndef DISABLE_JIT
 	switch (action) {
 	case MARSHAL_ACTION_CONV_IN: {
 		if ((t->attrs & (PARAM_ATTRIBUTE_IN | PARAM_ATTRIBUTE_OUT)) == PARAM_ATTRIBUTE_OUT)
 			break;
 
-		/* Generates IL code for the following algorithm:
-
-				SafeArray safearray;   // safearray_var
-				IntPtr indices; // indices_var
-				int empty;      // empty_var
-				if (mono_marshal_safearray_create (array, out safearray, out indices, out empty)) {
-					if (!empty) {
-						int index=0; // index_var
-						do { // label3
-							variant elem = Marshal.GetNativeVariantForObject (array.GetValueImpl(index));
-							mono_marshal_safearray_set_value (safearray, indices, elem);
-							++index;
-						}
-						while (mono_marshal_safearray_next (safearray, indices));
-					} // label2
-					mono_marshal_safearray_free_indices (indices);
-				} // label1
-		*/
-
-		int safearray_var, indices_var, empty_var, elem_var, index_var;
-		guint32 label1 = 0, label2 = 0, label3 = 0;
+		/* conv = mono_marshal_safearray_from_array (array, elem_type); */
 
 		MonoType *int_type = mono_get_int_type ();
-		conv_arg = safearray_var = mono_mb_add_local (mb, mono_get_object_type ());
-		indices_var = mono_mb_add_local (mb, int_type);
-		empty_var = mono_mb_add_local (mb, int_type);
+		*conv_arg_type = int_type;
+		conv_arg = mono_mb_add_local (mb, int_type);
 
 		if (t->byref) {
 			mono_mb_emit_ldarg (mb, argnum);
 			mono_mb_emit_byte (mb, CEE_LDIND_REF);
 		} else
 			mono_mb_emit_ldarg (mb, argnum);
+		mono_mb_emit_icon (mb, elem_type);
+		mono_mb_emit_icall (mb, mono_marshal_safearray_from_array);
+		mono_mb_emit_stloc (mb, conv_arg);
 
-		mono_mb_emit_ldloc_addr (mb, safearray_var);
-		mono_mb_emit_ldloc_addr (mb, indices_var);
-		mono_mb_emit_ldloc_addr (mb, empty_var);
-		mono_mb_emit_icall (mb, mono_marshal_safearray_create);
-
-		label1 = mono_mb_emit_short_branch (mb, CEE_BRFALSE_S);
-
-		mono_mb_emit_ldloc (mb, empty_var);
-
-		label2 = mono_mb_emit_short_branch (mb, CEE_BRTRUE_S);
-
-		index_var = mono_mb_add_local (mb, mono_get_int32_type ());
-		mono_mb_emit_byte (mb, CEE_LDC_I4_0);
-		mono_mb_emit_stloc (mb, index_var);
-
-		label3 = mono_mb_get_label (mb);
-
-		MONO_STATIC_POINTER_INIT (MonoMethod, get_value_impl)
-
-			ERROR_DECL (error);
-			get_value_impl = mono_class_get_method_from_name_checked (mono_defaults.array_class, "GetValueImpl", 1, 0, error);
-			mono_error_assert_ok (error);
-
-		MONO_STATIC_POINTER_INIT_END (MonoMethod, get_value_impl)
-
-		g_assert (get_value_impl);
-
-		if (t->byref) {
-			mono_mb_emit_ldarg (mb, argnum);
-			mono_mb_emit_byte (mb, CEE_LDIND_REF);
-		} else
-			mono_mb_emit_ldarg (mb, argnum);
-
-		mono_mb_emit_ldloc (mb, index_var);
-
-		mono_mb_emit_managed_call (mb, get_value_impl, NULL);
-
-		elem_var =  mono_mb_add_local (mb, m_class_get_byval_arg (mono_class_get_variant_class ()));
-		mono_mb_emit_ldloc_addr (mb, elem_var);
-
-		mono_mb_emit_managed_call (mb, mono_get_Marshal_GetNativeVariantForObject (), NULL);
-
-		mono_mb_emit_ldloc (mb, safearray_var);
-		mono_mb_emit_ldloc (mb, indices_var);
-		mono_mb_emit_ldloc_addr (mb, elem_var);
-		mono_mb_emit_icall (mb, mono_marshal_safearray_set_value);
-
-		mono_mb_emit_ldloc_addr (mb, elem_var);
-		mono_mb_emit_managed_call (mb, mono_get_Variant_Clear (), NULL);
-
-		mono_mb_emit_add_to_local (mb, index_var, 1);
-
-		mono_mb_emit_ldloc (mb, safearray_var);
-		mono_mb_emit_ldloc (mb, indices_var);
-		mono_mb_emit_icall (mb, mono_marshal_safearray_next);
-		mono_mb_emit_branch_label (mb, CEE_BRTRUE, label3);
-
-		mono_mb_patch_short_branch (mb, label2);
-
-		mono_mb_emit_ldloc (mb, indices_var);
-		mono_mb_emit_icall (mb, mono_marshal_safearray_free_indices);
-
-		mono_mb_patch_short_branch (mb, label1);
 		break;
 	}
 
@@ -4223,6 +4137,12 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 					if (!byValue)
 						return result;
 			*/
+
+			if (elem_type != MONO_VARIANT_VARIANT) {
+				char *msg = g_strdup ("Only SAFEARRAY(VARIANT) marshalling to managed code is implemented.");
+				mono_mb_emit_exception_full (mb, "System.Runtime.InteropServices", "MarshalDirectiveException", msg);
+				return conv_arg;
+			}
 
 			int result_var, indices_var, empty_var, elem_var, index_var;
 			guint32 label1 = 0, label2 = 0, label3 = 0, label4 = 0;
@@ -4326,6 +4246,12 @@ mono_cominterop_emit_marshal_safearray (EmitMarshalContext *m, int argnum, MonoT
 					mono_marshal_safearray_free_indices(indices);
 				} // label1
 		*/
+
+		if (elem_type != MONO_VARIANT_VARIANT) {
+			char *msg = g_strdup ("Only SAFEARRAY(VARIANT) marshalling to managed code is implemented.");
+			mono_mb_emit_exception_full (mb, "System.Runtime.InteropServices", "MarshalDirectiveException", msg);
+			return conv_arg;
+		}
 
 		int result_var, indices_var, empty_var, elem_var, index_var;
 		guint32 label1 = 0, label2 = 0, label3 = 0;
@@ -4884,13 +4810,16 @@ ves_icall_System_Variant_SafeArrayDestroyInternal (gpointer safearray, MonoError
 	mono_marshal_safearray_end (safearray, NULL);
 }
 
-static gpointer
-mono_marshal_safearray_from_array (MonoArrayHandle rarray, guint32 vt, MonoError *error)
+gpointer
+mono_marshal_safearray_from_array_impl (MonoArrayHandle rarray, guint32 vt, MonoError *error)
 {
 	MonoArray* array = MONO_HANDLE_RAW (rarray);
 	SAFEARRAYBOUND* bnd;
 	gpointer val;
 	glong* idx;
+
+	if (array == NULL)
+		return NULL;
 
 	guint32 i, d, dim = m_class_get_rank (mono_object_class (array));
 	bnd = (SAFEARRAYBOUND*)g_malloc (dim * (sizeof (*bnd) + sizeof (*idx)));
@@ -4973,7 +4902,7 @@ ves_icall_System_Variant_SafeArrayFromArrayInternal (MonoArrayHandle rarray, gin
 
 	*ref_vt = vt = vt_from_class (eclass);
 
-	return mono_marshal_safearray_from_array (rarray, vt, error);
+	return mono_marshal_safearray_from_array_impl (rarray, vt, error);
 }
 
 static MonoArrayHandle

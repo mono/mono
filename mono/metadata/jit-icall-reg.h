@@ -244,6 +244,7 @@ MONO_JIT_ICALL (mono_marshal_safearray_begin) \
 MONO_JIT_ICALL (mono_marshal_safearray_create) \
 MONO_JIT_ICALL (mono_marshal_safearray_end) \
 MONO_JIT_ICALL (mono_marshal_safearray_free_indices) \
+MONO_JIT_ICALL (mono_marshal_safearray_from_array) \
 MONO_JIT_ICALL (mono_marshal_safearray_get_value) \
 MONO_JIT_ICALL (mono_marshal_safearray_next) \
 MONO_JIT_ICALL (mono_marshal_safearray_set_value) \

@@ -75,6 +75,7 @@
 // mono_icall_sig_object_ptr_int32
 // mono_icall_sig_object_ptr_ptr
 // mono_icall_sig_ptr_int32_ptrref
+// mono_icall_sig_ptr_object_int32
 // mono_icall_sig_ptr_object_ptr
 // mono_icall_sig_ptr_ptr_int
 // mono_icall_sig_ptr_ptr_int32
@@ -201,6 +202,7 @@ ICALL_SIG (3, (object, ptr, int32))		\
 ICALL_SIG (3, (object, ptr, ptr))		\
 ICALL_SIG (3, (object, ptr, sizet))		\
 ICALL_SIG (3, (ptr, int32, ptrref))		\
+ICALL_SIG (3, (ptr, object, int32))		\
 ICALL_SIG (3, (ptr, object, ptr))		\
 ICALL_SIG (3, (ptr, ptr, int))			\
 ICALL_SIG (3, (ptr, ptr, int32))		\

@@ -1218,3 +1218,5 @@ MONO_HANDLE_REGISTER_ICALL (mono_string_builder_to_ansi, char_ptr, 1, (MonoStrin
 MONO_HANDLE_REGISTER_ICALL (mono_string_ansi_to_builder, void, 2, (MonoStringBuilder, const_char_ptr))
 MONO_HANDLE_REGISTER_ICALL (mono_string_ansi_to_builder2, MonoStringBuilder, 1, (const_char_ptr))
 
+MONO_HANDLE_REGISTER_ICALL (mono_marshal_safearray_from_array, gpointer, 2, (MonoArray, guint32))
+
