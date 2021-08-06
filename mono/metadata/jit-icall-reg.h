@@ -242,12 +242,14 @@ MONO_JIT_ICALL (mono_marshal_get_type_object) \
 MONO_JIT_ICALL (mono_marshal_isinst_with_cache) \
 MONO_JIT_ICALL (mono_marshal_safearray_begin) \
 MONO_JIT_ICALL (mono_marshal_safearray_create) \
+MONO_JIT_ICALL (mono_marshal_safearray_destroy) \
 MONO_JIT_ICALL (mono_marshal_safearray_end) \
 MONO_JIT_ICALL (mono_marshal_safearray_free_indices) \
 MONO_JIT_ICALL (mono_marshal_safearray_from_array) \
 MONO_JIT_ICALL (mono_marshal_safearray_get_value) \
 MONO_JIT_ICALL (mono_marshal_safearray_next) \
 MONO_JIT_ICALL (mono_marshal_safearray_set_value) \
+MONO_JIT_ICALL (mono_marshal_safearray_to_array) \
 MONO_JIT_ICALL (mono_marshal_set_domain_by_id) \
 MONO_JIT_ICALL (mono_marshal_set_last_error) \
 MONO_JIT_ICALL (mono_marshal_set_last_error_windows) \
