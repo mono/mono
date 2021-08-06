@@ -6211,6 +6211,7 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 	MonoMethodSignature *sig, *csig;
 	int i, *tmp_locals, orig_domain, attach_cookie;
 	gboolean closed = FALSE;
+	MonoExceptionClause *clause = NULL;
 
 	sig = m->sig;
 	csig = m->csig;
@@ -6282,6 +6283,12 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 		/* Switch to the object's domain before doing argument conversions */
 		mono_mb_emit_ldarg (mb, 0);
 		mono_mb_emit_icall (mb, cominterop_set_ccw_domain);
+
+		/* Add a try{} around all argument conversions */
+		clause = (MonoExceptionClause *)mono_image_alloc0 (get_method_image (method), sizeof (MonoExceptionClause));
+		clause->flags = MONO_EXCEPTION_CLAUSE_NONE;
+		clause->data.catch_class = mono_defaults.exception_class;
+		clause->try_offset = mono_mb_get_label (mb);
 	}
 
 	/* we first do all conversions */
@@ -6427,6 +6434,40 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 				g_assert_not_reached ();
 			}
 		}
+	}
+
+	if (clause)
+	{
+		/* end try */
+		gint32 leave_branch = mono_mb_emit_branch (mb, CEE_LEAVE);
+		clause->try_len = mono_mb_get_label (mb) - clause->try_offset;
+
+		clause->handler_offset = mono_mb_get_label (mb);
+
+		/* handler code */
+		if (sig->ret && !sig->ret->byref && (sig->ret->type == MONO_TYPE_U4 || sig->ret->type == MONO_TYPE_I4)) {
+			MONO_STATIC_POINTER_INIT (MonoMethod, get_hr_for_exception)
+
+				ERROR_DECL (error);
+				get_hr_for_exception = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetHRForException", -1, 0, error);
+				mono_error_assert_ok (error);
+
+			MONO_STATIC_POINTER_INIT_END (MonoMethod, get_hr_for_exception)
+
+			/* ret = Marshal.GetHRForException (exc); */
+			mono_mb_emit_managed_call (mb, get_hr_for_exception, NULL);
+			mono_mb_emit_stloc (mb, 3);
+		}
+		else {
+			mono_mb_emit_byte (mb, CEE_POP);
+		}
+
+		mono_mb_emit_branch (mb, CEE_LEAVE);
+
+		clause->handler_len = mono_mb_get_pos (mb) - clause->handler_offset;
+
+		mono_mb_set_clauses (mb, 1, clause);
+		mono_mb_patch_branch (mb, leave_branch);
 	}
 
 	/* mono_threads_detach_coop (orig_domain, &attach_cookie); */
