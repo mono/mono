@@ -1545,7 +1545,7 @@ assembly_name_to_aname (MonoAssemblyName *assembly, char *p) {
 			p++;
 			while (*p && g_ascii_isspace (*p))
 				p++;
-			if ((g_ascii_strncasecmp (p, "neutral", 7) == 0) && (p [7] == ' ' || p [7] == ',')) {
+			if ((g_ascii_strncasecmp (p, "neutral", 7) == 0) && (p [7] == ' ' || p [7] == ',' || p [7] == 0)) {
 				assembly->culture = "";
 				p += 7;
 			} else {
