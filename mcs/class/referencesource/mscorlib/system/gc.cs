@@ -471,22 +471,22 @@ namespace System {
 
         static bool _RegisterForFullGCNotification(int maxGenerationPercentage, int largeObjectHeapPercentage)
         {
-            throw new NotImplementedException ();
+			return false;
         }
 
         static bool _CancelFullGCNotification ()
         {
-            throw new NotImplementedException ();
+			return false;
         }
 
         static int _WaitForFullGCApproach (int millisecondsTimeout)
         {
-            throw new NotImplementedException ();
+			return (int)GCNotificationStatus.NotApplicable;
         }
 
         static int _WaitForFullGCComplete (int millisecondsTimeout)
         {
-            throw new NotImplementedException ();
+			return (int)GCNotificationStatus.NotApplicable;
         }
 
 #else 
