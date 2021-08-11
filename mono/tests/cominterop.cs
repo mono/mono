@@ -711,6 +711,9 @@ public class Tests
 			if (mono_test_cominterop_ccw_invoke (otherTest) != 0)
 				return 211;
 
+			if (Marshal.GetIDispatchForObject(test) == IntPtr.Zero)
+				return 212;
+
 			#endregion // COM Callable Wrapper Tests
 
 			#region SAFEARRAY tests
@@ -922,6 +925,16 @@ public class Tests
 				return 303;
 			if (Marshal.IsTypeVisibleFromCom(typeof(TestInvisible)))
 				return 304;
+			try
+			{
+				Marshal.GetIDispatchForObject(new TestInvisible());
+			}
+			catch (InvalidCastException)
+			{
+				pass = true;
+			}
+			if (!pass)
+				return 305;
 			#endregion 
 
 			#region COM GetStartComSlot Tests

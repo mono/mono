@@ -1883,7 +1883,8 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *
 static gboolean
 cominterop_can_support_dispatch (MonoClass* klass)
 {
-	if (!mono_class_is_public (klass))
+	guint32 visibility = (mono_class_get_flags (klass) & TYPE_ATTRIBUTE_VISIBILITY_MASK);
+	if (visibility != TYPE_ATTRIBUTE_PUBLIC && visibility != TYPE_ATTRIBUTE_NESTED_PUBLIC)
 		return FALSE;
 
 	if (!cominterop_com_visible (klass))
