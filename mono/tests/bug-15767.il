@@ -157,14 +157,14 @@
 	  IL_0019:  ldloc.0 
 	  IL_001a:  ldnull 
 	  IL_001b:  call void class T::bar(class C, class ['bug-15767-missing']M)
-	  IL_0020:  ldc.i4.1 
-	  IL_0021:  stloc.2 
-	  IL_0022:  leave IL_0030
+	  IL_0022:  leave IL_002e
 
 	} // end .try 1
 	catch class [mscorlib]System.Exception { // 1
 	  IL_0027:  stloc.s 4
-	  IL_0029:  leave IL_002e
+	  IL_0020:  ldc.i4.1 
+	  IL_0021:  stloc.2 
+	  IL_0029:  leave IL_0030
 
 	} // end handler 1
 	IL_002e:  ldc.i4.0 

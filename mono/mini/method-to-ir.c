@@ -7518,7 +7518,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			for (int i = 0; i < fsig->param_count; ++i)
 			{
-				ensure_type_is_valid (cfg, fsig->params [i]);
+				if (0) /* This check happens on x86_64 Framework but not x86??? */
+				{
+					ensure_type_is_valid (cfg, fsig->params [i]);
+				}
 				sp [i + fsig->hasthis] = convert_value (cfg, fsig->params [i], sp [i + fsig->hasthis]);
 			}
 
