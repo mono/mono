@@ -5028,8 +5028,14 @@ mini_cleanup (MonoDomain *domain)
 {
 	if (mono_stats.enabled)
 		g_printf ("Printing runtime stats at shutdown\n");
+#ifndef ENABLE_NETCORE
+	MONO_PROFILER_RAISE (runtime_shutdown_begin, ());
+#endif
 	mono_runtime_print_stats ();
 	jit_stats_cleanup ();
+#ifndef ENABLE_NETCORE
+	MONO_PROFILER_RAISE (runtime_shutdown_end, ());
+#endif
 	mono_jit_dump_cleanup ();
 	mini_get_interp_callbacks ()->cleanup ();
 #if defined(ENABLE_PERFTRACING) && !defined(DISABLE_EVENTPIPE)

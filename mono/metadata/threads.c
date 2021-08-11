@@ -3948,7 +3948,7 @@ mono_thread_manage_internal (void)
 		mono_thread_execute_interruption_void ();
 	}
 
-#ifndef ENABLE_NETCORE
+#if !defined(ENABLE_NETCORE) && !defined(DISABLE_CLEANUP)
 	/*
 	 * Under netcore, we don't abort any threads, just exit.
 	 * This is not a problem since we don't do runtime cleanup either.
