@@ -925,6 +925,7 @@ public class Tests
 				return 303;
 			if (Marshal.IsTypeVisibleFromCom(typeof(TestInvisible)))
 				return 304;
+			pass = false;
 			try
 			{
 				Marshal.GetIDispatchForObject(new TestInvisible());
