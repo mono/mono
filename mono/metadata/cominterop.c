@@ -2663,6 +2663,10 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		mono_object_register_finalizer_handle (object);
 	}
 
+	/* .NET Framework always gives a dispatch interface when requesting IUnknown */
+	if (itf == mono_class_get_iunknown_class ())
+		itf = mono_class_get_idispatch_class ();
+
 	cinfo = mono_custom_attrs_from_class_checked (itf, error);
 	mono_error_assert_ok (error);
 	if (cinfo) {

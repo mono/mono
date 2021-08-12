@@ -4115,6 +4115,72 @@ mono_test_marshal_ccw_itest (MonoComObject *pUnk)
 	return 0;
 }
 
+LIBTEST_API int STDCALL
+mono_test_marshal_ccw_iface_obj (MonoComObject *itf, MonoComObject *unk, IDispatch *disp, MonoComObject *pUnk)
+{
+	MonoComObject *unknown;
+	IDispatch *dispatch;
+	int hr;
+
+	hr = pUnk->vtbl->QueryInterface(pUnk, &IID_IMonoDispatch, (gpointer*)&dispatch);
+	pUnk->vtbl->Release(pUnk);
+
+	if (hr != 0)
+		return 1;
+	hr = dispatch->lpVtbl->QueryInterface(dispatch, &IID_IMonoUnknown, (gpointer*)&unknown);
+	dispatch->lpVtbl->Release(dispatch);
+	if (hr != 0)
+		return 2;
+	unknown->vtbl->Release(unknown);
+
+	if (dispatch != (IDispatch*)pUnk)
+		return 3;
+	if (dispatch != (IDispatch*)unknown)
+		return 4;
+	if (itf != unk)
+		return 5;
+	if ((IDispatch*)itf != disp)
+		return 6;
+
+	if (itf->vtbl->QueryInterface(itf, &IID_IMonoDispatch, (gpointer*)&dispatch) != 0)
+		return 7;
+	dispatch->lpVtbl->Release(dispatch);
+	if (dispatch != (IDispatch*)itf)
+		return 8;
+
+	if (unk->vtbl->QueryInterface(unk, &IID_IMonoDispatch, (gpointer*)&dispatch) != 0)
+		return 9;
+	dispatch->lpVtbl->Release(dispatch);
+	if (dispatch != (IDispatch*)unk)
+		return 10;
+
+	if (disp->lpVtbl->QueryInterface(disp, &IID_IMonoDispatch, (gpointer*)&dispatch) != 0)
+		return 11;
+	dispatch->lpVtbl->Release(dispatch);
+	if (dispatch != disp)
+		return 12;
+
+	if (itf->vtbl->QueryInterface(itf, &IID_IMonoUnknown, (gpointer*)&unknown) != 0)
+		return 13;
+	unknown->vtbl->Release(unknown);
+	if (unknown != itf)
+		return 14;
+
+	if (unk->vtbl->QueryInterface(unk, &IID_IMonoUnknown, (gpointer*)&unknown) != 0)
+		return 15;
+	unknown->vtbl->Release(unknown);
+	if (unknown != unk)
+		return 16;
+
+	if (disp->lpVtbl->QueryInterface(disp, &IID_IMonoUnknown, (gpointer*)&unknown) != 0)
+		return 17;
+	unknown->vtbl->Release(unknown);
+	if (unknown != (MonoComObject*)disp)
+		return 18;
+
+	return 0;
+}
+
 // Xamarin-47560
 LIBTEST_API int STDCALL
 mono_test_marshal_array_ccw_itest (int count, MonoComObject ** ppUnk)

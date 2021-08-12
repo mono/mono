@@ -275,6 +275,9 @@ public class Tests
 	public static extern int mono_test_marshal_ccw_itest_nomarshal (ITestPresSig itest);
 
 	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_ccw_iface_obj ([MarshalAs (UnmanagedType.Interface)]object itf, [MarshalAs (UnmanagedType.IUnknown)]object unk, [MarshalAs (UnmanagedType.IDispatch)]object disp, IntPtr pUnk);
+
+	[DllImport ("libtest")]
 	public static extern int mono_test_marshal_array_ccw_itest (int count, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex=0)] ITest[] ppUnk);
 
 	[DllImport ("libtest")]
@@ -713,6 +716,9 @@ public class Tests
 
 			if (Marshal.GetIDispatchForObject(test) == IntPtr.Zero)
 				return 212;
+
+			if (mono_test_marshal_ccw_iface_obj (test, test, test, Marshal.GetIUnknownForObject (test)) != 0)
+				return 213;
 
 			#endregion // COM Callable Wrapper Tests
 
