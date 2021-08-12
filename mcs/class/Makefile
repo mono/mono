@@ -440,7 +440,7 @@ xbuild_14_SUBDIRS := $(xbuild_4_0_dirs) Microsoft.NuGet.Build.Tasks
 
 unityjit_SUBDIRS := $(net_4_x_dirs)
 # TODO: Probably don't want ALL the net_4_x stuff here. Revisit.
-unityjit_PARALLEL_SUBDIRS := $(net_4_x_parallel_dirs)
+unityjit_PARALLEL_SUBDIRS := $(filter-out Mono.Cecil Mono.Cecil.Mdb Mono.Debugger.Soft Mono.CodeContracts,$(net_4_x_parallel_dirs))
 unityaot_SUBDIRS := $(mobile_common_dirs)
 unityaot_PARALLEL_SUBDIRS := $(unityaot_dirs_parallel)
 
