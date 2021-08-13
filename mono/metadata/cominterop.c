@@ -2822,6 +2822,8 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 				}
 				depth++;
 			}
+
+			g_assert (index == -1); /* ensure we wrote the correct number of methods */
 		}
 
 		/* Fill the vtable */
