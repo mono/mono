@@ -2721,7 +2721,26 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 				for (i = 0; i < mcount; ++i) {
 					MonoMethod *method = m_class_get_methods (klass_iter) [i];
 					if (cominterop_class_method_is_visible (method))
-						++method_count;
+					{
+						if (method->flags & METHOD_ATTRIBUTE_VIRTUAL)
+						{
+							MonoClass *ic = cominterop_get_method_interface (method);
+							if (!ic || !MONO_CLASS_IS_INTERFACE_INTERNAL(ic))
+								++method_count;
+						}
+						else
+							++method_count;
+					}
+				}
+
+				GPtrArray *ifaces = mono_class_get_implemented_interfaces (klass_iter, error);
+				mono_error_assert_ok (error);
+				if (ifaces) {
+					for (i = ifaces->len - 1; i >= 0; i--) {
+						MonoClass *ic = (MonoClass *)g_ptr_array_index (ifaces, i);
+						method_count += mono_class_get_method_count (ic);
+					}
+					g_ptr_array_free (ifaces, TRUE);
 				}
 
 				/* FIXME: accessors for public fields */
