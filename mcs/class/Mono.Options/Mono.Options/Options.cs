@@ -771,11 +771,22 @@ namespace Mono.Options
 	public class OptionSet : KeyedCollection<string, Option>
 	{
 		public OptionSet ()
-			: this (null)
+			: this (null, null)
 		{
 		}
 
 		public OptionSet (MessageLocalizerConverter localizer)
+			: this(localizer, null)
+		{
+		}
+
+		public OptionSet (StringComparer comparer)
+			: this(null, comparer)
+		{
+		}
+
+		public OptionSet (MessageLocalizerConverter localizer, StringComparer comparer)
+			: base(comparer)
 		{
 			this.roSources = new ReadOnlyCollection<ArgumentSource> (sources);
 			this.localizer = localizer;
