@@ -2941,7 +2941,7 @@ mono_marshal_free_ccw_handle (MonoObjectHandle object)
 		*/
 		gboolean destroy_ccw = is_null || is_equal;
 		if (is_null) {
-			MonoCCWInterface* ccw_entry = (MonoCCWInterface *)g_hash_table_lookup (ccw_iter->vtable_hash, mono_class_get_iunknown_class ());
+			MonoCCWInterface* ccw_entry = (MonoCCWInterface *)g_hash_table_lookup (ccw_iter->vtable_hash, mono_class_get_idispatch_class ());
 			MonoGCHandle gchandle = NULL;
 			if (!(ccw_entry && (gchandle = cominterop_get_ccw_gchandle (ccw_entry, FALSE)) && mono_gchandle_target_equal (gchandle, object)))
 				destroy_ccw = FALSE;
