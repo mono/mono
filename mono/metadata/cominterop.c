@@ -2700,58 +2700,59 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		start_slot = 7;
 	}
 
-	vtable_size = method_count;
-	if (start_slot >= 7) {
-		gboolean is_dispatch_iface = FALSE;
-		if (iface == mono_class_get_idispatch_class ()) {
-			iface = (itf == mono_class_get_idispatch_class ()) ? klass : itf;
-			is_dispatch_iface = TRUE;
-		}
-
-		method_count = 0;
-		if (mono_class_is_interface (iface))
-			method_count += mono_class_get_method_count (iface);
-		else {
-			MonoClass* klass_iter;
-			for (klass_iter = iface; klass_iter; klass_iter = m_class_get_parent (klass_iter)) {
-				int mcount = mono_class_get_method_count (klass_iter);
-				if (mcount && !m_class_get_methods (klass_iter))
-					mono_class_setup_methods (klass_iter);
-
-				for (i = 0; i < mcount; ++i) {
-					MonoMethod *method = m_class_get_methods (klass_iter) [i];
-					if (cominterop_class_method_is_visible (method))
-					{
-						if (method->flags & METHOD_ATTRIBUTE_VIRTUAL)
-						{
-							MonoClass *ic = cominterop_get_method_interface (method);
-							if (!ic || !MONO_CLASS_IS_INTERFACE_INTERNAL(ic))
-								++method_count;
-						}
-						else
-							++method_count;
-					}
-				}
-
-				GPtrArray *ifaces = mono_class_get_implemented_interfaces (klass_iter, error);
-				mono_error_assert_ok (error);
-				if (ifaces) {
-					for (i = ifaces->len - 1; i >= 0; i--) {
-						MonoClass *ic = (MonoClass *)g_ptr_array_index (ifaces, i);
-						method_count += mono_class_get_method_count (ic);
-					}
-					g_ptr_array_free (ifaces, TRUE);
-				}
-
-				/* FIXME: accessors for public fields */
-			}
-		}
-		vtable_size = is_dispatch_iface ? 0 : method_count;
-	}
-
 	ccw_entry = (MonoCCWInterface *)g_hash_table_lookup (ccw->vtable_hash, itf);
 
 	if (!ccw_entry) {
+		vtable_size = method_count;
+
+		if (start_slot >= 7) {
+			gboolean is_dispatch_iface = FALSE;
+			if (iface == mono_class_get_idispatch_class ()) {
+				iface = (itf == mono_class_get_idispatch_class ()) ? klass : itf;
+				is_dispatch_iface = TRUE;
+			}
+
+			method_count = 0;
+			if (mono_class_is_interface (iface))
+				method_count += mono_class_get_method_count (iface);
+			else {
+				MonoClass* klass_iter;
+				for (klass_iter = iface; klass_iter; klass_iter = m_class_get_parent (klass_iter)) {
+					int mcount = mono_class_get_method_count (klass_iter);
+					if (mcount && !m_class_get_methods (klass_iter))
+						mono_class_setup_methods (klass_iter);
+
+					for (i = 0; i < mcount; ++i) {
+						MonoMethod *method = m_class_get_methods (klass_iter) [i];
+						if (cominterop_class_method_is_visible (method))
+						{
+							if (method->flags & METHOD_ATTRIBUTE_VIRTUAL)
+							{
+								MonoClass *ic = cominterop_get_method_interface (method);
+								if (!ic || !MONO_CLASS_IS_INTERFACE_INTERNAL(ic))
+									++method_count;
+							}
+							else
+								++method_count;
+						}
+					}
+
+					GPtrArray *ifaces = mono_class_get_implemented_interfaces (klass_iter, error);
+					mono_error_assert_ok (error);
+					if (ifaces) {
+						for (i = ifaces->len - 1; i >= 0; i--) {
+							MonoClass *ic = (MonoClass *)g_ptr_array_index (ifaces, i);
+							method_count += mono_class_get_method_count (ic);
+						}
+						g_ptr_array_free (ifaces, TRUE);
+					}
+
+					/* FIXME: accessors for public fields */
+				}
+			}
+			vtable_size = is_dispatch_iface ? 0 : method_count;
+		}
+
 		struct ccw_method* methods = NULL;
 		gint32 depth, prevdepth;
 		if (method_count)
