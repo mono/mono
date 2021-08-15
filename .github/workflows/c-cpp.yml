@@ -1,0 +1,201 @@
+name: Wine-Mono CI
+
+on:
+  pull_request:
+    branches: [ develop ]
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+          repository: madewokherd/wine-mono
+          ref: develop
+
+    - uses: actions/checkout@v2
+      with:
+          path: mono
+          submodules: recursive
+
+    - name: Checkout remaining repos
+      run: |
+        git add mono
+        git submodule init mono
+        git submodule update --depth 1 --init --recursive
+
+    - name: Remove packages require EULA
+      run: sudo apt remove msodbcsql17 linux-azure linux-cloud-tools-azure linux-headers-azure linux-image-azure linux-tools-azure -y 1>&2
+    - name: Install Wine
+      run: |
+        sudo apt-get update 1>&2
+        sudo apt install --install-recommends wine64 wine64-tools -y 1>&2
+    - name: Install Mono Build Dependencies
+      run: |
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF 1>&2
+        echo "deb https://download.mono-project.com/repo/ubuntu stable-focal main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
+        sudo apt update 1>&2
+        sudo apt-get install mono-devel mono-complete libtool-bin gettext cmake dos2unix libgdiplus zip g++ -y 1>&2
+        # Seems that Github Action Image already includes mono-devel. Still install it explicitly
+    - name: Check Environment
+      run: |
+        gcc --version 1>&2
+        g++ --version 1>&2
+        wine --version 1>&2
+        mono --version 1>&2
+        ld --version 1>&2
+        cmake --version 1>&2
+        man libtool | tail -1 1>&2
+    - name: make
+      run: make -j$(nproc)
+    - name: msi capture
+      uses: actions/upload-artifact@v2
+      with:
+        name: make msi output
+        path: wine-mono-*.msi
+    - name: bin capture
+      uses: actions/upload-artifact@v2
+      with:
+        name: make bin output
+        path: wine-mono-*-x86.tar.xz
+    - name: tests-zip capture
+      uses: actions/upload-artifact@v2
+      with:
+        name: make tests-zip output
+        path: wine-mono-*-tests.zip
+    - name: dbgsym capture
+      uses: actions/upload-artifact@v2
+      with:
+        name: make dbgsym output
+        path: wine-mono-*-dbgsym.tar.xz
+    - name: Check for unnecessary rebuild steps
+      run: |
+        make -n image
+        make -q image
+    - name: Check for untracked files
+      run: |
+        ! (git clean -nd|grep .)
+    - name: Test make clean
+      run: |
+        make clean
+        ! find build
+        ! find tests
+        ! find image
+
+  windows-test:
+
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - name: Install XNA4
+      shell: cmd
+      run: |
+        curl https://download.microsoft.com/download/A/C/2/AC2C903B-E6E8-42C2-9FD7-BEBAC362A930/xnafx40_redist.msi --output xna4.msi
+        msiexec /q /i xna4.msi
+    - name: Download Wine Mono tests
+      uses: actions/download-artifact@v2
+      with:
+        name: make tests-zip output
+    - name: Run Wine Mono tests
+      shell: cmd
+      run: |
+        for %%z in (wine-mono-*-tests.zip) do tar -xf %%z
+        tests\run-tests.exe -pass-list:tests\github-windows-passing.txt
+
+  linux-test:
+
+    runs-on: ubuntu-20.04
+    needs: build
+
+    steps:
+    - name: Remove packages require EULA
+      run: sudo apt remove msodbcsql17 linux-azure linux-cloud-tools-azure linux-headers-azure linux-image-azure linux-tools-azure -y 1>&2
+    - name: Install Wine
+      run: |
+        sudo dpkg --add-architecture i386 1>&2
+        wget -nc https://dl.winehq.org/wine-builds/winehq.key 1>&2
+        sudo apt-key add winehq.key 1>&2
+        sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' 1>&2
+        sudo apt update 1>&2
+        sudo apt install --install-recommends -y winehq-devel 1>&2
+    - name: Download Wine Mono msi
+      uses: actions/download-artifact@v2
+      with:
+        name: make msi output
+    - name: Install Wine Mono msi
+      run: wine msiexec /i wine-mono-*.msi 1>&2
+    - name: Run 64-bit Wine mscoree tests
+      run: |
+        wget -nc 'http://test.winehq.org/builds/winetest64-latest.exe' 1>&2
+        wine winetest64-latest.exe -x winetest64 >/dev/null
+        wine winetest64/mscoree_test.exe --list 2>/dev/null|sed 's/\r//'|tail -n +2|while read testname; do
+          echo BEGIN 64-BIT $testname TEST 1>&2
+          WINETEST_REPORT_SUCCESS=1 WINEDEBUG=mscoree WINE_MONO_TRACE=x timeout -v 300 wine64 winetest64/mscoree_test.exe $testname 1>&2 || printf 'mscoree:%s 64-bit test failed\n' $testname >> tests-failed
+          echo END 64-BIT $testname TEST >&2
+        done
+    - name: Run 32-bit Wine mscoree tests
+      run: |
+        wget -nc 'http://test.winehq.org/builds/winetest-latest.exe' 1>&2
+        wine winetest-latest.exe -x winetest >/dev/null
+        wine winetest/mscoree_test.exe --list 2>/dev/null|sed 's/\r//'|tail -n +2|while read testname; do
+          echo BEGIN 32-BIT $testname TEST 1>&2
+          WINETEST_REPORT_SUCCESS=1 WINEDEBUG=mscoree WINE_MONO_TRACE=x timeout -v 300 wine winetest/mscoree_test.exe $testname 1>&2 || printf 'mscoree:%s 32-bit test failed\n' $testname >> tests-failed
+          echo END 32-BIT $testname TEST 1>&2
+        done
+    - name: Install Test Dependencies
+      run: |
+        echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
+        sudo apt install xvfb libgl1-mesa-glx libgl1-mesa-glx:i386 libgl1:i386 libglx-mesa0:i386 libgl1-mesa-dri:i386 unzip ttf-mscorefonts-installer openbox x11-utils -y 1>&2
+    - name: Download Wine Mono tests
+      uses: actions/download-artifact@v2
+      with:
+        name: make tests-zip output
+    - name: Run Wine Mono tests
+      run: |
+        unzip wine-mono-*-tests.zip 1>&2
+        Xvfb :2 & 1>&2
+        export DISPLAY=:2
+        while ! xdpyinfo; do sleep 1; jobs 1 || exit 1; done
+        openbox & 1>&2
+        wine reg add 'HKCU\Software\Wine\WineDbg' /v ShowCrashDialog /t REG_DWORD /d 0 /f 1>&2
+        wine tests/run-tests.exe -fail-list:tests/github-wine-failing.txt 1>&2 || printf 'Wine Mono tests failed\n' >> tests-failed
+    - name: Check for test failures
+      run: |
+        if test -f tests-failed; then
+          cat tests-failed
+          exit 1
+        fi
+
+  mac-test:
+    runs-on: macos-latest
+    needs: build
+
+    steps:
+    - name: Install Wine
+      run: |
+        brew tap gcenx/wine
+        brew install coreutils # for gtimeout
+        brew install --cask --no-quarantine gcenx-wine-devel
+    - name: Download Wine Mono msi
+      uses: actions/download-artifact@v2
+      with:
+        name: make msi output
+    - name: Install Wine Mono msi
+      run: wine64 msiexec /i wine-mono-*.msi 1>&2
+    - name: Run 64-bit Wine mscoree tests
+      run: |
+        wget -nc 'http://test.winehq.org/builds/winetest64-latest.exe' 1>&2
+        wine64 winetest64-latest.exe -x winetest64 >/dev/null
+        wine64 winetest64/mscoree_test.exe --list 2>/dev/null|sed 's/.$//'|tail -n +2|while read testname; do
+          echo BEGIN $testname TEST 1>&2
+          WINETEST_REPORT_SUCCESS=1 WINEDEBUG=mscoree WINE_MONO_TRACE=x gtimeout -v 300 wine64 winetest64/mscoree_test.exe $testname 1>&2 || printf 'mscoree:%s test failed\n' $testname >> tests-failed
+          echo END $testname TEST 1>&2
+        done
+        if test -f tests-failed; then
+          cat tests-failed
+          exit 1
+        fi
