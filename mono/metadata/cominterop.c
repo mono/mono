@@ -1027,6 +1027,9 @@ cominterop_class_marshalled_as_interface (MonoClass* klass)
 	return ret;
 }
 
+static MonoMarshalSpec*
+cominterop_get_ccw_default_mspec (const MonoType *param_type);
+
 /**
  * cominterop_get_native_wrapper_adjusted:
  * @method: managed COM Interop method
@@ -1072,50 +1075,14 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 	for (i = 1; i < sig_native->param_count; i++) {
 		int mspec_index = i + 1;
 		if (mspecs[mspec_index] == NULL) {
-			// default object to VARIANT
-			if (sig_native->params[i]->type == MONO_TYPE_OBJECT) {
-				mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[mspec_index]->native = MONO_NATIVE_STRUCT;
-			}
-			else if (sig_native->params[i]->type == MONO_TYPE_STRING) {
-				mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[mspec_index]->native = MONO_NATIVE_BSTR;
-			}
-			else if (sig_native->params[i]->type == MONO_TYPE_CLASS) {
-				if (cominterop_class_marshalled_as_interface (sig_native->params[i]->data.klass)) {
-					mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
-					mspecs[mspec_index]->native = MONO_NATIVE_INTERFACE;
-				}
-			}
-			else if (sig_native->params[i]->type == MONO_TYPE_BOOLEAN) {
-				mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[mspec_index]->native = MONO_NATIVE_VARIANTBOOL;
-			}
+			mspecs[mspec_index] = cominterop_get_ccw_default_mspec (sig_native->params[i]);
 		}
 	}
 
 	if (method->iflags & METHOD_IMPL_ATTRIBUTE_PRESERVE_SIG) {
 		// move return spec to last param
 		if (!MONO_TYPE_IS_VOID (sig->ret) && mspecs[0] == NULL) {			
-			// default object to VARIANT
-			if (sig->ret->type == MONO_TYPE_OBJECT) {
-				mspecs[0] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[0]->native = MONO_NATIVE_STRUCT;
-			}
-			else if (sig->ret->type == MONO_TYPE_STRING) {
-				mspecs[0] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[0]->native = MONO_NATIVE_BSTR;
-			}
-			else if (sig->ret->type == MONO_TYPE_CLASS) {
-				if (cominterop_class_marshalled_as_interface (sig->ret->data.klass)) {
-					mspecs[0] = g_new0 (MonoMarshalSpec, 1);
-					mspecs[0]->native = MONO_NATIVE_INTERFACE;
-				}
-			}
-			else if (sig->ret->type == MONO_TYPE_BOOLEAN) {
-				mspecs[0] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[0]->native = MONO_NATIVE_VARIANTBOOL;
-			}
+			mspecs[0] = cominterop_get_ccw_default_mspec (sig->ret);
 		}
 	}
 
