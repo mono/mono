@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using Mono.Interop;
 using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.CompilerServices;
@@ -1123,6 +1124,39 @@ namespace System.Globalization
 			}
 		}
 
+		static CultureInfo s_UserPreferredCultureInfoInAppX;
+
+		delegate void OnCultureInfoChangedDelegate ([MarshalAs(UnmanagedType.LPWStr)] string language);
+
+		[DllImport("__Internal")]
+		static extern void InitializeUserPreferredCultureInfoInAppX (OnCultureInfoChangedDelegate onCultureInfoChangedInAppX);
+
+		[DllImport("__Internal")]
+		static extern void SetUserPreferredCultureInfoInAppX ([MarshalAs(UnmanagedType.LPWStr)] string name);
+
+		[MonoPInvokeCallback (typeof(OnCultureInfoChangedDelegate))]
+		static void OnCultureInfoChangedInAppX ([MarshalAs(UnmanagedType.LPWStr)] string language)
+		{
+			if (language != null) {
+				s_UserPreferredCultureInfoInAppX = new CultureInfo(language);
+			} else {
+				s_UserPreferredCultureInfoInAppX = null;
+			}
+		}
+
+		internal static CultureInfo GetCultureInfoForUserPreferredLanguageInAppX ()
+		{
+			if (s_UserPreferredCultureInfoInAppX == null)
+				InitializeUserPreferredCultureInfoInAppX (OnCultureInfoChangedInAppX);
+
+			return s_UserPreferredCultureInfoInAppX;
+		}
+
+		internal static void SetCultureInfoForUserPreferredLanguageInAppX (CultureInfo cultureInfo)
+		{
+			SetUserPreferredCultureInfoInAppX (cultureInfo.Name);
+			s_UserPreferredCultureInfoInAppX = cultureInfo;
+		}
 
 #region reference sources
 		// TODO:

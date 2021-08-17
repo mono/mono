@@ -18,6 +18,8 @@ namespace System.Threading
 {    
 #if !MONO
     using Microsoft.Win32.SafeHandles;
+#else
+    using Mono.Interop;
 #endif
     using System.Security.Permissions;
     using System.Runtime.InteropServices;
@@ -436,14 +438,6 @@ namespace System.Threading
 				Exception.ReportUnhandledException(e);
 			}
         }
-
-		[AttributeUsage (AttributeTargets.Method)]
-		sealed class MonoPInvokeCallbackAttribute : Attribute
-		{
-			public MonoPInvokeCallbackAttribute(Type t)
-            {
-			}
-		}
 
         class InvocationContext
         {

@@ -41,6 +41,7 @@ Mono/DataConverter.cs
 Mono.Interop/ComInteropProxy.cs
 Mono.Interop/IDispatch.cs
 Mono.Interop/IUnknown.cs
+Mono.Interop/MonoPInvokeCallbackAttribute.cs
 ../Mono.Security/Mono.Math/BigInteger.cs
 ../Mono.Security/Mono.Math.Prime/ConfidenceFactor.cs
 ../Mono.Security/Mono.Math.Prime/PrimalityTests.cs
