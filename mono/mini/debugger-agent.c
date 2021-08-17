@@ -4262,7 +4262,7 @@ thread_end (MonoProfiler *prof, uintptr_t tid)
 	if (thread) {
 		mono_g_hash_table_remove (tid_to_thread_obj, GUINT_TO_POINTER (tid));
 		tls = (DebuggerTlsData *)mono_g_hash_table_lookup (thread_to_tls, thread);
-		if (tls) {
+		if (tls && !tls->terminated) {
 			/* FIXME: Maybe we need to free this instead, but some code can't handle that */
 			tls->terminated = TRUE;
 			/* Can't remove from tid_to_thread, as that would defeat the check in thread_start () */
