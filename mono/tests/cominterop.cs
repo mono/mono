@@ -1887,6 +1887,9 @@ public class Tests
 
 	public static int TestITest (ITest itest)
 	{
+		bool isWindows = !(((int)Environment.OSVersion.Platform == 4) ||
+			((int)Environment.OSVersion.Platform == 128));
+
 		try {
 			ITest itest2;
 			itest.SByteIn (-100);
@@ -1924,6 +1927,9 @@ public class Tests
 			PointWithoutExplicitLayout pt3 = new PointWithoutExplicitLayout(30, 40);
 			if (itest.PointClassWithoutExplicitLayout (pt3) != 0)
 				return 1;
+
+			if (isWindows)
+				itest.ArrayIn2 (new object[] { "Test", 2345 });
 		}
 		catch (Exception ex) {
 			return 1;

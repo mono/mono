@@ -3717,6 +3717,34 @@ ArrayIn(MonoComObject* pUnk, void *array)
 LIBTEST_API int STDCALL
 ArrayIn2(MonoComObject* pUnk, void *array)
 {
+#ifdef HOST_WIN32
+	SAFEARRAY* sa = (SAFEARRAY*)array;
+	LONG bound;
+	VARTYPE vt;
+	LONG index = 1;
+	VARIANT value;
+
+	if (SafeArrayGetDim (sa) != 1)
+		return 0x80000001;
+
+	if (FAILED(SafeArrayGetLBound (sa, 1, &bound)) || bound != 0)
+		return 0x80000002;
+
+	if (FAILED(SafeArrayGetUBound (sa, 1, &bound)) || bound != 1)
+		return 0x80000003;
+
+	if (FAILED(SafeArrayGetVartype (sa, &vt)) || vt != VT_VARIANT)
+		return 0x80000004;
+
+	if (FAILED(SafeArrayGetElement (sa, &index, &value)))
+		return 0x80000005;
+	
+	if (value.vt != VT_I4)
+		return 0x80000006;
+	
+	if (value.intVal != 2345)
+		return 0x80000007;
+#endif
 	return S_OK;
 }
 
