@@ -1953,9 +1953,15 @@ target_type_is_incompatible (MonoCompile *cfg, MonoType *target, MonoInst *arg)
 	case MONO_TYPE_VALUETYPE:
 		if (arg->type != STACK_VTYPE)
 			return 1;
+/* wine-mono hack: MS's Managed C++ compiler can generate invalid 
+ * functions that use different but same-sized valuetypes
+ * interchangeably. Apparently .NET Framework accepts this.
+ */
+#if 0
 		klass = mono_class_from_mono_type_internal (simple_type);
 		if (klass != arg->klass)
 			return 1;
+#endif
 		return 0;
 	case MONO_TYPE_TYPEDBYREF:
 		if (arg->type != STACK_VTYPE)
