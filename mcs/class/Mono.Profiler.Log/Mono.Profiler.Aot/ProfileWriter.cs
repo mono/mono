@@ -25,8 +25,8 @@ namespace Mono.Profiler.Aot {
 
 		void WriteString (string str)
 		{
-			WriteInt32 (str.Length);
 			var buf = Encoding.UTF8.GetBytes (str);
+			WriteInt32 (buf.Length);
 			stream.Write (buf, 0, buf.Length);
 		}
 
