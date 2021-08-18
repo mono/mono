@@ -181,6 +181,7 @@ System.Drawing.Imaging/MetaHeader.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Imaging/PropertyItem.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/PropertyItemInternal.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Imaging/WmfPlaceableFileHeader.cs
+System.Drawing.Printing/CorefxStubs.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Printing/Duplex.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Printing/InvalidPrinterException.cs
 ../../../external/corefx/src/System.Drawing.Common/src/System/Drawing/Printing/InvalidPrinterException.Serializable.cs

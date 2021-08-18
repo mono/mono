@@ -32,6 +32,7 @@
 
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Internal;
 using System.Drawing.Text;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -298,6 +299,12 @@ namespace System.Drawing
 			if (! disposed) {
 				if (deviceContextHdc != IntPtr.Zero)
 					ReleaseHdc ();
+
+				if (PrintingHelper is DeviceContext printerDC)
+				{
+					printerDC.Dispose();
+					PrintingHelper = null;
+				}
 
 				if (GDIPlus.UseCarbonDrawable || GDIPlus.UseCocoaDrawable) {
 					Flush ();
@@ -2457,8 +2464,13 @@ namespace System.Drawing
 			}
 		}
 
+		internal object PrintingHelper { get; set; }
+
 		public RectangleF VisibleClipBounds {
 			get {
+				if (PrintingHelper is PrintPreviewGraphics ppGraphics)
+					return ppGraphics.VisibleClipBounds;
+
                                 RectangleF rect;
 					
                                 Status status = GDIPlus.GdipGetVisibleClipBounds (nativeObject, out rect);

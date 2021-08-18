@@ -1,2 +1,15 @@
 System.Drawing/BufferedGraphics.cs
 System.Drawing/BufferedGraphicsContext.cs
+
+System.Drawing.Printing/PreviewPrintController.cs
+System.Drawing.Printing/StandardPrintController.cs
+System.Drawing.Printing/PrintController.cs
+System.Drawing.Printing/PrintPageEventArgs.cs
+System.Drawing.Printing/PrintEventArgs.cs
+System.Drawing.Printing/PageSettings.cs
+System.Drawing.Printing/PrintDocument.cs
+System.Drawing.Printing/PrintingServices.cs
+System.Drawing.Printing/PrinterSettings.cs
+System.Drawing.Printing/PrintingServicesUnix.cs
+System.Drawing.Printing/PrintingServicesWin32.cs
+System.Drawing.Printing/CorefxStubs.cs
