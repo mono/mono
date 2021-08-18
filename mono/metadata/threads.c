@@ -6392,7 +6392,7 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 		external = !(info = mono_thread_info_current_unchecked ()) || !mono_thread_info_is_live (info);
 
 	if (!mono_thread_internal_current ()) {
-		mono_thread_internal_attach (domain);
+		mono_thread_internal_attach (mono_get_root_domain ());
 
 		// #678164
 		mono_thread_set_state (mono_thread_internal_current (), ThreadState_Background);
@@ -6409,8 +6409,10 @@ mono_threads_attach_coop_internal (MonoDomain *domain, gpointer *cookie, MonoSta
 		}
 	}
 
-	if (orig != domain)
+	if (orig != domain) {
+		mono_thread_push_appdomain_ref (domain);
 		mono_domain_set_fast (domain, TRUE);
+	}
 
 	return orig;
 }
@@ -6452,6 +6454,7 @@ mono_threads_detach_coop_internal (MonoDomain *orig, gpointer cookie, MonoStackD
 			mono_domain_unset ();
 		else
 			mono_domain_set_fast (orig, TRUE);
+		mono_thread_pop_appdomain_ref ();
 	}
 
 	if (mono_threads_is_blocking_transition_enabled ()) {
