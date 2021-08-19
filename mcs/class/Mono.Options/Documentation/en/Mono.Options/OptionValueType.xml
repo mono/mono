@@ -34,6 +34,7 @@
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueType</ReturnType>
       </ReturnValue>
+      <MemberValue>0</MemberValue>
       <Docs>
         <summary>
           <para>No value is taken.</para>
@@ -58,6 +59,7 @@
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueType</ReturnType>
       </ReturnValue>
+      <MemberValue>1</MemberValue>
       <Docs>
         <summary>
           <para>A value is optional.</para>
@@ -87,6 +89,7 @@
       <ReturnValue>
         <ReturnType>Mono.Options.OptionValueType</ReturnType>
       </ReturnValue>
+      <MemberValue>2</MemberValue>
       <Docs>
         <summary>
           <para>A value is required.</para>

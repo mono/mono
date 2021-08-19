@@ -128,7 +128,7 @@
     </Member>
     <Member MemberName="GetArguments">
       <MemberSignature Language="C#" Value="public abstract bool GetArguments (string value, out System.Collections.Generic.IEnumerable&lt;string&gt; replacement);" />
-      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool GetArguments(string value, class System.Collections.Generic.IEnumerable`1&lt;string&gt; replacement) cil managed" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool GetArguments(string value, [out] class System.Collections.Generic.IEnumerable`1&lt;string&gt;&amp; replacement) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.2.0</AssemblyVersion>
@@ -139,7 +139,7 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="value" Type="System.String" />
-        <Parameter Name="replacement" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;&amp;" RefType="out" />
+        <Parameter Name="replacement" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" RefType="out" />
       </Parameters>
       <Docs>
         <param name="value">
