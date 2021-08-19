@@ -412,12 +412,6 @@ if ($build)
 			my $automakeMakeFlags = "";
 			print(">>> Installing automake from $automakeDir\n");
 			chdir("$automakeDir") eq 1 or die ("failed to chdir to automake directory\n");
-			if($windowsSubsystemForLinux)
-			{
-				#Windows subsystem needs to run bootstrap, and make needs to be run with -i due to one doc failing to build
-				system("./bootstrap") eq 0 or die ("failed to bootstrap automake\n");
-				$automakeMakeFlags = "-i";
-			}
 			system("./configure --prefix=$builtToolsDir") eq 0 or die ("failed to configure automake\n");
 			system("make $automakeMakeFlags") eq 0 or die ("failed to make automake\n");
 			system("make install");
