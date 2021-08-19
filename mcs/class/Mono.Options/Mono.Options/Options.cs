@@ -776,17 +776,17 @@ namespace Mono.Options
 		}
 
 		public OptionSet (MessageLocalizerConverter localizer)
-			: this(localizer, null)
+			: this (localizer, null)
 		{
 		}
 
 		public OptionSet (StringComparer comparer)
-			: this(null, comparer)
+			: this (null, comparer)
 		{
 		}
 
 		public OptionSet (MessageLocalizerConverter localizer, StringComparer comparer)
-			: base(comparer)
+			: base (comparer)
 		{
 			this.roSources = new ReadOnlyCollection<ArgumentSource> (sources);
 			this.localizer = localizer;
