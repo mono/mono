@@ -2538,6 +2538,20 @@ cominterop_class_method_is_visible (MonoMethod *method)
 	return TRUE;
 }
 
+static int
+cominterop_get_visible_method_count (MonoClass *klass)
+{
+	int i, ret = 0;
+	int mcount = mono_class_get_method_count (klass);
+	if (mcount && !m_class_get_methods (klass))
+		mono_class_setup_methods (klass);
+
+	for (i = 0; i < mcount; i++)
+		if (cominterop_class_method_is_visible (m_class_get_methods (klass) [i]))
+			ret++;
+	return ret;
+}
+
 static gpointer
 cominterop_get_ccw_method (MonoClass *iface, MonoMethod *method, MonoError *error)
 {
@@ -2708,7 +2722,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		start_slot = 7;
 	}
 	else if (mono_class_is_interface (iface)) {
-		method_count += mono_class_get_method_count (iface);
+		method_count += cominterop_get_visible_method_count (iface);
 		start_slot = cominterop_get_com_slot_begin (iface);
 	}
 	else {
@@ -2730,7 +2744,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 
 			method_count = 0;
 			if (mono_class_is_interface (iface))
-				method_count += mono_class_get_method_count (iface);
+				method_count += cominterop_get_visible_method_count (iface);
 			else {
 				MonoClass* klass_iter;
 				for (klass_iter = iface; klass_iter; klass_iter = m_class_get_parent (klass_iter)) {
@@ -2758,7 +2772,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 					if (ifaces) {
 						for (i = ifaces->len - 1; i >= 0; i--) {
 							MonoClass *ic = (MonoClass *)g_ptr_array_index (ifaces, i);
-							method_count += mono_class_get_method_count (ic);
+							method_count += cominterop_get_visible_method_count (ic);
 						}
 						g_ptr_array_free (ifaces, TRUE);
 					}
@@ -2785,12 +2799,18 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 		}
 
 		if (mono_class_is_interface (iface)) {
-			if (method_count && !m_class_get_methods (iface))
-				mono_class_setup_methods (iface);
+			if (method_count) {
+				if (!m_class_get_methods (iface))
+					mono_class_setup_methods (iface);
 
-			for (i = method_count - 1; i >= 0; i--) {
-				methods [i].method = m_class_get_methods (iface) [i];
-				methods [i].dispid = 0;
+				int index = method_count - 1;
+				for (i = mono_class_get_method_count (iface) - 1; i >= 0; i--) {
+					MonoMethod *method = m_class_get_methods (iface) [i];
+					if (cominterop_class_method_is_visible (method)) {
+						methods [index].method = method;
+						methods [index--].dispid = 0;
+					}
+				}
 			}
 			depth = 2;
 		}
@@ -2838,8 +2858,11 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 						int offset = mono_class_interface_offset (iface, ic);
 						g_assert (offset >= 0);
 						for (j = mono_class_get_method_count (ic) - 1; j >= 0; j--) {
-							methods [index].method = m_class_get_vtable (iface) [offset + m_class_get_methods (ic) [j]->slot];
-							methods [index--].dispid = depth;
+							MonoMethod *method = m_class_get_methods (ic) [j];
+							if (cominterop_class_method_is_visible (method)) {
+								methods [index].method = m_class_get_vtable (iface) [offset + method->slot];
+								methods [index--].dispid = depth;
+							}
 						}
 					}
 					g_ptr_array_free (ifaces, TRUE);

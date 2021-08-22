@@ -1674,6 +1674,9 @@ public class Tests
 		string[] lparrayref ([MarshalAs (UnmanagedType.LPArray, ArraySubType=UnmanagedType.LPStr, SizeConst=2)] ref string[] array);
 		[PreserveSig ()]
 		int pressig (short x, out uint y);
+		[ComVisible (false)]
+		void invisible1 ();
+		void invisible2 ();
 	}
 
 	public class OtherTest: IOtherTest
@@ -1751,6 +1754,15 @@ public class Tests
 				throw new ArgumentException ("test exception", "x");
 			y = 99;
 			return -1010;
+		}
+
+		public void invisible1 ()
+		{
+		}
+
+		[ComVisible (false)]
+		public void invisible2 ()
+		{
 		}
 
 		public byte prop

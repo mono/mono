@@ -8531,6 +8531,8 @@ mono_test_cominterop_ccw_queryinterface (MonoComObject *pUnk)
 LIBTEST_API int STDCALL
 mono_test_cominterop_ccw_get_ids_of_names (IDispatch *pDisp)
 {
+	static const gunichar2 invisible1[] = { 'i','n','v','i','s','i','b','l','e','1',0 };
+	static const gunichar2 invisible2[] = { 'i','n','v','i','s','i','b','l','e','2',0 };
 	static const gunichar2 Invoke[] = { 'I','n','v','o','k','e',0 };
 	static const gunichar2 method[] = { 'm','e','T','H','o','d',0 };
 	static const gunichar2 boolrefs[] = { 'b','o','o','l','R','e','F','S',0 };
@@ -8543,9 +8545,9 @@ mono_test_cominterop_ccw_get_ids_of_names (IDispatch *pDisp)
 	static const gunichar2 propref[] = { 'p','r','o','P','r','E','f',0 };
 	static const gunichar2 arg_str[] = { 's','T','r',0 };
 	static const gunichar2 arg_sh[] = { 'S','H',0 };
-	static const gunichar2* const names[] = { method, boolrefs, ifaceref, variantref, valuetype, valuetyperef, pressig, prop, propref };
+	static const gunichar2* const names[] = { method, boolrefs, ifaceref, variantref, valuetype, valuetyperef, pressig, prop, propref, invisible2 };
 	static const gunichar2* const method_names[] = { method, arg_str, arg_sh };
-	static const gunichar2* const invalid[] = { Invoke };
+	static const gunichar2* const invalid[] = { invisible1, Invoke };
 	gint32 dispid[3];
 	int i;
 
@@ -8559,8 +8561,9 @@ mono_test_cominterop_ccw_get_ids_of_names (IDispatch *pDisp)
 		return 3;
 	if (dispid[0] <= 0 || dispid[1] != 1 || dispid[2] != 0)
 		return 4;
-	if (pDisp->lpVtbl->GetIDsOfNames (pDisp, &IID_IMonoNULL, (void*)invalid, 1, 0x00000800, (void*)dispid) != 0x80020006)
-		return 5;
+	for (i = 0; i < sizeof (invalid) / sizeof (invalid[0]); i++)
+		if (pDisp->lpVtbl->GetIDsOfNames (pDisp, &IID_IMonoNULL, (void*)(invalid + i), 1, 0x00000800, (void*)dispid) != 0x80020006)
+			return 5;
 	return 0;
 }
 
