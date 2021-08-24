@@ -7408,6 +7408,13 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					 */
 					fsig = mono_metadata_signature_dup_mempool (cfg->mempool, fsig);
 					fsig->pinvoke = FALSE;
+
+					/* Ensure static cctor is run before trying to resolve the pinvoke */
+					if (mono_class_needs_cctor_run(cmethod->klass, method))
+					{
+						emit_class_init (cfg, cmethod->klass);
+						CHECK_TYPELOAD (cmethod->klass);
+					}
 				} else {
 					MonoMethod *wrapper = mono_marshal_get_native_wrapper (cmethod, TRUE, cfg->compile_aot);
 					fsig = mono_method_signature_internal (wrapper);
