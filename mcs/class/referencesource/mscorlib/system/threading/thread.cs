@@ -1209,12 +1209,11 @@ namespace System.Threading {
         public CultureInfo CurrentUICulture {
             get {
                 Contract.Ensures(Contract.Result<CultureInfo>() != null);
-#if FEATURE_APPX
+
                 if(AppDomain.IsAppXModel()) {
                     return CultureInfo.GetCultureInfoForUserPreferredLanguageInAppX() ?? GetCurrentUICultureNoAppX();
                 } 
                 else 
-#endif
                 {
                     return GetCurrentUICultureNoAppX();
                 }
@@ -1236,6 +1235,12 @@ namespace System.Threading {
 
                 // If you add more pre-conditions to this method, check to see if you also need to 
                 // add them to CultureInfo.DefaultThreadCurrentUICulture.set.
+
+                if (AppDomain.IsAppXModel ())
+                {
+                    CultureInfo.SetCultureInfoForUserPreferredLanguageInAppX (value);
+                    return;
+                }
 
 #if FEATURE_LEAK_CULTURE_INFO
                 if (nativeSetThreadUILocale(value.SortName) == false)
@@ -1335,12 +1340,10 @@ namespace System.Threading {
             get {
                 Contract.Ensures(Contract.Result<CultureInfo>() != null);
 
-#if FEATURE_APPX
                 if(AppDomain.IsAppXModel()) {
                     return CultureInfo.GetCultureInfoForUserPreferredLanguageInAppX() ?? GetCurrentCultureNoAppX();
                 } 
                 else 
-#endif
                 {
                     return GetCurrentCultureNoAppX();
                 }
@@ -1358,6 +1361,12 @@ namespace System.Threading {
 
                 // If you add more pre-conditions to this method, check to see if you also need to 
                 // add them to CultureInfo.DefaultThreadCurrentCulture.set.
+
+                if (AppDomain.IsAppXModel ())
+                {
+                    CultureInfo.SetCultureInfoForUserPreferredLanguageInAppX (value);
+                    return;
+                }
 
 #if FEATURE_LEAK_CULTURE_INFO
                 //If we can't set the nativeThreadLocale, we'll just let it stay
