@@ -671,13 +671,16 @@ find_method (MonoMethod *method, MonoDomain *domain, MonoDebugMethodJitInfo *jit
 MonoDebugMethodJitInfo *
 mono_debug_find_method (MonoMethod *method, MonoDomain *domain)
 {
-	MonoDebugMethodJitInfo *res = g_new0 (MonoDebugMethodJitInfo, 1);
-
 	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
 		return NULL;
 
+	MonoDebugMethodJitInfo* res = g_new0(MonoDebugMethodJitInfo, 1);
 	mono_debugger_lock ();
-	find_method (method, domain, res);
+	if (!find_method(method, domain, res))
+	{
+		g_free(res);
+		res = NULL;
+	}
 	mono_debugger_unlock ();
 	return res;
 }
