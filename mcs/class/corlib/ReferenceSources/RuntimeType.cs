@@ -650,9 +650,19 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static TypeCode GetTypeCodeImplInternal (Type type);		
 
+		[DllImport("ole32", CharSet=CharSet.Unicode)]
+		internal static extern int CLSIDFromProgID(string progID, out Guid clsid);
+
 		internal static Type GetTypeFromProgIDImpl(String progID, String server, bool throwOnError)
 		{
-			throw new NotImplementedException ("Unmanaged activation is not supported");
+			var hr = CLSIDFromProgID (progID, out var clsid);
+
+			if (throwOnError)
+				Marshal.ThrowExceptionForHR (hr);
+			else if (hr < 0)
+				return null;
+
+			return GetTypeFromCLSIDImpl (clsid, server, throwOnError);
 		}
 
 		public override string ToString()
