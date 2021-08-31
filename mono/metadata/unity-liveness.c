@@ -331,16 +331,12 @@ static gboolean mono_add_and_validate_object(MonoObject *object, LivenessState *
 		if (!IS_MARKED(object)) {
 			gboolean has_references = GET_VTABLE(object)->klass->has_references;
 			if (has_references || should_process_value(object, state->filter)) {
-				if (array_is_full(state->all_objects))
-					array_safe_grow(state, state->all_objects);
-				array_push_back(state->all_objects, object);
+				block_array_push_back(state->all_objects, object, state);
 				MARK_OBJ(object);
 			}
 			// Check if klass has further references - if not skip adding
 			if (has_references) {
-				if (array_is_full(state->process_array))
-					array_safe_grow(state, state->process_array);
-				array_push_back(state->process_array, object);
+				block_array_push_back(state->process_array, object, state);
 				return TRUE;
 			}
 		}
@@ -465,11 +461,11 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 				if (val && field->type->type == MONO_TYPE_CLASS) {
 					MonoClass *fieldClass = field->type->data.klass;
 					MonoClass *valClass = GET_VTABLE(val)->klass;
-					g_assert(valClass->byval_arg.type == MONO_TYPE_CLASS || 
-						valClass->byval_arg.type == MONO_TYPE_GENERICINST ||
-						valClass->byval_arg.type == MONO_TYPE_SZARRAY ||
-						valClass->byval_arg.type == MONO_TYPE_STRING ||
-						valClass->byval_arg.type == MONO_TYPE_OBJECT);
+					g_assert(valClass->_byval_arg.type == MONO_TYPE_CLASS || 
+						valClass->_byval_arg.type == MONO_TYPE_GENERICINST ||
+						valClass->_byval_arg.type == MONO_TYPE_SZARRAY ||
+						valClass->_byval_arg.type == MONO_TYPE_STRING ||
+						valClass->_byval_arg.type == MONO_TYPE_OBJECT);
 					if (mono_class_is_interface(fieldClass)) {
 						/* TODO */
 					}
@@ -533,9 +529,8 @@ static void mono_traverse_and_validate_objects(LivenessState *state)
 	MonoObject* object = NULL;
 
 	state->traverse_depth++;
-	while (state->process_array->len > 0)
-	{
-		object = array_pop_back(state->process_array);
+	while (!block_array_is_empty(state->process_array)) {
+		object = block_array_pop_back(state->process_array);
 		mono_traverse_and_validate_generic_object(object, state);
 	}
 	state->traverse_depth--;
@@ -645,7 +640,7 @@ static void mono_validate_array(MonoArray *array, LivenessState *state)
 			if (mono_add_and_validate_object(val, state))
 				items_processed++;
 
-			validate_object_value(val, &element_class->byval_arg);
+			validate_object_value(val, &element_class->_byval_arg);
 
 			if (should_traverse_objects (items_processed, state->traverse_depth))
 				mono_traverse_and_validate_objects(state);
@@ -807,6 +802,7 @@ void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
 {
 	int i, j;
 	MonoDomain *domain = mono_domain_get();
+	MonoMemoryManager* memory_manager = mono_domain_memory_manager(domain);
 
 	mono_reset_state(liveness_state);
 
@@ -814,9 +810,9 @@ void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
 
 	g_hash_table_foreach(domain->special_static_fields, foreach_thread_static_field, liveness_state);
 
-	for (i = 0; i < domain->class_vtable_array->len; ++i)
+	for (i = 0; i < memory_manager->class_vtable_array->len; ++i)
 	{
-		MonoVTable *vtable = (MonoVTable*)g_ptr_array_index(domain->class_vtable_array, i);
+		MonoVTable *vtable = (MonoVTable*)g_ptr_array_index(memory_manager->class_vtable_array, i);
 		MonoClass *klass = vtable->klass;
 		MonoClassField *field;
 		if (!klass)
@@ -850,15 +846,15 @@ void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
 				}
 			}
 			else {
-				MonoError error;
+				ERROR_DECL(error);
 				MonoObject* val = NULL;
 
-				mono_field_static_get_value_checked(mono_class_vtable(domain, klass), field, &val, &error);
+				mono_field_static_get_value_checked(mono_class_vtable(domain, klass), field, &val, MONO_HANDLE_NEW(MonoString, NULL), error);
 
-				if (val && mono_error_ok(&error))
+				if (val && mono_error_ok(error))
 					mono_add_and_validate_object(val, liveness_state);
 
-				mono_error_cleanup(&error);
+				mono_error_cleanup(error);
 			}
 		}
 	}
