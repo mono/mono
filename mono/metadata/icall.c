@@ -8692,12 +8692,9 @@ ves_icall_System_ArgIterator_Setup (MonoArgIterator *iter, char* argsp, char* st
 	g_assert (iter->sig->call_convention == MONO_CALL_VARARG);
 
 	iter->next_arg = 0;
-	/* FIXME: it's not documented what start is exactly... */
-	if (start) {
-		iter->args = start;
-	} else {
-		iter->args = argsp + sizeof (gpointer);
-	}
+	/* start is a pointer to the last argument before the variable argument list,
+	 * it's not currently useful to us.*/
+	iter->args = argsp + sizeof (gpointer);
 	iter->num_args = iter->sig->param_count - iter->sig->sentinelpos;
 
 	/* g_print ("sig %p, param_count: %d, sent: %d\n", iter->sig, iter->sig->param_count, iter->sig->sentinelpos); */
