@@ -36,6 +36,10 @@
 #define MONO_ARCH_IS_OP_MEMBASE(opcode) FALSE
 #endif
 
+#ifdef HOST_WIN32
+#define printf g_print
+#endif
+
 static MonoBitSet*
 mono_bitset_mp_new_noinit (MonoMemPool *mp,  guint32 max_size)
 {

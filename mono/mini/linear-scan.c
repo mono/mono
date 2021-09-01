@@ -12,6 +12,10 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/utils/mono-compiler.h>
 
+#ifdef HOST_WIN32
+#define printf g_print
+#endif
+
 #ifndef DISABLE_JIT
 
 static void mono_linear_scan2 (MonoCompile *cfg, GList *vars, GList *regs, regmask_t *used_mask);
