@@ -106,6 +106,8 @@ DECL_OFFSET(MonoRealProxy, unwrapped_server)
 
 DECL_OFFSET(MonoRemoteClass, proxy_class)
 
+DECL_OFFSET(MonoArgIterator, args)
+
 DECL_OFFSET(MonoArray, vector)
 DECL_OFFSET(MonoArray, max_length)
 DECL_OFFSET(MonoArray, bounds)

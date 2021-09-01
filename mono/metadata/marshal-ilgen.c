@@ -74,6 +74,7 @@ is_out (const MonoType *t)
 }
 
 static GENERATE_GET_CLASS_WITH_CACHE (fixed_buffer_attribute, "System.Runtime.CompilerServices", "FixedBufferAttribute");
+static GENERATE_GET_CLASS_WITH_CACHE (arg_iterator, "System", "ArgIterator");
 static GENERATE_GET_CLASS_WITH_CACHE (date_time, "System", "DateTime");
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (icustom_marshaler, "System.Runtime.InteropServices", "ICustomMarshaler");
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (marshal, "System.Runtime.InteropServices", "Marshal");
@@ -4889,12 +4890,13 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 					MarshalAction action)
 {
 	MonoMethodBuilder *mb = m->mb;
-	MonoClass *klass, *date_time_class;
+	MonoClass *klass, *date_time_class, *arg_iterator_class;
 	int pos = 0, pos2;
 
 	klass = mono_class_from_mono_type_internal (t);
 
 	date_time_class = mono_class_get_date_time_class ();
+	arg_iterator_class = mono_class_get_arg_iterator_class ();
 
 	MonoType *int_type = mono_get_int_type ();
 	MonoType *double_type = m_class_get_byval_arg (mono_defaults.double_class);
@@ -4928,6 +4930,27 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			if (t->byref)
 				mono_mb_patch_branch (mb, pos);
 			break;
+		}
+
+		if (klass == arg_iterator_class && !t->byref) {
+			/* Convert to va_list */
+#ifdef TARGET_WIN32
+			*conv_arg_type = int_type;
+			conv_arg = mono_mb_add_local (mb, int_type);
+
+			/* conv_arg = arg.args */
+			mono_mb_emit_ldarg_addr (mb, argnum);
+			mono_mb_emit_icon (mb, MONO_STRUCT_OFFSET (MonoArgIterator, args));
+			mono_mb_emit_byte (mb, CEE_ADD);
+			mono_mb_emit_byte (mb, CEE_LDIND_I);
+			mono_mb_emit_stloc (mb, conv_arg);
+
+			break;
+#else
+			char *msg = g_strdup ("ArgIterator to va_list marshaling not implemented on this platform");
+			mono_mb_emit_exception_marshal_directive (mb, msg);
+			break;
+#endif
 		}
 
 		if (mono_class_is_explicit_layout (klass) || m_class_is_blittable (klass) || m_class_is_enumtype (klass))
@@ -4991,6 +5014,11 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			break;
 		}
 
+		if (klass == arg_iterator_class && !t->byref) {
+			mono_mb_emit_ldloc (mb, conv_arg);
+			break;
+		}
+
 		if (mono_class_is_explicit_layout (klass) || m_class_is_blittable (klass) || m_class_is_enumtype (klass)) {
 			mono_mb_emit_ldarg (mb, argnum);
 			break;
@@ -5022,6 +5050,12 @@ emit_marshal_vtype_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 				mono_mb_emit_managed_call (mb, from_oadate, NULL);
 				mono_mb_emit_op (mb, CEE_STOBJ, date_time_class);
 			}
+			break;
+		}
+
+		if (klass == arg_iterator_class && !t->byref)
+		{
+			g_assert (!(t->attrs & PARAM_ATTRIBUTE_OUT));
 			break;
 		}
 
