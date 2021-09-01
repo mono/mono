@@ -2776,7 +2776,11 @@ namespace System.Linq
         {
             get
             {
+#if UNITY_AOT
+		return SR.EmptyEnumerable;
+#else
                 return Strings.EmptyEnumerable;
+#endif
             }
         }
     }
@@ -2829,4 +2833,50 @@ namespace System.Linq
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         private int count;
     }
+
+
+#if UNITY_AOT
+    // <summary>
+    /// An iterator that can produce an array or <see cref="List{TElement}"/> through an optimized path.
+    /// </summary>
+    internal interface IIListProvider<TElement> : IEnumerable<TElement>
+    {
+        /// <summary>
+        /// Produce an array of the sequence through an optimized path.
+        /// </summary>
+        /// <returns>The array.</returns>
+        TElement[] ToArray();
+
+        /// <summary>
+        /// Produce a <see cref="List{TElement}"/> of the sequence through an optimized path.
+        /// </summary>
+        /// <returns>The <see cref="List{TElement}"/>.</returns>
+        List<TElement> ToList();
+
+        /// <summary>
+        /// Returns the count of elements in the sequence.
+        /// </summary>
+        /// <param name="onlyIfCheap">If true then the count should only be calculated if doing
+        /// so is quick (sure or likely to be constant time), otherwise -1 should be returned.</param>
+        /// <returns>The number of elements.</returns>
+        int GetCount(bool onlyIfCheap);
+    }
+
+    internal static partial class Error
+    {
+        internal static Exception ArgumentNull(string s) => new ArgumentNullException(s);
+
+        internal static Exception ArgumentOutOfRange(string s) => new ArgumentOutOfRangeException(s);
+
+        internal static Exception MoreThanOneElement() => new InvalidOperationException(SR.MoreThanOneElement);
+
+        internal static Exception MoreThanOneMatch() => new InvalidOperationException(SR.MoreThanOneMatch);
+
+        internal static Exception NoElements() => new InvalidOperationException(SR.NoElements);
+
+        internal static Exception NoMatch() => new InvalidOperationException(SR.NoMatch);
+
+        internal static Exception NotSupported() => new NotSupportedException();
+    }
+#endif
 }

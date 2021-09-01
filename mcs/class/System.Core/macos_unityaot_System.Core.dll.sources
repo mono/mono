@@ -13,3 +13,6 @@ System.Security.Cryptography/SHA512Cng.cs
 ../referencesource/System.Core/System/Security/Cryptography/AesManaged.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECDiffieHellman.cs
 ../referencesource/System.Core/System/Security/Cryptography/ECKeyXmlFormat.cs
+
+../referencesource/System.Core/System/Linq/Enumerable.cs
+corefx/SR.cs
