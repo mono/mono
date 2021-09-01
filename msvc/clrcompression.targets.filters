@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="clrcompression">
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\common\dictionary.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\bit_reader.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\decode.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\huffman.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\state.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\backward_references.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\backward_references_hq.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\bit_cost.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\block_splitter.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\brotli_bit_stream.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\cluster.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\compress_fragment.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\compress_fragment_two_pass.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\dictionary_hash.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\encode.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\entropy_encode.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\histogram.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\literal_cost.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\memory.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\metablock.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\static_dict.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\utf8_util.c">
+      <Filter>Source Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClCompile>
+
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\common\constants.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\common\dictionary.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\common\version.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\bit_reader.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\context.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\huffman.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\port.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\prefix.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\state.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\dec\transform.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\backward_references.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\backward_references_hq.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\backward_references_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\bit_cost.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\bit_cost_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\block_encoder_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\block_splitter.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\block_splitter_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\brotli_bit_stream.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\cluster.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\cluster_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\command.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\compress_fragment.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\compress_fragment_two_pass.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\context.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\dictionary_hash.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\entropy_encode.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\entropy_encode_static.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\fast_log.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\find_match_length.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\hash.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\hash_forgetful_chain_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\hash_longest_match64_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\hash_longest_match_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\hash_longest_match_quickly_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\hash_to_binary_tree_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\histogram.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\histogram_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\literal_cost.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\memory.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\metablock.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\metablock_inc.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\port.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\prefix.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\quality.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\ringbuffer.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\static_dict.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\static_dict_lut.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\utf8_util.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\enc\write_bits.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\include\brotli\decode.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\include\brotli\encode.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\include\brotli\port.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MonoSourceLocation)\external\corefx\src\Native\AnyOS\brotli\include\brotli\types.h">
+      <Filter>Header Files$(ClrCompressionFilterSubFolder)</Filter>
+    </ClInclude>
+
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files$(ClrCompressionFilterSubFolder)">
+      <UniqueIdentifier>{073fa345-f2f5-4e48-9db5-b15cf0898229}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files$(ClrCompressionFilterSubFolder)">
+      <UniqueIdentifier>{68FFDDD6-2E04-4EE2-BA8C-9798618A6CC9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

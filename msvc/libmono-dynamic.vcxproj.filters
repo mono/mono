@@ -6,7 +6,9 @@
     <MonoMiniFilterSubFolder>\libmini</MonoMiniFilterSubFolder>
     <MonoGCsgenFilterSubFolder>\libgcmonosgen</MonoGCsgenFilterSubFolder>
     <EGLibFilterSubFolder>\eglib</EGLibFilterSubFolder>
+    <ClrCompressionFilterSubFolder>\clrcompression</ClrCompressionFilterSubFolder>
   </PropertyGroup>
+  <Import Project="clrcompression.targets.filters" />
   <Import Project="eglib.targets.filters" />
   <Import Project="libmonoutils.targets.filters" />
   <Import Project="libmonoruntime.targets.filters" />
