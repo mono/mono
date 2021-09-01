@@ -6,6 +6,10 @@ internal static partial class Interop
 {
     internal static partial class Libraries
     {
+#if WIN_PLATFORM
+        internal const string CompressionNative = "__Internal";
+#else
         internal const string CompressionNative = "System.Native";
+#endif
     }
 }
