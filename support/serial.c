@@ -511,8 +511,10 @@ set_signal (int fd, MonoSerialSignal signal, gboolean value)
 	expected = get_signal_code (signal);
 	if (ioctl (fd, TIOCMGET, &signals) == -1)
 		{
-			/* Return successfully for pseudo-ttys. */
-			if (errno == EINVAL)
+			/* Return successfully for pseudo-ttys.
+			 * Linux kernels < 5.13 return EINVAL,
+			 * but versions >=5.13 return ENOTTY. */
+			if (errno == EINVAL || errno == ENOTTY)
 				return 1;
 
 			return -1;
