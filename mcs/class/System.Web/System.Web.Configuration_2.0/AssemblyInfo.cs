@@ -33,6 +33,8 @@
 using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Reflection;
+using System.Web.Util;
 
 namespace System.Web.Configuration
 {
@@ -40,6 +42,13 @@ namespace System.Web.Configuration
 	{
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty assemblyProp;
+
+		private Assembly[] _assembly;
+		private CompilationSection _compilationSection;
+
+		internal void SetCompilationReference(CompilationSection compSection) {
+			_compilationSection = compSection;
+		}
 		
 		static AssemblyInfo ()
 		{
@@ -69,6 +78,21 @@ namespace System.Web.Configuration
 		
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
+		}
+
+		internal Assembly[] AssemblyInternal {
+			get {
+				Debug.Trace("AssemblyInternal", "Loading assembly: " + Assembly);
+				if (_assembly == null) {
+					Debug.Assert(_compilationSection != null);
+					_assembly = _compilationSection.LoadAssembly(this);
+				}
+				return _assembly;
+			}
+			set {
+				Debug.Trace("AssemblyInternal", "Set assembly: " + Assembly);
+				_assembly = value;
+			}
 		}
 	}
 }
