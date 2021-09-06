@@ -37,25 +37,43 @@ namespace System.Web.UI
 	public sealed class ScriptResourceAttribute : Attribute
 	{
 		string _scriptName;
-		string _scriptResourceName;
-		string _typeName;
+		string _stringResourceName;
+		string _stringResourceClientTypeName;
 
 		public ScriptResourceAttribute (string scriptName, string stringResourceName, string stringResourceClientTypeName) {
 			_scriptName = scriptName;
-			_scriptResourceName = stringResourceName;
-			_typeName = stringResourceClientTypeName;
+			_stringResourceName = stringResourceName;
+			_stringResourceClientTypeName = stringResourceClientTypeName;
 		}
 
 		public string ScriptName {
 			get { return _scriptName; }
 		}
 
+		[Obsolete("This property is obsolete. Use StringResourceName instead.")]
 		public string ScriptResourceName {
-			get { return _scriptResourceName; }
+			get {
+				return StringResourceName;
+			}
 		}
 
+		public string StringResourceClientTypeName {
+			get {
+				return _stringResourceClientTypeName;
+			}
+		}
+
+		public string StringResourceName {
+			get {
+				return _stringResourceName;
+			}
+		}
+
+		[Obsolete("This property is obsolete. Use StringResourceClientTypeName instead.")]
 		public string TypeName {
-			get { return _typeName; }
+			get {
+				return StringResourceClientTypeName;
+			}
 		}
 	}
 }
