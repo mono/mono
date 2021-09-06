@@ -43,6 +43,7 @@ using System.Web.UI.HtmlControls;
 using System.IO;
 using System.Globalization;
 using System.Threading;
+using System.Web.Resources;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Xml;
@@ -97,6 +98,8 @@ namespace System.Web.UI
 		ScriptReferenceCollection _scripts;
 		CompositeScriptReference _compositeScript;
 		ServiceReferenceCollection _services;
+		private bool _initCompleted;
+		private bool _preRenderCompleted;
 		bool _isInAsyncPostBack;
 		bool _isInPartialRendering;
 		string _asyncPostBackSourceElementID;
@@ -127,6 +130,8 @@ namespace System.Web.UI
 		AuthenticationServiceManager _authenticationService;
 		ProfileServiceManager _profileService;
 		List<ScriptManagerProxy> _proxies;
+		private AjaxFrameworkMode _ajaxFrameworkMode = AjaxFrameworkMode.Enabled;
+		private bool _enableCdn;
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -182,6 +187,43 @@ namespace System.Web.UI
 				if (_authenticationService == null)
 					_authenticationService = new AuthenticationServiceManager ();
 				return _authenticationService;
+			}
+		}
+
+		[
+		ResourceDescription("ScriptManager_EnableCdn"),
+		Category("Behavior"),
+		DefaultValue(false),
+		]
+		public bool EnableCdn {
+			get {
+				return _enableCdn;
+			}
+			set {
+				if (_preRenderCompleted) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_CannotChangeEnableCdn);
+				}
+				_enableCdn = value;
+			}
+		}
+
+		[
+		ResourceDescription("ScriptManager_AjaxFrameworkMode"),
+		Category("Behavior"),
+		DefaultValue(AjaxFrameworkMode.Enabled),
+		]
+		public AjaxFrameworkMode AjaxFrameworkMode {
+			get {
+				return _ajaxFrameworkMode;
+			}
+			set {
+				if (value < AjaxFrameworkMode.Enabled || value > AjaxFrameworkMode.Explicit) {
+					throw new ArgumentOutOfRangeException("value");
+				}
+				if (_initCompleted) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_CannotChangeAjaxFrameworkMode);
+				}
+				_ajaxFrameworkMode = value;
 			}
 		}
 
@@ -467,6 +509,7 @@ namespace System.Web.UI
 
 			SetCurrent (Page, this);
 			Page.Error += new EventHandler (OnPageError);
+			Page.InitComplete += OnPageInitComplete;
 			_init = true;
 		}
 
@@ -475,10 +518,20 @@ namespace System.Web.UI
 				OnAsyncPostBackError (new AsyncPostBackErrorEventArgs (Context.Error));
 		}
 
+		private void OnPageInitComplete(object sender, EventArgs e) {
+			if (Page.IsPostBack) {
+				if (IsInAsyncPostBack && !SupportsPartialRendering) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_AsyncPostBackNotInPartialRenderingMode);
+				}
+			}
+
+			_initCompleted = true;
+		}
+
 		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
-			Page.PreRenderComplete += new EventHandler (OnPreRenderComplete);
+			Page.PreRenderComplete += new EventHandler (OnPagePreRenderComplete);
 
 			if (IsInAsyncPostBack) {
 				Page.SetRenderMethodDelegate (RenderPageCallback);
@@ -532,8 +585,9 @@ namespace System.Web.UI
 			return CreateScriptReference (path, assembly, true);
 		}
 		
-		void OnPreRenderComplete (object sender, EventArgs e)
+		private void OnPagePreRenderComplete (object sender, EventArgs e)
 		{
+			_preRenderCompleted = true;
 			// Resolve Scripts
 			ScriptReference ajaxScript = CreateScriptReference ("MicrosoftAjax.js", String.Empty, false);
 			ScriptReference ajaxWebFormsScript = CreateScriptReference ("MicrosoftAjaxWebForms.js", String.Empty, false);
