@@ -886,6 +886,7 @@ mono_gc_free_fixed (void* addr)
 static int validate_heap = 0;
 static int counter = 0;
 static int validate_frequency = 100;
+static UnityHeapVerifierCallback unity_heap_validation_callback;
 
 void
 mono_gc_set_heap_verifier (gboolean enabled)
@@ -894,15 +895,26 @@ mono_gc_set_heap_verifier (gboolean enabled)
 	validate_heap = enabled;
 }
 
-extern void mono_unity_heap_validation ();
+void
+mono_gc_set_heap_verifier_callback(UnityHeapVerifierCallback callback)
+{
+	unity_heap_validation_callback = callback;
+}
 
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
 
-	if (validate_heap && (counter++ % validate_frequency) == 0)
-		mono_unity_heap_validation ();
+	if (unity_heap_validation_callback && validate_heap && (counter++ % validate_frequency) == 0)
+	{
+		ves_icall_System_GC_WaitForPendingFinalizers();
+		mono_gc_handle_lock();
+		GC_stop_world_external();
+		unity_heap_validation_callback();
+		GC_start_world_external();
+		mono_gc_handle_unlock();
+	}
 
 	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);

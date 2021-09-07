@@ -164,6 +164,7 @@ MONO_API void mono_unity_liveness_free_struct(LivenessState *state);
 
 MONO_API void mono_unity_liveness_calculation_from_root(MonoObject *root, LivenessState *state);
 MONO_API void mono_unity_liveness_calculation_from_statics(LivenessState *state);
+MONO_API void mono_unity_heap_validation_from_statics(LivenessState* state);
 
 #define MARK_OBJ(obj)                                                       \
 	do {                                                                    \
@@ -465,7 +466,8 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 						valClass->_byval_arg.type == MONO_TYPE_GENERICINST ||
 						valClass->_byval_arg.type == MONO_TYPE_SZARRAY ||
 						valClass->_byval_arg.type == MONO_TYPE_STRING ||
-						valClass->_byval_arg.type == MONO_TYPE_OBJECT);
+						valClass->_byval_arg.type == MONO_TYPE_OBJECT ||
+						valClass->_byval_arg.type == MONO_TYPE_VALUETYPE); // TODO: Not sure if this is correct
 					if (mono_class_is_interface(fieldClass)) {
 						/* TODO */
 					}
@@ -728,36 +730,6 @@ void mono_unity_liveness_calculation_from_statics(LivenessState *liveness_state)
 	mono_traverse_objects(liveness_state);
 	//Filter objects and call callback to register found objects
 	mono_filter_objects(liveness_state);
-}
-
-void mono_unity_heap_validation_from_statics(LivenessState *liveness_state);
-extern void mono_gc_handle_lock();
-extern void mono_gc_handle_unlock();
-MONO_API void mono_unity_heap_validation()
-{
-
-	// int i = 0;
-	// MonoArray* res = NULL;
-	// GPtrArray* objects = NULL;
-	// LivenessState* liveness_state = NULL;
-	// MonoError* error = NULL;
-
-	// objects = g_ptr_array_sized_new (100000);
-	// objects->len = 0;
-
-	// mono_gc_handle_lock ();
-
-	// //liveness_state = mono_unity_liveness_calculation_begin (NULL, 100000, mono_unity_liveness_add_object_callback, (void*)objects, NULL, NULL);
-
-	// mono_unity_heap_validation_from_statics (liveness_state);
-
-	// //mono_unity_liveness_calculation_end (liveness_state);
-
-	// mono_gc_handle_unlock ();
-
-	// g_ptr_array_free (objects, TRUE);
-
-	/// I DON'T KNOW HOW TO DO THIS YET FIXMEEEEEE
 }
 
 void gchandle_process(void *data, void *user_data)
