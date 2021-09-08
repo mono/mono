@@ -2777,7 +2777,7 @@ namespace System.Linq
             get
             {
 #if UNITY_AOT
-		return SR.EmptyEnumerable;
+                return SR.EmptyEnumerable;
 #else
                 return Strings.EmptyEnumerable;
 #endif
@@ -2877,6 +2877,118 @@ namespace System.Linq
         internal static Exception NoMatch() => new InvalidOperationException(SR.NoMatch);
 
         internal static Exception NotSupported() => new NotSupportedException();
+    }
+
+    public static partial class Enumerable
+    {
+        public static IEnumerable<TSource> SkipLast<TSource>(this IEnumerable<TSource> source, int count)
+        {
+            if (source == null)
+            {
+                throw Error.ArgumentNull(nameof(source));
+            }
+
+            if (count <= 0)
+            {
+                return source.Skip(0);
+            }
+
+            return SkipLastIterator(source, count);
+        }
+
+        private static IEnumerable<TSource> SkipLastIterator<TSource>(IEnumerable<TSource> source, int count)
+        {
+            var queue = new Queue<TSource>();
+
+            using (IEnumerator<TSource> e = source.GetEnumerator())
+            {
+                while (e.MoveNext())
+                {
+                    if (queue.Count == count)
+                    {
+                        do
+                        {
+                            yield return queue.Dequeue();
+                            queue.Enqueue(e.Current);
+                        }
+                        while (e.MoveNext());
+                        break;
+                    }
+                    else
+                    {
+                        queue.Enqueue(e.Current);
+                    }
+                }
+            }
+        }
+
+        public static IEnumerable<TSource> TakeLast<TSource>(this IEnumerable<TSource> source, int count)
+        {
+            if (source == null)
+            {
+                throw Error.ArgumentNull(nameof(source));
+            }
+
+            if (count <= 0)
+            {
+                return EmptyEnumerable<TSource>.Instance;
+            }
+
+            return TakeLastIterator(source, count);
+        }
+
+        private static IEnumerable<TSource> TakeLastIterator<TSource>(IEnumerable<TSource> source, int count)
+        {
+            Queue<TSource> queue;
+
+            using (IEnumerator<TSource> e = source.GetEnumerator())
+            {
+                if (!e.MoveNext())
+                {
+                    yield break;
+                }
+
+                queue = new Queue<TSource>();
+                queue.Enqueue(e.Current);
+
+                while (e.MoveNext())
+                {
+                    if (queue.Count < count)
+                    {
+                        queue.Enqueue(e.Current);
+                    }
+                    else
+                    {
+                        do
+                        {
+                            queue.Dequeue();
+                            queue.Enqueue(e.Current);
+                        }
+                        while (e.MoveNext());
+                        break;
+                    }
+                }
+            }
+
+            do
+            {
+                yield return queue.Dequeue();
+            }
+            while (queue.Count > 0);
+        }
+
+        public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> source) => source.ToHashSet(comparer: null);
+
+        public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> source, IEqualityComparer<TSource> comparer)
+        {
+            if (source == null)
+            {
+                throw Error.ArgumentNull(nameof(source));
+            }
+
+            // Don't pre-allocate based on knowledge of size, as potentially many elements will be dropped.
+            return new HashSet<TSource>(source, comparer);
+        }
     }
 #endif
 }
