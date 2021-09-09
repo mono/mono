@@ -2776,7 +2776,11 @@ namespace System.Linq
         {
             get
             {
+#if UNITY_AOT
+                return SR.EmptyEnumerable;
+#else
                 return Strings.EmptyEnumerable;
+#endif
             }
         }
     }
@@ -2829,4 +2833,162 @@ namespace System.Linq
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
         private int count;
     }
+
+
+#if UNITY_AOT
+    // <summary>
+    /// An iterator that can produce an array or <see cref="List{TElement}"/> through an optimized path.
+    /// </summary>
+    internal interface IIListProvider<TElement> : IEnumerable<TElement>
+    {
+        /// <summary>
+        /// Produce an array of the sequence through an optimized path.
+        /// </summary>
+        /// <returns>The array.</returns>
+        TElement[] ToArray();
+
+        /// <summary>
+        /// Produce a <see cref="List{TElement}"/> of the sequence through an optimized path.
+        /// </summary>
+        /// <returns>The <see cref="List{TElement}"/>.</returns>
+        List<TElement> ToList();
+
+        /// <summary>
+        /// Returns the count of elements in the sequence.
+        /// </summary>
+        /// <param name="onlyIfCheap">If true then the count should only be calculated if doing
+        /// so is quick (sure or likely to be constant time), otherwise -1 should be returned.</param>
+        /// <returns>The number of elements.</returns>
+        int GetCount(bool onlyIfCheap);
+    }
+
+    internal static partial class Error
+    {
+        internal static Exception ArgumentNull(string s) => new ArgumentNullException(s);
+
+        internal static Exception ArgumentOutOfRange(string s) => new ArgumentOutOfRangeException(s);
+
+        internal static Exception MoreThanOneElement() => new InvalidOperationException(SR.MoreThanOneElement);
+
+        internal static Exception MoreThanOneMatch() => new InvalidOperationException(SR.MoreThanOneMatch);
+
+        internal static Exception NoElements() => new InvalidOperationException(SR.NoElements);
+
+        internal static Exception NoMatch() => new InvalidOperationException(SR.NoMatch);
+
+        internal static Exception NotSupported() => new NotSupportedException();
+    }
+
+    public static partial class Enumerable
+    {
+        public static IEnumerable<TSource> SkipLast<TSource>(this IEnumerable<TSource> source, int count)
+        {
+            if (source == null)
+            {
+                throw Error.ArgumentNull(nameof(source));
+            }
+
+            if (count <= 0)
+            {
+                return source.Skip(0);
+            }
+
+            return SkipLastIterator(source, count);
+        }
+
+        private static IEnumerable<TSource> SkipLastIterator<TSource>(IEnumerable<TSource> source, int count)
+        {
+            var queue = new Queue<TSource>();
+
+            using (IEnumerator<TSource> e = source.GetEnumerator())
+            {
+                while (e.MoveNext())
+                {
+                    if (queue.Count == count)
+                    {
+                        do
+                        {
+                            yield return queue.Dequeue();
+                            queue.Enqueue(e.Current);
+                        }
+                        while (e.MoveNext());
+                        break;
+                    }
+                    else
+                    {
+                        queue.Enqueue(e.Current);
+                    }
+                }
+            }
+        }
+
+        public static IEnumerable<TSource> TakeLast<TSource>(this IEnumerable<TSource> source, int count)
+        {
+            if (source == null)
+            {
+                throw Error.ArgumentNull(nameof(source));
+            }
+
+            if (count <= 0)
+            {
+                return EmptyEnumerable<TSource>.Instance;
+            }
+
+            return TakeLastIterator(source, count);
+        }
+
+        private static IEnumerable<TSource> TakeLastIterator<TSource>(IEnumerable<TSource> source, int count)
+        {
+            Queue<TSource> queue;
+
+            using (IEnumerator<TSource> e = source.GetEnumerator())
+            {
+                if (!e.MoveNext())
+                {
+                    yield break;
+                }
+
+                queue = new Queue<TSource>();
+                queue.Enqueue(e.Current);
+
+                while (e.MoveNext())
+                {
+                    if (queue.Count < count)
+                    {
+                        queue.Enqueue(e.Current);
+                    }
+                    else
+                    {
+                        do
+                        {
+                            queue.Dequeue();
+                            queue.Enqueue(e.Current);
+                        }
+                        while (e.MoveNext());
+                        break;
+                    }
+                }
+            }
+
+            do
+            {
+                yield return queue.Dequeue();
+            }
+            while (queue.Count > 0);
+        }
+
+        public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> source) => source.ToHashSet(comparer: null);
+
+        public static HashSet<TSource> ToHashSet<TSource>(this IEnumerable<TSource> source, IEqualityComparer<TSource> comparer)
+        {
+            if (source == null)
+            {
+                throw Error.ArgumentNull(nameof(source));
+            }
+
+            // Don't pre-allocate based on knowledge of size, as potentially many elements will be dropped.
+            return new HashSet<TSource>(source, comparer);
+        }
+    }
+#endif
 }
