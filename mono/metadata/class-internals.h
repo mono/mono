@@ -1536,6 +1536,12 @@ mono_class_get_default_finalize_method (void);
 void
 mono_field_resolve_type (MonoClassField *field, MonoError *error);
 
+void
+mono_error_set_for_type_exceptions (MonoError *oerror, MonoType *type);
+
+void
+mono_error_set_for_method_exceptions (MonoError *oerror, MonoMethod *method);
+
 gboolean
 mono_type_has_exceptions (MonoType *type);
 

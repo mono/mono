@@ -593,6 +593,9 @@ method_object_construct (MonoDomain *domain, MonoClass *refclass, MonoMethod *me
 
 	error_init (error);
 
+	mono_error_set_for_method_exceptions (error, method);
+	goto_if_nok (error, fail);
+
 	if (*method->name == '.' && (strcmp (method->name, ".ctor") == 0 || strcmp (method->name, ".cctor") == 0)) {
 		klass = mono_class_get_mono_cmethod_class ();
 	}
