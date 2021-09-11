@@ -1028,6 +1028,53 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         </example>
       </Docs>
     </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OptionSet (StringComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.StringComparer comparer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="comparer" Type="System.StringComparer" />
+      </Parameters>
+      <Docs>
+        <param name="comparer">
+          A <see cref="T:System.StringComparer" /> that will be used to compare the option names, 
+          e.g. <see cref="M:System.StringComparer.OrdinalIgnoreCase" /> for case insensitive processing.
+        </param>
+        <summary>
+          Creates and initializes a new 
+          <see cref="T:Mono.Options.OptionSet" /> class instance.
+        </summary>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public OptionSet (Converter&lt;string,string&gt; localizer, StringComparer comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Converter`2&lt;string, string&gt; localizer, class System.StringComparer comparer) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="localizer" Type="System.Converter&lt;System.String,System.String&gt;" />
+        <Parameter Name="comparer" Type="System.StringComparer" />
+      </Parameters>
+      <Docs>
+        <param name="localizer">
+          A <see cref="T:System.Converter{System.String,System.String}" />
+          instance that will be used to translate strings.
+        </param>
+        <param name="comparer">
+          A <see cref="T:System.StringComparer" /> that will be used to compare the option names, 
+          e.g. <see cref="M:System.StringComparer.OrdinalIgnoreCase" /> for case insensitive processing.
+        </param>
+        <summary>
+          Creates and initializes a new 
+          <see cref="T:Mono.Options.OptionSet" /> class instance.
+        </summary>
+      </Docs>
+    </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (Mono.Options.ArgumentSource source);" />
       <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.Options.OptionSet Add(class Mono.Options.ArgumentSource source) cil managed" />
@@ -2023,7 +2070,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
     </Member>
     <Member MemberName="GetOptionParts">
       <MemberSignature Language="C#" Value="protected bool GetOptionParts (string argument, out string flag, out string name, out string sep, out string value);" />
-      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance bool GetOptionParts(string argument, string flag, string name, string sep, string value) cil managed" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig instance bool GetOptionParts(string argument, [out] string&amp; flag, [out] string&amp; name, [out] string&amp; sep, [out] string&amp; value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
@@ -2036,10 +2083,10 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </ReturnValue>
       <Parameters>
         <Parameter Name="argument" Type="System.String" />
-        <Parameter Name="flag" Type="System.String&amp;" RefType="out" />
-        <Parameter Name="name" Type="System.String&amp;" RefType="out" />
-        <Parameter Name="sep" Type="System.String&amp;" RefType="out" />
-        <Parameter Name="value" Type="System.String&amp;" RefType="out" />
+        <Parameter Name="flag" Type="System.String" RefType="out" />
+        <Parameter Name="name" Type="System.String" RefType="out" />
+        <Parameter Name="sep" Type="System.String" RefType="out" />
+        <Parameter Name="value" Type="System.String" RefType="out" />
       </Parameters>
       <Docs>
         <param name="argument">

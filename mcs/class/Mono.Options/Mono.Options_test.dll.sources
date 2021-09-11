@@ -1,4 +1,5 @@
 Mono.Options/BaseRocksFixture.cs
+Mono.Options/CaseSensitivityTests.cs
 Mono.Options/CollectionContract.cs
 Mono.Options/CommandTest.cs
 Mono.Options/CommandSetTest.cs
