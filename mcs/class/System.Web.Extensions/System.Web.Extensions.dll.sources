@@ -97,6 +97,8 @@
 ./System.Web.UI/UpdatePanelTrigger.cs
 ./System.Web.UI/UpdatePanelUpdateMode.cs
 ./System.Web.UI/UpdateProgress.cs
+../referencesource/System.Web.Extensions/ui/WebControls/ContextDataSourceContextData.cs
+../referencesource/System.Web.Extensions/ui/WebControls/ContextDataSourceView.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/DataSourceHelper.cs
 ./System.Web.UI.WebControls/DataPagerCommandEventArgs.cs
 ./System.Web.UI.WebControls/DataPager.cs
@@ -110,6 +112,7 @@
 ../referencesource/System.Web.Extensions/ui/WebControls/Expressions/ParameterDataSourceExpression.cs
 ./System.Web.UI.WebControls/HelperExtensions.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/IDynamicQueryable.cs
+../referencesource/System.Web.Extensions/ui/WebControls/ILinqToSql.cs
 ./System.Web.UI.WebControls/InsertItemPosition.cs
 ./System.Web.UI.WebControls/IPageableItemContainer.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/IQueryableDataSource.cs
@@ -122,7 +125,8 @@
 ./System.Web.UI.WebControls/LinqDataSourceStatusEventArgs.cs
 ./System.Web.UI.WebControls/LinqDataSourceUpdateEventArgs.cs
 ./System.Web.UI.WebControls/LinqDataSourceValidationException.cs
-./System.Web.UI.WebControls/LinqDataSourceView.cs
+../referencesource/System.Web.Extensions/ui/WebControls/LinqDataSourceView.cs
+../referencesource/System.Web.Extensions/ui/WebControls/LinqToSqlWrapper.cs
 ./System.Web.UI.WebControls/ListViewCancelEventArgs.cs
 ./System.Web.UI.WebControls/ListViewCancelMode.cs
 ./System.Web.UI.WebControls/ListViewCommandEventArgs.cs
