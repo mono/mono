@@ -1,0 +1,1458 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Common_PageCannotBeNull" xml:space="preserve">
+    <value>Page cannot be null. Please ensure that this operation is being performed in the context of an ASP.NET request.</value>
+  </data>
+  <data name="Common_ScriptManagerRequired" xml:space="preserve">
+    <value>The control with ID '{0}' requires a ScriptManager on the page. The ScriptManager must appear before any controls that need it.</value>
+  </data>
+  <data name="ScriptManager_AjaxFrameworkMode" xml:space="preserve">
+    <value>Indicates how Microsoft Ajax Framework scripts should be included on the page.</value>
+  </data>
+  <data name="ScriptManager_OnlyOneScriptManager" xml:space="preserve">
+    <value>Only one instance of a ScriptManager can be added to the page.</value>
+  </data>
+  <data name="ScriptReference_AssemblyRequiresName" xml:space="preserve">
+    <value>Assembly cannot be defined without Name.</value>
+  </data>
+  <data name="ScriptManager_CannotChangeEnablePartialRendering" xml:space="preserve">
+    <value>The EnablePartialRendering property cannot be changed after the Init event.</value>
+  </data>
+  <data name="ScriptManager_AsyncPostBackNotInPartialRenderingMode" xml:space="preserve">
+    <value>The page is performing an async postback but the ScriptManager.SupportsPartialRendering property is set to false. Ensure that the property is set to true during an async postback.</value>
+  </data>
+  <data name="UpdatePanel_CannotModifyControlCollection" xml:space="preserve">
+    <value>The Controls property of UpdatePanel with ID '{0}' cannot be modified directly. To change the contents of the UpdatePanel modify the child controls of the ContentTemplateContainer property.</value>
+  </data>
+  <data name="UpdatePanel_SetPartialRenderingModeCalledOnce" xml:space="preserve">
+    <value>SetPartialRenderingMode can only be called once.</value>
+  </data>
+  <data name="ScriptManager_InvalidControlRegistration" xml:space="preserve">
+    <value>Control with ID '{0}' being registered through RegisterAsyncPostBackControl or RegisterPostBackControl must implement either INamingContainer, IPostBackDataHandler, or IPostBackEventHandler.</value>
+  </data>
+  <data name="ScriptManager_UpdatePanelNotRegistered" xml:space="preserve">
+    <value>Cannot unregister UpdatePanel with ID '{0}' since it was not registered with the ScriptManager. This might occur if the UpdatePanel was removed from the control tree and later added again, which is not supported.</value>
+  </data>
+  <data name="UpdatePanel_CannotSetContentTemplate" xml:space="preserve">
+    <value>The ContentTemplate of UpdatePanel with ID '{0}' cannot be changed after it has been instantiated.</value>
+  </data>
+  <data name="UpdatePanel_UpdateConditional" xml:space="preserve">
+    <value>The Update method can only be called on UpdatePanel with ID '{0}' when UpdateMode is set to Conditional.</value>
+  </data>
+  <data name="UpdatePanel_UpdateTooLate" xml:space="preserve">
+    <value>The Update method can only be called on UpdatePanel with ID '{0}' before Render.</value>
+  </data>
+  <data name="JSON_ArrayTypeNotSupported" xml:space="preserve">
+    <value>Type '{0}' is not supported for deserialization of an array.</value>
+  </data>
+  <data name="JSON_CannotConvertObjectToType" xml:space="preserve">
+    <value>Cannot convert object of type '{0}' to type '{1}'</value>
+  </data>
+  <data name="JSON_CircularReference" xml:space="preserve">
+    <value>A circular reference was detected while serializing an object of type '{0}'.</value>
+  </data>
+  <data name="JSON_DepthLimitExceeded" xml:space="preserve">
+    <value>RecursionLimit exceeded.</value>
+  </data>
+  <data name="JSON_DeserializerTypeMismatch" xml:space="preserve">
+    <value>Cannot deserialize object graph into type of '{0}'.</value>
+  </data>
+  <data name="JSON_DictionaryTypeNotSupported" xml:space="preserve">
+    <value>Type '{0}' is not supported for serialization/deserialization of a dictionary, keys must be strings or objects.</value>
+  </data>
+  <data name="WebService_InvalidVerbRequest" xml:space="preserve">
+    <value>An attempt was made to call the method '{0}' using a {1} request, which is not allowed.</value>
+  </data>
+  <data name="JSON_InvalidRecursionLimit" xml:space="preserve">
+    <value>RecursionLimit must be a positive integer.</value>
+  </data>
+  <data name="WebService_InvalidXmlReturnType" xml:space="preserve">
+    <value>The method '{0}' returns a value of type '{1}', which cannot be serialized as Xml. Original error: {2}</value>
+  </data>
+  <data name="WebService_UnknownWebMethod" xml:space="preserve">
+    <value>Unknown web method {0}.</value>
+  </data>
+  <data name="JSON_UnterminatedString" xml:space="preserve">
+    <value>Unterminated string passed in.</value>
+  </data>
+  <data name="JSON_IllegalPrimitive" xml:space="preserve">
+    <value>Invalid JSON primitive: {0}.</value>
+  </data>
+  <data name="JSON_BadEscape" xml:space="preserve">
+    <value>Unrecognized escape sequence.</value>
+  </data>
+  <data name="JSON_CannotCreateListType" xml:space="preserve">
+    <value>Cannot create instance of {0}.</value>
+  </data>
+  <data name="JSON_ExpectedOpenBrace" xml:space="preserve">
+    <value>Invalid object passed in, '{' expected.</value>
+  </data>
+  <data name="JSON_InvalidArrayExpectComma" xml:space="preserve">
+    <value>Invalid array passed in, ',' expected.</value>
+  </data>
+  <data name="JSON_InvalidArrayExtraComma" xml:space="preserve">
+    <value>Invalid array passed in, extra trailing ','.</value>
+  </data>
+  <data name="JSON_InvalidArrayStart" xml:space="preserve">
+    <value>Invalid array passed in, '[' expected.</value>
+  </data>
+  <data name="JSON_InvalidMemberName" xml:space="preserve">
+    <value>Invalid object passed in, member name expected.</value>
+  </data>
+  <data name="JSON_InvalidObject" xml:space="preserve">
+    <value>Invalid object passed in, ':' or '}' expected.</value>
+  </data>
+  <data name="JSON_StringNotQuoted" xml:space="preserve">
+    <value>Invalid string passed in, '\"' expected.</value>
+  </data>
+  <data name="JSON_ValueTypeCannotBeNull" xml:space="preserve">
+    <value>Cannot convert null to a value type.</value>
+  </data>
+  <data name="JSON_InvalidMaxJsonLength" xml:space="preserve">
+    <value>Value must be a positive integer.</value>
+  </data>
+  <data name="JSON_MaxJsonLengthExceeded" xml:space="preserve">
+    <value>Error during serialization or deserialization using the JSON JavaScriptSerializer. The length of the string exceeds the value set on the maxJsonLength property.</value>
+  </data>
+  <data name="WebService_InvalidWebServiceCall" xml:space="preserve">
+    <value>Invalid web service call, expected path info of /js/&lt;Method&gt;.</value>
+  </data>
+  <data name="JSON_NoConstructor" xml:space="preserve">
+    <value>No parameterless constructor defined for type of '{0}'.</value>
+  </data>
+  <data name="JSON_InvalidArrayEnd" xml:space="preserve">
+    <value>Invalid array passed in, ']' expected.</value>
+  </data>
+  <data name="WebService_NoScriptServiceAttribute" xml:space="preserve">
+    <value>Only Web services with a [ScriptService] attribute on the class definition can be called from script.</value>
+  </data>
+  <data name="WebService_InvalidGenerateScriptType" xml:space="preserve">
+    <value>Using the GenerateScriptTypes attribute is not supported for types in the following categories: primitive types; DateTime; generic types taking more than one parameter; types implementing IEnumerable or IDictionary; interfaces; Abstract classes; classes without a public default constructor.</value>
+  </data>
+  <data name="WebService_MissingArg" xml:space="preserve">
+    <value>Invalid web service call, missing value for parameter: '{0}'.</value>
+  </data>
+  <data name="WebService_NoWebServiceData" xml:space="preserve">
+    <value>No web service found at: {0}.</value>
+  </data>
+  <data name="ScriptReference_InvalidReleaseScriptName" xml:space="preserve">
+    <value>'{0}' is not a valid script name.  The name must end in '.js'.</value>
+  </data>
+  <data name="ScriptReference_InvalidReleaseScriptPath" xml:space="preserve">
+    <value>'{0}' is not a valid script path.  The path must end in '.js'.</value>
+  </data>
+  <data name="ScriptReference_NameAndPathCannotBeEmpty" xml:space="preserve">
+    <value>Name and Path cannot both be empty.</value>
+  </data>
+  <data name="ScriptResourceDefinition_NameAndPathCannotBeEmpty" xml:space="preserve">
+    <value>ResourceName and Path cannot both be empty.</value>
+  </data>
+  <data name="WebResourceUtil_AssemblyDoesNotContainDebugWebResource" xml:space="preserve">
+    <value>Assembly '{0}' does not contain a Web resource with name '{1}'.  Setting the ScriptReference.ScriptMode property to ScriptMode.Auto or ScriptMode.Release will cause the release script to be used.</value>
+  </data>
+  <data name="WebResourceUtil_AssemblyDoesNotContainEmbeddedResource" xml:space="preserve">
+    <value>Assembly '{0}' contains a Web resource with name '{1}', but does not contain an embedded resource with name '{1}'.</value>
+  </data>
+  <data name="WebResourceUtil_AssemblyDoesNotContainReleaseWebResource" xml:space="preserve">
+    <value>Assembly '{0}' does not contain a Web resource with name '{1}'.</value>
+  </data>
+  <data name="ServiceReference_PathCannotBeEmpty" xml:space="preserve">
+    <value>Path cannot be empty.</value>
+  </data>
+  <data name="ScriptRegistrationManager_ControlNotOnPage" xml:space="preserve">
+    <value>The control must be in the control tree of a page.</value>
+  </data>
+  <data name="ScriptManager_AsyncPostBackTimeout" xml:space="preserve">
+    <value>The timeout period in seconds for async postbacks. A value of zero indicates no timeout.</value>
+  </data>
+  <data name="ScriptManager_EnablePartialRendering" xml:space="preserve">
+    <value>Enables asynchronous postbacks for the UpdatePanel control on supported browsers. To override the default browser support detection you can set the SupportsPartialRendering property.</value>
+  </data>
+  <data name="ScriptManager_ScriptMode" xml:space="preserve">
+    <value>Indicates the type of scripts to load when more than one type is available.</value>
+  </data>
+  <data name="ScriptManager_Scripts" xml:space="preserve">
+    <value>A collection of script references that the ScriptManager should include in the page. The Scripts collections on the ScriptManager and ScriptManagerProxy controls are merged at runtime.</value>
+  </data>
+  <data name="UpdatePanel_ChildrenAsTriggers" xml:space="preserve">
+    <value>Indicates whether postbacks coming from the UpdatePanel's child controls will cause the UpdatePanel to refresh.</value>
+  </data>
+  <data name="UpdatePanel_RenderMode" xml:space="preserve">
+    <value>Indicates whether the UpdatePanel should render as a block tag (&lt;div&gt;) or an inline tag (&lt;span&gt;).</value>
+  </data>
+  <data name="UpdatePanel_UpdateMode" xml:space="preserve">
+    <value>Indicates whether the UpdatePanel will refresh on every asynchronous postback or only as the result of a specific action, such as a call to UpdatePanel.Update().</value>
+  </data>
+  <data name="ScriptManager_ScriptPath" xml:space="preserve">
+    <value>Specifies that scripts should be loaded from this path instead of from assembly web resources.</value>
+  </data>
+  <data name="ScriptManager_Services" xml:space="preserve">
+    <value>A collection of service references that the ScriptManager should include in the page. The Services collections on the ScriptManager and ScriptManagerProxy controls are merged at runtime.</value>
+  </data>
+  <data name="ScriptManager_ProfileService" xml:space="preserve">
+    <value>Contains preferences for the client side profile service.</value>
+  </data>
+  <data name="ScriptManager_AuthenticationService" xml:space="preserve">
+    <value>Contains preferences for the client side authentication service.</value>
+  </data>
+  <data name="ScriptRegistrationManager_InvalidChars" xml:space="preserve">
+    <value>The script tag registered for type '{0}' and key '{1}' has invalid characters outside of the script tags: {2}. Only properly formatted script tags can be registered.</value>
+  </data>
+  <data name="ScriptRegistrationManager_NoCloseTag" xml:space="preserve">
+    <value>The script tag registered for type '{0}' and key '{1}' is missing a matching close tag.</value>
+  </data>
+  <data name="ScriptRegistrationManager_NoTags" xml:space="preserve">
+    <value>The script tag registered for type '{0}' and key '{1}' does not contain any valid script tags.</value>
+  </data>
+  <data name="ScriptManager_ResolveScriptReference" xml:space="preserve">
+    <value>This event is raised to allow modifications to script references before they are rendered.</value>
+  </data>
+  <data name="ExtenderControl_TargetControlID" xml:space="preserve">
+    <value>Identifies the control to extend.</value>
+  </data>
+  <data name="ExtenderControl_TargetControlIDEmpty" xml:space="preserve">
+    <value>The TargetControlID of '{0}' is not valid. The value cannot be null or empty.</value>
+  </data>
+  <data name="ExtenderControl_TargetControlIDInvalid" xml:space="preserve">
+    <value>The TargetControlID of '{0}' is not valid. A control with ID '{1}' could not be found.</value>
+  </data>
+  <data name="ExtenderControl_TargetControlDifferentUpdatePanel" xml:space="preserve">
+    <value>An extender can't be in a different UpdatePanel than the control it extends.</value>
+  </data>
+  <data name="ScriptControlManager_TargetControlTypeInvalid" xml:space="preserve">
+    <value>Extender control '{0}' cannot extend '{1}'. Extender controls of type '{2}' cannot extend controls of type '{3}'.</value>
+  </data>
+  <data name="ScriptControlManager_NoTargetControlTypes" xml:space="preserve">
+    <value>Extender control type '{0}' does not have any attributes of type '{1}'. Extender control types must have at least one attribute of type '{1}'.</value>
+  </data>
+  <data name="ConvertersCollection_NotJavaScriptConverter" xml:space="preserve">
+    <value>Type: '{0}' does not inherits from JavaScriptConverter.</value>
+  </data>
+  <data name="ConvertersCollection_UnknownType" xml:space="preserve">
+    <value>Type: '{0}' cannot be found.</value>
+  </data>
+  <data name="WebService_InvalidInlineVirtualPath" xml:space="preserve">
+    <value>The path "{0}" is not supported. When InlineScript=true, the path should be a relative path pointing to the same web application as the current page.</value>
+  </data>
+  <data name="ServiceReference_InlineScript" xml:space="preserve">
+    <value>Indicates whether this service reference should have its proxy script rendered inline in the page.</value>
+  </data>
+  <data name="ServiceReference_Path" xml:space="preserve">
+    <value>The path to the service being referenced.</value>
+  </data>
+  <data name="AppService_Disabled" xml:space="preserve">
+    <value>{0} is disabled.</value>
+  </data>
+  <data name="AppService_MultiplePaths" xml:space="preserve">
+    <value>Cannot specify more than one unique path.</value>
+  </data>
+  <data name="AppService_RequiredSSL" xml:space="preserve">
+    <value>SSL is required for this operation.</value>
+  </data>
+  <data name="AppService_UnknownProfileProperty" xml:space="preserve">
+    <value>Unknown profile property '{0}'.</value>
+  </data>
+  <data name="AsyncPostBackTrigger_CannotFindEvent" xml:space="preserve">
+    <value>Could not find an event named '{0}' on associated control '{1}' for the trigger in UpdatePanel '{2}'.</value>
+  </data>
+  <data name="AsyncPostBackTrigger_InvalidEvent" xml:space="preserve">
+    <value>The '{0}' event on associated control '{1}' for the trigger in UpdatePanel '{2}' does not match the standard event handler signature.</value>
+  </data>
+  <data name="UpdatePanelControlTrigger_ControlNotFound" xml:space="preserve">
+    <value>A control with ID '{0}' could not be found for the trigger in UpdatePanel '{1}'.</value>
+  </data>
+  <data name="UpdatePanelControlTrigger_NoControlID" xml:space="preserve">
+    <value>The ControlID property must be set on the trigger in UpdatePanel '{0}'.</value>
+  </data>
+  <data name="UpdatePanel_Triggers" xml:space="preserve">
+    <value>A collection of triggers that can cause the UpdatePanel to be updated.</value>
+  </data>
+  <data name="ScriptManager_CannotRegisterBothPostBacks" xml:space="preserve">
+    <value>Control with ID '{0}' cannot be registered through both RegisterAsyncPostBackControl and RegisterPostBackControl. This can happen if you have conflicting triggers associated with the target control.</value>
+  </data>
+  <data name="AsyncPostBackTrigger_EventName" xml:space="preserve">
+    <value>The event that the trigger will hook up to determine whether to refresh the UpdatePanel. If the property is not set then the UpdatePanel will be refreshed only if the postback was initiated by the target control.</value>
+  </data>
+  <data name="UpdatePanelControlTrigger_ControlID" xml:space="preserve">
+    <value>The trigger's target control ID.</value>
+  </data>
+  <data name="PageRequestManager_RegisterDataItemInNonAsyncRequest" xml:space="preserve">
+    <value>RegisterDataItem can only be called during an async postback.</value>
+  </data>
+  <data name="PageRequestManager_RegisterDataItemTwice" xml:space="preserve">
+    <value>The control '{0}' already has a data item registered.</value>
+  </data>
+  <data name="UpdatePanel_ChildrenTriggersAndUpdateAlways" xml:space="preserve">
+    <value>ChildrenAsTriggers cannot be set to false when UpdateMode is set to Always on UpdatePanel '{0}'.</value>
+  </data>
+  <data name="ScriptManager_AsyncPostBackError" xml:space="preserve">
+    <value>This event is raised to allow customization of the error message sent to the client during an async postback.</value>
+  </data>
+  <data name="ScriptManager_AllowCustomErrorsRedirect" xml:space="preserve">
+    <value>Indicates whether custom error redirects will occur during an async postback.</value>
+  </data>
+  <data name="ScriptManager_AsyncPostBackErrorMessage" xml:space="preserve">
+    <value>The error message to be sent to the client when an unhandled exception occurs on the server. The property can be set declaratively in the page markup or during the ScriptManager's AsyncPostBackError event. If the value is empty the exception's message will be used.</value>
+  </data>
+  <data name="Timer_IntervalMustBeGreaterThanZero" xml:space="preserve">
+    <value>The interval must be greater than zero.</value>
+  </data>
+  <data name="Timer_TimerEnable" xml:space="preserve">
+    <value>Enables raising of Tick events.</value>
+  </data>
+  <data name="Timer_TimerInterval" xml:space="preserve">
+    <value>The duration between Tick events in milliseconds.</value>
+  </data>
+  <data name="Timer_TimerTick" xml:space="preserve">
+    <value>Occurs whenever the specified interval time elapses.</value>
+  </data>
+  <data name="Common_NullOrEmpty" xml:space="preserve">
+    <value>Value cannot be null or empty.</value>
+  </data>
+  <data name="ApplicationServiceManager_Path" xml:space="preserve">
+    <value>Specifies the path to the web service.</value>
+  </data>
+  <data name="ProfileServiceManager_LoadProperties" xml:space="preserve">
+    <value>Specifies profile properties that should be rendered inline with the page.</value>
+  </data>
+  <data name="UpdateProgress_DisplayAfter" xml:space="preserve">
+    <value>Time in ms after which the ProgressTemplate is displayed.</value>
+  </data>
+  <data name="UpdateProgress_DisplayAfterInvalid" xml:space="preserve">
+    <value>DisplayAfter must be a non negative integer.</value>
+  </data>
+  <data name="UpdateProgress_DynamicLayout" xml:space="preserve">
+    <value>Determines whether the progress template is dynamically rendered.</value>
+  </data>
+  <data name="UpdateProgress_ProgressTemplate" xml:space="preserve">
+    <value>ProgressTemplate which is displayed during async postbacks.</value>
+  </data>
+  <data name="WebService_RedirectError" xml:space="preserve">
+    <value>Authentication failed.</value>
+  </data>
+  <data name="UpdateProgress_AssociatedUpdatePanelID" xml:space="preserve">
+    <value>UpdatePanel that this UpdateProgress is associated with.</value>
+  </data>
+  <data name="UpdateProgress_NoUpdatePanel" xml:space="preserve">
+    <value>No UpdatePanel found for AssociatedUpdatePanelID '{0}'.</value>
+  </data>
+  <data name="ScriptReference_Assembly" xml:space="preserve">
+    <value>The assembly that contains the script as a web resource.</value>
+  </data>
+  <data name="ScriptReference_IgnoreScriptPath" xml:space="preserve">
+    <value>Indicates whether this script reference should ignore the ScriptManager.ScriptPath property.</value>
+  </data>
+  <data name="ScriptReference_Name" xml:space="preserve">
+    <value>The name of the web resource.</value>
+  </data>
+  <data name="ScriptReference_Path" xml:space="preserve">
+    <value>The path to the script.</value>
+  </data>
+  <data name="ScriptReference_ScriptMode" xml:space="preserve">
+    <value>Specifies the algorithm for choosing between the debug and release scripts.</value>
+  </data>
+  <data name="ScriptManager_CannotChangeSupportsPartialRendering" xml:space="preserve">
+    <value>The SupportsPartialRendering property cannot be changed after the Init event.</value>
+  </data>
+  <data name="ScriptManager_CannotSetSupportsPartialRenderingWhenDisabled" xml:space="preserve">
+    <value>The SupportsPartialRendering property cannot be set when EnablePartialRendering is false.</value>
+  </data>
+  <data name="ScriptControlManager_RegisterScriptControlTooEarly" xml:space="preserve">
+    <value>Script controls may not be registered before PreRender.</value>
+  </data>
+  <data name="ScriptControlManager_RegisterExtenderControlTooEarly" xml:space="preserve">
+    <value>Extender controls may not be registered before PreRender.</value>
+  </data>
+  <data name="ScriptManager_CannotChangeEnableScriptGlobalization" xml:space="preserve">
+    <value>The EnableScriptGlobalization property cannot be changed during async postbacks or after the Init event.</value>
+  </data>
+  <data name="ScriptManager_EnableScriptGlobalization" xml:space="preserve">
+    <value>Enables ScriptManager to add client-side globalization information to the page for the current culture.</value>
+  </data>
+  <data name="ScriptResourceHandler_InvalidRequest" xml:space="preserve">
+    <value>This is an invalid script resource request.</value>
+  </data>
+  <data name="ScriptResourceHandler_TypeNameMismatch" xml:space="preserve">
+    <value>The type names for the debug and release versions of resource {0} don't match.</value>
+  </data>
+  <data name="ScriptManager_EnableScriptLocalization" xml:space="preserve">
+    <value>Enables ScriptManager to generate localized versions of script files if they are available.</value>
+  </data>
+  <data name="ScriptReference_ResourceUICultures" xml:space="preserve">
+    <value>A comma-delimited string of valid UI cultures supported by the path. ResourceUICultures is only valid with Path.</value>
+  </data>
+  <data name="ScriptResourceHandler_UnknownResource" xml:space="preserve">
+    <value>Web resource '{0}' was not found.</value>
+  </data>
+  <data name="WebService_Error" xml:space="preserve">
+    <value>There was an error processing the request.</value>
+  </data>
+  <data name="ScriptReference_NotifyScriptLoaded" xml:space="preserve">
+    <value>Specifies if the script resource loader should automatically append a script loaded notification statement.</value>
+  </data>
+  <data name="ScriptControlManager_RegisterExtenderControlTooLate" xml:space="preserve">
+    <value>Extender controls may not be registered after PreRender.</value>
+  </data>
+  <data name="ScriptControlManager_RegisterScriptControlTooLate" xml:space="preserve">
+    <value>Script controls may not be registered after PreRender.</value>
+  </data>
+  <data name="Common_ArgumentInvalidType" xml:space="preserve">
+    <value>Value must be of type '{0}'.</value>
+  </data>
+  <data name="ScriptControlManager_ExtenderControlNotRegistered" xml:space="preserve">
+    <value>Extender control '{0}' is not a registered extender control. Extender controls must be registered using RegisterExtenderControl() before calling RegisterScriptDescriptors().</value>
+  </data>
+  <data name="ScriptControlManager_ScriptControlNotRegistered" xml:space="preserve">
+    <value>Script control '{0}' is not a registered script control. Script controls must be registered using RegisterScriptControl() before calling RegisterScriptDescriptors().</value>
+  </data>
+  <data name="ScriptControlDescriptor_IDNotSettable" xml:space="preserve">
+    <value>The 'ID' property on ScriptControlDescriptor is not settable. The client ID of a script control is always equal to its element ID.</value>
+  </data>
+  <data name="ScriptManager_LoadScriptsBeforeUI" xml:space="preserve">
+    <value>Specifies that script references should be loaded before the UI is rendered in the browser.</value>
+  </data>
+  <data name="ScriptManager_EnablePageMethods" xml:space="preserve">
+    <value>Enables page methods.</value>
+  </data>
+  <data name="ScriptManager_RoleService" xml:space="preserve">
+    <value>Contains preferences for the client side authentication service.</value>
+  </data>
+  <data name="RoleServiceManager_LoadRoles" xml:space="preserve">
+    <value>Indicates whether user roles are rendered inline with the page.</value>
+  </data>
+  <data name="ProxyGenerator_UnsupportedType" xml:space="preserve">
+    <value>Type {0} is not supported.</value>
+  </data>
+  <data name="ScriptManager_FrameworkFailedToLoad" xml:space="preserve">
+    <value>ASP.NET Ajax client-side framework failed to load.</value>
+  </data>
+  <data name="ScriptResourceHandler_DuplicateScriptResources" xml:space="preserve">
+    <value>More than one ScriptResourceAttribute points to script '{0}' in assembly '{1}'.</value>
+  </data>
+  <data name="ProfileServiceManager_LoadProperitesWithNonDefaultPath" xml:space="preserve">
+    <value>The attribute 'LoadProperties' can only be used when using the default ProfileService.</value>
+  </data>
+  <data name="RoleServiceManager_LoadRolesWithNonDefaultPath" xml:space="preserve">
+    <value>For RoleService, 'loadRoles' property must be set to false when the 'path' property is set to a value different from the default value.</value>
+  </data>
+  <data name="ArgumentMustBeNull" xml:space="preserve">
+    <value>Argument must be null or empty.</value>
+  </data>
+  <data name="AttributeNotRecognized" xml:space="preserve">
+    <value>The following configuration attribute was not recognized: '{0}'</value>
+  </data>
+  <data name="DataPager_ControlIsntPageable" xml:space="preserve">
+    <value>Control '{0}' does not implement IPageableItemContainer.</value>
+  </data>
+  <data name="DataPager_Fields" xml:space="preserve">
+    <value>The collection of DataPagerFields.</value>
+  </data>
+  <data name="DataPager_NoNamingContainer" xml:space="preserve">
+    <value>The DataPager control '{0}' does not have a naming container.  Ensure that the DataPager is added to the page before calling DataBind.</value>
+  </data>
+  <data name="DataPager_NoPageableItemContainer" xml:space="preserve">
+    <value>No IPageableItemContainer was found. Verify that either the DataPager is inside an IPageableItemContainer or PagedControlID is set to the control ID of an IPageableItemContainer.</value>
+  </data>
+  <data name="DataPager_PageableItemContainerNotFound" xml:space="preserve">
+    <value>IPageableItemContainer '{0}' not found.</value>
+  </data>
+  <data name="DataPager_PagedControlID" xml:space="preserve">
+    <value>The ID of the control this DataPager should page.</value>
+  </data>
+  <data name="DataPager_PagePropertiesCannotBeSet" xml:space="preserve">
+    <value>Page properties cannot be set because no IPageableItemContainer has been found.</value>
+  </data>
+  <data name="DataPager_PageSize" xml:space="preserve">
+    <value>The number of records displayed in a page by the paged control.</value>
+  </data>
+  <data name="DataPagerField_Visible" xml:space="preserve">
+    <value>Whether the data pager field is visible.</value>
+  </data>
+  <data name="ListView_AlternatingItemTemplate" xml:space="preserve">
+    <value>The template used for alternating items.</value>
+  </data>
+  <data name="ListView_ContainerNameMustNotBeEmpty" xml:space="preserve">
+    <value>The value of {0} must not be empty.</value>
+  </data>
+  <data name="ListView_ConvertEmptyStringToNull" xml:space="preserve">
+    <value>Whether the ListView treats empty strings as null when the value is extracted from the item.</value>
+  </data>
+  <data name="ListView_DataKeyNames" xml:space="preserve">
+    <value>A comma-separated list of key fields in the data source.</value>
+  </data>
+  <data name="ListView_DataKeyNamesMustBeSpecified" xml:space="preserve">
+    <value>Data keys must be specified on ListView '{0}' before the selected data keys can be retrieved.  Use the DataKeyNames property to specify data keys.</value>
+  </data>
+  <data name="ListView_DataKeys" xml:space="preserve">
+    <value>The collection of data key field values.</value>
+  </data>
+  <data name="ListView_DataSourceDoesntSupportPaging" xml:space="preserve">
+    <value>The data source '{0}' does not support server-side paging and it returned non-ICollection</value>
+  </data>
+  <data name="ListView_DataSourceMustBeCollectionWhenNotDataBinding" xml:space="preserve">
+    <value>Data source must implement ICollection when calling CreateChildControls with dataBinding=false.</value>
+  </data>
+  <data name="ListView_EditIndex" xml:space="preserve">
+    <value>The index of the item shown in edit mode.</value>
+  </data>
+  <data name="ListView_EditItem" xml:space="preserve">
+    <value>The ListViewItem that is currently being edited.</value>
+  </data>
+  <data name="ListView_EditItemTemplate" xml:space="preserve">
+    <value>The template used for items in edit mode.</value>
+  </data>
+  <data name="ListView_EmptyDataTemplate" xml:space="preserve">
+    <value>The template used when no data is returned from the data source. This template replaces the LayoutTemplate when used.</value>
+  </data>
+  <data name="ListView_EmptyItemTemplate" xml:space="preserve">
+    <value>The template used in the GroupTemplate when the number of remaining data items is less than the GroupItemCount.</value>
+  </data>
+  <data name="ListView_GroupContainerID" xml:space="preserve">
+    <value>The ID of the server control that will be replaced with instances of the GroupTemplate.</value>
+  </data>
+  <data name="ListView_GroupItemCount" xml:space="preserve">
+    <value>The number of items that are rendered inside the GroupTemplate.</value>
+  </data>
+  <data name="ListView_GroupItemCountNoGroupTemplate" xml:space="preserve">
+    <value>ListView '{0}' has a GroupItemCount specified on it but no GroupTemplate. A GroupTemplate must be present for ListView to render groups.</value>
+  </data>
+  <data name="ListView_GroupSeparatorTemplate" xml:space="preserve">
+    <value>The template used for group separators between GroupTemplates.</value>
+  </data>
+  <data name="ListView_GroupTemplate" xml:space="preserve">
+    <value>The template used for item groups.</value>
+  </data>
+  <data name="ListView_InsertItem" xml:space="preserve">
+    <value>The ListViewItem that is currently being inserted.</value>
+  </data>
+  <data name="ListView_InsertItemPosition" xml:space="preserve">
+    <value>The position of the insert item within the ListView.</value>
+  </data>
+  <data name="ListView_InsertItemTemplate" xml:space="preserve">
+    <value>The template used for items in insert mode.</value>
+  </data>
+  <data name="ListView_InsertTemplateRequired" xml:space="preserve">
+    <value>An InsertItemTemplate must be defined on ListView '{0}' if InsertItemPosition is set to FirstItem or LastItem.</value>
+  </data>
+  <data name="ListView_InvalidCancel" xml:space="preserve">
+    <value>Cancel can only be called from the currently-edited record or an insert item.</value>
+  </data>
+  <data name="ListView_InvalidDelete" xml:space="preserve">
+    <value>Delete can only be called on a valid data item.</value>
+  </data>
+  <data name="ListView_InvalidEdit" xml:space="preserve">
+    <value>Edit can only be called on a valid data item.</value>
+  </data>
+  <data name="ListView_InvalidInsert" xml:space="preserve">
+    <value>Insert can only be called on an insert item. Ensure only the InsertTemplate has a button with CommandName=Insert.</value>
+  </data>
+  <data name="ListView_InvalidSelect" xml:space="preserve">
+    <value>Select can only be called on a valid data item.</value>
+  </data>
+  <data name="ListView_InvalidUpdate" xml:space="preserve">
+    <value>Update can only be called on a valid data item.</value>
+  </data>
+  <data name="ListView_ItemPlaceholderID" xml:space="preserve">
+    <value>The ID of the server control that will be replaced with instances of the ItemTemplate.</value>
+  </data>
+  <data name="ListView_Items" xml:space="preserve">
+    <value>The collection of visible items.</value>
+  </data>
+  <data name="ListView_ItemSeparatorTemplate" xml:space="preserve">
+    <value>The template used for separator items.</value>
+  </data>
+  <data name="ListView_ItemsNotDataItems" xml:space="preserve">
+    <value>ListViewItems that have type DataItem must be of type ListViewDataItem.</value>
+  </data>
+  <data name="ListView_ItemTemplate" xml:space="preserve">
+    <value>The template used for items.</value>
+  </data>
+  <data name="ListView_ItemTemplateRequired" xml:space="preserve">
+    <value>An ItemTemplate must be defined on ListView '{0}'.</value>
+  </data>
+  <data name="ListView_LayoutTemplate" xml:space="preserve">
+    <value>The template used for the ListView layout.</value>
+  </data>
+  <data name="ListView_Missing_VirtualItemCount" xml:space="preserve">
+    <value>ListView with id '{0}' must have a data source that either implements ICollection or can perform data source paging if AllowPaging is true.</value>
+  </data>
+  <data name="ListView_NeedICollectionOrTotalRowCount" xml:space="preserve">
+    <value>If a data source does not return ICollection and cannot return the total row count, it cannot be used by the {0} to implement server-side paging.</value>
+  </data>
+  <data name="ListView_NoGroupPlaceholder" xml:space="preserve">
+    <value>A group placeholder must be specified on ListView '{0}' when the GroupTemplate is defined. Specify a group placeholder by setting its ID property to "{1}". The group placeholder control must also specify runat="server".</value>
+  </data>
+  <data name="ListView_NoInsertItem" xml:space="preserve">
+    <value>An insert item wasn't found.</value>
+  </data>
+  <data name="ListView_NoItemPlaceholder" xml:space="preserve">
+    <value>An item placeholder must be specified on ListView '{0}'. Specify an item placeholder by setting a control's ID property to "{1}". The item placeholder control must also specify runat="server".</value>
+  </data>
+  <data name="ListView_NullView" xml:space="preserve">
+    <value>The data source retrieved by '{0}' returned a null DataSourceView.</value>
+  </data>
+  <data name="ListView_OnItemCanceling" xml:space="preserve">
+    <value>Fires when a Cancel event is generated within the ListView.</value>
+  </data>
+  <data name="ListView_OnItemCommand" xml:space="preserve">
+    <value>Fires when an event is generated within the ListView.</value>
+  </data>
+  <data name="ListView_OnItemCreated" xml:space="preserve">
+    <value>Fires when an item is created.</value>
+  </data>
+  <data name="ListView_OnItemDataBound" xml:space="preserve">
+    <value>Fires after an item has been data-bound.</value>
+  </data>
+  <data name="ListView_OnItemDeleted" xml:space="preserve">
+    <value>Fires after a Delete Command is executed on the data source.</value>
+  </data>
+  <data name="ListView_OnItemDeleting" xml:space="preserve">
+    <value>Fires before a Delete Command is executed on the data source.</value>
+  </data>
+  <data name="ListView_OnItemEditing" xml:space="preserve">
+    <value>Fires when an Edit event is generated within the ListView.</value>
+  </data>
+  <data name="ListView_OnItemInserted" xml:space="preserve">
+    <value>Fires after an Insert Command is executed on the data source.</value>
+  </data>
+  <data name="ListView_OnItemInserting" xml:space="preserve">
+    <value>Fires before an Insert Command is executed on the data source.</value>
+  </data>
+  <data name="ListView_OnItemUpdated" xml:space="preserve">
+    <value>Fires after an Update Command is executed on the data source.</value>
+  </data>
+  <data name="ListView_OnItemUpdating" xml:space="preserve">
+    <value>Fires before an Update Command is executed on the data source.</value>
+  </data>
+  <data name="ListView_OnLayoutCreated" xml:space="preserve">
+    <value>Fires when the ListView's layout is created.</value>
+  </data>
+  <data name="ListView_OnPagePropertiesChanged" xml:space="preserve">
+    <value>Fires when the ListView's paging properties have changed.</value>
+  </data>
+  <data name="ListView_OnPagePropertiesChanging" xml:space="preserve">
+    <value>Fires when the ListView's paging properties are changing.</value>
+  </data>
+  <data name="ListView_OnSelectedIndexChanged" xml:space="preserve">
+    <value>Fires when an item is selected in the ListView, after the selection is complete.</value>
+  </data>
+  <data name="ListView_OnSelectedIndexChanging" xml:space="preserve">
+    <value>Fires when an item is selected in the ListView, before the item is selected.</value>
+  </data>
+  <data name="ListView_OnSorted" xml:space="preserve">
+    <value>Fires when a field is sorted in the ListView, after the sort is complete.</value>
+  </data>
+  <data name="ListView_OnSorting" xml:space="preserve">
+    <value>Fires when a field is sorted in the ListView, before the sort occurs.</value>
+  </data>
+  <data name="ListView_SelectedIndex" xml:space="preserve">
+    <value>The index of the currently selected item.</value>
+  </data>
+  <data name="ListView_SelectedItemTemplate" xml:space="preserve">
+    <value>The template used for the currently selected item.</value>
+  </data>
+  <data name="ListView_SortDirection" xml:space="preserve">
+    <value>The direction in which to sort the field.</value>
+  </data>
+  <data name="ListView_SortExpression" xml:space="preserve">
+    <value>Sort expression used to sort the data source to which the ListView is binding.</value>
+  </data>
+  <data name="ListView_StyleNotSupported" xml:space="preserve">
+    <value>Style properties are not supported on ListView.</value>
+  </data>
+  <data name="ListView_StylePropertiesNotSupported" xml:space="preserve">
+    <value>Style properties are not supported on ListView.  Apply styling or CSS classes to the elements inside ListView's templates.</value>
+  </data>
+  <data name="ListView_UnhandledEvent" xml:space="preserve">
+    <value>The ListView '{0}' raised event {1} which wasn't handled.</value>
+  </data>
+  <data name="ListViewPagedDataSource_CannotGetCount" xml:space="preserve">
+    <value>Cannot compute Count for a data source that does not implement ICollection.</value>
+  </data>
+  <data name="ListViewPagedDataSource_EnumeratorMoveNextNotCalled" xml:space="preserve">
+    <value>You must call MoveNext on IEnumerator before accessing the Current property.</value>
+  </data>
+  <data name="NextPreviousPagerField_ButtonCssClass" xml:space="preserve">
+    <value>The CSS class applied to the next and previous buttons.</value>
+  </data>
+  <data name="NextPreviousPagerField_ButtonType" xml:space="preserve">
+    <value>The type of button contained within the pager field.</value>
+  </data>
+  <data name="NextPreviousPagerField_FirstPageImageUrl" xml:space="preserve">
+    <value>The URL of the image of the first page button if the ButtonType is Image.</value>
+  </data>
+  <data name="NextPreviousPagerField_FirstPageText" xml:space="preserve">
+    <value>The text of the first page button.</value>
+  </data>
+  <data name="NextPreviousPagerField_LastPageImageUrl" xml:space="preserve">
+    <value>The URL of the image of the last page button if the ButtonType is Image.</value>
+  </data>
+  <data name="NextPreviousPagerField_LastPageText" xml:space="preserve">
+    <value>The text of the last page button.</value>
+  </data>
+  <data name="NextPreviousPagerField_NextPageImageUrl" xml:space="preserve">
+    <value>The URL of the image of the next page button if the ButtonType is Image.</value>
+  </data>
+  <data name="NextPreviousPagerField_NextPageText" xml:space="preserve">
+    <value>The text of the next page button.</value>
+  </data>
+  <data name="NextPreviousPagerField_PreviousPageImageUrl" xml:space="preserve">
+    <value>The URL of the image of the previous page button if the ButtonType is Image.</value>
+  </data>
+  <data name="NextPreviousPagerField_PreviousPageText" xml:space="preserve">
+    <value>The text of the previous page button.</value>
+  </data>
+  <data name="NextPreviousPagerField_ShowFirstPageButton" xml:space="preserve">
+    <value>Whether the pager field should display the first page button.</value>
+  </data>
+  <data name="NextPreviousPagerField_ShowLastPageButton" xml:space="preserve">
+    <value>Whether the pager field should display the last page button.</value>
+  </data>
+  <data name="NextPreviousPagerField_ShowNextPageButton" xml:space="preserve">
+    <value>Whether the pager field should display the next page button.</value>
+  </data>
+  <data name="NextPreviousPagerField_ShowPreviousPageButton" xml:space="preserve">
+    <value>Whether the pager field should display the previous page button.</value>
+  </data>
+  <data name="NextPrevPagerField_DefaultFirstPageText" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="NextPrevPagerField_DefaultLastPageText" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <data name="NextPrevPagerField_DefaultNextPageText" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="NextPrevPagerField_DefaultPreviousPageText" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="NumericPagerField_ButtonCount" xml:space="preserve">
+    <value>The maximum number of page number buttons that can be displayed by the pager field.</value>
+  </data>
+  <data name="NumericPagerField_ButtonType" xml:space="preserve">
+    <value>The type of button contained within the pager field.</value>
+  </data>
+  <data name="NumericPagerField_CurrentPageLabelCssClass" xml:space="preserve">
+    <value>The CSS class applied to the label containing the current page number.</value>
+  </data>
+  <data name="NumericPagerField_DefaultNextPageText" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="NumericPagerField_DefaultPreviousPageText" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="NumericPagerField_NextPageImageUrl" xml:space="preserve">
+    <value>The URL of the image of the next page button if the ButtonType is Image.</value>
+  </data>
+  <data name="NumericPagerField_NextPageText" xml:space="preserve">
+    <value>The text of the next page button.</value>
+  </data>
+  <data name="NumericPagerField_NextPreviousButtonCssClass" xml:space="preserve">
+    <value>The CSS class applied to the next and previous buttons.</value>
+  </data>
+  <data name="NumericPagerField_NumericButtonCssClass" xml:space="preserve">
+    <value>The CSS class applied to the numeric pager buttons.</value>
+  </data>
+  <data name="NumericPagerField_PreviousPageImageUrl" xml:space="preserve">
+    <value>The URL of the image of the previous page button if the ButtonType is Image.</value>
+  </data>
+  <data name="NumericPagerField_PreviousPageText" xml:space="preserve">
+    <value>The text of the previous page button.</value>
+  </data>
+  <data name="PagerFieldCollection_InvalidType" xml:space="preserve">
+    <value>Object is not a DataPagerField.</value>
+  </data>
+  <data name="PagerFieldCollection_InvalidTypeIndex" xml:space="preserve">
+    <value>Type index is out of bounds.</value>
+  </data>
+  <data name="RoleService_RoleProviderNotFound" xml:space="preserve">
+    <value>Role Provider could not be found.</value>
+  </data>
+  <data name="RoleService_RolesFeatureNotEnabled" xml:space="preserve">
+    <value>The Role Manager feature has not been enabled.</value>
+  </data>
+  <data name="TemplatePagerField_OnPagerCommand" xml:space="preserve">
+    <value>Fires when an event is generated within the pager field.</value>
+  </data>
+  <data name="TemplatePagerField_PagerTemplate" xml:space="preserve">
+    <value>The template used in the pager field.</value>
+  </data>
+  <data name="TemplatePagerField_UnhandledEvent" xml:space="preserve">
+    <value>The TemplatePagerField raised event {0} which wasn't handled.</value>
+  </data>
+  <data name="UnhandledExceptionEventLogMessage" xml:space="preserve">
+    <value>An unhandled exception has occurred.</value>
+  </data>
+  <data name="UserIsNotAuthenticated" xml:space="preserve">
+    <value>You must log on to call this method.</value>
+  </data>
+  <data name="ArgumentMustBeCurrentUser" xml:space="preserve">
+    <value>Argument must be null, empty or same as the current user.</value>
+  </data>
+  <data name="ProxyHelper_BadStatusCode" xml:space="preserve">
+    <value>Error status code returned by the Web Service: {0}. Error details from service: {1}</value>
+  </data>
+  <data name="ServiceUriNotFound" xml:space="preserve">
+    <value>The serviceUri configuration setting was not found.</value>
+  </data>
+  <data name="SqlHelper_SqlEverywhereNotInstalled" xml:space="preserve">
+    <value>Unable to connect to the Microsoft SQL Everywhere Service using the specified connection string. Make sure that Microsoft SQL Server Everywhere is correctly installed on this computer.</value>
+  </data>
+  <data name="ClientService_BadJsonResponse" xml:space="preserve">
+    <value>The server method returned invalid data.</value>
+  </data>
+  <data name="LinqDataSource_AutoGenerateOrderByClause" xml:space="preserve">
+    <value>Specifies whether to automatically generate the OrderBy clause from the OrderByParameters.</value>
+  </data>
+  <data name="LinqDataSource_AutoGenerateWhereClause" xml:space="preserve">
+    <value>Specifies whether to automatically generate the Where clause from the WhereParameters.</value>
+  </data>
+  <data name="LinqDataSource_AutoPage" xml:space="preserve">
+    <value>Specifies whether data is automatically paged.</value>
+  </data>
+  <data name="LinqDataSource_AutoSort" xml:space="preserve">
+    <value>Specifies whether data is automatically sorted.</value>
+  </data>
+  <data name="LinqDataSource_ContextCreated" xml:space="preserve">
+    <value>Event raised after the context is created unless a query result is specified during the Selecting event.</value>
+  </data>
+  <data name="LinqDataSource_ContextCreating" xml:space="preserve">
+    <value>Event raised before the context is created unless a query result is specified during the Selecting event.</value>
+  </data>
+  <data name="LinqDataSource_ContextDisposing" xml:space="preserve">
+    <value>Event raised before the context is disposed.</value>
+  </data>
+  <data name="LinqDataSource_ContextTypeName" xml:space="preserve">
+    <value>The data context type that contains the table property.</value>
+  </data>
+  <data name="LinqDataSource_Deleted" xml:space="preserve">
+    <value>Event raised after the Delete operation is completed.</value>
+  </data>
+  <data name="LinqDataSource_DeleteParameters" xml:space="preserve">
+    <value>Collection of parameters used during the Delete operation. These parameters are merged with the parameters provided by data-bound controls.</value>
+  </data>
+  <data name="LinqDataSource_Deleting" xml:space="preserve">
+    <value>Event raised before the Delete operation is executed.</value>
+  </data>
+  <data name="LinqDataSource_Description" xml:space="preserve">
+    <value>Use LINQ to connect to a DataContext or object in the Bin or App_Code directory for the application.</value>
+  </data>
+  <data name="LinqDataSource_DisplayName" xml:space="preserve">
+    <value>LINQ</value>
+  </data>
+  <data name="LinqDataSource_EnableDelete" xml:space="preserve">
+    <value>Specifies whether the Delete operation is enabled.</value>
+  </data>
+  <data name="LinqDataSource_EnableInsert" xml:space="preserve">
+    <value>Specifies whether the Insert operation is enabled.</value>
+  </data>
+  <data name="LinqDataSource_EnableUpdate" xml:space="preserve">
+    <value>Specifies whether the Update operation is enabled.</value>
+  </data>
+  <data name="LinqDataSource_GroupBy" xml:space="preserve">
+    <value>The expression passed to the GroupBy operator during the Select query.</value>
+  </data>
+  <data name="LinqDataSource_GroupByParameters" xml:space="preserve">
+    <value>Collection of parameters used for the GroupBy operator during the Select query.</value>
+  </data>
+  <data name="LinqDataSource_Inserted" xml:space="preserve">
+    <value>Event raised after the Insert operation is completed.</value>
+  </data>
+  <data name="LinqDataSource_Inserting" xml:space="preserve">
+    <value>Event raised before the Insert operation is executed.</value>
+  </data>
+  <data name="LinqDataSource_InsertParameters" xml:space="preserve">
+    <value>Collection of parameters used during the Insert operation. These parameters are merged with the parameters provided by data-bound controls.</value>
+  </data>
+  <data name="LinqDataSource_InvalidViewName" xml:space="preserve">
+    <value>LinqDataSource '{0}' only supports a single view named '{1}'. You may also leave the view name empty for the default view to be chosen.</value>
+  </data>
+  <data name="LinqDataSource_OrderBy" xml:space="preserve">
+    <value>The expression passed to the OrderBy operator during the Select query.</value>
+  </data>
+  <data name="LinqDataSource_OrderByParameters" xml:space="preserve">
+    <value>Collection of parameters used for the OrderBy operator during the Select query.</value>
+  </data>
+  <data name="LinqDataSource_Select" xml:space="preserve">
+    <value>The expression defining a projection used during the Select query.</value>
+  </data>
+  <data name="LinqDataSource_Selected" xml:space="preserve">
+    <value>Event raised after the Select operation is completed.</value>
+  </data>
+  <data name="LinqDataSource_Selecting" xml:space="preserve">
+    <value>Event raised before the Select operation is executed.</value>
+  </data>
+  <data name="LinqDataSource_SelectParameters" xml:space="preserve">
+    <value>Collection of parameters used in the projection during the Select query.</value>
+  </data>
+  <data name="LinqDataSource_StoreOriginalValuesInViewState" xml:space="preserve">
+    <value>Specifies whether to store original data values in ViewState.  This property is used for conflict detection during Update and Delete operations.</value>
+  </data>
+  <data name="LinqDataSource_TableName" xml:space="preserve">
+    <value>The name of the table property on the data context.</value>
+  </data>
+  <data name="LinqDataSource_Updated" xml:space="preserve">
+    <value>Event raised after the Update operation is completed.</value>
+  </data>
+  <data name="LinqDataSource_UpdateParameters" xml:space="preserve">
+    <value>Collection of parameters used during the Update operation. These parameters are merged with the parameters provided by data-bound controls.</value>
+  </data>
+  <data name="LinqDataSource_Updating" xml:space="preserve">
+    <value>Event raised before the Update operation is executed.</value>
+  </data>
+  <data name="LinqDataSource_Where" xml:space="preserve">
+    <value>The expression passed to the Where operator during the Select query.</value>
+  </data>
+  <data name="LinqDataSource_WhereParameters" xml:space="preserve">
+    <value>Collection of parameters used for the Where operator during the Select query.</value>
+  </data>
+  <data name="LinqDataSourceView_CannotConvertType" xml:space="preserve">
+    <value>Cannot convert value of parameter '{0}' from '{1}' to '{2}'.</value>
+  </data>
+  <data name="LinqDataSourceView_ContextTypeNameNotFound" xml:space="preserve">
+    <value>Could not find the type specified in the ContextTypeName property of LinqDataSource '{0}'.</value>
+  </data>
+  <data name="LinqDataSourceView_ContextTypeNameNotSpecified" xml:space="preserve">
+    <value>The ContextTypeName property of LinqDataSource '{0}' must specify a data context type.</value>
+  </data>
+  <data name="LinqDataSourceView_DeleteNotSupported" xml:space="preserve">
+    <value>LinqDataSource '{0}' does not support the Delete operation unless EnableDelete is true.</value>
+  </data>
+  <data name="LinqDataSourceView_GroupByNotSupportedOnEdit" xml:space="preserve">
+    <value>LinqDataSource '{0}' does not support the GroupBy property when the Delete, Insert or Update operations are enabled.</value>
+  </data>
+  <data name="LinqDataSourceView_InsertNotSupported" xml:space="preserve">
+    <value>LinqDataSource '{0}' does not support the Insert operation unless EnableInsert is true.</value>
+  </data>
+  <data name="LinqDataSourceView_InsertRequiresValues" xml:space="preserve">
+    <value>LinqDataSource '{0}' has no values to insert. Check that the 'values' dictionary contains values.</value>
+  </data>
+  <data name="LinqDataSourceView_InvalidContextType" xml:space="preserve">
+    <value>The data context used by LinqDataSource '{0}' must extend DataContext when the Delete, Insert or Update operations are enabled.</value>
+  </data>
+  <data name="LinqDataSourceView_InvalidOrderByFieldName" xml:space="preserve">
+    <value>The value '{0}' for parameter '{1}' is not a valid OrderBy field name.</value>
+  </data>
+  <data name="LinqDataSourceView_InvalidTablePropertyType" xml:space="preserve">
+    <value>The table property used by LinqDataSource '{0}' must be a generic type with one parameter that extends ITable, when the Delete, Insert or Update operations are enabled.</value>
+  </data>
+  <data name="LinqDataSourceView_OrderByAlreadySpecified" xml:space="preserve">
+    <value>LinqDataSource '{0}' does not support the OrderBy property when AutoGenerateOrderByClause is true.</value>
+  </data>
+  <data name="LinqDataSourceView_OriginalValuesNotFound" xml:space="preserve">
+    <value>Could not find a row that matches the given keys in the original values stored in ViewState.  Ensure that the 'keys' dictionary contains unique key values that correspond to a row returned from the previous Select operation.</value>
+  </data>
+  <data name="LinqDataSourceView_SelectNewNotSupportedOnEdit" xml:space="preserve">
+    <value>LinqDataSource '{0}' does not support the Select property when the Delete, Insert or Update operations are enabled.</value>
+  </data>
+  <data name="LinqDataSourceView_TableNameNotFound" xml:space="preserve">
+    <value>Could not find a property or field called '{0}' on the data context type '{1}' of LinqDataSource '{2}'.</value>
+  </data>
+  <data name="LinqDataSourceView_TableNameNotSpecified" xml:space="preserve">
+    <value>The TableName property of LinqDataSource '{0}' must specify a table property or field on the data context type.</value>
+  </data>
+  <data name="LinqDataSourceView_UpdateNotSupported" xml:space="preserve">
+    <value>LinqDataSource '{0}' does not support the Update operation unless EnableUpdate is true.</value>
+  </data>
+  <data name="LinqDataSourceView_WhereAlreadySpecified" xml:space="preserve">
+    <value>LinqDataSource '{0}' does not support the Where property when AutoGenerateWhereClause is true.</value>
+  </data>
+  <data name="ExpressionParser_AmbiguousConstructorInvocation" xml:space="preserve">
+    <value>Ambiguous invocation of '{0}' constructor</value>
+  </data>
+  <data name="ExpressionParser_AmbiguousIndexerInvocation" xml:space="preserve">
+    <value>Ambiguous invocation of indexer in type '{0}'</value>
+  </data>
+  <data name="ExpressionParser_AmbiguousMethodInvocation" xml:space="preserve">
+    <value>Ambiguous invocation of method '{0}' in type '{1}'</value>
+  </data>
+  <data name="ExpressionParser_ArgsIncompatibleWithLambda" xml:space="preserve">
+    <value>Argument list incompatible with lambda expression</value>
+  </data>
+  <data name="ExpressionParser_BothTypesConvertToOther" xml:space="preserve">
+    <value>Both of the types '{0}' and '{1}' convert to the other</value>
+  </data>
+  <data name="ExpressionParser_CannotConvertValue" xml:space="preserve">
+    <value>A value of type '{0}' cannot be converted to type '{1}'</value>
+  </data>
+  <data name="ExpressionParser_CannotIndexMultipleDimensionalArray" xml:space="preserve">
+    <value>Indexing of multiple-dimensional arrays is not supported</value>
+  </data>
+  <data name="ExpressionParser_CloseBracketOrCommaExpected" xml:space="preserve">
+    <value>']' or ',' expected</value>
+  </data>
+  <data name="ExpressionParser_CloseParenOrCommaExpected" xml:space="preserve">
+    <value>')' or ',' expected</value>
+  </data>
+  <data name="ExpressionParser_CloseParenOrOperatorExpected" xml:space="preserve">
+    <value>')' or operator expected</value>
+  </data>
+  <data name="ExpressionParser_ColonExpected" xml:space="preserve">
+    <value>':' expected</value>
+  </data>
+  <data name="ExpressionParser_DigitExpected" xml:space="preserve">
+    <value>Digit expected</value>
+  </data>
+  <data name="ExpressionParser_DotOrOpenParenExpected" xml:space="preserve">
+    <value>'.' or '(' expected</value>
+  </data>
+  <data name="ExpressionParser_DuplicateIdentifier" xml:space="preserve">
+    <value>The identifier '{0}' was defined more than once</value>
+  </data>
+  <data name="ExpressionParser_ExpressionExpected" xml:space="preserve">
+    <value>Expression expected</value>
+  </data>
+  <data name="ExpressionParser_ExpressionTypeMismatch" xml:space="preserve">
+    <value>Expression of type '{0}' expected</value>
+  </data>
+  <data name="ExpressionParser_FirstExprMustBeBool" xml:space="preserve">
+    <value>The first expression must be of type 'Boolean'</value>
+  </data>
+  <data name="ExpressionParser_IdentifierExpected" xml:space="preserve">
+    <value>Identifier expected</value>
+  </data>
+  <data name="ExpressionParser_IifRequiresThreeArgs" xml:space="preserve">
+    <value>The 'iif' function requires three arguments</value>
+  </data>
+  <data name="ExpressionParser_IncompatibleOperand" xml:space="preserve">
+    <value>Operator '{0}' incompatible with operand type '{1}'</value>
+  </data>
+  <data name="ExpressionParser_IncompatibleOperands" xml:space="preserve">
+    <value>Operator '{0}' incompatible with operand types '{1}' and '{2}'</value>
+  </data>
+  <data name="ExpressionParser_InvalidCharacter" xml:space="preserve">
+    <value>Syntax error '{0}'</value>
+  </data>
+  <data name="ExpressionParser_InvalidCharacterLiteral" xml:space="preserve">
+    <value>Character literal must contain exactly one character</value>
+  </data>
+  <data name="ExpressionParser_InvalidIndex" xml:space="preserve">
+    <value>Array index must be an integer expression</value>
+  </data>
+  <data name="ExpressionParser_InvalidIntegerLiteral" xml:space="preserve">
+    <value>Invalid integer literal '{0}'</value>
+  </data>
+  <data name="ExpressionParser_InvalidRealLiteral" xml:space="preserve">
+    <value>Invalid real literal '{0}'</value>
+  </data>
+  <data name="ExpressionParser_MethodIsVoid" xml:space="preserve">
+    <value>Method '{0}' in type '{1}' does not return a value</value>
+  </data>
+  <data name="ExpressionParser_MethodsAreInaccessible" xml:space="preserve">
+    <value>Methods on type '{0}' are not accessible</value>
+  </data>
+  <data name="ExpressionParser_MissingAsClause" xml:space="preserve">
+    <value>Expression is missing an 'as' clause</value>
+  </data>
+  <data name="ExpressionParser_NeitherTypeConvertsToOther" xml:space="preserve">
+    <value>Neither of the types '{0}' and '{1}' converts to the other</value>
+  </data>
+  <data name="ExpressionParser_NoApplicableAggregate" xml:space="preserve">
+    <value>No applicable aggregate method '{0}' exists</value>
+  </data>
+  <data name="ExpressionParser_NoApplicableIndexer" xml:space="preserve">
+    <value>No applicable indexer exists in type '{0}'</value>
+  </data>
+  <data name="ExpressionParser_NoApplicableMethod" xml:space="preserve">
+    <value>No applicable method '{0}' exists in type '{1}'</value>
+  </data>
+  <data name="ExpressionParser_NoItInScope" xml:space="preserve">
+    <value>No 'it' is in scope</value>
+  </data>
+  <data name="ExpressionParser_NoMatchingConstructor" xml:space="preserve">
+    <value>No matching constructor in type '{0}'</value>
+  </data>
+  <data name="ExpressionParser_OpenBracketExpected" xml:space="preserve">
+    <value>'[' expected</value>
+  </data>
+  <data name="ExpressionParser_OpenParenExpected" xml:space="preserve">
+    <value>'(' expected</value>
+  </data>
+  <data name="ExpressionParser_SyntaxError" xml:space="preserve">
+    <value>Syntax error</value>
+  </data>
+  <data name="ExpressionParser_TokenExpected" xml:space="preserve">
+    <value>{0} expected</value>
+  </data>
+  <data name="ExpressionParser_TypeHasNoNullableForm" xml:space="preserve">
+    <value>Type '{0}' has no nullable form</value>
+  </data>
+  <data name="ExpressionParser_UnknownIdentifier" xml:space="preserve">
+    <value>Unknown identifier '{0}'</value>
+  </data>
+  <data name="ExpressionParser_UnknownPropertyOrField" xml:space="preserve">
+    <value>No property or field '{0}' exists in type '{1}'</value>
+  </data>
+  <data name="ExpressionParser_UnterminatedStringLiteral" xml:space="preserve">
+    <value>Unterminated string literal</value>
+  </data>
+  <data name="ParseException_ParseExceptionFormat" xml:space="preserve">
+    <value>{0} (at index {1})</value>
+  </data>
+  <data name="LinqDataSourceView_PagingNotHandled" xml:space="preserve">
+    <value>AutoPage is disabled on LinqDataSource {0} but paging has not been handled.  Ensure you have set the LinqDataSourceSelectArguments.Arguments.TotalRowCount property to the total number of rows.</value>
+  </data>
+  <data name="NextPreviousPagerField_RenderDisabledButtonsAsLabels" xml:space="preserve">
+    <value>Whether disabled pager links should be rendered as labels rather than buttons.</value>
+  </data>
+  <data name="NextPreviousPagerField_RenderNonBreakingSpacesBetweenControls" xml:space="preserve">
+    <value>Whether non-breaking spaces should be rendered between pager controls.</value>
+  </data>
+  <data name="NumericPagerField_RenderNonBreakingSpacesBetweenControls" xml:space="preserve">
+    <value>Whether non-breaking spaces should be rendered between pager controls.</value>
+  </data>
+  <data name="DataBoundControlHelper_NoNamingContainer" xml:space="preserve">
+    <value>The {0} control '{1}' does not have a naming container.  Ensure that the control is added to the page before calling DataBind.</value>
+  </data>
+  <data name="WebService_NoWebServiceDataInlineScript" xml:space="preserve">
+    <value>No web service found at: {0}. This error can occur if a ServiceReference to a WCF service has InlineScript set to 'true'. For WCF services InlineScript should be 'false'.</value>
+  </data>
+  <data name="LinqDataSourceView_ParametersMustBeNamed" xml:space="preserve">
+    <value>Parameters for LinqDataSource '{0}' that are not used for AutoGenerateOrderBy must be named.</value>
+  </data>
+  <data name="LinqDataSourceView_ContextTypeNameChanged" xml:space="preserve">
+    <value>The ContextTypeName property of LinqDataSource '{0}' cannot be changed after the data context has been created.</value>
+  </data>
+  <data name="LinqDataSourceView_TableNameChanged" xml:space="preserve">
+    <value>The TableName property of LinqDataSource '{0}' cannot be changed after the data context has been created.</value>
+  </data>
+  <data name="LinqDataSourceView_InvalidParameterName" xml:space="preserve">
+    <value>The name for parameter '{0}' on LinqDataSource '{1}' is not a valid identifier name.</value>
+  </data>
+  <data name="Category_Sorting" xml:space="preserve">
+    <value>Sorting</value>
+  </data>
+  <data name="LinqDataSourceView_ValidationFailed" xml:space="preserve">
+    <value>Failed to set one or more properties on type {0}.  {1}</value>
+  </data>
+  <data name="DataPager_QueryStringField" xml:space="preserve">
+    <value>The name of the query string field for the current page index. The pager will use the query string when this property is set.</value>
+  </data>
+  <data name="LinqDataSourceValidationException_ValidationFailed" xml:space="preserve">
+    <value>Failed to set one or more properties on the data object.  Ensure that the input values are valid and can be converted to the corresponding property types.</value>
+  </data>
+  <data name="LinqDataSource_OrderGroupsBy" xml:space="preserve">
+    <value>The expression passed to the OrderBy operator used for ordering groups after a GroupBy has been performed during the Select query.</value>
+  </data>
+  <data name="LinqDataSource_OrderGroupsByParameters" xml:space="preserve">
+    <value>Collection of parameters used for the OrderGroupsBy operator during the Select query.</value>
+  </data>
+  <data name="LinqDataSourceView_OrderGroupsByRequiresGroupBy" xml:space="preserve">
+    <value>LinqDataSource '{0}' does not support the OrderGroupsBy property when the GroupsBy property has not been set.</value>
+  </data>
+  <data name="Common_GreaterThanOrEqualToZero" xml:space="preserve">
+    <value>Value must be greater than or equal to 0.</value>
+  </data>
+  <data name="Common_GreaterThanOrEqualToZeroAndLessThanOrEqualToOne" xml:space="preserve">
+    <value>Value must be greater than or equal to 0 and less than or equal to 1.</value>
+  </data>
+  <data name="ScriptManager_EmptyPageUrl" xml:space="preserve">
+    <value>The URL of an empty page that will be used to manage history on Internet Explorer. The script manager uses a built-in, resource-based page if this property is unspecified.</value>
+  </data>
+  <data name="ScriptManager_Navigate" xml:space="preserve">
+    <value>This event is raised during asynchronous postbacks when the server-side history state changes.</value>
+  </data>
+  <data name="ScriptManager_EnableHistory" xml:space="preserve">
+    <value>Enables ScriptManager to manage browser history on supported browsers.</value>
+  </data>
+  <data name="ScriptManager_EnableSecureHistoryState" xml:space="preserve">
+    <value>When true, the server-side history state is hashed using the same settings as ViewState. When false, the server history state is a clear-text string dictionary that can be modified by the end user by modifying the url.</value>
+  </data>
+  <data name="DynamicControlBase_ConvertEmptyStringToNull" xml:space="preserve">
+    <value>Specifies whether the field value should be converted to a null reference.</value>
+  </data>
+  <data name="DynamicControlBase_DataField" xml:space="preserve">
+    <value>Specifies the name of the data field to which the DynamicControl will bind.</value>
+  </data>
+  <data name="DynamicControlBase_DataFormatString" xml:space="preserve">
+    <value>Specifies the display format for the field value.</value>
+  </data>
+  <data name="DynamicControlBase_HtmlEncode" xml:space="preserve">
+    <value>Specifies whether the field value is HTML-encoded before it is displayed.</value>
+  </data>
+  <data name="DynamicControlBase_NullDisplayText" xml:space="preserve">
+    <value>Specifies the caption displayed when the field value is null.</value>
+  </data>
+  <data name="DynamicControlBase_UIHint" xml:space="preserve">
+    <value>Specifies the user control with which the field should be rendered.</value>
+  </data>
+  <data name="DynamicControlBase_ValidationGroup" xml:space="preserve">
+    <value>Specifies the name of the validation group to which validation controls in the DynamicControl belong.</value>
+  </data>
+  <data name="DynamicFilterRepeater_DynamicFilterContainerId" xml:space="preserve">
+    <value>The ID of the DynamicFilter control that exists in the ItemTemplate.</value>
+  </data>
+  <data name="FilterRepeater_TableName" xml:space="preserve">
+    <value>Specifies an override for the table name used by the FilterRepeater. By default the table is inferred from the page URL.</value>
+  </data>
+  <data name="ScriptManager_CannotAddHistoryPointOutsideOfAsyncPostBack" xml:space="preserve">
+    <value>A history point can only be created during an asynchronous postback.</value>
+  </data>
+  <data name="JSON_InvalidEnumType" xml:space="preserve">
+    <value>Enums based on System.Int64 or System.UInt64 are not JSON-serializable because JavaScript does not support the necessary precision.</value>
+  </data>
+  <data name="LinqDataSource_EnableObjectTracking" xml:space="preserve">
+    <value>Specifies whether ObjectTracking should be disabled on read-only Linq to SQL data contexts.</value>
+  </data>
+  <data name="LinqDataSourceView_EnableObjectTrackingChanged" xml:space="preserve">
+    <value>The EnableObjectTracking property of LinqDataSource '{0}' cannot be changed after the data context has been created.</value>
+  </data>
+  <data name="DynamicNavigatorDataSource_NoAccessibleTablesFound" xml:space="preserve">
+    <value>No accessible tables found. Make sure scaffolds are enabled or custom templates exist for your model.</value>
+  </data>
+  <data name="DynamicNavigatorDataSource_NoModelsRegistered" xml:space="preserve">
+    <value>No data models have been registered.</value>
+  </data>
+  <data name="DynamicNavigatorDataSource_NoTablesInModels" xml:space="preserve">
+    <value>There are no tables defined in the registered data models.</value>
+  </data>
+  <data name="CompositeScriptReference_Scripts" xml:space="preserve">
+    <value>A collection of script references that the CompositeScriptReference should include in the page.</value>
+  </data>
+  <data name="ScriptManager_CannotRegisterScriptInMultipleCompositeReferences" xml:space="preserve">
+    <value>A script reference cannot be included multiple times in composite script references.</value>
+  </data>
+  <data name="ScriptManager_ResolveCompositeScriptReference" xml:space="preserve">
+    <value>This event is raised to allow modifications to composite script references before they are rendered.</value>
+  </data>
+  <data name="LinqDataSourceView_TableCannotBeStatic" xml:space="preserve">
+    <value>Member '{0}' on the data context type '{1}' of LinqDataSource '{2}' is not a valid table. For Insert, Update and Delete the table must not be a static member.</value>
+  </data>
+  <data name="ListView_EnableDataBoundControlManager" xml:space="preserve">
+    <value>Whether the data bound control will register itself with a data bound control manager on the page.</value>
+  </data>
+  <data name="ListView_EnableModelValidation" xml:space="preserve">
+    <value>Whether page validation will be performed after validation is done in the model.</value>
+  </data>
+  <data name="ScriptManager_CannotAddHistoryPointWithHistoryDisabled" xml:space="preserve">
+    <value>A history point can only be added if EnableHistory is set to true.</value>
+  </data>
+  <data name="ScriptManager_CannotChangeEnableHistory" xml:space="preserve">
+    <value>The EnableHistory property cannot be changed after the Init event.</value>
+  </data>
+  <data name="ScriptManager_CompositeScript" xml:space="preserve">
+    <value>Enables the composition of individual script references into one to minimize the number of requests to the server.</value>
+  </data>
+  <data name="ScriptManager_ClientNavigateHandler" xml:space="preserve">
+    <value>Specifies a client-side event handler name for the navigate event.</value>
+  </data>
+  <data name="ScriptManager_PageUntitled" xml:space="preserve">
+    <value>Untitled Page</value>
+  </data>
+  <data name="ScriptResourceHandler_ResourceUrlTooLong" xml:space="preserve">
+    <value>The resource URL cannot be longer than {0} characters. If using a CompositeScriptReference, reduce the number of ScriptReferences it contains, or combine them into a single static file and set the Path property to the location of it.</value>
+  </data>
+  <data name="ScriptManager_CannotChangeAjaxFrameworkMode" xml:space="preserve">
+    <value>TheAjaxFrameworkMode property cannot be changed after the Init event.</value>
+  </data>
+  <data name="ListView_PersistedSelectionRequiresDataKeysNames" xml:space="preserve">
+    <value>DataKeyNames must be specified for persisted selection to work.</value>
+  </data>
+  <data name="ListView_EnablePersistedSelection" xml:space="preserve">
+    <value>Whether selection should be based on DataKeys or row index.</value>
+  </data>
+  <data name="DataSourceControlExtender_TargetControlIDMustBeSpecified" xml:space="preserve">
+    <value>TargetControlID must be specified.</value>
+  </data>
+  <data name="DataSourceControlExtender_TargetControlMustImplementIDataSource" xml:space="preserve">
+    <value>TargetControl '{0}' must implement IDataSource.</value>
+  </data>
+  <data name="QueryExtender_DataSourceMustBeIQueryableDataSource" xml:space="preserve">
+    <value>DataSource '{0}' must implement IQueryableDataSource.</value>
+  </data>
+  <data name="Expressions_DataFieldRequired" xml:space="preserve">
+    <value>DataField must be specified.</value>
+  </data>
+  <data name="RangeExpression_MaximumValueRequired" xml:space="preserve">
+    <value>A maximum value must be specified.</value>
+  </data>
+  <data name="RangeExpression_MinimumValueRequired" xml:space="preserve">
+    <value>A minimum value must be specified.</value>
+  </data>
+  <data name="RangeExpression_RangeTypeMustBeSpecified" xml:space="preserve">
+    <value>A minimum and maximum RangeType must be specified.</value>
+  </data>
+  <data name="SearchExpression_ParameterRequired" xml:space="preserve">
+    <value>A search parameter is required.</value>
+  </data>
+  <data name="MethodExpression_MethodNameMustBeSpecified" xml:space="preserve">
+    <value>A MethodName must be specified.</value>
+  </data>
+  <data name="MethodExpression_MethodNotFound" xml:space="preserve">
+    <value>Method '{0}' was not found.</value>
+  </data>
+  <data name="MethodExpression_ParameterNotFound" xml:space="preserve">
+    <value>'{0}' has a parameter named '{1}' which was not specified.</value>
+  </data>
+  <data name="MethodExpression_DataSourceMustBeIDynamicDataSource" xml:space="preserve">
+    <value>The DataSource must implement IDynamicDataSource for a format string to be used.</value>
+  </data>
+  <data name="MethodExpression_ChangingTheReturnTypeIsNotAllowed" xml:space="preserve">
+    <value>Changing the result type of a query in a MethodExpression is not supported. Expected a return value of type 'IEnumerable&lt;{0}&gt;'.</value>
+  </data>
+  <data name="MethodExpression_FirstParamterMustBeCorrectType" xml:space="preserve">
+    <value>The first parameter of '{0}' must be of type '{1}'.</value>
+  </data>
+  <data name="MethodExpression_MethodMustBeStatic" xml:space="preserve">
+    <value>Method '{0}' must be static.</value>
+  </data>
+  <data name="ListView_InvalidCommand" xml:space="preserve">
+    <value>Custom commands can only be called on a valid data item.</value>
+  </data>
+  <data name="ScriptManager_AjaxFrameworkAssembly" xml:space="preserve">
+    <value>The assembly the Microsoft ASP.NET AJAX Framework scripts are embedded within.</value>
+  </data>
+  <data name="ScriptReference_ResourceRequiresAjaxAssembly" xml:space="preserve">
+    <value>The requested script resource '{0}' requires version '{1}' of the ASP.NET AJAX Framework. To use this resource, make sure that the application references version '{1}'.</value>
+  </data>
+  <data name="WebResourceUtil_SystemWebExtensionsDoesNotContainReleaseWebResource" xml:space="preserve">
+    <value>The assembly '{0}' does not contain a Web resource that has the name '{1}'. Make sure that the resource name is spelled correctly.</value>
+  </data>
+  <data name="ScriptManager_MustHaveGreaterVersion" xml:space="preserve">
+    <value>The assembly '{0}' is not a supported version of an ASP.NET AJAX Framework assembly. Make sure that the application references a version greater than '{1}' of an ASP.NET AJAX Framework assembly.</value>
+  </data>
+  <data name="ScriptManager_CannotChangeEnableCdn" xml:space="preserve">
+    <value>The EnableCdn property cannot be changed after the PreRender event.</value>
+  </data>
+  <data name="ScriptManager_EnableCdn" xml:space="preserve">
+    <value>Enables ScriptManager to load scripts from a content delivery network when available.</value>
+  </data>
+  <data name="ScriptManager_EnableCdnFallback" xml:space="preserve">
+    <value>Enables ScriptManager to load scripts locally when the content delivery network is unavailable.</value>
+  </data>
+  <data name="OfTypeExpression_CannotFindType" xml:space="preserve">
+    <value>Could not find the type '{0}' specified by the TypeName property of OfTypeExpression declared on '{1}'.</value>
+  </data>
+  <data name="OfTypeExpression_TypeNameNotSpecified" xml:space="preserve">
+    <value>The TypeName property of OfTypeExpression declared on '{0}' must specify a type name.</value>
+  </data>
+  <data name="ScriptResourceDefinition_InvalidPath" xml:space="preserve">
+    <value>Invalid path mapping '{0}'. A path in a ScriptResourceDefinition must be a non-relative virtual path or an encoded absolute URI.</value>
+  </data>
+  <data name="QueryExtender_Expressions" xml:space="preserve">
+    <value>A collection of expressions that can be used with the QueryExtender.</value>
+  </data>
+  <data name="ScriptManager_CannotChangeEnableCdnFallback" xml:space="preserve">
+    <value>The EnableCdnFallback property cannot be changed after the PreRender event.</value>
+  </data>
+  <data name="JSON_CannotSerializeMemberGeneric" xml:space="preserve">
+    <value>Cannot serialize member '{0}' on type '{1}'.</value>
+  </data>
+</root>
