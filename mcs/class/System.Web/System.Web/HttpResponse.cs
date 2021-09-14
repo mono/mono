@@ -353,6 +353,12 @@ namespace System.Web
 			set { writer = value; }
 		}
 
+		internal TextWriter SwitchWriter(TextWriter writer) {
+			TextWriter oldWriter = this.writer;
+			this.writer = writer;
+			return oldWriter;
+		}
+
 		public Stream OutputStream {
 			get {
 				return output_stream;

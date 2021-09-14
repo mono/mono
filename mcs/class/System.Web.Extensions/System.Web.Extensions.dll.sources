@@ -2,6 +2,7 @@
 ../System.Web/System.Web.Configuration_2.0/MachineKeyRegistryStorage.cs
 ../System.Web/System.Web.Handlers/AssemblyResourceLoader.cs
 ./Assembly/AssemblyInfo.cs
+../../build/common/AssemblyRef.cs
 ./System.Web.ClientServices/ClientFormsIdentity.cs
 ./System.Web.ClientServices/ClientRolePrincipal.cs
 ./System.Web.ClientServices/ConnectivityStatus.cs
@@ -29,6 +30,8 @@
 ./System.Web.DynamicData/IDynamicValidatorException.cs
 ./System.Web.Handlers/ScriptModule.cs
 ./System.Web.Handlers/ScriptResourceHandler.cs
+../referencesource/System.Web.Extensions/HttpResponseInternalBase.cs
+../referencesource/System.Web.Extensions/HttpResponseInternalWrapper.cs
 ../referencesource/System.Web.Extensions/Resources/AtlasWeb.Designer.cs
 ../referencesource/System.Web.Extensions/Script/AjaxFrameworkAssemblyAttribute.cs
 ./System.Web.Script.Serialization/JavaScriptConverter.cs
@@ -57,13 +60,19 @@
 ../referencesource/System.Web.Extensions/ui/AssemblyCache.cs
 ./System.Web.UI/AsyncPostBackErrorEventArgs.cs
 ./System.Web.UI/AsyncPostBackTrigger.cs
+../referencesource/System.Web.Extensions/ui/ClientScriptManagerWrapper.cs
 ./System.Web.UI/CompositeEntry.cs
 ./System.Web.UI/CompositeScriptReference.cs
 ./System.Web.UI/CompositeScriptReferenceEventArgs.cs
 ./System.Web.UI/AuthenticationServiceManager.cs
 ./System.Web.UI/ExtenderControl.cs
+../referencesource/System.Web.Extensions/ui/HtmlFormWrapper.cs
 ./System.Web.UI/IExtenderControl.cs
+../referencesource/System.Web.Extensions/ui/IClientScriptManager.cs
+../referencesource/System.Web.Extensions/ui/IHtmlForm.cs
+../referencesource/System.Web.Extensions/ui/IPage.cs
 ./System.Web.UI/IScriptControl.cs
+../referencesource/System.Web.Extensions/ui/PageWrapper.cs
 ./System.Web.UI/PostBackTrigger.cs
 ./System.Web.UI/ProfileServiceManager.cs
 ./System.Web.UI/RegisteredArrayDeclaration.cs
@@ -73,6 +82,7 @@
 ./System.Web.UI/RegisteredScript.cs
 ./System.Web.UI/RegisteredScriptType.cs
 ../referencesource/System.Web.Extensions/ui/ResourceDescriptionAttribute.cs
+../referencesource/System.Web.Extensions/ui/ResourceDisplayNameAttribute.cs
 ./System.Web.UI/ScriptBehaviorDescriptor.cs
 ./System.Web.UI/ScriptComponentDescriptor.cs
 ./System.Web.UI/ScriptControl.cs
@@ -99,6 +109,7 @@
 ./System.Web.UI/UpdateProgress.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/ContextDataSourceContextData.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/ContextDataSourceView.cs
+../referencesource/System.Web.Extensions/ui/WebControls/ContextDataSource.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/DataSourceHelper.cs
 ./System.Web.UI.WebControls/DataPagerCommandEventArgs.cs
 ./System.Web.UI.WebControls/DataPager.cs
@@ -117,7 +128,7 @@
 ./System.Web.UI.WebControls/IPageableItemContainer.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/IQueryableDataSource.cs
 ./System.Web.UI.WebControls/LinqDataSourceContextEventArgs.cs
-./System.Web.UI.WebControls/LinqDataSource.cs
+../referencesource/System.Web.Extensions/ui/WebControls/LinqDataSource.cs
 ./System.Web.UI.WebControls/LinqDataSourceDeleteEventArgs.cs
 ./System.Web.UI.WebControls/LinqDataSourceDisposeEventArgs.cs
 ./System.Web.UI.WebControls/LinqDataSourceInsertEventArgs.cs
@@ -155,6 +166,7 @@
 ../referencesource/System.Web.Extensions/ui/WebControls/QueryableDataSourceEditData.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/QueryableDataSourceHelper.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/QueryableDataSourceView.cs
+../referencesource/System.Web.Extensions/ui/WebControls/QueryableDataSource.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/QueryContext.cs
 ../referencesource/System.Web.Extensions/ui/WebControls/QueryCreatedEventArgs.cs
 ./System.Web.UI.WebControls/TemplatePagerField.cs

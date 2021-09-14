@@ -140,6 +140,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	bool isCallback;
 	List <Control> requireStateControls;
 	HtmlForm _form;
+	private RenderMethod _postFormRenderDelegate;
+	internal Dictionary<String, String> _hiddenFieldsToRender;
 
 	string _title;
 	string _theme;
@@ -1098,6 +1100,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		scriptManager.WriteStartupScriptBlocks (writer);
 		renderingForm = false;
 		postBackScriptRendered = false;
+		if (_postFormRenderDelegate != null) {
+			_postFormRenderDelegate(writer, null);
+		}
 	}
 
 	void ProcessPostData (NameValueCollection data, bool second)
@@ -1918,6 +1923,10 @@ public partial class Page : TemplateControl, IHttpHandler
 			EventHandler eh = (EventHandler) (Events [SaveStateCompleteEvent]);
 			if (eh != null) eh (this, e);
 		}
+	}
+
+	internal void SetPostFormRenderDelegate(RenderMethod renderMethod) {
+		_postFormRenderDelegate = renderMethod;
 	}
 	
 	public HtmlForm Form {
