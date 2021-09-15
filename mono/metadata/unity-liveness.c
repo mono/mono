@@ -7,6 +7,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/utils/mono-error.h>
+#include <mono/utils/mono-logger-internals.h>
 
 typedef struct _LivenessState LivenessState;
 
@@ -55,6 +56,21 @@ struct _LivenessState {
 	ReallocateArray reallocateArray;
 	guint traverse_depth; // track recursion. Prevent stack overflow by limiting recursion
 };
+
+static GString* error_string = NULL;
+
+static void set_error_string(const gchar* format, ...)
+{
+	va_list args;
+	// We don't want to generate some massive string that won't contain any additional useful info.
+	if (error_string || !format)
+		return;
+
+	error_string = g_string_new("Corruption Detected on the Managed heap: ");
+	va_start(args, format);
+	g_string_append_vprintf(error_string, format, args);
+	va_end(args);
+}
 
 custom_growable_block_array * block_array_create(LivenessState *state)
 {
@@ -253,11 +269,13 @@ static void validate_object_value(MonoObject *val, MonoType *storageType)
 					break;
 				}
 			}
-			g_assert(found);
+			if (!found)
+				set_error_string("validate_object_value: Unable to find interface %s in provided MonoObject %p", storageClass->name, val);
 		}
 		else {
 			int res = mono_class_has_parent_fast(valClass, storageClass);
-			g_assert(res);
+			if (!res)
+				set_error_string("validate_object_value: Unable to find parent for class %s at MonoObject %p", valClass->name, val);
 		}
 	}
 }
@@ -309,11 +327,27 @@ MONO_API void mono_validate_string_pointer(MonoString *string)
 
 static gboolean mono_add_and_validate_object(MonoObject *object, LivenessState *state)
 {
-	// TODO: validate object is good first...
 	if (object) {
-		void* vtable = NULL;
+		MonoVTable *vtable = NULL;
+		MonoClass *klass = NULL;
+		char *name = NULL;
 		__try {
-			vtable = *(void**)(object);
+			vtable = GET_VTABLE(object);
+			klass = vtable->klass;
+			name = klass->name;
+
+			if (!IS_MARKED(object)) {
+				gboolean has_references = klass->has_references;
+				if (has_references || should_process_value(object, state->filter)) {
+					block_array_push_back(state->all_objects, object, state);
+					MARK_OBJ(object);
+				}
+				// Check if klass has further references - if not skip adding
+				if (has_references) {
+					block_array_push_back(state->process_array, object, state);
+					return TRUE;
+				}
+			}
 		}
 		__except(1) {
 
@@ -321,26 +355,13 @@ static gboolean mono_add_and_validate_object(MonoObject *object, LivenessState *
 		}
 
 		if (vtable == NULL) {
-			DebugBreak();
+			set_error_string("mono_add_and_validate_object: Corrupt object detected at %p", object);
 		}
 
 		//if (!GC_is_marked(object))
 		//{
 		//	DebugBreak();
 		//}
-
-		if (!IS_MARKED(object)) {
-			gboolean has_references = GET_VTABLE(object)->klass->has_references;
-			if (has_references || should_process_value(object, state->filter)) {
-				block_array_push_back(state->all_objects, object, state);
-				MARK_OBJ(object);
-			}
-			// Check if klass has further references - if not skip adding
-			if (has_references) {
-				block_array_push_back(state->process_array, object, state);
-				return TRUE;
-			}
-		}
 	}
 
 	return FALSE;
@@ -418,7 +439,7 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 	MonoClass* p;
 	gboolean added_objects = FALSE;
 
-	g_assert (object);
+	g_assert(object);
 
 	// subtract the added offset for the vtable. This is added to the offset even though it is a struct
 	if (isStruct)
@@ -462,18 +483,13 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 				if (val && field->type->type == MONO_TYPE_CLASS) {
 					MonoClass *fieldClass = field->type->data.klass;
 					MonoClass *valClass = GET_VTABLE(val)->klass;
-					g_assert(valClass->_byval_arg.type == MONO_TYPE_CLASS || 
-						valClass->_byval_arg.type == MONO_TYPE_GENERICINST ||
-						valClass->_byval_arg.type == MONO_TYPE_SZARRAY ||
-						valClass->_byval_arg.type == MONO_TYPE_STRING ||
-						valClass->_byval_arg.type == MONO_TYPE_OBJECT ||
-						valClass->_byval_arg.type == MONO_TYPE_VALUETYPE); // TODO: Not sure if this is correct
 					if (mono_class_is_interface(fieldClass)) {
 						/* TODO */
 					}
 					else {
 						int res = mono_class_has_parent_fast(valClass, fieldClass);
-						g_assert(res);
+						if (!res)
+							set_error_string("mono_validate_object_internal: unable to find parent: %s (%p) for class: %s (%p)", valClass->name, valClass, fieldClass->name, fieldClass);
 					}
 				}
 			}
@@ -805,6 +821,8 @@ void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
 			// shortcut check for special statics
 			if (field->offset == -1)
 				continue;
+			if (field->type->attrs & FIELD_ATTRIBUTE_LITERAL)
+				continue;
 
 			if (MONO_TYPE_ISSTRUCT(field->type)) {
 				char* offseted = (char*)mono_vtable_get_static_field_data(vtable);
@@ -818,15 +836,14 @@ void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
 				}
 			}
 			else {
-				ERROR_DECL(error);
 				MonoObject* val = NULL;
 
-				mono_field_static_get_value_checked(mono_class_vtable(domain, klass), field, &val, MONO_HANDLE_NEW(MonoString, NULL), error);
+				char* offseted = (char*)mono_vtable_get_static_field_data(vtable);
+				offseted += field->offset;
+				val = *((MonoObject**)offseted);
 
-				if (val && mono_error_ok(error))
+				if (val)
 					mono_add_and_validate_object(val, liveness_state);
-
-				mono_error_cleanup(error);
 			}
 		}
 	}
@@ -896,5 +913,11 @@ void mono_unity_liveness_free_struct(LivenessState *state)
 	block_array_destroy(state->all_objects, state);
 	block_array_destroy(state->process_array, state);
 	g_free(state);
+
+	if (error_string)
+	{
+		mono_trace(G_LOG_LEVEL_WARNING, MONO_TRACE_GC, error_string->str);
+		g_string_free(error_string, TRUE);
+	}
 }
 

@@ -188,9 +188,9 @@ void  mono_gc_run_finalize (void *obj, void *data);
 void  mono_gc_clear_domain (MonoDomain * domain);
 /* Signal early termination of finalizer processing inside the gc */
 void  mono_gc_suspend_finalizers (void);
-MONO_API void  mono_gc_set_heap_verifier (gboolean enabled);
-typedef void (*UnityHeapVerifierCallback)();
-MONO_API void mono_gc_set_heap_verifier_callback(UnityHeapVerifierCallback callback);
+// typedef void (*UnityHeapVerifierCallback)();
+// MONO_API void mono_gc_set_heap_verifier_callback(UnityHeapVerifierCallback callback);
+// MONO_API void mono_gc_set_heap_validate_frequency(int freq);
 
 
 /* 

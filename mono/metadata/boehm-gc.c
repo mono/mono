@@ -883,38 +883,36 @@ mono_gc_free_fixed (void* addr)
 	GC_FREE (addr);
 }
 
-static int validate_heap = 0;
-static int counter = 0;
-static int validate_frequency = 100;
-static UnityHeapVerifierCallback unity_heap_validation_callback;
+// static int counter = 0;
+// static int validate_frequency = 0;
+// static UnityHeapVerifierCallback unity_heap_validation_callback;
 
-void
-mono_gc_set_heap_verifier (gboolean enabled)
-{
-	g_message("heap verifier is now: %d", enabled);
-	validate_heap = enabled;
-}
+// void
+// mono_gc_set_heap_validate_frequency (int freq)
+// {
+// 	if (freq >= 0 && freq != validate_frequency)
+// 		validate_frequency = freq;
+// }
 
-void
-mono_gc_set_heap_verifier_callback(UnityHeapVerifierCallback callback)
-{
-	unity_heap_validation_callback = callback;
-}
+// void
+// mono_gc_set_heap_verifier_callback (UnityHeapVerifierCallback callback)
+// {
+// 	unity_heap_validation_callback = callback;
+// }
 
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
 
-	if (unity_heap_validation_callback && validate_heap && (counter++ % validate_frequency) == 0)
-	{
-		ves_icall_System_GC_WaitForPendingFinalizers();
-		mono_gc_handle_lock();
-		GC_stop_world_external();
-		unity_heap_validation_callback();
-		GC_start_world_external();
-		mono_gc_handle_unlock();
-	}
+	// INTERNAL DEV NOTE: As this is a hotpath function we only want this to exist when we know we need it.
+	// if (unity_heap_validation_callback && validate_frequency > 0 && (++counter % validate_frequency) == 0)
+	// {
+	// 	mono_gc_handle_lock();
+	// 	unity_heap_validation_callback();
+	// 	mono_gc_handle_unlock();
+	// 	counter = 0;
+	// }
 
 	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
