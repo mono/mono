@@ -230,9 +230,7 @@ static void mono_traverse_and_validate_generic_object(MonoObject *object, Livene
 	gsize gc_desc = (gsize)(GET_VTABLE(object)->gc_descr);
 #endif
 
-	/*if (gc_desc & (gsize)1)
-		mono_traverse_gc_desc(object, state);
-	else */if (GET_VTABLE(object)->klass->rank)
+	if (GET_VTABLE(object)->klass->rank)
 		mono_validate_array((MonoArray*)object, state);
 	else
 		mono_validate_object(object, state);
@@ -245,10 +243,8 @@ static void validate_object_value(MonoObject *val, MonoType *storageType)
 		MonoClass *valClass = GET_VTABLE(val)->klass;
 		if (mono_class_is_interface(storageClass)) {
 			int found = 0;
-			for (int i = 0; i < valClass->interface_offsets_count; ++i)
-			{
-				if (valClass->interfaces_packed[i] == storageClass)
-				{
+			for (int i = 0; i < valClass->interface_offsets_count; ++i) {
+				if (valClass->interfaces_packed[i] == storageClass) {
 					found = TRUE;
 					break;
 				}
@@ -357,12 +353,10 @@ static gboolean mono_traverse_object_internal(MonoObject *object, gboolean isStr
 	if (isStruct)
 		object--;
 
-	for (p = klass; p != NULL; p = p->parent)
-	{
+	for (p = klass; p != NULL; p = p->parent) {
 		if (p->size_inited == 0)
 			continue;
-		for (i = 0; i < mono_class_get_field_count(p); i++)
-		{
+		for (i = 0; i < mono_class_get_field_count(p); i++) {
 			field = &p->fields[i];
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
@@ -390,7 +384,6 @@ static gboolean mono_traverse_object_internal(MonoObject *object, gboolean isStr
 				MonoVTable *vtable = NULL;
 				mono_field_get_value_internal(object, field, &val);
 				added_objects |= mono_add_process_object(val, state);
-				validate_object_value(val, field->type);
 			}
 		}
 	}
@@ -411,12 +404,10 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 	if (isStruct)
 		object--;
 
-	for (p = klass; p != NULL; p = p->parent)
-	{
+	for (p = klass; p != NULL; p = p->parent) {
 		if (p->size_inited == 0)
 			continue;
-		for (i = 0; i < mono_class_get_field_count(p); i++)
-		{
+		for (i = 0; i < mono_class_get_field_count(p); i++) {
 			field = &p->fields[i];
 			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
 				continue;
@@ -424,8 +415,7 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 			if (!mono_field_can_contain_references(field))
 				continue;
 
-			if (MONO_TYPE_ISSTRUCT(field->type))
-			{
+			if (MONO_TYPE_ISSTRUCT(field->type)) {
 				char* offseted = (char*)object;
 				offseted += field->offset;
 				if (field->type->type == MONO_TYPE_GENERICINST)
@@ -482,8 +472,7 @@ static void mono_traverse_gc_desc(MonoObject *object, LivenessState *state)
 
 	g_assert(mask & (gsize)1);
 
-	for (i = 0; i < WORDSIZE - 2; i++)
-	{
+	for (i = 0; i < WORDSIZE - 2; i++) {
 		gsize offset = ((gsize)1 << (WORDSIZE - 1 - i));
 		if (mask & offset) {
 			MonoObject *val = *(MonoObject **)(((char *)object) + i * sizeof(void *));
@@ -498,8 +487,7 @@ static void mono_traverse_objects(LivenessState *state)
 	MonoObject *object = NULL;
 
 	state->traverse_depth++;
-	while (!block_array_is_empty(state->process_array))
-	{
+	while (!block_array_is_empty(state->process_array)) {
 		object = block_array_pop_back(state->process_array);
 		mono_traverse_generic_object(object, state);
 	}
@@ -541,8 +529,7 @@ static void mono_traverse_array(MonoArray *array, LivenessState *state)
 	has_references = !m_class_is_valuetype(element_class);
 	g_assert(element_class->size_inited != 0);
 
-	for (i = 0; i < mono_class_get_field_count(element_class); i++)
-	{
+	for (i = 0; i < mono_class_get_field_count(element_class); i++)	{
 		has_references |= mono_field_can_contain_references(&element_class->fields[i]);
 	}
 
@@ -553,8 +540,7 @@ static void mono_traverse_array(MonoArray *array, LivenessState *state)
 	if (element_class->valuetype) {
 		size_t items_processed = 0;
 		elementClassSize = mono_class_array_element_size(element_class);
-		for (i = 0; i < array_length; i++)
-		{
+		for (i = 0; i < array_length; i++) {
 			MonoObject *object = (MonoObject *)mono_array_addr_with_size_internal(array, elementClassSize, i);
 			if (mono_traverse_object_internal(object, 1, element_class, state))
 				items_processed++;
@@ -565,8 +551,7 @@ static void mono_traverse_array(MonoArray *array, LivenessState *state)
 	}
 	else {
 		size_t items_processed = 0;
-		for (i = 0; i < array_length; i++)
-		{
+		for (i = 0; i < array_length; i++) {
 			MonoObject *val = mono_array_get(array, MonoObject *, i);
 			if (mono_add_process_object(val, state))
 				items_processed++;
@@ -594,8 +579,7 @@ static void mono_validate_array(MonoArray *array, LivenessState *state)
 	has_references = !m_class_is_valuetype(element_class);
 	g_assert(element_class->size_inited != 0);
 
-	for (i = 0; i < mono_class_get_field_count(element_class); i++)
-	{
+	for (i = 0; i < mono_class_get_field_count(element_class); i++)	{
 		has_references |= mono_field_can_contain_references(&element_class->fields[i]);
 	}
 
@@ -617,8 +601,7 @@ static void mono_validate_array(MonoArray *array, LivenessState *state)
 	}
 	else {
 		size_t items_processed = 0;
-		for (i = 0; i < array_length; i++)
-		{
+		for (i = 0; i < array_length; i++) {
 			MonoObject *val = mono_array_get(array, MonoObject*, i);
 			if (mono_add_and_validate_object(val, state))
 				items_processed++;
@@ -637,8 +620,7 @@ void mono_filter_objects(LivenessState *state)
 	gint num_objects = 0;
 
 	gpointer value = block_array_next(state->all_objects);
-	while (value != NULL)
-	{
+	while (value != NULL) {
 		MonoObject *object = value;
 		if (should_process_value(object, state->filter))
 			filtered_objects[num_objects++] = object;
@@ -667,8 +649,7 @@ void mono_unity_liveness_calculation_from_statics(LivenessState *liveness_state)
 
 	mono_reset_state(liveness_state);
 
-	for (i = 0; i < memory_manager->class_vtable_array->len; ++i)
-	{
+	for (i = 0; i < memory_manager->class_vtable_array->len; ++i) {
 		MonoVTable *vtable = (MonoVTable *)g_ptr_array_index(memory_manager->class_vtable_array, i);
 		MonoClass *klass = vtable->klass;
 		MonoClassField *field;
@@ -763,8 +744,7 @@ void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
 
 	g_hash_table_foreach(domain->special_static_fields, foreach_thread_static_field, liveness_state);
 
-	for (i = 0; i < memory_manager->class_vtable_array->len; ++i)
-	{
+	for (i = 0; i < memory_manager->class_vtable_array->len; ++i) {
 		MonoVTable *vtable = (MonoVTable*)g_ptr_array_index(memory_manager->class_vtable_array, i);
 		MonoClass *klass = vtable->klass;
 		MonoClassField *field;
@@ -776,8 +756,7 @@ void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
 			continue;
 		if (klass->size_inited == 0)
 			continue;
-		for (j = 0; j < mono_class_get_field_count(klass); j++)
-		{
+		for (j = 0; j < mono_class_get_field_count(klass); j++)	{
 			field = &klass->fields[j];
 			if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
 				continue;
@@ -864,8 +843,7 @@ void mono_unity_liveness_finalize(LivenessState *state)
 {
 	block_array_reset_iterator(state->all_objects);
 	gpointer it = block_array_next(state->all_objects);
-	while (it != NULL)
-	{
+	while (it != NULL) {
 		MonoObject *object = it;
 		CLEAR_OBJ(object);
 		it = block_array_next(state->all_objects);
@@ -879,4 +857,3 @@ void mono_unity_liveness_free_struct(LivenessState *state)
 	block_array_destroy(state->process_array, state);
 	g_free(state);
 }
-
