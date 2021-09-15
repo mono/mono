@@ -883,36 +883,39 @@ mono_gc_free_fixed (void* addr)
 	GC_FREE (addr);
 }
 
-// static int counter = 0;
-// static int validate_frequency = 0;
-// static UnityHeapVerifierCallback unity_heap_validation_callback;
+#ifdef HEAP_VALIDATION_FREQUENCY
+static int counter = 0;
+static int validate_frequency = 0;
+static UnityHeapVerifierCallback unity_heap_validation_callback;
 
-// void
-// mono_gc_set_heap_validate_frequency (int freq)
-// {
-// 	if (freq >= 0 && freq != validate_frequency)
-// 		validate_frequency = freq;
-// }
+void
+mono_gc_set_heap_validate_frequency (int freq)
+{
+	if (freq >= 0 && freq != validate_frequency)
+		validate_frequency = freq;
+}
 
-// void
-// mono_gc_set_heap_verifier_callback (UnityHeapVerifierCallback callback)
-// {
-// 	unity_heap_validation_callback = callback;
-// }
+void
+mono_gc_set_heap_verifier_callback (UnityHeapVerifierCallback callback)
+{
+	unity_heap_validation_callback = callback;
+}
+#endif
 
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
 
-	// INTERNAL DEV NOTE: As this is a hotpath function we only want this to exist when we know we need it.
-	// if (unity_heap_validation_callback && validate_frequency > 0 && (++counter % validate_frequency) == 0)
-	// {
-	// 	mono_gc_handle_lock();
-	// 	unity_heap_validation_callback();
-	// 	mono_gc_handle_unlock();
-	// 	counter = 0;
-	// }
+#ifdef HEAP_VALIDATION_FREQUENCY
+	if (unity_heap_validation_callback && validate_frequency > 0 && (++counter % validate_frequency) == 0)
+	{
+		mono_gc_handle_lock();
+		unity_heap_validation_callback();
+		mono_gc_handle_unlock();
+		counter = 0;
+	}
+#endif
 
 	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
