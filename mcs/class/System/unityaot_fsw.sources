@@ -1,0 +1,9 @@
+System.IO/DefaultWatcher.cs
+System.IO/NullFileWatcher.cs
+System.IO/FileAction.cs
+System.IO/FileSystemWatcher.cs
+System.IO/IFileWatcher.cs
+System.IO/SearchPattern.cs
+
+../../../external/corefx-bugfix/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+../../../external/corefx-bugfix/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.UnknownUnix.cs

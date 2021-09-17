@@ -3,4 +3,7 @@
 #include linux_networkinfo.sources
 #include macos_networkinfo.sources
 
+System.IO/FileSystemWatcher.DefaultEventAttribute.cs
 ../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.Unix.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.UnknownUnix.cs

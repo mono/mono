@@ -10,3 +10,5 @@ System.Net.NetworkInformation/Win32UnixFactoryPal.cs
 
 System.CodeDom/CodeCompileUnit.cs
 System.CodeDom/CodeTypeDeclaration.cs
+
+#include unityaot_fsw.sources

@@ -1,3 +1,6 @@
 System.Net/MacProxy.cs
 Mono/AppleTypes.cs
 System.Security.Cryptography.X509Certificates/OSX509Certificates.cs
+System.IO/FileSystemWatcher.DefaultEventAttribute.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
+../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.UnknownUnix.cs
