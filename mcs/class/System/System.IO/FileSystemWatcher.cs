@@ -123,10 +123,11 @@ namespace System.IO {
 
 				string managed = Environment.GetEnvironmentVariable ("MONO_MANAGED_WATCHER");
 				int mode = 0;
+				bool ok = false;
+#if !UNITY_AOT
 				if (managed == null)
 					mode = InternalSupportsFSW ();
 				
-				bool ok = false;
 				switch (mode) {
 				case 1: // windows
 					ok = DefaultWatcher.GetInstance (out watcher);
@@ -149,6 +150,7 @@ namespace System.IO {
 					watcher_handle = (watcher as CoreFXFileSystemWatcherProxy).NewWatcher (this);
 					break;
 				}
+#endif
 
 				if (mode == 0 || !ok) {
 					if (String.Compare (managed, "disabled", true) == 0)
@@ -196,9 +198,11 @@ namespace System.IO {
 		internal SearchPattern2 Pattern {
 			get {
 				if (pattern == null) {
+#if !UNITY_AOT
 					if (watcher?.GetType () == typeof (KeventWatcher))
 						pattern = new SearchPattern2 (MangledFilter, true); //assume we want to ignore case (OS X)
 					else
+#endif
 						pattern = new SearchPattern2 (MangledFilter);
 				}
 				return pattern;

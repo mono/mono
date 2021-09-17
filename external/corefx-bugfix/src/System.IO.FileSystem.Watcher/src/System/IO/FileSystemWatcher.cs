@@ -12,7 +12,7 @@ using System.IO.Enumeration;
 using System.Threading;
 using System.Threading.Tasks;
 
-#if MONO && (!MOBILE || MOBILE_DESKTOP_HOST)
+#if MONO && (!MOBILE || MOBILE_DESKTOP_HOST || UNITY_AOT)
 
 using System;
 using System.IO;
