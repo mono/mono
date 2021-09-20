@@ -73,7 +73,7 @@ testing_winaot_interp_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 testing_winaot_interp_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
 
 unityjit_SUBDIRS = $(common_DEPS_SUBDIRS)
-unityjit_PARALLEL_SUBDIRS = $(common_SUBDIRS) System.Net.Http.Rtc
+unityjit_PARALLEL_SUBDIRS = $(common_SUBDIRS) System.Net.Http.Rtc $(mobile_only_SUBDIRS)
 
 unityaot_SUBDIRS = $(common_DEPS_SUBDIRS) System.Drawing.Common
 unityaot_PARALLEL_SUBDIRS = $(common_SUBDIRS) $(mobile_only_SUBDIRS)
