@@ -279,12 +279,12 @@ static gboolean mono_add_process_object(MonoObject *object, LivenessState *state
 MONO_API void mono_validate_object_pointer (MonoObject *object)
 {
 	if (object) {
-		void *vtable = NULL;
+		MonoVTable *vtable = NULL;
 		MonoClass *klass = NULL;
 		char *name = NULL;
 
-		vtable = *(void**)(object);
-		klass = object->vtable->klass;
+		vtable = object->vtable;
+		klass = vtable->klass;
 		name = klass->name;
 
 		g_assert(vtable);
@@ -436,17 +436,7 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 				MonoVTable* vtable = NULL;
 				mono_field_get_value_internal(object, field, &val);
 				added_objects |= mono_add_and_validate_object(val, state);
-				if (val && field->type->type == MONO_TYPE_CLASS) {
-					MonoClass *fieldClass = field->type->data.klass;
-					MonoClass *valClass = GET_VTABLE(val)->klass;
-					if (mono_class_is_interface(fieldClass)) {
-						/* TODO */
-					}
-					else {
-						int res = mono_class_has_parent_fast(valClass, fieldClass);
-						g_assert(res);
-					}
-				}
+				validate_object_value(val, field->type);
 			}
 		}
 	}
@@ -529,7 +519,7 @@ static void mono_traverse_array(MonoArray *array, LivenessState *state)
 	has_references = !m_class_is_valuetype(element_class);
 	g_assert(element_class->size_inited != 0);
 
-	for (i = 0; i < mono_class_get_field_count(element_class); i++)	{
+	for (i = 0; i < mono_class_get_field_count(element_class); i++) {
 		has_references |= mono_field_can_contain_references(&element_class->fields[i]);
 	}
 
@@ -714,7 +704,7 @@ foreach_thread_static_field (gpointer key, gpointer value, gpointer user_data)
 
 	if (!mono_field_can_contain_references(field))
 		return;
-	// TODO
+
 	if (MONO_TYPE_ISSTRUCT(field->type))
 		return;
 

@@ -3646,18 +3646,16 @@ MONO_SIG_HANDLER_FUNC (, mono_sigsegv_signal_handler)
 #else
 
 	if (!ji) {
-		//if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
-		//	return;
+		if (!mono_do_crash_chaining && mono_chain_signal (MONO_SIG_HANDLER_PARAMS))
+			return;
 
-		// if (mono_dump_start ())
-		// 	mono_handle_native_crash (mono_get_signame (SIGSEGV), &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
+		if (mono_dump_start ())
+			mono_handle_native_crash (mono_get_signame (SIGSEGV), &mctx, (MONO_SIG_HANDLER_INFO_TYPE*)info);
 
-		//if (mono_do_crash_chaining) {
-		//	mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
-		//	return;
-		//}
-		info->handled = FALSE;
-		return;
+		if (mono_do_crash_chaining) {
+			mono_chain_signal (MONO_SIG_HANDLER_PARAMS);
+			return;
+		}
 	}
 
 	if (mono_is_addr_implicit_null_check (fault_addr)) {

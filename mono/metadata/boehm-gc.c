@@ -891,7 +891,7 @@ static UnityHeapVerifierCallback unity_heap_validation_callback;
 void
 mono_gc_set_heap_validate_frequency (int freq)
 {
-	if (freq >= 0 && freq != validate_frequency)
+	if (freq >= 0)
 		validate_frequency = freq;
 }
 
