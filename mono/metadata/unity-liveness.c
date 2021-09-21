@@ -692,8 +692,10 @@ void gchandle_process(void *data, void *user_data)
 	mono_add_and_validate_object(target, liveness_state);
 }
 
+#if HAVE_BOEHM_GC
 extern void
 mono_gc_strong_handle_foreach(GFunc func, gpointer user_data);
+#endif
 
 static void
 foreach_thread_static_field (gpointer key, gpointer value, gpointer user_data)
@@ -730,7 +732,11 @@ void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
 
 	mono_reset_state(liveness_state);
 
+#if HAVE_BOEHM_GC
 	mono_gc_strong_handle_foreach(gchandle_process, liveness_state);
+#else
+	g_assert_not_reached();
+#endif
 
 	g_hash_table_foreach(domain->special_static_fields, foreach_thread_static_field, liveness_state);
 
