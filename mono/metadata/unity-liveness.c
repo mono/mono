@@ -164,6 +164,7 @@ MONO_API void mono_unity_liveness_free_struct(LivenessState *state);
 
 MONO_API void mono_unity_liveness_calculation_from_root(MonoObject *root, LivenessState *state);
 MONO_API void mono_unity_liveness_calculation_from_statics(LivenessState *state);
+MONO_API void mono_unity_heap_validation_from_statics(LivenessState* state);
 
 #define MARK_OBJ(obj)                                                       \
 	do {                                                                    \
@@ -200,6 +201,8 @@ static gboolean should_process_value(MonoObject *val, MonoClass *filter)
 
 static void mono_traverse_array(MonoArray *array, LivenessState *state);
 static void mono_traverse_object(MonoObject *object, LivenessState *state);
+static void mono_validate_array(MonoArray *array, LivenessState *state);
+static void mono_validate_object(MonoObject *object, LivenessState *state);
 static void mono_traverse_gc_desc(MonoObject *object, LivenessState *state);
 static void mono_traverse_objects(LivenessState *state);
 
@@ -219,6 +222,42 @@ static void mono_traverse_generic_object(MonoObject *object, LivenessState *stat
 		mono_traverse_object(object, state);
 }
 
+static void mono_traverse_and_validate_generic_object(MonoObject *object, LivenessState *state)
+{
+#ifdef HAVE_SGEN_GC
+	gsize gc_desc = 0;
+#else
+	gsize gc_desc = (gsize)(GET_VTABLE(object)->gc_descr);
+#endif
+
+	if (GET_VTABLE(object)->klass->rank)
+		mono_validate_array((MonoArray*)object, state);
+	else
+		mono_validate_object(object, state);
+}
+
+static void validate_object_value(MonoObject *val, MonoType *storageType)
+{
+	if (val && storageType->type == MONO_TYPE_CLASS) {
+		MonoClass *storageClass = storageType->data.klass;
+		MonoClass *valClass = GET_VTABLE(val)->klass;
+		if (mono_class_is_interface(storageClass)) {
+			int found = 0;
+			for (int i = 0; i < valClass->interface_offsets_count; ++i) {
+				if (valClass->interfaces_packed[i] == storageClass) {
+					found = TRUE;
+					break;
+				}
+			}
+			g_assert(found);
+		}
+		else {
+			int res = mono_class_has_parent_fast(valClass, storageClass);
+			g_assert(res);
+		}
+	}
+}
+
 static gboolean mono_add_process_object(MonoObject *object, LivenessState *state)
 {
 	if (object && !IS_MARKED(object)) {
@@ -231,6 +270,59 @@ static gboolean mono_add_process_object(MonoObject *object, LivenessState *state
 		if (has_references) {
 			block_array_push_back(state->process_array, object, state);
 			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+MONO_API void mono_validate_object_pointer (MonoObject *object)
+{
+	if (object) {
+		MonoVTable *vtable = NULL;
+		MonoClass *klass = NULL;
+		char *name = NULL;
+
+		vtable = object->vtable;
+		klass = vtable->klass;
+		name = klass->name;
+
+		g_assert(vtable);
+		g_assert(klass);
+		g_assert(name);
+	}
+}
+
+MONO_API void mono_validate_string_pointer(MonoString *string)
+{
+	mono_validate_object_pointer(&string->object);
+}
+
+static gboolean mono_add_and_validate_object(MonoObject *object, LivenessState *state)
+{
+	if (object) {
+		MonoVTable *vtable = NULL;
+		MonoClass *klass = NULL;
+		char *name = NULL;
+		vtable = GET_VTABLE(object);
+		klass = vtable->klass;
+		name = klass->name;
+
+		g_assert(vtable);
+		g_assert(klass);
+		g_assert(name);
+
+		if (!IS_MARKED(object)) {
+			gboolean has_references = vtable->klass->has_references;
+			if (has_references || should_process_value(object, state->filter)) {
+				block_array_push_back(state->all_objects, object, state);
+				MARK_OBJ(object);
+			}
+			// Check if klass has further references - if not skip adding
+			if (has_references) {
+				block_array_push_back(state->process_array, object, state);
+				return TRUE;
+			}
 		}
 	}
 
@@ -299,9 +391,67 @@ static gboolean mono_traverse_object_internal(MonoObject *object, gboolean isStr
 	return added_objects;
 }
 
+static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStruct, MonoClass *klass, LivenessState *state)
+{
+	int i;
+	MonoClassField* field;
+	MonoClass* p;
+	gboolean added_objects = FALSE;
+
+	g_assert(object);
+
+	// subtract the added offset for the vtable. This is added to the offset even though it is a struct
+	if (isStruct)
+		object--;
+
+	for (p = klass; p != NULL; p = p->parent) {
+		if (p->size_inited == 0)
+			continue;
+		for (i = 0; i < mono_class_get_field_count(p); i++) {
+			field = &p->fields[i];
+			if (field->type->attrs & FIELD_ATTRIBUTE_STATIC)
+				continue;
+
+			if (!mono_field_can_contain_references(field))
+				continue;
+
+			if (MONO_TYPE_ISSTRUCT(field->type)) {
+				char* offseted = (char*)object;
+				offseted += field->offset;
+				if (field->type->type == MONO_TYPE_GENERICINST)
+				{
+					g_assert (field->type->data.generic_class->cached_class);
+					added_objects |= mono_validate_object_internal((MonoObject*)offseted, TRUE, field->type->data.generic_class->cached_class, state);
+				}
+				else
+					added_objects |= mono_validate_object_internal((MonoObject*)offseted, TRUE, field->type->data.klass, state);
+				continue;
+			}
+
+			if (field->offset == -1) {
+				g_assert_not_reached();
+			}
+			else {
+				MonoObject* val = NULL;
+				MonoVTable* vtable = NULL;
+				mono_field_get_value_internal(object, field, &val);
+				added_objects |= mono_add_and_validate_object(val, state);
+				validate_object_value(val, field->type);
+			}
+		}
+	}
+
+	return added_objects;
+}
+
 static void mono_traverse_object(MonoObject *object, LivenessState *state)
 {
 	mono_traverse_object_internal(object, FALSE, GET_VTABLE(object)->klass, state);
+}
+
+static void mono_validate_object(MonoObject *object, LivenessState *state)
+{
+	mono_validate_object_internal(object, FALSE, GET_VTABLE(object)->klass, state);
 }
 
 static void mono_traverse_gc_desc(MonoObject *object, LivenessState *state)
@@ -330,6 +480,19 @@ static void mono_traverse_objects(LivenessState *state)
 	while (!block_array_is_empty(state->process_array)) {
 		object = block_array_pop_back(state->process_array);
 		mono_traverse_generic_object(object, state);
+	}
+	state->traverse_depth--;
+}
+
+static void mono_traverse_and_validate_objects(LivenessState *state)
+{
+	int i = 0;
+	MonoObject* object = NULL;
+
+	state->traverse_depth++;
+	while (!block_array_is_empty(state->process_array)) {
+		object = block_array_pop_back(state->process_array);
+		mono_traverse_and_validate_generic_object(object, state);
 	}
 	state->traverse_depth--;
 }
@@ -385,6 +548,58 @@ static void mono_traverse_array(MonoArray *array, LivenessState *state)
 
 			if (should_traverse_objects(items_processed, state->traverse_depth))
 				mono_traverse_objects(state);
+		}
+	}
+}
+
+static void mono_validate_array(MonoArray *array, LivenessState *state)
+{
+	size_t i = 0;
+	gboolean has_references;
+	MonoObject *object = (MonoObject*)array;
+	MonoClass *element_class;
+	size_t elementClassSize;
+	size_t array_length;
+
+	g_assert(object);
+
+
+
+	element_class = GET_VTABLE(object)->klass->element_class;
+	has_references = !m_class_is_valuetype(element_class);
+	g_assert(element_class->size_inited != 0);
+
+	for (i = 0; i < mono_class_get_field_count(element_class); i++)	{
+		has_references |= mono_field_can_contain_references(&element_class->fields[i]);
+	}
+
+	if (!has_references)
+		return;
+
+	array_length = mono_array_length_internal(array);
+	if (element_class->valuetype) {
+		size_t items_processed = 0;
+		elementClassSize = mono_class_array_element_size(element_class);
+		for (i = 0; i < array_length; i++) {
+			MonoObject *object = (MonoObject*)mono_array_addr_with_size_internal(array, elementClassSize, i);
+			if (mono_validate_object_internal(object, 1, element_class, state))
+				items_processed++;
+
+			if (should_traverse_objects(items_processed, state->traverse_depth))
+				mono_traverse_and_validate_objects(state);
+		}
+	}
+	else {
+		size_t items_processed = 0;
+		for (i = 0; i < array_length; i++) {
+			MonoObject *val = mono_array_get(array, MonoObject*, i);
+			if (mono_add_and_validate_object(val, state))
+				items_processed++;
+
+			validate_object_value(val, &element_class->_byval_arg);
+
+			if (should_traverse_objects (items_processed, state->traverse_depth))
+				mono_traverse_and_validate_objects(state);
 		}
 	}
 }
@@ -467,6 +682,114 @@ void mono_unity_liveness_calculation_from_statics(LivenessState *liveness_state)
 	mono_traverse_objects(liveness_state);
 	//Filter objects and call callback to register found objects
 	mono_filter_objects(liveness_state);
+}
+
+void gchandle_process(void *data, void *user_data)
+{
+	MonoObject *target = data;
+	LivenessState *liveness_state = user_data;
+
+	mono_add_and_validate_object(target, liveness_state);
+}
+
+#if HAVE_BOEHM_GC
+extern void
+mono_gc_strong_handle_foreach(GFunc func, gpointer user_data);
+#endif
+
+static void
+foreach_thread_static_field (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoClassField *field = key;
+	guint32 offset = GPOINTER_TO_UINT(value);
+	LivenessState *liveness_state = user_data;
+
+	if (!mono_field_can_contain_references(field))
+		return;
+
+	if (MONO_TYPE_ISSTRUCT(field->type))
+		return;
+
+	MonoInternalThread *thread;
+
+	thread = mono_thread_internal_current();
+
+	gpointer data = mono_get_special_static_data_for_thread(thread, offset);
+
+	MonoObject *val = *(MonoObject**)data;
+
+	if (val) {
+		mono_add_and_validate_object(val, liveness_state);
+		validate_object_value(val, field->type);
+	}
+}
+
+void mono_unity_heap_validation_from_statics(LivenessState *liveness_state)
+{
+	int i, j;
+	MonoDomain *domain = mono_domain_get();
+	MonoMemoryManager* memory_manager = mono_domain_memory_manager(domain);
+
+	mono_reset_state(liveness_state);
+
+#if HAVE_BOEHM_GC
+	mono_gc_strong_handle_foreach(gchandle_process, liveness_state);
+#else
+	g_assert_not_reached();
+#endif
+
+	g_hash_table_foreach(domain->special_static_fields, foreach_thread_static_field, liveness_state);
+
+	for (i = 0; i < memory_manager->class_vtable_array->len; ++i) {
+		MonoVTable *vtable = (MonoVTable*)g_ptr_array_index(memory_manager->class_vtable_array, i);
+		MonoClass *klass = vtable->klass;
+		MonoClassField *field;
+		if (!klass)
+			continue;
+		if (!klass->has_static_refs)
+			continue;
+		if (klass->image == mono_defaults.corlib)
+			continue;
+		if (klass->size_inited == 0)
+			continue;
+		for (j = 0; j < mono_class_get_field_count(klass); j++)	{
+			field = &klass->fields[j];
+			if (!(field->type->attrs & FIELD_ATTRIBUTE_STATIC))
+				continue;
+			if (!mono_field_can_contain_references(field))
+				continue;
+			// shortcut check for special statics
+			if (field->offset == -1)
+				continue;
+			if (field->type->attrs & FIELD_ATTRIBUTE_LITERAL)
+				continue;
+
+			if (MONO_TYPE_ISSTRUCT(field->type)) {
+				char* offseted = (char*)mono_vtable_get_static_field_data(vtable);
+				offseted += field->offset;
+				if (field->type->type == MONO_TYPE_GENERICINST) {
+					g_assert(field->type->data.generic_class->cached_class);
+					mono_validate_object_internal((MonoObject*)offseted, TRUE, field->type->data.generic_class->cached_class, liveness_state);
+				}
+				else {
+					mono_validate_object_internal((MonoObject*)offseted, TRUE, field->type->data.klass, liveness_state);
+				}
+			}
+			else {
+				MonoObject* val = NULL;
+
+				char* offseted = (char*)mono_vtable_get_static_field_data(vtable);
+				offseted += field->offset;
+				val = *((MonoObject**)offseted);
+
+				if (val)
+					mono_add_and_validate_object(val, liveness_state);
+			}
+		}
+	}
+	mono_traverse_and_validate_objects(liveness_state);
+	//Filter objects and call callback to register found objects
+	//mono_filter_objects (liveness_state);
 }
 
 /**

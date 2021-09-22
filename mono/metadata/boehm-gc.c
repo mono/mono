@@ -78,7 +78,9 @@ static MonoGCFinalizerCallbacks fin_callbacks;
 
 static mono_mutex_t handle_section;
 #define lock_handles(handles) mono_os_mutex_lock (&handle_section)
+void mono_gc_handle_lock () { lock_handles (NULL);}
 #define unlock_handles(handles) mono_os_mutex_unlock (&handle_section)
+void mono_gc_handle_unlock () { unlock_handles (NULL); }
 
 typedef struct {
 	guint32  *bitmap;
@@ -881,10 +883,39 @@ mono_gc_free_fixed (void* addr)
 	GC_FREE (addr);
 }
 
+#ifdef HEAP_VALIDATION_FREQUENCY
+static int counter = 0;
+static int validate_frequency = 0;
+static UnityHeapVerifierCallback unity_heap_validation_callback;
+
+void
+mono_gc_set_heap_validate_frequency (int freq)
+{
+	if (freq >= 0)
+		validate_frequency = freq;
+}
+
+void
+mono_gc_set_heap_verifier_callback (UnityHeapVerifierCallback callback)
+{
+	unity_heap_validation_callback = callback;
+}
+#endif
+
 MonoObject*
 mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 {
 	MonoObject *obj;
+
+#ifdef HEAP_VALIDATION_FREQUENCY
+	if (unity_heap_validation_callback && validate_frequency > 0 && (++counter % validate_frequency) == 0)
+	{
+		mono_gc_handle_lock();
+		unity_heap_validation_callback();
+		mono_gc_handle_unlock();
+		counter = 0;
+	}
+#endif
 
 	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
