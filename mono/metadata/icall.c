@@ -1914,11 +1914,20 @@ ves_icall_System_RuntimeTypeHandle_internal_from_name (MonoStringHandle name,
 	gboolean free_info = FALSE;
 	MonoAssembly *caller_assembly;
 	MonoReflectionTypeHandle type = MONO_HANDLE_NEW (MonoReflectionType, NULL);
+	gboolean hide_type = FALSE;
 
 	/* The callerAssembly argument is unused for now */
 
 	char *str = mono_string_handle_to_utf8 (name, error);
 	goto_if_nok (error, leave);
+
+	if (strcmp(str, "Mono.Runtime") == 0 || strcmp(str, "System.MonoType") == 0)
+	{
+		const char *hidetypes = getenv("WINE_MONO_HIDETYPES");
+
+		if (hidetypes && strcmp(hidetypes, "0") != 0)
+			hide_type = TRUE;
+	}
 
 	free_info = TRUE;
 	if (!mono_reflection_parse_type_checked (str, &info, error))
@@ -1927,6 +1936,9 @@ ves_icall_System_RuntimeTypeHandle_internal_from_name (MonoStringHandle name,
 	/* mono_reflection_parse_type() mangles the string */
 
 	MONO_HANDLE_ASSIGN (type, type_from_parsed_name (&info, (MonoStackCrawlMark*)stack_mark, ignoreCase, &caller_assembly, error));
+
+	if (hide_type)
+		MONO_HANDLE_ASSIGN (type, MONO_HANDLE_NEW (MonoReflectionType, NULL));
 
 	goto_if_nok (error, leave);
 
