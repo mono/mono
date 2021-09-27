@@ -98,6 +98,7 @@ class FsharpPackage(GitHubTarballPackage):
         self.copy_netsdk_files("artifacts/bin/fsc/Release/net472", os.path.join(self.staged_prefix, "lib/mono/xbuild/Microsoft/VisualStudio/v14.0/FSharp"))
         self.copy_netsdk_files("artifacts/bin/fsc/Release/net472", os.path.join(self.staged_prefix, "lib/mono/xbuild/Microsoft/VisualStudio/v15.0/FSharp"))
         self.copy_netsdk_files("artifacts/bin/fsc/Release/net472", os.path.join(self.staged_prefix, "lib/mono/xbuild/Microsoft/VisualStudio/v16.0/FSharp"))
+        self.copy_netsdk_files("artifacts/bin/fsc/Release/net472", os.path.join(self.staged_prefix, "lib/mono/xbuild/Microsoft/VisualStudio/v17.0/FSharp"))
 
         self.write_targets_files(os.path.join(self.staged_prefix, "lib/mono/Microsoft F#/v4.0"))
         self.write_targets_files(os.path.join(self.staged_prefix, "lib/mono/Microsoft SDKs/F#/3.0/Framework/v4.0"))
@@ -110,6 +111,7 @@ class FsharpPackage(GitHubTarballPackage):
         self.write_targets_files(os.path.join(self.staged_prefix, "lib/mono/xbuild/Microsoft/VisualStudio/v14.0/FSharp"))
         self.write_targets_files(os.path.join(self.staged_prefix, "lib/mono/xbuild/Microsoft/VisualStudio/v15.0/FSharp"))
         self.write_targets_files(os.path.join(self.staged_prefix, "lib/mono/xbuild/Microsoft/VisualStudio/v16.0/FSharp"))
+        self.write_targets_files(os.path.join(self.staged_prefix, "lib/mono/xbuild/Microsoft/VisualStudio/v17.0/FSharp"))
 
         self.write_script(os.path.join(self.staged_prefix, "bin"), "fsharpc", "fsc.exe")
         self.write_script(os.path.join(self.staged_prefix, "bin"), "fsharpi", "fsi.exe")
