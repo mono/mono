@@ -4,7 +4,6 @@ agent:
   image: platform-foundation/windows-vs2019-prtools-bokken:latest
   flavor: b1.xlarge 
 dependencies:
-  - .yamato/Collate Builds.yml
   - .yamato/Publish To Stevedore.yml
 commands:
   - |
