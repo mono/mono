@@ -65,8 +65,16 @@ static mono_mutex_t mono_gc_lock;
 static GC_push_other_roots_proc default_push_other_roots;
 static GHashTable *roots;
 
+typedef struct ephemeron_node ephemeron_node;
+static ephemeron_node* ephemeron_list;
+
 static void
 mono_push_other_roots(void);
+
+static void
+mono_push_ephemerons(void);
+static void*
+null_ephemerons_for_domain (MonoDomain* domain);
 
 static void
 register_test_toggleref_callback (void);
@@ -179,6 +187,7 @@ mono_gc_base_init (void)
 	roots = g_hash_table_new (NULL, NULL);
 	default_push_other_roots = GC_get_push_other_roots ();
 	GC_set_push_other_roots (mono_push_other_roots);
+	GC_set_mark_stack_empty (mono_push_ephemerons);
 
 	GC_set_no_dls (TRUE);
 
@@ -777,6 +786,7 @@ mono_push_other_roots (void)
 		if (stack)
 			push_handle_stack (stack);
 	} FOREACH_THREAD_END
+	GC_push_all (&ephemeron_list, &ephemeron_list + 1);
 	if (default_push_other_roots)
 		default_push_other_roots ();
 }
@@ -1136,6 +1146,7 @@ mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src)
 void
 mono_gc_clear_domain (MonoDomain *domain)
 {
+	GC_call_with_alloc_lock (null_ephemerons_for_domain, domain);
 }
 
 void
@@ -1972,10 +1983,122 @@ mono_gc_register_obj_with_weak_fields (void *obj)
 	g_error ("Weak fields not supported by boehm gc");
 }
 
+struct ephemeron_node
+{
+	ephemeron_node* next;
+	void* ephemeron_array_weak_link;
+};
+
+
+static gpointer
+ephemeron_array_add (gpointer arg)
+{
+	ephemeron_node* item = (ephemeron_node*)arg;
+	ephemeron_node* current = ephemeron_list;
+	item->next = current;
+	mono_gc_wbarrier_generic_nostore_internal (&item->next);
+	ephemeron_list = item;
+
+	return NULL;
+}
+
 gboolean
 mono_gc_ephemeron_array_add (MonoObject *obj)
 {
+	ephemeron_node* item = GC_MALLOC (sizeof (ephemeron_node));
+	memset (item, 0, sizeof (ephemeron_node));
+
+	mono_gc_weak_link_add (&item->ephemeron_array_weak_link, obj, FALSE);
+
+	GC_call_with_alloc_lock (ephemeron_array_add, item);
 	return TRUE;
+}
+
+typedef struct {
+	MonoObject* key;
+	MonoObject* value;
+} Ephemeron;
+
+static void
+mono_push_ephemerons (void)
+{
+	ephemeron_node* prev_node = NULL;
+	ephemeron_node* current_node = NULL;
+
+	/* iterate all registered Ephemeron[] */
+	for (current_node = ephemeron_list; current_node; current_node = current_node->next)
+	{
+		Ephemeron* current_ephemeron, * array_end;
+		MonoObject* tombstone = NULL;
+		/* reveal weak link value*/
+		MonoArray* array = REVEAL_POINTER (current_node->ephemeron_array_weak_link);
+
+		/* remove unmarked (non-reachable) arrays from the list */
+		if (!GC_is_marked (array)) {
+			if (prev_node == NULL) {
+				ephemeron_list = current_node->next;
+				mono_gc_wbarrier_generic_nostore_internal (&ephemeron_list);
+			} else {
+				prev_node->next = current_node->next;
+				mono_gc_wbarrier_generic_nostore_internal (&prev_node->next);
+			}
+			continue;
+		}
+
+		prev_node = current_node;
+
+		current_ephemeron = mono_array_addr_internal (array, Ephemeron, 0);
+		array_end = current_ephemeron + mono_array_length_internal (array);
+		tombstone = array->obj.vtable->domain->ephemeron_tombstone;
+
+		for (; current_ephemeron < array_end; ++current_ephemeron) {
+			/* skip a null or tombstone (empty) key */
+			if (!current_ephemeron->key || current_ephemeron->key == tombstone)
+				continue;
+
+			/* If the key is not marked, then set it to the tombstone and the value to NULL. */
+			if (!GC_is_marked (current_ephemeron->key)) {
+				mono_gc_wbarrier_generic_store_internal (&current_ephemeron->key, tombstone);
+				current_ephemeron->value = NULL;
+			} else if (current_ephemeron->value && !GC_is_marked (current_ephemeron->value)) {
+				/* the key is marked, so mark the value if needed */
+				GC_push_all (&current_ephemeron->value, &current_ephemeron->value + 1);
+			}
+		}
+	}
+}
+
+static void*
+null_ephemerons_for_domain (MonoDomain* domain)
+{
+	ephemeron_node* prev_node = NULL;
+	ephemeron_node* current_node = NULL;
+
+	/* iterate all registered Ephemeron[] */
+	for (current_node = ephemeron_list; current_node; current_node = current_node->next)
+	{
+		Ephemeron* current_ephemeron, * array_end;
+		MonoObject* tombstone = NULL;
+		/* reveal weak link value*/
+		MonoObject* array = REVEAL_POINTER (current_node->ephemeron_array_weak_link);
+
+		/* remove arrays within the given domain from the list */
+		if (array && array->vtable->domain == domain) {
+			if (prev_node == NULL) {
+				ephemeron_list = current_node->next;
+				mono_gc_wbarrier_generic_nostore_internal (&ephemeron_list);
+			}
+			else {
+				prev_node->next = current_node->next;
+				mono_gc_wbarrier_generic_nostore_internal (&prev_node->next);
+			}
+			continue;
+		}
+
+		prev_node = current_node;
+	}
+
+	return NULL;
 }
 
 void

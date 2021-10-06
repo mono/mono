@@ -195,8 +195,6 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Test]
 	[Category ("MultiThreaded")]
 	public void Reachability () {
-		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			Assert.Ignore ("Not working on Boehm.");
 		var cwt = new ConditionalWeakTable <object,object> ();
 		List<object> keepAlive = null;
 		List<WeakReference> keys = null;
@@ -245,8 +243,6 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Test]
 	[Category ("MultiThreaded")]
 	public void InsertStress () {
-		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			Assert.Ignore ("Not working on Boehm.");
 		var cwt = new ConditionalWeakTable <object,object> ();
 
 		var a = new object ();
@@ -295,8 +291,6 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Category ("MultiThreaded")]
 	[Category ("NotWorkingRuntimeInterpreter")] // Flaky due to false pinning
 	public void OldGenStress () {
-		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			Assert.Ignore ("Not working on Boehm.");
 		var cwt = new ConditionalWeakTable <object,object>[1];
 		List<object> k = null;
 		List<WeakReference> res, res2;
@@ -439,8 +433,6 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Category ("MultiThreaded")]
 	public void FinalizableObjectsThatRetainDeadKeys ()
 	{
-		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			Assert.Ignore ("Not working on Boehm.");
 		lock (_lock1) { 
 			var cwt = new ConditionalWeakTable <object,object> ();
 			FinalizerHelpers.PerformNoPinAction (() => { FillWithFinalizable (cwt); });
@@ -461,8 +453,6 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Category("WASM")] //This test takes forever under WASM due to over allocating
 	public void OldGenKeysMakeNewGenObjectsReachable ()
 	{
-		if (GC.MaxGeneration == 0) /*Boehm doesn't handle ephemerons */
-			Assert.Ignore ("Not working on Boehm.");
 		ConditionalWeakTable<object, Val> table = new ConditionalWeakTable<object, Val>();
 		List<Key> keys = new List<Key>();
 
