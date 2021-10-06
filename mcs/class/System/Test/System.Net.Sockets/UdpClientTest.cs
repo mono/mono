@@ -501,6 +501,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress)
+#if FULL_AOT_DESKTOP || FULL_AOT_INTERP
+		[Category ("NotWorking")] // fails in FullAOT in Docker. See https://github.com/mono/mono/issues/20888
+#endif
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -596,6 +599,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (In32, IPAddress)
+#if FULL_AOT_DESKTOP || FULL_AOT_INTERP
+		[Category ("NotWorking")] // fails in FullAOT in Docker. See https://github.com/mono/mono/issues/20888
+#endif
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -656,6 +662,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (Int32, IPAddress)
+#if FULL_AOT_DESKTOP || FULL_AOT_INTERP
+		[Category ("NotWorking")] // fails in FullAOT in Docker. See https://github.com/mono/mono/issues/20888
+#endif
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -689,6 +698,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // JoinMulticastGroup (IPAddress, Int32)
+#if FULL_AOT_DESKTOP || FULL_AOT_INTERP
+		[Category ("NotWorking")] // fails in FullAOT in Docker. See https://github.com/mono/mono/issues/20888
+#endif
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -1144,7 +1156,9 @@ namespace MonoTests.System.Net.Sockets {
 		}
 
 		[Test] // #6057
-		[Category ("NotWorking")] // fails in FullAOT in Docker. Reproduce with docker run -w `pwd` -v `pwd`:`pwd` -e CI_TAGS="linux-amd64,fullaot" --platform linux/amd64 --user 0:0 mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mono-amd64-20210301134030-7b1af2f scripts/ci/run-jenkins.sh
+#if FULL_AOT_DESKTOP || FULL_AOT_INTERP
+		[Category ("NotWorking")] // fails in FullAOT in Docker. See https://github.com/mono/mono/issues/20888
+#endif
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
