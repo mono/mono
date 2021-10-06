@@ -55,8 +55,7 @@ class C
 			Crashers.Add(new Crasher ("MerpCrashExceptionHook", MerpCrashUnhandledExceptionHook));
 
 			// Specific Edge Cases
-			//FIXME: crash in dlopen holds the global dyld lock, which we need for stack walks.
-			//Crashers.Add(new Crasher ("MerpCrashDladdr", MerpCrashDladdr));
+			Crashers.Add(new Crasher ("MerpCrashDladdr", MerpCrashDladdr));
 			Crashers.Add(new Crasher ("MerpCrashSnprintf", MerpCrashSnprintf));
 			Crashers.Add(new Crasher ("MerpCrashDomainUnload", MerpCrashDomainUnload));
 			Crashers.Add(new Crasher ("MerpCrashUnbalancedGCSafe", MerpCrashUnbalancedGCSafe));
@@ -67,7 +66,6 @@ class C
 			Crashers.Add(new Crasher  ("MerpCrashSignalSegv", MerpCrashSignalSegv));
 			Crashers.Add(new Crasher  ("MerpCrashSignalIll", MerpCrashSignalIll));
 			Crashers.Add(new Crasher ("MerpCrashTestBreadcrumbs", MerpCrashTestBreadcrumbs, validator: ValidateBreadcrumbs));
-			Crashers.Add(new Crasher ("MerpCrashOnForeignThread", MerpCrashOnForeignThread));
 		}
 
 		public static void 
@@ -247,14 +245,6 @@ class C
 			mono_test_MerpCrashSignalSegv ();
 		}
 
-		[DllImport("libtest")]
-		public static extern void mono_test_MerpCrashOnForeignThread ();
-
-		public static void
-		MerpCrashOnForeignThread ()
-		{
-			mono_test_MerpCrashOnForeignThread ();
-		}
 
 		private static object jsonGetKey (object o, string key) => (o as Dictionary<string,object>)[key];
 		private static object jsonGetKeys (object o, params string[] keys) {

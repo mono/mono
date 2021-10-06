@@ -8118,34 +8118,6 @@ mono_test_MerpCrashSignalIll (void)
 #endif
 }
 
-#ifndef HOST_WIN32
-void*
-foreign_thread_crash_body (void* ud)
-{
-	while (1) {
-		fprintf (stderr, "alive\n");
-		sleep (2);
-	}
-	return NULL;
-}
-#endif
-
-LIBTEST_API void mono_test_MerpCrashOnForeignThread (void)
-{
-
-#ifndef HOST_WIN32
-	pthread_t t;
-	int res;
-
-	res = pthread_create (&t, NULL, foreign_thread_crash_body, NULL);
-
-	sleep (1);
-	pthread_kill (t, SIGILL);
-
-	pthread_join (t, NULL);
-#endif
-}
-
 #ifdef __cplusplus
 } // extern C
 #endif
