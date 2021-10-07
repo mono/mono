@@ -93,6 +93,7 @@ jobs:
 
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP CodeSigning binaries'
+    timeoutInMinutes: 180
     inputs:
       ConnectedServiceName: 'ESRP CodeSigning'
       FolderPath: '$(Build.ArtifactStagingDirectory)/'
@@ -148,6 +149,7 @@ jobs:
 
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP CodeSigning .pkg'
+    timeoutInMinutes: 180
     inputs:
       ConnectedServiceName: 'ESRP CodeSigning'
       FolderPath: '$(Build.ArtifactStagingDirectory)/'
@@ -175,6 +177,7 @@ jobs:
 
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP Notarizing .pkg'
+    timeoutInMinutes: 180
     inputs:
       ConnectedServiceName: 'ESRP CodeSigning'
       FolderPath: '$(Build.ArtifactStagingDirectory)/mono-signed/'
@@ -292,6 +295,7 @@ jobs:
 
   - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
     displayName: 'ESRP CodeSigning .msi'
+    timeoutInMinutes: 180
     inputs:
       ConnectedServiceName: 'ESRP CodeSigning'
       FolderPath: '$(Build.ArtifactStagingDirectory)/'
