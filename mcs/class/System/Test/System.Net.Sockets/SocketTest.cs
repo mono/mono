@@ -4094,6 +4094,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FULL_AOT_DESKTOP || FULL_AOT_INTERP
+		[Category ("NotWorking")] // fails in FullAOT in Docker. See https://github.com/mono/mono/issues/20888
+#endif
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -4339,6 +4342,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FULL_AOT_DESKTOP || FULL_AOT_INTERP
+		[Category ("NotWorking")] // fails in FullAOT in Docker. See https://github.com/mono/mono/issues/20888
+#endif
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
@@ -4360,6 +4366,9 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test] // SetSocketOption (SocketOptionLevel, SocketOptionName, Object)
+#if FULL_AOT_DESKTOP || FULL_AOT_INTERP
+		[Category ("NotWorking")] // fails in FullAOT in Docker. See https://github.com/mono/mono/issues/20888
+#endif
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
