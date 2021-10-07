@@ -5432,7 +5432,7 @@ mono_struct_delete_old (MonoClass *klass, char *ptr)
 		switch (conv) {
 		case MONO_MARSHAL_CONV_NONE:
 			if (MONO_TYPE_ISSTRUCT (ftype)) {
-				mono_struct_delete_old (ftype->data.klass, cpos);
+				mono_struct_delete_old (mono_class_from_mono_type_internal(ftype), cpos);
 				continue;
 			}
 			break;
