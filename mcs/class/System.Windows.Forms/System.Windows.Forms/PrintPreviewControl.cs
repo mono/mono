@@ -184,10 +184,13 @@ namespace System.Windows.Forms {
 
 			try {
 				if (page_infos == null) {
+					var prevPrintController = document.PrintController;
+
 					if (document.PrintController == null || !(document.PrintController is PrintControllerWithStatusDialog)) {
 						document.PrintController = new PrintControllerWithStatusDialog (controller);
 					}
 					document.Print ();
+					document.PrintController = prevPrintController;
 					page_infos = controller.GetPreviewPageInfo ();
 				}
 				

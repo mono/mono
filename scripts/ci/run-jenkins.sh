@@ -181,6 +181,13 @@ if [[ ${CI_TAGS} == *'sdks-ios'* ]];
             export TVOS_VERSION=13.2
             export WATCHOS_VERSION=6.1
             export WATCHOS64_32_VERSION=6.1
+        elif [[ ${CI_TAGS} == *'xcode124'* ]]; then
+            export XCODE_DIR=/Applications/Xcode124.app/Contents/Developer
+            export MACOS_VERSION=11.1
+            export IOS_VERSION=14.4
+            export TVOS_VERSION=14.3
+            export WATCHOS_VERSION=7.2
+            export WATCHOS64_32_VERSION=7.2
         else
             export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
             export MACOS_VERSION=10.14
@@ -242,6 +249,9 @@ then
     if [[ ${CI_TAGS} == *'xcode113'* ]]; then
         export XCODE_DIR=/Applications/Xcode113.app/Contents/Developer
         export MACOS_VERSION=10.15
+    elif [[ ${CI_TAGS} == *'xcode124'* ]]; then
+        export XCODE_DIR=/Applications/Xcode124.app/Contents/Developer
+        export MACOS_VERSION=11.1
     else
         export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
         export MACOS_VERSION=10.14
@@ -274,6 +284,9 @@ then
     if [[ ${CI_TAGS} == *'xcode113'* ]]; then
         export XCODE_DIR=/Applications/Xcode113.app/Contents/Developer
         export MACOS_VERSION=10.15
+    elif [[ ${CI_TAGS} == *'xcode124'* ]]; then
+        export XCODE_DIR=/Applications/Xcode124.app/Contents/Developer
+        export MACOS_VERSION=11.1
     else
         export XCODE_DIR=/Applications/Xcode101.app/Contents/Developer
         export MACOS_VERSION=10.14
@@ -412,14 +425,20 @@ if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
 	echo ./autogen.sh CFLAGS="$CFLAGS $EXTRA_CFLAGS" CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS" LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS" $EXTRA_CONF_FLAGS
 	${TESTCMD} --label=configure --timeout=60m --fatal ./autogen.sh CFLAGS="$CFLAGS $EXTRA_CFLAGS" CXXFLAGS="$CXXFLAGS $EXTRA_CXXFLAGS" LDFLAGS="$LDFLAGS $EXTRA_LDFLAGS" $EXTRA_CONF_FLAGS
 fi
+
+if [[ ${CI_TAGS} == *'msvc142'* ]]; then
+    export VS_PLATFORMTOOLSETVERSION=v142
+else
+    export VS_PLATFORMTOOLSETVERSION=v140
+fi
 if [[ ${CI_TAGS} == *'win-i386'* ]];
     then
-	# only build boehm on w32 (only windows platform supporting boehm).
-    ${TESTCMD} --label=make-msvc --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "boehm" "/p:PlatformToolset=v140 ${MSBUILD_CXX}"
+    # only build boehm on w32 (only windows platform supporting boehm).
+    ${TESTCMD} --label=make-msvc --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "boehm" "/p:PlatformToolset=${VS_PLATFORMTOOLSETVERSION} ${MSBUILD_CXX}"
 fi
 if [[ ${CI_TAGS} == *'win-'* ]];
     then
-    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "sgen" "/p:PlatformToolset=v140 ${MSBUILD_CXX}"
+    ${TESTCMD} --label=make-msvc-sgen --timeout=60m --fatal ./msvc/run-msbuild.sh "build" "${PLATFORM}" "release" "sgen" "/p:PlatformToolset=${VS_PLATFORMTOOLSETVERSION} ${MSBUILD_CXX}"
 fi
 
 if [[ ${CI_TAGS} == *'win-amd64'* ]];

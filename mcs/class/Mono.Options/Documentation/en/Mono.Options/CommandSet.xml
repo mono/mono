@@ -69,6 +69,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Mono.Options;
 
@@ -89,6 +90,9 @@ class CommandDemo {
 			new Command ("echo", "Echo arguments to the screen") {
 				Run = ca =&gt; Console.WriteLine ("{0}", string.Join (" ", ca)),
 			},
+			new Command ("equinox", "Does something with the equinox?") {
+				Run = ca =&gt; Console.WriteLine ("{0}", string.Join (" ", ca)),
+			},
 			new RequiresArgsCommand (),
 			"Commands with spaces are supported:",
 			new Command ("has spaces", "spaces?!") {
@@ -99,8 +103,20 @@ class CommandDemo {
 				new Command ("file type", "Does something or other.") {
 					Run = ca =&gt; Console.WriteLine ("File type set to: {0}", string.Join (" ", ca)),
 				},
+				new Command ("output", "Sets  output location") {
+					Run = ca =&gt; Console.WriteLine ("Output set to: {0}", string.Join (" ", ca)),
+				},
 			},
 		};
+		commands.Add (new Command ("completions", "Show CommandSet completions") {
+				Run = ca =&gt; {
+					var start = ca.Any() ? string.Join (" ", ca) : "";
+					Console.WriteLine ($"Showing CommandSet completions for prefix '{start}':");
+					foreach (var completion in commands.GetCompletions (start)) {
+						Console.WriteLine ($"\tcompletion: {completion}");
+					}
+				},
+		});
 		commands.Add (commands);
 		return commands.Run (args);
 	}
@@ -159,7 +175,6 @@ class RequiresArgsCommand : Command {
 Use `commands help` for usage.
 
 $ mono commands.exe --help
-# HelpCommand.Invoke: arguments=
 usage: commands COMMAND [OPTIONS]
 
 Mono.Options.CommandSet sample app.
@@ -169,15 +184,17 @@ Global options:
 
 Available commands:
         echo                 Echo arguments to the screen
+        equinox              Does something with the equinox?
         requires-args        Class-based Command subclass
 Commands with spaces are supported:
         has spaces           spaces?!
 Nested CommandSets are also supported. They're invoked similarly to commands
 with spaces.
         set file type        Does something or other.
+        set output           Sets  output location
+        completions          Show CommandSet completions
 
 $ mono commands.exe help
-# HelpCommand.Invoke: arguments=
 usage: commands COMMAND [OPTIONS]
 
 Mono.Options.CommandSet sample app.
@@ -187,28 +204,32 @@ Global options:
 
 Available commands:
         echo                 Echo arguments to the screen
+        equinox              Does something with the equinox?
         requires-args        Class-based Command subclass
 Commands with spaces are supported:
         has spaces           spaces?!
 Nested CommandSets are also supported. They're invoked similarly to commands
 with spaces.
         set file type        Does something or other.
+        set output           Sets  output location
+        completions          Show CommandSet completions
 
 $ mono commands.exe help --help
-# HelpCommand.Invoke: arguments=--help
 Usage: commands COMMAND [OPTIONS]
 Use `commands help COMMAND` for help on a specific command.
 
 Available commands:
 
+        completions          Show CommandSet completions
         echo                 Echo arguments to the screen
+        equinox              Does something with the equinox?
         has spaces           spaces?!
         requires-args        Class-based Command subclass
         set file type        Does something or other.
+        set output           Sets  output location
         help                 Show this message and exit
 
 $ mono commands.exe help echo
-# HelpCommand.Invoke: arguments=echo
 --help
 
 $ mono commands.exe echo --help
@@ -222,7 +243,6 @@ commands: Missing required argument `--name=NAME`.
 commands: Use `commands help requires-args` for details.
 
 $ mono commands.exe help requires-args
-# HelpCommand.Invoke: arguments=requires-args
 usage: commands requires-args [OPTIONS]
 
 Class-based Command subclass example.
@@ -244,7 +264,6 @@ commands: Unknown command: invalid-command
 commands: Use `commands help` for usage.
 
 $ mono commands.exe help invalid-command
-# HelpCommand.Invoke: arguments=invalid-command
 commands: Unknown command: invalid-command
 commands: Use `commands help` for usage.
 
@@ -253,6 +272,31 @@ spaces, yo!
 
 $ mono commands.exe set file type whatever
 File type set to: whatever
+
+$ mono commands.exe completions
+Showing CommandSet completions for prefix '':
+	completion: echo
+	completion: equinox
+	completion: requires-args
+	completion: has spaces
+	completion: completions
+	completion: help
+	completion: set file type
+	completion: set output
+
+$ mono commands.exe completions e
+Showing CommandSet completions for prefix 'e':
+	completion: echo
+	completion: equinox
+
+$ mono commands.exe completions s
+Showing CommandSet completions for prefix 's':
+	completion: set file type
+	completion: set output
+
+$ mono commands.exe completions s o
+Showing CommandSet completions for prefix 's o':
+	completion: set output
 </code>
       <para>
         The <c>commands.exe</c> output is short, informing the user that
@@ -1279,6 +1323,31 @@ File type set to: whatever
             to help with unit testing.
           </para>
         </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetCompletions">
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IEnumerable&lt;string&gt; GetCompletions (string prefix = null);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Collections.Generic.IEnumerable`1&lt;string&gt; GetCompletions(string prefix) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.2.3.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.IteratorStateMachine(typeof(Mono.Options.CommandSet/&lt;GetCompletions&gt;d__37))</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.Generic.IEnumerable&lt;System.String&gt;</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="prefix" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="prefix">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
       </Docs>
     </Member>
     <Member MemberName="GetKeyForItem">

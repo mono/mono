@@ -40,7 +40,9 @@ namespace System.Data.OracleClient.Oci {
 		RowId = 0x13,
 		CharacterSet = 0x14,
 		NChar = 0x15,
+		// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 		Username = 0x16,
+		// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 		Password = 0x17,
 		StatementType = 0x18,
 		InternalName = 0x19,

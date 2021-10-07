@@ -7345,7 +7345,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!dont_verify && !cfg->skip_visibility) {
 				MonoMethod *target_method = cil_method;
 				if (method->is_inflated) {
-					target_method = mini_get_method_allow_open (method, token, NULL, &(mono_method_get_generic_container (method_definition)->context), cfg->error);
+					MonoGenericContainer *container = mono_method_get_generic_container(method_definition);
+					MonoGenericContext *context = (container != NULL ? &container->context : NULL);
+					target_method = mini_get_method_allow_open (method, token, NULL, context, cfg->error);
 					CHECK_CFG_ERROR;
 				}
 				if (!mono_method_can_access_method (method_definition, target_method) &&
@@ -7456,7 +7458,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			sp -= n;
 
-			if (virtual_ && cmethod && sp [0]->opcode == OP_TYPED_OBJREF) {
+			if (virtual_ && cmethod && sp [0] && sp [0]->opcode == OP_TYPED_OBJREF) {
 				ERROR_DECL (error);
 
 				MonoMethod *new_cmethod = mono_class_get_virtual_method (sp [0]->klass, cmethod, FALSE, error);
@@ -8854,7 +8856,9 @@ calli_end:
 				MonoMethod *target_method = cil_method;
 
 				if (method->is_inflated) {
-					target_method = mini_get_method_allow_open (method, token, NULL, &(mono_method_get_generic_container (method_definition)->context), cfg->error);
+					MonoGenericContainer *container = mono_method_get_generic_container(method_definition);
+					MonoGenericContext *context = (container != NULL ? &container->context : NULL);
+					target_method = mini_get_method_allow_open (method, token, NULL, context, cfg->error);
 					CHECK_CFG_ERROR;
 				}
 
@@ -10109,6 +10113,17 @@ field_access_end:
 				*sp = mono_decompose_opcode (cfg, ins);
 			}
 
+#ifdef TARGET_S390X
+			if (sp [0]->type == STACK_I4 && TARGET_SIZEOF_VOID_P == 8) {
+				MONO_INST_NEW (cfg, ins, OP_ICONV_TO_I8);
+				ins->sreg1 = sp [0]->dreg;
+				ins->type = STACK_I8;
+				ins->dreg = alloc_ireg (cfg);
+				MONO_ADD_INS (cfg->cbb, ins);
+				*sp = mono_decompose_opcode (cfg, ins);
+			}
+#endif
+ 
 			if (context_used) {
 				MonoInst *args [3];
 				MonoClass *array_class = mono_class_create_array (klass, 1);

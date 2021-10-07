@@ -706,7 +706,7 @@ run-chrome-%: build-test-suite
 run-all-%:
 	$(MAKE) -C . run-v8-$*
 	$(MAKE) -C . run-sm-$*
-	$(MAKE) -C . run-jsc-$*
+#	$(MAKE) -C . run-jsc-$*   # crashes: https://github.com/mono/mono/issues/20982
 
 run-debugger-tests: build-debugger-test-app build-dbg-testsuite
 	if [ ! -z "$(TEST_FILTER)" ]; then \

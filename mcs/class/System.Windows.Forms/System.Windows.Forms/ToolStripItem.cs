@@ -803,13 +803,12 @@ namespace System.Windows.Forms
 
 		[Localizable (true)]
 		public bool Visible {
-			get { 
+			get {
 				if (this.parent == null)
 					return false;
-			
 				return this.visible && this.parent.Visible; 
 			}
-			set { 
+			set {
 				if (this.visible != value) {
 					this.available = value;
 					this.SetVisibleCore (value);

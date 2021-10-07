@@ -734,6 +734,7 @@ namespace MonoTests.System.ServiceModel.Security
   <c:Identifier>urn:uuid:b76bdd9d-89a7-45f5-83e7-b474e6f044b3</c:Identifier>
   <dnse:Cookie xmlns:dnse='http://schemas.microsoft.com/ws/2006/05/security'>{0}</dnse:Cookie>
 </c:SecurityContextToken>", cookie);
+			// [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Not a secret.")]
 			string expectedKey = "gLowfrwP4Hgn0lOSqlA2fr0k4NAKgRZX+0BVs2EOesY=";
 
 			WSSecurityTokenSerializer serializer =

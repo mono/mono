@@ -47,6 +47,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Security;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Threading;
 
 using Microsoft.Win32;
@@ -71,11 +74,22 @@ namespace MonoTests.System.Diagnostics
 		private const string WIN32_IMPL = "win32";
 		private const string NULL_IMPL = "null";
 
+		private static bool IsAzurePipelines => Environment.GetEnvironmentVariable("TF_BUILD") != null;
+
 		[SetUp]
 		public void SetUp ()
 		{
 			if (Win32EventLogEnabled)
+			{
+				// EventLog requires admin permissions on Windows
+				WindowsIdentity identity = WindowsIdentity.GetCurrent ();
+				WindowsPrincipal principal = new WindowsPrincipal (identity);
+				if (!principal.IsInRole (WindowsBuiltInRole.Administrator)) {
+					Assert.Ignore ("Not running as Administrator");
+				}
+
 				return;
+			}
 
 			// determine temp directory for eventlog store
 			_temp = new TempDirectory ();
@@ -1201,7 +1215,7 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void CreateEventSource1_Log_InvalidCustomerLog ()
 		{
-			if (EventLogImplType != NULL_IMPL)
+			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
 				Assert.Ignore ("No EventLogImplType.");
 
@@ -1338,7 +1352,7 @@ namespace MonoTests.System.Diagnostics
 		[Test]
 		public void CreateEventSource1_Log_NotUnique ()
 		{
-			if (EventLogImplType != NULL_IMPL)
+			if (EventLogImplType == NULL_IMPL)
 				// test cannot pass with NULL implementation
 				Assert.Ignore ("No EventLogImplType.");
 
@@ -1724,6 +1738,9 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
 				Assert.IsNull (ex.InnerException, "#6");
 				Assert.IsNull (ex.ParamName, "#7");
+			} catch (SecurityException) {
+				if (IsAzurePipelines) Assert.Ignore ("Azure Pipelines fails with: Requested registry access is not allowed on.");
+				throw;
 			}
 		}
 
@@ -1860,6 +1877,9 @@ namespace MonoTests.System.Diagnostics
 				Assert.IsTrue (ex.Message.IndexOf ("'.'") != -1, "#5");
 				Assert.IsNull (ex.InnerException, "#6");
 				Assert.IsNull (ex.ParamName, "#7");
+			} catch (SecurityException) {
+				if (IsAzurePipelines) Assert.Ignore ("Azure Pipelines fails with: Requested registry access is not allowed.");
+				throw;
 			}
 		}
 
@@ -2781,9 +2801,15 @@ namespace MonoTests.System.Diagnostics
 					Assert.Ignore ("Event log 'monologother' should not exist.");
 			}
 
-			using (RegistryKey sourceKey = FindSourceKeyByName ("monotempsource")) {
-				if (sourceKey != null)
-					Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+			try {
+				using (RegistryKey sourceKey = FindSourceKeyByName ("monotempsource")) {
+					if (sourceKey != null)
+						Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+				}
+			}
+ 			catch (SecurityException) {
+				if (IsAzurePipelines) Assert.Ignore ("Azure Pipelines fails with: Requested registry access is not allowed.");
+				throw;
 			}
 
 			Assert.IsFalse (EventLog.Exists ("monologtemp"), "#A1");
@@ -2849,9 +2875,14 @@ namespace MonoTests.System.Diagnostics
 					Assert.Ignore ("Event log 'monologother' should not exist.");
 			}
 
-			using (RegistryKey sourceKey = FindSourceKeyByName ("monotempsource")) {
-				if (sourceKey != null)
-					Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+			try {
+				using (RegistryKey sourceKey = FindSourceKeyByName ("monotempsource")) {
+					if (sourceKey != null)
+						Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+				}
+			} catch (SecurityException) {
+				if (IsAzurePipelines) Assert.Ignore ("Azure Pipelines fails with: Requested registry access is not allowed.");
+				throw;
 			}
 
 			Assert.IsFalse (EventLog.Exists ("monologtemp", "."), "#A1");
@@ -3281,9 +3312,14 @@ namespace MonoTests.System.Diagnostics
 					Assert.Ignore ("Event log 'monologtemp' should not exist.");
 			}
 
-			using (RegistryKey sourceKey = FindSourceKeyByName ("monotempsource")) {
-				if (sourceKey != null)
-					Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+			try {
+				using (RegistryKey sourceKey = FindSourceKeyByName ("monotempsource")) {
+					if (sourceKey != null)
+						Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+				}
+			} catch (SecurityException) {
+				if (IsAzurePipelines) Assert.Ignore ("Azure Pipelines fails with: Requested registry access is not allowed.");
+				throw;
 			}
 
 			Assert.IsFalse (EventLog.SourceExists ("monotempsource"), "#A1");
@@ -3354,9 +3390,14 @@ namespace MonoTests.System.Diagnostics
 					Assert.Ignore ("Event log 'monologtemp' should not exist.");
 			}
 
-			using (RegistryKey sourceKey = FindSourceKeyByName ("monotempsource")) {
-				if (sourceKey != null)
-					Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+			try {
+				using (RegistryKey sourceKey = FindSourceKeyByName ("monotempsource")) {
+					if (sourceKey != null)
+						Assert.Ignore ("Event log source 'monotempsource' should not exist.");
+				}
+			} catch (SecurityException) {
+				if (IsAzurePipelines) Assert.Ignore ("Azure Pipelines fails with: Requested registry access is not allowed.");
+				throw;
 			}
 
 			Assert.IsFalse (EventLog.SourceExists ("monotempsource", "."), "#1");

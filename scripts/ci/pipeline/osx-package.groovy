@@ -9,16 +9,10 @@ packageFileName = null
 commitHash = null
 utils = null
 
-if (monoBranch == 'master') {
+if (monoBranch == 'main') {
     properties([ /* compressBuildLog() */  // compression is incompatible with JEP-210 right now
-                pipelineTriggers([cron('0 3 * * *')])
+                disableConcurrentBuilds()
     ])
-
-    // multi-branch pipelines still get triggered for each commit, skip these builds on master by checking whether this build was timer-triggered
-    if (currentBuild.getBuildCauses('hudson.triggers.TimerTrigger$TimerTriggerCause').size() == 0) {
-        echo "Skipping per-commit build on master."
-        return
-    }
 }
 
 try {

@@ -16,7 +16,7 @@ namespace System.Net.Test.Common
     {
         public static partial class Certificates
         {
-            private const string CertificatePassword = "testcertificate";
+            private const string CertificatePassword = "PLACEHOLDER";
             private const string TestDataFolder = "TestData";
 
             private static readonly Mutex m;

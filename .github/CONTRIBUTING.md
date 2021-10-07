@@ -23,7 +23,7 @@ License
 
 The Mono runtime, compilers, and tools and most of the class libraries
 are licensed under the MIT license. But include some bits of code
-licensed under different licenses. The exact list is [available here](https://github.com/mono/mono/blob/master/LICENSE).
+licensed under different licenses. The exact list is [available here](https://github.com/mono/mono/blob/main/LICENSE).
 
 Different parts of Mono use different licenses.  The actual details of
 which licenses are used for which parts are detailed on the LICENSE

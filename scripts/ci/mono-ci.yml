@@ -2,7 +2,7 @@ trigger:
   batch: true
   branches:
     include:
-    - master
+    - main
     - 20*-*
   paths:
     include:
@@ -22,7 +22,7 @@ trigger:
 pr:
   branches:
     include:
-    - master
+    - main
     - 20*-*
   paths:
     include:
@@ -57,7 +57,6 @@ jobs:
     displayName: Linux ARM Hard Float
     os: linux
     arch: armhf
-    timeoutInMinutes: 180
 
 #
 # Linux aarch64
@@ -136,6 +135,7 @@ jobs:
     arch: amd64
     additionalCITags: acceptance-tests
     publishTestResults: false
+    timeoutInMinutes: 180
 
 - template: /scripts/ci/mono-ci-job-template.yml
   parameters:
@@ -143,6 +143,10 @@ jobs:
     os: linux
     arch: amd64
     additionalCITags: all-profiles,apidiff,csprojdiff,no-tests
+    additionalSteps:
+      - publish: mcs/apidiff
+        artifact: ApiDiff
+        displayName: Public API Diff
 
 #- template: /scripts/ci/mono-ci-job-template.yml
 #  parameters:
@@ -158,12 +162,13 @@ jobs:
 #    arch: amd64
 #    additionalCITags: bitcodeinterp
 
-- template: /scripts/ci/mono-ci-job-template.yml
-  parameters:
-    displayName: Linux x64 C++
-    os: linux
-    arch: amd64
-    additionalCITags: cxx
+# disabled as we won't switch to C++ in mono/mono
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: Linux x64 C++
+#    os: linux
+#    arch: amd64
+#    additionalCITags: cxx
 
 - template: /scripts/ci/mono-ci-job-template.yml
   parameters:
@@ -213,7 +218,6 @@ jobs:
     os: linux
     arch: amd64
     additionalCITags: interpreter
-    timeoutInMinutes: 180
 
 - template: /scripts/ci/mono-ci-job-template.yml
   parameters:
@@ -248,9 +252,20 @@ jobs:
     os: osx
     arch: amd64
 
+# disabled as we won't switch to C++ in mono/mono
+#- template: /scripts/ci/mono-ci-job-template.yml
+#  parameters:
+#    displayName: OS X x64 C++
+#    os: osx
+#    arch: amd64
+#    additionalCITags: cxx
+
+#
+# Windows x64
+#
 - template: /scripts/ci/mono-ci-job-template.yml
   parameters:
-    displayName: OS X x64 C++
-    os: osx
+    displayName: Windows x64
+    os: win
     arch: amd64
-    additionalCITags: cxx
+    timeoutInMinutes: 240

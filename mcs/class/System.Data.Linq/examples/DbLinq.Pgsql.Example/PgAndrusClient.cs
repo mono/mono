@@ -45,7 +45,7 @@ namespace ClientCodePg
 
             Console.WriteLine("newExpr=" + newExpr);
 
-            string connStr = "server=localhost;user id=LinqUser; password=linq2; database=andrus";
+            string connStr = "server=localhost;user id=LinqUser; password=PLACEHOLDER; database=andrus";
 
             using (Andrus db = new Andrus(connStr))
             {

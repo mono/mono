@@ -245,7 +245,7 @@ namespace MonoTests.System.ServiceModel.Description
 			//TODO: Write test cases for the related overloads of Resolve
 			MetadataResolver.Resolve (
 				contracts,
-				new EndpointAddress ("http://localhost"),
+				new EndpointAddress ("http://doesnotexist"),
 				new MetadataExchangeClient (new EndpointAddress (url)));
 		}
 
@@ -315,7 +315,7 @@ namespace MonoTests.System.ServiceModel.Description
 			List<ContractDescription> contracts = new List<ContractDescription> ();
 			contracts.Add (contract);
 
-			MetadataResolver.Resolve (contracts, new EndpointAddress ("http://localhost"));
+			MetadataResolver.Resolve (contracts, new EndpointAddress ("http://doesnotexist"));
 		}
 
 		private void CheckIEchoServiceEndpoint (ServiceEndpointCollection endpoints)
@@ -347,7 +347,7 @@ namespace MonoTests.System.ServiceModel.Description
 		public void ResolveBadUri ()
 		{
 			MetadataResolver.Resolve (
-				typeof (IEchoService), new EndpointAddress ("http://localhost"));
+				typeof (IEchoService), new EndpointAddress ("http://doesnotexist"));
 		}
 
 		[DataContract]

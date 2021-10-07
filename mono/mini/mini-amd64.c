@@ -7813,7 +7813,7 @@ MONO_RESTORE_WARNING
 
 				/*
 				 * Save the original location of 'this',
-				 * get_generic_info_from_stack_frame () needs this to properly look up
+				 * mono_get_generic_info_from_stack_frame () needs this to properly look up
 				 * the argument value during the handling of async exceptions.
 				 */
 				if (i == 0 && sig->hasthis) {
@@ -8323,7 +8323,7 @@ mono_arch_get_patch_offset (guint8 *code)
 }
 
 /**
- * \return TRUE if no sw breakpoint was present.
+ * \return TRUE if no sw breakpoint was present (always).
  *
  * Copy \p size bytes from \p code - \p offset to the buffer \p buf. If the debugger inserted software
  * breakpoints in the original code, they are removed in the copy.

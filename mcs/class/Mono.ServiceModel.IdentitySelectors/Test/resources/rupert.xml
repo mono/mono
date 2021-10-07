@@ -92,6 +92,7 @@
             <BackgroundColor>16777215</BackgroundColor>
         </InformationCardMetaData>
         <InformationCardPrivateData>
+            <![CDATA[[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="This is testing the identity card being properly formatted. It is not real data and protects no resource, and cannot easily be changed. Removing the test could adversely affect the customer experience.")]]>
             <MasterKey>VTH3VHGQd6YTliRZcGiS4JdKcY2ASe9jKr+zu4PP7tc=</MasterKey>
             <ClaimValueList>
 

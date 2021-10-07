@@ -6,7 +6,7 @@ class FsharpPackage(GitHubTarballPackage):
         GitHubTarballPackage.__init__(self,
             'dotnet', 'fsharp',
             '5.0.0',
-            '03283e07f6bd5717797acb288cf6044cedca2202',
+            '9cf3dbdf4e83816a8feb2eab0dd48465d130f902', # release/dev16.8
             configure='',
             override_properties={ 'make': 'version= ./build.sh -c Release && version= ./.dotnet/dotnet restore setup/Swix/Microsoft.FSharp.SDK/Microsoft.FSharp.SDK.csproj --packages fsharp-nugets' })
 
@@ -21,7 +21,7 @@ class FsharpPackage(GitHubTarballPackage):
 
         # .NET Core 3.1 officially only supports macOS 10.13+ but we can get it to work on 10.12 by compiling our own System.Native.dylib
         if StrictVersion(platform.mac_ver()[0]) < StrictVersion("10.13.0"):
-            self.sh('git clone --branch release/3.1 git://github.com/dotnet/corefx && git -C corefx checkout 1b5b5f0bf030bf7250c3258c140fa9e4214325c8')
+            self.sh('git clone --branch release/3.1 https://github.com/dotnet/corefx && git -C corefx checkout 1b5b5f0bf030bf7250c3258c140fa9e4214325c8')
             self.sh('echo \'\' > corefx/src/Native/Unix/System.Security.Cryptography.Native/CMakeLists.txt')
             self.sh('env -i HOME="$HOME" PATH="$PATH" USER="$USER" bash -c \'cd corefx && MACOSX_DEPLOYMENT_TARGET=10.12 src/Native/build-native.sh x64 Debug OSX outconfig netcoreapp-OSX-Debug-x64 -portable\'')
             self.sh('bash -c \'source eng/common/tools.sh && InitializeDotNetCli true\'')

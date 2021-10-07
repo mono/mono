@@ -77,6 +77,13 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Control SourceControl {
 			get { return src_control; }
+			private set
+			{
+				if (src_control == value)
+					return;
+				src_control = value;
+				OnSetSourceControlDone (new SetSourceControlDoneArgs (value));
+			}
 		}
 
 		#endregion Public Properties
@@ -85,7 +92,7 @@ namespace System.Windows.Forms
 
 		protected internal virtual bool ProcessCmdKey (ref Message msg, Keys keyData, Control control)
 		{
-			src_control = control;
+			SourceControl = control;
 			return ProcessCmdKey (ref msg, keyData);
 		}
 
@@ -108,11 +115,13 @@ namespace System.Windows.Forms
 			if (control == null)
 				throw new ArgumentException ();
 
-			src_control = control;
-
+			SourceControl = control;
 			OnPopup (EventArgs.Empty);
+
 			pos = control.PointToScreen (pos);
 			MenuTracker.TrackPopupMenu (this, pos);
+			
+			SourceControl = null;
 			OnCollapse (EventArgs.Empty);
 		}
 
@@ -128,9 +137,37 @@ namespace System.Windows.Forms
 			Show (control, point);
 		}
 		#endregion Public Methods
+
 		internal void Hide ()
 		{
 			tracker.Deactivate ();
+			SourceControl = null;
 		}
+
+		#region Internal Events
+
+		internal delegate void SetSourceControlDoneHandler (object sender, SetSourceControlDoneArgs e);
+		
+		// Is used by UIA API.
+		[Browsable (false)]
+		internal static event SetSourceControlDoneHandler SetSourceControlDone; 
+
+		private void OnSetSourceControlDone (SetSourceControlDoneArgs e)
+		{
+			if (SetSourceControlDone != null)
+				SetSourceControlDone (this, e);
+		}
+
+		internal class SetSourceControlDoneArgs : EventArgs
+		{
+			public readonly Control NewOwner;
+
+			public SetSourceControlDoneArgs (Control newOwner)
+			{
+				NewOwner = newOwner;
+			}
+		}
+
+		#endregion
 	}
 }

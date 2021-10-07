@@ -684,6 +684,13 @@ namespace System.Windows.Forms {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	internal struct XClassHint
+	{
+		internal string res_name;
+		internal string res_class;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XTextProperty {
 		internal string		value;
 		internal IntPtr		encoding;

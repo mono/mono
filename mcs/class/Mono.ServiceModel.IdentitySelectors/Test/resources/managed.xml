@@ -64,7 +64,7 @@
       <BackgroundColor>0</BackgroundColor>
     </InformationCardMetaData>
     <InformationCardPrivateData>
-      <MasterKey>01234567890123456789IOverwroteThisAreaHeheh=</MasterKey>
+      <MasterKey>[PLACEHOLDER]</MasterKey>
     </InformationCardPrivateData>
   </RoamingInformationCard>
 </RoamingStore>

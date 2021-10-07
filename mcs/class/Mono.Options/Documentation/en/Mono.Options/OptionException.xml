@@ -12,6 +12,11 @@
     <BaseTypeName>System.Exception</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Serializable</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Represents the error that occurs when there is an error parsing
       an <see cref="T:Mono.Options.Option" />.</summary>

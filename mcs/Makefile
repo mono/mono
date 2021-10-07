@@ -155,7 +155,7 @@ distcheck: dist-tarball
 MONO_API_SNAPSHOT_PATH := $(topdir)../external/api-snapshot/
 GENAPI := $(MONO_API_SNAPSHOT_PATH)tools/genapi/Microsoft.DotNet.GenAPI.exe
 MONO_API_SNAPSHOT_PROFILE_PATH := $(MONO_API_SNAPSHOT_PATH)profiles/$(PROFILE)/
-MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, Mono.CSharp.dll SystemWebTestShim.dll standalone-runner-support.dll nunitlite.dll Mono.Profiler.Log.dll)
+MONO_API_ASSEMBLIES_IGNORED := $(addprefix $(topdir)class/lib/$(PROFILE)/, Mono.CSharp.dll SystemWebTestShim.dll standalone-runner-support.dll nunitlite.dll Mono.Profiler.Log.dll Mono.Debugger.Soft.dll)
 MONO_API_ASSEMBLIES := $(filter-out $(MONO_API_ASSEMBLIES_IGNORED), $(wildcard $(topdir)class/lib/$(PROFILE)/*.dll)) $(wildcard $(topdir)class/lib/$(PROFILE)/Facades/*.dll)
 MONO_API_ASSEMBLIES_CS := $(MONO_API_ASSEMBLIES:$(topdir)class/lib/$(PROFILE)/%.dll=$(MONO_API_SNAPSHOT_PROFILE_PATH)%.cs)
 

@@ -4781,10 +4781,12 @@ if test "x$host" != "x$target"; then
 		sizeof_register=8
 		AC_DEFINE(TARGET_WATCHOS, 1, [...])
 		;;
+	aarch64*darwin20*)
+		TARGET=ARM64
+		TARGET_SYS=OSX
+		;;
 	aarch64*darwin*)
 		TARGET=ARM64
-		# Both ios and osx/arm64 have the same aarc64-darwin triple,
-		# assume ios for now when cross compiling
 		TARGET_SYS=IOS
 		;;
 	aarch64-*)
@@ -6208,8 +6210,8 @@ fi
 AC_SUBST(mono_runtime)
 AC_SUBST(mono_runtime_wrapper)
 
-CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.7.0/csc.exe
-VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.7.0/VBCSCompiler.exe
+CSC_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.9.0/csc.exe
+VBCS_LOCATION=`cd $srcdir && pwd`/external/roslyn-binaries/Microsoft.Net.Compilers/3.9.0/VBCSCompiler.exe
 
 if test $csc_compiler = mcs; then
   CSC=$mcs_topdir/class/lib/build/mcs.exe

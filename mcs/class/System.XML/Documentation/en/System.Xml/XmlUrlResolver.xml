@@ -133,11 +133,11 @@ public class App {
                         "bookstore/inventory.xml");
     NetworkCredential netCredential1 =
       new NetworkCredential("username1",
-                            "password1",
+                            "[PLACEHOLDER]",
                             "domain1");
     NetworkCredential netCredential2 =
       new NetworkCredential("username2",
-                            "password2",
+                            "[PLACEHOLDER]",
                             "domain2");
     CredentialCache credCache = new CredentialCache(); 
     credCache.Add( new Uri("http://www.contoso.com/"),
