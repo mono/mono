@@ -569,9 +569,4 @@ mono_threads_summarize_execute (MonoContext *ctx, gchar **out, MonoStackHash *ha
 gboolean
 mono_threads_summarize_one (MonoThreadSummary *out, MonoContext *ctx);
 
-#ifndef DISABLE_CRASH_REPORTING
-void
-mono_summarizer_create_leader_thread (void);
-#endif
-
 #endif /* _MONO_METADATA_THREADS_TYPES_H_ */
