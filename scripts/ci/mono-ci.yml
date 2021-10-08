@@ -147,6 +147,7 @@ jobs:
       - publish: mcs/apidiff
         artifact: ApiDiff
         displayName: Public API Diff
+        condition: failed()
 
 #- template: /scripts/ci/mono-ci-job-template.yml
 #  parameters:
