@@ -46,7 +46,8 @@ namespace System.Windows.Threading {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public void VerifyAccess ()
 		{
-			throw new InvalidOperationException ("The calling thread is not the same as the creation thread");
+			if (!CheckAccess ())
+				throw new InvalidOperationException ("The calling thread is not the same as the creation thread");
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
