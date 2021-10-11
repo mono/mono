@@ -11,4 +11,6 @@ partial class SR
 	public const string DataSetLinq_CannotCompareDeletedRow = "The DataRowComparer does not work with DataRows that have been deleted since it only compares current values.";
 	public const string DataSetLinq_CannotLoadDeletedRow = "The source contains a deleted DataRow that cannot be copied to the DataTable.";
 	public const string DataSetLinq_NonNullableCast = "Cannot cast DBNull. Value to type '{0}'. Please use a nullable type.";
+	public const string LDV_InvalidNumOfKeys = "Must provide '{0}' keys to find";
+	public const string LDVRowStateError = "DataViewRowState must be DataViewRowState.CurrentRows";
 }
