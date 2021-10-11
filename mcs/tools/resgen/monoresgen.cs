@@ -504,6 +504,9 @@ class TxtResourceReader : IResourceReader {
 				case '\\':
 					b.Append ('\\');
 					break;
+				case '"':
+					b.Append ('"');
+					break;
 				default:
 					return null;
 				}
