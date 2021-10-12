@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls
 
 			for (int i = 0; i < parameters.Count; i++) {
 				sb.Append (parameters [i].Name);
-				sb.Append (parameters [i].GetValue (context, owner));
+				sb.Append (parameters [i].ParameterValue);
 			}
 
 			return sb.ToString ();

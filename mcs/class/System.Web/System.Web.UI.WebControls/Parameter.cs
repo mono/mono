@@ -30,11 +30,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Data;
+using System.Diagnostics;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Web.UI.WebControls {
 	[DefaultPropertyAttribute ("DefaultValue")]
@@ -424,17 +427,120 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		internal object GetValue (HttpContext context, Control control)
-		{
-			UpdateValue (context, control);
+		/// <devdoc>
+		/// Returns the value of parameter after converting it to the proper type.
+		/// </devdoc>
+		[
+		Browsable(false),
+		]
+		internal object ParameterValue {
+			get {
+				return GetValue(ViewState["ParameterValue"], false);
+			}
+		}
 
-			object value = ConvertValue (ViewState ["ParameterValue"]);
-			if (value == null)
-				value = ConvertValue (DefaultValue);
+		internal object GetValue(object value, bool ignoreNullableTypeChanges) {
+			DbType dbType = DbType;
+			if (dbType == DbType.Object) {
+				return GetValue(value, DefaultValue, Type, ConvertEmptyStringToNull, ignoreNullableTypeChanges);
+			}
+			if (Type != TypeCode.Empty) {
+				throw new InvalidOperationException(SR.GetString(SR.Parameter_TypeNotSupported, Name));
+			}
+			return GetValue(value, DefaultValue, dbType, ConvertEmptyStringToNull, ignoreNullableTypeChanges);
+		}
 
+		internal static object GetValue(object value, string defaultValue, DbType dbType, bool convertEmptyStringToNull,
+			bool ignoreNullableTypeChanges) {
+
+			// use the TypeCode conversion logic for Whidbey types.
+			if ((dbType != DbType.DateTimeOffset) && (dbType != DbType.Time) && (dbType != DbType.Guid)) {
+				TypeCode type = ConvertDbTypeToTypeCode(dbType);
+				return GetValue(value, defaultValue, type, convertEmptyStringToNull, ignoreNullableTypeChanges);
+			}
+
+			value = HandleNullValue(value, defaultValue, convertEmptyStringToNull);
+			if (value == null) {
+				return null;
+			}
+
+			// For ObjectDataSource we special-case Nullable<T> and do nothing because these
+			// types will get converted when we actually call the method.
+			if (ignoreNullableTypeChanges && IsNullableType(value.GetType())) {
+				return value;
+			}
+
+			if (dbType == DbType.DateTimeOffset) {
+				if (value is DateTimeOffset) {
+					return value;
+				}
+				return DateTimeOffset.Parse(value.ToString(), CultureInfo.CurrentCulture);
+			}
+			else if (dbType == DbType.Time) {
+				if (value is TimeSpan) {
+					return value;
+				}
+				return TimeSpan.Parse(value.ToString(), CultureInfo.CurrentCulture);
+			}
+			else if (dbType == DbType.Guid) {
+				if (value is Guid) {
+					return value;
+				}
+				return new Guid(value.ToString());
+			}
+
+			Debug.Fail("Should never reach this point.");
+			return null;
+		}
+
+		internal static object GetValue(object value, string defaultValue, TypeCode type, bool convertEmptyStringToNull, bool ignoreNullableTypeChanges) {
+			// Convert.ChangeType() throws if you attempt to convert to DBNull, so we have to special case it.
+			if (type == TypeCode.DBNull) {
+				return DBNull.Value;
+			}
+
+			value = HandleNullValue(value, defaultValue, convertEmptyStringToNull);
+			if (value == null) {
+				return null;
+			}
+
+			if (type == TypeCode.Object || type == TypeCode.Empty) {
+				return value;
+			}
+
+			// For ObjectDataSource we special-case Nullable<T> and do nothing because these
+			// types will get converted when we actually call the method.
+			if (ignoreNullableTypeChanges && IsNullableType(value.GetType())) {
+				return value;
+			}
+			return value = Convert.ChangeType(value, type, CultureInfo.CurrentCulture);;
+		}
+
+		private static object HandleNullValue(object value, string defaultValue, bool convertEmptyStringToNull) {
+			// Get the value and convert it to the default value if it is null
+			if (convertEmptyStringToNull) {
+				string stringValue = value as string;
+				if ((stringValue != null) && (stringValue.Length == 0)) {
+					value = null;
+				}
+			}
+			if (value == null) {
+				// Attempt to use the default value, but if it is null too, just return null immediately
+				if (convertEmptyStringToNull && String.IsNullOrEmpty(defaultValue)) {
+					defaultValue = null;
+				}
+				if (defaultValue == null) {
+					return null;
+				}
+				value = defaultValue;
+			}
 			return value;
 		}
-		
+
+		private static bool IsNullableType(Type type) {
+			return type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>));
+		}
+
 		internal object ConvertValue (object val)
 		{
 			if (val == null) return null;

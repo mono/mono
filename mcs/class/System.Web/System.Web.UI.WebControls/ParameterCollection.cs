@@ -97,13 +97,15 @@ namespace System.Web.UI.WebControls
 
 		public IOrderedDictionary GetValues (HttpContext context, Control control)
 		{
+			UpdateValues(context, control);
+
 			OrderedDictionary values = new OrderedDictionary ();
 			foreach (Parameter param in this)
 			{
 				string name = param.Name;
 				for (int i = 1; values.Contains (name); i++)
 					name = param.Name + i.ToString ();
-				values.Add (name, param.GetValue (context, control));
+				values.Add (name, param.ParameterValue);
 			}
 			return values;
 		}
