@@ -3,6 +3,9 @@ agent:
   type: Unity::VM
   image: platform-foundation/windows-vs2019-prtools-bokken:latest
   flavor: b1.xlarge 
+variables:
+  MONO_REV: "latest"
+  BACKPORT_BRANCH: "2021.2" 
 dependencies:
   - .yamato/Publish To Stevedore.yml
 commands:
@@ -13,7 +16,7 @@ commands:
     cmd /c cibuildscript
     cmd /c xcopy build %PRTOOLS_BUILD_DIR% /s /Y /E /I
     cd %UNITY_SOURCE_PRTOOLS_DIR%
-    %PRTOOLS_BUILD_DIR%\prtools.exe --update-mono-il2cpp-deps=%YAMATO_SOURCE_DIR%/stevedore/artifactid.txt --backport=2021.2 --github-api-token=%GITHUB_TOKEN% --yamato-api-token=%YAMATO_TOKEN% --yamato-long-lived-token
+    %PRTOOLS_BUILD_DIR%\prtools.exe --update-mono-il2cpp-deps=%YAMATO_SOURCE_DIR%/stevedore/artifactid.txt --backport=%BACKPORT_BRANCH% --github-api-token=%GITHUB_TOKEN% --yamato-api-token=%YAMATO_TOKEN% --yamato-long-lived-token
     if NOT %errorlevel% == 0 (
       echo "PRTools failed"
       EXIT /B %errorlevel%
