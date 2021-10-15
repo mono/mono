@@ -107,7 +107,7 @@ get_pe_debug_info (MonoImage *image, const char** out_path, guint8 *out_guid, gi
 				guid_found = TRUE;
 
 				if (out_path != NULL) {
-					*out_path = g_strdup (dir.path);
+					*out_path = g_strdup (data + 24);
 				}
 			}
 		}
