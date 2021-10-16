@@ -51,7 +51,7 @@ sub CompileVCProj
     $config = $debug ? "Debug" : "Release";
 	my $arch = $arch32 ? "Win32" : "x64";
 	my $target = $clean ? "/t:Clean,Build" :"/t:Build";
-	my $properties = "/p:Configuration=$config;Platform=$arch;MONO_TARGET_GC=$gc";
+	my $properties = "/p:Configuration=$config;Platform=$arch;MONO_TARGET_GC=$gc;MONO_USE_STATIC_C_RUNTIME=true";
 
 	print (">>> $msbuild $properties $target $sln\n\n");
 	system($msbuild, $properties, $target, $sln) eq 0
