@@ -3099,7 +3099,10 @@ emit_marshal_array_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 			conv = mono_marshal_get_string_to_ptr_conv (m->piinfo, spec);
 		}
 		else {
-			g_assert_not_reached ();
+			if (m->error)
+				mono_error_set_marshal_directive (m->error, "Marshalling of non-string arrays to managed code is not implemented.");
+			else
+				g_assert_not_reached ();
 		}
 
 		if (is_string)

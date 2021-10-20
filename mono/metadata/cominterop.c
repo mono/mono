@@ -2038,6 +2038,7 @@ cominterop_setup_marshal_context (EmitMarshalContext *m, MonoMethod *method)
 	csig->hasthis = 0;
 	csig->pinvoke = 1;
 
+	memset (&m, 0, sizeof (m));
 	m->image = method_klass_image;
 	m->piinfo = NULL;
 	m->retobj_var = 0;

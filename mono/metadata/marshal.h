@@ -51,6 +51,7 @@ typedef struct {
 	MonoClass *retobj_class;
 	MonoMethodSignature *csig; /* Might need to be changed due to MarshalAs directives */
 	MonoImage *image; /* The image to use for looking up custom marshallers */
+	MonoError* error; /* allows reporting of error from marshaling logic */
 } EmitMarshalContext;
 
 typedef enum {
