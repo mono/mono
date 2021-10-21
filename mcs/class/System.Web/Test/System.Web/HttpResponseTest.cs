@@ -576,6 +576,33 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("text/plain; charset=big5", known.Value, "#B3");
 		}
 
+		[Test]
+		public void WriteHeadersDefaultCharset ()
+		{
+			FakeHttpWorkerRequest2 f;
+			HttpContext c = Cook (1, out f);
+
+			Assert.AreEqual ("text/html", c.Response.ContentType, "#A1");
+			Assert.AreEqual ("utf-8", c.Response.Charset, "#A2");
+
+			c.Response.Write ("Hola");
+			c.Response.Flush ();
+
+			Assert.AreEqual (4, f.data_len, "#B1");
+			Assert.AreEqual ((byte) 'H', f.data [0], "#B2");
+			Assert.AreEqual ((byte) 'o', f.data [1], "#B3");
+			Assert.AreEqual ((byte) 'l', f.data [2], "#B4");
+			Assert.AreEqual ((byte) 'a', f.data [3], "#B5");
+
+			KnownResponseHeader known;
+
+			AssertHelper.LessOrEqual (1, f.KnownResponseHeaders.Count, "#C1");
+
+			known = (KnownResponseHeader)f.KnownResponseHeaders ["Content-Type"];
+			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#C2");
+			Assert.AreEqual ("text/html; charset=utf-8", known.Value, "#C3");
+		}
+
 		[Test] // bug #485557
 		[Category ("NotWorking")] // bug #488702
 		public void ClearHeaders ()
