@@ -805,6 +805,7 @@ System.Windows.Forms/X11Clipboard.cs
 System.Windows.Forms/X11DesktopColors.cs
 System.Windows.Forms/X11Dnd.cs
 System.Windows.Forms/X11Keyboard.cs
+System.Windows.Forms/X11SelectionHandler.cs
 System.Windows.Forms/X11Structs.cs
 System.Windows.Forms/XEventQueue.cs
 System.Windows.Forms/XplatUI.cs

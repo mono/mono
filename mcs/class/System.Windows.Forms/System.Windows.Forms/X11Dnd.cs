@@ -42,239 +42,11 @@ namespace System.Windows.Forms {
 
 	internal class X11Dnd {
 
-		private enum State {
-			Accepting,
-			Dragging
-		}
-
 		private enum DragState {
 			None,
 			Beginning,
 			Dragging,
 			Entered
-		}
-
-		private interface IDataConverter {
-			void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent);
-			void SetData (X11Dnd dnd, object data, ref XEvent xevent);
-		}
-
-		private delegate void MimeConverter (IntPtr dsp,
-				IDataObject data, ref XEvent xevent);
-
-		private class MimeHandler {
-			public string Name;
-			public string [] Aliases;
-			public IntPtr Type;
-			public IntPtr NonProtocol;
-			public IDataConverter Converter;
-			
-			public MimeHandler (string name, IDataConverter converter) : this (name, converter, name)
-			{
-			}
-
-			public MimeHandler (string name, IDataConverter converter, params string [] aliases)
-			{
-				Name = name;
-				Converter = converter;
-				Aliases = aliases;
-			}
-
-			public override string ToString ()
-			{
-				return "MimeHandler {" + Name + "}";
-			}
-		}
-
-		private MimeHandler [] MimeHandlers = {
-//			  new MimeHandler ("WCF_DIB"),
-//			  new MimeHandler ("image/gif", new MimeConverter (ImageConverter)),
-//			new MimeHandler ("text/rtf", new MimeConverter (RtfConverter)),
-//			new MimeHandler ("text/richtext", new MimeConverter (RtfConverter)),
-
-			new MimeHandler ("text/plain", new TextConverter ()),
-			new MimeHandler ("text/plain", new TextConverter (), "System.String", DataFormats.Text),
-			new MimeHandler ("text/html", new HtmlConverter (), DataFormats.Html),
-			new MimeHandler ("text/uri-list", new UriListConverter (), DataFormats.FileDrop),
-			new MimeHandler ("application/x-mono-serialized-object",
-					new SerializedObjectConverter ())
-		};
-
-		private class SerializedObjectConverter : IDataConverter {
-
-			public void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent)
-			{
-				MemoryStream stream = dnd.GetData (ref xevent);
-				BinaryFormatter bf = new BinaryFormatter ();
-
-				if (stream.Length == 0)
-					return;
-
-				stream.Seek (0, 0);
-				object obj = bf.Deserialize (stream);
-				data.SetData (obj);
-			}
-
-			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
-			{
-				if (data == null)
-					return;
-
-				MemoryStream stream = new MemoryStream ();
-				BinaryFormatter bf = new BinaryFormatter ();
-
-				bf.Serialize (stream, data);
-
-				IntPtr buffer = Marshal.AllocHGlobal ((int) stream.Length);
-				stream.Seek (0, 0);
-
-				for (int i = 0; i < stream.Length; i++) {
-					Marshal.WriteByte (buffer, i, (byte) stream.ReadByte ());
-				}
-
-				dnd.SetProperty (ref xevent, buffer, (int) stream.Length);
-			}
-		}
-
-		private class HtmlConverter : IDataConverter {
-
-			public void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent)
-			{
-				string text = dnd.GetText (ref xevent, false);
-				if (text == null)
-					return;
-				data.SetData (DataFormats.Text, text);
-				data.SetData (DataFormats.UnicodeText, text);
-			}
-
-			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
-			{
-				IntPtr buffer;
-				int len;
-				string str = data as string;
-
-				if (str == null)
-					return;
-
-				if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
-					byte [] bytes = Encoding.ASCII.GetBytes (str);
-					buffer = Marshal.AllocHGlobal (bytes.Length);
-					len = bytes.Length;
-					for (int i = 0; i < len; i++)
-						Marshal.WriteByte (buffer, i, bytes [i]);
-				} else {
-					buffer = Marshal.StringToHGlobalAnsi (str);
-					len = 0;
-					while (Marshal.ReadByte (buffer, len) != 0)
-						len++;
-				}
-
-				dnd.SetProperty (ref xevent, buffer, len);
-
-				Marshal.FreeHGlobal (buffer);
-			}
-		}
-
-		private class TextConverter : IDataConverter {
-
-			public void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent)
-			{
-				string text = dnd.GetText (ref xevent, true);
-				if (text == null)
-					return;
-				data.SetData (DataFormats.Text, text);
-				data.SetData (DataFormats.UnicodeText, text);
-			}
-
-			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
-			{
-				IntPtr buffer;
-				int len;
-				string str = data as string;
-
-				if (str == null) {
-					IDataObject dobj = data as IDataObject;
-					if (dobj == null)
-						return;
-					str = (string) dobj.GetData ("System.String", true);
-				}
-
-				if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
-					byte [] bytes = Encoding.ASCII.GetBytes (str);
-					buffer = Marshal.AllocHGlobal (bytes.Length);
-					len = bytes.Length;
-					for (int i = 0; i < len; i++)
-						Marshal.WriteByte (buffer, i, bytes [i]);
-				} else {
-					buffer = Marshal.StringToHGlobalAnsi (str);
-					len = 0;
-					while (Marshal.ReadByte (buffer, len) != 0)
-						len++;
-				}
-
-				dnd.SetProperty (ref xevent, buffer, len);
-
-				Marshal.FreeHGlobal (buffer);
-			}
-		}
-
-		private class UriListConverter : IDataConverter {
-
-			public void GetData (X11Dnd dnd, IDataObject data, ref XEvent xevent)
-			{
-				string text = dnd.GetText (ref xevent, false);
-				if (text == null)
-					return;
-
-				// TODO: Do this in a loop instead of just splitting
-				ArrayList uri_list = new ArrayList ();
-				string [] lines = text.Split (new char [] { '\r', '\n' });
-				foreach (string line in lines) {
-					// # is a comment line (see RFC 2483)
-					if (line.StartsWith ("#"))
-						continue;
-					try {
-						Uri uri = new Uri (line);
-						uri_list.Add (uri.LocalPath);
-					} catch { }
-				}
-
-				string [] l = (string []) uri_list.ToArray (typeof (string));
-				if (l.Length < 1)
-					return;
-				data.SetData (DataFormats.FileDrop, l);
-				data.SetData ("FileName", l [0]);
-				data.SetData ("FileNameW", l [0]);
-			}
-
-			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
-			{
-				string [] uri_list = data as string [];
-
-				if (uri_list == null) {
-					IDataObject dobj = data as IDataObject;
-					if (dobj == null)
-						return;
-					uri_list = dobj.GetData (DataFormats.FileDrop, true) as string [];
-				}
-
-				if (uri_list == null)
-					return;
-
-				StringBuilder res = new StringBuilder ();
-				foreach (string uri_str in uri_list) {
-					Uri uri = new Uri (uri_str);
-					res.Append (uri.ToString ());
-					res.Append ("\r\n");
-				}
-
-				IntPtr buffer = Marshal.StringToHGlobalAnsi ((string) res.ToString ());
-				int len = 0;
-				while (Marshal.ReadByte (buffer, len) != 0)
-					len++;
-
-				dnd.SetProperty (ref xevent, buffer, len);
-			}
 		}
 
 		private class DragData {
@@ -392,7 +164,7 @@ namespace System.Windows.Forms {
 			drag_data.State = DragState.Beginning;
 			drag_data.MouseState = XplatUIX11.MouseState;
 			drag_data.Data = data;
-			drag_data.SupportedTypes = DetermineSupportedTypes (data);
+			drag_data.SupportedTypes = X11SelectionHandler.DetermineSupportedTypes (data);
 			drag_data.AllowedEffects = allowed_effects;
 			drag_data.Action = ActionFromEffect (allowed_effects);
 
@@ -433,6 +205,12 @@ namespace System.Windows.Forms {
 			tracking = true;
 			motion_poll = -1;
 			timer.Start ();
+
+			// FIXME inter mono runtime drag and drop:
+			// mono -> native : all formats are supported
+			// native -> mono : all formats are supported
+			// mono-1 -> mono-1 : (same runtime instance) all formats are supported
+			// mono-1 -> mono-2 : (different runtime instances) only first 3 formats are supported
 
 			// Send Enter to the window initializing the dnd operation - which initializes the data
 			SendEnter (drag_data.Window, drag_data.Window, drag_data.SupportedTypes);
@@ -666,13 +444,13 @@ namespace System.Windows.Forms {
 
 		public bool HandleSelectionNotifyEvent (ref XEvent xevent)
 		{
-			MimeHandler handler = FindHandler ((IntPtr) xevent.SelectionEvent.target);
+			X11SelectionHandler handler = X11SelectionHandler.Find ((IntPtr) xevent.SelectionEvent.target);
 			if (handler == null)
 				return false;
 			if (data == null)
 				data = new DataObject ();
 
-			handler.Converter.GetData (this, data, ref xevent);
+			handler.GetData (ref xevent, data);
 
 			converts_pending--;
 			if (converts_pending <= 0 && position_recieved) {
@@ -690,11 +468,11 @@ namespace System.Windows.Forms {
 			if (xevent.SelectionRequestEvent.selection != XdndSelection)
 				return false;
 
-			MimeHandler handler = FindHandler (xevent.SelectionRequestEvent.target);
+			X11SelectionHandler handler = X11SelectionHandler.Find (xevent.SelectionRequestEvent.target);
 			if (handler == null)
 				return false;
 
-			handler.Converter.SetData (this, drag_data.Data, ref xevent);
+			handler.SetData (ref xevent, drag_data.Data);
 
 			return true;
 		}
@@ -778,28 +556,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void SetProperty (ref XEvent xevent, IntPtr data, int length)
-		{
-			XEvent sel = new XEvent();
-			sel.SelectionEvent.type = XEventName.SelectionNotify;
-			sel.SelectionEvent.send_event = true;
-			sel.SelectionEvent.display = display;
-			sel.SelectionEvent.selection = xevent.SelectionRequestEvent.selection;
-			sel.SelectionEvent.target = xevent.SelectionRequestEvent.target;
-			sel.SelectionEvent.requestor = xevent.SelectionRequestEvent.requestor;
-			sel.SelectionEvent.time = xevent.SelectionRequestEvent.time;
-			sel.SelectionEvent.property = IntPtr.Zero;
-
-			XplatUIX11.XChangeProperty (display, xevent.SelectionRequestEvent.requestor,
-					xevent.SelectionRequestEvent.property,
-					xevent.SelectionRequestEvent.target,
-					8, PropertyMode.Replace, data, length);
-			sel.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-
-			XplatUIX11.XSendEvent (display, xevent.SelectionRequestEvent.requestor, false,
-					(IntPtr)EventMask.NoEventMask, ref sel);
-			return;
-		}
 
 		private void Reset ()
 		{
@@ -967,6 +723,7 @@ namespace System.Windows.Forms {
 
 		private bool HandleFinishedEvent (ref XEvent xevent)
 		{
+			X11SelectionHandler.FreeNativeSelectionBuffers(XdndSelection);
 			return true;
 		}
 
@@ -1035,58 +792,30 @@ namespace System.Windows.Forms {
 
 				IDataObject dragged = drag_data.Data as IDataObject;
 				if (dragged != null) {
+					// if it implements IDataObject it is responsible.
+					// don't do any special handling here like it is
+					// done below in SetDataWithFormats
+					// for example "Image that implements IDataObject"
 					data = dragged;
 				} else {
 					if (data == null)
 						data = new DataObject ();
-					SetDataWithFormats (drag_data.Data);
+					X11SelectionHandler.SetDataWithFormats (data, drag_data.Data);
 				}
 				return true;
 			}
 
 			foreach (IntPtr atom in SourceSupportedList (ref xevent)) {
-				MimeHandler handler = FindHandler (atom);
+				X11SelectionHandler handler = X11SelectionHandler.Find (atom);
 				if (handler == null)
 					continue;
-				XplatUIX11.XConvertSelection (display, XdndSelection, handler.Type,
-					handler.NonProtocol, toplevel, IntPtr.Zero /* CurrentTime */);
+				handler.ConvertSelectionDnd (display, XdndSelection, toplevel);
 				converts_pending++;
 				match = true;
 			}
 			return match;
 		}
 
-		private void SetDataWithFormats (object value)
-		{
-			if (value is string) {
-				data.SetData (DataFormats.Text, value);
-				data.SetData (DataFormats.UnicodeText, value);
-			}
-
-			data.SetData (value);
-		}
-
-		private MimeHandler FindHandler (IntPtr atom)
-		{
-			if (atom == IntPtr.Zero)
-				return null;
-			foreach (MimeHandler handler in MimeHandlers) {
-				if (handler.Type == atom)
-					return handler;
-			}
-			return null;
-		}
-
-		private MimeHandler FindHandler (string name)
-		{
-			foreach (MimeHandler handler in MimeHandlers) {
-				foreach (string alias in handler.Aliases) {
-					if (alias == name)
-						return handler;
-				}
-			}
-			return null;
-		}
 
 		private void SendStatus (IntPtr source, DragDropEffects effect)
 		{
@@ -1215,12 +944,7 @@ namespace System.Windows.Forms {
 			//XdndActionDescription = XplatUIX11.XInternAtom (display, "XdndActionDescription", false);
 			//XdndActionAsk = XplatUIX11.XInternAtom (display, "XdndActionAsk", false);
 
-			foreach (MimeHandler handler in MimeHandlers) {
-				handler.Type = XplatUIX11.XInternAtom (display, handler.Name, false);
-				handler.NonProtocol = XplatUIX11.XInternAtom (display,
-						String.Concat ("MWFNonP+", handler.Name), false);
-			}
-
+			X11SelectionHandler.Init();
 		}
 
 		private IntPtr [] SourceSupportedList (ref XEvent xevent)
@@ -1254,74 +978,6 @@ namespace System.Windows.Forms {
 				XplatUIX11.XFree (data);
 			}
 
-			return res;
-		}
-
-		private string GetText (ref XEvent xevent, bool unicode)
-		{
-			int nread = 0;
-			IntPtr nitems;
-			IntPtr bytes_after;
-
-			StringBuilder builder = new StringBuilder ();
-			do {
-				IntPtr actual_type;
-				int actual_fmt;
-				IntPtr data = IntPtr.Zero;
-
-				if (0 != XplatUIX11.XGetWindowProperty (display,
-						    xevent.AnyEvent.window,
-						    (IntPtr) xevent.SelectionEvent.property,
-						    IntPtr.Zero, new IntPtr(0xffffff), false,
-						    (IntPtr) Atom.AnyPropertyType, out actual_type,
-						    out actual_fmt, out nitems, out bytes_after,
-						    ref data)) {
-					XplatUIX11.XFree (data);
-					break;
-				}
-
-				if (unicode)
-					builder.Append (Marshal.PtrToStringUni (data));
-				else
-					builder.Append (Marshal.PtrToStringAnsi (data));
-				nread += nitems.ToInt32();
-
-				XplatUIX11.XFree (data);
-			} while (bytes_after.ToInt32() > 0);
-			if (nread == 0)
-				return null;
-			return builder.ToString ();
-		}
-
-		private MemoryStream GetData (ref XEvent xevent)
-		{
-			int nread = 0;
-			IntPtr nitems;
-			IntPtr bytes_after;
-
-			MemoryStream res = new MemoryStream ();
-			do {
-				IntPtr actual_type;
-				int actual_fmt;
-				IntPtr data = IntPtr.Zero;
-
-				if (0 != XplatUIX11.XGetWindowProperty (display,
-						    xevent.AnyEvent.window,
-						    (IntPtr) xevent.SelectionEvent.property,
-						    IntPtr.Zero, new IntPtr(0xffffff), false,
-						    (IntPtr) Atom.AnyPropertyType, out actual_type,
-						    out actual_fmt, out nitems, out bytes_after,
-						    ref data)) {
-					XplatUIX11.XFree (data);
-					break;
-				}
-
-				for (int i = 0; i < nitems.ToInt32(); i++)
-					res.WriteByte (Marshal.ReadByte (data, i));
-				nread += nitems.ToInt32();
-
-				XplatUIX11.XFree (data);
-			} while (bytes_after.ToInt32() > 0);
 			return res;
 		}
 
@@ -1385,37 +1041,6 @@ namespace System.Windows.Forms {
 
 			XplatUIX11.XFree (data);
 			return res;
-		}
-
-		private IntPtr [] DetermineSupportedTypes (object data)
-		{
-			ArrayList res = new ArrayList ();
-
-			if (data is string) {
-				MimeHandler handler = FindHandler ("text/plain");
-				if (handler != null)
-					res.Add (handler.Type);
-			}/* else if (data is Bitmap)
-				res.Add (data);
-
-			 */
-
-			IDataObject data_object = data as IDataObject;
-			if (data_object != null) {
-				foreach (string format in data_object.GetFormats (true)) {
-					MimeHandler handler = FindHandler (format);
-					if (handler != null && !res.Contains (handler.Type))
-						res.Add (handler.Type);
-				}
-			}
-
-			if (data is ISerializable) {
-				MimeHandler handler = FindHandler ("application/x-mono-serialized-object");
-				if (handler != null)
-					res.Add (handler.Type);
-			}
-
-			return (IntPtr []) res.ToArray (typeof (IntPtr));
 		}
 	}
 }
