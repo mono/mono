@@ -144,7 +144,26 @@ namespace System.Windows.Forms {
 			if (data == null)
 				return null;
 
-			return (StringCollection)data.GetData (DataFormats.FileDrop, true);
+			// CAUTION: DataFormats.FileDrop has multiple storage types
+			//    string[] - Carbon, Win32
+			//    StringCollection - SetFileDropList, X11
+			// support both here
+			string[] array;
+			StringCollection collection;
+
+			object raw = data.GetData (DataFormats.FileDrop, true);
+
+			if (raw != null) {
+				array = raw as string[];
+				if (array != null) {
+					collection = new StringCollection ();
+					collection.AddRange (array);
+				} else
+					collection = raw as StringCollection;
+			} else
+				collection = null;
+
+			return collection;
 		}
 		
 		public static Image GetImage ()
