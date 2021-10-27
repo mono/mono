@@ -1836,18 +1836,129 @@ ves_icall_System_Runtime_InteropServices_Marshal_QueryInterfaceInternal (MonoIUn
 	return mono_IUnknown_QueryInterface (pUnk, riid, ppv);
 }
 
+/* Call IUnknown.Release, ignoring exceptions if possible on the current platform. */
+static int mono_IUnknown_Release_IgnoreExceptions (MonoIUnknown *pUnk);
+
+#if defined(HOST_WIN32) && defined(HOST_AMD64) && defined(__GNUC__)
+int WINAPI release_call_wrapper(MonoIUnknown *pUnk);
+
+void WINAPI release_call_wrapper_catch(void);
+
+EXCEPTION_DISPOSITION __stdcall release_call_wrapper_handler( EXCEPTION_RECORD *rec, ULONG64 frame,
+                                               CONTEXT *context, DISPATCHER_CONTEXT *dispatch )
+{
+    RtlUnwind((void *)frame, release_call_wrapper_catch, rec, NULL);
+    return ExceptionContinueSearch;
+}
+
+asm(".text\n\t"
+    ".align 4\n\t"
+    ".globl release_call_wrapper \n\t"
+    ".def release_call_wrapper \n\t"
+    ".scl 2\n\t"
+    ".type 32\n\t"
+    ".endef \n\t"
+    ".seh_proc release_call_wrapper\n"
+    "release_call_wrapper:\n\t"
+
+    "subq $0x28, %rsp\n\t"
+    ".seh_stackalloc 0x28\n\t"
+    ".seh_endprologue\n"
+
+    "movq 0(%rcx),%rax\n\t"             /* IUnknown->lpVtbl */
+    "callq *0x10(%rax)\n\t"             /* Release() */
+
+    "nop\n\t"
+    "addq $0x28, %rsp\n\t"
+    "retq\n\t"
+    "release_call_wrapper_catch:\n\t"
+    "xorq %rax, %rax\n\t"
+    "addq $0x28, %rsp\n\t"
+    "retq\n\t"
+    ".seh_handler release_call_wrapper_handler, @except\n\t"
+    ".seh_endproc\n\t"
+);
+
+static int mono_IUnknown_Release_IgnoreExceptions (MonoIUnknown *pUnk) {
+	return release_call_wrapper(pUnk);
+}
+#elif defined(HOST_WIN32) && defined(HOST_X86) && defined(__GNUC__)
+int WINAPI release_call_wrapper(MonoIUnknown *pUnk);
+
+NTSTATUS WINAPI NtContinue(PCONTEXT,BOOLEAN);
+
+int WINAPI release_call_wrapper_handler( EXCEPTION_RECORD *rec, EXCEPTION_REGISTRATION_RECORD *frame,
+                      CONTEXT *context, void *dispatch )
+{
+    CONTEXT *catch_context;
+
+    if (rec->ExceptionFlags & 0x6)
+    {
+        /* Unwinding. */
+        return ExceptionContinueSearch;
+    }
+
+    catch_context = *(CONTEXT **)(frame + 1);
+
+    RtlUnwind(frame, NULL, rec, NULL);
+    ((NT_TIB *)NtCurrentTeb())->ExceptionList = *(void **)frame;
+
+    NtContinue(catch_context, FALSE);
+    return ExceptionContinueSearch;
+}
+
+asm(".text\n\t"
+    ".align 4\n\t"
+    ".globl _release_call_wrapper@4 \n\t"
+    ".def _release_call_wrapper@4 \n\t"
+    ".scl 2\n\t"
+    ".type 32\n\t"
+    ".endef \n\t"
+    "_release_call_wrapper@4:\n\t"
+    "pushl %ebp\n\t"
+    "movl %esp,%ebp\n\t"
+    "subl $0xcc,%esp\n\t"
+    "pushl %esp\n\t"
+    "xorl %eax,%eax\n\t"
+    "call _RtlCaptureContext@4\n\t"
+    "leal 12(%ebp),%eax\n\t"
+    "movl %eax,0xc4(%esp)\n\t"                /* context->Esp */
+    "subl $12,%esp\n\t"
+    "lea _release_call_wrapper_handler@16,%eax\n\t"
+    "movl %eax,4(%esp)\n\t"                   /* frame->Handler */
+    ".byte 0x64\n\tmovl (0x18),%eax\n\t"      /* teb */
+    "movl 0(%eax),%ecx\n\t"                   /* ExceptionList */
+    "movl %ecx,0(%esp)\n\t"                   /* frame->Prev */
+    "leal 12(%esp),%ecx\n\t"
+    "movl %ecx,8(%esp)\n\t"                   /* frame + 1 */
+    "movl %esp,0(%eax)\n\t"                   /* ExceptionList */
+    "movl 8(%ebp),%eax\n\t"
+    "pushl %eax\n\t"
+    "movl 0(%eax),%eax\n\t"                   /* lpVtbl */
+    "call *8(%eax)\n\t"                       /* lpVtbl->Release */
+    ".byte 0x64\n\tmovl (0x18),%edx\n\t"      /* teb */
+    "movl 0(%esp),%ecx\n\t"
+    "movl %ecx,0(%edx)\n\t"                   /* ExceptionList */
+    "leave\n\t"
+    "ret $4\n\t"
+);
+
+static int mono_IUnknown_Release_IgnoreExceptions (MonoIUnknown *pUnk) {
+	return release_call_wrapper(pUnk);
+}
+#else
+/* Not implemented on this platform. */
+static int mono_IUnknown_Release_IgnoreExceptions (MonoIUnknown *pUnk)
+{
+	return mono_IUnknown_Release(pUnk);
+}
+#endif
+
 int
 ves_icall_System_Runtime_InteropServices_Marshal_ReleaseInternal (MonoIUnknown *pUnk)
 {
 	g_assert (pUnk);
-#if HOST_WIN32
-	// Changed for Wine Mono - .NET Framework silently ignores the error in this situation.
-	if (IsBadReadPtr(pUnk, sizeof(void*)) ||
-		IsBadReadPtr(&pUnk->vtable->Release, sizeof(void*)) ||
-		IsBadCodePtr((FARPROC)pUnk->vtable->Release))
-		return 0;
-#endif
-	return mono_IUnknown_Release (pUnk);
+	return mono_IUnknown_Release_IgnoreExceptions (pUnk);
 }
 
 static gboolean
