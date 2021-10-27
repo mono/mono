@@ -7461,6 +7461,9 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XInternAtoms")]
 		internal extern static int XInternAtoms(IntPtr display, string[] atom_names, int atom_count, bool only_if_exists, IntPtr[] atoms);
 
+		[DllImport ("libX11", EntryPoint="XGetAtomName")]
+		internal extern static string XGetAtomName(IntPtr display, IntPtr atom);
+
 		[DllImport ("libX11", EntryPoint="XSetWMProtocols")]
 		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, IntPtr[] protocols, int count);
 
