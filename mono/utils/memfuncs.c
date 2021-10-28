@@ -273,6 +273,10 @@ mono_determine_physical_ram_size (void)
 #elif defined (HAVE_SYSCONF)
 	guint64 page_size = 0, num_pages = 0;
 
+	gint64 restricted_limit = getRestrictedPhysicalMemoryLimit();
+	if (restricted_limit != 0)
+		return restricted_limit;
+
 	/* sysconf works on most *NIX operating systems, if your system doesn't have it or if it
 	 * reports invalid values, please add your OS specific code below. */
 #ifdef _SC_PAGESIZE
@@ -340,6 +344,9 @@ mono_determine_physical_ram_available_size (void)
 
 	host_page_size (host, &page_size);
 	return (guint64) vmstat.free_count * page_size;
+
+#elif defined (__FreeBSD__) || defined (__linux__) || defined (__APPLE__)
+	return (getPhysicalMemoryAvail());
 
 #elif defined (HAVE_SYSCONF)
 	guint64 page_size = 0, num_pages = 0;

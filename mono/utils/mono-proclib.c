@@ -838,15 +838,24 @@ mono_cpu_count (void)
  * [5] https://github.com/dotnet/coreclr/blob/7058273693db2555f127ce16e6b0c5b40fb04867/src/pal/src/misc/sysinfo.cpp#L148
  */
 
+	int count = 0;
+
+	if (getCpuLimit(&count))
+		return count;
+
 #if defined (_SC_NPROCESSORS_CONF) && defined (HAVE_SYSCONF)
 	{
-		int count = sysconf (_SC_NPROCESSORS_CONF);
+		count = sysconf (_SC_NPROCESSORS_CONF);
 		if (count > 0)
 			return count;
 	}
 #endif
 
 #else
+	int count = 0;
+
+	if (getCpuLimit(&count))
+		return count;
 
 #ifdef HAVE_SCHED_GETAFFINITY
 	{
