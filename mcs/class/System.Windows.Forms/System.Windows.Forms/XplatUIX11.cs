@@ -6688,6 +6688,14 @@ namespace System.Windows.Forms {
 			return _XSetWMProtocols(display, window, protocols, count);
 		}
 
+		[DllImport ("libX11", EntryPoint="XGetAtomName")]
+		internal extern static string _XGetAtomName(IntPtr display, IntPtr atom);
+		internal static string XGetAtomName(IntPtr display, IntPtr atom)
+		{
+			DebugHelper.TraceWriteLine ("XGetAtomName");
+			return XGetAtomName(display, atom);
+		}
+
 		[DllImport ("libX11", EntryPoint="XGrabPointer")]
 		internal extern static int _XGrabPointer(IntPtr display, IntPtr window, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, IntPtr confine_to, IntPtr cursor, IntPtr timestamp);
 		internal static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, IntPtr confine_to, IntPtr cursor, IntPtr timestamp)
