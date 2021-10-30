@@ -1292,7 +1292,15 @@ namespace System.Windows.Forms {
 					Clipboard.Item = Encoding.Unicode.GetString (buffer);
 				} else if (property == RICHTEXTFORMAT)
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
-				else if (DataFormats.ContainsFormat (property.ToInt32 ())) {
+				else if (property == TARGETS) {
+					for (int pos = 0; pos < (long) nitems; pos++) {
+						IntPtr format = Marshal.ReadIntPtr (prop, pos * IntPtr.Size);
+						if (DataFormats.ContainsFormat (format.ToInt32())) {
+							Clipboard.Formats.Add (format);
+							DriverDebug("Got supported clipboard atom format: {0}", format);
+						}
+					}
+				} else if (DataFormats.ContainsFormat (property.ToInt32 ())) {
 					if (DataFormats.GetFormat (property.ToInt32 ()).is_serializable) {
 						MemoryStream memory_stream = new MemoryStream ((int)nitems);
 						for (int i = 0; i < (int)nitems; i++)
@@ -1916,11 +1924,7 @@ namespace System.Windows.Forms {
 					if (Clipboard.Enumerating) {
 						Clipboard.Enumerating = false;
 						if (xevent.SelectionEvent.property != IntPtr.Zero) {
-							XDeleteProperty(DisplayHandle, FosterParent, (IntPtr)xevent.SelectionEvent.property);
-							if (!Clipboard.Formats.Contains(xevent.SelectionEvent.property)) {
-								Clipboard.Formats.Add(xevent.SelectionEvent.property);
-								DriverDebug("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
-							}
+							TranslatePropertyToClipboard (xevent.SelectionEvent.property);
 						}
 					} else if (Clipboard.Retrieving) {
 						Clipboard.Retrieving = false;
@@ -2726,10 +2730,8 @@ namespace System.Windows.Forms {
 
 		internal override int[] ClipboardAvailableFormats(IntPtr handle)
 		{
-			DataFormats.Format	f;
 			int[]			result;
 
-			f = DataFormats.Format.List;
 
 			if (XGetSelectionOwner(DisplayHandle, CLIPBOARD) == IntPtr.Zero) {
 				return null;
@@ -2737,19 +2739,17 @@ namespace System.Windows.Forms {
 
 			Clipboard.Formats = new ArrayList();
 
-			while (f != null) {
-				XConvertSelection(DisplayHandle, CLIPBOARD, (IntPtr)f.Id, (IntPtr)f.Id, FosterParent, IntPtr.Zero);
+			// TARGETS is supported by all, no iteration required - see ICCCM chapter 2.6.2. Target Atoms
+			XConvertSelection(DisplayHandle, CLIPBOARD, TARGETS, TARGETS, FosterParent, IntPtr.Zero);
 
-				var timeToWaitForSelectionFormats = TimeSpan.FromSeconds(4);
-				var startTime = DateTime.Now;
-				Clipboard.Enumerating = true;
-				while (Clipboard.Enumerating) {
-					UpdateMessageQueue(null, false);
+			var timeToWaitForSelectionFormats = TimeSpan.FromSeconds(4);
+			var startTime = DateTime.Now;
+			Clipboard.Enumerating = true;
+			while (Clipboard.Enumerating) {
+				UpdateMessageQueue(null, false);
 
-					if (DateTime.Now - startTime > timeToWaitForSelectionFormats)
-						break;
-				}
-				f = f.Next;
+				if (DateTime.Now - startTime > timeToWaitForSelectionFormats)
+					break;
 			}
 
 			result = new int[Clipboard.Formats.Count];
