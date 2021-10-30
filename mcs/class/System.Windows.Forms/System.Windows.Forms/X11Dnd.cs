@@ -434,6 +434,11 @@ namespace System.Windows.Forms {
 			motion_poll = -1;
 			timer.Start ();
 
+			// X11R7.7: format 32 is actually padded 64 for 64 bit processes
+			XplatUIX11.XChangeProperty (display, drag_data.Window, XdndTypeList,
+				(IntPtr) Atom.XA_ATOM, 32, PropertyMode.Replace,
+				drag_data.SupportedTypes, drag_data.SupportedTypes.Length);
+
 			// Send Enter to the window initializing the dnd operation - which initializes the data
 			SendEnter (drag_data.Window, drag_data.Window, drag_data.SupportedTypes);
 			drag_data.LastTopLevel = toplevel;
@@ -967,6 +972,9 @@ namespace System.Windows.Forms {
 
 		private bool HandleFinishedEvent (ref XEvent xevent)
 		{
+			if (drag_data != null)
+				XplatUIX11.XDeleteProperty (display, drag_data.Window, XdndTypeList);
+
 			return true;
 		}
 
@@ -1116,11 +1124,11 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = from;
 
-			// (int) xevent.ClientMessageEvent.ptr2 & 0x1)
-			// int ptr2 = 0x1;
-			// xevent.ClientMessageEvent.ptr2 = (IntPtr) ptr2;
-			// (e)->xclient.data.l[1] = ((e)->xclient.data.l[1] & ~(0xFF << 24)) | ((v) << 24)
-			xevent.ClientMessageEvent.ptr2 = (IntPtr) ((long)XdndVersion [0] << 24);
+			long ptr2 = (long) XdndVersion [0];
+			ptr2 <<= 24;
+			if (supported.Length > 3)
+				ptr2 |= 1;
+			xevent.ClientMessageEvent.ptr2 = (IntPtr) ptr2;
 			
 			if (supported.Length > 0)
 				xevent.ClientMessageEvent.ptr3 = supported [0];
@@ -1247,8 +1255,8 @@ namespace System.Windows.Forms {
 
 				res = new IntPtr [count.ToInt32()];
 				for (int i = 0; i < count.ToInt32(); i++) {
-					res [i] = (IntPtr) Marshal.ReadInt32 (data, i *
-							Marshal.SizeOf (typeof (int)));
+					// X11R7.7: format 32 is actually padded 64 for 64 bit processes
+					res [i] = Marshal.ReadIntPtr(data, i * IntPtr.Size);
 				}
 
 				XplatUIX11.XFree (data);
