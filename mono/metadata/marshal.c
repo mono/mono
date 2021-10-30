@@ -3234,6 +3234,32 @@ mono_marshal_boolean_managed_conv_in_get_conv_arg_class (MonoMarshalSpec *spec, 
 	return conv_arg_class;
 }
 
+static gboolean
+ptr_type_is_copy_constructed (MonoType *type)
+{
+	g_assert (type->type == MONO_TYPE_PTR);
+	MonoType *target_type = type->data.type;
+	int i, cmod_count = mono_type_custom_modifier_count (target_type);
+	for (i = 0; i < cmod_count; i++)
+	{
+		ERROR_DECL (error);
+		gboolean required;
+
+		MonoType *cmod_type = mono_type_get_custom_modifier (target_type, i, &required, error);
+		mono_error_assert_ok (error);
+		MonoClass *cmod_class = mono_class_from_mono_type_internal (cmod_type);
+
+		if ((m_class_get_image (cmod_class) == mono_defaults.corlib) &&
+			!strcmp (m_class_get_name_space (cmod_class), "System.Runtime.CompilerServices") &&
+			!strcmp (m_class_get_name (cmod_class), "IsCopyConstructed"))
+		{
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 int
 mono_emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t, 
 	      MonoMarshalSpec *spec, int conv_arg, 
@@ -3289,6 +3315,9 @@ mono_emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t,
 	case MONO_TYPE_BOOLEAN:
 		return get_marshal_cb ()->emit_marshal_boolean (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 	case MONO_TYPE_PTR:
+		if (ptr_type_is_copy_constructed (t))
+			return get_marshal_cb ()->emit_marshal_copy_ctor (m, argnum, t, spec, conv_arg, conv_arg_type, action);
+
 		return get_marshal_cb ()->emit_marshal_ptr (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 	case MONO_TYPE_CHAR:
 		return get_marshal_cb ()->emit_marshal_char (m, argnum, t, spec, conv_arg, conv_arg_type, action);

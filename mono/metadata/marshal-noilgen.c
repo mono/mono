@@ -170,6 +170,15 @@ emit_marshal_variant_noilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 {
 	g_assert_not_reached ();
 }
+
+static int
+emit_marshal_copy_ctor_noilgen (EmitMarshalContext *m, int argnum, MonoType *t,
+		     MonoMarshalSpec *spec,
+		     int conv_arg, MonoType **conv_arg_type,
+		     MarshalAction action)
+{
+	g_assert_not_reached ();
+}
 #endif
 
 #ifndef ENABLE_ILGEN
@@ -376,6 +385,7 @@ mono_marshal_noilgen_init (void)
 	cb.emit_marshal_handleref = emit_marshal_handleref_noilgen;
 	cb.emit_marshal_object = emit_marshal_object_noilgen;
 	cb.emit_marshal_variant = emit_marshal_variant_noilgen;
+	cb.emit_marshal_copy_ctor = emit_marshal_copy_ctor_noilgen;
 	cb.emit_castclass = emit_castclass_noilgen;
 	cb.emit_struct_to_ptr = emit_struct_to_ptr_noilgen;
 	cb.emit_ptr_to_struct = emit_ptr_to_struct_noilgen;
@@ -428,6 +438,7 @@ mono_marshal_noilgen_init_blittable (MonoMarshalCallbacks *cb)
 	cb->emit_marshal_handleref = emit_marshal_handleref_noilgen;
 	cb->emit_marshal_object = emit_marshal_object_noilgen;
 	cb->emit_marshal_variant = emit_marshal_variant_noilgen;
+	cb->emit_marshal_copy_ctor = emit_marshal_copy_ctor_noilgen;
 }
 #else
 void

@@ -2280,6 +2280,7 @@ emit_native_wrapper_ilgen (MonoImage *image, MonoMethodBuilder *mb, MonoMethodSi
 		}
 
 		switch (t->type) {
+		case MONO_TYPE_PTR:
 		case MONO_TYPE_STRING:
 		case MONO_TYPE_VALUETYPE:
 		case MONO_TYPE_CLASS:
@@ -6239,6 +6240,68 @@ emit_marshal_variant_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 	return conv_arg;
 }
 
+#if defined(TARGET_WIN32) && defined(TARGET_X86)
+/* On x86, IsCopyConstructed parameters are passed as struct even though the function signature claims they're pointers */
+# define COPY_CTOR_DEREFERENCE 1
+#endif
+
+static int
+emit_marshal_copy_ctor_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
+		     MonoMarshalSpec *spec,
+		     int conv_arg, MonoType **conv_arg_type,
+		     MarshalAction action)
+{
+	MonoMethodBuilder *mb = m->mb;
+	MonoType *target_type = t->data.type;
+	MonoClass *target_class = mono_class_from_mono_type_internal (t->data.type);
+
+	switch (action) {
+	case MARSHAL_ACTION_CONV_IN: {
+		conv_arg = mono_mb_add_local (mb, target_type);
+
+#ifdef COPY_CTOR_DEREFERENCE
+		*conv_arg_type = target_type;
+#endif
+
+		MonoMethod *copy_method = get_method_nofail (target_class, "<MarshalCopy>", 2, METHOD_ATTRIBUTE_SPECIAL_NAME);
+
+		// <MarshalCopy>(&conv_arg, arg);
+		mono_mb_emit_ldloc_addr (mb, conv_arg);
+		mono_mb_emit_ldarg (mb, argnum);
+		mono_mb_emit_managed_call (mb, copy_method, NULL);
+
+		break;
+	}
+	case MARSHAL_ACTION_CONV_OUT: {
+		MonoMethod *destroy_method = get_method_nofail (target_class, "<MarshalDestroy>", 1, METHOD_ATTRIBUTE_SPECIAL_NAME);
+
+		// .NET Framework destroys arg, not conv_arg. This makes no sense, but we duplicate the bug here.
+		// In a sensible universe, this would be: mono_mb_emit_ldloc_addr (mb, conv_arg);
+		mono_mb_emit_ldarg (mb, argnum);
+		mono_mb_emit_managed_call (mb, destroy_method, NULL);
+
+		break;
+	}
+	case MARSHAL_ACTION_PUSH: {
+#ifdef COPY_CTOR_DEREFERENCE
+		mono_mb_emit_ldloc (mb, conv_arg);
+#else
+		mono_mb_emit_ldloc_addr (mb, conv_arg);
+#endif
+		break;
+	}
+	case MARSHAL_ACTION_CONV_RESULT: {
+		char *msg = g_strdup ("IsCopyContructed marshaling not supported for return type.");
+		mono_mb_emit_exception_marshal_directive (mb, msg);
+		break;
+	}
+	default:
+		g_assert_not_reached ();
+	}
+
+	return conv_arg;
+}
+
 static void
 emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_sig, MonoMarshalSpec **mspecs, EmitMarshalContext* m, MonoMethod *method, MonoGCHandle target_handle)
 {
@@ -6932,6 +6995,7 @@ mono_marshal_ilgen_init (void)
 	cb.emit_marshal_handleref = emit_marshal_handleref_ilgen;
 	cb.emit_marshal_object = emit_marshal_object_ilgen;
 	cb.emit_marshal_variant = emit_marshal_variant_ilgen;
+	cb.emit_marshal_copy_ctor = emit_marshal_copy_ctor_ilgen;
 #endif
 	cb.emit_castclass = emit_castclass_ilgen;
 	cb.emit_struct_to_ptr = emit_struct_to_ptr_ilgen;
