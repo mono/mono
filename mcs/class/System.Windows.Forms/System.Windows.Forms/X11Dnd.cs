@@ -468,8 +468,10 @@ namespace System.Windows.Forms {
 				return false;
 
 			X11SelectionHandler handler = X11SelectionHandler.Find (xevent.SelectionRequestEvent.target);
-			if (handler == null)
+			if (handler == null) {
+				X11SelectionHandler.SetUnsupported (ref xevent);
 				return false;
+			}
 
 			handler.SetData (ref xevent, drag_data.Data);
 

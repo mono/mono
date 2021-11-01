@@ -109,14 +109,20 @@ namespace System.Windows.Forms
 		internal void SetData (ref XEvent xevent, object data)
 		{
 			try {
-				Converter.SetData (ref xevent, this, data);
+				if (!Converter.SetData (ref xevent, this, data))
+					SetUnsupported (ref xevent);
 			} catch {
 				// always send data or requester is going to timeout
-				DataConverter.SetEmpty (ref xevent);
+				SetUnsupported (ref xevent);
 
 				// unlike GetData these issues where caused by 'us'
 				throw;
 			}
+		}
+
+		internal static void SetUnsupported (ref XEvent xevent)
+		{
+			DataConverter.SetUnsupported (ref xevent);
 		}
 
 		internal int ConvertSelectionDnd (IntPtr display, IntPtr selection, IntPtr toplevel)
@@ -611,18 +617,20 @@ namespace System.Windows.Forms
 		abstract class DataConverter
 		{
 			internal abstract void GetData (ref XEvent xevent, X11SelectionHandler handler, IDataObject data);
-			internal abstract void SetData (ref XEvent xevent, X11SelectionHandler handler, object data);
+			internal abstract bool SetData (ref XEvent xevent, X11SelectionHandler handler, object data);
 
 			// a dummy buffer filled only with zeros
 			static readonly IntPtr DUMMY_PTR;
-			const int DUMMY_PTR_LENGTH = 8;
+
+			// 24 <= max(ptr_size) * 3
+			const int CANARY_LENGTH = 24;
 
 			static readonly IDictionary<IntPtr, ICollection<IntPtr>> NATIVE_BUFFERS;
 
 			static DataConverter ()
 			{
-				DUMMY_PTR = Marshal.AllocHGlobal (DUMMY_PTR_LENGTH);
-				for (int i = 0; i < DUMMY_PTR_LENGTH; i++)
+				DUMMY_PTR = Marshal.AllocHGlobal (CANARY_LENGTH);
+				for (int i = 0; i < CANARY_LENGTH; i++)
 					Marshal.WriteByte (DUMMY_PTR, i, 0);
 
 				NATIVE_BUFFERS = new SortedDictionary<IntPtr, ICollection<IntPtr>> (new IntPtrComparer ());
@@ -669,11 +677,14 @@ namespace System.Windows.Forms
 				sel.SelectionEvent.time = xevent.SelectionRequestEvent.time;
 				sel.SelectionEvent.property = IntPtr.Zero;
 
-				XplatUIX11.XChangeProperty (XplatUIX11.Display, xevent.SelectionRequestEvent.requestor,
-					xevent.SelectionRequestEvent.property,
-					xevent.SelectionRequestEvent.target,
-					8, PropertyMode.Replace, data, length);
-				sel.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+				if (0 <= length) {
+					XplatUIX11.XChangeProperty (XplatUIX11.Display, xevent.SelectionRequestEvent.requestor,
+						xevent.SelectionRequestEvent.property,
+						xevent.SelectionRequestEvent.target,
+						8, PropertyMode.Replace, data, length);
+					sel.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+				} else
+					sel.SelectionEvent.property = IntPtr.Zero;
 
 				XplatUIX11.XSendEvent (XplatUIX11.Display, xevent.SelectionRequestEvent.requestor, false,
 					(IntPtr)EventMask.NoEventMask, ref sel);
@@ -716,8 +727,12 @@ namespace System.Windows.Forms
 
 			internal static void SetEmpty (ref XEvent xevent)
 			{
-				// TODO set as 'non-supported' instead of having 0-length
 				SetProperty (ref xevent, DUMMY_PTR, 0);
+			}
+
+			internal static void SetUnsupported (ref XEvent xevent)
+			{
+				SetProperty (ref xevent, IntPtr.Zero, -1);
 			}
 
 			protected static void SetBytes (ref XEvent xevent, byte[] bytes)
@@ -732,10 +747,8 @@ namespace System.Windows.Forms
 					// but they help with broken receivers that uses
 					// strlen instead of the length included in X11 message
 					// for example older Mono versions
-					//
-					// 24 <= max(ptr_size) * 3
 
-					length_canary = bytes.Length + 24;
+					length_canary = bytes.Length + CANARY_LENGTH;
 					if (length_canary < bytes.Length)
 						length_canary = int.MaxValue;
 
@@ -773,10 +786,8 @@ namespace System.Windows.Forms
 					// but they help with broken receivers that uses strlen
 					// instead of the length included in X11 message
 					// for example older Mono versions
-					//
-					// 24 <= max(ptr_size) * 3
 
-					length_canary = length + 24;
+					length_canary = length + CANARY_LENGTH;
 					if (length_canary < length)
 						length_canary = int.MaxValue;
 
@@ -839,15 +850,18 @@ namespace System.Windows.Forms
 				}
 			}
 
-			internal override void SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
+			internal override bool SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
 			{
 				IDataObject data_obj;
 				MemoryStream stream;
 				BinaryFormatter formatter;
 
 				if (!IsObjectSerializable (data)) {
-					data_obj = (IDataObject)data;
+					data_obj = data as IDataObject;
 					data = data_obj.GetData (DataFormats.Serializable, true);
+					if (!IsObjectSerializable (data)) {
+						return false;
+					}
 				}
 
 				using (stream = new MemoryStream ()) {
@@ -859,6 +873,8 @@ namespace System.Windows.Forms
 
 					SetBytes (ref xevent, stream);
 				}
+
+				return true;
 			}
 		}
 
@@ -888,7 +904,7 @@ namespace System.Windows.Forms
 				handler.SetUnsetTargets (data, image);
 			}
 
-			internal override void SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
+			internal override bool SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
 			{
 				Image image;
 				MemoryStream stream;
@@ -904,17 +920,18 @@ namespace System.Windows.Forms
 								break;
 						}
 					}
+					if (image == null) {
+						return false;
+					}
 				}
 
-				if (image == null) {
-					SetEmpty (ref xevent);
-					return;
-				}
 
 				using (stream = new MemoryStream ()) {
 					image.Save (stream, ImgFormat);
 					SetBytes (ref xevent, stream);
 				}
+
+				return false;
 			}
 		}
 
@@ -942,7 +959,7 @@ namespace System.Windows.Forms
 					handler.SetUnsetTargets (data, decoded);
 			}
 
-			internal override void SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
+			internal override bool SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
 			{
 				IDataObject data_object;
 				StringBuilder builder;
@@ -1008,9 +1025,9 @@ namespace System.Windows.Forms
 						}
 					}
 				} else
-					native = null;
+					return false;
 
-				SetText (ref xevent, handler, native);
+				return SetText (ref xevent, handler, native);
 			}
 
 			protected virtual object FromNative (string native)
@@ -1057,14 +1074,13 @@ namespace System.Windows.Forms
 				}
 			}
 
-			protected void SetText (ref XEvent xevent, X11SelectionHandler handler, string str)
+			protected bool SetText (ref XEvent xevent, X11SelectionHandler handler, string str)
 			{
 				Encoding encoding = null;
 				byte[] bytes;
 
-				if ((str == null) || (str.Length < 1)) {
-					SetEmpty (ref xevent);
-					return;
+				if (str == null) {
+					return false;
 				}
 
 				if (handler.CharsetEncoding != null)
@@ -1084,6 +1100,8 @@ namespace System.Windows.Forms
 				bytes = encoding.GetBytes (str);
 
 				SetBytes (ref xevent, bytes);
+
+				return true;
 			}
 		}
 
@@ -1095,7 +1113,7 @@ namespace System.Windows.Forms
 			{
 			}
 
-			internal override void SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
+			internal override bool SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
 			{
 				StringBuilder builder = new StringBuilder ();
 				IntPtr[] formats = DetermineSupportedTypes (data);
@@ -1105,7 +1123,7 @@ namespace System.Windows.Forms
 					builder.Append ('\n');
 				}
 
-				SetText (ref xevent, handler, builder.ToString ( ));
+				return SetText (ref xevent, handler, builder.ToString ( ));
 			}
 		}
 
@@ -1167,7 +1185,7 @@ namespace System.Windows.Forms
 				handler.SetUnsetTargets (data, all);
 			}
 
-			internal override void SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
+			internal override bool SetData (ref XEvent xevent, X11SelectionHandler handler, object data)
 			{
 
 				object o;
@@ -1225,9 +1243,9 @@ namespace System.Windows.Forms
 				else if (uri_list != null)
 					text = Encode (uri_list, Seperator, Netscape);
 				else
-					text = null;
+					return false;
 
-				SetText (ref xevent, handler, text);
+				return SetText (ref xevent, handler, text);
 			}
 
 
