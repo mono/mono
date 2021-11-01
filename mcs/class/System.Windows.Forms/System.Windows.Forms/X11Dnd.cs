@@ -443,6 +443,13 @@ namespace System.Windows.Forms {
 
 		public bool HandleSelectionNotifyEvent (ref XEvent xevent)
 		{
+			if (xevent.SelectionEvent.selection != XdndSelection)
+				return false;
+
+			// we requested something the source right now doesn't support
+			if (xevent.SelectionEvent.property == IntPtr.Zero)
+				return false;
+
 			X11SelectionHandler handler = X11SelectionHandler.Find ((IntPtr) xevent.SelectionEvent.target);
 			if (handler == null)
 				return false;
