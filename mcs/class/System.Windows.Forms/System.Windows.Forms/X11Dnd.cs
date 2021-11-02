@@ -477,7 +477,7 @@ namespace System.Windows.Forms {
 			X11SelectionHandler handler = X11SelectionHandler.Find (xevent.SelectionRequestEvent.target);
 			if (handler == null) {
 				X11SelectionHandler.SetUnsupported (ref xevent);
-				return false;
+				return true;
 			}
 
 			handler.SetData (ref xevent, drag_data.Data);
