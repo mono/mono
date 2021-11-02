@@ -448,11 +448,11 @@ namespace System.Windows.Forms {
 
 			// we requested something the source right now doesn't support
 			if (xevent.SelectionEvent.property == IntPtr.Zero)
-				return false;
+				return true;
 
 			X11SelectionHandler handler = X11SelectionHandler.Find ((IntPtr) xevent.SelectionEvent.target);
 			if (handler == null)
-				return false;
+				return true;
 			if (data == null)
 				data = new DataObject ();
 

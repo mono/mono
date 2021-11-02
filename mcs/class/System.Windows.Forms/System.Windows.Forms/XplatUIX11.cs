@@ -1921,6 +1921,9 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.SelectionNotify: {
+					if (Dnd.HandleSelectionNotifyEvent (ref xevent))
+						break;
+
 					if (Clipboard.Enumerating) {
 						Clipboard.Enumerating = false;
 						if (xevent.SelectionEvent.property != IntPtr.Zero) {
@@ -1934,8 +1937,6 @@ namespace System.Windows.Forms {
 							Clipboard.ClearSources ();
 							Clipboard.Item = null;
 						}
-					} else {
-						Dnd.HandleSelectionNotifyEvent (ref xevent);
 					}
 					break;
 				}
