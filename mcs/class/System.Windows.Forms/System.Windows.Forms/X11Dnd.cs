@@ -692,7 +692,7 @@ namespace System.Windows.Forms {
 
 			MimeHandler handler = FindHandler (xevent.SelectionRequestEvent.target);
 			if (handler == null)
-				return false;
+				return true;
 
 			handler.Converter.SetData (this, drag_data.Data, ref xevent);
 
