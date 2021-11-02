@@ -49,22 +49,22 @@ namespace System.Windows.Forms {
 			Entered
 		}
 
-		private class DragData {
-			public IntPtr Window;
-			public DragState State;
-			public object Data;
-			public IntPtr Action;
-			public IntPtr [] SupportedTypes;
-			public MouseButtons MouseState;
-			public DragDropEffects AllowedEffects;
-			public Point CurMousePos;
+		class DragData {
+			internal IntPtr Window;
+			internal DragState State;
+			internal object Data;
+			internal IntPtr Action;
+			internal IntPtr [] SupportedTypes;
+			internal MouseButtons MouseState;
+			internal DragDropEffects AllowedEffects;
+			internal Point CurMousePos;
 			
-			public IntPtr LastWindow;
-			public IntPtr LastTopLevel;
+			internal IntPtr LastWindow;
+			internal IntPtr LastTopLevel;
 
-			public bool WillAccept;
+			internal bool WillAccept;
 			
-			public void Reset ()
+			internal void Reset ()
 			{
 				State = DragState.None;
 				Data = null;
@@ -74,56 +74,56 @@ namespace System.Windows.Forms {
 		}
 
 		// This version seems to be the most common
-		private static readonly IntPtr [] XdndVersion = new IntPtr [] { new IntPtr (4) }; 
+		static readonly IntPtr [] XdndVersion = new IntPtr [] { new IntPtr (4) };
 
-		private IntPtr display;
-		private DragData drag_data;
+		IntPtr display;
+		DragData drag_data;
 		
-		private IntPtr XdndAware;
-		private IntPtr XdndSelection;
-		private IntPtr XdndEnter;
-		private IntPtr XdndLeave;
-		private IntPtr XdndPosition;
-		private IntPtr XdndDrop;
-		private IntPtr XdndFinished;
-		private IntPtr XdndStatus;
-		private IntPtr XdndTypeList;
-		private IntPtr XdndActionCopy;
-		private IntPtr XdndActionMove;
-		private IntPtr XdndActionLink;
+		IntPtr XdndAware;
+		IntPtr XdndSelection;
+		IntPtr XdndEnter;
+		IntPtr XdndLeave;
+		IntPtr XdndPosition;
+		IntPtr XdndDrop;
+		IntPtr XdndFinished;
+		IntPtr XdndStatus;
+		IntPtr XdndTypeList;
+		IntPtr XdndActionCopy;
+		IntPtr XdndActionMove;
+		IntPtr XdndActionLink;
 		//private IntPtr XdndActionPrivate;
-		private IntPtr XdndActionList;
+		IntPtr XdndActionList;
 		//private IntPtr XdndActionDescription;
 		//private IntPtr XdndActionAsk;
 
 		//private State state;
 
-		private int converts_pending;
-		private bool position_recieved;
-		private bool status_sent;
-		private IntPtr target;
-		private IntPtr source;
-		private IntPtr toplevel;
-		private IDataObject data;
+		int converts_pending;
+		bool position_recieved;
+		bool status_sent;
+		IntPtr target;
+		IntPtr source;
+		IntPtr toplevel;
+		IDataObject data;
 
-		private Control control;
-		private int pos_x, pos_y;
-		private DragDropEffects allowed;
-		private DragEventArgs drag_event;
+		Control control;
+		int pos_x, pos_y;
+		DragDropEffects allowed;
+		DragEventArgs drag_event;
 
-		private Cursor CursorNo;
-		private Cursor CursorCopy;
-		private Cursor CursorMove;
-		private Cursor CursorLink;
+		Cursor CursorNo;
+		Cursor CursorCopy;
+		Cursor CursorMove;
+		Cursor CursorLink;
 		// check out the TODO below
 		//private IntPtr CurrentCursorHandle;
 
-		private bool tracking = false;
-		private bool dropped = false;
-		private int motion_poll;
+		bool tracking = false;
+		bool dropped = false;
+		int motion_poll;
 		//private X11Keyboard keyboard;
 
-		public X11Dnd (IntPtr display, X11Keyboard keyboard)
+		internal X11Dnd (IntPtr display, X11Keyboard keyboard)
 		{
 			this.display = display;
 			//this.keyboard = keyboard;
@@ -131,14 +131,14 @@ namespace System.Windows.Forms {
 			Init ();
 		}
 
-		public bool InDrag()
+		bool InDrag()
 		{
 			if (drag_data == null)
 				return false;
 			return drag_data.State != DragState.None;
 		}
 		
-		public void SetAllowDrop (Hwnd hwnd, bool allow)
+		internal void SetAllowDrop (Hwnd hwnd, bool allow)
 		{
 			int[] atoms;
 
@@ -156,7 +156,7 @@ namespace System.Windows.Forms {
 			hwnd.allow_drop = allow;
 		}
 
-		public DragDropEffects StartDrag (IntPtr handle, object data,
+		internal DragDropEffects StartDrag (IntPtr handle, object data,
 				DragDropEffects allowed_effects)
 		{
 			drag_data = new DragData ();
@@ -268,7 +268,7 @@ namespace System.Windows.Forms {
 			return DragDropEffects.None;
 		}
 
-		private void DndTickHandler (object sender, EventArgs e)
+		void DndTickHandler (object sender, EventArgs e)
 		{
 			// This is to make sure we don't get stuck in a loop if another
 			// app doesn't finish the DND operation
@@ -292,7 +292,7 @@ namespace System.Windows.Forms {
 
 		// This routines helps us to have a DndEnter/DndLeave fallback when there wasn't any mouse movement
 		// as .Net does
-		private void DefaultEnterLeave (object user_data)
+		void DefaultEnterLeave (object user_data)
 		{
 			IntPtr toplevel, window;
 			int x_root, y_root;
@@ -314,7 +314,7 @@ namespace System.Windows.Forms {
 				source_control.DndLeave (EventArgs.Empty);
 		}
 
-		public void HandleButtonUpMsg ()
+		void HandleButtonUpMsg ()
 		{
 			if (drag_data.State == DragState.Beginning) {
 				//state = State.Accepting;
@@ -343,14 +343,14 @@ namespace System.Windows.Forms {
 			return;
 		}
 
-		private void RemoveCapture (IntPtr handle)
+		void RemoveCapture (IntPtr handle)
 		{
 			Control c = MwfWindow (handle);
 			if (c.InternalCapture)
 				c.InternalCapture = false;
 		}
 
-		public bool HandleMouseOver ()
+		bool HandleMouseOver ()
 		{
 			IntPtr toplevel, window;
 			int x_root, y_root;
@@ -414,7 +414,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public void HandleKeyMessage (MSG msg)
+		void HandleKeyMessage (MSG msg)
 		{
 			if (VirtualKeys.VK_ESCAPE == (VirtualKeys) msg.wParam.ToInt32()) {
 				QueryContinue (true, DragAction.Cancel);
@@ -422,7 +422,7 @@ namespace System.Windows.Forms {
 		}
 		
 		// return true if the event is handled here
-		public bool HandleClientMessage (ref XEvent xevent)
+		internal bool HandleClientMessage (ref XEvent xevent)
 		{
 			// most common so we check it first
 			if (xevent.ClientMessageEvent.message_type == XdndPosition)
@@ -441,7 +441,7 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		public bool HandleSelectionNotifyEvent (ref XEvent xevent)
+		internal bool HandleSelectionNotifyEvent (ref XEvent xevent)
 		{
 			if (xevent.SelectionEvent.selection != XdndSelection)
 				return false;
@@ -469,7 +469,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		public bool HandleSelectionRequestEvent (ref XEvent xevent)
+		internal bool HandleSelectionRequestEvent (ref XEvent xevent)
 		{
 			if (xevent.SelectionRequestEvent.selection != XdndSelection)
 				return false;
@@ -485,7 +485,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private bool QueryContinue (bool escape, DragAction action)
+		bool QueryContinue (bool escape, DragAction action)
 		{
 			QueryContinueDragEventArgs qce = new QueryContinueDragEventArgs ((int) XplatUI.State.ModifierKeys,
 					escape, action);
@@ -519,7 +519,7 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		private void RestoreDefaultCursor ()
+		void RestoreDefaultCursor ()
 		{
 			// Releasing the mouse buttons should automatically restore the default cursor,
 			// but canceling the operation using QueryContinue should restore it even if the
@@ -533,7 +533,7 @@ namespace System.Windows.Forms {
 
 		}
 
-		private void GiveFeedback (IntPtr action)
+		void GiveFeedback (IntPtr action)
 		{
 			GiveFeedbackEventArgs gfe = new GiveFeedbackEventArgs (EffectFromAction (drag_data.Action), true);
 
@@ -565,25 +565,25 @@ namespace System.Windows.Forms {
 		}
 
 
-		private void Reset ()
+		void Reset ()
 		{
 			ResetSourceData ();
 			ResetTargetData ();
 		}
 
-		private void ResetSourceData ()
+		void ResetSourceData ()
 		{
 			converts_pending = 0;
 			data = null;
 		}
 
-		private void ResetTargetData ()
+		void ResetTargetData ()
 		{
 			position_recieved = false;
 			status_sent = false;
 		}
 		
-		private bool Accepting_HandleEnterEvent (ref XEvent xevent)
+		bool Accepting_HandleEnterEvent (ref XEvent xevent)
 		{
 			Reset ();
 
@@ -596,7 +596,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private bool Accepting_HandlePositionEvent (ref XEvent xevent)
+		bool Accepting_HandlePositionEvent (ref XEvent xevent)
 		{
 			pos_x = (int) xevent.ClientMessageEvent.ptr3 >> 16;
 			pos_y = (int) xevent.ClientMessageEvent.ptr3 & 0xFFFF;
@@ -679,7 +679,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private void Finish ()
+		void Finish ()
 		{
 			if (control != null) {
 				if (drag_event == null) {
@@ -695,7 +695,7 @@ namespace System.Windows.Forms {
 			ResetTargetData ();
 		}
 
-		private bool Accepting_HandleDropEvent (ref XEvent xevent)
+		bool Accepting_HandleDropEvent (ref XEvent xevent)
 		{
 			if (control != null && drag_event != null) {
 				drag_event = new DragEventArgs (data,
@@ -707,7 +707,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private bool Accepting_HandleLeaveEvent (ref XEvent xevent)
+		bool Accepting_HandleLeaveEvent (ref XEvent xevent)
 		{
 			if (control != null && drag_event != null)
 				control.DndLeave (drag_event);
@@ -715,7 +715,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private bool HandleStatusEvent (ref XEvent xevent)
+		bool HandleStatusEvent (ref XEvent xevent)
 		{
 			if (drag_data != null && drag_data.State == DragState.Entered) {
 
@@ -729,7 +729,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private bool HandleFinishedEvent (ref XEvent xevent)
+		bool HandleFinishedEvent (ref XEvent xevent)
 		{
 			if (drag_data != null)
 				XplatUIX11.XDeleteProperty (display, drag_data.Window, XdndTypeList);
@@ -738,7 +738,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private DragDropEffects EffectsFromX11Source (IntPtr source, IntPtr action_atom)
+		DragDropEffects EffectsFromX11Source (IntPtr source, IntPtr action_atom)
 		{
 			DragDropEffects allowed = DragDropEffects.None;
 			IntPtr type, count, remaining, data = IntPtr.Zero;
@@ -762,7 +762,7 @@ namespace System.Windows.Forms {
 			return allowed;
 		}
 
-		private DragDropEffects EffectFromAction (IntPtr action)
+		DragDropEffects EffectFromAction (IntPtr action)
 		{
 			if (action == XdndActionCopy)
 				return DragDropEffects.Copy;
@@ -774,7 +774,7 @@ namespace System.Windows.Forms {
 			return DragDropEffects.None;
 		}
 
-		private IntPtr ActionFromEffect (DragDropEffects effect)
+		IntPtr ActionFromEffect (DragDropEffects effect)
 		{
 			IntPtr action = IntPtr.Zero;
 
@@ -789,7 +789,7 @@ namespace System.Windows.Forms {
 			return action;
 		}
 
-		private bool ConvertData (ref XEvent xevent)
+		bool ConvertData (ref XEvent xevent)
 		{
 			bool match = false;
 
@@ -828,7 +828,7 @@ namespace System.Windows.Forms {
 		}
 
 
-		private void SendStatus (IntPtr source, DragDropEffects effect)
+		void SendStatus (IntPtr source, DragDropEffects effect)
 		{
 			XEvent xevent = new XEvent ();
 
@@ -845,7 +845,7 @@ namespace System.Windows.Forms {
 			XplatUIX11.XSendEvent (display, source, false, IntPtr.Zero, ref xevent);
 		}
 
-		private void SendEnter (IntPtr handle, IntPtr from, IntPtr [] supported)
+		void SendEnter (IntPtr handle, IntPtr from, IntPtr [] supported)
 		{
 			XEvent xevent = new XEvent ();
 
@@ -872,7 +872,7 @@ namespace System.Windows.Forms {
 			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
-		private void SendDrop (IntPtr handle, IntPtr from, IntPtr time)
+		void SendDrop (IntPtr handle, IntPtr from, IntPtr time)
 		{
 			XEvent xevent = new XEvent ();
 
@@ -888,7 +888,7 @@ namespace System.Windows.Forms {
 			dropped = true;
 		}
 
-		private void SendPosition (IntPtr handle, IntPtr from, IntPtr action, int x, int y, IntPtr time)
+		void SendPosition (IntPtr handle, IntPtr from, IntPtr action, int x, int y, IntPtr time)
 		{
 			XEvent xevent = new XEvent ();
 
@@ -905,7 +905,7 @@ namespace System.Windows.Forms {
 			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
-		private void SendLeave (IntPtr handle, IntPtr from)
+		void SendLeave (IntPtr handle, IntPtr from)
 		{
 			XEvent xevent = new XEvent ();
 
@@ -919,7 +919,7 @@ namespace System.Windows.Forms {
 			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
-		private void SendFinished ()
+		void SendFinished ()
 		{
 			XEvent xevent = new XEvent ();
 
@@ -936,7 +936,7 @@ namespace System.Windows.Forms {
 		// There is a somewhat decent amount of overhead
 		// involved in setting up dnd so we do it lazily
 		// as a lot of applications do not even use it.
-		private void Init ()
+		void Init ()
 		{
 			XdndAware = XplatUIX11.XInternAtom (display, "XdndAware", false);
 			XdndEnter = XplatUIX11.XInternAtom (display, "XdndEnter", false);
@@ -958,7 +958,7 @@ namespace System.Windows.Forms {
 			X11SelectionHandler.Init();
 		}
 
-		private IntPtr [] SourceSupportedList (ref XEvent xevent)
+		IntPtr [] SourceSupportedList (ref XEvent xevent)
 		{
 			IntPtr [] res;
 
@@ -992,7 +992,7 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
-		private Control MwfWindow (IntPtr window)
+		Control MwfWindow (IntPtr window)
 		{
 			Hwnd hwnd = Hwnd.ObjectFromHandle (window);
 			if (hwnd == null)
@@ -1006,7 +1006,7 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
-		private bool IsWindowDndAware (IntPtr handle)
+		bool IsWindowDndAware (IntPtr handle)
 		{
 			bool res = true;
 			// Check the version number, we need greater than 3
