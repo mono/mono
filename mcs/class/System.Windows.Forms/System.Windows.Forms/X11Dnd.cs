@@ -123,7 +123,7 @@ namespace System.Windows.Forms {
 		int motion_poll;
 		//private X11Keyboard keyboard;
 
-		internal X11Dnd (IntPtr display, X11Keyboard keyboard)
+		internal X11Dnd (IntPtr display)
 		{
 			this.display = display;
 			//this.keyboard = keyboard;
@@ -138,11 +138,11 @@ namespace System.Windows.Forms {
 			return drag_data.State != DragState.None;
 		}
 		
-		internal void SetAllowDrop (Hwnd hwnd, bool allow)
+		internal void SetAllowDrop (Hwnd hwnd)
 		{
 			int[] atoms;
 
-			if (hwnd.allow_drop == allow)
+			if (hwnd.allow_drop)
 				return;
 
 			atoms = new int[XdndVersion.Length];
@@ -152,8 +152,8 @@ namespace System.Windows.Forms {
 
 			XplatUIX11.XChangeProperty (display, hwnd.whole_window, XdndAware,
 					(IntPtr) Atom.XA_ATOM, 32,
-					PropertyMode.Replace, atoms, allow ? 1 : 0);
-			hwnd.allow_drop = allow;
+					PropertyMode.Replace, atoms, 1);
+			hwnd.allow_drop = true;
 		}
 
 		internal DragDropEffects StartDrag (IntPtr handle, object data,
@@ -292,7 +292,7 @@ namespace System.Windows.Forms {
 
 		// This routines helps us to have a DndEnter/DndLeave fallback when there wasn't any mouse movement
 		// as .Net does
-		void DefaultEnterLeave (object user_data)
+		void DefaultEnterLeave ()
 		{
 			IntPtr toplevel, window;
 			int x_root, y_root;
@@ -331,7 +331,7 @@ namespace System.Windows.Forms {
 
 					// fallback if no movement was detected, as .net does.
 					if (motion_poll == -1)
-						DefaultEnterLeave (drag_data.Data);
+						DefaultEnterLeave ();
 				}
 
 				drag_data.State = DragState.None;
@@ -430,13 +430,13 @@ namespace System.Windows.Forms {
 			if (xevent.ClientMessageEvent.message_type == XdndEnter)
 				return Accepting_HandleEnterEvent (ref xevent);
 			if (xevent.ClientMessageEvent.message_type == XdndDrop)
-				return Accepting_HandleDropEvent (ref xevent);
+				return Accepting_HandleDropEvent ();
 			if (xevent.ClientMessageEvent.message_type == XdndLeave)
-				return Accepting_HandleLeaveEvent (ref xevent);
+				return Accepting_HandleLeaveEvent ();
 			if (xevent.ClientMessageEvent.message_type == XdndStatus)
 				return HandleStatusEvent (ref xevent);
 			if (xevent.ClientMessageEvent.message_type == XdndFinished)
-				return HandleFinishedEvent (ref xevent);
+				return HandleFinishedEvent ();
 
 			return false;
 		}
@@ -695,7 +695,7 @@ namespace System.Windows.Forms {
 			ResetTargetData ();
 		}
 
-		bool Accepting_HandleDropEvent (ref XEvent xevent)
+		bool Accepting_HandleDropEvent ()
 		{
 			if (control != null && drag_event != null) {
 				drag_event = new DragEventArgs (data,
@@ -707,7 +707,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		bool Accepting_HandleLeaveEvent (ref XEvent xevent)
+		bool Accepting_HandleLeaveEvent ()
 		{
 			if (control != null && drag_event != null)
 				control.DndLeave (drag_event);
@@ -729,7 +729,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		bool HandleFinishedEvent (ref XEvent xevent)
+		bool HandleFinishedEvent ()
 		{
 			if (drag_data != null)
 				XplatUIX11.XDeleteProperty (display, drag_data.Window, XdndTypeList);

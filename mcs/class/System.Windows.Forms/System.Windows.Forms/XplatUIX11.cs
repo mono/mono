@@ -509,7 +509,7 @@ namespace System.Windows.Forms {
 				pollfds [1].events = PollEvents.POLLIN;
 
 				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
-				Dnd = new X11Dnd (DisplayHandle, Keyboard);
+				Dnd = new X11Dnd (DisplayHandle);
 
 				DoubleClickInterval = 500;
 
@@ -3031,7 +3031,7 @@ namespace System.Windows.Forms {
 			}
 
 			// for now make all windows dnd enabled
-			Dnd.SetAllowDrop (hwnd, true);
+			Dnd.SetAllowDrop (hwnd);
 
 			// Set caption/window title
 			Text(hwnd.Handle, cp.Caption);
