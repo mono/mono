@@ -693,7 +693,6 @@ namespace System.Windows.Forms
 
 			protected static MemoryStream GetDataStream (ref XEvent xevent)
 			{
-				int nread = 0;
 				IntPtr nitems;
 				IntPtr bytes_after;
 
@@ -703,22 +702,29 @@ namespace System.Windows.Forms
 					int actual_fmt;
 					IntPtr data = IntPtr.Zero;
 
-					if (0 != XplatUIX11.XGetWindowProperty (xevent.AnyEvent.display,
+					XplatUIX11.XGetWindowProperty (xevent.AnyEvent.display,
 						    xevent.AnyEvent.window,
 						    (IntPtr)xevent.SelectionEvent.property,
 						    IntPtr.Zero, new IntPtr (0xffffff), false,
 						    (IntPtr)Atom.AnyPropertyType, out actual_type,
 						    out actual_fmt, out nitems, out bytes_after,
-						    ref data)) {
-						XplatUIX11.XFree (data);
-						break;
+						    ref data);
+
+					try {
+						if (actual_fmt == 0) {
+							break;
+						}
+
+						if (actual_fmt == 8) {
+							for (int i = 0; i < nitems.ToInt32 ( ); i++)
+								res.WriteByte (Marshal.ReadByte (data, i));
+						} else {
+							throw new NotImplementedException ("actual data format: " + actual_fmt);
+						}
+					} finally {
+						if (data != IntPtr.Zero)
+							XplatUIX11.XFree (data);
 					}
-
-					for (int i = 0; i < nitems.ToInt32 ( ); i++)
-						res.WriteByte (Marshal.ReadByte (data, i));
-					nread += nitems.ToInt32 ( );
-
-					XplatUIX11.XFree (data);
 				} while (bytes_after.ToInt32 ( ) > 0);
 
 				res.Seek (0, SeekOrigin.Begin);

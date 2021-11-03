@@ -754,13 +754,22 @@ namespace System.Windows.Forms {
 			int format;
 
 			XplatUIX11.XGetWindowProperty (display, source, XdndActionList,
-					IntPtr.Zero, new IntPtr (32), false, (IntPtr) Atom.AnyPropertyType,
+					IntPtr.Zero, new IntPtr (32), false, (IntPtr) Atom.XA_ATOM,
 					out type, out format, out count, out remaining, ref data);
 
-			int intptr_size = Marshal.SizeOf (typeof (IntPtr));
-			for (int i = 0; i < count.ToInt32 (); i++) {
-				IntPtr current_atom = Marshal.ReadIntPtr (data, i * intptr_size);
-				allowed |= EffectFromAction (current_atom);
+			try {
+				if (type == (IntPtr) Atom.XA_ATOM && format == 32 &&
+						count.ToInt32() > 0 &&  data != IntPtr.Zero) {
+
+					int intptr_size = Marshal.SizeOf (typeof (IntPtr));
+					for (int i = 0; i < count.ToInt32 (); i++) {
+						IntPtr current_atom = Marshal.ReadIntPtr (data, i * intptr_size);
+						allowed |= EffectFromAction (current_atom);
+					}
+				}
+			} finally {
+				if (data != IntPtr.Zero)
+					XplatUIX11.XFree (data);
 			}
 
 			// if source is not providing the action list, use the
@@ -946,13 +955,8 @@ namespace System.Windows.Forms {
 		{
 			IntPtr [] res;
 
-			
-			if (((int) xevent.ClientMessageEvent.ptr2 & 0x1) == 0) {
-				res = new IntPtr [3];
-				res [0] = xevent.ClientMessageEvent.ptr3;
-				res [1] = xevent.ClientMessageEvent.ptr4;
-				res [2] = xevent.ClientMessageEvent.ptr5;
-			} else {
+
+			if (((int) xevent.ClientMessageEvent.ptr2 & 0x1) == 1) {
 				IntPtr type;
 				int format;
 				IntPtr count;
@@ -964,14 +968,28 @@ namespace System.Windows.Forms {
 						out type, out format, out count,
 						out remaining, ref data);
 
-				res = new IntPtr [count.ToInt32()];
-				for (int i = 0; i < count.ToInt32(); i++) {
-					// X11R7.7: format 32 is actually padded 64 for 64 bit processes
-					res [i] = Marshal.ReadIntPtr(data, i * IntPtr.Size);
-				}
+				try {
+					if (type == (IntPtr) Atom.XA_ATOM && format == 32 &&
+						count.ToInt32() > 0 || data != IntPtr.Zero) {
 
-				XplatUIX11.XFree (data);
+						res = new IntPtr [count.ToInt32()];
+						for (int i = 0; i < res.Length; i++) {
+							// X11R7.7: format 32 is actually padded 64 for 64 bit processes
+							res [i] = Marshal.ReadIntPtr(data, i * IntPtr.Size);
+						}
+
+						return res;
+					}
+				} finally {
+					if (data != IntPtr.Zero)
+						XplatUIX11.XFree (data);
+				}
 			}
+
+			res = new IntPtr [3];
+			res [0] = xevent.ClientMessageEvent.ptr3;
+			res [1] = xevent.ClientMessageEvent.ptr4;
+			res [2] = xevent.ClientMessageEvent.ptr5;
 
 			return res;
 		}
@@ -999,42 +1017,43 @@ namespace System.Windows.Forms {
 			IntPtr count;
 			IntPtr remaining;
 			IntPtr data = IntPtr.Zero;
-			
+
 			XplatUIX11.XGetWindowProperty (display, handle, XdndAware, IntPtr.Zero, new IntPtr(0x8000000), false,
 					(IntPtr) Atom.XA_ATOM, out actual, out format,
 					out count, out remaining, ref data);
-			
-			if (actual != (IntPtr) Atom.XA_ATOM || format != 32 ||
-					count.ToInt32() == 0 || data == IntPtr.Zero) {
-				if (data != IntPtr.Zero)
-					XplatUIX11.XFree (data);
-				return false;
-			}
 
-			int version = Marshal.ReadInt32 (data, 0);
+			try {
+				if (actual != (IntPtr) Atom.XA_ATOM || format != 32 ||
+						count.ToInt32() == 0 || data == IntPtr.Zero) {
+					return false;
+				}
 
-			if (version < 3) {
-				Console.Error.WriteLine ("XDND Version too old (" + version + ").");
-				XplatUIX11.XFree (data);
-				return false;
-			}
+				int version = Marshal.ReadInt32 (data, 0);
 
-			// First type is actually the XDND version
-			if (count.ToInt32() > 1) {
-				res = false;
-				for (int i = 1; i < count.ToInt32(); i++) {
-					IntPtr type = (IntPtr) Marshal.ReadInt32 (data, i *
-							Marshal.SizeOf (typeof (int)));
-					for (int j = 0; j < drag_data.SupportedTypes.Length; j++) {
-						if (drag_data.SupportedTypes [j] == type) {
-							res = true;
-							break;
+				if (version < 3) {
+					Console.Error.WriteLine ("XDND Version too old (" + version + ").");
+					return false;
+				}
+
+				// First type is actually the XDND version
+				if (count.ToInt32() > 1) {
+					res = false;
+					for (int i = 1; i < count.ToInt32(); i++) {
+						IntPtr type = (IntPtr) Marshal.ReadInt32 (data, i *
+								Marshal.SizeOf (typeof (int)));
+						for (int j = 0; j < drag_data.SupportedTypes.Length; j++) {
+							if (drag_data.SupportedTypes [j] == type) {
+								res = true;
+								break;
+							}
 						}
 					}
 				}
+			} finally {
+				if (data != IntPtr.Zero)
+					XplatUIX11.XFree (data);
 			}
 
-			XplatUIX11.XFree (data);
 			return res;
 		}
 	}
