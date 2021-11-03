@@ -79,24 +79,19 @@ namespace System.Windows.Forms {
 		IntPtr display;
 		DragData drag_data;
 		
-		IntPtr XdndAware;
-		IntPtr XdndSelection;
-		IntPtr XdndEnter;
-		IntPtr XdndLeave;
-		IntPtr XdndPosition;
-		IntPtr XdndDrop;
-		IntPtr XdndFinished;
-		IntPtr XdndStatus;
-		IntPtr XdndTypeList;
-		IntPtr XdndActionCopy;
-		IntPtr XdndActionMove;
-		IntPtr XdndActionLink;
-		//private IntPtr XdndActionPrivate;
-		IntPtr XdndActionList;
-		//private IntPtr XdndActionDescription;
-		//private IntPtr XdndActionAsk;
-
-		//private State state;
+		readonly IntPtr XdndAware;
+		readonly IntPtr XdndSelection;
+		readonly IntPtr XdndEnter;
+		readonly IntPtr XdndLeave;
+		readonly IntPtr XdndPosition;
+		readonly IntPtr XdndDrop;
+		readonly IntPtr XdndFinished;
+		readonly IntPtr XdndStatus;
+		readonly IntPtr XdndTypeList;
+		readonly IntPtr XdndActionCopy;
+		readonly IntPtr XdndActionMove;
+		readonly IntPtr XdndActionLink;
+		readonly IntPtr XdndActionList;
 
 		int converts_pending;
 		bool position_recieved;
@@ -121,14 +116,26 @@ namespace System.Windows.Forms {
 		bool tracking = false;
 		bool dropped = false;
 		int motion_poll;
-		//private X11Keyboard keyboard;
 
 		internal X11Dnd (IntPtr display)
 		{
 			this.display = display;
-			//this.keyboard = keyboard;
 
-			Init ();
+			XdndAware = XplatUIX11.XInternAtom (display, "XdndAware", false);
+			XdndEnter = XplatUIX11.XInternAtom (display, "XdndEnter", false);
+			XdndLeave = XplatUIX11.XInternAtom (display, "XdndLeave", false);
+			XdndPosition = XplatUIX11.XInternAtom (display, "XdndPosition", false);
+			XdndStatus = XplatUIX11.XInternAtom (display, "XdndStatus", false);
+			XdndDrop = XplatUIX11.XInternAtom (display, "XdndDrop", false);
+			XdndSelection = XplatUIX11.XInternAtom (display, "XdndSelection", false);
+			XdndFinished = XplatUIX11.XInternAtom (display, "XdndFinished", false);
+			XdndTypeList = XplatUIX11.XInternAtom (display, "XdndTypeList", false);
+			XdndActionCopy = XplatUIX11.XInternAtom (display, "XdndActionCopy", false);
+			XdndActionMove = XplatUIX11.XInternAtom (display, "XdndActionMove", false);
+			XdndActionLink = XplatUIX11.XInternAtom (display, "XdndActionLink", false);
+			XdndActionList = XplatUIX11.XInternAtom (display, "XdndActionList", false);
+
+			X11SelectionHandler.Init();
 		}
 
 		bool InDrag()
@@ -441,6 +448,7 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		// return true if the event is handled here
 		internal bool HandleSelectionNotifyEvent (ref XEvent xevent)
 		{
 			if (xevent.SelectionEvent.selection != XdndSelection)
@@ -469,6 +477,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		// return true if the event is handled here
 		internal bool HandleSelectionRequestEvent (ref XEvent xevent)
 		{
 			if (xevent.SelectionRequestEvent.selection != XdndSelection)
@@ -933,31 +942,6 @@ namespace System.Windows.Forms {
 			XplatUIX11.XSendEvent (display, source, false, IntPtr.Zero, ref xevent);
 		}
 
-		// There is a somewhat decent amount of overhead
-		// involved in setting up dnd so we do it lazily
-		// as a lot of applications do not even use it.
-		void Init ()
-		{
-			XdndAware = XplatUIX11.XInternAtom (display, "XdndAware", false);
-			XdndEnter = XplatUIX11.XInternAtom (display, "XdndEnter", false);
-			XdndLeave = XplatUIX11.XInternAtom (display, "XdndLeave", false);
-			XdndPosition = XplatUIX11.XInternAtom (display, "XdndPosition", false);
-			XdndStatus = XplatUIX11.XInternAtom (display, "XdndStatus", false);
-			XdndDrop = XplatUIX11.XInternAtom (display, "XdndDrop", false);
-			XdndSelection = XplatUIX11.XInternAtom (display, "XdndSelection", false);
-			XdndFinished = XplatUIX11.XInternAtom (display, "XdndFinished", false);
-			XdndTypeList = XplatUIX11.XInternAtom (display, "XdndTypeList", false);
-			XdndActionCopy = XplatUIX11.XInternAtom (display, "XdndActionCopy", false);
-			XdndActionMove = XplatUIX11.XInternAtom (display, "XdndActionMove", false);
-			XdndActionLink = XplatUIX11.XInternAtom (display, "XdndActionLink", false);
-			//XdndActionPrivate = XplatUIX11.XInternAtom (display, "XdndActionPrivate", false);
-			XdndActionList = XplatUIX11.XInternAtom (display, "XdndActionList", false);
-			//XdndActionDescription = XplatUIX11.XInternAtom (display, "XdndActionDescription", false);
-			//XdndActionAsk = XplatUIX11.XInternAtom (display, "XdndActionAsk", false);
-
-			X11SelectionHandler.Init();
-		}
-
 		IntPtr [] SourceSupportedList (ref XEvent xevent)
 		{
 			IntPtr [] res;
@@ -1009,7 +993,7 @@ namespace System.Windows.Forms {
 		bool IsWindowDndAware (IntPtr handle)
 		{
 			bool res = true;
-			// Check the version number, we need greater than 3
+			// Check the version number, we need at least 3
 			IntPtr actual;
 			int format;
 			IntPtr count;
