@@ -301,6 +301,7 @@ mono_thread_internal_current_handle (void);
 gboolean
 mono_thread_internal_abort (MonoInternalThread *thread, gboolean appdomain_unload);
 void mono_thread_internal_suspend_for_shutdown (MonoInternalThread *thread);
+void mono_thread_internal_terminate_for_shutdown (MonoInternalThread* thread);
 
 gboolean mono_thread_internal_has_appdomain_ref (MonoInternalThread *thread, MonoDomain *domain);
 

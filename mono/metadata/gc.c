@@ -1177,7 +1177,8 @@ mono_gc_cleanup (void)
 					ret = guarded_wait (gc_thread->handle, 100, FALSE);
 					if (ret == MONO_THREAD_INFO_WAIT_RET_TIMEOUT) {
 						/* The finalizer thread refused to exit, suspend it forever. */
-						mono_thread_internal_suspend_for_shutdown (gc_thread);
+						g_warning ("Finalizer thread did not exit, forcing thread exit.");
+						mono_thread_internal_terminate_for_shutdown (gc_thread);
 						break;
 					}
 
