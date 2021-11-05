@@ -926,7 +926,7 @@ finalize_domain_objects (void)
 	mono_gc_invoke_finalizers ();
 
 #ifdef HAVE_BOEHM_GC
-	while (g_hash_table_size (domain->finalizable_objects_hash) > 0) {
+	while (g_hash_table_size (domain->finalizable_objects_hash) > 0 &&!suspend_finalizers) {
 		int i;
 		GPtrArray *objs;
 		/* 
@@ -938,7 +938,7 @@ finalize_domain_objects (void)
 		g_hash_table_foreach (domain->finalizable_objects_hash, collect_objects, objs);
 		/* printf ("FINALIZING %d OBJECTS.\n", objs->len); */
 
-		for (i = 0; i < objs->len; ++i) {
+		for (i = 0; i < objs->len && !suspend_finalizers; ++i) {
 			MonoObject *o = (MonoObject*)g_ptr_array_index (objs, i);
 			/* FIXME: Avoid finalizing threads, etc */
 			mono_gc_run_finalize (o, 0);
@@ -1177,7 +1177,8 @@ mono_gc_cleanup (void)
 					ret = guarded_wait (gc_thread->handle, 100, FALSE);
 					if (ret == MONO_THREAD_INFO_WAIT_RET_TIMEOUT) {
 						/* The finalizer thread refused to exit, suspend it forever. */
-						mono_thread_internal_suspend_for_shutdown (gc_thread);
+						g_warning ("Finalizer thread did not exit, forcing thread exit.");
+						mono_thread_internal_terminate_for_shutdown (gc_thread);
 						break;
 					}
 

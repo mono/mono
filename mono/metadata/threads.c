@@ -6016,6 +6016,27 @@ mono_thread_internal_suspend_for_shutdown (MonoInternalThread *thread)
 	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread), FALSE, suspend_for_shutdown_critical, NULL);
 }
 
+static void
+terminate_for_shutdown_async_call (gpointer unused)
+{
+	mono_thread_info_exit (1);
+}
+
+static SuspendThreadResult
+terminate_for_shutdown_critical (MonoThreadInfo* info, gpointer unused)
+{
+	mono_thread_info_setup_async_call (info, terminate_for_shutdown_async_call, NULL);
+	return MonoResumeThread;
+}
+
+void
+mono_thread_internal_terminate_for_shutdown (MonoInternalThread* thread)
+{
+	g_assert (thread != mono_thread_internal_current ());
+
+	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread), FALSE, terminate_for_shutdown_critical, NULL);
+}
+
 /**
  * mono_thread_is_foreign:
  * \param thread the thread to query
