@@ -284,6 +284,12 @@ mono_error_set_platform_not_supported (MonoError *error, const char *message)
 	mono_error_set_generic_error (error, "System", "PlatformNotSupportedException", "%s", message);
 }
 
+static inline void
+mono_error_set_marshal_directive (MonoError* error, const char* message)
+{
+	mono_error_set_generic_error (error, "System.Runtime.InteropServices", "MarshalDirectiveException", "%s", message);
+}
+
 MonoException*
 mono_error_prepare_exception (MonoError *error, MonoError *error_out);
 

@@ -3890,6 +3890,7 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 	m.retobj_var = 0;
 	m.csig = csig;
 	m.image = get_method_image (method);
+	m.error = error;
 
 	if (invoke)
 		mono_marshal_set_callconv_from_modopt (invoke, csig, TRUE);
@@ -3966,6 +3967,10 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 	}
 
 	mono_marshal_emit_managed_wrapper (mb, invoke_sig, mspecs, &m, method, target_handle);
+
+	if (!is_ok (m.error)) {
+		return NULL;
+	}
 
 	if (!target_handle) {
 		WrapperInfo *info;
