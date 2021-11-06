@@ -286,7 +286,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 	tramp = mono_get_trampoline_code (tramp_type);
 
-	code = buf = mono_mem_manager_code_reserve (domain, 32);
+	code = buf = mono_mem_manager_code_reserve (mem_manager, 32);
 
 	/* Prepare the jump to the generic trampoline code
 	 * mono_arch_create_trampoline_code() knows we're putting this in t8

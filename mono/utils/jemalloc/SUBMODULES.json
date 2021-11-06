@@ -1,7 +1,7 @@
 [
   {
       "name": "jemalloc", 
-      "url": "git://github.com/jemalloc/jemalloc.git",
+      "url": "https://github.com/jemalloc/jemalloc.git",
       "rev": "ea6b3e973b477b8061e0076bb257dbd7f3faa756",
       "remote-branch": "origin/master", 
       "branch": "master", 
