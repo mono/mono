@@ -15,7 +15,7 @@ Branches for released Unity versions are of the form unity-\<version\>\[-mbe\]. 
 ### Branches
 
 #### Trunk
-* [unity-master (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-master)
+* [unity-main (PR to this branch for MonoBleedingEdge)](https://github.com/Unity-Technologies/mono/tree/unity-main)
 
 #### 2021.2 pre-upgrade
 * [unity-2021.2-mbe-pre-upgrade](https://github.com/Unity-Technologies/mono/tree/unity-2021.2-mbe-pre-upgrade)
