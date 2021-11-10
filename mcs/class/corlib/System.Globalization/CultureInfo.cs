@@ -1154,6 +1154,10 @@ namespace System.Globalization
 
 		internal static void SetCultureInfoForUserPreferredLanguageInAppX (CultureInfo cultureInfo)
 		{
+			// Native side needs to be initialized before we can set the new culture info
+			if (s_UserPreferredCultureInfoInAppX == null)
+				InitializeUserPreferredCultureInfoInAppX (OnCultureInfoChangedInAppX);
+
 			SetUserPreferredCultureInfoInAppX (cultureInfo.Name);
 			s_UserPreferredCultureInfoInAppX = cultureInfo;
 		}
