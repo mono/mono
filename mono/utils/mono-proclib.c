@@ -838,13 +838,10 @@ mono_cpu_count (void)
  * [5] https://github.com/dotnet/coreclr/blob/7058273693db2555f127ce16e6b0c5b40fb04867/src/pal/src/misc/sysinfo.cpp#L148
  */
 
-	int count = 0;
-
-	if (getCpuLimit(&count))
-		return count;
 
 #if defined (_SC_NPROCESSORS_CONF) && defined (HAVE_SYSCONF)
 	{
+		int count;
 		count = sysconf (_SC_NPROCESSORS_CONF);
 		if (count > 0)
 			return count;
@@ -852,10 +849,6 @@ mono_cpu_count (void)
 #endif
 
 #else
-	int count = 0;
-
-	if (getCpuLimit(&count))
-		return count;
 
 #ifdef HAVE_SCHED_GETAFFINITY
 	{
@@ -888,6 +881,23 @@ mono_cpu_count (void)
 	/* FIXME: warn */
 	return 1;
 }
+
+/**
+ * mono_cpu_limit:
+ * \returns the number of processors available to this process
+ */
+int
+mono_cpu_limit (void)
+{
+	int count = 0,
+	    max;
+
+	max = mono_cpu_count();
+	if (getCpuLimit(&count))
+		return (max < count ? max : count);
+	return (max);
+
+}
 #endif /* !HOST_WIN32 */
 
 static void
@@ -901,7 +911,7 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 	if (!f)
 		return;
 	if (cpu_id < 0)
-		uhz *= mono_cpu_count ();
+		uhz *= mono_cpu_limit ();
 	while ((s = fgets (buf, sizeof (buf), f))) {
 		char *data = NULL;
 		if (cpu_id < 0 && strncmp (s, "cpu", 3) == 0 && g_ascii_isspace (s [3])) {
@@ -1143,7 +1153,7 @@ mono_cpu_usage (MonoCpuUsageState *prev)
 	user_time = resource_usage.ru_utime.tv_sec * 1000 * 1000 * 10 + resource_usage.ru_utime.tv_usec * 10;
 
 	cpu_busy_time = (user_time - (prev ? prev->user_time : 0)) + (kernel_time - (prev ? prev->kernel_time : 0));
-	cpu_total_time = (current_time - (prev ? prev->current_time : 0)) * mono_cpu_count ();
+	cpu_total_time = (current_time - (prev ? prev->current_time : 0)) * mono_cpu_limit ();
 
 	if (prev) {
 		prev->kernel_time = kernel_time;

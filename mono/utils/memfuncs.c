@@ -271,11 +271,7 @@ mono_determine_physical_ram_size (void)
 
 	return (guint64)value;
 #elif defined (HAVE_SYSCONF)
-	guint64 page_size = 0, num_pages = 0;
-
-	gint64 restricted_limit = getRestrictedPhysicalMemoryLimit();
-	if (restricted_limit != 0)
-		return restricted_limit;
+	guint64 page_size = 0, num_pages = 0, memsize;
 
 	/* sysconf works on most *NIX operating systems, if your system doesn't have it or if it
 	 * reports invalid values, please add your OS specific code below. */
@@ -292,7 +288,22 @@ mono_determine_physical_ram_size (void)
 		return 134217728;
 	}
 
-	return page_size * num_pages;
+	memsize = page_size * num_pages;	/* Calculate physical memory size */
+
+	gint64 restricted_limit = getRestrictedPhysicalMemoryLimit();	/* Check for any cgroup limit */
+	if (restricted_limit != 0) {
+		gchar *heapHardLimit = getenv("DOTNET_GCHeapHardLimit");	/* See if user has set a limit */
+		if (heapHardLimit != NULL) {
+			guint64 gcLimit = strtoull(heapHardLimit, NULL, 16);
+			if (gcLimit != 0)					
+				restricted_limit = (restricted_limit < gcLimit ? restricted_limit : (gint64) gcLimit);
+		} else
+			restricted_limit = (3 * restricted_limit) / 4;	/* Use 75% limit of container */
+		return (restricted_limit < 209715200 ? 209715200 : 	/* Use at least 20MB */
+			(restricted_limit < memsize ? restricted_limit : memsize));
+	}
+
+	return memsize;
 #else
 	return 134217728;
 #endif

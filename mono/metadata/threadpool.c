@@ -146,7 +146,7 @@ initialize (void)
 	threadpool.domains = g_ptr_array_new ();
 	mono_coop_mutex_init (&threadpool.domains_lock);
 
-	threadpool.limit_io_min = mono_cpu_count ();
+	threadpool.limit_io_min = mono_cpu_limit ();
 	threadpool.limit_io_max = CLAMP (threadpool.limit_io_min * 100, MIN (threadpool.limit_io_min, 200), MAX (threadpool.limit_io_min, 200));
 
 	mono_threadpool_worker_init (worker_callback);
@@ -713,7 +713,7 @@ ves_icall_System_Threading_ThreadPool_SetMaxThreadsNative (gint32 worker_threads
 	worker_threads = MIN (worker_threads, MAX_POSSIBLE_THREADS);
 	completion_port_threads = MIN (completion_port_threads, MAX_POSSIBLE_THREADS);
 
-	gint cpu_count = mono_cpu_count ();
+	gint cpu_count = mono_cpu_limit ();
 
 	if (completion_port_threads < threadpool.limit_io_min || completion_port_threads < cpu_count)
 		return FALSE;
