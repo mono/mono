@@ -177,9 +177,8 @@ jobs:
     steps:
     - name: Install Wine
       run: |
-        brew tap gcenx/wine
         brew install coreutils # for gtimeout
-        brew install --cask --no-quarantine gcenx-wine-devel
+        brew install --cask --no-quarantine homebrew/cask-versions/wine-devel
     - name: Download Wine Mono msi
       uses: actions/download-artifact@v2
       with:
