@@ -626,6 +626,30 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+		public void RootDirField ()
+		{
+			// Used via reflection by Let's Build a Zoo
+			var isf = IsolatedStorageFile.GetUserStoreForDomain ();
+
+			isf.CreateDirectory ("testdir");
+
+			try
+			{
+				var root_field = typeof(IsolatedStorageFile).GetField ("m_RootDir", BindingFlags.NonPublic|BindingFlags.Instance);
+				Assert.IsNotNull (root_field);
+
+				string root_dir = (string)root_field.GetValue (isf);
+				Assert.IsNotNull (root_dir);
+
+				Assert.IsTrue (Directory.Exists (root_dir + "testdir"), root_dir);
+			}
+			finally
+			{
+				isf.DeleteDirectory ("testdir");
+			}
+		}
+
+		[Test]
 		public void UsedSize ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();

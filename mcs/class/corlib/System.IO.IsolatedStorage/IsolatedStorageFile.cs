@@ -379,7 +379,20 @@ namespace System.IO.IsolatedStorage {
 
 		// non-static stuff
 
-		private DirectoryInfo directory;
+		private DirectoryInfo _directory;
+		private string m_RootDir;
+		private DirectoryInfo directory
+		{
+			get
+			{
+				return _directory;
+			}
+			set
+			{
+				_directory = value;
+				m_RootDir = _directory.FullName + Path.DirectorySeparatorChar;
+			}
+		}
 
 		private IsolatedStorageFile (IsolatedStorageScope scope)
 		{
