@@ -27,6 +27,7 @@
 #include <config.h>
 #include <glib.h>
 #include <string.h>
+#include <errno.h>
 
 #if defined (__APPLE__)
 #include <mach/message.h>
@@ -293,12 +294,23 @@ mono_determine_physical_ram_size (void)
 	gint64 restricted_limit = getRestrictedPhysicalMemoryLimit();	/* Check for any cgroup limit */
 	if (restricted_limit != 0) {
 		gchar *heapHardLimit = getenv("DOTNET_GCHeapHardLimit");	/* See if user has set a limit */
+		errno = 0;
 		if (heapHardLimit != NULL) {
 			guint64 gcLimit = strtoull(heapHardLimit, NULL, 16);
-			if (gcLimit != 0)					
+			if ((errno == 0) && (gcLimit != 0))
 				restricted_limit = (restricted_limit < gcLimit ? restricted_limit : (gint64) gcLimit);
-		} else
-			restricted_limit = (3 * restricted_limit) / 4;	/* Use 75% limit of container */
+		} else {
+			gchar *heapHardLimitPct = getenv("DOTNET_GCHeapHardLimitPercent"); /* User % limit? */
+			if (heapHardLimitPct != NULL) {
+				int gcLimit = strtoll(heapHardLimitPct, NULL, 16);
+				if ((gcLimit > 0) && (gcLimit <= 100)) 
+					restricted_limit = (gcLimit * restricted_limit) / 100;
+				else
+					restricted_limit = (3 * restricted_limit) / 4;	/* Use 75% limit of container */
+                        } else {
+				restricted_limit = (3 * restricted_limit) / 4;	/* Use 75% limit of container */
+                        }
+                }
 		return (restricted_limit < 209715200 ? 209715200 : 	/* Use at least 20MB */
 			(restricted_limit < memsize ? restricted_limit : memsize));
 	}

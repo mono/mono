@@ -889,13 +889,31 @@ mono_cpu_count (void)
 int
 mono_cpu_limit (void)
 {
-	int count = 0,
-	    max;
+	int count = 0;
+	static int limit = -1;	/* Value will be cached for future calls */
 
-	max = mono_cpu_count();
-	if (getCpuLimit(&count))
-		return (max < count ? max : count);
-	return (max);
+	/*
+	 * If 1st time through then check if user has mandated a value and use it,
+	 * otherwise we check for any cgroup limit and use the min of actual number
+	 * and that limit
+	 */ 
+	if (limit == -1) {
+		char *dotnetProcCnt = getenv("DOTNET_PROCESSOR_COUNT");
+                if (dotnetProcCnt != NULL) {
+			errno = 0;
+			limit = strtol(dotnetProcCnt, NULL, 0);
+			if ((errno == 0) && (limit > 0))	/* If it's in range and positive */
+				return (limit);
+		}
+		limit = mono_cpu_count();
+		if (getCpuLimit(&count))
+			limit = (limit < count ? limit : count);
+	}
+
+	/*
+	 * Just return the cached value
+	 */
+	return (limit);
 
 }
 #endif /* !HOST_WIN32 */
