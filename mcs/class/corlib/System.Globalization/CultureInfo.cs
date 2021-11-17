@@ -727,7 +727,7 @@ namespace System.Globalization
 				return;
 			}
 
-			if (!construct_internal_locale_from_name (name.ToLowerInvariant ())) {
+			if (!ConstructLocaleFromName (name.ToLowerInvariant ())) {
 				throw CreateNotFoundException (name);
 			}
 
@@ -846,18 +846,8 @@ namespace System.Globalization
 			name = name.ToLowerInvariant ();
 			CultureInfo ci = new CultureInfo ();
 
-			if (!ci.construct_internal_locale_from_name (name)) {
-				int idx = name.Length - 1;
-				if (idx > 0) {
-					while ((idx = name.LastIndexOf ('-', idx - 1)) > 0) {
-						if (ci.construct_internal_locale_from_name (name.Substring (0, idx)))
-							break;
-					}
-				}
-
-				if (idx <= 0)
-					throw CreateNotFoundException (src_name);
-			}
+			if (!ci.ConstructLocaleFromName (name))
+				throw CreateNotFoundException (src_name);
 
 			if (ci.IsNeutralCulture)
 				ci = CreateSpecificCultureFromNeutral (ci.Name);
@@ -867,6 +857,22 @@ namespace System.Globalization
 			ci.m_cultureData = CultureData.GetCultureData (ci.m_name, false, ci.datetime_index, ci.CalendarType, ci.number_index, ci.iso2lang,
 				ti.ansi, ti.oem, ti.mac, ti.ebcdic, ti.right_to_left, ((char)ti.list_sep).ToString ());
 			return ci;
+		}
+
+		bool ConstructLocaleFromName (string name)
+		{
+			if (construct_internal_locale_from_name (name))
+				return true;
+
+			int idx = name.Length - 1;
+			if (idx > 0) {
+				while ((idx = name.LastIndexOf ('-', idx - 1)) > 0) {
+					if (construct_internal_locale_from_name (name.Substring (0, idx)))
+						return true;
+				}
+			}
+
+			return false;
 		}
 
 		//
