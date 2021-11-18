@@ -1494,21 +1494,6 @@ interp_method_get_header (MonoMethod* method, MonoError *error)
 		return mono_method_get_header_internal (method, error);
 }
 
-/* stores top of stack as local and pushes address of it on stack */
-static void
-emit_store_value_as_local (TransformData *td, MonoType *src)
-{
-	int local = create_interp_local (td, mini_native_type_replace_type (src));
-
-	store_local (td, local);
-
-	interp_add_ins (td, MINT_LDLOCA_S);
-	push_simple_type (td, STACK_TYPE_MP);
-	interp_ins_set_dreg (td->last_ins, td->sp [-1].local);
-	interp_ins_set_sreg (td->last_ins, local);
-	td->locals [local].indirects++;
-}
-
 static gboolean
 interp_ip_in_cbb (TransformData *td, int il_offset)
 {
@@ -1826,8 +1811,6 @@ interp_handle_magic_type_intrinsics (TransformData *td, MonoMethod *target_metho
 		}
 
 		if (store_value_as_local) {
-			emit_store_value_as_local (td, src);
-
 			/* emit call to managed conversion method */
 			return FALSE;
 		}
@@ -1887,14 +1870,6 @@ interp_handle_magic_type_intrinsics (TransformData *td, MonoMethod *target_metho
 		td->ip += 5;
 		return TRUE;
 	} else if (!strcmp ("CompareTo", tm) || !strcmp ("Equals", tm)) {
-		MonoType *arg = csignature->params [0];
-		int mt = mint_type (arg);
-
-		/* on 'System.n*::{CompareTo,Equals} (System.n*)' variant we need to push managed
-		 * pointer instead of value */
-		if (mt != MINT_TYPE_O)
-			emit_store_value_as_local (td, arg);
-
 		/* emit call to managed conversion method */
 		return FALSE;
 	} else if (!strcmp (".cctor", tm)) {
@@ -5718,6 +5693,8 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 					td->sp--;
 					interp_emit_sfld_access (td, field, field_klass, mt, TRUE, error);
 					goto_if_nok (error, exit);
+				} else if (td->sp [-1].type != STACK_TYPE_O && td->sp [-1].type != STACK_TYPE_MP && (mono_class_is_magic_int (klass) || mono_class_is_magic_float (klass))) {
+					// No need to load anything, the value is already on the execution stack
 				} else if (td->sp [-1].type == STACK_TYPE_VT) {
 					/* First we pop the vt object from the stack. Then we push the field */
 					int opcode = MINT_LDFLD_VT_I1 + mt - MINT_TYPE_I1;
