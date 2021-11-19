@@ -38,11 +38,9 @@ using System.Security;
 using System.Diagnostics;
 using System.Runtime.ConstrainedExecution;
 
-#if !NETCORE
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Remoting.Contexts;
 using System.Security.Principal;
-#endif
 
 namespace System.Threading {
 	[StructLayout (LayoutKind.Sequential)]
@@ -116,9 +114,7 @@ namespace System.Threading {
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-#if !NETCORE
 	public
-#endif
 	sealed partial class Thread {
 #pragma warning disable 414		
 		#region Sync with metadata/object-internals.h
@@ -164,7 +160,6 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
 
-#if !NETCORE
 #if !DISABLE_REMOTING
 		public static Context CurrentContext {
 			get {
@@ -303,7 +298,6 @@ namespace System.Threading {
 		public static AppDomain GetDomain() {
 			return AppDomain.CurrentDomain;
 		}
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void GetCurrentThread_icall (ref Thread thread);

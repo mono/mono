@@ -189,12 +189,10 @@ namespace System.Runtime.CompilerServices
 			return !typeof (T).IsValueType || RuntimeTypeHandle.HasReferences ((typeof (T) as RuntimeType));
 		}
 
-#if !NETCORE
 		public static object GetUninitializedObject (Type type)
 		{
 			return FormatterServices.GetUninitializedObject (type);
 		}
-#endif
 
         /// <summary>
         /// GetSubArray helper method for the compiler to slice an array using a range.

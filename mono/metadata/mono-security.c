@@ -24,7 +24,6 @@
 #include "reflection-internals.h"
 #include "icall-decl.h"
 
-#ifndef ENABLE_NETCORE
 
 #ifndef HOST_WIN32
 #ifdef HAVE_GRP_H
@@ -668,8 +667,3 @@ ves_icall_System_Security_SecureString_EncryptInternal (MonoArrayHandle data, Mo
 	mono_invoke_protected_memory_method (data, scope, "Protect", &mono_method_securestring_encrypt, error);
 }
 
-#else
-
-MONO_EMPTY_SOURCE_FILE (mono_security);
-
-#endif /* ENABLE_NETCORE */

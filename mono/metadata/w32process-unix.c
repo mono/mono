@@ -91,7 +91,7 @@
 #include "object-internals.h"
 #include "icall-decl.h"
 
-#if !defined(ENABLE_NETCORE) && !defined(DISABLE_PROCESSES)
+#if !defined(DISABLE_PROCESSES)
 
 #ifndef MAXPATHLEN
 #define MAXPATHLEN 242
@@ -3500,50 +3500,4 @@ mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subbl
 	return(ret);
 }
 
-#else /* ENABLE_NETCORE && DISABLE_PROCESSES */
-
-void
-mono_w32process_init (void)
-{
-}
-
-void
-mono_w32process_cleanup (void)
-{
-}
-
-void
-mono_w32process_set_cli_launcher (gchar *path)
-{
-}
-
-void
-mono_w32process_signal_finished (void)
-{
-}
-
-guint32
-mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 lang_len)
-{
-	return 0;
-}
-
-gboolean
-mono_w32process_get_fileversion_info (const gunichar2 *filename, gpointer *data)
-{
-	return FALSE;
-}
-
-gboolean
-mono_w32process_module_get_information (gpointer handle, gpointer module, gpointer modinfo, guint32 size)
-{
-	return FALSE;
-}
-
-gboolean
-mono_w32process_ver_query_value (gconstpointer datablock, const gunichar2 *subblock, gpointer *buffer, guint32 *len)
-{
-	return FALSE;
-}
-
-#endif /* ENABLE_NETCORE && DISABLE_PROCESSES */
+#endif /* !defined(DISABLE_PROCESSES) */

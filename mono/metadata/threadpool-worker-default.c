@@ -14,7 +14,6 @@
 #include <config.h>
 #include <glib.h>
 
-#ifndef ENABLE_NETCORE
 
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/exception.h>
@@ -1233,4 +1232,3 @@ mono_threadpool_worker_set_suspended (gboolean suspended)
 	mono_refcount_dec (&worker);
 }
 
-#endif /* ENABLE_NETCORE */

@@ -30,5 +30,3 @@ ${TESTCMD} --label=coreclr-runtest-coremanglib --timeout=10m make -C acceptance-
 
 # run the GC stress tests (on PRs we only run a short version)
 ${TESTCMD} --label=coreclr-gcstress --timeout=1200m make -C acceptance-tests coreclr-gcstress
-
-${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

@@ -159,11 +159,7 @@ namespace System
 		{
 			var ctor = GetDefaultConstructor ();
 			if (!nonPublic && ctor != null && !ctor.IsPublic) {
-#if NETCORE
-				throw new MissingMethodException(SR.Format(SR.Arg_NoDefCTor, FullName));
-#else
 				ctor = null;
-#endif
 			}
 
 			if (ctor == null) {
@@ -432,11 +428,7 @@ namespace System
 
 		public override StructLayoutAttribute StructLayoutAttribute {
 			get {
-#if NETCORE
-				return GetStructLayoutAttribute ();
-#else
 				return StructLayoutAttribute.GetCustomAttribute (this);
-#endif
 			}
 		}
 
@@ -716,11 +708,7 @@ namespace System
 				var a = new RuntimeEventInfo[n];
 				for (int i = 0; i < n; i++) {
 					var eh = new Mono.RuntimeEventHandle (h[i]);
-#if NETCORE
-					a[i] = (RuntimeEventInfo) RuntimeEventInfo.GetEventFromHandle (eh, refh);
-#else
 					a[i] = (RuntimeEventInfo) EventInfo.GetEventFromHandle (eh, refh);
-#endif
 				}
 				return a;
 			}
@@ -735,13 +723,8 @@ namespace System
 		RuntimeType[] GetNestedTypes_internal (string displayName, BindingFlags bindingAttr, MemberListType listType)
 		{
 			string internalName = null;
-#if NETCORE
-			if (displayName != null)
-				internalName = displayName;
-#else
 			if (displayName != null)
 				internalName = TypeIdentifiers.FromDisplay (displayName).InternalName;
-#endif
 			using (var namePtr = new Mono.SafeStringMarshal (internalName))
 			using (var h = new Mono.SafeGPtrArrayHandle (GetNestedTypes_native (namePtr.Value, bindingAttr, listType))) {
 				int n = h.Length;
@@ -775,19 +758,7 @@ namespace System
 			get;
 		}
 
-#if NETCORE
-		public override bool IsSecurityTransparent {
-			get { return false; }
-		}
-
-		public override bool IsSecurityCritical {
-			get { return true; }
-		}
-
-		public override bool IsSecuritySafeCritical {
-			get { return false; }
-		}
-#elif MOBILE
+#if MOBILE
 		static int get_core_clr_security_level ()
 		{
 			return 1;
@@ -810,7 +781,6 @@ namespace System
 		}
 #endif
 
-#if !NETCORE
 		public override int GetHashCode()
 		{
 			Type t = UnderlyingSystemType;
@@ -818,7 +788,6 @@ namespace System
 				return t.GetHashCode ();
 			return (int)_impl.Value;
 		}
-#endif
 
 		public override string FullName {
 			get {
@@ -874,44 +843,5 @@ namespace System
 		}
 
 		public override bool IsTypeDefinition => RuntimeTypeHandle.IsTypeDefinition (this);
-
-#if NETCORE
-        private const int DEFAULT_PACKING_SIZE = 8;
-
-        internal StructLayoutAttribute GetStructLayoutAttribute ()
-        {
-            if (IsInterface || HasElementType || IsGenericParameter)
-                return null;
-
-            int pack = 0, size = 0;
-            LayoutKind layoutKind = LayoutKind.Auto;
-            switch (Attributes & TypeAttributes.LayoutMask)
-            {
-                case TypeAttributes.ExplicitLayout: layoutKind = LayoutKind.Explicit; break;
-                case TypeAttributes.AutoLayout: layoutKind = LayoutKind.Auto; break;
-                case TypeAttributes.SequentialLayout: layoutKind = LayoutKind.Sequential; break;
-                default: Contract.Assume(false); break;
-            }
-
-            CharSet charSet = CharSet.None;
-            switch (Attributes & TypeAttributes.StringFormatMask)
-            {
-                case TypeAttributes.AnsiClass: charSet = CharSet.Ansi; break;
-                case TypeAttributes.AutoClass: charSet = CharSet.Auto; break;
-                case TypeAttributes.UnicodeClass: charSet = CharSet.Unicode; break;
-                default: Contract.Assume(false); break;
-            }
-
-            GetPacking (out pack, out size);
-
-            // Metadata parameter checking should not have allowed 0 for packing size.
-            // The runtime later converts a packing size of 0 to 8 so do the same here
-            // because it's more useful from a user perspective. 
-            if (pack == 0)
-                pack = DEFAULT_PACKING_SIZE;
-
-            return new StructLayoutAttribute (layoutKind) { Pack = pack, Size = size, CharSet = charSet };
-        }
-#endif // NETCORE
 	}
 }

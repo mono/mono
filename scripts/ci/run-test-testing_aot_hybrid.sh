@@ -29,5 +29,3 @@ ${TESTCMD} --label=System.Net.Http --timeout=5m make -w -C mcs/class/System.Net.
 ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run-test
 
 rm -fr /tmp/jenkins-temp-aspnet*
-
-${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

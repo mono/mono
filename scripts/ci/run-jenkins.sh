@@ -24,10 +24,6 @@ source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 # 	# FIXME: Add more
 # 	skip=false
 # 	skip_step=""
-# 	if ! grep -q -v -e a/netcore -e a/scripts/ci/pipeline-netcore-runtime.yml pr-files.txt; then
-# 		skip_step="NETCORE"
-# 		skip=true
-# 	fi
 # 	if ! grep -q -v a/mono/mini/mini-ppc pr-files.txt; then
 # 		skip_step="PPC"
 # 		skip=true
@@ -52,9 +48,6 @@ source ${MONO_REPO_ROOT}/scripts/ci/util.sh
 
 #     rm pr-files.txt
 # fi
-
-helix_set_env_vars
-helix_send_build_start_event "build/source/$MONO_HELIX_TYPE/"
 
 make_timeout=300m
 gnumake=$(which gmake || which gnumake || which make)
@@ -378,7 +371,6 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
         fi
 
         echo "ENABLE_WASM_THREADS=1" >> sdks/Make.config
-        #echo "ENABLE_WASM_NETCORE=1" >> sdks/Make.config
 
         export aot_test_suites="System.Core"
         export mixed_test_suites="System.Core"
@@ -402,8 +394,8 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=system-core --timeout=60m $gnumake -C sdks/wasm run-all-System.Core
             for suite in ${xunit_test_suites}; do ${TESTCMD} --label=xunit-${suite} --timeout=30m $gnumake -C sdks/wasm run-${suite}-xunit; done
             # disable for now until https://github.com/mono/mono/pull/13622 goes in
-            ${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
-            ${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
+            #${TESTCMD} --label=browser --timeout=20m $gnumake -C sdks/wasm run-browser-tests
+            #${TESTCMD} --label=browser-threads --timeout=20m $gnumake -C sdks/wasm run-browser-threads-tests
             #${TESTCMD} --label=browser-dynamic --timeout=20m $gnumake -C sdks/wasm run-browser-dynamic-tests
             if [[ ${CI_TAGS} == *'osx-amd64'* ]]; then
                 ${TESTCMD} --label=browser-safari --timeout=20m $gnumake -C sdks/wasm run-browser-safari-tests            
@@ -412,8 +404,6 @@ if [[ ${CI_TAGS} == *'webassembly'* ]] || [[ ${CI_TAGS} == *'wasm'* ]];
             ${TESTCMD} --label=build-aot-all --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm build-aot-all
             for suite in ${aot_test_suites}; do ${TESTCMD} --label=run-aot-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-${suite}; done
             for suite in ${mixed_test_suites}; do ${TESTCMD} --label=run-aot-mixed-${suite} --timeout=10m $gnumake -C sdks/wasm run-aot-mixed-${suite}; done
-            # Requires a net 3.0 sdk
-            #${TESTCMD} --label=netcore --timeout=20m $gnumake -j ${CI_CPU_COUNT} -C sdks/wasm run-hello-netcore
             #${TESTCMD} --label=check-aot --timeout=20m $gnumake -C sdks/wasm check-aot
         fi
         exit 0
@@ -462,11 +452,9 @@ if [[ ${CI_TAGS} != *'mac-sdk'* ]]; # Mac SDK builds Mono itself
     then
     build_error=0
     ${TESTCMD} --label=make --timeout=${make_timeout} --fatal make ${make_parallelism} ${make_continue} -w V=1 || build_error=1
-    helix_send_build_done_event "build/source/$MONO_HELIX_TYPE/" $build_error
 
     if [[ ${build_error} != 0 ]]; then
         echo "ERROR: The Mono build failed."
-        ${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh
         exit ${build_error}
     fi
 fi
@@ -485,7 +473,6 @@ elif [[ ${CI_TAGS} == *'stress-tests'* ]];             then ${MONO_REPO_ROOT}/sc
 elif [[ ${CI_TAGS} == *'interpreter'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-interpreter.sh;
 elif [[ ${CI_TAGS} == *'mcs-compiler'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-mcs.sh;
 elif [[ ${CI_TAGS} == *'mac-sdk'* ]];                  then ${MONO_REPO_ROOT}/scripts/ci/run-test-mac-sdk.sh;
-elif [[ ${CI_TAGS} == *'helix-tests'* ]];              then ${MONO_REPO_ROOT}/scripts/ci/run-test-helix.sh;
 elif [[ ${CI_TAGS} == *'compile-msbuild-source'* ]];   then ${MONO_REPO_ROOT}/scripts/ci/run-test-msbuild.sh;
 elif [[ ${CI_TAGS} == *'make-install'* ]];             then ${MONO_REPO_ROOT}/scripts/ci/run-test-make-install.sh;
 elif [[ ${CI_TAGS} == *'compiler-server-tests'* ]];          then ${MONO_REPO_ROOT}/scripts/ci/run-test-compiler-server.sh;

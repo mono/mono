@@ -83,8 +83,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 char*
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *s, int length)
 {
-	g_assert_not_netcore ();
-
 	// FIXME pass mono_utf16_to_utf8 an allocator to avoid double alloc/copy.
 
 	ERROR_DECL (error);

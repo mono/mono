@@ -113,7 +113,6 @@ typedef struct _MonoFSAsyncResult {
 */
 /* System.IO.MonoIO */
 
-#if !ENABLE_NETCORE
 
 ICALL_EXPORT
 MonoBoolean
@@ -248,7 +247,6 @@ ICALL_EXPORT
 void
 ves_icall_System_IO_MonoIO_DumpHandles (void);
 
-#endif /* !ENABLE_NETCORE */
 
 #if defined (TARGET_IOS) || defined (TARGET_ANDROID)
 

@@ -16,7 +16,6 @@
 #include <mono/metadata/object-internals.h>
 #include <mono/metadata/icalls.h>
 
-#if !ENABLE_NETCORE
 
 /* This is a copy of System.Globalization.CompareOptions */
 typedef enum {
@@ -53,7 +52,6 @@ ICALL_EXPORT gint32
 ves_icall_System_Globalization_CompareInfo_internal_index (const gunichar2 *source, gint32 sindex,
 	gint32 count, const gunichar2 *value, gint32 value_length, MonoBoolean first);
 
-#endif /* !ENABLE_NETCORE */
 
 #define MONO_LOCALE_INVARIANT (0x007F)
 

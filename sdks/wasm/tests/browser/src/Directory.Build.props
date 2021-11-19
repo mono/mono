@@ -9,5 +9,4 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ReleaseThreads|AnyCPU' ">
     <EnableMonoWasmThreads>true</EnableMonoWasmThreads>  
   </PropertyGroup>
-
 </Project>

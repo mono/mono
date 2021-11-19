@@ -14,7 +14,6 @@
 #include <config.h>
 #include <glib.h>
 
-#ifndef ENABLE_NETCORE
 
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/threadpool-worker.h>
@@ -78,4 +77,3 @@ mono_threadpool_worker_notify_completed (void)
 	return FALSE;
 }
 
-#endif

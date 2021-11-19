@@ -155,5 +155,3 @@ fi
 ${TESTCMD} --label=bundle-test-results --timeout=2m find . -name "TestResult*.xml" -exec tar -rvf TestResults.tar {} \;
 
 rm -fr /tmp/jenkins-temp-aspnet*
-
-${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

@@ -188,30 +188,6 @@ ves_icall_System_Math_Ceiling (gdouble v)
 	return ceil (v);
 }
 
-#if ENABLE_NETCORE
-gint32
-ves_icall_System_Math_ILogB (gdouble x)
-{
-	if (FP_ILOGB0 != INT_MIN && x == 0.0)
-		return INT_MIN;
-	if (FP_ILOGBNAN != INT_MAX && isnan(x))
-		return INT_MAX;
-	
-	return ilogb(x);
-}
-
-gdouble
-ves_icall_System_Math_Log2 (gdouble x)
-{
-	return log2 (x);
-}
-
-gdouble
-ves_icall_System_Math_FusedMultiplyAdd (gdouble x, gdouble y, gdouble z)
-{
-	return fma (x, y, z);
-}
-#endif
 
 float
 ves_icall_System_MathF_Acos (float x)
@@ -351,27 +327,3 @@ ves_icall_System_MathF_ModF (float x, float *d)
 	return modff (x, d);
 }
 
-#if ENABLE_NETCORE
-gint32
-ves_icall_System_MathF_ILogB (float x)
-{
-	if (FP_ILOGB0 != INT_MIN && x == 0.0)
-		return INT_MIN;
-	if (FP_ILOGBNAN != INT_MAX && isnan(x))
-		return INT_MAX;
-	
-	return ilogbf(x);
-}
-
-float
-ves_icall_System_MathF_Log2 (float x)
-{
-	return log2f (x);
-}
-
-float
-ves_icall_System_MathF_FusedMultiplyAdd (float x, float y, float z)
-{
-	return fmaf (x, y, z);
-}
-#endif

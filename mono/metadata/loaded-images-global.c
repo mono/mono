@@ -3,7 +3,6 @@
 #include "mono/metadata/loaded-images-internals.h"
 #include "mono/metadata/metadata-internals.h"
 
-#ifndef ENABLE_NETCORE
 /* Global image hashes should not be in netcore Mono */
 
 static MonoLoadedImages global_loaded_images; /* zero initalized is good enough */
@@ -62,4 +61,3 @@ mono_alc_get_loaded_images (MonoAssemblyLoadContext *alc)
 	return mono_get_global_loaded_images ();
 }
 
-#endif /* ENABLE_NETCORE */

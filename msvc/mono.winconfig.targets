@@ -123,8 +123,7 @@
                                                       "ENABLE_LLVM",
                                                       "ENABLE_LLVM_RUNTIME",
                                                       "ENABLE_HYBRID_SUSPEND",
-                                                      "ENABLE_COOP_SUSPEND",
-                                                      "ENABLE_NETCORE" };
+                                                      "ENABLE_COOP_SUSPEND" };
 
                       var enableFeatures = GetConfigFeatures(path, ".*#define.*ENABLE_.*1");
                       if (enableDefines != null)
