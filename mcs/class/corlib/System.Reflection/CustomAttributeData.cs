@@ -144,9 +144,6 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributesData (target);
 		}
 
-#if NETCORE
-		virtual
-#endif
 		public Type AttributeType {
 			get { return ctorInfo.DeclaringType; }
 		}
@@ -188,9 +185,6 @@ namespace System.Reflection {
 
 		public override bool Equals (object obj)
 		{
-#if NETCORE
-			return obj == (object)this;
-#else
 			CustomAttributeData other = obj as CustomAttributeData;
 			if (other == null || other.ctorInfo != ctorInfo ||
 			    other.ctorArgs.Count != ctorArgs.Count ||
@@ -210,14 +204,10 @@ namespace System.Reflection {
 					return false;
 			}
 			return true;
-#endif
 		}
 
 		public override int GetHashCode ()
 		{
-#if NETCORE
-			return base.GetHashCode ();
-#else
 			int ret = ctorInfo == null ? 13 : (ctorInfo.GetHashCode () << 16);
 			// argument order-dependent
 			if (ctorArgs != null) {
@@ -231,7 +221,6 @@ namespace System.Reflection {
 					ret += (namedArgs [i].GetHashCode () << 5);
 			}
 			return ret;
-#endif
 		}
 	}
 

@@ -29,7 +29,6 @@ orbis_SUBDIRS := build class
 unreal_SUBDIRS := build class
 wasm_SUBDIRS := build class
 wasm_tools_SUBDIRS := build class tools
-netcore_SUBDIRS := build class
 
 include build/rules.make
 

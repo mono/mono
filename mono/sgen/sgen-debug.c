@@ -947,7 +947,6 @@ sgen_scan_for_registered_roots_in_domain (MonoDomain *domain, int root_type)
 static gboolean
 is_xdomain_ref_allowed (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 {
-#ifndef ENABLE_NETCORE
 	MonoObject *o = (MonoObject*)(obj);
 	size_t offset = (char*)(ptr) - (char*)o;
 
@@ -960,7 +959,6 @@ is_xdomain_ref_allowed (GCObject **ptr, GCObject *obj, MonoDomain *domain)
 	if (m_class_get_supertypes (mono_defaults.real_proxy_class) && mono_class_has_parent_fast (o->vtable->klass, mono_defaults.real_proxy_class) &&
 			offset == G_STRUCT_OFFSET (MonoRealProxy, unwrapped_server))
 		return TRUE;
-#endif
 #endif
 	return FALSE;
 }

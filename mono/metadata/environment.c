@@ -62,7 +62,6 @@ mono_get_os_cmd_line (void)
 	return mono_runtime_get_cmd_line (mini_argc, mini_argv);
 }
 
-#ifndef ENABLE_NETCORE
 /* note: we better manipulate the string in managed code (easier and safer) */
 MonoStringHandle
 ves_icall_System_Environment_GetOSVersionString (MonoError *error)
@@ -108,4 +107,3 @@ ves_icall_System_Environment_GetOSVersionString (MonoError *error)
 #endif
 	return mono_string_new_handle (mono_domain_get (), "0.0.0.0", error);
 }
-#endif

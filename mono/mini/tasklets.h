@@ -7,7 +7,6 @@
 
 #include "mini.h"
 
-#if !defined(ENABLE_NETCORE)
 typedef struct {
 	MonoLMF *lmf;
 	gpointer top_sp;
@@ -32,7 +31,6 @@ void  mono_tasklets_cleanup (void);
 
 MonoContinuationRestore mono_tasklets_arch_restore (void);
 
-#endif /* ENABLE_NETCORE */
 
 #endif /* __MONO_TASKLETS_H__ */
 

@@ -17,15 +17,6 @@
 #include <mono/utils/mono-error.h>
 #include <mono/utils/mono-forward.h>
 
-#ifdef ENABLE_NETCORE
-#if defined(TARGET_OSX)
-#define MONO_LOADER_LIBRARY_NAME "libcoreclr.dylib"
-#elif defined(TARGET_ANDROID)
-#define MONO_LOADER_LIBRARY_NAME "libmonodroid.so"
-#else
-#define MONO_LOADER_LIBRARY_NAME "libcoreclr.so"
-#endif
-#endif
 
 G_BEGIN_DECLS
 
@@ -33,9 +24,6 @@ typedef struct _MonoLoadedImages MonoLoadedImages;
 typedef struct _MonoAssemblyLoadContext MonoAssemblyLoadContext;
 typedef struct _MonoMemoryManager MonoMemoryManager;
 typedef struct _MonoSingletonMemoryManager MonoSingletonMemoryManager;
-#ifdef ENABLE_NETCORE
-typedef struct _MonoGenericMemoryManager MonoGenericMemoryManager;
-#endif
 
 struct _MonoBundledSatelliteAssembly {
 	const char *name;
@@ -55,31 +43,6 @@ struct _MonoDllMap {
 };
 #endif
 
-#ifdef ENABLE_NETCORE
-struct _MonoAssemblyLoadContext {
-	MonoDomain *domain;
-	MonoLoadedImages *loaded_images;
-	GSList *loaded_assemblies;
-	// If taking this with the domain assemblies_lock, always take this second
-	MonoCoopMutex assemblies_lock;
-	// Holds ALC-specific memory
-	MonoSingletonMemoryManager *memory_manager;
-	GPtrArray *generic_memory_managers;
-	// Protects generic_memory_managers; if taking this with the domain alcs_lock, always take this second
-	MonoCoopMutex memory_managers_lock;
-	// Handle of the corresponding managed object.  If the ALC is
-	// collectible, the handle is weak, otherwise it's strong.
-	MonoGCHandle gchandle;
-	// Whether the ALC can be unloaded; should only be set at creation
-	gboolean collectible;
-	// Set to TRUE when the unloading process has begun
-	gboolean unloading;
-	// Used in native-library.c for the hash table below; do not access anywhere else
-	MonoCoopMutex pinvoke_lock;
-	// Maps malloc-ed char* pinvoke scope -> MonoDl*
-	GHashTable *pinvoke_scopes;
-};
-#endif /* ENABLE_NETCORE */
 
 struct _MonoMemoryManager {
 	MonoDomain *domain;
@@ -117,15 +80,6 @@ struct _MonoSingletonMemoryManager {
 	MonoAssemblyLoadContext *alc;
 };
 
-#ifdef ENABLE_NETCORE
-struct _MonoGenericMemoryManager {
-	MonoMemoryManager memory_manager;
-
-	// Parent ALCs
-	int n_alcs;
-	MonoAssemblyLoadContext **alcs;
-};
-#endif
 
 void
 mono_global_loader_data_lock (void);
@@ -150,52 +104,11 @@ mono_global_loader_cache_init (void);
 void
 mono_global_loader_cache_cleanup (void);
 
-#ifdef ENABLE_NETCORE
-void
-mono_set_pinvoke_search_directories (int dir_count, char **dirs);
-
-void
-mono_alc_create_default (MonoDomain *domain);
-
-MonoAssemblyLoadContext *
-mono_alc_create_individual (MonoDomain *domain, MonoGCHandle this_gchandle, gboolean collectible, MonoError *error);
-
-void
-mono_alc_assemblies_lock (MonoAssemblyLoadContext *alc);
-
-void
-mono_alc_assemblies_unlock (MonoAssemblyLoadContext *alc);
-
-void
-mono_alc_memory_managers_lock (MonoAssemblyLoadContext *alc);
-
-void
-mono_alc_memory_managers_unlock (MonoAssemblyLoadContext *alc);
-
-gboolean
-mono_alc_is_default (MonoAssemblyLoadContext *alc);
-
-MonoAssembly*
-mono_alc_invoke_resolve_using_load_nofail (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname);
-
-MonoAssembly*
-mono_alc_invoke_resolve_using_resolving_event_nofail (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname);
-
-MonoAssembly*
-mono_alc_invoke_resolve_using_resolve_satellite_nofail (MonoAssemblyLoadContext *alc, MonoAssemblyName *aname);
-
-MonoAssemblyLoadContext *
-mono_alc_from_gchandle (MonoGCHandle alc_gchandle);
-#endif /* ENABLE_NETCORE */
 
 static inline MonoDomain *
 mono_alc_domain (MonoAssemblyLoadContext *alc)
 {
-#ifdef ENABLE_NETCORE
-	return alc->domain;
-#else
 	return mono_domain_get ();
-#endif
 }
 
 MonoLoadedImages *

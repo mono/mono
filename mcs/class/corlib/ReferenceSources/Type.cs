@@ -206,13 +206,11 @@ namespace System
 			return !object.ReferenceEquals (left, right);
 		}
 
-#if !NETCORE
         [MethodImplAttribute(MethodImplOptions.NoInlining)] // Methods containing StackCrawlMark local var has to be marked non-inlineable
         public static Type ReflectionOnlyGetType (String typeName, bool throwIfNotFound, bool ignoreCase) 
         {
             StackCrawlMark stackMark = StackCrawlMark.LookForMyCaller;
             return RuntimeType.GetType (typeName, throwIfNotFound, ignoreCase, true /*reflectionOnly*/, ref stackMark);
         }
-#endif
 	}
 }

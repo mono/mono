@@ -260,9 +260,7 @@ mono_images_init (void)
 
 	images_storage_hash = g_hash_table_new (g_str_hash, g_str_equal);
 
-#ifndef ENABLE_NETCORE
 	mono_loaded_images_init (mono_get_global_loaded_images (), NULL);
-#endif
 
 	debug_assembly_unload = g_hasenv ("MONO_DEBUG_ASSEMBLY_UNLOAD");
 
@@ -281,9 +279,7 @@ mono_images_cleanup (void)
 {
 	mono_os_mutex_destroy (&images_mutex);
 
-#ifndef ENABLE_NETCORE
 	mono_loaded_images_cleanup (mono_get_global_loaded_images (), TRUE);
-#endif
 
 	g_hash_table_destroy (images_storage_hash);
 
@@ -715,7 +711,6 @@ mono_image_check_for_module_cctor (MonoImage *image)
 	image->checked_module_cctor = TRUE;
 }
 
-#ifndef ENABLE_NETCORE
 static void
 load_modules (MonoImage *image)
 {
@@ -729,7 +724,6 @@ load_modules (MonoImage *image)
 	image->modules_loaded = g_new0 (gboolean, t->rows);
 	image->module_count = t->rows;
 }
-#endif
 
 /**
  * mono_image_load_module_checked:
@@ -747,10 +741,6 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 	if (image->modules_loaded [idx - 1])
 		return image->modules [idx - 1];
 
-#ifdef ENABLE_NETCORE
-	/* SRE still uses image->modules, but they are not loaded from files, so the rest of this function is dead code for netcore */
-	g_assert_not_reached ();
-#else
 	MonoTableInfo *t;
 	MonoTableInfo *file_table;
 	int i;
@@ -821,7 +811,6 @@ mono_image_load_module_checked (MonoImage *image, int idx, MonoError *error)
 	g_list_free (valid_modules);
 
 	return image->modules [idx - 1];
-#endif
 }
 
 /**
@@ -1565,9 +1554,7 @@ do_mono_image_load (MonoImage *image, MonoImageOpenStatus *status,
 
 	mono_image_load_time_date_stamp (image);
 
-#ifndef ENABLE_NETCORE
 	load_modules (image);
-#endif
 
 done:
 	MONO_PROFILER_RAISE (image_loaded, (image));
@@ -1801,9 +1788,6 @@ do_mono_image_open (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOp
 	image->ref_count = 1;
 	/* if MONO_SECURITY_MODE_CORE_CLR is set then determine if this image is platform code */
 	image->core_clr_platform_code = mono_security_core_clr_determine_platform_image (image);
-#ifdef ENABLE_NETCORE
-	image->alc = alc;
-#endif
 	return do_mono_image_load (image, status, care_about_cli, care_about_pecoff);
 }
 
@@ -1913,7 +1897,6 @@ mono_image_loaded_by_guid_full (const char *guid, gboolean refonly)
 static MonoImage *
 mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly)
 {
-#ifndef ENABLE_NETCORE
 	GuidData data;
 	GHashTable *loaded_images = mono_loaded_images_get_hash (mono_get_global_loaded_images (), refonly);
 	data.res = NULL;
@@ -1923,10 +1906,6 @@ mono_image_loaded_by_guid_internal (const char *guid, gboolean refonly)
 	g_hash_table_foreach (loaded_images, find_by_guid, &data);
 	mono_images_unlock ();
 	return data.res;
-#else
-	/* TODO: Maybe implement this for netcore by searching only the default ALC of the current domain */
-	return NULL;
-#endif
 }
 
 /**
@@ -1973,13 +1952,6 @@ register_image (MonoLoadedImages *li, MonoImage *image, gboolean *problematic)
 {
 	MonoImage *image2;
 	char *name = image->name;
-#ifdef ENABLE_NETCORE
-	/* Since we register cultures by file name, we need to make this culture aware for
-	   satellite assemblies */
-	char *name_with_culture = mono_image_get_name_with_culture_if_needed (image);
-	if (name_with_culture)
-		name = name_with_culture;
-#endif
 	GHashTable *loaded_images = mono_loaded_images_get_hash (li, image->ref_only);
 
 	mono_images_lock ();
@@ -1990,9 +1962,6 @@ register_image (MonoLoadedImages *li, MonoImage *image, gboolean *problematic)
 		mono_image_addref (image2);
 		mono_images_unlock ();
 		mono_image_close (image);
-#ifdef ENABLE_NETCORE
-		g_free (name_with_culture);
-#endif
 		return image2;
 	}
 
@@ -2007,9 +1976,6 @@ register_image (MonoLoadedImages *li, MonoImage *image, gboolean *problematic)
 		if (problematic)
 			*problematic = TRUE;
 	}
-#ifdef ENABLE_NETCORE
-	g_free (name_with_culture);
-#endif
 	return image;
 }
 
@@ -2047,9 +2013,6 @@ mono_image_open_from_data_internal (MonoAssemblyLoadContext *alc, char *data, gu
 	image->ref_only = refonly;
 	image->metadata_only = metadata_only;
 	image->ref_count = 1;
-#ifdef ENABLE_NETCORE
-	image->alc = alc;
-#endif
 
 	image = do_mono_image_load (image, status, TRUE, TRUE);
 	if (image == NULL)
@@ -2063,11 +2026,7 @@ mono_image_open_from_data_alc (MonoAssemblyLoadContextGCHandle alc_gchandle, cha
 {
 	MonoImage *result;
 	MONO_ENTER_GC_UNSAFE;
-#ifdef ENABLE_NETCORE
-	MonoAssemblyLoadContext *alc = mono_alc_from_gchandle (alc_gchandle);
-#else
 	MonoAssemblyLoadContext *alc = mono_domain_default_alc (mono_domain_get ());
-#endif
 	result = mono_image_open_from_data_internal (alc, data, data_len, need_copy, status, FALSE, FALSE, name, name);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
@@ -2158,9 +2117,6 @@ mono_image_open_from_module_handle (MonoAssemblyLoadContext *alc, HMODULE module
 	image->name = fname;
 	image->filename = g_strdup (image->name);
 	image->ref_count = has_entry_point ? 0 : 1;
-#ifdef ENABLE_NETCORE
-	image->alc = alc;
-#endif
 
 	image = do_mono_image_load (image, status, TRUE, TRUE);
 	if (image == NULL)
@@ -2696,9 +2652,7 @@ mono_image_close_except_pools (MonoImage *image)
 	if (image->mvar_gparam_cache)
 		mono_conc_hashtable_destroy (image->mvar_gparam_cache);
 	free_hash (image->wrapper_param_names);
-#ifndef ENABLE_NETCORE
 	free_hash (image->pinvoke_scopes);
-#endif
 	free_hash (image->native_func_wrapper_cache);
 	mono_conc_hashtable_destroy (image->typespec_cache);
 	free_hash (image->weak_field_indexes);

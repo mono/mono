@@ -7,10 +7,6 @@ using nuint = System.UInt32;
 using System.Runtime.CompilerServices;
 using System.Runtime;
 
-#if NETCORE
-using Internal.Runtime.CompilerServices;
-#endif
-
 namespace System
 {
 	partial class Buffer

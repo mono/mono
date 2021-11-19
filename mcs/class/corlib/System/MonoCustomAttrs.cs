@@ -154,11 +154,6 @@ namespace System
 			if (attributeType == typeof (MonoCustomAttrs))
 				attributeType = null;
 
-#if NETCORE
-			if (attributeType == typeof (Attribute))
-				attributeType = null;
-#endif
-
 			object[] r;
 			object[] res = GetCustomAttributesBase (obj, attributeType, false);
 			// shortcut

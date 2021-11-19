@@ -30,15 +30,6 @@ ENABLE_ANDROID = 1
 #Enables passing --enable-cxx to configure.
 #ENABLE_CXX = 1
 
-# Enable netcore support in the WASM build
-#ENABLE_WASM_NETCORE = 1
-
-# Disable non-wasm support in the WASM build
-#DISABLE_WASM_NO_NETCORE = 1
-
-# Path to the dotnet/runtime repo for the WASM netcore build
-#DOTNET_REPO_DIR =
-
 # Enable WASM threads build
 #ENABLE_WASM_THREADS=1
 

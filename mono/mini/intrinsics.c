@@ -569,21 +569,6 @@ emit_unsafe_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignatu
 		ins->type = STACK_PTR;
 		return ins;
 	}
-#ifdef ENABLE_NETCORE
-	else if (!strcmp (cmethod->name, "InitBlockUnaligned")) {
-		g_assert (fsig->param_count == 3);
-
-		mini_emit_memory_init_bytes (cfg, args [0], args [1], args [2], MONO_INST_UNALIGNED);
- 		MONO_INST_NEW (cfg, ins, OP_NOP);
-		MONO_ADD_INS (cfg->cbb, ins);
-		return ins;
-	}
-	else if (!strcmp (cmethod->name, "SkipInit")) {
- 		MONO_INST_NEW (cfg, ins, OP_NOP);
-		MONO_ADD_INS (cfg->cbb, ins);
-		return ins;
-	}
-#endif
 
 	return NULL;
 }
@@ -1926,57 +1911,6 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 		}
 	}
 
-#ifdef ENABLE_NETCORE
-	// Return false for IsSupported for all types in System.Runtime.Intrinsics.* 
-	// if it's not handled in mono_emit_simd_intrinsics
-	if (in_corlib && 
-		!strncmp ("System.Runtime.Intrinsics", cmethod_klass_name_space, 25) && 
-		!strcmp (cmethod->name, "get_IsSupported")) {
-		EMIT_NEW_ICONST (cfg, ins, 0);
-		ins->type = STACK_I4;
-		return ins;
-	}
-
-	// Return false for RuntimeFeature.IsDynamicCodeSupported and RuntimeFeature.IsDynamicCodeCompiled on FullAOT, otherwise true
-	if (in_corlib &&
-		!strcmp ("System.Runtime.CompilerServices", cmethod_klass_name_space) &&
-		!strcmp ("RuntimeFeature", cmethod_klass_name)) {
-		if (!strcmp (cmethod->name, "get_IsDynamicCodeSupported") || !strcmp (cmethod->name, "get_IsDynamicCodeCompiled")) {
-			EMIT_NEW_ICONST (cfg, ins, cfg->full_aot ? 0 : 1);
-			ins->type = STACK_I4;
-			return ins;
-		}
-	}
-
-	if (in_corlib &&
-		!strcmp ("System", cmethod_klass_name_space) &&
-		!strcmp ("ThrowHelper", cmethod_klass_name) &&
-		!strcmp ("ThrowForUnsupportedVectorBaseType", cmethod->name)) {
-		/* The mono JIT can't optimize the body of this method away */
-		MonoGenericContext *ctx = mono_method_get_context (cmethod);
-		g_assert (ctx);
-		g_assert (ctx->method_inst);
-
-		MonoType *t = ctx->method_inst->type_argv [0];
-		switch (t->type) {
-		case MONO_TYPE_I1:
-		case MONO_TYPE_U1:
-		case MONO_TYPE_I2:
-		case MONO_TYPE_U2:
-		case MONO_TYPE_I4:
-		case MONO_TYPE_U4:
-		case MONO_TYPE_I8:
-		case MONO_TYPE_U8:
-		case MONO_TYPE_R4:
-		case MONO_TYPE_R8:
-			MONO_INST_NEW (cfg, ins, OP_NOP);
-			MONO_ADD_INS (cfg->cbb, ins);
-			return ins;
-		default:
-			break;
-		}
-	}
-#endif
 
 	ins = mono_emit_native_types_intrinsics (cfg, cmethod, fsig, args);
 	if (ins)
@@ -2112,7 +2046,6 @@ emit_array_unsafe_mov (MonoCompile *cfg, MonoMethodSignature *fsig, MonoInst **a
 	return NULL;
 }
 
-#ifndef ENABLE_NETCORE
 MonoInst*
 mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -2127,7 +2060,6 @@ mini_emit_inst_for_sharable_method (MonoCompile *cfg, MonoMethod *cmethod, MonoM
 
 	return NULL;
 }
-#endif
 
 MonoInst*
 mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field)
@@ -2145,12 +2077,6 @@ mini_emit_inst_for_field_load (MonoCompile *cfg, MonoClassField *field)
 		EMIT_NEW_ICONST (cfg, ins, is_le);
 		return ins;
 	} 
-#ifdef ENABLE_NETCORE
-	else if ((klass == mono_defaults.int_class || klass == mono_defaults.uint_class) && strcmp (field->name, "Zero") == 0) {
-		EMIT_NEW_PCONST (cfg, ins, 0);
-		return ins;
-	}
-#endif
 	return NULL;
 }
 #else

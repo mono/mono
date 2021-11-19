@@ -97,11 +97,7 @@
  * while the jit only sees one method, so we have to inline things ourselves.
  */
 /* Used by LLVM AOT */
-#ifdef ENABLE_NETCORE
-#define LLVM_AOT_INLINE_LENGTH_LIMIT 30
-#else
 #define LLVM_AOT_INLINE_LENGTH_LIMIT INLINE_LENGTH_LIMIT
-#endif
 
 /* Used to LLVM JIT */
 #define LLVM_JIT_INLINE_LENGTH_LIMIT 100
@@ -3495,21 +3491,6 @@ method_needs_stack_walk (MonoCompile *cfg, MonoMethod *cmethod)
 			return TRUE;
 	}
 
-#if defined(ENABLE_NETCORE)
-	/*
-	 * In corelib code, methods which need to do a stack walk declare a StackCrawlMark local and pass it as an
-	 * arguments until it reaches an icall. Its hard to detect which methods do that especially with
-	 * StackCrawlMark.LookForMyCallersCaller, so for now, just hardcode the classes which contain the public
-	 * methods whose caller is needed.
-	 */
-	if (mono_is_corlib_image (m_class_get_image (cmethod->klass))) {
-		const char *cname = m_class_get_name (cmethod->klass);
-		if (!strcmp (cname, "Assembly") ||
-			!strcmp (cname, "AssemblyLoadContext") ||
-			(!strcmp (cname, "Activator")))
-			return TRUE;
-	}
-#endif
 	return FALSE;
 }
 
@@ -7498,7 +7479,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if ((m_class_get_parent (cmethod->klass) == mono_defaults.multicastdelegate_class) && !strcmp (cmethod->name, "Invoke"))
 				delegate_invoke = TRUE;
 
-#ifndef ENABLE_NETCORE
 			if ((cfg->opt & MONO_OPT_INTRINS) && (ins = mini_emit_inst_for_sharable_method (cfg, cmethod, fsig, sp))) {
 				if (!MONO_TYPE_IS_VOID (fsig->ret)) {
 					mini_type_to_eval_stack_type ((cfg), fsig->ret, ins);
@@ -7509,7 +7489,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					mono_tailcall_print ("missed tailcall intrins_sharable %s -> %s\n", method->name, cmethod->name);
 				goto call_end;
 			}
-#endif
 
 			/*
 			 * Implement a workaround for the inherent races involved in locking:
@@ -7748,11 +7727,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				}
 			}
 
-#ifdef ENABLE_NETCORE
-			if (save_last_error) {
-				mono_emit_jit_icall (cfg, mono_marshal_clear_last_error, NULL);
-			}
-#endif
 
 			/* Tail prefix / tailcall optimization */
 
@@ -9262,129 +9236,6 @@ calli_end:
 				}
 			}
 
-#ifdef ENABLE_NETCORE
-			// Optimize
-			// 
-			//    box
-			//    ldnull
-			//    ceq (or cgt.un)
-			//    
-			// to just
-			// 
-			//    ldc.i4.0 (or 1)
-			guchar* ldnull_ip;
-			if ((ldnull_ip = il_read_op (next_ip, end, CEE_LDNULL, MONO_CEE_LDNULL)) && ip_in_bb (cfg, cfg->cbb, ldnull_ip)) {
-				gboolean is_eq = FALSE, is_neq = FALSE;
-				if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CEQ)))
-					is_eq = TRUE;
-				else if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CGT_UN)))
-					is_neq = TRUE;
-
-				if ((is_eq || is_neq) && ip_in_bb (cfg, cfg->cbb, ip) && 
-					!mono_class_is_nullable (klass) && !mini_is_gsharedvt_klass (klass)) {
-					next_ip = ip;
-					il_op = (MonoOpcodeEnum) (is_eq ? CEE_LDC_I4_0 : CEE_LDC_I4_1);
-					EMIT_NEW_ICONST (cfg, ins, is_eq ? 0 : 1);
-					ins->type = STACK_I4;
-					*sp++ = ins;
-					break;
-				}
-			}
-			
-			guint32 isinst_tk = 0;
-			if ((ip = il_read_op_and_token (next_ip, end, CEE_ISINST, MONO_CEE_ISINST, &isinst_tk)) &&
-				ip_in_bb (cfg, cfg->cbb, ip)) {
-				MonoClass *isinst_class = mini_get_class (method, isinst_tk, generic_context);
-				if (!mono_class_is_nullable (klass) && !mono_class_is_nullable (isinst_class) &&
-					!mini_is_gsharedvt_variable_klass (klass) && !mini_is_gsharedvt_variable_klass (isinst_class) &&
-					!mono_class_is_open_constructed_type (m_class_get_byval_arg (klass)) &&
-					!mono_class_is_open_constructed_type (m_class_get_byval_arg (isinst_class))) {
-
-					// Optimize
-					// 
-					//    box
-					//    isinst [Type]
-					//    brfalse/brtrue
-					//    
-					// to
-					// 
-					//    ldc.i4.0 (or 1)
-					//    brfalse/brtrue
-					//
-					guchar* br_ip = NULL;
-					if ((br_ip = il_read_brtrue (ip, end, &target)) || (br_ip = il_read_brtrue_s (ip, end, &target)) ||
-						(br_ip = il_read_brfalse (ip, end, &target)) || (br_ip = il_read_brfalse_s (ip, end, &target))) {
-
-						gboolean isinst = mono_class_is_assignable_from_internal (isinst_class, klass);
-						next_ip = ip;
-						il_op = (MonoOpcodeEnum) (isinst ? CEE_LDC_I4_1 : CEE_LDC_I4_0);
-						EMIT_NEW_ICONST (cfg, ins, isinst ? 1 : 0);
-						ins->type = STACK_I4;
-						*sp++ = ins;
-						break;
-					}
-
-					// Optimize
-					// 
-					//    box
-					//    isinst [Type]
-					//    ldnull
-					//    ceq/cgt.un
-					//    
-					// to
-					// 
-					//    ldc.i4.0 (or 1)
-					//
-					guchar* ldnull_ip = NULL;
-					if ((ldnull_ip = il_read_op (ip, end, CEE_LDNULL, MONO_CEE_LDNULL)) && ip_in_bb (cfg, cfg->cbb, ldnull_ip)) {
-						gboolean is_eq = FALSE, is_neq = FALSE;
-						if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CEQ)))
-							is_eq = TRUE;
-						else if ((ip = il_read_op (ldnull_ip, end, CEE_PREFIX1, MONO_CEE_CGT_UN)))
-							is_neq = TRUE;
-
-						if ((is_eq || is_neq) && ip_in_bb (cfg, cfg->cbb, ip) && 
-							!mono_class_is_nullable (klass) && !mini_is_gsharedvt_klass (klass)) {
-							gboolean isinst = mono_class_is_assignable_from_internal (isinst_class, klass);
-							next_ip = ip;
-							if (is_eq)
-								isinst = !isinst;
-							il_op = (MonoOpcodeEnum) (isinst ? CEE_LDC_I4_1 : CEE_LDC_I4_0);
-							EMIT_NEW_ICONST (cfg, ins, isinst ? 1 : 0);
-							ins->type = STACK_I4;
-							*sp++ = ins;
-							break;
-						}
-					}
-
-					// Optimize
-					// 
-					//    box
-					//    isinst [Type]
-					//    unbox.any
-					//    
-					// to
-					// 
-					//    nop
-					//
-					guchar* unbox_ip = NULL;
-					guint32 unbox_token = 0;
-					if ((unbox_ip = il_read_unbox_any (ip, end, &unbox_token)) && ip_in_bb (cfg, cfg->cbb, unbox_ip)) {
-						MonoClass *unbox_klass = mini_get_class (method, unbox_token, generic_context);
-						CHECK_TYPELOAD (unbox_klass);
-						if (!mono_class_is_nullable (unbox_klass) &&
-							!mini_is_gsharedvt_klass (unbox_klass) &&
-							klass == isinst_class &&
-							klass == unbox_klass)
-						{
-							*sp++ = val;
-							next_ip = unbox_ip;
-							break;
-						}
-					}
-				}
-			}
-#endif
 
 			gboolean is_true;
 

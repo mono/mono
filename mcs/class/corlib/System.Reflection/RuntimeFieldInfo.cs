@@ -52,9 +52,7 @@ namespace System.Reflection {
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
 	class RuntimeFieldInfo : RtFieldInfo
-#if !NETCORE
 	, ISerializable
-#endif
 	{
 #pragma warning disable 649
 		internal IntPtr klass;
@@ -92,7 +90,6 @@ namespace System.Reflection {
 			return GetDeclaringTypeInternal ().GetRuntimeModule ();
 		}
 
-#if !NETCORE
         #region ISerializable Implementation
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -107,7 +104,6 @@ namespace System.Reflection {
                 MemberTypes.Field);
         }
         #endregion
-#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal override extern object UnsafeGetValue (object obj);
@@ -308,24 +304,6 @@ namespace System.Reflection {
 		static int get_core_clr_security_level ()
 		{
 			return 1;
-		}
-#elif NETCORE
-		public override bool IsSecurityTransparent {
-			get {
-				return false;
-			}
-		}
-
-		public override bool IsSecurityCritical {
-			get {
-				return true;
-			}
-		}
-
-		public override bool IsSecuritySafeCritical {
-			get {
-				return false;
-			}
 		}
 #else
 		//seclevel { transparent = 0, safe-critical = 1, critical = 2}

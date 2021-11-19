@@ -66,13 +66,8 @@
 		mono_thread_info_tls_set (info, TLS_KEY_DOMAIN, (x));	\
 } while (FALSE)
 
-#ifndef ENABLE_NETCORE
 #define GET_APPCONTEXT() (mono_thread_internal_current ()->current_appcontext)
 #define SET_APPCONTEXT(x) MONO_OBJECT_SETREF_INTERNAL (mono_thread_internal_current (), current_appcontext, (x))
-#else
-#define GET_APPCONTEXT() NULL
-#define SET_APPCONTEXT(x)
-#endif
 
 static guint16 appdomain_list_size = 0;
 static guint16 appdomain_next = 0;
@@ -432,17 +427,13 @@ mono_domain_create (void)
 
 	domain->shadow_serial = shadow_serial;
 	domain->domain = NULL;
-#ifndef ENABLE_NETCORE
 	domain->setup = NULL;
-#endif
 	domain->friendly_name = NULL;
 	domain->search_path = NULL;
 
 	MONO_PROFILER_RAISE (domain_loading, (domain));
 
-#ifndef ENABLE_NETCORE
 	domain->memory_manager = (MonoMemoryManager *)mono_mem_manager_create_singleton (NULL, domain, TRUE);
-#endif
 
 	domain->lock_free_mp = lock_free_mempool_new ();
 	domain->env = mono_g_hash_table_new_type_internal ((GHashFunc)mono_string_hash_internal, (GCompareFunc)mono_string_equal_internal, MONO_HASH_KEY_VALUE_GC, MONO_ROOT_SOURCE_DOMAIN, domain, "Domain Environment Variable Table");
@@ -464,9 +455,6 @@ mono_domain_create (void)
 	mono_os_mutex_init_recursive (&domain->jit_code_hash_lock);
 	mono_os_mutex_init_recursive (&domain->finalizable_objects_hash_lock);
 
-#ifdef ENABLE_NETCORE
-	mono_coop_mutex_init (&domain->alcs_lock);
-#endif
 
 	mono_appdomains_lock ();
 	domain_id_alloc (domain);
@@ -479,9 +467,6 @@ mono_domain_create (void)
 
 	mono_debug_domain_create (domain);
 
-#ifdef ENABLE_NETCORE
-	mono_alc_create_default (domain);
-#endif
 
 	if (create_domain_hook)
 		create_domain_hook (domain);
@@ -705,10 +690,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.multicastdelegate_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System", "MulticastDelegate");
 
-#ifndef ENABLE_NETCORE
 	mono_defaults.manualresetevent_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "ManualResetEvent");
-#endif
 
 	mono_defaults.typehandle_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System", "RuntimeTypeHandle");
@@ -731,20 +714,13 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.thread_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System.Threading", "Thread");
 
-#ifdef ENABLE_NETCORE
-	/* There is only one thread class */
-	mono_defaults.internal_thread_class = mono_defaults.thread_class;
-#else
 	mono_defaults.internal_thread_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System.Threading", "InternalThread");
 
 	mono_defaults.threadabortexception_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System.Threading", "ThreadAbortException");
-#endif
 
-#ifndef ENABLE_NETCORE
 	mono_defaults.appdomain_class = mono_class_get_appdomain_class ();
-#endif
 
 #ifndef DISABLE_REMOTING
 	mono_defaults.transparent_proxy_class = mono_class_load_from_name (
@@ -762,10 +738,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 #endif
 
         /* FIXME pretty sure this is wrong and netcore has messages... */
-#ifndef ENABLE_NETCORE
 	mono_defaults.mono_method_message_class = mono_class_load_from_name (
                 mono_defaults.corlib, "System.Runtime.Remoting.Messaging", "MonoMethodMessage");
-#endif
 
 	mono_defaults.field_info_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Reflection", "FieldInfo");
@@ -773,13 +747,8 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.method_info_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Reflection", "MethodInfo");
 
-#ifdef ENABLE_NETCORE
-	mono_defaults.stack_frame_class = mono_class_load_from_name (
-	        mono_defaults.corlib, "System.Diagnostics", "MonoStackFrame");
-#else
 	mono_defaults.stack_frame_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Diagnostics", "StackFrame");
-#endif
 
 	mono_defaults.marshal_class = mono_class_load_from_name (
 	        mono_defaults.corlib, "System.Runtime.InteropServices", "Marshal");
@@ -813,12 +782,7 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.generic_ienumerator_class = mono_class_try_load_from_name (
 	        mono_defaults.corlib, "System.Collections.Generic", "IEnumerator`1");
 
-#ifdef ENABLE_NETCORE
-	mono_defaults.alc_class = mono_class_get_assembly_load_context_class ();
-	mono_defaults.appcontext_class = mono_class_try_load_from_name (mono_defaults.corlib, "System", "AppContext");
-#endif
 
-#ifndef ENABLE_NETCORE
 	MonoClass *threadpool_wait_callback_class = mono_class_load_from_name (
 		mono_defaults.corlib, "System.Threading", "_ThreadPoolWaitCallback");
 
@@ -826,7 +790,6 @@ mono_init_internal (const char *filename, const char *exe_filename, const char *
 	mono_defaults.threadpool_perform_wait_callback_method = mono_class_get_method_from_name_checked (
 		threadpool_wait_callback_class, "PerformWaitCallback", 0, 0, error);
 	mono_error_assert_ok (error);
-#endif
 
 	domain->friendly_name = g_path_get_basename (filename);
 
@@ -1036,7 +999,6 @@ mono_domain_ensure_entry_assembly (MonoDomain *domain, MonoAssembly *assembly)
 	if (!mono_runtime_get_no_exec () && !domain->entry_assembly && assembly) {
 
 		domain->entry_assembly = assembly;
-#ifndef ENABLE_NETCORE
 		gchar *str;
 		ERROR_DECL (error);
 		/* Domains created from another domain already have application_base and configuration_file set */
@@ -1054,7 +1016,6 @@ mono_domain_ensure_entry_assembly (MonoDomain *domain, MonoAssembly *assembly)
 			g_free (str);
 			mono_domain_set_options_from_config (domain);
 		}
-#endif
 	}
 }
 
@@ -1097,9 +1058,6 @@ mono_domain_assembly_open_internal (MonoDomain *domain, MonoAssemblyLoadContext 
 
 	// On netcore, this is necessary because we check the AppContext.BaseDirectory property as part of the assembly lookup algorithm
 	// AppContext.BaseDirectory can sometimes fall back to checking the location of the entry_assembly, which should be non-null
-#ifdef ENABLE_NETCORE
-	mono_domain_ensure_entry_assembly (domain, ass);
-#endif
 
 	return ass;
 }
@@ -1118,7 +1076,6 @@ mono_domain_assembly_open_internal (MonoDomain *domain, MonoAssemblyLoadContext 
 void
 mono_domain_free (MonoDomain *domain, gboolean force)
 {
-#ifndef ENABLE_NETCORE
 	int code_size, code_alloc;
 	GSList *tmp;
 	gpointer *p;
@@ -1290,9 +1247,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 
 	if (domain == mono_root_domain)
 		mono_root_domain = NULL;
-#else
-	g_assert_not_reached ();
-#endif
 }
 
 /**
@@ -1961,9 +1915,5 @@ mono_domain_get_assemblies (MonoDomain *domain, gboolean refonly)
 MonoAssemblyLoadContext *
 mono_domain_default_alc (MonoDomain *domain)
 {
-#ifndef ENABLE_NETCORE
 	return NULL;
-#else
-	return domain->default_alc;
-#endif
 }

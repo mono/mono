@@ -40,7 +40,7 @@ using System.Runtime.CompilerServices;
 using System.IO;
 
 using Mono;
-#if !MOBILE && !NETCORE
+#if !MOBILE
 using Mono.Security.Cryptography;
 #endif
 
@@ -51,13 +51,11 @@ namespace System.Reflection {
 //	http://www.ietf.org/rfc/rfc2396.txt
 
 	[ComVisible (true)]
-#if !NETCORE
 	[ComDefaultInterfaceAttribute (typeof (_AssemblyName))]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-#endif
 	[Serializable]	
 	[StructLayout (LayoutKind.Sequential)]
-#if MOBILE || NETCORE
+#if MOBILE
 	public sealed partial class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback {
 #else
 	public sealed class AssemblyName  : ICloneable, ISerializable, IDeserializationCallback, _AssemblyName {
@@ -279,7 +277,7 @@ namespace System.Reflection {
 				switch (publicKey [0]) {
 				case 0x00: // public key inside a header
 					if (publicKey.Length > 12 && publicKey [12] == 0x06) {
-#if MOBILE || NETCORE
+#if MOBILE
 						return true;
 #else
 						return CryptoConvert.TryImportCapiPublicKeyBlob (publicKey, 12);
@@ -287,7 +285,7 @@ namespace System.Reflection {
 					}
 					break;
 				case 0x06: // public key
-#if MOBILE || NETCORE
+#if MOBILE
 					return true;
 #else
 					return CryptoConvert.TryImportCapiPublicKeyBlob (publicKey, 0);
@@ -419,7 +417,7 @@ namespace System.Reflection {
 			return aname;
 		}
 
-#if !MOBILE && !NETCORE
+#if !MOBILE
 		void _AssemblyName.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -473,13 +471,8 @@ namespace System.Reflection {
 
 			this.major = native->major;
 			this.minor = native->minor;
-#if NETCORE
-			this.build = native->build == 65535 ? -1 : native->build;
-			this.revision = native->revision == 65535 ? -1 : native->revision;
-#else
 			this.build = native->build;
 			this.revision = native->revision;
-#endif
 
 			this.flags = (AssemblyNameFlags)native->flags;
 
@@ -488,29 +481,13 @@ namespace System.Reflection {
 			this.versioncompat = AssemblyVersionCompatibility.SameMachine;
 			this.processor_architecture = (ProcessorArchitecture)native->arch;
 
-#if NETCORE
-			if (addVersion) {
-				if (this.build == -1)
-					this.version = new Version (this.major, this.minor);
-				else if (this.revision == -1)
-					this.version = new Version (this.major, this.minor, this.build);
-				else
-					this.version = new Version (this.major, this.minor, this.build, this.revision);
-			}
-#else
 			if (addVersion)
 				this.version = new Version (this.major, this.minor, this.build, this.revision);
-#endif
 
 			this.codebase = codeBase;
 
-#if NETCORE
-			if (native->culture != IntPtr.Zero)
-				this.cultureinfo = CultureInfo.GetCultureInfo (RuntimeMarshal.PtrToUtf8String (native->culture));
-#else
 			if (native->culture != IntPtr.Zero)
 				this.cultureinfo = CultureInfo.CreateCulture ( RuntimeMarshal.PtrToUtf8String (native->culture), assemblyRef);
-#endif
 
 			if (native->public_key != IntPtr.Zero) {
 				this.publicKey = RuntimeMarshal.DecodeBlobArray (native->public_key);
@@ -542,11 +519,5 @@ namespace System.Reflection {
 			}
 			return aname;
 		}
-
-#if NETCORE
-		internal static string EscapeCodeBase (string codebase) {
-			throw new NotImplementedException ();
-		}
-#endif
 	}
 }

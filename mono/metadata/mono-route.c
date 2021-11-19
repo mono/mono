@@ -9,7 +9,6 @@
 
 #include "config.h"
 
-#ifndef ENABLE_NETCORE
 #if HOST_DARWIN || HOST_BSD
 
 #include <sys/types.h>
@@ -168,7 +167,6 @@ ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInf
 
 #endif
 
-#endif
 
 extern const char mono_route_empty_file_no_warning;
 const char mono_route_empty_file_no_warning = 0;

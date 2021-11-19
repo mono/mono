@@ -90,10 +90,6 @@ if INSTALL_WASM
 build_profiles += wasm wasm_tools
 endif
 
-if ENABLE_NETCORE
-build_profiles += netcore
-endif
-
 test_profiles = $(filter-out binary_reference_assemblies monodroid_tools wasm_tools,$(build_profiles))
 
 MAKE_FLAGS=$(if $(V),,--no-print-directory -s)
