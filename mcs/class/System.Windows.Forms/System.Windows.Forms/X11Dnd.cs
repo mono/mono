@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,7 +40,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Windows.Forms {
 
-	internal class X11Dnd {
+	internal sealed class X11Dnd : X11Selection {
 
 		private enum DragState {
 			None,
@@ -58,12 +58,12 @@ namespace System.Windows.Forms {
 			internal MouseButtons MouseState;
 			internal DragDropEffects AllowedEffects;
 			internal Point CurMousePos;
-			
+
 			internal IntPtr LastWindow;
 			internal IntPtr LastTopLevel;
 
 			internal bool WillAccept;
-			
+
 			internal void Reset ()
 			{
 				State = DragState.None;
@@ -76,30 +76,14 @@ namespace System.Windows.Forms {
 		// This version seems to be the most common
 		static readonly IntPtr [] XdndVersion = new IntPtr [] { new IntPtr (4) };
 
-		IntPtr display;
 		DragData drag_data;
-		
-		readonly IntPtr XdndAware;
-		readonly IntPtr XdndSelection;
-		readonly IntPtr XdndEnter;
-		readonly IntPtr XdndLeave;
-		readonly IntPtr XdndPosition;
-		readonly IntPtr XdndDrop;
-		readonly IntPtr XdndFinished;
-		readonly IntPtr XdndStatus;
-		readonly IntPtr XdndTypeList;
-		readonly IntPtr XdndActionCopy;
-		readonly IntPtr XdndActionMove;
-		readonly IntPtr XdndActionLink;
-		readonly IntPtr XdndActionList;
 
-		int converts_pending;
+
 		bool position_recieved;
 		bool status_sent;
 		IntPtr target;
 		IntPtr source;
 		IntPtr toplevel;
-		IDataObject data;
 
 		Control control;
 		int pos_x, pos_y;
@@ -117,25 +101,11 @@ namespace System.Windows.Forms {
 		bool dropped = false;
 		int motion_poll;
 
-		internal X11Dnd (IntPtr display)
+		protected override IDataObject Outgoing { get{return Incomming;}  set{ Incomming = value;} }
+
+		internal X11Dnd ()
+			: base (X11Selection.ID.XdndSelection)
 		{
-			this.display = display;
-
-			XdndAware = XplatUIX11.XInternAtom (display, "XdndAware", false);
-			XdndEnter = XplatUIX11.XInternAtom (display, "XdndEnter", false);
-			XdndLeave = XplatUIX11.XInternAtom (display, "XdndLeave", false);
-			XdndPosition = XplatUIX11.XInternAtom (display, "XdndPosition", false);
-			XdndStatus = XplatUIX11.XInternAtom (display, "XdndStatus", false);
-			XdndDrop = XplatUIX11.XInternAtom (display, "XdndDrop", false);
-			XdndSelection = XplatUIX11.XInternAtom (display, "XdndSelection", false);
-			XdndFinished = XplatUIX11.XInternAtom (display, "XdndFinished", false);
-			XdndTypeList = XplatUIX11.XInternAtom (display, "XdndTypeList", false);
-			XdndActionCopy = XplatUIX11.XInternAtom (display, "XdndActionCopy", false);
-			XdndActionMove = XplatUIX11.XInternAtom (display, "XdndActionMove", false);
-			XdndActionLink = XplatUIX11.XInternAtom (display, "XdndActionLink", false);
-			XdndActionList = XplatUIX11.XInternAtom (display, "XdndActionList", false);
-
-			X11SelectionHandler.Init();
 		}
 
 		bool InDrag()
@@ -144,7 +114,7 @@ namespace System.Windows.Forms {
 				return false;
 			return drag_data.State != DragState.None;
 		}
-		
+
 		internal void SetAllowDrop (Hwnd hwnd)
 		{
 			int[] atoms;
@@ -157,7 +127,7 @@ namespace System.Windows.Forms {
 				atoms[i] = XdndVersion[i].ToInt32();
 			}
 
-			XplatUIX11.XChangeProperty (display, hwnd.whole_window, XdndAware,
+			XplatUIX11.XChangeProperty (XplatUIX11.Display, hwnd.whole_window, XdndAware,
 					(IntPtr) Atom.XA_ATOM, 32,
 					PropertyMode.Replace, atoms, 1);
 			hwnd.allow_drop = true;
@@ -171,7 +141,7 @@ namespace System.Windows.Forms {
 			drag_data.State = DragState.Beginning;
 			drag_data.MouseState = XplatUIX11.MouseState;
 			drag_data.Data = data;
-			drag_data.SupportedTypes = X11SelectionHandler.DetermineSupportedTypes (data);
+			drag_data.SupportedTypes = X11SelectionHandler.DetermineSupportedTypes (data, false);
 			drag_data.AllowedEffects = allowed_effects;
 			drag_data.Action = ActionFromEffect (allowed_effects);
 
@@ -196,11 +166,11 @@ namespace System.Windows.Forms {
 			int suc;
 			drag_data.State = DragState.Dragging;
 
-			suc = XplatUIX11.XSetSelectionOwner (display, XdndSelection,
+			suc = XplatUIX11.XSetSelectionOwner (XplatUIX11.Display, Selection,
 					drag_data.Window, IntPtr.Zero);
 
-			if (suc == 0) {
-				Console.Error.WriteLine ("Could not take ownership of XdndSelection aborting drag.");
+			if (suc == 0 || drag_data.Window != XplatUIX11.XGetSelectionOwner (XplatUIX11.Display, Selection)) {
+				Console.Error.WriteLine ("Could not take ownership of {0} aborting drag.", SelectionName);
 				drag_data.Reset ();
 				return DragDropEffects.None;
 			}
@@ -214,7 +184,7 @@ namespace System.Windows.Forms {
 			timer.Start ();
 
 			// X11R7.7: format 32 is actually padded 64 for 64 bit processes
-			XplatUIX11.XChangeProperty (display, drag_data.Window, XdndTypeList,
+			XplatUIX11.XChangeProperty (XplatUIX11.Display, drag_data.Window, XdndTypeList,
 					(IntPtr) Atom.XA_ATOM, 32, PropertyMode.Replace,
 					drag_data.SupportedTypes, drag_data.SupportedTypes.Length);
 
@@ -237,7 +207,7 @@ namespace System.Windows.Forms {
 							break;
 						if (msg.message == Msg.WM_MBUTTONDOWN && drag_data.MouseState != MouseButtons.Middle)
 							break;
-						
+
 						HandleButtonUpMsg ();
 
 						// We don't want to dispatch button up neither (Match .Net)
@@ -312,7 +282,7 @@ namespace System.Windows.Forms {
 
 			// `data' and other members are already available
 			Point pos = Control.MousePosition;
-			DragEventArgs drag_args = new DragEventArgs (data, 0, pos.X, pos.Y, drag_data.AllowedEffects, DragDropEffects.None);
+			DragEventArgs drag_args = new DragEventArgs (Incomming, 0, pos.X, pos.Y, drag_data.AllowedEffects, DragDropEffects.None);
 
 			source_control.DndEnter (drag_args);
 			if ((drag_args.Effect & drag_data.AllowedEffects) != 0)
@@ -330,7 +300,7 @@ namespace System.Windows.Forms {
 				if (drag_data.WillAccept) {
 
 					if (QueryContinue (false, DragAction.Drop))
-						return;					
+						return;
 				} else {
 
 					if (QueryContinue (false, DragAction.Cancel))
@@ -402,9 +372,9 @@ namespace System.Windows.Forms {
 			int x = x_root = drag_data.CurMousePos.X;
 			int y = y_root = drag_data.CurMousePos.Y;
 
-			while (XplatUIX11.XQueryPointer (display, window, out root, out child,
+			while (XplatUIX11.XQueryPointer (XplatUIX11.Display, window, out root, out child,
 					       out x_temp, out y_temp, out x, out y, out mask_return)) {
-					
+
 				if (!dnd_aware) {
 					dnd_aware = IsWindowDndAware (window);
 					if (dnd_aware) {
@@ -416,7 +386,7 @@ namespace System.Windows.Forms {
 
 				if (child == IntPtr.Zero)
 					break;
-					
+
 				window = child;
 			}
 		}
@@ -427,7 +397,7 @@ namespace System.Windows.Forms {
 				QueryContinue (true, DragAction.Cancel);
 			}
 		}
-		
+
 		// return true if the event is handled here
 		internal bool HandleClientMessage (ref XEvent xevent)
 		{
@@ -443,55 +413,41 @@ namespace System.Windows.Forms {
 			if (xevent.ClientMessageEvent.message_type == XdndStatus)
 				return HandleStatusEvent (ref xevent);
 			if (xevent.ClientMessageEvent.message_type == XdndFinished)
-				return HandleFinishedEvent ();
+				return HandleFinishedEvent (ref xevent);
 
 			return false;
 		}
 
-		// return true if the event is handled here
-		internal bool HandleSelectionNotifyEvent (ref XEvent xevent)
+		internal override void HandleSelectionNotifyEvent (ref XEvent xevent)
 		{
-			if (xevent.SelectionEvent.selection != XdndSelection)
-				return false;
+			base.HandleSelectionNotifyEvent (ref xevent);
 
-			// we requested something the source right now doesn't support
-			if (xevent.SelectionEvent.property == IntPtr.Zero)
-				return true;
-
-			X11SelectionHandler handler = X11SelectionHandler.Find ((IntPtr) xevent.SelectionEvent.target);
-			if (handler == null)
-				return true;
-			if (data == null)
-				data = new DataObject ();
-
-			handler.GetData (ref xevent, data);
-
-			converts_pending--;
-			if (converts_pending <= 0 && position_recieved) {
-				drag_event = new DragEventArgs (data, 0, pos_x, pos_y,
+			if (ConvertsPending <= 0 && position_recieved) {
+				drag_event = new DragEventArgs (Incomming, 0, pos_x, pos_y,
 					allowed, DragDropEffects.None);
 				control.DndEnter (drag_event);
 				SendStatus (source, drag_event.Effect);
 				status_sent = true;
 			}
-			return true;
 		}
 
-		// return true if the event is handled here
-		internal bool HandleSelectionRequestEvent (ref XEvent xevent)
+		internal override void HandleSelectionRequestEvent (ref XEvent xevent)
 		{
-			if (xevent.SelectionRequestEvent.selection != XdndSelection)
-				return false;
-
 			X11SelectionHandler handler = X11SelectionHandler.Find (xevent.SelectionRequestEvent.target);
 			if (handler == null) {
 				X11SelectionHandler.SetUnsupported (ref xevent);
-				return true;
+			} else {
+				handler.SetData (ref xevent, drag_data.Data);
 			}
+		}
 
-			handler.SetData (ref xevent, drag_data.Data);
-
-			return true;
+		internal override void HandleSelectionClearEvent (ref XEvent xevent)
+		{
+			if (drag_data != null) {
+				XplatUIX11.XDeleteProperty (XplatUIX11.Display, drag_data.Window, XdndTypeList);
+				drag_data = null;
+			}
+			base.HandleSelectionClearEvent (ref xevent);
 		}
 
 		bool QueryContinue (bool escape, DragAction action)
@@ -500,12 +456,12 @@ namespace System.Windows.Forms {
 					escape, action);
 
 			Control c = MwfWindow (source);
-			
+
 			if (c == null) {
 				tracking = false;
 				return false;
 			}
-			
+
 			c.DndContinueDrag (qce);
 
 			switch (qce.Action) {
@@ -533,7 +489,7 @@ namespace System.Windows.Forms {
 			// Releasing the mouse buttons should automatically restore the default cursor,
 			// but canceling the operation using QueryContinue should restore it even if the
 			// mouse buttons are not released yet.
-			XplatUIX11.XChangeActivePointerGrab (display,
+			XplatUIX11.XChangeActivePointerGrab (XplatUIX11.Display,
 					EventMask.ButtonMotionMask |
 					EventMask.PointerMotionMask |
 					EventMask.ButtonPressMask |
@@ -562,7 +518,7 @@ namespace System.Windows.Forms {
 				}
 				// TODO: Try not to set the cursor so much
 				//if (cursor.Handle != CurrentCursorHandle) {
-				XplatUIX11.XChangeActivePointerGrab (display,
+				XplatUIX11.XChangeActivePointerGrab (XplatUIX11.Display,
 						EventMask.ButtonMotionMask |
 						EventMask.PointerMotionMask |
 						EventMask.ButtonPressMask |
@@ -582,8 +538,8 @@ namespace System.Windows.Forms {
 
 		void ResetSourceData ()
 		{
-			converts_pending = 0;
-			data = null;
+			ConvertsPending = 0;
+			Incomming = null;
 		}
 
 		void ResetTargetData ()
@@ -591,7 +547,7 @@ namespace System.Windows.Forms {
 			position_recieved = false;
 			status_sent = false;
 		}
-		
+
 		bool Accepting_HandleEnterEvent (ref XEvent xevent)
 		{
 			Reset ();
@@ -618,14 +574,14 @@ namespace System.Windows.Forms {
 				allowed = drag_data.AllowedEffects;
 
 			IntPtr parent, child, new_child, last_drop_child;
-			parent = XplatUIX11.XRootWindow (display, 0);
+			parent = XplatUIX11.XRootWindow (XplatUIX11.Display, 0);
 			child = toplevel;
 			last_drop_child = IntPtr.Zero;
 			while (true) {
 				int xd, yd;
 				new_child = IntPtr.Zero;
-				
-				if (!XplatUIX11.XTranslateCoordinates (display,
+
+				if (!XplatUIX11.XTranslateCoordinates (XplatUIX11.Display,
 						    parent, child, pos_x, pos_y,
 						    out xd, out yd, out new_child))
 					break;
@@ -645,7 +601,7 @@ namespace System.Windows.Forms {
 				child = last_drop_child;
 
 			if (target != child) {
-				// We have moved into a new control 
+				// We have moved into a new control
 				// or into a control for the first time
 				Finish ();
 			}
@@ -665,16 +621,16 @@ namespace System.Windows.Forms {
 			}
 
 			control = c;
-			position_recieved = true;			
+			position_recieved = true;
 
-			if (converts_pending > 0)
+			if (ConvertsPending > 0)
 				return true;
 
 			if (!status_sent) {
-				drag_event = new DragEventArgs (data, 0, pos_x, pos_y,
+				drag_event = new DragEventArgs (Incomming, 0, pos_x, pos_y,
 					allowed, DragDropEffects.None);
 				control.DndEnter (drag_event);
-				
+
 				SendStatus (source, drag_event.Effect);
 				status_sent = true;
 			} else {
@@ -684,7 +640,7 @@ namespace System.Windows.Forms {
 
 				SendStatus (source, drag_event.Effect);
 			}
-			
+
 			return true;
 		}
 
@@ -692,9 +648,9 @@ namespace System.Windows.Forms {
 		{
 			if (control != null) {
 				if (drag_event == null) {
-					if (data == null)
-						data = new DataObject ();
-					drag_event = new DragEventArgs (data,
+					if (Incomming == null)
+						Incomming = new DataObject ();
+					drag_event = new DragEventArgs (Incomming,
 							0, pos_x, pos_y,
 					allowed, DragDropEffects.None);
 				}
@@ -707,7 +663,7 @@ namespace System.Windows.Forms {
 		bool Accepting_HandleDropEvent ()
 		{
 			if (control != null && drag_event != null) {
-				drag_event = new DragEventArgs (data,
+				drag_event = new DragEventArgs (Incomming,
 						0, pos_x, pos_y,
 					allowed, drag_event.Effect);
 				control.DndDrop (drag_event);
@@ -732,44 +688,28 @@ namespace System.Windows.Forms {
 					return true;
 
 				drag_data.WillAccept = ((int) xevent.ClientMessageEvent.ptr2 & 0x1) != 0;
-				
+
 				GiveFeedback (xevent.ClientMessageEvent.ptr5);
 			}
 			return true;
 		}
 
-		bool HandleFinishedEvent ()
+		bool HandleFinishedEvent (ref XEvent xevent)
 		{
-			if (drag_data != null)
-				XplatUIX11.XDeleteProperty (display, drag_data.Window, XdndTypeList);
-
-			X11SelectionHandler.FreeNativeSelectionBuffers(XdndSelection);
+			HandleSelectionClearEvent (ref xevent);
 			return true;
 		}
 
 		DragDropEffects EffectsFromX11Source (IntPtr source, IntPtr action_atom)
 		{
 			DragDropEffects allowed = DragDropEffects.None;
-			IntPtr type, count, remaining, data = IntPtr.Zero;
-			int format;
 
-			XplatUIX11.XGetWindowProperty (display, source, XdndActionList,
-					IntPtr.Zero, new IntPtr (32), false, (IntPtr) Atom.XA_ATOM,
-					out type, out format, out count, out remaining, ref data);
+			var atoms = X11SelectionHandler.GetDataPtrs(XplatUIX11.Display, source, XdndActionList, (IntPtr) Atom.XA_ATOM);
 
-			try {
-				if (type == (IntPtr) Atom.XA_ATOM && format == 32 &&
-						count.ToInt32() > 0 &&  data != IntPtr.Zero) {
-
-					int intptr_size = Marshal.SizeOf (typeof (IntPtr));
-					for (int i = 0; i < count.ToInt32 (); i++) {
-						IntPtr current_atom = Marshal.ReadIntPtr (data, i * intptr_size);
-						allowed |= EffectFromAction (current_atom);
-					}
+			if (atoms != null) {
+				foreach (var current_atom in atoms) {
+					allowed |= EffectFromAction (current_atom);
 				}
-			} finally {
-				if (data != IntPtr.Zero)
-					XplatUIX11.XFree (data);
 			}
 
 			// if source is not providing the action list, use the
@@ -807,17 +747,15 @@ namespace System.Windows.Forms {
 			return action;
 		}
 
-		bool ConvertData (ref XEvent xevent)
+		void ConvertData (ref XEvent xevent)
 		{
-			bool match = false;
-
 			Control mwfcontrol = MwfWindow (source);
 
 			/* To take advantage of the mwfcontrol, we have to be sure
 			   that the dnd operation is still happening (since messages are asynchronous) */
 			if (mwfcontrol != null && drag_data != null) {
 				if (!tracking)
-					return false;
+					return;
 
 				IDataObject dragged = drag_data.Data as IDataObject;
 				if (dragged != null) {
@@ -825,24 +763,29 @@ namespace System.Windows.Forms {
 					// don't do any special handling here like it is
 					// done below in SetDataWithFormats
 					// for example "Image that implements IDataObject"
-					data = dragged;
+					Incomming = dragged;
 				} else {
-					if (data == null)
-						data = new DataObject ();
-					X11SelectionHandler.SetDataWithFormats (data, drag_data.Data);
+					Incomming = X11SelectionHandler.SetDataWithFormats (drag_data.Data);
 				}
-				return true;
+				return;
 			}
 
-			foreach (IntPtr atom in SourceSupportedList (ref xevent)) {
-				X11SelectionHandler handler = X11SelectionHandler.Find (atom);
-				if (handler == null)
-					continue;
-				handler.ConvertSelectionDnd (display, XdndSelection, toplevel);
-				converts_pending++;
-				match = true;
+			X11SelectionHandler multiple;
+			var handlers = X11SelectionHandler.TypeListHandlers(XplatUIX11.Display, source,
+					XdndTypeList, ref xevent.ClientMessageEvent, out multiple);
+
+			if (handlers != null && 0 < handlers.Length) {
+				if (null != multiple && 1 < handlers.Length) {
+					multiple.ConvertSelection (XplatUIX11.Display, Selection, toplevel, handlers);
+					ConvertsPending++;
+				} else {
+					foreach (var handler in handlers){
+						handler.ConvertSelection (XplatUIX11.Display, Selection, toplevel);
+						ConvertsPending++;
+					}
+				}
 			}
-			return match;
+			return;
 		}
 
 
@@ -851,7 +794,7 @@ namespace System.Windows.Forms {
 			XEvent xevent = new XEvent ();
 
 			xevent.AnyEvent.type = XEventName.ClientMessage;
-			xevent.AnyEvent.display = display;
+			xevent.AnyEvent.display = XplatUIX11.Display;
 			xevent.ClientMessageEvent.window = source;
 			xevent.ClientMessageEvent.message_type = XdndStatus;
 			xevent.ClientMessageEvent.format = 32;
@@ -860,7 +803,7 @@ namespace System.Windows.Forms {
 				xevent.ClientMessageEvent.ptr2 = (IntPtr) 1;
 
 			xevent.ClientMessageEvent.ptr5 = ActionFromEffect (effect);
-			XplatUIX11.XSendEvent (display, source, false, IntPtr.Zero, ref xevent);
+			XplatUIX11.XSendEvent (XplatUIX11.Display, source, false, IntPtr.Zero, ref xevent);
 		}
 
 		void SendEnter (IntPtr handle, IntPtr from, IntPtr [] supported)
@@ -868,7 +811,7 @@ namespace System.Windows.Forms {
 			XEvent xevent = new XEvent ();
 
 			xevent.AnyEvent.type = XEventName.ClientMessage;
-			xevent.AnyEvent.display = display;
+			xevent.AnyEvent.display = XplatUIX11.Display;
 			xevent.ClientMessageEvent.window = handle;
 			xevent.ClientMessageEvent.message_type = XdndEnter;
 			xevent.ClientMessageEvent.format = 32;
@@ -879,7 +822,7 @@ namespace System.Windows.Forms {
 			if (supported.Length > 3)
 				ptr2 |= 1;
 			xevent.ClientMessageEvent.ptr2 = (IntPtr) ptr2;
-			
+
 			if (supported.Length > 0)
 				xevent.ClientMessageEvent.ptr3 = supported [0];
 			if (supported.Length > 1)
@@ -887,7 +830,7 @@ namespace System.Windows.Forms {
 			if (supported.Length > 2)
 				xevent.ClientMessageEvent.ptr5 = supported [2];
 
-			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
+			XplatUIX11.XSendEvent (XplatUIX11.Display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
 		void SendDrop (IntPtr handle, IntPtr from, IntPtr time)
@@ -895,14 +838,14 @@ namespace System.Windows.Forms {
 			XEvent xevent = new XEvent ();
 
 			xevent.AnyEvent.type = XEventName.ClientMessage;
-			xevent.AnyEvent.display = display;
+			xevent.AnyEvent.display = XplatUIX11.Display;
 			xevent.ClientMessageEvent.window = handle;
 			xevent.ClientMessageEvent.message_type = XdndDrop;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = from;
 			xevent.ClientMessageEvent.ptr3 = time;
-			
-			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
+
+			XplatUIX11.XSendEvent (XplatUIX11.Display, handle, false, IntPtr.Zero, ref xevent);
 			dropped = true;
 		}
 
@@ -911,7 +854,7 @@ namespace System.Windows.Forms {
 			XEvent xevent = new XEvent ();
 
 			xevent.AnyEvent.type = XEventName.ClientMessage;
-			xevent.AnyEvent.display = display;
+			xevent.AnyEvent.display = XplatUIX11.Display;
 			xevent.ClientMessageEvent.window = handle;
 			xevent.ClientMessageEvent.message_type = XdndPosition;
 			xevent.ClientMessageEvent.format = 32;
@@ -919,8 +862,8 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.ptr3 = (IntPtr) ((x << 16) | (y & 0xFFFF));
 			xevent.ClientMessageEvent.ptr4 = time;
 			xevent.ClientMessageEvent.ptr5 = action;
-			
-			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
+
+			XplatUIX11.XSendEvent (XplatUIX11.Display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
 		void SendLeave (IntPtr handle, IntPtr from)
@@ -928,13 +871,13 @@ namespace System.Windows.Forms {
 			XEvent xevent = new XEvent ();
 
 			xevent.AnyEvent.type = XEventName.ClientMessage;
-			xevent.AnyEvent.display = display;
+			xevent.AnyEvent.display = XplatUIX11.Display;
 			xevent.ClientMessageEvent.window = handle;
 			xevent.ClientMessageEvent.message_type = XdndLeave;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = from;
 
-			XplatUIX11.XSendEvent (display, handle, false, IntPtr.Zero, ref xevent);
+			XplatUIX11.XSendEvent (XplatUIX11.Display, handle, false, IntPtr.Zero, ref xevent);
 		}
 
 		void SendFinished ()
@@ -942,56 +885,13 @@ namespace System.Windows.Forms {
 			XEvent xevent = new XEvent ();
 
 			xevent.AnyEvent.type = XEventName.ClientMessage;
-			xevent.AnyEvent.display = display;
+			xevent.AnyEvent.display = XplatUIX11.Display;
 			xevent.ClientMessageEvent.window = source;
 			xevent.ClientMessageEvent.message_type = XdndFinished;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = toplevel;
 
-			XplatUIX11.XSendEvent (display, source, false, IntPtr.Zero, ref xevent);
-		}
-
-		IntPtr [] SourceSupportedList (ref XEvent xevent)
-		{
-			IntPtr [] res;
-
-
-			if (((int) xevent.ClientMessageEvent.ptr2 & 0x1) == 1) {
-				IntPtr type;
-				int format;
-				IntPtr count;
-				IntPtr remaining;
-				IntPtr data = IntPtr.Zero;
-
-				XplatUIX11.XGetWindowProperty (display, source, XdndTypeList,
-						IntPtr.Zero, new IntPtr(32), false, (IntPtr) Atom.XA_ATOM,
-						out type, out format, out count,
-						out remaining, ref data);
-
-				try {
-					if (type == (IntPtr) Atom.XA_ATOM && format == 32 &&
-						count.ToInt32() > 0 || data != IntPtr.Zero) {
-
-						res = new IntPtr [count.ToInt32()];
-						for (int i = 0; i < res.Length; i++) {
-							// X11R7.7: format 32 is actually padded 64 for 64 bit processes
-							res [i] = Marshal.ReadIntPtr(data, i * IntPtr.Size);
-						}
-
-						return res;
-					}
-				} finally {
-					if (data != IntPtr.Zero)
-						XplatUIX11.XFree (data);
-				}
-			}
-
-			res = new IntPtr [3];
-			res [0] = xevent.ClientMessageEvent.ptr3;
-			res [1] = xevent.ClientMessageEvent.ptr4;
-			res [2] = xevent.ClientMessageEvent.ptr5;
-
-			return res;
+			XplatUIX11.XSendEvent (XplatUIX11.Display, source, false, IntPtr.Zero, ref xevent);
 		}
 
 		Control MwfWindow (IntPtr window)
@@ -1001,60 +901,40 @@ namespace System.Windows.Forms {
 				return null;
 
 			Control res = Control.FromHandle (hwnd.client_window);
-			
+
 			if (res == null)
 				res = Control.FromHandle (window);
-				
+
 			return res;
 		}
 
 		bool IsWindowDndAware (IntPtr handle)
 		{
-			bool res = true;
 			// Check the version number, we need at least 3
-			IntPtr actual;
-			int format;
-			IntPtr count;
-			IntPtr remaining;
-			IntPtr data = IntPtr.Zero;
 
-			XplatUIX11.XGetWindowProperty (display, handle, XdndAware, IntPtr.Zero, new IntPtr(0x8000000), false,
-					(IntPtr) Atom.XA_ATOM, out actual, out format,
-					out count, out remaining, ref data);
+			var atoms = X11SelectionHandler.GetDataPtrs(XplatUIX11.Display, handle, XdndAware, (IntPtr) Atom.XA_ATOM);
 
-			try {
-				if (actual != (IntPtr) Atom.XA_ATOM || format != 32 ||
-						count.ToInt32() == 0 || data == IntPtr.Zero) {
-					return false;
-				}
-
-				int version = Marshal.ReadInt32 (data, 0);
-
-				if (version < 3) {
-					Console.Error.WriteLine ("XDND Version too old (" + version + ").");
-					return false;
-				}
-
-				// First type is actually the XDND version
-				if (count.ToInt32() > 1) {
-					res = false;
-					for (int i = 1; i < count.ToInt32(); i++) {
-						IntPtr type = (IntPtr) Marshal.ReadInt32 (data, i *
-								Marshal.SizeOf (typeof (int)));
-						for (int j = 0; j < drag_data.SupportedTypes.Length; j++) {
-							if (drag_data.SupportedTypes [j] == type) {
-								res = true;
-								break;
-							}
-						}
-					}
-				}
-			} finally {
-				if (data != IntPtr.Zero)
-					XplatUIX11.XFree (data);
+			if (atoms == null || atoms.Count < 1) {
+				return false;
 			}
 
-			return res;
+			int version = atoms[0].ToInt32();
+
+			if (version < 3) {
+				Console.Error.WriteLine ("XDND Version too old ({0}).", version);
+				return false;
+			}
+
+			for (int i = 1; i < atoms.Count; i++) {
+				IntPtr type = atoms[i];
+				for (int j = 0; j < drag_data.SupportedTypes.Length; j++) {
+					if (drag_data.SupportedTypes [j] == type) {
+						return true;
+					}
+				}
+			}
+
+			return (atoms.Count == 1);
 		}
 	}
 }

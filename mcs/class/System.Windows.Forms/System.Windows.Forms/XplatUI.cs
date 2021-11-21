@@ -1220,7 +1220,26 @@ namespace System.Windows.Forms {
 		#region	Delegates
 		public delegate bool ClipboardToObject (int type, IntPtr data, out object obj);
 		public delegate bool ObjectToClipboard (ref int type, object obj, out byte[] data);
+
 		#endregion	// Delegates
+
+		#region alternative Clipboard API
+		// This alternative clipboard API is required for X11 as the original API requires
+		// excessive round trips to the clipboard owner and forces multiple, unnecessary
+		// data conversions to be performed by the clipboard owner.
+
+		internal delegate IDataObject ClipboardGetContentDG (bool primary_selection);
+		internal static ClipboardGetContentDG ClipboardGetContent;
+
+		internal delegate string[] ClipboardGetFormatsDG (bool primary_selection);
+		internal static ClipboardGetFormatsDG ClipboardGetFormats;
+
+		internal delegate void ClipboardSetContentDG (bool primary_selection, object data, bool copy);
+		internal static ClipboardSetContentDG ClipboardSetContent;
+
+		internal delegate void ClipboardClearDG (bool primary_selection);
+		internal static ClipboardClearDG ClipboardClear;
+		#endregion      // alternative Clipboard API
 
 		[DllImport ("libc")]
 		static extern int uname (IntPtr buf);

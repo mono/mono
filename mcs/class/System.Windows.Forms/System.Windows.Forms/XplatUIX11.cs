@@ -94,8 +94,8 @@ namespace System.Windows.Forms {
 		int                     render_first_error;
 
 		// Clipboard
-		static IntPtr 		ClipMagic;
-		static ClipboardData	Clipboard;		// Our clipboard
+		static X11Clipboard[]	Clipboards;		// Our clipboards
+		static X11Selection[]	Selections;		// clipboards and DND
 
 		// Communication
 		static IntPtr		PostAtom;		// PostMessage atom
@@ -200,14 +200,8 @@ namespace System.Windows.Forms {
 		//static IntPtr _NET_WM_WINDOW_TYPE_SPLASH;
 		// static IntPtr _NET_WM_WINDOW_TYPE_DIALOG;
 		static IntPtr _NET_WM_WINDOW_TYPE_NORMAL;
-		static IntPtr CLIPBOARD;
-		static IntPtr PRIMARY;
 		//static IntPtr DIB;
-		static IntPtr OEMTEXT;
 		static IntPtr UTF8_STRING;
-		static IntPtr UTF16_STRING;
-		static IntPtr RICHTEXTFORMAT;
-		static IntPtr TARGETS;
 
 		// mouse hover message generation
 		static HoverStruct	HoverState;		//
@@ -256,7 +250,6 @@ namespace System.Windows.Forms {
 			MessageQueues = Hashtable.Synchronized (new Hashtable(7));
 			unattached_timer_list = ArrayList.Synchronized (new ArrayList (3));
 			messageHold = Hashtable.Synchronized (new Hashtable(3));
-			Clipboard = new ClipboardData ();
 			XInitThreads();
 
 			ErrorExceptions = false;
@@ -509,7 +502,19 @@ namespace System.Windows.Forms {
 				pollfds [1].events = PollEvents.POLLIN;
 
 				Keyboard = new X11Keyboard(DisplayHandle, FosterParent);
-				Dnd = new X11Dnd (DisplayHandle);
+				Dnd = new X11Dnd ();
+
+				Clipboards = new []{
+					new X11Clipboard (false, UpdateMessageQueue, FosterParent, 10, 120),
+					new X11Clipboard (true, UpdateMessageQueue, FosterParent, 10, 120)
+				};
+
+				Selections = new X11Selection[] {Dnd, Clipboards[0], Clipboards[1]};
+
+				XplatUI.ClipboardGetContent = ClipboardGetContentImp;
+				XplatUI.ClipboardGetFormats = ClipboardGetFormatsImp;
+				XplatUI.ClipboardSetContent = ClipboardSetContentImp;
+				XplatUI.ClipboardClear = ClipboardClearImp;
 
 				DoubleClickInterval = 500;
 
@@ -545,6 +550,21 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check your DISPLAY environment variable)");
 			}
 		}
+
+		internal static string XGetAtomName (IntPtr display, IntPtr atom)
+		{
+			IntPtr buf = _XGetAtomName (display, atom);
+
+			if (buf == IntPtr.Zero)
+				return null;
+
+			string name = Marshal.PtrToStringAuto (buf);
+
+			XFree (buf);
+
+			return name;
+		}
+
 		#endregion	// Internal Methods
 
 		#region Methods
@@ -623,13 +643,7 @@ namespace System.Windows.Forms {
 				// "_NET_WM_WINDOW_TYPE_DIALOG",
 				//"_NET_WM_WINDOW_TYPE_SPLASH",
 				"_NET_WM_WINDOW_TYPE_NORMAL",
-				"CLIPBOARD",
-				"PRIMARY",
-				"COMPOUND_TEXT",
 				"UTF8_STRING",
-				"UTF16_STRING",
-				"RICHTEXTFORMAT",
-				"TARGETS",
 				"_SWF_AsyncAtom",
 				"_SWF_PostMessageAtom",
 				"_SWF_HoverAtom" };
@@ -699,13 +713,7 @@ namespace System.Windows.Forms {
 			// _NET_WM_WINDOW_TYPE_DIALOG = atoms [off++];
 			//_NET_WM_WINDOW_TYPE_SPLASH = atoms [off++];
 			_NET_WM_WINDOW_TYPE_NORMAL = atoms [off++];
-			CLIPBOARD = atoms [off++];
-			PRIMARY = atoms [off++];
-			OEMTEXT = atoms [off++];
 			UTF8_STRING = atoms [off++];
-			UTF16_STRING = atoms [off++];
-			RICHTEXTFORMAT = atoms [off++];
-			TARGETS = atoms [off++];
 			AsyncAtom = atoms [off++];
 			PostAtom = atoms [off++];
 			HoverState.Atom = atoms [off++];
@@ -1247,123 +1255,6 @@ namespace System.Windows.Forms {
 			return queue;
 		}
 
-		void TranslatePropertyToClipboard(IntPtr property) {
-			IntPtr			actual_atom;
-			int			actual_format;
-			IntPtr			nitems;
-			IntPtr			bytes_after;
-			IntPtr			prop = IntPtr.Zero;
-
-			Clipboard.Item = null;
-
-			XGetWindowProperty(DisplayHandle, FosterParent, property, IntPtr.Zero, new IntPtr (0x7fffffff), true, (IntPtr)Atom.AnyPropertyType, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-
-			if ((long)nitems > 0) {
-				if (property == (IntPtr)Atom.XA_STRING) {
-					// Xamarin-5116: PtrToStringAnsi expects to get UTF-8, but we might have
-					// Latin-1 instead, in which case it will return null.
-					var s = Marshal.PtrToStringAnsi (prop);
-					if (string.IsNullOrEmpty (s)) {
-						var sb = new StringBuilder ();
-						for (int i = 0; i < (int)nitems; i++) {
-							var b = Marshal.ReadByte (prop, i);
-							sb.Append ((char)b);
-						}
-						s = sb.ToString ();
-					}
-					// Some X managers/apps pass unicode chars as escaped strings, so
-					// we may need to unescape them.
-					Clipboard.Item = UnescapeUnicodeFromAnsi (s);
-				} else if (property == (IntPtr)Atom.XA_BITMAP) {
-					// FIXME - convert bitmap to image
-				} else if (property == (IntPtr)Atom.XA_PIXMAP) {
-					// FIXME - convert pixmap to image
-				} else if (property == OEMTEXT) {
-					Clipboard.Item = UnescapeUnicodeFromAnsi (Marshal.PtrToStringAnsi(prop));
-				} else if (property == UTF8_STRING) {
-					byte [] buffer = new byte [(int)nitems];
-					for (int i = 0; i < (int)nitems; i++)
-						buffer [i] = Marshal.ReadByte (prop, i);
-					Clipboard.Item = Encoding.UTF8.GetString (buffer);
-				} else if (property == UTF16_STRING) {
-					byte [] buffer = new byte [(int)nitems];
-					for (int i = 0; i < (int)nitems; i++)
-						buffer [i] = Marshal.ReadByte (prop, i);
-					Clipboard.Item = Encoding.Unicode.GetString (buffer);
-				} else if (property == RICHTEXTFORMAT)
-					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
-				else if (property == TARGETS) {
-					for (int pos = 0; pos < (long) nitems; pos++) {
-						IntPtr format = Marshal.ReadIntPtr (prop, pos * IntPtr.Size);
-						if (DataFormats.ContainsFormat (format.ToInt32())) {
-							Clipboard.Formats.Add (format);
-							DriverDebug("Got supported clipboard atom format: {0}", format);
-						}
-					}
-				} else if (DataFormats.ContainsFormat (property.ToInt32 ())) {
-					if (DataFormats.GetFormat (property.ToInt32 ()).is_serializable) {
-						MemoryStream memory_stream = new MemoryStream ((int)nitems);
-						for (int i = 0; i < (int)nitems; i++)
-							memory_stream.WriteByte (Marshal.ReadByte (prop, i));
-
-						memory_stream.Position = 0;
-						BinaryFormatter formatter = new BinaryFormatter ();
-						Clipboard.Item = formatter.Deserialize (memory_stream);
-						memory_stream.Close ();
-					}
-				}
-
-				XFree(prop);
-			}
-		}
-
-		string UnescapeUnicodeFromAnsi (string value)
-		{
-			if (value == null || value.IndexOf ("\\u") == -1)
-				return value;
-
-			StringBuilder sb = new StringBuilder (value.Length);
-			int start, pos;
-
-			start = pos = 0;
-			while (start < value.Length) {
-				pos = value.IndexOf ("\\u", start);
-				if (pos == -1)
-					break;
-
-				sb.Append (value, start, pos - start);
-				pos += 2;
-				start = pos;
-
-				int length = 0;
-				while (pos < value.Length && length < 4) {
-					if (!ValidHexDigit (value [pos]))
-						break;
-					length++;
-					pos++;
-				}
-
-				int res;
-				if (!Int32.TryParse (value.Substring (start, length), System.Globalization.NumberStyles.HexNumber, 
-							null, out res))
-					return value; // Error, return the unescaped original value.
-				
-				sb.Append ((char)res);
-				start = pos;
-			}
-
-			// Append any remaining data.
-			if (start < value.Length)
-				sb.Append (value, start, value.Length - start);
-
-			return sb.ToString ();
-		}
-
-		private static bool ValidHexDigit (char e)
-		{
-			return Char.IsDigit (e) || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
-		}
-
 		void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
 			// Don't waste time
 			if ((hwnd == null) || (x > hwnd.Width) || (y > hwnd.Height) || ((x + width) < 0) || ((y + height) < 0)) {
@@ -1791,151 +1682,30 @@ namespace System.Windows.Forms {
 					break;
 
 				case XEventName.SelectionClear: {
-					// Should we do something?
+					foreach (var selection in Selections) {
+						if (selection.Selection == xevent.SelectionClearEvent.selection) {
+							selection.HandleSelectionClearEvent (ref xevent);
+							break;
+						}
+					}
 					break;
 				}
 
 				case XEventName.SelectionRequest: {
-					if (Dnd.HandleSelectionRequestEvent (ref xevent))
-						break;
-					XEvent sel_event;
-
-					sel_event = new XEvent();
-					sel_event.SelectionEvent.type = XEventName.SelectionNotify;
-					sel_event.SelectionEvent.send_event = true;
-					sel_event.SelectionEvent.display = DisplayHandle;
-					sel_event.SelectionEvent.selection = xevent.SelectionRequestEvent.selection;
-					sel_event.SelectionEvent.target = xevent.SelectionRequestEvent.target;
-					sel_event.SelectionEvent.requestor = xevent.SelectionRequestEvent.requestor;
-					sel_event.SelectionEvent.time = xevent.SelectionRequestEvent.time;
-					sel_event.SelectionEvent.property = IntPtr.Zero;
-
-					IntPtr format_atom = xevent.SelectionRequestEvent.target;
-
-					// Seems that some apps support asking for supported types
-					if (format_atom == TARGETS) {
-						IntPtr[]	atoms;
-						int	atom_count;
-
-						atoms = new IntPtr[5];
-						atom_count = 0;
-
-						if (Clipboard.IsSourceText) {
-							atoms[atom_count++] = (IntPtr)Atom.XA_STRING;
-							atoms[atom_count++] = (IntPtr)OEMTEXT;
-							atoms[atom_count++] = (IntPtr)UTF8_STRING;
-							atoms[atom_count++] = (IntPtr)UTF16_STRING;
-							atoms[atom_count++] = (IntPtr)RICHTEXTFORMAT;
-						} else if (Clipboard.IsSourceImage) {
-							atoms[atom_count++] = (IntPtr)Atom.XA_PIXMAP;
-							atoms[atom_count++] = (IntPtr)Atom.XA_BITMAP;
-						} else {
-							// FIXME - handle other types
-						}
-
-						XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, 
-								(IntPtr)Atom.XA_ATOM, 32, PropertyMode.Replace, atoms, atom_count);
-						sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-					} else if (format_atom == (IntPtr)RICHTEXTFORMAT) {
-						string rtf_text = Clipboard.GetRtfText ();
-						if (rtf_text != null) {
-							// The RTF spec mentions that ascii is enough to contain it
-							Byte [] bytes = Encoding.ASCII.GetBytes (rtf_text);
-							int buflen = bytes.Length;
-							IntPtr buffer = Marshal.AllocHGlobal (buflen);
-
-							for (int i = 0; i < buflen; i++)
-								Marshal.WriteByte (buffer, i, bytes[i]);
-
-							XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property,
-									(IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-							Marshal.FreeHGlobal(buffer);
-						}
-					} else if (Clipboard.IsSourceText && 
-					           (format_atom == (IntPtr)Atom.XA_STRING 
-					            || format_atom == OEMTEXT
-					            || format_atom == UTF16_STRING
-					            || format_atom == UTF8_STRING)) {
-						IntPtr	buffer = IntPtr.Zero;
-						int	buflen;
-						Encoding encoding = null;
-
-						buflen = 0;
-
-						// Select an encoding depending on the target
-						IntPtr target_atom = xevent.SelectionRequestEvent.target;
-						if (target_atom == (IntPtr)Atom.XA_STRING || target_atom == OEMTEXT)
-							// FIXME - EOMTEXT should encode into ISO2022
-							encoding = Encoding.ASCII;
-						else if (target_atom == UTF16_STRING)
-							encoding = Encoding.Unicode;
-						else if (target_atom == UTF8_STRING)
-							encoding = Encoding.UTF8;
-
-						Byte [] bytes;
-
-						bytes = encoding.GetBytes (Clipboard.GetPlainText ());
-						buffer = Marshal.AllocHGlobal (bytes.Length);
-						buflen = bytes.Length;
-
-						for (int i = 0; i < buflen; i++)
-							Marshal.WriteByte (buffer, i, bytes [i]);
-
-						if (buffer != IntPtr.Zero) {
-							XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-							Marshal.FreeHGlobal(buffer);
-						}
-					} else if (Clipboard.GetSource (format_atom.ToInt32 ()) != null) { // check if we have an available value of this format
-						if (DataFormats.GetFormat (format_atom.ToInt32 ()).is_serializable) {
-							object serializable = Clipboard.GetSource (format_atom.ToInt32 ());
-
-							BinaryFormatter formatter = new BinaryFormatter ();
-							MemoryStream memory_stream = new MemoryStream ();
-							formatter.Serialize (memory_stream, serializable);
-
-							int buflen = (int)memory_stream.Length;
-							IntPtr buffer = Marshal.AllocHGlobal (buflen);
-							memory_stream.Position = 0;
-							for (int i = 0; i < buflen; i++)
-								Marshal.WriteByte (buffer, i, (byte)memory_stream.ReadByte ());
-							memory_stream.Close ();
-
-							XChangeProperty (DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target,
-									8, PropertyMode.Replace, buffer, buflen);
-							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-							Marshal.FreeHGlobal (buffer);
-						}
-
-					} else if (Clipboard.IsSourceImage) {
-						if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
-							// FIXME - convert image and store as property
-						} else if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
-							// FIXME - convert image and store as property
+					foreach (var selection in Selections) {
+						if (selection.Selection == xevent.SelectionRequestEvent.selection) {
+							selection.HandleSelectionRequestEvent (ref xevent);
+							break;
 						}
 					}
-
-					XSendEvent(DisplayHandle, xevent.SelectionRequestEvent.requestor, false, new IntPtr ((int)EventMask.NoEventMask), ref sel_event);
 					break;
 				}
 
 				case XEventName.SelectionNotify: {
-					if (Dnd.HandleSelectionNotifyEvent (ref xevent))
-						break;
-
-					if (Clipboard.Enumerating) {
-						Clipboard.Enumerating = false;
-						if (xevent.SelectionEvent.property != IntPtr.Zero) {
-							TranslatePropertyToClipboard (xevent.SelectionEvent.property);
-						}
-					} else if (Clipboard.Retrieving) {
-						Clipboard.Retrieving = false;
-						if (xevent.SelectionEvent.property != IntPtr.Zero) {
-							TranslatePropertyToClipboard(xevent.SelectionEvent.property);
-						} else {
-							Clipboard.ClearSources ();
-							Clipboard.Item = null;
+					foreach (var selection in Selections) {
+						if (selection.Selection == xevent.SelectionEvent.selection) {
+							selection.HandleSelectionNotifyEvent (ref xevent);
+							break;
 						}
 					}
 					break;
@@ -2729,127 +2499,57 @@ namespace System.Windows.Forms {
 			y = dest_y_return;
 		}
 
+
+		[Obsolete("ClipboardAvailableFormats is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override int[] ClipboardAvailableFormats(IntPtr handle)
 		{
-			int[]			result;
-
-
-			if (XGetSelectionOwner(DisplayHandle, CLIPBOARD) == IntPtr.Zero) {
-				return null;
-			}
-
-			Clipboard.Formats = new ArrayList();
-
-			// TARGETS is supported by all, no iteration required - see ICCCM chapter 2.6.2. Target Atoms
-			XConvertSelection(DisplayHandle, CLIPBOARD, TARGETS, TARGETS, FosterParent, IntPtr.Zero);
-
-			var timeToWaitForSelectionFormats = TimeSpan.FromSeconds(4);
-			var startTime = DateTime.Now;
-			Clipboard.Enumerating = true;
-			while (Clipboard.Enumerating) {
-				UpdateMessageQueue(null, false);
-
-				if (DateTime.Now - startTime > timeToWaitForSelectionFormats)
-					break;
-			}
-
-			result = new int[Clipboard.Formats.Count];
-
-			for (int i = 0; i < Clipboard.Formats.Count; i++) {
-				result[i] = ((IntPtr)Clipboard.Formats[i]).ToInt32 ();
-			}
-
-			Clipboard.Formats = null;
-			return result;
+			throw new NotImplementedException ("ClipboardAvailableFormats is deprecated for X11, use System.Windows.Forms.Clipboard instead");
 		}
 
+		[Obsolete("ClipboardClose is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override void ClipboardClose(IntPtr handle)
 		{
-			if (handle != ClipMagic) {
-				throw new ArgumentException("handle is not a valid clipboard handle");
-			}
-			return;
+			// NOP
 		}
 
+		[Obsolete("ClipboardGetID is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override int ClipboardGetID(IntPtr handle, string format)
 		{
-			if (handle != ClipMagic) {
-				throw new ArgumentException("handle is not a valid clipboard handle");
-			}
-
-			if (format == "Text" ) return (int)Atom.XA_STRING;
-			else if (format == "Bitmap" ) return (int)Atom.XA_BITMAP;
-			//else if (format == "MetaFilePict" ) return 3;
-			//else if (format == "SymbolicLink" ) return 4;
-			//else if (format == "DataInterchangeFormat" ) return 5;
-			//else if (format == "Tiff" ) return 6;
-			else if (format == "OEMText" ) return OEMTEXT.ToInt32();
-			else if (format == "DeviceIndependentBitmap" ) return (int)Atom.XA_PIXMAP;
-			else if (format == "Palette" ) return (int)Atom.XA_COLORMAP;	// Useless
-			//else if (format == "PenData" ) return 10;
-			//else if (format == "RiffAudio" ) return 11;
-			//else if (format == "WaveAudio" ) return 12;
-			else if (format == "UnicodeText" ) return UTF8_STRING.ToInt32();
-			//else if (format == "EnhancedMetafile" ) return 14;
-			//else if (format == "FileDrop" ) return 15;
-			//else if (format == "Locale" ) return 16;
-			else if (format == "Rich Text Format") return RICHTEXTFORMAT.ToInt32 ();
-
-			return XInternAtom(DisplayHandle, format, false).ToInt32();
+			return  XplatUIX11.XInternAtom (DisplayHandle, format, false).ToInt32 ();
 		}
 
+		[Obsolete("ClipboardOpen is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override IntPtr ClipboardOpen(bool primary_selection)
 		{
-			if (!primary_selection)
-				ClipMagic = CLIPBOARD;
-			else
-				ClipMagic = PRIMARY;
-			return ClipMagic;
+			return Clipboards[primary_selection ? 1 : 0].Selection;
 		}
 
+		[Obsolete("ClipboardRetrieve is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override object ClipboardRetrieve(IntPtr handle, int type, XplatUI.ClipboardToObject converter)
 		{
-			XConvertSelection(DisplayHandle, handle, (IntPtr)type, (IntPtr)type, FosterParent, IntPtr.Zero);
-
-			Clipboard.Retrieving = true;
-			while (Clipboard.Retrieving) {
-				UpdateMessageQueue(null, false);
-			}
-
-			return Clipboard.Item;
+			throw new NotImplementedException ("ClipboardRetrieveis obsolete for X11, use System.Windows.Forms.Clipboard instead");
 		}
 
+		[Obsolete("ClipboardStore is obsolete for X11, use System.Windows.Forms.Clipboard instead", true)]
 		internal override void ClipboardStore (IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter, bool copy)
 		{
-			Clipboard.Converter = converter;
+			throw new NotImplementedException ("ClipboardStore obsolete for X11, use System.Windows.Forms.Clipboard instead");
+		}
 
-			if (obj != null) {
-				Clipboard.AddSource (type, obj);
-				XSetSelectionOwner (DisplayHandle, CLIPBOARD, FosterParent, IntPtr.Zero);
+		string[] ClipboardGetFormatsImp (bool primary_selection) {
+			return Clipboards[primary_selection ? 1 : 0].GetFormats ();
+		}
 
-				if (copy) {
-					try {
-						var clipboardAtom = gdk_atom_intern ("CLIPBOARD", true);
-						var clipboard = gtk_clipboard_get (clipboardAtom);
-						if (clipboard != IntPtr.Zero) {
-							// for now we only store text
-							var text = Clipboard.GetRtfText ();
-							if (string.IsNullOrEmpty (text))
-								text = Clipboard.GetPlainText ();
-							if (!string.IsNullOrEmpty (text)) {
-								gtk_clipboard_set_text (clipboard, text, text.Length);
-								gtk_clipboard_store (clipboard);
-							}
-						}
-					} catch {
-						// ignore any errors - most likely because gtk isn't installed?
-					}
-				}
-			} else {
-				// Clearing the selection
-				Clipboard.ClearSources ();
-				XSetSelectionOwner (DisplayHandle, CLIPBOARD, IntPtr.Zero, IntPtr.Zero);
-			}
+		IDataObject ClipboardGetContentImp (bool primary_selection) {
+			return Clipboards[primary_selection ? 1 : 0].GetContent ();
+		}
+
+		void ClipboardSetContentImp (bool primary_selection, object data, bool copy) {
+			Clipboards[primary_selection ? 1 : 0].SetContent (data, copy);
+		}
+
+		void ClipboardClearImp (bool primary_selection) {
+			Clipboards[primary_selection ? 1 : 0].Clear ();
 		}
 
 		internal override void CreateCaret (IntPtr handle, int width, int height)
@@ -6690,11 +6390,11 @@ namespace System.Windows.Forms {
 		}
 
 		[DllImport ("libX11", EntryPoint="XGetAtomName")]
-		internal extern static string _XGetAtomName(IntPtr display, IntPtr atom);
-		internal static string XGetAtomName(IntPtr display, IntPtr atom)
+		extern static IntPtr __XGetAtomName(IntPtr display, IntPtr atom);
+		static IntPtr _XGetAtomName(IntPtr display, IntPtr atom)
 		{
 			DebugHelper.TraceWriteLine ("XGetAtomName");
-			return XGetAtomName(display, atom);
+			return __XGetAtomName(display, atom);
 		}
 
 		[DllImport ("libX11", EntryPoint="XGrabPointer")]
@@ -7471,7 +7171,7 @@ namespace System.Windows.Forms {
 		internal extern static int XInternAtoms(IntPtr display, string[] atom_names, int atom_count, bool only_if_exists, IntPtr[] atoms);
 
 		[DllImport ("libX11", EntryPoint="XGetAtomName")]
-		internal extern static string XGetAtomName(IntPtr display, IntPtr atom);
+		extern static IntPtr _XGetAtomName(IntPtr display, IntPtr atom);
 
 		[DllImport ("libX11", EntryPoint="XSetWMProtocols")]
 		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, IntPtr[] protocols, int count);
@@ -7706,19 +7406,6 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XGetInputFocus")]
 		internal extern static void XGetInputFocus (IntPtr display, out IntPtr focus, out IntPtr revert_to);
 		#endregion
-#region Gtk/Gdk imports
-		[DllImport("libgdk-x11-2.0")]
-		internal extern static IntPtr gdk_atom_intern (string atomName, bool onlyIfExists);
-
-		[DllImport("libgtk-x11-2.0")]
-		internal extern static IntPtr gtk_clipboard_get (IntPtr atom);
-
-		[DllImport("libgtk-x11-2.0")]
-		internal extern static void gtk_clipboard_store (IntPtr clipboard);
-
-		[DllImport("libgtk-x11-2.0")]
-		internal extern static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
-#endregion
 
 #region Shape extension imports
 		[DllImport("libXext")]

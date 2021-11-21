@@ -263,8 +263,8 @@ namespace System.Windows.Forms {
 		public virtual StringCollection GetFileDropList ()
 		{
 			// CAUTION: DataFormats.FileDrop has multiple storage types
-			//    string[] - Carbon, Win32
-			//    StringCollection - SetFileDropList, X11
+			//    string[] - Carbon, X11, Win32
+			//    StringCollection - SetFileDropList
 			// support both here
 			string[] array;
 			StringCollection collection;
