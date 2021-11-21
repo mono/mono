@@ -7299,6 +7299,40 @@ namespace System.Windows.Forms {
 		}
 #endregion
 
+#region Gtk/Gdk imports
+		[DllImport("libgdk-x11-2.0", EntryPoint="gdk_atom_intern")]
+		internal extern static IntPtr _gdk_atom_intern (string atomName, bool onlyIfExists);
+		internal static IntPtr gdk_atom_intern (string atomName, bool onlyIfExists)
+		{
+			DebugHelper.TraceWriteLine (nameof(gdk_atom_intern));
+			return _gdk_atom_intern (atomName, onlyIfExists);
+		}
+
+		[DllImport("libgtk-x11-2.0", EntryPoint="gtk_clipboard_get")]
+		internal extern static IntPtr _gtk_clipboard_get (IntPtr atom);
+		internal static IntPtr gtk_clipboard_get (IntPtr atom)
+		{
+			DebugHelper.TraceWriteLine (nameof(gtk_clipboard_get));
+			return _gtk_clipboard_get (atom);
+		}
+
+		[DllImport("libgtk-x11-2.0", EntryPoint="gtk_clipboard_store")]
+		internal extern static void _gtk_clipboard_store (IntPtr clipboard);
+		internal static void gtk_clipboard_store (IntPtr clipboard)
+		{
+			DebugHelper.TraceWriteLine (nameof(gtk_clipboard_store));
+			_gtk_clipboard_store (clipboard);
+		}
+
+		[DllImport("libgtk-x11-2.0", EntryPoint="gtk_clipboard_set_text")]
+		internal extern static void _gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
+		internal static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len)
+		{
+			DebugHelper.TraceWriteLine (nameof(gtk_clipboard_set_text));
+			_gtk_clipboard_set_text (clipboard, text, len);
+		}
+#endregion
+
 #region Shape extension imports
 		[DllImport("libXext", EntryPoint="XShapeQueryExtension")]
 		internal extern static bool _XShapeQueryExtension(IntPtr display, out int event_base, out int error_base);
