@@ -7289,6 +7289,14 @@ namespace System.Windows.Forms {
 			DebugHelper.TraceWriteLine ("XIfEvent");
 			_XIfEvent (display, ref xevent, event_predicate, arg);
 		}
+
+		[DllImport ("libX11", EntryPoint="XGetInputFocus")]
+		internal extern static void _XGetInputFocus (IntPtr display, out IntPtr focus, out IntPtr revert_to);
+		internal static void XGetInputFocus (IntPtr display, out IntPtr focus, out IntPtr revert_to)
+		{
+			DebugHelper.TraceWriteLine (nameof(XGetInputFocus));
+			_XGetInputFocus (display, out focus, out revert_to);
+		}
 #endregion
 
 #region Shape extension imports
@@ -7301,7 +7309,7 @@ namespace System.Windows.Forms {
 
 		[DllImport("libXext", EntryPoint="XShapeCombineRectangles")]
 		internal extern static void _XShapeCombineRectangles(IntPtr display, IntPtr window, XShapeKind dest_kind, int x_off, int y_off, XRectangle[] rectangles, int n_rects, XShapeOperation op, XOrdering ordering);
-		internal static void XShapeCombineRectangles(IntPtr display, IntPtr window, int dest_kind, int x_off, int y_off, XRectangle[] rectangles, int n_rects, int op, int ordering) {
+		internal static void XShapeCombineRectangles(IntPtr display, IntPtr window, XShapeKind dest_kind, int x_off, int y_off, XRectangle[] rectangles, int n_rects, XShapeOperation op, XOrdering ordering) {
 			DebugHelper.TraceWriteLine (nameof(XShapeCombineRectangles));
 			_XShapeCombineRectangles(display, window, dest_kind, x_off, y_off, rectangles, n_rects, op, ordering);
 		}
