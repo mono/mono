@@ -681,20 +681,12 @@ namespace System
 
 		static int IndexOfImpl<T>(T[] array, T value, int startIndex, int count)
 		{
-#if NETCORE
-			throw new NotImplementedException ();
-#else
 			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, count);
-#endif
 		}
 
 		static int LastIndexOfImpl<T>(T[] array, T value, int startIndex, int count)
 		{
-#if NETCORE
-			throw new NotImplementedException ();
-#else
 			return EqualityComparer<T>.Default.LastIndexOf (array, value, startIndex, count);
-#endif
 		}
 
 		static void SortImpl (Array keys, Array items, int index, int length, IComparer comparer)

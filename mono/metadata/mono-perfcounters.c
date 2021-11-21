@@ -1822,7 +1822,6 @@ mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer data)
 
 #else
 
-#ifndef ENABLE_NETCORE
 
 void*
 mono_perfcounter_get_impl (const gunichar2 *category, gint32 category_length,
@@ -1903,7 +1902,6 @@ mono_perfcounter_instance_names (const gunichar2 *category, gint32 category_leng
 	g_assert_not_reached ();
 }
 
-#endif /* ENABLE_NETCORE */
 
 void
 mono_perfcounter_foreach (PerfCounterEnumCallback cb, gpointer data)

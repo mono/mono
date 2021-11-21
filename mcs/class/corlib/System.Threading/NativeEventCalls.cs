@@ -35,7 +35,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Microsoft.Win32.SafeHandles;
 
-#if !MOBILE && !NETCORE
+#if !MOBILE
 using System.Security.AccessControl;
 using System.IO;
 #endif
@@ -87,7 +87,7 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void CloseEvent_internal (IntPtr handle);
 
-#if !MOBILE && !NETCORE
+#if !MOBILE
 		public unsafe static IntPtr OpenEvent_internal (string name, EventWaitHandleRights rights, out int errorCode)
 		{
 			// FIXME check for embedded nuls in name

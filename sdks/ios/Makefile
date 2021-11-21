@@ -5,10 +5,6 @@ include $(TOP)/sdks/paths.mk
 
 ALL_TARGETS = harness.exe appbuilder.exe
 
-ifdef ENABLE_NETCORE
-ALL_TARGETS += netcore-test-runner.exe
-endif
-
 ifndef DISABLE_CLASSIC
 ALL_TARGETS += test-runner.exe
 endif
@@ -16,7 +12,6 @@ endif
 all: $(ALL_TARGETS)
 
 BCL_DIR = ../out/ios-bcl/monotouch
-NETCORE_BCL_DIR = ../out/ios-netcore_libs/ios
 
 NINJA_PATH:=$(or $(shell which ninja),$(error "ninja not found, install it using 'brew install ninja'."))
 IOS_DEPLOY_PATH:=$(or $(shell which ios-deploy),$(error "ios-deploy not found, install it using 'brew install ios-deploy'."))
@@ -58,11 +53,6 @@ harness.exe: harness/harness.cs $(OPTIONS_CS)
 appbuilder.exe: appbuilder/appbuilder.cs $(OPTIONS_CS)
 	csc /out:$@ $^
 
-NETCORE_XUNIT_DIR := $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/System.Buffers.Tests/netcoreapp-Debug
-
-netcore-test-runner.exe: test-runner/runner.cs $(NETCORE_XUNIT_DIR)/xunit.core.dll
-	csc /out:$@ /debug /noconfig /nostdlib /d:ENABLE_NETCORE /d:XUNIT_RUNNER /r:$(NETCORE_BCL_DIR)/System.Private.CoreLib.dll /r:$(NETCORE_BCL_DIR)/System.Runtime.dll /r:$(NETCORE_BCL_DIR)/System.Runtime.Extensions.dll /r:$(NETCORE_BCL_DIR)/System.Xml.XDocument.dll /r:$(NETCORE_BCL_DIR)/System.Private.Xml.dll /r:$(NETCORE_BCL_DIR)/System.Private.Xml.Linq.dll  /r:$(NETCORE_BCL_DIR)/System.Linq.dll /r:$(NETCORE_BCL_DIR)/System.IO.dll /r:$(NETCORE_BCL_DIR)/System.IO.FileSystem.dll /r:$(NETCORE_BCL_DIR)/System.Collections.dll /r:$(NETCORE_BCL_DIR)/System.Threading.dll /r:$(NETCORE_BCL_DIR)/System.Net.Sockets.dll /r:$(NETCORE_XUNIT_DIR)/xunit.core.dll /r:$(NETCORE_XUNIT_DIR)/xunit.abstractions.dll /r:$(NETCORE_XUNIT_DIR)/xunit.runner.utility.netcoreapp10.dll test-runner/runner.cs
-
 test-runner.exe: test-runner/runner.cs obj/Xamarin.iOS.dll
 	csc /out:$@ /debug -r:$(BCL_DIR)/nunitlite.dll -r:$(BCL_DIR)/Mono.Security.dll test-runner/runner.cs
 
@@ -70,12 +60,8 @@ obj/Xamarin.iOS.dll: test-runner/xi.cs test-runner/xi.snk
 	mkdir -p obj
 	csc /out:$@ /noconfig /nostdlib /keyfile:test-runner/xi.snk /optimize /deterministic /publicsign /target:library /r:$(BCL_DIR)/mscorlib.dll /r:$(BCL_DIR)/System.Net.Http.dll test-runner/xi.cs
 
-app/app-simulator app/app-device.a app/app-netcore-simulator app/app-netcore-device.a: app/*.h app/*.m app/Makefile
+app/app-simulator app/app-device.a: app/*.h app/*.m app/Makefile
 	$(MAKE) -C app
-
-ifdef ENABLE_NETCORE
-SIM_DEPS += netcore-test-runner.exe app/app-netcore-simulator
-endif
 
 ifndef DISABLE_CLASSIC
 SIM_DEPS += test-runner.exe app/app-simulator
@@ -109,10 +95,6 @@ endif
 #
 ifdef ENABLE_AOT_CACHE
 APPBUILDER_ARGS += --aot-cachedir $(abspath aot-cache)
-endif
-
-ifdef ENABLE_NETCORE
-DEV_DEPS += netcore-test-runner.exe app/app-netcore-device.a
 endif
 
 ifndef DISABLE_CLASSIC
@@ -203,46 +185,6 @@ start-sim:
 
 stop-sim:
 	xcrun simctl shutdown $(SIM_NAME)
-
-ifdef ENABLE_NETCORE
-
-NETCORE_TEST_ASSEMBLIES = $(filter-out $(NETCORE_BCL_DIR)/System.Runtime.WindowsRuntime.dll $(NETCORE_BCL_DIR)/System.Runtime.WindowsRuntime.UI.Xaml.dll, $(wildcard $(NETCORE_BCL_DIR)/*.dll)) netcore-test-runner.exe
-
-# Parameters:
-#  $(1): test assembly name (no .dll suffix)
-define NetCoreTestTemplate
-
-$(1)_ASSEMBLIES = \
-	$(NETCORE_TEST_ASSEMBLIES) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/$(1).dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/CoreFx.Private.TestUtilities.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Newtonsoft.Json.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/xunit.abstractions.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/xunit.assert.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/xunit.core.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/xunit.execution.dotnet.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/xunit.runner.utility.netcoreapp10.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.DotNet.PlatformAbstractions.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.DotNet.XUnitExtensions.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.TestPlatform.CommunicationUtilities.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.TestPlatform.CoreUtilities.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.TestPlatform.CrossPlatEngine.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.TestPlatform.PlatformAbstractions.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.TestPlatform.Utilities.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.VisualStudio.CodeCoverage.Shim.dll) \
-	$(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/$(1)/netcoreapp*/Microsoft.VisualStudio.TestPlatform.Common.dll)
-
-# TODO: remove need for DOTNET_SYSTEM_GLOBALIZATION_INVARIANT by compiling System.Globalization.Native.dylib
-# TODO: replace nonosxtests trait with noniostests
-$(1)_ARGS = --setenv=DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 netcore-test-runner.exe CONNSTR $(1).dll -notrait category=nonosxtests @CoreFX.issues.rsp @CoreFX.issues_mac.rsp
-$(1)_APPBUILDER_ARGS += --netcore --content="$(abspath $(TOP)/netcore/CoreFX.issues.rsp)" --content="$(abspath $(TOP)/netcore/CoreFX.issues_mac.rsp)"
-
-endef
-
-$(foreach testdir,$(notdir $(wildcard $(DOTNET_RUNTIME_REPO_DIR)/artifacts/bin/*.Tests)),$(eval $(call NetCoreTestTemplate,$(testdir))))
-
-endif
 
 ifndef DISABLE_CLASSIC
 

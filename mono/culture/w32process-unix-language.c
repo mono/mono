@@ -8,7 +8,7 @@
 #include <mono/utils/mono-publib.h>
 #include <mono/metadata/w32process-internals.h>
 
-#if !defined(ENABLE_NETCORE) && !defined(DISABLE_PROCESSES)
+#if !defined(DISABLE_PROCESSES)
 
 static guint32
 copy_lang (gunichar2 *lang_out, guint32 lang_len, const gchar *text)
@@ -791,6 +791,6 @@ mono_w32process_ver_language_name (guint32 lang, gunichar2 *lang_out, guint32 la
 	return copy_lang (lang_out, lang_len, name);
 }
 
-#endif /* ENABLE_NETCORE && DISABLE_PROCESSES */
+#endif /* !defined(DISABLE_PROCESSES) */
 
 MONO_EMPTY_SOURCE_FILE (culture_w32_process_unix_language);

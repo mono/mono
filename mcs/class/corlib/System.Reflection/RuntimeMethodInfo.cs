@@ -46,41 +46,6 @@ using System.Diagnostics;
 
 namespace System.Reflection {
 
-#if NETCORE
-	[Flags()]
-	internal enum PInvokeAttributes
-	{
-		NoMangle          = 0x0001,
-
-		CharSetMask       = 0x0006,
-		CharSetNotSpec    = 0x0000,
-		CharSetAnsi       = 0x0002,
-		CharSetUnicode    = 0x0004,
-		CharSetAuto       = 0x0006,
-
-		BestFitUseAssem   = 0x0000,
-		BestFitEnabled    = 0x0010,
-		BestFitDisabled   = 0x0020,
-		BestFitMask       = 0x0030,
-
-		ThrowOnUnmappableCharUseAssem   = 0x0000,
-		ThrowOnUnmappableCharEnabled    = 0x1000,
-		ThrowOnUnmappableCharDisabled   = 0x2000,
-		ThrowOnUnmappableCharMask       = 0x3000,
-
-		SupportsLastError = 0x0040,
-
-		CallConvMask      = 0x0700,
-		CallConvWinapi    = 0x0100,
-		CallConvCdecl     = 0x0200,
-		CallConvStdcall   = 0x0300,
-		CallConvThiscall  = 0x0400,
-		CallConvFastcall  = 0x0500,
-
-		MaxValue          = 0xFFFF,
-	}
-#endif
-	
 	internal struct MonoMethodInfo 
 	{
 #pragma warning disable 649	
@@ -153,9 +118,7 @@ namespace System.Reflection {
 	[Serializable()]
 	[StructLayout (LayoutKind.Sequential)]
 	class RuntimeMethodInfo : MethodInfo
-#if !NETCORE
 	, ISerializable
-#endif
 	{
 #pragma warning disable 649
 		internal IntPtr mhandle;
@@ -181,11 +144,7 @@ namespace System.Reflection {
 			}
 		}
 
-#if NETCORE
-        string FormatNameAndSig (bool serialization)
-#else
         internal override string FormatNameAndSig (bool serialization)
-#endif
         {
             // Serialization uses ToString to resolve MethodInfo overloads.
             StringBuilder sbName = new StringBuilder(Name);
@@ -224,7 +183,6 @@ namespace System.Reflection {
 			return ((RuntimeType)DeclaringType).GetRuntimeModule();
 		}
 
-#if !NETCORE
         #region ISerializable Implementation
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -246,7 +204,6 @@ namespace System.Reflection {
             return ReturnType.FormatTypeName(true) + " " + FormatNameAndSig(true);
         }
         #endregion
-#endif
 
 		internal static MethodBase GetMethodFromHandleNoGenericCheck (RuntimeMethodHandle handle)
 		{
@@ -259,11 +216,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-#if NETCORE
-		[PreserveDependency(".ctor(System.Reflection.ExceptionHandlingClause[],System.Reflection.LocalVariableInfo[],System.Byte[],System.Boolean,System.Int32,System.Int32)", "System.Reflection.RuntimeMethodBody")]
-#else
 		[PreserveDependency(".ctor(System.Reflection.ExceptionHandlingClause[],System.Reflection.LocalVariableInfo[],System.Byte[],System.Boolean,System.Int32,System.Int32)", "System.Reflection.MethodBody")]
-#endif
 		internal extern static MethodBody GetMethodBodyInternal (IntPtr handle);
 
 		internal static MethodBody GetMethodBody (IntPtr handle)
@@ -399,10 +352,6 @@ namespace System.Reflection {
 				} catch (MethodAccessException) {
 					throw;
 #endif
-#if NETCORE
-				} catch (Mono.NullByRefReturnException) {
-					throw new NullReferenceException ();
-#endif
 				} catch (OverflowException) {
 					throw;
 				} catch (Exception e) {
@@ -411,15 +360,7 @@ namespace System.Reflection {
 			}
 			else
 			{
-#if NETCORE
-				try {
-					o = InternalInvoke (obj, parameters, out exc);
-				} catch (Mono.NullByRefReturnException) {
-					throw new NullReferenceException ();
-				}
-#else
 				o = InternalInvoke (obj, parameters, out exc);
-#endif
 			}
 
 			if (exc != null)
@@ -525,61 +466,11 @@ namespace System.Reflection {
 			if ((info.iattrs & MethodImplAttributes.PreserveSig) != 0)
 				attrs [count ++] = new PreserveSigAttribute ();
 			if ((info.attrs & MethodAttributes.PinvokeImpl) != 0) {
-#if NETCORE
-				attrs [count ++] = GetDllImportAttribute ();
-#else
 				attrs [count ++] = DllImportAttribute.GetCustomAttribute (this);
-#endif
 			}
 
 			return attrs;
 		}
-
-#if NETCORE
-        Attribute GetDllImportAttribute ()
-        {
-            string entryPoint, dllName = null;
-            int token = MetadataToken;
-            PInvokeAttributes flags = 0;
-
-            GetPInvoke (out flags, out entryPoint, out dllName);
-
-            CharSet charSet = CharSet.None;
-
-            switch (flags & PInvokeAttributes.CharSetMask) {
-                case PInvokeAttributes.CharSetNotSpec: charSet = CharSet.None; break;
-                case PInvokeAttributes.CharSetAnsi: charSet = CharSet.Ansi; break;
-                case PInvokeAttributes.CharSetUnicode: charSet = CharSet.Unicode; break;
-                case PInvokeAttributes.CharSetAuto: charSet = CharSet.Auto; break;
-
-                // Invalid: default to CharSet.None
-                default: break;
-            }
-
-            CallingConvention callingConvention = InteropServicesCallingConvention.Cdecl;
-
-            switch (flags & PInvokeAttributes.CallConvMask) {
-                case PInvokeAttributes.CallConvWinapi: callingConvention = InteropServicesCallingConvention.Winapi; break;
-                case PInvokeAttributes.CallConvCdecl: callingConvention = InteropServicesCallingConvention.Cdecl; break;
-                case PInvokeAttributes.CallConvStdcall: callingConvention = InteropServicesCallingConvention.StdCall; break;
-                case PInvokeAttributes.CallConvThiscall: callingConvention = InteropServicesCallingConvention.ThisCall; break;
-                case PInvokeAttributes.CallConvFastcall: callingConvention = InteropServicesCallingConvention.FastCall; break;
-
-                // Invalid: default to CallingConvention.Cdecl
-                default: break;
-            }
-
-            bool exactSpelling = (flags & PInvokeAttributes.NoMangle) != 0;
-            bool setLastError = (flags & PInvokeAttributes.SupportsLastError) != 0;
-            bool bestFitMapping = (flags & PInvokeAttributes.BestFitMask) == PInvokeAttributes.BestFitEnabled;
-            bool throwOnUnmappableChar = (flags & PInvokeAttributes.ThrowOnUnmappableCharMask) == PInvokeAttributes.ThrowOnUnmappableCharEnabled;
-            bool preserveSig = (GetMethodImplementationFlags() & MethodImplAttributes.PreserveSig) != 0;
-
-			return new DllImportAttribute (dllName) { EntryPoint = entryPoint, CharSet = charSet, SetLastError = setLastError,
-					ExactSpelling = exactSpelling, PreserveSig = preserveSig, BestFitMapping = bestFitMapping,
-					ThrowOnUnmappableChar = throwOnUnmappableChar, CallingConvention = callingConvention };
-        }
-#endif // NETCORE
 
 		internal CustomAttributeData[] GetPseudoCustomAttributesData ()
 		{
@@ -835,9 +726,6 @@ namespace System.Reflection {
         {
             if (info == null)
                 throw new ArgumentNullException("info");
-#if NETCORE
-            throw new NotImplementedException ();
-#else
             MemberInfoSerializationHolder.GetSerializationInfo(
                 info,
                 Name,
@@ -846,17 +734,12 @@ namespace System.Reflection {
                 SerializationToString(),
                 MemberTypes.Constructor,
                 null);
-#endif
         }
 
         internal string SerializationToString()
         {
-#if NETCORE
-            throw new NotImplementedException ();
-#else
             // We don't need the return type for constructors.
             return FormatNameAndSig(true);
-#endif
         }
 
 		internal void SerializationInvoke (Object target, SerializationInfo info, StreamingContext context)
@@ -1019,20 +902,7 @@ namespace System.Reflection {
 		}
 
 		public override string ToString () {
-#if NETCORE
-			StringBuilder sbName = new StringBuilder(Name);
-			sbName.Append ("Void ");
-
-			TypeNameFormatFlags format = TypeNameFormatFlags.FormatBasic;
-
-			sbName.Append("(");
-			RuntimeParameterInfo.FormatParameters (sbName, GetParametersNoCopy (), CallingConvention, false);
-			sbName.Append(")");
-
-			return sbName.ToString();
-#else
 			return "Void " + FormatNameAndSig (false);
-#endif
 		}
 
 		public override IList<CustomAttributeData> GetCustomAttributesData () {

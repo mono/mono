@@ -193,12 +193,10 @@ public class TestRunner
 			closeAfterTestRun = false;
 		}
 
-#if !ENABLE_NETCORE
 		// Make sure the TLS subsystem including the DependencyInjector is initialized.
 		// This would normally happen on system startup in
 		// `xamarin-macios/src/ObjcRuntime/Runtime.cs`.
 		MonoTlsProviderFactory.Initialize ();
-#endif
 
 		// some tests assert having a SynchronizationContext for MONOTOUCH, provide a default one
 		SynchronizationContext.SetSynchronizationContext (new SynchronizationContext ());

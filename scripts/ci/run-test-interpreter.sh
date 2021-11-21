@@ -114,5 +114,3 @@ if [[ "$run_full_test_suite" -eq "1" ]]; then
 	${TESTCMD} --label=Microsoft.Build.Utilities-14 --timeout=60m make -w -C mcs/class/Microsoft.Build.Utilities run-test PROFILE=xbuild_14 V=1
 	${TESTCMD} --label=System.IO.Compression --timeout=5m make -w -C mcs/class/System.IO.Compression run-test V=1
 fi
-
-${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

@@ -54,9 +54,7 @@ namespace System.Reflection {
 	[Serializable]
 	[StructLayout (LayoutKind.Sequential)]
 	internal sealed class RuntimeEventInfo : EventInfo
-#if !NETCORE
 	, ISerializable
-#endif
 	{
 #pragma warning disable 169
 		IntPtr klass;
@@ -101,7 +99,6 @@ namespace System.Reflection {
 			return GetDeclaringTypeInternal ().GetRuntimeModule ();
 		}
 
-#if !NETCORE
         #region ISerializable
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -117,7 +114,6 @@ namespace System.Reflection {
                 MemberTypes.Event);
         }
         #endregion
-#endif
 
 		internal BindingFlags GetBindingFlags ()
 		{
@@ -235,20 +231,5 @@ namespace System.Reflection {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern int get_metadata_token (RuntimeEventInfo monoEvent);
-
-#if NETCORE
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern EventInfo internal_from_handle_type (IntPtr event_handle, IntPtr type_handle);
-
-		internal static EventInfo GetEventFromHandle (Mono.RuntimeEventHandle handle, RuntimeTypeHandle reflectedType)
-		{
-			if (handle.Value == IntPtr.Zero)
-				throw new ArgumentException ("The handle is invalid.");
-			EventInfo ei = internal_from_handle_type (handle.Value, reflectedType.Value);
-			if (ei == null)
-				throw new ArgumentException ("The event handle and the type handle are incompatible.");
-			return ei;
-		}
-#endif
 	}
 }

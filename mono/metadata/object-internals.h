@@ -278,9 +278,7 @@ mono_handle_array_get_bounds_dim (MonoArrayHandle arr, gint32 dim, MonoArrayBoun
 
 typedef struct {
 	MonoObject obj;
-#ifndef ENABLE_NETCORE
 	MonoObject *identity;
-#endif
 } MonoMarshalByRefObject;
 
 TYPED_HANDLE_DECL (MonoMarshalByRefObject);
@@ -288,18 +286,14 @@ TYPED_HANDLE_DECL (MonoMarshalByRefObject);
 /* This is a copy of System.AppDomain */
 struct _MonoAppDomain {
 	MonoMarshalByRefObject mbr;
-#ifndef ENABLE_NETCORE
 	MonoDomain *data;
-#endif
 };
 
 /* Safely access System.AppDomain from native code */
 TYPED_HANDLE_DECL (MonoAppDomain);
 
-#ifndef ENABLE_NETCORE
 /* Safely access System.AppDomainSetup from native code.  (struct is in domain-internals.h) */
 TYPED_HANDLE_DECL (MonoAppDomainSetup);
-#endif
 
 typedef struct _MonoStringBuilder MonoStringBuilder;
 TYPED_HANDLE_DECL (MonoStringBuilder);
@@ -373,12 +367,10 @@ typedef struct {
 
 TYPED_HANDLE_DECL (MonoSystemException);
 
-#ifndef ENABLE_NETCORE
 typedef struct {
 	MonoSystemException base;
 	MonoString *param_name;
 } MonoArgumentException;
-#endif
 
 typedef struct {
 	MonoObject   object;
@@ -594,9 +586,7 @@ struct _MonoInternalThread {
 	gsize debugger_thread; // FIXME switch to bool as soon as CI testing with corlib version bump works
 	gpointer *static_data;
 	struct _MonoThreadInfo *thread_info;
-#ifndef ENABLE_NETCORE
 	MonoAppContext *current_appcontext;
-#endif
 	MonoThread *root_domain_thread;
 	MonoObject *_serialized_principal;
 	int _serialized_principal_version;
@@ -624,13 +614,7 @@ struct _MonoInternalThread {
 	gint32 self_suspended; // TRUE | FALSE
 	gsize thread_state;
 
-#ifdef ENABLE_NETCORE
-	struct _MonoInternalThread *internal_thread;
-	MonoObject *start_obj;
-	MonoException *pending_exception;
-#else
 	void* unused [3]; // same size as netcore
-#endif
 	/* This is used only to check that we are in sync between the representation
 	 * of MonoInternalThread in native and InternalThread in managed
 	 *
@@ -638,21 +622,18 @@ struct _MonoInternalThread {
 	gpointer last;
 };
 
-#ifndef ENABLE_NETCORE
 struct _MonoThread {
 	MonoObject obj;
 	MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
 };
-#endif
 
 typedef struct {
 	guint32 state;
 	MonoObject *additional;
 } MonoStreamingContext;
 
-#if !ENABLE_NETCORE
 typedef struct {
 	MonoObject obj;
 	MonoBoolean readOnly;
@@ -800,7 +781,6 @@ typedef struct {
 
 TYPED_HANDLE_DECL (MonoRegionInfo);
 
-#endif /* !ENABLE_NETCORE */
 
 typedef struct {
 	MonoObject object;
@@ -1054,9 +1034,7 @@ TYPED_HANDLE_DECL (MonoReflectionProperty);
 /*This is System.EventInfo*/
 struct _MonoReflectionEvent {
 	MonoObject object;
-#ifndef ENABLE_NETCORE
 	MonoObject *cached_add_event;
-#endif
 };
 
 /* Safely access System.Reflection.EventInfo from native code */
@@ -1523,21 +1501,6 @@ typedef struct {
 
 TYPED_HANDLE_DECL (MonoReflectionCustomAttr);
 
-#if ENABLE_NETCORE
-typedef struct {
-	MonoObject object;
-	guint32 utype;
-	gint32 safe_array_subtype;
-	MonoReflectionType *marshal_safe_array_user_defined_subtype;
-	gint32 IidParameterIndex;
-	guint32 array_subtype;
-	gint16 size_param_index;
-	gint32 size_const;
-	MonoString *marshal_type;
-	MonoReflectionType *marshal_type_ref;
-	MonoString *marshal_cookie;
-} MonoReflectionMarshalAsAttribute;
-#else
 typedef struct {
 	MonoObject object;
 	MonoString *marshal_cookie;
@@ -1551,7 +1514,6 @@ typedef struct {
 	gint32 IidParameterIndex;
 	gint16 size_param_index;
 } MonoReflectionMarshalAsAttribute;
-#endif
 
 /* Safely access System.Runtime.InteropServices.MarshalAsAttribute */
 TYPED_HANDLE_DECL (MonoReflectionMarshalAsAttribute);
@@ -1658,21 +1620,6 @@ typedef struct {
 	MonoProperty *prop;
 } CattrNamedArg;
 
-#ifdef ENABLE_NETCORE
-// Keep in sync with System.Runtime.Loader.AssemblyLoadContext.InternalState
-typedef enum {
-	ALIVE = 0,
-	UNLOADING = 1
-} MonoManagedAssemblyLoadContextInternalState;
-
-// Keep in sync with System.Runtime.Loader.AssemblyLoadContext
-typedef struct {
-	MonoObject object;
-	MonoAssemblyLoadContext *native_assembly_load_context;
-} MonoManagedAssemblyLoadContext;
-
-TYPED_HANDLE_DECL (MonoManagedAssemblyLoadContext);
-#endif
 
 /* All MonoInternalThread instances should be pinned, so it's safe to use the raw ptr.  However
  * for uniformity, icall wrapping will make handles anyway.  So this is the method for getting the payload.
@@ -1927,13 +1874,6 @@ mono_runtime_unhandled_exception_policy_set (MonoRuntimeUnhandledExceptionPolicy
 void
 mono_unhandled_exception_checked (MonoObjectHandle exc, MonoError *error);
 
-#ifdef ENABLE_NETCORE
-void
-mono_first_chance_exception_checked (MonoObjectHandle exc, MonoError *error);
-
-void
-mono_first_chance_exception_internal (MonoObject *exc_raw);
-#endif
 
 MonoVTable *
 mono_class_try_get_vtable (MonoDomain *domain, MonoClass *klass);

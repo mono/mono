@@ -1987,10 +1987,8 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			interp_emit_ldelema (td, target_method->klass, check_class);
 			td->ip += 5;
 			return TRUE;
-#ifndef ENABLE_NETCORE
 		} else if (!strcmp (tm, "UnsafeMov") || !strcmp (tm, "UnsafeLoad")) {
 			*op = MINT_CALLRUN;
-#endif
 		} else if (!strcmp (tm, "Get")) {
 			interp_emit_ldelema (td, target_method->klass, NULL);
 			interp_emit_ldobj (td, m_class_get_element_class (target_method->klass));
@@ -2191,112 +2189,7 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 	} else if (((in_corlib && !strcmp (klass_name_space, "Internal.Runtime.CompilerServices"))
 				|| !strcmp (klass_name_space, "System.Runtime.CompilerServices"))
 			   && !strcmp (klass_name, "Unsafe")) {
-#ifdef ENABLE_NETCORE
-		if (!strcmp (tm, "AddByteOffset"))
-			*op = MINT_INTRINS_UNSAFE_ADD_BYTE_OFFSET;
-		else if (!strcmp (tm, "ByteOffset"))
-			*op = MINT_INTRINS_UNSAFE_BYTE_OFFSET;
-		else if (!strcmp (tm, "As") || !strcmp (tm, "AsRef"))
-			*op = MINT_MOV_P;
-		else if (!strcmp (tm, "AsPointer")) {
-			/* NOP */
-			SET_SIMPLE_TYPE (td->sp - 1, STACK_TYPE_MP);
-			td->ip += 5;
-			return TRUE;
-		} else if (!strcmp (tm, "IsAddressLessThan")) {
-			MonoGenericContext *ctx = mono_method_get_context (target_method);
-			g_assert (ctx);
-			g_assert (ctx->method_inst);
-			g_assert (ctx->method_inst->type_argc == 1);
-
-			MonoClass *k = mono_defaults.boolean_class;
-			interp_add_ins (td, MINT_CLT_UN_P);
-			td->sp -= 2;
-			interp_ins_set_sregs2 (td->last_ins, td->sp [0].local, td->sp [1].local);
-			push_type (td, stack_type [mint_type (m_class_get_byval_arg (k))], k);
-			interp_ins_set_dreg (td->last_ins, td->sp [-1].local);
-			td->ip += 5;
-			return TRUE;
-		} else if (!strcmp (tm, "SizeOf")) {
-			MonoGenericContext *ctx = mono_method_get_context (target_method);
-			g_assert (ctx);
-			g_assert (ctx->method_inst);
-			g_assert (ctx->method_inst->type_argc == 1);
-			MonoType *t = ctx->method_inst->type_argv [0];
-			int align;
-			int esize = mono_type_size (t, &align);
-			interp_add_ins (td, MINT_LDC_I4);
-			WRITE32_INS (td->last_ins, 0, &esize);
-			push_simple_type (td, STACK_TYPE_I4);
-			interp_ins_set_dreg (td->last_ins, td->sp [-1].local);
-			td->ip += 5;
-			return TRUE;
-		} else if (!strcmp (tm, "AreSame")) {
-			*op = MINT_CEQ_P;
-		} else if (!strcmp (tm, "SkipInit")) {
-			*op = MINT_NOP;
-		} else if (!strcmp (tm, "InitBlockUnaligned")) {
-			*op = MINT_INITBLK;
-		}
-#endif
 	} else if (in_corlib && !strcmp (klass_name_space, "System.Runtime.CompilerServices") && !strcmp (klass_name, "RuntimeHelpers")) {
-#ifdef ENABLE_NETCORE
-		if (!strcmp (tm, "get_OffsetToStringData")) {
-			g_assert (csignature->param_count == 0);
-			int offset = MONO_STRUCT_OFFSET (MonoString, chars);
-			interp_add_ins (td, MINT_LDC_I4);
-			WRITE32_INS (td->last_ins, 0, &offset);
-			push_simple_type (td, STACK_TYPE_I4);
-			interp_ins_set_dreg (td->last_ins, td->sp [-1].local);
-			td->ip += 5;
-			return TRUE;
-		} else if (!strcmp (tm, "GetRawData")) {
-			interp_add_ins (td, MINT_LDFLDA_UNSAFE);
-			td->last_ins->data [0] = (gint16) MONO_ABI_SIZEOF (MonoObject);
-
-			td->sp--;
-			interp_ins_set_sreg (td->last_ins, td->sp [0].local);
-			push_simple_type (td, STACK_TYPE_MP);
-			interp_ins_set_dreg (td->last_ins, td->sp [-1].local);
-
-			td->ip += 5;
-			return TRUE;
-		} else if (!strcmp (tm, "IsBitwiseEquatable")) {
-			g_assert (csignature->param_count == 0);
-			MonoGenericContext *ctx = mono_method_get_context (target_method);
-			g_assert (ctx);
-			g_assert (ctx->method_inst);
-			g_assert (ctx->method_inst->type_argc == 1);
-			MonoType *t = mini_get_underlying_type (ctx->method_inst->type_argv [0]);
-
-			if (MONO_TYPE_IS_PRIMITIVE (t) && t->type != MONO_TYPE_R4 && t->type != MONO_TYPE_R8)
-				*op = MINT_LDC_I4_1;
-			else
-				*op = MINT_LDC_I4_0;
-		} else if (!strcmp (tm, "ObjectHasComponentSize")) {
-			*op = MINT_INTRINS_RUNTIMEHELPERS_OBJECT_HAS_COMPONENT_SIZE;
-		} else if (!strcmp (tm, "IsReferenceOrContainsReferences")) {
-			g_assert (csignature->param_count == 0);
-			MonoGenericContext *ctx = mono_method_get_context (target_method);
-			g_assert (ctx);
-			g_assert (ctx->method_inst);
-			g_assert (ctx->method_inst->type_argc == 1);
-			MonoType *t = mini_get_underlying_type (ctx->method_inst->type_argv [0]);
-
-			gboolean has_refs;
-
-			MonoClass *klass = mono_class_from_mono_type_internal (t);
-			mono_class_init_internal (klass);
-			if (MONO_TYPE_IS_REFERENCE (t))
-				has_refs = TRUE;
-			else if (MONO_TYPE_IS_PRIMITIVE (t))
-				has_refs = FALSE;
-			else
-				has_refs = m_class_has_references (klass);
-
-			*op = has_refs ? MINT_LDC_I4_1 : MINT_LDC_I4_0;
-		}
-#endif
 	} else if (in_corlib && !strcmp (klass_name_space, "System") && !strcmp (klass_name, "RuntimeMethodHandle") && !strcmp (tm, "GetFunctionPointer") && csignature->param_count == 1) {
 		// We must intrinsify this method on interp so we don't return a pointer to native code entering interpreter
 		*op = MINT_LDFTN_DYNAMIC;
@@ -2429,20 +2322,6 @@ interp_handle_intrinsics (TransformData *td, MonoMethod *target_method, MonoClas
 			}
 		}
 	}
-#ifdef ENABLE_NETCORE
-	else if (in_corlib &&
-			   !strcmp ("System.Runtime.CompilerServices", klass_name_space) &&
-			   !strcmp ("RuntimeFeature", klass_name)) {
-		if (!strcmp (tm, "get_IsDynamicCodeSupported"))
-			*op = MINT_LDC_I4_1;
-		else if (!strcmp (tm, "get_IsDynamicCodeCompiled"))
-			*op = MINT_LDC_I4_0;
-	} else if (in_corlib &&
-			!strncmp ("System.Runtime.Intrinsics", klass_name_space, 25) &&
-			!strcmp (tm, "get_IsSupported")) {
-		*op = MINT_LDC_I4_0;
-	}
-#endif
 
 	return FALSE;
 }
@@ -3074,13 +2953,11 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 #endif
 		}
 
-#ifndef ENABLE_NETCORE
 		if (op == MINT_CALLRUN) {
 			interp_ins_set_dreg (td->last_ins, dreg);
 			td->last_ins->data [0] = get_data_item_index (td, target_method);
 			td->last_ins->data [1] = get_data_item_index (td, mono_method_signature_internal (target_method));
 		}
-#endif
 	} else if (!calli && !is_delegate_invoke && !is_virtual && mono_interp_jit_call_supported (target_method, csignature)) {
 		interp_add_ins (td, MINT_JIT_CALL);
 		interp_ins_set_dreg (td->last_ins, dreg);

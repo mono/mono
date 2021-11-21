@@ -96,7 +96,6 @@ public class AppBuilder
 		string exe = null;
 		string signing_identity = null;
 		string team_identifier = null;
-		bool isnetcore = false;
 		bool isdev = false;
 		bool isdebug = false;
 		bool isllvm = false;
@@ -118,7 +117,6 @@ public class AppBuilder
 				{ "signing-identity=", s => signing_identity = s },
 				{ "team-identifier=", s => team_identifier = s },
 				{ "llvm", s => isllvm = true },
-				{ "netcore", s => isnetcore = true },
 				{ "debug", s => isdebug = true },
 				{ "interp-only", s => isinterponly = true },
 				{ "interp-mixed", s => isinterpmixed = true },
@@ -149,8 +147,8 @@ public class AppBuilder
 			break;
 		}
 
-		string runtime = isnetcore ? "ios-netcore_target64-release" : "ios-target64-release";
-		string cross_runtime = isnetcore ? "ios-netcore_cross64-release" : "ios-cross64-release";
+		string runtime = "ios-target64-release";
+		string cross_runtime = "ios-cross64-release";
 
 		bool isinterpany = isinterponly || isinterpmixed;
 
@@ -341,14 +339,11 @@ public class AppBuilder
 				libs += $" $mono_sdkdir/{runtime}/lib/libmono-icall-table.a";
 				libs += $" $mono_sdkdir/{runtime}/lib/libmono-ilgen.a";
 			}
-			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/modules.o " + libs + (isnetcore ? " $apptemplate_dir/app-netcore-device.a" : " $apptemplate_dir/app-device.a"));
-			if (isnetcore)
-				ninja.WriteLine ($"    forcelibs = -force_load $mono_sdkdir/{runtime}/lib/System.Native.a -force_load $mono_sdkdir/{runtime}/lib/System.IO.Compression.Native.a -force_load $mono_sdkdir/{runtime}/lib/System.Security.Cryptography.Native.Apple.a");
-			else
-				ninja.WriteLine ($"    forcelibs = -force_load $mono_sdkdir/{runtime}/lib/libmono-native-unified.a");
+			ninja.WriteLine ($"build $appdir/{bundle_executable}: gen-exe {ofiles} $builddir/modules.o " + libs + " $apptemplate_dir/app-device.a");
+			ninja.WriteLine ($"    forcelibs = -force_load $mono_sdkdir/{runtime}/lib/libmono-native-unified.a");
 			ninja.WriteLine ("build $builddir/modules.o: compile-objc $builddir/modules.m");
 		} else {
-			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp " + (isnetcore ? "$apptemplate_dir/app-netcore-simulator" : "$apptemplate_dir/app-simulator"));
+			ninja.WriteLine ($"build $appdir/{bundle_executable}: cp " + "$apptemplate_dir/app-simulator");
 		}
 		ninja.WriteLine ("build $builddir/Info.plist.binary: plutil $builddir/Info.plist");
 		ninja.WriteLine ("build $appdir/Info.plist: cpifdiff $builddir/Info.plist.binary");

@@ -5090,49 +5090,6 @@ MONO_RESTORE_WARNING
 					g_hash_table_insert (acfg->export_names, wrapper, export_name);
 			}
 
-#ifdef ENABLE_NETCORE
-			for (j = 0; j < cattr->num_attrs; ++j)
-				if (cattr->attrs [j].ctor && mono_is_corlib_image (m_class_get_image (cattr->attrs [j].ctor->klass)) && !strcmp (m_class_get_name (cattr->attrs [j].ctor->klass), "UnmanagedCallersOnlyAttribute"))
-					break;
-			if (j < cattr->num_attrs) {
-				MonoCustomAttrEntry *e = &cattr->attrs [j];
-				const char *named;
-				int slen;
-				char *export_name = NULL;
-				MonoMethod *wrapper;
-
-				if (!(method->flags & METHOD_ATTRIBUTE_STATIC)) {
-					g_warning ("AOT restriction: Method '%s' must be static since it is decorated with [UnmanagedCallers].",
-						mono_method_full_name (method, TRUE));
-					exit (1);
-				}
-
-				gpointer *typed_args = NULL;
-				gpointer *named_args = NULL;
-				CattrNamedArg *named_arg_info = NULL;
-				int num_named_args = 0;
-				mono_reflection_create_custom_attr_data_args_noalloc (acfg->image, e->ctor, e->data, e->data_size, &typed_args, &named_args, &num_named_args, &named_arg_info, error);
-				mono_error_assert_ok (error);
-				for (j = 0; j < num_named_args; ++j) {
-					if (named_arg_info [j].field && !strcmp (named_arg_info [j].field->name, "EntryPoint")) {
-						named = named_args [j];
-						slen = mono_metadata_decode_value (named, &named);
-						export_name = (char *)g_malloc (slen + 1);
-						memcpy (export_name, named, slen);
-						export_name [slen] = 0;
-					}
-				}
-				g_free (named_args);
-				g_free (named_arg_info);
-
-				wrapper = mono_marshal_get_managed_wrapper (method, NULL, 0, error);
-				mono_error_assert_ok (error);
-
-				add_method (acfg, wrapper);
-				if (export_name)
-					g_hash_table_insert (acfg->export_names, wrapper, export_name);
-			}
-#endif
 
 			g_free (cattr);
 		}
@@ -5424,7 +5381,6 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 		else
 			name_prefix = g_strdup_printf ("%s.%s", klass_name_space, klass_name);
 
-#ifndef ENABLE_NETCORE
 		/* Add the T[]/InternalEnumerator class */
 		if (!strcmp (klass_name, "IEnumerable`1") || !strcmp (klass_name, "IEnumerator`1")) {
 			ERROR_DECL (error);
@@ -5440,7 +5396,6 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 			mono_error_assert_ok (error); /* FIXME don't swallow the error */
 			add_generic_class (acfg, nclass, FALSE, "ICollection<T>");
 		}
-#endif
 
 		iter = NULL;
 		while ((method = mono_class_get_methods (array_class, &iter))) {
@@ -5802,7 +5757,6 @@ add_generic_instances (MonoAotCompile *acfg)
 			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "EnumEqualityComparer`1");
 			add_instances_of (acfg, enum_comparer, insts, ninsts, FALSE);
 
-#ifndef ENABLE_NETCORE
 			ninsts = 0;
 			insts [ninsts ++] = int16_type;
 			enum_comparer = mono_class_load_from_name (mono_defaults.corlib, "System.Collections.Generic", "ShortEnumEqualityComparer`1");
@@ -5818,7 +5772,6 @@ add_generic_instances (MonoAotCompile *acfg)
 			insts [ninsts ++] = int64_type;
 			insts [ninsts ++] = uint64_type;
 			add_instances_of (acfg, enum_comparer, insts, ninsts, FALSE);
-#endif
 		}
 
 		/* Add instances of the array generic interfaces for primitive types */
