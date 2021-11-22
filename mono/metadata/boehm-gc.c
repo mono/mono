@@ -1852,7 +1852,7 @@ mono_gc_is_null (void)
 }
 
 /**
- * mono_gchandle_is_in_domain:
+ * mono_gchandle_is_in_domain_internal:
  * \param gchandle a GCHandle's handle.
  * \param domain An application domain.
  *
@@ -1862,7 +1862,7 @@ mono_gc_is_null (void)
  * \returns TRUE if the object wrapped by the \p gchandle belongs to the specific \p domain.
  */
 gboolean
-mono_gchandle_is_in_domain (MonoGCHandle gch, MonoDomain *domain)
+mono_gchandle_is_in_domain_internal (MonoGCHandle gch, MonoDomain *domain)
 {
 	guint32 gchandle = MONO_GC_HANDLE_TO_UINT (gch);
 	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
