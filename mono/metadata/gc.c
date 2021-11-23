@@ -819,7 +819,7 @@ ves_icall_System_GCHandle_GetAddrOfPinnedObject (MonoGCHandle handle)
 MonoBoolean
 ves_icall_System_GCHandle_CheckCurrentDomain (MonoGCHandle gchandle)
 {
-	return mono_gchandle_is_in_domain (gchandle, mono_domain_get ());
+	return mono_gchandle_is_in_domain_internal (gchandle, mono_domain_get ());
 }
 
 #endif

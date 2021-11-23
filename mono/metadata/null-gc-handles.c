@@ -343,7 +343,7 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
 }
 
 /**
- * mono_gchandle_is_in_domain:
+ * mono_gchandle_is_in_domain_internal:
  * \param gchandle a GCHandle's handle.
  * \param domain An application domain.
  *
@@ -353,7 +353,7 @@ mono_gchandle_set_target (guint32 gchandle, MonoObject *obj)
  * \returns TRUE if the object wrapped by the \p gchandle belongs to the specific \p domain.
  */
 gboolean
-mono_gchandle_is_in_domain (guint32 gchandle, MonoDomain *domain)
+mono_gchandle_is_in_domain_internal (guint32 gchandle, MonoDomain *domain)
 {
 	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
 	guint type = MONO_GC_HANDLE_TYPE (gchandle);

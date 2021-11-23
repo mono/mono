@@ -2791,13 +2791,13 @@ mono_gchandle_new_weakref_internal (GCObject *obj, gboolean track_resurrection)
 }
 
 /**
- * mono_gchandle_is_in_domain:
+ * mono_gchandle_is_in_domain_internal:
  * \param gchandle a GCHandle's handle.
  * \param domain An application domain.
  * \returns TRUE if the object wrapped by the \p gchandle belongs to the specific \p domain.
  */
 gboolean
-mono_gchandle_is_in_domain (MonoGCHandle gchandle, MonoDomain *domain)
+mono_gchandle_is_in_domain_internal (MonoGCHandle gchandle, MonoDomain *domain)
 {
 	MonoDomain *gchandle_domain = (MonoDomain *)sgen_gchandle_get_metadata (MONO_GC_HANDLE_TO_UINT (gchandle));
 	return domain->domain_id == gchandle_domain->domain_id;

@@ -131,6 +131,20 @@ mono_gchandle_free_v2 (MonoGCHandle gchandle)
 	MONO_EXTERNAL_ONLY_VOID (mono_gchandle_free_internal (gchandle));
 }
 
+
+/* make sure the gchandle was allocated for an object in domain */
+gboolean
+mono_gchandle_is_in_domain (uint32_t gchandle, MonoDomain* domain)
+{
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (gboolean, mono_gchandle_is_in_domain_internal ((MonoGCHandle)(size_t)gchandle, domain));
+}
+
+/* make sure the gchandle was allocated for an object in domain */
+gboolean mono_gchandle_is_in_domain_v2 (MonoGCHandle gchandle, MonoDomain* domain)
+{
+	MONO_EXTERNAL_ONLY_GC_UNSAFE (gboolean, mono_gchandle_is_in_domain_internal (gchandle, domain));
+}
+
 /* GC write barriers support */
 
 /**
