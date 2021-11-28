@@ -38,11 +38,7 @@ namespace System.Security.Cryptography {
 	// a.	Windows Data Protection
 	//	http://msdn.microsoft.com/library/en-us/dnsecure/html/windataprotection-dpapi.asp?frame=true
 
-	public sealed class ProtectedMemory {
-
-		private ProtectedMemory ()
-		{
-		}
+	public static class ProtectedMemory {
 
 		[MonoTODO ("only supported on Windows 2000 SP3 and later")]
 // FIXME	[DataProtectionPermission (SecurityAction.Demand, ProtectMemory = true)]
