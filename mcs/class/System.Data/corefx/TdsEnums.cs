@@ -21,6 +21,7 @@ namespace System.Data.SqlClient
 		SqlPassword,
 		ActiveDirectoryPassword,
 		ActiveDirectoryIntegrated,
+		ActiveDirectoryInteractive
 	}
 
 	public enum SqlCommandColumnEncryptionSetting 
