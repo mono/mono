@@ -35,7 +35,7 @@ using Microsoft.Build.Evaluation;
 using System.Linq;
 using System.IO;
 
-namespace Microsoft.Build.Internal
+namespace Microsoft.Build.Execution
 {
 	public enum NodeEngineShutdownReason
 	{
