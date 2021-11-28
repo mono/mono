@@ -37,7 +37,7 @@ using System.Xml;
 namespace System.ServiceModel.Channels
 {
 	[MonoTODO ("We aren't actually going to implement this windows-only protocol")]
-	public class PnrpPeerResolverBindingElement : PeerResolverBindingElement
+	public sealed class PnrpPeerResolverBindingElement : PeerResolverBindingElement
 	{
 		public PnrpPeerResolverBindingElement ()
 		{

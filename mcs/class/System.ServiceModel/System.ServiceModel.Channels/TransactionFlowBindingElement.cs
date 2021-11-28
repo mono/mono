@@ -34,7 +34,7 @@ using System.Transactions;
 
 namespace System.ServiceModel.Channels
 {
-	public class TransactionFlowBindingElement : BindingElement
+	public sealed class TransactionFlowBindingElement : BindingElement
 	{
 		TransactionProtocol protocol;
 
