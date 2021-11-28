@@ -74,7 +74,6 @@
 /mcs/tools @marek-safar @akoeplinger @steveisok
 /mcs/tools/gensources @kg @akoeplinger
 /mcs/tools/resx2sr @baulig
-/mcs/tools/upload-to-sentry @directhex @akoeplinger
 
 /mono/arch @vargaz
 
@@ -128,8 +127,6 @@
 /mono/utils/*-win* @lateralusX @lambdageek
 
 /msvc @lateralusX @kg @akoeplinger
-
-/netcore @marek-safar @akoeplinger @egorbo @vargaz @steveisok
 
 /packaging @alexischr @akoeplinger @directhex
 /packaging/MacSDK/msbuild.py @radical @akoeplinger

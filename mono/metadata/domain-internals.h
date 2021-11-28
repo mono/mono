@@ -27,20 +27,10 @@
  * So we move it to Mono.MonoDomain
  *
  */
-#ifndef ENABLE_NETCORE
 #define MONO_APPDOMAIN_CLASS_NAME_SPACE "System"
 #define MONO_APPDOMAIN_CLASS_NAME "AppDomain"
 #define MONO_APPDOMAIN_SETUP_CLASS_NAME_SPACE "System"
 #define MONO_APPDOMAIN_SETUP_CLASS_NAME "AppDomainSetup"
-#else
-/* We don't care anymore about the managed appdomain representation
- * so we just use a sentinel System.Object in the parts of the code that still care
- */
-/*
-#define MONO_APPDOMAIN_CLASS_NAME_SPACE "System"
-#define MONO_APPDOMAIN_CLASS_NAME "Object"
-*/
-#endif
 
 G_BEGIN_DECLS
 
@@ -52,7 +42,6 @@ G_BEGIN_DECLS
  */ 
 extern gboolean mono_dont_free_domains;
 
-#ifndef ENABLE_NETCORE
 /* This is a copy of System.AppDomainSetup */
 typedef struct {
 	MonoObject object;
@@ -79,7 +68,6 @@ typedef struct {
 	MonoArray *configuration_bytes;
 	MonoArray *serialized_non_primitives;
 } MonoAppDomainSetup;
-#endif
 
 typedef struct _MonoJitInfoTable MonoJitInfoTable;
 typedef struct _MonoJitInfoTableChunk MonoJitInfoTableChunk;
@@ -349,12 +337,8 @@ struct _MonoDomain {
 	 * keep all the managed objects close to each other for the precise GC
 	 * For the Boehm GC we additionally keep close also other GC-tracked pointers.
 	 */
-#ifndef ENABLE_NETCORE
 #define MONO_DOMAIN_FIRST_OBJECT setup
 	MonoAppDomainSetup *setup;
-#else
-#define MONO_DOMAIN_FIRST_OBJECT domain
-#endif
 	MonoAppDomain      *domain;
 	MonoAppContext     *default_context;
 	MonoException      *out_of_memory_ex;
@@ -465,16 +449,9 @@ struct _MonoDomain {
 
 	guint32 execution_context_field_offset;
 
-#ifdef ENABLE_NETCORE
-	GSList *alcs;
-	MonoAssemblyLoadContext *default_alc;
-	MonoCoopMutex alcs_lock; /* Used when accessing 'alcs' */
-#endif
 
-#ifndef ENABLE_NETCORE
 	// Holds domain code memory
 	MonoMemoryManager *memory_manager;
-#endif
 };
 
 typedef struct  {
@@ -570,8 +547,6 @@ mono_make_shadow_copy (const char *filename, MonoError *error);
 gboolean
 mono_is_shadow_copy_enabled (MonoDomain *domain, const gchar *dir_name);
 
-// TODO: remove these on netcore, we should always be explicit about allocating from ALCs
-//#ifndef ENABLE_NETCORE
 gpointer
 mono_domain_alloc  (MonoDomain *domain, guint size);
 
@@ -581,8 +556,6 @@ gpointer
 mono_domain_alloc0 (MonoDomain *domain, guint size);
 
 #define mono_domain_alloc0(domain, size) (g_cast (mono_domain_alloc0 ((domain), (size))))
-
-//#endif
 
 gpointer
 mono_domain_alloc0_lock_free (MonoDomain *domain, guint size);
@@ -595,10 +568,8 @@ mono_domain_unset (void);
 void
 mono_domain_set_internal_with_options (MonoDomain *domain, gboolean migrate_exception);
 
-#ifndef ENABLE_NETCORE
 gboolean
 mono_domain_set_config_checked (MonoDomain *domain, const char *base_dir, const char *config_file_name, MonoError *error);
-#endif
 
 MonoTryBlockHoleTableJitInfo*
 mono_jit_info_get_try_block_hole_table_info (MonoJitInfo *ji);
@@ -655,9 +626,7 @@ mono_try_assembly_resolve (MonoAssemblyLoadContext *alc, const char *fname, Mono
 MonoAssembly *
 mono_domain_assembly_postload_search (MonoAssemblyLoadContext *alc, MonoAssembly *requesting, MonoAssemblyName *aname, gboolean refonly, gboolean postload, gpointer user_data, MonoError *error);
 
-#ifndef ENABLE_NETCORE
 void mono_domain_set_options_from_config (MonoDomain *domain);
-#endif
 
 int mono_framework_version (void);
 
@@ -696,19 +665,6 @@ mono_domain_set_fast (MonoDomain *domain, gboolean force);
 MonoAssemblyLoadContext *
 mono_domain_default_alc (MonoDomain *domain);
 
-#ifdef ENABLE_NETCORE
-static inline void
-mono_domain_alcs_lock (MonoDomain *domain)
-{
-	mono_coop_mutex_lock (&domain->alcs_lock);
-}
-
-static inline void
-mono_domain_alcs_unlock (MonoDomain *domain)
-{
-	mono_coop_mutex_unlock (&domain->alcs_lock);
-}
-#endif
 
 static inline
 MonoAssemblyLoadContext *
@@ -724,11 +680,7 @@ mono_domain_ambient_alc (MonoDomain *domain)
 static inline MonoMemoryManager *
 mono_domain_memory_manager (MonoDomain *domain)
 {
-#ifdef ENABLE_NETCORE
-	return (MonoMemoryManager *)mono_domain_default_alc (domain)->memory_manager;
-#else
 	return domain->memory_manager;
-#endif
 }
 
 static inline MonoMemoryManager *

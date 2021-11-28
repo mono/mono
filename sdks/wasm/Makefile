@@ -36,12 +36,7 @@ PACKAGER=mono --debug packager.exe --no-native-strip
 
 MSBUILD_QUIET_ARGS=--nologo -v q -consoleloggerparameters:NoSummary
 
-ifeq ($(HOST_PLATFORM),win32)
-DOTNET_CMD := $(shell powershell -ExecutionPolicy Bypass -Command "./init-tools.ps1")/dotnet.exe
-DOTNET_CMD := "$(subst \,/,$(DOTNET))"
-else
-DOTNET_CMD := $(shell ./init-tools.sh | tail -1)
-endif
+DOTNET_CMD := dotnet
 
 DOTNET_PACK=$(DOTNET_CMD) pack
 DOTNET_BUILD=$(DOTNET_CMD) build
@@ -208,7 +203,6 @@ build-interp-$(1): builds/$(1)/dotnet.js
 
 endef
 
-ifndef DISABLE_WASM_NO_NETCORE
 $(eval $(call InterpBuildTemplate,debug,wasm-runtime-release,$(EMCC_DEBUG_FLAGS),$(MONO_LIBS),$(MONO_DEPS)))
 $(eval $(call InterpBuildTemplate,release,wasm-runtime-release,$(EMCC_RELEASE_FLAGS),$(MONO_LIBS),$(MONO_DEPS)))
 ifdef ENABLE_WASM_THREADS
@@ -218,134 +212,6 @@ endif
 ifdef ENABLE_WASM_DYNAMIC_RUNTIME
 $(eval $(call InterpBuildTemplate,dynamic-debug,wasm-runtime-dynamic-release,$(EMCC_DEBUG_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS),$(MONO_DEPS)))
 $(eval $(call InterpBuildTemplate,dynamic-release,wasm-runtime-dynamic-release,$(EMCC_RELEASE_FLAGS) $(EMCC_DYNAMIC_FLAGS),$(MONO_DYNAMIC_LIBS),$(MONO_DEPS)))
-endif
-endif
-
-#
-# NETCORE TARGETS
-#
-
-#
-# These require a separate dotnet/runtime repo
-#
-
-ifdef ENABLE_WASM_NETCORE
-
-ifeq ($(ENABLE_WASM_NETCORE_LOCAL_BUILD),)
-$(error "Only local builds using a separate dotnet/runtime repo are supported.")
-endif
-
-ifeq ($(DOTNET_REPO_PATH),)
-$(error "Set the DOTNET_REPO_PATH variable for the netcore build to a checkout of the dotnet/runtime repo.")
-endif
-
-DOTNET=$(DOTNET_REPO_PATH)/dotnet.sh
-RUNTIMEPACK_DIR=$(DOTNET_REPO_PATH)/artifacts/bin/lib-runtime-packs/net5.0-Browser-Release-wasm
-
-.PHONY: build-netcore
-build-netcore: | provision-emsdk
-	EMSDK_PATH=$(EMSCRIPTEN_SDK_DIR) && make -C $(DOTNET_REPO_PATH)/src/mono/wasm build
-
-samples/hello/bin/Debug/net5.0/hello.dll: samples/hello/Program.cs
-	$(DOTNET) build samples/hello -f net5.0 $(MSBUILD_QUIET_ARGS)
-
-build-interp-netcore-hello: packager.exe samples/hello/bin/Debug/net5.0/hello.dll
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/interp-netcore-hello --nobinding --builddir=obj/interp-netcore-hello --framework=net5.0 --runtimepack-dir=$(RUNTIMEPACK_DIR) --template=runtime-tests.js --linker samples/hello/bin/Debug/net5.0/hello.dll
-	ninja -v -C obj/interp-netcore-hello
-
-bin/interp-netcore-hello/dotnet.js: build-interp-netcore-hello
-
-run-interp-netcore-hello: bin/interp-netcore-hello/dotnet.js
-	(cd bin/interp-netcore-hello && $(SM) runtime.js --run hello.dll)
-
-build-aot-hello-netcore: packager.exe samples/hello/bin/Debug/net5.0/hello.dll
-	$(PACKAGER) --native-strip --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/aot-hello-netcore --nobinding --builddir=obj/aot-hello-netcore --framework=net5.0 --runtimepack-dir=$(RUNTIMEPACK_DIR) --template=runtime-tests.js --aot --linker --pinvoke-libs=libSystem.Native samples/hello/bin/Debug/net5.0/hello.dll
-	ninja -v -C obj/aot-hello-netcore
-
-bin/aot-hello-netcore/dotnet.js: build-aot-hello-netcore
-
-run-aot-hello-netcore: bin/aot-hello-netcore/dotnet.js
-	(cd bin/aot-hello-netcore && $(RUN_V8) --experimental-wasm-simd runtime.js -- --run hello.dll)
-
-#
-# XUNIT test support
-#
-# This depends on the tests being built using build.sh --subset Libs.Tests -c release
-
-##
-# Parameters:
-# $(1) - make target suffix
-# $(2) - directory name
-# $(3) - test directory
-# $(4) - test assembly
-# $(5) - command line arguments
-define NetcoreTestTemplate
-
-ifeq ($(3),Common.Tests)
-$(1)_PATH=$(DOTNET_REPO_PATH)/artifacts/bin/$(3)/netcoreapp5.0-OSX-Release
-else
-$(1)_PATH=$(DOTNET_REPO_PATH)/artifacts/bin/$(3)/netcoreapp5.0-Release
-endif
-
-bin/$(2)/dotnet.js: packager.exe runtime-tests.js corefx-exclusions.rsp
-	cd xunit-runner && ../../../.dotnet/dotnet build $(MSBUILD_QUIET_ARGS)
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --search-path=$(COREFX_TESTS_DIR)/$(3) --template=runtime-tests.js --appdir=bin/$(2) --builddir=obj/$(2) --asset=corefx-exclusions.rsp --framework=netcoreapp5.0 --netcore-sdkdir=$(NETCOREAPP_DIR) --search-path=$$($(1)_PATH) --search-path=$$($(1)_PATH) xunit-runner/bin/Debug/netcoreapp5.0/xunit-runner.dll $(5) $$($(1)_PATH)/$(4)
-	ninja -v -C obj/$(2)
-
-build-$(1): bin/$(2)/dotnet.js
-
-run-$(1): bin/$(2)/dotnet.js
-	(cd bin/$(2) && $$(SM) runtime.js --enable-gc --run xunit-runner.dll $(4) `cat corefx-exclusions.rsp | grep -v '#'`)
-
-endef
-
-include corefx-test-suites.mk
-
-# Passing testsuites after exclusions
-NETCORE_COREFX_PASSING_TEST_SUITES = \
-	Common.Tests \
-	Invariant.Tests \
-	Microsoft.CSharp.Tests \
-	Microsoft.VisualBasic.Core.Tests \
-	Microsoft.Win32.Primitives.Tests \
-	System.AppContext.Tests \
-	System.Buffers.Tests \
-	System.Collections.Concurrent.Tests \
-	System.Collections.Immutable.Tests \
-	System.Collections.NonGeneric.Tests \
-	System.Collections.Specialized.Tests \
-	System.Collections.Tests \
-	System.IO.UnmanagedMemoryStream.Tests \
-	System.Json.Tests \
-	System.Memory.Tests \
-	System.Numerics.Vectors.Tests \
-	System.Runtime.CompilerServices.Unsafe.Tests \
-	System.Runtime.CompilerServices.VisualC.Tests \
-	System.Runtime.Extensions.Tests \
-	System.Runtime.Handles.Tests \
-	System.Runtime.Tests
-
-System.IO.Compression.ZipFile.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.ZipFile.Tests/ZipTestData@ZipTestData
-System.IO.Compression.Brotli.Tests_PACKAGER_ARGS=--pinvoke-libs=System.IO.Compression.Native --native-lib=$(TOP)/sdks/out/wasm-runtime-netcore-release/lib/System.IO.Compression.Native.bc --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/UncompressedTestFiles@UncompressedTestFiles --embed-file $(COREFX_TESTS_DIR)/System.IO.Compression.Brotli.Tests/BrotliTestData@BrotliTestData
-
-# Test targets are named run-netcore-<test suite name>
-$(foreach suite,$(NETCORE_COREFX_TEST_SUITES),$(eval $(call NetcoreTestTemplate,netcore-$(suite),netcore-$(suite),$(suite),$(suite).dll,$($(suite)_PACKAGER_ARGS))))
-
-$(foreach suite,$(NETCORE_COREFX_PASSING_TEST_SUITES),$(eval run-corefx-tests-netcore: run-$(suite)))
-
-# Path to a fully built https://github.com/dotnet/performance
-PERF_REPO_ROOT=
-
-# Need to embed corelib because BenchmarkDotNet reads version info from it
-build-bench: packager.exe $(NETCOREAPP_DIR) bench-runner/WasmRunner.cs
-	@if test -z "$(PERF_REPO_ROOT)"; then echo "PERF_REPO_ROOT is not set"; exit 1; fi
-	cd bench-runner && dotnet build /nologo /p:Configuration=Release
-	$(PACKAGER) --debugrt --emscripten-sdkdir=$(EMSCRIPTEN_SDK_DIR) --mono-sdkdir=$(TOP)/sdks/out -appdir=bin/bench --nobinding --builddir=obj/bench --framework=netcoreapp3.0 --netcore-sdkdir=$(NETCOREAPP_DIR)/runtimes/webassembly-wasm/lib/netcoreapp3.0 --template=runtime-tests.js --search-path=bench-runner/bin/Release/netcoreapp3.0 --embed-file System.Private.CoreLib.dll@System.Private.CoreLib.dll --embed-file System.Text.RegularExpressions.dll --search-path=$(PERF_REPO_ROOT)/artifacts/bin/MicroBenchmarks/Release/netcoreapp5.0 --search-path=$(PERF_REPO_ROOT)/artifacts/bin/MicroBenchmarks/Release/netcoreapp5.0/runtimes/unix/lib/netstandard2.0 bench-runner/bin/Release/netcoreapp3.0/bench.dll MicroBenchmarks.dll
-	ninja -v -C obj/bench
-
-run-bench: build-bench
-	(cd bin/bench && $(SM) runtime.js --enable-gc --setenv=MONO_LOG_MASK= --run bench.dll MicroBenchmarks.dll Perf_HashCode)
-
 endif
 
 runtime-threads:
@@ -747,11 +613,9 @@ clean: clean-browser-tests
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.dll
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.pdb
 	$(RM) $(WASM_FRAMEWORK)/WebAssembly.*.xml
-	$(RM) -r $(NETCOREAPP_DIR)
 	$(RM) -r builds
 	$(RM) emsdk_env.sh
 	$(RM) .configured
-	$(RM) src/pinvoke-tables-default-netcore.h
 
 package: build build-sdk build-dbg-proxy
 	rm -rf tmp
@@ -823,11 +687,13 @@ clean-sdk:
 	$(RM) -r sdk/**/**/bin
 	$(RM) -r sdk/**/**/obj
 	$(RM) -r sdk/packages
+	$(RM) -r sdk/nuget.config
 	$(RM) -r $(WASM_FRAMEWORK)/.stamp-framework
 
 build-sdk: $(WASM_FRAMEWORK)/.stamp-framework
 	$(DOTNET_BUILD) sdk/MonoWasmSdkCLI.sln
 	$(DOTNET_PACK) sdk/Templates/Mono.WebAssembly.Templates.csproj
+	@echo '<?xml version="1.0" encoding="utf-8"?><configuration><packageSources><add key="wasm-packages" value="sdk/packages" /></packageSources></configuration>' > nuget.config
 
 clean-browser-tests: clean-sdk
 	$(RM) -r $(BROWSER_TEST)/.stamp-browser-test-suite

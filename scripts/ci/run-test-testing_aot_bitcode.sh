@@ -35,5 +35,3 @@ ${TESTCMD} --label=System.Json --timeout=5m make -w -C mcs/class/System.Json run
 ${TESTCMD} --label=monolinker --timeout=10m make -w -C mcs/tools/linker check
 
 rm -fr /tmp/jenkins-temp-aspnet*
-
-${MONO_REPO_ROOT}/scripts/ci/run-upload-sentry.sh

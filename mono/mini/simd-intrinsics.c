@@ -64,7 +64,7 @@ The advantage of this change is that it could have a _membase version and promot
 without a OP_LDADDR.
 */
 
-#if defined (MONO_ARCH_SIMD_INTRINSICS) && !defined(ENABLE_NETCORE)
+#if defined (MONO_ARCH_SIMD_INTRINSICS)
 
 #if defined (DISABLE_JIT)
 

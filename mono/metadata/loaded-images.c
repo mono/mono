@@ -104,11 +104,6 @@ mono_loaded_images_remove_image (MonoImage *image)
 	loaded_images_by_name = mono_loaded_images_get_by_name_hash (li, image->ref_only);
 
 	name = image->name;
-#ifdef ENABLE_NETCORE
-	char *name_with_culture = mono_image_get_name_with_culture_if_needed (image);
-	if (name_with_culture)
-		name = name_with_culture;
-#endif
 	image2 = (MonoImage *)g_hash_table_lookup (loaded_images, name);
 	if (image == image2) {
 		/* This is not true if we are called from mono_image_open () */
@@ -118,9 +113,6 @@ mono_loaded_images_remove_image (MonoImage *image)
 		g_hash_table_remove (loaded_images_by_name, (char *) image->assembly_name);
 
 	proceed = TRUE;
-#ifdef ENABLE_NETCORE
-	g_free (name_with_culture);
-#endif
 done:
 	mono_images_unlock ();
 
@@ -131,9 +123,5 @@ done:
 MonoLoadedImages*
 mono_image_get_loaded_images_for_modules (MonoImage *image)
 {
-#ifndef ENABLE_NETCORE
 	return mono_get_global_loaded_images ();
-#else
-	g_assert_not_reached ();
-#endif
 }

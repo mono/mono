@@ -1,9 +1,9 @@
 
 #include "utils/mono-compiler.h"
 
-#if defined(ENABLE_MONOTOUCH) && !defined(ENABLE_NETCORE)
+#if defined(ENABLE_MONOTOUCH)
 #include "../../support/zlib-helper.c"
-#elif defined(ENABLE_MONODROID) && !defined(ENABLE_NETCORE)
+#elif defined(ENABLE_MONODROID)
 #include "../../support/nl.c"
 #include "../../support/zlib-helper.c"
 #else

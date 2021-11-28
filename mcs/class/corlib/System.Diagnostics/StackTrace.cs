@@ -43,9 +43,7 @@ namespace System.Diagnostics {
 
 	[Serializable]
 	[ComVisible (true)]
-#if !NETCORE
 	[MonoTODO ("Serialized objects are not compatible with .NET")]
-#endif
 	public class StackTrace {
 
         // TraceFormat is Used to specify options for how the 
@@ -148,9 +146,7 @@ namespace System.Diagnostics {
 			this.frames [0] = frame;
 		}
 
-#if !NETCORE
 		[MonoLimitation ("Not possible to create StackTraces from other threads")]
-#endif
 		[Obsolete]
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{

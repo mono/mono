@@ -12,7 +12,6 @@
 #include "mono/metadata/loader-internals.h"
 #include "mono/utils/mono-tls-inline.h"
 
-#if !defined(ENABLE_NETCORE)
 #if defined(MONO_SUPPORT_TASKLETS)
 
 #include "mono/metadata/loader-internals.h"
@@ -216,5 +215,4 @@ mono_tasklets_init(void)
 }
 #endif /* MONO_SUPPORT_TASKLETS */
 
-#endif /* ENABLE_NETCORE */
 

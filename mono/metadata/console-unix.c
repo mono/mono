@@ -40,7 +40,6 @@
 #include <mono/metadata/exception.h>
 #include "icall-decl.h"
 
-#ifndef ENABLE_NETCORE
 
 /* On solaris, curses.h must come before both termios.h and term.h */
 #ifdef HAVE_CURSES_H
@@ -511,16 +510,3 @@ ves_icall_System_ConsoleDriver_TtySetup (MonoStringHandle keypad, MonoStringHand
 	return TRUE;
 }
 
-#else /* ENABLE_NETCORE */
-
-void
-mono_console_init (void)
-{
-}
-
-void
-mono_console_handle_async_ops (void)
-{
-}
-
-#endif
