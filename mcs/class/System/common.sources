@@ -918,3 +918,10 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/Generic/ValueListBuilder.Pop.cs
 ../../../external/corefx/src/System.Text.RegularExpressions/src/System/Collections/HashtableExtensions.cs
 
+../../../external/corefx/src/Common/src/System/Collections/Generic/ArrayBuilder.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/EnumerableHelpers.cs
+../../../external/corefx/src/Common/src/System/Collections/Generic/LargeArrayBuilder.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/QueueDebugView.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Stack.cs
+../../../external/corefx/src/System.Collections/src/System/Collections/Generic/StackDebugView.cs

@@ -1839,10 +1839,6 @@ corefx/SwitchExpressionException.cs
 ../../../external/corefx/src/Common/src/System/Threading/Tasks/RendezvousAwaitable.cs
 
 ../../../external/corefx/src/System.Collections/src/System/Collections/Generic/CollectionExtensions.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Queue.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/QueueDebugView.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/Stack.cs
-../../../external/corefx/src/System.Collections/src/System/Collections/Generic/StackDebugView.cs
 
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/CDSCollectionETWBCLProvider.cs
 ../../../external/corefx/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs
