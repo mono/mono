@@ -13,7 +13,7 @@ commands:
     cmd /c cibuildscript
     cmd /c xcopy build %PRTOOLS_BUILD_DIR% /s /Y /E /I
     cd %UNITY_SOURCE_PRTOOLS_DIR%
-    %PRTOOLS_BUILD_DIR%\prtools.exe --update-mono-il2cpp-deps=%YAMATO_SOURCE_DIR%/stevedore/artifactid.txt --github-api-token=%GITHUB_TOKEN% --yamato-api-token=%YAMATO_TOKEN% --yamato-long-lived-token
+    %PRTOOLS_BUILD_DIR%\prtools.exe --update-mono-il2cpp-deps=%YAMATO_SOURCE_DIR%/stevedore/artifactid.txt --github-api-token=%GITHUB_TOKEN% --yamato-api-token=%YAMATO_TOKEN% --yamato-long-lived-token --il2cpp-deps-manifest-file=il2cpp-deps.stevedore
     if NOT %errorlevel% == 0 (
       echo "PRTools failed"
       EXIT /B %errorlevel%
