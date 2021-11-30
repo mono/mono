@@ -935,6 +935,40 @@ mono_cominterop_emit_object_to_ptr_conv (MonoMethodBuilder *mb, MonoType *type, 
 #endif /* DISABLE_JIT */
 }
 
+static gboolean
+cominterop_class_marshalled_as_interface (MonoClass* klass)
+{
+	ERROR_DECL (error);
+	MonoCustomAttrInfo* cinfo = NULL;
+	gboolean ret = FALSE;
+
+	if (MONO_CLASS_IS_INTERFACE_INTERNAL (klass))
+		return TRUE;
+
+	// Classes are marshalled as interfaces if their layout is not specified explicitly
+	if (mono_class_is_auto_layout (klass))
+		return TRUE;
+
+	// Some corlib classes, such as the AssemblyBuilder, are marshalled as interfaces on
+	// .NET Framework, since they don't have a specific layout requested. mono, however,
+	// uses an explicit layout because it needs to be synced to libmono. Special case them.
+	if (m_class_get_image (klass) == mono_defaults.corlib) {
+		cinfo = mono_custom_attrs_from_class_checked (klass, error);
+		mono_error_assert_ok (error);
+		if (cinfo) {
+			MonoReflectionComDefaultInterfaceAttribute *attr = (MonoReflectionComDefaultInterfaceAttribute *)
+				mono_custom_attrs_get_attr_checked (cinfo, mono_class_get_com_default_interface_attribute_class (), error);
+			mono_error_assert_ok (error);
+			if (attr)
+				ret = TRUE;
+			if (!cinfo->cached)
+				mono_custom_attrs_free (cinfo);
+		}
+	}
+
+	return ret;
+}
+
 /**
  * cominterop_get_native_wrapper_adjusted:
  * @method: managed COM Interop method
@@ -990,8 +1024,10 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 				mspecs[mspec_index]->native = MONO_NATIVE_BSTR;
 			}
 			else if (sig_native->params[i]->type == MONO_TYPE_CLASS) {
-				mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[mspec_index]->native = MONO_NATIVE_INTERFACE;
+				if (cominterop_class_marshalled_as_interface (sig_native->params[i]->data.klass)) {
+					mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
+					mspecs[mspec_index]->native = MONO_NATIVE_INTERFACE;
+				}
 			}
 			else if (sig_native->params[i]->type == MONO_TYPE_BOOLEAN) {
 				mspecs[mspec_index] = g_new0 (MonoMarshalSpec, 1);
@@ -1013,8 +1049,10 @@ cominterop_get_native_wrapper_adjusted (MonoMethod *method)
 				mspecs[0]->native = MONO_NATIVE_BSTR;
 			}
 			else if (sig->ret->type == MONO_TYPE_CLASS) {
-				mspecs[0] = g_new0 (MonoMarshalSpec, 1);
-				mspecs[0]->native = MONO_NATIVE_INTERFACE;
+				if (cominterop_class_marshalled_as_interface (sig->ret->data.klass)) {
+					mspecs[0] = g_new0 (MonoMarshalSpec, 1);
+					mspecs[0]->native = MONO_NATIVE_INTERFACE;
+				}
 			}
 			else if (sig->ret->type == MONO_TYPE_BOOLEAN) {
 				mspecs[0] = g_new0 (MonoMarshalSpec, 1);
@@ -2060,7 +2098,10 @@ cominterop_get_ccw_default_mspec (const MonoType *param_type)
 		native = MONO_NATIVE_BSTR;
 		break;
 	case MONO_TYPE_CLASS:
-		native = MONO_NATIVE_INTERFACE;
+		if (cominterop_class_marshalled_as_interface (param_type->data.klass))
+			native = MONO_NATIVE_INTERFACE;
+		else
+			return NULL;
 		break;
 	case MONO_TYPE_BOOLEAN:
 		native = MONO_NATIVE_VARIANTBOOL;
