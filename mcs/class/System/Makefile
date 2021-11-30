@@ -112,6 +112,11 @@ endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System/System.txt
 
+NO_RESGEN := $(filter build, $(PROFILE))
+ifndef NO_RESGEN
+RESOURCE_DEFS = System,../referencesource/System/System.txt
+RESGEN_FLAGS += -define:INCLUDE_DEBUG -define:INCLUDE_RUNTIME
+endif
 
 API_BIN_REFS := System.Net.Http System.Xml System.Core System.Numerics
 
