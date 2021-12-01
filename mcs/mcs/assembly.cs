@@ -586,7 +586,7 @@ namespace Mono.CSharp
 			// we need the last 8 bytes in reverse order
 			public_key_token = new byte[8];
 			Buffer.BlockCopy (hash, hash.Length - 8, public_key_token, 0, 8);
-			Array.Reverse (public_key_token, 0, 8);
+			Array.Reverse ((Array)public_key_token, 0, 8);
 			return public_key_token;
 		}
 

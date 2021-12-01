@@ -8505,7 +8505,7 @@ namespace Mono.CSharp
 
 					// FIXME: Handle the ARM float format.
 					if (!BitConverter.IsLittleEndian)
-						System.Array.Reverse (data, idx, 8);
+						System.Array.Reverse ((Array)data, idx, 8);
 					break;
 				case BuiltinTypeSpec.Type.Char:
 					int chval = (int) ((char) v);

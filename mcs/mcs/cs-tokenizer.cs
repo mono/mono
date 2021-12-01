@@ -428,7 +428,7 @@ namespace Mono.CSharp
 					// There is no simple way to clone Stack<T> all
 					// methods reverse the order
 					var clone = t.ifstack.ToArray ();
-					Array.Reverse (clone);
+					Array.Reverse ((Array)clone);
 					ifstack = new Stack<int> (clone);
 				}
 				parsing_generic_less_than = t.parsing_generic_less_than;
@@ -439,7 +439,7 @@ namespace Mono.CSharp
 				string_interpolation_section = t.string_interpolation_section;
 				if (t.parsing_string_interpolation_quoted != null && t.parsing_string_interpolation_quoted.Count != 0) {
 					var clone = t.parsing_string_interpolation_quoted.ToArray ();
-					Array.Reverse (clone);
+					Array.Reverse ((Array)clone);
 					parsing_string_interpolation_quoted = new Stack<bool> (clone);
 				}
 			}
