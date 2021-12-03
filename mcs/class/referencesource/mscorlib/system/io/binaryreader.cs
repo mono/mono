@@ -521,14 +521,27 @@ namespace System.IO {
 #if MONO
         public virtual int Read(Span<char> buffer)
         {
-            char[] bufferBytes = buffer.ToArray();
-            return Read(bufferBytes, 0, bufferBytes.Length);
+            char[] bufferBytes = System.Buffers.ArrayPool<char>.Shared.Rent(buffer.Length);
+            try
+            {
+                int num = InternalReadChars(bufferBytes, 0, buffer.Length);
+                if ((uint)num > (uint)buffer.Length)
+                {
+		    throw new IOException(SR.IO_StreamTooLong);
+                }
+                new ReadOnlySpan<char>(bufferBytes, 0, num).CopyTo(buffer);
+                return num;
+            }
+            finally
+            {
+                System.Buffers.ArrayPool<char>.Shared.Return(bufferBytes);
+            }
         }
 
         public virtual int Read(Span<byte> buffer)
         {
-            byte[] bufferBytes = buffer.ToArray();
-            return Read(bufferBytes, 0, bufferBytes.Length);
+            if (m_stream==null) __Error.FileNotOpen();
+            return m_stream.Read(buffer);
         }
 #endif
 
