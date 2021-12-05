@@ -851,12 +851,17 @@ namespace System.Web.Security {
 			if (user.UserName == null)
 				throw new ArgumentNullException ("user.UserName");
 
-			if (RequiresUniqueEmail && user.Email == null)
-				throw new ArgumentNullException ("user.Email");
-
 			CheckParam ("user.UserName", user.UserName, 256);
 
-			if (user.Email.Length > 256 || (RequiresUniqueEmail && user.Email.Length == 0))
+			if (RequiresUniqueEmail) {
+				if (user.Email == null)
+					throw new ArgumentNullException ("user.Email");
+
+				if (user.Email.Length == 0)
+					throw new ArgumentException ("invalid format for user.Email");
+			}
+
+			if (user.Email != null && user.Email.Length > 256)
 				throw new ArgumentException ("invalid format for user.Email");
 
 			using (DbConnection connection = CreateConnection ()) {
