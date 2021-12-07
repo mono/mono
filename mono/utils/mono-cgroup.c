@@ -5,10 +5,13 @@
 
 Module Name:
 
-    mono-cgroup.cpp
+    mono-cgroup.c
 
 Abstract:
     Read the memory limit for the current process
+
+    Adapted from runtime src/coreclr/gc/unix/cgroup.cpp 
+    - commit 28ec20194010c2a3d06f2217998cfcb8e8b8fb5e
 --*/
 #ifdef __FreeBSD__
 #define _WITH_GETLINE
@@ -136,27 +139,6 @@ readMemoryValueFromFile(const char* filename, guint64* val)
 			if (getline(&line, &lineLen, file) != -1) {
 				errno = 0;
 				num = strtoull(line, &endptr, 0);
-				if (line != endptr && errno == 0) {
-					multiplier = 1;
-
-					switch (*endptr)
-					{
-					case 'g':
-					case 'G': 
-						multiplier = 1024;
-					case 'm':
-					case 'M': 
-						multiplier = multiplier * 1024;
-					case 'k':
-					case 'K': 
-						multiplier = multiplier * 1024;
-					}
-
-					*val = num * multiplier;
-					result = TRUE;
-					if (*val / multiplier != num)
-						result = FALSE;
-				}
 			}
 		}
 	}
@@ -189,7 +171,7 @@ getPhysicalMemoryLimit(guint64 *val)
 	else if (s_cgroup_version == 2)
 		return getCGroupMemoryLimit(val, CGROUP2_MEMORY_LIMIT_FILENAME);
 	else {
-		g_assert(!"Unknown cgroup version.");
+		g_error("Unknown cgroup version.");
 		return FALSE;
 	}
 }
@@ -213,7 +195,7 @@ getPhysicalMemoryUsage(size_t *val)
 	else if (s_cgroup_version == 2)
 		return getCGroupMemoryUsage(val);
 	else {
-		g_assert(!"Unknown cgroup version.");
+		g_error("Unknown cgroup version.");
 		return FALSE;
 	}
 }
@@ -248,7 +230,7 @@ findCGroupVersion()
 	case TMPFS_MAGIC: return 1;
 	case CGROUP2_SUPER_MAGIC: return 2;
 	default:
-		g_assert(!"Unexpected file system type for /sys/fs/cgroup");
+		g_error("Unexpected file system type for /sys/fs/cgroup");
 		return 0;
 	}
 }
@@ -389,7 +371,7 @@ findHierarchyMount(gboolean (*is_subsystem)(const char *), char** pmountpath, ch
 		   filesystemType,
 		   options);
 		if (sscanfRet != 2) {
-			g_assert(!"Failed to parse mount info file contents with sscanf.");
+			g_error("Failed to parse mount info file contents with sscanf.");
 			goto done;
 		}
 
@@ -417,7 +399,7 @@ findHierarchyMount(gboolean (*is_subsystem)(const char *), char** pmountpath, ch
 					   mountroot,
 					   mountpath);
 				if (sscanfRet != 2)
-					g_assert(!"Failed to parse mount info file contents with sscanf.");
+					g_error("Failed to parse mount info file contents with sscanf.");
 
 				// assign the output arguments and clear the locals so we don't free them.
 				*pmountpath = mountpath;
@@ -482,7 +464,7 @@ findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *))
 			subsystem_list,
 			cgroup_path);
 			if (sscanfRet != 2) {
-				g_assert(!"Failed to parse cgroup info file contents with sscanf.");
+				g_error("Failed to parse cgroup info file contents with sscanf.");
 				goto done;
 			}
 
@@ -506,7 +488,7 @@ findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *))
 				result = TRUE;
 			}
 		} else {
-			g_assert(!"Unknown cgroup version in mountinfo.");
+			g_error("Unknown cgroup version in mountinfo.");
 			goto done;
 		}
 	}
@@ -805,13 +787,13 @@ getCGroup2CpuLimit(guint *val)
 	max_quota_string = strtok_r(line, " ", &context);
 	if (max_quota_string == NULL)
 	{
-		g_assert(!"Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
+		g_error("Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
 		goto done;
 	}
 	period_string = strtok_r(NULL, " ", &context);
 	if (period_string == NULL)
 	{
-		g_assert(!"Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
+		g_error("Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
 		goto done;
 	}
 
@@ -952,7 +934,7 @@ getCpuLimit(guint *val)
 	else if (s_cgroup_version == 2)
 		return getCGroup2CpuLimit(val);
 	else {
-		g_assert(!"Unknown cgroup version.");
+		g_error("Unknown cgroup version.");
 		return FALSE;
 	}
 }
