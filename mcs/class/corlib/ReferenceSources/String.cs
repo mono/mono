@@ -293,7 +293,7 @@ namespace System
 
 		static unsafe void memcpy (byte *dest, byte *src, int size)
 		{
-			Buffer.Memcpy (dest, src, size);
+			Buffer.Memcpy (dest, src, size, false);
 		}
 
 		/* Used by the runtime */
