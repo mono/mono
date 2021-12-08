@@ -1456,9 +1456,6 @@ socket_transport_close1 (void)
 	/* Close the read part only so it can still send back replies */
 	/* Also shut down the connection listener so that we can exit normally */
 #ifdef HOST_WIN32
-	MonoThreadInfo* info = mono_thread_info_lookup(debugger_thread_id);
-	if (info)
-		mono_threads_suspend_abort_syscall(info);
 	/* SD_RECEIVE doesn't break the recv in the debugger thread */
 	shutdown (conn_fd, SD_BOTH);
 	shutdown (listen_fd, SD_BOTH);
@@ -1680,14 +1677,9 @@ transport_handshake (void)
 }
 
 static void
-stop_debugger_thread (void)
+wait_for_debugger_thread_to_stop ()
 {
-	if (!agent_inited)
-		return;
-
-	transport_close1 ();
-
-	/* 
+	/*
 	 * Wait for the thread to exit.
 	 *
 	 * If we continue with the shutdown without waiting for it, then the client might
@@ -1704,6 +1696,36 @@ stop_debugger_thread (void)
 		if (debugger_thread_handle)
 			mono_thread_info_wait_one_handle (debugger_thread_handle, MONO_INFINITE_WAIT, TRUE);
 	}
+}
+
+static void
+stop_debugger_thread (void)
+{
+	if (!agent_inited)
+		return;
+
+#ifdef HOST_WIN32
+	gboolean debuggerAttached = mono_is_debugger_attached ();
+
+	// We need to make the call to mono_threads_suspend_abort_syscall to break any
+	// hung accept calls on windows.
+	MonoThreadInfo* info = mono_thread_info_lookup (debugger_thread_id);
+	if (info) {
+		mono_threads_suspend_abort_syscall (info);
+
+		// On Windows we must wait for the debugger to stop before
+		// closing the transport. !debuggerAttached means we are not in
+		// socket accept, the problematic blocking call.
+		if (!debuggerAttached)
+		{
+			wait_for_debugger_thread_to_stop ();
+		}
+	}
+
+#endif
+	transport_close1 ();
+
+	wait_for_debugger_thread_to_stop ();
 
 	transport_close2 ();
 }
