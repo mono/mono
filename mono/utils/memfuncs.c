@@ -294,7 +294,7 @@ mono_determine_physical_ram_size (void)
 	gint64 restricted_limit = getRestrictedPhysicalMemoryLimit();	/* Check for any cgroup limit */
 	if (restricted_limit != 0) {
 		gchar *heapHardLimit = getenv("DOTNET_GCHeapHardLimit");	/* See if user has set a limit */
-                if (heapHardLimit == NULL)
+		if (heapHardLimit == NULL)
 			heapHardLimit = getenv("COMPlus_GCHeapHardLimit");	/* Check old envvar name */
 		errno = 0;
 		if (heapHardLimit != NULL) {
@@ -303,18 +303,18 @@ mono_determine_physical_ram_size (void)
 				restricted_limit = (restricted_limit < gcLimit ? restricted_limit : (gint64) gcLimit);
 		} else {
 			gchar *heapHardLimitPct = getenv("DOTNET_GCHeapHardLimitPercent"); /* User % limit? */
-                	if (heapHardLimitPct == NULL)
-			heapHardLimitPct = getenv("COMPlus_GCHeapHardLimitPercent");	/* Check old envvar name */
+			if (heapHardLimitPct == NULL)
+				heapHardLimitPct = getenv("COMPlus_GCHeapHardLimitPercent");	/* Check old envvar name */
 			if (heapHardLimitPct != NULL) {
 				int gcLimit = strtoll(heapHardLimitPct, NULL, 16);
 				if ((gcLimit > 0) && (gcLimit <= 100)) 
 					restricted_limit = (gcLimit * restricted_limit) / 100;
 				else
 					restricted_limit = (3 * restricted_limit) / 4;	/* Use 75% limit of container */
-                        } else {
+			} else {
 				restricted_limit = (3 * restricted_limit) / 4;	/* Use 75% limit of container */
-                        }
-                }
+			}
+		}
 		return (restricted_limit < 209715200 ? 209715200 : 	/* Use at least 20MB */
 			(restricted_limit < memsize ? restricted_limit : memsize));
 	}
