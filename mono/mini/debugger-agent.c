@@ -1456,6 +1456,9 @@ socket_transport_close1 (void)
 	/* Close the read part only so it can still send back replies */
 	/* Also shut down the connection listener so that we can exit normally */
 #ifdef HOST_WIN32
+	MonoThreadInfo* info = mono_thread_info_lookup(debugger_thread_id);
+	if (info)
+		mono_threads_suspend_abort_syscall(info);
 	/* SD_RECEIVE doesn't break the recv in the debugger thread */
 	shutdown (conn_fd, SD_BOTH);
 	shutdown (listen_fd, SD_BOTH);
