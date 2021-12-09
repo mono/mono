@@ -1,3 +1,7 @@
+This patent promise is contained in the PATENTS.TXT file of https://github.com/mono/mono/ and is included here for your reference:
+
+---------
+
 Microsoft Patent Promise for Mono
 
 Microsoft Corporation and its affiliates (“Microsoft”) promise not to
