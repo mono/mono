@@ -52,8 +52,8 @@ Abstract:
 #define CGROUP2_CPU_MAX_FILENAME "/cpu.max"
 
 static void initialize(void);
-static gboolean readMemoryValueFromFile(const char *, guint64 *);
-static gboolean getPhysicalMemoryLimit(guint64 *);
+static gboolean readMemoryValueFromFile(const char *, size_t *);
+static gboolean getPhysicalMemoryLimit(size_t *);
 static gboolean getPhysicalMemoryUsage(size_t *);
 static int findCGroupVersion(void);
 static gboolean isCGroup1MemorySubsystem(const char *);
@@ -61,11 +61,11 @@ static gboolean isCGroup1CpuSubsystem(const char *);
 static char *findCGroupPath(gboolean (*is_subsystem)(const char *));
 static void findHierarchyMount(gboolean (*is_subsystem)(const char *), char **, char **);
 static char *findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *));
-static gboolean getCGroupMemoryLimit(guint64 *, const char *);
+static gboolean getCGroupMemoryLimit(size_t *, const char *);
 static gboolean getCGroupMemoryUsage(size_t *);
-static size_t getPhysicalMemoryTotal(guint64);
+static size_t getPhysicalMemoryTotal(size_t);
 static long long readCpuCGroupValue(const char *);
-static void computeCpuLimit(long long, long long, uint32_t *);
+static void computeCpuLimit(long long, long long, guint32 *);
 
 size_t getRestrictedPhysicalMemoryLimit(void);
 gboolean getPhysicalMemoryUsed(size_t *);
@@ -124,13 +124,12 @@ initialize()
  *
  */
 static gboolean 
-readMemoryValueFromFile(const char* filename, guint64* val)
+readMemoryValueFromFile(const char* filename, size_t* val)
 {
 	gboolean result = FALSE;
 	char *line = NULL;
 	size_t lineLen = 0;
 	char *endptr = NULL;
-	guint64 num = 0, multiplier;
 	FILE *file = NULL;
 
 	if (val != NULL) {
@@ -138,7 +137,8 @@ readMemoryValueFromFile(const char* filename, guint64* val)
 		if (file != NULL) {
 			if (getline(&line, &lineLen, file) != -1) {
 				errno = 0;
-				num = strtoull(line, &endptr, 0);
+				*val = strtoull(line, &endptr, 0);
+				result = TRUE;
 			}
 		}
 	}
@@ -159,7 +159,7 @@ readMemoryValueFromFile(const char* filename, guint64* val)
  *
  */
 static gboolean 
-getPhysicalMemoryLimit(guint64 *val)
+getPhysicalMemoryLimit(size_t *val)
 {
 	if (s_mem_stat_n_keys == 0)
 		initialize();
@@ -514,7 +514,7 @@ done:
  *
  */
 static gboolean 
-getCGroupMemoryLimit(guint64 *val, const char *filename)
+getCGroupMemoryLimit(size_t *val, const char *filename)
 {
 	if (s_memory_cgroup_path == NULL)
 		return FALSE;
@@ -591,7 +591,7 @@ getCGroupMemoryUsage(size_t *val)
 size_t 
 getRestrictedPhysicalMemoryLimit()
 {
-	guint64 physical_memory_limit = 0;
+	size_t physical_memory_limit = 0;
 
 	if (s_mem_stat_n_keys == 0)
 		initialize();
@@ -724,7 +724,7 @@ getPhysicalMemoryAvail()
  *
  */
 static gboolean
-getCGroup1CpuLimit(guint *val)
+getCGroup1CpuLimit(guint32 *val)
 {
 	long long quota;
 	long long period;
@@ -750,7 +750,7 @@ getCGroup1CpuLimit(guint *val)
  *
  */
 static gboolean 
-getCGroup2CpuLimit(guint *val)
+getCGroup2CpuLimit(guint32 *val)
 {
 	char *filename = NULL;
 	FILE *file = NULL;
@@ -858,7 +858,7 @@ readCpuCGroupValue(const char *subsystemFilename)
 {
 	char *filename = NULL;
 	gboolean result = FALSE;
-	long long val;
+	long long val = -1;
 
 	if (s_cpu_cgroup_path == NULL)
 		return -1;
@@ -930,9 +930,9 @@ getCpuLimit(guint *val)
 	if (s_cgroup_version == 0)
 		return FALSE;
 	else if (s_cgroup_version == 1)
-		return getCGroup1CpuLimit(val);
+		return getCGroup1CpuLimit((guint32 *)val);
 	else if (s_cgroup_version == 2)
-		return getCGroup2CpuLimit(val);
+		return getCGroup2CpuLimit((guint32 *)val);
 	else {
 		g_error("Unknown cgroup version.");
 		return FALSE;
