@@ -659,6 +659,9 @@ public class Tests
 				}
 			}
 
+			if (CallableWrapperLeakTest () != 0)
+			    return 209;
+
 			#endregion // COM Callable Wrapper Tests
 
 			#region SAFEARRAY tests
@@ -1630,6 +1633,55 @@ public class Tests
                 return 2;
             return 0;
         }
+
+	// Doesn't matter what this is
+	internal class CallableWrapperLeakTestClass {
+	}
+
+	public static int CallableWrapperLeakTest () {
+		bool ok = true;
+		GCHandle h = HideFromGC (() => {
+			var o = new CallableWrapperLeakTestClass();
+			var weakHandle = GCHandle.Alloc (o, GCHandleType.Weak);
+			var pUnk = Marshal.GetIUnknownForObject (o);
+			int c = Marshal.Release(pUnk);
+			o = null;
+			if (c != 0) {
+				Console.Error.WriteLine ("Expected IUnknown refcount on a CCW to be 0 after Release, was {0}", c);
+				ok = false;
+			}
+			return weakHandle;
+		});
+		if (!ok)
+			return 1;
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+		HideFromGC(() => {
+			var o = h.Target;
+			if (o != null) {
+				Console.Error.WriteLine ("Expected weak handle to be null after GC, but the object (of type {0}) was retained", o.GetType());
+				ok = false;
+			}
+			return "done"; // doesn't matter
+		});
+		if (!ok)
+			return 2;
+		return 0;
+	}
+
+	[MethodImpl (MethodImplOptions.NoInlining)]
+	private static T HideFromGC<T> (Func<T> f) => HideFromGC (20, f);
+
+	[MethodImpl (MethodImplOptions.NoInlining)]
+	private static T HideFromGC<T> (int rec, Func<T> f) {
+		if (rec <= 0)
+			return f ();
+		else
+			return HideFromGC (rec - 1, f);
+	}
+
 }
 
 public class TestVisible
