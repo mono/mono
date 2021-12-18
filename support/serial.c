@@ -274,8 +274,8 @@ setup_baud_rate (int baud_rate, gboolean *custom_baud_rate)
 	    baud_rate = B50;
 #else
 	    baud_rate = -1;
-	    break;
 #endif
+	    break;
 	case 0:
 #ifdef B0
 	    baud_rate = B0;
