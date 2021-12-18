@@ -202,9 +202,59 @@ setup_baud_rate (int baud_rate, gboolean *custom_baud_rate)
 	switch (baud_rate)
 	{
 /*Some values are not defined on OSX, *BSD, or AIX */
+#if defined(B4000000)
+	case 4000000:
+	    baud_rate = B4000000;
+	    break;
+#endif
+#if defined(B3500000)
+	case 3500000:
+	    baud_rate = B3500000;
+	    break;
+#endif
+#if defined(B3000000)
+	case 3000000:
+	    baud_rate = B3000000;
+	    break;
+#endif
+#if defined(B2500000)
+	case 2500000:
+	    baud_rate = B2500000;
+	    break;
+#endif
+#if defined(B2000000)
+	case 2000000:
+	    baud_rate = B2000000;
+	    break;
+#endif
+#if defined(B1500000)
+	case 1500000:
+	    baud_rate = B1500000;
+	    break;
+#endif
+#if defined(B1152000)
+	case 1152000:
+	    baud_rate = B1152000;
+	    break;
+#endif
+#if defined(B1000000)
+	case 1000000:
+	    baud_rate = B1000000;
+	    break;
+#endif
 #if defined(B921600)
 	case 921600:
 	    baud_rate = B921600;
+	    break;
+#endif
+#if defined(B576000)
+	case 576000:
+	    baud_rate = B576000;
+	    break;
+#endif
+#if defined(B500000)
+	case 500000:
+	    baud_rate = B500000;
 	    break;
 #endif
 #if defined(B460800)
