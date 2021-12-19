@@ -710,6 +710,7 @@ AC_CHECK_HEADERS(sys/user.h, [], [],
 ])
 
 AC_CHECK_HEADERS(linux/serial.h)
+AC_CHECK_HEADERS([asm/termbits.h sys/ioctl.h])
 
 case "$host" in
 	# Use bundled zlib on Windows to be sure it is static.

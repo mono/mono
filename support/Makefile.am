@@ -45,6 +45,7 @@ MPH_UNIX_SOURCE =				\
 	old-map.h				\
 	pwd.c					\
 	serial.c				\
+	serial-custom.c				\
 	sys-mman.c				\
 	sys-sendfile.c				\
 	sys-socket.c				\
