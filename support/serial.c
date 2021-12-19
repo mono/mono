@@ -428,9 +428,6 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	/* can't implement here due to header conflicts */
 	int res = set_attributes_custom_speed (fd, baud_rate, &newtio);
 
-	if (res == 0)
-		return FALSE;
-
 	if (res == 1)
 		return TRUE;
 
