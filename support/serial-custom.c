@@ -37,6 +37,7 @@ set_attributes_custom_speed (int fd, speed_t baud_rate, struct termios *tio)
 	memcpy (newtio.c_cc, tio->c_cc, sizeof(newtio.c_cc));
 
 	/* set speed */
+	newtio.c_cflag &= ~CBAUD;
 	newtio.c_cflag |= BOTHER;
 	newtio.c_ispeed = baud_rate;
 	newtio.c_ospeed = baud_rate;
