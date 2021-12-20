@@ -121,6 +121,7 @@ jobs:
         sudo apt-key add winehq.key 1>&2
         sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ focal main' 1>&2
         sudo apt update 1>&2
+        sudo apt install -y --allow-downgrades libpcre2-8-0:i386 libpcre2-8-0=10.34-7 || true
         sudo apt install --install-recommends -y winehq-devel 1>&2
     - name: Download Wine Mono msi
       uses: actions/download-artifact@v2
