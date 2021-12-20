@@ -74,7 +74,7 @@ gboolean getCpuLimit(guint *);
 static gboolean readLongLongValueFromFile(const char *, long long *);
 
 // the cgroup version number or 0 to indicate cgroups are not found or not enabled
-static int s_cgroup_version;
+static int s_cgroup_version = -1;
 
 static char *s_memory_cgroup_path = NULL;
 static char *s_cpu_cgroup_path = NULL;
@@ -94,6 +94,9 @@ initialize()
 	s_cgroup_version = findCGroupVersion();
 	s_memory_cgroup_path = findCGroupPath(s_cgroup_version == 1 ? &isCGroup1MemorySubsystem : NULL);
 	s_cpu_cgroup_path = findCGroupPath(s_cgroup_version == 1 ? &isCGroup1CpuSubsystem : NULL);
+
+	if (s_cgroup_version == 0) 
+		return;
 
 	if (s_cgroup_version == 1) {
 		s_mem_stat_n_keys = 4;
@@ -161,9 +164,6 @@ readMemoryValueFromFile(const char* filename, size_t* val)
 static gboolean 
 getPhysicalMemoryLimit(size_t *val)
 {
-	if (s_mem_stat_n_keys == 0)
-		initialize();
-
 	if (s_cgroup_version == 0)
 		return FALSE;
 	else if (s_cgroup_version == 1)
@@ -230,7 +230,7 @@ findCGroupVersion()
 	case TMPFS_MAGIC: return 1;
 	case CGROUP2_SUPER_MAGIC: return 2;
 	default:
-		g_error("Unexpected file system type for /sys/fs/cgroup");
+		g_warning("Unexpected file system type for /sys/fs/cgroup");
 		return 0;
 	}
 }
@@ -593,8 +593,11 @@ getRestrictedPhysicalMemoryLimit()
 {
 	size_t physical_memory_limit = 0;
 
-	if (s_mem_stat_n_keys == 0)
+	if (s_cgroup_version == -1)
 		initialize();
+
+	if (s_cgroup_version == 0)
+		return 0;
 
 	if (!getPhysicalMemoryLimit(&physical_memory_limit))
 		return 0;
@@ -924,7 +927,7 @@ readLongLongValueFromFile(const char *filename, long long *val)
 gboolean 
 getCpuLimit(guint *val)
 {
-	if (s_mem_stat_n_keys == 0)
+	if (s_cgroup_version == -1)
 		initialize();
 
 	if (s_cgroup_version == 0)
