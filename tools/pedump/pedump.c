@@ -150,7 +150,7 @@ dent (const char *label, MonoPEDirEntry de)
 static void
 dump_blob (const char *desc, const char* p, guint32 size)
 {
-	int i;
+	guint32 i;
 
 	printf ("%s", desc);
 	if (!p) {
