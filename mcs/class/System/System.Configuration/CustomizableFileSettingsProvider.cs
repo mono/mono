@@ -346,12 +346,12 @@ namespace System.Configuration
 
 			if (ForceVersion == "") {
 				if (isVersionRevision)
-					versionName = String.Format ("{0}.{1}.{2}.{3}", ProductVersion [0], ProductVersion [1], ProductVersion [2], ProductVersion [3]);
-				else if (isVersionBuild)
+					versionName = String.Join ('.', ProductVersion);
+				else if (isVersionBuild && ProductVersion.Length >= 3)
 					versionName = String.Format ("{0}.{1}.{2}", ProductVersion [0], ProductVersion [1], ProductVersion [2]);
-				else if (isVersionMinor)
+				else if (isVersionMinor && ProductVersion.Length >= 2)
 					versionName = String.Format ("{0}.{1}", ProductVersion [0], ProductVersion [1]);
-				else if (isVersionMajor)
+				else if (isVersionMajor && ProductVersion.Length >= 1)
 					versionName = ProductVersion [0];
 				else
 					versionName = "";
