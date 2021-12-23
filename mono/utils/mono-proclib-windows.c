@@ -32,6 +32,16 @@ mono_cpu_count (void)
 	return info.dwNumberOfProcessors;
 }
 
+/**
+ * mono_cpu_limit:
+ * \returns the number of processors available to this process
+ */
+int
+mono_cpu_limit (void)
+{
+	return mono_cpu_count();
+}
+
 /*
  * This function returns the cpu usage in percentage,
  * normalized on the number of cores.

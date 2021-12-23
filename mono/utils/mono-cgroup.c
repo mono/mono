@@ -230,7 +230,7 @@ findCGroupVersion()
 	case TMPFS_MAGIC: return 1;
 	case CGROUP2_SUPER_MAGIC: return 2;
 	default:
-		g_warning("Unexpected file system type for /sys/fs/cgroup");
+		g_debug("Unexpected file system type for /sys/fs/cgroup");
 		return 0;
 	}
 }
