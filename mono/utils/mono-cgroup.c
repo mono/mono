@@ -34,6 +34,8 @@ Abstract:
 #include <errno.h>
 #include <limits.h>
 
+#include <utils/mono-logger-internals.h>
+
 #ifndef SIZE_T_MAX
 # define SIZE_T_MAX (~(size_t)0)
 #endif
@@ -67,10 +69,10 @@ static size_t getPhysicalMemoryTotal(size_t);
 static long long readCpuCGroupValue(const char *);
 static void computeCpuLimit(long long, long long, guint32 *);
 
-size_t getRestrictedPhysicalMemoryLimit(void);
-gboolean getPhysicalMemoryUsed(size_t *);
-size_t getPhysicalMemoryAvail(void);
-gboolean getCpuLimit(guint *);
+size_t mono_get_restricted_memory_limit(void);
+gboolean mono_get_memory_used(size_t *);
+size_t mono_get_memory_avail(void);
+gboolean mono_get_cpu_limit(guint *);
 static gboolean readLongLongValueFromFile(const char *, long long *);
 
 // the cgroup version number or 0 to indicate cgroups are not found or not enabled
@@ -171,7 +173,8 @@ getPhysicalMemoryLimit(size_t *val)
 	else if (s_cgroup_version == 2)
 		return getCGroupMemoryLimit(val, CGROUP2_MEMORY_LIMIT_FILENAME);
 	else {
-		g_error("Unknown cgroup version.");
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
+			    "Unknown cgroup version.");
 		return FALSE;
 	}
 }
@@ -195,7 +198,8 @@ getPhysicalMemoryUsage(size_t *val)
 	else if (s_cgroup_version == 2)
 		return getCGroupMemoryUsage(val);
 	else {
-		g_error("Unknown cgroup version.");
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
+			    "Unknown cgroup version.");
 		return FALSE;
 	}
 }
@@ -229,9 +233,7 @@ findCGroupVersion()
 	switch (stats.f_type) {
 	case TMPFS_MAGIC: return 1;
 	case CGROUP2_SUPER_MAGIC: return 2;
-	default:
-		g_debug("Unexpected file system type for /sys/fs/cgroup");
-		return 0;
+	default: return 0;
 	}
 }
 
@@ -371,7 +373,7 @@ findHierarchyMount(gboolean (*is_subsystem)(const char *), char** pmountpath, ch
 		   filesystemType,
 		   options);
 		if (sscanfRet != 2) {
-			g_error("Failed to parse mount info file contents with sscanf.");
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, "Failed to parse mount info file contents with sscanf.");
 			goto done;
 		}
 
@@ -399,7 +401,8 @@ findHierarchyMount(gboolean (*is_subsystem)(const char *), char** pmountpath, ch
 					   mountroot,
 					   mountpath);
 				if (sscanfRet != 2)
-					g_error("Failed to parse mount info file contents with sscanf.");
+					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
+						    "Failed to parse mount info file contents with sscanf.");
 
 				// assign the output arguments and clear the locals so we don't free them.
 				*pmountpath = mountpath;
@@ -464,7 +467,8 @@ findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *))
 			subsystem_list,
 			cgroup_path);
 			if (sscanfRet != 2) {
-				g_error("Failed to parse cgroup info file contents with sscanf.");
+				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
+					    "Failed to parse cgroup info file contents with sscanf.");
 				goto done;
 			}
 
@@ -488,7 +492,8 @@ findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *))
 				result = TRUE;
 			}
 		} else {
-			g_error("Unknown cgroup version in mountinfo.");
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
+				    "Unknown cgroup version in mountinfo.");
 			goto done;
 		}
 	}
@@ -589,7 +594,7 @@ getCGroupMemoryUsage(size_t *val)
  * Zero represents no limit.
  */
 size_t 
-getRestrictedPhysicalMemoryLimit()
+mono_get_restricted_memory_limit()
 {
 	size_t physical_memory_limit = 0;
 
@@ -656,7 +661,7 @@ getPhysicalMemoryTotal(size_t physical_memory_limit)
  *
  */
 gboolean 
-getPhysicalMemoryUsed(size_t *val)
+mono_get_memory_used(size_t *val)
 {
 	gboolean result = FALSE;
 	size_t linelen;
@@ -701,22 +706,26 @@ getPhysicalMemoryUsed(size_t *val)
  *
  */
 size_t
-getPhysicalMemoryAvail()
+mono_get_memory_avail()
 {
 	size_t max, used, avail, sysAvail;
+#ifdef _SC_AVPHYS_PAGES		// If this isn't defined then we don't get called
 
-	max = getRestrictedPhysicalMemoryLimit();
+	max = mono_get_restricted_memory_limit();
 
 	if (max == 0)
 		max = getPhysicalMemoryTotal(ULONG_MAX);
 
-	if (getPhysicalMemoryUsed(&used))
+	if (mono_get_memory_used(&used))
 		avail = max - used;
 	else
 		avail = max;
 
 	sysAvail = sysconf(_SC_AVPHYS_PAGES) * pageSize;
 	return (avail < sysAvail ? avail : sysAvail);
+#else
+	return (0);
+#endif
 }
 
 /**
@@ -790,13 +799,15 @@ getCGroup2CpuLimit(guint32 *val)
 	max_quota_string = strtok_r(line, " ", &context);
 	if (max_quota_string == NULL)
 	{
-		g_error("Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
+			    "Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
 		goto done;
 	}
 	period_string = strtok_r(NULL, " ", &context);
 	if (period_string == NULL)
 	{
-		g_error("Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
+			    "Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
 		goto done;
 	}
 
@@ -925,7 +936,7 @@ readLongLongValueFromFile(const char *filename, long long *val)
  * a limit on CPUs
  */
 gboolean 
-getCpuLimit(guint *val)
+mono_get_cpu_limit(guint *val)
 {
 	if (s_cgroup_version == -1)
 		initialize();
@@ -937,7 +948,8 @@ getCpuLimit(guint *val)
 	else if (s_cgroup_version == 2)
 		return getCGroup2CpuLimit((guint32 *)val);
 	else {
-		g_error("Unknown cgroup version.");
+		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
+			    "Unknown cgroup version.");
 		return FALSE;
 	}
 }

@@ -291,7 +291,8 @@ mono_determine_physical_ram_size (void)
 
 	memsize = page_size * num_pages;	/* Calculate physical memory size */
 
-	gint64 restricted_limit = getRestrictedPhysicalMemoryLimit();	/* Check for any cgroup limit */
+#ifdef _SC_AVPHYS_PAGES
+	gint64 restricted_limit = mono_get_restricted_memory_limit();	/* Check for any cgroup limit */
 	if (restricted_limit != 0) {
 		gchar *heapHardLimit = getenv("DOTNET_GCHeapHardLimit");	/* See if user has set a limit */
 		if (heapHardLimit == NULL)
@@ -318,6 +319,7 @@ mono_determine_physical_ram_size (void)
 		return (restricted_limit < 209715200 ? 209715200 : 	/* Use at least 20MB */
 			(restricted_limit < memsize ? restricted_limit : memsize));
 	}
+#endif
 
 	return memsize;
 #else
@@ -373,7 +375,7 @@ mono_determine_physical_ram_available_size (void)
 	return (guint64) vmstat.free_count * page_size;
 
 #elif defined (__FreeBSD__) || defined (__linux__) || defined (__APPLE__)
-	return (getPhysicalMemoryAvail());
+	return (mono_get_memory_avail());
 
 #elif defined (HAVE_SYSCONF)
 	guint64 page_size = 0, num_pages = 0;
