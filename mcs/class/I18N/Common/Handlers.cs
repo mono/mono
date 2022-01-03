@@ -198,6 +198,8 @@ public sealed class Handlers
         "I18N.West.ENCiso_8859_3",
         "I18N.West.CP28597",
         "I18N.West.ENCiso_8859_7",
+        "I18N.West.CP28603",
+        "I18N.West.ENCiso_8859_13",
         "I18N.West.CP28605",
         "I18N.West.ENCiso_8859_15",
         "I18N.West.CP437",

@@ -468,6 +468,12 @@ ${UCM2CP} --region MidEast --page 28599 --wpage 1254 \
 	--webname iso-8859-9 --bodyname iso-8859-9 \
 	--headername iso-8859-9 MidEast/ibm-920.ucm >MidEast/CP28599.cs
 
+${UCM2CP} --region West --page 28603 --wpage 1257 \
+	--name 'Estonian (ISO)' \
+	--webname iso-8859-13 --bodyname iso-8859-13 \
+	--headername iso-8859-13 --no-browser-display \
+	--no-browser-save West/windows-28603-vista.ucm >West/CP28603.cs
+
 ${UCM2CP} --region West --page 28605 --wpage 1252 \
 	--name 'Latin 9 (ISO)' \
 	--webname iso-8859-15 --bodyname iso-8859-15 \
