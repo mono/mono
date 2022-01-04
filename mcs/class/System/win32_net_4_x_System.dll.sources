@@ -32,3 +32,12 @@ System.Net.NetworkInformation/Win32UnixFactoryPal.cs
 ../../../external/corefx/src/Common/src/System/Net/SafeCloseSocketAndEvent.cs
 ../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetworkAddressChange.cs
 ../../../external/corefx/src/System.Net.NetworkInformation/src/System/Net/NetworkInformation/NetworkAddressChange.Windows.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/BufferAsyncResult.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/FixedSizeReader.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/HelperAsyncResults.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/NTAuthentication.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/StreamFramer.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/InternalNegotiateStream.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/NegoState.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/NegotiateStream.cs
+../../../external/corefx/src/System.Net.Security/src/System/Net/Security/NegotiateStreamPal.Windows.cs
