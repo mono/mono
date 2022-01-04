@@ -80,6 +80,14 @@ internal static partial class EncodingHelper
 						int code_page = 1;
 						
 						string code_page_name = InternalCodePage (ref code_page);
+						// Wine Mono hack: InternalCodePage on Windows returns CP<number>
+						// from the ACP, but we can't get most encodings this way, so
+						// pull out the number and use that.
+						if (code_page == -1 && code_page_name.StartsWith ("CP"))
+						{
+							if (!int.TryParse(code_page_name.Substring (2), out code_page))
+								code_page = -1;
+						}
 						try {
 							if (code_page == -1)
 								enc = Encoding.GetEncoding (code_page_name);
