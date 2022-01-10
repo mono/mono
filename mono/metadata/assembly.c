@@ -137,6 +137,8 @@ static const AssemblyVersionMap framework_assemblies [] = {
 	{"PEAPI", 0},
 	{"PresentationCore", 3},
 	{"PresentationFramework", 3},
+	{"PresentationFramework.Aero", 3},
+	{"PresentationFramework.Classic", 3},
 	{"System", 0},
 	FACADE_ASSEMBLY ("System.AppContext"),
 	FACADE_ASSEMBLY ("System.Buffers"),
