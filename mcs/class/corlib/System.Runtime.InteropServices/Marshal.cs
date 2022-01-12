@@ -834,7 +834,7 @@ namespace System.Runtime.InteropServices
 
 		public static Type GetTypeFromCLSID (Guid clsid)
 		{
-			throw new PlatformNotSupportedException ();
+			return Type.GetTypeFromCLSID (clsid);
 		}
 
 #if !NETCORE
