@@ -854,6 +854,8 @@ if test x$platform_android = xyes; then
 	fi
 fi # Android
 
+AC_CHECK_HEADER(linux/cgroupstats.h, [AC_DEFINE(HAVE_CGROUP_SUPPORT, 1, Define to 1 if you have the <linux/cgroupstats.h> header file.)])
+
 # not 64 bit clean in cross-compile
 AC_CHECK_SIZEOF(void *)
 AC_CHECK_SIZEOF(long)
@@ -4680,8 +4682,6 @@ case "$host" in
 		TARGET=S390X;
 		arch_target=s390x;
 		ACCESS_UNALIGNED="yes"
-		BTLS_SUPPORTED=yes
-		BTLS_PLATFORM=s390x
 		CFLAGS="$CFLAGS -mbackchain"
 		;;
 	riscv32-*)
@@ -7221,6 +7221,7 @@ echo "
 	libgdiplus:      $libgdiplus_msg
 	zlib:            $zlib_msg
 	BTLS:            $enable_btls$btls_platform_string
+	CGROUP:		 $ac_cv_header_linux_cgroupstats_h
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
 	crash reporting: $crash_reporting (private crashes: $with_crash_privacy)
 	.NET Core:       $with_core

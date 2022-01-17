@@ -18,6 +18,10 @@ Abstract:
 #endif
 
 #include <config.h>
+#include <mono/utils/mono-compiler.h>
+
+#if HAVE_CGROUP_SUPPORT
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -953,3 +957,8 @@ mono_get_cpu_limit(guint *val)
 		return FALSE;
 	}
 }
+#else
+
+MONO_EMPTY_SOURCE_FILE (mono_cgroup);
+
+#endif

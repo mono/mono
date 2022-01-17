@@ -906,8 +906,10 @@ mono_cpu_limit (void)
 				return (limit);
 		}
 		limit = mono_cpu_count();
+#if HAVE_CGROUP_SUPPORT
 		if (mono_get_cpu_limit(&count))
 			limit = (limit < count ? limit : count);
+#endif
 	}
 
 	/*
