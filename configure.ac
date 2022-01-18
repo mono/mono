@@ -852,9 +852,9 @@ if test x$platform_android = xyes; then
 	if test x$android_unified_headers = xyes; then
 		AC_DEFINE(ANDROID_UNIFIED_HEADERS, 1, [Whether Android NDK unified headers are used])
 	fi
+else
+	AC_CHECK_HEADER(linux/cgroupstats.h, [AC_DEFINE(HAVE_CGROUP_SUPPORT, 1, Define to 1 if you have the <linux/cgroupstats.h> header file.)])
 fi # Android
-
-AC_CHECK_HEADER(linux/cgroupstats.h, [AC_DEFINE(HAVE_CGROUP_SUPPORT, 1, Define to 1 if you have the <linux/cgroupstats.h> header file.)])
 
 # not 64 bit clean in cross-compile
 AC_CHECK_SIZEOF(void *)
@@ -4682,6 +4682,8 @@ case "$host" in
 		TARGET=S390X;
 		arch_target=s390x;
 		ACCESS_UNALIGNED="yes"
+		BTLS_SUPPORTED=yes
+		BTLS_PLATFORM=s390x
 		CFLAGS="$CFLAGS -mbackchain"
 		;;
 	riscv32-*)
