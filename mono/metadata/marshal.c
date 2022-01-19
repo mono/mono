@@ -3867,6 +3867,11 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 		mono_method_get_marshal_info (invoke, mspecs);
 	}
 
+	if (invoke_sig->ret->type == MONO_TYPE_GENERICINST) {
+		mono_error_set_generic_error (error, "System.Runtime.InteropServices", "MarshalDirectiveException", "%s", "Cannot marshal 'return value': Non-blittable generic types cannot be marshaled.");
+		return NULL;
+	}
+
 	sig = mono_method_signature_internal (method);
 
 	mb = mono_mb_new (method->klass, method->name, MONO_WRAPPER_NATIVE_TO_MANAGED);
