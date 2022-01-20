@@ -7158,7 +7158,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 					g_assert (!fsig->hasthis && !fsig->pinvoke);
 
-					gboolean inline_wrapper = cfg->opt & MONO_OPT_INLINE || cfg->compile_aot;
+					/* UNITY: avoid inlining as no LMF will be setup, causing problems with exception handling.
+					* See FB case 1396617 and https://github.com/dotnet/runtime/issues/64073
+					* gboolean inline_wrapper = (cfg->opt & MONO_OPT_INLINE || cfg->compile_aot); */
+					gboolean inline_wrapper = FALSE;
 					if (inline_wrapper) {
 						int costs = inline_method (cfg, wrapper, fsig, sp, ip, cfg->real_offset, TRUE);
 						CHECK_CFG_EXCEPTION;
