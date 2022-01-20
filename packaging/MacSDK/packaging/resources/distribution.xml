@@ -16,4 +16,5 @@
         <pkg-ref id="mono"/>
     </choice>
     <pkg-ref id="mono">#mono.pkg</pkg-ref>
+    <options hostArchitectures="arm64,x86_64"/>
 </installer-gui-script>
