@@ -185,21 +185,12 @@ mono_wasm_setenv (const char *name, const char *value)
 	monoeg_g_setenv (strdup (name), strdup (value), 1);
 }
 
-#ifdef ENABLE_NETCORE
-static void *sysglobal_native_handle;
-#endif
-
 static void*
 wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 {
 	void* handle = wasm_dl_lookup_pinvoke_table (name);
 	if (handle)
 		return handle;
-
-#ifdef ENABLE_NETCORE
-	if (!strcmp (name, "System.Globalization.Native"))
-		return sysglobal_native_handle;
-#endif
 
 #if WASM_SUPPORTS_DLOPEN
 	return dlopen(name, flags);
@@ -211,11 +202,6 @@ wasm_dl_load (const char *name, int flags, char **err, void *user_data)
 static void*
 wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 {
-#ifdef ENABLE_NETCORE
-	if (handle == sysglobal_native_handle)
-		assert (0);
-#endif
-
 #if WASM_SUPPORTS_DLOPEN
 	if (!wasm_dl_is_pinvoke_tables (handle)) {
 		return dlsym (handle, name);
@@ -235,15 +221,6 @@ wasm_dl_symbol (void *handle, const char *name, char **err, void *user_data)
 	}
 	return NULL;
 }
-
-#ifdef ENABLE_NETCORE
-/* Missing System.Native symbols */
-int SystemNative_CloseNetworkChangeListenerSocket (int a) { return 0; }
-int SystemNative_CreateNetworkChangeListenerSocket (int a) { return 0; }
-void SystemNative_ReadEvents (int a,int b) {}
-int SystemNative_SchedGetAffinity (int a,int b) { return 0; }
-int SystemNative_SchedSetAffinity (int a,int b) { return 0; }
-#endif
 
 #if !defined(ENABLE_AOT) || defined(EE_MODE_LLVMONLY_INTERP)
 #define NEED_INTERP 1
@@ -369,9 +346,6 @@ mono_wasm_load_runtime (const char *managed_path, int enable_debugging)
 
 	monoeg_g_setenv ("MONO_LOG_LEVEL", "debug", 0);
 	monoeg_g_setenv ("MONO_LOG_MASK", "gc", 0);
-#ifdef ENABLE_NETCORE
-	monoeg_g_setenv ("DOTNET_SYSTEM_GLOBALIZATION_INVARIANT", "1", 0);
-#endif
 
 	mini_parse_debug_option ("top-runtime-invoke-unhandled");
 

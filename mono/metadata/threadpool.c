@@ -24,7 +24,6 @@
 #include <config.h>
 #include <mono/utils/mono-compiler.h>
 
-#ifndef ENABLE_NETCORE
 
 #include <stdlib.h>
 #define _USE_MATH_DEFINES // needed by MSVC to define math constants
@@ -823,6 +822,5 @@ ves_icall_System_Threading_ThreadPool_RequestWorkerThread (MonoError *error)
 	return TRUE;
 }
 
-#endif /* !ENABLE_NETCORE */
 
 MONO_EMPTY_SOURCE_FILE (threadpool);

@@ -33,7 +33,7 @@
 	<dllmap dll="libXinerama" target="@XINERAMA@" os="!windows" />
 	<dllmap dll="libasound" target="libasound.so.2" os="!windows" />
 	<dllmap dll="libcairo-2.dll" target="libcairo.so.2" os="!windows"/>
-	<dllmap dll="libcairo-2.dll" target="libcairo.2.dylib" os="osx"/>
+	<dllmap dll="libcairo-2.dll" target="$mono_libdir/libcairo.2.dylib" os="osx" />
 	<dllmap dll="libcups" target="libcups.so.2" os="!windows"/>
 	<dllmap dll="libcups" target="libcups.dylib" os="osx"/>
 	<dllmap dll="i:kernel32.dll">

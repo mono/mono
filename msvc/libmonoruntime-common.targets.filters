@@ -175,9 +175,6 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\loaded-images-global.c">
       <Filter>Source Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\loaded-images-netcore.c">
-      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\common</Filter>
-    </ClCompile>
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\loader.c">
       <Filter>Source Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClCompile>

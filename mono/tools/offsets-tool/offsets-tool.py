@@ -63,7 +63,6 @@ class OffsetsTool:
 		parser.add_argument ('--abi=', dest='abi', help='ABI triple to generate', required=True)
 		parser.add_argument ('--sysroot=', dest='sysroot', help='path to sysroot headers of target')
 		parser.add_argument ('--prefix=', dest='prefixes', action='append', help='prefix path to include directory of target')
-		parser.add_argument ('--netcore', dest='netcore', help='target runs with netcore', action='store_true')
 		args = parser.parse_args ()
 
 		if not args.libclang or not os.path.isfile (args.libclang):
@@ -200,9 +199,6 @@ class OffsetsTool:
 		if not self.target:
 			print ("ABI '" + args.abi + "' is not supported.", file=sys.stderr)
 			sys.exit (1)
-
-		if args.netcore:
-			self.target_args += ["-DENABLE_NETCORE"]
 
 		self.args = args
 

@@ -1557,7 +1557,6 @@ mono_w32socket_convert_error (gint error)
 	}
 }
 
-#ifndef ENABLE_NETCORE
 MonoBoolean
 ves_icall_System_Net_Sockets_Socket_SupportPortReuse_icall (MonoProtocolType proto)
 {
@@ -1572,7 +1571,6 @@ ves_icall_System_Net_Sockets_Socket_SupportPortReuse_icall (MonoProtocolType pro
 	return FALSE;
 #endif
 }
-#endif
 
 gboolean
 mono_w32socket_duplicate (gpointer handle, gint32 targetProcessId, gpointer *duplicate_handle)

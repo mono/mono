@@ -18,7 +18,7 @@
 
 #include <mono/metadata/w32socket.h>
 
-#if !defined(DISABLE_SOCKETS) && !defined(ENABLE_NETCORE)
+#if !defined(DISABLE_SOCKETS)
 
 #if defined(__APPLE__) || defined(__FreeBSD__)
 #define __APPLE_USE_RFC_3542
@@ -2644,4 +2644,4 @@ mono_network_cleanup (void)
 {
 }
 
-#endif // !defined(DISABLE_SOCKETS) && !defined(ENABLE_NETCORE)
+#endif // !defined(DISABLE_SOCKETS)

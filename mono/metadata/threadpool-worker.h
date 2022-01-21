@@ -8,7 +8,6 @@
 #include <config.h>
 #include <glib.h>
 
-#ifndef ENABLE_NETCORE
 
 typedef void (*MonoThreadPoolWorkerCallback)(void);
 
@@ -37,6 +36,5 @@ mono_threadpool_worker_set_max (gint32 value);
 void
 mono_threadpool_worker_set_suspended (gboolean suspended);
 
-#endif /* ENABLE_NETCORE */
 
 #endif /* _MONO_METADATA_THREADPOOL_WORKER_H */

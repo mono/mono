@@ -4,8 +4,6 @@ SUBDIRS = @MONO_SUBDIRS@
 noinst_SUBDIRS = @MONO_NOINST_SUBDIRS@
 DIST_SUBDIRS = $(SUBDIRS) m4
 
-if !ENABLE_NETCORE
-
 all: $(update_submodules)
 
 update_submodules:
@@ -40,7 +38,7 @@ dist-hook:
 	rm -f `find $(top_distdir)/external -path '*\.Plo'`
 	rm -f `find $(top_distdir)/external -name '\.dirstamp'`
 	rm -f `find $(top_distdir)/external -path '*\.exe' -not -path '*/roslyn-binaries/*'`
-	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*' -not -path '*/helix-binaries/*'`
+	rm -f `find $(top_distdir)/external -path '*\.dll' -not -path '*/binary-reference-assemblies/*' -not -path '*/roslyn-binaries/*'`
 	rm -rf "$(top_distdir)/external/linker/test"
 	rm -rf "$(top_distdir)/external/llvm-project/lldb/test"
 	rm -rf "$(top_distdir)/external/llvm-project/libcxx/test"
@@ -100,5 +98,3 @@ install:
 update-llvm-version:
 	if test "x$$LLVM_DIR" = "x"; then echo "Set the make variable LLVM_DIR to the directory containing the LLVM installation."; exit 1; fi
 	REV=`$(LLVM_DIR)/bin/llvm-config --version` && sed -e "s,expected_llvm_version=.*,expected_llvm_version=\"$$REV\"," < configure.ac > tmp && mv tmp configure.ac && echo "Version set to $$REV."
-
-endif

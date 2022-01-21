@@ -107,9 +107,6 @@
 // "HandleIn" is the default for managed types, and is just called "Handle".
 //
 
-#if ENABLE_NETCORE
-#include "icall-def-netcore.h"
-#else
 
 ICALL_TYPE(CLR_INTEROP_SYS, "Interop/Sys", CLR_INTEROP_SYS_1)
 NOHANDLES(ICALL(CLR_INTEROP_SYS_1, "DoubleToString", ves_icall_Interop_Sys_DoubleToString))
@@ -1153,7 +1150,6 @@ HANDLES(COMOBJ_2, "GetInterfaceInternal", ves_icall_System_ComObject_GetInterfac
 HANDLES(COMOBJ_3, "ReleaseInterfaces", ves_icall_System_ComObject_ReleaseInterfaces, void, 1, (MonoComObject))
 #endif
 
-#endif
 
 // This is similar to HANDLES() but is for icalls passed to register_jit_icall.
 // There is no metadata for these. No signature matching.

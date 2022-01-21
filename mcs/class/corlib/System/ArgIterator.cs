@@ -38,9 +38,6 @@ namespace System
 {
 	[StructLayout (LayoutKind.Auto)]
 	public
-#if NETCORE
-	ref
-#endif
 	struct ArgIterator
 	{
 #pragma warning disable 169, 414

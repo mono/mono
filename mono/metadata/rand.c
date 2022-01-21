@@ -21,7 +21,6 @@
 #include "utils/mono-rand.h"
 #include "icall-decl.h"
 
-#ifndef ENABLE_NETCORE
 
 MonoBoolean
 ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngOpen (MonoError *error)
@@ -49,8 +48,3 @@ ves_icall_System_Security_Cryptography_RNGCryptoServiceProvider_RngClose (gpoint
 	mono_rand_close (handle);
 }
 
-#else
-
-MONO_EMPTY_SOURCE_FILE (rand);
-
-#endif /* ENABLE_NETCORE */

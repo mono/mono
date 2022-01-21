@@ -757,15 +757,6 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
 {
 	int dreg;
 
-#ifdef ENABLE_NETCORE
-	if (type->type == MONO_TYPE_VALUETYPE && !type->byref) {
-		MonoClass *klass = mono_class_from_mono_type_internal (type);
-		if (m_class_is_enumtype (klass) && m_class_get_image (klass) == mono_get_corlib () && !strcmp (m_class_get_name (klass), "StackCrawlMark")) {
-			if (!(cfg->method->flags & METHOD_ATTRIBUTE_REQSECOBJ))
-				g_error ("Method '%s' which contains a StackCrawlMark local variable must be decorated with [System.Security.DynamicSecurityMethod].", mono_method_get_full_name (cfg->method));
-		}
-	}
-#endif
 
 	type = mini_get_underlying_type (type);
 
@@ -3420,7 +3411,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 			if (strcmp (cfg->method->name, name) == 0)
 				cfg->verbose_level = 4;
-			else if ((strchr (name, '.') > name) || strchr (name, ':')) {
+			else if ((strchr (name, '.') > name) || strchr (name, ':') || strchr (name, '*')) {
 				MonoMethodDesc *desc;
 				
 				desc = mono_method_desc_new (name, TRUE);

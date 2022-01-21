@@ -224,11 +224,7 @@ namespace System
 
 		internal static bool IsContextful (RuntimeType type)
 		{
-#if NETCORE
-			return false;
-#else
 			return typeof (ContextBoundObject).IsAssignableFrom (type);
-#endif
 		}
 
 		internal static bool IsEquivalentTo (RuntimeType rtType1, RuntimeType rtType2)

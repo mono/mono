@@ -137,10 +137,6 @@ delegate_hash_table_remove (MonoDelegate *d);
 GENERATE_TRY_GET_CLASS_WITH_CACHE (stringbuilder, "System.Text", "StringBuilder");
 static GENERATE_TRY_GET_CLASS_WITH_CACHE (unmanaged_function_pointer_attribute, "System.Runtime.InteropServices", "UnmanagedFunctionPointerAttribute");
 
-#ifdef ENABLE_NETCORE
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (suppress_gc_transition_attribute, "System.Runtime.InteropServices", "SuppressGCTransitionAttribute")
-static GENERATE_TRY_GET_CLASS_WITH_CACHE (unmanaged_callers_only_attribute, "System.Runtime.InteropServices", "UnmanagedCallersOnlyAttribute")
-#endif
 
 static gboolean type_is_blittable (MonoType *type);
 
@@ -1325,10 +1321,6 @@ handle_enum:
 MonoAsyncResult *
 mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 {
-#ifdef ENABLE_NETCORE
-	mono_set_pending_exception (mono_exception_from_name (mono_defaults.corlib, "System", "PlatformNotSupportedException"));
-	return NULL;
-#else
 	ERROR_DECL (error);
 	MonoMulticastDelegate *mcast_delegate;
 	MonoClass *klass;
@@ -1393,7 +1385,6 @@ mono_delegate_begin_invoke (MonoDelegate *delegate, gpointer *params)
 	MonoAsyncResult *result = mono_threadpool_begin_invoke (mono_domain_get (), (MonoObject*) delegate, method, params, error);
 	mono_error_set_pending_exception (error);
 	return result;
-#endif
 }
 
 static char*
@@ -2040,10 +2031,6 @@ mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 {
-#ifdef ENABLE_NETCORE
-	mono_set_pending_exception (mono_exception_from_name (mono_defaults.corlib, "System", "PlatformNotSupportedException"));
-	return NULL;
-#else
 	ERROR_DECL (error);
 	MonoDomain *domain = mono_domain_get ();
 	MonoAsyncResult *ares;
@@ -2143,7 +2130,6 @@ mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params)
 	mono_method_return_message_restore (method, params, out_args, error);
 	mono_error_set_pending_exception (error);
 	return res;
-#endif
 }
 
 /**
@@ -3484,29 +3470,6 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 		csig->pinvoke = 0;
 
 		res = NULL;
-#ifdef ENABLE_NETCORE
-		iter = NULL;
-		while ((m = mono_class_get_methods (mono_defaults.string_class, &iter))) {
-			/*
-			 * Find the corresponding String::Ctor () method which has the same signature but its static
-			 * and returns a string.
-			 */
-			if (!strcmp ("Ctor", m->name)) {
-				int i;
-
-				MonoMethodSignature *rsig = mono_method_signature_internal (m);
-				if (csig->param_count == rsig->param_count) {
-					for (i = 0; i < csig->param_count; ++i)
-						if (!mono_metadata_type_equal (csig->params [i], rsig->params [i]))
-							break;
-					if (i == csig->param_count) {
-						res = m;
-						break;
-					}
-				}
-			}
-		}
-#else
 		iter = NULL;
 		while ((m = mono_class_get_methods (mono_defaults.string_class, &iter))) {
 			if (!strcmp ("CreateString", m->name) &&
@@ -3515,7 +3478,6 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 				break;
 			}
 		}
-#endif
 		g_assert (res);
 
 		WrapperInfo *info;
@@ -3563,12 +3525,7 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	 * In AOT mode and embedding scenarios, it is possible that the icall is not
 	 * registered in the runtime doing the AOT compilation.
 	 */
-#ifdef ENABLE_NETCORE
-	/* Handled at runtime */
-	pinvoke_not_found = !pinvoke && !piinfo->addr && !aot;
-#else
 	pinvoke_not_found = !piinfo->addr && !aot;
-#endif
 	if (pinvoke_not_found) {
 		/* if there's no code but the error isn't set, just use a fairly generic exception. */
 		if (is_ok (emitted_error))
@@ -3623,29 +3580,6 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 	mspecs = g_new (MonoMarshalSpec*, sig->param_count + 1);
 	mono_method_get_marshal_info (method, mspecs);
 
-#ifdef ENABLE_NETCORE
-	if (mono_class_try_get_suppress_gc_transition_attribute_class ()) {
-		MonoCustomAttrInfo *cinfo;
-		ERROR_DECL (error);
-
-		cinfo = mono_custom_attrs_from_method_checked (method, error);
-		mono_error_assert_ok (error);
-		gboolean found = FALSE;
-		if (cinfo) {
-			for (i = 0; i < cinfo->num_attrs; ++i) {
-				MonoClass *ctor_class = cinfo->attrs [i].ctor->klass;
-				if (ctor_class == mono_class_try_get_suppress_gc_transition_attribute_class ()) {
-					found = TRUE;
-					break;
-				}
-			}
-		}
-		if (found)
-			skip_gc_trans = TRUE;
-		if (cinfo && !cinfo->cached)
-			mono_custom_attrs_free (cinfo);
-	}
-#endif
 
 	MonoNativeWrapperFlags flags = aot ? EMIT_NATIVE_WRAPPER_AOT : (MonoNativeWrapperFlags)0;
 	flags |= check_exceptions ? EMIT_NATIVE_WRAPPER_CHECK_EXCEPTIONS : (MonoNativeWrapperFlags)0;
@@ -5179,8 +5113,6 @@ void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_to_unmanaged (MonoArrayHandle src, gint32 start_index,
 		gpointer dest, gint32 length, gconstpointer managed_source_addr, MonoError *error)
 {
-	g_assert_not_netcore ();
-
 	if (length != 0) {
 		MonoGCHandle gchandle = 0;
 		gsize const bytes = copy_managed_common (src, dest, start_index, length, (gpointer*)&managed_source_addr, &gchandle, error);
@@ -5198,8 +5130,6 @@ void
 ves_icall_System_Runtime_InteropServices_Marshal_copy_from_unmanaged (gconstpointer src, gint32 start_index,
 		MonoArrayHandle dest, gint32 length, gpointer managed_dest_addr, MonoError *error)
 {
-	g_assert_not_netcore ();
-
 	if (length != 0) { 
 		MonoGCHandle gchandle = 0;
 		gsize const bytes = copy_managed_common (dest, src, start_index, length, &managed_dest_addr, &gchandle, error);
@@ -5215,8 +5145,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (const char *pt
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi (const char *ptr, MonoError *error)
 {
-	g_assert_not_netcore ();
-
 	if (!ptr)
 		return NULL_HANDLE_STRING;
 #ifdef TARGET_WIN32
@@ -5232,8 +5160,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringAnsi_len (const char *ptr, gint32 len, MonoError *error)
 {
-	g_assert_not_netcore ();
-
 	if (!ptr) {
 		mono_error_set_argument_null (error, "ptr", "");
 		return NULL_HANDLE_STRING;
@@ -5291,8 +5217,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const gunichar2
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni (const gunichar2 *ptr, MonoError *error)
 {
-	g_assert_not_netcore ();
-
 	gsize len = 0;
 	const gunichar2 *t = ptr;
 
@@ -5314,8 +5238,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const gunic
 MonoStringHandle
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStringUni_len (const gunichar2 *ptr, gint32 len, MonoError *error)
 {
-	g_assert_not_netcore ();
-
 	if (!ptr) {
 		mono_error_set_argument_null (error, "ptr", "");
 		return NULL_HANDLE_STRING;
@@ -5375,17 +5297,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StructureToPtr (MonoObjectHandl
 	MONO_CHECK_ARG_NULL_HANDLE_NAMED (obj, "structure",);
 	MONO_CHECK_ARG_NULL_NAMED (dst, "ptr",);
 
-#ifdef ENABLE_NETCORE
-	MonoClass *klass = mono_handle_class (obj);
-	if (m_class_is_auto_layout (klass)) {
-		mono_error_set_argument (error, "structure", "The specified structure must be blittable or have layout information.");
-		return;
-	}
-	if (m_class_is_ginst (klass)) {
-		mono_error_set_argument (error, "structure", "The specified object must not be an instance of a generic type.");
-		return;
-	}
-#endif
 
 	MonoMethod *method = mono_marshal_get_struct_to_ptr (mono_handle_class (obj));
 
@@ -5405,30 +5316,6 @@ ptr_to_structure (gconstpointer src, MonoObjectHandle dst, MonoError *error)
 	mono_runtime_invoke_checked (method, NULL, pa, error);
 }
 
-#ifdef ENABLE_NETCORE
-
-void
-ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructureInternal (gconstpointer src, MonoObjectHandle dst, MonoBoolean allow_vtypes, MonoError *error)
-{
-	MonoType *t;
-	MonoClass *klass;
-
-	t = m_class_get_byval_arg (mono_handle_class (dst));
-	if (!allow_vtypes && MONO_TYPE_ISSTRUCT (t)) {
-		mono_error_set_argument (error, "structure", "The structure must not be a value class.");
-		return;
-	}
-
-	klass = mono_class_from_mono_type_internal (t);
-	if (m_class_is_auto_layout (klass)) {
-		mono_error_set_argument (error, "structure", "The specified structure must be blittable or have layout information.");
-		return;
-	}
-
-	ptr_to_structure (src, dst, error);
-}
-
-#else
 
 void
 ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure (gconstpointer src, MonoObjectHandle dst, MonoError *error)
@@ -5468,7 +5355,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_PtrToStructure_type (gconstpoin
 
 	return res;
 }
-#endif // !NETCORE
 
 int
 ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHandle ref_type, MonoStringHandle field_name, MonoError *error)
@@ -5479,20 +5365,12 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 		return 0;
 	}
 	if (MONO_HANDLE_IS_NULL (field_name)) {
-#ifdef ENABLE_NETCORE
-		mono_error_set_argument_null (error, NULL, "");
-#else
 		mono_error_set_argument_null (error, "fieldName", "");
-#endif
 		return 0;
 	}
 
 	if (!m_class_is_runtime_type (MONO_HANDLE_GET_CLASS (ref_type))) {
-#ifdef ENABLE_NETCORE
-		mono_error_set_argument (error, "fieldName", "");
-#else
 		mono_error_set_argument (error, "type", "");
-#endif
 		return 0;
 	}
 
@@ -5503,12 +5381,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_OffsetOf (MonoReflectionTypeHan
 	MonoClass *klass = mono_class_from_mono_type_internal (type);
 	if (!mono_class_init_checked (klass, error))
 		return 0;
-#ifdef ENABLE_NETCORE
-	if (m_class_is_auto_layout (klass)) {
-		mono_error_set_argument (error, NULL, "");
-		return 0;
-	}
-#endif
 	int match_index = -1;
 	while (klass && match_index == -1) {
 		MonoClassField* field;
@@ -5550,8 +5422,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const guni
 char*
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalAnsi (const gunichar2 *utf16, int length)
 {
-	g_assert_not_netcore ();
-
 	ERROR_DECL (error);
 
 	char * const utf8 = mono_utf16_to_utf8 (utf16, length, error);
@@ -5575,8 +5445,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunic
 gunichar2*
 ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni (const gunichar2 *s, int length)
 {
-	g_assert_not_netcore ();
-
 	if (!s)
 		return NULL;
 
@@ -5660,13 +5528,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_DestroyStructure (gpointer src,
 	MonoClass *klass = mono_class_from_mono_type_handle (type);
 	if (!mono_class_init_checked (klass, error))
 		return;
-#ifdef ENABLE_NETCORE
-	if (m_class_is_auto_layout (klass)) {
-		mono_error_set_argument (error, "structureType", "The specified structure must be blittable or have layout information.");
-		return;
-	}
-
-#endif
 
 	mono_struct_delete_old (klass, (char *)src);
 }
@@ -5753,8 +5614,6 @@ ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gsize size)
 void*
 ves_icall_System_Runtime_InteropServices_Marshal_AllocCoTaskMemSize (gsize size)
 {
-	g_assert_not_netcore ();
-
 	void *res = mono_marshal_alloc_co_task_mem (size);
 
 	if (!res) {
@@ -5795,14 +5654,12 @@ ves_icall_System_Runtime_InteropServices_Marshal_ReAllocCoTaskMem (gpointer ptr,
 	return res;
 }
 
-#ifndef ENABLE_NETCORE
 gpointer
 ves_icall_System_Runtime_InteropServices_Marshal_UnsafeAddrOfPinnedArrayElement (MonoArrayHandle arrayobj, int index, MonoError *error)
 {
 	int esize = mono_array_element_size (mono_handle_class (arrayobj));
 	return mono_array_addr_with_size_fast (MONO_HANDLE_RAW (arrayobj), esize, index);
 }
-#endif
 
 MonoDelegateHandle
 ves_icall_System_Runtime_InteropServices_Marshal_GetDelegateForFunctionPointerInternal (void *ftn, MonoReflectionTypeHandle type, MonoError *error)
@@ -6191,16 +6048,6 @@ mono_marshal_type_size (MonoType *type, MonoMarshalSpec *mspec, guint32 *align,
 			*align = 16;
 			return 16;
 		} 
-#ifdef ENABLE_NETCORE
-		else if (strcmp (m_class_get_name_space (klass), "System") == 0 && 
-			strcmp (m_class_get_name (klass), "Decimal") == 0) {
-			
-			// Special case: Managed Decimal consists of 4 int32 fields, the alignment should be 8 on x64 to follow 
-			// https://github.com/dotnet/coreclr/blob/4450e5ca663b9e66c20e6f9751c941efa3716fde/src/vm/methodtablebuilder.cpp#L9753
-			*align = MONO_ABI_ALIGNOF (gpointer);
-			return mono_class_native_size (klass, NULL);
-		}
-#endif
 		padded_size = mono_class_native_size (klass, align);
 		if (padded_size == 0)
 			padded_size = 1;
@@ -6690,24 +6537,5 @@ get_marshal_cb (void)
 gboolean
 mono_method_has_unmanaged_callers_only_attribute (MonoMethod *method)
 {
-#ifndef ENABLE_NETCORE
 	return FALSE;
-#else
-	ERROR_DECL (attr_error);
-	MonoClass *attr_klass = NULL;
-	attr_klass = mono_class_try_get_unmanaged_callers_only_attribute_class ();
-	if (!attr_klass)
-		return FALSE;
-	MonoCustomAttrInfo *cinfo;
-	cinfo = mono_custom_attrs_from_method_checked (method, attr_error);
-	if (!is_ok (attr_error) || !cinfo) {
-		mono_error_cleanup (attr_error);
-		return FALSE;
-	}
-	gboolean result;
-	result = mono_custom_attrs_has_attr (cinfo, attr_klass);
-	if (!cinfo->cached)
-		mono_custom_attrs_free (cinfo);
-	return result;
-#endif
 }

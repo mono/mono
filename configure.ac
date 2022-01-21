@@ -949,13 +949,6 @@ AC_ARG_WITH(mcs-path, [  --with-mcs-path=/path/to/mcs      Specify an alternate 
 
 AC_ARG_WITH(jumptables, [  --with-jumptables=yes,no      enable/disable support for jumptables (ARM-only for now) (defaults to no)],[],[with_jumptables=no])
 
-AC_ARG_WITH(core,       [  --with-core=only       controls whether to build Mono as a .NET Core runtime (defaults to no)],[],[with_core=no])
-if test x$with_core = xonly; then
-    AC_DEFINE(ENABLE_NETCORE,1,[Enables the support for .NET Core Features in the MonoVM])
-    with_runtime_preset=netcore
-fi
-AM_CONDITIONAL(ENABLE_NETCORE, test x$with_core = xonly)
-
 #
 # A sanity check to catch cases where the package was unpacked
 # with an ancient tar program (Solaris)
@@ -1393,31 +1386,7 @@ if test x$cross_compiling = xyes -o x$enable_mcs_build = xno; then
    DISABLE_MCS_DOCS_default=yes
 fi
 
-if test x$with_runtime_preset = xnetcore; then
-   # Keep in sync with winconfig.h netcore configuration.
-   DISABLE_MCS_DOCS_default=yes
-   BTLS_SUPPORTED=no
-   enable_mcs_build=no
-   enable_support_build=no
-
-   mono_feature_disable_remoting='yes'
-   mono_feature_disable_reflection_emit_save='yes'
-   mono_feature_disable_appdomains='yes'
-   mono_feature_disable_cleanup='yes'
-   mono_feature_disable_assembly_remapping='yes'
-   mono_feature_disable_security='yes'
-   mono_feature_disable_mdb='yes'
-   mono_feature_disable_com='yes'
-   mono_feature_disable_gac='yes'
-   mono_feature_disable_perfcounters='yes'
-   mono_feature_disable_attach='yes'
-   mono_feature_disable_cfgdir_config='yes'
-   if test "x$enable_monodroid" = "xno" -a "x$enable_monotouch" = "xno"; then
-     mono_feature_disable_dllmap='yes' # FIXME: the mobile products use this
-   fi
-   disable_mono_native=yes
-   support_boehm=no
-elif test x$with_runtime_preset = xnet_4_x; then
+if test x$with_runtime_preset = xnet_4_x; then
    with_profile4_x_default=yes
    TEST_PROFILE=net_4_x
 elif test x$with_runtime_preset = xall; then
@@ -1712,7 +1681,6 @@ AM_CONDITIONAL(INSTALL_TESTING_WINAOT_INTERP, [test "x$with_testing_winaot_inter
 AM_CONDITIONAL(INSTALL_ORBIS, [test "x$with_orbis" != "xno"])
 AM_CONDITIONAL(INSTALL_UNREAL, [test "x$with_unreal" != "xno"])
 AM_CONDITIONAL(INSTALL_WASM, [test "x$with_wasm" != "xno"])
-AM_CONDITIONAL(INSTALL_NETCORE, [test "x$with_core" != "xno"])
 
 AM_CONDITIONAL(HYBRID_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_hybrid"] || [test "x$TEST_PROFILE" = "xunreal"])
 AM_CONDITIONAL(FULL_AOT_TESTS, [test "x$TEST_PROFILE" = "xtesting_aot_full"] || [test "x$TEST_PROFILE" = "xtesting_aot_bitcode"] || [test "x$TEST_PROFILE" = "xwinaot"] || [test "x$TEST_PROFILE" = "xorbis"] || [test "x$TEST_PROFILE" = "xwasm"])
@@ -5181,7 +5149,6 @@ case "$host" in
         SQLITE3="libsqlite3.so"
 	;;
     *-*-*linux*)
-	if test "x$with_core" != "xonly"; then
 		AC_PATH_X
 		dlsearch_path=`(libtool --config ; echo eval echo \\$sys_lib_dlsearch_path_spec) | sh`
 		AC_MSG_CHECKING(for the soname of libX11.so)
@@ -5198,7 +5165,6 @@ case "$host" in
 			AC_MSG_WARN([Could not find libX11.so. Do you have X.org or XFree86 installed? Assuming libX11.so.6...]);
 			X11=libX11.so.6
 		fi
-	fi
 	;;
 esac
 
@@ -6261,191 +6227,184 @@ AC_SUBST(mono_cfg_dir)
 
 AC_SUBST(CSC)
 
-if test "x$with_core" != "xonly"; then
+AC_CONFIG_COMMANDS([runtime/etc/mono/1.0/machine.config],
+[   depth=../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/1.0
+	cd runtime/etc/mono/1.0
+	rm -f machine.config
+	$LN_S $reldir/data/net_1_1/machine.config machine.config
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/1.0/machine.config],
-	[   depth=../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/1.0
-		cd runtime/etc/mono/1.0
-		rm -f machine.config
-		$LN_S $reldir/data/net_1_1/machine.config machine.config
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/machine.config],
+[   depth=../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/2.0
+	cd runtime/etc/mono/2.0
+	rm -f machine.config
+	$LN_S $reldir/data/net_2_0/machine.config machine.config
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/machine.config],
-	[   depth=../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/2.0
-		cd runtime/etc/mono/2.0
-		rm -f machine.config
-		$LN_S $reldir/data/net_2_0/machine.config machine.config
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/web.config],
+[   depth=../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/2.0
+	cd runtime/etc/mono/2.0
+	rm -f web.config
+	$LN_S $reldir/data/net_2_0/web.config web.config
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/web.config],
-	[   depth=../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/2.0
-		cd runtime/etc/mono/2.0
-		rm -f web.config
-		$LN_S $reldir/data/net_2_0/web.config web.config
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/browscap.ini],
+[   depth=../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/
+	cd runtime/etc/mono/
+	rm -f browscap.ini
+	$LN_S $reldir/data/browscap.ini browscap.ini
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/browscap.ini],
-	[   depth=../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/
-		cd runtime/etc/mono/
-		rm -f browscap.ini
-		$LN_S $reldir/data/browscap.ini browscap.ini
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/Browsers/Compat.browser],
+[   depth=../../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/2.0/Browsers/
+	cd runtime/etc/mono/2.0/Browsers
+	rm -f Compat.browser
+	$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/2.0/Browsers/Compat.browser],
-	[   depth=../../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/2.0/Browsers/
-		cd runtime/etc/mono/2.0/Browsers
-		rm -f Compat.browser
-		$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/Browsers/Compat.browser],
+[   depth=../../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/4.0/Browsers/
+	cd runtime/etc/mono/4.0/Browsers
+	rm -f Compat.browser
+	$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/Browsers/Compat.browser],
-	[   depth=../../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/4.0/Browsers/
-		cd runtime/etc/mono/4.0/Browsers
-		rm -f Compat.browser
-		$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/Browsers/Compat.browser],
+[   depth=../../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/4.5/Browsers/
+	cd runtime/etc/mono/4.5/Browsers
+	rm -f Compat.browser
+	$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/Browsers/Compat.browser],
-	[   depth=../../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/4.5/Browsers/
-		cd runtime/etc/mono/4.5/Browsers
-		rm -f Compat.browser
-		$LN_S $reldir/data/Browsers/Compat.browser Compat.browser
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/machine.config],
+[   depth=../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/4.0
+	cd runtime/etc/mono/4.0
+	rm -f machine.config
+	$LN_S $reldir/data/net_4_0/machine.config machine.config
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/machine.config],
-	[   depth=../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/4.0
-		cd runtime/etc/mono/4.0
-		rm -f machine.config
-		$LN_S $reldir/data/net_4_0/machine.config machine.config
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/web.config],
+[   depth=../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/4.0
+	cd runtime/etc/mono/4.0
+	rm -f web.config
+	$LN_S $reldir/data/net_4_0/web.config web.config
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/4.0/web.config],
-	[   depth=../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/4.0
-		cd runtime/etc/mono/4.0
-		rm -f web.config
-		$LN_S $reldir/data/net_4_0/web.config web.config
-		cd $depth
-	],[LN_S='$LN_S'])
+AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/machine.config],
+[   depth=../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/4.5
+	cd runtime/etc/mono/4.5
+	rm -f machine.config
+	$LN_S $reldir/data/net_4_5/machine.config machine.config
+	cd $depth
+],[LN_S='$LN_S'])
 
-	AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/machine.config],
-	[   depth=../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/4.5
-		cd runtime/etc/mono/4.5
-		rm -f machine.config
-		$LN_S $reldir/data/net_4_5/machine.config machine.config
-		cd $depth
-	],[LN_S='$LN_S'])
-
-	AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/web.config],
-	[   depth=../../../..
-		case $srcdir in
-		[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
-		.) reldir=$depth ;;
-		*) reldir=$depth/$srcdir ;;
-		esac
-		$ac_aux_dir/install-sh -d runtime/etc/mono/4.5
-		cd runtime/etc/mono/4.5
-		rm -f web.config
-		$LN_S $reldir/data/net_4_5/web.config web.config
-		cd $depth
-	],[LN_S='$LN_S'])
-fi
+AC_CONFIG_COMMANDS([runtime/etc/mono/4.5/web.config],
+[   depth=../../../..
+	case $srcdir in
+	[[\\/$]]* | ?:[[\\/]]* ) reldir=$srcdir ;;
+	.) reldir=$depth ;;
+	*) reldir=$depth/$srcdir ;;
+	esac
+	$ac_aux_dir/install-sh -d runtime/etc/mono/4.5
+	cd runtime/etc/mono/4.5
+	rm -f web.config
+	$LN_S $reldir/data/net_4_5/web.config web.config
+	cd $depth
+],[LN_S='$LN_S'])
 
 # Top level Makefile.am subdirs
-if test "x$with_core" = "xonly"; then
-	MONO_SUBDIRS="llvm mono"
-else
-	if test "x$support_boehm" = "xyes" -a "x$libgc" = "xincluded"; then
-		mono_subdirs_libgc=external/bdwgc
-	fi
-
-	if test x$enable_support_build != xno; then
-		mono_subdirs_support=support
-	fi
-
-	if test x$cross_compiling = xno; then
-		# Some tools might not build when cross-compiling
-		mono_subdirs_tools=tools
-	fi
-
-	if test x$DISABLE_MCS_DOCS != xyes; then
-		mono_subdirs_docs=docs
-	fi
-
-	if test x$with_ikvm_native = xyes; then
-		mono_subdirs_ikvm_native=ikvm-native
-	fi
-
-	MONO_SUBDIRS="po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
-	MONO_NOINST_SUBDIRS="$mono_subdirs_libgc"
+if test "x$support_boehm" = "xyes" -a "x$libgc" = "xincluded"; then
+	mono_subdirs_libgc=external/bdwgc
 fi
+
+if test x$enable_support_build != xno; then
+	mono_subdirs_support=support
+fi
+
+if test x$cross_compiling = xno; then
+	# Some tools might not build when cross-compiling
+	mono_subdirs_tools=tools
+fi
+
+if test x$DISABLE_MCS_DOCS != xyes; then
+	mono_subdirs_docs=docs
+fi
+
+if test x$with_ikvm_native = xyes; then
+	mono_subdirs_ikvm_native=ikvm-native
+fi
+
+MONO_SUBDIRS="po $mono_subdirs_libgc llvm mono $mono_subdirs_ikvm_native $mono_subdirs_support data runtime scripts man samples $mono_subdirs_tools $mono_subdirs_docs msvc acceptance-tests"
+MONO_NOINST_SUBDIRS="$mono_subdirs_libgc"
 
 AC_SUBST(MONO_SUBDIRS)
 AC_SUBST(MONO_NOINST_SUBDIRS)
@@ -6892,63 +6851,6 @@ AC_COMPILE_IFELSE(
 		AC_MSG_RESULT(no)
 	])
 
-# for icu shim
-ICU_SHIM_PATH=.
-if test x$with_core = xonly; then
-	if test x$cross_compiling = xno; then
-		AC_CHECK_FILE($srcdir/../libraries/Native/Unix/System.Globalization.Native/pal_icushim.h, [have_shim_globalization=yes], [have_shim_globalization=no])
-	fi
-	if test x$have_shim_globalization = xyes || test x$cross_compiling = xyes; then
-		ICU_SHIM_PATH=../../../libraries/Native/Unix/System.Globalization.Native
-		if test x$target_wasm = xyes && test x$with_static_icu = xyes; then
-			ICU_CFLAGS="-DTARGET_UNIX -DU_DISABLE_RENAMING -DHAVE_UDAT_STANDALONE_SHORTER_WEEKDAYS -DHAVE_SET_MAX_VARIABLE"
-			have_sys_icu=yes
-		elif test x$target_osx = xyes; then
-			ORIG_CPPFLAGS=$CPPFLAGS
-			# adding icu path to pkg_config_path
-			PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig:/usr/local/opt/icu4c/lib/pkgconfig
-			export PKG_CONFIG_PATH
-			CPPFLAGS="`pkg-config --cflags-only-I icu-uc`"
-			AC_CHECK_LIB(icucore, ucol_open, LIBS=$LIBS,
-				[AC_MSG_ERROR([Cannot find libicucore, skipping build for System.Globalization.Native. .NET globalization is not expected to function.])])
-			AC_CHECK_HEADER(unicode/utypes.h, [have_sys_icu=yes], [have_sys_icu=no])
-			if test x$have_sys_icu = xyes; then
-				ICU_CFLAGS="$CPPFLAGS -DPALEXPORT="" -DOSX_ICU_LIBRARY_PATH=AS_ESCAPE(\"/usr/lib/libicucore.dylib\", '\"') -DTARGET_UNIX -DU_DISABLE_RENAMING -Wno-reserved-id-macro -Wno-documentation -Wno-documentation-unknown-command -Wno-switch-enum -Wno-covered-switch-default -Wno-covered-switch-default -Wno-extra-semi-stmt -Wno-unknown-warning-option -Wno-deprecated-declarations"
-			fi
-			CPPFLAGS=$ORIG_CPPFLAGS
-		elif test x$platform_android = xyes; then
-			ICU_CFLAGS="-DPALEXPORT="" -DHAVE_UDAT_STANDALONE_SHORTER_WEEKDAYS -DHAVE_SET_MAX_VARIABLE -DTARGET_UNIX -DTARGET_ANDROID -Wno-reserved-id-macro -Wno-documentation -Wno-documentation-unknown-command -Wno-switch-enum -Wno-covered-switch-default -Wno-covered-switch-default -Wno-extra-semi-stmt -Wno-unknown-warning-option"
-			have_sys_icu=yes
-		elif test x$host_linux = xyes; then
-			AC_CHECK_LIB(icuuc, main, LIBS=$LIBS,
-				[AC_MSG_ERROR([Cannot find libicuuc, try installing libicu-dev (or the appropriate package for your platform).])])
-			AC_CHECK_LIB(icui18n, main, LIBS=$LIBS,
-				[AC_MSG_ERROR([Cannot find libicui18n, try installing libicu-dev (or the appropriate package for your platform).])])
-			AC_CHECK_HEADER(unicode/utypes.h, [have_sys_icu=yes], [have_sys_icu=no])
-			if test x$have_sys_icu = xyes; then
-				ICU_CFLAGS="-DPALEXPORT="" -DTARGET_UNIX -Wno-reserved-id-macro -Wno-documentation -Wno-documentation-unknown-command -Wno-switch-enum -Wno-covered-switch-default -Wno-covered-switch-default -Wno-extra-semi-stmt -Wno-unknown-warning-option"
-			fi
-		elif test x$host_sunos = xyes; then
-			ICU_CFLAGS="-DPALEXPORT="" -DTARGET_UNIX -Wno-reserved-id-macro -Wno-documentation -Wno-documentation-unknown-command -Wno-switch-enum -Wno-covered-switch-default -Wno-extra-semi-stmt -Wno-unknown-warning-option"
-			have_sys_icu=yes
-		elif test x$host_wasm = xyes; then
-			ICU_CFLAGS="-DPALEXPORT="" -DTARGET_UNIX -Wno-reserved-id-macro -Wno-documentation -Wno-documentation-unknown-command -Wno-switch-enum -Wno-covered-switch-default -Wno-covered-switch-default -Wno-extra-semi-stmt -Wno-unknown-warning-option"
-			have_sys_icu=yes
-		else
-			GLOBALIZATION_SHIM_DEFINES="-DNO_GLOBALIZATION_SHIM"
-		fi
-		AC_SUBST(ICU_CFLAGS)
-	else
-		GLOBALIZATION_SHIM_DEFINES="-DNO_GLOBALIZATION_SHIM"
-	fi
-else
-	GLOBALIZATION_SHIM_DEFINES="-DNO_GLOBALIZATION_SHIM"
-fi
-
-AC_SUBST(GLOBALIZATION_SHIM_DEFINES)
-AC_SUBST(ICU_SHIM_PATH)
-AM_CONDITIONAL(HAVE_SYS_ICU, test x$have_sys_icu = xyes)
-
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LDFLAGS)
@@ -6956,9 +6858,7 @@ AC_SUBST(CCLDFLAGS)
 AC_SUBST(ZLIB_CFLAGS)
 
 # Update all submodules recursively to ensure everything is checked out
-if test "x$with_core" != "xonly"; then
-	(cd $srcdir && scripts/update_submodules.sh)
-fi
+(cd $srcdir && scripts/update_submodules.sh)
 
 AC_MONO_OUTPUT()
 
@@ -7178,32 +7078,6 @@ if test x$buildsgen = xyes; then
 	fi
 fi
 
-if test "x$with_core" = "xonly"; then
-  if test ! -e netcore/Makefile; then
-    # Out of tree builds
-    mkdir -p netcore
-    echo "all:" > netcore/Makefile
-  fi
-  echo "VERSION = $VERSION" > netcore/config.make
-  echo "RID = $RID" >> netcore/config.make
-  echo "COREARCH = $COREARCH" >> netcore/config.make
-  echo "CORETARGETS = $CORETARGETS" >> netcore/config.make
-  echo "MONO_CORLIB_VERSION = $MONO_CORLIB_VERSION" >> netcore/config.make
-
-  if test x$build_darwin = xyes; then
-    echo "HOST_PLATFORM ?= macos" >> netcore/config.make
-  elif test x$host_darwin = xyes; then
-    echo "HOST_PLATFORM ?= macos" >> netcore/config.make
-  elif test x$host_win32 = xyes; then
-    echo "HOST_PLATFORM ?= win32" >> netcore/config.make
-  elif test x$host_linux = xyes; then
-    echo "HOST_PLATFORM ?= linux" >> netcore/config.make
-  else
-    echo "HOST_PLATFORM ?= unix" >> netcore/config.make
-  fi
-fi
-
-	
 echo "
 	mcs source:    $mcsdir
 	C# Compiler:   $csc_compiler
@@ -7241,7 +7115,6 @@ echo "
 	BTLS:            $enable_btls$btls_platform_string
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
 	crash reporting: $crash_reporting (private crashes: $with_crash_privacy)
-	.NET Core:       $with_core
 	$disabled
 "
 if test x$with_static_mono = xno -a "x$host_win32" != "xyes"; then

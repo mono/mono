@@ -38,12 +38,10 @@ using System.Text;
 
 namespace System.Reflection
 {
-#if !NETCORE
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_ParameterInfo))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-#endif
 	class RuntimeParameterInfo : ParameterInfo {		
 		internal MarshalAsAttribute marshalAs;
 
@@ -255,11 +253,7 @@ namespace System.Reflection
 				attrs [count ++] = new OptionalAttribute ();
 
 			if (marshalAs != null) {
-#if NETCORE
-				attrs [count ++] = (MarshalAsAttribute)marshalAs.CloneInternal ();
-#else
 				attrs [count ++] = marshalAs.Copy ();
-#endif
 			}
 
 			return attrs;
