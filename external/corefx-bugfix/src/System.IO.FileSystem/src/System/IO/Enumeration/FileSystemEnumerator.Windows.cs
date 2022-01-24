@@ -169,7 +169,16 @@ namespace System.IO.Enumeration
                         {
                             // Recursion is on and the directory was accepted, Queue it
                             string subDirectory = Path.Join(_currentPath, _entry->FileName);
-                            IntPtr subDirectoryHandle = CreateRelativeDirectoryHandle(_entry->FileName, subDirectory);
+#if UNITY_AOT
+                            // We ship the same class libs for Win32 & WinRT so we need to make a runtime
+                            // decision on which GetData implementation to call
+                            //IntPtr subDirectoryHandle = CreateRelativeDirectoryHandle(_entry->FileName, subDirectory);
+                            IntPtr subDirectoryHandle;
+                            if (System.AppDomain.IsAppXModel())
+                                subDirectoryHandle = CreateRelativeDirectoryHandleUWP(_entry->FileName, subDirectory);
+                            else
+                                subDirectoryHandle = CreateRelativeDirectoryHandle(_entry->FileName, subDirectory);
+#endif
                             if (subDirectoryHandle != IntPtr.Zero)
                             {
                                 try
@@ -203,9 +212,23 @@ namespace System.IO.Enumeration
             if (_entry != null)
                 return;
 
+#if UNITY_AOT
+            // We ship the same class libs for Win32 & WinRT so we need to make a runtime
+            // decision on which GetData implementation to call
+            if (System.AppDomain.IsAppXModel())
+            {
+                if (GetDataUWP())
+                    _entry = (Interop.NtDll.FILE_FULL_DIR_INFORMATION*)_buffer;
+            }
+            else
+            {
+#endif
             // We need more data
             if (GetData())
                 _entry = (Interop.NtDll.FILE_FULL_DIR_INFORMATION*)_buffer;
+#if UNITY_AOT
+            }
+#endif
         }
 
         private bool DequeueNextDirectory()

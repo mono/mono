@@ -10,7 +10,14 @@ namespace System.IO.Enumeration
     public partial class FileSystemEnumerator<TResult>
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // Rename this method so that it does not conflict with the method of the
+        // same name for Windows Desktop. In the unityjit profile, this source
+        // file is not included in the build.
+#if UNITY_AOT
+        private unsafe bool GetDataUWP()
+#else
         private unsafe bool GetData()
+#endif
         {
             if (!Interop.Kernel32.GetFileInformationByHandleEx(
                 _directoryHandle,
@@ -39,7 +46,14 @@ namespace System.IO.Enumeration
             return true;
         }
 
+        // Rename this method so that it does not conflict with the method of the
+        // same name for Windows Desktop. In the unityjit profile, this source
+        // file is not included in the build.
+#if UNITY_AOT
+        private IntPtr CreateRelativeDirectoryHandleUWP(ReadOnlySpan<char> relativePath, string fullPath)
+#else
         private IntPtr CreateRelativeDirectoryHandle(ReadOnlySpan<char> relativePath, string fullPath)
+#endif
         {
             // We don't have access to any APIs that allow us to pass in a base handle in UAP,
             // just call our "normal" handle open.
