@@ -716,6 +716,16 @@ namespace System.Diagnostics
 
 				procInfo.envVariables = envVariables.ToArray ();
 			}
+			
+			if (startInfo.ArgumentList.Count > 0)
+			{
+				StringBuilder sb = new StringBuilder();
+				foreach (string argument in startInfo.ArgumentList)
+					PasteArguments.AppendArgument(sb, argument);
+
+				startInfo.Arguments = sb.ToString();
+			}
+
 
 			MonoIOError error;
 			IntPtr stdin_read = IntPtr.Zero, stdin_write = IntPtr.Zero;
