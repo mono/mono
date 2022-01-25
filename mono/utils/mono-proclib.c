@@ -838,9 +838,11 @@ mono_cpu_count (void)
  * [5] https://github.com/dotnet/coreclr/blob/7058273693db2555f127ce16e6b0c5b40fb04867/src/pal/src/misc/sysinfo.cpp#L148
  */
 
+
 #if defined (_SC_NPROCESSORS_CONF) && defined (HAVE_SYSCONF)
 	{
-		int count = sysconf (_SC_NPROCESSORS_CONF);
+		int count;
+		count = sysconf (_SC_NPROCESSORS_CONF);
 		if (count > 0)
 			return count;
 	}
@@ -879,6 +881,43 @@ mono_cpu_count (void)
 	/* FIXME: warn */
 	return 1;
 }
+
+/**
+ * mono_cpu_limit:
+ * \returns the number of processors available to this process
+ */
+int
+mono_cpu_limit (void)
+{
+	int count = 0;
+	static int limit = -1;	/* Value will be cached for future calls */
+
+	/*
+	 * If 1st time through then check if user has mandated a value and use it,
+	 * otherwise we check for any cgroup limit and use the min of actual number
+	 * and that limit
+	 */ 
+	if (limit == -1) {
+		char *dotnetProcCnt = getenv("DOTNET_PROCESSOR_COUNT");
+		if (dotnetProcCnt != NULL) {
+			errno = 0;
+			limit = strtol(dotnetProcCnt, NULL, 0);
+			if ((errno == 0) && (limit > 0))	/* If it's in range and positive */
+				return (limit);
+		}
+		limit = mono_cpu_count();
+#if HAVE_CGROUP_SUPPORT
+		if (mono_get_cpu_limit(&count))
+			limit = (limit < count ? limit : count);
+#endif
+	}
+
+	/*
+	 * Just return the cached value
+	 */
+	return (limit);
+
+}
 #endif /* !HOST_WIN32 */
 
 static void
@@ -892,7 +931,7 @@ get_cpu_times (int cpu_id, gint64 *user, gint64 *systemt, gint64 *irq, gint64 *s
 	if (!f)
 		return;
 	if (cpu_id < 0)
-		uhz *= mono_cpu_count ();
+		uhz *= mono_cpu_limit ();
 	while ((s = fgets (buf, sizeof (buf), f))) {
 		char *data = NULL;
 		if (cpu_id < 0 && strncmp (s, "cpu", 3) == 0 && g_ascii_isspace (s [3])) {
@@ -1134,7 +1173,7 @@ mono_cpu_usage (MonoCpuUsageState *prev)
 	user_time = resource_usage.ru_utime.tv_sec * 1000 * 1000 * 10 + resource_usage.ru_utime.tv_usec * 10;
 
 	cpu_busy_time = (user_time - (prev ? prev->user_time : 0)) + (kernel_time - (prev ? prev->kernel_time : 0));
-	cpu_total_time = (current_time - (prev ? prev->current_time : 0)) * mono_cpu_count ();
+	cpu_total_time = (current_time - (prev ? prev->current_time : 0)) * mono_cpu_limit ();
 
 	if (prev) {
 		prev->kernel_time = kernel_time;

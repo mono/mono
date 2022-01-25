@@ -27,6 +27,7 @@
 #include <config.h>
 #include <glib.h>
 #include <string.h>
+#include <errno.h>
 
 #if defined (__APPLE__)
 #include <mach/message.h>
@@ -271,7 +272,7 @@ mono_determine_physical_ram_size (void)
 
 	return (guint64)value;
 #elif defined (HAVE_SYSCONF)
-	guint64 page_size = 0, num_pages = 0;
+	guint64 page_size = 0, num_pages = 0, memsize;
 
 	/* sysconf works on most *NIX operating systems, if your system doesn't have it or if it
 	 * reports invalid values, please add your OS specific code below. */
@@ -288,7 +289,44 @@ mono_determine_physical_ram_size (void)
 		return 134217728;
 	}
 
-	return page_size * num_pages;
+#if defined(_SC_AVPHYS_PAGES)
+	memsize = sysconf(_SC_AVPHYS_PAGES) * page_size;
+#else
+	memsize = page_size * num_pages;	/* Calculate physical memory size */
+#endif
+
+#if HAVE_CGROUP_SUPPORT
+	gint64 restricted_limit = mono_get_restricted_memory_limit();	/* Check for any cgroup limit */
+	if (restricted_limit != 0) {
+		gchar *heapHardLimit = getenv("DOTNET_GCHeapHardLimit");	/* See if user has set a limit */
+		if (heapHardLimit == NULL)
+			heapHardLimit = getenv("COMPlus_GCHeapHardLimit");	/* Check old envvar name */
+		errno = 0;
+		if (heapHardLimit != NULL) {
+			guint64 gcLimit = strtoull(heapHardLimit, NULL, 16);
+			if ((errno == 0) && (gcLimit != 0))
+				restricted_limit = (restricted_limit < gcLimit ? restricted_limit : (gint64) gcLimit);
+		} else {
+			gchar *heapHardLimitPct = getenv("DOTNET_GCHeapHardLimitPercent"); /* User % limit? */
+			if (heapHardLimitPct == NULL)
+				heapHardLimitPct = getenv("COMPlus_GCHeapHardLimitPercent");	/* Check old envvar name */
+			if (heapHardLimitPct != NULL) {
+				int gcLimit = strtoll(heapHardLimitPct, NULL, 16);
+				if ((gcLimit > 0) && (gcLimit <= 100)) 
+					restricted_limit = (gcLimit * restricted_limit) / 100;
+				else
+					restricted_limit = (3 * restricted_limit) / 4;	/* Use 75% limit of container */
+			} else {
+				restricted_limit = (3 * restricted_limit) / 4;	/* Use 75% limit of container */
+			}
+		}
+		return (restricted_limit < 209715200 ? 209715200 : 	/* Use at least 20MB */
+			(restricted_limit < memsize ? restricted_limit : memsize));
+	}
+
+#endif
+
+	return memsize;
 #else
 	return 134217728;
 #endif
@@ -340,6 +378,9 @@ mono_determine_physical_ram_available_size (void)
 
 	host_page_size (host, &page_size);
 	return (guint64) vmstat.free_count * page_size;
+
+#elif HAVE_CGROUP_SUPPORT
+	return (mono_get_memory_avail());
 
 #elif defined (HAVE_SYSCONF)
 	guint64 page_size = 0, num_pages = 0;

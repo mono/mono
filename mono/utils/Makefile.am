@@ -53,6 +53,7 @@ else
 unix_sources = \
 	dlmalloc.h      	\
 	dlmalloc.c      	\
+	mono-cgroup.c		\
 	os-event-unix.c
 
 platform_sources = $(unix_sources)
