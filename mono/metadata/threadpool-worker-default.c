@@ -281,7 +281,7 @@ mono_threadpool_worker_init (MonoThreadPoolWorkerCallback callback)
 	else
 		threads_per_cpu = CLAMP (atoi (threads_per_cpu_env), 1, 50);
 
-	threads_count = mono_cpu_count () * threads_per_cpu;
+	threads_count = mono_cpu_limit () * threads_per_cpu;
 
 	worker.limit_worker_min = threads_count;
 
@@ -1206,7 +1206,7 @@ mono_threadpool_worker_set_max (gint32 value)
 {
 	gint32 cpu_count;
 
-	cpu_count = mono_cpu_count ();
+	cpu_count = mono_cpu_limit ();
 	if (value < worker.limit_worker_min || value < cpu_count)
 		return FALSE;
 

@@ -852,6 +852,8 @@ if test x$platform_android = xyes; then
 	if test x$android_unified_headers = xyes; then
 		AC_DEFINE(ANDROID_UNIFIED_HEADERS, 1, [Whether Android NDK unified headers are used])
 	fi
+else
+	AC_CHECK_HEADER(linux/cgroupstats.h, [AC_DEFINE(HAVE_CGROUP_SUPPORT, 1, Define to 1 if you have the <linux/cgroupstats.h> header file.)])
 fi # Android
 
 # not 64 bit clean in cross-compile
@@ -7095,6 +7097,7 @@ echo "
 	libgdiplus:      $libgdiplus_msg
 	zlib:            $zlib_msg
 	BTLS:            $enable_btls$btls_platform_string
+	CGROUP:		 $ac_cv_header_linux_cgroupstats_h
 	jemalloc:        $with_jemalloc (always use: $with_jemalloc_always)
 	crash reporting: $crash_reporting (private crashes: $with_crash_privacy)
 	$disabled
