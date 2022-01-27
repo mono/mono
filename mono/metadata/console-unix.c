@@ -323,6 +323,9 @@ MONO_SIG_HANDLER_FUNC (static, sigwinch_handler)
  * terminal is resized.    It sets an internal variable that is checked
  * by System.Console when the Terminfo driver has been activated.
  */
+
+extern GString* gEmbeddingHostName;
+
 static void
 console_set_signal_handlers ()
 {
@@ -340,10 +343,16 @@ console_set_signal_handlers ()
 	sigaction (SIGCONT, &sigcont, &save_sigcont);
 	
 	// Interrupt handler
-	sigint.sa_handler = (void (*)(int)) sigint_handler;
-	sigint.sa_flags = SA_RESTART;
-	sigemptyset (&sigint.sa_mask);
-	sigaction (SIGINT, &sigint, &save_sigint);
+	if (!gEmbeddingHostName)
+	{
+		// If gEmbeddingHostName is set, mono is embedded
+		// and the owning application needs to be in
+		// control of SIGNINT
+		sigint.sa_handler = (void (*)(int)) sigint_handler;
+		sigint.sa_flags = SA_RESTART;
+		sigemptyset (&sigint.sa_mask);
+		sigaction (SIGINT, &sigint, &save_sigint);
+	}
 
 	// Window size changed
 	sigwinch.sa_handler = (void (*)(int)) sigwinch_handler;
@@ -362,7 +371,8 @@ void
 console_restore_signal_handlers ()
 {
 	sigaction (SIGCONT, &save_sigcont, NULL);
-	sigaction (SIGINT, &save_sigint, NULL);
+	if (sigint.sa_handler)
+		sigaction (SIGINT, &save_sigint, NULL);
 	sigaction (SIGWINCH, &save_sigwinch, NULL);
 }
 #endif
