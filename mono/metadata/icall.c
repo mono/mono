@@ -3502,6 +3502,14 @@ ves_icall_InternalInvoke (MonoReflectionMethodHandle method_handle, MonoObjectHa
 		goto return_null;
 	}
 
+	image = m_class_get_image (m->klass);
+	if (!mono_runtime_run_module_cctor (image, mono_object_domain (method), error)) {
+		if (!is_ok (error)) {
+			exception = mono_error_convert_to_exception (error);
+			goto return_null;
+		}
+	}
+
 	if (!(m->flags & METHOD_ATTRIBUTE_STATIC)) {
 		if (!mono_class_vtable_checked (mono_object_domain (method), m->klass, error)) {
 			mono_error_cleanup (error); /* FIXME does this make sense? */
@@ -3554,7 +3562,6 @@ ves_icall_InternalInvoke (MonoReflectionMethodHandle method_handle, MonoObjectHa
 		goto return_null;
 	}
 
-	image = m_class_get_image (m->klass);
 	if (mono_asmctx_get_kind (&image->assembly->context) == MONO_ASMCTX_REFONLY) {
 		exception = mono_get_exception_invalid_operation ("It is illegal to invoke a method on a type loaded using the ReflectionOnly api.");
 		goto return_null;
