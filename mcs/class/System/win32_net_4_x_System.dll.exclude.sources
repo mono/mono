@@ -2,6 +2,22 @@
 #include linux_networkinfo.sources
 #include macos_networkinfo.sources
 
+System.IO.Ports/Handshake.cs
+System.IO.Ports/ISerialStream.cs
+System.IO.Ports/Parity.cs
+System.IO.Ports/SerialData.cs
+System.IO.Ports/SerialError.cs
+System.IO.Ports/SerialErrorEventArgs.cs
+System.IO.Ports/SerialPinChange.cs
+System.IO.Ports/SerialPinChangedEventArgs.cs
+System.IO.Ports/SerialPort.cs
+System.IO.Ports/SerialPortStream.cs
+System.IO.Ports/SerialReceivedEventArgs.cs
+System.IO.Ports/SerialSignal.cs
+System.IO.Ports/StopBits.cs
+System.IO.Ports/WinSerialStream.cs
+../referencesource/System/sys/system/IO/ports/InternalResources.cs
+
 ../../../external/corefx/src/Common/src/System/Net/Security/CertificateHelper.Unix.cs
 System.Net.NetworkInformation/NetworkChange.cs
 System.Net.Security/NegotiateStream.cs

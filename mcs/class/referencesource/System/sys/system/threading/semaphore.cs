@@ -16,6 +16,7 @@ namespace System.Threading
     // CoreSys build problem - we're using mscorlib's implementation assembly instead of one from asmmeta.  There's a conflicting NativeMethods type.
     using Marshal = System.Runtime.InteropServices.Marshal;
     using ComVisibleAttribute = System.Runtime.InteropServices.ComVisibleAttribute;
+	using NativeMethods = Microsoft.Win32.NativeMethods;
     using System.Threading;
     using System.Security;
     using System.Security.Permissions;
