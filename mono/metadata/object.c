@@ -4663,6 +4663,13 @@ prepare_run_main (MonoMethod *method, int argc, char *argv[])
 	argc--;
 	argv++;
 
+	/* Ensure the class static ctor is executed before trying to load the method. */
+	MonoVTable *vt = mono_class_vtable_checked (domain, method->klass, error);
+	mono_error_assert_ok (error);
+
+	mono_runtime_class_init_full (vt, error);
+	mono_error_assert_ok (error);
+
 	sig = mono_method_signature_internal (method);
 	if (!sig) {
 		g_print ("Unable to load Main method.\n");
