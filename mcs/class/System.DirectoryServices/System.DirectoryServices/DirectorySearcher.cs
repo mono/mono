@@ -114,6 +114,18 @@ namespace System.DirectoryServices
 			}
 		}
 
+		[DSDescription ("DSAttributeQuery")]
+		public string AttributeScopeQuery {
+			get
+			{
+				throw new NotImplementedException ();
+			}
+			set
+			{
+				throw new NotImplementedException ();
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the maximum amount of time that the client waits for 
 		/// the server to return results. If the server does not respond 
