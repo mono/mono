@@ -341,6 +341,7 @@ namespace MonoTests.System.Net.Http
 #if FEATURE_NO_BSD_SOCKETS
 		[ExpectedException (typeof (PlatformNotSupportedException))]
 #endif
+		[Category ("InetAccess")]
 		public void Proxy_Disabled ()
 		{
 			var pp = WebRequest.DefaultWebProxy;
