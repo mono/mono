@@ -176,9 +176,9 @@ namespace Mono.ApiTools {
 
 		public override void DiffModification (StringBuilder output, string old, string @new, bool breaking)
 		{
-			if (old.Length > 0)
+			if (old != null && old.Length > 0)
 				DiffAddition (output, old, breaking);
-			if (@new.Length > 0)
+			if (@new != null && @new.Length > 0)
 				DiffRemoval (output, @new, true);
 		}
 
