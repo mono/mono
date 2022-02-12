@@ -5802,7 +5802,51 @@ emit_marshal_object_ilgen (EmitMarshalContext *m, int argnum, MonoType *t,
 		mono_mb_emit_ldloc (mb, 1);
 		pos = mono_mb_emit_branch (mb, CEE_BRFALSE);
 
-		if (t->byref || (t->attrs & PARAM_ATTRIBUTE_OUT)) {
+		if (m_class_is_blittable(klass)) {
+			/* Pointer to original class was passed in, so we don't need most marshaling or frees */
+			if (t->byref || (t->attrs & PARAM_ATTRIBUTE_OUT))
+			{
+				mono_mb_emit_ldloc (mb, 1);
+				mono_mb_emit_icon (mb, MONO_ABI_SIZEOF (MonoObject));
+				mono_mb_emit_byte (mb, CEE_ADD);
+				mono_mb_emit_stloc (mb, 1);
+				
+				/* src = tmp_locals [i] */
+				mono_mb_emit_ldloc (mb, conv_arg);
+				mono_mb_emit_stloc (mb, 0);
+
+				/* Always convert value if we made a new object */
+				if (t->byref && (t->attrs & PARAM_ATTRIBUTE_OUT))
+					emit_struct_conv (mb, klass, TRUE);
+
+				if (m->orig_conv_args [argnum]) {
+					/* 
+					 * If the native function changed the pointer, then convert/free
+					 * the new pointer.
+					 */
+					mono_mb_emit_ldloc (mb, m->orig_conv_args [argnum]);
+					mono_mb_emit_ldloc (mb, conv_arg);
+					pos2 = mono_mb_emit_branch (mb, CEE_BEQ);
+
+					/* If we didn't made a new object, convert only if the pointer changed */
+					if (!(t->byref && (t->attrs & PARAM_ATTRIBUTE_OUT)))
+						emit_struct_conv (mb, klass, TRUE);
+
+					if (!(t->attrs & PARAM_ATTRIBUTE_OUT)) {
+						g_assert (m->orig_conv_args [argnum]);
+
+						emit_struct_free (mb, klass, conv_arg);
+					}
+
+					mono_mb_emit_ldloc (mb, conv_arg);
+					mono_mb_emit_icall (mb, mono_marshal_free);
+
+					mono_mb_patch_branch (mb, pos2);
+				}
+			}
+			break;
+		}
+		else if (t->byref || (t->attrs & PARAM_ATTRIBUTE_OUT)) {
 			mono_mb_emit_ldloc (mb, 1);
 			mono_mb_emit_icon (mb, MONO_ABI_SIZEOF (MonoObject));
 			mono_mb_emit_byte (mb, CEE_ADD);
