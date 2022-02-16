@@ -16,7 +16,7 @@ win_files  = \
 unix_files = \
 	gdate-unix.c  gdir-unix.c  gfile-unix.c  gmisc-unix.c	\
 	gmodule-unix.c gtimer-unix.c gmodule-aix.c \
-	gspawn.c
+	gspawn.c gclock-nanosleep.c
 
 if HOST_WIN32
 os_files = $(win_files)
@@ -52,7 +52,6 @@ libeglib_la_SOURCES = \
 	gutf8.c		\
 	gunicode.c	\
 	unicode-data.h	\
-	gclock-nanosleep.c \
 	$(os_files)
 
 endif # !ENABLE_MSVC_ONLY
