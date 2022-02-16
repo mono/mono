@@ -54,6 +54,10 @@ libeglib_la_SOURCES = \
 	unicode-data.h	\
 	$(os_files)
 
+if HAVE_CLOCK_NANOSLEEP
+libeglib_la_SOURCES = $(libeglib_la_SOURCES) gclock-nanosleep.c
+endif
+
 endif # !ENABLE_MSVC_ONLY
 
 CFLAGS := $(filter-out @CXX_REMOVE_CFLAGS@, @CFLAGS@) @CXX_ADD_CFLAGS@
