@@ -5,8 +5,6 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
 */
 
-#ifdef HAVE_CLOCK_NANOSLEEP
-
 #include <config.h>
 #include <glib.h>
 #include <errno.h>
@@ -16,7 +14,7 @@ g_clock_nanosleep (clockid_t clockid, gint flags, const struct timespec *request
 {
 	gint ret = 0;
 
-#if !defined(__PASE__)
+#if defined(HAVE_CLOCK_NANOSLEEP) && !defined(__PASE__)
 	ret = clock_nanosleep (clockid, flags, request, remain);
 #else
 	g_assert_not_reached ();
@@ -31,5 +29,3 @@ g_clock_nanosleep (clockid_t clockid, gint flags, const struct timespec *request
 
 	return ret;
 }
-
-#endif
