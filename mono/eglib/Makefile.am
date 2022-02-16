@@ -52,11 +52,8 @@ libeglib_la_SOURCES = \
 	gutf8.c		\
 	gunicode.c	\
 	unicode-data.h	\
+	gclock-nanosleep.c \
 	$(os_files)
-
-if HAVE_CLOCK_NANOSLEEP
-libeglib_la_SOURCES = $(libeglib_la_SOURCES) gclock-nanosleep.c
-endif
 
 endif # !ENABLE_MSVC_ONLY
 
