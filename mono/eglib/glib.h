@@ -31,6 +31,7 @@
 #else
 #include <eglib-config.h>
 #endif
+#include <time.h>
 
 // - Pointers should only be converted to or from pointer-sized integers.
 // - Any size integer can be converted to any other size integer.
@@ -1485,5 +1486,10 @@ mono_qsort (void* base, size_t num, size_t size, int (*compare)(const void*, con
 #define g_try_malloc(x) (g_cast (monoeg_try_malloc (x)))
 #define g_try_realloc(obj, size) (g_cast (monoeg_try_realloc ((obj), (size))))
 #define g_memdup(mem, size) (g_cast (monoeg_g_memdup ((mem), (size))))
+
+#ifndef G_OS_WIN32
+gint
+g_clock_nanosleep (clockid_t clockid, gint flags, const struct timespec *request, struct timespec *remain);
+#endif
 
 #endif // __GLIB_H
