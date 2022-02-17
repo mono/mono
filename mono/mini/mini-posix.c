@@ -80,6 +80,7 @@
 #include "debugger-agent.h"
 #include "mini-runtime.h"
 #include "jit-icalls.h"
+#include <glib.h>
 
 #ifdef HOST_DARWIN
 #include <mach/mach.h>
@@ -578,7 +579,7 @@ clock_init_for_profiler (MonoProfilerSampleMode mode)
 		 * CLOCK_PROCESS_CPUTIME_ID clock but don't actually support it. For
 		 * those systems, we fall back to CLOCK_MONOTONIC if we get EINVAL.
 		 */
-		if (clock_nanosleep (CLOCK_PROCESS_CPUTIME_ID, TIMER_ABSTIME, &ts, NULL) != EINVAL) {
+		if (g_clock_nanosleep (CLOCK_PROCESS_CPUTIME_ID, TIMER_ABSTIME, &ts, NULL) != EINVAL) {
 			sampling_clock = CLOCK_PROCESS_CPUTIME_ID;
 			break;
 		}
@@ -602,7 +603,7 @@ clock_sleep_ns_abs (guint64 ns_abs)
 	then.tv_nsec = ns_abs % 1000000000;
 
 	do {
-		ret = clock_nanosleep (sampling_clock, TIMER_ABSTIME, &then, NULL);
+		ret = g_clock_nanosleep (sampling_clock, TIMER_ABSTIME, &then, NULL);
 
 		if (ret != 0 && ret != EINTR)
 			g_error ("%s: clock_nanosleep () returned %d", __func__, ret);
