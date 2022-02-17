@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Mono runtime or class libraries in .NET >= 5
+  - name: Mono runtime or class libraries in .NET 5 or later
     url: https://github.com/dotnet/runtime/issues/new/choose
-    about: For issues with runtime crashes, AOT compilation, etc in .NET 5 or later, Mono is now part of the dotnet/runtime repository.
+    about: Beginning in .NET 5, Mono is now a part of the dotnet/runtime repository.  Please report issues with runtime crashes, AOT compilation, etc in .NET 5 or later in the runtime repo.
   - name: Blazor WebAssembly issue in .NET 5 or later
     url: https://github.com/dotnet/aspnetcore/issues/new/choose
     about: Starting point for issues with Blazor WebAssembly in .NET 5 or later.
@@ -14,6 +14,8 @@ contact_links:
     about: For issues with Xamarin.Forms
   - name: Xamarin.Android or .NET Android (.NET 6 or later)
     url: https://github.com/xamarin/xamarin-android/issues/new/choose
+    about: For Android-specific issues 
   - name: Xamarin.Mac or Xamarin.iOS, or .NET iOS (.NET 6 or later)
     url: https://github.com/xamarin/xamarin-macios/issues/new/choose
+    about: For issues on Apple platforms
     
