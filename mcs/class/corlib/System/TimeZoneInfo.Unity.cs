@@ -40,7 +40,7 @@ namespace System {
 			return string.Empty;
 		}
 
-		static List<AdjustmentRule> CreateAdjustmentRule (int year, out Int64[] data, out string[] names, string standardNameCurrentYear, string daylightNameCurrentYear)
+		static List<AdjustmentRule> CreateAdjustmentRule (int year, out Int64[] data, out string[] names)
 		{
 			List<AdjustmentRule> rulesForYear = new List<AdjustmentRule> ();
 			bool dst_inverted;
@@ -55,9 +55,7 @@ namespace System {
 			 * has changed, but there is no support in the C# code to transition to this new UTC offset except for the case of daylight
 			 * savings time. As such we'll only generate timezone rules for a region at the times associated with the timezone of the current year.
 			 */
-			if(standardNameCurrentYear != names[(int)TimeZoneNames.StandardNameIdx])
-				return rulesForYear;
-			if(daylightNameCurrentYear != names[(int)TimeZoneNames.DaylightNameIdx])
+			if(data[(int)TimeZoneData.AdditionalDaylightOffsetIdx] == 0 || data[(int)TimeZoneData.UtcOffsetIdx] == data[(int)TimeZoneData.AdditionalDaylightOffsetIdx])
 				return rulesForYear;
 
 			// If the first and second transition DateTime objects are the same, ValidateAdjustmentRule will throw
@@ -124,9 +122,30 @@ namespace System {
 		{
 			Int64[] data;
 			string[] names;
+			string daylightDisplayName = null;
 			//Some timezones start in DST on january first and disable it during the summer
 			bool dst_inverted;
+			var adjustmentRulesList = new List<AdjustmentRule> ();
+
+			//the icall only supports years from 1970 through 2037.
+			int firstSupportedDate = 1971;
+			int lastSupportedDate = 2037;
 			int currentYear = DateTime.UtcNow.Year;
+
+			// Find the most recent daylight saving time display name by working backwards
+			bool disableDaylightSavings = true;
+			for (var year = lastSupportedDate; year >= firstSupportedDate; year--) {
+				if (!System.CurrentSystemTimeZone.GetTimeZoneData (year, out data, out names, out dst_inverted))
+					throw new NotSupportedException ("Can't get timezone name.");
+
+				disableDaylightSavings = data[(int)TimeZoneData.AdditionalDaylightOffsetIdx] == 0 || data[(int)TimeZoneData.UtcOffsetIdx] == data[(int)TimeZoneData.AdditionalDaylightOffsetIdx];
+				if (!disableDaylightSavings)
+				{
+					daylightDisplayName = names[(int)TimeZoneNames.DaylightNameIdx];
+					break;
+				}
+			}
+
 			if (!System.CurrentSystemTimeZone.GetTimeZoneData (currentYear, out data, out names, out dst_inverted))
 				throw new NotSupportedException ("Can't get timezone name.");
 
@@ -134,34 +153,14 @@ namespace System {
 			char utcOffsetSign = (utcOffsetTS >= TimeSpan.Zero) ? '+' : '-';
 			string displayName = "(GMT" + utcOffsetSign + utcOffsetTS.ToString (@"hh\:mm") + ") Local Time";
 			string standardDisplayName = names[(int)TimeZoneNames.StandardNameIdx];
-			string daylightDisplayName = names[(int)TimeZoneNames.DaylightNameIdx];
+			daylightDisplayName ??= names[(int)TimeZoneNames.DaylightNameIdx];
 
-			var adjustmentRulesList = new List<AdjustmentRule> ();
-			bool disableDaylightSavings = data[(int)TimeZoneData.AdditionalDaylightOffsetIdx] == 0;
 			//If the timezone supports daylight savings time, generate adjustment rules for the timezone
 			if (!disableDaylightSavings) {
-				//the icall only supports years from 1970 through 2037.
-				int firstSupportedDate = 1971;
-				int lastSupportedDate = 2037;
-
-				//first, generate rules from the current year until the last year mktime is guaranteed to supports
-				for (int year = currentYear; year <= lastSupportedDate; year++) {
-					var rulesForCurrentYear = CreateAdjustmentRule (year, out data, out names, standardDisplayName, daylightDisplayName);
-					//breakout if no more rules
+				for (int year = firstSupportedDate; year <= lastSupportedDate; year++) {
+					var rulesForCurrentYear = CreateAdjustmentRule (year, out data, out names);
 					if (rulesForCurrentYear.Count > 0)
 						adjustmentRulesList.AddRange (rulesForCurrentYear);
-					else
-						break;
-
-				}
-
-				for (int year = currentYear - 1; year >= firstSupportedDate; year--) {
-					var rulesForCurrentYear = CreateAdjustmentRule (year, out data, out names, standardDisplayName, daylightDisplayName);
-					//breakout if no more rules
-					if (rulesForCurrentYear.Count > 0)
-						adjustmentRulesList.AddRange (rulesForCurrentYear);
-					else
-						break;
 				}
 
 				adjustmentRulesList.Sort ( (rule1, rule2) => rule1.DateStart.CompareTo (rule2.DateStart) );
