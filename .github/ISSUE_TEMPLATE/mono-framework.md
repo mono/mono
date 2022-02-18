@@ -1,3 +1,9 @@
+---
+name: Bugs in .NET Framework 4.x-compatible versions of Mono
+about: For mono 6.12 or older on mobile and desktop platforms
+
+---
+
 <!--
 If you are new to the project get yourself familiar with https://www.mono-project.com/community/bugs/make-a-good-bug-report/ before filling the issue
 -->
