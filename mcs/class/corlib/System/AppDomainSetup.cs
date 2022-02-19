@@ -42,6 +42,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 using System.Runtime.Hosting;
 using System.Security.Policy;
+using System.Runtime.Versioning;
+using System.Reflection;
 
 namespace System
 {
@@ -345,7 +347,8 @@ namespace System
 			}
 		}
 
-		public string TargetFrameworkName { get; set; }
+		public string TargetFrameworkName =>
+			Assembly.GetEntryAssembly()?.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName;
 
 		public ActivationArguments ActivationArguments {
 			get {
