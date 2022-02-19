@@ -861,8 +861,6 @@ Console.WriteLine ("\tide.imageOffset: {0}", ide.imageOffset);
 				byte [] buffer = new byte [iconDir.idEntries [j].bytesInRes];
 				stream.Read (buffer, 0, buffer.Length);
 
-
-				if (iconDir.idEntries[j].height == 0 && iconDir.idEntries[j].width == 0)
 				{
 					int i;
 
