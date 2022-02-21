@@ -4663,6 +4663,9 @@ prepare_run_main (MonoMethod *method, int argc, char *argv[])
 	argc--;
 	argv++;
 
+	if (!domain->entry_assembly)
+		mono_domain_ensure_entry_assembly (domain, m_class_get_image (method->klass)->assembly);
+
 	/* Ensure the class static ctor is executed before trying to load the method. */
 	MonoVTable *vt = mono_class_vtable_checked (domain, method->klass, error);
 	mono_error_assert_ok (error);
