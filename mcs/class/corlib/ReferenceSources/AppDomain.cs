@@ -6,6 +6,9 @@ namespace System {
 
 	public partial class AppDomain
 	{
+		#if UNITY_AOT
+		[System.Runtime.CompilerServices.Intrinsic]
+		#endif
 		internal static bool IsAppXModel ()
 		{
 			return false;
