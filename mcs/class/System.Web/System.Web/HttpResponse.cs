@@ -59,6 +59,7 @@ namespace System.Web
 		
 		HttpContext context;
 		TextWriter writer;
+		private HttpWriter _httpWriter;
 		HttpCachePolicy cache_policy;
 		Encoding encoding;
 		HttpCookieCollection cookies;
@@ -110,7 +111,7 @@ namespace System.Web
 		internal HttpResponse ()
 		{
 			output_stream = new HttpResponseStream (this);
-			writer = new HttpWriter (this);
+			writer = _httpWriter = new HttpWriter (this);
 		}
 
 		public HttpResponse (TextWriter writer) : this ()
@@ -131,7 +132,7 @@ namespace System.Web
 			} else {
 				use_chunked = false;
 			}
-			writer = new HttpWriter (this);
+			writer = _httpWriter = new HttpWriter (this);
 		}
 
 		internal TextWriter SetTextWriter (TextWriter writer)
@@ -223,9 +224,8 @@ namespace System.Web
 					throw new ArgumentException ("ContentEncoding can not be null");
 
 				encoding = value;
-				HttpWriter http_writer = writer as HttpWriter;
-				if (http_writer != null)
-					http_writer.SetEncoding (encoding);
+				if (_httpWriter != null)
+					_httpWriter.UpdateResponseEncoding ();
 			}
 		}
 		
@@ -351,6 +351,12 @@ namespace System.Web
 				return writer;
 			}
 			set { writer = value; }
+		}
+
+		internal TextWriter SwitchWriter(TextWriter writer) {
+			TextWriter oldWriter = this.writer;
+			this.writer = writer;
+			return oldWriter;
 		}
 
 		public Stream OutputStream {
@@ -712,14 +718,8 @@ namespace System.Web
 			// Content-Type
 			//
 			if (content_type != null){
-				string header = content_type;
+				string header = AppendCharSetToContentType (content_type);
 
-				if (charset_set || header == "text/plain" || header == "text/html") {
-					if (header.IndexOf ("charset=") == -1 && !string.IsNullOrEmpty (charset)) {
-						header += "; charset=" + charset;
-					}
-				}
-				
 				write_headers.Add ("Content-Type", header);
 			}
 
@@ -728,6 +728,22 @@ namespace System.Web
 				for (int i = 0; i < n; i++)
 					write_headers.Add ("Set-Cookie", cookies.Get (i).GetCookieHeaderValue ());
 			}
+		}
+
+		internal string AppendCharSetToContentType(string contentType)
+		{
+			String newContentType = contentType;
+
+			if (charset_set || (_httpWriter != null && _httpWriter.ResponseEncodingUsed)) {
+				if (contentType.IndexOf("charset=", StringComparison.Ordinal) < 0) {
+					string charset = Charset;
+					if (!string.IsNullOrEmpty (charset)) {
+						newContentType = contentType + "; charset=" + charset;
+					}
+				}
+			}
+
+			return newContentType;
 		}
 
 		internal void WriteHeaders (bool final_flush)

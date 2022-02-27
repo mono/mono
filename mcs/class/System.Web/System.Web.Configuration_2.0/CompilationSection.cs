@@ -29,8 +29,13 @@
 //
 
 using System;
-using System.Configuration;
+using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Configuration;
+using System.IO;
+using System.Reflection;
+using System.Web.Compilation;
+using System.Web.Util;
 
 namespace System.Web.Configuration
 {
@@ -48,7 +53,6 @@ namespace System.Web.Configuration
 		static ConfigurationProperty maxBatchGeneratedFileSizeProp;
 		static ConfigurationProperty numRecompilesBeforeAppRestartProp;
 		static ConfigurationProperty defaultLanguageProp;
-		static ConfigurationProperty assembliesProp;
 		static ConfigurationProperty assemblyPostProcessorTypeProp;
 		static ConfigurationProperty buildProvidersProp;
 		static ConfigurationProperty expressionBuildersProp;
@@ -56,12 +60,19 @@ namespace System.Web.Configuration
 		static ConfigurationProperty codeSubDirectoriesProp;
 		static ConfigurationProperty optimizeCompilationsProp;
 		static ConfigurationProperty targetFrameworkProp;
-		
+
+		private static readonly ConfigurationProperty _propAssemblies =
+			new ConfigurationProperty("assemblies", typeof(AssemblyCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+
+		private static readonly Lazy<ConcurrentDictionary<Assembly, string>> _assemblyNames =
+			new Lazy<ConcurrentDictionary<Assembly, string>>();
+
+		private bool _referenceSet;
+
+		private bool _isRuntimeObject = false;
+
 		static CompilationSection ()
 		{
-			assembliesProp = new ConfigurationProperty ("assemblies", typeof (AssemblyCollection), null,
-								    null, PropertyHelper.DefaultValidator,
-								    ConfigurationPropertyOptions.None);
 			assemblyPostProcessorTypeProp = new ConfigurationProperty ("assemblyPostProcessorType", typeof (string), "");
 			batchProp = new ConfigurationProperty ("batch", typeof (bool), true);
 			buildProvidersProp = new ConfigurationProperty ("buildProviders", typeof (BuildProviderCollection), null,
@@ -99,7 +110,7 @@ namespace System.Web.Configuration
 			targetFrameworkProp = new ConfigurationProperty ("targetFramework", typeof (string), null);
 
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (assembliesProp);
+			properties.Add (_propAssemblies);
 			properties.Add (assemblyPostProcessorTypeProp);
 			properties.Add (batchProp);
 			properties.Add (buildProvidersProp);
@@ -129,15 +140,19 @@ namespace System.Web.Configuration
 			base.PostDeserialize ();
 		}
 
-		[MonoTODO ("why override this?")]
-		protected internal override object GetRuntimeObject ()
-		{
-			return this;
+		protected internal override object GetRuntimeObject() {
+			_isRuntimeObject = true;
+			return base.GetRuntimeObject();
 		}
 
-		[ConfigurationProperty ("assemblies")]
+		[ConfigurationProperty("assemblies")]
 		public AssemblyCollection Assemblies {
-			get { return (AssemblyCollection) base [assembliesProp]; }
+			get {
+				if (_isRuntimeObject || BuildManagerHost.InClientBuildManager) {
+					EnsureReferenceSet();
+				}
+				return GetAssembliesCollection();
+			}
 		}
 
 		[ConfigurationProperty ("assemblyPostProcessorType", DefaultValue = "")]
@@ -248,6 +263,168 @@ namespace System.Web.Configuration
 
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return properties; }
+		}
+
+		private AssemblyCollection GetAssembliesCollection() {
+			return (AssemblyCollection)base[_propAssemblies];
+		}
+
+		// This will only set the section pointer
+		private void EnsureReferenceSet() {
+			if (!_referenceSet) {
+				foreach (AssemblyInfo ai in GetAssembliesCollection()) {
+					ai.SetCompilationReference(this);
+				}
+				_referenceSet = true;
+			}
+		}
+
+		internal Assembly[] LoadAssembly(AssemblyInfo ai) {
+			Assembly[] assemblies = null;
+			if (ai.Assembly == "*") {
+				throw new NotImplementedException();
+			}
+			else {
+				Assembly a;
+				a = LoadAssemblyHelper(ai.Assembly, false);
+				if (a != null) {
+					assemblies = new Assembly[1];
+					assemblies[0] = a;
+					RecordAssembly(ai.Assembly, a);
+				}
+			}
+			return assemblies;
+		}
+
+		internal static void RecordAssembly(string assemblyName, Assembly a) {
+			// For each Assembly that we load, keep track of its original
+			// full name as specified in the config.
+			if (!_assemblyNames.Value.ContainsKey(a)) {
+				_assemblyNames.Value.TryAdd(a, assemblyName);
+			}
+		}
+
+		internal Assembly LoadAssembly(string assemblyName, bool throwOnFail) {
+
+			// The trust should always be set before we load any assembly (VSWhidbey 317295)
+			// TrustLevel is currently not set on HttpRuntime - reenable once it is
+			// System.Web.Util.Debug.Assert(HttpRuntime.TrustLevel != null);
+
+			try {
+				// First, try to just load the assembly
+				Assembly a = Assembly.Load(assemblyName);
+				// Record the original assembly name that was used to load this assembly.
+				RecordAssembly(assemblyName, a);
+				return a;
+			}
+			catch {
+				AssemblyName asmName = new AssemblyName(assemblyName);
+
+				// Check if it's simply named
+				Byte[] publicKeyToken = asmName.GetPublicKeyToken();
+				if ((publicKeyToken == null || publicKeyToken.Length == 0) && asmName.Version == null) {
+
+					EnsureReferenceSet();
+
+					// It is simply named.  Go through all the assemblies from
+					// the <assemblies> section, and if we find one that matches
+					// the simple name, return it (ASURT 100546)
+					foreach (AssemblyInfo ai in GetAssembliesCollection()) {
+						Assembly[] a = ai.AssemblyInternal;
+						if (a != null) {
+							for (int i = 0; i < a.Length; i++) {
+								// use new AssemblyName(FullName).Name
+								// instead of a.GetName().Name, because GetName() does not work in medium trust
+								if (StringUtil.EqualsIgnoreCase(asmName.Name, new AssemblyName(a[i].FullName).Name)) {
+									return a[i];
+								}
+							}
+						}
+					}
+				}
+
+				if (throwOnFail) {
+					throw;
+				}
+			}
+
+			return null;
+		}
+
+		private Assembly LoadAssemblyHelper(string assemblyName, bool starDirective) {
+			// The trust should always be set before we load any assembly (VSWhidbey 317295)
+			// TrustLevel is currently not set on HttpRuntime - reenable once it is
+			// System.Web.Util.Debug.Assert(HttpRuntime.TrustLevel != null);
+
+			Assembly retAssembly = null;
+			// Load the assembly and add it to the dictionary.
+			try {
+				retAssembly = System.Reflection.Assembly.Load(assemblyName);
+			}
+			catch (Exception e) {
+
+				// Check if this assembly came from the '*' directive
+				bool ignoreException = false;
+
+				if (starDirective) {
+					int hresult = System.Runtime.InteropServices.Marshal.GetHRForException(e);
+
+					// This is expected to fail for unmanaged DLLs that happen
+					// to be in the bin dir.  Ignore them.
+
+					// Also, if the DLL is not an assembly, ignore the exception (ASURT 93073, VSWhidbey 319486)
+
+					// Test for COR_E_ASSEMBLYEXPECTED=0x80131018=-2146234344
+					if (hresult == -2146234344) {
+						ignoreException = true;
+					}
+				}
+
+				/*
+				// unimplemented
+				if (BuildManager.IgnoreBadImageFormatException) {
+					var badImageFormatException = e as BadImageFormatException;
+					if (badImageFormatException != null) {
+						ignoreException = true;
+					}
+				}
+				*/
+
+				if (!ignoreException) {
+					string Message = e.Message;
+					if (String.IsNullOrEmpty(Message)) {
+						// try and make a better message than empty string
+						if (e is FileLoadException) {
+							Message = SR.GetString(SR.Config_base_file_load_exception_no_message, "assembly");
+						}
+						else if (e is BadImageFormatException) {
+							Message = SR.GetString(SR.Config_base_bad_image_exception_no_message, assemblyName);
+						}
+						else {
+							Message = SR.GetString(SR.Config_base_report_exception_type, e.GetType().ToString()); // at least this is better than no message
+						}
+					}
+					// default to section if the assembly is not in the collection
+					// which may happen it the assembly is being loaded from the bindir
+					// and not named in configuration.
+					String source = ElementInformation.Properties["assemblies"].Source;
+					int lineNumber = ElementInformation.Properties["assemblies"].LineNumber;
+
+					// If processing the * directive, look up the line information for it
+					if (starDirective)
+						assemblyName = "*";
+
+					if (Assemblies[assemblyName] != null) {
+						source = Assemblies[assemblyName].ElementInformation.Source;
+						lineNumber = Assemblies[assemblyName].ElementInformation.LineNumber;
+					}
+					throw new ConfigurationErrorsException(Message, e, source, lineNumber);
+				}
+			}
+
+			System.Web.Util.Debug.Trace("LoadAssembly", "Successfully loaded assembly '" + assemblyName + "'");
+
+			return retAssembly;
 		}
 	}
 }

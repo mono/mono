@@ -39,6 +39,7 @@ using System.Text;
 using System.Collections.Specialized;
 using System.Web.Util;
 using System.Globalization;
+using System.Reflection;
 
 namespace System.Web.UI
 {
@@ -60,6 +61,8 @@ namespace System.Web.UI
 		bool _initCallBackRegistered;
 		bool _webFormClientScriptRendered;
 		bool _webFormClientScriptRequired;
+
+		private Dictionary<Assembly, Dictionary<String, Object>> _registeredResourcesToSuppress;
 		
 		internal bool ScriptsPresent {
 			get {
@@ -85,6 +88,15 @@ namespace System.Web.UI
 		internal ClientScriptManager (Page page)
 		{
 			this.ownerPage = page;
+		}
+
+		internal Dictionary<Assembly, Dictionary<String, Object>> RegisteredResourcesToSuppress {
+			get {
+				if (_registeredResourcesToSuppress == null) {
+					_registeredResourcesToSuppress = new Dictionary<Assembly, Dictionary<String, Object>>();
+				}
+				return _registeredResourcesToSuppress;
+			}
 		}
 
 		public string GetPostBackClientHyperlink (Control control, string argument)

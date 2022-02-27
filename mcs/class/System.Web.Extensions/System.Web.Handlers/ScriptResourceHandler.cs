@@ -1,4 +1,4 @@
-﻿//
+//
 // ScriptResourceHandler.cs
 //
 // Authors:
@@ -200,7 +200,7 @@ namespace System.Web.Handlers
 			TextWriter writer = response.Output;
 			foreach (ScriptResourceAttribute sra in assembly.GetCustomAttributes (typeof (ScriptResourceAttribute), false)) {
 				if (String.Compare (sra.ScriptName, res.Name, StringComparison.Ordinal) == 0) {
-					string scriptResourceName = sra.ScriptResourceName;
+					string scriptResourceName = sra.StringResourceName;
 					ResourceSet rset = null;
 					try {
 						rset = new ResourceManager (scriptResourceName, assembly).GetResourceSet (Threading.Thread.CurrentThread.CurrentUICulture, true, true);
@@ -216,11 +216,11 @@ namespace System.Web.Handlers
 					if (rset == null)
 						break;
 					writer.WriteLine ();
-					string ns = sra.TypeName;
+					string ns = sra.StringResourceClientTypeName;
 					int indx = ns.LastIndexOf ('.');
 					if (indx > 0)
 						writer.WriteLine ("Type.registerNamespace('" + ns.Substring (0, indx) + "')");
-					writer.Write ("{0}={{", sra.TypeName);
+					writer.Write ("{0}={{", sra.StringResourceClientTypeName);
 					bool first = true;
 					foreach (DictionaryEntry de in rset) {
 						string value = de.Value as string;

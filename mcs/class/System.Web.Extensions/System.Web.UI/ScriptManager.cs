@@ -37,14 +37,19 @@ using System.Security.Permissions;
 using System.Collections.Specialized;
 using System.Collections;
 using System.Web.Handlers;
+using System.Web.Hosting;
 using System.Reflection;
 using System.Web.Configuration;
+using System.Web.Compilation;
 using System.Web.UI.HtmlControls;
 using System.IO;
+using System.Linq;
 using System.Globalization;
 using System.Threading;
+using System.Web.Resources;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
+using System.Web.Script;
 using System.Xml;
 using System.Collections.ObjectModel;
 using System.Web.Util;
@@ -88,6 +93,10 @@ namespace System.Web.UI
 
 		static readonly object ScriptManagerKey = typeof (IScriptManager);
 
+		private static bool _ajaxFrameworkAssemblyConfigChecked;
+		private static Assembly _defaultAjaxFrameworkAssembly = null;
+		private Assembly _ajaxFrameworkAssembly = DefaultAjaxFrameworkAssembly;
+
 		int _asyncPostBackTimeout = 90;
 		List<Control> _asyncPostBackControls;
 		List<Control> _postBackControls;
@@ -97,6 +106,8 @@ namespace System.Web.UI
 		ScriptReferenceCollection _scripts;
 		CompositeScriptReference _compositeScript;
 		ServiceReferenceCollection _services;
+		private bool _initCompleted;
+		private bool _preRenderCompleted;
 		bool _isInAsyncPostBack;
 		bool _isInPartialRendering;
 		string _asyncPostBackSourceElementID;
@@ -127,6 +138,20 @@ namespace System.Web.UI
 		AuthenticationServiceManager _authenticationService;
 		ProfileServiceManager _profileService;
 		List<ScriptManagerProxy> _proxies;
+		private AjaxFrameworkMode _ajaxFrameworkMode = AjaxFrameworkMode.Enabled;
+		private bool _enableCdn;
+
+		[
+		ResourceDescription("ScriptManager_AjaxFrameworkAssembly"),
+		Browsable(false)
+		]
+		public virtual Assembly AjaxFrameworkAssembly {
+			get {
+				// value is set to the static DefaultAjaxFrameworkAssembly one at constructor time,
+				// so this property value can't change in the middle of a request.
+				return _ajaxFrameworkAssembly;
+			}
+		}
 
 		[DefaultValue (true)]
 		[Category ("Behavior")]
@@ -182,6 +207,82 @@ namespace System.Web.UI
 				if (_authenticationService == null)
 					_authenticationService = new AuthenticationServiceManager ();
 				return _authenticationService;
+			}
+		}
+
+		internal static Assembly DefaultAjaxFrameworkAssembly {
+			get {
+				if ((_defaultAjaxFrameworkAssembly == null) && !_ajaxFrameworkAssemblyConfigChecked && AssemblyCache._useCompilationSection) {
+					IEnumerable<Assembly> referencedAssemblies;
+					// In a hosted environment we want to get the assemblies from the BuildManager. This will include
+					// dynamically added assemblies through the PreAppStart phase.
+					// In non-hosted scenarios (VS designer) we want to look the assemblies directly from the config system
+					// since the PreAppStart phase will not execute.
+					if (HostingEnvironment.IsHosted) {
+						referencedAssemblies = BuildManager.GetReferencedAssemblies().OfType<Assembly>();
+					}
+					else {
+						CompilationSection compilationSection = RuntimeConfig.GetAppConfig().Compilation;
+						referencedAssemblies = compilationSection.Assemblies.OfType<AssemblyInfo>().SelectMany(assemblyInfo => assemblyInfo.AssemblyInternal);
+					}
+
+					foreach (Assembly assembly in referencedAssemblies) {
+						if (assembly != AssemblyCache.SystemWebExtensions) {
+							AjaxFrameworkAssemblyAttribute attribute =
+								AssemblyCache.GetAjaxFrameworkAssemblyAttribute(assembly);
+							if (attribute != null) {
+								_defaultAjaxFrameworkAssembly = attribute.GetDefaultAjaxFrameworkAssembly(assembly);
+								break;
+							}
+						}
+						_ajaxFrameworkAssemblyConfigChecked = true;
+					}
+					_ajaxFrameworkAssemblyConfigChecked = true;
+				}
+				return _defaultAjaxFrameworkAssembly ?? AssemblyCache.SystemWebExtensions;
+			}
+			set {
+				if (value == null) {
+					throw new ArgumentNullException("value");
+				}
+				_defaultAjaxFrameworkAssembly = value;
+			}
+		}
+
+		[
+		ResourceDescription("ScriptManager_EnableCdn"),
+		Category("Behavior"),
+		DefaultValue(false),
+		]
+		public bool EnableCdn {
+			get {
+				return _enableCdn;
+			}
+			set {
+				if (_preRenderCompleted) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_CannotChangeEnableCdn);
+				}
+				_enableCdn = value;
+			}
+		}
+
+		[
+		ResourceDescription("ScriptManager_AjaxFrameworkMode"),
+		Category("Behavior"),
+		DefaultValue(AjaxFrameworkMode.Enabled),
+		]
+		public AjaxFrameworkMode AjaxFrameworkMode {
+			get {
+				return _ajaxFrameworkMode;
+			}
+			set {
+				if (value < AjaxFrameworkMode.Enabled || value > AjaxFrameworkMode.Explicit) {
+					throw new ArgumentOutOfRangeException("value");
+				}
+				if (_initCompleted) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_CannotChangeAjaxFrameworkMode);
+				}
+				_ajaxFrameworkMode = value;
 			}
 		}
 
@@ -467,6 +568,7 @@ namespace System.Web.UI
 
 			SetCurrent (Page, this);
 			Page.Error += new EventHandler (OnPageError);
+			Page.InitComplete += OnPageInitComplete;
 			_init = true;
 		}
 
@@ -475,10 +577,20 @@ namespace System.Web.UI
 				OnAsyncPostBackError (new AsyncPostBackErrorEventArgs (Context.Error));
 		}
 
+		private void OnPageInitComplete(object sender, EventArgs e) {
+			if (Page.IsPostBack) {
+				if (IsInAsyncPostBack && !SupportsPartialRendering) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_AsyncPostBackNotInPartialRenderingMode);
+				}
+			}
+
+			_initCompleted = true;
+		}
+
 		protected internal override void OnPreRender (EventArgs e) {
 			base.OnPreRender (e);
 
-			Page.PreRenderComplete += new EventHandler (OnPreRenderComplete);
+			Page.PreRenderComplete += new EventHandler (OnPagePreRenderComplete);
 
 			if (IsInAsyncPostBack) {
 				Page.SetRenderMethodDelegate (RenderPageCallback);
@@ -532,8 +644,9 @@ namespace System.Web.UI
 			return CreateScriptReference (path, assembly, true);
 		}
 		
-		void OnPreRenderComplete (object sender, EventArgs e)
+		private void OnPagePreRenderComplete (object sender, EventArgs e)
 		{
+			_preRenderCompleted = true;
 			// Resolve Scripts
 			ScriptReference ajaxScript = CreateScriptReference ("MicrosoftAjax.js", String.Empty, false);
 			ScriptReference ajaxWebFormsScript = CreateScriptReference ("MicrosoftAjaxWebForms.js", String.Empty, false);

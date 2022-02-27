@@ -34,6 +34,14 @@ namespace System.Web.Compilation
 {
 	class BuildManagerHost : MarshalByRefObject, IRegisteredObject
 	{
+
+		private static bool _inClientBuildManager;
+
+		internal static bool InClientBuildManager {
+			get { return _inClientBuildManager; }
+			set { _inClientBuildManager = true; }
+		}
+
 		// This method is used by the Cassini ASP.NET host application (and all of its
 		// derivatives, e.g. CassiniDev, see http://cassinidev.codeplex.com) to register the
 		// host assembly with System.Web's assembly resolver in order to enable loading

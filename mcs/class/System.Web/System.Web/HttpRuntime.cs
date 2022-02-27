@@ -672,5 +672,15 @@ namespace System.Web
 				return trace_manager;
 			}
 		}
+
+        internal static Object CreatePublicInstance(Type type) {
+            return Activator.CreateInstance(type);
+        }
+
+        internal static Object FastCreatePublicInstance(Type type) {
+			// if DONTUSEFACTORYGENERATOR is set, the referencesource uses a faster implementation here instead
+			// this should behave correctly anyways
+            return CreatePublicInstance(type);
+		}
 	}
 }

@@ -21,5 +21,6 @@ static class AssemblyRef
 	public const string SystemDrawing = Consts.AssemblySystem_Drawing;
 	public const string SystemWeb = Consts.AssemblySystem_Web;
 	public const string SystemWebExtensions =  "System.Web.Extensions, Version=" + Consts.FxVersion + ", Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+	public const string SystemWebExtensionsDesign =  "System.Web.Extensions.Design, Version=" + Consts.FxVersion + ", Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 	public const string SystemWindowsForms = Consts.AssemblySystem_Windows_Forms;
 }

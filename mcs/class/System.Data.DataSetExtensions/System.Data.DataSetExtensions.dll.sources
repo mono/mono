@@ -8,6 +8,7 @@ corefx/SR.cs
 ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataTableExtensions.cs
 ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/EnumerableRowCollection.cs
 ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/EnumerableRowCollectionExtensions.cs
+../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/LinqDataView.cs
 ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/OrderedEnumerableRowCollection.cs
 ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/SortExpressionBuilder.cs
 ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/TypedTableBase.cs

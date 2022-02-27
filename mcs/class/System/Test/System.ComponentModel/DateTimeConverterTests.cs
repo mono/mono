@@ -185,6 +185,15 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+		public void ConvertToInstanceDescriptor ()
+		{
+			DateTime date = new DateTime(2008, 12, 31);
+			InstanceDescriptor id = (InstanceDescriptor) converter.ConvertTo (null, CultureInfo.InvariantCulture, date, typeof(InstanceDescriptor));
+			Assert.IsTrue (id.IsComplete, "#1");
+			Assert.AreEqual (date, (DateTime) id.Invoke (), "#2");
+		}
+
+		[Test]
 		public void ConvertFromString ()
 		{
 			CultureInfo culture = new MyCultureInfo ();
