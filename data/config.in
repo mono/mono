@@ -43,4 +43,11 @@
 	<dllmap dll="gdiplus.dll" target="@libgdiplus_install_loc@"  os="!windows"/>
 	<dllmap dll="gdi32" target="@libgdiplus_install_loc@" os="!windows"/>
 	<dllmap dll="gdi32.dll" target="@libgdiplus_install_loc@" os="!windows"/>
+
+    <!-- Some .net base class library code pinvokes into api-ms-win-core-threadpool-l1-2-0.dll. The only thing this library does is forward the call
+	to kernel32.dll (on windows desktop, versions on other platforms might forward elsewhere.  Unfortunately this library did not ship with windows7.
+	We're using the dll remap functionality in this file to have mono directly route these calls into kernel32, just like the library would do so that
+	the BCL code that relies on this can work on windows7 again.  This functionality that does not work without this workaround includes NamedServerPipeStream.
+	-->
+	<dllmap dll="api-ms-win-core-threadpool-l1-2-0.dll" target="kernel32.dll" os="windows"/>
 </configuration>
