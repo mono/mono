@@ -7,6 +7,7 @@ use lib ('external/buildscripts', "../../Tools/perl_lib","perl_lib", 'external/b
 use strict;
 use warnings;
 use Tools qw(InstallNameTool);
+use POSIX;
 
 print ">>> PATH in Build All = $ENV{PATH}\n\n";
 
@@ -204,11 +205,12 @@ if($^O eq "linux")
 }
 elsif($^O eq 'darwin')
 {
-	$monoHostArch = "x86_64";
+	$monoHostArch = (POSIX::uname)[4];
 	$existingExternalMono = "$existingExternalMonoRoot";
 	$existingExternalMonoBinDir = "bin";
 
-	if ($targetArch eq "arm64")
+	# Save time when cross compiling
+	if ($targetArch ne $monoHostArch)
 	{
 		$disableMcs = 1;
 		$test = 0;
