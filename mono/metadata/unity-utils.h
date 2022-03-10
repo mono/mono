@@ -14,6 +14,32 @@ typedef struct {
 	void* (*realloc_func)(void *ptr, size_t size);
 } MonoMemoryCallbacks;
 
+typedef struct
+{
+	// For Burst 
+	void (*BurstFinishSetup)();
+
+	// For MonoDebugInternal From Burst
+	int (*BurstIsFileBursted)(int ignoreCase, const char* baseName);
+	void (*BurstBreakpointNotify)(gboolean set, void* method, long ilOffset, void* bp);
+	void (*BurstFetchMethods)(void* buf, void* domain, guint32 id, gboolean protocol_version_set, int major_version, int minor_version);
+	void (*BurstFetchFiles)(void* buf, guint32 fullPath, gboolean protocol_version_set, int major_version, int minor_version);
+	void (*BurstFetchDebugInfo)(void* buf, void* method, gboolean protocol_version_set, int major_version, int minor_version);
+	void (*BurstFetchMethodInfo)(void* buf, void* method, gboolean protocol_version_set, int major_version, int minor_version);
+	void (*BurstFetchParamInfo)(void* buf, void* method, gboolean protocol_version_set, int major_version, int minor_version);
+	void (*BurstFetchMethodName)(void* buf, void* method, gboolean protocol_version_set, int major_version, int minor_version);
+
+	// For Burst From MonoDebugInternal
+	void (*buffer_add_byte)(void* buf, guint8 iVal);
+	void (*buffer_add_int)(void* buf, guint32 iVal);
+	void (*buffer_add_id)(void* buf, int iVal);
+	void (*buffer_add_string)(void* buf, const char* str);
+	void (*buffer_add_ptr_id)(void* buf, void* domain, int id, gpointer ptr);
+	void (*mono_burst_shutdown)();
+	void (*mono_burst_type_load)(const char* asmPath, const char* typeNamespace,const char* typeName);
+
+} BurstMonoDebuggerCallbacks;
+
 /**
  *	Custom exit function, called instead of system exit()
  */
@@ -36,6 +62,9 @@ MONO_API void mono_unity_set_vprintf_func(vprintf_func func);
 
 
 void unity_mono_install_memory_callbacks(MonoMemoryCallbacks* callbacks);
+
+MONO_API extern void burst_mono_install_hooks(BurstMonoDebuggerCallbacks* callbacks, void* extra);
+MONO_API extern void burst_mono_update_tracking_pointers(MonoDomain* domain,MonoClass* klass);
 
 MONO_API gboolean
 unity_mono_method_is_generic (MonoMethod* method);
