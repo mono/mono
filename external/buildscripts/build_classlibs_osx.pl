@@ -3,6 +3,7 @@ use Cwd 'abs_path';
 use Getopt::Long;
 use File::Basename;
 use File::Path;
+use POSIX;
 
 my $monoroot = File::Spec->rel2abs(dirname(__FILE__) . "/../..");
 my $monoroot = abs_path($monoroot);
@@ -14,6 +15,7 @@ my $mcsOnly = 0;
 my $skipMonoMake = 0;
 my $stevedoreBuildDeps=1;
 my $cpus = `sysctl -n hw.ncpu`;
+my $targetArch = (POSIX::uname)[4];
 
 # Handy troubleshooting/niche options
 
@@ -35,7 +37,7 @@ system(
 	"--build=$build",
 	"--clean=$clean",
 	"--mcsonly=$mcsOnly",
-	"--targetarch=x86_64",
+	"--targetarch=$targetArch",
 	"--skipmonomake=$skipMonoMake",
 	"--artifact=1",
 	"--artifactscommon=1",
