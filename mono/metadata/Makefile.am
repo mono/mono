@@ -432,7 +432,8 @@ common_sources = \
 	native-library.c \
 	native-library.h \
 	native-library-qcall.c \
-	qcall-def.h 
+	qcall-def.h \
+	etw-profiler.c
 
 # These source files have compile time dependencies on GC code
 gc_dependent_sources = \
