@@ -141,6 +141,8 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\security-manager.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\string-icalls.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\string-icalls.h" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\metadata\etw-profiler.c" />
+    <ClInclude Include="$(MonoSourceLocation)\mono\metadata\CLR-ETW-Generated.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\sysmath.c" />
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\tabledefs.h" />
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\threads.c" />
