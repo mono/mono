@@ -542,9 +542,8 @@ static MonoDomain* g_BurstDebugDomain = NULL;
 static BurstMonoDebuggerCallbacks g_BurstDebugCallbacks = { 0 };
 static MonoClass* g_BurstKlass = NULL;
 static MonoCoopMutex g_BurstDebugMutex;
-static MonoBoolean g_BurstDebugMutexInitialised = FALSE;
-#define burst_lock() if (g_BurstDebugMutexInitialised) mono_coop_mutex_lock (&g_BurstDebugMutex);
-#define burst_unlock() if (g_BurstDebugMutexInitialised) mono_coop_mutex_unlock (&g_BurstDebugMutex);
+#define burst_lock() do {mono_coop_mutex_lock (&g_BurstDebugMutex);}while(0)
+#define burst_unlock() do {mono_coop_mutex_unlock (&g_BurstDebugMutex);}while(0)
 
 /* 
  * Whenever the agent is fully initialized.
@@ -1017,6 +1016,9 @@ debugger_agent_init (void)
 	mono_loader_lock_track_ownership (TRUE);
 
 	event_requests = g_ptr_array_new ();
+
+	/* Initialise the mutex for burst operation, regardless of whether burst is ever used */
+	mono_coop_mutex_init_recursive(&g_BurstDebugMutex);
 
 	mono_coop_mutex_init (&debugger_thread_exited_mutex);
 	mono_coop_cond_init (&debugger_thread_exited_cond);
@@ -10568,9 +10570,6 @@ static void burst_mono_shutdown()
 // Called from the main thread - once only
 static void burst_mono_install_hooks_imp(BurstMonoDebuggerCallbacks* callbacks,void* domainInitCallback)
 {
-	mono_coop_mutex_init_recursive(&g_BurstDebugMutex);
-	g_BurstDebugMutexInitialised = TRUE;
-
 	burst_lock();
 	// Copy the callback structure (the one passed in may not persist)
 	g_BurstDebugCallbacks.BurstFinishSetup = callbacks->BurstFinishSetup;
@@ -10590,7 +10589,10 @@ static void burst_mono_install_hooks_imp(BurstMonoDebuggerCallbacks* callbacks,v
 	callbacks->buffer_add_string = buffer_add_string;
 	callbacks->buffer_add_ptr_id = buffer_add_ptr_id;
 	callbacks->mono_burst_shutdown = burst_mono_shutdown;
-	callbacks->mono_burst_type_load = domainInitCallback;
+
+	// This one is passed to us from unity, and we then pass it back to burst as this avoids having a 3rd copy of the callbacks
+	//structure (burst/mono & unity)
+	callbacks->burst_unity_domain_init = domainInitCallback;
 
 	callbacks->BurstFinishSetup();	// notify burst the mono callbacks are in place
 	burst_unlock();

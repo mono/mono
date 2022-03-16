@@ -14,6 +14,7 @@ typedef struct {
 	void* (*realloc_func)(void *ptr, size_t size);
 } MonoMemoryCallbacks;
 
+// This structure must remain in sync with the one in Burst (MonoBreakpointHandling.cs)
 typedef struct
 {
 	// For Burst 
@@ -36,7 +37,9 @@ typedef struct
 	void (*buffer_add_string)(void* buf, const char* str);
 	void (*buffer_add_ptr_id)(void* buf, void* domain, int id, gpointer ptr);
 	void (*mono_burst_shutdown)();
-	void (*mono_burst_type_load)(const char* asmPath, const char* typeNamespace,const char* typeName);
+
+	// For Burst From Unity (set via mono to avoid requiring another copy of the definition of this structure in unity)
+	void (*burst_unity_domain_init)(const char* asmPath, const char* typeNamespace,const char* typeName);
 
 } BurstMonoDebuggerCallbacks;
 
