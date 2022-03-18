@@ -400,6 +400,12 @@
     <ClInclude Include="$(MonoSourceLocation)\mono\metadata\string-icalls.h">
       <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClInclude>
+	<ClCompile Include="$(MonoSourceLocation)\mono\metadata\etw-profiler.c">
+      <Filter>Source Files$(MonoRuntimeFilterSubFolder)\common</Filter>
+    </ClCompile>
+	<ClInclude Include="$(MonoSourceLocation)\mono\metadata\CLR-ETW-Generated.h">
+      <Filter>Header Files$(MonoRuntimeFilterSubFolder)\common</Filter>
+    </ClInclude>
     <ClCompile Include="$(MonoSourceLocation)\mono\metadata\sysmath.c">
       <Filter>Source Files$(MonoRuntimeFilterSubFolder)\common</Filter>
     </ClCompile>
