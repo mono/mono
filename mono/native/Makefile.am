@@ -34,28 +34,35 @@ common_sources = \
 	../../external/corefx/src/Native/Unix/System.Native/pal_uid.h \
 	../../external/corefx/src/Native/Unix/System.Native/pal_time.c \
 	../../external/corefx/src/Native/Unix/System.Native/pal_time.h \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/dictionary_hash.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/backward_references_hq.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/histogram.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/memory.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/entropy_encode.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/compress_fragment_two_pass.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/block_splitter.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/encode.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/cluster.c \
 	../../external/corefx/src/Native/AnyOS/brotli/enc/backward_references.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/utf8_util.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/compress_fragment.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/brotli_bit_stream.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/backward_references_hq.c \
 	../../external/corefx/src/Native/AnyOS/brotli/enc/bit_cost.c \
-	../../external/corefx/src/Native/AnyOS/brotli/enc/static_dict.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/block_splitter.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/brotli_bit_stream.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/cluster.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/command.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/compress_fragment.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/compress_fragment_two_pass.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/dictionary_hash.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/encode.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/encoder_dict.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/entropy_encode.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/fast_log.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/histogram.c \
 	../../external/corefx/src/Native/AnyOS/brotli/enc/literal_cost.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/memory.c \
 	../../external/corefx/src/Native/AnyOS/brotli/enc/metablock.c \
-	../../external/corefx/src/Native/AnyOS/brotli/dec/state.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/static_dict.c \
+	../../external/corefx/src/Native/AnyOS/brotli/enc/utf8_util.c \
+	../../external/corefx/src/Native/AnyOS/brotli/dec/bit_reader.c \
 	../../external/corefx/src/Native/AnyOS/brotli/dec/decode.c \
 	../../external/corefx/src/Native/AnyOS/brotli/dec/huffman.c \
-	../../external/corefx/src/Native/AnyOS/brotli/dec/bit_reader.c \
-	../../external/corefx/src/Native/AnyOS/brotli/common/dictionary.c
+	../../external/corefx/src/Native/AnyOS/brotli/dec/state.c \
+	../../external/corefx/src/Native/AnyOS/brotli/common/constants.c \
+	../../external/corefx/src/Native/AnyOS/brotli/common/context.c \
+	../../external/corefx/src/Native/AnyOS/brotli/common/dictionary.c \
+	../../external/corefx/src/Native/AnyOS/brotli/common/platform.c \
+	../../external/corefx/src/Native/AnyOS/brotli/common/transform.c
 
 macos_sources = $(unix_sources)
 
