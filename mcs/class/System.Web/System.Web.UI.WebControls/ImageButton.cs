@@ -281,6 +281,7 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void OnPreRender (EventArgs e)
 		{
+			base.OnPreRender(e);
 			Page page = Page;
 			if (page != null && IsEnabled)
 				page.RegisterRequiresPostBack (this);

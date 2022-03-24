@@ -55,6 +55,8 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void OnPreRender (EventArgs e)
 		{
+			base.OnPreRender(e);
+
 			Hashtable ht = null;
 			
 			if (!String.IsNullOrEmpty (ad_file)) {
