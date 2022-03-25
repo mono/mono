@@ -1,7 +1,7 @@
 [
   {
     "name": "roslyn", 
-    "url": "git://github.com/mono/roslyn.git",
+    "url": "https://github.com/mono/roslyn.git",
     "rev": "6bfcd4e770609a38b8523e83ce1ec943162f30bb",
     "remote-branch": "origin/mono-testing",
     "branch": "mono-testing",
@@ -9,7 +9,7 @@
   }, 
   {
     "name": "coreclr", 
-    "url": "git://github.com/mono/coreclr.git", 
+    "url": "https://github.com/mono/coreclr.git", 
     "rev": "90f7060935732bb624e1f325d23f63072433725f",
     "remote-branch": "origin/mono", 
     "branch": "mono", 
@@ -25,7 +25,7 @@
   }, 
   {
     "name": "benchmarker", 
-    "url": "git://github.com/xamarin/benchmarker.git", 
+    "url": "https://github.com/xamarin/benchmarker.git", 
     "rev": "97f618cd585af549dd861b7c142656c496f6a89b", 
     "remote-branch": "origin/master", 
     "branch": "master", 
