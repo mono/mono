@@ -10615,5 +10615,7 @@ void burst_mono_update_tracking_pointers(MonoDomain* domain, MonoClass* klass)
 	g_BurstKlass = klass;
 	g_BurstDebugDomain = domain;
 	burst_unlock();
+	send_type_load(g_BurstKlass);	// We must manually send the type load event, since we never actually JIT anything in this class
+					//without this call, some mono debuggers will not work properly for burst
 #endif /* DISABLE_SDB */
 }
