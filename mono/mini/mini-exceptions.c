@@ -3413,7 +3413,6 @@ print_stack_frame_to_string (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 MONO_API int
 mono_unity_backtrace_from_context (void* context, void* array[], int count)
 {
-#ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
 	MonoContext mctx;
 	void*  ip = 0;
 	void** bp = 0;
@@ -3433,9 +3432,6 @@ mono_unity_backtrace_from_context (void* context, void* array[], int count)
 	}
 
 	return idx;
-#else
-	return 0;
-#endif
 }
 /*
  * mono_handle_native_crash:
