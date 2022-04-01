@@ -89,6 +89,7 @@
 #include "debugger-engine.h"
 #include "mono/metadata/debug-mono-ppdb.h"
 #include "mono/metadata/custom-attrs-internals.h"
+#include "mono/metadata/unity-utils.h"
 
 /*
  * On iOS we can't use System.Environment.Exit () as it will do the wrong
@@ -537,6 +538,13 @@ typedef struct ReplyPacket {
 
 static AgentConfig agent_config;
 
+static MonoDomain* g_BurstDebugDomain = NULL;
+static BurstMonoDebuggerCallbacks g_BurstDebugCallbacks = { 0 };
+static MonoClass* g_BurstKlass = NULL;
+static MonoCoopMutex g_BurstDebugMutex;
+#define burst_lock() do {mono_coop_mutex_lock (&g_BurstDebugMutex);}while(0)
+#define burst_unlock() do {mono_coop_mutex_unlock (&g_BurstDebugMutex);}while(0)
+
 /* 
  * Whenever the agent is fully initialized.
  * When using the onuncaught or onthrow options, only some parts of the agent are
@@ -661,6 +669,8 @@ static void gc_finalized (MonoProfiler *prof);
 static void emit_assembly_load (gpointer assembly, gpointer user_data);
 
 static void emit_type_load (gpointer key, gpointer type, gpointer user_data);
+
+static void burst_check_source (gpointer key, gpointer type, gpointer user_data);
 
 static void jit_done (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo);
 
@@ -1006,6 +1016,9 @@ debugger_agent_init (void)
 	mono_loader_lock_track_ownership (TRUE);
 
 	event_requests = g_ptr_array_new ();
+
+	/* Initialise the mutex for burst operation, regardless of whether burst is ever used */
+	mono_coop_mutex_init_recursive(&g_BurstDebugMutex);
 
 	mono_coop_mutex_init (&debugger_thread_exited_mutex);
 	mono_coop_cond_init (&debugger_thread_exited_cond);
@@ -2484,9 +2497,14 @@ decode_methodid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domai
 	if (G_UNLIKELY (log_level >= 2) && m) {
 		char *s;
 
-		s = mono_method_full_name (m, TRUE);
-		PRINT_DEBUG_MSG (2, "[dbg]   recv method [%s]\n", s);
-		g_free (s);
+		burst_lock();
+		if (*domain != g_BurstDebugDomain)
+		{
+			s = mono_method_full_name(m, TRUE);
+			PRINT_DEBUG_MSG(2, "[dbg]   recv method [%s]\n", s);
+			g_free(s);
+		}
+		burst_unlock();
 	}
 	return m;
 }
@@ -3578,6 +3596,17 @@ emit_type_load (gpointer key, gpointer value, gpointer user_data)
 	process_profiler_event (EVENT_KIND_TYPE_LOAD, value);
 }
 
+// Burst debug mutex is held while this callback is in use, no need to lock
+static void
+burst_check_source(gpointer key, gpointer value, gpointer user_data)
+{
+	if (g_BurstDebugCallbacks.BurstIsFileBursted) {
+		if (g_BurstDebugCallbacks.BurstIsFileBursted(TRUE, value)) {
+			*((gboolean*)user_data) = TRUE;
+		}
+	}
+}
+
 
 static void gc_finalizing (MonoProfiler *prof)
 {
@@ -3807,32 +3836,42 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, EventInfo 
 					int i;
 					GPtrArray *source_file_list;
 
-					while ((method = mono_class_get_methods (ei->klass, &iter))) {
-						MonoDebugMethodInfo *minfo = mono_debug_lookup_method (method);
+					burst_lock();
+					if (ei->klass == g_BurstKlass)
+					{
+						g_hash_table_foreach(mod->data.source_files, burst_check_source, &found);
+						burst_unlock();
+					}
+					else
+					{
+						burst_unlock();
+						while ((method = mono_class_get_methods(ei->klass, &iter))) {
+							MonoDebugMethodInfo* minfo = mono_debug_lookup_method(method);
 
-						if (minfo) {
-							mono_debug_get_seq_points (minfo, NULL, &source_file_list, NULL, NULL, NULL);
-							for (i = 0; i < source_file_list->len; ++i) {
-								sinfo = (MonoDebugSourceInfo *)g_ptr_array_index (source_file_list, i);
-								/*
-								 * Do a case-insesitive match by converting the file name to
-								 * lowercase.
-								 */
-								s = strdup_tolower (sinfo->source_file);
-								if (g_hash_table_lookup (mod->data.source_files, s))
-									found = TRUE;
-								else {
-									char *s2 = dbg_path_get_basename (sinfo->source_file);
-									char *s3 = strdup_tolower (s2);
-
-									if (g_hash_table_lookup (mod->data.source_files, s3))
+							if (minfo) {
+								mono_debug_get_seq_points(minfo, NULL, &source_file_list, NULL, NULL, NULL);
+								for (i = 0; i < source_file_list->len; ++i) {
+									sinfo = (MonoDebugSourceInfo*)g_ptr_array_index(source_file_list, i);
+									/*
+									 * Do a case-insesitive match by converting the file name to
+									 * lowercase.
+									 */
+									s = strdup_tolower(sinfo->source_file);
+									if (g_hash_table_lookup(mod->data.source_files, s))
 										found = TRUE;
-									g_free (s2);
-									g_free (s3);
+									else {
+										char* s2 = dbg_path_get_basename(sinfo->source_file);
+										char* s3 = strdup_tolower(s2);
+
+										if (g_hash_table_lookup(mod->data.source_files, s3))
+											found = TRUE;
+										g_free(s2);
+										g_free(s3);
+									}
+									g_free(s);
 								}
-								g_free (s);
+								g_ptr_array_free(source_file_list, TRUE);
 							}
-							g_ptr_array_free (source_file_list, TRUE);
 						}
 					}
 					if (!found)
@@ -6233,7 +6272,14 @@ clear_event_request (int req_id, int etype)
 
 		if (req->id == req_id && req->event_kind == etype) {
 			if (req->event_kind == EVENT_KIND_BREAKPOINT)
-				mono_de_clear_breakpoint ((MonoBreakpoint *)req->info);
+			{
+				burst_lock();
+				if (g_BurstDebugCallbacks.BurstBreakpointNotify) {
+					g_BurstDebugCallbacks.BurstBreakpointNotify(FALSE, NULL, 0, req->info);
+				}
+				burst_unlock();
+				mono_de_clear_breakpoint((MonoBreakpoint*)req->info);
+			}
 			if (req->event_kind == EVENT_KIND_STEP) {
 				mono_de_cancel_ss ((SingleStepReq *)req->info);
 			}
@@ -6945,6 +6991,17 @@ get_types_for_source_file (gpointer key, gpointer value, gpointer user_data)
 		g_ptr_array_add (ud->res_classes, klass);
 		g_ptr_array_add (ud->res_domains, domain);
 	}
+
+	burst_lock();
+	if (g_BurstDebugDomain == domain) {
+		if (g_BurstDebugCallbacks.BurstIsFileBursted) {
+			if (g_BurstDebugCallbacks.BurstIsFileBursted(ud->ignore_case, ud->basename)) {
+				g_ptr_array_add(ud->res_classes, g_BurstKlass);
+				g_ptr_array_add(ud->res_domains, g_BurstDebugDomain);
+			}
+		}
+	}
+	burst_unlock();
 }
 
 static void
@@ -7553,12 +7610,32 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		if (req->event_kind == EVENT_KIND_BREAKPOINT) {
 			g_assert (method);
 
-			req->info = mono_de_set_breakpoint (method, location, req, error);
-			if (!is_ok (error)) {
-				g_free (req);
-				PRINT_DEBUG_MSG (1, "[dbg] Failed to set breakpoint: %s\n", mono_error_get_message (error));
-				mono_error_cleanup (error);
-				return ERR_NO_SEQ_POINT_AT_IL_OFFSET;
+			burst_lock();
+			if (domain == g_BurstDebugDomain)
+			{
+				if (g_BurstDebugCallbacks.BurstBreakpointNotify) {
+
+					MonoBreakpoint* bp = g_new0 (MonoBreakpoint, 1);
+					bp->method = NULL;
+					bp->il_offset = location;
+					bp->req = req;
+					bp->children = g_ptr_array_new ();	// empty
+					req->info = bp;
+
+					g_BurstDebugCallbacks.BurstBreakpointNotify(TRUE, method, location, bp);
+				}
+				burst_unlock();
+			}
+			else
+			{
+				burst_unlock();
+				req->info = mono_de_set_breakpoint(method, location, req, error);
+				if (!is_ok(error)) {
+					g_free(req);
+					PRINT_DEBUG_MSG(1, "[dbg] Failed to set breakpoint: %s\n", mono_error_get_message(error));
+					mono_error_cleanup(error);
+					return ERR_NO_SEQ_POINT_AT_IL_OFFSET;
+				}
 			}
 		} else if (req->event_kind == EVENT_KIND_STEP) {
 			g_assert (step_thread_id);
@@ -8193,6 +8270,17 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		gpointer iter = NULL;
 		MonoMethod *m;
 
+		burst_lock();
+		if (domain == g_BurstDebugDomain)
+		{
+			if (g_BurstDebugCallbacks.BurstFetchMethods) {
+				g_BurstDebugCallbacks.BurstFetchMethods(buf, domain, ID_METHOD, protocol_version_set, major_version, minor_version);
+			}
+			burst_unlock();
+			break;
+		}
+		burst_unlock();
+
 		mono_class_setup_methods (klass);
 
 		nmethods = mono_class_num_methods (klass);
@@ -8438,6 +8526,17 @@ type_commands_internal (int command, MonoClass *klass, MonoDomain *domain, guint
 		GPtrArray *files;
 		int i;
 
+		burst_lock();
+		if (domain == g_BurstDebugDomain)
+		{
+			if (g_BurstDebugCallbacks.BurstFetchFiles) {
+				g_BurstDebugCallbacks.BurstFetchFiles(buf, command == CMD_TYPE_GET_SOURCE_FILES_2, protocol_version_set, major_version, minor_version);
+			}
+			burst_unlock();
+			break;
+		}
+		burst_unlock();
+
 		files = get_source_files_for_type (klass);
 
 		buffer_add_int (buf, files->len);
@@ -8630,11 +8729,31 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 
 	switch (command) {
 	case CMD_METHOD_GET_NAME: {
-		buffer_add_string (buf, method->name);
-		break;			
+
+		burst_lock();
+		if (domain == g_BurstDebugDomain)
+		{
+			if (g_BurstDebugCallbacks.BurstFetchMethodName) {
+				g_BurstDebugCallbacks.BurstFetchMethodName(buf, method, protocol_version_set, major_version, minor_version);
+			}
+			burst_unlock();
+			break;
+		}
+		burst_unlock();
+
+		buffer_add_string(buf, method->name);
+		break;
 	}
 	case CMD_METHOD_GET_DECLARING_TYPE: {
-		buffer_add_typeid (buf, domain, method->klass);
+		burst_lock();
+		if (domain == g_BurstDebugDomain)
+		{
+			buffer_add_typeid(buf, domain, g_BurstKlass);
+			burst_unlock();
+			break;
+		}
+		burst_unlock();
+		buffer_add_typeid(buf, domain, method->klass);
 		break;
 	}
 	case CMD_METHOD_GET_DEBUG_INFO: {
@@ -8645,6 +8764,17 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		int *source_files;
 		GPtrArray *source_file_list;
 		MonoSymSeqPoint *sym_seq_points;
+
+		burst_lock();
+		if (domain == g_BurstDebugDomain)
+		{
+			if (g_BurstDebugCallbacks.BurstFetchDebugInfo) {
+				g_BurstDebugCallbacks.BurstFetchDebugInfo(buf, method, protocol_version_set, major_version, minor_version);
+			}
+			burst_unlock();
+			break;
+		}
+		burst_unlock();
 
 		header = mono_method_get_header_checked (method, error);
 		if (!header) {
@@ -8709,6 +8839,18 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		break;
 	}
 	case CMD_METHOD_GET_PARAM_INFO: {
+
+		burst_lock();
+		if (domain == g_BurstDebugDomain)
+		{
+			if (g_BurstDebugCallbacks.BurstFetchParamInfo) {
+				g_BurstDebugCallbacks.BurstFetchParamInfo(buf, method, protocol_version_set, major_version, minor_version);
+			}
+			burst_unlock();
+			break;
+		}
+		burst_unlock();
+
 		MonoMethodSignature *sig = mono_method_signature_internal (method);
 		guint32 i;
 		char **names;
@@ -8814,6 +8956,16 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		break;
 	}
 	case CMD_METHOD_GET_INFO:
+		burst_lock();
+		if (domain == g_BurstDebugDomain)
+		{
+			if (g_BurstDebugCallbacks.BurstFetchMethodInfo) {
+				g_BurstDebugCallbacks.BurstFetchMethodInfo(buf, method, protocol_version_set, major_version, minor_version);
+			}
+			burst_unlock();
+			break;
+		}
+		burst_unlock();
 		buffer_add_int (buf, method->flags);
 		buffer_add_int (buf, method->iflags);
 		buffer_add_int (buf, method->token);
@@ -10397,4 +10549,73 @@ mono_debugger_agent_parse_options (char *options)
 	sdb_options = options;
 }
 
+// Called from main thread
+static void burst_mono_shutdown()
+{
+	burst_lock();
+	// Leave the domain registered (as this prevents mono from trying to decode any mmethods belonging solely to burst)
+	// But we clear the callbacks, because the callbacks will be torn down in burst shortly
+	g_BurstDebugCallbacks.BurstFinishSetup = NULL;
+	g_BurstDebugCallbacks.BurstIsFileBursted = NULL;
+	g_BurstDebugCallbacks.BurstBreakpointNotify = NULL;
+	g_BurstDebugCallbacks.BurstFetchMethods = NULL;
+	g_BurstDebugCallbacks.BurstFetchFiles = NULL;
+	g_BurstDebugCallbacks.BurstFetchDebugInfo = NULL;
+	g_BurstDebugCallbacks.BurstFetchMethodInfo = NULL;
+	g_BurstDebugCallbacks.BurstFetchParamInfo = NULL;
+	g_BurstDebugCallbacks.BurstFetchMethodName = NULL;
+	burst_unlock();
+}
+
+// Called from the main thread - once only
+static void burst_mono_install_hooks_imp(BurstMonoDebuggerCallbacks* callbacks,void* domainInitCallback)
+{
+	burst_lock();
+	// Copy the callback structure (the one passed in may not persist)
+	g_BurstDebugCallbacks.BurstFinishSetup = callbacks->BurstFinishSetup;
+	g_BurstDebugCallbacks.BurstIsFileBursted = callbacks->BurstIsFileBursted;
+	g_BurstDebugCallbacks.BurstBreakpointNotify = callbacks->BurstBreakpointNotify;
+	g_BurstDebugCallbacks.BurstFetchMethods = callbacks->BurstFetchMethods;
+	g_BurstDebugCallbacks.BurstFetchFiles = callbacks->BurstFetchFiles;
+	g_BurstDebugCallbacks.BurstFetchDebugInfo = callbacks->BurstFetchDebugInfo;
+	g_BurstDebugCallbacks.BurstFetchMethodInfo = callbacks->BurstFetchMethodInfo;
+	g_BurstDebugCallbacks.BurstFetchParamInfo = callbacks->BurstFetchParamInfo;
+	g_BurstDebugCallbacks.BurstFetchMethodName = callbacks->BurstFetchMethodName;
+
+	// Provide the callee with access to the features it will need
+	callbacks->buffer_add_byte = buffer_add_byte;
+	callbacks->buffer_add_int = buffer_add_int;
+	callbacks->buffer_add_id = buffer_add_id;
+	callbacks->buffer_add_string = buffer_add_string;
+	callbacks->buffer_add_ptr_id = buffer_add_ptr_id;
+	callbacks->mono_burst_shutdown = burst_mono_shutdown;
+
+	// This one is passed to us from unity, and we then pass it back to burst as this avoids having a 3rd copy of the callbacks
+	//structure (burst/mono & unity)
+	callbacks->burst_unity_domain_init = domainInitCallback;
+
+	callbacks->BurstFinishSetup();	// notify burst the mono callbacks are in place
+	burst_unlock();
+}
+
 #endif /* DISABLE_SDB */
+
+void burst_mono_install_hooks(BurstMonoDebuggerCallbacks* callbacks, void* domainInitCallback)
+{
+#ifndef DISABLE_SDB
+	burst_mono_install_hooks_imp(callbacks,domainInitCallback);
+#endif /* DISABLE_SDB */
+}
+
+// Called from various threads
+void burst_mono_update_tracking_pointers(MonoDomain* domain, MonoClass* klass)
+{
+#ifndef DISABLE_SDB
+	burst_lock();
+	g_BurstKlass = klass;
+	g_BurstDebugDomain = domain;
+	burst_unlock();
+	send_type_load(g_BurstKlass);	// We must manually send the type load event, since we never actually JIT anything in this class
+					//without this call, some mono debuggers will not work properly for burst
+#endif /* DISABLE_SDB */
+}
