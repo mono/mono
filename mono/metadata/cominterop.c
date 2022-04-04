@@ -2284,6 +2284,7 @@ cominterop_get_ccw_checked (MonoObjectHandle object, MonoClass* itf, MonoError *
 
 			vtable [vtable_index--] = mono_compile_method_checked (wrapper_method, error);
 
+			mono_mb_free (mb);
 			// cleanup, then error out if compile_method failed
 			for (param_index = sig_adjusted->param_count; param_index >= 0; param_index--)
 				if (mspecs [param_index])
