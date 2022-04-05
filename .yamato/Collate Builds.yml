@@ -20,10 +20,10 @@ triggers:
   pull_requests:
     - targets:
         only:
-          - "unity-2021.2-mbe"
+          - "unity-2021.3-mbe"
   branches:
     only:
-      - "unity-2021.2-mbe"
+      - "unity-2021.3-mbe"
   cancel_old_ci: true
   recurring:
     - branch: unity-master

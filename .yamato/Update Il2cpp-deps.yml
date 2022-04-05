@@ -5,7 +5,7 @@ agent:
   flavor: b1.xlarge 
 variables:
   MONO_REV: "latest"
-  BACKPORT_BRANCH: "2021.2" 
+  BACKPORT_BRANCH: "2021.3" 
 dependencies:
   - .yamato/Publish To Stevedore.yml
 commands:
