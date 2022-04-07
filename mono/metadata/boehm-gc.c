@@ -72,7 +72,9 @@ static void
 mono_push_other_roots(void);
 
 static void
-mono_push_ephemerons(void);
+mono_clear_ephemerons (void);
+static void
+mono_push_ephemerons (void);
 static void*
 null_ephemerons_for_domain (MonoDomain* domain);
 
@@ -634,6 +636,9 @@ on_gc_notification (GC_EventType event)
 	case GC_EVENT_POST_START_WORLD:
 		mono_thread_info_suspend_unlock ();
 		MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, 0, TRUE));
+		break;
+	case GC_EVENT_RECLAIM_START:
+		mono_clear_ephemerons ();
 		break;
 	default:
 		break;
@@ -2021,7 +2026,7 @@ typedef struct {
 } Ephemeron;
 
 static void
-mono_push_ephemerons (void)
+mono_clear_ephemerons (void)
 {
 	ephemeron_node* prev_node = NULL;
 	ephemeron_node* current_node = NULL;
@@ -2061,7 +2066,46 @@ mono_push_ephemerons (void)
 			if (!GC_is_marked (current_ephemeron->key)) {
 				mono_gc_wbarrier_generic_store_internal (&current_ephemeron->key, tombstone);
 				current_ephemeron->value = NULL;
-			} else if (current_ephemeron->value && !GC_is_marked (current_ephemeron->value)) {
+			}
+		}
+	}
+}
+
+static void
+mono_push_ephemerons (void)
+{
+	ephemeron_node* prev_node = NULL;
+	ephemeron_node* current_node = NULL;
+
+	/* iterate all registered Ephemeron[] */
+	for (current_node = ephemeron_list; current_node; current_node = current_node->next)
+	{
+		Ephemeron* current_ephemeron, * array_end;
+		MonoObject* tombstone = NULL;
+		/* reveal weak link value*/
+		MonoArray* array = REVEAL_POINTER (current_node->ephemeron_array_weak_link);
+
+		/* remove unmarked (non-reachable) arrays from the list */
+		if (!GC_is_marked (array)) {
+			continue;
+		}
+
+		prev_node = current_node;
+
+		current_ephemeron = mono_array_addr_internal (array, Ephemeron, 0);
+		array_end = current_ephemeron + mono_array_length_internal (array);
+		tombstone = array->obj.vtable->domain->ephemeron_tombstone;
+
+		for (; current_ephemeron < array_end; ++current_ephemeron) {
+			/* skip a null or tombstone (empty) key */
+			if (!current_ephemeron->key || current_ephemeron->key == tombstone)
+				continue;
+
+			/* If the key is not marked, then don't mark value. */
+			if (!GC_is_marked (current_ephemeron->key))
+				continue;
+
+			if (current_ephemeron->value && !GC_is_marked (current_ephemeron->value)) {
 				/* the key is marked, so mark the value if needed */
 				GC_push_all (&current_ephemeron->value, &current_ephemeron->value + 1);
 			}
