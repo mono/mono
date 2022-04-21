@@ -26,7 +26,7 @@ triggers:
       - "unity-2021.3-mbe"
   cancel_old_ci: true
   recurring:
-    - branch: unity-master
+    - branch: unity-2021.3-mbe
       frequency: daily # Should run between midnight and 6AM UTC
 
 artifacts: 
