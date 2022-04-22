@@ -199,7 +199,8 @@ orbis_dirs_parallel := \
 	$(filter-out Microsoft.CSharp Mono.Data.Sqlite,$(mobile_common_dirs_parallel))
 
 unityaot_dirs_parallel := \
-	$(mobile_common_dirs_parallel)
+	$(mobile_common_dirs_parallel) \
+	System.Drawing
 
 xammac_4_5_dirs_parallel := \
 	Mono.Security \

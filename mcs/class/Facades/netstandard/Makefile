@@ -34,7 +34,7 @@ else
 LIB_REFS += System.Web System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions
 endif
 
-ifneq (,$(filter build net_4_x unityjit, $(PROFILE)))
+ifneq (,$(filter build net_4_x unityjit unityaot, $(PROFILE)))
 # drawing types are inside System.Drawing.dll
 LIB_REFS += System.Drawing
 else
