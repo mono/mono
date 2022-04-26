@@ -1169,7 +1169,7 @@ try {
 			settings.UseServicePointManagerCallback = true;
 			var sslStream = new SslStream (stream, false, tlsProvider, settings);
 			CheckCancellation ();
-			sslStream.AuthenticateAsClient (Host, this.ClientCertificates, SslProtocols.Default, false);
+			sslStream.AuthenticateAsClient (Host, this.ClientCertificates, (SslProtocols)ServicePointManager.SecurityProtocol, false);
 			stream = sslStream;
 
 #else
