@@ -2,3 +2,9 @@
 ../../../external/corefx/src/Common/src/Interop/Unix/System.Native/Interop.GetDomainSocketSizes.cs
 ../../../external/corefx/src/Common/src/Interop/Unix/Interop.Libraries.cs
 ../../../external/corefx/src/System.Linq/src/System/Linq/*.cs
+
+System.IO.Pipes/AnonymousPipeServerStream.NotSupported.cs
+System.IO.Pipes/NamedPipeClientStream.NotSupported.cs
+System.IO.Pipes/NamedPipeServerStream.NotSupported.cs
+System.IO.Pipes/PipeStream.NotSupported.cs
+System.IO.Pipes/SafePipeHandle.NotSupported.cs
