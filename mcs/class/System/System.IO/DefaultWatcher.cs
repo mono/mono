@@ -249,7 +249,7 @@ namespace System.IO {
 					}
 
 					if (dispatch)
-						DispatchEvents (data.FSW, FileAction.Added, Path.GetRelativePath(directory, filename));
+						DispatchEvents (data.FSW, FileAction.Added, Path.GetRelativePath(data.Directory, filename));
 				} else if (fd.Directory == directory) {
 					fd.NotExists = false;
 				}
@@ -268,7 +268,7 @@ namespace System.IO {
 						removed = new List<string> ();
 
 					removed.Add (filename);
-					DispatchEvents (data.FSW, FileAction.Removed, Path.GetRelativePath(fd.Directory, filename));
+					DispatchEvents (data.FSW, FileAction.Removed, Path.GetRelativePath(data.Directory, filename));
 				}
 			}
 
@@ -293,14 +293,14 @@ namespace System.IO {
 						removed = new List<string> ();
 
 					removed.Add (filename);
-					DispatchEvents (data.FSW, FileAction.Removed, Path.GetRelativePath(fd.Directory, filename));
+					DispatchEvents (data.FSW, FileAction.Removed, Path.GetRelativePath(data.Directory, filename));
 					continue;
 				}
 
 				if (creation != fd.CreationTime || write != fd.LastWriteTime) {
 					fd.CreationTime = creation;
 					fd.LastWriteTime = write;
-					DispatchEvents (data.FSW, FileAction.Modified, Path.GetRelativePath(fd.Directory, filename));
+					DispatchEvents (data.FSW, FileAction.Modified, Path.GetRelativePath(data.Directory, filename));
 				}
 			}
 
