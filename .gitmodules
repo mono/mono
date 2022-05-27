@@ -1,60 +1,60 @@
 [submodule "external/aspnetwebstack"]
 	path = external/aspnetwebstack
-	url = git://github.com/mono/aspnetwebstack.git
+	url = https://github.com/mono/aspnetwebstack.git
 [submodule "external/Newtonsoft.Json"]
 	path = external/Newtonsoft.Json
-	url = git://github.com/mono/Newtonsoft.Json.git
+	url = https://github.com/mono/Newtonsoft.Json.git
 [submodule "external/cecil"]
 	path = external/cecil
-	url = git://github.com/mono/cecil.git
+	url = https://github.com/mono/cecil.git
 [submodule "external/rx"]
 	path = external/rx
-	url = git://github.com/mono/rx.git
+	url = https://github.com/mono/rx.git
 	branch = rx-oss-v2.2
 [submodule "external/ikvm"]
 	path = external/ikvm
-	url = git://github.com/mono/ikvm-fork.git
+	url = https://github.com/mono/ikvm-fork.git
 [submodule "external/ikdasm"]
 	path = external/ikdasm
-	url = git://github.com/mono/ikdasm.git
+	url = https://github.com/mono/ikdasm.git
 [submodule "external/reference-assemblies"]
 	path = external/binary-reference-assemblies
-	url = git://github.com/mono/reference-assemblies.git
+	url = https://github.com/mono/reference-assemblies.git
 [submodule "external/nunit-lite"]
 	path = external/nunit-lite
-	url = git://github.com/mono/NUnitLite.git
+	url = https://github.com/mono/NUnitLite.git
 [submodule "external/nuget-buildtasks"]
 	path = external/nuget-buildtasks
-	url = git://github.com/mono/NuGet.BuildTasks
+	url = https://github.com/mono/NuGet.BuildTasks
 [submodule "external/cecil-legacy"]
 	path = external/cecil-legacy
-	url = git://github.com/mono/cecil.git
+	url = https://github.com/mono/cecil.git
 	branch = mono-legacy-0.9.5
 [submodule "external/boringssl"]
 	path = external/boringssl
-	url = git://github.com/mono/boringssl.git
+	url = https://github.com/mono/boringssl.git
 	branch = mono
 [submodule "external/corefx"]
 	path = external/corefx
-	url = git://github.com/mono/corefx.git
+	url = https://github.com/mono/corefx.git
 [submodule "external/bockbuild"]
 	path = external/bockbuild
-	url = git://github.com/mono/bockbuild.git
+	url = https://github.com/mono/bockbuild.git
 [submodule "external/linker"]
 	path = external/linker
-	url = git://github.com/mono/linker.git
+	url = https://github.com/mono/linker.git
 [submodule "external/roslyn-binaries"]
 	path = external/roslyn-binaries
-	url = git://github.com/mono/roslyn-binaries.git
+	url = https://github.com/mono/roslyn-binaries.git
 [submodule "external/corert"]
 	path = external/corert
-	url = git://github.com/mono/corert.git
+	url = https://github.com/mono/corert.git
 [submodule "external/xunit-binaries"]
 	path = external/xunit-binaries
-	url = git://github.com/mono/xunit-binaries.git
+	url = https://github.com/mono/xunit-binaries.git
 [submodule "external/api-doc-tools"]
 	path = external/api-doc-tools
-	url = git://github.com/mono/api-doc-tools.git
+	url = https://github.com/mono/api-doc-tools.git
 [submodule "external/api-snapshot"]
 	path = external/api-snapshot
-	url = git://github.com/mono/api-snapshot.git
+	url = https://github.com/mono/api-snapshot.git
