@@ -878,7 +878,7 @@ ReferenceSources/Win32Exception.cs
 ../../../external/corefx/src/System.Private.Uri/src/System/UriBuilder.cs
 
 ../../../external/corefx/src/System.Runtime.Extensions/src/System/CodeDom/Compiler/IndentedTextWriter.cs
-../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
+../../../external/corefx-bugfix/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventArgs.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemEventHandler.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/RenamedEventArgs.cs

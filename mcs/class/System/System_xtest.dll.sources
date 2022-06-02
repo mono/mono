@@ -114,7 +114,7 @@ System/RemoteExecutorTests.cs
 # System.IO.FileSystemWatcher
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Utility/*.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Args.ErrorEventArgs.cs
-../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Args.FileSystemEventArgs.cs
+../../../external/corefx-bugfix/src/System.IO.FileSystem.Watcher/tests/Args.FileSystemEventArgs.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/Args.RenamedEventArgs.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/tests/FileSystemWatcher.unit.cs
