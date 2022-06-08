@@ -382,6 +382,12 @@ mono_gchandle_is_in_domain_internal (guint32 gchandle, MonoDomain *domain)
 	return result;
 }
 
+GCHandleType
+mono_gchandle_get_type_internal (MonoGCHandle gchandle)
+{
+	return MONO_GC_HANDLE_TYPE (gchandle);
+}
+
 /**
  * mono_gchandle_free:
  * \param gchandle a GCHandle's handle.

@@ -1856,6 +1856,13 @@ mono_gc_is_null (void)
 	return FALSE;
 }
 
+GCHandleType
+mono_gchandle_get_type_internal (MonoGCHandle gchandle)
+{
+	guint32 handle = MONO_GC_HANDLE_TO_UINT(gchandle);
+	return MONO_GC_HANDLE_TYPE (handle);
+}
+
 /**
  * mono_gchandle_is_in_domain_internal:
  * \param gchandle a GCHandle's handle.

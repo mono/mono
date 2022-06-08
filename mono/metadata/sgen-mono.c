@@ -2803,6 +2803,12 @@ mono_gchandle_is_in_domain_internal (MonoGCHandle gchandle, MonoDomain *domain)
 	return domain->domain_id == gchandle_domain->domain_id;
 }
 
+GCHandleType
+mono_gchandle_get_type_internal (MonoGCHandle gchandle)
+{
+	return MONO_GC_HANDLE_TYPE (gchandle);
+}
+
 /**
  * mono_gchandle_free_internal:
  * \param gchandle a GCHandle's handle.

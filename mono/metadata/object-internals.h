@@ -2377,6 +2377,8 @@ mono_gchandle_get_target_internal (MonoGCHandle gchandle);
 
 void mono_gchandle_free_internal (MonoGCHandle gchandle);
 
+GCHandleType mono_gchandle_get_type_internal (MonoGCHandle gchandle);
+
 /* make sure the gchandle was allocated for an object in domain */
 gboolean mono_gchandle_is_in_domain_internal(MonoGCHandle gchandle, MonoDomain* domain);
 
