@@ -721,7 +721,7 @@ size_t
 mono_get_memory_avail()
 {
 	size_t max, used, avail, sysAvail;
-#ifdef _SC_AVPHYS_PAGES		// If this isn't defined then we don't get called
+#ifdef _SC_PHYS_PAGES		// If this isn't defined then we don't get called
 
 	max = mono_get_restricted_memory_limit();
 
@@ -733,7 +733,7 @@ mono_get_memory_avail()
 	else
 		avail = max;
 
-	sysAvail = sysconf(_SC_AVPHYS_PAGES) * pageSize;
+	sysAvail = sysconf(_SC_PHYS_PAGES) * pageSize;
 	return (avail < sysAvail ? avail : sysAvail);
 #else
 	return (0);
