@@ -53,6 +53,10 @@ Abstract:
 #define CGROUP1_MEMORY_LIMIT_FILENAME "/memory.limit_in_bytes"
 #define CGROUP2_MEMORY_LIMIT_FILENAME "/memory.max"
 #define CGROUP_MEMORY_STAT_FILENAME "/memory.stat"
+#define CGROUP1_MEMORY_USAGE_FILENAME "/memory.usage_in_bytes"
+#define CGROUP2_MEMORY_USAGE_FILENAME "/memory.current"
+#define CGROUP1_MEMORY_STAT_INACTIVE_FIELD "total_inactive_file "
+#define CGROUP2_MEMORY_STAT_INACTIVE_FIELD "inactive_file "
 #define CGROUP1_CFS_QUOTA_FILENAME "/cpu.cfs_quota_us"
 #define CGROUP1_CFS_PERIOD_FILENAME "/cpu.cfs_period_us"
 #define CGROUP2_CPU_MAX_FILENAME "/cpu.max"
@@ -68,7 +72,7 @@ static char *findCGroupPath(gboolean (*is_subsystem)(const char *));
 static void findHierarchyMount(gboolean (*is_subsystem)(const char *), char **, char **);
 static char *findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *));
 static gboolean getCGroupMemoryLimit(size_t *, const char *);
-static gboolean getCGroupMemoryUsage(size_t *);
+static gboolean getCGroupMemoryUsage(size_t *, const char *, const char *);
 static size_t getPhysicalMemoryTotal(size_t);
 static long long readCpuCGroupValue(const char *);
 static void computeCpuLimit(long long, long long, guint32 *);
@@ -85,9 +89,6 @@ static int s_cgroup_version = -1;
 static char *s_memory_cgroup_path = NULL;
 static char *s_cpu_cgroup_path = NULL;
 
-static const char *s_mem_stat_key_names[4];
-static size_t s_mem_stat_key_lengths[4];
-static size_t s_mem_stat_n_keys = 0;
 static long pageSize;
 
 /**
@@ -103,22 +104,6 @@ initialize()
 
 	if (s_cgroup_version == 0) 
 		return;
-
-	if (s_cgroup_version == 1) {
-		s_mem_stat_n_keys = 4;
-		s_mem_stat_key_names[0] = "total_inactive_anon ";
-		s_mem_stat_key_names[1] = "total_active_anon ";
-		s_mem_stat_key_names[2] = "total_dirty ";
-		s_mem_stat_key_names[3] = "total_unevictable ";
-	} else {
-		s_mem_stat_n_keys = 3;
-		s_mem_stat_key_names[0] = "anon ";
-		s_mem_stat_key_names[1] = "file_dirty ";
-		s_mem_stat_key_names[2] = "unevictable ";
-	}
-
-	for (size_t i = 0; i < s_mem_stat_n_keys; i++)
-		s_mem_stat_key_lengths[i] = strlen(s_mem_stat_key_names[i]);
 
 	pageSize = sysconf(_SC_PAGE_SIZE);
 }
@@ -198,9 +183,9 @@ getPhysicalMemoryUsage(size_t *val)
 	if (s_cgroup_version == 0)
 		return FALSE;
 	else if (s_cgroup_version == 1)
-		return getCGroupMemoryUsage(val);
+		return getCGroupMemoryUsage(val, CGROUP1_MEMORY_USAGE_FILENAME, CGROUP1_MEMORY_STAT_INACTIVE_FIELD);
 	else if (s_cgroup_version == 2)
-		return getCGroupMemoryUsage(val);
+		return getCGroupMemoryUsage(val, CGROUP2_MEMORY_USAGE_FILENAME, CGROUP2_MEMORY_STAT_INACTIVE_FIELD);
 	else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
 			    "Unknown cgroup version.");
@@ -546,8 +531,34 @@ getCGroupMemoryLimit(size_t *val, const char *filename)
  *
  */
 static gboolean 
-getCGroupMemoryUsage(size_t *val)
+getCGroupMemoryUsage(size_t *val, const char *filename, const char *inactiveFileFieldName)
 {
+	/* 
+	 * Use the same way to calculate memory load as popular container tools (Docker, Kubernetes, Containerd etc.)
+	 * For cgroup v1: value of 'memory.usage_in_bytes' minus 'total_inactive_file' value of 'memory.stat'
+	 * For cgroup v2: value of 'memory.current' minus 'inactive_file' value of 'memory.stat'
+	 */
+
+	char *mem_usage_filename = NULL;
+	if (asprintf(&mem_usage_filename, "%s%s", s_memory_cgroup_path, filename) < 0)
+		return FALSE;
+
+	uint64_t temp = 0;
+	size_t usage = 0;
+
+	gboolean result = readMemoryValueFromFile(mem_usage_filename, &temp);
+	if (result) {
+		if (temp > SIZE_T_MAX)
+			usage = SIZE_T_MAX;
+		else
+			usage = (size_t)temp;
+	}
+
+	free(mem_usage_filename);
+
+	if (!result)
+		return result;
+
 	if (s_memory_cgroup_path == NULL)
 		return FALSE;
 
@@ -562,31 +573,28 @@ getCGroupMemoryUsage(size_t *val)
 
 	char *line = NULL;
 	size_t lineLen = 0;
-	size_t readValues = 0;
+	gboolean foundInactiveFileValue = FALSE;
 	char *endptr;
 
-	*val = 0;
-	while (getline(&line, &lineLen, stat_file) != -1 && readValues < s_mem_stat_n_keys) {
-		for (size_t i = 0; i < s_mem_stat_n_keys; i++) {
-			if (strncmp(line, s_mem_stat_key_names[i], s_mem_stat_key_lengths[i]) == 0) {
-				errno = 0;
-				const char *startptr = line + s_mem_stat_key_lengths[i];
-				*val += strtoll(startptr, &endptr, 10);
-				if (endptr != startptr && errno == 0)
-					readValues++;
+	size_t inactiveFileFieldNameLength = strlen(inactiveFileFieldName);
 
-				break;
+	while (getline(&line, &lineLen, stat_file) != -1) {
+		if (strncmp(line, inactiveFileFieldName, inactiveFileFieldNameLength) == 0) {
+			errno = 0;
+			const char *startptr = line + inactiveFileFieldNameLength;
+			size_t inactiveFileValue = strtoll(startptr, &endptr, 10);
+			if (endptr != startptr && errno == 0) {
+				foundInactiveFileValue = TRUE;
+				*val = usage - inactiveFileValue;
 			}
+			break;
 		}
 	}
 
 	fclose(stat_file);
 	free(line);
 
-	if (readValues == s_mem_stat_n_keys)
-		return TRUE;
-
-	return FALSE;
+	return foundInactiveFileValue;
 }
 
 /**
