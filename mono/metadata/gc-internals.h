@@ -27,6 +27,7 @@
 
 #define MONO_GC_UNREGISTER_ROOT(x) mono_gc_deregister_root ((char*)&(x))
 
+#if defined(ENABLE_NETCORE) || defined(HAVE_SGEN_GC)
 /*
  * The lowest bit is used to mark pinned handles by netcore's GCHandle class. These macros
  * are used to convert between the old int32 representation to a netcore compatible pointer
@@ -34,6 +35,8 @@
  */
 #define MONO_GC_HANDLE_TO_UINT(ptr) ((guint32)((size_t)(ptr) >> 1))
 #define MONO_GC_HANDLE_FROM_UINT(i) ((MonoGCHandle)((size_t)(i) << 1))
+#endif
+
 /*
  * Return a GC descriptor for an array containing N pointers to memory allocated
  * by mono_gc_alloc_fixed ().
