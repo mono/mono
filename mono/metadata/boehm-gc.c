@@ -92,39 +92,45 @@ void mono_gc_handle_lock () { lock_handles (NULL);}
 #define unlock_handles(handles) mono_os_mutex_unlock (&handle_section)
 void mono_gc_handle_unlock () { unlock_handles (NULL); }
 
-typedef struct {
+/*
+ * The value of HANDLE_COUNT must satisfy two constraints:
+ * 1. It must be a multiple of CHAR_BIT, e.g. HANDLE_COUNT % CHAR_BIT == 0
+ * 2. It must be small enough that sizeof(HandleData) < HANDLE_DATA_ALIGNMENT
+ *
+ * The two values chosen below for 32 & 64 bit, are the largest values for HANDLE_COUNT
+ * to result in the smallest amount of wasted space at the end of the allocation.
+ */
+#if SIZEOF_VOID_P == 4
+#define HANDLE_COUNT 1008
+#define HANDLE_DATA_ALIGNMENT 4096
+#else
+#define HANDLE_COUNT 992
+#define HANDLE_DATA_ALIGNMENT 8192
+#endif
+typedef struct HandleData HandleData;
+struct HandleData {
+	HandleData *next; //immutable
+	HandleData *next_free; // next free
 	guint32  *bitmap;
-	gpointer *entries;
-	guint32   size;
-	guint8    type;
-	guint     slot_hint : 24; /* starting slot for search in bitmap */
 	/* 2^16 appdomains should be enough for everyone (though I know I'll regret this in 20 years) */
 	/* we alloc this only for weak refs, since we can get the domain directly in the other cases */
 	guint16  *domain_ids;
-} HandleData;
-
-#define EMPTY_HANDLE_DATA(type) {NULL, NULL, 0, (type), 0, NULL}
+	guint32   in_use;
+	guint32   size;
+	guint8    type;
+	guint     slot_hint : 24; /* starting slot for search in bitmap */
+	gpointer  entries[HANDLE_COUNT];
+};
 
 
 #define MONO_GC_HANDLE_TO_UINTPTR(ptr) ((uintptr_t)((size_t)(ptr)))
 
 #define GC_HANDLE_TYPE_IS_WEAK(x) ((x) <= HANDLE_WEAK_TRACK)
 
-#define MONO_GC_HANDLE_TYPE_SHIFT (3)
-#define MONO_GC_HANDLE_TYPE_MASK ((1 << MONO_GC_HANDLE_TYPE_SHIFT) - 1)
-#define MONO_GC_HANDLE_TYPE(x) ((GCHandleType)((MONO_GC_HANDLE_TO_UINTPTR(x) & MONO_GC_HANDLE_TYPE_MASK) - 1))
-#define MONO_GC_HANDLE_SLOT(x) (MONO_GC_HANDLE_TO_UINTPTR(x) >> MONO_GC_HANDLE_TYPE_SHIFT)
 #define MONO_GC_HANDLE_TYPE_IS_WEAK(x) ((x) <= HANDLE_WEAK_TRACK)
-#define MONO_GC_HANDLE(slot, type) ((MonoGCHandle)(uintptr_t)(((slot) << MONO_GC_HANDLE_TYPE_SHIFT) | (((type) & MONO_GC_HANDLE_TYPE_MASK) + 1)))
 
-/* weak and weak-track arrays will be allocated in malloc memory 
- */
-static HandleData gc_handles [] = {
-	EMPTY_HANDLE_DATA (HANDLE_WEAK),
-	EMPTY_HANDLE_DATA (HANDLE_WEAK_TRACK),
-	EMPTY_HANDLE_DATA (HANDLE_NORMAL),
-	EMPTY_HANDLE_DATA (HANDLE_PINNED)
-};
+static HandleData* gc_handles[4];
+static HandleData* gc_handles_free[4];
 
 static void
 mono_gc_warning (char *msg, GC_word arg)
@@ -1603,11 +1609,19 @@ slot_occupied (HandleData *handles, guint slot) {
 
 static void
 vacate_slot (HandleData *handles, guint slot) {
+	handles->in_use--;
 	handles->bitmap [slot / BITMAP_SIZE] &= ~(1 << (slot % BITMAP_SIZE));
+
+	if (handles->in_use == (handles->size - 1)) {
+		HandleData* first = gc_handles_free[handles->type];
+		handles->next_free = first;
+		gc_handles_free[handles->type] = handles;
+	}
 }
 
 static void
 occupy_slot (HandleData *handles, guint slot) {
+	handles->in_use++;
 	handles->bitmap [slot / BITMAP_SIZE] |= 1 << (slot % BITMAP_SIZE);
 }
 
@@ -1622,17 +1636,22 @@ find_first_unset (guint32 bitmap)
 	return -1;
 }
 
-static void
-handle_data_alloc_entries (HandleData *handles)
+static HandleData*
+handle_data_alloc_entries(int type)
 {
-	handles->size = 32;
+	g_static_assert (sizeof(HandleData) < HANDLE_DATA_ALIGNMENT);
+	g_static_assert (HANDLE_COUNT % CHAR_BIT == 0);
+	HandleData* handles = mono_valloc_aligned (sizeof(HandleData), HANDLE_DATA_ALIGNMENT, MONO_MMAP_READ | MONO_MMAP_WRITE, MONO_MEM_ACCOUNT_SGEN_INTERNAL);
+	handles->type = type;
+	handles->size = HANDLE_COUNT;
 	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
-		handles->entries = (void **)g_malloc0 (sizeof (*handles->entries) * handles->size);
 		handles->domain_ids = (guint16 *)g_malloc0 (sizeof (*handles->domain_ids) * handles->size);
 	} else {
-		handles->entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * handles->size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "GC Handle Table (Boehm)");
+		mono_gc_register_root((char*) &handles->entries[0], HANDLE_COUNT * sizeof(gpointer), MONO_GC_DESCRIPTOR_NULL, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "GC Handle Data");
 	}
 	handles->bitmap = (guint32 *)g_malloc0 (handles->size / CHAR_BIT);
+
+	return handles;
 }
 
 static gint
@@ -1661,69 +1680,66 @@ handle_data_first_unset (HandleData *handles)
 	return -1;
 }
 
-/* Returns the index of the current slot in the bitmap. */
-static void
-handle_data_grow (HandleData *handles, gboolean track)
+static MonoGCHandle
+mono_gchandle_tag_strong (MonoGCHandle handle)
 {
-	guint32 *new_bitmap;
-	guint32 new_size = handles->size * 2; /* always double: we memset to 0 based on this below */
-
-	/* resize and copy the bitmap */
-	new_bitmap = (guint32 *)g_malloc0 (new_size / CHAR_BIT);
-	memcpy (new_bitmap, handles->bitmap, handles->size / CHAR_BIT);
-	g_free (handles->bitmap);
-	handles->bitmap = new_bitmap;
-
-	/* resize and copy the entries */
-	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
-		gpointer *entries;
-		guint16 *domain_ids;
-		gint i;
-		domain_ids = (guint16 *)g_malloc0 (sizeof (*handles->domain_ids) * new_size);
-		entries = (void **)g_malloc0 (sizeof (*handles->entries) * new_size);
-		memcpy (domain_ids, handles->domain_ids, sizeof (*handles->domain_ids) * handles->size);
-		for (i = 0; i < handles->size; ++i) {
-			MonoObject *obj = mono_gc_weak_link_get (&(handles->entries [i]));
-			if (obj) {
-				mono_gc_weak_link_add (&(entries [i]), obj, track);
-				mono_gc_weak_link_remove (&(handles->entries [i]), track);
-			} else {
-				g_assert (!handles->entries [i]);
-			}
-		}
-		g_free (handles->entries);
-		g_free (handles->domain_ids);
-		handles->entries = entries;
-		handles->domain_ids = domain_ids;
-	} else {
-		gpointer *entries;
-		entries = (void **)mono_gc_alloc_fixed (sizeof (*handles->entries) * new_size, NULL, MONO_ROOT_SOURCE_GC_HANDLE, NULL, "GC Handle Table (Boehm)");
-		mono_gc_memmove_aligned (entries, handles->entries, sizeof (*handles->entries) * handles->size);
-		mono_gc_dirty_range (entries, new_size * sizeof (*handles->entries));
-		mono_gc_free_fixed (handles->entries);
-		handles->entries = entries;
-	}
-	handles->slot_hint = handles->size / BITMAP_SIZE;
-	handles->size = new_size;
+	return (MonoGCHandle)((uintptr_t)handle | (uintptr_t)1);
 }
 
 static MonoGCHandle
-alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
+mono_gchandle_untag_strong (MonoGCHandle handle)
 {
-	gint slot, i;
+	return (MonoGCHandle)((uintptr_t)handle & ~(uintptr_t)1);
+}
+
+static HandleData*
+get_handle_data_from_handle (MonoGCHandle handle)
+{
+	HandleData* handles = (HandleData*)ALIGN_DOWN_TO(handle, HANDLE_DATA_ALIGNMENT);
+	return handles;
+}
+
+static HandleData*
+mono_gchandle_lookup (MonoGCHandle handle, guint* slot)
+{
+	HandleData* handles = get_handle_data_from_handle (handle);
+	if (slot)
+		*slot = (int)(ptrdiff_t)((gpointer*)mono_gchandle_untag_strong (handle) - &handles->entries[0]);
+	return handles;
+}
+
+static MonoGCHandle
+alloc_handle (int type, MonoObject *obj, gboolean track)
+{
+	gint slot, i = -1;
 	MonoGCHandle res;
+	HandleData* handles = gc_handles[type];
 	lock_handles (handles);
-	if (!handles->size)
-		handle_data_alloc_entries (handles);
-	i = handle_data_next_unset (handles);
-	if (i == -1 && handles->slot_hint != 0)
-		i = handle_data_first_unset (handles);
+	if (!handles) {
+		handles = gc_handles[type] = gc_handles_free[type] = handle_data_alloc_entries(type);
+	}
+	handles = gc_handles_free[type];
+	if (handles) {
+		i = handle_data_next_unset(handles);
+		if (i == -1 && handles->slot_hint != 0)
+			i = handle_data_first_unset(handles);
+	}
 	if (i == -1) {
-		handle_data_grow (handles, track);
+		handles = handle_data_alloc_entries(type);
+		handles->next = gc_handles[type];
+		gc_handles[type] = handles;
+
+		handles->next_free = gc_handles_free[type];
+		gc_handles_free[type] = handles;
 		i = 0;
 	}
 	slot = handles->slot_hint * BITMAP_SIZE + i;
 	occupy_slot (handles, slot);
+
+	if (handles->in_use == handles->size) {	
+		g_assert(handles == gc_handles_free[type]);
+		gc_handles_free[type] = gc_handles_free[type]->next_free;
+	}
 	handles->entries [slot] = NULL;
 	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
 		/*FIXME, what to use when obj == null?*/
@@ -1732,14 +1748,19 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 			mono_gc_weak_link_add (&(handles->entries [slot]), obj, track);
 	} else {
 		handles->entries [slot] = obj;
-		mono_gc_dirty (handles->entries + slot);
 	}
 
 #ifndef DISABLE_PERFCOUNTERS
-	mono_atomic_inc_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 	unlock_handles (handles);
-	res = MONO_GC_HANDLE (slot, handles->type);
+	res = &handles->entries[slot];
+	if (!MONO_GC_HANDLE_TYPE_IS_WEAK(handles->type)) {
+		/*
+		 * Use lowest bit as an optimization to indicate strong GC handle.
+		 * This allows client code to simply dereference the GCHandle
+		*/
+		res = mono_gchandle_tag_strong (res);
+	}
 	MONO_PROFILER_RAISE (gc_handle_created, (res, (MonoGCHandleType)handles->type, obj));
 	return res;
 }
@@ -1764,7 +1785,7 @@ alloc_handle (HandleData *handles, MonoObject *obj, gboolean track)
 MonoGCHandle
 mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 {
-	return alloc_handle (&gc_handles [pinned? HANDLE_PINNED: HANDLE_NORMAL], obj, FALSE);
+	return alloc_handle (pinned? HANDLE_PINNED: HANDLE_NORMAL, obj, FALSE);
 }
 
 /**
@@ -1791,7 +1812,7 @@ mono_gchandle_new_internal (MonoObject *obj, gboolean pinned)
 MonoGCHandle
 mono_gchandle_new_weakref_internal (MonoObject *obj, gboolean track_resurrection)
 {
-	return alloc_handle (&gc_handles [track_resurrection? HANDLE_WEAK_TRACK: HANDLE_WEAK], obj, track_resurrection);
+	return alloc_handle (track_resurrection? HANDLE_WEAK_TRACK: HANDLE_WEAK, obj, track_resurrection);
 }
 
 /**
@@ -1807,11 +1828,10 @@ mono_gchandle_new_weakref_internal (MonoObject *obj, gboolean track_resurrection
 MonoObject*
 mono_gchandle_get_target_internal (MonoGCHandle gchandle)
 {
-	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
-	guint type = MONO_GC_HANDLE_TYPE (gchandle);
-	HandleData *handles = &gc_handles [type];
+	guint slot = 0;
+	HandleData* handles = mono_gchandle_lookup(gchandle, &slot);
 	MonoObject *obj = NULL;
-	if (type >= HANDLE_TYPE_MAX)
+	if (handles->type >= HANDLE_TYPE_MAX)
 		return NULL;
 
 	lock_handles (handles);
@@ -1832,12 +1852,11 @@ mono_gchandle_get_target_internal (MonoGCHandle gchandle)
 void
 mono_gchandle_set_target (MonoGCHandle gchandle, MonoObject *obj)
 {
-	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
-	guint type = MONO_GC_HANDLE_TYPE (gchandle);
-	HandleData *handles = &gc_handles [type];
+	guint slot = 0;
+	HandleData* handles = mono_gchandle_lookup(gchandle, &slot);
 	MonoObject *old_obj = NULL;
 
-	g_assert (type < HANDLE_TYPE_MAX);
+	g_assert (handles->type < HANDLE_TYPE_MAX);
 	lock_handles (handles);
 	if (slot < handles->size && slot_occupied (handles, slot)) {
 		if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
@@ -1851,7 +1870,6 @@ mono_gchandle_set_target (MonoGCHandle gchandle, MonoObject *obj)
 			handles->domain_ids [slot] = (obj ? mono_object_get_domain_internal (obj) : mono_domain_get ())->domain_id;
 		} else {
 			handles->entries [slot] = obj;
-			mono_gc_dirty (handles->entries + slot);
 		}
 	} else {
 		/* print a warning? */
@@ -1869,7 +1887,8 @@ mono_gc_is_null (void)
 GCHandleType
 mono_gchandle_get_type_internal (MonoGCHandle gchandle)
 {
-	return MONO_GC_HANDLE_TYPE (gchandle);
+	HandleData* handles = mono_gchandle_lookup(gchandle, NULL);
+	return handles->type;
 }
 
 /**
@@ -1885,12 +1904,11 @@ mono_gchandle_get_type_internal (MonoGCHandle gchandle)
 gboolean
 mono_gchandle_is_in_domain_internal (MonoGCHandle gchandle, MonoDomain *domain)
 {
-	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
-	guint type = MONO_GC_HANDLE_TYPE (gchandle);
-	HandleData *handles = &gc_handles [type];
+	guint slot = 0;
+	HandleData* handles = mono_gchandle_lookup(gchandle, &slot);
 	gboolean result = FALSE;
 
-	if (type >= HANDLE_TYPE_MAX)
+	if (handles->type >= HANDLE_TYPE_MAX)
 		return FALSE;
 
 	lock_handles (handles);
@@ -1926,10 +1944,9 @@ mono_gchandle_free_internal (MonoGCHandle gchandle)
 	if (!gchandle)
 		return;
 
-	guint slot = MONO_GC_HANDLE_SLOT (gchandle);
-	guint type = MONO_GC_HANDLE_TYPE (gchandle);
-	HandleData *handles = &gc_handles [type];
-	if (type >= HANDLE_TYPE_MAX)
+	guint slot = 0;
+	HandleData* handles = mono_gchandle_lookup(gchandle, &slot);
+	if (handles->type >= HANDLE_TYPE_MAX)
 		return;
 
 	lock_handles (handles);
@@ -1939,7 +1956,6 @@ mono_gchandle_free_internal (MonoGCHandle gchandle)
 				mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
 		} else {
 			handles->entries [slot] = NULL;
-			mono_gc_dirty (handles->entries + slot);
 		}
 		vacate_slot (handles, slot);
 	} else {
@@ -1967,24 +1983,27 @@ mono_gchandle_free_domain (MonoDomain *domain)
 
 	for (type = HANDLE_TYPE_MIN; type <= HANDLE_PINNED; ++type) {
 		guint slot;
-		HandleData *handles = &gc_handles [type];
+		HandleData *handles = gc_handles [type];
 		lock_handles (handles);
-		for (slot = 0; slot < handles->size; ++slot) {
-			if (!slot_occupied (handles, slot))
-				continue;
-			if (MONO_GC_HANDLE_TYPE_IS_WEAK (type)) {
-				if (domain->domain_id == handles->domain_ids [slot]) {
-					vacate_slot (handles, slot);
-					if (handles->entries [slot])
-						mono_gc_weak_link_remove (&handles->entries [slot], handles->type == HANDLE_WEAK_TRACK);
+		while (handles != NULL) {
+			for (slot = 0; slot < handles->size; ++slot) {
+				if (!slot_occupied(handles, slot))
+					continue;
+				if (MONO_GC_HANDLE_TYPE_IS_WEAK(type)) {
+					if (domain->domain_id == handles->domain_ids[slot]) {
+						vacate_slot(handles, slot);
+						if (handles->entries[slot])
+							mono_gc_weak_link_remove(&handles->entries[slot], handles->type == HANDLE_WEAK_TRACK);
+					}
 				}
-			} else {
-				if (handles->entries [slot] && mono_object_domain (handles->entries [slot]) == domain) {
-					vacate_slot (handles, slot);
-					handles->entries [slot] = NULL;
-					mono_gc_dirty (handles->entries + slot);
+				else {
+					if (handles->entries[slot] && mono_object_domain(handles->entries[slot]) == domain) {
+						vacate_slot(handles, slot);
+						handles->entries[slot] = NULL;
+					}
 				}
 			}
+			handles = handles->next;
 		}
 		unlock_handles (handles);
 	}
@@ -2184,14 +2203,17 @@ mono_gc_strong_handle_foreach(GFunc func, gpointer user_data)
 
 	for (gcHandleTypeIndex = HANDLE_NORMAL; gcHandleTypeIndex <= HANDLE_PINNED; gcHandleTypeIndex++)
 	{
-		HandleData* handles = &gc_handles[gcHandleTypeIndex];
+		HandleData* handles = gc_handles[gcHandleTypeIndex];
 
-		for (i = 0; i < handles->size; i++)
-		{			
-			if (!slot_occupied(handles, i))
-				continue;
-			if (handles->entries[i] != NULL)
-				func(handles->entries[i], user_data);
+		while (handles != NULL) {
+			for (i = 0; i < handles->size; i++)
+			{
+				if (!slot_occupied(handles, i))
+					continue;
+				if (handles->entries[i] != NULL)
+					func(handles->entries[i], user_data);
+			}
+			handles = handles->next;
 		}
 	}
 
