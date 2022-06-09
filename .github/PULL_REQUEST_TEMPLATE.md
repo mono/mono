@@ -21,7 +21,7 @@ Reviewers: please consider these questions as well! :heart:
 <!-- Use this section if the pull request has release notes.
 **Release notes**
 
-Fixed case XXXXXX @username:
+Fixed UUM-XXXXXX @username:
 Mono: Your release notes go here.
 
 Other options: Internal, Changed, Improved, Feature. 
