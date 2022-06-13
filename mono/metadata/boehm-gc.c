@@ -122,9 +122,6 @@ struct HandleData {
 	gpointer  entries[HANDLE_COUNT];
 };
 
-
-#define MONO_GC_HANDLE_TO_UINTPTR(ptr) ((uintptr_t)((size_t)(ptr)))
-
 #define GC_HANDLE_TYPE_IS_WEAK(x) ((x) <= HANDLE_WEAK_TRACK)
 
 #define MONO_GC_HANDLE_TYPE_IS_WEAK(x) ((x) <= HANDLE_WEAK_TRACK)
@@ -1613,9 +1610,10 @@ vacate_slot (HandleData *handles, guint slot) {
 	handles->bitmap [slot / BITMAP_SIZE] &= ~(1 << (slot % BITMAP_SIZE));
 
 	if (handles->in_use == (handles->size - 1)) {
-		HandleData* first = gc_handles_free[handles->type];
+		guint8 type = handles->type;
+		HandleData* first = gc_handles_free[type];
 		handles->next_free = first;
-		gc_handles_free[handles->type] = handles;
+		gc_handles_free[type] = handles;
 	}
 }
 
@@ -1623,6 +1621,12 @@ static void
 occupy_slot (HandleData *handles, guint slot) {
 	handles->in_use++;
 	handles->bitmap [slot / BITMAP_SIZE] |= 1 << (slot % BITMAP_SIZE);
+
+	if (handles->in_use == handles->size) {
+		guint8 type = handles->type;
+		g_assert(handles == gc_handles_free[type]);
+		gc_handles_free[type] = gc_handles_free[type]->next_free;
+	}
 }
 
 static int
@@ -1680,14 +1684,28 @@ handle_data_first_unset (HandleData *handles)
 	return -1;
 }
 
+static gint
+handle_data_find_slot(HandleData* handles)
+{
+	gint slot = 0;
+	gint i = handle_data_next_unset(handles);
+	if (i == -1 && handles->slot_hint != 0)
+		i = handle_data_first_unset(handles);
+
+	g_assert(i != -1);
+
+	slot = handles->slot_hint * BITMAP_SIZE + i;
+	return slot;
+}
+
 static MonoGCHandle
-mono_gchandle_tag_strong (MonoGCHandle handle)
+handle_tag_weak (MonoGCHandle handle)
 {
 	return (MonoGCHandle)((uintptr_t)handle | (uintptr_t)1);
 }
 
 static MonoGCHandle
-mono_gchandle_untag_strong (MonoGCHandle handle)
+handle_untag_weak (MonoGCHandle handle)
 {
 	return (MonoGCHandle)((uintptr_t)handle & ~(uintptr_t)1);
 }
@@ -1700,46 +1718,34 @@ get_handle_data_from_handle (MonoGCHandle handle)
 }
 
 static HandleData*
-mono_gchandle_lookup (MonoGCHandle handle, guint* slot)
+handle_lookup (MonoGCHandle handle, guint* slot)
 {
 	HandleData* handles = get_handle_data_from_handle (handle);
 	if (slot)
-		*slot = (int)(ptrdiff_t)((gpointer*)mono_gchandle_untag_strong (handle) - &handles->entries[0]);
+		*slot = (int)(ptrdiff_t)((gpointer*)handle_untag_weak (handle) - &handles->entries[0]);
 	return handles;
 }
 
 static MonoGCHandle
 alloc_handle (int type, MonoObject *obj, gboolean track)
 {
-	gint slot, i = -1;
+	gint slot = 0;
 	MonoGCHandle res;
 	HandleData* handles = gc_handles[type];
 	lock_handles (handles);
-	if (!handles) {
-		handles = gc_handles[type] = gc_handles_free[type] = handle_data_alloc_entries(type);
-	}
 	handles = gc_handles_free[type];
-	if (handles) {
-		i = handle_data_next_unset(handles);
-		if (i == -1 && handles->slot_hint != 0)
-			i = handle_data_first_unset(handles);
-	}
-	if (i == -1) {
+	if (!handles) {
 		handles = handle_data_alloc_entries(type);
 		handles->next = gc_handles[type];
 		gc_handles[type] = handles;
 
 		handles->next_free = gc_handles_free[type];
 		gc_handles_free[type] = handles;
-		i = 0;
 	}
-	slot = handles->slot_hint * BITMAP_SIZE + i;
+
+	slot = handle_data_find_slot (handles);
 	occupy_slot (handles, slot);
 
-	if (handles->in_use == handles->size) {	
-		g_assert(handles == gc_handles_free[type]);
-		gc_handles_free[type] = gc_handles_free[type]->next_free;
-	}
 	handles->entries [slot] = NULL;
 	if (MONO_GC_HANDLE_TYPE_IS_WEAK (handles->type)) {
 		/*FIXME, what to use when obj == null?*/
@@ -1754,12 +1760,13 @@ alloc_handle (int type, MonoObject *obj, gboolean track)
 #endif
 	unlock_handles (handles);
 	res = &handles->entries[slot];
-	if (!MONO_GC_HANDLE_TYPE_IS_WEAK(handles->type)) {
+	if (MONO_GC_HANDLE_TYPE_IS_WEAK(handles->type)) {
 		/*
-		 * Use lowest bit as an optimization to indicate strong GC handle.
-		 * This allows client code to simply dereference the GCHandle
+		 * Use lowest bit as an optimization to indicate weak GC handle.
+		 * This allows client code to simply dereference strong GCHandle
+		 * when the bit is not set.
 		*/
-		res = mono_gchandle_tag_strong (res);
+		res = handle_tag_weak (res);
 	}
 	MONO_PROFILER_RAISE (gc_handle_created, (res, (MonoGCHandleType)handles->type, obj));
 	return res;
@@ -1829,7 +1836,7 @@ MonoObject*
 mono_gchandle_get_target_internal (MonoGCHandle gchandle)
 {
 	guint slot = 0;
-	HandleData* handles = mono_gchandle_lookup(gchandle, &slot);
+	HandleData* handles = handle_lookup (gchandle, &slot);
 	MonoObject *obj = NULL;
 	if (handles->type >= HANDLE_TYPE_MAX)
 		return NULL;
@@ -1853,7 +1860,7 @@ void
 mono_gchandle_set_target (MonoGCHandle gchandle, MonoObject *obj)
 {
 	guint slot = 0;
-	HandleData* handles = mono_gchandle_lookup(gchandle, &slot);
+	HandleData* handles = handle_lookup (gchandle, &slot);
 	MonoObject *old_obj = NULL;
 
 	g_assert (handles->type < HANDLE_TYPE_MAX);
@@ -1887,7 +1894,7 @@ mono_gc_is_null (void)
 GCHandleType
 mono_gchandle_get_type_internal (MonoGCHandle gchandle)
 {
-	HandleData* handles = mono_gchandle_lookup(gchandle, NULL);
+	HandleData* handles = handle_lookup (gchandle, NULL);
 	return handles->type;
 }
 
@@ -1905,7 +1912,7 @@ gboolean
 mono_gchandle_is_in_domain_internal (MonoGCHandle gchandle, MonoDomain *domain)
 {
 	guint slot = 0;
-	HandleData* handles = mono_gchandle_lookup(gchandle, &slot);
+	HandleData* handles = handle_lookup (gchandle, &slot);
 	gboolean result = FALSE;
 
 	if (handles->type >= HANDLE_TYPE_MAX)
@@ -1945,7 +1952,7 @@ mono_gchandle_free_internal (MonoGCHandle gchandle)
 		return;
 
 	guint slot = 0;
-	HandleData* handles = mono_gchandle_lookup(gchandle, &slot);
+	HandleData* handles = handle_lookup (gchandle, &slot);
 	if (handles->type >= HANDLE_TYPE_MAX)
 		return;
 

@@ -2742,6 +2742,24 @@ sgen_client_metadata_for_object (GCObject *obj)
 	return mono_object_domain (obj);
 }
 
+#define MONO_GC_HANDLE_TO_UINT(ptr) ((guint32)((size_t)(ptr) >> 1))
+#if defined(ENABLE_NETCORE)
+/*
+ * The lowest bit is used to mark pinned handles by netcore's GCHandle class. These macros
+ * are used to convert between the old int32 representation to a netcore compatible pointer
+ * representation.
+ */
+#define MONO_GC_HANDLE_FROM_UINT(i) ((MonoGCHandle)((size_t)(i) << 1))
+#else
+/*
+ * The lowest bit is used to mark weak handles for Boehm. What this really does is force
+ * target access via icall instead of just dereferencing a pointer in managed code. Since
+ * the classlibs are GC agnostic and can run with either Boehm or SGen, mark all handles
+ * on SGen with lowest bit set to avoid the fast path in the classlibs.
+ */
+#define MONO_GC_HANDLE_FROM_UINT(i) ((MonoGCHandle)(((size_t)(i) << 1) | 1))
+#endif
+
 /**
  * mono_gchandle_new_internal:
  * \param obj managed object to get a handle for
