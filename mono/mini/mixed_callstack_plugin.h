@@ -4,11 +4,11 @@
 #include "config.h"
 #include "mini.h"
 
-void mixed_callstack_plugin_init (const char *options);
+void mixed_callstack_plugin_init (const guint options, MonoDomain *domain);
 
 void mixed_callstack_plugin_save_method_info (MonoCompile *cfg);
 
-void mixed_callstack_plugin_save_trampoline_info (MonoTrampInfo *info);
+void mixed_callstack_plugin_save_trampoline_info (MonoTrampInfo *info, MonoDomain *domain);
 
 void mixed_callstack_plugin_remove_method (MonoDomain *domain, MonoMethod *method, MonoJitDynamicMethodInfo *info);
 

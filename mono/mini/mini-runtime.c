@@ -551,7 +551,7 @@ mono_tramp_info_register_internal (MonoTrampInfo *info, MonoDomain *domain, gboo
 
 	mono_save_trampoline_xdebug_info (info);
 	mono_lldb_save_trampoline_info (info);
-	mixed_callstack_plugin_save_trampoline_info (info);
+	mixed_callstack_plugin_save_trampoline_info (info, domain);
 
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE
 	if (!aot)
@@ -4002,8 +4002,12 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.llvm_disable_inlining = TRUE;
 	else if (!strcmp (option, "llvm-disable-implicit-null-checks"))
 		mini_debug_options.llvm_disable_implicit_null_checks = TRUE;
-	else if (!strcmp (option, "unity-mixed-callstack"))
-		mini_debug_options.unity_mixed_callstack = TRUE;
+	else if (!strncmp (option, "unity-mixed-callstack", strlen("unity-mixed-callstack"))) {
+		if (!strncmp (option, "unity-mixed-callstack=", strlen("unity-mixed-callstack=")))
+			mini_debug_options.unity_mixed_callstack = atoi(option + strlen ("unity-mixed-callstack="));
+		else
+			mini_debug_options.unity_mixed_callstack = 1;
+	}
 	else if (!strcmp (option, "explicit-null-checks"))
 		mini_debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))
@@ -4495,10 +4499,6 @@ mini_init (const char *filename, const char *runtime_version)
 		mono_dont_free_domains = TRUE;
 	}
 
-	if (mini_get_debug_options()->unity_mixed_callstack || g_hasenv ("UNITY_MIXED_CALLSTACK")) {
-		mixed_callstack_plugin_init ("");
-	}
-
 #ifdef XDEBUG_ENABLED
 	char *mono_xdebug = g_getenv ("MONO_XDEBUG");
 	if (mono_xdebug) {
@@ -4577,6 +4577,12 @@ mini_init (const char *filename, const char *runtime_version)
 		domain = mono_init_version (filename, runtime_version);
 	else
 		domain = mono_init_from_assembly (filename, filename);
+
+	guint mono_mixed_options = g_getenv ("UNITY_MIXED_CALLSTACK") ? atoi(g_getenv("UNITY_MIXED_CALLSTACK")) : 0;
+	if (mini_get_debug_options()->unity_mixed_callstack || mono_mixed_options) {
+		mono_mixed_options = mini_get_debug_options()->unity_mixed_callstack ? mini_get_debug_options()->unity_mixed_callstack : mono_mixed_options;
+		mixed_callstack_plugin_init(mono_mixed_options, domain);
+	}
 
 #if defined(ENABLE_PERFTRACING) && !defined(DISABLE_EVENTPIPE)
 	if (mono_compile_aot)
