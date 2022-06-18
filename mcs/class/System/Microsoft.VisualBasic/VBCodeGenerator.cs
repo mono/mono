@@ -56,7 +56,7 @@ namespace Microsoft.VisualBasic
 			CompilerResults results = new CompilerResults (options.TempFiles);
 			Process vbc = new Process ();
 
-			string vbnc_output = "";
+			string vbc_output = "";
 			string[] vbc_output_lines;
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
