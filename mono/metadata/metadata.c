@@ -5873,11 +5873,7 @@ mono_metadata_generic_class_foreach(MonoGenericClassFunc func, void* user_data)
 void
 mono_metadata_image_set_foreach(MonoImageSetFunc func, gpointer user_data)
 {
-	GenericClassForeachData data;
 	guint i;
-
-	data.func = func;
-	data.user_data = user_data;
 
 	for (i = 0; i < HASH_TABLE_SIZE; ++i)
 	{
