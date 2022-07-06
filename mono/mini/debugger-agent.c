@@ -2460,6 +2460,12 @@ buffer_add_ptr_id (Buffer *buf, MonoDomain *domain, IdType type, gpointer val)
 	return id;
 }
 
+inline static void
+buffer_add_ptr_id_unsafe(void* buf, void* domain, int type, gpointer val)
+{
+	buffer_add_ptr_id(buf, domain, type, val);
+}
+
 static MonoClass*
 decode_typeid (guint8 *buf, guint8 **endbuf, guint8 *limit, MonoDomain **domain, ErrorCode *err)
 {
@@ -10587,7 +10593,7 @@ static void burst_mono_install_hooks_imp(BurstMonoDebuggerCallbacks* callbacks,v
 	callbacks->buffer_add_int = buffer_add_int;
 	callbacks->buffer_add_id = buffer_add_id;
 	callbacks->buffer_add_string = buffer_add_string;
-	callbacks->buffer_add_ptr_id = buffer_add_ptr_id;
+	callbacks->buffer_add_ptr_id = buffer_add_ptr_id_unsafe;
 	callbacks->mono_burst_shutdown = burst_mono_shutdown;
 
 	// This one is passed to us from unity, and we then pass it back to burst as this avoids having a 3rd copy of the callbacks
