@@ -4159,12 +4159,6 @@ mini_init (const char *filename, const char *runtime_version)
 	}
 #endif
 
-	mono_interp_stub_init ();
-#ifndef DISABLE_INTERPRETER
-	if (mono_use_interpreter)
-		mono_ee_interp_init (mono_interp_opts_string);
-#endif
-
 	mono_debugger_agent_stub_init ();
 #ifndef DISABLE_SDB
 	mono_debugger_agent_init ();
@@ -4172,6 +4166,12 @@ mini_init (const char *filename, const char *runtime_version)
 
 	if (sdb_options)
 		mini_get_dbg_callbacks ()->parse_options (sdb_options);
+
+	mono_interp_stub_init ();
+#ifndef DISABLE_INTERPRETER
+	if (mono_use_interpreter)
+		mono_ee_interp_init (mono_interp_opts_string);
+#endif
 
 	mono_os_mutex_init_recursive (&jit_mutex);
 
