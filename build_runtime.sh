@@ -28,13 +28,15 @@ make install
 echo "/mono/external/bdwgc/: make "
 cd external/bdwgc
 make
+cd ../../
 
 #	make "mono/mono" and "mono/mono/mini"
 cd mono
 make
+cd ../../
 
 #	make "mono/runtime"
-cd ../../runtime
+cd runtime
 make
 
 echo ""
