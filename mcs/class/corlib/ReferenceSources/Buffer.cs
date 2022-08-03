@@ -194,9 +194,9 @@ namespace System
 				((byte*)dest) [0] = ((byte*)src) [0];
 		}
 
-		internal static unsafe void Memcpy (byte *dest, byte *src, int len) {
+		internal static unsafe void Memcpy (byte *dest, byte *src, int len, bool useICall = true) {
 			// For bigger lengths, we use the heavily optimized native code
-			if (len > 32) {
+			if (len > 32 && useICall) {
 				InternalMemcpy (dest, src, len);
 				return;
 			}
