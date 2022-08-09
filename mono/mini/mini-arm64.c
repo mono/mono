@@ -4169,8 +4169,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (cfg->r4fp) {
 				arm_fmov_double_to_rx (code, ins->dreg, ins->sreg1);
 			} else {
-				arm_fcvt_ds (code, ins->dreg, ins->sreg1);
-				arm_fmov_double_to_rx (code, ins->dreg, ins->dreg);
+				arm_fcvt_ds (code, FP_TEMP_REG, ins->sreg1);
+				arm_fmov_double_to_rx (code, ins->dreg, FP_TEMP_REG);
 			}
 			break;
 		case OP_MOVE_I4_TO_F:
