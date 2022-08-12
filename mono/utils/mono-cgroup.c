@@ -61,12 +61,8 @@ Abstract:
 #define CGROUP1_CFS_PERIOD_FILENAME "/cpu.cfs_period_us"
 #define CGROUP2_CPU_MAX_FILENAME "/cpu.max"
 
-#define MEMINFO_FILENAME "/proc/meminfo"
-#define MEMAVAILABLE "MemAvailable:"
-
 static void initialize(void);
 static gboolean readMemoryValueFromFile(const char *, size_t *);
-static gboolean readKeywordValueFromFile(const char *, const char *, size_t *);
 static gboolean getPhysicalMemoryLimit(size_t *);
 static gboolean getPhysicalMemoryUsage(size_t *);
 static int findCGroupVersion(void);
@@ -122,7 +118,7 @@ initialize()
  *
  */
 static gboolean 
-readMemoryValueFromFile(const char *filename, size_t *val)
+readMemoryValueFromFile(const char* filename, size_t* val)
 {
 	gboolean result = FALSE;
 	char *line = NULL;
@@ -137,47 +133,6 @@ readMemoryValueFromFile(const char *filename, size_t *val)
 				errno = 0;
 				*val = strtoull(line, &endptr, 0);
 				result = TRUE;
-			}
-		}
-	}
-
-	if (file)
-		fclose(file);
-	free(line);
-	return result;
-}
-
-/**
- *
- * @brief Read a value of keyword from a specified file
- *
- * @param[in] filename - name of file containing value
- * @param[in] keyword - keyword to find
- * @param[out] val - value of keyword
- * @returns True if found
- *
- */
-static gboolean
-readKeywordValueFromFile(const char *filename, const char *key, size_t *val)
-{
-	gboolean result = FALSE;
-	char *line = NULL;
-	size_t lineLen = 0;
-	char *endptr = NULL;
-	FILE *file = NULL;
-
-	if (val != NULL) {
-		file = fopen(filename, "r");
-		if (file != NULL) {
-			while ((result == FALSE) && (getline(&line, &lineLen, file) != -1)) {
-				char *savePtr = NULL;
-				char *keyWord = strtok_r(line, " ", &savePtr);
-				errno = 0;
-				if ((keyWord != NULL) && (strcmp(keyWord, key) == 0)) {
-					char *value = strtok_r(NULL, " ", &savePtr);
-					*val = strtoull(value, &endptr, 0) * 1024;
-					result = TRUE;
-				}
 			}
 		}
 	}
@@ -766,6 +721,7 @@ size_t
 mono_get_memory_avail()
 {
 	size_t max, used, avail, sysAvail;
+#ifdef _SC_AVPHYS_PAGES		// If this isn't defined then we don't get called
 
 	max = mono_get_restricted_memory_limit();
 
@@ -777,10 +733,11 @@ mono_get_memory_avail()
 	else
 		avail = max;
 
-	if (readKeywordValueFromFile(MEMINFO_FILENAME, MEMAVAILABLE, &sysAvail))
-		return (avail < sysAvail ? avail : sysAvail);
-
+	sysAvail = sysconf(_SC_AVPHYS_PAGES) * pageSize;
+	return (avail < sysAvail ? avail : sysAvail);
+#else
 	return (0);
+#endif
 }
 
 /**
