@@ -102,6 +102,9 @@ This will put the current thread in GC Unsafe mode.
 For further explanation of what can and can't be done in GC unsafe mode:
 http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-mode
 */
+
+#if defined(ENABLE_HYBRID_SUSPEND) || defined(ENABLE_COOP_SUSPEND)
+
 #define MONO_ENTER_GC_UNSAFE	\
 	do {	\
 		MONO_STACKDATA (__gc_unsafe_dummy); \
@@ -132,6 +135,24 @@ http://www.mono-project.com/docs/advanced/runtime/docs/coop-suspend/#gc-unsafe-m
 #define MONO_ENTER_GC_SAFE_UNBALANCED	\
 		MONO_STACKDATA (__gc_safe_unbalanced_dummy); \
 		mono_threads_enter_gc_safe_region_unbalanced_internal (&__gc_safe_unbalanced_dummy)
+
+#else
+
+#define MONO_ENTER_GC_UNSAFE do {
+
+#define MONO_EXIT_GC_UNSAFE ; } while (0)
+
+#define MONO_ENTER_GC_UNSAFE_UNBALANCED do {
+
+#define MONO_EXIT_GC_UNSAFE_UNBALANCED ; } while (0)
+
+#define MONO_ENTER_GC_SAFE do {
+
+#define MONO_EXIT_GC_SAFE ; } while (0)
+
+#define MONO_ENTER_GC_SAFE_UNBALANCED
+
+#endif
 
 void
 mono_threads_enter_no_safepoints_region (const char *func);
