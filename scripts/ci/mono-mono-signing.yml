@@ -1,6 +1,6 @@
 parameters:
 - name: mono_branch
-  displayName: Branch of build
+  displayName: Branch of build to sign
   type: string
   default: main
   values:
@@ -28,7 +28,7 @@ jobs:
   displayName: Mono .PKG Signing
   condition: ne(${{ parameters.mac_build_number }}, 0)
   pool:
-    vmImage: 'macOS-10.15'
+    vmImage: 'macOS-latest'
   timeoutInMinutes: 180
   workspace:
     clean: all
@@ -256,7 +256,7 @@ jobs:
   displayName: Mono .MSI Signing
   condition: ne(${{ parameters.windows_build_number }}, 0)
   pool:
-    vmImage: 'ubuntu-20.04'
+    vmImage: 'ubuntu-latest'
   timeoutInMinutes: 180
   workspace:
     clean: all
