@@ -53,6 +53,10 @@ Abstract:
 #define CGROUP1_MEMORY_LIMIT_FILENAME "/memory.limit_in_bytes"
 #define CGROUP2_MEMORY_LIMIT_FILENAME "/memory.max"
 #define CGROUP_MEMORY_STAT_FILENAME "/memory.stat"
+#define CGROUP1_MEMORY_USAGE_FILENAME "/memory.usage_in_bytes"
+#define CGROUP2_MEMORY_USAGE_FILENAME "/memory.current"
+#define CGROUP1_MEMORY_STAT_INACTIVE_FIELD "total_inactive_file "
+#define CGROUP2_MEMORY_STAT_INACTIVE_FIELD "inactive_file "
 #define CGROUP1_CFS_QUOTA_FILENAME "/cpu.cfs_quota_us"
 #define CGROUP1_CFS_PERIOD_FILENAME "/cpu.cfs_period_us"
 #define CGROUP2_CPU_MAX_FILENAME "/cpu.max"
@@ -68,7 +72,7 @@ static char *findCGroupPath(gboolean (*is_subsystem)(const char *));
 static void findHierarchyMount(gboolean (*is_subsystem)(const char *), char **, char **);
 static char *findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *));
 static gboolean getCGroupMemoryLimit(size_t *, const char *);
-static gboolean getCGroupMemoryUsage(size_t *);
+static gboolean getCGroupMemoryUsage(size_t *, const char *, const char *);
 static size_t getPhysicalMemoryTotal(size_t);
 static long long readCpuCGroupValue(const char *);
 static void computeCpuLimit(long long, long long, guint32 *);
@@ -85,9 +89,6 @@ static int s_cgroup_version = -1;
 static char *s_memory_cgroup_path = NULL;
 static char *s_cpu_cgroup_path = NULL;
 
-static const char *s_mem_stat_key_names[4];
-static size_t s_mem_stat_key_lengths[4];
-static size_t s_mem_stat_n_keys = 0;
 static long pageSize;
 
 /**
@@ -97,30 +98,14 @@ static long pageSize;
 static void 
 initialize()
 {
-	s_cgroup_version = findCGroupVersion();
-	s_memory_cgroup_path = findCGroupPath(s_cgroup_version == 1 ? &isCGroup1MemorySubsystem : NULL);
-	s_cpu_cgroup_path = findCGroupPath(s_cgroup_version == 1 ? &isCGroup1CpuSubsystem : NULL);
+	s_cgroup_version = findCGroupVersion ();
+	s_memory_cgroup_path = findCGroupPath (s_cgroup_version == 1 ? &isCGroup1MemorySubsystem : NULL);
+	s_cpu_cgroup_path = findCGroupPath (s_cgroup_version == 1 ? &isCGroup1CpuSubsystem : NULL);
 
 	if (s_cgroup_version == 0) 
 		return;
 
-	if (s_cgroup_version == 1) {
-		s_mem_stat_n_keys = 4;
-		s_mem_stat_key_names[0] = "total_inactive_anon ";
-		s_mem_stat_key_names[1] = "total_active_anon ";
-		s_mem_stat_key_names[2] = "total_dirty ";
-		s_mem_stat_key_names[3] = "total_unevictable ";
-	} else {
-		s_mem_stat_n_keys = 3;
-		s_mem_stat_key_names[0] = "anon ";
-		s_mem_stat_key_names[1] = "file_dirty ";
-		s_mem_stat_key_names[2] = "unevictable ";
-	}
-
-	for (size_t i = 0; i < s_mem_stat_n_keys; i++)
-		s_mem_stat_key_lengths[i] = strlen(s_mem_stat_key_names[i]);
-
-	pageSize = sysconf(_SC_PAGE_SIZE);
+	pageSize = sysconf (_SC_PAGE_SIZE);
 }
 
 /**
@@ -142,19 +127,19 @@ readMemoryValueFromFile(const char* filename, size_t* val)
 	FILE *file = NULL;
 
 	if (val != NULL) {
-		file = fopen(filename, "r");
+		file = fopen (filename, "r");
 		if (file != NULL) {
-			if (getline(&line, &lineLen, file) != -1) {
+			if (getline (&line, &lineLen, file) != -1) {
 				errno = 0;
-				*val = strtoull(line, &endptr, 0);
+				*val = strtoull (line, &endptr, 0);
 				result = TRUE;
 			}
 		}
 	}
 
 	if (file)
-		fclose(file);
-	free(line);
+		fclose (file);
+	free (line);
 	return result;
 }
 
@@ -173,9 +158,9 @@ getPhysicalMemoryLimit(size_t *val)
 	if (s_cgroup_version == 0)
 		return FALSE;
 	else if (s_cgroup_version == 1)
-		return getCGroupMemoryLimit(val, CGROUP1_MEMORY_LIMIT_FILENAME);
+		return getCGroupMemoryLimit (val, CGROUP1_MEMORY_LIMIT_FILENAME);
 	else if (s_cgroup_version == 2)
-		return getCGroupMemoryLimit(val, CGROUP2_MEMORY_LIMIT_FILENAME);
+		return getCGroupMemoryLimit (val, CGROUP2_MEMORY_LIMIT_FILENAME);
 	else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
 			    "Unknown cgroup version.");
@@ -198,9 +183,9 @@ getPhysicalMemoryUsage(size_t *val)
 	if (s_cgroup_version == 0)
 		return FALSE;
 	else if (s_cgroup_version == 1)
-		return getCGroupMemoryUsage(val);
+		return getCGroupMemoryUsage (val, CGROUP1_MEMORY_USAGE_FILENAME, CGROUP1_MEMORY_STAT_INACTIVE_FIELD);
 	else if (s_cgroup_version == 2)
-		return getCGroupMemoryUsage(val);
+		return getCGroupMemoryUsage (val, CGROUP2_MEMORY_USAGE_FILENAME, CGROUP2_MEMORY_STAT_INACTIVE_FIELD);
 	else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
 			    "Unknown cgroup version.");
@@ -230,7 +215,7 @@ findCGroupVersion()
 
 
 	struct statfs stats;
-	int result = statfs("/sys/fs/cgroup", &stats);
+	int result = statfs ("/sys/fs/cgroup", &stats);
 	if (result != 0)
 		return 0;
 
@@ -252,7 +237,7 @@ findCGroupVersion()
 static gboolean 
 isCGroup1MemorySubsystem(const char *strTok)
 {
-	return strcmp("memory", strTok) == 0;
+	return strcmp ("memory", strTok) == 0;
 }
 
 /**
@@ -266,7 +251,7 @@ isCGroup1MemorySubsystem(const char *strTok)
 static gboolean
 isCGroup1CpuSubsystem(const char *strTok)
 {
-	return strcmp("cpu", strTok) == 0;
+	return strcmp ("cpu", strTok) == 0;
 }
 
 /**
@@ -286,16 +271,16 @@ findCGroupPath(gboolean (*is_subsystem)(const char *))
 	char *cgroup_path_relative_to_mount = NULL;
 	size_t common_path_prefix_len;
 
-	findHierarchyMount(is_subsystem, &hierarchy_mount, &hierarchy_root);
+	findHierarchyMount (is_subsystem, &hierarchy_mount, &hierarchy_root);
 	if (hierarchy_mount != NULL && hierarchy_root != NULL) {
 
-		cgroup_path_relative_to_mount = findCGroupPathForSubsystem(is_subsystem);
+		cgroup_path_relative_to_mount = findCGroupPathForSubsystem (is_subsystem);
 		if (cgroup_path_relative_to_mount != NULL) {
 
-			cgroup_path = (char*)malloc(strlen(hierarchy_mount) + strlen(cgroup_path_relative_to_mount) + 1);
+			cgroup_path = (char*)malloc (strlen (hierarchy_mount) + strlen (cgroup_path_relative_to_mount) + 1);
 			if (cgroup_path != NULL) {
 
-				strcpy(cgroup_path, hierarchy_mount);
+				strcpy (cgroup_path, hierarchy_mount);
 				// For a host cgroup, we need to append the relative path.
 				// The root and cgroup path can share a common prefix of the path that should not be appended.
 				// Example 1 (docker):
@@ -311,22 +296,22 @@ findCGroupPath(gboolean (*is_subsystem)(const char *))
 				// cgroup_path_relative_to_mount: /my_named_cgroup
 				// append do the cgroup_path:     /my_named_cgroup
 				// final cgroup_path:             /sys/fs/cgroup/cpu/my_named_cgroup
-				common_path_prefix_len = strlen(hierarchy_root);
+				common_path_prefix_len = strlen (hierarchy_root);
 				if ((common_path_prefix_len == 1) || 
-				    (strncmp(hierarchy_root, cgroup_path_relative_to_mount, common_path_prefix_len) != 0))
+				    (strncmp (hierarchy_root, cgroup_path_relative_to_mount, common_path_prefix_len) != 0))
 					common_path_prefix_len = 0;
 
 				g_assert((cgroup_path_relative_to_mount[common_path_prefix_len] == '/') || 
 				         (cgroup_path_relative_to_mount[common_path_prefix_len] == '\0'));
 
-				strcat(cgroup_path, cgroup_path_relative_to_mount + common_path_prefix_len);
+				strcat (cgroup_path, cgroup_path_relative_to_mount + common_path_prefix_len);
 			}
 		}
 	}
 
-	free(hierarchy_mount);
-	free(hierarchy_root);
-	free(cgroup_path_relative_to_mount);
+	free (hierarchy_mount);
+	free (hierarchy_root);
+	free (cgroup_path_relative_to_mount);
 	return cgroup_path;
 }
 
@@ -350,32 +335,32 @@ findHierarchyMount(gboolean (*is_subsystem)(const char *), char** pmountpath, ch
 	char *mountpath = NULL;
 	char *mountroot = NULL;
 
-	FILE *mountinfofile = fopen(PROC_MOUNTINFO_FILENAME, "r");
+	FILE *mountinfofile = fopen (PROC_MOUNTINFO_FILENAME, "r");
 	if (mountinfofile == NULL) 
 		goto done;
 
-	while (getline(&line, &lineLen, mountinfofile) != -1) {
+	while (getline (&line, &lineLen, mountinfofile) != -1) {
 		if (filesystemType == NULL || lineLen > maxLineLen) {
-			free(filesystemType);
+			free (filesystemType);
 			filesystemType = NULL;
-			free(options);
+			free (options);
 			options = NULL;
-			filesystemType = (char*)malloc(lineLen+1);
+			filesystemType = (char*)malloc (lineLen+1);
 			if (filesystemType == NULL)
 				goto done;
-			options = (char*)malloc(lineLen+1);
+			options = (char*)malloc (lineLen+1);
 			if (options == NULL)
 				goto done;
 			maxLineLen = lineLen;
 		}
 
-		char *separatorChar = strstr(line, " - ");
+		char *separatorChar = strstr (line, " - ");
 
 		// See man page of proc to get format for /proc/self/mountinfo file
-		int sscanfRet = sscanf(separatorChar,
-		   " - %s %*s %s",
-		   filesystemType,
-		   options);
+		int sscanfRet = sscanf (separatorChar,
+					   " - %s %*s %s",
+					   filesystemType,
+					   options);
 		if (sscanfRet != 2) {
 			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, "Failed to parse mount info file contents with sscanf.");
 			goto done;
@@ -385,25 +370,25 @@ findHierarchyMount(gboolean (*is_subsystem)(const char *), char** pmountpath, ch
 			gboolean isSubsystemMatch = is_subsystem == NULL;
 			if (!isSubsystemMatch) {
 				char *context = NULL;
-				char *strTok = strtok_r(options, ",", &context);
+				char *strTok = strtok_r (options, ",", &context);
 				while (!isSubsystemMatch && strTok != NULL)
 				{
-					isSubsystemMatch = is_subsystem(strTok);
-					strTok = strtok_r(NULL, ",", &context);
+					isSubsystemMatch = is_subsystem (strTok);
+					strTok = strtok_r (NULL, ",", &context);
 				}
 			}
 			if (isSubsystemMatch) {
-				mountpath = (char*)malloc(lineLen+1);
+				mountpath = (char*)malloc (lineLen+1);
 				if (mountpath == NULL)
 					goto done;
-				mountroot = (char*)malloc(lineLen+1);
+				mountroot = (char*)malloc (lineLen+1);
 				if (mountroot == NULL)
 					goto done;
 
-				sscanfRet = sscanf(line,
-					   "%*s %*s %*s %s %s ",
-					   mountroot,
-					   mountpath);
+				sscanfRet = sscanf (line,
+						   "%*s %*s %*s %s %s ",
+						   mountroot,
+						   mountpath);
 				if (sscanfRet != 2)
 					mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
 						    "Failed to parse mount info file contents with sscanf.");
@@ -416,13 +401,13 @@ findHierarchyMount(gboolean (*is_subsystem)(const char *), char** pmountpath, ch
 		}
 	}
 done:
-	free(mountpath);
-	free(mountroot);
-	free(filesystemType);
-	free(options);
-	free(line);
+	free (mountpath);
+	free (mountroot);
+	free (filesystemType);
+	free (options);
+	free (line);
 	if (mountinfofile)
-		fclose(mountinfofile);
+		fclose (mountinfofile);
 }
 
 /**
@@ -445,20 +430,20 @@ findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *))
 	char *cgroup_path = NULL;
 	gboolean result = FALSE;
 
-	FILE *cgroupfile = fopen(PROC_CGROUP_FILENAME, "r");
+	FILE *cgroupfile = fopen (PROC_CGROUP_FILENAME, "r");
 	if (cgroupfile == NULL)
 		goto done;
 
-	while (!result && getline(&line, &lineLen, cgroupfile) != -1) {
+	while (!result && getline (&line, &lineLen, cgroupfile) != -1) {
 		if (subsystem_list == NULL || lineLen > maxLineLen) {
-			free(subsystem_list);
+			free (subsystem_list);
 			subsystem_list = NULL;
-			free(cgroup_path);
+			free (cgroup_path);
 			cgroup_path = NULL;
-			subsystem_list = (char*)malloc(lineLen+1);
+			subsystem_list = (char*)malloc (lineLen+1);
 			if (subsystem_list == NULL)
 				goto done;
-			cgroup_path = (char*)malloc(lineLen+1);
+			cgroup_path = (char*)malloc (lineLen+1);
 			if (cgroup_path == NULL)
 				goto done;
 			maxLineLen = lineLen;
@@ -466,10 +451,10 @@ findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *))
 
 		if (s_cgroup_version == 1) {
 			// See man page of proc to get format for /proc/self/cgroup file
-			int sscanfRet = sscanf(line,
-			"%*[^:]:%[^:]:%s",
-			subsystem_list,
-			cgroup_path);
+			int sscanfRet = sscanf (line,
+						"%*[^:]:%[^:]:%s",
+						subsystem_list,
+						cgroup_path);
 			if (sscanfRet != 2) {
 				mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
 					    "Failed to parse cgroup info file contents with sscanf.");
@@ -477,20 +462,20 @@ findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *))
 			}
 
 			char* context = NULL;
-			char* strTok = strtok_r(subsystem_list, ",", &context);
+			char* strTok = strtok_r (subsystem_list, ",", &context);
 			while (strTok != NULL) {
-				if (is_subsystem(strTok)) {
+				if (is_subsystem (strTok)) {
 					result = TRUE;
 					break;
 				}
-				strTok = strtok_r(NULL, ",", &context);
+				strTok = strtok_r (NULL, ",", &context);
 			}
 		} else if (s_cgroup_version == 2) {
 			// See https://www.kernel.org/doc/Documentation/cgroup-v2.txt
 			// Look for a "0::/some/path"
-			int sscanfRet = sscanf(line,
-			"0::%s",
-			cgroup_path);
+			int sscanfRet = sscanf (line,
+						"0::%s",
+						cgroup_path);
 			if (sscanfRet == 1)
 			{
 				result = TRUE;
@@ -502,14 +487,14 @@ findCGroupPathForSubsystem(gboolean (*is_subsystem)(const char *))
 		}
 	}
 done:
-	free(subsystem_list);
+	free (subsystem_list);
 	if (!result) {
-		free(cgroup_path);
+		free (cgroup_path);
 		cgroup_path = NULL;
 	}
-	free(line);
+	free (line);
 	if (cgroupfile)
-		fclose(cgroupfile);
+		fclose (cgroupfile);
 	return cgroup_path;
 }
 
@@ -529,11 +514,11 @@ getCGroupMemoryLimit(size_t *val, const char *filename)
 		return FALSE;
 
 	char* mem_limit_filename = NULL;
-	if (asprintf(&mem_limit_filename, "%s%s", s_memory_cgroup_path, filename) < 0)
+	if (asprintf (&mem_limit_filename, "%s%s", s_memory_cgroup_path, filename) < 0)
 		return FALSE;
 
-	gboolean result = readMemoryValueFromFile(mem_limit_filename, val);
-	free(mem_limit_filename);
+	gboolean result = readMemoryValueFromFile (mem_limit_filename, val);
+	free (mem_limit_filename);
 	return result;
 }
 
@@ -546,47 +531,70 @@ getCGroupMemoryLimit(size_t *val, const char *filename)
  *
  */
 static gboolean 
-getCGroupMemoryUsage(size_t *val)
+getCGroupMemoryUsage(size_t *val, const char *filename, const char *inactiveFileFieldName)
 {
+	/* 
+	 * Use the same way to calculate memory load as popular container tools (Docker, Kubernetes, Containerd etc.)
+	 * For cgroup v1: value of 'memory.usage_in_bytes' minus 'total_inactive_file' value of 'memory.stat'
+	 * For cgroup v2: value of 'memory.current' minus 'inactive_file' value of 'memory.stat'
+	 */
+
+	char *mem_usage_filename = NULL;
+	if (asprintf (&mem_usage_filename, "%s%s", s_memory_cgroup_path, filename) < 0)
+		return FALSE;
+
+	size_t temp = 0;
+	size_t usage = 0;
+
+	gboolean result = readMemoryValueFromFile (mem_usage_filename, &temp);
+	if (result) {
+		if (temp > SIZE_T_MAX)
+			usage = SIZE_T_MAX;
+		else
+			usage = temp;
+	}
+
+	free (mem_usage_filename);
+
+	if (!result)
+		return result;
+
 	if (s_memory_cgroup_path == NULL)
 		return FALSE;
 
 	char *stat_filename = NULL;
-	if (asprintf(&stat_filename, "%s%s", s_memory_cgroup_path, CGROUP_MEMORY_STAT_FILENAME) < 0)
+	if (asprintf (&stat_filename, "%s%s", s_memory_cgroup_path, CGROUP_MEMORY_STAT_FILENAME) < 0)
 		return FALSE;
 
-	FILE *stat_file = fopen(stat_filename, "r");
-	free(stat_filename);
+	FILE *stat_file = fopen (stat_filename, "r");
+	free (stat_filename);
 	if (stat_file == NULL)
 		return FALSE;
 
 	char *line = NULL;
 	size_t lineLen = 0;
-	size_t readValues = 0;
+	gboolean foundInactiveFileValue = FALSE;
 	char *endptr;
 
-	*val = 0;
-	while (getline(&line, &lineLen, stat_file) != -1 && readValues < s_mem_stat_n_keys) {
-		for (size_t i = 0; i < s_mem_stat_n_keys; i++) {
-			if (strncmp(line, s_mem_stat_key_names[i], s_mem_stat_key_lengths[i]) == 0) {
-				errno = 0;
-				const char *startptr = line + s_mem_stat_key_lengths[i];
-				*val += strtoll(startptr, &endptr, 10);
-				if (endptr != startptr && errno == 0)
-					readValues++;
+	size_t inactiveFileFieldNameLength = strlen (inactiveFileFieldName);
 
-				break;
+	while (getline (&line, &lineLen, stat_file) != -1) {
+		if (strncmp (line, inactiveFileFieldName, inactiveFileFieldNameLength) == 0) {
+			errno = 0;
+			const char *startptr = line + inactiveFileFieldNameLength;
+			size_t inactiveFileValue = strtoll (startptr, &endptr, 10);
+			if (endptr != startptr && errno == 0) {
+				foundInactiveFileValue = TRUE;
+				*val = usage - inactiveFileValue;
 			}
+			break;
 		}
 	}
 
-	fclose(stat_file);
-	free(line);
+	fclose (stat_file);
+	free (line);
 
-	if (readValues == s_mem_stat_n_keys)
-		return TRUE;
-
-	return FALSE;
+	return foundInactiveFileValue;
 }
 
 /**
@@ -603,12 +611,12 @@ mono_get_restricted_memory_limit()
 	size_t physical_memory_limit = 0;
 
 	if (s_cgroup_version == -1)
-		initialize();
+		initialize ();
 
 	if (s_cgroup_version == 0)
 		return 0;
 
-	if (!getPhysicalMemoryLimit(&physical_memory_limit))
+	if (!getPhysicalMemoryLimit (&physical_memory_limit))
 		return 0;
 
 	// If there's no memory limit specified on the container this
@@ -618,7 +626,7 @@ mono_get_restricted_memory_limit()
 	if (physical_memory_limit > 0x7FFFFFFF00000000)
 		return 0;
 
-	return (getPhysicalMemoryTotal(physical_memory_limit));
+	return (getPhysicalMemoryTotal (physical_memory_limit));
 }
 
 /**
@@ -634,13 +642,13 @@ getPhysicalMemoryTotal(size_t physical_memory_limit)
 {
 	struct rlimit curr_rlimit;
 	size_t rlimit_soft_limit = (size_t)RLIM_INFINITY;
-	if (getrlimit(RLIMIT_AS, &curr_rlimit) == 0)
+	if (getrlimit (RLIMIT_AS, &curr_rlimit) == 0)
 		rlimit_soft_limit = curr_rlimit.rlim_cur;
 	physical_memory_limit = (physical_memory_limit < rlimit_soft_limit) ?
 				 physical_memory_limit : rlimit_soft_limit;
 
 	// Ensure that limit is not greater than real memory size
-	long pages = sysconf(_SC_PHYS_PAGES);
+	long pages = sysconf (_SC_PHYS_PAGES);
 	if (pages != -1) {
 		if (pageSize != -1) {
 			physical_memory_limit = (physical_memory_limit < (size_t)pages * pageSize) ?
@@ -653,7 +661,7 @@ getPhysicalMemoryTotal(size_t physical_memory_limit)
 		// group returns a physical limit that is bigger than the address space
 		return ULONG_MAX;
 	} else
-		return (size_t)physical_memory_limit;
+		return physical_memory_limit;
 }
 
 /**
@@ -675,18 +683,18 @@ mono_get_memory_used(size_t *val)
 		return FALSE;
 
 	// Linux uses cgroup usage to trigger oom kills.
-	if (getPhysicalMemoryUsage(val))
+	if (getPhysicalMemoryUsage (val))
 		return TRUE;
 
 	// process resident set size.
-	FILE* file = fopen(PROC_STATM_FILENAME, "r");
-	if (file != NULL && getline(&line, &linelen, file) != -1) {
+	FILE* file = fopen (PROC_STATM_FILENAME, "r");
+	if (file != NULL && getline (&line, &linelen, file) != -1) {
 		char* context = NULL;
-		char* strTok = strtok_r(line, " ", &context);
-		strTok = strtok_r(NULL, " ", &context);
+		char* strTok = strtok_r (line, " ", &context);
+		strTok = strtok_r (NULL, " ", &context);
 
 		errno = 0;
-		*val = strtoull(strTok, NULL, 0);
+		*val = strtoull (strTok, NULL, 0);
 		if (errno == 0) {
 			if (pageSize != -1) {
 				*val = *val * pageSize;
@@ -696,8 +704,8 @@ mono_get_memory_used(size_t *val)
 	}
 
 	if (file)
-		fclose(file);
-	free(line);
+		fclose (file);
+	free (line);
 	return result;
 }
 
@@ -715,17 +723,17 @@ mono_get_memory_avail()
 	size_t max, used, avail, sysAvail;
 #ifdef _SC_AVPHYS_PAGES		// If this isn't defined then we don't get called
 
-	max = mono_get_restricted_memory_limit();
+	max = mono_get_restricted_memory_limit ();
 
 	if (max == 0)
-		max = getPhysicalMemoryTotal(ULONG_MAX);
+		max = getPhysicalMemoryTotal (ULONG_MAX);
 
-	if (mono_get_memory_used(&used))
+	if (mono_get_memory_used (&used))
 		avail = max - used;
 	else
 		avail = max;
 
-	sysAvail = sysconf(_SC_AVPHYS_PAGES) * pageSize;
+	sysAvail = sysconf (_SC_AVPHYS_PAGES) * pageSize;
 	return (avail < sysAvail ? avail : sysAvail);
 #else
 	return (0);
@@ -745,15 +753,15 @@ getCGroup1CpuLimit(guint32 *val)
 	long long quota;
 	long long period;
 
-	quota = readCpuCGroupValue(CGROUP1_CFS_QUOTA_FILENAME);
+	quota = readCpuCGroupValue (CGROUP1_CFS_QUOTA_FILENAME);
 	if (quota <= 0)
 		return FALSE;
 
-	period = readCpuCGroupValue(CGROUP1_CFS_PERIOD_FILENAME);
+	period = readCpuCGroupValue (CGROUP1_CFS_PERIOD_FILENAME);
 	if (period <= 0)
 		return FALSE;
 
-	computeCpuLimit(period, quota, val);
+	computeCpuLimit (period, quota, val);
 
 	return TRUE;
 }
@@ -786,28 +794,28 @@ getCGroup2CpuLimit(guint32 *val)
 	if (s_cpu_cgroup_path == NULL)
 		return FALSE;
 
-	if (asprintf(&filename, "%s%s", s_cpu_cgroup_path, CGROUP2_CPU_MAX_FILENAME) < 0)
+	if (asprintf (&filename, "%s%s", s_cpu_cgroup_path, CGROUP2_CPU_MAX_FILENAME) < 0)
 		return FALSE;
 
-	file = fopen(filename, "r");
+	file = fopen (filename, "r");
 	if (file == NULL)
 		goto done;
 
-	if (getline(&line, &lineLen, file) == -1)
+	if (getline (&line, &lineLen, file) == -1)
 		goto done;
 
 	// The expected format is:
 	//     $MAX $PERIOD
 	// Where "$MAX" may be the string literal "max"
 
-	max_quota_string = strtok_r(line, " ", &context);
+	max_quota_string = strtok_r (line, " ", &context);
 	if (max_quota_string == NULL)
 	{
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
 			    "Unable to parse " CGROUP2_CPU_MAX_FILENAME " file contents.");
 		goto done;
 	}
-	period_string = strtok_r(NULL, " ", &context);
+	period_string = strtok_r (NULL, " ", &context);
 	if (period_string == NULL)
 	{
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
@@ -816,26 +824,26 @@ getCGroup2CpuLimit(guint32 *val)
 	}
 
 	// "max" means no cpu limit
-	if (strcmp("max", max_quota_string) == 0)
+	if (strcmp ("max", max_quota_string) == 0)
 		goto done;
 
 	errno = 0;
-	quota = strtoll(max_quota_string, &endptr, 10);
+	quota = strtoll (max_quota_string, &endptr, 10);
 	if (max_quota_string == endptr || errno != 0)
 		goto done;
 
-	period = strtoll(period_string, &endptr, 10);
+	period = strtoll (period_string, &endptr, 10);
 	if (period_string == endptr || errno != 0)
 		goto done;
 
-	computeCpuLimit(period, quota, val);
+	computeCpuLimit (period, quota, val);
 	result = TRUE;
 
 done:
 	if (file)
-		fclose(file);
-	free(filename);
-	free(line);
+		fclose (file);
+	free (filename);
+	free (line);
 
 	return result;
 }
@@ -881,11 +889,11 @@ readCpuCGroupValue(const char *subsystemFilename)
 	if (s_cpu_cgroup_path == NULL)
 		return -1;
 
-	if (asprintf(&filename, "%s%s", s_cpu_cgroup_path, subsystemFilename) < 0)
+	if (asprintf (&filename, "%s%s", s_cpu_cgroup_path, subsystemFilename) < 0)
 		return -1;
 
-	result = readLongLongValueFromFile(filename, &val);
-	free(filename);
+	result = readLongLongValueFromFile (filename, &val);
+	free (filename);
 	if (!result)
 		return -1;
 
@@ -912,19 +920,19 @@ readLongLongValueFromFile(const char *filename, long long *val)
 	if (val == NULL)
 		return FALSE;
 
-	FILE *file = fopen(filename, "r");
+	FILE *file = fopen (filename, "r");
 	if (file == NULL)
 		return FALSE;
 
-	if (getline(&line, &lineLen, file) != -1) {
+	if (getline (&line, &lineLen, file) != -1) {
 		errno = 0;
-		*val = strtoll(line, &endptr, 10);
+		*val = strtoll (line, &endptr, 10);
 		if (line != endptr && errno == 0)
 			result = TRUE;
 	}
 
-	fclose(file);
-	free(line);
+	fclose (file);
+	free (line);
 	return result;
 }
 
@@ -943,14 +951,14 @@ gboolean
 mono_get_cpu_limit(guint *val)
 {
 	if (s_cgroup_version == -1)
-		initialize();
+		initialize ();
 
 	if (s_cgroup_version == 0)
 		return FALSE;
 	else if (s_cgroup_version == 1)
-		return getCGroup1CpuLimit((guint32 *)val);
+		return getCGroup1CpuLimit ((guint32 *)val);
 	else if (s_cgroup_version == 2)
-		return getCGroup2CpuLimit((guint32 *)val);
+		return getCGroup2CpuLimit ((guint32 *)val);
 	else {
 		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_CONFIG, 
 			    "Unknown cgroup version.");

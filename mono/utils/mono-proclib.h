@@ -77,7 +77,7 @@ MONO_API int       mono_cpu_limit    (void);
 gint64    mono_cpu_get_data (int cpu_id, MonoCpuData data, MonoProcessError *error);
 gint32    mono_cpu_usage (MonoCpuUsageState *prev);
 
-gboolean  mono_get_cpu_limit(int *);
+gboolean  mono_get_cpu_limit(int *limit);
 
 int       mono_atexit (void (*func)(void));
 

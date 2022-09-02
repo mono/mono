@@ -129,16 +129,31 @@ typedef struct {
 	uint8_t ibm14:1;	// 147 - Reserved for IBM use
 	uint8_t vef2:1;		// 148 - Vector Execution Facility 2
 	uint8_t mpsk:1;		// 149 - Move Page and Set Key Facility
-	uint8_t x016:1;		// 150 - Undefined
+	uint8_t esort:1;	// 150 - Enhanced-sort Facility
 	uint8_t dfcf:1;		// 151 - Deflate Conversion Facility
 	uint8_t vpde:1;		// 152 - Vector Packed Decimal Enhancement Facility
 	uint8_t x017:2; 	// 153-154 - Undefined
 	uint8_t msa9:1;		// 155 - Message Security Assist Facility 9
-	uint8_t x018:4;		// 156-159 - Undefined
-	uint8_t x019;		// 160-167 - Undefined
+	uint8_t x018:2;		// 156-157 - Undefined
+	uint8_t uvcf:1;		// 158 - Ultravisor Call Facility
+	uint8_t x019:1;		// 159 - Undefined
+	uint8_t x019a:1;	// 160 - Undefined
+	uint8_t seun:1;		// 161 - Secure Execution Unpack Facility
+	uint8_t x019b:3;	// 162-164 - Undefined
+	uint8_t nnpa:1;		// 165 - Neural Network Processing Assist Facility
+	uint8_t x019c:2;	// 166-167 - Undefined
 	uint8_t esac:1; 	// 168 - ESA/390 Compatibility Mode Facility
-	uint8_t x020:7;  	// 169-175 - Undefined
-	uint8_t x021[10];	// 176-256 Undefined
+	uint8_t skrm:1;  	// 169 - Storage Key Removal Facility
+	uint8_t x020:6;  	// 170-175 - Undefined
+	uint8_t x021[2];	// 176-191 Undefined
+	uint8_t vpde2:1; 	// 192 - Vector Packed Decimal Enhancment Facility 2
+	uint8_t bear:1; 	// 193 - Breaking Event Address Register Enhancement Facility
+	uint8_t rdat:1; 	// 194 - Reset DAT Protection Facility
+	uint8_t x022:1; 	// 195 - Undefined
+	uint8_t paci:1; 	// 196 - Processor Activity Instrumentation Facility
+	uint8_t pacie1:1; 	// 197 - Processor Activity Instrumentation Enhancement 1 Facility
+	uint8_t x023:2; 	// 198-199 - Undefined
+	uint8_t x024[7]; 	// 200-255 - Undefined
 } __attribute__ ((__packed__)) __attribute__ ((__aligned__(8))) facilityList_t;
 
 void
