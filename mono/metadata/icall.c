@@ -1331,7 +1331,23 @@ ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStac
 MonoBoolean
 ves_icall_System_Runtime_CompilerServices_RuntimeHelpers_SufficientExecutionStack (void)
 {
+#if defined(__linux__)
+    MonoThreadInfo *thread = mono_thread_info_current ();
+    void *current = &thread;
+
+    // Stack upper/lower bound should have been calculated and set as part of register_thread.
+    // If not, we are optimistic and assume there is enough room.
+    if (!thread->stack_start_limit || !thread->stack_end)
+        return TRUE;
+
+    void *limit = ((uint8_t *)thread->stack_start_limit) + ALIGN_TO ((thread->stack_end - thread->stack_start_limit) / 2, ((gssize)mono_pagesize ()));
+
+    if (current < limit)
+        return FALSE;
+    return TRUE;
+#else
 	return mono_thread_has_sufficient_execution_stack ();
+#endif
 }
 #endif
 
