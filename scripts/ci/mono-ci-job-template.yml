@@ -26,7 +26,7 @@ jobs:
   displayName: ${{ parameters.displayName }}
   pool:
     ${{ if eq(parameters.os, 'osx') }}:
-      vmImage: macos-12
+      vmImage: macos-11
     ${{ if eq(parameters.os, 'win') }}:
       vmImage: windows-2019
     ${{ if and(eq(parameters.os, 'linux'),eq(parameters.arch, 'amd64')) }}:
