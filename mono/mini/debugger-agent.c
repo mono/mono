@@ -8858,6 +8858,8 @@ method_commands_internal (int command, MonoMethod *method, MonoDomain *domain, g
 		burst_unlock();
 
 		MonoMethodSignature *sig = mono_method_signature_internal (method);
+		if (!sig)
+			return ERR_INVALID_ARGUMENT;
 		guint32 i;
 		char **names;
 
