@@ -347,6 +347,8 @@ static gboolean mono_traverse_object_internal(MonoObject *object, gboolean isStr
 	MonoClass *p;
 	gboolean added_objects = FALSE;
 
+	if (!isStruct && mono_class_has_parent_fast(klass, mono_defaults.real_proxy_class)) return FALSE;
+
 	g_assert(object);
 
 	// subtract the added offset for the vtable. This is added to the offset even though it is a struct
@@ -397,6 +399,8 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 	MonoClassField* field;
 	MonoClass* p;
 	gboolean added_objects = FALSE;
+
+	if (!isStruct && mono_class_has_parent_fast(klass, mono_defaults.real_proxy_class)) return FALSE;
 
 	g_assert(object);
 
