@@ -7,7 +7,8 @@ LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
 
 LIB_MCS_FLAGS = $(REFERENCE_SOURCES_FLAGS) $(RESOURCE_FILES:%=-resource:%) $(UNICODECHARINFO:%=-resource:%)
-
+# set langversion to preview to allow native integer use in GCHandle.Target implementation
+LIB_MCS_FLAGS += -langversion:preview
 USE_XTEST_REMOTE_EXECUTOR = YES
 LIBRARY_WARN_AS_ERROR = yes
 #LIBRARY_USE_INTERMEDIATE_FILE = yes

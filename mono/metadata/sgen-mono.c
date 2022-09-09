@@ -2742,6 +2742,24 @@ sgen_client_metadata_for_object (GCObject *obj)
 	return mono_object_domain (obj);
 }
 
+#define MONO_GC_HANDLE_TO_UINT(ptr) ((guint32)((size_t)(ptr) >> 1))
+#if defined(ENABLE_NETCORE)
+/*
+ * The lowest bit is used to mark pinned handles by netcore's GCHandle class. These macros
+ * are used to convert between the old int32 representation to a netcore compatible pointer
+ * representation.
+ */
+#define MONO_GC_HANDLE_FROM_UINT(i) ((MonoGCHandle)((size_t)(i) << 1))
+#else
+/*
+ * The lowest bit is used to mark weak handles for Boehm. What this really does is force
+ * target access via icall instead of just dereferencing a pointer in managed code. Since
+ * the classlibs are GC agnostic and can run with either Boehm or SGen, mark all handles
+ * on SGen with lowest bit set to avoid the fast path in the classlibs.
+ */
+#define MONO_GC_HANDLE_FROM_UINT(i) ((MonoGCHandle)(((size_t)(i) << 1) | 1))
+#endif
+
 /**
  * mono_gchandle_new_internal:
  * \param obj managed object to get a handle for
@@ -2801,6 +2819,12 @@ mono_gchandle_is_in_domain_internal (MonoGCHandle gchandle, MonoDomain *domain)
 {
 	MonoDomain *gchandle_domain = (MonoDomain *)sgen_gchandle_get_metadata (MONO_GC_HANDLE_TO_UINT (gchandle));
 	return domain->domain_id == gchandle_domain->domain_id;
+}
+
+GCHandleType
+mono_gchandle_get_type_internal (MonoGCHandle gchandle)
+{
+	return MONO_GC_HANDLE_TYPE (MONO_GC_HANDLE_TO_UINT (gchandle));
 }
 
 /**
@@ -2883,7 +2907,7 @@ sgen_client_gchandle_created (int handle_type, GCObject *obj, guint32 handle)
 	mono_atomic_inc_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 
-	MONO_PROFILER_RAISE (gc_handle_created, (handle, (MonoGCHandleType)handle_type, obj));
+	MONO_PROFILER_RAISE (gc_handle_created, (MONO_GC_HANDLE_FROM_UINT (handle), (MonoGCHandleType)handle_type, obj));
 }
 
 void
@@ -2893,7 +2917,7 @@ sgen_client_gchandle_destroyed (int handle_type, guint32 handle)
 	mono_atomic_dec_i32 (&mono_perfcounters->gc_num_handles);
 #endif
 
-	MONO_PROFILER_RAISE (gc_handle_deleted, (handle, (MonoGCHandleType)handle_type));
+	MONO_PROFILER_RAISE (gc_handle_deleted, (MONO_GC_HANDLE_FROM_UINT (handle), (MonoGCHandleType)handle_type));
 }
 
 void

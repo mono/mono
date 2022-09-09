@@ -788,9 +788,8 @@ ves_icall_System_GCHandle_GetAddrOfPinnedObject (MonoGCHandle handle)
 	// Handles seem to only be in the way here, and the object is pinned.
 
 	MonoObject *obj;
-	guint32 gch = MONO_GC_HANDLE_TO_UINT (handle);
 
-	if (MONO_GC_HANDLE_TYPE (gch) != HANDLE_PINNED)
+	if (mono_gchandle_get_type_internal (handle) != HANDLE_PINNED)
 		return (gpointer)-2;
 
 	obj = mono_gchandle_get_target_internal (handle);
