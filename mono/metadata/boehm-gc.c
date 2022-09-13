@@ -101,7 +101,7 @@ void mono_gc_handle_unlock () { unlock_handles (NULL); }
  * to result in the smallest amount of wasted space at the end of the allocation.
  */
 #if SIZEOF_VOID_P == 4
-#define HANDLE_COUNT 1008
+#define HANDLE_COUNT 992
 #define HANDLE_DATA_ALIGNMENT 4096
 #else
 #define HANDLE_COUNT 992
@@ -1644,7 +1644,7 @@ static HandleData*
 handle_data_alloc_entries(int type)
 {
 	g_static_assert (sizeof(HandleData) < HANDLE_DATA_ALIGNMENT);
-	g_static_assert (HANDLE_COUNT % CHAR_BIT == 0);
+	g_static_assert (HANDLE_COUNT % BITMAP_SIZE == 0);
 	HandleData* handles = mono_valloc_aligned (sizeof(HandleData), HANDLE_DATA_ALIGNMENT, MONO_MMAP_READ | MONO_MMAP_WRITE, MONO_MEM_ACCOUNT_SGEN_INTERNAL);
 	handles->type = type;
 	handles->size = HANDLE_COUNT;
