@@ -1768,7 +1768,12 @@ alloc_handle (int type, MonoObject *obj, gboolean track)
 		*/
 		res = handle_tag_weak (res);
 	}
-	MONO_PROFILER_RAISE (gc_handle_created, (res, (MonoGCHandleType)handles->type, obj));
+	/*
+	 * TODO: We now require the full pointer sized representation of GCHandle on 64-bit,
+	 * but the profiler API exposes handles as uint32_t. Avoid firing profiler events for GCHandle
+	 * on Boehm until we can sort out a breaking change to the profiler APIs.
+	 * MONO_PROFILER_RAISE (gc_handle_created, (res, (MonoGCHandleType)handles->type, obj));
+	*/
 	return res;
 }
 
@@ -1973,7 +1978,12 @@ mono_gchandle_free_internal (MonoGCHandle gchandle)
 #endif
 	/*g_print ("freed entry %d of type %d\n", slot, handles->type);*/
 	unlock_handles (handles);
-	MONO_PROFILER_RAISE (gc_handle_deleted, (gchandle, (MonoGCHandleType)handles->type));
+	/*
+	 * TODO: We now require the full pointer sized representation of GCHandle on 64-bit,
+	 * but the profiler API exposes handles as uint32_t. Avoid firing profiler events for GCHandle
+	 * on Boehm until we can sort out a breaking change to the profiler APIs.
+	 * MONO_PROFILER_RAISE (gc_handle_deleted, (gchandle, (MonoGCHandleType)handles->type));
+	*/
 }
 
 /**
