@@ -101,7 +101,7 @@ void mono_gc_handle_unlock () { unlock_handles (NULL); }
  * to result in the smallest amount of wasted space at the end of the allocation.
  */
 #if SIZEOF_VOID_P == 4
-#define HANDLE_COUNT 1008
+#define HANDLE_COUNT 992
 #define HANDLE_DATA_ALIGNMENT 4096
 #else
 #define HANDLE_COUNT 992
@@ -1644,7 +1644,7 @@ static HandleData*
 handle_data_alloc_entries(int type)
 {
 	g_static_assert (sizeof(HandleData) < HANDLE_DATA_ALIGNMENT);
-	g_static_assert (HANDLE_COUNT % CHAR_BIT == 0);
+	g_static_assert (HANDLE_COUNT % BITMAP_SIZE == 0);
 	HandleData* handles = mono_valloc_aligned (sizeof(HandleData), HANDLE_DATA_ALIGNMENT, MONO_MMAP_READ | MONO_MMAP_WRITE, MONO_MEM_ACCOUNT_SGEN_INTERNAL);
 	handles->type = type;
 	handles->size = HANDLE_COUNT;
@@ -1768,7 +1768,12 @@ alloc_handle (int type, MonoObject *obj, gboolean track)
 		*/
 		res = handle_tag_weak (res);
 	}
-	MONO_PROFILER_RAISE (gc_handle_created, (res, (MonoGCHandleType)handles->type, obj));
+	/*
+	 * TODO: We now require the full pointer sized representation of GCHandle on 64-bit,
+	 * but the profiler API exposes handles as uint32_t. Avoid firing profiler events for GCHandle
+	 * on Boehm until we can sort out a breaking change to the profiler APIs.
+	 * MONO_PROFILER_RAISE (gc_handle_created, (res, (MonoGCHandleType)handles->type, obj));
+	*/
 	return res;
 }
 
@@ -1973,7 +1978,12 @@ mono_gchandle_free_internal (MonoGCHandle gchandle)
 #endif
 	/*g_print ("freed entry %d of type %d\n", slot, handles->type);*/
 	unlock_handles (handles);
-	MONO_PROFILER_RAISE (gc_handle_deleted, (gchandle, (MonoGCHandleType)handles->type));
+	/*
+	 * TODO: We now require the full pointer sized representation of GCHandle on 64-bit,
+	 * but the profiler API exposes handles as uint32_t. Avoid firing profiler events for GCHandle
+	 * on Boehm until we can sort out a breaking change to the profiler APIs.
+	 * MONO_PROFILER_RAISE (gc_handle_deleted, (gchandle, (MonoGCHandleType)handles->type));
+	*/
 }
 
 /**
