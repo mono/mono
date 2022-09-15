@@ -890,7 +890,7 @@ namespace System.Windows.Forms {
 				if (class_name != null)
 					return class_name;
 
-				class_name = string.Format ("Mono.WinForms.{0}.{1}", System.Threading.Thread.GetDomainID ().ToString (), classStyle);
+				class_name = string.Format ("Mono.WinForms.{0}.{1}.{2}", System.Threading.Thread.GetDomainID ().ToString (), classStyle, new Random().Next());
 
 				WNDCLASS wndClass;
 
