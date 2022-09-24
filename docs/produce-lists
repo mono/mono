@@ -13,12 +13,12 @@ add_h4()
 
 ignore_known()
 {
-	fgrep -v -f $dir/ignore
+	grep -F -v -f $dir/ignore
 }
 
 ignore_hidden ()
 {
-    fgrep -w -v -f $dir/hidden_methods
+    grep -F -w -v -f $dir/hidden_methods
 }
 
 clean_nm ()
@@ -28,7 +28,7 @@ clean_nm ()
 
 ignore_wapi ()
 {
-	grep -v _wapi | fgrep -v -f $dir/wapi
+	grep -v _wapi | grep -F -v -f $dir/wapi
 }
 
 if grep ^$ ignore >/dev/null; then
@@ -41,4 +41,4 @@ fi
 objdump -t ../mono/mini/.libs/libmono-2.0.a | grep "\.hidden" | sed 's/.*\.hidden //' > hidden_methods
 
 nm  $dir/../mono/io-layer/.libs/*.o | clean_nm | grep -v _wapi | ignore_known | sort > $dir/wapi
-nm  $dir/../mono/mini/.libs/libmono-2.0.a | clean_nm | ignore_known | ignore_hidden | ignore_wapi | grep -v ^ves_icall | egrep -v '^(mono_arch_|monoeg)'  | sort > $dir/public-api
+nm  $dir/../mono/mini/.libs/libmono-2.0.a | clean_nm | ignore_known | ignore_hidden | ignore_wapi | grep -v ^ves_icall | grep -E -v '^(mono_arch_|monoeg)'  | sort > $dir/public-api
