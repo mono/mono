@@ -26,11 +26,11 @@ jobs:
   displayName: ${{ parameters.displayName }}
   pool:
     ${{ if eq(parameters.os, 'osx') }}:
-      vmImage: macos-10.15
+      vmImage: macos-11
     ${{ if eq(parameters.os, 'win') }}:
       vmImage: windows-2019
     ${{ if and(eq(parameters.os, 'linux'),eq(parameters.arch, 'amd64')) }}:
-      vmImage: ubuntu-20.04
+      vmImage: ubuntu-22.04
     ${{ if and(eq(parameters.os, 'linux'),eq(parameters.arch, 'aarch64')) }}:
       name: MonoARM64
     ${{ if and(eq(parameters.os, 'linux'),eq(parameters.arch, 'armhf')) }}:
