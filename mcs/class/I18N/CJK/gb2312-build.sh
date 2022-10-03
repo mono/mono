@@ -14,7 +14,7 @@
 
 # GB2312 to Unicode
 
-egrep '^0x' $1 | perl -e \
+grep -E '^0x' $1 | perl -e \
 '
 @vals;
 while (<>) {
@@ -66,7 +66,7 @@ for ($i=0; $i < $#vals+1; $i++) {
 
 # Gb2312 from Unicode, table 2
 
-egrep '^0x' $1 | awk '{ print $2, $1 }' | sort | egrep '^0x03' | perl -e \
+grep -E '^0x' $1 | awk '{ print $2, $1 }' | sort | grep -E '^0x03' | perl -e \
 '
 @vals;
 while(<>) {
@@ -85,7 +85,7 @@ for ($i=0; $i < $#vals+1; $i++) {
 
 # Gb2312 from Unicode, table 3
 
-egrep '^0x' $1 | awk '{ print $2, $1 }' | sort | egrep '^0x04' | perl -e \
+grep -E '^0x' $1 | awk '{ print $2, $1 }' | sort | grep -E '^0x04' | perl -e \
 '
 @vals;
 while(<>) {
@@ -104,7 +104,7 @@ for ($i=0; $i < $#vals+1; $i++) {
 
 # Gb2312 from Unicode, table 4
 
-egrep '^0x' $1 | awk '{ print $2, $1 }' | sort | egrep '^0x20' | perl -e \
+grep -E '^0x' $1 | awk '{ print $2, $1 }' | sort | grep -E '^0x20' | perl -e \
 '
 @vals;
 while(<>) {
@@ -123,7 +123,7 @@ for ($i=0; $i < $#vals+1; $i++) {
 
 # Gb2312 from Unicode, table 5
 
-egrep '^0x' $1 | awk '{ print $2, $1 }' | sort | egrep '^0x2[12]' | perl -e \
+grep -E '^0x' $1 | awk '{ print $2, $1 }' | sort | grep -E '^0x2[12]' | perl -e \
 '
 @vals;
 while(<>) {
@@ -143,7 +143,7 @@ for ($i=0; $i < $#vals+1; $i++) {
 
 # Gb2312 from Unicode, table 6
 
-egrep '^0x' $1 | awk '{ print $2, $1 }' | sort | egrep '^0x24' | perl -e \
+grep -E '^0x' $1 | awk '{ print $2, $1 }' | sort | grep -E '^0x24' | perl -e \
 '
 @vals;
 while(<>) {
@@ -163,7 +163,7 @@ for ($i=0; $i < $#vals+1; $i++) {
 
 # Gb2312 from Unicode, table 7
 
-egrep '^0x' $1 | awk '{ print $2, $1 }' | sort | egrep '^0x3[01]' | perl -e \
+grep -E '^0x' $1 | awk '{ print $2, $1 }' | sort | grep -E '^0x3[01]' | perl -e \
 '
 @vals;
 while(<>) {
@@ -182,7 +182,7 @@ for ($i=0; $i < $#vals+1; $i++) {
 
 # Gb2312 from Unicode, table 8
 
-egrep '^0x' $1 | awk '{ print $2, $1 }' | sort | egrep '^0x[4-9]' | perl -e \
+grep -E '^0x' $1 | awk '{ print $2, $1 }' | sort | grep -E '^0x[4-9]' | perl -e \
 '
 @vals;
 while(<>) {
@@ -201,7 +201,7 @@ for ($i=0; $i < $#vals+1; $i++) {
 
 # Gb2312 from Unicode, table 9
 
-egrep '^0x' $1 | awk '{ print $2, $1 }' | sort | egrep '^0xFF[0-5]' | perl -e \
+grep -E '^0x' $1 | awk '{ print $2, $1 }' | sort | grep -E '^0xFF[0-5]' | perl -e \
 '
 @vals;
 while(<>) {
