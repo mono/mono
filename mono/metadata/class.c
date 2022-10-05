@@ -365,7 +365,7 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 		int i, rank = type->data.array->rank;
 		MonoTypeNameFormat nested_format;
 
-		nested_format = format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED ?
+		nested_format = format >= MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED ?
 			MONO_TYPE_NAME_FORMAT_FULL_NAME : format;
 
 		mono_type_get_name_recurse (
@@ -385,12 +385,14 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 
 		if (format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED)
 			_mono_type_get_assembly_name (type->data.array->eklass, str);
+		else if (format == MONO_TYPE_NAME_FORMAT_REFLECTION_QUALIFIED)
+			g_string_append_printf (str, ", %s", type->data.array->eklass->image->assembly_name);
 		break;
 	}
 	case MONO_TYPE_SZARRAY: {
 		MonoTypeNameFormat nested_format;
 
-		nested_format = format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED ?
+		nested_format = format >= MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED ?
 			MONO_TYPE_NAME_FORMAT_FULL_NAME : format;
 
 		mono_type_get_name_recurse (
@@ -401,12 +403,14 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 
 		if (format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED)
 			_mono_type_get_assembly_name (type->data.klass, str);
+		else if (format == MONO_TYPE_NAME_FORMAT_REFLECTION_QUALIFIED)
+			g_string_append_printf(str, ", %s", type->data.klass->image->assembly_name);
 		break;
 	}
 	case MONO_TYPE_PTR: {
 		MonoTypeNameFormat nested_format;
 
-		nested_format = format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED ?
+		nested_format = format >= MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED ?
 			MONO_TYPE_NAME_FORMAT_FULL_NAME : format;
 
 		mono_type_get_name_recurse (
@@ -417,6 +421,8 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 
 		if (format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED)
 			_mono_type_get_assembly_name (mono_class_from_mono_type_internal (type->data.type), str);
+		else if (format == MONO_TYPE_NAME_FORMAT_REFLECTION_QUALIFIED)
+			g_string_append_printf(str, ", %s", mono_class_from_mono_type_internal(type->data.type)->image->assembly_name);
 		break;
 	}
 	case MONO_TYPE_VAR:
@@ -479,11 +485,11 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 
 				if (i)
 					g_string_append_c (str, ',');
-				if ((nested_format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED) &&
+				if ((format >= MONO_TYPE_NAME_FORMAT_FULL_NAME) &&
 				    (t->type != MONO_TYPE_VAR) && (type->type != MONO_TYPE_MVAR))
 					g_string_append_c (str, '[');
 				mono_type_get_name_recurse (inst->type_argv [i], str, FALSE, nested_format);
-				if ((nested_format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED) &&
+				if ((format >= MONO_TYPE_NAME_FORMAT_FULL_NAME) &&
 				    (t->type != MONO_TYPE_VAR) && (type->type != MONO_TYPE_MVAR))
 					g_string_append_c (str, ']');
 			}
@@ -513,9 +519,13 @@ mono_type_get_name_recurse (MonoType *type, GString *str, gboolean is_recursed,
 
 		mono_type_name_check_byref (type, str);
 
-		if ((format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED) &&
-		    (type->type != MONO_TYPE_VAR) && (type->type != MONO_TYPE_MVAR))
-			_mono_type_get_assembly_name (klass, str);
+		if ((type->type != MONO_TYPE_VAR) && (type->type != MONO_TYPE_MVAR))
+		{
+			if (format == MONO_TYPE_NAME_FORMAT_ASSEMBLY_QUALIFIED)
+				_mono_type_get_assembly_name(klass, str);
+			else if (format == MONO_TYPE_NAME_FORMAT_REFLECTION_QUALIFIED)
+				g_string_append_printf(str, ", %s", klass->image->assembly_name);
+		}
 		break;
 	}
 }
