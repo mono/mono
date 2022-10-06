@@ -551,7 +551,7 @@ namespace System.Xaml
 
 		bool IsAllowedType (XamlType xt, object value)
 		{
-			return  xt == null ||
+			return xt == null ||
 				xt.UnderlyingType == null ||
 				xt.UnderlyingType.IsInstanceOfType (value) ||
 				value == null && xt == XamlLanguage.Null ||
