@@ -65,7 +65,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Run backport
-      uses: ./eng/actions/backport
+      uses: ./scripts/ci/actions/backport
       with:
         target_branch: ${{ steps.target-branch-extractor.outputs.result }}
         auth_token: ${{ secrets.GITHUB_TOKEN }}
