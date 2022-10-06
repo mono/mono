@@ -28,7 +28,7 @@ using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml.Schema;
 
-using Pair = System.Collections.Generic.KeyValuePair<string,string>;
+using Pair = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace System.Xaml
 {
