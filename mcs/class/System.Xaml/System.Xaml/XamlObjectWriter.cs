@@ -115,8 +115,8 @@ namespace System.Xaml
 
 		public void SetLineInfo (int lineNumber, int linePosition)
 		{
-//			line = lineNumber;
-//			column = linePosition;
+			// line = lineNumber;
+			// column = linePosition;
 			lineinfo_was_given = true;
 		}
 		
