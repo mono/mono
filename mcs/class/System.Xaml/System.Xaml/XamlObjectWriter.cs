@@ -494,7 +494,7 @@ namespace System.Xaml
 				throw;
 			} catch (Exception ex) {
 				// For + ex.Message, the runtime should print InnerException message like .NET does.
-				throw new XamlObjectWriterException (String.Format ("Could not convert object \'{0}' (of type {1}) to {2}: ", value, value != null ? (object) value.GetType () : "(null)", xt)  + ex.Message, ex);
+				throw new XamlObjectWriterException (String.Format ("Could not convert object \'{0}' (of type {1}) to {2}: ", value, value != null ? (object) value.GetType () : "(null)", xt) + ex.Message, ex);
 			}
 		}
 
