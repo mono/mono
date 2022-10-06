@@ -383,7 +383,7 @@ namespace System.Xaml
 			var eventMethodParams = ev.EventHandlerType.GetMethod ("Invoke").GetParameters ();
 			
 			var target = root_state.Value;
-			var mi = target.GetType().GetMethod (mn, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, null, (from pi in eventMethodParams select pi.ParameterType).ToArray (), null);
+			var mi = target.GetType ().GetMethod (mn, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public, null, (from pi in eventMethodParams select pi.ParameterType).ToArray (), null);
 			if (mi == null)
 				throw new XamlObjectWriterException (String.Format ("Referenced value method {0} in type {1} indicated by event {2} was not found", mn, value, member));
 			var obj = object_states.Peek ().Value;
