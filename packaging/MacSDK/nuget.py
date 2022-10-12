@@ -4,7 +4,7 @@ import fileinput
 class NuGetBinary (Package):
 
     def __init__(self):
-        Package.__init__(self, name='NuGet', version='6.2.1', sources=[
+        Package.__init__(self, name='NuGet', version='6.3.1', sources=[
                          'https://dist.nuget.org/win-x86-commandline/v%{version}/nuget.exe'])
 
     def build(self):
