@@ -10371,8 +10371,8 @@ debugger_thread (void *arg)
 		/* This will break if the socket is closed during shutdown too */
 		if (res != HEADER_LENGTH) {
 			PRINT_DEBUG_MSG (1, "[dbg] transport_recv () returned %d, expected %d.\n", res, HEADER_LENGTH);
-			command_set = (CommandSet)0;
-			command = 0;
+			command_set = CMD_SET_VM;
+			command = CMD_VM_DISPOSE;
 			dispose_vm ();
 			break;
 		} else {
