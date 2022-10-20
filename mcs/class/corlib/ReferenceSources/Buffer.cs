@@ -194,9 +194,18 @@ namespace System
 				((byte*)dest) [0] = ((byte*)src) [0];
 		}
 
-		internal static unsafe void Memcpy (byte *dest, byte *src, int len, bool useICall = true) {
+		internal static unsafe void Memcpy (byte *dest, byte *src, int len) {
 			// For bigger lengths, we use the heavily optimized native code
-			if (len > 32 && useICall) {
+			if (len > 32) {
+#if UNITY
+				// We need to check if the destination is non-null. We need to do
+				// that in managed code, so at the normal Mono NullReferenceException
+				// handling will work. So attempt to dereference the destination here.
+				// This check is pretty cheap, and will cause a proper managed
+				// exception if the value is null.
+				long dereferencedValue = *dest;
+				System.Threading.Interlocked.Read(ref dereferencedValue);
+#endif
 				InternalMemcpy (dest, src, len);
 				return;
 			}
