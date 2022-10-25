@@ -194,6 +194,8 @@ ReadZStream (ZStream *stream, guchar *buffer, gint length)
 	while (zs->avail_out > 0) {
 		if (zs->avail_in == 0) {
 			n = stream->func (stream->buffer, BUFFER_SIZE, stream->gchandle);
+			if (n == MONO_EXCEPTION)
+				return n;
 			n = n < 0 ? 0 : n;
 			stream->total_in += n;
 			zs->next_in = stream->buffer;
