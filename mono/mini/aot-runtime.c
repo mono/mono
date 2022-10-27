@@ -1890,10 +1890,10 @@ compare_version (char* runtime, char* build)
 		build_token = strtok_r (build, " .)", &saveptr1);
 		runtime_token = strtok_r (runtime, " .)", &saveptr2);
 		if (build_token == NULL || runtime_token == NULL || strcmp (build_token, runtime_token)) {
-			return true;
+			return TRUE;
 		}
 	}
-	return false;
+	return FALSE;
 }
 
 static gboolean
