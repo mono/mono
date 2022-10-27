@@ -1884,14 +1884,15 @@ compare_version (char* runtime, char* build)
 	// Example: 6.12.0.182 (2020-02/6051b710727)
 	// Tokens:  0  1 2   3                    4
 	char *saveptr1, *saveptr2;
-	char *build_token, *runtime_token;
+	char *build_token = strtok_r (build, " .)", &saveptr1);
+	char *runtime_token = strtok_r (runtime, " .)", &saveptr2);
 	int num_tokens = 5;
 	for (int i = 0; i < num_tokens; ++i) {
-		build_token = strtok_r (build, " .)", &saveptr1);
-		runtime_token = strtok_r (runtime, " .)", &saveptr2);
 		if (build_token == NULL || runtime_token == NULL || strcmp (build_token, runtime_token)) {
 			return TRUE;
 		}
+		build_token = strtok_r (NULL, " .)", &saveptr1);
+		runtime_token = strtok_r (NULL, " .)", &saveptr2);
 	}
 	return FALSE;
 }
