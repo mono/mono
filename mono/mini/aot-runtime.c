@@ -1876,6 +1876,26 @@ open_aot_data (MonoAssembly *assembly, MonoAotFileInfo *info, void **ret_handle)
 	return data;
 }
 
+// Return true if the verisons are different, to mimic the behavior of strcmp.
+static gboolean
+compare_version (char* runtime, char* build)
+{
+	// Expect version strings matched by ([0-9]+[.]){3}[0-9]+\s.*[\s\)]
+	// Example: 6.12.0.182 (2020-02/6051b710727)
+	// Tokens:  0  1 2   3                    4
+	char *saveptr1, *saveptr2;
+	char *build_token, *runtime_token;
+	int num_tokens = 5;
+	for (int i = 0; i < num_tokens; ++i) {
+		build_token = strtok_r (build, " .)", &saveptr1);
+		runtime_token = strtok_r (runtime, " .)", &saveptr2);
+		if (build_token == NULL || runtime_token == NULL || strcmp (build_token, runtime_token)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 static gboolean
 check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char **out_msg)
 {
@@ -1891,7 +1911,7 @@ check_usable (MonoAssembly *assembly, MonoAotFileInfo *info, guint8 *blob, char 
 	}
 
 	build_info = mono_get_runtime_build_info ();
-	if (strlen ((const char *)info->runtime_version) > 0 && strcmp (info->runtime_version, build_info)) {
+	if (strlen ((const char *)info->runtime_version) > 0 && compare_version (info->runtime_version, build_info)) {
 		msg = g_strdup_printf ("compiled against runtime version '%s' while this runtime has version '%s'", info->runtime_version, build_info);
 		usable = FALSE;
 	}
