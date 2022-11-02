@@ -9,7 +9,7 @@ class PCLReferenceAssembliesPackage(Package):
         Package.__init__(self,
                          name='PortableReferenceAssemblies',
                          version='2014-04-14',
-                         sources=['https://bosstoragemirror.blob.core.windows.net/bot-provisioning/PortableReferenceAssemblies-2014-04-14.zip'])
+                         sources=['https://github.com/mono/reference-assemblies/releases/download/v4.8/PortableReferenceAssemblies-2014-04-14.zip'])
 
     def build(self):
         pass
