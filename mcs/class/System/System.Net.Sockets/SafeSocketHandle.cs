@@ -15,8 +15,11 @@ using Microsoft.Win32.SafeHandles;
 
 namespace System.Net.Sockets {
 
+#if UNITY_AOT
+	sealed class SafeSocketHandle : SafeHandleMinusOneIsInvalid {
+#else
 	sealed class SafeSocketHandle : SafeHandleZeroOrMinusOneIsInvalid {
-
+#endif
 		List<Thread> blocking_threads;
 		Dictionary<Thread, StackTrace> threads_stacktraces;
 
