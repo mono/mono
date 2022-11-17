@@ -90,6 +90,10 @@
 #include "mini-arm.h"
 #endif
 
+#ifdef TARGET_ARM64
+#include "mini-arm64.h"
+#endif
+
 #ifndef MONO_ARCH_CONTEXT_DEF
 #define MONO_ARCH_CONTEXT_DEF
 #endif

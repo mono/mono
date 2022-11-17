@@ -6,6 +6,7 @@ set PATH=%PATH%;%MONO_DEPENDENCIES_PREFIX%\bin
 
 if "%2" == "Win32" goto x86
 if "%2" == "x64" goto x64
+if "%2" == "ARM64" goto ARM64
 goto error
 :x86
 echo Platform detected is x86...
@@ -14,6 +15,10 @@ goto end
 :x64
 echo Platform detected is x64...
 %1 -c 1 -p -e inssel.brg inssel-float.brg inssel-long.brg inssel-amd64.brg -d inssel.h -s inssel.c
+goto end
+:ARM64
+echo Platform detected is ARM64...
+%1 -c 1 -p -e inssel.brg inssel-float.brg inssel-long.brg inssel-arm64.brg -d inssel.h -s inssel.c
 goto end
 :error
 echo Error: unsupported platform

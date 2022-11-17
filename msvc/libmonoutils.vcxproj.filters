@@ -11,5 +11,13 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{82f9c5a2-bc7b-4424-ae85-a203027fd038}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\arch\arm64">
+      <UniqueIdentifier>{d0cffd18-ccf9-4cc9-a5ab-d6bc6ad7dadb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\mono\utils\winarm64.asm">
+      <Filter>Resource Files\arch\arm64</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

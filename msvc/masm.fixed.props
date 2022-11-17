@@ -17,7 +17,8 @@
       <ErrorReporting>0</ErrorReporting>
       <CommandLineTemplate Condition="'$(Platform)' == 'Win32'">"ml.exe" /c [AllOptions] [AdditionalOptions] /Ta[Inputs]</CommandLineTemplate>
       <CommandLineTemplate Condition="'$(Platform)' == 'X64'">"ml64.exe" /c [AllOptions] [AdditionalOptions] /Ta[Inputs]</CommandLineTemplate>
-      <CommandLineTemplate Condition="'$(Platform)' != 'Win32' and '$(Platform)' != 'X64'">echo MASM not supported on this platform</CommandLineTemplate>
+      <CommandLineTemplate Condition="'$(Platform)' == 'ARM64'">"armasm64.exe" [Inputs] -o $(IntDir)%(FileName).obj</CommandLineTemplate>
+      <CommandLineTemplate Condition="'$(Platform)' != 'Win32' and '$(Platform)' != 'X64' and '$(Platform)' != 'ARM64'">echo MASM not supported on this platform</CommandLineTemplate>
       <ExecutionDescription>Assembling %(Identity)...</ExecutionDescription>
     </MASM>
   </ItemDefinitionGroup>

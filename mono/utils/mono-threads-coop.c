@@ -198,7 +198,7 @@ copy_stack_data_internal (MonoThreadInfo *info, MonoStackData *stackdata_begin, 
 	state->gc_stackdata_size = stackdata_size;
 }
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(TARGET_ARM64)
 typedef void (*CopyStackDataFunc)(MonoThreadInfo *, MonoStackData *, gconstpointer, gconstpointer);
 
 #ifdef TARGET_AMD64

@@ -1382,7 +1382,7 @@ MINI_OP(OP_PPC_FLOOR,              "ppc_floor", FREG, FREG, NONE)
 MINI_OP(OP_PPC_TRUNC,              "ppc_trunc", FREG, FREG, NONE)
 #endif
 
-#if defined(TARGET_ARM) || defined(TARGET_ARM64)
+#if defined(TARGET_ARM) || defined(TARGET_ARM64) || defined(TARGET_AMD64)
 MINI_OP(OP_ARM_RSBS_IMM,            "arm_rsbs_imm", IREG, IREG, NONE)
 MINI_OP(OP_ARM_RSC_IMM,             "arm_rsc_imm", IREG, IREG, NONE)
 /* Set dreg to an r4 value */
@@ -1499,7 +1499,7 @@ MINI_OP(OP_MIPS_COND_EXC_INC, "mips_cond_exc_inc", NONE, IREG, IREG)
 
 #endif
 
-#if defined(TARGET_ARM64)
+#if defined(TARGET_ARM64) || defined(TARGET_AMD64)
 /* Branch if sreg1 == 0 */
 MINI_OP(OP_ARM64_CBZW, "arm64_cbzw", NONE, IREG, NONE)
 MINI_OP(OP_ARM64_CBZX, "arm64_cbzx", NONE, IREG, NONE)

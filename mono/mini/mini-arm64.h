@@ -15,7 +15,89 @@
 #include <mono/arch/arm64/arm64-codegen.h>
 #include <mono/mini/mini-arm64-gsharedvt.h>
 
+#ifdef HOST_WIN32
+#include <windows.h>
+#include <signal.h>
+
+#if !defined(_MSC_VER)
+ /* sigcontext surrogate */
+struct sigcontext {
+	guint64 eax;
+	guint64 ebx;
+	guint64 ecx;
+	guint64 edx;
+	guint64 ebp;
+	guint64 esp;
+	guint64 esi;
+	guint64 edi;
+	guint64 eip;
+};
+#endif
+
+typedef void MONO_SIG_HANDLER_SIGNATURE((*MonoW32ExceptionHandler));
+
+#ifndef SIGFPE
+#define SIGFPE 4
+#endif
+
+#ifndef SIGILL
+#define SIGILL 8
+#endif
+
+#ifndef	SIGSEGV
+#define	SIGSEGV 11
+#endif
+
+LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
+
+typedef struct {
+	SRWLOCK lock;
+	PVOID handle;
+	gsize begin_range;
+	gsize end_range;
+	PRUNTIME_FUNCTION rt_funcs;
+	DWORD rt_funcs_current_count;
+	DWORD rt_funcs_max_count;
+} DynamicFunctionTableEntry;
+
+#define MONO_UNWIND_INFO_RT_FUNC_SIZE 128
+
+typedef BOOLEAN(WINAPI* RtlInstallFunctionTableCallbackPtr)(
+	DWORD64 TableIdentifier,
+	DWORD64 BaseAddress,
+	DWORD Length,
+	PGET_RUNTIME_FUNCTION_CALLBACK Callback,
+	PVOID Context,
+	PCWSTR OutOfProcessCallbackDll);
+
+typedef BOOLEAN(WINAPI* RtlDeleteFunctionTablePtr)(
+	PRUNTIME_FUNCTION FunctionTable);
+
+// On Win8/Win2012Server and later we can use dynamic growable function tables
+// instead of RtlInstallFunctionTableCallback. This gives us the benefit to
+// include all needed unwind upon registration.
+typedef DWORD(NTAPI* RtlAddGrowableFunctionTablePtr)(
+	PVOID* DynamicTable,
+	PRUNTIME_FUNCTION FunctionTable,
+	DWORD EntryCount,
+	DWORD MaximumEntryCount,
+	ULONG_PTR RangeBase,
+	ULONG_PTR RangeEnd);
+
+typedef VOID(NTAPI* RtlGrowFunctionTablePtr)(
+	PVOID DynamicTable,
+	DWORD NewEntryCount);
+
+typedef VOID(NTAPI* RtlDeleteGrowableFunctionTablePtr)(
+	PVOID DynamicTable);
+
+#endif /* HOST_WIN32 */
+
+#ifdef HOST_WIN32
+#define MONO_ARCH_CPU_SPEC mono_arm64_desc
+#else
 #define MONO_ARCH_CPU_SPEC mono_arm64_cpu_desc
+#endif /* HOST_WIN32 */
 
 #define MONO_MAX_IREGS 32
 #define MONO_MAX_FREGS 32
@@ -27,9 +109,15 @@
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [0] = (gsize)exc; } while (0)
 
+/*
+* __builtin_frame_address () is broken on some older gcc versions in the presence of
+* frame pointer elimination, see bug #82095.
+*/
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,func) do {	\
-		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
-		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
+        int tmp; \
+        guint64 stackptr = (guint64)&tmp; \
+		MONO_CONTEXT_SET_BP ((ctx), stackptr);	\
+		MONO_CONTEXT_SET_SP ((ctx), stackptr);	\
 		MONO_CONTEXT_SET_IP ((ctx), (func));	\
 	} while (0)
 
@@ -147,7 +235,9 @@ typedef struct {
 #define MONO_ARCH_IMT_REG MONO_ARCH_RGCTX_REG
 #define MONO_ARCH_VTABLE_REG ARMREG_R0
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
+#if !defined(HOST_WIN32)
 #define MONO_ARCH_USE_SIGACTION 1
+#endif
 #ifdef HOST_TVOS
 #define MONO_ARCH_HAS_NO_PROPER_MONOCTX 1
 #endif

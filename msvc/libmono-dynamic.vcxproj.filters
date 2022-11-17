@@ -27,6 +27,9 @@
     <Filter Include="Source Files\libmini\unity">
       <UniqueIdentifier>{169b1a8b-01cd-40a3-84aa-a6bac9922770}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\libmonoutils\arch\arm64">
+      <UniqueIdentifier>{68e539ab-750a-4734-bd78-5f6b4e51a78e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MonoSourceLocation)\mono\mini\mini-windows-dllmain.c">
@@ -35,5 +38,10 @@
     <ClCompile Include="..\mono\metadata\oop.c">
       <Filter>Source Files\libmini\unity</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="$(MonoSourceLocation)\mono\utils\winarm64.asm">
+      <Filter>Resource Files\libmonoutils\arch\arm64</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

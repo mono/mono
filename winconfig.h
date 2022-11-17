@@ -197,6 +197,8 @@
 #define MONO_ARCHITECTURE "amd64"
 #elif defined(_M_IX86)
 #define MONO_ARCHITECTURE "x86"
+#elif defined(_M_ARM64)
+#define MONO_ARCHITECTURE "arm64"
 #else
 #error Unknown architecture
 #endif
@@ -260,9 +262,12 @@
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
-#ifdef _WIN64
+#if defined(_M_X64)
 #define TARGET_AMD64 1
 #define HOST_AMD64 1
+#elif defined(_M_ARM64)
+#define TARGET_ARM64 1
+#define HOST_ARM64 1
 #else
 #define TARGET_X86 1
 #define HOST_X86 1

@@ -17,14 +17,14 @@ my $buildMachine = $ENV{UNITY_THISISABUILDMACHINE};
 
 my $build = 0;
 my $clean = 0;
-my $arch32 = 0;
+my $targetArch = "";
 my $debug = 0;
 my $gc = "bdwgc";
 
 GetOptions(
 	'build=i'=>\$build,
 	'clean=i'=>\$clean,
-	'arch32=i'=>\$arch32,
+	'targetarch=s'=>\$targetArch,
 	'debug=i'=>\$debug,
 	'gc=s'=>\$gc,
 ) or die ("illegal cmdline options");
@@ -49,7 +49,8 @@ sub CompileVCProj
 	}
 
     $config = $debug ? "Debug" : "Release";
-	my $arch = $arch32 ? "Win32" : "x64";
+	my $arch = $targetArch;
+
 	my $target = $clean ? "/t:Clean,Build" :"/t:Build";
 	my $properties = "/p:Configuration=$config;Platform=$arch;MONO_TARGET_GC=$gc;MONO_USE_STATIC_C_RUNTIME=true";
 

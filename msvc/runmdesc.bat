@@ -13,6 +13,7 @@ goto end
 :x64
 echo Platform detected is x64...
 %1 cpu-amd64.h amd64_desc cpu-amd64.md
+%1 cpu-arm64.h arm64_desc cpu-arm64.md
 goto end
 :error
 echo Error: unsupported platform

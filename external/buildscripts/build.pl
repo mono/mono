@@ -1351,14 +1351,13 @@ if ($build)
 	{
 		if ($^O eq "cygwin")
 		{
-			system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--clean=$clean", "--debug=$debug") eq 0 or die ('failed building mono with VS\n');
+			system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--targetArch=$targetArch", "--clean=$clean", "--debug=$debug") eq 0 or die ('failed building mono with VS\n');
 
 			# Copy over the VS built stuff that we want to use instead into the prefix directory
-			my $archNameForBuild = $arch32 ? 'Win32' : 'x64';
 			my $config = $debug ? "Debug" : "Release";
-			system("cp $monoroot/msvc/$archNameForBuild/bin/$config/mono.exe $monoprefix/bin/.") eq 0 or die ("failed copying mono.exe\n");
-			system("cp $monoroot/msvc/$archNameForBuild/bin/$config/mono-2.0.dll $monoprefix/bin/.") eq 0 or die ("failed copying mono-2.0.dll\n");
-			system("cp $monoroot/msvc/$archNameForBuild/bin/$config/mono-2.0.pdb $monoprefix/bin/.") eq 0 or die ("failed copying mono-2.0.pdb\n");
+			system("cp $monoroot/msvc/$targetArch/bin/$config/mono.exe $monoprefix/bin/.") eq 0 or die ("failed copying mono.exe\n");
+			system("cp $monoroot/msvc/$targetArch/bin/$config/mono-2.0.dll $monoprefix/bin/.") eq 0 or die ("failed copying mono-2.0.dll\n");
+			system("cp $monoroot/msvc/$targetArch/bin/$config/mono-2.0.pdb $monoprefix/bin/.") eq 0 or die ("failed copying mono-2.0.pdb\n");
 		}
 
 		system("cp -R $addtoresultsdistdir/bin/. $monoprefix/bin/") eq 0 or die ("Failed copying $addtoresultsdistdir/bin to $monoprefix/bin\n");
@@ -1536,9 +1535,9 @@ if ($artifact)
 	}
 	else
 	{
-		$embedDirArchDestination = $arch32 ? "$embedDirRoot/win32" : "$embedDirRoot/win64";
-		$distDirArchBin = $arch32 ? "$distdir/bin" : "$distdir/bin-x64";
-		$versionsOutputFile = $arch32 ? "$buildsroot/versions-win32.txt" : "$buildsroot/versions-win64.txt";
+		$embedDirArchDestination = "$embedDirRoot/$targetArch";
+		$distDirArchBin = $targetArch;
+		$versionsOutputFile = "$buildsroot/versions-$targetArch.txt" 
 	}
 
 	# Make sure the directory for our architecture is clean before we copy stuff into it

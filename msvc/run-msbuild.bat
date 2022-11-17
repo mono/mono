@@ -31,6 +31,9 @@ if /i "%~1" == "i686" (
 if /i "%~1" == "win32" (
     set VS_PLATFORM="Win32"
 )
+if /i "%~1" == "ARM64" (
+    set VS_PLATFORM="ARM64"
+)
 shift
 
 set VS_CONFIGURATION=Release

@@ -12,6 +12,7 @@ dependencies:
   - .yamato/Build Runtime OSX.yml
   - .yamato/Build Windows x64.yml
   - .yamato/Build Windows x86.yml
+  - .yamato/Build Windows ARM64.yml
   
 commands:
   - .yamato/scripts/collate_builds.sh
