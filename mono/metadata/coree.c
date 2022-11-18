@@ -626,11 +626,11 @@ STDAPI MonoFixupCorEE(HMODULE ModuleHandle)
 
 		if (cmp == 0)
 		{
-#ifdef _WIN64
+#if defined(_WIN64) && !defined(_M_ARM64)
 #if defined(_M_IA64)
 			ProcRva = (DWORD)((DWORD_PTR)PLabel - (DWORD_PTR)DosHeader);
 			*(PLabel)++ = *ExportFixup->ProcAddress.PLabel;
-#elif defined(_M_AMD64) || defined(_M_ARM64)
+#elif defined(_M_AMD64) 
 			ProcRva = (DWORD)((DWORD_PTR)Trampoline - (DWORD_PTR)DosHeader);
 			/* mov r11, ExportFixup->ProcAddress */
 			*(Trampoline)++ = 0x49;

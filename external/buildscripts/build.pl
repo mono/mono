@@ -1534,10 +1534,27 @@ if ($artifact)
 		$versionsOutputFile = "$buildsroot/versions-macos-$targetArch.txt";
 	}
 	else
-	{
-		$embedDirArchDestination = "$embedDirRoot/$targetArch";
-		$distDirArchBin = $targetArch;
-		$versionsOutputFile = "$buildsroot/versions-$targetArch.txt" 
+	{	
+		if($targetArch eq 'Win32')
+		{
+			$embedDirArchDestination = "$embedDirRoot\\win32";
+			$distDirArchBin = "$distdir\\bin";
+			$versionsOutputFile = "$buildsroot\\versions-win32.txt";
+		}
+		
+		if($targetArch eq 'x64')
+		{			
+			$embedDirArchDestination = "$embedDirRoot\\win64";
+			$distDirArchBin = "$distdir\\bin-x64";
+			$versionsOutputFile = "$buildsroot\\versions-win64.txt";
+		}	
+		
+		if($targetArch eq 'ARM64')
+		{
+			$embedDirArchDestination = "$embedDirRoot\\win-arm64";
+			$distDirArchBin = "$distdir\\bin-arm64";
+			$versionsOutputFile = "$buildsroot\\versions-win-arm64.txt";    		
+		}
 	}
 
 	# Make sure the directory for our architecture is clean before we copy stuff into it
@@ -1636,9 +1653,12 @@ if ($artifact)
 			# embedruntimes directory setup
 			system("cp", "$monoprefix/bin/mono-2.0-bdwgc.dll", "$embedDirArchDestination/mono-2.0-bdwgc.dll") eq 0 or die ("failed copying mono-2.0-bdwgc.dll\n");
 			system("cp", "$monoprefix/bin/mono-2.0-bdwgc.pdb", "$embedDirArchDestination/mono-2.0-bdwgc.pdb") eq 0 or die ("failed copying mono-2.0-bdwgc.pdb\n");
-
-			system("cp", "$monoprefix/bin/mono-2.0-sgen.dll", "$embedDirArchDestination/mono-2.0-sgen.dll") eq 0 or die ("failed copying mono-2.0-sgen.dll\n");
-			system("cp", "$monoprefix/bin/mono-2.0-sgen.pdb", "$embedDirArchDestination/mono-2.0-sgen.pdb") eq 0 or die ("failed copying mono-2.0-sgen.pdb\n");
+			
+			if($targetArch ne 'ARM64')
+			{
+				system("cp", "$monoprefix/bin/mono-2.0-sgen.dll", "$embedDirArchDestination/mono-2.0-sgen.dll") eq 0 or die ("failed copying mono-2.0-sgen.dll\n");
+				system("cp", "$monoprefix/bin/mono-2.0-sgen.pdb", "$embedDirArchDestination/mono-2.0-sgen.pdb") eq 0 or die ("failed copying mono-2.0-sgen.pdb\n");
+			}
 		}
 
 		# monodistribution directory setup

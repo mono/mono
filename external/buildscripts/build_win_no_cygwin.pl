@@ -167,30 +167,28 @@ if ($artifact)
 	my $embedDirArchDestination = "";
    	my $distDirArchBin = "";
    	my $versionsOutputFile = "";
-	
-	print(">>> TARGET ARCH IS $targetArch\n");
-	
-	if($targetArch eq "Win32")
+		
+	if($targetArch eq 'Win32')
 	{
 		$embedDirArchDestination = "$embedDirRoot\\win32";
 		$distDirArchBin = "$distdir\\bin";
 		$versionsOutputFile = "$buildsroot\\versions-win32.txt";
 	}
 	
-	if($targetArch eq "x64")
+	if($targetArch eq 'x64')
 	{			
 		$embedDirArchDestination = "$embedDirRoot\\win64";
 		$distDirArchBin = "$distdir\\bin-x64";
 		$versionsOutputFile = "$buildsroot\\versions-win64.txt";
 	}	
 	
-	if($targetArch eq "ARM64")
+	if($targetArch eq 'ARM64')
 	{
 		$embedDirArchDestination = "$embedDirRoot\\win-arm64";
 		$distDirArchBin = "$distdir\\bin-arm64";
 		$versionsOutputFile = "$buildsroot\\versions-win-arm64.txt";    		
 	}
-	
+
 	# Make sure the directory for our architecture is clean before we copy stuff into it
 	if (-d "$embedDirArchDestination")
 	{
