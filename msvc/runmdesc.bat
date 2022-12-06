@@ -4,6 +4,8 @@ echo Running genmdesc
 cd ..\mono\mini
 set PATH=%PATH%;%MONO_DEPENDENCIES_PREFIX%\bin
 if "%2" == "Win32" goto x86
+if "%3" == "Release-target-arm64" goto arm64
+if "%3" == "Debug-target-arm64" goto arm64
 if "%2" == "x64" goto x64
 goto error
 :x86
@@ -13,6 +15,9 @@ goto end
 :x64
 echo Platform detected is x64...
 %1 cpu-amd64.h amd64_desc cpu-amd64.md
+goto end
+:arm64
+echo Platform detected is ARM64...
 %1 cpu-arm64.h arm64_desc cpu-arm64.md
 goto end
 :error
