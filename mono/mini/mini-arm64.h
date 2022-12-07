@@ -15,11 +15,7 @@
 #include <mono/arch/arm64/arm64-codegen.h>
 #include <mono/mini/mini-arm64-gsharedvt.h>
 
-#ifdef HOST_WIN32
-#define MONO_ARCH_CPU_SPEC mono_arm64_desc
-#else
 #define MONO_ARCH_CPU_SPEC mono_arm64_cpu_desc
-#endif /* HOST_WIN32 */
 
 #define MONO_MAX_IREGS 32
 #define MONO_MAX_FREGS 32
