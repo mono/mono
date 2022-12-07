@@ -2045,7 +2045,9 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #ifndef MONO_CROSS_COMPILE
 #if __APPLE__
 	sys_icache_invalidate (code, size);
-#elif !HOST_WIN32
+#elif defined(HOST_WIN32)	
+	FlushInstructionCache(GetCurrentProcess(), code, size);
+#else
 	/* Don't rely on GCC's __clear_cache implementation, as it caches
 	 * icache/dcache cache line sizes, that can vary between cores on
 	 * big.LITTLE architectures. */
@@ -2069,8 +2071,6 @@ mono_arch_flush_icache (guint8 *code, gint size)
 
 	asm volatile ("dsb ish" : : : "memory");
 	asm volatile ("isb" : : : "memory");
-#elif HOST_WIN32	
-	FlushInstructionCache(GetCurrentProcess(), code, size);
 #endif
 #endif
 }

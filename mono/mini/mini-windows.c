@@ -43,9 +43,11 @@
 #include <mono/utils/mono-counters.h>
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-mmap.h>
+#include <mono/utils/mono-state.h>
 #include <mono/utils/dtrace.h>
 #include <mono/utils/mono-context.h>
 #include <mono/utils/w32subset.h>
+#include "mono/utils/mono-tls-inline.h"
 
 #include "mini.h"
 #include "mini-runtime.h"
@@ -73,80 +75,200 @@ typedef struct {
 	handler handler;
 } HandlerItem;
 
-#if !defined(_MSC_VER)
-/* sigcontext surrogate */
-struct sigcontext {
-	guint64 eax;
-	guint64 ebx;
-	guint64 ecx;
-	guint64 edx;
-	guint64 ebp;
-	guint64 esp;
-	guint64 esi;
-	guint64 edi;
-	guint64 eip;
-};
-#endif
-
+#if _WIN64
 typedef void MONO_SIG_HANDLER_SIGNATURE ((*MonoW32ExceptionHandler));
 void win32_seh_init(void);
 void win32_seh_cleanup(void);
 void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler);
 
-#ifndef SIGFPE
-#define SIGFPE 4
+static void (*restore_stack) (void);
+static MonoW32ExceptionHandler fpe_handler;
+static MonoW32ExceptionHandler ill_handler;
+static MonoW32ExceptionHandler segv_handler;
+
+LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
+void *mono_win_vectored_exception_handle;
+
+#define W32_SEH_HANDLE_EX(_ex) \
+	if (_ex##_handler) _ex##_handler(er->ExceptionCode, &info, ctx)
+
+static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
+{
+#ifndef MONO_CROSS_COMPILE
+	if (mono_old_win_toplevel_exception_filter) {
+		return (*mono_old_win_toplevel_exception_filter)(ep);
+	}
 #endif
 
-#ifndef SIGILL
-#define SIGILL 8
-#endif
+	if (mono_dump_start ())
+		mono_handle_native_crash (mono_get_signame (SIGSEGV), NULL, NULL);
 
-#ifndef	SIGSEGV
-#define	SIGSEGV 11
-#endif
+	return EXCEPTION_CONTINUE_SEARCH;
+}
 
-LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
+#if HAVE_API_SUPPORT_WIN32_RESET_STKOFLW && !TARGET_ARM64
+static gpointer
+get_win32_restore_stack (void)
+{
+	static guint8 *start = NULL;
+	guint8 *code;
 
-typedef struct {
-	SRWLOCK lock;
-	PVOID handle;
-	gsize begin_range;
-	gsize end_range;
-	PRUNTIME_FUNCTION rt_funcs;
-	DWORD rt_funcs_current_count;
-	DWORD rt_funcs_max_count;
-} DynamicFunctionTableEntry;
+	if (start)
+		return start;
 
-#define MONO_UNWIND_INFO_RT_FUNC_SIZE 128
+	const int size = 128;
 
-typedef BOOLEAN (WINAPI* RtlInstallFunctionTableCallbackPtr)(
-	DWORD64 TableIdentifier,
-	DWORD64 BaseAddress,
-	DWORD Length,
-	PGET_RUNTIME_FUNCTION_CALLBACK Callback,
-	PVOID Context,
-	PCWSTR OutOfProcessCallbackDll);
+	/* restore_stack (void) */
+	start = code = mono_global_codeman_reserve (size);
 
-typedef BOOLEAN (WINAPI* RtlDeleteFunctionTablePtr)(
-	PRUNTIME_FUNCTION FunctionTable);
+	amd64_push_reg (code, AMD64_RBP);
+	amd64_mov_reg_reg (code, AMD64_RBP, AMD64_RSP, 8);
 
-// On Win8/Win2012Server and later we can use dynamic growable function tables
-// instead of RtlInstallFunctionTableCallback. This gives us the benefit to
-// include all needed unwind upon registration.
-typedef DWORD (NTAPI* RtlAddGrowableFunctionTablePtr)(
-	PVOID * DynamicTable,
-	PRUNTIME_FUNCTION FunctionTable,
-	DWORD EntryCount,
-	DWORD MaximumEntryCount,
-	ULONG_PTR RangeBase,
-	ULONG_PTR RangeEnd);
+	/* push 32 bytes of stack space for Win64 calling convention */
+	amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 32);
 
-typedef VOID (NTAPI* RtlGrowFunctionTablePtr)(
-	PVOID DynamicTable,
-	DWORD NewEntryCount);
+	/* restore guard page */
+	amd64_mov_reg_imm (code, AMD64_R11, _resetstkoflw);
+	amd64_call_reg (code, AMD64_R11);
 
-typedef VOID (NTAPI* RtlDeleteGrowableFunctionTablePtr)(
-	PVOID DynamicTable);
+	/* get jit_tls with context to restore */
+	amd64_mov_reg_imm (code, AMD64_R11, mono_tls_get_jit_tls_extern);
+	amd64_call_reg (code, AMD64_R11);
+
+	/* move jit_tls from return reg to arg reg */
+	amd64_mov_reg_reg (code, AMD64_ARG_REG1, AMD64_RAX, 8);
+
+	/* retrieve pointer to saved context */
+	amd64_alu_reg_imm (code, X86_ADD, AMD64_ARG_REG1, MONO_STRUCT_OFFSET (MonoJitTlsData, stack_restore_ctx));
+
+	/* this call does not return */
+	amd64_mov_reg_imm (code, AMD64_R11, mono_restore_context);
+	amd64_call_reg (code, AMD64_R11);
+
+	g_assertf ((code - start) <= size, "%d %d", (int)(code - start), size);
+
+	mono_arch_flush_icache (start, code - start);
+	MONO_PROFILER_RAISE (jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
+
+	return start;
+}
+#else
+static gpointer
+get_win32_restore_stack (void)
+{
+	// _resetstkoflw unsupported on none desktop Windows platforms.
+	return NULL;
+}
+#endif /* HAVE_API_SUPPORT_WIN32_RESET_STKOFLW */
+
+/*
+ * Unhandled Exception Filter
+ * Top-level per-process exception handler.
+ */
+LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
+{
+	EXCEPTION_RECORD* er;
+	CONTEXT* ctx;
+	LONG res;
+	MonoJitTlsData *jit_tls = mono_tls_get_jit_tls ();
+	MonoDomain* domain = mono_domain_get ();
+	MonoWindowsSigHandlerInfo info = { TRUE, ep };
+
+	/* If the thread is not managed by the runtime return early */
+	if (!jit_tls)
+		return EXCEPTION_CONTINUE_SEARCH;
+
+	res = EXCEPTION_CONTINUE_EXECUTION;
+
+	er = ep->ExceptionRecord;
+	ctx = ep->ContextRecord;
+
+	switch (er->ExceptionCode) {
+	case EXCEPTION_STACK_OVERFLOW:
+		if (!mono_aot_only && restore_stack) {
+			if (mono_arch_handle_exception (ctx, domain->stack_overflow_ex)) {
+				/* need to restore stack protection once stack is unwound
+				 * restore_stack will restore stack protection and then
+				 * resume control to the saved stack_restore_ctx */
+				mono_sigctx_to_monoctx (ctx, &jit_tls->stack_restore_ctx);
+#ifdef TARGET_ARM64
+				ctx->Pc = (guint64)restore_stack;
+#else
+				ctx->Rip = (guint64)restore_stack;
+#endif 
+			}
+		} else {
+			info.handled = FALSE;
+		}
+		break;
+	case EXCEPTION_ACCESS_VIOLATION:
+		W32_SEH_HANDLE_EX(segv);
+		break;
+	case EXCEPTION_ILLEGAL_INSTRUCTION:
+		W32_SEH_HANDLE_EX(ill);
+		break;
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:
+	case EXCEPTION_INT_OVERFLOW:
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+	case EXCEPTION_FLT_OVERFLOW:
+	case EXCEPTION_FLT_UNDERFLOW:
+	case EXCEPTION_FLT_INEXACT_RESULT:
+		W32_SEH_HANDLE_EX(fpe);
+		break;
+	default:
+		info.handled = FALSE;
+		break;
+	}
+
+	if (!info.handled) {
+		/* Don't copy context back if we chained exception
+		* as the handler may have modfied the EXCEPTION_POINTERS
+		* directly. We don't pass sigcontext to chained handlers.
+		* Return continue search so the UnhandledExceptionFilter
+		* can correctly chain the exception.
+		*/
+		res = EXCEPTION_CONTINUE_SEARCH;
+	}
+
+	return res;
+}
+
+void win32_seh_init()
+{
+	if (!mono_aot_only)
+		restore_stack = (void (*) (void))get_win32_restore_stack ();
+
+	mono_old_win_toplevel_exception_filter = SetUnhandledExceptionFilter(seh_unhandled_exception_filter);
+	mono_win_vectored_exception_handle = AddVectoredExceptionHandler (1, seh_vectored_exception_handler);
+}
+
+void win32_seh_cleanup()
+{
+	guint32 ret = 0;
+
+	if (mono_old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
+
+	ret = RemoveVectoredExceptionHandler (mono_win_vectored_exception_handle);
+	g_assert (ret);
+}
+
+void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
+{
+	switch (type) {
+	case SIGFPE:
+		fpe_handler = handler;
+		break;
+	case SIGILL:
+		ill_handler = handler;
+		break;
+	case SIGSEGV:
+		segv_handler = handler;
+		break;
+	default:
+		break;
+	}
+}
+#endif /* _WIN64 */
 
 #if HAVE_API_SUPPORT_WIN32_CONSOLE
 /**
@@ -264,7 +386,7 @@ install_custom_handler (const char *handlers, size_t *handler_arg_len)
 void
 mono_runtime_install_handlers (void)
 {
-#if !defined(MONO_CROSS_COMPILE) && !defined(TARGET_ARM64)
+#if !defined(MONO_CROSS_COMPILE)
 	win32_seh_init();
 	win32_seh_set_handler(SIGFPE, mono_sigfpe_signal_handler);
 	win32_seh_set_handler(SIGILL, mono_crashing_signal_handler);
@@ -315,7 +437,7 @@ mono_runtime_install_custom_handlers_usage (void)
 void
 mono_runtime_cleanup_handlers (void)
 {
-#if !defined(MONO_CROSS_COMPILE) && !defined(TARGET_ARM64)
+#if !defined(MONO_CROSS_COMPILE)
 	win32_seh_cleanup();
 #endif
 }

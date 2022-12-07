@@ -35,13 +35,22 @@
 * __builtin_frame_address () is broken on some older gcc versions in the presence of
 * frame pointer elimination, see bug #82095.
 */
+
+#ifdef HOST_WIN32
+#define MONO_INIT_CONTEXT_FROM_FUNC(ctx, func) do { \
+	guint64 stackptr; \
+		stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));\
+		MONO_CONTEXT_SET_IP ((ctx), (func)); \
+		MONO_CONTEXT_SET_BP ((ctx), stackptr); \
+		MONO_CONTEXT_SET_SP ((ctx), stackptr); \
+} while (0)
+#else
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,func) do {	\
-        int tmp; \
-        guint64 stackptr = (guint64)&tmp; \
-		MONO_CONTEXT_SET_BP ((ctx), stackptr);	\
-		MONO_CONTEXT_SET_SP ((ctx), stackptr);	\
+		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
+		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_IP ((ctx), (func));	\
-	} while (0)
+} while (0)
+#endif /* HOST_WIN32 */
 
 #define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf)
 

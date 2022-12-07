@@ -11,6 +11,82 @@
 #include <mono/utils/mono-context.h>
 #include <glib.h>
 
+#ifdef HOST_WIN32
+#include <windows.h>
+#include <signal.h>
+
+#if !defined(_MSC_VER)
+/* sigcontext surrogate */
+struct sigcontext {
+	guint64 eax;
+	guint64 ebx;
+	guint64 ecx;
+	guint64 edx;
+	guint64 ebp;
+	guint64 esp;
+	guint64 esi;
+	guint64 edi;
+	guint64 eip;
+};
+#endif
+
+#ifndef SIGFPE
+#define SIGFPE 4
+#endif
+
+#ifndef SIGILL
+#define SIGILL 8
+#endif
+
+#ifndef	SIGSEGV
+#define	SIGSEGV 11
+#endif
+
+LONG CALLBACK seh_handler(EXCEPTION_POINTERS* ep);
+
+typedef struct {
+	SRWLOCK lock;
+	PVOID handle;
+	gsize begin_range;
+	gsize end_range;
+	PRUNTIME_FUNCTION rt_funcs;
+	DWORD rt_funcs_current_count;
+	DWORD rt_funcs_max_count;
+} DynamicFunctionTableEntry;
+
+#define MONO_UNWIND_INFO_RT_FUNC_SIZE 128
+
+typedef BOOLEAN (WINAPI* RtlInstallFunctionTableCallbackPtr)(
+	DWORD64 TableIdentifier,
+	DWORD64 BaseAddress,
+	DWORD Length,
+	PGET_RUNTIME_FUNCTION_CALLBACK Callback,
+	PVOID Context,
+	PCWSTR OutOfProcessCallbackDll);
+
+typedef BOOLEAN (WINAPI* RtlDeleteFunctionTablePtr)(
+	PRUNTIME_FUNCTION FunctionTable);
+
+// On Win8/Win2012Server and later we can use dynamic growable function tables
+// instead of RtlInstallFunctionTableCallback. This gives us the benefit to
+// include all needed unwind upon registration.
+typedef DWORD (NTAPI* RtlAddGrowableFunctionTablePtr)(
+	PVOID * DynamicTable,
+	PRUNTIME_FUNCTION FunctionTable,
+	DWORD EntryCount,
+	DWORD MaximumEntryCount,
+	ULONG_PTR RangeBase,
+	ULONG_PTR RangeEnd);
+
+typedef VOID (NTAPI* RtlGrowFunctionTablePtr)(
+	PVOID DynamicTable,
+	DWORD NewEntryCount);
+
+typedef VOID (NTAPI* RtlDeleteGrowableFunctionTablePtr)(
+	PVOID DynamicTable);
+
+#endif /* HOST_WIN32 */
+
 #ifdef sun    // Solaris x86
 #  undef SIGSEGV_ON_ALTSTACK
 #  define MONO_ARCH_NOMAP32BIT
