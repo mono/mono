@@ -27,11 +27,6 @@
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [0] = (gsize)exc; } while (0)
 
-/*
-* __builtin_frame_address () is broken on some older gcc versions in the presence of
-* frame pointer elimination, see bug #82095.
-*/
-
 #ifdef HOST_WIN32
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx, func) do { \
 	guint64 stackptr; \
@@ -39,13 +34,13 @@
 		MONO_CONTEXT_SET_IP ((ctx), (func)); \
 		MONO_CONTEXT_SET_BP ((ctx), stackptr); \
 		MONO_CONTEXT_SET_SP ((ctx), stackptr); \
-} while (0)
+	} while (0)
 #else
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,func) do {	\
 		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_IP ((ctx), (func));	\
-} while (0)
+	} while (0)
 #endif /* HOST_WIN32 */
 
 #define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf)

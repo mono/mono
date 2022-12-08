@@ -386,7 +386,7 @@ install_custom_handler (const char *handlers, size_t *handler_arg_len)
 void
 mono_runtime_install_handlers (void)
 {
-#if !defined(MONO_CROSS_COMPILE)
+#ifndef MONO_CROSS_COMPILE
 	win32_seh_init();
 	win32_seh_set_handler(SIGFPE, mono_sigfpe_signal_handler);
 	win32_seh_set_handler(SIGILL, mono_crashing_signal_handler);
@@ -437,7 +437,7 @@ mono_runtime_install_custom_handlers_usage (void)
 void
 mono_runtime_cleanup_handlers (void)
 {
-#if !defined(MONO_CROSS_COMPILE)
+#ifndef MONO_CROSS_COMPILE
 	win32_seh_cleanup();
 #endif
 }

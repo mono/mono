@@ -3,9 +3,9 @@ rem This runs genmdesc on the x86 files when called on Visual Studio
 echo Running genmdesc
 cd ..\mono\mini
 set PATH=%PATH%;%MONO_DEPENDENCIES_PREFIX%\bin
-if "%2" == "Win32" goto x86
 if "%3" == "Release-target-arm64" goto arm64
 if "%3" == "Debug-target-arm64" goto arm64
+if "%2" == "Win32" goto x86
 if "%2" == "x64" goto x64
 goto error
 :x86

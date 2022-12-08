@@ -71,19 +71,19 @@ typedef BOOLEAN (WINAPI* RtlDeleteFunctionTablePtr)(
 // instead of RtlInstallFunctionTableCallback. This gives us the benefit to
 // include all needed unwind upon registration.
 typedef DWORD (NTAPI* RtlAddGrowableFunctionTablePtr)(
-	PVOID * DynamicTable,
-	PRUNTIME_FUNCTION FunctionTable,
-	DWORD EntryCount,
-	DWORD MaximumEntryCount,
-	ULONG_PTR RangeBase,
-	ULONG_PTR RangeEnd);
+    PVOID * DynamicTable,
+    PRUNTIME_FUNCTION FunctionTable,
+    DWORD EntryCount,
+    DWORD MaximumEntryCount,
+    ULONG_PTR RangeBase,
+    ULONG_PTR RangeEnd);
 
 typedef VOID (NTAPI* RtlGrowFunctionTablePtr)(
-	PVOID DynamicTable,
-	DWORD NewEntryCount);
+    PVOID DynamicTable,
+    DWORD NewEntryCount);
 
 typedef VOID (NTAPI* RtlDeleteGrowableFunctionTablePtr)(
-	PVOID DynamicTable);
+    PVOID DynamicTable);
 
 #endif /* HOST_WIN32 */
 
