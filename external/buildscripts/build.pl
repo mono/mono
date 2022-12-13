@@ -1174,7 +1174,7 @@ if ($build)
 		}
 
 		# Need to define because Apple's SIP gets in the way of us telling mono where to find this
-		push @configureparams, "--with-libgdiplus=$addtoresultsdistdir/lib/libgdiplus.dylib";
+		push @configureparams, "--with-libgdiplus=libgdiplus.dylib";
 		push @configureparams, "--enable-minimal=com,shared_perfcounters";
 		push @configureparams, "--disable-parallel-mark";
 		push @configureparams, "--enable-verify-defines";
