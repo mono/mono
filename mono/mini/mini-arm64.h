@@ -27,11 +27,21 @@
 
 #define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [0] = (gsize)exc; } while (0)
 
+#ifdef HOST_WIN32
+#define MONO_INIT_CONTEXT_FROM_FUNC(ctx, func) do { \
+	guint64 stackptr; \
+		stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));\
+		MONO_CONTEXT_SET_IP ((ctx), (func)); \
+		MONO_CONTEXT_SET_BP ((ctx), stackptr); \
+		MONO_CONTEXT_SET_SP ((ctx), stackptr); \
+	} while (0)
+#else
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,func) do {	\
 		MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));	\
 		MONO_CONTEXT_SET_IP ((ctx), (func));	\
 	} while (0)
+#endif /* HOST_WIN32 */
 
 #define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf)
 
@@ -147,7 +157,9 @@ typedef struct {
 #define MONO_ARCH_IMT_REG MONO_ARCH_RGCTX_REG
 #define MONO_ARCH_VTABLE_REG ARMREG_R0
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
+#if !defined(HOST_WIN32)
 #define MONO_ARCH_USE_SIGACTION 1
+#endif
 #ifdef HOST_TVOS
 #define MONO_ARCH_HAS_NO_PROPER_MONOCTX 1
 #endif

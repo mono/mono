@@ -1,0 +1,14 @@
+name: Build Windows ARM64
+
+agent:
+  type: Unity::VM
+  image: platform-foundation/windows-vs2019-il2cpp-bokken:stable
+  flavor: b1.xlarge
+
+commands:
+  - .yamato/scripts/build_win_arm64.bat
+
+artifacts: 
+  win-arm64:
+    paths:
+      - incomingbuilds\win-arm64\**

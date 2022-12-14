@@ -30,11 +30,6 @@ struct sigcontext {
 };
 #endif
 
-typedef void MONO_SIG_HANDLER_SIGNATURE ((*MonoW32ExceptionHandler));
-void win32_seh_init(void);
-void win32_seh_cleanup(void);
-void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler);
-
 #ifndef SIGFPE
 #define SIGFPE 4
 #endif

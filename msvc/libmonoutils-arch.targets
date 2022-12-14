@@ -7,9 +7,25 @@
     <ExcludeFromWindows32Build>false</ExcludeFromWindows32Build>
     <ExcludeFromWindows32Build Condition="'$(Platform)'=='Win32'">true</ExcludeFromWindows32Build>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(OnlyWindows32Build)'==''">
+    <OnlyWindows32Build>true</OnlyWindows32Build>
+    <OnlyWindows32Build Condition="'$(Platform)'=='Win32'">false</OnlyWindows32Build>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(ExcludeFromWindows64Build)'==''">
     <ExcludeFromWindows64Build>false</ExcludeFromWindows64Build>
     <ExcludeFromWindows64Build Condition="'$(Platform)'=='x64'">true</ExcludeFromWindows64Build>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OnlyWindows64Build)'==''">
+    <OnlyWindows64Build>true</OnlyWindows64Build>
+    <OnlyWindows64Build Condition="'$(Platform)'=='x64'">false</OnlyWindows64Build>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ExcludeFromWindowsARM64Build)'==''">
+    <ExcludeFromWindowsARM64Build>false</ExcludeFromWindowsARM64Build>
+    <ExcludeFromWindowsARM64Build Condition="'$(Platform)'=='ARM64'">true</ExcludeFromWindowsARM64Build>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OnlyWindowsARM64Build)'==''">
+    <OnlyWindowsARM64Build>true</OnlyWindowsARM64Build>
+    <OnlyWindowsARM64Build Condition="'$(Platform)'=='ARM64'">false</OnlyWindowsARM64Build>
   </PropertyGroup>
   <PropertyGroup Condition="'$(ExcludeMASMFromWindowsBuild)'==''">
     <ExcludeMASMFromWindowsBuild>false</ExcludeMASMFromWindowsBuild>
@@ -18,7 +34,9 @@
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\mach-support-x86.c">
       <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-hwcap-x86.c" />
+    <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-hwcap-x86.c" >
+      <ExcludedFromBuild>$(ExcludeFromWindowsARM64Build)</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup Label="arch_amd64_sources">
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\mach-support-amd64.c">
@@ -26,7 +44,7 @@
     </ClCompile>
     <MASM Include="$(MonoSourceLocation)\mono\utils\win64.asm" Condition="'$(ExcludeMASMFromWindowsBuild)'=='false'">
       <FileType>Document</FileType>
-      <ExcludedFromBuild>$(ExcludeFromWindows32Build)</ExcludedFromBuild>
+      <ExcludedFromBuild>$(OnlyWindows64Build)</ExcludedFromBuild>
       <PreprocessorDefinitions>X64</PreprocessorDefinitions>
     </MASM>
   </ItemGroup>
@@ -39,11 +57,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup Label="arch_arm64_sources">
+    <MASM Include="$(MonoSourceLocation)\mono\utils\winarm64.asm" Condition="'$(ExcludeMASMFromWindowsBuild)'=='false'">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild>$(OnlyWindowsARM64Build)</ExcludedFromBuild>
+      <PreprocessorDefinitions>ARM64</PreprocessorDefinitions>
+    </MASM>
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\mach-support-arm64.c">
-      <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
+      <ExcludedFromBuild>$(OnlyWindowsARM64Build)</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="$(MonoSourceLocation)\mono\utils\mono-hwcap-arm64.c">
-      <ExcludedFromBuild>$(ExcludeFromWindowsBuild)</ExcludedFromBuild>
+      <ExcludedFromBuild>$(OnlyWindowsARM64Build)</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup Label="arch_mips_sources">

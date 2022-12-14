@@ -46,7 +46,7 @@ GOTO ON_EXIT
 
 :ON_ERROR
 	ECHO Failed to setup test configuration file.
-	ECHO test-config-setup.bat [CONFIG_FILE_PATH] [MONO_MODULE_PATH] [x86|x86-64]
+	ECHO test-config-setup.bat [CONFIG_FILE_PATH] [MONO_MODULE_PATH] [x86|x86-64|ARM64]
 	SET MONO_RESULT=1
 	GOTO ON_EXIT
 	

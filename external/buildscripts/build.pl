@@ -1351,14 +1351,13 @@ if ($build)
 	{
 		if ($^O eq "cygwin")
 		{
-			system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--arch32=$arch32", "--clean=$clean", "--debug=$debug") eq 0 or die ('failed building mono with VS\n');
+			system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--targetArch=$targetArch", "--clean=$clean", "--debug=$debug") eq 0 or die ('failed building mono with VS\n');
 
 			# Copy over the VS built stuff that we want to use instead into the prefix directory
-			my $archNameForBuild = $arch32 ? 'Win32' : 'x64';
 			my $config = $debug ? "Debug" : "Release";
-			system("cp $monoroot/msvc/$archNameForBuild/bin/$config/mono.exe $monoprefix/bin/.") eq 0 or die ("failed copying mono.exe\n");
-			system("cp $monoroot/msvc/$archNameForBuild/bin/$config/mono-2.0.dll $monoprefix/bin/.") eq 0 or die ("failed copying mono-2.0.dll\n");
-			system("cp $monoroot/msvc/$archNameForBuild/bin/$config/mono-2.0.pdb $monoprefix/bin/.") eq 0 or die ("failed copying mono-2.0.pdb\n");
+			system("cp $monoroot/msvc/$targetArch/bin/$config/mono.exe $monoprefix/bin/.") eq 0 or die ("failed copying mono.exe\n");
+			system("cp $monoroot/msvc/$targetArch/bin/$config/mono-2.0.dll $monoprefix/bin/.") eq 0 or die ("failed copying mono-2.0.dll\n");
+			system("cp $monoroot/msvc/$targetArch/bin/$config/mono-2.0.pdb $monoprefix/bin/.") eq 0 or die ("failed copying mono-2.0.pdb\n");
 		}
 
 		system("cp -R $addtoresultsdistdir/bin/. $monoprefix/bin/") eq 0 or die ("Failed copying $addtoresultsdistdir/bin to $monoprefix/bin\n");
@@ -1456,7 +1455,7 @@ if ($artifact)
 		system("cp -r $monoprefix/etc $distdir/") eq 0 or die("failed copying etc folder\n");
 
 		system("cp -R $externalBuildDeps/reference-assemblies/unity $distdirlibmono/unity");
- 		system("cp -R $externalBuildDeps/reference-assemblies/unity_web $distdirlibmono/unity_web");
+		system("cp -R $externalBuildDeps/reference-assemblies/unity_web $distdirlibmono/unity_web");
 
 		# now remove nunit from a couple places (but not all, we need some of them)
 		# linux tar is not happy these are removed(at least on wsl), so don't remove them for now
@@ -1536,9 +1535,26 @@ if ($artifact)
 	}
 	else
 	{
-		$embedDirArchDestination = $arch32 ? "$embedDirRoot/win32" : "$embedDirRoot/win64";
-		$distDirArchBin = $arch32 ? "$distdir/bin" : "$distdir/bin-x64";
-		$versionsOutputFile = $arch32 ? "$buildsroot/versions-win32.txt" : "$buildsroot/versions-win64.txt";
+		if($targetArch eq 'Win32')
+		{
+			$embedDirArchDestination = "$embedDirRoot\\win32";
+			$distDirArchBin = "$distdir\\bin";
+			$versionsOutputFile = "$buildsroot\\versions-win32.txt";
+		}
+
+		if($targetArch eq 'x64')
+		{
+			$embedDirArchDestination = "$embedDirRoot\\win64";
+			$distDirArchBin = "$distdir\\bin-x64";
+			$versionsOutputFile = "$buildsroot\\versions-win64.txt";
+		}
+
+		if($targetArch eq 'ARM64')
+		{
+			$embedDirArchDestination = "$embedDirRoot\\win-arm64";
+			$distDirArchBin = "$distdir\\bin-arm64";
+			$versionsOutputFile = "$buildsroot\\versions-win-arm64.txt";    		
+		}
 	}
 
 	# Make sure the directory for our architecture is clean before we copy stuff into it
@@ -1637,9 +1653,12 @@ if ($artifact)
 			# embedruntimes directory setup
 			system("cp", "$monoprefix/bin/mono-2.0-bdwgc.dll", "$embedDirArchDestination/mono-2.0-bdwgc.dll") eq 0 or die ("failed copying mono-2.0-bdwgc.dll\n");
 			system("cp", "$monoprefix/bin/mono-2.0-bdwgc.pdb", "$embedDirArchDestination/mono-2.0-bdwgc.pdb") eq 0 or die ("failed copying mono-2.0-bdwgc.pdb\n");
-
-			system("cp", "$monoprefix/bin/mono-2.0-sgen.dll", "$embedDirArchDestination/mono-2.0-sgen.dll") eq 0 or die ("failed copying mono-2.0-sgen.dll\n");
-			system("cp", "$monoprefix/bin/mono-2.0-sgen.pdb", "$embedDirArchDestination/mono-2.0-sgen.pdb") eq 0 or die ("failed copying mono-2.0-sgen.pdb\n");
+			
+			if($targetArch ne 'ARM64')
+			{
+				system("cp", "$monoprefix/bin/mono-2.0-sgen.dll", "$embedDirArchDestination/mono-2.0-sgen.dll") eq 0 or die ("failed copying mono-2.0-sgen.dll\n");
+				system("cp", "$monoprefix/bin/mono-2.0-sgen.pdb", "$embedDirArchDestination/mono-2.0-sgen.pdb") eq 0 or die ("failed copying mono-2.0-sgen.pdb\n");
+			}
 		}
 
 		# monodistribution directory setup

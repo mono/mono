@@ -16,6 +16,8 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+#include <config.h>
+
 #include "mini.h"
 #include "cpu-arm64.h"
 #include "ir-emit.h"
@@ -45,6 +47,9 @@
 
 #define FP_TEMP_REG ARMREG_D16
 #define FP_TEMP_REG2 ARMREG_D17
+#ifdef HOST_WIN32
+#define __attribute__(x)
+#endif
 
 #define THUNK_SIZE (4 * 4)
 
@@ -2040,6 +2045,8 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #ifndef MONO_CROSS_COMPILE
 #if __APPLE__
 	sys_icache_invalidate (code, size);
+#elif defined(HOST_WIN32)	
+	FlushInstructionCache(GetCurrentProcess(), code, size);
 #else
 	/* Don't rely on GCC's __clear_cache implementation, as it caches
 	 * icache/dcache cache line sizes, that can vary between cores on

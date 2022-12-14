@@ -88,7 +88,7 @@ ECHO Packaging of mono build %PLATFORM% %CONFIG% into '%PACKAGE_DIR%' DONE.
 EXIT /b 0
 
 :ON_ERROR
-	ECHO "package.bat [win32|x64] [Debug|Release] [MONO_BUILD_DIR_PREFIX] [ARGUMENTS]"
+	ECHO "package.bat [win32|x64|ARM64] [Debug|Release] [MONO_BUILD_DIR_PREFIX] [ARGUMENTS]"
 	EXIT /b 1
 
 @ECHO on

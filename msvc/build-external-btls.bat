@@ -90,6 +90,10 @@ if "%VS_PLATFORM%" == "" (
     set VS_PLATFORM=x64
 )
 
+if "%VS_PLATFORM%" == "ARM64" (
+    set VS_PLATFORM=ARM64
+)
+
 if "%VS_CONFIGURATION%" == "" (
     set VS_CONFIGURATION=Release
 )

@@ -491,12 +491,20 @@ typedef struct ucontext {
 	#define UCONTEXT_REG_SP(ctx) (((ucontext_t*)(ctx))->uc_mcontext.sp)
 	#define UCONTEXT_REG_R0(ctx) (((ucontext_t*)(ctx))->uc_mcontext.regs [ARMREG_R0])
 	#define UCONTEXT_GREGS(ctx) (&(((ucontext_t*)(ctx))->uc_mcontext.regs))
+#elif defined(HOST_WIN32)
+#include <Windows.h>
+	#define UCONTEXT_REG_PC(ctx) (((CONTEXT*)(ctx))->Pc)
+	#define UCONTEXT_REG_SP(ctx) (((CONTEXT*)(ctx))->Sp)
+	#define UCONTEXT_REG_R0(ctx) (((CONTEXT*)(ctx))->X [ARMREG_R0])
+	#define UCONTEXT_GREGS(ctx) (&(((CONTEXT*)(ctx))->X))
 #endif
 
 #ifndef UCONTEXT_REG_SET_PC
 #define UCONTEXT_REG_SET_PC(ctx, val) do { \
-	UCONTEXT_REG_PC (ctx) = (val); \
+	UCONTEXT_REG_PC (ctx) = (guint64)(val); \
 	 } while (0)
+#endif
+#ifndef UCONTEXT_REG_SET_SP
 #define UCONTEXT_REG_SET_SP(ctx, val) do { \
 	UCONTEXT_REG_SP (ctx) = (val); \
 	 } while (0)

@@ -21,7 +21,10 @@ foreach my $arg (@ARGV)
 }
 
 print(">>> Building i686\n");
-system("perl", "$buildscriptsdir/build_win_wrapper.pl", "--arch32=1", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ('failing building win32');
+system("perl", "$buildscriptsdir/build_win_wrapper.pl", "--clean=1", "--classlibtests=0", "--targetarch=Win32", @passAlongArgs) eq 0 or die ('failing building win32');
 
 print(">>> Building x86_64\n");
-system("perl", "$buildscriptsdir/build_win_wrapper.pl", "--clean=1", "--classlibtests=0", @passAlongArgs) eq 0 or die ('failing building x64');
+system("perl", "$buildscriptsdir/build_win_wrapper.pl", "--clean=1", "--classlibtests=0", "--targetarch=x64", @passAlongArgs) eq 0 or die ('failing building x64');
+
+print(">>> Building ARM64\n");
+system("perl", "$buildscriptsdir/build_win_wrapper.pl", "--clean=1", "--classlibtests=0", "--targetarch=ARM64", @passAlongArgs) eq 0 or die ('failing building ARM64');

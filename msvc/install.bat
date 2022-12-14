@@ -79,7 +79,7 @@ ECHO Installing of mono build %PLATFORM% %CONFIG% from %PACKAGE_DIR% into %INSTA
 EXIT /b 0
 
 :ON_ERROR
-	ECHO "install.bat [win32|x64] [Debug|Release] [MONO_BUILD_DIR_PREFIX] [MONO_INSTALLATION_DIR_PREFIX] [ARGUMENTS]"
+	ECHO "install.bat [win32|x64|ARM64] [Debug|Release] [MONO_BUILD_DIR_PREFIX] [MONO_INSTALLATION_DIR_PREFIX] [ARGUMENTS]"
 	EXIT /b 1
 
 @ECHO on

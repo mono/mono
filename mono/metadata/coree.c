@@ -626,7 +626,7 @@ STDAPI MonoFixupCorEE(HMODULE ModuleHandle)
 
 		if (cmp == 0)
 		{
-#ifdef _WIN64
+#if defined(_WIN64) && !defined(_M_ARM64)
 #if defined(_M_IA64)
 			ProcRva = (DWORD)((DWORD_PTR)PLabel - (DWORD_PTR)DosHeader);
 			*(PLabel)++ = *ExportFixup->ProcAddress.PLabel;
