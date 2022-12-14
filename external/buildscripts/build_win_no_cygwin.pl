@@ -102,12 +102,12 @@ if ($build)
 	}
 
 	system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--targetarch=$targetArch", "--clean=$clean", "--debug=$debug", "--gc=boehm") eq 0 or die ('failed building mono bdwgc with VS\n');
-	
+
 	if($targetArch ne 'ARM64')
 	{
 		system("$winPerl", "$winMonoRoot/external/buildscripts/build_runtime_vs.pl", "--build=$build", "--targetarch=$targetArch", "--clean=$clean", "--debug=$debug", "--gc=sgen") eq 0 or die ('failed building mono sgen with VS\n');
 	}
-	
+
 	if (!(-d "$monoroot\\tmp"))
 	{
 		print(">>> Creating directory $monoroot\\tmp\n");
@@ -125,26 +125,26 @@ if ($build)
 		print(">>> Creating directory $monoprefix\\bin\n");
 		system("mkdir $monoprefix\\bin") eq 0 or die ("failing creating $monoprefix\\bin\n");;
 	}
-	
+
     my $archNameForBuild = $targetArch;
 	my $configDirName = $debug ? "Debug" : "Release";
 
 	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-bdwgc.exe", "$monoprefix/bin/mono-bdwgc.exe") or die ("failed copying mono-bdwgc.exe\n");
 	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-2.0-bdwgc.dll", "$monoprefix/bin/mono-2.0-bdwgc.dll") or die ("failed copying mono-2.0-bdwgc.dll\n");
 	copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/mono-2.0-bdwgc.pdb", "$monoprefix/bin/mono-2.0-bdwgc.pdb") or die ("failed copying mono-2.0-bdwgc.pdb\n");
-	
+
 	if($targetArch ne 'ARM64')
 	{
 		copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-sgen.exe", "$monoprefix/bin/.") or die ("failed copying mono-sgen.exe\n");
 		copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-2.0-sgen.dll", "$monoprefix/bin/.") or die ("failed copying mono-2.0-sgen.dll\n");
 		copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-2.0-sgen.pdb", "$monoprefix/bin/.") or die ("failed copying mono-2.0-sgen.pdb\n");
-		
+
 		# sgen as default exe
 		copy("$monoroot/msvc/build/sgen/$archNameForBuild/bin/$configDirName/mono-sgen.exe", "$monoprefix/bin/mono.exe") or die ("failed copying mono-sgen.exe to mono.exe\n");
-		
+
 		copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/MonoPosixHelper.dll", "$monoprefix/bin/.") or die ("failed copying MonoPosixHelper.dll\n");
 		copy("$monoroot/msvc/build/boehm/$archNameForBuild/bin/$configDirName/MonoPosixHelper.pdb", "$monoprefix/bin/.") or die ("failed copying MonoPosixHelper.pdb\n");
-	}	
+	}
 
 	system("xcopy /y /f $addtoresultsdistdir\\bin\\*.* $monoprefix\\bin\\") eq 0 or die ("Failed copying $addtoresultsdistdir/bin to $monoprefix/bin\n");
 }
@@ -162,21 +162,21 @@ if ($artifact)
 	my $embedDirArchDestination = "";
    	my $distDirArchBin = "";
    	my $versionsOutputFile = "";
-		
+
 	if($targetArch eq 'Win32')
 	{
 		$embedDirArchDestination = "$embedDirRoot\\win32";
 		$distDirArchBin = "$distdir\\bin";
 		$versionsOutputFile = "$buildsroot\\versions-win32.txt";
 	}
-	
+
 	if($targetArch eq 'x64')
 	{			
 		$embedDirArchDestination = "$embedDirRoot\\win64";
 		$distDirArchBin = "$distdir\\bin-x64";
 		$versionsOutputFile = "$buildsroot\\versions-win64.txt";
-	}	
-	
+	}
+
 	if($targetArch eq 'ARM64')
 	{
 		$embedDirArchDestination = "$embedDirRoot\\win-arm64";
@@ -226,20 +226,20 @@ if ($artifact)
 
 	copy("$monoprefix/bin/mono-2.0-bdwgc.dll", "$embedDirArchDestination/.") or die ("failed copying mono-2.0-bdwgc.dll\n");
 	copy("$monoprefix/bin/mono-2.0-bdwgc.pdb", "$embedDirArchDestination/.") or die ("failed copying mono-2.0-bdwgc.pdb\n");
-	
+
 	if($targetArch ne 'ARM64')
 	{
 		copy("$monoprefix/bin/mono-2.0-sgen.dll", "$embedDirArchDestination/.") or die ("failed copying mono-2.0-sgen.dll\n");
 		copy("$monoprefix/bin/mono-2.0-sgen.pdb", "$embedDirArchDestination/.") or die ("failed copying mono-2.0-sgen.pdb\n");
-		
+
 		copy("$monoprefix/bin/MonoPosixHelper.dll", "$embedDirArchDestination/.") or die ("failed copying MonoPosixHelper.dll\n");
-    	copy("$monoprefix/bin/MonoPosixHelper.pdb", "$embedDirArchDestination/.") or die ("failed copying MonoPosixHelper.pdb\n");
+		copy("$monoprefix/bin/MonoPosixHelper.pdb", "$embedDirArchDestination/.") or die ("failed copying MonoPosixHelper.pdb\n");
 
-    	# monodistribution directory setup
-    	print(">>> Creating monodistribution directory\n");
+		# monodistribution directory setup
+		print(">>> Creating monodistribution directory\n");
 
-    	copy("$monoprefix/bin/mono-2.0-bdwgc.dll", "$distDirArchBin/.") or die ("failed copying mono-2.0-bdwgc.dll\n");
-    	copy("$monoprefix/bin/mono-2.0-bdwgc.pdb", "$distDirArchBin/.") or die ("failed copying mono-2.0-bdwgc.pdb\n");
+		copy("$monoprefix/bin/mono-2.0-bdwgc.dll", "$distDirArchBin/.") or die ("failed copying mono-2.0-bdwgc.dll\n");
+		copy("$monoprefix/bin/mono-2.0-bdwgc.pdb", "$distDirArchBin/.") or die ("failed copying mono-2.0-bdwgc.pdb\n");
 
 		copy("$monoprefix/bin/mono-2.0-sgen.dll", "$distDirArchBin/.") or die ("failed copying mono-2.0-sgen.dll\n");
 		copy("$monoprefix/bin/mono-2.0-sgen.pdb", "$distDirArchBin/.") or die ("failed copying mono-2.0-sgen.pdb\n");
@@ -247,7 +247,7 @@ if ($artifact)
 		copy("$monoprefix/bin/mono-sgen.exe", "$distDirArchBin/.") or die ("failed copying mono-sgen.exe\n");		
 		copy("$monoprefix/bin/mono-bdwgc.exe", "$distDirArchBin/.") or die ("failed copying mono-bdwgc.exe\n");
 		copy("$monoprefix/bin/mono.exe", "$distDirArchBin/.") or die ("failed copying mono.exe\n");
-	
+
 		copy("$monoprefix/bin/MonoPosixHelper.dll", "$distDirArchBin/.") or die ("failed copying MonoPosixHelper.dll\n");
 		copy("$monoprefix/bin/MonoPosixHelper.pdb", "$distDirArchBin/.") or die ("failed copying MonoPosixHelper.pdb\n");
 	}

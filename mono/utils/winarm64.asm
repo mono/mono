@@ -1,3 +1,4 @@
+;inline assembly not supported on 64 bit, this file is for windows arm64
 	AREA	|.text|,CODE
 
 	EXPORT	|mono_context_get_current|

@@ -1455,7 +1455,7 @@ if ($artifact)
 		system("cp -r $monoprefix/etc $distdir/") eq 0 or die("failed copying etc folder\n");
 
 		system("cp -R $externalBuildDeps/reference-assemblies/unity $distdirlibmono/unity");
- 		system("cp -R $externalBuildDeps/reference-assemblies/unity_web $distdirlibmono/unity_web");
+		system("cp -R $externalBuildDeps/reference-assemblies/unity_web $distdirlibmono/unity_web");
 
 		# now remove nunit from a couple places (but not all, we need some of them)
 		# linux tar is not happy these are removed(at least on wsl), so don't remove them for now
@@ -1534,21 +1534,21 @@ if ($artifact)
 		$versionsOutputFile = "$buildsroot/versions-macos-$targetArch.txt";
 	}
 	else
-	{	
+	{
 		if($targetArch eq 'Win32')
 		{
 			$embedDirArchDestination = "$embedDirRoot\\win32";
 			$distDirArchBin = "$distdir\\bin";
 			$versionsOutputFile = "$buildsroot\\versions-win32.txt";
 		}
-		
+
 		if($targetArch eq 'x64')
-		{			
+		{
 			$embedDirArchDestination = "$embedDirRoot\\win64";
 			$distDirArchBin = "$distdir\\bin-x64";
 			$versionsOutputFile = "$buildsroot\\versions-win64.txt";
-		}	
-		
+		}
+
 		if($targetArch eq 'ARM64')
 		{
 			$embedDirArchDestination = "$embedDirRoot\\win-arm64";

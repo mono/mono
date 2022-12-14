@@ -500,10 +500,12 @@ thread_timer_expired (HANDLE thread)
 		guchar *ip;
 
 #ifdef _WIN64
-#ifdef TARGET_ARM64
-		ip = (guchar*)context.Pc;
-#else //TARGET_AMD64
+#if defined(TARGET_AMD64)
 		ip = (guchar*)context.Rip;
+#elif defined(TARGET_ARM64)
+		ip = (guchar*)context.Pc;
+#else
+		#error Unknown architecture
 #endif 
 #else
 		ip = (guchar *) context.Eip;
