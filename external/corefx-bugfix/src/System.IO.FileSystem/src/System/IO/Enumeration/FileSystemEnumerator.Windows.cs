@@ -92,7 +92,7 @@ namespace System.IO.Enumeration
         /// </summary>
         private IntPtr CreateDirectoryHandle(string path, bool ignoreNotFound = false)
         {
-            IntPtr handle = Interop.Kernel32.CreateFile_IntPtr(
+            IntPtr handle = System.IO.FileSystem.UnityCreateFile_IntPtr(
                 path,
                 Interop.Kernel32.FileOperations.FILE_LIST_DIRECTORY,
                 FileShare.ReadWrite | FileShare.Delete,
