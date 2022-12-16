@@ -930,9 +930,13 @@ mono_debugger_get_generate_debug_info ()
 }
 
 MONO_API void
-mono_debugger_disconnect (const char *message)
+mono_debugger_disconnect ()
 {
 	stop_debugger_thread ();
+
+	//restart debugger thread now that we've forcefully disconnected any clients
+	mono_atomic_cas_i32(&agent_inited, 0, 1);
+	finish_agent_init(FALSE);
 }
 
 typedef void (*MonoDebuggerAttachFunc)(gboolean attached);
@@ -1755,6 +1759,7 @@ start_debugger_thread (MonoError *error)
 	debugger_thread_handle = mono_threads_open_thread_handle (thread->handle);
 	g_assert (debugger_thread_handle);
 	
+	debugger_thread_exited = FALSE;
 }
 
 /*
