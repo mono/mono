@@ -183,12 +183,22 @@ mono_dyld_image_info_free (void *info)
 static void
 image_added (const struct mach_header *hdr32, intptr_t vmaddr_slide)
 {
+#if defined(__APPLE__) && defined(__clang__) // getsectbynamefromheader functions are deprecated as of macOS 13.0
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 	#if SIZEOF_VOID_P == 8
 	const struct mach_header_64 *hdr64 = (const struct mach_header_64 *)hdr32;
 	const struct section_64 *sec = getsectbynamefromheader_64 (hdr64, SEG_DATA, SECT_DATA);
 	#else
 	const struct section *sec = getsectbynamefromheader (hdr32, SEG_DATA, SECT_DATA);
 	#endif
+
+#if defined(__APPLE__) && defined(__clang__)
+#pragma clang diagnostic pop
+#endif
+
 	Dl_info dlinfo;
 	if (!dladdr (hdr32, &dlinfo)) return;
 	if (sec == NULL) return;
