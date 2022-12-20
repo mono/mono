@@ -3336,6 +3336,12 @@ if test x$host_win32 = xno; then
 	dnl ******************************************
 	AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
 
+	AC_CHECK_MEMBER(struct objc_super.super_class,
+		[AC_DEFINE(HAVE_OBJC_SUPER_SUPER_CLASS, 1, [struct objc_super.super_class])],
+		[],
+		[#include <objc/runtime.h>
+		#include <objc/message.h>])
+
 	dnl *********************************
 	dnl *** Check for Console 2.0 I/O ***
 	dnl *********************************
