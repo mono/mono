@@ -2072,6 +2072,12 @@ if test "x$mono_feature_disable_processes" = "xyes"; then
 	AC_MSG_NOTICE([Disabled process support])
 fi
 
+AC_ARG_ENABLE(unity-define,[  --enable-unity-define have UNITY defined], unity_define=$enableval, unity_define=no)
+if test "x$unity_define" = "xyes"; then
+   AC_DEFINE(UNITY, 1, [Building for Unity])
+   AC_MSG_NOTICE([Building for Unity])
+fi
+
 AC_ARG_ENABLE(executables, [  --disable-executables disable the build of the runtime executables], enable_executables=$enableval, enable_executables=yes)
 AM_CONDITIONAL(DISABLE_EXECUTABLES, test x$enable_executables = xno)
 

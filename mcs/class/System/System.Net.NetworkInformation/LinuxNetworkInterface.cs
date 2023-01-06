@@ -32,6 +32,7 @@
 //
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.IO;
 using System.Globalization;
 
@@ -260,6 +261,16 @@ namespace System.Net.NetworkInformation {
 		bool android_use_java_api;
 #endif
 
+#if UNITY
+		const string LibLog = "/system/lib/liblog.so";
+		const string LibLog64 = "/system/lib64/liblog.so";
+
+		internal static bool IsRunningOnAndroid = File.Exists (LibLog) || File.Exists (LibLog64);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static bool unitydroid_get_network_interface_up_state (string ifname, ref bool is_up);
+#endif
+
 		internal string IfacePath {
 			get { return iface_path; }
 		}
@@ -303,6 +314,17 @@ namespace System.Net.NetworkInformation {
 					// to us here.
 					bool is_up = false;
 					if (_monodroid_get_network_interface_up_state (Name, ref is_up))
+						return is_up ? OperationalStatus.Up : OperationalStatus.Down;
+					else
+						return OperationalStatus.Unknown;
+				}
+#endif
+#if UNITY
+				// Similar to above we need to go into java but in a Unity context we don't have access to Xamarin.Android
+				if (IsRunningOnAndroid)
+				{
+					bool is_up = false;
+					if (unitydroid_get_network_interface_up_state(Name, ref is_up))
 						return is_up ? OperationalStatus.Up : OperationalStatus.Down;
 					else
 						return OperationalStatus.Unknown;
