@@ -276,6 +276,7 @@ if ($build)
 	push @configureparams, "--enable-ignore-dynamic-loading=yes";
 	push @configureparams, "--enable-dont-register-main-static-data=yes";
 	push @configureparams, "--enable-thread-local-alloc=no";
+	push @configureparams, "--enable-unity-define=yes";
 
 	if(!($disableMcs))
 	{
