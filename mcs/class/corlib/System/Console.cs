@@ -131,6 +131,13 @@ namespace System
 			SetupStreams (inputEncoding, outputEncoding);
 		}
 
+#if MONODROID || UNITY
+		const string LibLog = "/system/lib/liblog.so";
+		const string LibLog64 = "/system/lib64/liblog.so";
+
+		internal static bool IsRunningOnAndroid = File.Exists (LibLog) || File.Exists (LibLog64);
+#endif
+
 		static void SetupStreams (Encoding inputEncoding, Encoding outputEncoding)
 		{
 #if MONO_FEATURE_CONSOLE
@@ -151,7 +158,7 @@ namespace System
 				stderr = TextWriter.Synchronized (new UnexceptionalStreamWriter (OpenStandardError (0), outputEncoding) { AutoFlush = true });
 
 #if MONODROID && !MOBILE_DESKTOP_HOST
-				if (LogcatTextWriter.IsRunningOnAndroid ()) {
+				if (IsRunningOnAndroid ()) {
 					stdout = TextWriter.Synchronized (new LogcatTextWriter ("mono-stdout", stdout));
 					stderr = TextWriter.Synchronized (new LogcatTextWriter ("mono-stderr", stderr));
 				}

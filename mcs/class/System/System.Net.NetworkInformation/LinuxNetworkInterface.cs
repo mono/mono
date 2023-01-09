@@ -262,11 +262,6 @@ namespace System.Net.NetworkInformation {
 #endif
 
 #if UNITY
-		const string LibLog = "/system/lib/liblog.so";
-		const string LibLog64 = "/system/lib64/liblog.so";
-
-		internal static bool IsRunningOnAndroid = File.Exists (LibLog) || File.Exists (LibLog64);
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static bool unitydroid_get_network_interface_up_state (string ifname, ref bool is_up);
 #endif
@@ -321,7 +316,7 @@ namespace System.Net.NetworkInformation {
 #endif
 #if UNITY
 				// Similar to above we need to go into java but in a Unity context we don't have access to Xamarin.Android
-				if (IsRunningOnAndroid)
+				if (Console.IsRunningOnAndroid)
 				{
 					bool is_up = false;
 					if (unitydroid_get_network_interface_up_state(Name, ref is_up))

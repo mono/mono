@@ -1981,7 +1981,7 @@ mono_unity_class_has_failure(const MonoClass* klass)
 static android_network_up_state network_up_state_func = NULL;
 
 MONO_API void
-mono_unity_set_android_network_up_state_func(android_network_up_state func)
+mono_unity_set_android_network_up_state_func (android_network_up_state func)
 {
 	network_up_state_func = func;
 }
@@ -1991,10 +1991,12 @@ ves_icall_Unity_Android_Network_Interface_Up_State (MonoString *ifName, MonoBool
 {
 	if (network_up_state_func)
 	{
-		MonoError unused;
-		char* ifNameUtf = mono_string_to_utf8_checked(ifName, &unused);
-		mono_error_cleanup(&unused);
-		return network_up_state_func(ifNameUtf, is_up);
+		ERROR_DECL(unused);
+		char* ifNameUtf = mono_string_to_utf8_checked(ifName, unused);
+		mono_error_cleanup(unused);
+		MonoBoolean retVal = network_up_state_func(ifNameUtf, is_up);
+		mono_free(ifNameUtf);
+		return retVal;
 	}
 	return FALSE;
 }
