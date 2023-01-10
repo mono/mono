@@ -52,7 +52,7 @@ jobs:
       image: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-mono-arm32v7
       options: --platform linux/arm/v7 --user 0:0
   timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
-  env:
+  variables:
     ${{ if eq(parameters.os, 'linux') }}:
       AZP_AGENT_DOCKER_ADDITIONAL_NETWORK_OPTIONS: '--ipv6 --subnet=2002:db8:1:1::/64'  # enable IPv6 in Docker
   steps:
