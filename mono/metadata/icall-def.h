@@ -547,6 +547,11 @@ NOHANDLES(ICALL(LINUXNETWORKCHANGE_2, "CreateNLSocket", ves_icall_System_Net_Net
 NOHANDLES(ICALL(LINUXNETWORKCHANGE_3, "ReadEvents", ves_icall_System_Net_NetworkInformation_LinuxNetworkChange_ReadEvents))
 #endif
 
+#if defined(ANDROID) && defined(UNITY)
+ICALL_TYPE(LINUXNETWORKINTERFACE, "System.Net.NetworkInformation.LinuxNetworkInterface", LINUXNETWORKINTERFACE_1)
+NOHANDLES(ICALL(LINUXNETWORKINTERFACE_1, "unitydroid_get_network_interface_up_state", ves_icall_Unity_Android_Network_Interface_Up_State))
+#endif
+
 #if !defined(DISABLE_SOCKETS)
 ICALL_TYPE(MAC_IFACE_PROPS, "System.Net.NetworkInformation.MacOsIPInterfaceProperties", MAC_IFACE_PROPS_1)
 HANDLES(MAC_IFACE_PROPS_1, "ParseRouteInfo_icall", ves_icall_System_Net_NetworkInformation_MacOsIPInterfaceProperties_ParseRouteInfo, MonoBoolean, 2, (MonoString, MonoArrayOut))

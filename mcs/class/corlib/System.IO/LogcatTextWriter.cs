@@ -12,9 +12,6 @@ namespace System.IO {
 
 	class LogcatTextWriter : TextWriter {
 
-		const string LibLog = "/system/lib/liblog.so";
-		const string LibLog64 = "/system/lib64/liblog.so";
-
 		readonly byte[] appname;
 
 		TextWriter stdout;
@@ -87,11 +84,6 @@ namespace System.IO {
 			fixed (byte *b_appname = appname) {
 				Log (b_appname, 1 << 5 /* G_LOG_LEVEL_MESSAGE */, b_message);
 			}
-		}
-
-		public static bool IsRunningOnAndroid ()
-		{
-			return File.Exists (LibLog) || File.Exists (LibLog64);
 		}
 
 		[MethodImpl(MethodImplOptions.InternalCall)]
