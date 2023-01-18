@@ -10,7 +10,7 @@ unity-internal: android-ndk-win/r19-unity_799f451638695b9da797fcd509f9f2a8e59e35
 # macOS
 unity-internal: android-ndk-mac/r19-unity_8b169ff2a8234c85e0c5ba3c776aa94273cd3c15fdc96d213154970d87938589.7z
 unity-internal: mac-toolchain-11_0/12.2-12B5018i_351c773fb8a192039fe0f0e962314b888102b0718c734ad54f3906c0caeed1c9.zip
-unity-internal: mono-build-tools-extra/755290e1f53e88bc3a8caa0224993ee91a1e1a02_c9e1fb5ebedba9bf3ccdfd938ae7db739ae8fef93fcb9647a4542bc3749038b5.7z
+unity-internal: mono-build-tools-extra/e86f1a824f0f0ff49f645277700b85189c6b1b6b_b21a8dc0fde03a54336f7682b0c91eab8cac4d402ecb11cc441ee577df2a8c74.7z
 unity-internal: cmake-linux-x64/3.20.0_a47b24f0bb16dca4fbd6974c03d5eb82e081318f5c9de75e1416db0020508579.7z
 
 # Linux
