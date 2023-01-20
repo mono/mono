@@ -13,7 +13,7 @@
 
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.SECURITY_ATTRIBUTES.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.WIN32_FILE_ATTRIBUTE_DATA.cs
-../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.WIN32_FIND_DATA.cs
+../../../external/corefx-bugfix/src/Common/src/Interop/Windows/kernel32/Interop.WIN32_FIND_DATA.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FILE_TIME.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.FileAttributes.cs
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CreateFile.cs
@@ -58,7 +58,7 @@
 ../../../external/corefx/src/Common/src/CoreLib/System/IO/PathInternal.Windows.cs
 ../../../external/corefx/src/Common/src/CoreLib/Internal/IO/File.Windows.cs
 ../../../external/corefx-bugfix/src/Common/src/System/IO/DriveInfoInternal.Win32.cs
-../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileSystem.Windows.cs
+../../../external/corefx-bugfix/src/System.IO.FileSystem/src/System/IO/FileSystem.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/FileSystemInfo.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.Windows.cs
 ../../../external/corefx/src/System.IO.FileSystem/src/System/IO/Enumeration/FileSystemEnumerator.Win32.cs
