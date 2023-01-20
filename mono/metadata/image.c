@@ -1188,7 +1188,7 @@ static void
 mono_image_load_time_date_stamp (MonoImage *image)
 {
 	image->time_date_stamp = 0;
-#ifndef HOST_WIN32
+#if !defined (HOST_WIN32) && !defined (HOST_ANDROID)
 	if (!image->filename)
 		return;
 
