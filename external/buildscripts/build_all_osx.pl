@@ -4,6 +4,9 @@ use Getopt::Long;
 use File::Basename;
 use File::Path;
 
+my $hostArch = (POSIX::uname)[5]; # get the host machine architecture
+my $m1Arch = "arm64";             # M1 Mac architecture is arm64
+
 my $currentdir = getcwd();
 
 my $monoroot = File::Spec->rel2abs(dirname(__FILE__) . "/../..");
@@ -52,13 +55,18 @@ my $embedDirRoot = "$buildsroot/embedruntimes";
 my $embedDirSourceX64 = "$embedDirRoot/osx-tmp-x86_64";
 my $embedDirSourceARM64 = "$embedDirRoot/osx-tmp-arm64";
 
-print(">>> Building x86_64\n");
-system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=x86_64", @passAlongArgs) eq 0 or die ('failing building x86_64');
 
-if ($artifact)
+# Do not try to build x86_64 for M1 Mac
+if (!$buildMachine && $hostArch != $m1Arch) 
 {
-	# dsymutil generates based off of object files so it needs to be ran before we build the arm variant
-	CopyEmbedRuntimeBinaries($embedDirSourceX64, "$embedDirRoot/osx");
+	print(">>> Building x86_64\n");
+	system("perl", "$buildscriptsdir/build.pl", "--clean=1", "--classlibtests=0", "--targetarch=x86_64", @passAlongArgs) eq 0 or die ('failing building x86_64');
+
+	if ($artifact)
+	{
+		# dsymutil generates based off of object files so it needs to be ran before we build the arm variant
+		CopyEmbedRuntimeBinaries($embedDirSourceX64, "$embedDirRoot/osx");
+	}
 }
 
 print(">>> Building ARM64\n");
@@ -89,9 +97,12 @@ if ($artifact)
 		system("mkdir -p $distDirDestinationLib");
 	}
 
-	if (!(-d $distDirSourceBinX64))
+	if (!$buildMachine && $hostArch != "arm64")
 	{
-		die("Expected source directory not found : $distDirSourceBinX64\n");
+		if (!(-d $distDirSourceBinX64))
+		{
+			die("Expected source directory not found : $distDirSourceBinX64\n");
+		}
 	}
 
 	if (!(-d $distDirSourceBinARM64))
@@ -99,34 +110,47 @@ if ($artifact)
 		die("Expected source directory not found : $distDirSourceBinARM64\n");
 	}
 
-	for my $file ('mono')
+	# not for M1 Mac
+	if (!$buildMachine && $hostArch != $m1Arch) 
 	{
-		MergeIntoFatBinary("$distDirSourceBinX64/$file", "$distDirSourceBinARM64/$file", "$distDirDestinationBin/$file", 1);
-	}
+		for my $file ('mono')
+		{
+			MergeIntoFatBinary("$distDirSourceBinX64/$file", "$distDirSourceBinARM64/$file", "$distDirDestinationBin/$file", 1);
+		}
 
-	for my $file ('pedump')
-	{
-		# pedump doens't get cross-compiled
-		system ('mv', "$distDirSourceBinX64/$file", "$distDirDestinationBin/$file") eq 0 or die ("Failed to move '$distDirSourceBinX64/$file' to '$distDirDestinationBin/$file'.");
-	}
+		for my $file ('pedump')
+		{
+			# pedump doens't get cross-compiled
+			system ('mv', "$distDirSourceBinX64/$file", "$distDirDestinationBin/$file") eq 0 or die ("Failed to move '$distDirSourceBinX64/$file' to '$distDirDestinationBin/$file'.");
+		}
 
-	for my $file ('libMonoPosixHelper.dylib')
-	{
-		MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file", 0);
-	}
+		for my $file ('libMonoPosixHelper.dylib')
+		{
+			MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file", 0);
+		}
 
-	for my $file ('libmono-native.dylib')
-	{
-		MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file", 0);
+		for my $file ('libmono-native.dylib')
+		{
+			MergeIntoFatBinary("$embedDirSourceX64/$file", "$embedDirSourceARM64/$file", "$distDirDestinationLib/$file", 0);
+		}
 	}
 
 	if ($buildMachine)
 	{
 		print(">>> Clean up temporary arch specific build directories\n");
 
-		rmtree("$distDirSourceBinX64");
+		if (!$buildMachine && $hostArch != "arm64")
+		{
+			rmtree("$distDirSourceBinX64");
+		}
+
 		rmtree("$distDirSourceBinARM64");
-		rmtree("$embedDirSourceX64");
+		
+		if (!$buildMachine && $hostArch != "arm64")
+		{
+			rmtree("$embedDirSourceX64");
+		}
+
 		rmtree("$embedDirSourceARM64");
 	}
 }
