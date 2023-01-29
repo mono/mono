@@ -23,7 +23,7 @@ DRIVER_CONF=release
 CSC_LOCATION=$(TOP)/external/roslyn-binaries/Microsoft.Net.Compilers/3.5.0/csc.exe
 
 EMSCRIPTEN_SDK_DIR?=$(TOP)/sdks/builds/toolchains/emsdk
-EMCC=source $(CURDIR)/emsdk_env.sh && emcc
+EMCC=source $(EMSCRIPTEN_SDK_DIR)/emsdk_env.sh && emcc
 EMCC_DYNAMIC=EMCC_FORCE_STDLIBS=1 $(EMCC)
 WASM_BCL_DIR=$(TOP)/sdks/out/wasm-bcl/wasm
 WASM_RUNTIME_DIR=$(TOP)/sdks/out/wasm-runtime-release
