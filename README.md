@@ -9,6 +9,9 @@ In newer Unity versions (2017.1+) this MonoBleedingEdge version can be used in t
 
 Unity versions 2019.3+ contain only MonoBleedingEdge.
 
+### Build the software for Unity usages
+Please refer to [Unity-build.md](https://github.com/Unity-Technologies/mono/blob/yuc434-build-repo/Unity-build.md) for instructions to build Mono for Unity usages.
+
 ### Branch Naming Convention
 Branches for released Unity versions are of the form unity-\<version\>\[-mbe\]. The '-mbe' suffix indicates the branch is for the MonoBleedingEdge version of Mono mentioned above.
 
