@@ -225,4 +225,14 @@ MONO_API gboolean mono_unity_class_is_open_constructed_type (MonoClass *klass);
 
 MONO_API gboolean mono_unity_class_has_failure (const MonoClass* klass);
 
+#ifdef ANDROID
+typedef uint8_t (*android_network_up_state)(const char* ifName, uint8_t* is_up);
+
+MONO_API void
+mono_unity_set_android_network_up_state_func(android_network_up_state func);
+
+MonoBoolean
+ves_icall_Unity_Android_Network_Interface_Up_State (MonoString *ifName, MonoBoolean* is_up);
+#endif
+
 #endif
