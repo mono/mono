@@ -10633,7 +10633,7 @@ void burst_mono_update_tracking_pointers(MonoDomain* domain, MonoClass* klass)
 	burst_lock();
 	g_BurstKlass = klass;
 	g_BurstDebugDomain = domain;
-	MonoAssembly* assembly=m_class_get_image (g_BurstKlass)->assembly;
+	MonoAssembly* assembly = m_class_get_image (g_BurstKlass)->assembly;
 	g_BurstAssembly = assembly;
 	burst_unlock();
 	send_type_load(g_BurstKlass);	// We must manually send the type load event, since we never actually JIT anything in this class
@@ -10650,8 +10650,8 @@ void burst_mono_update_tracking_pointers(MonoDomain* domain, MonoClass* klass)
 void burst_mono_simulate_burst_debug_domain_reload()
 {
 #ifndef DISABLE_SDB
-	appdomain_start_unload(NULL,g_BurstDebugDomain);
-	assembly_unload(NULL,g_BurstAssembly);
+	appdomain_start_unload(NULL, g_BurstDebugDomain);
+	assembly_unload(NULL, g_BurstAssembly);
 	appdomain_unload(NULL, g_BurstDebugDomain);
 
 	debugger_agent_free_domain_info(g_BurstDebugDomain);	// We need to call this to flush any typeids (its usually done via free_domain)
