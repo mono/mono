@@ -541,6 +541,7 @@ static AgentConfig agent_config;
 static MonoDomain* g_BurstDebugDomain = NULL;
 static BurstMonoDebuggerCallbacks g_BurstDebugCallbacks = { 0 };
 static MonoClass* g_BurstKlass = NULL;
+static MonoAssembly* g_BurstAssembly = NULL;
 static MonoCoopMutex g_BurstDebugMutex;
 #define burst_lock() do {mono_coop_mutex_lock (&g_BurstDebugMutex);}while(0)
 #define burst_unlock() do {mono_coop_mutex_unlock (&g_BurstDebugMutex);}while(0)
@@ -10620,15 +10621,43 @@ void burst_mono_install_hooks(BurstMonoDebuggerCallbacks* callbacks, void* domai
 #endif /* DISABLE_SDB */
 }
 
-// Called from various threads
+// In Old editors the behaviour is that burst_mono_update_tracking_pointers is called from various threads,
+//after a request from the burst managed debugger dll that the managed debugger domain needs to be torn
+//down and re-created to cause the debugger clients to refresh the information they hold about the domain.
+
+// In Newer editors, this is now only called once during initialisation, these pointers are fixed for the 
+//lifetime of the editor once installed.
 void burst_mono_update_tracking_pointers(MonoDomain* domain, MonoClass* klass)
 {
 #ifndef DISABLE_SDB
 	burst_lock();
 	g_BurstKlass = klass;
 	g_BurstDebugDomain = domain;
+	MonoAssembly* assembly = m_class_get_image (g_BurstKlass)->assembly;
+	g_BurstAssembly = assembly;
 	burst_unlock();
 	send_type_load(g_BurstKlass);	// We must manually send the type load event, since we never actually JIT anything in this class
 					//without this call, some mono debuggers will not work properly for burst
+#endif /* DISABLE_SDB */
+}
+
+// This function is only called by newer editors, currently via the main thread. It simulates
+//a domain tear down and recreate (from the debugee clients point of view), without actually freeing 
+//the domain and recreating it. Which is both more effecient than the old method, and safer because
+//the various pointers we hold statically are now fixed (after one time init)
+// The method will only be called, if the burst debugger is initialised, which means we don't need
+//to hold the burst locks here.
+void burst_mono_simulate_burst_debug_domain_reload()
+{
+#ifndef DISABLE_SDB
+	appdomain_start_unload(NULL, g_BurstDebugDomain);
+	assembly_unload(NULL, g_BurstAssembly);
+	appdomain_unload(NULL, g_BurstDebugDomain);
+
+	debugger_agent_free_domain_info(g_BurstDebugDomain);	// We need to call this to flush any typeids (its usually done via free_domain)
+
+	appdomain_load(NULL, g_BurstDebugDomain);
+
+	send_type_load(g_BurstKlass);	// We must manually send the type load event, since we never actually JIT anything in this class
 #endif /* DISABLE_SDB */
 }
