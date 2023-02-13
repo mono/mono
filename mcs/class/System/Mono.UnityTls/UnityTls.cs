@@ -46,6 +46,19 @@ namespace Mono.Unity
             UNITYTLS_USER_CUSTOM_ERROR_END = 0x200000,
         }
 
+        // Log levels
+        public enum unitytls_log_level: UInt32
+        {
+            UNITYTLS_LOGLEVEL_MIN = 0,
+            UNITYTLS_LOGLEVEL_FATAL = UNITYTLS_LOGLEVEL_MIN,
+            UNITYTLS_LOGLEVEL_ERROR,
+            UNITYTLS_LOGLEVEL_WARN,
+            UNITYTLS_LOGLEVEL_INFO,
+            UNITYTLS_LOGLEVEL_DEBUG,
+            UNITYTLS_LOGLEVEL_TRACE,
+            UNITYTLS_LOGLEVEL_MAX = UNITYTLS_LOGLEVEL_TRACE
+        }
+
         [StructLayout (LayoutKind.Sequential)]
         public struct unitytls_errorstate
         {
