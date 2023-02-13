@@ -19,24 +19,44 @@ namespace Mono.Unity
         public enum unitytls_error_code : UInt32
         {
             UNITYTLS_SUCCESS = 0,
-            UNITYTLS_INVALID_ARGUMENT,      // One of the arguments has an invalid value (e.g. null where not allowed)
-            UNITYTLS_INVALID_FORMAT,        // The passed data does not have a valid format.
-            UNITYTLS_INVALID_PASSWORD,      // Invalid password
-            UNITYTLS_INVALID_STATE,         // The object operating being operated on is not in a state that allows this function call.
-            UNITYTLS_BUFFER_OVERFLOW,       // A passed buffer was not large enough.
-            UNITYTLS_OUT_OF_MEMORY,         // Out of memory error
-            UNITYTLS_INTERNAL_ERROR,        // Internal implementation error.
-            UNITYTLS_NOT_SUPPORTED,         // The requested action is not supported on the current platform/implementation.
-            UNITYTLS_ENTROPY_SOURCE_FAILED, // Failed to generate requested amount of entropy data.
-            UNITYTLS_STREAM_CLOSED,         // The operation is not possible because the stream between the peers was closed.
+            UNITYTLS_INVALID_ARGUMENT,          // One of the arguments has an invalid value (e.g. null where not allowed)
+            UNITYTLS_INVALID_FORMAT,            // The passed data does not have a valid format.
+            UNITYTLS_INVALID_PASSWORD,          // Invalid password
+            UNITYTLS_INVALID_STATE,             // The object operating being operated on is not in a state that allows this function call.
+            UNITYTLS_BUFFER_OVERFLOW,           // A passed buffer was not large enough.
+            UNITYTLS_OUT_OF_MEMORY,             // Out of memory error
+            UNITYTLS_INTERNAL_ERROR,            // Internal implementation error.
+            UNITYTLS_NOT_SUPPORTED,             // The requested action is not supported on the current platform/implementation.
+            UNITYTLS_ENTROPY_SOURCE_FAILED,     // Failed to generate requested amount of entropy data.
+            UNITYTLS_STREAM_CLOSED,             // The operation is not possible because the stream between the peers was closed.
+            UNITYTLS_DER_PARSE_ERROR,           // error in parse_der
+            UNITYTLS_KEY_PARSE_ERROR,           // error parsing key
+            UNITYTLS_SSL_ERROR,                 // SSL setup failed
 
-            UNITYTLS_USER_CUSTOM_ERROR_START    = 0x100000,
-            UNITYTLS_USER_WOULD_BLOCK,      // Can be set by the user to signal that a call (e.g. read/write callback) would block and needs to be called again.
-                                            // Some implementations may set this if not all bytes have been read/written.
-            UNITYTLS_USER_READ_FAILED,      // Can be set by the user to indicate a failed read operation.
-            UNITYTLS_USER_WRITE_FAILED,     // Can be set by the user to indicate a failed write operation.
-            UNITYTLS_USER_UNKNOWN_ERROR,    // Can be set by the user to indicate a generic error.
-            UNITYTLS_USER_CUSTOM_ERROR_END      = 0x200000,
+
+            UNITYTLS_USER_CUSTOM_ERROR_START = 0x100000,
+            UNITYTLS_USER_WOULD_BLOCK,          // Can be set by the user to signal that a call (e.g. read/write callback) would block and needs to be called again.
+            UNITYTLS_USER_WOULD_BLOCK_READ,     // Refinement on UNITYTLS_USER_WOULD_BLOCK
+            UNITYTLS_USER_WOULD_BLOCK_WRITE,    // Refinement on UNITYTLS_USER_WOULD_BLOCK
+            UNITYTLS_USER_READ_FAILED,          // Can be set by the user to indicate a failed read operation.
+            UNITYTLS_USER_WRITE_FAILED,         // Can be set by the user to indicate a failed write operation.
+            UNITYTLS_USER_UNKNOWN_ERROR,        // Can be set by the user to indicate a generic error.
+            UNITYTLS_SSL_NEEDS_VERIFY,          // Not an error - need to verify the validity of a connecting client.
+            UNITYTLS_HANDSHAKE_STEP,            // Not an error - we are in the process of handshake stepping.
+            UNITYTLS_USER_CUSTOM_ERROR_END = 0x200000,
+        }
+
+        // Log levels
+        public enum unitytls_log_level: UInt32
+        {
+            UNITYTLS_LOGLEVEL_MIN = 0,
+            UNITYTLS_LOGLEVEL_FATAL = UNITYTLS_LOGLEVEL_MIN,
+            UNITYTLS_LOGLEVEL_ERROR,
+            UNITYTLS_LOGLEVEL_WARN,
+            UNITYTLS_LOGLEVEL_INFO,
+            UNITYTLS_LOGLEVEL_DEBUG,
+            UNITYTLS_LOGLEVEL_TRACE,
+            UNITYTLS_LOGLEVEL_MAX = UNITYTLS_LOGLEVEL_TRACE
         }
 
         [StructLayout (LayoutKind.Sequential)]
@@ -75,23 +95,42 @@ namespace Mono.Unity
         [Flags]
         public enum unitytls_x509verify_result : UInt32
         {
-            UNITYTLS_X509VERIFY_SUCCESS            = 0x00000000,
-            UNITYTLS_X509VERIFY_NOT_DONE           = 0x80000000,
-            UNITYTLS_X509VERIFY_FATAL_ERROR        = 0xFFFFFFFF,
+            UNITYTLS_X509VERIFY_SUCCESS = 0x00000000,
 
-            UNITYTLS_X509VERIFY_FLAG_EXPIRED       = 0x00000001,
-            UNITYTLS_X509VERIFY_FLAG_REVOKED       = 0x00000002,
-            UNITYTLS_X509VERIFY_FLAG_CN_MISMATCH   = 0x00000004,
-            UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED   = 0x00000008,
+            UNITYTLS_X509VERIFY_NOT_DONE = 0x80000000,
+            UNITYTLS_X509VERIFY_FATAL_ERROR = 0xFFFFFFFF,
 
-            UNITYTLS_X509VERIFY_FLAG_USER_ERROR1   = 0x00010000,
-            UNITYTLS_X509VERIFY_FLAG_USER_ERROR2   = 0x00020000,
-            UNITYTLS_X509VERIFY_FLAG_USER_ERROR3   = 0x00040000,
-            UNITYTLS_X509VERIFY_FLAG_USER_ERROR4   = 0x00080000,
-            UNITYTLS_X509VERIFY_FLAG_USER_ERROR5   = 0x00100000,
-            UNITYTLS_X509VERIFY_FLAG_USER_ERROR6   = 0x00200000,
-            UNITYTLS_X509VERIFY_FLAG_USER_ERROR7   = 0x00400000,
-            UNITYTLS_X509VERIFY_FLAG_USER_ERROR8   = 0x00800000,
+            UNITYTLS_X509VERIFY_FLAG_EXPIRED = 0x00000001,                  // The certificate has expired.
+            UNITYTLS_X509VERIFY_FLAG_REVOKED = 0x00000002,                  // The certificate has been revoked (is on a CRL). Requires the CRL backend.
+            UNITYTLS_X509VERIFY_FLAG_CN_MISMATCH = 0x00000004,              // The certificate Common Name (CN) does not match with the expected CN.
+            UNITYTLS_X509VERIFY_FLAG_NOT_TRUSTED = 0x00000008,              // The certificate is not correctly signed by the trusted CA.
+            UNITYTLS_X509VERIFY_FLAG_BADCRL_NOT_TRUSTED = 0x00000010,       // The CRL is not correctly signed by the trusted CA. Requires the CRL backend.
+            UNITYTLS_X509VERIFY_FLAG_BADCRL_EXPIRED = 0x00000020,           // The CRL is expired. Requires the CRL backend.
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_MISSING = 0x00000040,          // Certificate was missing.
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_SKIP_VERIFY = 0x00000080,      // Certificate verification was skipped.
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_OTHER = 0x00000100,            // Other reason (can be used by verify callback)
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_FUTURE = 0x00000200,           // The certificate validity starts in the future.
+            UNITYTLS_X509VERIFY_FLAG_BADCRL_FUTURE = 0x00000400,            // The CRL is from the future
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_KEY_USAGE = 0x00000800,        // Usage does not match the keyUsage extension.
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_EXT_KEY_USAGE = 0x00001000,    // Usage does not match the extendedKeyUsage extension.
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_NS_CERT_TYPE = 0x00002000,     // Usage does not match the nsCertType extension.
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_BAD_MD = 0x00004000,           // The certificate is signed with an unacceptable hash.
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_BAD_PK = 0x00008000,           // The certificate is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+            UNITYTLS_X509VERIFY_FLAG_BADCERT_BAD_KEY = 0x00010000,          // The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
+            UNITYTLS_X509VERIFY_FLAG_BADCRL_BAD_MD = 0x00020000,            // The CRL is signed with an unacceptable hash. Requires the CRL backend.
+            UNITYTLS_X509VERIFY_FLAG_BADCRL_BAD_PK = 0x00040000,            // The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).. Requires the CRL backend.
+            UNITYTLS_X509VERIFY_FLAG_BADCRL_BAD_KEY = 0x00080000,           // The CRL is signed with an unacceptable key (eg bad curve, RSA too short). Requires the CRL backend.
+
+            // Deprecated enumerations
+
+            UNITYTLS_X509VERIFY_FLAG_USER_ERROR1 = UNITYTLS_X509VERIFY_FLAG_BADCERT_BAD_KEY,
+            UNITYTLS_X509VERIFY_FLAG_USER_ERROR2 = UNITYTLS_X509VERIFY_FLAG_BADCRL_BAD_MD,
+            UNITYTLS_X509VERIFY_FLAG_USER_ERROR3 = UNITYTLS_X509VERIFY_FLAG_BADCRL_BAD_PK,
+            UNITYTLS_X509VERIFY_FLAG_USER_ERROR4 = UNITYTLS_X509VERIFY_FLAG_BADCRL_BAD_KEY,
+            UNITYTLS_X509VERIFY_FLAG_USER_ERROR5 = 0x00100000, // UNUSED
+            UNITYTLS_X509VERIFY_FLAG_USER_ERROR6 = 0x00200000, // UNUSED
+            UNITYTLS_X509VERIFY_FLAG_USER_ERROR7 = 0x00400000, // UNUSED
+            UNITYTLS_X509VERIFY_FLAG_USER_ERROR8 = 0x00800000, // UNUSED
 
             UNITYTLS_X509VERIFY_FLAG_UNKNOWN_ERROR = 0x08000000,
         }
@@ -263,6 +302,14 @@ namespace Mono.Unity
             [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
             public delegate void                                          unitytls_random_generate_bytes_t(UInt8 * buffer, size_t bufferLen, unitytls_errorstate * errorState);
             public unitytls_random_generate_bytes_t                       unitytls_random_generate_bytes;
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            public delegate char*                                         unitytls_x509verify_result_to_string_t(unitytls_x509verify_result v);
+            public unitytls_x509verify_result_to_string_t                 unitytls_x509verify_result_to_string;
+
+            [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+            public delegate void                                          unitytls_tlsctx_set_trace_level_t(unitytls_tlsctx* ctx, unitytls_log_level level);
+            public unitytls_tlsctx_set_trace_level_t                      unitytls_tlsctx_set_trace_level;
         }
 
         [MethodImplAttribute (MethodImplOptions.InternalCall)]
