@@ -73,8 +73,8 @@ mono_push_other_roots(void);
 
 static void
 mono_clear_ephemerons (void);
-static void
-mono_push_ephemerons (void);
+static struct GC_ms_entry*
+mono_push_ephemerons(struct GC_ms_entry* mark_stack_ptr, struct GC_ms_entry* mark_stack_limit);
 static void*
 null_ephemerons_for_domain (MonoDomain* domain);
 
@@ -2070,8 +2070,8 @@ mono_clear_ephemerons (void)
 	}
 }
 
-static void
-mono_push_ephemerons (void)
+static struct GC_ms_entry*
+mono_push_ephemerons (struct GC_ms_entry* mark_stack_ptr, struct GC_ms_entry* mark_stack_limit)
 {
 	ephemeron_node* prev_node = NULL;
 	ephemeron_node* current_node = NULL;
@@ -2104,12 +2104,13 @@ mono_push_ephemerons (void)
 			if (!GC_is_marked (current_ephemeron->key))
 				continue;
 
-			if (current_ephemeron->value && !GC_is_marked (current_ephemeron->value)) {
-				/* the key is marked, so mark the value if needed */
-				GC_push_all (&current_ephemeron->value, &current_ephemeron->value + 1);
+			if (current_ephemeron->value) {
+				mark_stack_ptr = GC_mark_and_push(current_ephemeron->value, mark_stack_ptr, mark_stack_limit, &current_ephemeron->value);
 			}
 		}
 	}
+
+	return mark_stack_ptr;
 }
 
 static void*
