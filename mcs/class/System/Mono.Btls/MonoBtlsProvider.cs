@@ -149,12 +149,6 @@ namespace Mono.Btls
 			X509CertificateCollection certificates, bool wantsChain, ref X509Chain chain,
 			ref SslPolicyErrors errors, ref int status11)
 		{
-			// Super ugly hack to make things work on Unity build servers
-			// FIXME: REMOVE THIS WHEN AGENTS RUN NEWER LINUX
-			if (Environment.OSVersion.Platform == PlatformID.Unix
-				&& Environment.GetEnvironmentVariable ("UNITY_THISISABUILDMACHINE") != null)
-				return true;
-
 			if (chain != null) {
 				var chainImpl = (X509ChainImplBtls)chain.Impl;
 				var success = chainImpl.StoreCtx.VerifyResult == 1;
