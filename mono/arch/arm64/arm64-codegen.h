@@ -528,6 +528,9 @@ arm_encode_arith_imm (int imm, guint32 *shift)
 #define arm_adrpx(p, rd, target) arm_format_adrp ((p), 0x1, (rd), (target))
 #define arm_adrx(p, rd, target) arm_format_adrp ((p), 0x0, (rd), (target))
 
+/* ADRL is a pseudo instruction which uses ADRP and ADD */
+#define arm_adrlx(p, rd, target)  do { 	arm_adrpx(p, rd, target); arm_addx_imm(p, rd, rd, ((int)target) & 0xFFF); } while (0)
+
 /* Bitfield move */
 #define arm_format_bfm(p, sf, opc, N, immr, imms, rn, rd) arm_emit ((p), ((sf) << 31) | ((opc) << 29) | (0x26 << 23) | ((N) << 22) | ((N) << 22) | ((immr) << 16) | ((imms) << 10) | ((rn) << 5) | ((rd) << 0))
 
