@@ -2754,8 +2754,8 @@ thread_interrupt (DebuggerTlsData *tls, MonoThreadInfo *info, MonoJitInfo *ji)
 
 			// FIXME: printf is not signal safe, but this is only used during
 			// debugger debugging
-			if (ip)
-				PRINT_DEBUG_MSG (1, "[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)(gsize)tid, ip);
+			/*if (ip)
+				PRINT_DEBUG_MSG (1, "[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)(gsize)tid, ip);*/
 			//save_thread_context (&ctx);
 
 			if (!tls->thread)
