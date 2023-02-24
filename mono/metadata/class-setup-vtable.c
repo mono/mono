@@ -454,7 +454,7 @@ check_interface_method_override (MonoClass *klass, MonoMethod *im, MonoMethod *c
 {
 	MonoMethodSignature *cmsig, *imsig;
 	if (strcmp (im->name, cm->name) == 0) {
-		if (! (cm->flags & METHOD_ATTRIBUTE_PUBLIC)) {
+		if ((cm->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) != METHOD_ATTRIBUTE_PUBLIC) {
 			TRACE_INTERFACE_VTABLE (printf ("[PUBLIC CHECK FAILED]"));
 			return FALSE;
 		}
