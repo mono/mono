@@ -73,7 +73,8 @@ static guint8* emit_blrx (guint8 *code, int reg);
 static guint8*
 emit_get_last_error(guint8* code, int dreg)
 {
-	arm_movx(code, dreg, TEB_LAST_ERROR_OFFSET);
+	arm_movx(code, ARMREG_R8, ARMREG_R18);
+	arm_ldrw(code, dreg, ARMREG_R8, TEB_LAST_ERROR_OFFSET);
 	return code;
 }
 
