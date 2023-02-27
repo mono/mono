@@ -152,6 +152,49 @@ get_win32_restore_stack (void)
 
 	return start;
 }
+#elif HAVE_API_SUPPORT_WIN32_RESET_STKOFLW && TARGET_ARM64
+static gpointer
+get_win32_restore_stack(void)
+{
+	static guint8* start = NULL;
+	guint8* code;
+
+	if (start)
+		return start;
+
+	const int size = 64;
+
+	/* restore_stack (void) */
+	start = code = mono_global_codeman_reserve(size);
+
+	/* push the incoming frame pointer and return onto the stack */
+	arm_stpx_pre(code, ARMREG_FP, ARMREG_LR, ARMREG_SP, -0x10);
+
+	/* update the link pointer to the current stack */
+	arm_movspx(code, ARMREG_FP, ARMREG_SP);
+
+	/* stack overflow protection */
+	arm_adrlx(code, ARMREG_R8, _resetstkoflw);
+	arm_blrx(code, ARMREG_R8);
+
+	/* call mono_tls_get_jit_tls_extern */
+	arm_adrlx(code, ARMREG_R8, mono_tls_get_jit_tls_extern);
+	arm_blrx(code, ARMREG_R8);
+
+	/* return value is in x0 */
+	arm_addx_imm(code, ARMREG_R0, ARMREG_R0, ((int)MONO_STRUCT_OFFSET(MonoJitTlsData, stack_restore_ctx)) & 0xFFF);
+
+	/* this call does not return */
+	arm_adrlx(code, ARMREG_R8, mono_restore_context);
+	arm_blrx(code, ARMREG_R8);
+
+	g_assertf((code - start) <= size, "%d %d", (int)(code - start), size);
+
+	mono_arch_flush_icache(start, code - start);
+	MONO_PROFILER_RAISE(jit_code_buffer, (start, code - start, MONO_PROFILER_CODE_BUFFER_EXCEPTION_HANDLING, NULL));
+
+	return start;
+}
 #else
 static gpointer
 get_win32_restore_stack (void)
