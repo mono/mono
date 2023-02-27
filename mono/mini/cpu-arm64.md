@@ -497,6 +497,7 @@ atomic_store_r4: dest:b src1:f len:28
 atomic_store_r8: dest:b src1:f len:24
 
 generic_class_init: src1:a len:44 clob:c
+get_last_error: dest:i len:32
 gc_safe_point: src1:i len:12 clob:c
 
 fill_prof_call_ctx: src1:i len:128
