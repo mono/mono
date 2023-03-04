@@ -121,37 +121,44 @@ namespace Mono.Audio {
 				throw new Exception ("incorrect format (fmt)");
 			}
 
-			// Read SubChunk 2 ID + Size => Could be 'fact' or 'data' !
+			// Read SubChunk 2 ID + Size => Could be 'fact' or 'data' or 'LIST'!
 			c = stream.Read (buffer, 0, 8);
 			if (c == 8) {
-				// If SubChunk 2 ID = fact
-				if (buffer [0] == 'f' && buffer [1] == 'a' && buffer [2] == 'c' && buffer [3] == 't') {
-					// Read Data
-					int sub_chunk_2_size = buffer [4];
-					sub_chunk_2_size |= buffer [5] << 8;
-					sub_chunk_2_size |= buffer [6] << 16;
-					sub_chunk_2_size |= buffer [7] << 24;
+				// while SubChunk ID != data
+				while ( !(buffer [0] == 'd' && buffer [1] == 'a' && buffer [2] == 't' && buffer [3] == 'a') ) {
+					// Ignore all subchunks whose ID is not 'data'
+					// might be 'fact' or 'LIST'
 
-					c = stream.Read (buffer, 0, sub_chunk_2_size);
+					// Read Data
+					int sub_inner_size = buffer [4];
+					sub_inner_size |= buffer [5] << 8;
+					sub_inner_size |= buffer [6] << 16;
+					sub_inner_size |= buffer [7] << 24;
+
+					// seek next chunk
+					// Have to use seek instead of read because LIST chunks are big
+					stream.Seek ( sub_inner_size, SeekOrigin.Current);
 
 					// Don't care about this data !
 
-					// If there is a fact Chunck, read the next subChunk Id and size (should be data !)
+					// Read the next subChunk Id and size
 					c = stream.Read (buffer, 0, 8);
+					if ( c != 8 ){
+						// EOF?, weird case, data chunk is never found
+						throw new Exception ("Error: Can't Read "+ 8 +" bytes from stream ("+c+" bytes read");
+					}
+				
 				}
 
-				if (buffer [0] == 'd' && buffer [1] == 'a' && buffer [2] == 't' && buffer [3] == 'a') {
-					// Read Data
-					int sub_chunk_2_size = buffer [4];
-					sub_chunk_2_size |= buffer [5] << 8;
-					sub_chunk_2_size |= buffer [6] << 16;
-					sub_chunk_2_size |= buffer [7] << 24;
+				// Finally the data chunk
+				// Read Data
+				int sub_chunk_2_size = buffer [4];
+				sub_chunk_2_size |= buffer [5] << 8;
+				sub_chunk_2_size |= buffer [6] << 16;
+				sub_chunk_2_size |= buffer [7] << 24;
 
-					data_len = sub_chunk_2_size;
-					data_offset = stream.Position;
-				} else { 
-					throw new Exception ("incorrect format (data/fact chunck)");
-				}
+				data_len = sub_chunk_2_size;
+				data_offset = stream.Position;
 			}
 		}
 
