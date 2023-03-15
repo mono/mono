@@ -532,9 +532,8 @@ handle_signal_exception (gpointer obj)
 gboolean
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
-#if defined(MONO_CROSS_COMPILE)
-	g_assert_not_reached ();
-#else
+#if defined(MONO_ARCH_USE_SIGACTION)
+
 	MonoJitTlsData *jit_tls;
 	void *sigctx = ctx;
 
@@ -552,8 +551,16 @@ mono_arch_handle_exception (void *ctx, gpointer obj)
 	UCONTEXT_REG_SET_PC (sigctx, addr);
 	host_mgreg_t sp = UCONTEXT_REG_SP (sigctx) - MONO_ARCH_REDZONE_SIZE;
 	UCONTEXT_REG_SET_SP (sigctx, sp);
-#endif
+#else
+	MonoContext mctx;
 
+	mono_sigctx_to_monoctx (ctx, &mctx);
+
+	mono_handle_exception (&mctx, obj);
+
+	mono_monoctx_to_sigctx (&mctx, ctx);
+
+#endif
 	return TRUE;
 }
 
