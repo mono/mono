@@ -532,7 +532,11 @@ handle_signal_exception (gpointer obj)
 gboolean
 mono_arch_handle_exception (void *ctx, gpointer obj)
 {
-#if defined(MONO_ARCH_USE_SIGACTION)
+#if defined(MONO_CROSS_COMPILE)
+
+	g_assert_not_reached();
+
+#elif defined(MONO_ARCH_USE_SIGACTION)
 
 	MonoJitTlsData *jit_tls;
 	void *sigctx = ctx;
