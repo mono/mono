@@ -104,6 +104,7 @@ MonoClass* mono_unity_class_get_castclass(MonoClass *klass);
 guint32 mono_unity_class_get_native_size(MonoClass* klass);
 MonoBoolean mono_unity_class_is_string(MonoClass* klass);
 MonoBoolean mono_unity_class_is_class_type(MonoClass* klass);
+MONO_API gboolean mono_unity_class_is_inited(MonoClass* klass);
 MONO_API gboolean mono_class_is_generic(MonoClass *klass);
 MONO_API gboolean mono_class_is_blittable(MonoClass *klass);
 MONO_API gboolean mono_class_is_inflated(MonoClass *klass);
