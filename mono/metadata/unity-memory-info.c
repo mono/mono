@@ -137,3 +137,14 @@ mono_unity_class_for_each(ClassReportFunc callback, void *user_data)
 	// Report all image set arrays
 	mono_metadata_image_set_foreach(ReportImageSetClasses, &reportContext);
 }
+
+MONO_API MonoManagedMemorySnapshot* 
+mono_unity_capture_memory_snapshot()
+{
+	return NULL;
+}
+
+MONO_API void
+mono_unity_free_captured_memory_snapshot(MonoManagedMemorySnapshot* snapshot)
+{
+}
