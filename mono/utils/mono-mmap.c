@@ -295,7 +295,9 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 		static int is_hardened_runtime;
 
 		if (is_hardened_runtime == 0 && !use_mmap_jit) {
-			ptr = mmap (NULL, getpagesize (), PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+			do {
+				ptr = mmap (NULL, getpagesize (), PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+			} while (ptr == MAP_FAILED && errno == EINTR);
 			if (ptr == MAP_FAILED) {
 				is_hardened_runtime = 1;
 			} else {
@@ -318,7 +320,9 @@ mono_valloc (void *addr, size_t length, int flags, MonoMemAccountType type)
 	mflags |= MAP_PRIVATE;
 
 	BEGIN_CRITICAL_SECTION;
-	ptr = mmap (addr, length, prot, mflags, -1, 0);
+	do {
+		ptr = mmap (addr, length, prot, mflags, -1, 0);
+	} while (ptr == MAP_FAILED && errno == EINTR);
 	if (ptr == MAP_FAILED) {
 		int fd = open ("/dev/zero", O_RDONLY);
 		if (fd != -1) {
@@ -405,7 +409,9 @@ mono_file_map_error (size_t length, int flags, int fd, guint64 offset, void **re
 
 	// No GC safe transition because this is called early in main.c
 	BEGIN_CRITICAL_SECTION;
-	ptr = mmap (0, length, prot, mflags, fd, offset);
+	do {
+		ptr = mmap (0, length, prot, mflags, fd, offset);
+	} while (ptr == MAP_FAILED && errno == EINTR);
 	END_CRITICAL_SECTION;
 	if (ptr == MAP_FAILED) {
 		if (error_message) {
@@ -641,7 +647,9 @@ mono_shared_area (void)
 		close (fd);
 	}
 	BEGIN_CRITICAL_SECTION;
-	res = mmap (NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+	do {
+		res = mmap (NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+	} while (res == MAP_FAILED && errno == EINTR);
 	END_CRITICAL_SECTION;
 
 	if (res == MAP_FAILED) {
@@ -696,7 +704,9 @@ mono_shared_area_for_pid (void *pid)
 	if (fd == -1)
 		return NULL;
 	BEGIN_CRITICAL_SECTION;
-	res = mmap (NULL, size, PROT_READ, MAP_SHARED, fd, 0);
+	do {
+		res = mmap (NULL, size, PROT_READ, MAP_SHARED, fd, 0);
+	} while (res == MAP_FAILED && errno == EINTR);
 	END_CRITICAL_SECTION;
 
 	if (res == MAP_FAILED) {
