@@ -18,13 +18,16 @@ Here are a few things to think about (see below for more details). Please check 
 
 Reviewers: please consider these questions as well! :heart:
 
-<!-- Use this section if the pull request has release notes.
 **Release notes**
 
 Fixed UUM-XXXXXX @username:
 Mono: Your release notes go here.
 
-Other options: Internal, Changed, Improved, Feature. 
+<!-- Most pull requests should have release notes.
+
+Use Internal for release notes that should not be public.
+
+Other options: Changed, Improved, Feature.
 -->
 
 <!-- Use this section is the pull request should be back ported.
