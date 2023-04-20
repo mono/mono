@@ -1908,7 +1908,7 @@ gc_safe_transition_builder_init (GCSafeTransitionBuilder *builder, MonoMethodBui
 #ifndef DISABLE_COM
 	builder->coop_cominterop_fnptr = -1;
 #endif
-#if defined (TARGET_WASM)
+#if defined (TARGET_WASM) || !(defined(ENABLE_HYBRID_SUSPEND) || defined(ENABLE_COOP_SUSPEND))
 	return FALSE;
 #else
 	return TRUE;
