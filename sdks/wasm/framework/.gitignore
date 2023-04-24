@@ -1,4 +1,0 @@
-*.xml
-*.json
-!src/WebAssembly.Bindings/LinkDescriptor/*
-!src/System.Net.Http.WebAssemblyHttpHandler/LinkDescriptor/*
