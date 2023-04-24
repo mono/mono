@@ -206,8 +206,6 @@ runtime as an embedded library.
 
 * `scripts/` - Scripts used to invoke Mono and the corresponding program.
 
-* `sdks/` - A new way of embedding Mono into Xamarin.iOS, Xamarin.Android and other products.
-
 * `support/` - Various support libraries.
 
 * `tools/` - A collection of tools, mostly used during Mono development.

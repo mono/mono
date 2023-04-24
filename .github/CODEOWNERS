@@ -140,15 +140,6 @@
 /scripts @akoeplinger @directhex
 /scripts/ci @akoeplinger @directhex
 
-/sdks @marek-safar @vargaz @lambdageek
-/sdks/builds/android* @alexischr @jonpryor
-/sdks/builds/mxe* @alexischr @jonpryor
-/sdks/builds/ios* @vargaz @rolfbjarne
-/sdks/builds/wasm* @vargaz @kjpou1 @lewing
-/sdks/wasm @vargaz @kjpou1 @kg @lewing
-/sdks/ios @vargaz @rolfbjarne
-/sdks/android @alexischr @jonpryor
-
 /support @lambdageek @vargaz
 
 /tools @lambdageek @vargaz
