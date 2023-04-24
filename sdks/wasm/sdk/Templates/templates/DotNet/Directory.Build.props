@@ -1,6 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <MonoWasmSdkPath>MONO_SDK</MonoWasmSdkPath>
-    <MonoWasmLinkMode>Full</MonoWasmLinkMode>
-  </PropertyGroup>
-</Project>
