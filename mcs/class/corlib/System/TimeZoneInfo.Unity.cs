@@ -26,7 +26,7 @@ namespace System {
 			DaylightSavingFirstTransitionIdx,
 			DaylightSavingSecondTransitionIdx,
 			UtcOffsetIdx,
-			AdditionalDaylightOffsetIdx
+			DaylightDeltaIdx
 		};
 
 		enum TimeZoneNames
@@ -48,14 +48,14 @@ namespace System {
 				return rulesForYear;
 			var firstTransition = new DateTime (data[(int)TimeZoneData.DaylightSavingFirstTransitionIdx]);
 			var secondTransition = new DateTime (data[(int)TimeZoneData.DaylightSavingSecondTransitionIdx]);
-			var daylightOffset = new TimeSpan (data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]);
+			var daylightDelta = new TimeSpan (data[(int)TimeZoneData.DaylightDeltaIdx]);
 
 			/* C# TimeZoneInfo does not support timezones the same way as unix. In unix, timezone files are specified by region such as
 			 * America/New_York or Asia/Singapore. If a region like Asia/Singapore changes it's timezone from +0730 to +08, the UTC offset
 			 * has changed, but there is no support in the C# code to transition to this new UTC offset except for the case of daylight
 			 * savings time. As such we'll only generate timezone rules for a region at the times associated with the timezone of the current year.
 			 */
-			if(data[(int)TimeZoneData.AdditionalDaylightOffsetIdx] == 0 || data[(int)TimeZoneData.UtcOffsetIdx] == data[(int)TimeZoneData.AdditionalDaylightOffsetIdx])
+			if(data[(int)TimeZoneData.DaylightDeltaIdx] == 0)
 				return rulesForYear;
 
 			// If the first and second transition DateTime objects are the same, ValidateAdjustmentRule will throw
@@ -79,7 +79,7 @@ namespace System {
 
 				var fullYearRule = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (beginningOfYear,
 																					endOfYearDay,
-																					daylightOffset,
+																					daylightDelta,
 																					startOfDaylightSavingsTime,
 																					endOfDaylightSavingsTime);
 				rulesForYear.Add (fullYearRule);
@@ -95,7 +95,7 @@ namespace System {
 				var transitionOutOfDaylightSavingsRule = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (
 																					new DateTime (year, 1, 1),
 																					new DateTime (firstTransition.Year, firstTransition.Month, firstTransition.Day),
-																					daylightOffset,
+																					daylightDelta,
 																					startOfFirstDaylightSavingsTime,
 																					endOfFirstDaylightSavingsTime);
 				rulesForYear.Add (transitionOutOfDaylightSavingsRule);
@@ -110,7 +110,7 @@ namespace System {
 				var transitionIntoDaylightSavingsRule = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule (
 																					new DateTime (firstTransition.Year, firstTransition.Month, firstTransition.Day).AddDays (1),
 																					endOfYearDay,
-																					daylightOffset,
+																					daylightDelta,
 																					startOfSecondDaylightSavingsTime,
 																					endOfSecondDaylightSavingsTime);
 				rulesForYear.Add (transitionIntoDaylightSavingsRule);
@@ -138,7 +138,7 @@ namespace System {
 				if (!System.CurrentSystemTimeZone.GetTimeZoneData (year, out data, out names, out dst_inverted))
 					throw new NotSupportedException ("Can't get timezone name.");
 
-				disableDaylightSavings = data[(int)TimeZoneData.AdditionalDaylightOffsetIdx] == 0 || data[(int)TimeZoneData.UtcOffsetIdx] == data[(int)TimeZoneData.AdditionalDaylightOffsetIdx];
+				disableDaylightSavings = data[(int)TimeZoneData.DaylightDeltaIdx] == 0;
 				if (!disableDaylightSavings)
 				{
 					daylightDisplayName = names[(int)TimeZoneNames.DaylightNameIdx];
