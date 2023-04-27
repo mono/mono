@@ -40,11 +40,9 @@ namespace System.IO
 
         public static void CopyFile(string sourceFullPath, string destFullPath, bool overwrite)
         {
-            // The destination path may just be a directory into which the file should be copied.
-            // If it is, append the filename from the source onto the destination directory
             if (DirectoryExists(destFullPath))
             {
-                destFullPath = Path.Combine(destFullPath, Path.GetFileName(sourceFullPath));
+                throw new System.UnauthorizedAccessException(SR.Format(SR.Arg_FileIsDirectory_Name, destFullPath));
             }
 
             if (CopyDanglingSymlink(sourceFullPath, destFullPath))
