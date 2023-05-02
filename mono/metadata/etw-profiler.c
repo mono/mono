@@ -314,6 +314,13 @@ DECLSPEC_NOINLINE __inline VOID __stdcall Private_EventControlCallback (_In_ LPC
 	};
 }
 
+void
+mono_profiler_cleanup_etw(MonoProfiler *prof)
+{
+	EventUnregisterMicrosoft_Windows_DotNETRuntimeRundown ();
+	EventUnregisterMicrosoft_Windows_DotNETRuntime ();
+}
+
 /* the entry point */
 MONO_API void
 mono_profiler_init_etw (const char *desc)
@@ -331,6 +338,7 @@ mono_profiler_init_etw (const char *desc)
 	mono_profiler_set_image_loaded_callback (handle, image_loaded);
 	mono_profiler_set_image_unloading_callback (handle, image_unloading);
 	mono_profiler_set_jit_done_callback (handle, method_jit_done);
+	mono_profiler_set_cleanup_callback(handle, mono_profiler_cleanup_etw);
 
 	is_initialized = TRUE;
 
