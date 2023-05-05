@@ -260,6 +260,14 @@ if ARM64
 arch_sources += mach-support-arm64.c
 endif
 
+if POWERPC
+arch_sources += mach-support-ppc.c
+endif
+
+if POWERPC64
+arch_sources += mach-support-ppc64.c
+endif
+
 else
 
 arch_sources += mach-support-unknown.c
