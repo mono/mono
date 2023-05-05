@@ -35,6 +35,10 @@
 #define REDZONE_SIZE	128
 #endif
 
+#elif defined(TARGET_POWERPC64)
+
+#define REDZONE_SIZE	320
+
 #elif defined(TARGET_POWERPC)
 
 #define REDZONE_SIZE	224
