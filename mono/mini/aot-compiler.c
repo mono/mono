@@ -2763,6 +2763,40 @@ arch_emit_imt_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
 
 	code = buf;
 
+#if defined(TARGET_OSX)
+	/* Load the mscorlib got address */
+	ppc_ldptr (code, ppc_r11, sizeof (target_mgreg_t), ppc_r30);
+	/* Load the parameter from the GOT */
+	ppc_load (code, ppc_r0, offset * sizeof (target_mgreg_t));
+	ppc_ldptr_indexed (code, ppc_r11, ppc_r11, ppc_r0);
+
+	/* Load and check key */
+	labels [1] = code;
+	ppc_ldptr (code, ppc_r0, 0, ppc_r11);
+	ppc_cmp (code, 0, sizeof (target_mgreg_t) == 8 ? 1 : 0, ppc_r0, MONO_ARCH_IMT_REG);
+	labels [2] = code;
+	ppc_bc (code, PPC_BR_TRUE, PPC_BR_EQ, 0);
+
+	/* End-of-loop check */
+	ppc_cmpi (code, 0, sizeof (target_mgreg_t) == 8 ? 1 : 0, ppc_r0, 0);
+	labels [3] = code;
+	ppc_bc (code, PPC_BR_TRUE, PPC_BR_EQ, 0);
+
+	/* Loop footer */
+	ppc_addi (code, ppc_r11, ppc_r11, 2 * sizeof (target_mgreg_t));
+	labels [4] = code;
+	ppc_b (code, 0);
+	mono_ppc_patch (labels [4], labels [1]);
+
+	/* Match */
+	mono_ppc_patch (labels [2], code);
+	ppc_ldptr (code, ppc_r11, sizeof (target_mgreg_t), ppc_r11);
+	/* r11 now contains the value of the vtable slot */
+	/* this is not a function descriptor on ppc64 */
+	ppc_ldptr (code, ppc_r11, 0, ppc_r11);
+	ppc_mtctr (code, ppc_r11);
+	ppc_bcctr (code, PPC_BR_ALWAYS, 0);
+#else /* Everything but macOS. */
 	/* Load the mscorlib got address */
 	ppc_ldptr (code, ppc_r12, sizeof (target_mgreg_t), ppc_r30);
 	/* Load the parameter from the GOT */
@@ -2795,6 +2829,7 @@ arch_emit_imt_trampoline (MonoAotCompile *acfg, int offset, int *tramp_size)
 	ppc_ldptr (code, ppc_r12, 0, ppc_r12);
 	ppc_mtctr (code, ppc_r12);
 	ppc_bcctr (code, PPC_BR_ALWAYS, 0);
+#endif
 
 	/* Fail */
 	mono_ppc_patch (labels [3], code);
