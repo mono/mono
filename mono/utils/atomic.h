@@ -238,6 +238,9 @@ mono_atomic_store_ptr (volatile gpointer *dst, gpointer val)
 #define gcc_sync_add_and_fetch(a, b) __sync_add_and_fetch (a, b)
 #define gcc_sync_sub_and_fetch(a, b) __sync_sub_and_fetch (a, b)
 #define gcc_sync_fetch_and_add(a, b) __sync_fetch_and_add (a, b)
+#if defined(TARGET_POWERPC) && !defined(TARGET_POWERPC64) /* 8-byte CAS not supported on ppc. */
+#define gcc_atomic_compare_exchange(a, b, c, d, e, f) __atomic_compare_exchange (a, b, c, d, e, f)
+#endif
 #endif
 
 static inline gint32 mono_atomic_cas_i32(volatile gint32 *dest,
@@ -333,7 +336,7 @@ static inline void mono_atomic_store_i32(volatile gint32 *dst, gint32 val)
 	} while (gcc_sync_val_compare_and_swap (dst, old_val, val) != old_val);
 }
 
-#if defined (TARGET_OSX) || defined (__arm__) || (defined (__mips__) && !defined (__mips64)) || (defined (__powerpc__) && !defined (__powerpc64__)) || (defined (__sparc__) && !defined (__arch64__))
+#if defined (TARGET_OSX) || defined (__arm__) || (defined (__mips__) && !defined (__mips64)) || defined (__ppc__) || (defined (__powerpc__) && !defined (__powerpc64__)) || (defined (__sparc__) && !defined (__arch64__))
 #define BROKEN_64BIT_ATOMICS_INTRINSIC 1
 #endif
 
