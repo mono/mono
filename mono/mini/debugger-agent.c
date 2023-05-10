@@ -358,7 +358,8 @@ typedef enum {
 	CMD_VM_GET_TYPES = 12,
 	CMD_VM_INVOKE_METHODS = 13,
 	CMD_VM_START_BUFFERING = 14,
-	CMD_VM_STOP_BUFFERING = 15
+	CMD_VM_STOP_BUFFERING = 15,
+	CMD_GET_ENC_CAPABILITIES = 21
 } CmdVM;
 
 typedef enum {
@@ -7314,6 +7315,10 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 	case CMD_VM_STOP_BUFFERING:
 		/* Handled in the main loop */
 		break;
+	case CMD_GET_ENC_CAPABILITIES: {
+		buffer_add_string (buf, "Baseline");
+		break;
+	}
 	default:
 		return ERR_NOT_IMPLEMENTED;
 	}
