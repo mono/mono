@@ -47,4 +47,7 @@ mono_ppdb_get_sourcelink (MonoDebugHandle *handle);
 gboolean 
 mono_ppdb_is_embedded (MonoPPDBFile *ppdb);
 
+gboolean
+mono_get_pe_debug_info_full (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp, guint8 **ppdb_data,
+                                int *ppdb_uncompressed_size, int *ppdb_compressed_size, char **pdb_path, GArray *pdb_checksum_hash_type, GArray *pdb_checksum);
 #endif

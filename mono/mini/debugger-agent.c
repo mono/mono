@@ -269,7 +269,7 @@ typedef struct {
 #define HEADER_LENGTH 11
 
 #define MAJOR_VERSION 2
-#define MINOR_VERSION 58
+#define MINOR_VERSION 63
 
 typedef enum {
 	CMD_SET_VM = 1,
@@ -408,6 +408,7 @@ typedef enum {
 	CMD_ASSEMBLY_GET_METHOD_FROM_TOKEN = 12,
 	CMD_ASSEMBLY_HAS_DEBUG_INFO = 13,
 	CMD_ASSEMBLY_GET_CATTRS = 14,
+	CMD_ASSEMBLY_GET_DEBUG_INFORMATION = 17
 } CmdAssembly;
 
 typedef enum {
@@ -7912,6 +7913,42 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		err = buffer_add_cattrs (buf, domain, mono_assembly_get_image_internal (ass), attr_klass, cinfo);
 		if (err != ERR_NONE)
 			return err;
+		break;
+	}
+	case CMD_ASSEMBLY_GET_DEBUG_INFORMATION: {
+		guint8 pe_guid [16];
+		gint32 pe_age;
+		gint32 pe_timestamp;
+		guint8 *ppdb_data = NULL;
+		int ppdb_size = 0, ppdb_compressed_size = 0;
+		char *ppdb_path;
+		GArray *pdb_checksum_hash_type = g_array_new (FALSE, TRUE, sizeof (char*));
+		GArray *pdb_checksum = g_array_new (FALSE, TRUE, sizeof (guint8*));
+		gboolean has_debug_info = mono_get_pe_debug_info_full (ass->image, pe_guid, &pe_age, &pe_timestamp, &ppdb_data, &ppdb_size, &ppdb_compressed_size, &ppdb_path, pdb_checksum_hash_type, pdb_checksum);
+		if (!has_debug_info || ppdb_size > 0)
+		{
+			buffer_add_byte (buf, 0);
+			g_array_free (pdb_checksum_hash_type, TRUE);
+			g_array_free (pdb_checksum, TRUE);
+			return ERR_NONE;
+		}
+		buffer_add_byte (buf, 1);
+		buffer_add_int (buf, pe_age);
+		buffer_add_byte_array (buf, pe_guid, 16);
+		buffer_add_string (buf, ppdb_path);
+		buffer_add_int (buf, pdb_checksum_hash_type->len);
+		for (int i = 0 ; i < pdb_checksum_hash_type->len; ++i) {
+			char* checksum_hash_type =  g_array_index (pdb_checksum_hash_type, char*, i);
+			buffer_add_string (buf, checksum_hash_type);
+			if (!strcmp (checksum_hash_type, "SHA256"))
+				buffer_add_byte_array (buf, g_array_index (pdb_checksum, guint8*, i), 32);
+			else if (!strcmp (checksum_hash_type, "SHA384"))
+				buffer_add_byte_array (buf, g_array_index (pdb_checksum, guint8*, i), 48);
+			else if (!strcmp (checksum_hash_type, "SHA512"))
+				buffer_add_byte_array (buf, g_array_index (pdb_checksum, guint8*, i), 64);
+		}
+		g_array_free (pdb_checksum_hash_type, TRUE);
+		g_array_free (pdb_checksum, TRUE);
 		break;
 	}
 	default:
