@@ -38,7 +38,7 @@ namespace System.IO
                     if (errorCode == Interop.Errors.ERROR_ACCESS_DENIED)
                     {
                         if (DirectoryExists(destFullPath))
-                            throw new IOException(SR.Format(SR.Arg_FileIsDirectory_Name, destFullPath), Interop.Errors.ERROR_ACCESS_DENIED);
+	                        throw new System.UnauthorizedAccessException(SR.Format(SR.Arg_FileIsDirectory_Name, destFullPath));
                     }
                 }
 
