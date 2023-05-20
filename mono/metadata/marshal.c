@@ -6518,7 +6518,33 @@ gboolean
 mono_method_has_unmanaged_callers_only_attribute (MonoMethod *method)
 {
 #ifndef ENABLE_NETCORE
-	return FALSE;
+	ERROR_DECL (attr_error);
+	/* attribute is only allowed on static methods */
+	if (!m_method_is_static(method))
+		return FALSE;
+	/* attribute is only allowed on non-generic methods */
+	if (method->is_generic || method->is_inflated)
+		return FALSE;
+
+	MonoCustomAttrInfo* cinfo;
+	cinfo = mono_custom_attrs_from_method_checked(method, attr_error);
+	if (!is_ok(attr_error) || !cinfo) {
+		mono_error_cleanup(attr_error);
+		return FALSE;
+	}
+	gboolean result = FALSE;
+	for (int i = 0; i < cinfo->num_attrs; ++i) {
+		MonoClass* ctor_class = cinfo->attrs[i].ctor->klass;
+		if (!strcmp(ctor_class->name, "UnmanagedCallersOnlyAttribute") &&
+			!strcmp(ctor_class->name_space, "System.Runtime.InteropServices"))
+		{
+			result = TRUE;
+			break;
+		}
+	}
+	if (!cinfo->cached)
+		mono_custom_attrs_free(cinfo);
+	return result;
 #else
 	ERROR_DECL (attr_error);
 	MonoClass *attr_klass = NULL;
