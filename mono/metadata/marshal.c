@@ -51,6 +51,7 @@
 #include "mono/metadata/abi-details.h"
 #include "mono/metadata/custom-attrs-internals.h"
 #include "mono/metadata/loader-internals.h"
+#include "mono/metadata/sre-internals.h"
 #include "mono/utils/mono-counters.h"
 #include "mono/utils/mono-tls.h"
 #include "mono/utils/mono-memory-model.h"
@@ -3264,6 +3265,90 @@ mono_marshal_set_callconv_from_modopt (MonoMethod *method, MonoMethodSignature *
 	}
 }
 
+static void
+mono_marshal_set_signature_callconv_from_attribute (MonoMethodSignature* sig, MonoType* cmod_type, MonoError* error)
+{
+	g_assert(cmod_type->type == MONO_TYPE_CLASS);
+	MonoClass* cmod_klass = mono_class_from_mono_type_internal (cmod_type);
+	g_assert (m_class_get_image (cmod_klass) == mono_defaults.corlib);
+	g_assert (!strcmp (m_class_get_name_space (cmod_klass), "System.Runtime.CompilerServices"));
+
+	const char* name = m_class_get_name (cmod_klass);
+	g_assert (g_str_has_prefix(name, "CallConv"));
+
+	name += strlen ("CallConv");
+	if (!strcmp (name, "Cdecl"))
+		sig->call_convention = MONO_CALL_C;
+	else if (!strcmp (name, "Stdcall"))
+		sig->call_convention = MONO_CALL_STDCALL;
+	else if (!strcmp (name, "Thiscall"))
+		sig->call_convention = MONO_CALL_THISCALL;
+	else if (!strcmp (name, "Fastcall"))
+		sig->call_convention = MONO_CALL_FASTCALL;
+	else if (!strcmp (name, "SuppressGCTransition"))
+		sig->suppress_gc_transition = 1;
+	// TODO: Support CallConvMemberFunction?
+	// TODO: Support multiple calling convetions?
+	//		 - Switch MonoCallConvention enum values to powers of 2
+	//		 - Adjust the code above with 'anding' the attribute parameter value
+}
+
+static void
+mono_marshal_set_callconv_from_unmanaged_callers_only_attribute (MonoMethod* method, MonoMethodSignature* csig)
+{
+#ifdef ENABLE_NETCORE
+	MonoClass* attr_class = mono_class_try_get_unmanaged_callers_only_attribute_class ();
+	if (!attr_class)
+		return;
+#endif
+
+	ERROR_DECL(error);
+	MonoCustomAttrInfo* cinfo = mono_custom_attrs_from_method_checked (method, error);
+	if (!is_ok(error) || !cinfo) {
+		mono_error_cleanup(error);
+		return;
+	}
+
+	mono_array_size_t i;
+	MonoCustomAttrEntry* attr = NULL;
+	for (i = 0; i < cinfo->num_attrs; ++i) {
+		MonoClass* ctor_class = cinfo->attrs[i].ctor->klass;
+#ifdef ENABLE_NETCORE
+		if (ctor_class == attr_class) {
+			attr = &cinfo->attrs[i];
+			break;
+		}
+#else
+		if (!strcmp (ctor_class->name, "UnmanagedCallersOnlyAttribute") &&
+			!strcmp (ctor_class->name_space, "System.Runtime.InteropServices"))
+		{
+			attr = &cinfo->attrs[i];
+			break;
+		}
+#endif
+	}
+
+	if (attr != NULL) {
+		MonoObject* attr_obj = mono_custom_attrs_get_attr_checked (cinfo, attr->ctor->klass, error);
+		mono_error_assert_ok (error);
+		MonoClassField* field = mono_class_get_field_from_name_full (attr->ctor->klass, "CallConvs", NULL);
+		MonoArray* call_conv_array = (MonoArray*)mono_field_get_value_object_checked (mono_domain_get (), field, attr_obj, error);
+		mono_error_assert_ok (error);
+		if (call_conv_array) {
+			int length = mono_array_length_internal (call_conv_array);
+			g_assert(length == 1);
+			MonoReflectionType* call_conv_type_obj = mono_array_get_internal (call_conv_array, MonoReflectionType*, 0);
+			MonoType* calling_convention = (MonoType*)mono_reflection_type_get_handle (call_conv_type_obj, error);
+			mono_error_assert_ok (error);
+			mono_marshal_set_signature_callconv_from_attribute (csig, calling_convention, error);
+			mono_error_assert_ok (error);
+		}
+	}
+
+	if (!cinfo->cached)
+		mono_custom_attrs_free (cinfo);
+}
+
 /**
  * mono_marshal_get_native_wrapper:
  * \param method The \c MonoMethod to wrap.
@@ -3901,6 +3986,8 @@ mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass,
 
 	if (invoke)
 		mono_marshal_set_callconv_from_modopt (invoke, csig, TRUE);
+	else
+		mono_marshal_set_callconv_from_unmanaged_callers_only_attribute(method, csig);
 
 	/* The attribute is only available in Net 2.0 */
 	if (delegate_klass && mono_class_try_get_unmanaged_function_pointer_attribute_class ()) {
@@ -6518,7 +6605,26 @@ gboolean
 mono_method_has_unmanaged_callers_only_attribute (MonoMethod *method)
 {
 #ifndef ENABLE_NETCORE
-	return FALSE;
+	ERROR_DECL (attr_error);
+	MonoCustomAttrInfo* cinfo;
+	cinfo = mono_custom_attrs_from_method_checked(method, attr_error);
+	if (!is_ok(attr_error) || !cinfo) {
+		mono_error_cleanup(attr_error);
+		return FALSE;
+	}
+	gboolean result = FALSE;
+	for (int i = 0; i < cinfo->num_attrs; ++i) {
+		MonoClass* ctor_class = cinfo->attrs[i].ctor->klass;
+		if (!strcmp(ctor_class->name, "UnmanagedCallersOnlyAttribute") &&
+			!strcmp(ctor_class->name_space, "System.Runtime.InteropServices"))
+		{
+			result = TRUE;
+			break;
+		}
+	}
+	if (!cinfo->cached)
+		mono_custom_attrs_free(cinfo);
+	return result;
 #else
 	ERROR_DECL (attr_error);
 	MonoClass *attr_klass = NULL;

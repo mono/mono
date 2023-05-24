@@ -8443,6 +8443,10 @@ ves_icall_System_IO_DriveInfo_GetDiskFreeSpace (const gunichar2 *path_name, gint
 gpointer
 ves_icall_RuntimeMethodHandle_GetFunctionPointer (MonoMethod *method, MonoError *error)
 {
+	if (G_UNLIKELY(mono_method_has_unmanaged_callers_only_attribute(method))) {
+		method = mono_marshal_get_managed_wrapper(method, NULL, (MonoGCHandle)0, error);
+		return_val_if_nok(error, NULL);
+	}
 	return mono_compile_method_checked (method, error);
 }
 
