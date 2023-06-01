@@ -277,6 +277,8 @@ namespace System.Windows.Forms.PropertyGridInternal
 			IComponent selectedComponent = property_grid.SelectedObject as IComponent;
 			if (selectedComponent != null && selectedComponent.Site != null)
 				return selectedComponent.Site.GetService (serviceType);
+			if (property_grid.Site != null)
+				return property_grid.Site.GetService (serviceType);
 			return null;
 		}
 
