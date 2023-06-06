@@ -509,7 +509,7 @@ namespace System.Runtime.Serialization
 							var isDeclaredType = typeHandleValue.Equals (CodeInterpreter.ConvertValue (memberValue, memberType, Globals.TypeOfObject));
 							if (isNullableOfT) {
 								ctx.InternalSerialize (writer, memberValue, isDeclaredType, writeXsiType, DataContract.GetId (memberType.TypeHandle), memberType.TypeHandle);
-							} else if (memberType == Globals.TypeOfObject) {
+							} else if (memberType == Globals.TypeOfObject && !ctx.HasDataContractResolver) {
 								var dataContract = DataContract.GetDataContract (memberValue.GetType());
 								writer.WriteAttributeQualifiedName (Globals.XsiPrefix, DictionaryGlobals.XsiTypeLocalName, DictionaryGlobals.SchemaInstanceNamespace, dataContract.Name, dataContract.Namespace);
 								ctx.InternalSerializeReference (writer, memberValue, false, false, -1, typeHandleValue);
