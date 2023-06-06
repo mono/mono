@@ -105,7 +105,8 @@ namespace System.Windows.Forms
 			}
 
 			// This is needed for a button set to Overflow = Always
-			if (need_overflow) {
+			if (ts.OverflowButton == null) {}
+			else if (need_overflow) {
 				ts.OverflowButton.Visible = true;
 				ts.OverflowButton.SetBounds (new Rectangle (ts.Width - 16, 0, 16, ts.Height));
 				toolstrip_width -= ts.OverflowButton.Width;
@@ -115,7 +116,7 @@ namespace System.Windows.Forms
 			while (total_width > toolstrip_width) {
 				// If we can overflow, get our overflow button setup, and subtract it's width
 				// from our available width				
-				if (can_overflow && !ts.OverflowButton.Visible) {
+				if (can_overflow && ts.OverflowButton != null && !ts.OverflowButton.Visible) {
 					ts.OverflowButton.Visible = true;
 					ts.OverflowButton.SetBounds (new Rectangle (ts.Width - 16, 0, 16, ts.Height));
 					toolstrip_width -= ts.OverflowButton.Width;
@@ -197,12 +198,13 @@ namespace System.Windows.Forms
 				i++;
 			}
 
-			ts.OverflowButton.Visible = false;
+			if (ts.OverflowButton != null)
+				ts.OverflowButton.Visible = false;
 
 			while (total_height > toolstrip_height) {
 				// If we can overflow, get our overflow button setup, and subtract it's width
 				// from our available width				
-				if (can_overflow && !ts.OverflowButton.Visible) {
+				if (can_overflow && ts.OverflowButton != null && !ts.OverflowButton.Visible) {
 					ts.OverflowButton.Visible = true;
 					ts.OverflowButton.SetBounds (new Rectangle (0, ts.Height - 16,  ts.Width, 16));
 					toolstrip_height -= ts.OverflowButton.Height;
