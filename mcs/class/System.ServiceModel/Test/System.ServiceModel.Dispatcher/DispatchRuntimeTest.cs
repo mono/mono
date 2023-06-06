@@ -185,6 +185,68 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				h.Close ();
 			}
 		}
+
+		[Test]
+		public void TestClientRuntime ()
+		{
+			DispatchRuntime d = new EndpointDispatcher (
+				new EndpointAddress ("http://localhost:30158"), "IFoo", "urn:foo").DispatchRuntime;
+			ClientRuntime r = d.CallbackClientRuntime;
+
+			Assert.AreEqual (d, r.CallbackDispatchRuntime, "#1");
+			Assert.AreEqual (0, r.ChannelInitializers.Count, "#2");
+			Assert.AreEqual (0, r.InteractiveChannelInitializers.Count, "#3");
+			Assert.AreEqual (0, r.MessageInspectors.Count, "#4");
+			Assert.AreEqual (0, r.Operations.Count, "#5");
+			Assert.AreEqual (0, r.ClientMessageInspectors.Count, "#6");
+			Assert.AreEqual (0, r.ClientOperations.Count, "#7");
+			Assert.IsNull (r.OperationSelector, "#8");
+			Assert.IsNotNull (r.UnhandledClientOperation, "#9");
+
+			MyClientMessageInspector inspector1 = new MyClientMessageInspector();
+			MyClientMessageInspector inspector2 = new MyClientMessageInspector();
+			MyClientMessageInspector[] inspectors = new MyClientMessageInspector[2];
+			r.MessageInspectors.Add (inspector1);
+			Assert.AreEqual (1, r.MessageInspectors.Count, "inspectors #1");
+			Assert.AreEqual (1, r.ClientMessageInspectors.Count, "inspectors #2");
+			r.ClientMessageInspectors.Add (inspector2);
+			Assert.AreEqual (2, r.MessageInspectors.Count, "inspectors #3");
+			Assert.AreEqual (2, r.ClientMessageInspectors.Count, "inspectors #4");
+			Assert.AreEqual (inspector1, r.MessageInspectors[0], "inspectors #5");
+			Assert.AreEqual (inspector2, r.MessageInspectors[1], "inspectors #6");
+			r.ClientMessageInspectors.CopyTo(inspectors, 0);
+			Assert.AreEqual (inspector1, inspectors[0], "inspectors #7");
+			Assert.AreEqual (inspector2, inspectors[1], "inspectors #8");
+
+			ClientOperation operation1 = new ClientOperation(r, "foo", String.Empty);
+			ClientOperation operation2 = new ClientOperation(r, "bar", String.Empty);
+			ClientOperation[] operations = new ClientOperation[2];
+			r.Operations.Add (operation1);
+			Assert.AreEqual (1, r.Operations.Count, "operations #1");
+			Assert.AreEqual (1, r.ClientOperations.Count, "operations #2");
+			r.ClientOperations.Add (operation2);
+			Assert.AreEqual (2, r.Operations.Count, "operations #3");
+			Assert.AreEqual (2, r.ClientOperations.Count, "operations #4");
+			Assert.AreEqual (operation1, r.Operations[0], "operations #5");
+			Assert.AreEqual (operation2, r.Operations[1], "operations #6");
+			r.ClientOperations.CopyTo(operations, 0);
+			Assert.AreEqual (operation1, operations[0], "operations #7");
+			Assert.AreEqual (operation2, operations[1], "operations #8");
+
+			Assert.AreEqual ("*", r.UnhandledClientOperation.Name, "unhandled #1");
+			Assert.AreEqual ("*", r.UnhandledClientOperation.Action, "unhandled #2");
+			Assert.AreEqual ("*", r.UnhandledClientOperation.ReplyAction, "unhandled #3");
+			Assert.AreEqual (r, r.UnhandledClientOperation.Parent, "unhandled #4");
+			Assert.IsNotNull (r.UnhandledClientOperation.Formatter, "unhandled #5");
+			Assert.IsFalse (r.UnhandledClientOperation.DeserializeReply, "unhandled #6");
+			Assert.IsFalse (r.UnhandledClientOperation.SerializeRequest, "unhandled #7");
+			Assert.IsNull (r.UnhandledClientOperation.BeginMethod, "unhandled #8");
+			Assert.IsNull (r.UnhandledClientOperation.EndMethod, "unhandled #9");
+			Assert.IsNull (r.UnhandledClientOperation.SyncMethod, "unhandled #10");
+			Assert.AreEqual (0, r.UnhandledClientOperation.ParameterInspectors.Count, "unhandled #11");
+			Assert.AreEqual (0, r.UnhandledClientOperation.ClientParameterInspectors.Count, "unhandled #12");
+			Assert.AreEqual (0, r.UnhandledClientOperation.FaultContractInfos.Count, "unhandled #13");
+		}
 	}
 
 
@@ -235,6 +297,18 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			res.string_res += "BeforeSendReply , ";
 			res.AddCurrentOperationContextInfo ();
 		}
+
+		#endregion
+	}
+
+	public class MyClientMessageInspector : IClientMessageInspector
+	{
+		public MyClientMessageInspector () { }
+
+		#region IClientMessageInspector Members
+
+		public void AfterReceiveReply (ref Message reply, object correlationState) { }
+		public object BeforeSendRequest (ref Message request, IClientChannel channel) { return null; }
 
 		#endregion
 	}
