@@ -6235,6 +6235,13 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 	/* <interrupt check> */
 	emit_thread_interrupt_checkpoint (mb);
 
+	if (method->wrapper_type == MONO_WRAPPER_COMINTEROP)
+	{
+		/* Switch to the object's domain before doing argument conversions */
+		mono_mb_emit_ldarg (mb, 0);
+		mono_mb_emit_icall (mb, cominterop_set_ccw_domain);
+	}
+
 	/* we first do all conversions */
 	tmp_locals = g_newa (int, sig->param_count);
 	for (i = 0; i < sig->param_count; i ++) {
