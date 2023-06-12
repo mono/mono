@@ -70,7 +70,8 @@ typedef struct {
 
 typedef enum {
 	DEBUG_DIR_ENTRY_CODEVIEW = 2,
-	DEBUG_DIR_ENTRY_PPDB = 17
+	DEBUG_DIR_ENTRY_PPDB = 17,
+	DEBUG_DIR_PDB_CHECKSUM = 19
 } DebugDirectoryEntryType;
 
 #define EMBEDDED_PPDB_MAGIC 0x4244504d
@@ -82,14 +83,15 @@ enum {
 	MONO_HAS_CUSTOM_DEBUG_MASK = 0x1f
 };
 
-static gboolean
-get_pe_debug_info (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp, guint8 **ppdb_data,
-				   int *ppdb_uncompressed_size, int *ppdb_compressed_size)
+gboolean
+mono_get_pe_debug_info_full (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp, guint8 **ppdb_data,
+				   int *ppdb_uncompressed_size, int *ppdb_compressed_size, char **pdb_path, GArray *pdb_checksum_hash_type, GArray *pdb_checksum)
 {
 	MonoPEDirEntry *debug_dir_entry;
 	ImageDebugDirectory *debug_dir;
 	int idx;
 	gboolean guid_found = FALSE;
+	guint8 *data;
 
 	*ppdb_data = NULL;
 
@@ -99,14 +101,26 @@ get_pe_debug_info (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *
 
 	int offset = mono_cli_rva_image_map (image, debug_dir_entry->rva);
 	for (idx = 0; idx < debug_dir_entry->size / sizeof (ImageDebugDirectory); ++idx) {
+		data = (guint8 *) ((ImageDebugDirectory *) (image->raw_data + offset) + idx);
 		debug_dir = (ImageDebugDirectory*)(image->raw_data + offset) + idx;
+		if (pdb_checksum_hash_type && pdb_checksum && debug_dir->type == DEBUG_DIR_PDB_CHECKSUM)
+		{
+			data  = (guint8 *) (image->raw_data + debug_dir->pointer);
+			char* alg_name = (char*)data;
+			guint8*	checksum = (guint8 *) (data + strlen(alg_name)+ 1);
+			g_array_append_val (pdb_checksum_hash_type, alg_name);
+			g_array_append_val (pdb_checksum, checksum);
+		}
 		if (debug_dir->type == DEBUG_DIR_ENTRY_CODEVIEW && debug_dir->major_version == 0x100 && debug_dir->minor_version == 0x504d) {
 			/* This is a 'CODEVIEW' debug directory */
 			CodeviewDebugDirectory *dir = (CodeviewDebugDirectory*)(image->raw_data + debug_dir->pointer);
+			data  = (guint8 *) (image->raw_data + debug_dir->pointer);
 
 			if (dir->signature == 0x53445352) {
 				memcpy (out_guid, dir->guid, 16);
 				*out_age = dir->age;
+				if (pdb_path)
+					*pdb_path = (char*) data + 24;
 				*out_timestamp = debug_dir->time_date_stamp;
 				guid_found = TRUE;
 			}
@@ -114,7 +128,7 @@ get_pe_debug_info (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *
 		if (debug_dir->type == DEBUG_DIR_ENTRY_PPDB && debug_dir->major_version >= 0x100 && debug_dir->minor_version == 0x100) {
 			/* Embedded PPDB blob */
 			/* See src/System.Reflection.Metadata/src/System/Reflection/PortableExecutable/PEReader.EmbeddedPortablePdb.cs in corefx */
-			guint8 *data = (guint8*)(image->raw_data + debug_dir->pointer);
+			data = (guint8*)(image->raw_data + debug_dir->pointer);
 			guint32 magic = read32 (data);
 			g_assert (magic == EMBEDDED_PPDB_MAGIC);
 			guint32 size = read32 (data + 4);
@@ -124,6 +138,13 @@ get_pe_debug_info (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *
 		}
 	}
 	return guid_found;
+}
+
+static gboolean
+get_pe_debug_info (MonoImage *image, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp, guint8 **ppdb_data,
+									int *ppdb_uncompressed_size, int *ppdb_compressed_size)
+{
+	return mono_get_pe_debug_info_full  (image, out_guid, out_age, out_timestamp, ppdb_data, ppdb_uncompressed_size, ppdb_compressed_size, NULL, NULL, NULL);
 }
 
 static void
