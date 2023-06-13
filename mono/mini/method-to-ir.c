@@ -11316,7 +11316,9 @@ mono_ldptr:
 					MonoMethod *invoke;
 					int invoke_context_used;
 
-					if (G_UNLIKELY (has_unmanaged_callers_only)) {
+					if (G_UNLIKELY (has_unmanaged_callers_only) && !strstr(cmethod->name, "$BurstManaged")) {
+						/* Burst is currently generating managed methods for direct calls, including methods marked with UnmanagedCallersOnly.
+						 * Add temporary workaround to land support for UnmanagedCallersOnly until Burst can respond to the new exception being raised.*/
 						mono_error_set_not_supported (cfg->error, "Cannot create delegate from method with UnmanagedCallersOnlyAttribute");
 						CHECK_CFG_ERROR;
 					}
