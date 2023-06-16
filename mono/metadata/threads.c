@@ -34,6 +34,7 @@
 #include <mono/metadata/debug-internals.h>
 #include <mono/utils/monobitset.h>
 #include <mono/utils/mono-compiler.h>
+#include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-membar.h>
 #include <mono/utils/mono-time.h>
@@ -892,6 +893,9 @@ mono_thread_attach_internal (MonoThread *thread, gboolean force_attach, gboolean
 	internal->handle = mono_threads_open_thread_handle (info->handle);
 	internal->native_handle = MONO_NATIVE_THREAD_HANDLE_TO_GPOINTER (mono_threads_open_native_thread_handle (info->native_handle));
 	internal->tid = MONO_NATIVE_THREAD_ID_TO_UINT (mono_native_thread_id_get ());
+#if !HOST_WIN32
+	internal->os_tid = mono_native_thread_os_id_get();
+#endif
 	internal->thread_info = info;
 	internal->small_id = info->small_id;
 
@@ -4333,7 +4337,7 @@ mono_gstring_append_thread_name (GString* text, MonoInternalThread* thread)
 }
 
 static void
-dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_file)
+dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_file, gboolean use_trace)
 {
 	GString* text = g_string_new (0);
 	int i;
@@ -4368,15 +4372,18 @@ dump_thread (MonoInternalThread *thread, ThreadDumpUserData *ud, FILE* output_fi
 			g_string_append_printf (text, "  at <unknown> <0x%05x>\n", frame->native_offset);
 		}
 	}
-
-	g_fprintf (output_file, "%s", text->str);
+	if (use_trace)
+		mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_ASSEMBLY, "%s", text->str);
+	else
+		g_fprintf (output_file, "%s", text->str);
 
 #if PLATFORM_WIN32 && TARGET_WIN32 && _DEBUG
 	OutputDebugStringA(text->str);
 #endif
 
 	g_string_free (text, TRUE);
-	fflush (output_file);
+	if (!use_trace)
+		fflush (output_file);
 }
 
 static void
@@ -4442,7 +4449,7 @@ mono_threads_perform_thread_dump (void)
 	for (tindex = 0; tindex < nthreads; ++tindex) {
 		MonoGCHandle handle = thread_array [tindex];
 		MonoInternalThread *thread = (MonoInternalThread *) mono_gchandle_get_target_internal (handle);
-		dump_thread (thread, &ud, output_file != NULL ? output_file : stdout);
+		dump_thread (thread, &ud, output_file != NULL ? output_file : stdout, FALSE);
 		mono_gchandle_free_internal (handle);
 	}
 
@@ -4742,7 +4749,10 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 	abort_appdomain_data user_data;
 	gint64 start_time;
 	int orig_timeout = timeout;
+	int orig_waitnum = 0;
 	int i;
+	gboolean logState = FALSE;
+	guint64 os_tid;
 
 	THREAD_DEBUG (g_message ("%s: starting abort", __func__));
 
@@ -4761,11 +4771,33 @@ mono_threads_abort_appdomain_threads (MonoDomain *domain, int timeout)
 			for (i = 0; i < user_data.wait.num; ++i)
 				mono_thread_internal_abort (user_data.wait.threads [i], TRUE);
 
+			if (logState && (user_data.wait.num != orig_waitnum))
+			{	
+				orig_waitnum = user_data.wait.num;
+				mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_ASSEMBLY, "Domain Unload is waiting for %d threads to end. Thread IDs are:", user_data.wait.num);
+				ThreadDumpUserData ud;
+				memset (&ud, 0, sizeof (ud));
+				ud.frames = g_new0 (MonoStackFrameInfo, 256);
+				ud.max_frames = 256;
+				for (int x = 0; x < user_data.wait.num; x++)
+				{
+#if HOST_WIN32
+					os_tid = user_data.wait.threads[x]->tid;
+#else
+					os_tid = user_data.wait.threads[x]->os_tid;
+#endif
+					mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_ASSEMBLY, "Thread[%d]: (%"PRIu64")", x, os_tid);
+					dump_thread (user_data.wait.threads[x], &ud, NULL, TRUE);
+				}
+				g_free (ud.frames);
+			}
+
 			/*
 			 * We should wait for the threads either to abort, or to leave the
 			 * domain. We can't do the latter, so we wait with a timeout.
 			 */
 			wait_for_tids (&user_data.wait, 100, FALSE);
+			logState = TRUE;
 		}
 
 		/* Update remaining time */
