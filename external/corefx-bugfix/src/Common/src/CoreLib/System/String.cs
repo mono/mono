@@ -301,7 +301,9 @@ namespace System
 
             string result = FastAllocateString(count);
 
+#if !UNITY
             if (c != '\0') // Fast path null char string
+#endif
             {
                 unsafe
                 {
