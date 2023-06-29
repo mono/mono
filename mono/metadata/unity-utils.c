@@ -1877,6 +1877,13 @@ MONO_API void
 mono_unity_stop_gc_world()
 {
 #if HAVE_BOEHM_GC
+	// Metadata access does mono_loader_lock. We access it when we capture classes 
+	// and other information. So does the debugger, which can create a deadlock.
+	mono_loader_lock();
+	// We need to lock domain sooner, to make sure than no other thread is currently
+	// holding lock, as mono_unity_domain_mempool_chunk_foreach will need it for:
+	// mono_unity_domain_mempool_chunk_foreach -> mono_mem_manager_lock -> mono_domain_lock
+	mono_domain_lock(mono_domain_get());
 	GC_stop_world_external();
 #else
 	g_assert_not_reached();
@@ -1888,6 +1895,8 @@ mono_unity_start_gc_world()
 {
 #if HAVE_BOEHM_GC
 	GC_start_world_external();
+	mono_domain_unlock(mono_domain_get());
+	mono_loader_unlock();
 #else
 	g_assert_not_reached();
 #endif
