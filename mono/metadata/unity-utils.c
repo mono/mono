@@ -374,6 +374,8 @@ MONO_API gboolean
 mono_class_is_blittable(MonoClass *klass)
 {
 	g_assert(klass);
+	if (!klass->fields_inited)
+		mono_class_setup_fields(klass);
 	return klass->blittable;
 }
 
