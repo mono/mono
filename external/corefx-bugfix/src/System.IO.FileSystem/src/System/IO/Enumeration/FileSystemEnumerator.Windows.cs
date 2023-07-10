@@ -92,6 +92,23 @@ namespace System.IO.Enumeration
         /// </summary>
         private IntPtr CreateDirectoryHandle(string path, bool ignoreNotFound = false)
         {
+            // GetFileAttributesEx sometimes does not understand long form UNC paths
+            // without adding a trailing backslash. So we check explicitly for such a
+            // path, and add the required trail.
+            if ((path.StartsWith(@"\?\") || path.StartsWith(@"\\?\"))
+                && path.Contains(@"GLOBALROOT\Device\Harddisk"))
+            {
+                // 'Partition' length is 9 and can be followed by a number between '1' and '14'.
+                int diff = path.Length - path.IndexOf("Partition");
+
+                // Previous code get rid of any directory separator ('/')
+                // This leaves only "PartitionX", "PartitionXX" or "PartitionX\" to check.
+                if (diff <= 11 && path[path.Length - 1] != '\\')
+                {
+                    path += '\\';
+                }
+            }
+
             IntPtr handle = System.IO.FileSystem.UnityCreateFile_IntPtr(
                 path,
                 Interop.Kernel32.FileOperations.FILE_LIST_DIRECTORY,
