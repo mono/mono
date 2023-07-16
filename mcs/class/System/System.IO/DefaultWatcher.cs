@@ -192,7 +192,7 @@ namespace System.IO {
 			RenamedEventArgs renamed = null;
 
 			lock (fsw) {
-				fsw.DispatchEvents (action, filename, ref renamed);
+				fsw.DispatchEvents (action, Path.GetRelativePath(fsw.Path, filename), ref renamed);
 				if (fsw.Waiting) {
 					fsw.Waiting = false;
 					System.Threading.Monitor.PulseAll (fsw);
