@@ -1340,11 +1340,13 @@ namespace System
 		static long ReadBigEndianInt64(byte[] buffer, int start)
 		{
 			byte[] longBytes = new byte[8];
-			for (int i = 0; i < 8; i++)
+			for (int i = 0; i < 8; i++) {
 				longBytes[i] = buffer[start + i];
+			}
 
-			if (BitConverter.IsLittleEndian)
+			if (BitConverter.IsLittleEndian) {
 				Array.Reverse(longBytes);
+			}
 
 			return BitConverter.ToInt64(longBytes, 0);
 		}
@@ -1362,8 +1364,7 @@ namespace System
 			byte version = buffer[4];
 			int index = 0;
 			int timeValuesLength = 4;
-			if (version == '2' || version == '3')
-			{
+			if (version == '2' || version == '3') {
 				index += 44 + (int)((timeValuesLength * timecnt) + timecnt + (6 * typecnt) + ((timeValuesLength + 4) * leapcnt) + ttisstdcnt + ttisgmtcnt + charcnt);
 				// move index past the V1 information to read the V2 information
 
@@ -1539,10 +1540,11 @@ namespace System
 			var list = new List<KeyValuePair<DateTime, TimeType>> (count);
 			for (int i = 0; i < count; i++) {
 				long unixtime = 0;
-				if (timeValuesLength == 8)
+				if (timeValuesLength == 8) {
 					unixtime = ReadBigEndianInt64 (buffer, index + timeValuesLength * i);
-				else
+				} else {
 					unixtime = ReadBigEndianInt32 (buffer, index + timeValuesLength * i);
+				}
 
 				DateTime ttime = DateTimeFromUnixTime (unixtime);
 				byte ttype = buffer [index + timeValuesLength * count + i];
