@@ -1322,7 +1322,7 @@ mono_signature_to_name (MonoMethodSignature *sig, const char *prefix)
  *  Return the string encoding which should be used for a given parameter.
  */
 MonoMarshalNative
-mono_marshal_get_string_encoding (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec)
+mono_marshal_get_string_encoding (EmitMarshalContext *m, MonoMarshalSpec *spec)
 {
 	/* First try the parameter marshal info */
 	if (spec) {
@@ -1334,11 +1334,11 @@ mono_marshal_get_string_encoding (MonoMethodPInvoke *piinfo, MonoMarshalSpec *sp
 			return spec->native;
 	}
 
-	if (!piinfo)
-		return MONO_NATIVE_LPSTR;
+	if (!m->piinfo)
+		return m->sig->hasthis ? MONO_NATIVE_BSTR : MONO_NATIVE_LPSTR;
 
 	/* Then try the method level marshal info */
-	switch (piinfo->piflags & PINVOKE_ATTRIBUTE_CHAR_SET_MASK) {
+	switch (m->piinfo->piflags & PINVOKE_ATTRIBUTE_CHAR_SET_MASK) {
 	case PINVOKE_ATTRIBUTE_CHAR_SET_ANSI:
 		return MONO_NATIVE_LPSTR;
 	case PINVOKE_ATTRIBUTE_CHAR_SET_UNICODE:
@@ -1355,9 +1355,9 @@ mono_marshal_get_string_encoding (MonoMethodPInvoke *piinfo, MonoMarshalSpec *sp
 }
 
 MonoMarshalConv
-mono_marshal_get_string_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec)
+mono_marshal_get_string_to_ptr_conv (EmitMarshalContext *m, MonoMarshalSpec *spec)
 {
-	MonoMarshalNative encoding = mono_marshal_get_string_encoding (piinfo, spec);
+	MonoMarshalNative encoding = mono_marshal_get_string_encoding (m, spec);
 
 	switch (encoding) {
 	case MONO_NATIVE_LPWSTR:
@@ -1381,9 +1381,9 @@ mono_marshal_get_string_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec 
 }
 
 MonoMarshalConv
-mono_marshal_get_stringbuilder_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec)
+mono_marshal_get_stringbuilder_to_ptr_conv (EmitMarshalContext *m, MonoMarshalSpec *spec)
 {
-	MonoMarshalNative encoding = mono_marshal_get_string_encoding (piinfo, spec);
+	MonoMarshalNative encoding = mono_marshal_get_string_encoding (m, spec);
 
 	switch (encoding) {
 	case MONO_NATIVE_LPWSTR:
@@ -1400,9 +1400,9 @@ mono_marshal_get_stringbuilder_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarsh
 }
 
 MonoMarshalConv
-mono_marshal_get_ptr_to_string_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec, gboolean *need_free)
+mono_marshal_get_ptr_to_string_conv (EmitMarshalContext *m, MonoMarshalSpec *spec, gboolean *need_free)
 {
-	MonoMarshalNative encoding = mono_marshal_get_string_encoding (piinfo, spec);
+	MonoMarshalNative encoding = mono_marshal_get_string_encoding (m, spec);
 
 	*need_free = TRUE;
 
@@ -1432,9 +1432,9 @@ mono_marshal_get_ptr_to_string_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec 
 }
 
 MonoMarshalConv
-mono_marshal_get_ptr_to_stringbuilder_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec, gboolean *need_free)
+mono_marshal_get_ptr_to_stringbuilder_conv (EmitMarshalContext *m, MonoMarshalSpec *spec, gboolean *need_free)
 {
-	MonoMarshalNative encoding = mono_marshal_get_string_encoding (piinfo, spec);
+	MonoMarshalNative encoding = mono_marshal_get_string_encoding (m, spec);
 
 	*need_free = TRUE;
 
@@ -1459,7 +1459,7 @@ mono_marshal_get_ptr_to_stringbuilder_conv (MonoMethodPInvoke *piinfo, MonoMarsh
  * be freed.
  */
 gboolean
-mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec)
+mono_marshal_need_free (MonoType *t, EmitMarshalContext *m, MonoMarshalSpec *spec)
 {
 	MonoMarshalNative encoding;
 
@@ -1471,12 +1471,12 @@ mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec 
 	case MONO_TYPE_CLASS:
 		if (t->data.klass == mono_class_try_get_stringbuilder_class ()) {
 			gboolean need_free;
-			mono_marshal_get_ptr_to_stringbuilder_conv (piinfo, spec, &need_free);
+			mono_marshal_get_ptr_to_stringbuilder_conv (m, spec, &need_free);
 			return need_free;
 		}
 		return FALSE;
 	case MONO_TYPE_STRING:
-		encoding = mono_marshal_get_string_encoding (piinfo, spec);
+		encoding = mono_marshal_get_string_encoding (m, spec);
 		return (encoding == MONO_NATIVE_LPWSTR) ? FALSE : TRUE;
 	default:
 		return FALSE;
