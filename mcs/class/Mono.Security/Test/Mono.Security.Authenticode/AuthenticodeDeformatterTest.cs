@@ -700,9 +700,14 @@ namespace MonoTests.Mono.Security.Authenticode {
 			AuthenticodeDeformatter ad = new AuthenticodeDeformatter (filename);
 			// note: it's a valid signed PE file - but it doesn't 
 			// mean it's root is trusted on the current system
-			Assert.IsTrue (((ad.Reason == 0) || (ad.Reason == 6)), "Reason");
+			if (ad.Reason == 0)
+				Assert.AreEqual (632011370700000000, ad.Timestamp.ToUniversalTime ().Ticks, "Timestamp");
+			else if (ad.Reason == 6)
+				Assert.AreEqual (0, ad.Timestamp.ToUniversalTime ().Ticks, "Timestamp");
+			else
+				Assert.Fail ($"Unexpected Reason: {ad.Reason}");
+
 			Assert.AreEqual ("35-A5-21-3B-FC-FE-FA-40-97-AA-BB-DE-3B-52-15-6F", BitConverter.ToString (ad.Hash), "Hash");
-			Assert.AreEqual (632011370700000000, ad.Timestamp.ToUniversalTime ().Ticks, "Timestamp");
 			Assert.AreEqual (4, ad.Certificates.Count, "#Certificates");
 			Assert.AreEqual ("C=ZA, S=Western Cape, L=Cape Town, O=Thawte Consulting cc, OU=Certification Services Division, CN=Thawte Server CA, E=server-certs@thawte.com", ad.SigningCertificate.IssuerName, "IssuerName");
 			Assert.AreEqual ("C=CA, S=Quebec, L=Quebec, O=Motus Technologies Inc., OU=Secure Application Development, CN=Motus Technologies Inc.", ad.SigningCertificate.SubjectName, "SubjectName");
@@ -728,9 +733,14 @@ namespace MonoTests.Mono.Security.Authenticode {
 			AuthenticodeDeformatter ad = new AuthenticodeDeformatter (helloworld_signed);
 			// note: it's a valid signed PE file - but it doesn't
 			// mean it's root is trusted on the current system
-			Assert.IsTrue (((ad.Reason == 0) || (ad.Reason == 6)), "Reason");
+			if (ad.Reason == 0)
+				Assert.AreEqual (632011370700000000, ad.Timestamp.ToUniversalTime ().Ticks, "Timestamp");
+			else if (ad.Reason == 6)
+				Assert.AreEqual (0, ad.Timestamp.ToUniversalTime ().Ticks, "Timestamp");
+			else
+				Assert.Fail ($"Unexpected Reason: {ad.Reason}");
+
 			Assert.AreEqual ("35-A5-21-3B-FC-FE-FA-40-97-AA-BB-DE-3B-52-15-6F", BitConverter.ToString (ad.Hash), "Hash");
-			Assert.AreEqual (632011370700000000, ad.Timestamp.ToUniversalTime ().Ticks, "Timestamp");
 			Assert.AreEqual (4, ad.Certificates.Count, "#Certificates");
 			Assert.AreEqual ("C=ZA, S=Western Cape, L=Cape Town, O=Thawte Consulting cc, OU=Certification Services Division, CN=Thawte Server CA, E=server-certs@thawte.com", ad.SigningCertificate.IssuerName, "IssuerName");
 			Assert.AreEqual ("C=CA, S=Quebec, L=Quebec, O=Motus Technologies Inc., OU=Secure Application Development, CN=Motus Technologies Inc.", ad.SigningCertificate.SubjectName, "SubjectName");
