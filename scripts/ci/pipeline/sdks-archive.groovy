@@ -124,7 +124,7 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                     // build the Archive
                     timeout (time: 300, unit: 'MINUTES') {
                         if (platform == "Darwin") {
-                            def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed gnu-tar intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz mingw-w64 make"
+                            def brewpackages = "autoconf automake ccache cmake coreutils gdk-pixbuf gettext glib gnu-sed intltool ios-deploy jpeg libffi libidn2 libpng libtiff libtool libunistring ninja openssl p7zip pcre pkg-config scons wget xz mingw-w64 make"
                             if (product == "android") {
                                 brewpackages = "${brewpackages} xamarin/xamarin-android-windeps/mingw-zlib"
                                 sh "brew tap xamarin/xamarin-android-windeps"
