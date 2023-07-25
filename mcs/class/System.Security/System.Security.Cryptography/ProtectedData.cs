@@ -39,11 +39,7 @@ namespace System.Security.Cryptography {
 	// a.	Windows Data Protection
 	//	http://msdn.microsoft.com/library/en-us/dnsecure/html/windataprotection-dpapi.asp?frame=true
 
-	public sealed class ProtectedData {
-
-		private ProtectedData ()
-		{
-		}
+	public static class ProtectedData {
 
 // FIXME	[DataProtectionPermission (SecurityAction.Demand, ProtectData = true)]
 		public static byte[] Protect (byte[] userData, byte[] optionalEntropy, DataProtectionScope scope) 
