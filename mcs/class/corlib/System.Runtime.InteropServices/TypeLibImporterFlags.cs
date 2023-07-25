@@ -44,6 +44,7 @@ namespace System.Runtime.InteropServices
 		None = 0,
 		PreventClassMembers = 16,
 		ImportAsAgnostic = 2048,
+		ImportAsArm = 16384,
 		ImportAsItanium = 1024,
 		ImportAsX64 = 512,
 		ImportAsX86 = 256,
