@@ -4705,7 +4705,8 @@ namespace System.Windows.Forms
 			nfs,
 			smbfs,
 			usbfs,
-			cifs
+			cifs,
+			zfs
 		}
 		
 		internal struct Mount
@@ -4828,7 +4829,11 @@ namespace System.Windows.Forms
 					mount.fsType = FsTypes.usbfs;
 					removable_devices.Add (mount);
 					
-				} else if (split [0].StartsWith ("/")) { //block devices
+				} else if (split[2] == "zfs") { 
+                    			mount.fsType = FsTypes.zfs;
+                    			block_devices.Add(mount);
+
+                		} else if (split [0].StartsWith ("/")) { //block devices
 					if (split [1].StartsWith ("/dev/"))  // root static, do not add
 						return;
 					
