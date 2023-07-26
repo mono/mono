@@ -1570,11 +1570,10 @@ namespace System
 			return list;
 		}
 
-		static DateTime DateTimeFromUnixTime (long unix_time)
-		{
-			DateTime date_time = new DateTime (1970, 1, 1);
-			return date_time.AddSeconds (unix_time);
-		}
+		static DateTime DateTimeFromUnixTime (long unix_time) =>
+			unix_time < DateTimeOffset.UnixMinSeconds ? DateTime.MinValue :
+			unix_time > DateTimeOffset.UnixMaxSeconds ? DateTime.MaxValue :
+			DateTimeOffset.FromUnixTimeSeconds(unix_time).UtcDateTime;
 
 #region reference sources
 		// Shortcut for TimeZoneInfo.Local.GetUtcOffset
