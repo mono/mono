@@ -9242,7 +9242,7 @@ calli_end:
 			guint32 gettype_token;
 			if ((ip = il_read_call(next_ip, end, &gettype_token)) && ip_in_bb (cfg, cfg->cbb, ip)) {
 				MonoMethod* gettype_method = mini_get_method (cfg, method, gettype_token, NULL, generic_context);
-				if (!strcmp (gettype_method->name, "GetType") && gettype_method->klass == mono_defaults.object_class) {
+				if (gettype_method && !strcmp (gettype_method->name, "GetType") && gettype_method->klass == mono_defaults.object_class) {
 					mono_class_init_internal(klass);
 					if (mono_class_get_checked (m_class_get_image (klass), m_class_get_type_token (klass), error) == klass) {
 						if (cfg->compile_aot) {
