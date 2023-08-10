@@ -212,7 +212,12 @@ g_assertion_message (const gchar *format, ...)
 	failure_assertion = g_logv_nofree (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, format, args);
 
 	va_end (args);
-	exit (0);
+
+#ifdef HOST_WIN32
+	RaiseException(0xE0000001, EXCEPTION_NONCONTINUABLE, 0, NULL);
+#else
+	g_assert_abort();
+#endif
 }
 
 // Emscriptem emulates varargs, and fails to stack pack multiple outgoing varargs areas,
