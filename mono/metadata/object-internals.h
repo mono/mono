@@ -628,8 +628,11 @@ struct _MonoInternalThread {
 	struct _MonoInternalThread *internal_thread;
 	MonoObject *start_obj;
 	MonoException *pending_exception;
+#elif HOST_WIN32
+	void* unused [3];
 #else
-	void* unused [3]; // same size as netcore
+	void* unused [2]; // same size as netcore
+	guint64 os_tid;
 #endif
 	/* This is used only to check that we are in sync between the representation
 	 * of MonoInternalThread in native and InternalThread in managed
