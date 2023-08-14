@@ -26,6 +26,7 @@
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/metadata/abi-details.h>
+#include <mono/metadata/marshal-ilgen.h>
 
 #include "interp/interp.h"
 
@@ -1140,7 +1141,7 @@ is_hfa (MonoType *t, int *out_nfields, int *out_esize, int *field_offsets)
 	gpointer iter;
 	MonoClassField *field;
 	MonoType *ftype, *prev_ftype = NULL;
-	int i, nfields = 0;
+	int nfields = 0;
 
 	klass = mono_class_from_mono_type_internal (t);
 	iter = NULL;
@@ -1154,8 +1155,22 @@ is_hfa (MonoType *t, int *out_nfields, int *out_esize, int *field_offsets)
 			int nested_nfields, nested_esize;
 			int nested_field_offsets [16];
 
-			if (!is_hfa (ftype, &nested_nfields, &nested_esize, nested_field_offsets))
-				return FALSE;
+			MonoType *fixed_etype;
+			int fixed_len;
+			if (get_fixed_buffer_attr (field, &fixed_etype, &fixed_len)) {
+				if (fixed_etype->type != MONO_TYPE_R4 && fixed_etype->type != MONO_TYPE_R8)
+					return FALSE;
+				if (fixed_len > 16)
+					return FALSE;
+				nested_nfields = fixed_len;
+				nested_esize = fixed_etype->type == MONO_TYPE_R4 ? 4 : 8;
+				for (int i = 0; i < nested_nfields; ++i)
+					nested_field_offsets [i] = i * nested_esize;
+			} else {
+				if (!is_hfa (ftype, &nested_nfields, &nested_esize, nested_field_offsets))
+					return FALSE;
+			}
+
 			if (nested_esize == 4)
 				ftype = m_class_get_byval_arg (mono_defaults.single_class);
 			else
@@ -1163,7 +1178,7 @@ is_hfa (MonoType *t, int *out_nfields, int *out_esize, int *field_offsets)
 			if (prev_ftype && prev_ftype->type != ftype->type)
 				return FALSE;
 			prev_ftype = ftype;
-			for (i = 0; i < nested_nfields; ++i) {
+			for (int i = 0; i < nested_nfields; ++i) {
 				if (nfields + i < 4)
 					field_offsets [nfields + i] = field->offset - MONO_ABI_SIZEOF (MonoObject) + nested_field_offsets [i];
 			}
