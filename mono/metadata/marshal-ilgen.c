@@ -169,7 +169,7 @@ offset_of_first_nonstatic_field (MonoClass *klass)
 	return 0;
 }
 
-static gboolean
+gboolean
 get_fixed_buffer_attr (MonoClassField *field, MonoType **out_etype, int *out_len)
 {
 	ERROR_DECL (error);
