@@ -196,6 +196,8 @@ typedef enum
 
 MONO_API void mono_unity_gc_set_mode(MonoGCMode mode);
 
+MONO_API gboolean mono_unity_gc_is_heap_ptr(const void*);
+
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API void mono_unity_gc_enable();
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
