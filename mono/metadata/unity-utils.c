@@ -975,6 +975,16 @@ MONO_API void mono_unity_gc_enable()
 #endif
 }
 
+MONO_API gboolean
+mono_unity_gc_is_heap_ptr(const void* ptr)
+{
+#if HAVE_BOEHM_GC
+	return GC_is_heap_ptr(ptr);
+#else
+	g_assert_not_reached();
+#endif
+}
+
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API void mono_unity_gc_disable()
 {
