@@ -26,20 +26,24 @@ class MonoMainPackage(Package):
         self.dont_clean = True
 
         if Package.profile.name == 'darwin':
-            self.configure_flags.extend([
-                '--with-libgdiplus=%s/lib/libgdiplus.dylib' % Package.profile.staged_prefix,
-                '--enable-llvm',
-                'CXXFLAGS=-stdlib=libc++'
-            ])
+            self.configure_flags.extend(
+                [
+                    f'--with-libgdiplus={Package.profile.staged_prefix}/lib/libgdiplus.dylib',
+                    '--enable-llvm',
+                    'CXXFLAGS=-stdlib=libc++',
+                ]
+            )
 
             self.sources.extend([
                 # Fixes up pkg-config usage on the Mac
                 'patches/mcs-pkgconfig.patch'
             ])
         else:
-            self.configure_flags.extend([
-                '--with-libgdiplus=%s/lib/libgdiplus.so' % Package.profile.staged_prefix
-            ])
+            self.configure_flags.extend(
+                [
+                    f'--with-libgdiplus={Package.profile.staged_prefix}/lib/libgdiplus.so'
+                ]
+            )
 
         self.gcc_flags.extend(['-O2'])
 
@@ -49,8 +53,7 @@ class MonoMainPackage(Package):
         self.custom_version_str = None
 
     def build(self):
-        self.make = '%s EXTERNAL_RUNTIME=%s' % (
-            self.make, self.profile.env.system_mono)
+        self.make = f'{self.make} EXTERNAL_RUNTIME={self.profile.env.system_mono}'
         Package.configure(self)
 
         if self.custom_version_str is not None:
@@ -71,7 +74,10 @@ class MonoMainPackage(Package):
             self.local_configure_flags.extend (['--build=i386-apple-darwin13.0.0'])
 
         self.local_configure_flags.extend(
-            ['--cache-file=%s/%s-%s.cache' % (self.profile.bockbuild.build_root, self.name, arch)])
+            [
+                f'--cache-file={self.profile.bockbuild.build_root}/{self.name}-{arch}.cache'
+            ]
+        )
 
     def install(self):
         Package.install(self)
@@ -93,7 +99,7 @@ class MonoMainPackage(Package):
 
     def deploy(self):
         if bockbuild.cmd_options.arch == 'darwin-universal':
-            os.symlink('mono-sgen64', '%s/bin/mono64' % self.staged_profile)
-            os.symlink('mono-sgen32', '%s/bin/mono32' % self.staged_profile)
+            os.symlink('mono-sgen64', f'{self.staged_profile}/bin/mono64')
+            os.symlink('mono-sgen32', f'{self.staged_profile}/bin/mono32')
 
 MonoMainPackage()

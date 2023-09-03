@@ -102,13 +102,13 @@ scriptname = sys.argv[0]
 class Hesitate(Exception):
 	pass
 class HesitantParser(argparse.ArgumentParser):
-	def __init__(s, *args, **kwargs):
-		s.hesitating = True  # Errors will be swallowed until this is set false
-		argparse.ArgumentParser.__init__(s, *args, **kwargs)
-	def error(s, *args, **kwargs):
-		if s.hesitating:
+	def __init__(self, *args, **kwargs):
+		self.hesitating = True
+		argparse.ArgumentParser.__init__(self, *args, **kwargs)
+	def error(self, *args, **kwargs):
+		if self.hesitating:
 			raise Hesitate() # Bail out before errors are printed.
-		argparse.ArgumentParser.error(s, *args, **kwargs)
+		argparse.ArgumentParser.error(self, *args, **kwargs)
 
 # Define args
 argparser = HesitantParser(description="""\
@@ -153,24 +153,24 @@ durationre = re.compile(r'(\d+)([smhd]?)')
 def parse_duration(duration): # Accept units
 	match = durationre.match(duration)
 	if not match:
-		argparser.error("Could not understand duration %s" % duration)
+		argparser.error(f"Could not understand duration {duration}")
 	time, units = match.group(1), match.group(2)
 	time = int(time)
-	if units == 'm':
-		time *= 60
+	if units == 'd':
+		time *= 60*60*24
 	elif units == 'h':
 		time *= 60*60
-	elif units == 'd':
-		time *= 60*60*24
+	elif units == 'm':
+		time *= 60
 	return time
 
 def parse_signal(sig):        # Accept names
 	if sig.isdigit():
 		return int(sig)
 	for k,v in signal.__dict__.items():
-		if k == ("SIG%s" % sig):
+		if k == f"SIG{sig}":
 			return v
-	argparser.error("Could not understand signal name %s" % sig)
+	argparser.error(f"Could not understand signal name {sig}")
 
 # Final interpretation of arguments
 duration = parse_duration(args.duration)
@@ -254,7 +254,7 @@ def send_signal(proc, sig):
 			sys.stderr.write("%s: Warning, could not kill process group %s because %s\n" % (scriptname, proc.pid, e))
 		# For compatibility with GNU Timeout, send a SIGCONT after the signal
 		# (so delivery has a chance to occur even for stopped processes)
-		if sig != signal.SIGKILL and sig != signal.SIGCONT:
+		if sig not in [signal.SIGKILL, signal.SIGCONT]:
 			os.kill(proc.pid, signal.SIGCONT)
 	elif have_windows_process_groups: # Windows with Python 2.7 or better
 		os.kill(proc.pid, sig) # Becuase CREATE_NEW_PROCESS_GROUP, will go to entire group
@@ -277,10 +277,7 @@ def attemptLines(path):
 		return []
 
 def attemptFirstLine(path):
-	lines = attemptLines(path)
-	if lines:
-		return lines[0]
-	return None
+	return lines[0] if (lines := attemptLines(path)) else None
 
 def posixtime(): # Amazingly, time.time() does not guarantee an epoch in the docs. However this does:
 	return calendar.timegm(time.gmtime())
@@ -335,11 +332,7 @@ def run(): # Returns exit code
 	try:
 		while True:
 			env = copy.copy(global_env)
-			if ever_completed:
-				retry_next = []
-			else: # Persist reported failures list until first non-crash run
-				retry_next = retry_these
-
+			retry_next = [] if ever_completed else retry_these
 			log_value(COUNT_JSON, add=1)
 
 			# Prepare environment/filesystem
@@ -364,7 +357,10 @@ def run(): # Returns exit code
 			code = wait(proc, duration)
 			timed_out = code is None
 			if timed_out:                  # Initial timeout
-				sys.stderr.write("%s: Sending %s to `%s`\n" % (scriptname, "SIG" + args.signal, command[0]))
+				sys.stderr.write(
+					"%s: Sending %s to `%s`\n"
+					% (scriptname, f"SIG{args.signal}", command[0])
+				)
 				send_signal(proc, timeout_signal)
 				if kill_after is not None: # Kill-after timeout
 					code = wait(proc, kill_after)
@@ -374,7 +370,10 @@ def run(): # Returns exit code
 						code = wait(proc, 1)
 						sys.stderr.write("%s: Command `%s` returned with %s after SIGKILL\n" % (scriptname, command[0], str(code)))
 					else:
-						sys.stderr.write("%s: Command `%s` returned with %s after %s\n" % (scriptname, command[0], str(code), "SIG" + args.signal))
+						sys.stderr.write(
+							"%s: Command `%s` returned with %s after %s\n"
+							% (scriptname, command[0], str(code), f"SIG{args.signal}")
+						)
 				code = proc.wait()         # Waits forever
 				sys.stderr.write("%s: Command `%s` timed out with %s\n" % (scriptname, command[0], str(code)))
 			died_politely = True
@@ -433,13 +432,13 @@ def run(): # Returns exit code
 						bailout = True
 
 				# Report human-readable failures for stdout log.
-				message = "%s:" % (scriptname)
+				message = f"{scriptname}:"
 				if timed_out:
-					message += " Saw timeout in test case %s (never allowed)." % (crashed_at)
+					message += f" Saw timeout in test case {crashed_at} (never allowed)."
 				elif crashed_at:
-					message += " Saw crash in test case %s." % (failure_annotate(crashed_at))
+					message += f" Saw crash in test case {failure_annotate(crashed_at)}."
 				if failed_tests:
-					message += " Saw test failure in test case%s %s." % (pluralize(failed_tests), "; ".join(map(failure_annotate, failed_tests)))
+					message += f' Saw test failure in test case{pluralize(failed_tests)} {"; ".join(map(failure_annotate, failed_tests))}.'
 				if not (timed_out or crashed_at or failed_tests):
 					message += " Test suite terminated with code %d, " % (code)
 					if log[SUPPORT_JSON]:
@@ -454,7 +453,7 @@ def run(): # Returns exit code
 
 			if not log[SUPPORT_JSON]:
 				for xml in (xml_list + [incomingPath(xml) for xml in wrote_xml]):
-					verbose_print("Will attempt to load XML from %s" % (xml))
+					verbose_print(f"Will attempt to load XML from {xml}")
 					try:
 						data = xmlparse(xml).documentElement
 						if data.nodeName != 'test-results':
@@ -467,7 +466,7 @@ def run(): # Returns exit code
 							nextsearch = []
 							for node in search:
 								for child in node.childNodes:
-									if child.nodeName == 'test-suite' or child.nodeName == 'results':
+									if child.nodeName in ['test-suite', 'results']:
 										nextsearch.append(child) # Descend
 									elif child.nodeName == 'test-case':
 										name = child.getAttribute("name")
@@ -476,7 +475,7 @@ def run(): # Returns exit code
 
 							search = nextsearch
 					except Exception as e:
-						print("Could not load XML file %s. Reason: %s" % (xml, e))
+						print(f"Could not load XML file {xml}. Reason: {e}")
 					data
 
 			if bailout or not (resume_after or retry_next): # If not retrying
@@ -486,13 +485,13 @@ def run(): # Returns exit code
 			retry_these = retry_next
 
 			# Report human-readable retry notice for stdout log.
-			message = "%s: Will rerun test suite" % (scriptname)
+			message = f"{scriptname}: Will rerun test suite"
 			if log[COUNT_JSON] > 1:
 				message += " (iteration #%d)" % (log[COUNT_JSON])
 			if resume_after:
-				message += ", resuming at crashed testcase %s." % (crashed_at)
+				message += f", resuming at crashed testcase {crashed_at}."
 			else:
-				message += ", running previously failed testcase%s: %s." % (pluralize(retry_these), "; ".join(retry_these))
+				message += f', running previously failed testcase{pluralize(retry_these)}: {"; ".join(retry_these)}.'
 			print(message)
 	finally:
 		# Emergency: Ensure command does not outlive this script

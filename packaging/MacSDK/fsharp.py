@@ -136,11 +136,17 @@ class FsharpPackage(GitHubTarballPackage):
         ensure_dir(target_dir)
         with open(os.path.join(target_dir, "Microsoft.FSharp.Targets"), "w") as output:
             output.write('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">\n')
-            output.write('    <Import Project="' + self.package_prefix + '/lib/mono/fsharp/Microsoft.FSharp.Targets" />\n')
+            output.write(
+                f'    <Import Project="{self.package_prefix}'
+                + '/lib/mono/fsharp/Microsoft.FSharp.Targets" />\n'
+            )
             output.write('</Project>\n')
         with open(os.path.join(target_dir, "Microsoft.Portable.FSharp.Targets"), "w") as output:
             output.write('<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">\n')
-            output.write('    <Import Project="' + self.package_prefix + '/lib/mono/fsharp/Microsoft.Portable.FSharp.Targets" />\n')
+            output.write(
+                f'    <Import Project="{self.package_prefix}'
+                + '/lib/mono/fsharp/Microsoft.Portable.FSharp.Targets" />\n'
+            )
             output.write('</Project>\n')
 
     def write_script(self, target_dir, script_name, exe_name):
@@ -165,7 +171,10 @@ class FsharpPackage(GitHubTarballPackage):
             output.write('  EXEC="valgrind $VALGRIND_OPTIONS"   \n')
             output.write('fi\n')
             output.write('\n')
-            output.write('$EXEC ' + self.package_prefix + '/bin/mono $DEBUG $MONO_OPTIONS ' + self.package_prefix + '/lib/mono/fsharp/' + exe_name + ' --exename:$(basename "$0") "$@"\n')
+            output.write(
+                f'$EXEC {self.package_prefix}/bin/mono $DEBUG $MONO_OPTIONS {self.package_prefix}/lib/mono/fsharp/{exe_name}'
+                + ' --exename:$(basename "$0") "$@"\n'
+            )
         os.chmod(wrapper, 0o755)
 
     def copy_files_to_dir(self, files, target_dir):

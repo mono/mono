@@ -15,7 +15,9 @@ def print_frames(thread, num_frames, current_thread):
         if function_name == "interp_exec_method_full":
             try:
                 s = 'frame->imethod->method'
-                methoddesc = frame.EvaluateExpression('(char*) mono_method_full_name (' + s + ', 1)').summary[1:-1]
+                methoddesc = frame.EvaluateExpression(
+                    f'(char*) mono_method_full_name ({s}, 1)'
+                ).summary[1:-1]
 
                 ipoffset = frame.EvaluateExpression('ip').GetValueAsUnsigned()
                 insn = ''
@@ -28,14 +30,16 @@ def print_frames(thread, num_frames, current_thread):
         elif function_name == "mono_interp_transform_method":
             try:
                 s = 'runtime_method->method'
-                klassname = frame.EvaluateExpression('(char*) ' + s + '->klass->name').summary[1:-1]
-                methodname = frame.EvaluateExpression('(char*) ' + s + '->name').summary[1:-1]
-                var = 'transforming %s::%s || %s' % (klassname, methodname, frame)
+                klassname = frame.EvaluateExpression(f'(char*) {s}->klass->name').summary[1:-1]
+                methodname = frame.EvaluateExpression(f'(char*) {s}->name').summary[1:-1]
+                var = f'transforming {klassname}::{methodname} || {frame}'
             except Exception as e:
-                print("DBG: transformfail:" + str(e))
+                print(f"DBG: transformfail:{str(e)}")
         elif pc[0] == '0':
             try:
-                framestr = frame.EvaluateExpression('(char*)mono_pmip((void*)%s)' % pc).summary[1:-1]
+                framestr = frame.EvaluateExpression(
+                    f'(char*)mono_pmip((void*){pc})'
+                ).summary[1:-1]
                 var = 'frame #%i: %s%s' % (frame.idx, pc, framestr)
             except:
                 pass

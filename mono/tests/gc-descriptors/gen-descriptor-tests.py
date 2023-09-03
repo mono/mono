@@ -10,12 +10,11 @@ parser.add_option ("--one-method-if", action = "store_true", dest = "one_method_
 
 (options, args) = parser.parse_args ()
 
-def print_file (file_name):
-    f = open (file_name, "r")
-    for line in f:
-        sys.stdout.write (line + " ")
-        sys.stdout.flush ()
-    f.close ()
+def print_file(file_name):
+    with open (file_name, "r") as f:
+        for line in f:
+            sys.stdout.write(f"{line} ")
+            sys.stdout.flush ()
 
 print_file ("descriptor-tests-prefix.cs")
 
@@ -111,13 +110,12 @@ if options.switch:
         print ("}")
     print ("      default: return null;")
     print ("    }")
-    print ("  }")
 else:
     method_name = gen_binary_search (0, len (names), options.one_method_if)
     print ("  public static Filler MakeAndFill (int which, object[] refs, bool wrap) {")
     print ("    if (which >= {0}) return null;".format (len (names)))
     print ("    return {0} (which, refs, wrap);".format (method_name))
-    print ("  }")
+print ("  }")
 print ("  public const int NumWhich = {0};".format (len (names)))
 print ("}")
 

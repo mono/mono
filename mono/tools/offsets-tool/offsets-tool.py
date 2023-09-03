@@ -66,15 +66,15 @@ class OffsetsTool:
 		args = parser.parse_args ()
 
 		if not args.libclang or not os.path.isfile (args.libclang):
-			print ("Libclang '" + args.libclang + "' doesn't exist.", file=sys.stderr)
+			print(f"Libclang '{args.libclang}' doesn't exist.", file=sys.stderr)
 			sys.exit (1)
 		if not os.path.isdir (args.mono_path):
-			print ("Mono directory '" + args.mono_path + "' doesn't exist.", file=sys.stderr)
+			print(f"Mono directory '{args.mono_path}' doesn't exist.", file=sys.stderr)
 			sys.exit (1)
-		if not os.path.isfile (args.target_path + "/config.h"):
-			print ("File '" + args.target_path + "/config.h' doesn't exist.", file=sys.stderr)
+		if not os.path.isfile(f"{args.target_path}/config.h"):
+			print(f"File '{args.target_path}/config.h' doesn't exist.", file=sys.stderr)
 			sys.exit (1)
-			
+
 		self.sys_includes=[]
 		self.target = None
 		self.target_args = []
@@ -82,33 +82,36 @@ class OffsetsTool:
 
 		if "wasm" in args.abi:
 			require_emscipten_path (args)
-			self.sys_includes = [args.emscripten_path + "/system/include", args.emscripten_path + "/system/include/libc", args.emscripten_path + "/system/lib/libc/musl/arch/emscripten"]
+			self.sys_includes = [
+				f"{args.emscripten_path}/system/include",
+				f"{args.emscripten_path}/system/include/libc",
+				f"{args.emscripten_path}/system/lib/libc/musl/arch/emscripten",
+			]
 			self.target = Target ("TARGET_WASM", None, [])
 			self.target_args += ["-target", args.abi]
 
-		# Linux
 		elif "arm-linux-gnueabihf" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", None, ["ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6", "HAVE_ARMV7"] + LINUX_DEFINES)
 			self.target_args += ["--target=arm---gnueabihf"]
-			self.target_args += ["-I", args.sysroot + "/include"]
+			self.target_args += ["-I", f"{args.sysroot}/include"]
 
 			if args.prefixes:
 				for prefix in args.prefixes:
 					if not os.path.isdir (prefix):
 						print ("provided path via --prefix (\"" + prefix + "\") doesn't exist.", file=sys.stderr)
 						sys.exit (1)
-					self.target_args += ["-I", prefix + "/include"]
-					self.target_args += ["-I", prefix + "/include-fixed"]
+					self.target_args += ["-I", f"{prefix}/include"]
+					self.target_args += ["-I", f"{prefix}/include-fixed"]
 			else:
 				found = False
 				for i in range (11, 5, -1):
-					prefix = "/usr/lib/gcc-cross/" + args.abi +  "/" + str (i)
+					prefix = f"/usr/lib/gcc-cross/{args.abi}/{str(i)}"
 					if not os.path.isdir (prefix):
 						continue
 					found = True
-					self.target_args += ["-I", prefix + "/include"]
-					self.target_args += ["-I", prefix + "/include-fixed"]
+					self.target_args += ["-I", f"{prefix}/include"]
+					self.target_args += ["-I", f"{prefix}/include-fixed"]
 					break
 
 				if not found:
@@ -120,16 +123,15 @@ class OffsetsTool:
 			self.target = Target ("TARGET_ARM64", None, LINUX_DEFINES)
 			self.target_args += ["--target=aarch64-linux-gnu"]
 			self.target_args += ["--sysroot", args.sysroot]
-			self.target_args += ["-I", args.sysroot + "/include"]
+			self.target_args += ["-I", f"{args.sysroot}/include"]
 			if args.prefixes:
 				for prefix in args.prefixes:
 					if not os.path.isdir (prefix):
 						print ("provided path via --prefix (\"" + prefix + "\") doesn't exist.", file=sys.stderr)
 						sys.exit (1)
-					self.target_args += ["-I", prefix + "/include"]
-					self.target_args += ["-I", prefix + "/include-fixed"]
+					self.target_args += ["-I", f"{prefix}/include"]
+					self.target_args += ["-I", f"{prefix}/include-fixed"]
 
-		# iOS
 		elif "arm-apple-darwin10" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_IOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + MACIOS_DEFINES)
@@ -158,7 +160,6 @@ class OffsetsTool:
 			self.target_args += ["-arch", "arm64"]
 			self.target_args += ["-isysroot", args.sysroot]
 
-		# watchOS
 		elif "armv7k-apple-darwin" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_WATCHOS", ["ARM_FPU_VFP", "HAVE_ARMV5"] + MACIOS_DEFINES)
@@ -170,34 +171,33 @@ class OffsetsTool:
 			self.target_args += ["-arch", "arm64_32"]
 			self.target_args += ["-isysroot", args.sysroot]
 
-		# Android
 		elif "i686-none-linux-android" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_X86", "TARGET_ANDROID", ANDROID_DEFINES)
 			self.target_args += ["--target=i386---android"]
-			self.target_args += ["-I", args.sysroot + "/usr/include/i686-linux-android"]
+			self.target_args += ["-I", f"{args.sysroot}/usr/include/i686-linux-android"]
 		elif "x86_64-none-linux-android" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_AMD64", "TARGET_ANDROID", ANDROID_DEFINES)
 			self.target_args += ["--target=x86_64---android"]
-			self.target_args += ["-I", args.sysroot + "/usr/include/x86_64-linux-android"]
+			self.target_args += ["-I", f"{args.sysroot}/usr/include/x86_64-linux-android"]
 		elif "armv7-none-linux-androideabi" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM", "TARGET_ANDROID", ["ARM_FPU_VFP", "HAVE_ARMV5", "HAVE_ARMV6", "HAVE_ARMV7"] + ANDROID_DEFINES)
 			self.target_args += ["--target=arm---androideabi"]
-			self.target_args += ["-I", args.sysroot + "/usr/include/arm-linux-androideabi"]
+			self.target_args += ["-I", f"{args.sysroot}/usr/include/arm-linux-androideabi"]
 		elif "aarch64-v8a-linux-android" == args.abi:
 			require_sysroot (args)
 			self.target = Target ("TARGET_ARM64", "TARGET_ANDROID", ANDROID_DEFINES)
 			self.target_args += ["--target=aarch64---android"]
-			self.target_args += ["-I", args.sysroot + "/usr/include/aarch64-linux-android"]
+			self.target_args += ["-I", f"{args.sysroot}/usr/include/aarch64-linux-android"]
 
 		if self.target.platform_define == "TARGET_ANDROID":
 			self.target_args += [android_api_level]
 			self.target_args += ["-isysroot", args.sysroot]
 
 		if not self.target:
-			print ("ABI '" + args.abi + "' is not supported.", file=sys.stderr)
+			print(f"ABI '{args.abi}' is not supported.", file=sys.stderr)
 			sys.exit (1)
 
 		self.args = args

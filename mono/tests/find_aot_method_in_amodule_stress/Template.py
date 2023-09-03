@@ -3,25 +3,25 @@ import sys
 
 commands = {}
 
-def typeof (typ):
-	return "typeof (" + typ + ")\n"
+def typeof(typ):
+	return f"typeof ({typ}" + ")\n"
 
-def inst (one, two):
-	return "TypeBucket.Foo <TypeBucket." + one + ", TypeBucket." + two + ">.CallMe ();\n"
+def inst(one, two):
+	return f"TypeBucket.Foo <TypeBucket.{one}, TypeBucket.{two}" + ">.CallMe ();\n"
 
-def bucketCall (filePrefix):
-	return "TypeBucket." + filePrefix + ".CallMe ();\n"
+def bucketCall(filePrefix):
+	return f"TypeBucket.{filePrefix}" + ".CallMe ();\n"
 
-def classDef (name):
-	return "public struct " + name + " {\t\n public int inner; \t\n}\n"
+def classDef(name):
+	return f"public struct {name}" + " {\t\n public int inner; \t\n}\n"
 
-def run (cmd):
+def run(cmd):
 	print(cmd)
 	child = sub.Popen (cmd, shell=True)
 	child.wait()
 	error = child.returncode
 	if error != 0:
-		raise Exception ("Compilation error " + str(error))
+		raise Exception(f"Compilation error {str(error)}")
 
 def typeBucketInst (types, filePrefix):
 	accum = "\npublic class " + filePrefix + "{\n"
@@ -32,7 +32,7 @@ def typeBucketInst (types, filePrefix):
 	accum += "\t\n}\n}\n"
 	return accum
 
-def makeGenericDef (fileName):
+def makeGenericDef(fileName):
 	fileTemplate = """
 using System.Runtime.CompilerServices;
 
@@ -65,21 +65,21 @@ namespace TypeBucket {
 }
 
 """
-	csName = fileName + ".cs"
+	csName = f"{fileName}.cs"
 	with open(csName, 'w') as f:
 		f.write (fileTemplate);
 	cmd = commands ["mcs"] + " -t:library " + csName
 	run (cmd)
 	
-def makeFile (prefix, insts, files, genericDefDll):
+def makeFile(prefix, insts, files, genericDefDll):
 	types = []
-	fileName = prefix + "TypeBucket"
-	csName = fileName + ".cs"
+	fileName = f"{prefix}TypeBucket"
+	csName = f"{fileName}.cs"
 	templatePrefix = "using TypeBucket;\n\tnamespace TypeBucket {\n"
 	with open(csName, 'w') as f:
 		f.write (templatePrefix)
 		for i in range(100):
-			name = "classy" + prefix + str(i)
+			name = f"classy{prefix}{str(i)}"
 			f.write (classDef (name))
 			types.append (name)
 		f.write(typeBucketInst (types, fileName))
@@ -105,9 +105,9 @@ template_tail = """
 }
 """
 
-def main (bin_prefix):
-	commands ["mono"] = "MONO_PATH=. " + bin_prefix + "/bin/mono "
-	commands ["mcs"] = "MONO_PATH=. " + bin_prefix + "/bin/mcs "
+def main(bin_prefix):
+	commands ["mono"] = f"MONO_PATH=. {bin_prefix}/bin/mono "
+	commands ["mcs"] = f"MONO_PATH=. {bin_prefix}/bin/mcs "
 
 	generic_def_file = "Foo"
 	makeGenericDef (generic_def_file)
@@ -115,17 +115,15 @@ def main (bin_prefix):
 	insts = []
 	files = [generic_def_file]
 	for prefix in ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"]:
-		makeFile (prefix, insts, files, generic_def_file + ".dll")
+		makeFile(prefix, insts, files, f"{generic_def_file}.dll")
 
 	template = template_head + "\n\t".join(insts) + template_tail
 
-	f = open("Hello.cs", 'w')
-	f.write (template)
-	f.close ();
-
+	with open("Hello.cs", 'w') as f:
+		f.write (template)
 	cmd = commands ["mcs"] + " Hello.cs"
 	for f in files:
-		cmd = cmd + " -r:" + f + ".dll"
+		cmd = f"{cmd} -r:{f}.dll"
 	run (cmd)
 
 

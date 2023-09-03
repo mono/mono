@@ -11,8 +11,10 @@ class MSBuild (GitHubPackage):
 		finally:
 			self.sh ('find artifacts stage1 -wholename \'*/log/*\' -type f -exec zip msbuild-bin-logs.zip {} \+')
 
-	def install (self):
+	def install(self):
 		# use the bootstrap msbuild as the system might not have one available!
-		self.sh ('./stage1/mono-msbuild/msbuild mono/build/install.proj /p:MonoInstallPrefix=%s /p:Configuration=Release-MONO /p:IgnoreDiffFailure=true' % self.staged_prefix)
+		self.sh(
+			f'./stage1/mono-msbuild/msbuild mono/build/install.proj /p:MonoInstallPrefix={self.staged_prefix} /p:Configuration=Release-MONO /p:IgnoreDiffFailure=true'
+		)
 
 MSBuild ()

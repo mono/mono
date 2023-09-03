@@ -21,22 +21,20 @@ command = sys.argv[2]
 
 submodules = json.load(open(CONFIG_FILE))
 
-if command == "get-rev":
-    mod = find_module(submodules, sys.argv[3])
-    print(mod["rev"])
-elif command == "get-url":
-    mod = find_module(submodules, sys.argv[3])
-    print(mod["url"])
+if command == "cat":
+    print(json.dumps(submodules, indent = 2))
 elif command == "get-dir":
     mod = find_module(submodules, sys.argv[3])
     print(mod["directory"])
 elif command == "get-remote-branch":
     mod = find_module(submodules, sys.argv[3])
     print(mod["remote-branch"])
-elif command == "set-rev":
+elif command == "get-rev":
     mod = find_module(submodules, sys.argv[3])
-    mod["rev"] = sys.argv[4]
-    json.dump(submodules, open(CONFIG_FILE, "w"), indent = 2)
+    print(mod["rev"])
+elif command == "get-url":
+    mod = find_module(submodules, sys.argv[3])
+    print(mod["url"])
 elif command == "set-branch":
     mod = find_module(submodules, sys.argv[3])
     mod["branch"] = sys.argv[4]
@@ -45,8 +43,10 @@ elif command == "set-remote-branch":
     mod = find_module(submodules, sys.argv[3])
     mod["remote-branch"] = sys.argv[4]
     json.dump(submodules, open(CONFIG_FILE, "w"), indent = 2)
-elif command == "cat":
-    print(json.dumps(submodules, indent = 2))
+elif command == "set-rev":
+    mod = find_module(submodules, sys.argv[3])
+    mod["rev"] = sys.argv[4]
+    json.dump(submodules, open(CONFIG_FILE, "w"), indent = 2)
 else:
     print("Unknown command "" + command + "".")
     sys.exit(1)

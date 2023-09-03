@@ -27,9 +27,9 @@ class PCLReferenceAssembliesPackage(Package):
 
         shutil.rmtree(dest, ignore_errors=True)
 
-        self.sh("rsync -abv -q %s/* %s" % (self.workspace, dest))
+        self.sh(f"rsync -abv -q {self.workspace}/* {dest}")
 
-        for f in glob.glob("%s/*/Profile/*/SupportedFrameworks" % dest):
+        for f in glob.glob(f"{dest}/*/Profile/*/SupportedFrameworks"):
             self.write_xml(f)
 
     def write_xml(self, directory):
@@ -49,9 +49,8 @@ class PCLReferenceAssembliesPackage(Package):
             """<Framework Identifier="Xamarin.WatchOS" MinimumVersion="1.0" Profile="*" DisplayName="Xamarin.WatchOS"/>""",
         }
         for filename, content in data.iteritems():
-            f = open(filename, "w")
-            f.write(content + "\n")
-            f.close()
+            with open(filename, "w") as f:
+                f.write(content + "\n")
 
 
 PCLReferenceAssembliesPackage()

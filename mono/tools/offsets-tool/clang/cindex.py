@@ -97,16 +97,14 @@ if sys.version_info[0] == 3:
             if param is None:
                 # Support passing null to C functions expecting char arrays
                 return None
-            raise TypeError("Cannot convert '{}' to '{}'".format(type(param).__name__, cls.__name__))
+            raise TypeError(f"Cannot convert '{type(param).__name__}' to '{cls.__name__}'")
 
         @staticmethod
         def to_python_string(x, *args):
             return x.value
 
     def b(x):
-        if isinstance(x, bytes):
-            return x
-        return x.encode('utf8')
+        return x if isinstance(x, bytes) else x.encode('utf8')
 
 elif sys.version_info[0] == 2:
     # Python 2 strings are utf8 byte strings, no translation is needed for
@@ -241,10 +239,7 @@ class SourceLocation(Structure):
             f, l, c, o = c_object_p(), c_uint(), c_uint(), c_uint()
             conf.lib.clang_getInstantiationLocation(self, byref(f), byref(l),
                     byref(c), byref(o))
-            if f:
-                f = File(f)
-            else:
-                f = None
+            f = File(f) if f else None
             self._data = (f, int(l.value), int(c.value), int(o.value))
         return self._data
 
@@ -293,10 +288,7 @@ class SourceLocation(Structure):
         return not self.__eq__(other)
 
     def __repr__(self):
-        if self.file:
-            filename = self.file.name
-        else:
-            filename = None
+        filename = self.file.name if self.file else None
         return "<SourceLocation file %r, line %r, column %r>" % (
             filename, self.line, self.column)
 
@@ -441,6 +433,9 @@ class Diagnostic(object):
 
     @property
     def children(self):
+
+
+
         class ChildDiagnosticsIterator(object):
             def __init__(self, diag):
                 self.diag_set = conf.lib.clang_getChildDiagnostics(diag)
@@ -449,10 +444,12 @@ class Diagnostic(object):
                 return int(conf.lib.clang_getNumDiagnosticsInSet(self.diag_set))
 
             def __getitem__(self, key):
-                diag = conf.lib.clang_getDiagnosticInSet(self.diag_set, key)
-                if not diag:
+                if diag := conf.lib.clang_getDiagnosticInSet(self.diag_set, key):
+                    return Diagnostic(diag)
+
+                else:
                     raise IndexError
-                return Diagnostic(diag)
+
 
         return ChildDiagnosticsIterator(self)
 
@@ -581,7 +578,7 @@ class TokenKind(object):
         self.name = name
 
     def __repr__(self):
-        return 'TokenKind.%s' % (self.name,)
+        return f'TokenKind.{self.name}'
 
     @staticmethod
     def from_value(value):
@@ -651,7 +648,7 @@ class BaseEnumeration(object):
         return cls._kinds[id]
 
     def __repr__(self):
-        return '%s.%s' % (self.__class__, self.name,)
+        return f'{self.__class__}.{self.name}'
 
 
 class CursorKind(BaseEnumeration):
@@ -666,7 +663,7 @@ class CursorKind(BaseEnumeration):
     @staticmethod
     def get_all_kinds():
         """Return all CursorKind enumeration instances."""
-        return [x for x in CursorKind._kinds if not x is None]
+        return [x for x in CursorKind._kinds if x is not None]
 
     def is_declaration(self):
         """Test if this is a declaration kind."""
@@ -705,7 +702,7 @@ class CursorKind(BaseEnumeration):
         return conf.lib.clang_isUnexposed(self)
 
     def __repr__(self):
-        return 'CursorKind.%s' % (self.name,)
+        return f'CursorKind.{self.name}'
 
 ###
 # Declaration Kinds
@@ -1398,7 +1395,7 @@ class ExceptionSpecificationKind(BaseEnumeration):
     _name_map = None
 
     def __repr__(self):
-        return 'ExceptionSpecificationKind.{}'.format(self.name)
+        return f'ExceptionSpecificationKind.{self.name}'
 
 ExceptionSpecificationKind.NONE = ExceptionSpecificationKind(0)
 ExceptionSpecificationKind.DYNAMIC_NONE = ExceptionSpecificationKind(1)
@@ -1849,8 +1846,7 @@ class Cursor(Structure):
         """
         yield self
         for child in self.get_children():
-            for descendant in child.walk_preorder():
-                yield descendant
+            yield from child.walk_preorder()
 
     def get_tokens(self):
         """Obtain Token instances formulating that compose this Cursor.
@@ -1955,7 +1951,7 @@ class StorageClass(object):
         return StorageClass._kinds[id]
 
     def __repr__(self):
-        return 'StorageClass.%s' % (self.name,)
+        return f'StorageClass.{self.name}'
 
 StorageClass.INVALID = StorageClass(0)
 StorageClass.NONE = StorageClass(1)
@@ -1978,7 +1974,7 @@ class AvailabilityKind(BaseEnumeration):
     _name_map = None
 
     def __repr__(self):
-        return 'AvailabilityKind.%s' % (self.name,)
+        return f'AvailabilityKind.{self.name}'
 
 AvailabilityKind.AVAILABLE = AvailabilityKind(0)
 AvailabilityKind.DEPRECATED = AvailabilityKind(1)
@@ -2000,7 +1996,7 @@ class AccessSpecifier(BaseEnumeration):
         return self.value
 
     def __repr__(self):
-        return 'AccessSpecifier.%s' % (self.name,)
+        return f'AccessSpecifier.{self.name}'
 
 AccessSpecifier.INVALID = AccessSpecifier(0)
 AccessSpecifier.PUBLIC = AccessSpecifier(1)
@@ -2025,7 +2021,7 @@ class TypeKind(BaseEnumeration):
         return conf.lib.clang_getTypeKindSpelling(self.value)
 
     def __repr__(self):
-        return 'TypeKind.%s' % (self.name,)
+        return f'TypeKind.{self.name}'
 
 TypeKind.INVALID = TypeKind(0)
 TypeKind.UNEXPOSED = TypeKind(1)
@@ -2134,7 +2130,7 @@ class RefQualifierKind(BaseEnumeration):
         return self.value
 
     def __repr__(self):
-        return 'RefQualifierKind.%s' % (self.name,)
+        return f'RefQualifierKind.{self.name}'
 
 RefQualifierKind.NONE = RefQualifierKind(0)
 RefQualifierKind.LVALUE = RefQualifierKind(1)
@@ -2151,7 +2147,7 @@ class LinkageKind(BaseEnumeration):
         return self.value
 
     def __repr__(self):
-        return 'LinkageKind.%s' % (self.name,)
+        return f'LinkageKind.{self.name}'
 
 LinkageKind.INVALID = LinkageKind(0)
 LinkageKind.NO_LINKAGE = LinkageKind(1)
@@ -2170,7 +2166,7 @@ class TLSKind(BaseEnumeration):
         return self.value
 
     def __repr__(self):
-        return 'TLSKind.%s' % (self.name,)
+        return f'TLSKind.{self.name}'
 
 TLSKind.NONE = TLSKind(0)
 TLSKind.DYNAMIC = TLSKind(1)
@@ -2263,12 +2259,14 @@ class Type(Structure):
     def from_result(res, fn, args):
         assert isinstance(res, Type)
 
-        tu = None
-        for arg in args:
-            if hasattr(arg, 'translation_unit'):
-                tu = arg.translation_unit
-                break
-
+        tu = next(
+            (
+                arg.translation_unit
+                for arg in args
+                if hasattr(arg, 'translation_unit')
+            ),
+            None,
+        )
         assert tu is not None
         res._tu = tu
 
@@ -2495,7 +2493,7 @@ class CompletionChunk(object):
             return self.name
 
         def __repr__(self):
-            return "<ChunkKind: %s>" % self
+            return f"<ChunkKind: {self}>"
 
     def __init__(self, completionString, key):
         self.cs = completionString
@@ -2527,13 +2525,12 @@ class CompletionChunk(object):
 
     @CachedProperty
     def string(self):
-        res = conf.lib.clang_getCompletionChunkCompletionString(self.cs,
-                                                                self.key)
-
-        if (res):
-          return CompletionString(res)
+        if res := conf.lib.clang_getCompletionChunkCompletionString(
+            self.cs, self.key
+        ):
+            return CompletionString(res)
         else:
-          None
+            None
 
     def isKindOptional(self):
       return self.__kindNumber == 0
@@ -2582,7 +2579,7 @@ class CompletionString(ClangObject):
             return self.name
 
         def __repr__(self):
-            return "<Availability: %s>" % self
+            return f"<Availability: {self}>"
 
     def __len__(self):
         return self.num_chunks
@@ -2854,11 +2851,10 @@ class TranslationUnit(ClangObject):
         if index is None:
             index = Index.create()
 
-        ptr = conf.lib.clang_createTranslationUnit(index, fspath(filename))
-        if not ptr:
+        if ptr := conf.lib.clang_createTranslationUnit(index, fspath(filename)):
+            return cls(ptr=ptr, index=index)
+        else:
             raise TranslationUnitLoadError(filename)
-
-        return cls(ptr=ptr, index=index)
 
     def __init__(self, ptr, index):
         """Create a TranslationUnit instance.
@@ -2969,6 +2965,8 @@ class TranslationUnit(ClangObject):
         """
         Return an iterable (and indexable) object containing the diagnostics.
         """
+
+
         class DiagIterator(object):
             def __init__(self, tu):
                 self.tu = tu
@@ -2977,10 +2975,12 @@ class TranslationUnit(ClangObject):
                 return int(conf.lib.clang_getNumDiagnostics(self.tu))
 
             def __getitem__(self, key):
-                diag = conf.lib.clang_getDiagnostic(self.tu, key)
-                if not diag:
+                if diag := conf.lib.clang_getDiagnostic(self.tu, key):
+                    return Diagnostic(diag)
+
+                else:
                     raise IndexError
-                return Diagnostic(diag)
+
 
         return DiagIterator(self)
 
@@ -3066,9 +3066,15 @@ class TranslationUnit(ClangObject):
                 unsaved_files_array[i].name = b(fspath(name))
                 unsaved_files_array[i].contents = contents
                 unsaved_files_array[i].length = len(contents)
-        ptr = conf.lib.clang_codeCompleteAt(self, fspath(path), line, column,
-                unsaved_files_array, len(unsaved_files), options)
-        if ptr:
+        if ptr := conf.lib.clang_codeCompleteAt(
+            self,
+            fspath(path),
+            line,
+            column,
+            unsaved_files_array,
+            len(unsaved_files),
+            options,
+        ):
             return CodeCompletionResults(ptr)
         return None
 
@@ -3110,7 +3116,7 @@ class File(ClangObject):
         return self.name
 
     def __repr__(self):
-        return "<File: %s>" % (self.name)
+        return f"<File: {self.name}>"
 
     @staticmethod
     def from_result(res, fn, args):
@@ -3211,16 +3217,14 @@ class CompileCommands(object):
         return int(conf.lib.clang_CompileCommands_getSize(self.ccmds))
 
     def __getitem__(self, i):
-        cc = conf.lib.clang_CompileCommands_getCommand(self.ccmds, i)
-        if not cc:
+        if cc := conf.lib.clang_CompileCommands_getCommand(self.ccmds, i):
+            return CompileCommand(cc, self)
+        else:
             raise IndexError
-        return CompileCommand(cc, self)
 
     @staticmethod
     def from_result(res, fn, args):
-        if not res:
-            return None
-        return CompileCommands(res)
+        return None if not res else CompileCommands(res)
 
 class CompilationDatabase(ClangObject):
     """
@@ -4065,10 +4069,9 @@ def register_function(lib, item, ignore_errors):
     try:
         func = getattr(lib, item[0])
     except AttributeError as e:
-        msg = str(e) + ". Please ensure that your python bindings are "\
-                       "compatible with your libclang.so version."
         if ignore_errors:
             return
+        msg = f"{str(e)}. Please ensure that your python bindings are compatible with your libclang.so version."
         raise LibclangError(msg)
 
     if len(item) >= 2:
@@ -4163,7 +4166,7 @@ class Config(object):
             file = 'libclang.so'
 
         if Config.library_path:
-            file = Config.library_path + '/' + file
+            file = f'{Config.library_path}/{file}'
 
         return file
 

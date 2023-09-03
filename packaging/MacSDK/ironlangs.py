@@ -14,8 +14,7 @@ class IronLanguagesPackage(GitHubTarballPackage):
         # override: avoid naming the package 'main' because of the repo name
         self.sources = [
             'https://github.com/%{organization}/main/tarball/%{revision}']
-        self.source_dir_name = '%s-%s-%s' % (
-            self.organization, 'main', self.revision[:7])
+        self.source_dir_name = f'{self.organization}-main-{self.revision[:7]}'
 
     def build(self):
         self.ironruby = os.path.join(

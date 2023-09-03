@@ -61,7 +61,7 @@ class MonoReleaseProfile(DarwinProfile):
         'nuget'
     ]
 
-    def attach (self, bockbuild):
+    def attach(self, bockbuild):
         self.min_version = 9
         DarwinProfile.attach (self, bockbuild)
 
@@ -86,8 +86,9 @@ class MonoReleaseProfile(DarwinProfile):
             system_mono_dir, 'bin', 'mono'))
         self.env.set('system_mcs', os.path.join(system_mono_dir, 'bin', 'mcs'))
 
-        self.env.set('system_mono_version', backtick(
-            '%s --version' % self.env.system_mono)[0])
+        self.env.set(
+            'system_mono_version', backtick(f'{self.env.system_mono} --version')[0]
+        )
 
         # config overrides for some programs to be functional while staged
 
@@ -108,13 +109,15 @@ class MonoReleaseProfile(DarwinProfile):
         self.mono_package.fetch(dest)
 
 
-        verbose('Mono version: %s' % self.mono_package.version)
+        verbose(f'Mono version: {self.mono_package.version}')
         self.RELEASE_VERSION = self.mono_package.version
         self.prefix = os.path.join(
             self.MONO_ROOT, "Versions", self.RELEASE_VERSION)
 
         if os.path.exists(self.prefix):
-            error('Prefix %s exists, and may interfere with the staged build. Please remove and try again.' % self.prefix)
+            error(
+                f'Prefix {self.prefix} exists, and may interfere with the staged build. Please remove and try again.'
+            )
 
         self.calculate_updateid()
 
@@ -147,16 +150,16 @@ class MonoReleaseProfile(DarwinProfile):
         # Create the updateid
         pwd = os.getcwd()
         git_bin = self.bockbuild.git_bin
-        trace("cur path is %s and git is %s" % (pwd, git_bin))
+        trace(f"cur path is {pwd} and git is {git_bin}")
         blame_rev_str = 'cd %s; %s blame configure.ac HEAD | grep AC_INIT | sed \'s/ .*//\' ' % (
             self.mono_package.workspace, git_bin)
         blame_rev = backtick(blame_rev_str)[0]
-        trace("Last commit to the version string %s" % (blame_rev))
+        trace(f"Last commit to the version string {blame_rev}")
         version_number_str = 'cd %s; %s log %s..HEAD --oneline | wc -l | sed \'s/ //g\'' % (
             self.mono_package.workspace, git_bin, blame_rev)
         self.BUILD_NUMBER = backtick(version_number_str)[0]
-        trace("Calculating commit distance, %s" % (self.BUILD_NUMBER))
-        self.FULL_VERSION = self.RELEASE_VERSION + "." + self.BUILD_NUMBER
+        trace(f"Calculating commit distance, {self.BUILD_NUMBER}")
+        self.FULL_VERSION = f"{self.RELEASE_VERSION}.{self.BUILD_NUMBER}"
         os.chdir(pwd)
 
         parts = self.RELEASE_VERSION.split(".")
@@ -277,7 +280,7 @@ class MonoReleaseProfile(DarwinProfile):
         updateinfo = os.path.join(
             working_dir, "PKGROOT", self.prefix[1:], "updateinfo")
         with open(updateinfo, "w") as updateinfo:
-            updateinfo.write(guid + ' ' + self.updateid + "\n")
+            updateinfo.write(f'{guid} {self.updateid}' + "\n")
         version_file = os.path.join(
             working_dir, "PKGROOT", self.prefix[1:], "VERSION")
         with open(version_file, "w") as version_file:
@@ -295,12 +298,15 @@ class MonoReleaseProfile(DarwinProfile):
         else:
             error ("Unknown architecture")
 
-        if self.bockbuild.cmd_options.release_build:
-            info = (pkg_type, self.FULL_VERSION, arch_str)
-        else:
-            info = (pkg_type, '%s-%s' % (git_shortid(self.bockbuild,
-                                                     self.mono_package.workspace), self.FULL_VERSION), arch_str)
-
+        info = (
+            (pkg_type, self.FULL_VERSION, arch_str)
+            if self.bockbuild.cmd_options.release_build
+            else (
+                pkg_type,
+                f'{git_shortid(self.bockbuild, self.mono_package.workspace)}-{self.FULL_VERSION}',
+                arch_str,
+            )
+        )
         filename = "MonoFramework-%s-%s.macos10.xamarin.%s.pkg" % info
         return {
             "type": pkg_type,
@@ -311,7 +317,7 @@ class MonoReleaseProfile(DarwinProfile):
         def insert_install_root(matches):
             root = self.prefix
             captures = matches.groupdict()
-            return 'target="%s"' % os.path.join(root, "lib", captures["lib"])
+            return f'target="{os.path.join(root, "lib", captures["lib"])}"'
 
         if matcher(line):
             pattern = r'target="(?P<lib>.+\.dylib)"'
@@ -327,7 +333,7 @@ class MonoReleaseProfile(DarwinProfile):
                 for line in c:
                     output.write(self.fix_line(line, matcher))
         os.rename(temp, config)
-        os.system('chmod a+r %s' % config)
+        os.system(f'chmod a+r {config}')
 
     def fix_gtksharp_configs(self):
         print 'Fixing GTK# configuration files...',
@@ -349,7 +355,7 @@ class MonoReleaseProfile(DarwinProfile):
         print count
 
     def verify(self, f):
-        result = " ".join(backtick("otool -L " + f))
+        result = " ".join(backtick(f"otool -L {f}"))
         regex = os.path.join(self.MONO_ROOT, "Versions", r"(\d+\.\d+\.\d+)")
 
         match = re.search(regex, result)
@@ -365,7 +371,7 @@ class MonoReleaseProfile(DarwinProfile):
         for path, dirs, files in os.walk(bindir):
             for name in files:
                 f = os.path.join(path, name)
-                file_type = backtick('file "%s"' % f)
+                file_type = backtick(f'file "{f}"')
                 if "Mach-O executable" in "".join(file_type):
                     self.verify(f)
 
@@ -385,7 +391,7 @@ class MonoReleaseProfile(DarwinProfile):
         bash -i
         ''' % (self.profile_name, self.staged_prefix, self.root)
 
-        path = os.path.join(self.root, self.profile_name + '.sh')
+        path = os.path.join(self.root, f'{self.profile_name}.sh')
 
         with open(path, 'w') as f:
             f.write(envscript)

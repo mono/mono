@@ -17,17 +17,11 @@ parser.add_option ('--major', action = 'store_true', dest = 'major', help = "onl
 (options, files) = parser.parse_args ()
 
 show_histogram = False
-show_scatter = False
-show_minor = True
-show_major = True
-if options.minor:
-    show_major = False
-if options.major:
-    show_minor = False
+show_major = not options.minor
+show_minor = not options.major
 if options.histogram:
     show_histogram = True
-if options.scatter:
-    show_scatter = True
+show_scatter = bool(options.scatter)
 if (options.minor or options.major) and not options.scatter:
     show_histogram = True
 
@@ -52,13 +46,7 @@ class Event:
         self.stop = kwargs['stop']
         self.gc_type = kwargs['gc_type']
     def __repr__(self):
-        return 'Event(minor_work={}, major_work={}, start={}, stop={}, gc_type={})'.format(
-            self.minor_work,
-            self.major_work,
-            self.start,
-            self.stop,
-            self.gc_type,
-        )
+        return f'Event(minor_work={self.minor_work}, major_work={self.major_work}, start={self.start}, stop={self.stop}, gc_type={self.gc_type})'
 
 grep_input = open (files [0])
 proc = subprocess.Popen ([sgen_grep_path, '--pause-times'], stdin = grep_input, stdout = subprocess.PIPE)
@@ -113,9 +101,7 @@ class FullMajorGCEventGroup(MajorGCEventGroup):
     def __init__(self, event):
         self.event = event
     def __repr__(self):
-        return 'FullMajorGCEventGroup({})'.format(
-            self.event,
-        )
+        return f'FullMajorGCEventGroup({self.event})'
 
 class ConcurrentMajorGCEventGroup(MajorGCEventGroup):
     def __init__(self, start, updates, finish):
@@ -123,11 +109,7 @@ class ConcurrentMajorGCEventGroup(MajorGCEventGroup):
         self.updates = updates
         self.finish = finish
     def __repr__(self):
-        return 'ConcurrentMajorEventGroup({}, {}, {})'.format(
-            self.start,
-            self.updates,
-            self.finish,
-        )
+        return f'ConcurrentMajorEventGroup({self.start}, {self.updates}, {self.finish})'
 
 # ([Event], int) -> (MajorGCEventGroup, int) | None
 def parse_next_major_gc(data, i):
@@ -236,10 +218,7 @@ else:
         indices = kwargs['indices']
         pauses = kwargs['pauses']
         color = kwargs['color']
-        if 'bottom' in kwargs:
-            bottom = kwargs['bottom']
-        else:
-            bottom = 0
+        bottom = kwargs.get('bottom', 0)
         plt.bar(
             [index for index in indices if pauses[index] is not None],
             np.array([pause for pause in pauses if pause is not None]),

@@ -73,13 +73,13 @@ class SectionHandler:
 
         return img
 
-    def emit (self, collection_file, collection_kind, collection_num, section_num):
-        print ('<h2>%s</h2>' % self.header (), file = collection_file)
+    def emit(self, collection_file, collection_kind, collection_num, section_num):
+        print(f'<h2>{self.header()}</h2>', file = collection_file)
         print ('<p>Size %d kB - ' % (self.size / 1024), file = collection_file)
         print ('used %d kB</p>' % (self.used / 1024), file = collection_file)
 
         filename = '%s_%d_%d.png' % (collection_kind, collection_num, section_num)
-        print ('<p><img src="%s"></img></p>' % filename, file = collection_file)
+        print(f'<p><img src="{filename}"></img></p>', file = collection_file)
         img = self.draw ()
         img.save (filename)
 
@@ -124,8 +124,8 @@ class LargeSectionHandler (SectionHandler):
     def end_section (self):
         pass
 
-    def header (self):
-        return self.kind + ' section'
+    def header(self):
+        return f'{self.kind} section'
 
 class DocHandler (ContentHandler):
     def start (self):
@@ -137,15 +137,12 @@ class DocHandler (ContentHandler):
         print ('</body></html>', file = self.index_file)
         self.index_file.close ()
 
-    def startElement (self, name, attrs):
+    def startElement(self, name, attrs):
         if name == 'collection':
             self.collection_kind = attrs.get('type', None)
             self.collection_num = int(attrs.get('num', None))
             reason = attrs.get('reason', None)
-            if reason:
-                reason = ' (%s)' % reason
-            else:
-                reason = ''
+            reason = f' ({reason})' if reason else ''
             self.section_num = 0
             filename = 'collection_%d.html' % self.collection_index
             print ('<a href="%s">%s%s collection %d</a>' % (filename, self.collection_kind, reason, self.collection_num), file = self.index_file)
@@ -208,7 +205,7 @@ class DocHandler (ContentHandler):
 
                 self.section_handler.add_object (klass, offset, size)
                 self.heap_used += size
-            if not (klass in usage_dict):
+            if klass not in usage_dict:
                 usage_dict [klass] = (0, 0)
             usage = usage_dict [klass]
             usage_dict [klass] = (usage [0] + 1, usage [1] + size)
@@ -223,10 +220,10 @@ class DocHandler (ContentHandler):
         elif name == 'pinned-objects':
             self.in_pinned = True
 
-    def dump_usage (self, usage_dict, limit):
+    def dump_usage(self, usage_dict, limit):
         klasses = sorted (usage_dict.keys (), lambda x, y: usage_dict [y][1] - usage_dict [x][1])
         if limit:
-            klasses = klasses [0:limit]
+            klasses = klasses[:limit]
         for klass in klasses:
             usage = usage_dict [klass]
             if usage [1] < 100000:
@@ -235,7 +232,7 @@ class DocHandler (ContentHandler):
                 print ('%s %d kB' % (klass, usage [1] / 1024), file = self.collection_file)
             print (' (%d)<br>' % usage [0], file = self.collection_file)
 
-    def endElement (self, name):
+    def endElement(self, name):
         if name == 'section':
             self.section_handler.end_section ()
 
@@ -251,7 +248,7 @@ class DocHandler (ContentHandler):
             self.dump_usage (self.los_usage, None)
             print ('<h3>Pinned</h3>', file = self.collection_file)
             for location in sorted (self.pinned_usage.keys ()):
-                print ('<h4>%s</h4>' % location, file = self.collection_file)
+                print(f'<h4>{location}</h4>', file = self.collection_file)
                 self.dump_usage (self.pinned_usage[location], None)
             print ('</body></html>', file = self.collection_file)
             print (' - %d kB / %d kB (%d%%) - %d kB LOS</a><br>' % (self.heap_used / 1024, self.heap_size / 1024, int(100.0 * self.heap_used / self.heap_size), self.los_size / 1024), file = self.index_file)

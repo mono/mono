@@ -81,10 +81,7 @@ def stringify_class_name(ns, name):
             return "byte"
         if name == "String":
             return "string"
-    if ns == "":
-        return name
-    else:
-        return "{0}.{1}".format (ns, name)
+    return name if ns == "" else "{0}.{1}".format (ns, name)
 
 #
 # Pretty printers for mono runtime types
@@ -112,9 +109,7 @@ def stringify_ginst (ginst):
 
 def print_type(valobj, internal_dict):
     type = valobj
-    if isnull (type):
-        return ""
-    return stringify_type (type)
+    return "" if isnull (type) else stringify_type (type)
 
 def print_class (valobj, internal_dict):
     klass = valobj

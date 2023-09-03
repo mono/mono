@@ -35,12 +35,9 @@ class StringPrinter:
         res = ['"']
         while i < len:
             val = (chars.cast(gdb.lookup_type ("gint64")) + (i * 2)).cast(gdb.lookup_type ("gunichar2").pointer ()).dereference ()
-            if val >= 256:
-                c = "\u%X".format (val)
-            else:
-                c = chr (val)
+            c = "\u%X".format (val) if val >= 256 else chr (val)
             res.append (c)
-            i = i + 1
+            i += 1
         res.append ('"')
         return ''.join (res)
 
@@ -50,10 +47,7 @@ def stringify_class_name(ns, name):
             return "byte"
         if name == "String":
             return "string"
-    if ns == "":
-        return name
-    else:
-        return "{0}.{1}".format (ns, name)
+    return name if ns == "" else "{0}.{1}".format (ns, name)
 
 class ArrayPrinter:
     "Print a C# array"
@@ -66,7 +60,12 @@ class ArrayPrinter:
     def to_string(self):
         obj = self.val.cast (gdb.lookup_type ("MonoArray").pointer ()).dereference ()
         length = obj ['max_length']
-        return "{0} [{1}]".format (stringify_class_name (self.class_ns, self.class_name [0:len (self.class_name) - 2]), int (length))
+        return "{0} [{1}]".format(
+            stringify_class_name(
+                self.class_ns, self.class_name[: len(self.class_name) - 2]
+            ),
+            int(length),
+        )
         
 class ObjectPrinter:
     "Print a C# object"
@@ -81,7 +80,6 @@ class ObjectPrinter:
         def __init__(self,obj):
             self.obj = obj
             self.iter = self.obj.type.fields ().__iter__ ()
-            pass
 
         def __iter__(self):
             return self
@@ -107,7 +105,7 @@ class ObjectPrinter:
             obj = self.val.dereference ()
             class_ns = obj ['vtable'].dereference ()['klass'].dereference ()['name_space'].string ()
             class_name = obj ['vtable'].dereference ()['klass'].dereference ()['name'].string ()
-            if class_name [-2:len(class_name)] == "[]":
+            if class_name[-2:] == "[]":
                 return {}.__iter__ ()
             gdb_type = gdb.lookup_type ("struct {0}_{1}".format (class_ns.replace (".", "_"), class_name))
             return self._iterator(obj.cast (gdb_type))
@@ -125,7 +123,7 @@ class ObjectPrinter:
             class_name = obj ['vtable'].dereference ()['klass'].dereference ()['name'].string ()
             if class_ns == "System" and class_name == "String":
                 return StringPrinter (self.val).to_string ()
-            if class_name [-2:len(class_name)] == "[]":
+            if class_name[-2:] == "[]":
                 return ArrayPrinter (self.val,class_ns,class_name).to_string ()
             if class_ns != "":
                 try:
@@ -177,20 +175,18 @@ def lookup_pretty_printer(val):
     t = str (val.type)
     if t == "object":
         return ObjectPrinter (val)
-    if t[0:5] == "class" and t[-1] == "&":
-        return ObjectPrinter (val)    
+    if t.startswith("class") and t[-1] == "&":
+        return ObjectPrinter (val)
     if t == "string":
         return StringPrinter (val)
     if t == "MonoMethod *":
         return MonoMethodPrinter (val)
-    if t == "MonoClass *":
-        return MonoClassPrinter (val)
-    return None
+    return MonoClassPrinter (val) if t == "MonoClass *" else None
 
 def register_csharp_printers(obj):
     "Register C# pretty-printers with objfile Obj."
 
-    if obj == None:
+    if obj is None:
         obj = gdb
 
     obj.pretty_printers.append (lookup_pretty_printer)
@@ -217,9 +213,9 @@ class MonoSupport(object):
             new_size = os.stat ("xdb.s").st_size
             if new_size > self.s_size:
                 sofile = "xdb.so"
-                gdb.execute ("shell as -o xdb.o xdb.s && ld -shared -o {} xdb.o".format (sofile))
+                gdb.execute(f"shell as -o xdb.o xdb.s && ld -shared -o {sofile} xdb.o")
                 # FIXME: This prints messages which couldn't be turned off
-                gdb.execute ("add-symbol-file {} 0".format (sofile))
+                gdb.execute(f"add-symbol-file {sofile} 0")
                 self.s_size = new_size
 
 class RunHook (gdb.Command):

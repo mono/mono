@@ -26,7 +26,7 @@ class TestLldb(unittest.TestCase):
         if self.process != None:
             self.process.Kill ()
 
-    def test_stacktraces (self):
+    def test_stacktraces(self):
         bp = self.target.BreakpointCreateByName ('ves_icall_System_Threading_Thread_Sleep_internal')
         self.assertEqual (bp.GetNumLocations (), 1)
 
@@ -58,13 +58,13 @@ class TestLldb(unittest.TestCase):
         frame = thread.GetFrameAtIndex (findex)
         name = frame.GetSymbol().GetName ()
         self.assertEqual (name, 'System.Threading.Thread:Sleep (int)')
-        self.assertTrue (str (frame.GetLineEntry ().GetFileSpec()).find ('thread.cs') != -1)
+        self.assertTrue('thread.cs' in str (frame.GetLineEntry ().GetFileSpec()))
         findex += 1
 
         frame = thread.GetFrameAtIndex (findex)
         name = frame.GetSymbol().GetName ()
         self.assertEqual (name, 'Tests:Main ()')
-        self.assertTrue (str (frame.GetLineEntry ().GetFileSpec()).find ('test-lldb.cs') != -1)
+        self.assertTrue('test-lldb.cs' in str (frame.GetLineEntry ().GetFileSpec()))
 
     def test_breakpoints (self):
         bp = self.target.BreakpointCreateByLocation ('test-lldb.cs', 9)

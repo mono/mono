@@ -30,12 +30,9 @@ class StringPrinter:
         res = ['"']
         while i < len:
             val = (chars.cast(gdb.lookup_type ("gint64")) + (i * 2)).cast(gdb.lookup_type ("gunichar2").pointer ()).dereference ()
-            if val >= 256:
-                c = unichr (val)
-            else:
-                c = chr (val)
+            c = unichr (val) if val >= 256 else chr (val)
             res.append (c)
-            i = i + 1
+            i += 1
         res.append ('"')
         return ''.join (res)
 
@@ -45,10 +42,7 @@ def stringify_class_name(ns, name):
             return "byte"
         if name == "String":
             return "string"
-    if ns == "":
-        return name
-    else:
-        return "{0}.{1}".format (ns, name)
+    return name if ns == "" else "{0}.{1}".format (ns, name)
 
 class ArrayPrinter:
     "Print a C# array"
@@ -61,7 +55,12 @@ class ArrayPrinter:
     def to_string(self):
         obj = self.val.cast (gdb.lookup_type ("MonoArray").pointer ()).dereference ()
         length = obj ['max_length']
-        return "{0} [{1}]".format (stringify_class_name (self.class_ns, self.class_name [0:len(self.class_name) - 2]), int(length))
+        return "{0} [{1}]".format(
+            stringify_class_name(
+                self.class_ns, self.class_name[: len(self.class_name) - 2]
+            ),
+            int(length),
+        )
         
 class ObjectPrinter:
     "Print a C# object"
@@ -76,7 +75,6 @@ class ObjectPrinter:
         def __init__(self,obj):
             self.obj = obj
             self.iter = self.obj.type.fields ().__iter__ ()
-            pass
 
         def __iter__(self):
             return self
@@ -102,7 +100,7 @@ class ObjectPrinter:
             obj = self.val.dereference ()
             class_ns = obj ['vtable'].dereference ()['klass'].dereference ()['name_space'].string ()
             class_name = obj ['vtable'].dereference ()['klass'].dereference ()['name'].string ()
-            if class_name [-2:len(class_name)] == "[]":
+            if class_name[-2:] == "[]":
                 return {}.__iter__ ()
             try:
                 gdb_type = gdb.lookup_type ("struct {0}_{1}".format (class_ns.replace (".", "_"), class_name))
@@ -123,7 +121,7 @@ class ObjectPrinter:
             class_name = obj ['vtable'].dereference ()['klass'].dereference ()['name'].string ()
             if class_ns == "System" and class_name == "String":
                 return StringPrinter (self.val).to_string ()
-            if class_name [-2:len(class_name)] == "[]":
+            if class_name[-2:] == "[]":
                 return ArrayPrinter (self.val,class_ns,class_name).to_string ()
             if class_ns != "":
                 try:
@@ -167,10 +165,7 @@ class MonoClassPrinter:
             return "0x0"
         klass = self.val.dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
-        if add_quotes:
-            return "\"{0}\"".format (class_name)
-        else:
-            return class_name
+        return "\"{0}\"".format (class_name) if add_quotes else class_name
         # This returns more info but requires calling into the inferior
         #return "\"{0}\"".format (gdb.parse_and_eval ("mono_type_full_name (&((MonoClass*){0})->byval_arg)".format (str (int ((self.val).cast (gdb.lookup_type ("guint64")))))))
 
@@ -199,7 +194,7 @@ class MonoGenericInstPrinter:
             # print (inst_args)
             type_printer = MonoTypePrinter (inst_args [i])
             if i > 0:
-                inst_str = inst_str + ", "
+                inst_str = f"{inst_str}, "
             inst_str = inst_str + type_printer.to_string ()
         return inst_str
 
@@ -279,7 +274,7 @@ class MonoMethodRgctxPrinter:
             # print (inst_args)
             type_printer = MonoTypePrinter (inst_args [i])
             if i > 0:
-                inst_str = inst_str + ", "
+                inst_str = f"{inst_str}, "
             inst_str = inst_str + type_printer.to_string ()
         return "MRGCTX[{0}, [{1}]]".format (klass_printer.to_string(), inst_str)
 
@@ -302,8 +297,8 @@ def lookup_pretty_printer(val):
     t = str (val.type)
     if t == "object":
         return ObjectPrinter (val)
-    if t[0:5] == "class" and t[-1] == "&":
-        return ObjectPrinter (val)    
+    if t.startswith("class") and t[-1] == "&":
+        return ObjectPrinter (val)
     if t == "string":
         return StringPrinter (val)
     if t == "MonoString *":
@@ -320,14 +315,12 @@ def lookup_pretty_printer(val):
         return MonoGenericClassPrinter (val)
     if t == "MonoMethodRuntimeGenericContext *":
         return MonoMethodRgctxPrinter (val)
-    if t == "MonoVTable *":
-        return MonoVTablePrinter (val)
-    return None
+    return MonoVTablePrinter (val) if t == "MonoVTable *" else None
 
 def register_csharp_printers(obj):
     "Register C# pretty-printers with objfile Obj."
 
-    if obj == None:
+    if obj is None:
         obj = gdb
 
     obj.pretty_printers.append (lookup_pretty_printer)
