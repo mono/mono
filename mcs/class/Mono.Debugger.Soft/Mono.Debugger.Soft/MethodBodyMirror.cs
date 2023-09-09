@@ -88,6 +88,11 @@ namespace Mono.Debugger.Soft
 			if (!opcodes_inited) {
 				foreach (FieldInfo fi in typeof (OpCodes).GetFields (BindingFlags.Static|BindingFlags.Public)) {
 					var val = (OpCode)fi.GetValue (null);
+					
+					// Filter reserved opcodes like Prefixref, Prefix1, Prefix2, etc.
+					if (val.OpCodeType == OpCodeType.Nternal)
+						continue;
+					
 					bool isOneByteOpCode;
 					uint index;
 
