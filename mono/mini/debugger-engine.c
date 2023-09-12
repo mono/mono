@@ -250,7 +250,8 @@ remove_breakpoint (BreakpointInstance *inst)
 			NOT_IMPLEMENTED;
 #endif
 		}
-		PRINT_DEBUG_MSG (1, "[dbg] Clear breakpoint at %s [%p].\n", mono_method_full_name (jinfo_get_method (ji), TRUE), ip);
+		if (log_level > 0)
+			PRINT_DEBUG_MSG (1, "[dbg] Clear breakpoint at %s [%p].\n", mono_method_full_name (jinfo_get_method (ji), TRUE), ip);
 	}
 }
 
