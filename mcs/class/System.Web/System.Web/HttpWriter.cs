@@ -49,6 +49,8 @@ namespace System.Web
 		HttpResponse response;
 		Encoding encoding;
 
+		private bool     _responseEncodingUsed;
+
 		[ThreadStatic]
 		static byte [] _bytebuffer;
 		static readonly uint byteBufferSize;
@@ -69,8 +71,9 @@ namespace System.Web
 		internal HttpWriter (HttpResponse response)
 		{
 			this.response = response;
-			encoding = response.ContentEncoding;
 			output_stream = response.output_stream;
+
+			UpdateResponseEncoding();
 		}
 
 		byte [] GetByteBuffer (int length)
@@ -85,15 +88,23 @@ namespace System.Web
 				return new byte [length];
 		}
 
+		internal void UpdateResponseEncoding() {
+			/*
+			// TODO: referencesource does this
+			if (_responseEncodingUpdated) {  // subsequent update
+				if (_charBufferLength != _charBufferFree)
+					FlushCharBuffer(true);
+			}
+			*/
+
+			encoding = response.ContentEncoding;
+			//_responseEncodingUpdated = true;
+		}
+
 		public override Encoding Encoding {
 			get {
 				return encoding;
 			}
-		}
-
-		internal void SetEncoding (Encoding new_encoding)
-		{
-			encoding = new_encoding;
 		}
 
 		public Stream OutputStream {
@@ -143,6 +154,9 @@ namespace System.Web
 		{
 			if (buffer == null || index < 0 || count < 0 || (buffer.Length - index) < count)
 				throw new ArgumentOutOfRangeException ();
+
+			_responseEncodingUsed = true;
+
 			int length = encoding.GetMaxByteCount (count);
 			byte [] bytebuffer = GetByteBuffer (length);
 			int realLength = encoding.GetBytes (buffer, index, count, bytebuffer, 0);
@@ -167,6 +181,9 @@ namespace System.Web
 
 			if (index < 0 || count < 0 || ((index + count > s.Length)))
 				throw new ArgumentOutOfRangeException ();
+
+			_responseEncodingUsed = true;
+
 			int length = encoding.GetMaxByteCount (count);
 			byte [] bytebuffer = GetByteBuffer (length);
 			int realLength = encoding.GetBytes (s, index, count, bytebuffer, 0);
@@ -190,6 +207,10 @@ namespace System.Web
 				return;
 
 			response.Flush ();
+		}
+
+		internal bool ResponseEncodingUsed {
+			get { return _responseEncodingUsed; }
 		}
 	}
 }
