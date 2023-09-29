@@ -1914,63 +1914,28 @@ mono_unity_start_gc_world()
 #endif
 }
 
-
+typedef void (*MonoGCHeapForeachFunc)(void* userData, gpointer start, gpointer end, uint32_t type);
 #if HAVE_BOEHM_GC
-static void EnumerateGCHeapSectionsCallback(void *userdata, gpointer chunk_start, gpointer chunk_end, GC_heap_section_type type)
+typedef struct GCHeapForeachContextStruct
 {
-	if (type != GC_HEAP_SECTION_TYPE_USED)
-		return;
+	void* userData;
+	MonoGCHeapForeachFunc callback;
 
-	execution_ctx *ctx = (execution_ctx *)userdata;
-	mono_heap_chunk chunk;
-	chunk.start = chunk_start;
-	chunk.size = (uint8_t *)chunk_end - (uint8_t *)chunk_start;
-	ctx->callback(&chunk, ctx->user_data);
+} GCHeapForeachContext;
+void GCHeapForeachCallback(void* userData, gpointer start, gpointer end, GC_heap_section_type type)
+{
+	GCHeapForeachContext* ctx = (GCHeapForeachContext*)userData;
+	ctx->callback(userData, start, end, type);
 }
 #endif
-
 MONO_API void
-mono_unity_gc_heap_foreach(GFunc callback, gpointer user_data)
+mono_unity_gc_heap_foreach(MonoGCHeapForeachFunc callback, gpointer user_data)
 {
 #if HAVE_BOEHM_GC
-	execution_ctx ctx;
+	GCHeapForeachContext ctx;
+	ctx.userData = user_data;
 	ctx.callback = callback;
-	ctx.user_data = user_data;
-
-	GC_foreach_heap_section(&ctx, EnumerateGCHeapSectionsCallback);
-#else
-	g_assert_not_reached();
-#endif
-}
-
-#if HAVE_BOEHM_GC
-typedef struct
-{
-	gpointer start;
-	size_t size;
-	int type;
-} MonoHeapChunk2;
-
-static void EnumerateGCHeapSectionsCallback2(void* userData, gpointer start, gpointer end, GC_heap_section_type type)
-{
-	execution_ctx* ctx = (execution_ctx*)userData;
-	MonoHeapChunk2 chunk;
-	chunk.start = start;
-	chunk.size = (uint8_t*)end - (uint8_t*)start;
-	chunk.type = type;
-	ctx->callback(&chunk, ctx->user_data);
-}
-#endif
-
-MONO_API void
-mono_unity_gc_heap_foreach_2(GFunc callback, gpointer user_data)
-{
-#if HAVE_BOEHM_GC
-	execution_ctx ctx;
-	ctx.callback = callback;
-	ctx.user_data = user_data;
-
-	GC_foreach_heap_section(&ctx, EnumerateGCHeapSectionsCallback2);
+	GC_foreach_heap_section(&ctx, GCHeapForeachCallback);
 #else
 	g_assert_not_reached();
 #endif
