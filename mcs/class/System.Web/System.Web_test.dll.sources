@@ -97,6 +97,7 @@ System.Web.Configuration/MachineKeySectionTest.cs
 System.Web.Configuration/MachineKeyValidationConverterTest.cs
 System.Web.Configuration/NullableStringValidatorTest.cs
 System.Web.Configuration/ProfilePropertySettingsTest.cs
+System.Web.Configuration/RuntimeConfigTest.cs
 System.Web.Configuration/SiteMapSectionTest.cs
 System.Web.Configuration/WebConfigurationManagerTest.cs
 System.Web.Hosting/ApplicationHostTest.cs
