@@ -2002,5 +2002,12 @@ ves_icall_Unity_Android_Network_Interface_Up_State (MonoString *ifName, MonoBool
 	}
 	return FALSE;
 }
+#else
+MonoBoolean
+ves_icall_Unity_Android_Network_Interface_Up_State (MonoString *ifName, MonoBoolean* is_up)
+{
+	//No-op to avoid error message on linux. This is not called at runtime.
+	return FALSE;
+}
 #endif
 

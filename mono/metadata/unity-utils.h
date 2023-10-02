@@ -230,9 +230,9 @@ typedef uint8_t (*android_network_up_state)(const char* ifName, uint8_t* is_up);
 
 MONO_API void
 mono_unity_set_android_network_up_state_func(android_network_up_state func);
+#endif
 
 MonoBoolean
 ves_icall_Unity_Android_Network_Interface_Up_State (MonoString *ifName, MonoBoolean* is_up);
-#endif
 
 #endif
