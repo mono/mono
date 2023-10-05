@@ -9745,7 +9745,9 @@ calli_end:
 				} else {
 					MonoInst *load;
 
-					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg, foffset > mono_target_pagesize ());
+					// We may call a copy / wbarrier function which doesn't do null checks; 
+					// passing MONO_TYPE_ISSTRUCT to macro so that we emit the null check when accessing fields that are structs */
+					MONO_EMIT_NULL_CHECK (cfg, sp [0]->dreg, foffset > mono_target_pagesize () || MONO_TYPE_ISSTRUCT(field->type));
 
 #ifdef MONO_ARCH_SIMD_INTRINSICS
 					if (sp [0]->opcode == OP_LDADDR && m_class_is_simd_type (klass) && cfg->opt & MONO_OPT_SIMD) {
