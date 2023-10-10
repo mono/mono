@@ -2703,10 +2703,12 @@ lookup_start:
 		}
 
 		if (mono_aot_only) {
-			char *fullname = mono_method_get_full_name (method);
-			mono_error_set_execution_engine (error, "Attempting to JIT compile method '%s' while running in aot-only mode. See https://docs.microsoft.com/xamarin/ios/internals/limitations for more information.\n", fullname);
-			g_free (fullname);
-
+			if (!mono_use_interpreter)
+			{
+				char *fullname = mono_method_get_full_name (method);
+				mono_error_set_execution_engine (error, "Attempting to JIT compile method '%s' while running in aot-only mode. See https://docs.microsoft.com/xamarin/ios/internals/limitations for more information.\n", fullname);
+				g_free (fullname);
+			}
 			return NULL;
 		}
 
@@ -3324,12 +3326,13 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 		if (callee) {
 			compiled_method = mono_jit_compile_method_jit_only (callee, error);
 			if (!compiled_method) {
-				g_assert (!is_ok (error));
-
 				if (mono_use_interpreter)
 					use_interp = TRUE;
 				else
+				{
+					g_assert (!is_ok (error));
 					return NULL;
+				}
 			} else {
 				if (mono_llvm_only) {
 					ji = mini_jit_info_table_find (mono_domain_get (), (char *)mono_get_addr_from_ftnptr (compiled_method), NULL);
