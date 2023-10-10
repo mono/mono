@@ -1375,7 +1375,7 @@ ves_icall_System_IO_MonoIO_RemapPath  (MonoString *path, MonoString **new_path)
 
 	mono_gc_wbarrier_generic_store (new_path, (MonoObject*)mono_string_from_utf16_checked (path_remapped, &error));
 
-	g_free (path_remapped);
+	g_free ((void*)path_remapped);
 
 	mono_error_set_pending_exception (&error);
 
@@ -1386,7 +1386,7 @@ const char*
 mono_unity_remap_path (const char* path)
 {
 	const char* path_remap = NULL;
-	call_remapper (path, &path_remap);
+	call_remapper (path, &((char*)path_remap));
 
 	return path_remap;
 }
