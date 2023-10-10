@@ -1111,8 +1111,16 @@ mono_interp_jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
 	if (mono_aot_only && m_class_get_image (method->klass)->aot_module && !(method->iflags & METHOD_IMPL_ATTRIBUTE_SYNCHRONIZED)) {
 		ERROR_DECL (error);
 		gpointer addr = mono_jit_compile_method_jit_only (method, error);
-		if (addr && is_ok (error))
-			return TRUE;
+		if (addr)
+        {
+            if (is_ok (error))
+                return TRUE;
+            mono_error_cleanup(error);
+        }
+        else if (!is_ok (error))
+        {
+            mono_error_cleanup(error);
+        }
 	}
 
 	for (l = mono_interp_jit_classes; l; l = l->next) {
