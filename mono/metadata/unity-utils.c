@@ -1386,7 +1386,7 @@ const char*
 mono_unity_remap_path (const char* path)
 {
 	const char* path_remap = NULL;
-	call_remapper (path, &((char*)path_remap));
+	call_remapper (path, (char**)(&path_remap));
 
 	return path_remap;
 }
