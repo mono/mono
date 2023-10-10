@@ -5988,6 +5988,8 @@ if test "x$enable_btls" = "xyes"; then
 				if test "x$HAVE_YASM" != "xyes"; then
 					BTLS_CMAKE_ARGS="-DOPENSSL_NO_ASM=1"
 				fi
+				mono_btls_dir_abs=`cd $srcdir && pwd`/mono/btls
+				BTLS_CMAKE_ARGS="$BTLS_CMAKE_ARGS -DCYGWIN=TRUE -DCMAKE_TOOLCHAIN_FILE=\"$mono_btls_dir_abs/mxe-Win32.cmake\""
 				;;
 		esac
 		;;
@@ -5999,6 +6001,8 @@ if test "x$enable_btls" = "xyes"; then
 				if test "x$HAVE_YASM" != "xyes"; then
 					BTLS_CMAKE_ARGS="-DOPENSSL_NO_ASM=1"
 				fi
+				mono_btls_dir_abs=`cd $srcdir && pwd`/mono/btls
+				BTLS_CMAKE_ARGS="$BTLS_CMAKE_ARGS -DCYGWIN=TRUE -DCMAKE_TOOLCHAIN_FILE=\"$mono_btls_dir_abs/mxe-Win64.cmake\""
 				;;
 		esac
 		;;

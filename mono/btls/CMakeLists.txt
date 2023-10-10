@@ -129,4 +129,5 @@ endif ()
 
 if (CYGWIN)
 	target_link_libraries (mono-btls-shared wsock32 ws2_32)
+	target_link_options (mono-btls-shared PRIVATE -static-libgcc)
 endif ()
