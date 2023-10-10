@@ -1136,7 +1136,7 @@ MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type)
 MONO_API void
 mono_unity_runtime_set_main_args (int argc, const char* argv[])
 {
-	mono_runtime_set_main_args (argc, argv);
+	mono_runtime_set_main_args (argc, (char**)argv);
 }
 
 MONO_API MonoString*
