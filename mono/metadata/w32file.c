@@ -34,6 +34,7 @@
 #include <mono/metadata/exception.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/marshal.h>
+#include <mono/metadata/unity-utils.h>
 #include <mono/utils/strenc.h>
 #include <mono/utils/mono-io-portability.h>
 #include <mono/metadata/w32handle.h>

@@ -1794,7 +1794,7 @@ mono_unity_type_get_name_foreach_name_chunk_recurse(MonoType *type, gboolean is_
 
 				for (i = 0; i < mono_class_get_generic_container(klass)->type_argc; i++) {
 					if (i)
-						nameChunkReport(",", userData);
+						nameChunkReport((void*)",", userData);
 					nameChunkReport((void*)(mono_generic_container_get_param_info(mono_class_get_generic_container(klass), i)->name), userData);
 				}
 				if (format == MONO_TYPE_NAME_FORMAT_IL)
