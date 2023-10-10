@@ -94,7 +94,7 @@ include $(topdir)/build/config-default.make
 
 include $(topdir)/build/platforms/$(BUILD_PLATFORM).make
 
-PROFILE_PLATFORM = $(if $(PLATFORMS),$(if $(filter $(PLATFORMS),$(HOST_PLATFORM)),$(HOST_PLATFORM),$(error Unknown platform "$(HOST_PLATFORM)" for profile "$(PROFILE)")))
+PROFILE_PLATFORM ?= $(if $(PLATFORMS),$(if $(filter $(PLATFORMS),$(HOST_PLATFORM)),$(HOST_PLATFORM),$(error Unknown platform "$(HOST_PLATFORM)" for profile "$(PROFILE)")))
 PROFILE_DIRECTORY = $(PROFILE)$(if $(PROFILE_PLATFORM),-$(PROFILE_PLATFORM))
 
 # Useful
