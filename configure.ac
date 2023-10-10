@@ -4993,9 +4993,6 @@ if test "x$target_mach" = "xyes"; then
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_OSX"
           CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DTARGET_OSX"
           target_osx=yes
-          if test "x$TARGET" = "xARM64"; then
-             BTLS_SUPPORTED=no
-          fi
        ], [
           AC_DEFINE(TARGET_IOS,1,[The JIT/AOT targets iOS])
           CPPFLAGS_FOR_LIBGC="$CPPFLAGS_FOR_LIBGC -DTARGET_IOS"
@@ -6016,7 +6013,11 @@ if test "x$enable_btls" = "xyes"; then
 		;;
 	aarch64)
 		btls_arch=aarch64
-		btls_cflags="-march=armv8-a+crypto"
+		if test "x$target_mach" = "xyes"; then
+			btls_cflags="-arch arm64"
+		else
+			btls_cflags="-march=armv8-a+crypto"
+		fi
 		;;
 	s390x)
 		btls_arch=s390x

@@ -21,6 +21,15 @@ if (MSVC OR CYGWIN)
 	set(BTLS_HOST_WIN32 1)
 endif ()
 
+if (NOT "${BTLS_ARCH}" STREQUAL "")
+	message (STATUS "SET ARCH: ${BTLS_ARCH}")
+	set (CMAKE_SYSTEM_PROCESSOR "${BTLS_ARCH}")
+endif ()
+
+if ((("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "arm64") OR ("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "aarch64")) AND APPLE AND NOT IOS)
+	set(OPENSSL_NO_ASM 1)
+endif ()
+
 if (NOT OPENSSL_NO_ASM)
 	if (BTLS_HOST_WIN32)
 		if (CYGWIN AND "${BTLS_ARCH}" STREQUAL "i386")
@@ -36,11 +45,6 @@ if (NOT OPENSSL_NO_ASM)
 		set (CMAKE_ASM_COMPILER_ID "${CMAKE_C_COMPILER_ID}")
 		enable_language(ASM)
 	endif ()
-endif ()
-
-if (NOT "${BTLS_ARCH}" STREQUAL "")
-	message (STATUS "SET ARCH: ${BTLS_ARCH}")
-	set (CMAKE_SYSTEM_PROCESSOR "${BTLS_ARCH}")
 endif ()
 
 if (NOT MSVC)
