@@ -25,7 +25,7 @@
 #include <sys/time.h>
 #else
 #include <process.h>
-#include <Windows.h>
+#include <windows.h>
 #endif
 #include "mono-logger-internals.h"
 #include "mono-proclib.h"
