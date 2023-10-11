@@ -204,7 +204,7 @@ ves_icall_System_IO_MonoIO_CreateDirectory (const gunichar2 *path, gint32 *error
 		*error=mono_w32error_get_last ();
 	}
 
-	g_free (path_remapped);
+	g_free ((void*)path_remapped);
 
 	return(ret);
 }
@@ -225,7 +225,7 @@ ves_icall_System_IO_MonoIO_RemoveDirectory (const gunichar2 *path, gint32 *error
 		*error=mono_w32error_get_last ();
 	}
 
-	g_free (path_remapped);
+	g_free ((void*)path_remapped);
 
 	return(ret);
 }
@@ -246,7 +246,7 @@ ves_icall_System_IO_MonoIO_FindFirstFile (const gunichar2 *path_with_pattern, Mo
 		MONO_HANDLE_ASSIGN (file_name, NULL_HANDLE_STRING);
 		*file_attr = 0;
 		*ioerror = mono_w32error_get_last ();
-		g_free (path_with_pattern_remapped);
+		g_free ((void*)path_with_pattern_remapped);
 		return hnd;
 	}
 
@@ -258,7 +258,7 @@ ves_icall_System_IO_MonoIO_FindFirstFile (const gunichar2 *path_with_pattern, Mo
 	*file_attr = data.dwFileAttributes;
 	*ioerror = ERROR_SUCCESS;
 
-	g_free (path_with_pattern_remapped);
+	g_free ((void*)path_with_pattern_remapped);
 	return hnd;
 }
 
@@ -347,7 +347,7 @@ ves_icall_System_IO_MonoIO_SetCurrentDirectory (const gunichar2 *path,
 		*error=mono_w32error_get_last ();
 	}
 
-	g_free (path_remapped);
+	g_free ((void*)path_remapped);
 
 	return(ret);
 }
@@ -367,8 +367,8 @@ ves_icall_System_IO_MonoIO_MoveFile (const gunichar2 *path, const gunichar2 *des
 	*error=ERROR_SUCCESS;
 	ret = mono_w32file_move (path, dest, error);
 
-	g_free (path_remapped);
-	g_free (dest_remapped);
+	g_free ((void*)path_remapped);
+	g_free ((void*)dest_remapped);
 
 	return ret;
 }
@@ -399,9 +399,9 @@ ves_icall_System_IO_MonoIO_ReplaceFile (const gunichar2 *source_file_name, const
 	ret = mono_w32file_replace (destination_file_name, source_file_name,
 					  destination_backup_file_name, replace_flags, error);
 
-	g_free (source_file_name_remapped);
-	g_free (destination_file_name_remapped);
-	g_free (destination_backup_file_name_remapped);
+	g_free ((void*)source_file_name_remapped);
+	g_free ((void*)destination_file_name_remapped);
+	g_free ((void*)destination_backup_file_name_remapped);
 
 	return ret;
 }
@@ -422,8 +422,8 @@ ves_icall_System_IO_MonoIO_CopyFile (const gunichar2 *path, const gunichar2 *des
 	*error=ERROR_SUCCESS;
 	ret = mono_w32file_copy (path, dest, overwrite, error);
 
-	g_free (path_remapped);
-	g_free (dest_remapped);
+	g_free ((void*)path_remapped);
+	g_free ((void*)dest_remapped);
 
 	return ret;
 }
@@ -444,7 +444,7 @@ ves_icall_System_IO_MonoIO_DeleteFile (const gunichar2 *path, gint32 *error)
 		*error=mono_w32error_get_last ();
 	}
 
-	g_free (path_remapped);
+	g_free ((void*)path_remapped);
 	
 	return(ret);
 }
@@ -473,7 +473,7 @@ ves_icall_System_IO_MonoIO_GetFileAttributes (const gunichar2 *path, gint32 *err
 		*error=mono_w32error_get_last ();
 	}
 
-	g_free (path_remapped);
+	g_free ((void*)path_remapped);
 
 	return(ret);
 }
@@ -529,7 +529,7 @@ ves_icall_System_IO_MonoIO_GetFileStat (const gunichar2 *path, MonoIOStat *stat,
 		memset (stat, 0, sizeof (MonoIOStat));
 	}
 
-	g_free (path_remapped);
+	g_free ((void*)path_remapped);
 
 	return result;
 }
@@ -582,7 +582,7 @@ ves_icall_System_IO_MonoIO_Open (const gunichar2 *filename, gint32 mode,
 		*error=mono_w32error_get_last ();
 	}
 
-	g_free (filename_remapped);
+	g_free ((void*)filename_remapped);
 
 	return(ret);
 }
