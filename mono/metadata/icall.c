@@ -1027,7 +1027,7 @@ ves_icall_System_Array_ClearInternal (MonoArrayHandle arr, int idx, int length, 
 {
 	icallarray_print ("%s arr:%p idx:%d len:%d\n", __func__, MONO_HANDLE_RAW (arr), (int)idx, (int)length);
 
-	int sz = mono_array_element_size (mono_handle_class (arr));
+	size_t sz = mono_array_element_size (mono_handle_class (arr));
 	mono_gc_bzero_atomic (mono_array_addr_with_size_fast (MONO_HANDLE_RAW (arr), sz, idx), length * sz);
 }
 #endif
