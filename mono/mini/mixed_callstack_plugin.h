@@ -14,5 +14,4 @@ void mixed_callstack_plugin_remove_method (MonoDomain *domain, MonoMethod *metho
 
 void mixed_callstack_plugin_save_specific_trampoline_info (gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, gpointer code, guint32 code_len);
 
-void mixed_callstack_plugin_on_domain_unload_end();
 #endif
