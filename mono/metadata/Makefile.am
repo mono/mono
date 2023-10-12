@@ -479,7 +479,8 @@ libmonoruntimeinclude_HEADERS = \
 	sgen-bridge.h		\
 	threads.h		\
 	tokentype.h		\
-	verify.h
+	verify.h		\
+	unity-utils.h
 
 if !ENABLE_MSVC_ONLY
 
