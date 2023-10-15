@@ -34,7 +34,7 @@ using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels
 {
-	public sealed class CompositeDuplexBindingElementImporter
+	public class CompositeDuplexBindingElementImporter
 		: IPolicyImportExtension
 	{
 		[MonoTODO]

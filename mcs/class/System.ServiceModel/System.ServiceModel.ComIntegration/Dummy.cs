@@ -5,5 +5,5 @@ namespace System.ServiceModel.ComIntegration
 	public interface IServiceSurrogate { }
 	public class ComPlusListenerInitializationException { }
 	public class DllHostInitializer { }
-	public class ServiceMoniker { }
+	public sealed class ServiceMoniker { }
 }
