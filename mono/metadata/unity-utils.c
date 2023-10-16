@@ -766,7 +766,7 @@ const char* mono_unity_method_get_param_name(MonoMethod *method, uint32_t index)
 	{
 		return NULL;
 	}
-	const char** names = g_new (char *, sig->param_count);
+	const char** names = (const char**)g_new (char *, sig->param_count);
 	mono_method_get_param_names (method, (const char **) names);
 	const char* result = names[index];
 	g_free(names);
@@ -838,7 +838,7 @@ mono_unity_array_get_byte_length (MonoArray* array)
 
 MonoArray* mono_unity_array_new_specific(MonoClass* arrayClass, uintptr_t size)
 {
-	MonoVTable* vTable = mono_class_try_get_vtable(arrayClass);
+	MonoVTable* vTable = mono_class_try_get_vtable(mono_domain_get(), arrayClass);
 	return mono_array_new_specific(vTable, size);
 }
 
