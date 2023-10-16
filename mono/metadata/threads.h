@@ -97,7 +97,7 @@ MONO_API MONO_RT_EXTERNAL_ONLY
 mono_bool mono_unity_thread_get_frame_at(MonoThread* thread, int32_t offset, MonoUnityStackFrameInfo* frame);
 
 MONO_API MONO_RT_EXTERNAL_ONLY
-int32_t mono_unity_current_thread_get_stack_depth();
+int32_t mono_unity_current_thread_get_stack_depth(void);
 
 MONO_API MONO_RT_EXTERNAL_ONLY
 int32_t mono_unity_thread_get_stack_depth(MonoThread* thread);
