@@ -1305,6 +1305,11 @@ ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObjectHandle o
 	return FALSE;
 }
 
+void mono_monitor_pulse_external(MonoObject *obj, const char *func, gboolean all)
+{
+	MONO_EXTERNAL_ONLY_VOID (mono_monitor_pulse(obj, func, all))
+}
+
 /* All wait list manipulation in the pulse, pulseall and wait
  * functions happens while the monitor lock is held, so we don't need
  * any extra struct locking
@@ -1355,11 +1360,22 @@ ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, Mono
 	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, TRUE);
 }
 
+MonoBoolean
+mono_monitor_wait_external (MonoObject* obj, guint32 ms)
+{
+	MonoError* error = NULL;
+	mono_monitor_wait_internal(obj, ms, 1, &error);
+}
+
 static MonoBoolean
 mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
 {
 	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
+}
 
+static MonoBoolean
+mono_monitor_wait_internal (MonoObject* const obj, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
+{
 	LockWord lw;
 	MonoThreadsSync *mon;
 	HANDLE event;

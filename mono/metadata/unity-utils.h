@@ -7,6 +7,7 @@
 #include <mono/metadata/marshal.h>
 
 typedef int (*vprintf_func)(const char* msg, va_list args);
+typedef void (*assembly_foreach_func)(MonoAssembly* assembly);
 typedef struct {
 	void* (*malloc_func)(size_t size);
 	void(*free_func)(void *ptr);
@@ -35,10 +36,10 @@ MONO_API extern void mono_unity_socket_security_enabled_set (gboolean enabled);
 MONO_API void mono_unity_set_vprintf_func(vprintf_func func);
 
 
-void unity_mono_install_memory_callbacks(MonoMemoryCallbacks* callbacks);
+// void mono_unity_install_memory_callbacks(MonoMemoryCallbacks* callbacks);
 
 MONO_API gboolean
-unity_mono_method_is_generic (MonoMethod* method);
+mono_unity_method_is_generic (MonoMethod* method);
 
 typedef const char*(*UnityFindPluginCallback)(const char*);
 
@@ -75,6 +76,7 @@ MONO_API gboolean mono_class_is_generic(MonoClass *klass);
 MONO_API gboolean mono_class_is_blittable(MonoClass *klass);
 MONO_API gboolean mono_class_is_inflated(MonoClass *klass);
 gboolean mono_unity_class_has_cctor(MonoClass *klass);
+gboolean mono_unity_class_has_reference(MonoClass* kclass);
 
 //method 
 MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method);
@@ -95,8 +97,9 @@ const char* mono_unity_method_get_name(const MonoMethod *method);
 guint64 mono_unity_method_get_hash(MonoMethod *method, gboolean inflate);
 MonoMethod* mono_unity_method_get_aot_array_helper_from_wrapper(MonoMethod *method);
 MonoObject* mono_unity_method_convert_return_type_if_needed(MonoMethod *method, void *value);
-MONO_API gboolean unity_mono_method_is_inflated(MonoMethod* method);
+MONO_API gboolean mono_unity_method_is_inflated(MonoMethod* method);
 MONO_API guint32 mono_unity_method_get_token(MonoMethod *method);
+MONO_API const char* mono_unity_method_get_param_name(MonoMethod *method, uint32_t index);
 
 //domain
 void mono_unity_domain_install_finalize_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback);
@@ -108,6 +111,8 @@ MONO_API void mono_unity_domain_unload (MonoDomain *domain, MonoUnityExceptionFu
 int mono_unity_array_get_element_size(MonoArray *arr);
 MonoClass* mono_unity_array_get_class(MonoArray *arr);
 mono_array_size_t mono_unity_array_get_max_length(MonoArray *arr);
+int mono_unity_array_get_byte_length (MonoArray* array);
+MonoArray* mono_unity_array_new_specific(MonoClass* arrayClass, uintptr_t size);
 
 //type
 gboolean mono_unity_type_is_generic_instance(MonoType *type);
@@ -125,6 +130,8 @@ MonoClass* mono_unity_generic_class_get_container_class(MonoGenericClass *klass)
 MonoClass* mono_unity_signature_get_class_for_param(MonoMethodSignature *sig, int index);
 int mono_unity_signature_num_parameters(MonoMethodSignature *sig);
 gboolean mono_unity_signature_param_is_byref(MonoMethodSignature *sig, int index);
+MonoType* mono_unity_signature_get_type_for_param(MonoMethodSignature *sig, int index);
+
 
 //generic inst
 guint mono_unity_generic_inst_get_type_argc(MonoGenericInst *inst);
@@ -193,6 +200,8 @@ MONO_API char* mono_unity_get_data_dir();
 MONO_API MonoClass* mono_unity_class_get(MonoImage* image, guint32 type_token);
 MONO_API gpointer mono_unity_alloc(gsize size);
 MONO_API void mono_unity_g_free (void *ptr);
+MonoImage* mono_unity_assembly_get_image(MonoAssembly* assembly);
+MonoClass* mono_unity_field_get_class(MonoClassField* field);
 
 MONO_API MonoClass* mono_custom_attrs_get_attrs (MonoCustomAttrInfo *ainfo, gpointer *iter);
 MONO_API MonoArray* mono_unity_custom_attrs_construct (MonoCustomAttrInfo *cinfo, MonoError *error);
@@ -234,5 +243,14 @@ mono_unity_set_android_network_up_state_func(android_network_up_state func);
 
 MonoBoolean
 ves_icall_Unity_Android_Network_Interface_Up_State (MonoString *ifName, MonoBoolean* is_up);
+MONO_API
+mono_unichar2*
+mono_unity_string_chars (MonoString *s);
+
+MONO_API
+guint32 mono_unity_get_all_classes_size (MonoImage *image);
+
+MONO_API
+MonoClass* mono_unity_get_class_by_index(MonoImage *image, guint32 index);
 
 #endif

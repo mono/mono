@@ -406,6 +406,7 @@ gc_dependent_sources = \
 	monitor.c
 
 unity_gc_dependent_sources = \
+	unity-liveness.h \
 	unity-liveness.c
 
 boehm_sources = \
@@ -480,6 +481,7 @@ libmonoruntimeinclude_HEADERS = \
 	threads.h		\
 	tokentype.h		\
 	verify.h		\
+	unity-liveness.h	\
 	unity-utils.h
 
 if !ENABLE_MSVC_ONLY

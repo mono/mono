@@ -127,8 +127,19 @@ unsigned mono_unity_get_all_classes_with_name_case (MonoImage *image, const char
 	return length;
 }
 
+guint32 mono_unity_get_all_classes_size (MonoImage *image)
+{
+	MonoTableInfo *tdef = &image->tables [MONO_TABLE_TYPEDEF];
+	return tdef->rows;
+}
+
+MonoClass* mono_unity_get_class_by_index(MonoImage *image, guint32 index)
+{
+	return mono_class_get(image, (index + 1) | MONO_TOKEN_TYPE_DEF);
+}
+
 gboolean
-unity_mono_method_is_generic (MonoMethod* method)
+mono_unity_method_is_generic (MonoMethod* method)
 {
 	return method->is_generic;
 }
@@ -146,6 +157,16 @@ MONO_API void
 mono_unity_g_free(void *ptr)
 {
 	g_free (ptr);
+}
+
+MonoImage* mono_unity_assembly_get_image(MonoAssembly* assembly)
+{
+	return assembly->image;
+}
+
+MonoClass* mono_unity_field_get_class(MonoClassField* field)
+{
+	return field->parent;
 }
 
 
@@ -376,6 +397,11 @@ mono_class_is_blittable(MonoClass *klass)
 gboolean mono_unity_class_has_cctor(MonoClass *klass)
 {
     return klass->has_cctor ? TRUE : FALSE;
+}
+
+gboolean mono_unity_class_has_reference(MonoClass* kclass)
+{
+	return m_class_has_references(kclass);
 }
 
 //method
@@ -723,7 +749,7 @@ MonoObject* mono_unity_method_convert_return_type_if_needed(MonoMethod *method, 
 }
 
 MONO_API gboolean
-unity_mono_method_is_inflated(MonoMethod* method)
+mono_unity_method_is_inflated(MonoMethod* method)
 {
 	return method->is_inflated;
 }
@@ -731,6 +757,20 @@ unity_mono_method_is_inflated(MonoMethod* method)
 guint32 mono_unity_method_get_token(MonoMethod *method)
 {
 	return method->token;
+}
+
+const char* mono_unity_method_get_param_name(MonoMethod *method, uint32_t index)
+{
+	MonoMethodSignature* sig = mono_method_signature(method);
+	if (index >= sig->param_count)
+	{
+		return NULL;
+	}
+	const char** names = g_new (char *, sig->param_count);
+	mono_method_get_param_names (method, (const char **) names);
+	const char* result = names[index];
+	g_free(names);
+	return result;
 }
 
 //domain
@@ -773,6 +813,33 @@ MonoClass* mono_unity_array_get_class(MonoArray *arr)
 mono_array_size_t mono_unity_array_get_max_length(MonoArray *arr)
 {
 	return arr->max_length;
+}
+
+int
+mono_unity_array_get_byte_length (MonoArray* array)
+{
+	int length;
+
+	MonoClass * const klass = ((MonoObject*)array)->vtable->klass;
+
+	// This resembles mono_array_get_length, but adds the loop.
+
+	if (array->bounds != NULL) {
+		length = 1;
+		const int klass_rank = m_class_get_rank (klass);
+		for (int i = 0; i < klass_rank; ++ i)
+			length *= array->bounds [i].length;
+	} else {
+		length = array->max_length;
+	}
+
+	return length * klass->sizes.element_size;
+}
+
+MonoArray* mono_unity_array_new_specific(MonoClass* arrayClass, uintptr_t size)
+{
+	MonoVTable* vTable = mono_class_try_get_vtable(arrayClass);
+	return mono_array_new_specific(vTable, size);
 }
 
 //type
@@ -827,6 +894,11 @@ MonoClass* mono_unity_signature_get_class_for_param(MonoMethodSignature *sig, in
 {
 	MonoType *type = sig->params[index];
 	return mono_class_from_mono_type(type);
+}
+
+MonoType* mono_unity_signature_get_type_for_param(MonoMethodSignature *sig, int index)
+{
+	return sig->params[index];
 }
 
 int mono_unity_signature_num_parameters(MonoMethodSignature *sig)
@@ -1926,14 +1998,10 @@ handle_gc_handle(gpointer handle_target, gpointer handle_report_callback)
 MONO_API void
 mono_unity_gc_handles_foreach_get_target(GFunc callback, gpointer user_data)
 {
-#if HAVE_BOEHM_GC
 	execution_ctx ctx;
 	ctx.callback = callback;
 	ctx.user_data = user_data;
 	mono_gc_strong_handle_foreach(handle_gc_handle, &ctx);
-#else
-	g_assert_not_reached();
-#endif
 }
 
 // VM runtime info
@@ -2011,3 +2079,10 @@ ves_icall_Unity_Android_Network_Interface_Up_State (MonoString *ifName, MonoBool
 }
 #endif
 
+MONO_API
+mono_unichar2*
+mono_unity_string_chars (MonoString *s)
+{
+	MONO_REQ_GC_UNSAFE_MODE;
+	return s->chars;
+}

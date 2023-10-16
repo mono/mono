@@ -18,8 +18,15 @@
 
 MONO_BEGIN_DECLS
 
+typedef struct MonoUnityStackFrameInfo
+{
+    const MonoMethod *method;
+} MonoUnityStackFrameInfo;
+
 /* This callback should return TRUE if the runtime must wait for the thread, FALSE otherwise */
 typedef mono_bool (*MonoThreadManageCallback) (MonoThread* thread);
+typedef void (*MonoThreadManageVisit) (MonoThread* thread);
+typedef void (*MonoUnityStackFrameInfoWalk) (const MonoUnityStackFrameInfo *info, void *user_data);
 
 MONO_API void mono_thread_init (MonoThreadStartCB start_cb,
 			      MonoThreadAttachCB attach_cb);
@@ -65,6 +72,35 @@ MONO_API MONO_RT_EXTERNAL_ONLY mono_bool
 mono_thread_detach_if_exiting (void);
 
 MONO_API mono_bool mono_thread_has_sufficient_execution_stack (void);
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+void
+mono_unity_thread_get_all_attached_threads(MonoThreadManageVisit visitFunc);
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+void mono_unity_current_thread_walk_frame_stack(MonoUnityStackFrameInfoWalk func, void* user_data);
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+void mono_unity_thread_walk_frame_stack(MonoThread* thread, MonoUnityStackFrameInfoWalk func, void* user_data);
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+void mono_unity_current_thread_get_top_frame(MonoUnityStackFrameInfo* frame);
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+void 
+mono_unity_thread_get_top_frame(MonoThread* thread, MonoUnityStackFrameInfo* frame);
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+void mono_unity_current_thread_get_frame_at(int32_t offset, MonoUnityStackFrameInfo* frame);
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+mono_bool mono_unity_thread_get_frame_at(MonoThread* thread, int32_t offset, MonoUnityStackFrameInfo* frame);
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+int32_t mono_unity_current_thread_get_stack_depth();
+
+MONO_API MONO_RT_EXTERNAL_ONLY
+int32_t mono_unity_thread_get_stack_depth(MonoThread* thread);
 
 MONO_END_DECLS
 
