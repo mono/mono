@@ -33,8 +33,8 @@
 
 #if HAVE_BOEHM_GC
 #include <mono/utils/gc_wrapper.h>
-#include <mono/metadata/gc-internals.h>
 #endif
+#include <mono/metadata/gc-internals.h>
 
 #include <glib.h>
 
