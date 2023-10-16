@@ -1485,15 +1485,15 @@ mono_monitor_wait_internal (MonoObject* const obj, guint32 ms, MonoBoolean allow
 MonoBoolean
 mono_monitor_wait_external (MonoObject* obj, guint32 ms)
 {
-	MonoError* error = NULL;
-	mono_monitor_wait_internal(obj, ms, 1, &error);
+	ERROR_DECL (error);
+	return mono_monitor_wait_internal(obj, ms, 1, error);
 }
 
 static MonoBoolean
 mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
 {
 	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
-	mono_monitor_wait_internal(obj, ms, allow_interruption, error);
+	return mono_monitor_wait_internal(obj, ms, allow_interruption, error);
 }
 
 MonoBoolean
