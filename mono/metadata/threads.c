@@ -1072,8 +1072,8 @@ mono_thread_detach_internal (MonoInternalThread *thread)
 
 	for (int i = 0; i < threads_array->len; ++i)
 	{
-		MonoThread* thread = g_array_index(threads_array, MonoThread*, i);
-		if (thread->internal_thread == thread)
+		MonoThread* curThread = g_array_index(threads_array, MonoThread*, i);
+		if (curThread->internal_thread == thread)
 		{
 			threads_array = g_array_remove_index(threads_array, i);
 			removed = TRUE;
@@ -7608,7 +7608,7 @@ mono_unity_thread_get_top_frame(MonoThread* thread, MonoUnityStackFrameInfo* fra
 	mono_gchandle_free_internal(handle);
 }
 
-void mono_unity_current_thread_get_frame_at(int32_t offset, MonoUnityStackFrameInfo* frame)
+mono_bool mono_unity_current_thread_get_frame_at(int32_t offset, MonoUnityStackFrameInfo* frame)
 {
     MonoUnityDumpInfoByIndex di;
 	di.idx = 0;
@@ -7617,6 +7617,7 @@ void mono_unity_current_thread_get_frame_at(int32_t offset, MonoUnityStackFrameI
 	di.thread_func = NULL;
 	di.out_sent_frame = frame;
 	mono_get_eh_callbacks ()->mono_walk_stack_with_ctx (collect_unity_frame_by_index, NULL, MONO_UNWIND_SIGNAL_SAFE, &di);
+	return di.idx == di.target_idx;
 }
 
 mono_bool mono_unity_thread_get_frame_at(MonoThread* thread, int32_t offset, MonoUnityStackFrameInfo* frame)
@@ -7630,6 +7631,7 @@ mono_bool mono_unity_thread_get_frame_at(MonoThread* thread, int32_t offset, Mon
 	MonoGCHandle handle = mono_gchandle_new_internal (&thread->internal_thread->obj, TRUE);
 	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread->internal_thread), FALSE, get_mono_unity_thread_dump, &di);
 	mono_gchandle_free_internal(handle);
+	return di.idx == di.target_idx;
 }
 
 int32_t mono_unity_current_thread_get_stack_depth()

@@ -47,7 +47,7 @@ MONO_API void
 mono_set_find_plugin_callback(UnityFindPluginCallback find);
 
 MONO_API UnityFindPluginCallback
-mono_get_find_plugin_callback();
+mono_get_find_plugin_callback(void);
 
 //object
 void mono_unity_object_init(void* obj, MonoClass* klass);
@@ -147,16 +147,16 @@ MonoException* mono_unity_exception_get_marshal_directive(const char* msg);
 MONO_API MonoException* mono_unity_error_convert_to_exception(MonoError *error);
 
 //defaults
-MonoClass* mono_unity_defaults_get_int_class();
-MonoClass* mono_unity_defaults_get_stack_frame_class();
-MonoClass* mono_unity_defaults_get_int32_class();
-MonoClass* mono_unity_defaults_get_char_class();
-MonoClass* mono_unity_defaults_get_delegate_class();
-MonoClass* mono_unity_defaults_get_byte_class();
+MonoClass* mono_unity_defaults_get_int_class(void);
+MonoClass* mono_unity_defaults_get_stack_frame_class(void);
+MonoClass* mono_unity_defaults_get_int32_class(void);
+MonoClass* mono_unity_defaults_get_char_class(void);
+MonoClass* mono_unity_defaults_get_delegate_class(void);
+MonoClass* mono_unity_defaults_get_byte_class(void);
 
 //unitytls
 typedef struct unitytls_interface_struct unitytls_interface_struct;
-MONO_API unitytls_interface_struct* mono_unity_get_unitytls_interface();
+MONO_API unitytls_interface_struct* mono_unity_get_unitytls_interface(void);
 MONO_API void mono_unity_install_unitytls_interface(unitytls_interface_struct* callbacks);
 
 // gc
@@ -170,11 +170,11 @@ typedef enum
 MONO_API void mono_unity_gc_set_mode(MonoGCMode mode);
 
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
-MONO_API void mono_unity_gc_enable();
+MONO_API void mono_unity_gc_enable(void);
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
-MONO_API void mono_unity_gc_disable();
+MONO_API void mono_unity_gc_disable(void);
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
-MONO_API int mono_unity_gc_is_disabled();
+MONO_API int mono_unity_gc_is_disabled(void);
 
 // logging
 typedef void (*UnityLogErrorCallback) (const char *message);
@@ -182,12 +182,12 @@ MONO_API void mono_unity_set_editor_logging_callback(UnityLogErrorCallback callb
 gboolean mono_unity_log_error_to_editor(const char *message);
 
 //misc
-MonoAssembly* mono_unity_assembly_get_mscorlib();
-MonoImage* mono_unity_image_get_mscorlib();
+MonoAssembly* mono_unity_assembly_get_mscorlib(void);
+MonoImage* mono_unity_image_get_mscorlib(void);
 MonoClass* mono_unity_generic_container_get_parameter_class(MonoGenericContainer* generic_container, gint index);
 MonoString* mono_unity_string_append_assembly_name_if_necessary(MonoString* typeName, const char* assemblyName);
-void mono_unity_memory_barrier();
-MonoException* mono_unity_thread_check_exception();
+void mono_unity_memory_barrier(void);
+MonoException* mono_unity_thread_check_exception(void);
 MonoObject* mono_unity_delegate_get_target(MonoDelegate *delegate);
 gchar* mono_unity_get_runtime_build_info(const char *date, const char *time);
 void* mono_unity_get_field_address(MonoObject *obj, MonoVTable *vt, MonoClassField *field);
@@ -196,7 +196,7 @@ gboolean mono_unity_thread_state_init_from_handle(MonoThreadUnwindState *tctx, M
 void mono_unity_stackframe_set_method(MonoStackFrame *sf, MonoMethod *method);
 MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type);
 MONO_API void mono_unity_set_data_dir(const char* dir);
-MONO_API char* mono_unity_get_data_dir();
+MONO_API char* mono_unity_get_data_dir(void);
 MONO_API MonoClass* mono_unity_class_get(MonoImage* image, guint32 type_token);
 MONO_API gpointer mono_unity_alloc(gsize size);
 MONO_API void mono_unity_g_free (void *ptr);

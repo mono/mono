@@ -91,7 +91,7 @@ void
 mono_unity_thread_get_top_frame(MonoThread* thread, MonoUnityStackFrameInfo* frame);
 
 MONO_API MONO_RT_EXTERNAL_ONLY
-void mono_unity_current_thread_get_frame_at(int32_t offset, MonoUnityStackFrameInfo* frame);
+mono_bool mono_unity_current_thread_get_frame_at(int32_t offset, MonoUnityStackFrameInfo* frame);
 
 MONO_API MONO_RT_EXTERNAL_ONLY
 mono_bool mono_unity_thread_get_frame_at(MonoThread* thread, int32_t offset, MonoUnityStackFrameInfo* frame);

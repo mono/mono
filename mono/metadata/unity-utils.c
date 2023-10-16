@@ -61,7 +61,7 @@ MONO_API void mono_unity_set_embeddinghostname(const char* name)
 
 
 
-MonoString* mono_unity_get_embeddinghostname()
+MonoString* mono_unity_get_embeddinghostname(void)
 {
 	if (gEmbeddingHostName == 0)
 		mono_unity_set_embeddinghostname("mono");
@@ -71,7 +71,7 @@ MonoString* mono_unity_get_embeddinghostname()
 static gboolean socket_security_enabled = FALSE;
 
 gboolean
-mono_unity_socket_security_enabled_get ()
+mono_unity_socket_security_enabled_get (void)
 {
 	return socket_security_enabled;
 }
@@ -224,7 +224,7 @@ mono_class_set_userdata(MonoClass* klass, void* userdata)
 }
 
 MONO_API int
-mono_class_get_userdata_offset()
+mono_class_get_userdata_offset(void)
 {
 	return offsetof(struct _MonoClass, unity_user_data);
 }
@@ -239,7 +239,7 @@ mono_set_find_plugin_callback (UnityFindPluginCallback find)
 }
 
 MONO_API UnityFindPluginCallback
-mono_get_find_plugin_callback ()
+mono_get_find_plugin_callback (void)
 {
 	return unity_find_plugin_callback;
 }
@@ -963,32 +963,32 @@ MonoException* mono_unity_error_convert_to_exception (MonoError *error)
 
 //defaults
 
-MonoClass* mono_unity_defaults_get_int_class()
+MonoClass* mono_unity_defaults_get_int_class(void)
 {
 	return mono_defaults.int_class;
 }
 
-MonoClass* mono_unity_defaults_get_stack_frame_class()
+MonoClass* mono_unity_defaults_get_stack_frame_class(void)
 {
 	return mono_defaults.stack_frame_class;
 }
 
-MonoClass* mono_unity_defaults_get_int32_class()
+MonoClass* mono_unity_defaults_get_int32_class(void)
 {
 	return mono_defaults.int32_class;
 }
 
-MonoClass* mono_unity_defaults_get_char_class()
+MonoClass* mono_unity_defaults_get_char_class(void)
 {
 	return mono_defaults.char_class;
 }
 
-MonoClass* mono_unity_defaults_get_delegate_class()
+MonoClass* mono_unity_defaults_get_delegate_class(void)
 {
 	return mono_defaults.delegate_class;
 }
 
-MonoClass* mono_unity_defaults_get_byte_class()
+MonoClass* mono_unity_defaults_get_byte_class(void)
 {
 	return mono_defaults.byte_class;
 }
@@ -998,7 +998,7 @@ MonoClass* mono_unity_defaults_get_byte_class()
 static unitytls_interface_struct* gUnitytlsInterface = NULL;
 
 MONO_API unitytls_interface_struct* 
-mono_unity_get_unitytls_interface()
+mono_unity_get_unitytls_interface(void)
 {
 	return gUnitytlsInterface;
 }
@@ -1032,7 +1032,7 @@ MONO_API void mono_unity_gc_set_mode(MonoGCMode mode)
 }
 
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
-MONO_API void mono_unity_gc_enable()
+MONO_API void mono_unity_gc_enable(void)
 {
 #if HAVE_BOEHM_GC
 	GC_enable();
@@ -1042,7 +1042,7 @@ MONO_API void mono_unity_gc_enable()
 }
 
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
-MONO_API void mono_unity_gc_disable()
+MONO_API void mono_unity_gc_disable(void)
 {
 #if HAVE_BOEHM_GC
 	GC_disable();
@@ -1052,7 +1052,7 @@ MONO_API void mono_unity_gc_disable()
 }
 
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
-MONO_API int mono_unity_gc_is_disabled()
+MONO_API int mono_unity_gc_is_disabled(void)
 {
 #if HAVE_BOEHM_GC
 	return GC_is_disabled ();
@@ -1087,12 +1087,12 @@ mono_unity_install_unitytls_interface(unitytls_interface_struct* callbacks)
 
 //misc
 
-MonoAssembly* mono_unity_assembly_get_mscorlib()
+MonoAssembly* mono_unity_assembly_get_mscorlib(void)
 {
 	return mono_defaults.corlib->assembly;
 }
 
-MonoImage* mono_unity_image_get_mscorlib()
+MonoImage* mono_unity_image_get_mscorlib(void)
 {
 	return mono_defaults.corlib->assembly->image;
 }
@@ -1133,7 +1133,7 @@ MonoString* mono_unity_string_append_assembly_name_if_necessary(MonoString* type
 	return typeName;
 }
 
-void mono_unity_memory_barrier()
+void mono_unity_memory_barrier(void)
 {
 	mono_memory_barrier();
 }
@@ -1212,7 +1212,7 @@ mono_unity_runtime_set_main_args (int argc, const char* argv[])
 }
 
 MONO_API MonoString*
-mono_unity_string_empty_wrapper ()
+mono_unity_string_empty_wrapper (void)
 {
 	return mono_string_empty (mono_domain_get ());
 }
@@ -1250,7 +1250,7 @@ mono_unity_domain_set_config (MonoDomain *domain, const char *base_dir, const ch
 }
 
 MONO_API MonoException*
-mono_unity_loader_get_last_error_and_error_prepare_exception ()
+mono_unity_loader_get_last_error_and_error_prepare_exception (void)
 {
 	return NULL;
 }
@@ -1273,7 +1273,7 @@ mono_unity_set_data_dir(const char* dir)
 }
 
 MONO_API char*
-mono_unity_get_data_dir()
+mono_unity_get_data_dir(void)
 {
     return data_dir;
 }
@@ -1367,7 +1367,7 @@ mono_unity_thread_fast_attach (MonoDomain *domain)
 }
 
 MONO_API void
-mono_unity_thread_fast_detach ()
+mono_unity_thread_fast_detach (void)
 {
 	MonoInternalThread *thread;
 	MonoDomain *current_domain;
@@ -1942,7 +1942,7 @@ mono_unity_class_field_is_literal(MonoClassField *field)
 
 // GC world control
 MONO_API void
-mono_unity_stop_gc_world()
+mono_unity_stop_gc_world(void)
 {
 #if HAVE_BOEHM_GC
 	GC_stop_world_external();
@@ -1952,7 +1952,7 @@ mono_unity_stop_gc_world()
 }
 
 MONO_API void
-mono_unity_start_gc_world()
+mono_unity_start_gc_world(void)
 {
 #if HAVE_BOEHM_GC
 	GC_start_world_external();
@@ -2006,31 +2006,31 @@ mono_unity_gc_handles_foreach_get_target(GFunc callback, gpointer user_data)
 
 // VM runtime info
 MONO_API uint32_t
-mono_unity_object_header_size()
+mono_unity_object_header_size(void)
 {
 	return (uint32_t)(sizeof(MonoObject));
 }
 
 MONO_API uint32_t
-mono_unity_array_object_header_size()
+mono_unity_array_object_header_size(void)
 {
 	return offsetof(MonoArray, vector);
 }
 
 MONO_API uint32_t
-mono_unity_offset_of_array_length_in_array_object_header()
+mono_unity_offset_of_array_length_in_array_object_header(void)
 {
 	return offsetof(MonoArray, max_length);
 }
 
 MONO_API uint32_t
-mono_unity_offset_of_array_bounds_in_array_object_header()
+mono_unity_offset_of_array_bounds_in_array_object_header(void)
 {
 	return offsetof(MonoArray, bounds);
 }
 
 MONO_API uint32_t
-mono_unity_allocation_granularity()
+mono_unity_allocation_granularity(void)
 {
 	return (uint32_t)(2 * sizeof(void *));
 }
