@@ -838,6 +838,7 @@ LivenessState * mono_unity_liveness_calculation_begin(MonoClass *filter, guint m
 	LivenessState* ls = mono_unity_liveness_allocate_struct(filter, max_count, callback, callback_userdata);
 	onWorldStopped();
 	mono_gc_stop_world();
+	return ls;
 }
 
 void mono_unity_liveness_calculation_end(LivenessState *state)
