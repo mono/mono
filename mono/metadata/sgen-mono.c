@@ -3253,4 +3253,33 @@ sgen_client_schedule_background_job (void (*cb)(void))
 
 #endif
 
+typedef struct {
+       GFunc *func;
+       gpointer *user_data;
+} HandleForeachContext;
+
+static gpointer
+gc_strong_handle_foreach (gpointer hidden, GCHandleType handle_type, int max_generation, gpointer user)
+{
+	if (hidden)
+	{
+		HandleForeachContext* context = (HandleForeachContext*)user;
+		context->func(hidden, context->user_data);
+	}
+	return hidden;
+}
+
+void
+mono_gc_strong_handle_foreach(GFunc func, gpointer user_data)
+{
+	HandleForeachContext context;
+	context.func = func;
+	context.user_data = user_data;
+	mono_gc_stop_world();
+	guint type;
+	for (type = HANDLE_NORMAL; type < HANDLE_PINNED; ++type)
+		sgen_gchandle_iterate ((GCHandleType)type, GENERATION_OLD, gc_strong_handle_foreach, &context);
+	mono_gc_restart_world();
+}
+
 #endif
