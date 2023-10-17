@@ -33,5 +33,5 @@ MONO_API void mono_unity_liveness_calculation_from_statics(LivenessState *state)
 MONO_API LivenessState * mono_unity_liveness_calculation_begin(MonoClass *filter, guint max_count, register_object_callback callback, void *callback_userdata, WorldStateChanged onWorldStarted, WorldStateChanged onWorldStopped);
 
 MONO_API void mono_unity_liveness_calculation_end(LivenessState *state);
-MONO_API void mono_unity_liveness_set_memory_callback(unity_aligned_malloc_func aligned_alloc_callback, unityaligned_free_func aligned_free_callback)
+MONO_API void mono_unity_liveness_set_memory_callback(unity_aligned_malloc_func aligned_alloc_callback, unity_aligned_free_func aligned_free_callback)
 #endif

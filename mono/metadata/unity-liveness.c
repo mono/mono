@@ -924,7 +924,7 @@ void mono_unity_liveness_calculation_end(LivenessState *state)
 	mono_unity_liveness_free_struct(state);
 }
 
-void mono_unity_liveness_set_memory_callback(unity_aligned_malloc_func aligned_alloc_callback, unityaligned_free_func aligned_free_callback)
+void mono_unity_liveness_set_memory_callback(unity_aligned_malloc_func aligned_alloc_callback, unity_aligned_free_func aligned_free_callback)
 {
 	block_memory_callbacks.aligned_malloc_func = aligned_alloc_callback;
 	block_memory_callbacks.aligned_free_func = aligned_free_callback;
