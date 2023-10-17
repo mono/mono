@@ -909,7 +909,7 @@ void mono_unity_liveness_free_struct(LivenessState *state)
 
 LivenessState * mono_unity_liveness_calculation_begin(MonoClass *filter, guint max_count, register_object_callback callback, void *callback_userdata, WorldStateChanged onWorldStarted, WorldStateChanged onWorldStopped)
 {
-	LivenessState* ls = mono_unity_liveness_allocate_struct(filter, max_count, callback, callback_userdata);
+	LivenessState* ls = mono_unity_liveness_allocate_struct(filter, max_count, callback, callback_userdata, onWorldStarted);
 	onWorldStopped();
 	mono_gc_stop_world();
 	return ls;
