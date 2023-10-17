@@ -3254,7 +3254,7 @@ sgen_client_schedule_background_job (void (*cb)(void))
 #endif
 
 typedef struct {
-       GFunc *func;
+       GFunc func;
        gpointer *user_data;
 } HandleForeachContext;
 
