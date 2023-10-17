@@ -32,8 +32,6 @@
 #define k_block_size (8 * 1024)
 #define k_array_elements_per_block ((k_block_size - 3 * sizeof (void*)) / sizeof (gpointer))
 
-typedef struct _custom_array_block custom_array_block;
-
 typedef struct _custom_array_block {
 	gpointer *next_item;
 	custom_array_block *prev_block;
@@ -46,8 +44,6 @@ typedef struct _custom_aligned_memory_callbacks
     void* (*aligned_malloc_func)(size_t size, size_t alignment);
     void (*aligned_free_func)(gpointer ptr);
 } custom_aligned_memory_callbacks;
-
-typedef struct _custom_block_array_iterator custom_block_array_iterator;
 
 typedef struct _custom_growable_block_array {
 	custom_array_block *first_block;
@@ -77,7 +73,7 @@ struct _LivenessState {
 };
 
 #if defined(_POSIX_VERSION) || defined (TARGET_N3DS)
-    gpointer aligned_alloc(size_t size, size_t alignment)
+    static aligned_alloc(size_t size, size_t alignment)
     {
 #if defined(TARGET_ANDROID) || defined(TARGET_PSP2)
         return memalign(alignment, size);
@@ -88,30 +84,30 @@ struct _LivenessState {
 #endif
     }
 
-	void aligned_free(gpointer memory)
+	static void aligned_free(gpointer memory)
     {
         free(memory);
     }
 
 #elif defined(TARGET_WIN32)
 
-	gpointer aligned_alloc(size_t size, size_t alignment)
+	static gpointer aligned_alloc(size_t size, size_t alignment)
     {
         return _aligned_malloc(size, alignment);
     }
 
-	void aligned_free(gpointer memory)
+	static void aligned_free(gpointer memory)
     {
         return _aligned_free(memory);
     }
 #else
-	gpointer aligned_alloc(size_t size, size_t alignment)
+	static gpointer aligned_alloc(size_t size, size_t alignment)
     {
         g_assert_not_reached();
 		return NULL;
     }
 
-	void aligned_free(gpointer memory)
+	static void aligned_free(gpointer memory)
     {
         g_assert_not_reached();
     }
@@ -120,11 +116,11 @@ struct _LivenessState {
 static custom_aligned_memory_callbacks block_memory_callbacks = {
 	aligned_alloc,
 	aligned_free
-}
+};
 
-size_t g_pointer_align = ALIGN_OF(gpointer);
+static size_t g_pointer_align = ALIGN_OF(gpointer);
 
-custom_growable_block_array * block_array_create(LivenessState *state)
+static custom_growable_block_array * block_array_create(LivenessState *state)
 {
 	custom_growable_block_array *array = g_new0(custom_growable_block_array, 1);
 	array->current_block = block_memory_callbacks.aligned_malloc_func(k_block_size, g_pointer_align);
@@ -140,12 +136,12 @@ custom_growable_block_array * block_array_create(LivenessState *state)
 	return array;
 }
 
-gboolean block_array_is_empty(custom_growable_block_array *block_array)
+static gboolean block_array_is_empty(custom_growable_block_array *block_array)
 {
 	return block_array->first_block->next_item == block_array->first_block->p_data;
 }
 
-void block_array_push_back(custom_growable_block_array *block_array, gpointer value, LivenessState *state)
+static void block_array_push_back(custom_growable_block_array *block_array, gpointer value, LivenessState *state)
 {
 	if (block_array->current_block->next_item == block_array->current_block->p_data + k_array_elements_per_block) {
 		custom_array_block* new_block = block_array->current_block->next_block;
@@ -162,7 +158,7 @@ void block_array_push_back(custom_growable_block_array *block_array, gpointer va
 	*block_array->current_block->next_item++ = value;
 }
 
-gpointer block_array_pop_back(custom_growable_block_array *block_array)
+static gpointer block_array_pop_back(custom_growable_block_array *block_array)
 {
 	if (block_array->current_block->next_item == block_array->current_block->p_data) {
 		if (block_array->current_block->prev_block == NULL)
@@ -173,13 +169,13 @@ gpointer block_array_pop_back(custom_growable_block_array *block_array)
 	return *--block_array->current_block->next_item;
 }
 
-void block_array_reset_iterator(custom_growable_block_array *array)
+static void block_array_reset_iterator(custom_growable_block_array *array)
 {
 	array->iterator->current_block = array->first_block;
 	array->iterator->current_position = array->first_block->p_data;
 }
 
-gpointer block_array_next(custom_growable_block_array *block_array)
+static gpointer block_array_next(custom_growable_block_array *block_array)
 {
 	custom_block_array_iterator *iterator = block_array->iterator;
 	if (iterator->current_position != iterator->current_block->next_item)
@@ -193,7 +189,7 @@ gpointer block_array_next(custom_growable_block_array *block_array)
 	return *iterator->current_position++;
 }
 
-void block_array_clear(custom_growable_block_array *block_array)
+static void block_array_clear(custom_growable_block_array *block_array)
 {
 	custom_array_block *block = block_array->first_block;
 	while (block != NULL) {
@@ -202,7 +198,7 @@ void block_array_clear(custom_growable_block_array *block_array)
 	}
 }
 
-void block_array_destroy(custom_growable_block_array *block_array, LivenessState *state)
+static void block_array_destroy(custom_growable_block_array *block_array, LivenessState *state)
 {
 	custom_array_block *block = block_array->first_block;
 	while (block != NULL) {
