@@ -79,7 +79,7 @@ struct _LivenessState {
 };
 
 #if defined(_POSIX_VERSION) || defined (TARGET_N3DS)
-    static gpointer aligned_alloc(size_t size, size_t alignment)
+    static gpointer custom_aligned_alloc(size_t size, size_t alignment)
     {
 #if defined(TARGET_ANDROID) || defined(TARGET_PSP2)
         return memalign(alignment, size);
@@ -90,38 +90,38 @@ struct _LivenessState {
 #endif
     }
 
-	static void aligned_free(gpointer memory)
+	static void custom_aligned_free(gpointer memory)
     {
         free(memory);
     }
 
 #elif defined(TARGET_WIN32)
 
-	static gpointer aligned_alloc(size_t size, size_t alignment)
+	static gpointer custom_aligned_alloc(size_t size, size_t alignment)
     {
         return _aligned_malloc(size, alignment);
     }
 
-	static void aligned_free(gpointer memory)
+	static void custom_aligned_free(gpointer memory)
     {
         return _aligned_free(memory);
     }
 #else
-	static gpointer aligned_alloc(size_t size, size_t alignment)
+	static gpointer custom_aligned_alloc(size_t size, size_t alignment)
     {
         g_assert_not_reached();
 		return NULL;
     }
 
-	static void aligned_free(gpointer memory)
+	static void custom_aligned_free(gpointer memory)
     {
         g_assert_not_reached();
     }
 #endif
 
 static custom_aligned_memory_callbacks block_memory_callbacks = {
-	aligned_alloc,
-	aligned_free
+	custom_aligned_alloc,
+	custom_aligned_free
 };
 
 static size_t g_pointer_align = ALIGN_OF(gpointer);
