@@ -9,7 +9,9 @@
 #include <mono/utils/mono-error.h>
 #include <mono/metadata/unity-liveness.h>
 #include <mono/metadata/mono-gc.h>
+#if defined(TARGET_ANDROID) || defined(TARGET_PSP2) || defined(TARGET_WIN32)
 #include <malloc.h>
+#endif
 
 
 #if defined(__GNUC__) || defined(__SNC__) || defined(__clang__)
@@ -77,7 +79,7 @@ struct _LivenessState {
 };
 
 #if defined(_POSIX_VERSION) || defined (TARGET_N3DS)
-    static aligned_alloc(size_t size, size_t alignment)
+    static gpointer aligned_alloc(size_t size, size_t alignment)
     {
 #if defined(TARGET_ANDROID) || defined(TARGET_PSP2)
         return memalign(alignment, size);
