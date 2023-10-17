@@ -9,6 +9,28 @@
 #include <mono/utils/mono-error.h>
 #include <mono/metadata/unity-liveness.h>
 #include <mono/metadata/mono-gc.h>
+#include <malloc.h>
+
+
+#if defined(__GNUC__) || defined(__SNC__) || defined(__clang__)
+    #define ALIGN_OF(T) __alignof__(T)
+    #define ALIGN_TYPE(val) __attribute__((aligned(val)))
+    #define ALIGN_FIELD(val) ALIGN_TYPE(val)
+#elif defined(_MSC_VER)
+    #define ALIGN_OF(T) __alignof(T)
+#if _MSC_VER >= 1900 && defined(__cplusplus)
+    #define ALIGN_TYPE(val) alignas(val)
+#else
+    #define ALIGN_TYPE(val) __declspec(align(val))
+#endif
+    #define ALIGN_FIELD(val) __declspec(align(val))
+#else
+    #define ALIGN_TYPE(size)
+    #define ALIGN_FIELD(size)
+#endif
+
+#define k_block_size (8 * 1024)
+#define k_array_elements_per_block ((k_block_size - 3 * sizeof (void*)) / sizeof (gpointer))
 
 typedef struct _custom_array_block custom_array_block;
 
@@ -18,6 +40,12 @@ typedef struct _custom_array_block {
 	custom_array_block *next_block;
 	gpointer p_data[k_array_elements_per_block];
 } custom_array_block;
+
+typedef struct _custom_aligned_memory_callbacks
+{
+    void* (*aligned_malloc_func)(size_t size, size_t alignment);
+    void (*aligned_free_func)(gpointer ptr);
+} custom_aligned_memory_callbacks;
 
 typedef struct _custom_block_array_iterator custom_block_array_iterator;
 
@@ -44,15 +72,62 @@ struct _LivenessState {
 	void *callback_userdata;
 
 	register_object_callback filter_callback;
-	ReallocateArray reallocateArray;
 	WorldStateChanged onWorldStart;
 	guint traverse_depth; // track recursion. Prevent stack overflow by limiting recursion
 };
 
+#if defined(_POSIX_VERSION) || defined (TARGET_N3DS)
+    gpointer aligned_alloc(size_t size, size_t alignment)
+    {
+#if defined(TARGET_ANDROID) || defined(TARGET_PSP2)
+        return memalign(alignment, size);
+#else
+        void* ptr = NULL;
+        posix_memalign(&ptr, alignment, size);
+        return ptr;
+#endif
+    }
+
+	void aligned_free(gpointer memory)
+    {
+        free(memory);
+    }
+
+#elif defined(TARGET_WIN32)
+
+	gpointer aligned_alloc(size_t size, size_t alignment)
+    {
+        return _aligned_malloc(size, alignment);
+    }
+
+	void aligned_free(gpointer memory)
+    {
+        return _aligned_free(memory);
+    }
+#else
+	gpointer aligned_alloc(size_t size, size_t alignment)
+    {
+        g_assert_not_reached();
+		return NULL;
+    }
+
+	void aligned_free(gpointer memory)
+    {
+        g_assert_not_reached();
+    }
+#endif
+
+static custom_aligned_memory_callbacks block_memory_callbacks = {
+	aligned_alloc,
+	aligned_free
+}
+
+size_t g_pointer_align = ALIGN_OF(gpointer);
+
 custom_growable_block_array * block_array_create(LivenessState *state)
 {
 	custom_growable_block_array *array = g_new0(custom_growable_block_array, 1);
-	array->current_block = state->reallocateArray(NULL, k_block_size, state->callback_userdata);
+	array->current_block = block_memory_callbacks.aligned_malloc_func(k_block_size, g_pointer_align);
 	array->current_block->prev_block = NULL;
 	array->current_block->next_block = NULL;
 	array->current_block->next_item = array->current_block->p_data;
@@ -76,7 +151,7 @@ void block_array_push_back(custom_growable_block_array *block_array, gpointer va
 		custom_array_block* new_block = block_array->current_block->next_block;
 		if (block_array->current_block->next_block == NULL)
 		{
-			new_block = state->reallocateArray(NULL, k_block_size, state->callback_userdata);
+			new_block = block_memory_callbacks.aligned_malloc_func(k_block_size, g_pointer_align);
 			new_block->next_block = NULL;
 			new_block->prev_block = block_array->current_block;
 			new_block->next_item = new_block->p_data;
@@ -133,7 +208,7 @@ void block_array_destroy(custom_growable_block_array *block_array, LivenessState
 	while (block != NULL) {
 		void *data_block = block;
 		block = block->next_block;
-		state->reallocateArray(data_block, 0, state->callback_userdata);
+		block_memory_callbacks.aligned_free_func(data_block);
 	}
 	g_free(block_array->iterator);
 	g_free(block_array);
@@ -788,7 +863,7 @@ void mono_unity_liveness_calculation_from_root(MonoObject *root, LivenessState *
 	mono_filter_objects(liveness_state);
 }
 
-LivenessState * mono_unity_liveness_allocate_struct(MonoClass *filter, guint max_count, register_object_callback callback, void *callback_userdata, ReallocateArray reallocateArray, WorldStateChanged onWorldStart)
+LivenessState * mono_unity_liveness_allocate_struct(MonoClass *filter, guint max_count, register_object_callback callback, void *callback_userdata, WorldStateChanged onWorldStart)
 {
 	LivenessState *state = NULL;
 
@@ -805,7 +880,6 @@ LivenessState * mono_unity_liveness_allocate_struct(MonoClass *filter, guint max
 
 	state->callback_userdata = callback_userdata;
 	state->filter_callback = callback;
-	state->reallocateArray = reallocateArray;
 	state->onWorldStart = onWorldStart;
 
 	state->all_objects = block_array_create(state);
@@ -848,4 +922,10 @@ void mono_unity_liveness_calculation_end(LivenessState *state)
 	mono_gc_restart_world();
 	onWorldStart();
 	mono_unity_liveness_free_struct(state);
+}
+
+void mono_unity_liveness_set_memory_callback(unity_aligned_malloc_func aligned_alloc_callback, unityaligned_free_func aligned_free_callback)
+{
+	block_memory_callbacks.aligned_malloc_func = aligned_alloc_callback;
+	block_memory_callbacks.aligned_free_func = aligned_free_callback;
 }
