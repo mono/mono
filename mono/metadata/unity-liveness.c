@@ -32,6 +32,8 @@
 #define k_block_size (8 * 1024)
 #define k_array_elements_per_block ((k_block_size - 3 * sizeof (void*)) / sizeof (gpointer))
 
+typedef struct _custom_array_block custom_array_block;
+
 typedef struct _custom_array_block {
 	gpointer *next_item;
 	custom_array_block *prev_block;
@@ -44,6 +46,8 @@ typedef struct _custom_aligned_memory_callbacks
     void* (*aligned_malloc_func)(size_t size, size_t alignment);
     void (*aligned_free_func)(gpointer ptr);
 } custom_aligned_memory_callbacks;
+
+typedef struct _custom_block_array_iterator custom_block_array_iterator;
 
 typedef struct _custom_growable_block_array {
 	custom_array_block *first_block;
