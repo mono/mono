@@ -152,6 +152,7 @@ typedef struct {
 	MonoUnityStackFrameInfo* out_sent_frame;
 	MonoInternalThread* thread;
 	MonoInternalStackWalk thread_func;
+	gboolean result;
 } MonoUnityDumpInfoByIndex;
 
 
@@ -4128,6 +4129,7 @@ collect_unity_frame_by_index(MonoStackFrameInfo * frame, MonoContext* ctx, gpoin
 	if (di->idx == di->target_idx)
 	{
 		di->out_sent_frame->method = frame->method;
+		di->result = TRUE;
 		return TRUE;
 	}
 	++di->idx;
@@ -7583,7 +7585,7 @@ void mono_unity_thread_walk_frame_stack(MonoThread *thread, MonoUnityStackFrameI
 	mono_gchandle_free_internal(handle);
 }
 
-void mono_unity_current_thread_get_top_frame(MonoUnityStackFrameInfo* frame)
+mono_bool mono_unity_current_thread_get_top_frame(MonoUnityStackFrameInfo* frame)
 {
 	MonoUnityDumpInfoByIndex di;
 	di.idx = 0;
@@ -7591,10 +7593,12 @@ void mono_unity_current_thread_get_top_frame(MonoUnityStackFrameInfo* frame)
 	di.thread = NULL;
 	di.thread_func = NULL;
 	di.out_sent_frame = frame;
+	di.result = FALSE;
 	mono_get_eh_callbacks ()->mono_walk_stack_with_ctx (collect_unity_frame_by_index, NULL, MONO_UNWIND_SIGNAL_SAFE, &di);
+	return di.result;
 }
 
-void 
+mono_bool 
 mono_unity_thread_get_top_frame(MonoThread* thread, MonoUnityStackFrameInfo* frame)
 {
     MonoUnityDumpInfoByIndex di;
@@ -7603,9 +7607,11 @@ mono_unity_thread_get_top_frame(MonoThread* thread, MonoUnityStackFrameInfo* fra
 	di.thread = thread->internal_thread;;
 	di.thread_func = collect_unity_frame_by_index;
 	di.out_sent_frame = frame;
+	di.result = FALSE;
 	MonoGCHandle handle = mono_gchandle_new_internal (&thread->internal_thread->obj, TRUE);
 	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread->internal_thread), FALSE, get_mono_unity_thread_dump, &di);
 	mono_gchandle_free_internal(handle);
+	return di.result;
 }
 
 mono_bool mono_unity_current_thread_get_frame_at(int32_t offset, MonoUnityStackFrameInfo* frame)
@@ -7616,8 +7622,9 @@ mono_bool mono_unity_current_thread_get_frame_at(int32_t offset, MonoUnityStackF
 	di.thread = NULL;
 	di.thread_func = NULL;
 	di.out_sent_frame = frame;
+	di.result = FALSE;
 	mono_get_eh_callbacks ()->mono_walk_stack_with_ctx (collect_unity_frame_by_index, NULL, MONO_UNWIND_SIGNAL_SAFE, &di);
-	return di.idx == di.target_idx;
+	return di.result;
 }
 
 mono_bool mono_unity_thread_get_frame_at(MonoThread* thread, int32_t offset, MonoUnityStackFrameInfo* frame)
@@ -7628,10 +7635,11 @@ mono_bool mono_unity_thread_get_frame_at(MonoThread* thread, int32_t offset, Mon
 	di.thread = thread->internal_thread;;
 	di.thread_func = collect_unity_frame_by_index;
 	di.out_sent_frame = frame;
+	di.result = FALSE;
 	MonoGCHandle handle = mono_gchandle_new_internal (&thread->internal_thread->obj, TRUE);
 	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread->internal_thread), FALSE, get_mono_unity_thread_dump, &di);
 	mono_gchandle_free_internal(handle);
-	return di.idx == di.target_idx;
+	return di.result;
 }
 
 int32_t mono_unity_current_thread_get_stack_depth()
@@ -7642,8 +7650,9 @@ int32_t mono_unity_current_thread_get_stack_depth()
 	di.thread = NULL;
 	di.thread_func = NULL;
 	di.out_sent_frame = NULL;
+	di.result = FALSE;
     mono_get_eh_callbacks ()->mono_walk_stack_with_ctx (collect_unity_frame_by_index, NULL, MONO_UNWIND_SIGNAL_SAFE, &di);
-	return di.idx;
+	return di.result ? di.idx : -1;
 }
 
 int32_t mono_unity_thread_get_stack_depth(MonoThread *thread)
@@ -7654,8 +7663,9 @@ int32_t mono_unity_thread_get_stack_depth(MonoThread *thread)
 	di.thread = thread->internal_thread;;
 	di.thread_func = collect_unity_frame_by_index;
 	di.out_sent_frame = NULL;
+	di.result = FALSE;
 	MonoGCHandle handle = mono_gchandle_new_internal (&thread->internal_thread->obj, TRUE);
 	mono_thread_info_safe_suspend_and_run (thread_get_tid (thread->internal_thread), FALSE, get_mono_unity_thread_dump, &di);
 	mono_gchandle_free_internal(handle);
-	return di.idx;
+	return di.result ? di.idx : -1;
 }

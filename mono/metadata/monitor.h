@@ -130,12 +130,11 @@ mono_monitor_threads_sync_members_offset (int *status_offset, int *nest_offset);
 #define MONO_THREADS_SYNC_MEMBER_OFFSET(o)	((o)>>8)
 #define MONO_THREADS_SYNC_MEMBER_SIZE(o)	((o)&0xff)
 
-ICALL_EXTERN_C
-void mono_monitor_pulse_external(MonoObject *obj, const char *func, gboolean all);
 
-ICALL_EXTERN_C
+void
+mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all);
+
 MonoBoolean
-mono_monitor_wait_external (MonoObject* obj, guint32 ms);
-
+mono_monitor_wait_internal (MonoObject* const obj, guint32 ms, MonoBoolean allow_interruption, MonoError* error);
 
 #endif /* _MONO_METADATA_MONITOR_H_ */

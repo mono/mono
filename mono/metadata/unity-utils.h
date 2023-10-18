@@ -1,10 +1,11 @@
 #ifndef __UNITY_MONO_UTILS_H
 #define __UNITY_MONO_UTILS_H
 
-#include <glib.h>
 #include <stdio.h>
 #include <mono/metadata/object.h>
-#include <mono/metadata/marshal.h>
+
+typedef int (*unity_vprintf_func)(const char* msg, va_list args);
+typedef MonoObject *(*UnityRuntimeInvokeFunction) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
 
 typedef void (*assembly_foreach_func)(MonoAssembly* assembly);
 typedef struct {
@@ -13,6 +14,11 @@ typedef struct {
 	void* (*calloc_func)(size_t nmemb, size_t size);
 	void* (*realloc_func)(void *ptr, size_t size);
 } MonoMemoryCallbacks;
+
+struct MonoThreadUnwindState;
+struct MonoThreadInfo;
+struct MonoStackFrame;
+
 
 /**
  *	Custom exit function, called instead of system exit()
@@ -24,15 +30,15 @@ void unity_mono_exit( int code );
  */
 void unity_mono_close_output(void);
 
-extern MonoString* mono_unity_get_embeddinghostname(void);
+MONO_API MonoString* mono_unity_get_embeddinghostname(void);
 
 #ifdef WIN32
 FILE* unity_fopen( const char *name, const char *mode );
 #endif
 
-extern mono_bool mono_unity_socket_security_enabled_get (void);
-MONO_API extern void mono_unity_socket_security_enabled_set (mono_bool enabled);
-MONO_API void mono_unity_set_vprintf_func(vprintf_func func);
+MONO_API mono_bool mono_unity_socket_security_enabled_get (void);
+MONO_API void mono_unity_socket_security_enabled_set (mono_bool enabled);
+MONO_API void mono_unity_set_vprintf_func(unity_vprintf_func func);
 
 
 // void mono_unity_install_memory_callbacks(MonoMemoryCallbacks* callbacks);
@@ -76,6 +82,10 @@ MONO_API mono_bool mono_class_is_blittable(MonoClass *klass);
 MONO_API mono_bool mono_class_is_inflated(MonoClass *klass);
 mono_bool mono_unity_class_has_cctor(MonoClass *klass);
 mono_bool mono_unity_class_has_reference(MonoClass* kclass);
+MONO_API mono_bool mono_unity_class_is_abstract (MonoClass* klass);
+MONO_API void* mono_unity_vtable_get_static_field_data(MonoVTable *vTable);
+MONO_API MonoVTable* mono_unity_class_try_get_vtable(MonoDomain *domain, MonoClass *klass);
+MONO_API mono_bool mono_unity_class_field_is_literal(MonoClassField *field);
 
 //method 
 MonoMethod* mono_unity_method_get_generic_definition(MonoMethod* method);
@@ -84,6 +94,7 @@ MonoMethod* mono_unity_method_alloc0(MonoClass* klass);
 MonoMethod* mono_unity_method_delegate_invoke_wrapper(MonoClass* klass);
 mono_bool mono_unity_method_is_static(MonoMethod *method);
 MonoClass* mono_unity_method_get_class(const MonoMethod *method);
+MONO_API MonoMethod* mono_unity_reflection_method_get_method(MonoReflectionMethod* mrf);
 
 #ifdef IL2CPP_ON_MONO
 void* mono_unity_method_get_method_pointer(MonoMethod* method);
@@ -101,15 +112,15 @@ MONO_API uint32_t mono_unity_method_get_token(MonoMethod *method);
 MONO_API const char* mono_unity_method_get_param_name(MonoMethod *method, uint32_t index);
 
 //domain
-void mono_unity_domain_install_finalize_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback);
-void mono_unity_domain_install_capture_context_runtime_invoke(MonoDomain* domain, RuntimeInvokeFunction callback);
+void mono_unity_domain_install_finalize_runtime_invoke(MonoDomain* domain, UnityRuntimeInvokeFunction callback);
+void mono_unity_domain_install_capture_context_runtime_invoke(MonoDomain* domain, UnityRuntimeInvokeFunction callback);
 void mono_unity_domain_install_capture_context_method(MonoDomain* domain, void* callback);
 MONO_API void mono_unity_domain_unload (MonoDomain *domain, MonoUnityExceptionFunc callback);
 
 //array
-int mono_unity_array_get_element_size(MonoArray *arr);
+int mono_unity_array_get_element_size(MonoClass *arr_class);
 MonoClass* mono_unity_array_get_class(MonoArray *arr);
-mono_array_size_t mono_unity_array_get_max_length(MonoArray *arr);
+uint32_t mono_unity_array_get_max_length(MonoArray *arr);
 int mono_unity_array_get_byte_length (MonoArray* array);
 MonoArray* mono_unity_array_new_specific(MonoClass* arrayClass, uintptr_t size);
 
@@ -120,6 +131,7 @@ mono_bool mono_unity_type_is_enum_type(MonoType *type);
 mono_bool mono_unity_type_is_boolean(MonoType *type);
 MonoClass* mono_unity_type_get_element_class(MonoType *type); //only safe to call when the type has a defined klass data element
 uint64_t mono_unity_type_get_hash(MonoType *type, mono_bool inflate);
+MONO_API mono_bool mono_unity_type_is_static(MonoType *type);
 
 //generic class
 MonoGenericContext mono_unity_generic_class_get_context(MonoGenericClass *klass);
@@ -174,6 +186,7 @@ MONO_API void mono_unity_gc_enable(void);
 MONO_API void mono_unity_gc_disable(void);
 // Deprecated. Remove when Unity has switched to mono_unity_gc_set_mode
 MONO_API int mono_unity_gc_is_disabled(void);
+MONO_API void mono_unity_gc_handles_foreach_get_target(MonoFunc callback, void* user_data);
 
 // logging
 typedef void (*UnityLogErrorCallback) (const char *message);
@@ -251,5 +264,36 @@ uint32_t mono_unity_get_all_classes_size (MonoImage *image);
 
 MONO_API
 MonoClass* mono_unity_get_class_by_index(MonoImage *image, uint32_t index);
+
+MONO_API uint32_t
+mono_unity_object_header_size(void);
+
+MONO_API uint32_t
+mono_unity_array_object_header_size(void);
+
+MONO_API uint32_t
+mono_unity_offset_of_array_length_in_array_object_header(void);
+
+MONO_API uint32_t
+mono_unity_offset_of_array_bounds_in_array_object_header(void);
+
+MONO_API uint32_t
+mono_unity_allocation_granularity(void);
+
+MONO_API
+void mono_monitor_pulse_external(MonoObject *obj, const char *func, mono_bool all);
+
+MONO_API
+MonoBoolean
+mono_monitor_wait_external (MonoObject* obj, uint32_t ms);
+
+MONO_API void
+mono_unity_type_get_name_full_chunked(MonoType *type, MonoFunc chunkReportFunc, void* userData);
+
+MONO_API void
+mono_class_set_userdata(MonoClass* klass, void* userdata);
+
+MONO_API int
+mono_class_get_userdata_offset(void);
 
 #endif

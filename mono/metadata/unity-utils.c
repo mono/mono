@@ -29,6 +29,8 @@
 #include <mono/metadata/threads.h>
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/tokentype.h>
+#include <mono/metadata/monitor.h>
+#include <mono/metadata/external-only.h>
 #include <mono/utils/mono-string.h>
 
 #if HAVE_BOEHM_GC
@@ -145,7 +147,7 @@ mono_unity_method_is_generic (MonoMethod* method)
 }
 
 MONO_API MonoMethod*
-unity_mono_reflection_method_get_method(MonoReflectionMethod* mrf)
+mono_unity_reflection_method_get_method(MonoReflectionMethod* mrf)
 {
 	if(!mrf)
 		return NULL;
@@ -800,9 +802,9 @@ void mono_unity_domain_unload (MonoDomain* domain, MonoUnityExceptionFunc callba
 
 //array
 
-int mono_unity_array_get_element_size(MonoArray *arr)
+int mono_unity_array_get_element_size(MonoClass *arr_class)
 {
-	return arr->obj.vtable->klass->sizes.element_size;
+	return arr_class->sizes.element_size;
 }
 
 MonoClass* mono_unity_array_get_class(MonoArray *arr)
@@ -2085,4 +2087,16 @@ mono_unity_string_chars (MonoString *s)
 {
 	MONO_REQ_GC_UNSAFE_MODE;
 	return s->chars;
+}
+
+MonoBoolean
+mono_monitor_wait_external (MonoObject* obj, guint32 ms)
+{
+	ERROR_DECL (error);
+	return mono_monitor_wait_internal(obj, ms, 1, error);
+}
+
+void mono_monitor_pulse_external(MonoObject *obj, const char *func, gboolean all)
+{
+	MONO_EXTERNAL_ONLY_VOID (mono_monitor_pulse(obj, func, all))
 }

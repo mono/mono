@@ -84,10 +84,10 @@ MONO_API MONO_RT_EXTERNAL_ONLY
 void mono_unity_thread_walk_frame_stack(MonoThread* thread, MonoUnityStackFrameInfoWalk func, void* user_data);
 
 MONO_API MONO_RT_EXTERNAL_ONLY
-void mono_unity_current_thread_get_top_frame(MonoUnityStackFrameInfo* frame);
+mono_bool mono_unity_current_thread_get_top_frame(MonoUnityStackFrameInfo* frame);
 
 MONO_API MONO_RT_EXTERNAL_ONLY
-void 
+mono_bool 
 mono_unity_thread_get_top_frame(MonoThread* thread, MonoUnityStackFrameInfo* frame);
 
 MONO_API MONO_RT_EXTERNAL_ONLY

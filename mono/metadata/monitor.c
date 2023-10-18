@@ -1310,7 +1310,7 @@ ves_icall_System_Threading_Monitor_Monitor_test_synchronised (MonoObjectHandle o
  * any extra struct locking
  */
 
-static void
+void
 mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
 {
 	int const id = mono_thread_info_get_small_id ();
@@ -1343,11 +1343,6 @@ mono_monitor_pulse (MonoObject *obj, const char *func, gboolean all)
 	} while (all && mon->wait_list);
 }
 
-void mono_monitor_pulse_external(MonoObject *obj, const char *func, gboolean all)
-{
-	MONO_EXTERNAL_ONLY_VOID (mono_monitor_pulse(obj, func, all))
-}
-
 void
 ves_icall_System_Threading_Monitor_Monitor_pulse (MonoObjectHandle obj, MonoError* error)
 {
@@ -1360,7 +1355,7 @@ ves_icall_System_Threading_Monitor_Monitor_pulse_all (MonoObjectHandle obj, Mono
 	mono_monitor_pulse (MONO_HANDLE_RAW (obj), __func__, TRUE);
 }
 
-static MonoBoolean
+MonoBoolean
 mono_monitor_wait_internal (MonoObject* const obj, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
 {
 	LockWord lw;
@@ -1483,13 +1478,6 @@ mono_monitor_wait_internal (MonoObject* const obj, guint32 ms, MonoBoolean allow
 }
 
 MonoBoolean
-mono_monitor_wait_external (MonoObject* obj, guint32 ms)
-{
-	ERROR_DECL (error);
-	return mono_monitor_wait_internal(obj, ms, 1, error);
-}
-
-static MonoBoolean
 mono_monitor_wait (MonoObjectHandle obj_handle, guint32 ms, MonoBoolean allow_interruption, MonoError* error)
 {
 	MonoObject* const obj = MONO_HANDLE_RAW (obj_handle);
