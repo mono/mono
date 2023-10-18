@@ -2672,9 +2672,9 @@ mono_gc_is_incremental()
     return FALSE;
 }
 
-void mono_gc_collect_a_little()
+int mono_gc_collect_a_little()
 {
-
+	return 0;
 }
 
 void
