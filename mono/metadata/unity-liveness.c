@@ -7,6 +7,7 @@
 #include <mono/metadata/object.h>
 #include <mono/metadata/tabledefs.h>
 #include <mono/utils/mono-error.h>
+#include <mono/metadata/class-internals.h>
 #include <mono/metadata/unity-liveness.h>
 #include <mono/metadata/mono-gc.h>
 #if defined(TARGET_ANDROID) || defined(TARGET_PSP2) || defined(TARGET_WIN32)
