@@ -8,7 +8,6 @@
 #undef MONO_RT_EXTERNAL_ONLY
 #define MONO_RT_EXTERNAL_ONLY
 #endif
-#include <mono/metadata/unity-utils.h>
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef WIN32
@@ -35,6 +34,8 @@
 #include <mono/utils/mono-string.h>
 #include <mono/utils/mono-stack-unwinding.h>
 #include <mono/utils/mono-threads.h>
+
+#include <mono/metadata/unity-utils.h>
 
 #if HAVE_BOEHM_GC
 #include <mono/utils/gc_wrapper.h>

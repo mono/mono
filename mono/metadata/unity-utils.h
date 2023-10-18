@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <mono/metadata/object.h>
 #include <mono/metadata/reflection.h>
+#include <mono/metadata/appdomain.h>
 
 typedef int (*unity_vprintf_func)(const char* msg, va_list args);
 typedef MonoObject *(*UnityRuntimeInvokeFunction) (MonoObject *this_obj, void **params, MonoObject **exc, void* compiled_method);
