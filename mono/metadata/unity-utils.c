@@ -30,8 +30,11 @@
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/tokentype.h>
 #include <mono/metadata/monitor.h>
+#include <mono/metadata/appdomain.h>
 #include <mono/metadata/external-only.h>
 #include <mono/utils/mono-string.h>
+#include <mono/utils/mono-stack-unwinding.h>
+#include <mono/utils/mono-threads.h>
 
 #if HAVE_BOEHM_GC
 #include <mono/utils/gc_wrapper.h>
