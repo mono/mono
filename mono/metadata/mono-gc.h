@@ -135,8 +135,8 @@ mono_gc_init_finalizer_thread (void);
 /*
  * Only supported under SGen. These two with Sgen will take and release the LOCK_GC
  */
-void mono_gc_stop_world (void);
-void mono_gc_restart_world (void);
+MONO_API void mono_gc_stop_world (void);
+MONO_API void mono_gc_restart_world (void);
 
 MONO_END_DECLS
 

@@ -2672,6 +2672,11 @@ mono_gc_is_incremental()
     return FALSE;
 }
 
+void mono_gc_collect_a_little()
+{
+
+}
+
 void
 mono_gc_set_incremental(MonoBoolean value)
 {
