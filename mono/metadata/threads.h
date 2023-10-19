@@ -35,6 +35,7 @@ MONO_API MONO_RT_EXTERNAL_ONLY
 void mono_thread_manage(void);
 
 MONO_API MonoThread *mono_thread_current (void);
+MONO_API MonoThread *mono_thread_current_not_assert (void);
 
 MONO_API void        mono_thread_set_main (MonoThread *thread);
 MONO_API MonoThread *mono_thread_get_main (void);

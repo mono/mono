@@ -2300,6 +2300,30 @@ mono_thread_current (void)
 	return *current_thread_ptr;
 }
 
+MonoThread *
+mono_thread_current_not_assert (void)
+{
+#ifdef ENABLE_NETCORE
+	return mono_thread_internal_current ();
+#else
+	MonoDomain *domain = mono_domain_get ();
+	MonoInternalThread *internal = mono_thread_internal_current ();
+	MonoThread **current_thread_ptr;
+
+	if (!internal){
+		return NULL;
+	}
+	current_thread_ptr = get_current_thread_ptr_for_domain (domain, internal);
+
+	if (!*current_thread_ptr) {
+		g_assert (domain != mono_get_root_domain ());
+		*current_thread_ptr = create_thread_object (domain, internal);
+		mono_gc_wbarrier_generic_nostore_internal (current_thread_ptr);
+	}
+	return *current_thread_ptr;
+#endif
+}
+
 static MonoThreadObjectHandle
 mono_thread_current_handle (void)
 {
