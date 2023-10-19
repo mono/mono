@@ -138,6 +138,8 @@ mono_gc_init_finalizer_thread (void);
 MONO_API void mono_gc_stop_world (void);
 MONO_API void mono_gc_restart_world (void);
 
+MONO_API gboolean mono_gc_is_finalizer_thread (MonoThread *thread);
+
 MONO_END_DECLS
 
 #endif /* __METADATA_MONO_GC_H__ */

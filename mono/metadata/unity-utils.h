@@ -136,7 +136,6 @@ MONO_API uint64_t mono_unity_type_get_hash(MonoType *type, mono_bool inflate);
 MONO_API mono_bool mono_unity_type_is_static(MonoType *type);
 
 //generic class
-MONO_API MonoGenericContext mono_unity_generic_class_get_context(MonoGenericClass *klass);
 MONO_API MonoClass* mono_unity_generic_class_get_container_class(MonoGenericClass *klass);
 
 //method signature
@@ -238,7 +237,7 @@ mono_method_get_method_definition(MonoMethod *method);
 MONO_API void
 mono_class_set_allow_gc_aware_layout(mono_bool allow);
 
-MONO_API MONO_API void
+MONO_API void
 mono_unity_set_enable_handler_block_guards (mono_bool allow);
 
 MONO_API mono_bool

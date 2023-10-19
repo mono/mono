@@ -349,6 +349,17 @@ mono_property_set_value (MonoProperty *prop, void *obj, void **params, MonoObjec
 MONO_API MONO_RT_EXTERNAL_ONLY MonoObject*
 mono_property_get_value (MonoProperty *prop, void *obj, void **params, MonoObject **exc);
 
+typedef enum {
+	MONO_UNHANDLED_POLICY_LEGACY,
+	MONO_UNHANDLED_POLICY_CURRENT
+} MonoRuntimeUnhandledExceptionPolicy;
+
+MONO_API MonoRuntimeUnhandledExceptionPolicy
+mono_runtime_unhandled_exception_policy_get (void);
+
+MONO_API void
+mono_runtime_unhandled_exception_policy_set (MonoRuntimeUnhandledExceptionPolicy policy);
+
 /* GC handles support
  *
  * A handle can be created to refer to a managed object and either prevent it
