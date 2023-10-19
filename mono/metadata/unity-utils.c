@@ -1914,28 +1914,24 @@ mono_unity_start_gc_world()
 #endif
 }
 
-typedef void (*MonoGCHeapForeachFunc)(void* userData, gpointer start, gpointer end, uint32_t type);
 #if HAVE_BOEHM_GC
-typedef struct GCHeapForeachContextStruct
+void handle_gc_heap_chunk(void* userData, gpointer start, gpointer end, GC_heap_section_type type)
 {
-	void* userData;
-	MonoGCHeapForeachFunc callback;
-
-} GCHeapForeachContext;
-void GCHeapForeachCallback(void* userData, gpointer start, gpointer end, GC_heap_section_type type)
-{
-	GCHeapForeachContext* ctx = (GCHeapForeachContext*)userData;
-	ctx->callback(userData, start, end, type);
+	execution_ctx* ctx = (execution_ctx*)userData;
+	mono_heap_chunk chunk;
+	chunk.start = start;
+	chunk.size = (uint8_t *)end - (uint8_t *)start;
+	ctx->callback(&chunk, ctx->user_data);
 }
 #endif
 MONO_API void
-mono_unity_gc_heap_foreach(MonoGCHeapForeachFunc callback, gpointer user_data)
+mono_unity_gc_heap_foreach(GFunc callback, gpointer user_data)
 {
 #if HAVE_BOEHM_GC
-	GCHeapForeachContext ctx;
-	ctx.userData = user_data;
+	execution_ctx ctx;
+	ctx.user_data = user_data;
 	ctx.callback = callback;
-	GC_foreach_heap_section(&ctx, GCHeapForeachCallback);
+	GC_foreach_heap_section(&ctx, handle_gc_heap_chunk);
 #else
 	g_assert_not_reached();
 #endif
