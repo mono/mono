@@ -1578,12 +1578,14 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 			}
 			method = mono_class_get_method_by_index (iface, method_slot_in_interface);
 			if (method->is_generic) {
-				has_generic_virtual = TRUE;
-				vt_slot ++;
+				if (m_method_is_virtual (method)) {
+					has_generic_virtual = TRUE;
+					vt_slot ++;
+				}
 				continue;
 			}
 
-			if (method->flags & METHOD_ATTRIBUTE_VIRTUAL) {
+			if (m_method_is_virtual (method)) {
 				add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, vt_slot, slot_num);
 				vt_slot ++;
 			}
@@ -1599,7 +1601,7 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 			for (method_slot_in_interface = 0; method_slot_in_interface < mcount; method_slot_in_interface++) {
 				MonoMethod *method = mono_class_get_method_by_index (iface, method_slot_in_interface);
 
-				if (method->is_generic)
+				if (method->is_generic && m_method_is_virtual(method))
 					has_generic_virtual = TRUE;
 				add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, interface_offset + method_slot_in_interface, slot_num);
 			}
