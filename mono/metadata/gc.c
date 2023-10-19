@@ -1172,7 +1172,7 @@ mono_gc_is_finalizer_internal_thread (MonoInternalThread *thread)
  * 
  * \returns TRUE if \p thread is the finalization thread.
  */
-gboolean
+mono_bool
 mono_gc_is_finalizer_thread (MonoThread *thread)
 {
 	return mono_gc_is_finalizer_internal_thread (thread->internal_thread);
