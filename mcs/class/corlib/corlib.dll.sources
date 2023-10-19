@@ -903,8 +903,8 @@ ReferenceSources/Type.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/ArrayTypeMismatchException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/AsyncCallback.cs
 ../referencesource/mscorlib/system/attribute.cs
-../../../external/corefx/src/Common/src/CoreLib/System/AttributeTargets.cs
-../../../external/corefx/src/Common/src/CoreLib/System/AttributeUsageAttribute.cs
+../referencesource/mscorlib/system/attributetargets.cs
+../referencesource/mscorlib/system/attributeusageattribute.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/BadImageFormatException.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/BitConverter.cs
 ../../../external/corefx/src/Common/src/CoreLib/System/Boolean.cs
