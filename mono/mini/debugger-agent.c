@@ -10653,11 +10653,16 @@ void burst_mono_simulate_burst_debug_domain_reload()
 #ifndef DISABLE_SDB
 	appdomain_start_unload(NULL, g_BurstDebugDomain);
 	assembly_unload(NULL, g_BurstAssembly);
+
+	g_BurstDebugDomain->state = MONO_APPDOMAIN_UNLOADING;
+
 	appdomain_unload(NULL, g_BurstDebugDomain);
 
 	debugger_agent_free_domain_info(g_BurstDebugDomain);	// We need to call this to flush any typeids (its usually done via free_domain)
 
 	appdomain_load(NULL, g_BurstDebugDomain);
+
+	g_BurstDebugDomain->state = MONO_APPDOMAIN_CREATED;
 
 	send_type_load(g_BurstKlass);	// We must manually send the type load event, since we never actually JIT anything in this class
 #endif /* DISABLE_SDB */
