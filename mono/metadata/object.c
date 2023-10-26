@@ -145,16 +145,19 @@ mono_runtime_object_init_handle (MonoObjectHandle this_obj, MonoError *error)
 
 	MonoClass * const klass = MONO_HANDLE_GETVAL (this_obj, vtable)->klass;
 	MonoMethod * const method = mono_class_get_method_from_name_checked (klass, ".ctor", 0, 0, error);
-	mono_error_assert_msg_ok (error, "Could not lookup zero argument constructor");
-	g_assertf (method, "Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
+	if (method || m_class_get_parent(klass) != mono_defaults.object_class)
+	{
+		mono_error_assert_msg_ok (error, "Could not lookup zero argument constructor");
+		g_assertf (method, "Could not lookup zero argument constructor for class %s", mono_type_get_full_name (klass));
 
-	if (m_class_is_valuetype (method->klass)) {
-		MonoGCHandle gchandle = NULL;
-		gpointer raw = mono_object_handle_pin_unbox (this_obj, &gchandle);
-		mono_runtime_invoke_checked (method, raw, NULL, error);
-		mono_gchandle_free_internal (gchandle);
-	} else {
-		mono_runtime_invoke_handle_void (method, this_obj, NULL, error);
+		if (m_class_is_valuetype (method->klass)) {
+			MonoGCHandle gchandle = NULL;
+			gpointer raw = mono_object_handle_pin_unbox (this_obj, &gchandle);
+			mono_runtime_invoke_checked (method, raw, NULL, error);
+			mono_gchandle_free_internal (gchandle);
+		} else {
+			mono_runtime_invoke_handle_void (method, this_obj, NULL, error);
+		}
 	}
 
 	HANDLE_FUNCTION_RETURN_VAL (is_ok (error));
