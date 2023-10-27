@@ -1,0 +1,11 @@
+version: 7.7.0-{build}
+
+clone_depth: 50
+
+build_script:
+  - git clone --depth=50 https://github.com/ivmai/libatomic_ops.git
+  - cmake -Denable_gc_assertions=ON
+  - cmake --build . --config Debug
+
+test_script:
+  - ctest --build-config Debug -V

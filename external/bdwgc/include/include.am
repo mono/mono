@@ -1,0 +1,57 @@
+#
+# THIS MATERIAL IS PROVIDED AS IS, WITH ABSOLUTELY NO WARRANTY EXPRESSED
+# OR IMPLIED.  ANY USE IS AT YOUR OWN RISK.
+#
+# Permission is hereby granted to use or copy this program
+# for any purpose,  provided the above notices are retained on all copies.
+# Permission to modify the code and to distribute modified code is granted,
+# provided the above notices are retained, and a notice that the code was
+# modified is included with the above copyright notice.
+
+## Process this file with automake to produce part of Makefile.in.
+
+# installed headers
+#
+pkginclude_HEADERS += \
+        include/gc.h \
+        include/gc_allocator.h \
+        include/gc_backptr.h \
+        include/gc_config_macros.h \
+        include/gc_disclaim.h \
+        include/gc_gcj.h \
+        include/gc_inline.h \
+        include/gc_mark.h \
+        include/gc_pthread_redirects.h \
+        include/gc_tiny_fl.h \
+        include/gc_typed.h \
+        include/gc_version.h \
+        include/javaxfc.h \
+        include/leak_detector.h \
+        include/weakpointer.h
+
+# headers which are not installed
+#
+dist_noinst_HEADERS += \
+        include/cord.h \
+        include/cord_pos.h \
+        include/ec.h \
+        include/gc_alloc_ptrs.h \
+        include/new_gc_alloc.h \
+        include/private/darwin_semaphore.h \
+        include/private/darwin_stop_world.h \
+        include/private/dbg_mlc.h \
+        include/private/gc_atomic_ops.h \
+        include/private/gc_hdrs.h \
+        include/private/gc_locks.h \
+        include/private/gc_pmark.h \
+        include/private/gc_priv.h \
+        include/private/gcconfig.h \
+        include/private/msvc_dbg.h \
+        include/private/pthread_stop_world.h \
+        include/private/pthread_support.h \
+        include/private/specific.h \
+        include/private/thread_local_alloc.h
+
+# unprefixed header
+include_HEADERS += \
+        include/extra/gc.h

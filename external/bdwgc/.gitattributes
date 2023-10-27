@@ -1,0 +1,18 @@
+# Git repo attributes.
+
+# need LF enforced to make cygwin work
+*.sh text eol=lf
+*.ac text eol=lf
+*.am text eol=lf
+*.m4 text eol=lf
+
+# Ensure all text files have normalized (LF) line endings in the repository.
+* text=auto
+
+# These files should use CR/LF line ending:
+/BCC_MAKEFILE -text
+/digimars.mak -text
+
+# Note: "core.eol" configuration variable controls which line endings to use
+# for the normalized files in the working directory (the default is native).
+

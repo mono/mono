@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+    ProjectType="Visual C++"
+    Version="7.10"
+    Name="test"
+    SccProjectName=""
+    SccLocalPath=""
+    Keyword="MakeFileProj">
+    <Platforms>
+        <Platform
+            Name="Win32"/>
+    </Platforms>
+    <Configurations>
+        <Configuration
+            Name="Release|Win32"
+            OutputDirectory=".\..\..\..\bin"
+            IntermediateDirectory=".\..\..\..\obj\Release"
+            ConfigurationType="10"
+            UseOfMFC="0"
+            ATLMinimizesCRunTimeLibraryUsage="FALSE">
+            <Tool
+                Name="VCCustomBuildTool"/>
+            <Tool
+                Name="VCMIDLTool"
+                TypeLibraryName=".\..\..\..\bin/test.tlb"
+                HeaderFileName=""/>
+            <Tool
+                Name="VCPostBuildEventTool"/>
+            <Tool
+                Name="VCPreBuildEventTool"/>
+        </Configuration>
+        <Configuration
+            Name="Debug|Win32"
+            OutputDirectory=".\..\..\..\bin"
+            IntermediateDirectory=".\..\..\..\obj\Debug"
+            ConfigurationType="10"
+            UseOfMFC="0"
+            ATLMinimizesCRunTimeLibraryUsage="FALSE">
+            <Tool
+                Name="VCCustomBuildTool"/>
+            <Tool
+                Name="VCMIDLTool"
+                TypeLibraryName=".\..\..\..\bin/test.tlb"
+                HeaderFileName=""/>
+            <Tool
+                Name="VCPostBuildEventTool"/>
+            <Tool
+                Name="VCPreBuildEventTool"/>
+        </Configuration>
+    </Configurations>
+    <References>
+    </References>
+    <Files>
+    </Files>
+    <Globals>
+    </Globals>
+</VisualStudioProject>

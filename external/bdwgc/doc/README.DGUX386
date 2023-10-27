@@ -1,0 +1,39 @@
+    Garbage Collector (parallel version) for x86 DG/UX Release R4.20MU07
+
+
+     *READ* the file README.QUICK.
+
+     You need the GCC-3.0.3 rev (DG/UX) compiler to build this tree.
+     This compiler has the new "dgux386" threads package implemented.
+     It also supports the switch "-pthread" needed to link correctly
+     the DG/UX's -lrte -lthread with -lgcc and the system's -lc.
+     Finally, we support parallel mark for the SMP DG/UX machines.
+     To build the garbage collector do:
+
+      ./configure
+      make
+      make gctest
+
+     Before you run "gctest" you need to set your LD_LIBRARY_PATH
+     correctly so that "gctest" can find the shared library libgc.
+     Alternatively you can do a configuration
+
+      ./configure --disable-shared
+
+     to build only the static version of libgc.
+
+     To enable debugging messages please do:
+     1) Add the "--enable-gc-debug" flag during configuration.
+     2) Pass "CFLAGS=-DDEBUG_THREADS" to "make".
+
+     In a machine with 4 CPUs (my own machine), parallel mark makes
+     a BIG difference.
+
+     Takis Psarogiannakopoulos
+
+Note (HB):
+     The integration of this patch is currently not complete.
+     The following patches against 6.1alpha3 where hard to move
+     to alpha4, and are not integrated.  There may also be minor
+     problems with stylistic corrections made by me.
+[The diff for ltconfig and ltmain.sh was removed from this file on 2011-08-22]

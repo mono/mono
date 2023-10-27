@@ -1,0 +1,81 @@
+#include <winres.h>
+#include <winver.h>
+
+#include "../include/gc_version.h"
+
+#define GC_VERSION_REVISION 0
+
+#define GC_VERSION        ((GC_VERSION_MAJOR) * 100 + GC_VERSION_MINOR)
+#define GC_FULL_VERSION   ((GC_VERSION) * 10000 + GC_VERSION_MICRO)
+
+#ifndef __T
+# ifdef UNICODE
+#  define __T(x)            L ## x
+# else
+#  define __T(x)            x
+# endif
+#endif
+
+#define PP_TSTR(x)          __T(#x)
+#define PP_EVAL_TSTR(x)     PP_TSTR(x)
+
+#define GC_VERSION_STR      PP_EVAL_TSTR(GC_VERSION_MAJOR) __T(".") PP_EVAL_TSTR(GC_VERSION_MINOR)
+#define GC_FULL_VERSION_STR PP_EVAL_TSTR(GC_VERSION_MAJOR) __T(".") PP_EVAL_TSTR(GC_VERSION_MINOR) __T(".") PP_EVAL_TSTR(GC_VERSION_MICRO) __T(".") PP_EVAL_TSTR(GC_VERSION_REVISION)
+#define GC_FULL_VERSION_CSV GC_VERSION_MAJOR, GC_VERSION_MINOR, GC_VERSION_MICRO, GC_VERSION_REVISION
+
+#ifdef _DEBUG
+#define VER_DEBUG      VS_FF_DEBUG
+#else
+#define VER_DEBUG      0
+#endif
+
+#ifdef _BETA
+#define VER_PRERELEASE VS_FF_PRERELEASE
+#else
+#define VER_PRERELEASE 0
+#endif
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION       GC_FULL_VERSION_CSV
+  PRODUCTVERSION    GC_FULL_VERSION_CSV
+  FILEFLAGSMASK     VS_FFI_FILEFLAGSMASK
+  FILEFLAGS         VER_DEBUG | VER_PRERELEASE
+  FILEOS            VOS__WINDOWS32
+  FILETYPE          VFT_DLL
+  FILESUBTYPE       VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "\
+Hans-J. Boehm, \
+Alan J. Demers, \
+Xerox Corporation, \
+Silicon Graphics, \
+and Hewlett-Packard Company. \
+\0"
+            VALUE "LegalCopyright",   "\
+Copyright 1988, 1989 Hans-J. Boehm, Alan J. Demers. \
+Copyright (c) 1991-1995 by Xerox Corporation. All rights reserved. \
+Copyright (c) 1996-1999 by Silicon Graphics. All rights reserved. \
+Copyright (c) 1999-2004 by Hewlett-Packard. All rights reserved. \
+\0"
+
+            VALUE "OriginalFilename", "GC.DLL\0"
+            VALUE "InternalName",     "GC\0"
+            VALUE "FileDescription",  "Conservative Garbage Collector for C and C++\0"
+            VALUE "FileVersion",      GC_FULL_VERSION_STR
+
+            VALUE "ProductName",      "Conservative Garbage Collector for C and C++\0"
+            VALUE "ProductVersion",   GC_FULL_VERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

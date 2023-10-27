@@ -1,0 +1,27 @@
+64-bit Windows on AMD64/Intel EM64T is somewhat supported in the 7.0
+and later release.  A collector can be built with Microsoft Visual C++ 2005
+or with mingw-w64 gcc.
+More testing would clearly be helpful.
+
+NT_MAKEFILE has been used in this environment.  Uncomment the corresponding
+definitions of CPU and CVTRES_CPU variables (commenting out the ones for X86),
+and then type "nmake -f NT_MAKEFILE" in a Visual C++ command line window to
+build the dynamic library with threads support and the usual test programs.
+To verify that the collector is at least somewhat functional, run gctest.exe.
+This should create gctest.gc.log after a few seconds.
+
+Test_cpp.exe might not run correctly in case of dynamic GC linking.  (It seems
+that we're getting wrong instances of operator new/delete in some cases.)
+
+This process is completely analogous to NT_MAKEFILE usage
+for the 32-bit library version.
+
+A similar procedure using NT_MAKEFILE should be usable to
+build the static library (see comments for CFLAGS_SPECIFIC and LINK_GC
+variables in NT_MAKEFILE).
+
+Note that some warnings have been explicitly turned off in the makefile.
+
+VC++ note: to suppress warnings -D_CRT_SECURE_NO_DEPRECATE is used.
+
+gcc note: -fno-strict-aliasing should be used if optimizing.

@@ -1,0 +1,51 @@
+#
+# THIS MATERIAL IS PROVIDED AS IS, WITH ABSOLUTELY NO WARRANTY EXPRESSED
+# OR IMPLIED.  ANY USE IS AT YOUR OWN RISK.
+#
+# Permission is hereby granted to use or copy this program
+# for any purpose,  provided the above notices are retained on all copies.
+# Permission to modify the code and to distribute modified code is granted,
+# provided the above notices are retained, and a notice that the code was
+# modified is included with the above copyright notice.
+
+## Process this file with automake to produce Makefile.in.
+
+# installed documentation
+if ENABLE_DOCS
+dist_doc_DATA = \
+        AUTHORS \
+        README.md \
+        doc/README.DGUX386 \
+        doc/README.Mac \
+        doc/README.OS2 \
+        doc/README.amiga \
+        doc/README.arm.cross \
+        doc/README.autoconf \
+        doc/README.cmake \
+        doc/README.cords \
+        doc/README.darwin \
+        doc/README.environment \
+        doc/README.ews4800 \
+        doc/README.hp \
+        doc/README.linux \
+        doc/README.macros \
+        doc/README.rs6000 \
+        doc/README.sgi \
+        doc/README.solaris2 \
+        doc/README.symbian \
+        doc/README.uts \
+        doc/README.win32 \
+        doc/README.win64 \
+        doc/debugging.md \
+        doc/finalization.md \
+        doc/gcdescr.md \
+        doc/gcinterface.md \
+        doc/leak.md \
+        doc/overview.md \
+        doc/porting.md \
+        doc/scale.md \
+        doc/simple_example.md \
+        doc/tree.md
+
+dist_man3_MANS = doc/gc.man
+endif

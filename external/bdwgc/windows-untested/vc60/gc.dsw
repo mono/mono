@@ -1,0 +1,194 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "all"=".\all.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name gc
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libgc
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name libgcmt
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "gc"=".\gc.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "libgc"=".\libgc.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "libgcmt"=".\libgcmt.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "test"=".\test.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name test_gc
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name test_libgc
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name test_libgcmt
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name test_leak_gc
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name test_leak_libgc
+    End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name test_leak_libgcmt
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test_gc"=".\test_gc.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name gc
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test_leak_gc"=".\test_leak_gc.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name gc
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test_leak_libgc"=".\test_leak_libgc.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libgc
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test_leak_libgcmt"=".\test_leak_libgcmt.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libgcmt
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test_libgc"=".\test_libgc.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libgc
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "test_libgcmt"=".\test_libgcmt.dsp" - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name libgcmt
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

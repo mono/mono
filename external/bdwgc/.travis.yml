@@ -1,0 +1,620 @@
+language: c++
+
+matrix:
+  include:
+  - os: linux
+    compiler: clang
+    env:
+    - CONF_OPTIONS="--enable-cplusplus"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--enable-cplusplus"
+  - os: osx
+    env:
+    - CONF_OPTIONS="--enable-cplusplus"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    env:
+    - COVERITY_SCAN_BRANCH=1
+    addons:
+      coverity_scan:
+        project:
+          name: ivmai/bdwgc
+          version: 7.7.0
+        notification_email: ivmai@mail.ru
+        branch_pattern: master
+        build_command_prepend: "./configure --enable-cplusplus --disable-shared --enable-single-obj-compilation"
+        build_command: make -j check CFLAGS_EXTRA=-DLINT2
+  - os: linux
+    env:
+    - MAKEFILE_TARGETS="distcheck"
+    - AUTOMAKE_VER=1.15
+    - M4_VER=1.4.18
+    - LIBTOOL_VER=2.4.6
+    - PKG_CONFIG_VER=0.29.2
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    env:
+    - MAKEFILE_TARGETS="dist"
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--enable-gc-assertions --enable-cplusplus --enable-static"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-multilib
+    compiler: clang
+    env:
+    - CFLAGS_EXTRA="-m32"
+    - CONF_OPTIONS="--enable-gc-assertions"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-multilib
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-m32"
+    - CONF_OPTIONS="--enable-gc-assertions"
+  - os: osx
+    env:
+    - CFLAGS_EXTRA="-m32"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-cplusplus"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--disable-threads --enable-checksums --disable-munmap --enable-cplusplus"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: clang
+    env:
+    - CFLAGS_EXTRA="-D DBG_HDRS_ALL -D SHORT_DBG_HDRS"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-cplusplus"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: osx
+    env:
+    - CFLAGS_EXTRA="-D DBG_HDRS_ALL -D SHORT_DBG_HDRS -D LINT2"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-cplusplus --enable-handle-fork=manual"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-D DEBUG_ADD_DEL_ROOTS -D DEBUG_THREADS -D GC_LOG_TO_FILE_ALWAYS"
+    - CONF_OPTIONS="--enable-cplusplus"
+  - os: linux
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-D DEFAULT_STACK_MAYBE_SMALL -D ENABLE_TRACE -D EMPTY_GETENV_RESULTS -D GC_ALWAYS_MULTITHREADED -D GC_NETBSD_THREADS_WORKAROUND -D CPPCHECK"
+    - CONF_OPTIONS="--enable-cplusplus"
+  - os: linux
+    compiler: clang
+    env:
+    - CFLAGS_EXTRA="-march=native -D _FORTIFY_SOURCE=2 -D DEFAULT_VDB"
+    - CONF_OPTIONS="--with-libatomic-ops=no --enable-cplusplus --disable-handle-fork"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - libatomic-ops-dev
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--with-libatomic-ops=yes --enable-gc-assertions --enable-cplusplus"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: osx
+    env:
+    - CFLAGS_EXTRA="-march=native -D _FORTIFY_SOURCE=2 -D AO_DISABLE_GCC_ATOMICS"
+    - CONF_OPTIONS="--with-libatomic-ops=no --enable-munmap --enable-cplusplus --enable-static"
+  - os: linux
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-D DONT_ADD_BYTE_AT_END"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-cplusplus"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-multilib
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-m32 -D MARK_BIT_PER_OBJ"
+  - os: linux
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-D NO_CLOCK -D POINTER_MASK=~0xf"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-cplusplus --enable-handle-fork=manual"
+  - os: linux
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-D PROC_VDB -D GC_NO_SYS_FAULT_H -D NO_INCREMENTAL -D DEBUG_DIRTY_BITS"
+    - CONF_OPTIONS="--enable-cplusplus --disable-docs"
+  - os: linux
+    compiler: clang
+    env:
+    - CFLAGS_EXTRA="-D MANUAL_VDB"
+    - CONF_OPTIONS="--enable-gc-assertions --disable-parallel-mark"
+  - os: linux
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-D SMALL_CONFIG -D NO_GETENV"
+    - CONF_OPTIONS="--enable-cplusplus"
+  - os: linux
+    compiler: gcc
+    env:
+    - CFLAGS_EXTRA="-std=c11 -D GC_NO_SIGSETJMP"
+    - CONF_OPTIONS="--disable-threads --enable-gc-assertions --enable-cplusplus"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: clang
+    env:
+    - CONF_OPTIONS="--disable-thread-local-alloc --enable-cplusplus --enable-static"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--disable-parallel-mark --disable-thread-local-alloc --enable-gc-assertions --enable-cplusplus"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - lcov
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--enable-gcov --enable-single-obj-compilation --enable-cplusplus --disable-shared --enable-gc-assertions"
+    - CFLAGS_EXTRA="-D USE_CUSTOM_SPECIFIC"
+    - REPORT_COVERAGE=true
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--enable-gc-debug --enable-cplusplus"
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--disable-gc-debug --enable-cplusplus"
+  - os: linux
+    compiler: clang
+    env:
+    - CONF_OPTIONS="--enable-large-config --enable-cplusplus --disable-shared --enable-static"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: osx
+    env:
+    - CONF_OPTIONS="--enable-large-config --enable-cplusplus --disable-handle-fork"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-multilib
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--enable-large-config --disable-munmap"
+    - CFLAGS_EXTRA="-m32"
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--enable-large-config --enable-cplusplus --enable-gc-assertions --enable-static"
+    - CFLAGS_EXTRA="-D LINT2"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-multilib
+    compiler: clang
+    env:
+    - CONF_OPTIONS="--enable-redirect-malloc --enable-static --disable-threads"
+    - CFLAGS_EXTRA="-m32"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: osx
+    env:
+    - CONF_OPTIONS="--enable-redirect-malloc --enable-cplusplus --enable-static --disable-threads"
+    - CFLAGS_EXTRA="-m32"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--enable-redirect-malloc --enable-gc-debug --enable-cplusplus --enable-gc-assertions"
+  - os: linux
+    compiler: clang
+    env:
+    - CONF_OPTIONS="--disable-threads --enable-cplusplus"
+    - CFLAGS_EXTRA="-O3 -march=native"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: gcc
+    env:
+    - CONF_OPTIONS="--disable-static --disable-threads --enable-cplusplus"
+    - CFLAGS_EXTRA="-O3 -march=native"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: osx
+    env:
+    - CONF_OPTIONS="--disable-threads --enable-cplusplus"
+    - CFLAGS_EXTRA="-O3 -march=native"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: osx
+    env:
+    - CSA_CHECK=true
+    - CFLAGS_EXTRA="-m32"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CSA_CHECK=true
+    - CFLAGS_EXTRA="-D ALL_INTERIOR_POINTERS -D CHECKSUMS -D DBG_HDRS_ALL -D DEBUG_THREADS -D ENABLE_TRACE -D GC_ALWAYS_MULTITHREADED -D GC_ASSERTIONS -D GC_ATOMIC_UNCOLLECTABLE -D GC_ENABLE_SUSPEND_THREAD -D GC_GCJ_SUPPORT -D GC_PRINT_BACK_HEIGHT -D GC_THREADS -D HANDLE_FORK -D JAVA_FINALIZATION -D KEEP_BACK_PTRS -D MAKE_BACK_GRAPH -D PARALLEL_MARK -D PRINT_BLACK_LIST -D THREAD_LOCAL_ALLOC -D USE_MMAP -D USE_MUNMAP"
+  - os: linux
+    env:
+    - CPPCHECK_ENABLE="-j16 --enable=information,performance,portability,style,warning extra/AmigaOS.c extra/MacOS.c extra/msvc_dbg.c extra/real_malloc.c extra/symbian.cpp"
+    sudo: required
+  - os: linux
+    env:
+    - CPPCHECK_ENABLE="--enable=unusedFunction"
+    sudo: required
+  - os: linux
+    compiler: clang
+    env:
+    - MAKEFILE_NAME=Makefile.direct
+    - MAKEFILE_TARGETS="check check-cpp cord/de"
+  - os: linux
+    compiler: gcc
+    env:
+    - MAKEFILE_NAME=Makefile.direct
+    - MAKEFILE_TARGETS="check check-cpp cord/de"
+  - os: osx
+    env:
+    - MAKEFILE_NAME=Makefile.direct
+    - MAKEFILE_TARGETS="check check-cpp cord/de"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - musl-tools
+    compiler: musl-gcc
+    language: c
+    env:
+    - CONF_OPTIONS="--disable-parallel-mark --enable-gc-assertions"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CXX=clang++-4.0
+    - CFLAGS_EXTRA="-fsanitize=address -fno-common -fno-omit-frame-pointer"
+    - CONF_OPTIONS="--enable-cplusplus --enable-static"
+    - NO_CLONE_LIBATOMIC_OPS=true
+    - TESTS_CUSTOM_RUN=true
+    sudo: required
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-5
+        sources:
+        - ubuntu-toolchain-r-test
+    compiler: gcc-5
+    language: c
+    env:
+    - CFLAGS_EXTRA="-fsanitize=address -O0"
+    - CONF_OPTIONS="--enable-gc-assertions"
+    - LDFLAGS="-fuse-ld=gold"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: osx
+    env:
+    - CFLAGS_EXTRA="-fsanitize=address -m32 -fno-omit-frame-pointer"
+    - CONF_OPTIONS="--disable-shared --enable-cplusplus"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CFLAGS_EXTRA="-fsanitize=memory -fno-omit-frame-pointer"
+    - CONF_OPTIONS="--enable-static"
+    - TESTS_CUSTOM_RUN=true
+    - NO_CLONE_LIBATOMIC_OPS=true
+    sudo: required
+  - os: linux
+    compiler: clang
+    env:
+    - CFLAGS_EXTRA="-fsanitize=undefined -fno-common -fno-omit-frame-pointer"
+    - TESTS_CUSTOM_RUN=true
+    - CONF_OPTIONS="--enable-cplusplus --enable-static"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CFLAGS_EXTRA="-fsanitize=thread -D NO_CANCEL_SAFE -D NO_INCREMENTAL -D USE_SPIN_LOCK -fno-omit-frame-pointer -D TEST_FORK_WITHOUT_ATFORK"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-handle-fork=manual"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CFLAGS_EXTRA="-fsanitize=thread -D NO_CANCEL_SAFE -D NO_INCREMENTAL -D USE_SPIN_LOCK -fno-omit-frame-pointer -D TEST_FORK_WITHOUT_ATFORK"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-gc-debug --enable-handle-fork=manual --enable-large-config --with-libatomic-ops=no"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CFLAGS_EXTRA="-fsanitize=thread -D NO_CANCEL_SAFE -D NO_INCREMENTAL -D USE_SPIN_LOCK -fno-omit-frame-pointer -D NTHREADS=15"
+    - CONF_OPTIONS="--disable-parallel-mark"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CFLAGS_EXTRA="-fsanitize=thread -D NO_CANCEL_SAFE -D NO_INCREMENTAL -fno-omit-frame-pointer"
+    - CONF_OPTIONS="--disable-parallel-mark --disable-thread-local-alloc --disable-shared --enable-gc-assertions --with-libatomic-ops=no"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CXX=clang++-4.0
+    - CFLAGS_EXTRA="-O3 -march=native"
+    - CONF_OPTIONS="--enable-cplusplus --enable-static --enable-single-obj-compilation"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - clang-4.0
+        - gcc-multilib
+        sources:
+        - llvm-toolchain-trusty-4.0
+    compiler: clang-4.0
+    language: c
+    env:
+    - CFLAGS_EXTRA="-m32 -D _FORTIFY_SOURCE=2 -D GC_DISABLE_INCREMENTAL"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-gc-debug"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-5
+        - g++-5
+        sources:
+        - ubuntu-toolchain-r-test
+    compiler: gcc-5
+    language: c
+    env:
+    - CXX=g++-5
+    - CONF_OPTIONS="--enable-cplusplus --enable-gc-assertions --enable-static"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-5
+        - gcc-5-multilib
+        - gcc-multilib
+        sources:
+        - ubuntu-toolchain-r-test
+    compiler: gcc-5
+    language: c
+    env:
+    - CFLAGS_EXTRA="-m32 -O3"
+    - CONF_OPTIONS="--disable-shared --enable-static --enable-single-obj-compilation"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-5
+        - gcc-5-multilib
+        - gcc-multilib
+        sources:
+        - ubuntu-toolchain-r-test
+    compiler: gcc-5
+    language: c
+    env:
+    - CFLAGS_EXTRA="-mx32 -march=native -D _FORTIFY_SOURCE=2"
+    - CONF_OPTIONS="--enable-large-config --enable-gc-assertions"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: clang
+    env:
+    - CFLAGS_EXTRA="-x c++"
+    - CONF_OPTIONS="--enable-gc-assertions --enable-cplusplus --enable-gc-debug --disable-shared"
+    - MAKEFILE_TARGETS="all"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: gcc
+    env:
+    - CC_FOR_CHECK=g++
+    - CONF_OPTIONS="--enable-gc-assertions"
+    - MAKEFILE_TARGETS="all"
+    - MAKEFILE_TARGETS_CHECK="check"
+    - NO_CLONE_LIBATOMIC_OPS=true
+  - os: linux
+    compiler: clang
+    env:
+    - CFLAGS_EXTRA="-O3 -Wall -Wextra -Werror -x c++"
+    - MAKEFILE_NAME=Makefile.direct
+    - MAKEFILE_TARGETS="cords"
+  - os: linux
+    compiler: gcc
+    env:
+    - CC_FOR_CHECK=g++
+    - CFLAGS_EXTRA="-O3 -Wall -Wextra -Werror"
+    - MAKEFILE_NAME=Makefile.direct
+    - MAKEFILE_TARGETS="cords"
+    - MAKEFILE_TARGETS_CHECK="cord/de check"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - g++-mingw-w64
+        - gcc-mingw-w64
+    compiler: x86_64-w64-mingw32-gcc
+    language: c
+    env:
+    - CXX=x86_64-w64-mingw32-g++
+    - CONF_OPTIONS="--host=x86_64-w64-mingw32 --enable-cplusplus --enable-static"
+    - MAKEFILE_TARGETS="all"
+  - os: linux
+    addons:
+      apt:
+        packages:
+        - gcc-mingw-w64
+    compiler: i686-w64-mingw32-gcc
+    language: c
+    env:
+    - CONF_OPTIONS="--host=i686-w64-mingw32"
+    - MAKEFILE_TARGETS="all"
+    - CFLAGS_EXTRA="-fno-omit-frame-pointer"
+
+before_install:
+- if [[ "$CPPCHECK_ENABLE" != "" ]]; then
+    git clone --depth=3 https://github.com/danmar/cppcheck.git
+            ~/cppcheck -b master;
+    make --directory ~/cppcheck -j CXXFLAGS="-O3 -march=native -D NDEBUG";
+  fi
+- if [[ "$AUTOMAKE_VER" != "" || "$LIBTOOL_VER" != ""
+        || "$M4_VER" != "" || "$PKG_CONFIG_VER" != "" ]]; then
+    GNUTOOLS_ROOT=`pwd`/../gnu-tools;
+    export PATH=$GNUTOOLS_ROOT/bin:$PATH;
+  fi
+- if [[ "$M4_VER" != "" ]]; then
+    M4_XZ_URL=https://ftp.gnu.org/gnu/m4/m4-$M4_VER.tar.xz;
+    wget -O - $M4_XZ_URL | tar xf - --xz --directory ~;
+    (cd ~/m4-$M4_VER && ./configure --prefix=$GNUTOOLS_ROOT && make -j check && make install);
+  fi
+- if [[ "$LIBTOOL_VER" != "" ]]; then
+    LIBTOOL_XZ_URL=https://ftp.gnu.org/gnu/libtool/libtool-$LIBTOOL_VER.tar.xz;
+    wget -O - $LIBTOOL_XZ_URL | tar xf - --xz --directory ~;
+    (cd ~/libtool-$LIBTOOL_VER && ./configure --prefix=$GNUTOOLS_ROOT && make -j && make install);
+  fi
+- if [[ "$AUTOMAKE_VER" != "" ]]; then
+    AUTOMAKE_XZ_URL=https://ftp.gnu.org/gnu/automake/automake-$AUTOMAKE_VER.tar.xz;
+    wget -O - $AUTOMAKE_XZ_URL | tar xf - --xz --directory ~;
+    (cd ~/automake-$AUTOMAKE_VER && ./configure --prefix=$GNUTOOLS_ROOT && make -j && make install);
+  fi
+- if [[ "$PKG_CONFIG_VER" != "" ]]; then
+    PKG_CONFIG_GZ_URL=https://pkgconfig.freedesktop.org/releases/pkg-config-$PKG_CONFIG_VER.tar.gz;
+    wget -O - $PKG_CONFIG_GZ_URL | tar xf - --gz --directory ~;
+    (cd ~/pkg-config-$PKG_CONFIG_VER && ./configure --with-internal-glib --prefix=$GNUTOOLS_ROOT && make -j check && make install);
+  fi
+- if [[ "$MAKEFILE_TARGETS" == *"dist"* ]]; then
+    autoconf --version;
+    automake --version;
+    m4 --version;
+    libtool --version || true;
+    pkg-config --version;
+  fi
+- if [[ "$MAKEFILE_NAME" == "" ]]; then MAKEFILE_NAME=Makefile; fi
+- if [[ "$MAKEFILE_TARGETS" == "" ]]; then MAKEFILE_TARGETS="check"; fi
+
+install:
+- if [[ "$NO_CLONE_LIBATOMIC_OPS" != true ]]; then
+    git clone --depth=50 https://github.com/ivmai/libatomic_ops.git;
+  fi
+- "./autogen.sh"
+- if [[ "$GNUTOOLS_ROOT" != "" ]]; then mv $GNUTOOLS_ROOT $GNUTOOLS_ROOT-x; fi
+- if [[ "$REPORT_COVERAGE" == true ]]; then gem install coveralls-lcov; fi
+
+script:
+- if [[ "$CSA_CHECK" != true && "$CPPCHECK_ENABLE" == ""
+        && "$MAKEFILE_NAME" != "Makefile.direct"
+        && "$COVERITY_SCAN_BRANCH" != 1 ]]; then
+    ./configure $CONF_OPTIONS --enable-werror && cat include/config.h;
+  fi
+- if [[ "$CSA_CHECK" != true && "$CPPCHECK_ENABLE" == ""
+        && "$COVERITY_SCAN_BRANCH" != 1 ]]; then
+    make -j -f $MAKEFILE_NAME $MAKEFILE_TARGETS CFLAGS_EXTRA="$CFLAGS_EXTRA"
+            LDFLAGS="$LDFLAGS";
+  fi
+- if [[ "$CC_FOR_CHECK" != "" ]]; then
+    make -f $MAKEFILE_NAME $MAKEFILE_TARGETS_CHECK CC=$CC_FOR_CHECK
+            CFLAGS_EXTRA="$CFLAGS_EXTRA";
+  fi
+- if [ -f gctest.log ]; then cat gctest.log; fi
+- if [ -f threadkey_test.log ]; then cat threadkey_test.log; fi
+- if [[ "$CSA_CHECK" == true ]]; then
+    ${CC} --analyze -Xanalyzer -analyzer-output=text -Werror
+        -I include -I libatomic_ops/src $CFLAGS_EXTRA
+        *.c *.cc cord/*.c cord/tests/cordtest.c cord/tests/de.c extra/gc.c
+        extra/msvc_dbg.c extra/pcr_interface.c extra/real_malloc.c
+        tests/*.c tests/*.cc tools/*.c;
+  fi
+- if [[ "$CPPCHECK_ENABLE" != "" ]]; then
+    ~/cppcheck/cppcheck -q -f --error-exitcode=2 -U GC_API -U long -D CPPCHECK
+        -I include -I libatomic_ops/src $CPPCHECK_ENABLE
+        *.cc cord/*.c cord/tests/*.c tests/*.c tests/*.cc tools/*.c
+        extra/gc.c;
+  fi
+- if [[ "$TESTS_CUSTOM_RUN" == true ]]; then
+    ASAN_OPTIONS="detect_leaks=1" UBSAN_OPTIONS="halt_on_error=1"
+        make check-without-test-driver;
+  fi
+
+after_success:
+- if [[ "$REPORT_COVERAGE" == true ]]; then
+    lcov --capture --base-directory . --directory . --output-file coverage.info;
+    lcov --remove coverage.info '/usr/*' 'cord/tests/*' 'libatomic_ops/*' 'tests/*' --output-file coverage.info;
+    lcov --list coverage.info;
+    coveralls-lcov --repo-token ${COVERALLS_TOKEN} coverage.info;
+  fi
+
+deploy:
+  provider: releases
+  api_key:
+    secure: j1HkSD5hyYFo//XzPemojLk6iBT+T9+PwktxtDOwdasR0lOvPyBS2k/RbBZp+amDna/40efTg2WVI8BEfpRMV8+QoYGVoTWCKCaxFCHMfSZdsPLYsHpeqp7PBh3sFX6iuQuZkRGXHNeG8cLHTTw1TatrEBU/vTZXItYKmOJH8WnlwwkiVXKQ3BvU9EJjFB1OJX9PArBXgoHjDcgi6D1kL6ErsraU9nwnaBNRFx5Tpvz/fXZDwjzMnGcxeu02zhVC37mFDd6VbKom8Pm28u4NjYLLhjdICexc0BaVC0kr3+usJytyMtWMRm6LN4kFievOntHZOEAtuU6/E0Bg8wnB8FX8vXaytb+eUVtcfS/n/x6ykgPtKHrCnWEP8nnruW/3qRExxSBASyAwBceJK+yyzVBtQudK4YZnBXUWkFfsc9pPiauUDXkYlUgvVyb3rXvJTvjdiIle194GtRsCQsGKxCZiI6jMB/wRQAA9AgcSb3FpRTqkVPEUT3Gnn0xT+Y0QLJBBm4eAG8qWoEuMMAW8lAVvfHdZh3AnnIvqONvc2dk7kq5EZyhUPTFFDxZGnXWzIwY7Nm9QkUOdvb9t+RsnoTwBL4hSD4/T1CgW/hULQ7cuiwtK/E+8r5C1VES5/I20qkwfTGwKQchdR6lOLO7YM4VlHfNbEUe/wsE3PBh0ekc=
+  file: gc-*.tar.gz
+  file_glob: true
+  skip_cleanup: true
+  on:
+    condition: $MAKEFILE_TARGETS = distcheck
+    repo: ivmai/bdwgc
+    tags: true

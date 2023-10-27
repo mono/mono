@@ -1,0 +1,75 @@
+TARGET     libgc.dll
+
+TARGETTYPE        dll
+UID       0x1000008d 0x200107C2 // check uid
+
+EXPORTUNFROZEN
+EPOCALLOWDLLDATA
+//ALWAYS_BUILD_AS_ARM
+//nocompresstarget
+//srcdbg
+//baseaddress   00500000
+//LINKEROPTION CW -map libgc.map
+//LINKEROPTION CW -filealign 0x10000
+
+CAPABILITY PowerMgmt ReadDeviceData ReadUserData WriteDeviceData WriteUserData SwEvent LocalServices NetworkServices UserEnvironment
+
+
+MACRO ALL_INTERIOR_POINTERS
+MACRO NO_EXECUTE_PERMISSION
+MACRO USE_MMAP
+MACRO GC_DONT_REGISTER_MAIN_STATIC_DATA
+MACRO GC_DLL
+MACRO SYMBIAN
+MACRO ENABLE_DISCLAIM
+//MACRO GC_GCJ_SUPPORT
+
+USERINCLUDE      ..\..\include
+USERINCLUDE      ..\..\include\private
+
+SYSTEMINCLUDE   \epoc32\include
+SYSTEMINCLUDE   \epoc32\include\stdapis
+
+SOURCEPATH        ..\..\
+
+SOURCE          allchblk.c
+SOURCE          alloc.c
+SOURCE          blacklst.c
+SOURCE          dbg_mlc.c
+SOURCE          dyn_load.c
+SOURCE          finalize.c
+SOURCE          fnlz_mlc.c
+//SOURCE        gc_cpp.cpp
+SOURCE          gcj_mlc.c
+SOURCE          headers.c
+SOURCE          mach_dep.c
+SOURCE          malloc.c
+SOURCE          mallocx.c
+SOURCE          mark.c
+SOURCE          mark_rts.c
+SOURCE          misc.c
+SOURCE          new_hblk.c
+SOURCE          obj_map.c
+SOURCE          os_dep.c
+SOURCE          extra/symbian.cpp
+SOURCE          ptr_chck.c
+SOURCE          reclaim.c
+SOURCE          typd_mlc.c
+
+/*
+#ifdef ENABLE_ABIV2_MODE
+  DEBUGGABLE_UDEBONLY
+#endif
+*/
+
+// Using main() as entry point
+STATICLIBRARY   libcrt0.lib
+
+// libc and euser are always needed when using main() entry point
+LIBRARY         libc.lib
+
+
+LIBRARY euser.lib
+LIBRARY efsrv.lib
+LIBRARY avkon.lib
+LIBRARY eikcore.lib

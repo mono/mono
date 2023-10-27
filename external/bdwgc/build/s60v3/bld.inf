@@ -1,0 +1,11 @@
+/*
+ Name : bld.inf
+ Description : This file provides the information required for building the
+ whole of a libgc.
+*/
+
+PRJ_PLATFORMS
+default armv5
+
+PRJ_MMPFILES
+libgc.mmp
