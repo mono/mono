@@ -23,6 +23,9 @@
 /* Windows MSVC builds defaults to preemptive suspend. Disable ENABLE_HYBRID_SUSPEND defines. */
 #undef ENABLE_HYBRID_SUSPEND
 
+/* Override allocators for Memory Profiler memory tracking */
+#define ENABLE_OVERRIDABLE_ALLOCATORS 1
+
 /* No ENABLE_DEFINES below this point */
 
 /* Keep in sync with netcore runtime-preset in configure.ac */

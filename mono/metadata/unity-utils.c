@@ -1914,18 +1914,16 @@ mono_unity_start_gc_world()
 #endif
 }
 
-
-//GC memory
-static void
-handle_gc_heap_chunk(void *userdata, gpointer chunk_start, gpointer chunk_end)
+#if HAVE_BOEHM_GC
+static void handle_gc_heap_chunk(void* userData, gpointer chunk_start, gpointer chunk_end, GC_heap_section_type type)
 {
-	execution_ctx *ctx = (execution_ctx *)userdata;
+	execution_ctx* ctx = (execution_ctx*)userData;
 	mono_heap_chunk chunk;
 	chunk.start = chunk_start;
 	chunk.size = (uint8_t *)chunk_end - (uint8_t *)chunk_start;
 	ctx->callback(&chunk, ctx->user_data);
 }
-
+#endif
 MONO_API void
 mono_unity_gc_heap_foreach(GFunc callback, gpointer user_data)
 {
@@ -1933,7 +1931,6 @@ mono_unity_gc_heap_foreach(GFunc callback, gpointer user_data)
 	execution_ctx ctx;
 	ctx.callback = callback;
 	ctx.user_data = user_data;
-
 	GC_foreach_heap_section(&ctx, handle_gc_heap_chunk);
 #else
 	g_assert_not_reached();
