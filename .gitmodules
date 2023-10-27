@@ -65,6 +65,3 @@
 	path = external/llvm-project
 	url = https://github.com/dotnet/llvm-project.git
 	branch = release/6.x
-[submodule "external/bdwgc"]
-	path = external/bdwgc
-	url = https://github.com/Unity-Technologies/bdwgc.git
