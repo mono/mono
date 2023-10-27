@@ -2070,11 +2070,10 @@ if test "x$support_boehm" = "xyes"; then
 			LIBGC_STATIC_LIBS='$(top_builddir)/external/bdwgc/libgc-static.la'
 
 			BOEHM_DEFINES="-DHAVE_BOEHM_GC -DGC_THREADS -DGC_BUILTIN_ATOMIC"
-			CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DGC_BUILD"
 
 			if test x$target_win32 = xyes; then
 				BOEHM_DEFINES="$BOEHM_DEFINES -DGC_NOT_DLL"
-				CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DGC_NOT_DLL"
+				CFLAGS_FOR_LIBGC="$CFLAGS_FOR_LIBGC -DGC_BUILD -DGC_NOT_DLL"
 			fi
 
 			gc_msg="Included Boehm GC with typed GC"
