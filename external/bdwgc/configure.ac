@@ -1024,7 +1024,7 @@ AC_ARG_WITH([libatomic-ops],
                     [Use an external libatomic_ops? (default: check;
                      none: use compiler intrinsics or no thread support)])],
     [], [ AS_IF([test x"$THREADS" != xnone],
-                [with_libatomic_ops=yes], [with_libatomic_ops=none]) ])
+                [with_libatomic_ops=check], [with_libatomic_ops=none]) ])
 
 # Check whether compiler atomic intrinsics can be used.
 if test x"$with_libatomic_ops" = xcheck; then
