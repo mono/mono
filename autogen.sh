@@ -161,7 +161,7 @@ fi
 
 if test x$has_disable_boehm = xfalse -a -d $srcdir/external/bdwgc; then
   echo Running external/bdwgc/autogen.sh ...
-  (cd $srcdir/external/bdwgc ; NOCONFIGURE=1 ./autogen.sh "$@")
+  (cd $srcdir/external/bdwgc ; chmod u+x ./autogen.sh; NOCONFIGURE=1 ./autogen.sh "$@")
   echo Done running external/bdwgc/autogen.sh ...
 fi
 
