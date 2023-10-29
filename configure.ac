@@ -2069,7 +2069,7 @@ if test "x$support_boehm" = "xyes"; then
 			LIBGC_LIBS='$(top_builddir)/external/bdwgc/libgc.la'
 			LIBGC_STATIC_LIBS='$(top_builddir)/external/bdwgc/libgc-static.la'
 
-			BOEHM_DEFINES="-DHAVE_BOEHM_GC -DGC_THREADS"
+			BOEHM_DEFINES="-DHAVE_BOEHM_GC -DGC_THREADS -DGC_BUILTIN_ATOMIC"
 
 			if test x$target_win32 = xyes; then
 				BOEHM_DEFINES="$BOEHM_DEFINES -DGC_NOT_DLL"
