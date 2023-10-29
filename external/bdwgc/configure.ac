@@ -1083,7 +1083,6 @@ AS_IF([test x"$with_libatomic_ops" != xno],
           [ AC_MSG_RESULT([external]) 
             ATOMIC_OPS_CFLAGS='-I$(srcdir)/libatomic_ops/src'
             AC_SUBST([ATOMIC_OPS_CFLAGS])
-            AC_CONFIG_SUBDIRS([libatomic_ops])
           ],
           [ AC_MSG_RESULT([none])
             AS_IF([test x"$THREADS" != xnone],
