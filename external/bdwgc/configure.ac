@@ -373,8 +373,14 @@ compiler_suncc=no
 pthread_start_standalone=no
 case "$host" in
   *-*-*linux*)
-      # Turn on the workaround described in pthread_start.c.
-      AS_IF([test "$THREADS" = posix], [pthread_start_standalone=yes])
+      case "$host" in
+        *-*-android*)
+            ;;
+        *)
+            # Turn on the workaround described in pthread_start.c.
+            AS_IF([test "$THREADS" = posix], [pthread_start_standalone=yes])
+            ;;
+      esac      
       ;;
   powerpc-*-darwin*)
       powerpc_darwin=true
@@ -1074,7 +1080,11 @@ AS_IF([test x"$with_libatomic_ops" = xno \
 AC_MSG_CHECKING([which libatomic_ops to use])
 AS_IF([test x"$with_libatomic_ops" != xno],
   [ AS_IF([test x"$with_libatomic_ops" != xnone -a x"$THREADS" != xnone],
-          [ AC_MSG_RESULT([external]) ],
+          [ AC_MSG_RESULT([external]) 
+            ATOMIC_OPS_CFLAGS='-I$(srcdir)/libatomic_ops/src'
+            AC_SUBST([ATOMIC_OPS_CFLAGS])
+            AC_CONFIG_SUBDIRS([libatomic_ops])
+          ],
           [ AC_MSG_RESULT([none])
             AS_IF([test x"$THREADS" != xnone],
                   [ AC_DEFINE([GC_BUILTIN_ATOMIC], [1],

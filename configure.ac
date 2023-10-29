@@ -2065,11 +2065,11 @@ if test "x$support_boehm" = "xyes"; then
 	LIBGC_STATIC_LIBS=
 	case "x$libgc" in
 		xincluded)
-			LIBGC_CPPFLAGS='-I$(top_srcdir)/external/bdwgc/include'
+			LIBGC_CPPFLAGS='-I$(top_srcdir)/external/bdwgc/include -I$(top_srcdir)/external/bdwgc/libatomic_ops/src'
 			LIBGC_LIBS='$(top_builddir)/external/bdwgc/libgc.la'
 			LIBGC_STATIC_LIBS='$(top_builddir)/external/bdwgc/libgc-static.la'
 
-			BOEHM_DEFINES="-DHAVE_BOEHM_GC -DGC_THREADS -DGC_BUILTIN_ATOMIC"
+			BOEHM_DEFINES="-DHAVE_BOEHM_GC -DGC_THREADS"
 
 			if test x$target_win32 = xyes; then
 				BOEHM_DEFINES="$BOEHM_DEFINES -DGC_NOT_DLL"
