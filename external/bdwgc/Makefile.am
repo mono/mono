@@ -59,7 +59,7 @@ noinst_LTLIBRARIES += libgc-static.la
 
 if SINGLE_GC_OBJ
 
-libgc_la_SOURCES = extra/gc.c
+libgc_la_SOURCES = extra/gc.c extra/krait_signal_handler.c
 
 if PTHREAD_START_STANDALONE
 AM_CPPFLAGS += -DGC_PTHREAD_START_STANDALONE
