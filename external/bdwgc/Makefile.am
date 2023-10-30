@@ -59,7 +59,7 @@ noinst_LTLIBRARIES += libgc-static.la
 
 if SINGLE_GC_OBJ
 
-libgc_la_SOURCES = extra/gc.c extra/krait_signal_handler.c
+libgc_la_SOURCES = extra/gc.c
 
 if PTHREAD_START_STANDALONE
 AM_CPPFLAGS += -DGC_PTHREAD_START_STANDALONE
@@ -73,7 +73,7 @@ libgc_la_SOURCES = \
     allchblk.c alloc.c blacklst.c dbg_mlc.c \
     dyn_load.c finalize.c gc_dlopen.c gcj_mlc.c headers.c \
     mach_dep.c malloc.c mallocx.c mark.c mark_rts.c misc.c new_hblk.c \
-    obj_map.c os_dep.c ptr_chck.c reclaim.c specific.c typd_mlc.c extra/krait_signal_handler.c
+    obj_map.c os_dep.c ptr_chck.c reclaim.c specific.c typd_mlc.c
 
 # C Library: Architecture Dependent
 # ---------------------------------
