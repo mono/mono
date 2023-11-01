@@ -1113,7 +1113,7 @@ void
 mono_gc_wbarrier_generic_store_internal (void volatile* ptr, MonoObject* value)
 {
 	*(void**)ptr = value;
-	mono_gc_dirty (ptr);
+	mono_gc_dirty ((void**)ptr);
 }
 
 void
