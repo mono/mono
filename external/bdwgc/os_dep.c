@@ -1219,6 +1219,7 @@ GC_INNER size_t GC_page_size = 0;
     /* We could use pthread_get_stackaddr_np even in case of a  */
     /* single-threaded gclib (there is no -lpthread on Darwin). */
 #   include <pthread.h>
+void* pthread_get_stackaddr_np(pthread_t);
 #   undef STACKBOTTOM
 #   define STACKBOTTOM (ptr_t)pthread_get_stackaddr_np(pthread_self())
 # endif
