@@ -851,7 +851,7 @@ HANDLES(REMSER_1, "InternalExecute", ves_icall_InternalExecute, MonoObject, 4, (
 HANDLES(REMSER_2, "IsTransparentProxy", ves_icall_IsTransparentProxy, MonoBoolean, 1, (MonoObject))
 #else
 ICALL_TYPE(REMSER, "System.Runtime.Remoting.RemotingServices", REMSER_0)
-ICALL(REMSER_0, "IsTransparentProxy", ves_icall_IsTransparentProxy)
+NOHANDLES(ICALL(REMSER_0, "IsTransparentProxy", ves_icall_IsTransparentProxy))
 #endif
 
 ICALL_TYPE(RUNIMPORT, "System.Runtime.RuntimeImports", RUNIMPORT_1)
