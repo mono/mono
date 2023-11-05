@@ -258,7 +258,12 @@ ICALL_EXPORT gpointer    ves_icall_System_Threading_Semaphore_CreateSemaphore_ic
 ICALL_EXPORT gpointer    ves_icall_System_Threading_Semaphore_OpenSemaphore_icall       (const gunichar2 *name, gint32 name_length, gint32 rights, gint32 *win32error);
 ICALL_EXPORT MonoBoolean ves_icall_System_Threading_Semaphore_ReleaseSemaphore_internal (gpointer handle, gint32 releaseCount, gint32 *prevcount);
 
-
-
+#ifndef DISABLE_REMOTING
+MonoBoolean
+ves_icall_IsTransparentProxy (MonoObjectHandle proxy, MonoError *error);
+#else
+MonoBoolean
+ves_icall_IsTransparentProxy (MonoObject* proxy);
+#endif
 
 #endif // __MONO_METADATA_ICALL_DECL_H__
