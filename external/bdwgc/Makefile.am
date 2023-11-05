@@ -85,9 +85,8 @@ if PTHREADS
 # Not Cygwin or MinGW.
 if PTHREAD_START_STANDALONE
 AM_CPPFLAGS += -DGC_PTHREAD_START_STANDALONE
-libgc_la_SOURCES += pthread_start.c
 endif
-libgc_la_SOURCES += pthread_support.c
+libgc_la_SOURCES += pthread_start.c pthread_support.c
 if DARWIN_THREADS
 libgc_la_SOURCES += darwin_stop_world.c
 else
