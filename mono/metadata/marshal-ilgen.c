@@ -6183,6 +6183,10 @@ emit_managed_wrapper_ilgen (MonoMethodBuilder *mb, MonoMethodSignature *invoke_s
 	mono_mb_add_local (mb, boolean_type);
 
 	if (!sig->hasthis && sig->param_count != invoke_sig->param_count) {
+		if (sig->param_count != invoke_sig->param_count + 1)
+		{
+			g_error("method name %s, method class %s", method->name, m_class_get_name(method->klass));
+		}
 		/* Closed delegate */
 		g_assert (sig->param_count == invoke_sig->param_count + 1);
 		closed = TRUE;
