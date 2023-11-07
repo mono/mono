@@ -783,7 +783,7 @@ GC_roots_proc (word* addr, mse* mark_stack_ptr,	mse* mark_stack_limit, word env)
 
 static void mono_mark_interp_stack(gpointer* p, gpointer gc_data)
 {
-	GC_push_one((GC_word)p);
+	GC_push_one((GC_word)*p);
 }
 
 static void
