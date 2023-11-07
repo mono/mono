@@ -7529,6 +7529,7 @@ mono_ee_interp_init (const char *opts)
 		mono_interp_opt = 0;
 	mono_interp_transform_init ();
 
+	mono_interp_callbacks.mark_stack = interp_mark_stack;
 	mini_install_interp_callbacks (&mono_interp_callbacks);
 
 	register_interp_stats ();
