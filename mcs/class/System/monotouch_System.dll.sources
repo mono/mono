@@ -6,3 +6,4 @@ Mono.AppleTls/MonoCertificatePal.Mobile.cs
 Mono.AppleTls/SafeHandles.cs
 
 System.Configuration/ConfigurationException.cs
+System.Configuration/IConfigXmlNode.cs

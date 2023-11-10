@@ -23,3 +23,4 @@ Mono.Btls/MonoBtlsX509LookupAndroid.cs
 ../corlib/corefx/Interop.ReadDir.Mono.cs
 
 System.Configuration/ConfigurationException.cs
+System.Configuration/IConfigXmlNode.cs
