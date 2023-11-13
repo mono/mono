@@ -192,7 +192,7 @@ mono_gc_base_init (void)
 	roots = g_hash_table_new (NULL, NULL);
 	default_push_other_roots = GC_get_push_other_roots ();
 	GC_set_push_other_roots (mono_push_other_roots);
-	GC_set_mark_stack_empty (mono_push_ephemerons);
+	// GC_set_mark_stack_empty (mono_push_ephemerons);
 
 	GC_set_no_dls (TRUE);
 
@@ -641,8 +641,8 @@ on_gc_notification (GC_EventType event)
 		MONO_PROFILER_RAISE (gc_event, (MONO_GC_EVENT_POST_START_WORLD_UNLOCKED, 0, TRUE));
 		break;
 	case GC_EVENT_RECLAIM_START:
-		mono_clear_ephemerons ();
-		break;
+		// mono_clear_ephemerons ();
+		// break;
 	default:
 		break;
 	}
@@ -807,7 +807,7 @@ mono_push_other_roots (void)
 			gc_callbacks.interp_mark_func(info, mono_mark_interp_stack, NULL, 0);
 		}	
 	} FOREACH_THREAD_END
-	GC_push_all (&ephemeron_list, &ephemeron_list + 1);
+	// GC_push_all (&ephemeron_list, &ephemeron_list + 1);
 	if (default_push_other_roots)
 		default_push_other_roots ();
 }
@@ -1167,7 +1167,7 @@ mono_gc_wbarrier_object_copy_internal (MonoObject* obj, MonoObject *src)
 void
 mono_gc_clear_domain (MonoDomain *domain)
 {
-	GC_call_with_alloc_lock (null_ephemerons_for_domain, domain);
+	// GC_call_with_alloc_lock (null_ephemerons_for_domain, domain);
 }
 
 void
@@ -2027,12 +2027,12 @@ ephemeron_array_add (gpointer arg)
 gboolean
 mono_gc_ephemeron_array_add (MonoObject *obj)
 {
-	ephemeron_node* item = GC_MALLOC (sizeof (ephemeron_node));
-	memset (item, 0, sizeof (ephemeron_node));
+	// ephemeron_node* item = GC_MALLOC (sizeof (ephemeron_node));
+	// memset (item, 0, sizeof (ephemeron_node));
 
-	mono_gc_weak_link_add (&item->ephemeron_array_weak_link, obj, FALSE);
+	// mono_gc_weak_link_add (&item->ephemeron_array_weak_link, obj, FALSE);
 
-	GC_call_with_alloc_lock (ephemeron_array_add, item);
+	// GC_call_with_alloc_lock (ephemeron_array_add, item);
 	return TRUE;
 }
 

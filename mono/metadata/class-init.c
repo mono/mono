@@ -2205,13 +2205,14 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		klass->instance_size = instance_size;
 	}
 	klass->blittable = blittable;
-	/* An Ephemeron cannot be marked by Boehm */
-	/* See SGen equivalent code in compute_class_bitmap */
-	if (!mono_gc_is_moving() && m_class_get_image (klass) == mono_defaults.corlib && !strcmp ("Ephemeron", m_class_get_name (klass))) {
-		klass->has_references = FALSE;
-	} else {
-		klass->has_references = has_references;
-	}
+	klass->has_references = has_references;
+	// /* An Ephemeron cannot be marked by Boehm */
+	// /* See SGen equivalent code in compute_class_bitmap */
+	// if (!mono_gc_is_moving() && m_class_get_image (klass) == mono_defaults.corlib && !strcmp ("Ephemeron", m_class_get_name (klass))) {
+	// 	klass->has_references = FALSE;
+	// } else {
+	// 	klass->has_references = has_references;
+	// }
 	klass->packing_size = packing_size;
 	klass->min_align = min_align;
 	for (i = 0; i < top; ++i) {
