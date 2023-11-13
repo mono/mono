@@ -165,7 +165,7 @@ mono_ppdb_get_signature(MonoImage *image, const char** out_path, guint8 *out_gui
 {
 	guint8 *ppdb_data = NULL;
 	int ppdb_size, ppdb_compressed_size;
-	return mono_get_pe_debug_info_full (image, out_guid, out_age, out_timestamp, &ppdb_data, &ppdb_size, &ppdb_compressed_size, out_path, NULL, NULL);
+	return mono_get_pe_debug_info_full (image, out_guid, out_age, out_timestamp, &ppdb_data, &ppdb_size, &ppdb_compressed_size, (char**)out_path, NULL, NULL);
 }
 
 
