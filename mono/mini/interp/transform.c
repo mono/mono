@@ -1115,11 +1115,11 @@ mono_interp_jit_call_supported (MonoMethod *method, MonoMethodSignature *sig)
         {
             if (is_ok (error))
                 return TRUE;
-            mono_error_cleanup(error);
+            mono_interp_error_cleanup(error);
         }
         else if (!is_ok (error))
         {
-            mono_error_cleanup(error);
+            mono_interp_error_cleanup(error);
         }
 	}
 
