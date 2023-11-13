@@ -10,7 +10,6 @@
 #include <mono/utils/mono-mmap.h>
 
 #include <emscripten.h>
-#include <emscripten/stack.h>
 #include <glib.h>
 
 #define round_down(addr, val) ((void*)((addr) & ~((val) - 1)))
@@ -19,14 +18,18 @@ EMSCRIPTEN_KEEPALIVE
 static int
 wasm_get_stack_base (void)
 {
-	return emscripten_stack_get_end ();
+	return EM_ASM_INT ({
+			return STACK_MAX;
+	});
 }
 
 EMSCRIPTEN_KEEPALIVE
 static int
 wasm_get_stack_size (void)
 {
-	return (guint8*)emscripten_stack_get_base () - (guint8*)emscripten_stack_get_end ();
+	return EM_ASM_INT ({
+			return TOTAL_STACK;
+	});
 }
 
 int
