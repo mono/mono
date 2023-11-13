@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>WebAssembly</RootNamespace>
+    <SignAssembly>true</SignAssembly>
+    <Version>$(BindingsVersion)</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.Bindings.xml</DocumentationFile>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <NoWarn>1701;1702;1591; 1570; 1572; 1573</NoWarn>
+    <OutputPath>..\..\</OutputPath>
+    <DocumentationFile>..\..\netstandard2.0\WebAssembly.Bindings.xml</DocumentationFile>
+    <LangVersion>7.3</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="LinkDescriptor\WebAssembly.Bindings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="LinkDescriptor\WebAssembly.Bindings.xml">
+      <LogicalName>WebAssembly.Bindings.xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\" />
+    <Folder Include="Host\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.2" />
+  </ItemGroup>
+</Project>

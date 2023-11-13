@@ -1,0 +1,92 @@
+<linker>
+  
+  <!--
+  Preserve the methods that are called from JavaScript bindings
+  -->
+    <assembly fullname="WebAssembly.Bindings" >
+        <type fullname="WebAssembly.Runtime" >
+            <method name="BindJSObject" />
+            <method name="BindJSType" />
+            <method name="BindCoreCLRObject" />
+            <method name="BindExistingObject" />
+            <method name="UnBindJSObject" />
+            <method name="UnBindJSObjectAndFree" />
+            <method name="UnBindRawJSObjectAndFree" />
+            <method name="GetJSObjectId" />
+            <method name="GetMonoObject" />
+            <method name="BoxInt" />
+            <method name="BoxDouble" />
+            <method name="BoxBool" />
+            <method name="IsSimpleArray" />
+            <method name="GetCoreType" />
+            <method name="SetupJSContinuation" />
+            <method name="CreateTaskSource" />
+            <method name="SetTaskSourceResult" />
+            <method name="SetTaskSourceFailure" />
+            <method name="GetTaskAndBind" />
+            <method name="GetCallSignature" />
+            <method name="ObjectToString" />
+            <method name="GetDateValue" />
+            <method name="CreateDateTime" />
+            <method name="CreateUri" />
+            <method name="ObjectToEnum" />
+            <method name="DumpAotProfileData" />            
+        </type>
+          <!--
+          The following methods are called by reflection
+          -->
+        <type fullname="WebAssembly.Core.Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.ArrayBuffer" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.DataView" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Float32Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Float64Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Int16Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Int32Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Int8Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Uint16Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Uint32Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Uint8Array" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Uint8ClampedArray" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.SharedArrayBuffer" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+        <type fullname="WebAssembly.Core.Function" >
+            <method signature="System.Void .ctor(System.IntPtr)" />
+        </type>
+    </assembly>
+
+
+  <!--
+  Preserve System.Delegate.DynamicInvoke which is called from javascript
+  -->
+  <assembly fullname="mscorlib">
+    <type fullname="System.Delegate">
+      <method signature="System.Object DynamicInvoke(System.Object[])" />
+    </type>
+  </assembly>   
+    
+</linker>

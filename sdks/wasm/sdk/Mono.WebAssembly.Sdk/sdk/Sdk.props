@@ -1,0 +1,52 @@
+<Project>
+  <Import Project="$(MSBuildThisFileDirectory)\Versions.props" />
+  <PropertyGroup>
+    <_IsMonoWasmProject>True</_IsMonoWasmProject>
+  </PropertyGroup>
+
+  <!-- import SDK first so MonoWasm*Path values can come from Directory.props -->
+  <Import Sdk="Microsoft.NET.Sdk" Project="Sdk.props" />
+
+  <!-- derive other values from MonoWasmSdkPath -->
+  <PropertyGroup Condition="'$(MonoWasmSdkPath)' != ''">
+    <MonoWasmSdkPath Condition="'$(MonoWasmSdkPath)'!='' And !HasTrailingSlash('$(MonoWasmSdkPath)')">$(MonoWasmSdkPath)\</MonoWasmSdkPath>
+    <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'==''">$(MonoWasmSdkPath)out\wasm-bcl\wasm\</MonoWasmFrameworkPath>
+    <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'==''">$(MonoWasmSdkPath)wasm\sdk\Mono.WebAssembly.Build\bin\Debug\netstandard2.0</MonoWasmTargetsPath>
+    <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'==''">$(MonoWasmSdkPath)wasm\</MonoWasmRuntimePath>
+    <MonoWasmBindingsPath Condition="'$(MonoWasmBindingsPath)'==''">$(MonoWasmSdkPath)wasm\framework\</MonoWasmBindingsPath>
+  </PropertyGroup>
+
+  <!-- ensure these paths have consistent trailing slashes -->
+  <PropertyGroup>
+    <MonoWasmTargetsPath Condition="'$(MonoWasmTargetsPath)'!='' And !HasTrailingSlash('$(MonoWasmTargetsPath)')">$(MonoWasmTargetsPath)\</MonoWasmTargetsPath>
+    <MonoWasmFrameworkPath Condition="'$(MonoWasmFrameworkPath)'!='' And !HasTrailingSlash('$(MonoWasmFrameworkPath)')">$(MonoWasmFrameworkPath)\</MonoWasmFrameworkPath>
+    <MonoWasmRuntimePath Condition="'$(MonoWasmRuntimePath)'!='' And !HasTrailingSlash('$(MonoWasmRuntimePath)')">$(MonoWasmRuntimePath)\</MonoWasmRuntimePath>
+    <MonoWasmBindingsPath Condition="'$(MonoWasmBindingsPath)'!='' And !HasTrailingSlash('$(MonoWasmBindingsPath)')">$(MonoWasmBindingsPath)\</MonoWasmBindingsPath>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(CentralPackagesFile)'!='' And '$(EnableCentralPackageVersions)'!='false'">
+    <PackageReference Include="Mono.WebAssembly.Build" VersionOverride="$(_MonoWasmBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Framework" VersionOverride="$(_MonoWasmFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Runtime" VersionOverride="$(_MonoWasmRuntimePackageVersion)" Condition="'$(MonoWasmRuntimePath)'=='' Or '$(_MonoWasmRuntimeFromPackage)'=='True'" />
+    <PackageReference Include="WebAssembly.Bindings" VersionOverride="$(_MonoWasmBindingsPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+    <PackageReference Include="WebAssembly.Net.Http" VersionOverride="$(_MonoWasmHttpHandlerPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+    <PackageReference Include="WebAssembly.Net.WebSockets" VersionOverride="$(_MonoWasmClientWebSocketPackageVersion)" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(CentralPackagesFile)'=='' Or '$(EnableCentralPackageVersions)'=='false'">
+    <PackageReference Include="Mono.WebAssembly.Build" Version="$(_MonoWasmBuildPackageVersion)" Condition="'$(MonoWasmTargetsPath)'=='' Or '$(_MonoWasmTargetsFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Framework" Version="$(_MonoWasmFrameworkPackageVersion)" Condition="'$(MonoWasmFrameworkPath)'=='' Or '$(_MonoWasmFrameworkFromPackage)'=='True'" />
+    <PackageReference Include="Mono.WebAssembly.Runtime" Version="$(_MonoWasmRuntimePackageVersion)" Condition="'$(MonoWasmRuntimePath)'=='' Or '$(_MonoWasmRuntimeFromPackage)'=='True'" />
+    <PackageReference Include="WebAssembly.Bindings" Version="[$(_MonoWasmBindingsPackageVersion)]" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+    <PackageReference Include="WebAssembly.Net.Http" Version="[$(_MonoWasmHttpHandlerPackageVersion)]" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+    <PackageReference Include="WebAssembly.Net.WebSockets" Version="[$(_MonoWasmClientWebSocketPackageVersion)]" Condition="'$(MonoWasmBindingsPath)'=='' And '$(DisableImplicitWasmBindingReferences)' != 'True'" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(MonoWasmBindingsPath)' != '' And '$(DisableImplicitWasmBindingReferences)' != 'True'">
+    <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Bindings.dll" />
+    <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Net.Http.dll" />
+    <Reference Include="$(MonoWasmBindingsPath)WebAssembly.Net.WebSockets.dll" />
+  </ItemGroup>
+
+  <Import Project="$(MonoWasmTargetsPath)Mono.WebAssembly.Build.props" Condition="'$(MonoWasmTargetsPath)'!=''" />
+</Project>

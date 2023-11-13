@@ -1,0 +1,10 @@
+node_modules
+package-lock.json
+.stamp*
+*.wasm
+dotnet.js
+Mono.Cecil*
+emsdk_env.sh
+builds/threads-debug
+builds/threads-release
+.configured

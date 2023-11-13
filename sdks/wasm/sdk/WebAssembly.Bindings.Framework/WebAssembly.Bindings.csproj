@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Mono.WebAssembly bindings. This package is not intended to be referenced directly.</Description>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SignAssembly>true</SignAssembly>
+    <!-- get rid of warnings about assemblies not in lib -->
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\..\wasm\framework\WebAssembly.Bindings.dll" PackagePath="lib\netstandard2.0\%(Filename)%(Extension)" Pack="True" />
+    <None Include="..\..\..\wasm\framework\WebAssembly.Bindings.pdb" PackagePath="lib\netstandard2.0\%(Filename)%(Extension)" Pack="True" />
+    <None Include="..\..\..\wasm\framework\WebAssembly.Bindings.xml" PackagePath="lib\netstandard2.0\%(Filename)%(Extension)" Pack="True" />    
+  </ItemGroup>
+</Project>

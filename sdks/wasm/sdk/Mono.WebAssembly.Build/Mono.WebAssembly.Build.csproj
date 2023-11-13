@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>Mono.WebAssembly build targets. This package is not intended to be referenced directly.</Description>
+    <BuildOutputTargetFolder>build</BuildOutputTargetFolder>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" ExcludeAssets="runtime" PrivateAssets="all" />
+    <PackageReference Include="System.CodeDom" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\out\wasm-bcl\wasm_tools\monolinker.exe" Link="monolinker.exe" CopyToOutputDirectory="Always" Pack="true" PackagePath="$(BuildOutputTargetFolder)\tools" />
+    <None Include="..\..\..\out\wasm-bcl\wasm_tools\Mono.Cecil.dll" Link="Mono.Cecil.dll" CopyToOutputDirectory="Always" Pack="true" PackagePath="$(BuildOutputTargetFolder)\tools" />
+    <None Update="Mono.WebAssembly.Build.targets" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)\netstandard2.0" />
+    <None Update="Mono.WebAssembly.Build.props" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="$(BuildOutputTargetFolder)\netstandard2.0" />
+    <None Update="RuntimeJs.tt" Generator="TextTemplatingFilePreprocessor" LastGenOutput="RuntimeJs.cs" />
+    <Compile Update="RuntimeJs.cs" DependentUpon="RuntimeJs.tt" />
+  </ItemGroup>
+</Project>

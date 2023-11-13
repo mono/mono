@@ -1,0 +1,18 @@
+{
+  "name": "wasm-driver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsvu": "git+https://github.com/GoogleChromeLabs/jsvu.git",
+    "lite-server": "^2.5.3",
+    "node": ">11.0.0",
+    "npm": "^6.13.4",
+    "puppeteer": "^1.17.0"
+  }
+}

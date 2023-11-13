@@ -1,0 +1,9 @@
+<Project Sdk="Mono.WebAssembly.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\sample.cs" />
+    <ProjectReference Include="..\Simple.Dependency\Simple.Dependency.csproj" />
+  </ItemGroup>
+</Project>

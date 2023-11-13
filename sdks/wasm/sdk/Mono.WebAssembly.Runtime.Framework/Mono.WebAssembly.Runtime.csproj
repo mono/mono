@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Description>Mono.WebAssembly runtime libraries. This package is not intended to be referenced directly.</Description>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SignAssembly>true</SignAssembly>
+    <!-- get rid of warnings about assemblies not in lib -->
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Update="build\netstandard2.0\Mono.WebAssembly.Runtime.props" Pack="True" />
+    <Content Include="..\..\..\wasm\builds\debug\dotnet.js" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\dotnet.js" />
+    <Content Include="..\..\..\wasm\builds\debug\dotnet.wasm" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\dotnet.wasm" />
+    <Content Include="..\..\..\wasm\builds\debug\dotnet.wasm.map" PackagePath="mono-wasm-runtime\debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\debug\dotnet.wasm.map" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\dotnet.js" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\dotnet.js" Condition="Exists('..\..\..\wasm\builds\threads-debug\dotnet.js')" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\dotnet.worker.js" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\dotnet.worker.js" Condition="Exists('..\..\..\wasm\builds\threads-debug\dotnet.worker.js')" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\dotnet.wasm" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\dotnet.wasm" Condition="Exists('..\..\..\wasm\builds\threads-debug\dotnet.wasm')" />
+    <Content Include="..\..\..\wasm\builds\threads-debug\dotnet.wasm.map" PackagePath="mono-wasm-runtime\threads-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-debug\dotnet.wasm.map" Condition="Exists('..\..\..\wasm\builds\threads-debug\dotnet.wasm.map')" />
+    <Content Include="..\..\..\wasm\builds\release\dotnet.js" PackagePath="mono-wasm-runtime\release\%(Filename)%(Extension)" Link="mono-wasm-runtime\release\dotnet.js" />
+    <Content Include="..\..\..\wasm\builds\release\dotnet.wasm" PackagePath="mono-wasm-runtime\release\%(Filename)%(Extension)" Link="mono-wasm-runtime\release\dotnet.wasm" />
+    <Content Include="..\..\..\wasm\builds\threads-release\dotnet.js" PackagePath="mono-wasm-runtime\threads-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-release\dotnet.js" Condition="Exists('..\..\..\wasm\builds\threads-release\dotnet.js')" />
+    <Content Include="..\..\..\wasm\builds\threads-release\dotnet.worker.js" PackagePath="mono-wasm-runtime\threads-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-release\dotnet.worker.js"  Condition="Exists('..\..\..\wasm\builds\threads-release\dotnet.worker.js')" />
+    <Content Include="..\..\..\wasm\builds\threads-release\dotnet.wasm" PackagePath="mono-wasm-runtime\threads-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\threads-release\dotnet.wasm"  Condition="Exists('..\..\..\wasm\builds\threads-release\dotnet.wasm')" />
+
+    <Content Include="..\..\..\wasm\builds\netcore-debug\dotnet.js" PackagePath="mono-wasm-runtime\netcore-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\netcore-debug\dotnet.js" Condition="Exists('..\..\..\wasm\builds\netcore-debug\dotnet.js')" />
+    <Content Include="..\..\..\wasm\builds\netcore-debug\dotnet.wasm" PackagePath="mono-wasm-runtime\netcore-debug\%(Filename)%(Extension)" Link="mono-wasm-runtime\netcore-debug\dotnet.wasm"  Condition="Exists('..\..\..\wasm\builds\netcore-debug\dotnet.wasm')" />
+
+    <Content Include="..\..\..\wasm\builds\netcore-release\dotnet.js" PackagePath="mono-wasm-runtime\netcore-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\netcore-release\dotnet.js" Condition="Exists('..\..\..\wasm\builds\netcore-release\dotnet.js')" />
+    <Content Include="..\..\..\wasm\builds\netcore-release\dotnet.wasm" PackagePath="mono-wasm-runtime\netcore-release\%(Filename)%(Extension)" Link="mono-wasm-runtime\netcore-release\dotnet.wasm"  Condition="Exists('..\..\..\wasm\builds\netcore-release\dotnet.wasm')" />
+
+    <None Update="build\netstandard2.0\Mono.WebAssembly.Runtime.props" PackagePath="build\netstandard2.0\Mono.WebAssembly.Runtime.props" Pack="True" />
+  </ItemGroup>
+</Project>

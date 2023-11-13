@@ -1,0 +1,90 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26124.0
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Bindings", "WebAssembly.Bindings\WebAssembly.Bindings.csproj", "{176A0D0C-41F0-4C2F-A440-617518A30032}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.Http", "WebAssembly.Net.Http\WebAssembly.Net.Http.csproj", "{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAssembly.Net.WebSockets", "WebAssembly.Net.WebSockets\WebAssembly.Net.WebSockets.csproj", "{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Debug|x64.Build.0 = Debug|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Debug|x86.Build.0 = Debug|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Release|Any CPU.Build.0 = Release|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Release|x64.ActiveCfg = Release|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Release|x64.Build.0 = Release|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Release|x86.ActiveCfg = Release|Any CPU
+		{176A0D0C-41F0-4C2F-A440-617518A30032}.Release|x86.Build.0 = Release|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Debug|x64.Build.0 = Debug|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Debug|x86.Build.0 = Debug|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|x64.ActiveCfg = Release|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|x64.Build.0 = Release|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|x86.ActiveCfg = Release|Any CPU
+		{D721826B-CD18-4FBC-A3BC-7CDDEA41F3A2}.Release|x86.Build.0 = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|x64.Build.0 = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Debug|x86.Build.0 = Debug|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x64.ActiveCfg = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x64.Build.0 = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x86.ActiveCfg = Release|Any CPU
+		{D399ED16-6F8E-4D6D-BF44-434D5F2986D7}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.TextStylePolicy = $1
+		$1.FileWidth = 80
+		$1.TabWidth = 8
+		$1.IndentWidth = 8
+		$1.scope = text/x-csharp
+		$0.CSharpFormattingPolicy = $2
+		$2.IndentSwitchSection = False
+		$2.NewLinesForBracesInTypes = False
+		$2.NewLinesForBracesInProperties = False
+		$2.NewLinesForBracesInAccessors = False
+		$2.NewLinesForBracesInAnonymousMethods = False
+		$2.NewLinesForBracesInControlBlocks = False
+		$2.NewLinesForBracesInAnonymousTypes = False
+		$2.NewLinesForBracesInObjectCollectionArrayInitializers = False
+		$2.NewLinesForBracesInLambdaExpressionBody = False
+		$2.NewLineForElse = False
+		$2.NewLineForCatch = False
+		$2.NewLineForFinally = False
+		$2.NewLineForMembersInObjectInit = False
+		$2.NewLineForMembersInAnonymousTypes = False
+		$2.NewLineForClausesInQuery = False
+		$2.SpacingAfterMethodDeclarationName = True
+		$2.SpaceAfterMethodCallName = True
+		$2.SpaceBeforeOpenSquareBracket = True
+		$2.scope = text/x-csharp
+	EndGlobalSection
+EndGlobal

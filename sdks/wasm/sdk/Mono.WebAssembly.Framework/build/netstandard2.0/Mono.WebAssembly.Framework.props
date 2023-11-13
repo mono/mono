@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup Condition="'$(_IsMonoWasmProject)'=='true'">
+    <MonoWasmFrameworkPath>$(MSBuildThisFileDirectory)..\..\wasm-assemblies\</MonoWasmFrameworkPath>
+    <_MonoWasmFrameworkFromPackage>True</_MonoWasmFrameworkFromPackage>
+  </PropertyGroup>
+</Project>

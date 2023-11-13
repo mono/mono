@@ -1,0 +1,54 @@
+{
+  "license": "Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license.",
+  "intellisenseImports": [
+    "..\\Mono.WebAssembly.Sdk\\sdk\\Sdk.props",
+    "..\\Mono.WebAssembly.Sdk\\sdk\\Sdk.targets"
+  ],
+  "properties": {
+    "MonoWasmManagedOutputDir": "Directory into which managed assemblies will be placed. Defaults to $(OutputDir)managed\\.",
+    "MonoWasmIntermediateDir": "Directory into which intermediate WebAssembly artifacts will be placed. Defaults to $(IntermediateOutputDir)monowasm\\.",
+    "MonoWasmLinkMode": {
+      "description": "Which kinds of assemblies should be linked, i.e. stripped of unused code",
+      "values": {
+        "None": "Do not link any assemblies",
+        "SdkOnly": "Link SDK assemblies only",
+        "Full": "Link all assemblies"
+      },
+      "default": "SdkOnly"
+    },
+    "MonoWasmLinkSkip": {
+      "description": "List of names of assemblies that should not be linked",
+      "kind": "string-list"
+    },
+    "MonoWasmI18n": {
+      "description": "Internationalization code pages to be supported. Default is None.",
+      "values": {
+        "cjk": "Chinese, Japanese and Korean",
+        "mideast": "Arabic, Hebrew, Turkish and Latin5",
+        "other": "Cyrillic, Baltic, Vietnamese, Ukrainian and Thai",
+        "rare": "EBCDIC encodings and other rare code pages",
+        "west": "Latin languages, Eastern and Western European",
+        "all":  "Include all supported code pages",
+        "none": "Do not include any additional code pages"
+      },
+      "valueSeparators": ",;"
+    },
+    "EnableDefaultWebContentItems": {
+      "description": "Whether to automatically include html, js, css, png and jpg files in the project as Content items",
+      "kind": "bool",
+      "default": true
+    },
+    "EnableMonoWasmThreads": {
+      "description": "Whether to include support for threads or not.",
+      "kind": "bool",
+      "default": false
+    },
+    "MonoWasmRuntime": {
+      "description": "Decide which version of the wasm runtime should be published.  Default: Tied to _DebugSymbolsProduced",
+      "values": {
+        "debug": "Publish the debug version of the runtime.",
+        "release": "Publish the release version of the runtime."
+      }
+    }
+  }
+}

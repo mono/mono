@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup Condition="'$(_IsMonoWasmProject)'=='true'">
+    <MonoWasmRuntimePath>$(MSBuildThisFileDirectory)..\..\mono-wasm-runtime\</MonoWasmRuntimePath>
+    <_MonoWasmRuntimeFromPackage>True</_MonoWasmRuntimeFromPackage>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,9 @@
+﻿<Project>
+  <ItemGroup>
+    <PackageReference Update="Mono.WebAssembly.Sdk" Version="0.2.2" />
+    <PackageReference Update="WebAssembly.Bindings" Version="0.2.2" />
+    <PackageReference Update="WebAssembly.Net.Http" Version="0.2.2" />
+    <PackageReference Update="WebAssembly.Net.WebSockets" Version="0.2.2" />  
+    <PackageReference Update="System.Memory" Version="4.5.3" />
+  </ItemGroup>
+</Project>

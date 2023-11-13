@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>WebAssembly Issues Test Suite</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <h3 id="header">WebAssembly Issues Test Suite</h3>
+
+    <script type="text/javascript" src="runtime.js"></script>
+    <script type="text/javascript">
+      var App = {
+          init: function () {
+            document.Module = Module;
+            document.Module.BINDING = BINDING;
+            document.onRuntimeDone();
+          },
+      };
+    </script>
+
+    <script defer src="dotnet.js"></script>
+
+  </body>
+</html>

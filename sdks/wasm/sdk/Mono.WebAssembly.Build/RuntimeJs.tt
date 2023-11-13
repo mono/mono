@@ -1,0 +1,23 @@
+<#@ template inherits="TemplateBase" #>
+<#@ import namespace="System.Collections.Generic" #>
+var Module = { 
+	onRuntimeInitialized: function () {
+		MONO.mono_load_runtime_and_bcl (
+			"<#=VfsPrefix??"managed"#>",
+			"<#=DeployPrefix??"managed"#>",
+			<#=EnableDebugging?1:0#>,
+			[ "<#=string.Join("\", \"", FileList)#>" ],
+			function () {
+				App.init ();
+			}
+		);
+	},
+};
+
+
+<#+
+public string VfsPrefix { get; set; }
+public string DeployPrefix { get; set; }
+public bool EnableDebugging { get; set; }
+public IEnumerable<string> FileList { get; set; }
+#>
