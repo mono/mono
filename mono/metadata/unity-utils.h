@@ -204,7 +204,7 @@ MONO_API MonoException* mono_unity_thread_check_exception(void);
 MONO_API MonoObject* mono_unity_delegate_get_target(MonoDelegate *delegate);
 MONO_API char* mono_unity_get_runtime_build_info(const char *date, const char *time);
 MONO_API void* mono_unity_get_field_address(MonoObject *obj, MonoVTable *vt, MonoClassField *field);
-MONO_API MonoClassField* mono_unity_field_from_token_checked(MonoImage *image, guint32 token, MonoClass **retklass, MonoGenericContext *context, MonoError *error);
+MONO_API MonoClassField* mono_unity_field_from_token_checked(MonoImage *image, uint32_t token, MonoClass **retklass, MonoGenericContext *context, MonoError *error);
 MONO_API mono_bool mono_unity_thread_state_init_from_handle(MonoThreadUnwindState *tctx, MonoThreadInfo *info, void* fixme);
 MONO_API void mono_unity_stackframe_set_method(MonoStackFrame *sf, MonoMethod *method);
 MONO_API MonoType* mono_unity_reflection_type_get_type(MonoReflectionType *type);
@@ -245,7 +245,7 @@ mono_unity_get_enable_handler_block_guards (void);
 
 MONO_API mono_bool mono_unity_class_is_open_constructed_type (MonoClass *klass);
 
-MONO_API gboolean mono_unity_class_has_failure (const MonoClass* klass);
+MONO_API mono_bool mono_unity_class_has_failure (const MonoClass* klass);
 
 #ifdef ANDROID
 typedef uint8_t (*android_network_up_state)(const char* ifName, uint8_t* is_up);
