@@ -6204,7 +6204,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 		INLINE_FAILURE ("coverage profiling");
 
-		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->method, header->code_size);
+		cfg->coverage_info = mono_profiler_coverage_alloc (cfg->domain, cfg->method, header->code_size);
 	}
 
 	if ((cfg->gen_sdb_seq_points && cfg->method == method) || cfg->prof_coverage) {
@@ -9232,7 +9232,7 @@ calli_end:
 			guint32 gettype_token;
 			if ((ip = il_read_call(next_ip, end, &gettype_token)) && ip_in_bb (cfg, cfg->cbb, ip)) {
 				MonoMethod* gettype_method = mini_get_method (cfg, method, gettype_token, NULL, generic_context);
-				if (!strcmp (gettype_method->name, "GetType") && gettype_method->klass == mono_defaults.object_class) {
+				if (gettype_method && !strcmp (gettype_method->name, "GetType") && gettype_method->klass == mono_defaults.object_class) {
 					mono_class_init_internal(klass);
 					if (mono_class_get_checked (m_class_get_image (klass), m_class_get_type_token (klass), error) == klass) {
 						if (cfg->compile_aot) {
@@ -9528,6 +9528,10 @@ calli_end:
 							EMIT_NEW_BIALU_IMM (cfg, ptr, OP_PADD_IMM, dreg, sp [0]->dreg, foffset);
 							store = mini_emit_storing_write_barrier (cfg, ptr, sp [1]);
 						} else {
+							if (MONO_TYPE_ISSTRUCT (field->type))
+								/* The decomposition might end up calling a copy/wbarrier function which doesn't do null checks */
+								MONO_EMIT_EXPLICIT_NULL_CHECK (cfg, sp [0]->dreg);
+
 							EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, field->type, sp [0]->dreg, foffset, sp [1]->dreg);
 						}
 					}
@@ -9837,6 +9841,11 @@ calli_end:
 
 				EMIT_NEW_STORE_MEMBASE_TYPE (cfg, store, ftype, ins->dreg, 0, store_val->dreg);
 				store->flags |= ins_flag;
+				if (cfg->gen_write_barriers && cfg->method->wrapper_type != MONO_WRAPPER_WRITE_BARRIER &&
+					mini_type_is_reference (ftype)) {
+					/* insert call to write barrier */
+					mini_emit_write_barrier (cfg, store, ins);
+				}			
 			} else {
 				gboolean is_const = FALSE;
 				MonoVTable *vtable = NULL;

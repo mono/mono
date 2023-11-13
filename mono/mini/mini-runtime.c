@@ -98,6 +98,7 @@
 #include "lldb.h"
 #include "mini-runtime.h"
 #include "interp/interp.h"
+#include "mixed_callstack_plugin.h"
 
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
@@ -566,6 +567,7 @@ mono_tramp_info_register_internal (MonoTrampInfo *info, MonoDomain *domain, gboo
 
 	mono_save_trampoline_xdebug_info (info);
 	mono_lldb_save_trampoline_info (info);
+	mixed_callstack_plugin_save_trampoline_info (info);
 
 #ifdef MONO_ARCH_HAVE_UNWIND_TABLE
 	if (!aot)
@@ -892,7 +894,7 @@ mono_jit_thread_attach (MonoDomain *domain)
 	if (!attached) {
 		// #678164
 		gboolean background = TRUE;
-		mono_thread_attach_external_native_thread (domain, background);
+		mono_thread_attach_external_native_thread (mono_get_root_domain (), background);
 
 		/* mono_jit_thread_attach is external-only and not called by
 		 * the runtime on any of our own threads.  So if we get here,
@@ -905,8 +907,10 @@ mono_jit_thread_attach (MonoDomain *domain)
 	}
 
 	orig = mono_domain_get ();
-	if (orig != domain)
+	if (orig != domain) {
+		mono_thread_push_appdomain_ref (domain);
 		mono_domain_set_fast (domain, TRUE);
+	}
 
 	return orig != domain ? orig : NULL;
 }
@@ -921,8 +925,10 @@ mono_jit_set_domain (MonoDomain *domain)
 {
 	g_assert (!mono_threads_is_blocking_transition_enabled ());
 
-	if (domain)
+	if (domain) {
 		mono_domain_set_fast (domain, TRUE);
+		mono_thread_pop_appdomain_ref ();
+	}
 }
 
 /**
@@ -4014,6 +4020,8 @@ mini_parse_debug_option (const char *option)
 		mini_debug_options.llvm_disable_inlining = TRUE;
 	else if (!strcmp (option, "llvm-disable-implicit-null-checks"))
 		mini_debug_options.llvm_disable_implicit_null_checks = TRUE;
+	else if (!strcmp (option, "unity-mixed-callstack"))
+		mini_debug_options.unity_mixed_callstack = TRUE;
 	else if (!strcmp (option, "explicit-null-checks"))
 		mini_debug_options.explicit_null_checks = TRUE;
 	else if (!strcmp (option, "gen-seq-points"))
@@ -4503,6 +4511,10 @@ mini_init (const char *filename, const char *runtime_version)
 	if (mini_debug_options.lldb || g_hasenv ("MONO_LLDB")) {
 		mono_lldb_init ("");
 		mono_dont_free_domains = TRUE;
+	}
+
+	if (mini_get_debug_options()->unity_mixed_callstack || g_hasenv ("UNITY_MIXED_CALLSTACK")) {
+		mixed_callstack_plugin_init ("");
 	}
 
 #ifdef XDEBUG_ENABLED

@@ -3112,6 +3112,13 @@ find_all_nocase (gpointer key, gpointer value, gpointer user_data)
 		data->values = g_slist_prepend (data->values, value);
 }
 
+static void
+add_all(gpointer key, gpointer value, gpointer user_data)
+{
+	FindAllUserData* data = (FindAllUserData*)user_data;
+	data->values = g_slist_prepend (data->values, value);
+}
+
 typedef struct {
 	gconstpointer key;
 	gpointer value;
@@ -3306,7 +3313,10 @@ mono_class_from_name_checked_aux (MonoImage *image, const char* name_space, cons
 
 		// We're forced to check all matching namespaces, not just the first one found,
 		// because our desired type could be in any of the ones that match case-insensitively.
-		g_hash_table_foreach (image->name_cache, find_all_nocase, &all_user_data);
+		if (name_space)
+			g_hash_table_foreach(image->name_cache, find_all_nocase, &all_user_data);
+		else
+			g_hash_table_foreach(image->name_cache, add_all, &all_user_data);
 
 		values = all_user_data.values;
 		while (values && !user_data.value) {

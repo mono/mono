@@ -2765,17 +2765,8 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 
 			if (unhandled)
 				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
-			else if (!ji || (jinfo_get_method (ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE)) {
-				if (last_mono_wrapper_runtime_invoke && !mono_thread_internal_current ()->threadpool_thread) {
-					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, NULL, NULL);
-					if (mini_get_debug_options ()->top_runtime_invoke_unhandled) {
-						mini_set_abort_threshold (&catch_frame);
-						mono_unhandled_exception_internal (obj);
-					}
-				} else {
-					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
-				}
-			}
+			else if (!ji || (jinfo_get_method (ji)->wrapper_type == MONO_WRAPPER_RUNTIME_INVOKE))
+				mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
 			else if (res != MONO_FIRST_PASS_CALLBACK_TO_NATIVE)
 				if (!is_caught_unmanaged)
 					mini_get_dbg_callbacks ()->handle_exception ((MonoException *)obj, ctx, &ctx_cp, &catch_frame);
@@ -3414,6 +3405,29 @@ print_stack_frame_to_string (StackFrameInfo *frame, MonoContext *ctx, gpointer d
 
 #ifndef MONO_CROSS_COMPILE
 
+MONO_API int
+mono_unity_backtrace_from_context (void* context, void* array[], int count)
+{
+	MonoContext mctx;
+	void*  ip = 0;
+	void** bp = 0;
+	int idx = 0;
+
+	mono_sigctx_to_monoctx(context, &mctx);
+
+	ip = (void*)MONO_CONTEXT_GET_IP(&mctx);
+	bp = (void**)MONO_CONTEXT_GET_BP(&mctx);
+
+	while(bp && count-- > 0)
+	{
+		array[idx++] = ip;
+
+		ip = bp[1];
+		bp = (void**)bp[0];
+	}
+
+	return idx;
+}
 /*
  * mono_handle_native_crash:
  *

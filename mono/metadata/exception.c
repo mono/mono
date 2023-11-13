@@ -1521,3 +1521,10 @@ mono_error_convert_to_exception_handle (MonoError *error)
 	return is_ok (error) ? MONO_HANDLE_CAST (MonoException, NULL_HANDLE)
 		: MONO_HANDLE_NEW (MonoException, mono_error_convert_to_exception (error));
 }
+
+void
+ves_icall_System_Exception_ReportUnhandledException(MonoObject *exc)
+{
+	mono_unhandled_exception_internal (exc);
+	mono_invoke_unhandled_exception_hook (exc);
+}

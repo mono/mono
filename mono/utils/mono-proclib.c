@@ -1056,6 +1056,7 @@ mono_pe_file_map (const gunichar2 *filename, guint32 *map_size, void **handle)
 	gchar *located_filename = NULL;
 	guint64 fsize = 0;
 	gpointer file_map = NULL;
+	MonoFileMap *filed = NULL;
 	ERROR_DECL (error);
 	MonoFileMap *filed = NULL;
 

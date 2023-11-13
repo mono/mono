@@ -160,6 +160,15 @@ create_ppdb_file (MonoImage *ppdb_image, gboolean is_embedded_ppdb)
 	return ppdb;
 }
 
+gboolean
+mono_ppdb_get_signature(MonoImage *image, const char** out_path, guint8 *out_guid, gint32 *out_age, gint32 *out_timestamp)
+{
+	guint8 *ppdb_data = NULL;
+	int ppdb_size, ppdb_compressed_size;
+	return get_pe_debug_info (image, out_guid, out_age, out_timestamp, &ppdb_data, &ppdb_size, &ppdb_compressed_size, out_path, NULL, NULL);
+}
+
+
 MonoPPDBFile*
 mono_ppdb_load_file (MonoImage *image, const guint8 *raw_contents, int size)
 {

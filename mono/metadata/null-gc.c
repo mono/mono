@@ -61,6 +61,11 @@ mono_gc_collect (int generation)
 {
 }
 
+void
+mono_gc_start_incremental_collection()
+{
+}
+
 int
 mono_gc_max_generation (void)
 {
@@ -113,6 +118,28 @@ int64_t
 mono_gc_get_heap_size (void)
 {
 	return 2*1024*1024;
+}
+
+int64_t
+mono_gc_get_max_time_slice_ns()
+{
+	return 0;
+}
+
+void
+mono_gc_set_max_time_slice_ns(int64_t maxTimeSlice)
+{
+}
+
+MonoBoolean 
+mono_gc_is_incremental()
+{
+    return FALSE;
+}
+
+void
+mono_gc_set_incremental(MonoBoolean value)
+{
 }
 
 gboolean
@@ -445,6 +472,12 @@ mono_gc_is_moving (void)
 }
 
 gboolean
+mono_gc_needs_write_barriers(void)
+{
+	return FALSE;
+}
+
+gboolean
 mono_gc_is_disabled (void)
 {
 	return FALSE;
@@ -500,16 +533,6 @@ FILE *
 mono_gc_get_logfile (void)
 {
 	return NULL;
-}
-
-void
-mono_gc_params_set (const char* options)
-{
-}
-
-void
-mono_gc_debug_set (const char* options)
-{
 }
 
 void

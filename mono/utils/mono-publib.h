@@ -77,6 +77,7 @@ typedef unsigned __int64	uint64_t;
 
 // Should (but not must) wrap in extern "C" (MONO_BEGIN_DECLS, MONO_END_DECLS).
 #define MONO_API_DATA MONO_API_NO_EXTERN_C extern
+#define UNITY_MONO_API MONO_API
 
 typedef int32_t		mono_bool;
 typedef uint8_t		mono_byte;

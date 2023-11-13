@@ -212,6 +212,8 @@ jit_info_table_chunk_index (MonoJitInfoTableChunk *chunk, MonoThreadHazardPointe
 	return left;
 }
 
+/* When changing this method, make sure to also update oop_jit_info_table_find
+   in mono/metadata/oop.c. */
 static MonoJitInfo*
 jit_info_table_find (MonoJitInfoTable *table, MonoThreadHazardPointers *hp, gint8 *addr)
 {
@@ -353,7 +355,7 @@ mono_jit_info_table_foreach_internal (MonoDomain *domain, MonoJitInfoFunc func, 
 				ji = (MonoJitInfo *)mono_get_hazardous_pointer ((gpointer volatile*)&chunk->data [jit_info_index], hp, JIT_INFO_HAZARD_INDEX);
 
 				if (func && !IS_JIT_INFO_TOMBSTONE (ji))
-					func (ji, user_data);
+					func (domain, ji->d.method, ji, user_data);
 
 				mono_hazard_pointer_clear (hp, JIT_INFO_HAZARD_INDEX);
 			}

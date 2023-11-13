@@ -119,6 +119,16 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 			     MonoError *error);
 
 
+
+
+static gboolean ignore_version_and_key_when_finding_assemblies_already_loaded = FALSE;
+
+void
+mono_set_ignore_version_and_key_when_finding_assemblies_already_loaded(gboolean value)
+{
+	ignore_version_and_key_when_finding_assemblies_already_loaded = value;
+}
+
 static void
 mono_domain_fire_assembly_load (MonoAssemblyLoadContext *alc, MonoAssembly *assembly, gpointer user_data, MonoError *error_out);
 
@@ -228,6 +238,7 @@ create_domain_objects (MonoDomain *domain)
 	mono_error_assert_ok (error);
 	mono_field_static_set_value_internal (string_vt, string_empty_fld, MONO_HANDLE_RAW (empty_str));
 	domain->empty_string = MONO_HANDLE_RAW (empty_str);
+	mono_gc_wbarrier_generic_nostore_internal (&domain->empty_string);
 
 	/*
 	 * Create an instance early since we can't do it when there is no memory.
@@ -235,6 +246,7 @@ create_domain_objects (MonoDomain *domain)
 	arg = mono_string_new_handle (domain, "Out of memory", error);
 	mono_error_assert_ok (error);
 	domain->out_of_memory_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "OutOfMemoryException", arg, NULL_HANDLE_STRING, error));
+	mono_gc_wbarrier_generic_nostore_internal (&domain->out_of_memory_ex);
 	mono_error_assert_ok (error);
 
 	/* 
@@ -244,14 +256,17 @@ create_domain_objects (MonoDomain *domain)
 	arg = mono_string_new_handle (domain, "A null value was found where an object instance was required", error);
 	mono_error_assert_ok (error);
 	domain->null_reference_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "NullReferenceException", arg, NULL_HANDLE_STRING, error));
+	mono_gc_wbarrier_generic_nostore_internal (&domain->null_reference_ex);
 	mono_error_assert_ok (error);
 	arg = mono_string_new_handle (domain, "The requested operation caused a stack overflow.", error);
 	mono_error_assert_ok (error);
 	domain->stack_overflow_ex = MONO_HANDLE_RAW (mono_exception_from_name_two_strings_checked (mono_defaults.corlib, "System", "StackOverflowException", arg, NULL_HANDLE_STRING, error));
+	mono_gc_wbarrier_generic_nostore_internal (&domain->stack_overflow_ex);
 	mono_error_assert_ok (error);
 
 	/*The ephemeron tombstone i*/
 	domain->ephemeron_tombstone = MONO_HANDLE_RAW (mono_object_new_handle (domain, mono_defaults.object_class, error));
+	mono_gc_wbarrier_generic_nostore_internal (&domain->ephemeron_tombstone);
 	mono_error_assert_ok (error);
 
 	if (domain != old_domain) {
@@ -330,7 +345,9 @@ mono_runtime_init_checked (MonoDomain *domain, MonoThreadStartCB start_cb, MonoT
 
 		MONO_HANDLE_SETVAL (ad, data, MonoDomain*, domain);
 		domain->domain = MONO_HANDLE_RAW (ad);
+		mono_gc_wbarrier_generic_nostore_internal (&domain->domain);
 		domain->setup = MONO_HANDLE_RAW (setup);
+		mono_gc_wbarrier_generic_nostore_internal (&domain->setup);
 	}
 
 	mono_thread_internal_attach (domain);
@@ -746,6 +763,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	goto_if_nok (error, leave);
 	MONO_HANDLE_SETVAL (ad, data, MonoDomain*, data);
 	data->domain = MONO_HANDLE_RAW (ad);
+	mono_gc_wbarrier_generic_nostore_internal (&data->domain);	
 	data->friendly_name = g_strdup (friendly_name);
 
 	MONO_PROFILER_RAISE (domain_name, (data, data->friendly_name));
@@ -773,6 +791,7 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetupHa
 	goto_if_nok (error, leave);
 
 	data->setup = MONO_HANDLE_RAW (copy_app_domain_setup (data, setup, error));
+	mono_gc_wbarrier_generic_nostore_internal (&data->setup);
 	if (!is_ok (error)) {
 		g_free (data->friendly_name);
 		goto leave;
@@ -2329,7 +2348,7 @@ mono_domain_assembly_search (MonoAssemblyLoadContext *alc, MonoAssembly *request
 	/* If it's not a strong name, any version that has the right simple
 	 * name is good enough to satisfy the request.  .NET Framework also
 	 * ignores case differences in this case. */
-	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)(strong_name ? MONO_ANAME_EQ_IGNORE_CASE :
+	const MonoAssemblyNameEqFlags eq_flags = (MonoAssemblyNameEqFlags)((strong_name && !ignore_version_and_key_when_finding_assemblies_already_loaded) ? MONO_ANAME_EQ_IGNORE_CASE :
 		(MONO_ANAME_EQ_IGNORE_PUBKEY | MONO_ANAME_EQ_IGNORE_VERSION | MONO_ANAME_EQ_IGNORE_CASE));
 
 	mono_domain_assemblies_lock (domain);
@@ -2628,7 +2647,7 @@ ves_icall_System_AppDomain_InternalUnload (gint32 domain_id, MonoError *error)
 		return;
 
 	MonoException *exc = NULL;
-	mono_domain_try_unload (domain, (MonoObject**)&exc);
+	mono_domain_try_unload (domain, (MonoObject**)&exc, NULL);
 	if (exc)
 		mono_error_set_exception_instance (error, exc);
 }
@@ -2983,7 +3002,7 @@ mono_domain_unload (MonoDomain *domain)
 {
 	MONO_ENTER_GC_UNSAFE;
 	MonoObject *exc = NULL;
-	mono_domain_try_unload (domain, &exc);
+	mono_domain_try_unload (domain, &exc, NULL);
 	MONO_EXIT_GC_UNSAFE;
 }
 
@@ -3000,7 +3019,7 @@ guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertab
 }
 
 /**
- * mono_domain_unload:
+ * mono_domain_try_unload:
  * \param domain The domain to unload
  * \param exc Exception information
  *
@@ -3019,7 +3038,7 @@ guarded_wait (MonoThreadHandle *thread_handle, guint32 timeout, gboolean alertab
  *  process could end up trying to abort the current thread.
  */
 void
-mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
+mono_domain_try_unload (MonoDomain *domain, MonoObject **exc, MonoUnityExceptionFunc callback)
 {
 	HANDLE_FUNCTION_ENTER ();
 	ERROR_DECL (error);
@@ -3066,10 +3085,14 @@ mono_domain_try_unload (MonoDomain *domain, MonoObject **exc)
 	}
 
 	if (*exc) {
-		/* Roll back the state change */
-		domain->state = MONO_APPDOMAIN_CREATED;
-		mono_domain_set_fast (caller_domain, FALSE);
-		goto exit;
+		if (callback != NULL)
+			callback (*exc);
+		else {
+			/* Roll back the state change */
+			domain->state = MONO_APPDOMAIN_CREATED;
+			mono_domain_set_internal_with_options (caller_domain, TRUE);
+			goto exit;
+		}
 	}
 	mono_domain_set_fast (caller_domain, FALSE);
 

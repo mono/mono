@@ -131,7 +131,7 @@ get_win32_restore_stack (void)
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
  */
-static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
+LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
@@ -1134,11 +1134,11 @@ mono_arch_unwindinfo_add_alloc_stack (PUNWIND_INFO unwindinfo, MonoUnwindOp *unw
 static gboolean g_dyn_func_table_inited;
 
 // Dynamic function table used when registering unwind info for OS unwind support.
-static GList *g_dynamic_function_table_begin;
+GList *g_dynamic_function_table_begin;
 static GList *g_dynamic_function_table_end;
 
 // SRW lock (lightweight read/writer lock) protecting dynamic function table.
-static SRWLOCK g_dynamic_function_table_lock = SRWLOCK_INIT;
+SRWLOCK g_dynamic_function_table_lock = SRWLOCK_INIT;
 
 static RtlInstallFunctionTableCallbackPtr g_rtl_install_function_table_callback;
 static RtlDeleteFunctionTablePtr g_rtl_delete_function_table;

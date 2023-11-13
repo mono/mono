@@ -265,6 +265,8 @@ struct _MonoJitInfo {
 	/* Whenever this jit info refers to an interpreter method */
 	gboolean    is_interp:1;
 
+	gboolean    dbg_ignore : 1;
+
 	/* FIXME: Embed this after the structure later*/
 	gpointer    gc_info; /* Currently only used by SGen */
 
@@ -608,7 +610,7 @@ mono_runtime_get_no_exec (void);
 void
 mono_domain_parse_assembly_bindings (MonoDomain *domain, int amajor, int aminor, gchar *domain_config_file_name);
 
-gboolean
+UNITY_MONO_API gboolean
 mono_assembly_name_parse (const char *name, MonoAssemblyName *aname);
 
 MonoAssembly *
@@ -633,8 +635,6 @@ int mono_framework_version (void);
 void mono_assembly_cleanup_domain_bindings (guint32 domain_id);
 
 MonoJitInfo* mono_jit_info_table_find_internal (MonoDomain *domain, gpointer addr, gboolean try_aot, gboolean allow_trampolines);
-
-typedef void (*MonoJitInfoFunc) (MonoJitInfo *ji, gpointer user_data);
 
 void
 mono_jit_info_table_foreach_internal (MonoDomain *domain, MonoJitInfoFunc func, gpointer user_data);

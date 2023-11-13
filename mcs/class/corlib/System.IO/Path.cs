@@ -427,6 +427,10 @@ namespace System.IO {
 			if (IsDirectorySeparator (end) && (path [path.Length - 1] != DirectorySeparatorChar))
 				path += DirectorySeparatorChar;
 
+			string newPath;
+			if (MonoIO.RemapPath(path, out newPath))
+				path = newPath;
+
 			return path;
 		}
 

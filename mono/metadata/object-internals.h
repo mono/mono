@@ -614,7 +614,12 @@ struct _MonoInternalThread {
 	gint32 self_suspended; // TRUE | FALSE
 	gsize thread_state;
 
-	void* unused [3]; // same size as netcore
+#ifdef HOST_WIN32
+	void* unused [3];
+#else
+	void* unused [2]; // same size as netcore
+	guint64 os_tid;
+#endif
 	/* This is used only to check that we are in sync between the representation
 	 * of MonoInternalThread in native and InternalThread in managed
 	 *
@@ -1868,7 +1873,7 @@ typedef enum {
 
 MonoRuntimeUnhandledExceptionPolicy
 mono_runtime_unhandled_exception_policy_get (void);
-void
+UNITY_MONO_API void
 mono_runtime_unhandled_exception_policy_set (MonoRuntimeUnhandledExceptionPolicy policy);
 
 void

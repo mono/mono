@@ -630,6 +630,10 @@ verify_import_table (VerifyContext *ctx)
 	guint32 name_rva, ilt_rva, iat_rva;
 	char mscoreeBuff[SIZE_OF_MSCOREE + 1];
 
+	// Having no import table is structurally valid
+	if (it.rva == 0 && it.size == 0)
+		return;
+
 	g_assert (offset != INVALID_OFFSET);
 
 	if (it.size < 40)

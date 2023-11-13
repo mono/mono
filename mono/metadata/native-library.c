@@ -378,9 +378,12 @@ static MonoDl *
 cached_module_load (const char *name, int flags, char **err)
 {
 	MonoDl *res;
+	const char *name_remap;
 
 	if (err)
 		*err = NULL;
+	if (name_remap = mono_unity_remap_path (name))
+		name = name_remap;
 
 	MONO_ENTER_GC_SAFE;
 	mono_global_loader_data_lock ();
@@ -398,6 +401,7 @@ exit:
 	MONO_ENTER_GC_SAFE;
 	mono_global_loader_data_unlock ();
 	MONO_EXIT_GC_SAFE;
+	g_free((void*)name_remap);
 
 	return res;
 }
@@ -606,6 +610,20 @@ legacy_probe_for_module (MonoImage *image, const char *new_scope)
 		}
 
 		return module;
+	}
+
+	if (mono_get_find_plugin_callback ())
+	{
+		const char* unity_new_scope = mono_get_find_plugin_callback () (new_scope);
+		if (unity_new_scope == NULL || !unity_new_scope[0])
+		{
+			mono_trace (G_LOG_LEVEL_WARNING, MONO_TRACE_DLLIMPORT,
+				"DllImport unable to load unity mapped library '%s'.",
+				unity_new_scope);
+		}
+
+		else
+			new_scope = g_strdup (unity_new_scope);
 	}
 
 	/*
@@ -823,6 +841,7 @@ pinvoke_probe_for_symbol (MonoDl *module, MonoMethodPInvoke *piinfo, const char 
 	if (piinfo->piflags & PINVOKE_ATTRIBUTE_NO_MANGLE)
 		error_msg = mono_dl_symbol (module, import, &addr);
 	else {
+
 		/*
 		 * Search using a variety of mangled names
 		 */

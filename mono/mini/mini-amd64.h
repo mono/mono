@@ -7,6 +7,7 @@
 
 #include <mono/arch/amd64/amd64-codegen.h>
 #include <mono/utils/mono-sigcontext.h>
+#include <mono/utils/mono-signal-handler.h>
 #include <mono/utils/mono-context.h>
 #include <glib.h>
 

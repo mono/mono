@@ -38,6 +38,7 @@
 #include "w32semaphore.h"
 #include "w32socket.h"
 #include "mono/utils/mono-proclib.h"
+#include <mono/metadata/unity-utils.h>
 
 /* From MonoProperty.cs */
 typedef enum {

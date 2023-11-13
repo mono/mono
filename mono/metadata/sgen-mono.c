@@ -2582,6 +2582,12 @@ mono_gc_is_moving (void)
 }
 
 gboolean
+mono_gc_needs_write_barriers(void)
+{
+	return TRUE;
+}
+
+gboolean
 mono_gc_is_disabled (void)
 {
 	return FALSE;
@@ -2612,6 +2618,12 @@ mono_gc_collect (int generation)
 	MONO_ENTER_GC_UNSAFE;
 	sgen_gc_collect (generation);
 	MONO_EXIT_GC_UNSAFE;
+}
+
+void 
+mono_gc_start_incremental_collection()
+{
+
 }
 
 int
@@ -2647,6 +2659,28 @@ mono_gc_get_gcmemoryinfo (gint64* high_memory_load_threshold_bytes,
 	*memory_load_bytes = sgen_gc_info.memory_load_bytes;
 	*total_available_memory_bytes = sgen_gc_info.total_available_memory_bytes;
 }	
+
+int64_t
+mono_gc_get_max_time_slice_ns()
+{
+	return 0;
+}
+
+MonoBoolean 
+mono_gc_is_incremental()
+{
+    return FALSE;
+}
+
+void
+mono_gc_set_incremental(MonoBoolean value)
+{
+}
+
+void
+mono_gc_set_max_time_slice_ns(int64_t maxTimeSlice)
+{
+}
 
 MonoGCDescriptor
 mono_gc_make_root_descr_user (MonoGCRootMarkFunc marker)

@@ -5551,6 +5551,7 @@ mono_metadata_localscope_from_methoddef (MonoImage *meta, guint32 index)
 static void
 mono_backtrace (int limit)
 {
+#ifndef _MSC_VER
 	void *array[limit];
 	char **names;
 	int i;
@@ -5560,6 +5561,7 @@ mono_backtrace (int limit)
 		g_print ("\t%s\n", names [i]);
 	}
 	g_free (names);
+#endif
 }
 #endif
 
@@ -5828,6 +5830,66 @@ gboolean
 mono_metadata_generic_class_is_valuetype (MonoGenericClass *gclass)
 {
 	return m_class_is_valuetype (gclass->container_class);
+}
+
+typedef struct
+{
+	MonoGenericClassFunc func;
+	gpointer user_data;
+} GenericClassForeachData;
+
+
+static void
+generic_class_foreach_callback(gpointer key, gpointer value, gpointer user_data)
+{
+	GenericClassForeachData* data = (GenericClassForeachData*)user_data;
+	data->func(key, data->user_data);
+}
+
+void
+mono_metadata_generic_class_foreach(MonoGenericClassFunc func, void* user_data)
+{
+	GenericClassForeachData data;
+	guint i;
+
+	data.func = func;
+	data.user_data = user_data;
+
+	for(i = 0; i < HASH_TABLE_SIZE; ++i)
+	{ 
+		MonoImageSet* imageSet = img_set_cache[i];
+
+		if (imageSet == NULL || imageSet->gclass_cache == NULL)
+			continue;
+
+		mono_image_set_lock(imageSet);
+
+		mono_conc_hashtable_foreach(imageSet->gclass_cache, generic_class_foreach_callback, &data);
+
+		mono_image_set_unlock(imageSet);
+	}
+}
+
+void
+mono_metadata_image_set_foreach(MonoImageSetFunc func, gpointer user_data)
+{
+	GenericClassForeachData data;
+	guint i;
+
+	data.func = func;
+	data.user_data = user_data;
+
+	for (i = 0; i < HASH_TABLE_SIZE; ++i)
+	{
+		MonoImageSet* imageSet = img_set_cache[i];
+
+		if (imageSet == NULL)
+			continue;
+
+		mono_image_set_lock(imageSet);
+		func(imageSet, user_data);
+		mono_image_set_unlock(imageSet);
+	}
 }
 
 static gboolean
@@ -7633,6 +7695,18 @@ mono_type_is_byref (MonoType *type)
 	result = mono_type_is_byref_internal (type);
 	MONO_EXIT_GC_UNSAFE;
 	return result;
+}
+
+/**
+ * mono_type_get_attrs:
+ * @type: the MonoType operated on
+ *
+ * Returns: the param attributes.
+ */
+uint32_t
+mono_type_get_attrs (MonoType *type)
+{
+	return type->attrs;
 }
 
 /**

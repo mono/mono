@@ -37,6 +37,7 @@
 
 gboolean mono_print_vtable = FALSE;
 gboolean mono_align_small_structs = FALSE;
+extern gboolean mono_allow_gc_aware_layout;
 
 /* Statistics */
 static gint32 classes_size;
@@ -1098,8 +1099,10 @@ mono_class_create_bounded_array (MonoClass *eclass, guint32 rank, gboolean bound
 
 	mono_class_setup_supertypes (klass);
 
-	if (mono_class_is_ginst (eclass))
-		mono_class_init_internal (eclass);
+	// NOTE: this is probably too aggressive if eclass is not a valuetype.  It looks like we
+	// only need the size info in order to set MonoClass:has_references for this array type -
+	// and for that we only need to setup the fields of the element type if it's not a reference
+	// type.
 	if (!eclass->size_inited)
 		mono_class_setup_fields (eclass);
 	mono_class_set_type_load_failure_causedby_class (klass, eclass, "Could not load array element type");
@@ -1941,9 +1944,14 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 	 * what the default is for other runtimes.
 	 */
 	 /* corlib is missing [StructLayout] directives in many places */
-	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT) {
+	if (mono_allow_gc_aware_layout && layout == TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		if (!klass->valuetype)
 			gc_aware_layout = TRUE;
+		/* Unity depends on List`1 layout in native code */
+		if (klass->image == mono_defaults.corlib &&
+			strcmp (klass->name_space, "System.Collections.Generic") == 0 &&
+			strcmp (klass->name, "List`1") == 0)
+			gc_aware_layout = FALSE;
 	}
 
 	/* Compute klass->blittable */
@@ -2197,7 +2205,13 @@ mono_class_layout_fields (MonoClass *klass, int base_instance_size, int packing_
 		klass->instance_size = instance_size;
 	}
 	klass->blittable = blittable;
-	klass->has_references = has_references;
+	/* An Ephemeron cannot be marked by Boehm */
+	/* See SGen equivalent code in compute_class_bitmap */
+	if (!mono_gc_is_moving() && m_class_get_image (klass) == mono_defaults.corlib && !strcmp ("Ephemeron", m_class_get_name (klass))) {
+		klass->has_references = FALSE;
+	} else {
+		klass->has_references = has_references;
+	}
 	klass->packing_size = packing_size;
 	klass->min_align = min_align;
 	for (i = 0; i < top; ++i) {

@@ -260,7 +260,6 @@ mono_profiler_enable_coverage (void)
 		return FALSE;
 
 	mono_os_mutex_init (&mono_profiler_state.coverage_mutex);
-	mono_profiler_state.coverage_hash = g_hash_table_new (NULL, NULL);
 
 	if (!mono_debug_enabled ())
 		mono_debug_init (MONO_DEBUG_FORMAT_MONO);
@@ -290,15 +289,87 @@ mono_profiler_set_coverage_filter_callback (MonoProfilerHandle handle, MonoProfi
 }
 
 static void
-coverage_lock (void)
+coverage_domains_lock (void)
 {
 	mono_os_mutex_lock (&mono_profiler_state.coverage_mutex);
 }
 
 static void
-coverage_unlock (void)
+coverage_domains_unlock (void)
 {
 	mono_os_mutex_unlock (&mono_profiler_state.coverage_mutex);
+}
+
+static MonoDomainCoverage*
+get_coverage_for_domain (MonoDomain* domain)
+{
+	coverage_domains_lock ();
+	MonoDomainCoverage* cov = mono_profiler_state.coverage_domains;
+	while (cov)
+	{
+		if (cov->domain == domain)
+			break;
+		cov = cov->next;
+	}
+	coverage_domains_unlock ();
+	return cov;
+}
+
+void
+mono_profiler_coverage_domain_init (MonoDomain* domain)
+{
+	if (!mono_profiler_state.code_coverage)
+		return;
+
+	MonoDomainCoverage* cov = g_new0 (MonoDomainCoverage, 1);
+	cov->domain = domain;
+	cov->coverage_hash = g_hash_table_new (NULL, NULL);
+	mono_os_mutex_init (&cov->mutex);
+
+	coverage_domains_lock ();
+	cov->next = mono_profiler_state.coverage_domains;
+	mono_profiler_state.coverage_domains = cov;
+	coverage_domains_unlock ();
+}
+
+void
+mono_profiler_coverage_domain_free (MonoDomain* domain)
+{
+	if (!mono_profiler_state.code_coverage)
+		return;
+
+	coverage_domains_lock ();
+
+	MonoDomainCoverage* cov = mono_profiler_state.coverage_domains;
+	MonoDomainCoverage** prev = &mono_profiler_state.coverage_domains;
+	while (cov)
+	{
+		if (cov->domain == domain)
+			break;
+
+		prev = &cov->next;
+		cov = cov->next;
+	}
+
+	if (cov != NULL)
+	{
+		*prev = cov->next;
+
+		GHashTableIter iter;
+		g_hash_table_iter_init (&iter, cov->coverage_hash);
+
+		MonoProfilerCoverageInfo* info;
+		while (g_hash_table_iter_next (&iter, NULL, (gpointer*)&info))
+			g_free (info);
+
+		g_hash_table_destroy (cov->coverage_hash);
+
+		mono_os_mutex_destroy (&cov->mutex);
+
+		g_free (cov);
+	}
+
+	coverage_domains_unlock ();
 }
 
 /**
@@ -323,11 +394,13 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
 		return FALSE;
 
-	coverage_lock ();
+	MonoDomainCoverage* domain = get_coverage_for_domain (mono_domain_get ());
 
-	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)g_hash_table_lookup (mono_profiler_state.coverage_hash, method);
+	mono_os_mutex_lock (&domain->mutex);
 
-	coverage_unlock ();
+	MonoProfilerCoverageInfo *info = (MonoProfilerCoverageInfo*)g_hash_table_lookup (domain->coverage_hash, method);
+
+	mono_os_mutex_unlock (&domain->mutex);
 
 	MonoMethodHeaderSummary header;
 
@@ -413,6 +486,133 @@ mono_profiler_get_coverage_data (MonoProfilerHandle handle, MonoMethod *method, 
 	return TRUE;
 }
 
+
+typedef struct
+{
+	MonoProfilerCoverageCallback cb;
+	MonoProfilerHandle handle;
+} InvokeCallbackInfo;
+
+static void invoke_coverage_callback_for_hashtable_entry (gpointer key, gpointer value, gpointer user_data)
+{
+	InvokeCallbackInfo* invokeInfo = (InvokeCallbackInfo*)user_data;
+	MonoMethod* method = (MonoMethod*)key;
+	MonoProfilerCoverageInfo* info = (MonoProfilerCoverageInfo*)value;
+
+	MonoError error;
+	MonoMethodHeader* header = mono_method_get_header_checked (method, &error);
+	mono_error_assert_ok (&error);
+
+	guint32 size;
+
+	const unsigned char* start = mono_method_header_get_code (header, &size, NULL);
+	const unsigned char* end = start + size;
+	MonoDebugMethodInfo* minfo = mono_debug_lookup_method (method);
+
+	for (guint32 i = 0; i < info->entries; i++) {
+		guchar* cil_code = info->data[i].cil_code;
+
+		if (cil_code && cil_code >= start && cil_code < end) {
+			guint32 offset = cil_code - start;
+
+			MonoProfilerCoverageData data = {
+				.method = method,
+				.il_offset = offset,
+				.counter = info->data[i].count,
+				.line = 1,
+				.column = 1,
+			};
+
+			if (minfo) {
+				MonoDebugSourceLocation* loc = mono_debug_method_lookup_location (minfo, offset);
+
+				if (loc) {
+					data.file_name = g_strdup (loc->source_file);
+					data.line = loc->row;
+					data.column = loc->column;
+
+					mono_debug_free_source_location (loc);
+				}
+			}
+
+			invokeInfo->cb (invokeInfo->handle->prof, &data);
+
+			g_free ((char*)data.file_name);
+		}
+	}
+
+	mono_metadata_free_mh (header);
+}
+
+mono_bool
+mono_profiler_get_all_coverage_data (MonoProfilerHandle handle, MonoProfilerCoverageCallback cb)
+{
+	if (!mono_profiler_state.code_coverage)
+		return FALSE;
+
+	InvokeCallbackInfo info;
+	info.cb = cb;
+	info.handle = handle;
+
+	MonoDomainCoverage* domain = get_coverage_for_domain (mono_domain_get ());
+
+	mono_os_mutex_lock (&domain->mutex);
+
+	g_hash_table_foreach (domain->coverage_hash, invoke_coverage_callback_for_hashtable_entry, &info);
+
+	mono_os_mutex_unlock (&domain->mutex);
+
+	return TRUE;
+}
+
+mono_bool
+mono_profiler_reset_coverage (MonoMethod* method)
+{
+	if (!mono_profiler_state.code_coverage)
+		return FALSE;
+
+	if ((method->flags & METHOD_ATTRIBUTE_ABSTRACT) || (method->iflags & METHOD_IMPL_ATTRIBUTE_RUNTIME) || (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) || (method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL))
+		return FALSE;
+
+	MonoDomainCoverage* domain = get_coverage_for_domain (mono_domain_get ());
+
+	mono_os_mutex_lock (&domain->mutex);
+
+	MonoProfilerCoverageInfo* info = g_hash_table_lookup (domain->coverage_hash, method);
+
+	mono_os_mutex_unlock (&domain->mutex);
+
+	if (!info)
+		return TRUE;
+
+	for (guint32 i = 0; i < info->entries; i++)
+		info->data[i].count = 0;
+
+	return TRUE;
+}
+
+static void reset_coverage_for_hashtable_entry (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoProfilerCoverageInfo* info = (MonoProfilerCoverageInfo*)value;
+
+	for (guint32 i = 0; i < info->entries; i++)
+		info->data[i].count = 0;
+}
+
+void mono_profiler_reset_all_coverage ()
+{
+	if (!mono_profiler_state.code_coverage)
+		return;
+
+	MonoDomainCoverage* domain = get_coverage_for_domain (mono_domain_get ());
+
+	mono_os_mutex_lock (&domain->mutex);
+
+	g_hash_table_foreach (domain->coverage_hash, reset_coverage_for_hashtable_entry, NULL);
+
+	mono_os_mutex_unlock (&domain->mutex);
+}
+
 gboolean
 mono_profiler_coverage_instrumentation_enabled (MonoMethod *method)
 {
@@ -429,7 +629,7 @@ mono_profiler_coverage_instrumentation_enabled (MonoMethod *method)
 }
 
 MonoProfilerCoverageInfo *
-mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
+mono_profiler_coverage_alloc (MonoDomain* domain, MonoMethod *method, guint32 entries)
 {
 	if (!mono_profiler_state.code_coverage)
 		return NULL;
@@ -437,15 +637,17 @@ mono_profiler_coverage_alloc (MonoMethod *method, guint32 entries)
 	if (!mono_profiler_coverage_instrumentation_enabled (method))
 		return NULL;
 
-	coverage_lock ();
+	MonoDomainCoverage* covdomain = get_coverage_for_domain (domain);
+
+	mono_os_mutex_lock (&covdomain->mutex);
 
 	MonoProfilerCoverageInfo *info = g_malloc0 (sizeof (MonoProfilerCoverageInfo) + sizeof (MonoProfilerCoverageInfoEntry) * entries);
 
 	info->entries = entries;
 
-	g_hash_table_insert (mono_profiler_state.coverage_hash, method, info);
+	g_hash_table_insert (covdomain->coverage_hash, method, info);
 
-	coverage_unlock ();
+	mono_os_mutex_unlock (&covdomain->mutex);
 
 	return info;
 }
@@ -566,7 +768,7 @@ mono_profiler_sampling_thread_wait (void)
 mono_bool
 mono_profiler_enable_allocations (void)
 {
-	if (mono_profiler_state.startup_done)
+	if (mono_gc_get_managed_allocator_types () > 0 && mono_profiler_state.startup_done)
 		return FALSE;
 
 	return mono_profiler_state.allocations = TRUE;
@@ -854,21 +1056,6 @@ mono_profiler_cleanup (void)
 		g_free (cur);
 	}
 
-	if (mono_profiler_state.code_coverage) {
-		mono_os_mutex_destroy (&mono_profiler_state.coverage_mutex);
-
-		GHashTableIter iter;
-
-		g_hash_table_iter_init (&iter, mono_profiler_state.coverage_hash);
-
-		MonoProfilerCoverageInfo *info;
-
-		while (g_hash_table_iter_next (&iter, NULL, (gpointer *) &info))
-			g_free (info);
-
-		g_hash_table_destroy (mono_profiler_state.coverage_hash);
-	}
-
 	if (mono_profiler_state.sampling_owner)
 		mono_os_sem_destroy (&mono_profiler_state.sampling_semaphore);
 }
@@ -1067,10 +1254,45 @@ mono_profiler_install_jit_end (MonoLegacyProfileJitResult end)
 	}
 }
 
+
+static MonoProfilerCallInstrumentationFlags
+call_instrumentation_filter_callback (MonoProfiler *prof, MonoMethod *method)
+{
+	return MONO_PROFILER_CALL_INSTRUMENTATION_ENTER | MONO_PROFILER_CALL_INSTRUMENTATION_LEAVE | MONO_PROFILER_CALL_INSTRUMENTATION_TAIL_CALL | MONO_PROFILER_CALL_INSTRUMENTATION_EXCEPTION_LEAVE;
+}
+
+typedef enum
+{
+	MONO_PROFILE_NONE = 0,
+	MONO_PROFILE_APPDOMAIN_EVENTS = 1 << 0,
+	MONO_PROFILE_ASSEMBLY_EVENTS = 1 << 1,
+	MONO_PROFILE_MODULE_EVENTS = 1 << 2,
+	MONO_PROFILE_CLASS_EVENTS = 1 << 3,
+	MONO_PROFILE_JIT_COMPILATION = 1 << 4,
+	MONO_PROFILE_INLINING = 1 << 5,
+	MONO_PROFILE_EXCEPTIONS = 1 << 6,
+	MONO_PROFILE_ALLOCATIONS = 1 << 7,
+	MONO_PROFILE_GC = 1 << 8,
+	MONO_PROFILE_THREADS = 1 << 9,
+	MONO_PROFILE_REMOTING = 1 << 10,
+	MONO_PROFILE_TRANSITIONS = 1 << 11,
+	MONO_PROFILE_ENTER_LEAVE = 1 << 12,
+	MONO_PROFILE_COVERAGE = 1 << 13,
+	MONO_PROFILE_INS_COVERAGE = 1 << 14,
+	MONO_PROFILE_STATISTICAL = 1 << 15
+} LegacyMonoProfileFlags;
+
 void
 mono_profiler_set_events (int flags)
 {
+	if (flags & MONO_PROFILE_ENTER_LEAVE)
+		mono_profiler_set_call_instrumentation_filter_callback (current->handle, call_instrumentation_filter_callback);
+	else
+		mono_profiler_set_call_instrumentation_filter_callback (current->handle, NULL);
 	/* Do nothing. */
+
+	if (flags & MONO_PROFILE_ALLOCATIONS)
+		mono_profiler_enable_allocations ();
 }
 
 static void

@@ -1576,12 +1576,14 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 			}
 			method = mono_class_get_method_by_index (iface, method_slot_in_interface);
 			if (method->is_generic) {
-				has_generic_virtual = TRUE;
-				vt_slot ++;
+				if (m_method_is_virtual (method)) {
+					has_generic_virtual = TRUE;
+					vt_slot ++;
+				}
 				continue;
 			}
 
-			if (method->flags & METHOD_ATTRIBUTE_VIRTUAL) {
+			if (m_method_is_virtual (method)) {
 				add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, vt_slot, slot_num);
 				vt_slot ++;
 			}
@@ -1597,7 +1599,7 @@ build_imt_slots (MonoClass *klass, MonoVTable *vt, MonoDomain *domain, gpointer*
 			for (method_slot_in_interface = 0; method_slot_in_interface < mcount; method_slot_in_interface++) {
 				MonoMethod *method = mono_class_get_method_by_index (iface, method_slot_in_interface);
 
-				if (method->is_generic)
+				if (method->is_generic && m_method_is_virtual(method))
 					has_generic_virtual = TRUE;
 				add_imt_builder_entry (imt_builder, method, &imt_collisions_bitmap, interface_offset + method_slot_in_interface, slot_num);
 			}
@@ -2130,9 +2132,11 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 	 * vtable field in MonoObject, since we can no longer assume the
 	 * vtable is reachable by other roots after the appdomain is unloaded.
 	 */
-	if (!mono_gc_is_moving () && domain != mono_get_root_domain () && !mono_dont_free_domains)
+#if HAVE_BOEHM_GC
+	if (domain != mono_get_root_domain () && !mono_dont_free_domains)
 		vt->gc_descr = MONO_GC_DESCRIPTOR_NULL;
 	else
+#endif
 		vt->gc_descr = m_class_get_gc_descr (klass);
 
 	gc_bits = mono_gc_get_vtable_bits (klass);
@@ -2221,6 +2225,10 @@ mono_class_create_runtime_vtable (MonoDomain *domain, MonoClass *klass, MonoErro
 				/* it's a pointer type: add check */
 				g_assert ((m_class_get_byval_arg (fklass)->type == MONO_TYPE_PTR) || (m_class_get_byval_arg (fklass)->type == MONO_TYPE_FNPTR));
 				*t = *(char *)data;
+				/* This is not needed by sgen, as it does not seem 
++				to need write barriers for uncollectable objects (like the vtables storing static 
++				fields), but it is needed for incremental boehm. */
+				mono_gc_wbarrier_generic_nostore_internal (t);
 			}
 			continue;
 		}		
@@ -3459,6 +3467,11 @@ mono_field_static_set_value_internal (MonoVTable *vt, MonoClassField *field, voi
 		dest = (char*)mono_vtable_get_static_field_data (vt) + field->offset;
 	}
 	mono_copy_value (field->type, dest, value, value && field->type->type == MONO_TYPE_PTR);
+	/* This is not needed by sgen, as it does not seem 
+	to need write barriers for uncollectable objects (like the vtables storing static 
++	fields), but it is needed for incremental boehm. */
+	if (field->offset == -1)
+		mono_gc_wbarrier_generic_nostore_internal (dest);
 }
 
 /**
@@ -6206,7 +6219,7 @@ mono_array_full_copy (MonoArray *src, MonoArray *dest)
 static void
 array_full_copy_unchecked_size (MonoArray *src, MonoArray *dest, MonoClass *klass, uintptr_t size)
 {
-	if (mono_gc_is_moving ()) {
+	if (mono_gc_needs_write_barriers ()) {
 		MonoClass *element_class = m_class_get_element_class (klass);
 		if (m_class_is_valuetype (element_class)) {
 			if (m_class_has_references (element_class))
@@ -7053,7 +7066,7 @@ mono_value_box_handle (MonoDomain *domain, MonoClass *klass, gpointer value, Mon
 	return_val_if_nok (error, NULL_HANDLE);
 
 	size -= MONO_ABI_SIZEOF (MonoObject);
-	if (mono_gc_is_moving ()) {
+	if (mono_gc_needs_write_barriers ()) {
 		g_assert (size == mono_class_value_size (klass, NULL));
 		MONO_ENTER_NO_SAFEPOINTS;
 		gpointer data = mono_handle_get_data_unsafe (res_handle);

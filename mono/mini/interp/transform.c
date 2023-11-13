@@ -8164,7 +8164,7 @@ generate (MonoMethod *method, MonoMethodHeader *header, InterpMethod *rtm, MonoG
 	rtm->data_items = td->data_items;
 
 	if (td->prof_coverage)
-		td->coverage_info = mono_profiler_coverage_alloc (method, header->code_size);
+		td->coverage_info = mono_profiler_coverage_alloc (rtm->domain, method, header->code_size);
 
 	interp_method_compute_offsets (td, rtm, mono_method_signature_internal (method), header, error);
 	goto_if_nok (error, exit);

@@ -334,6 +334,10 @@ HANDLES(ENV_17, "internalGetEnvironmentVariable_native", ves_icall_System_Enviro
 HANDLES(ENV_18, "internalGetGacPath", ves_icall_System_Environment_GetGacPath, MonoString, 0, ())
 HANDLES(ENV_19, "internalGetHome", ves_icall_System_Environment_InternalGetHome, MonoString, 0, ())
 NOHANDLES(ICALL(ENV_20, "set_ExitCode", mono_environment_exitcode_set))
+
+ICALL_TYPE(EXCEPTION, "System.Exception", EXCEPTION_1)
+NOHANDLES(ICALL(EXCEPTION_1, "ReportUnhandledException", ves_icall_System_Exception_ReportUnhandledException))
+
 ICALL_TYPE(GC, "System.GC", GC_10)
 NOHANDLES(ICALL(GC_10, "GetAllocatedBytesForCurrentThread", ves_icall_System_GC_GetAllocatedBytesForCurrentThread))
 NOHANDLES(ICALL(GC_0, "GetCollectionCount", ves_icall_System_GC_GetCollectionCount))
@@ -432,6 +436,7 @@ NOHANDLES(ICALL(MONOIO_15, "MoveFile(char*,char*,System.IO.MonoIOError&)", ves_i
 #endif /* !PLATFORM_RO_FS */
 NOHANDLES(ICALL(MONOIO_16, "Open(char*,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.FileOptions,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Open))
 HANDLES(MONOIO_17, "Read(intptr,byte[],int,int,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Read, gint32, 5, (gpointer, MonoArray, gint32, gint32, gint32_ref))
+NOHANDLES(ICALL(MONOIO_40, "RemapPath(string,string&)", ves_icall_System_IO_MonoIO_RemapPath))
 #ifndef PLATFORM_RO_FS
 NOHANDLES(ICALL(MONOIO_18, "RemoveDirectory(char*,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_RemoveDirectory))
 NOHANDLES(ICALL(MONOIO_18M, "ReplaceFile(char*,char*,char*,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_ReplaceFile))
@@ -550,6 +555,7 @@ NOHANDLES(ICALL(SOCK_6b, "Duplicate_icall", ves_icall_System_Net_Sockets_Socket_
 HANDLES(SOCK_7, "GetSocketOption_arr_icall", ves_icall_System_Net_Sockets_Socket_GetSocketOption_arr_icall, void, 5, (gsize, gint32, gint32, MonoArray, gint32_ref))
 HANDLES(SOCK_8, "GetSocketOption_obj_icall", ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_icall, void, 5, (gsize, gint32, gint32, MonoObjectOut, gint32_ref))
 HANDLES(SOCK_21, "IOControl_icall", ves_icall_System_Net_Sockets_Socket_IOControl_icall, int, 5, (gsize, gint32, MonoArray, MonoArray, gint32_ref))
+ICALL(SOCK_22, "IsProtocolSupported_internal", ves_icall_System_Net_Sockets_Socket_IsProtocolSupported_internal)
 NOHANDLES(ICALL(SOCK_9, "Listen_icall", ves_icall_System_Net_Sockets_Socket_Listen_icall))
 HANDLES(SOCK_10, "LocalEndPoint_icall", ves_icall_System_Net_Sockets_Socket_LocalEndPoint_icall, MonoObject, 3, (gsize, gint32, gint32_ref))
 NOHANDLES(ICALL(SOCK_11, "Poll_icall", ves_icall_System_Net_Sockets_Socket_Poll_icall))
@@ -843,6 +849,9 @@ ICALL_TYPE(REMSER, "System.Runtime.Remoting.RemotingServices", REMSER_0)
 HANDLES(REMSER_0, "GetVirtualMethod", ves_icall_Remoting_RemotingServices_GetVirtualMethod, MonoReflectionMethod, 2, (MonoReflectionType, MonoReflectionMethod))
 HANDLES(REMSER_1, "InternalExecute", ves_icall_InternalExecute, MonoObject, 4, (MonoReflectionMethod, MonoObject, MonoArray, MonoArrayOut))
 HANDLES(REMSER_2, "IsTransparentProxy", ves_icall_IsTransparentProxy, MonoBoolean, 1, (MonoObject))
+#else
+ICALL_TYPE(REMSER, "System.Runtime.Remoting.RemotingServices", REMSER_0)
+ICALL(REMSER_0, "IsTransparentProxy", ves_icall_IsTransparentProxy)
 #endif
 
 ICALL_TYPE(RUNIMPORT, "System.Runtime.RuntimeImports", RUNIMPORT_1)
@@ -1016,6 +1025,10 @@ HANDLES(NATIVEC_2, "CreateEvent_icall", ves_icall_System_Threading_Events_Create
 HANDLES(NATIVEC_3, "OpenEvent_icall", ves_icall_System_Threading_Events_OpenEvent_icall, gpointer, 4, (const_gunichar2_ptr, gint32, gint32, gint32_ref))
 NOHANDLES(ICALL(NATIVEC_4, "ResetEvent_internal",  ves_icall_System_Threading_Events_ResetEvent_internal))
 NOHANDLES(ICALL(NATIVEC_5, "SetEvent_internal",    ves_icall_System_Threading_Events_SetEvent_internal))
+
+ICALL_TYPE(OSSYNCCONTEXT, "System.Threading.OSSpecificSynchronizationContext", OSSYNCCONTEXT_1)
+NOHANDLES(ICALL(OSSYNCCONTEXT_1, "GetOSContext", ves_icall_System_Threading_OSSpecificSynchronizationContext_GetOSContext))
+NOHANDLES(ICALL(OSSYNCCONTEXT_2, "PostInternal", ves_icall_System_Threading_OSSpecificSynchronizationContext_PostInternal))
 
 ICALL_TYPE(SEMA, "System.Threading.Semaphore", SEMA_1)
 NOHANDLES(ICALL(SEMA_1, "CreateSemaphore_icall", ves_icall_System_Threading_Semaphore_CreateSemaphore_icall))

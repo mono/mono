@@ -50,6 +50,7 @@
 #include <mono/metadata/w32process-internals.h>
 #include <mono/metadata/debug-internals.h>
 #include <mono/metadata/mono-private-unstable.h>
+#include <mono/metadata/unity-utils.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef HAVE_UNISTD_H
@@ -1565,7 +1566,10 @@ done:
 
 invalid_image:
 	if (!is_ok (error)) {
-		mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, "Could not load image %s due to %s", image->name, mono_error_get_message (error));
+		char* log_message = g_strdup_printf("Could not load image %s due to %s\nRun the peverify utility against this for more information.", image->name, mono_error_get_message (error));
+		if (!mono_unity_log_error_to_editor(log_message))
+			mono_trace (G_LOG_LEVEL_DEBUG, MONO_TRACE_ASSEMBLY, log_message);
+		g_free(log_message);
 		mono_error_cleanup (error);
 	}
 	MONO_PROFILER_RAISE (image_failed, (image));
@@ -1759,12 +1763,16 @@ do_mono_image_open (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOp
 {
 	MonoCLIImageInfo *iinfo;
 	MonoImage *image;
+	const char *fname_remap;
+	if (fname_remap = mono_unity_remap_path (fname))
+		fname = fname_remap;
 
 	MonoImageStorage *storage = mono_image_storage_open (fname);
 
 	if (!storage) {
 		if (status)
 			*status = MONO_IMAGE_ERROR_ERRNO;
+		g_free((void*)fname_remap);
 		return NULL;
 	}
 
@@ -1776,6 +1784,7 @@ do_mono_image_open (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOp
 		g_free (image);
 		if (status)
 			*status = MONO_IMAGE_IMAGE_INVALID;
+		g_free((void*)fname_remap);
 		return NULL;
 	}
 	iinfo = g_new0 (MonoCLIImageInfo, 1);
@@ -1788,6 +1797,7 @@ do_mono_image_open (MonoAssemblyLoadContext *alc, const char *fname, MonoImageOp
 	image->ref_count = 1;
 	/* if MONO_SECURITY_MODE_CORE_CLR is set then determine if this image is platform code */
 	image->core_clr_platform_code = mono_security_core_clr_determine_platform_image (image);
+	g_free((void*)fname_remap);
 	return do_mono_image_load (image, status, care_about_cli, care_about_pecoff);
 }
 

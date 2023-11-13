@@ -326,6 +326,15 @@ mono_thread_info_push_stack_mark (MonoThreadInfo *info, void *mark)
 		return g_cast (__ret);	\
 	} while (0); } while (0)
 
+#define ICALL_RETURN_OBJ_TYPED(HANDLE,TYPE)    \
+	do {	\
+		CLEAR_STACK_WATERMARK	\
+		CLEAR_ICALL_COMMON	\
+		void* __ret = (HANDLE == NULL_HANDLE) ? NULL : MONO_HANDLE_RAW (HANDLE);	\
+		CLEAR_ICALL_FRAME	\
+		return (TYPE)__ret;	\
+	} while (0); } while (0)
+
 /*
 Handle macros/functions
 */

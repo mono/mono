@@ -94,6 +94,12 @@ static MonoCoopCond pending_done_cond;
 static MonoCoopMutex pending_done_mutex;
 #endif
 
+static char* gc_params_options;
+static char* gc_debug_options;
+
+#define MONO_GC_PARAMS_NAME	"MONO_GC_PARAMS"
+#define MONO_GC_DEBUG_NAME	"MONO_GC_DEBUG"
+
 static void object_register_finalizer (MonoObject *obj, void (*callback)(void *, void*));
 
 static void reference_queue_proccess_all (void);
@@ -165,6 +171,48 @@ coop_cond_timedwait_alertable (MonoCoopCond *cond, MonoCoopMutex *mutex, guint32
 		}
 	}
 	return res;
+}
+
+void
+mono_gc_params_set (const char* options)
+{
+	if (gc_params_options)
+		g_free (gc_params_options);
+
+	gc_params_options = g_strdup (options);
+}
+
+char *
+mono_gc_params_get ()
+{
+	char *env;
+	if ((env = g_getenv (MONO_GC_PARAMS_NAME)) || gc_params_options) {
+		char *params_opts = g_strdup_printf ("%s,%s", gc_params_options ? gc_params_options  : "", env ? env : "");
+		g_free (env);
+		return params_opts;
+	}
+	return NULL;	
+}
+
+void
+mono_gc_debug_set (const char* options)
+{
+	if (gc_debug_options)
+		g_free (gc_debug_options);
+
+	gc_debug_options = g_strdup (options);
+}
+
+char *
+mono_gc_debug_get ()
+{
+	char *env;
+	if ((env = g_getenv (MONO_GC_DEBUG_NAME)) || gc_debug_options) {
+		char *debug_opts = g_strdup_printf ("%s,%s", gc_debug_options ? gc_debug_options  : "", env ? env : "");
+		g_free (env);
+		return debug_opts;
+	}
+	return NULL;
 }
 
 /* 
@@ -911,6 +959,18 @@ finalizer_thread (gpointer unused)
 	/* Register a hazard free queue pump callback */
 	mono_hazard_pointer_install_free_queue_size_callback (hazard_free_queue_is_too_big);
 
+	/* if GC is disabled, we run no finalizer, but we still run mono_w32process_signal_finished 
+	on the finalizer thread, so that processes can exit. */
+	if (mono_gc_is_disabled())
+	{
+		while (!finished)
+		{
+			mono_coop_sem_wait (&finalizer_sem, MONO_SEM_FLAGS_ALERTABLE);
+			mono_w32process_signal_finished();
+		}
+		return 0;
+	}
+	
 	while (!finished) {
 		/* Wait to be notified that there's at least one
 		 * finaliser to run
@@ -999,10 +1059,8 @@ mono_gc_init (void)
 
 	mono_gc_base_init ();
 
-	if (mono_gc_is_disabled ()) {
+	if (mono_gc_is_disabled ())
 		gc_disabled = TRUE;
-		return;
-	}
 
 #ifdef TARGET_WIN32
 	pending_done_event = CreateEvent (NULL, TRUE, FALSE, NULL);
@@ -1030,9 +1088,9 @@ mono_gc_cleanup (void)
 
 	if (mono_gc_is_null ())
 		return;
-
+	
+	finished = TRUE;
 	if (!gc_disabled) {
-		finished = TRUE;
 		if (mono_thread_internal_current () != gc_thread) {
 			int ret;
 			gint64 start;
@@ -1091,10 +1149,9 @@ mono_gc_cleanup (void)
 		}
 		gc_thread = NULL;
 		mono_gc_base_cleanup ();
+
+		mono_reference_queue_cleanup ();
 	}
-
-	mono_reference_queue_cleanup ();
-
 	mono_coop_mutex_destroy (&finalizer_mutex);
 	mono_coop_mutex_destroy (&reference_queue_mutex);
 }

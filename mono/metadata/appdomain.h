@@ -26,6 +26,9 @@ typedef void (*MonoThreadAttachCB) (intptr_t tid, void* stack_start);
 typedef struct _MonoAppDomain MonoAppDomain;
 
 typedef void (*MonoDomainFunc) (MonoDomain *domain, void* user_data);
+typedef void (*MonoJitInfoFunc)(MonoDomain *domain, MonoMethod* method, MonoJitInfo* jinfo, void* user_data);
+typedef void (*MonoUnityExceptionFunc) (MonoObject* exc);
+typedef void (*MonoDomainAssemblyFunc) (MonoAssembly *assembly, void* user_data);
 
 MONO_API MonoDomain*
 mono_init                  (const char *filename);
@@ -92,7 +95,7 @@ MONO_API MONO_RT_EXTERNAL_ONLY void
 mono_domain_unload (MonoDomain *domain);
 
 MONO_API void
-mono_domain_try_unload (MonoDomain *domain, MonoObject **exc);
+mono_domain_try_unload (MonoDomain *domain, MonoObject **exc,  MonoUnityExceptionFunc callback);
 
 MONO_API mono_bool
 mono_domain_is_unloading   (MonoDomain *domain);
@@ -101,13 +104,22 @@ MONO_API MONO_RT_EXTERNAL_ONLY MonoDomain *
 mono_domain_from_appdomain (MonoAppDomain *appdomain);
 
 MONO_API void
+mono_domain_jit_foreach (MonoDomain *domain, MonoJitInfoFunc func, void *user_data);
+
+MONO_API void
 mono_domain_foreach        (MonoDomainFunc func, void* user_data);
+
+MONO_API void
+mono_domain_assembly_foreach (MonoDomain* domain, MonoDomainAssemblyFunc func, void* user_data);
 
 MONO_API MONO_RT_EXTERNAL_ONLY MonoAssembly *
 mono_domain_assembly_open  (MonoDomain *domain, const char *name);
 
 MONO_API void
 mono_domain_ensure_entry_assembly (MonoDomain *domain, MonoAssembly *assembly);
+
+MONO_API void
+mono_set_ignore_version_and_key_when_finding_assemblies_already_loaded(mono_bool value);
 
 MONO_API mono_bool
 mono_domain_finalize       (MonoDomain *domain, uint32_t timeout);

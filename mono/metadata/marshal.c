@@ -5307,7 +5307,7 @@ mono_struct_delete_old (MonoClass *klass, char *ptr)
 		switch (conv) {
 		case MONO_MARSHAL_CONV_NONE:
 			if (MONO_TYPE_ISSTRUCT (ftype)) {
-				mono_struct_delete_old (ftype->data.klass, cpos);
+				mono_struct_delete_old (mono_class_from_mono_type_internal(ftype), cpos);
 				continue;
 			}
 			break;
@@ -5644,21 +5644,18 @@ mono_marshal_load_type_info (MonoClass* klass)
 	if (m_class_get_byval_arg (klass)->type == MONO_TYPE_PTR)
 		info->native_size = TARGET_SIZEOF_VOID_P;
 
+	gboolean align_size = TRUE;
 	if (layout != TYPE_ATTRIBUTE_AUTO_LAYOUT) {
 		info->native_size = MAX (native_size, info->native_size);
-		/*
-		 * If the provided Size is equal or larger than the calculated size, and there
-		 * was no Pack attribute, we set min_align to 1 to avoid native_size being increased
-		 */
 		if (layout == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT) {
 			if (native_size && native_size == info->native_size && m_class_get_packing_size (klass) == 0)
-				min_align = 1;
+				align_size = FALSE;
 			else
 				min_align = MIN (min_align, packing);
 		}
 	}
 
-	if (info->native_size & (min_align - 1)) {
+	if (info->native_size & (min_align - 1) && align_size) {
 		info->native_size += min_align - 1;
 		info->native_size &= ~(min_align - 1);
 	}

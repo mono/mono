@@ -663,7 +663,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		exception = mono_corlib_exception_new_with_args ("System", "MissingFieldException", error->full_message, error->first_argument, error_out);
 		break;
 	case MONO_ERROR_MEMBER_ACCESS:
-		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "MemberAccessException", error->full_message, error_out);
+		exception = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "MemberAccessException", error->full_message, error_out);
 		break;
 
 	case MONO_ERROR_TYPE_LOAD: {
@@ -697,7 +697,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 				}
 			}
 		} else {
-			exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "TypeLoadException", error->full_message, error_out);
+			exception = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "TypeLoadException", error->full_message, error_out);
 		}
 	}
 	break;
@@ -730,14 +730,14 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		message = g_strdup_printf ("Error in %s:%s %s", type_name, error->member_name, error->full_message);
 		if (!message)
 			goto out_of_memory;
-		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System.Security", "VerificationException", message, error_out);
+		exception = mono_exception_new_by_name_msg (mono_get_corlib (), "System.Security", "VerificationException", message, error_out);
 		break;
 
 	case MONO_ERROR_GENERIC:
 		if (!error->exception_name_space || !error->exception_name)
 			mono_error_set_execution_engine (error_out, "MonoError with generic error but no exception name was supplied");
 		else
-			exception = mono_exception_new_by_name_msg (mono_defaults.corlib, error->exception_name_space, error->exception_name, error->full_message, error_out);
+			exception = mono_exception_new_by_name_msg (mono_get_corlib (), error->exception_name_space, error->exception_name, error->full_message, error_out);
 		break;
 
 	case MONO_ERROR_EXCEPTION_INSTANCE:
@@ -749,7 +749,7 @@ mono_error_prepare_exception (MonoError *oerror, MonoError *error_out)
 		break;
 
 	case MONO_ERROR_INVALID_PROGRAM:
-		exception = mono_exception_new_by_name_msg (mono_defaults.corlib, "System", "InvalidProgramException",
+		exception = mono_exception_new_by_name_msg (mono_get_corlib (), "System", "InvalidProgramException",
 			(error->flags & MONO_ERROR_INCOMPLETE) ? "" : error->full_message, error_out);
 		break;
 

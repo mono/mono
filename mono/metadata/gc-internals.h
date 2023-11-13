@@ -62,7 +62,7 @@
 } while (0)
 
 /* useful until we keep track of gc-references in corlib etc. */
-#define IS_GC_REFERENCE(class,t) (mono_gc_is_moving () ? FALSE : ((t)->type == MONO_TYPE_U && (class)->image == mono_defaults.corlib))
+#define IS_GC_REFERENCE(class,t) (mono_gc_needs_write_barriers() ? FALSE : ((t)->type == MONO_TYPE_U && (class)->image == mono_defaults.corlib))
 
 void   mono_object_register_finalizer               (MonoObject  *obj);
 
@@ -126,7 +126,7 @@ mono_gc_alloc_fixed_no_descriptor (size_t size, MonoGCRootSource source, void *k
 void  mono_gc_free_fixed             (void* addr);
 
 /* make sure the gchandle was allocated for an object in domain */
-gboolean mono_gchandle_is_in_domain (MonoGCHandle gchandle, MonoDomain *domain);
+UNITY_MONO_API gboolean mono_gchandle_is_in_domain (MonoGCHandle gchandle, MonoDomain *domain);
 void     mono_gchandle_free_domain  (MonoDomain *domain);
 
 typedef void (*FinalizerThreadCallback) (gpointer user_data);
@@ -179,6 +179,7 @@ mono_gc_register_object_with_weak_fields (MonoObjectHandle obj);
 typedef void (*MonoFinalizationProc)(gpointer, gpointer); // same as SGenFinalizationProc, GC_finalization_proc
 
 void  mono_gc_register_for_finalization (MonoObject *obj, MonoFinalizationProc user_data);
+void  mono_gc_strong_handle_foreach(GFunc func, gpointer user_data);
 void  mono_gc_add_memory_pressure (gint64 value);
 MONO_API int   mono_gc_register_root (char *start, size_t size, MonoGCDescriptor descr, MonoGCRootSource source, void *key, const char *msg);
 void  mono_gc_deregister_root (char* addr);
@@ -187,6 +188,11 @@ void  mono_gc_run_finalize (void *obj, void *data);
 void  mono_gc_clear_domain (MonoDomain * domain);
 /* Signal early termination of finalizer processing inside the gc */
 void  mono_gc_suspend_finalizers (void);
+#ifdef HEAP_VALIDATION_FREQUENCY
+typedef void (*UnityHeapVerifierCallback)();
+MONO_API void mono_gc_set_heap_verifier_callback(UnityHeapVerifierCallback callback);
+MONO_API void mono_gc_set_heap_validate_frequency(int freq);
+#endif
 
 
 /* 
@@ -318,6 +324,11 @@ void mono_gc_set_desktop_mode (void);
  * Return whenever this GC can move objects
  */
 gboolean mono_gc_is_moving (void);
+
+/*
+ * Return whenever this GC needs write barriers
+ */
+gboolean mono_gc_needs_write_barriers (void);
 
 typedef void* (*MonoGCLockedCallbackFunc) (void *data);
 
