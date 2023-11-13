@@ -1,0 +1,20 @@
+--- a/emcc.py	2019-08-13 20:07:34.000000000 -0500
++++ b/emcc.py	2019-08-27 08:05:39.000000000 -0500
+@@ -915,7 +918,7 @@
+         file_suffix = get_file_suffix(arg)
+         if file_suffix in SOURCE_ENDINGS + BITCODE_ENDINGS + DYNAMICLIB_ENDINGS + ASSEMBLY_ENDINGS + HEADER_ENDINGS or shared.Building.is_ar(arg): # we already removed -o <target>, so all these should be inputs
+           newargs[i] = ''
+-          if file_suffix.endswith(SOURCE_ENDINGS):
++          if file_suffix.endswith(SOURCE_ENDINGS) or (has_dash_c and file_suffix.endswith(OBJECT_FILE_ENDINGS)):
+             input_files.append((i, arg))
+             has_source_inputs = True
+           elif file_suffix.endswith(HEADER_ENDINGS):
+@@ -1838,7 +1840,7 @@
+       # First, generate LLVM bitcode. For each input file, we get base.o with bitcode
+       for i, input_file in input_files:
+         file_ending = get_file_suffix(input_file)
+-        if file_ending.endswith(SOURCE_ENDINGS):
++        if file_ending.endswith(SOURCE_ENDINGS) or (has_dash_c and file_ending.endswith(OBJECT_FILE_ENDINGS)):
+           compile_source_file(i, input_file)
+         else: # bitcode
+           if file_ending.endswith(BITCODE_ENDINGS):
