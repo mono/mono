@@ -2122,7 +2122,7 @@ mono_push_ephemerons (struct GC_ms_entry* mark_stack_ptr, struct GC_ms_entry* ma
 				continue;
 
 			if (current_ephemeron->value) {
-				mark_stack_ptr = GC_mark_and_push(current_ephemeron->value, mark_stack_ptr, mark_stack_limit, &current_ephemeron->value);
+				mark_stack_ptr = GC_mark_and_push(current_ephemeron->value, mark_stack_ptr, mark_stack_limit, (void**)&current_ephemeron->value);
 			}
 		}
 	}
