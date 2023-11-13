@@ -1058,7 +1058,6 @@ mono_pe_file_map (const gunichar2 *filename, guint32 *map_size, void **handle)
 	gpointer file_map = NULL;
 	MonoFileMap *filed = NULL;
 	ERROR_DECL (error);
-	MonoFileMap *filed = NULL;
 
 	/* According to the MSDN docs, a search path is applied to
 	 * filename.  FIXME: implement this, for now just pass it
