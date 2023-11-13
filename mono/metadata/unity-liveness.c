@@ -399,7 +399,9 @@ static gboolean mono_traverse_object_internal(MonoObject *object, gboolean isStr
 	MonoClass *p;
 	gboolean added_objects = FALSE;
 
+#ifndef DISABLE_REMOTING
 	if (!isStruct && mono_class_has_parent_fast(klass, mono_defaults.real_proxy_class)) return FALSE;
+#endif	
 
 	g_assert(object);
 
@@ -452,7 +454,9 @@ static gboolean mono_validate_object_internal(MonoObject *object, gboolean isStr
 	MonoClass* p;
 	gboolean added_objects = FALSE;
 
+#ifndef DISABLE_REMOTING
 	if (!isStruct && mono_class_has_parent_fast(klass, mono_defaults.real_proxy_class)) return FALSE;
+#endif	
 
 	g_assert(object);
 
