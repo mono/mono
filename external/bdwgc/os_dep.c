@@ -3084,7 +3084,7 @@ GC_API void GC_CALL rg_set_GC_gcj_malloc(func_GC_dirty_inner func)
   GC_API void GC_dirty_inner(const void *p)
   {
     if (ptr_func_GC_dirty_inner) {
-      ptr_func_GC_dirty_inner();
+      ptr_func_GC_dirty_inner(p);
       return;
     }
     word index = PHT_HASH(p);

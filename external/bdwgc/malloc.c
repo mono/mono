@@ -351,7 +351,7 @@ GC_API void GC_CALL rg_set_GC_malloc_atomic(func_GC_malloc_atomic func)
 GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc_atomic(size_t lb)
 {
     if (ptr_func_GC_malloc) {
-        return ptr_func_GC_malloc(lb, PTRFREE);
+        return ptr_func_GC_malloc(lb);
     }
     return GC_malloc_kind(lb, PTRFREE);
 }
@@ -360,7 +360,7 @@ GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc_atomic(size_t lb)
 GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc(size_t lb)
 {
     if (ptr_func_GC_malloc_atomic) {
-        return ptr_func_GC_malloc_atomic(lb, NORMAL);
+        return ptr_func_GC_malloc_atomic(lb);
     }
     return GC_malloc_kind(lb, NORMAL);
 }
@@ -435,7 +435,7 @@ GC_API void GC_CALL rg_set_GC_malloc_uncollectable(func_GC_malloc_uncollectable 
 GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc_uncollectable(size_t lb)
 {
   if (ptr_func_GC_malloc_uncollectable) {
-      return ptr_func_GC_malloc_uncollectable(lb, UNCOLLECTABLE);
+      return ptr_func_GC_malloc_uncollectable(lb);
   }
   return GC_generic_malloc_uncollectable(lb, UNCOLLECTABLE);
 }
@@ -593,7 +593,7 @@ GC_API void GC_CALL rg_set_GC_free(func_GC_free func)
 GC_API void GC_CALL GC_free(void * p)
 {
     if (ptr_GC_free) {
-        ptr_GC_free();
+        ptr_GC_free(p);
         return;
     }
     struct hblk *h;
