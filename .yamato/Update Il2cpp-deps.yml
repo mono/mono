@@ -11,15 +11,11 @@ commands:
     git clone git@github.cds.internal.unity3d.com:unity/prtools.git
     cd prtools
     git checkout main
-    cmd /c cibuildscript
-    cmd /c xcopy build %PRTOOLS_BUILD_DIR% /s /Y /E /I
     cd %UNITY_SOURCE_PRTOOLS_DIR%
     git config --global core.longpaths true
-    git clone https://github.cds.internal.unity3d.com/unity/unity.git .
     cmd /v /c dotnet run --project C:\build\output\prtools\PRTools\PRTools.csproj --update-mono-il2cpp-deps=%YAMATO_SOURCE_DIR%/stevedore/artifactid.txt --github-api-token=%GITHUB_TOKEN% --yamato-api-token=%YAMATO_TOKEN% --yamato-long-lived-token --il2cpp-deps-manifest-file=il2cpp-deps.stevedore --yamato-owner-email=%YAMATO_OWNER_EMAIL%
     if NOT %errorlevel% == 0 (
       echo "PRTools failed"
       EXIT /B %errorlevel%
     )
 timeout: 1
-
