@@ -59,6 +59,7 @@
 #include "utils/refcount.h"
 #include "icall-decl.h"
 #include "utils/mono-errno.h"
+#include "mono/metadata/profiler-private.h"
 
 #define NANOSECONDS_PER_MICROSECOND 1000LL
 #define TICKS_PER_MICROSECOND 10L
@@ -1128,6 +1129,7 @@ file_read(FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *by
 		
 	if (bytesread != NULL) {
 		*bytesread = ret;
+		MONO_PROFILER_RAISE (fileio, (1, *bytesread));
 	}
 		
 	return(TRUE);
@@ -1195,6 +1197,7 @@ file_write (FileHandle *filehandle, gpointer buffer, guint32 numbytes, guint32 *
 	}
 	if (byteswritten != NULL) {
 		*byteswritten = ret;
+		MONO_PROFILER_RAISE (fileio, (0, *byteswritten));
 	}
 	return(TRUE);
 }
