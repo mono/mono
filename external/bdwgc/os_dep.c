@@ -3077,7 +3077,7 @@ void GC_reset_default_push_other_roots(void)
   /* entire object.                                                     */
 #if !IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
 func_GC_dirty_inner ptr_func_GC_dirty_inner = NULL;
-GC_API void GC_CALL rg_set_GC_gcj_malloc(func_GC_dirty_inner func)
+GC_API void GC_CALL rg_set_GC_dirty_inner(func_GC_dirty_inner func)
 {
     ptr_func_GC_dirty_inner = func;
 }
