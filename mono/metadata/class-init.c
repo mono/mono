@@ -2908,7 +2908,7 @@ mono_class_init_internal (MonoClass *klass)
 
 	if (mono_class_is_ginst (klass) && !mono_class_get_generic_class (klass)->is_dynamic) {
 		UnlockedIncrement (&mono_stats.generic_class_count);
-		nlockedIncrement64 (&mono_runtime_stats.generic_class_count);
+		UnlockedIncrement64 (&mono_runtime_stats.generic_class_count);
 	}
 
 	if (mono_class_is_ginst (klass) || image_is_dynamic (klass->image) || !klass->type_token || (has_cached_info && !cached_info.has_nested_classes))
