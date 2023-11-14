@@ -37,6 +37,23 @@ typedef void (*CBFunc)(cbPtr data, cbPtr user_data);
 MONO_API void
 rg_gc_heap_foreach(CBFunc callback, cbPtr user_data);
 
+// IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
+typedef void (*rg_mono_func_GC_dirty_inner)(void **ptr);
+typedef void (*rg_mono_func_GC_free)(void *ptr);
+typedef void* (*rg_mono_func_GC_malloc)(size_t size);
+typedef void* (*rg_mono_func_GC_gcj_malloc)(size_t size, void * ptr_to_struct_containing_descr);
+typedef void* (*rg_mono_func_GC_malloc_uncollectable)(size_t size);
+typedef void* (*rg_mono_func_GC_malloc_atomic)(size_t size);
+
+MONO_API void rg_mono_set_GC_dirty_inner(rg_mono_func_GC_dirty_inner func);
+MONO_API void rg_mono_set_GC_free(rg_mono_func_GC_free func);
+MONO_API void rg_mono_set_GC_malloc(rg_mono_func_GC_malloc func);
+MONO_API void rg_mono_set_GC_gcj_malloc(rg_mono_func_GC_gcj_malloc func);
+MONO_API void rg_mono_set_GC_malloc_uncollectable(rg_mono_func_GC_malloc_uncollectable func);
+MONO_API void rg_mono_set_GC_malloc_atomic(rg_mono_func_GC_malloc_atomic func);
+
+MONO_API void *rg_mono_GC_malloc_kind(size_t /* lb */, int /* k */);
+
 MONO_END_DECLS
 
 #endif /* __MONO_RUNTIME_STATS_H__ */

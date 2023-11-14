@@ -2046,6 +2046,21 @@ typedef void (*GC_heap_section_proc)(void* user_data, GC_PTR start, GC_PTR end);
 GC_API void GC_foreach_heap_section(void* user_data, GC_heap_section_proc callback);
 GC_API GC_word GC_get_heap_section_count(void);
 
+// IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
+typedef void (*func_GC_dirty_inner)(void **ptr);
+typedef void (*func_GC_free)(void *ptr);
+typedef void* (*func_GC_malloc)(size_t size);
+typedef void* (*func_GC_gcj_malloc)(size_t size, void * ptr_to_struct_containing_descr);
+typedef void* (*func_GC_malloc_uncollectable)(size_t size);
+typedef void* (*func_GC_malloc_atomic)(size_t size);
+
+GC_API void GC_CALL rg_set_GC_dirty_inner(func_GC_dirty_inner func);
+GC_API void GC_CALL rg_set_GC_free(func_GC_free func);
+GC_API void GC_CALL rg_set_GC_malloc(func_GC_malloc func);
+GC_API void GC_CALL rg_set_GC_gcj_malloc(func_GC_gcj_malloc func);
+GC_API void GC_CALL rg_set_GC_malloc_uncollectable(func_GC_malloc_uncollectable func);
+GC_API void GC_CALL rg_set_GC_malloc_atomic(func_GC_malloc_atomic func);
+
 #ifdef __cplusplus
   } /* extern "C" */
 #endif
