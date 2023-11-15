@@ -32,10 +32,9 @@ MONO_API
 MonoRuntimeStats *
 get_mono_runtime_stats();
 
-typedef void *cbPtr;
-typedef void (*CBFunc)(cbPtr data, cbPtr user_data);
-MONO_API void
-rg_gc_heap_foreach(CBFunc callback, cbPtr user_data);
+typedef void *RG_GC_PTR;
+typedef void (*RG_GC_heap_section_proc)(void* user_data, RG_GC_PTR start, RG_GC_PTR end);
+MONO_API void rg_gc_heap_foreach(RG_GC_heap_section_proc callback, RG_GC_PTR user_data);
 
 // IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
 typedef void (*rg_mono_func_GC_dirty_inner)(void **ptr);
