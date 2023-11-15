@@ -27,6 +27,13 @@ rg_gc_heap_foreach(CBFunc callback, cbPtr user_data)
 #endif
 }
 
+void rg_set_GC_dirty_inner(func_GC_dirty_inner func);
+void rg_set_GC_free(func_GC_free func);
+void rg_set_GC_malloc(func_GC_malloc func);
+void rg_set_GC_gcj_malloc(func_GC_gcj_malloc func);
+void rg_set_GC_malloc_uncollectable(func_GC_malloc_uncollectable func);
+void rg_set_GC_malloc_atomic(func_GC_malloc_atomic func);
+
 MONO_API void rg_mono_set_GC_dirty_inner(rg_mono_func_GC_dirty_inner func)
 {
 	rg_set_GC_dirty_inner(func);
