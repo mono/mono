@@ -52,6 +52,7 @@ MONO_API void rg_mono_set_GC_malloc_uncollectable(rg_mono_func_GC_malloc_uncolle
 MONO_API void rg_mono_set_GC_malloc_atomic(rg_mono_func_GC_malloc_atomic func);
 
 MONO_API void *rg_mono_GC_malloc_kind(size_t /* lb */, int /* k */);
+MONO_API void rg_mono_GC_set_time_limit(unsigned long slice);
 
 MONO_END_DECLS
 
