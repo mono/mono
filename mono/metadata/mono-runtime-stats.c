@@ -66,11 +66,17 @@ MONO_API void rg_mono_set_GC_malloc_atomic(rg_mono_func_GC_malloc_atomic func)
 #endif
 }
 
+#if HAVE_BOEHM_GC
 void* GC_malloc_kind(size_t size, int k);
+#endif
 
 MONO_API void *rg_mono_GC_malloc_kind(size_t lb, int k)
 {
+#if HAVE_BOEHM_GC
 	return GC_malloc_kind(lb, k);
+#else
+	g_assert_not_reached();
+#endif
 }
 
 MONO_API void rg_mono_GC_set_time_limit(unsigned long slice)
