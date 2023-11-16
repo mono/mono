@@ -27,6 +27,7 @@
 #include <mono/utils/mono-logger-internals.h>
 #include <mono/utils/mono-memory-model.h>
 #include <mono/utils/unlocked.h>
+#include <mono/metadata/mono-runtime-stats.h>
 #ifdef MONO_CLASS_DEF_PRIVATE
 /* Class initialization gets to see the fields of MonoClass */
 #define REALLY_INCLUDE_CLASS_DEF 1
@@ -2763,6 +2764,7 @@ mono_class_init_internal (MonoClass *klass)
 	}
 
 	UnlockedIncrement (&mono_stats.initialized_class_count);
+	UnlockedIncrement64 (&mono_runtime_stats.initialized_class_count);
 
 	if (mono_class_is_ginst (klass) && !mono_class_get_generic_class (klass)->is_dynamic) {
 		MonoClass *gklass = mono_class_get_generic_class (klass)->container_class;
@@ -2902,9 +2904,12 @@ mono_class_init_internal (MonoClass *klass)
 	}
 
 	UnlockedIncrement (&mono_stats.initialized_class_count);
+	UnlockedIncrement64 (&mono_runtime_stats.initialized_class_count);
 
-	if (mono_class_is_ginst (klass) && !mono_class_get_generic_class (klass)->is_dynamic)
+	if (mono_class_is_ginst (klass) && !mono_class_get_generic_class (klass)->is_dynamic) {
 		UnlockedIncrement (&mono_stats.generic_class_count);
+		UnlockedIncrement64 (&mono_runtime_stats.generic_class_count);
+	}
 
 	if (mono_class_is_ginst (klass) || image_is_dynamic (klass->image) || !klass->type_token || (has_cached_info && !cached_info.has_nested_classes))
 		klass->nested_classes_inited = TRUE;

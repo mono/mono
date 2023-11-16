@@ -151,6 +151,11 @@ static void maybe_finalize(void)
 /* type structure (vtable in gcj).                              */
 /* This adds a byte at the end of the object if GC_malloc would.*/
 #if !IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
+func_GC_gcj_malloc ptr_func_GC_gcj_malloc = NULL;
+GC_API void GC_CALL rg_set_GC_gcj_malloc(func_GC_gcj_malloc func)
+{
+    ptr_func_GC_gcj_malloc = func;
+}
 #ifdef THREAD_LOCAL_ALLOC
   GC_INNER void * GC_core_gcj_malloc(size_t lb,
                                      void * ptr_to_struct_containing_descr)
@@ -159,6 +164,9 @@ static void maybe_finalize(void)
                                       void * ptr_to_struct_containing_descr)
 #endif
 {
+    if (ptr_func_GC_gcj_malloc) {
+        return ptr_func_GC_gcj_malloc(lb, ptr_to_struct_containing_descr);
+    }
     ptr_t op;
     DCL_LOCK_STATE;
 

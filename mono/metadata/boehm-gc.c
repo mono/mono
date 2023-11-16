@@ -41,6 +41,7 @@
 #include <mono/utils/mono-compiler.h>
 #include <mono/utils/unlocked.h>
 #include <mono/metadata/icall-decl.h>
+#include <mono/metadata/mono-runtime-stats.h>
 
 #if HAVE_BOEHM_GC
 
@@ -969,6 +970,8 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 		obj->vtable = vtable;
 	}
 
+	mono_atomic_inc_i64 (&mono_runtime_stats.new_object_count);
+
 	if (G_UNLIKELY (mono_profiler_allocations_enabled ()))
 		MONO_PROFILER_RAISE (gc_allocation, (obj));
 
@@ -1012,6 +1015,8 @@ mono_gc_alloc_vector (MonoVTable *vtable, size_t size, uintptr_t max_length)
 
 	obj->max_length = max_length;
 
+	mono_atomic_inc_i64 (&mono_runtime_stats.new_object_count);
+
 	if (G_UNLIKELY (mono_profiler_allocations_enabled ()))
 		MONO_PROFILER_RAISE (gc_allocation, (&obj->obj));
 
@@ -1049,6 +1054,8 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 	if (bounds_size)
 		obj->bounds = (MonoArrayBounds *) ((char *) obj + size - bounds_size);
 
+	mono_atomic_inc_i64 (&mono_runtime_stats.new_object_count);
+
 	if (G_UNLIKELY (mono_profiler_allocations_enabled ()))
 		MONO_PROFILER_RAISE (gc_allocation, (&obj->obj));
 
@@ -1066,6 +1073,8 @@ mono_gc_alloc_string (MonoVTable *vtable, size_t size, gint32 len)
 	obj->object.synchronisation = NULL;
 	obj->length = len;
 	obj->chars [len] = 0;
+
+	mono_atomic_inc_i64 (&mono_runtime_stats.new_object_count);
 
 	if (G_UNLIKELY (mono_profiler_allocations_enabled ()))
 		MONO_PROFILER_RAISE (gc_allocation, (&obj->object));

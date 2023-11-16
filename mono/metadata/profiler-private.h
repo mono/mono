@@ -59,6 +59,7 @@ typedef struct {
 	guint32 sample_freq;
 
 	gboolean allocations;
+	gboolean fileio;
 
 	gboolean clauses;
 

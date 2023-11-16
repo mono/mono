@@ -12,6 +12,7 @@
 #include <windows.h>
 #include <mono/utils/w32subset.h>
 #include "icall-decl.h"
+#include "mono/metadata/profiler-private.h"
 
 void
 mono_w32file_init (void)
@@ -117,6 +118,7 @@ mono_w32file_read(gpointer handle, gpointer buffer, guint32 numbytes, guint32 *b
 		SetLastError (ERROR_OPERATION_ABORTED);
 	} else {
 		res = ReadFile (handle, buffer, numbytes, (PDWORD)bytesread, NULL);
+		MONO_PROFILER_RAISE (fileio, (1, *bytesread));
 	}
 	if (!res)
 		*win32error = GetLastError ();
@@ -153,6 +155,7 @@ mono_w32file_write (gpointer handle, gconstpointer buffer, guint32 numbytes, gui
 		SetLastError (ERROR_OPERATION_ABORTED);
 	} else {
 		res = WriteFile (handle, buffer, numbytes, (PDWORD)byteswritten, NULL);
+		MONO_PROFILER_RAISE (fileio, (0, *byteswritten));
 	}
 	if (!res)
 		*win32error = GetLastError ();

@@ -30,6 +30,7 @@ typedef void (*MonoLegacyProfileAllocFunc) (MonoLegacyProfiler *prof, MonoObject
 typedef void (*MonoLegacyProfileMethodFunc) (MonoLegacyProfiler *prof, MonoMethod *method);
 typedef void (*MonoLegacyProfileExceptionFunc) (MonoLegacyProfiler *prof, MonoObject *object);
 typedef void (*MonoLegacyProfileExceptionClauseFunc) (MonoLegacyProfiler *prof, MonoMethod *method, int clause_type, int clause_num);
+typedef void (*MonoLegacyProfileFileIOFunc) (MonoLegacyProfiler *prof, int kind, int size);
 
 MONO_DEPRECATED void mono_profiler_install (MonoLegacyProfiler *prof, MonoLegacyProfileFunc callback);
 MONO_DEPRECATED void mono_profiler_install_thread (MonoLegacyProfileThreadFunc start, MonoLegacyProfileThreadFunc end);

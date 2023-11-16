@@ -335,15 +335,33 @@ GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc_kind_global(size_t lb, int k)
 #endif
 
 #if !IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
+func_GC_malloc ptr_func_GC_malloc = NULL;
+GC_API void GC_CALL rg_set_GC_malloc(func_GC_malloc func)
+{
+    ptr_func_GC_malloc = func;
+}
+
+func_GC_malloc_atomic ptr_func_GC_malloc_atomic = NULL;
+GC_API void GC_CALL rg_set_GC_malloc_atomic(func_GC_malloc_atomic func)
+{
+    ptr_func_GC_malloc_atomic = func;
+}
+
 /* Allocate lb bytes of atomic (pointer-free) data.     */
 GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc_atomic(size_t lb)
 {
+    if (ptr_func_GC_malloc) {
+        return ptr_func_GC_malloc(lb);
+    }
     return GC_malloc_kind(lb, PTRFREE);
 }
 
 /* Allocate lb bytes of composite (pointerful) data.    */
 GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc(size_t lb)
 {
+    if (ptr_func_GC_malloc_atomic) {
+        return ptr_func_GC_malloc_atomic(lb);
+    }
     return GC_malloc_kind(lb, NORMAL);
 }
 #endif
@@ -408,9 +426,17 @@ GC_API GC_ATTR_MALLOC void * GC_CALL GC_generic_malloc_uncollectable(
 }
 
 #if !IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
+func_GC_malloc_uncollectable ptr_func_GC_malloc_uncollectable = NULL;
+GC_API void GC_CALL rg_set_GC_malloc_uncollectable(func_GC_malloc_uncollectable func)
+{
+    ptr_func_GC_malloc_uncollectable = func;
+}
 /* Allocate lb bytes of pointerful, traced, but not collectible data.   */
 GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc_uncollectable(size_t lb)
 {
+  if (ptr_func_GC_malloc_uncollectable) {
+      return ptr_func_GC_malloc_uncollectable(lb);
+  }
   return GC_generic_malloc_uncollectable(lb, UNCOLLECTABLE);
 }
 #endif
@@ -558,9 +584,18 @@ GC_API GC_ATTR_MALLOC void * GC_CALL GC_malloc_uncollectable(size_t lb)
 #endif /* REDIRECT_MALLOC */
 
 #if !IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
+func_GC_free ptr_GC_free = NULL;
+GC_API void GC_CALL rg_set_GC_free(func_GC_free func)
+{
+    ptr_GC_free = func;
+}
 /* Explicitly deallocate an object p.                           */
 GC_API void GC_CALL GC_free(void * p)
 {
+    if (ptr_GC_free) {
+        ptr_GC_free(p);
+        return;
+    }
     struct hblk *h;
     hdr *hhdr;
     size_t sz; /* In bytes */

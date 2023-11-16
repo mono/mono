@@ -94,6 +94,7 @@ MONO_PROFILER_EVENT_1(gc_finalized_object, GCFinalizedObject, MonoObject *, obje
 MONO_PROFILER_EVENT_5(gc_root_register, RootRegister, const mono_byte *, start, uintptr_t, size, MonoGCRootSource, source, const void *, key, const char *, name)
 MONO_PROFILER_EVENT_1(gc_root_unregister, RootUnregister, const mono_byte *, start)
 MONO_PROFILER_EVENT_3(gc_roots, GCRoots, uint64_t, count, const mono_byte *const *, addresses, MonoObject *const *, objects)
+MONO_PROFILER_EVENT_2(fileio, FileIO, uint64_t, kind, uint64_t, size)
 
 MONO_PROFILER_EVENT_1(monitor_contention, MonitorContention, MonoObject *, object)
 MONO_PROFILER_EVENT_1(monitor_failed, MonitorFailed, MonoObject *, object)

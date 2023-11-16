@@ -3076,8 +3076,17 @@ void GC_reset_default_push_other_roots(void)
   /* Mark the page containing p as dirty.  Logically, this dirties the  */
   /* entire object.                                                     */
 #if !IL2CPP_ENABLE_WRITE_BARRIER_VALIDATION
+func_GC_dirty_inner ptr_func_GC_dirty_inner = NULL;
+GC_API void GC_CALL rg_set_GC_dirty_inner(func_GC_dirty_inner func)
+{
+    ptr_func_GC_dirty_inner = func;
+}
   GC_API void GC_dirty_inner(const void *p)
   {
+    if (ptr_func_GC_dirty_inner) {
+      ptr_func_GC_dirty_inner(p);
+      return;
+    }
     word index = PHT_HASH(p);
     async_set_pht_entry_from_index(GC_dirty_pages, index);
   }

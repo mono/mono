@@ -88,6 +88,7 @@ MONO_API mono_bool mono_profiler_set_sample_mode (MonoProfilerHandle handle, Mon
 MONO_API mono_bool mono_profiler_get_sample_mode (MonoProfilerHandle handle, MonoProfilerSampleMode *mode, uint32_t *freq);
 
 MONO_API mono_bool mono_profiler_enable_allocations (void);
+MONO_API mono_bool mono_profiler_enable_fileio (void);
 MONO_API mono_bool mono_profiler_enable_clauses (void);
 
 typedef struct _MonoProfilerCallContext MonoProfilerCallContext;
