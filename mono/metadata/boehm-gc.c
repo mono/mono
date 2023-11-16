@@ -960,9 +960,6 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 		memset (mono_object_get_data (obj), 0, size - MONO_ABI_SIZEOF (MonoObject));
 	} else if (vtable->gc_descr != GC_NO_DESCRIPTOR) {
 		obj = (MonoObject *)GC_GCJ_MALLOC (size, vtable);
-
-		mono_profiler_printf("mono_gc_alloc_obj class: %s, %d", vtable->klass->name, size);
-
 		if (G_UNLIKELY (!obj))
 			return NULL;
 	} else {
@@ -1042,9 +1039,6 @@ mono_gc_alloc_array (MonoVTable *vtable, size_t size, uintptr_t max_length, uint
 		memset (mono_object_get_data ((MonoObject*)obj), 0, size - MONO_ABI_SIZEOF (MonoObject));
 	} else if (vtable->gc_descr != GC_NO_DESCRIPTOR) {
 		obj = (MonoArray *)GC_GCJ_MALLOC (size, vtable);
-
-		mono_profiler_printf("mono_gc_alloc_array class: %s, %d", vtable->klass->name, size);
-
 		if (G_UNLIKELY (!obj))
 			return NULL;
 	} else {

@@ -75,7 +75,5 @@ MONO_API void *rg_mono_GC_malloc_kind(size_t lb, int k)
 
 MONO_API void rg_mono_GC_set_time_limit(unsigned long slice)
 {
-#if HAVE_BOEHM_GC
 	GC_set_time_limit(slice);
-#endif
 }
