@@ -61,6 +61,9 @@ static gboolean gc_initialized = FALSE;
 static gboolean gc_dont_gc_env = FALSE;
 static gboolean gc_strict_wbarriers = FALSE;
 
+static gboolean gc_incremental = FALSE;
+static guint64 gc_time_slice_ns = 0;
+
 static mono_mutex_t mono_gc_lock;
 
 static GC_push_other_roots_proc default_push_other_roots;
@@ -211,6 +214,13 @@ mono_gc_base_init (void)
 		}
 		g_strfreev (opts);
 		g_free (debug_opts);
+	}
+
+	if (gc_incremental) {
+		GC_enable_incremental();
+		if (gc_time_slice_ns > 0) {
+			GC_set_time_limit(gc_time_slice_ns);
+		}
 	}
 
 	/* cache value rather than calling during collection since g_hasenv may take locks and can deadlock */
@@ -468,6 +478,10 @@ mono_gc_get_max_time_slice_ns()
 void
 mono_gc_set_max_time_slice_ns(int64_t maxTimeSlice)
 {
+	if (!gc_initialized) {
+		gc_time_slice_ns = maxTimeSlice;
+		return;
+	}
 	GC_set_time_limit_ns(maxTimeSlice);
 }
 
@@ -480,6 +494,10 @@ mono_gc_is_incremental()
 void 
 mono_gc_set_incremental(MonoBoolean value)
 {
+	if (!gc_initialized) {
+		gc_incremental = value;
+		return;
+	}
 	if (GC_is_incremental_mode() == value)
 		return;
 	if (value)
@@ -949,7 +967,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	}
 #endif
 
-	if (!m_class_has_references (vtable->klass)) {
+	if (!m_class_has_references (vtable->klass)) {-
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
 		if (G_UNLIKELY (!obj))
 			return NULL;
