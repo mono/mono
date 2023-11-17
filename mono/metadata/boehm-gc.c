@@ -218,8 +218,10 @@ mono_gc_base_init (void)
 
 	if (gc_incremental) {
 		GC_enable_incremental();
+		mono_profiler_printf ("boehm-gc init GC_enable_incremental");
 		if (gc_time_slice_ns > 0) {
 			GC_set_time_limit(gc_time_slice_ns);
+			mono_profiler_printf ("boehm-gc init GC_set_time_limit %ld", gc_time_slice_ns);
 		}
 	}
 
@@ -236,6 +238,8 @@ mono_gc_base_init (void)
 	GC_init_gcj_vector (VECTOR_PROC_INDEX, GC_gcj_vector_proc);
 	GC_roots_proc_index = GC_new_proc (GC_roots_proc);
 	GC_allow_register_threads ();
+
+	mono_profiler_printf ("boehm-gc gc_initialized");
 
 	params_opts = mono_gc_params_get();
 	if (params_opts) {
