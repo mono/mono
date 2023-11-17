@@ -971,7 +971,7 @@ mono_gc_alloc_obj (MonoVTable *vtable, size_t size)
 	}
 #endif
 
-	if (!m_class_has_references (vtable->klass)) {-
+	if (!m_class_has_references (vtable->klass)) {
 		obj = (MonoObject *)GC_MALLOC_ATOMIC (size);
 		if (G_UNLIKELY (!obj))
 			return NULL;
