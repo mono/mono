@@ -27,6 +27,9 @@ public class Tests
 	[DllImport("libtest")]
 	public static extern int mono_test_marshal_variant_in_sbyte([MarshalAs(UnmanagedType.Struct)]object obj);
 
+	[DllImport("libtest", EntryPoint="mono_test_marshal_variant_in_sbyte")]
+	public static extern int mono_test_marshal_variant_in_sbyte_default(object obj);
+
 	[DllImport("libtest")]
 	public static extern int mono_test_marshal_variant_in_byte([MarshalAs(UnmanagedType.Struct)]object obj);
 
@@ -514,6 +517,9 @@ public class Tests
 			swithV.data = (object)-123;
 			if (mono_test_marshal_struct_with_variant_out_unmanaged (swithV) != 0)
 				return 109;
+
+			if (mono_test_marshal_variant_in_sbyte_default ((sbyte)100) != 0)
+				return 110;
 
 			#endregion // VARIANT Tests
 
