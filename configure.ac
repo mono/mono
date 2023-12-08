@@ -2831,14 +2831,16 @@ if test x$host_win32 = xno; then
 			__thread int i;
 			static int res1, res2;
 
-			void thread_main (void *arg)
+			void *thread_main (void *parg)
 			{
+				int arg = *(int *)parg;
 				i = arg;
 				sleep (1);
 				if (arg == 1)
 					res1 = (i == arg);
 				else
 					res2 = (i == arg);
+				return NULL;
 			}
 
 			int main () {
@@ -2846,8 +2848,10 @@ if test x$host_win32 = xno; then
 
 				i = 5;
 
-				pthread_create (&t1, NULL, thread_main, 1);
-				pthread_create (&t2, NULL, thread_main, 2);
+				int one = 1;
+				pthread_create (&t1, NULL, thread_main, &one);
+				int two = 2;
+				pthread_create (&t2, NULL, thread_main, &two);
 
 				pthread_join (t1, NULL);
 				pthread_join (t2, NULL);
