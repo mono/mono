@@ -24,6 +24,35 @@ or: Open msvc/mono.sln in Visual Studio and build the Runtime/libmono-dynamic pr
 
 - Artifacts will be in: <mono root>\msvc\build\boehm\x64\bin\Debug
 
+#### class libraries
+
+- You can not build the class libraries on windows, so you will want to install WSL https://learn.microsoft.com/en-us/windows/wsl/install
+
+- Our buildscript relies on an old Ubuntu version, chances are when you setup WSL you will have a more recent version.
+  If you attempt to build you will get an error message that says "No usable version of libssl was found".
+  To fix this issue, you want to install libssl 1.0 (you have a more recent version, and 1.0 is deprecated)
+
+  Execute the following script in WSL to download libssl 1.0 and install it in /usr/local/ssl/  (credit to @danielo for the script )
+
+<code>
+	wget https://www.openssl.org/source/openssl-1.0.2l.tar.gz
+	tar -xzvf openssl-1.0.2l.tar.gz 
+	cd openssl-1.0.2l 
+	./config -fPIC shared
+	make
+	# installs into /usr/local/ssl
+	sudo make install
+	sudo ldconfig /usr/local/ssl/lib
+	ldconfig -p | grep libssl
+</code>
+<br>
+
+You should see your libssl1.0 listed. If you do not, go to your `/etc/ld.so.conf.d/` folder, pick one of the files here and add the path to `/usr/local/ssl/lib` in it, then run `ldconfig`.
+`ldconfig -p | grep libssl` should now list your lib.
+
+From the root of your cloned mono directory run:
+ - perl external/buildscripts/build_classlibs_wsl.pl
+
 ### Build on OSX
 You need to install pkg-config. With Homebrew installed run:
 - brew install pkg-config
