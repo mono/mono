@@ -11,6 +11,11 @@ namespace System.Diagnostics {
         [ResourceExposure(ResourceScope.None)]
         [ResourceConsumption(ResourceScope.Machine, ResourceScope.Machine)]
         internal ProcessWaitHandle( SafeProcessHandle processHandle): base() {
+
+#if UNITY_AOT
+            throw new PlatformNotSupportedException();
+#else
+
             SafeWaitHandle waitHandle = null;
             bool succeeded = NativeMethods.DuplicateHandle(
                 new HandleRef(this, NativeMethods.GetCurrentProcess()),
@@ -33,6 +38,7 @@ namespace System.Diagnostics {
             }
 
             this.SafeWaitHandle = waitHandle;         
+#endif // #if UNITY_AOT
         }
     }
 }

@@ -7,6 +7,7 @@
 System.Net.NetworkInformation/Win32UnixFactoryPal.cs
 
 ../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.CloseHandle.cs
+../referencesource/System/services/monitoring/system/diagnosticts/processwaithandle.cs
 
 System.CodeDom/CodeCompileUnit.cs
 System.CodeDom/CodeTypeDeclaration.cs

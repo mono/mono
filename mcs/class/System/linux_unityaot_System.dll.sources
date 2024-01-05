@@ -4,6 +4,7 @@
 ../System.Web/System.Web.Util/HttpEncoder.cs
 System.CodeDom/CodeCompileUnit.cs
 System.CodeDom/CodeTypeDeclaration.cs
+../referencesource/System/services/monitoring/system/diagnosticts/processwaithandle.cs
 
 #include unityaot_fsw.sources
 
