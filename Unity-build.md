@@ -51,7 +51,12 @@ You should see your libssl1.0 listed. If you do not, go to your `/etc/ld.so.conf
 `ldconfig -p | grep libssl` should now list your lib.
 
 From the root of your cloned mono directory run:
- - perl external/buildscripts/build_classlibs_wsl.pl
+ - `perl external/buildscripts/build_classlibs_wsl.pl`
+
+Once you have built the class libraries successfully, a faster way of rebuilding is using the make file located in `mcs/class` and running:
+- `make PROFILE=unityjit HOST_PLATFORM=win32`
+
+Your artifacts will be in `mcs/class/lib/unityjit-win32`
 
 ### Build on OSX
 You need to install pkg-config. With Homebrew installed run:
