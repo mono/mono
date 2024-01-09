@@ -254,9 +254,12 @@ namespace System.Net.Sockets
         public static ValueTask<int> ReceiveAsync(this Socket socket, Memory<byte> memory, SocketFlags socketFlags, CancellationToken cancellationToken = default)
         {
             var tcs = new TaskCompletionSource<int>(socket);
-            socket.BeginReceive(memory.ToArray(), 0, memory.Length, socketFlags, iar =>
+            var buffer = memory.ToArray();
+            socket.BeginReceive(buffer, 0, memory.Length, socketFlags, iar =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+                Memory<byte> cp = new Memory<byte>(buffer);
+                cp.CopyTo(memory);
                 var tcsInner = (TaskCompletionSource<int>)iar.AsyncState;
                 var socketInner = (Socket)tcsInner.Task.AsyncState;
                 try { tcsInner.TrySetResult(socketInner.EndReceive(iar)); }
