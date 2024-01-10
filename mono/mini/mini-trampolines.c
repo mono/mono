@@ -694,6 +694,17 @@ common_call_trampoline (host_mgreg_t *regs, guint8 *code, MonoMethod *m, MonoVTa
 			mono_domain_unlock (domain);
 		}
 
+#ifdef MONO_ARCH_HAVE_PATCH_JUMP_TRAMPOLINE
+		if (!mono_aot_only) {
+			mono_domain_lock(domain);
+			gpointer jump_tramp = g_hash_table_lookup(domain_jit_info(domain)->jump_target_got_slot_hash, m);
+			mono_domain_unlock(domain);
+
+			if (jump_tramp)
+				mono_arch_patch_jump_trampoline((guint8*)jump_tramp, (guint8*)addr);
+		}
+#endif
+
 		return addr;
 	}
 

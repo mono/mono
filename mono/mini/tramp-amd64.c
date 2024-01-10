@@ -45,6 +45,9 @@ void mono_arch_patch_plt_entry_exec_only (gpointer amodule_info, guint8 *code, g
 
 #define IS_REX(inst) (((inst) >= 0x40) && ((inst) <= 0x4f))
 
+/* mov + call + 9 byte literal */
+#define JUMP_TRAMP_PATCH_OFFSET (10 + 3 + 9)
+
 #ifndef DISABLE_JIT
 /*
  * mono_arch_get_unbox_trampoline:
@@ -192,6 +195,34 @@ mono_arch_patch_callsite (guint8 *method_start, guint8 *orig_code, guint8 *addr)
 			VALGRIND_DISCARD_TRANSLATIONS (orig_code - 5, sizeof (gpointer));
 		}
 	}
+}
+
+void
+mono_arch_patch_jump_trampoline(guint8* jump_tramp, guint8* addr)
+{
+	guint8* code, * patch_addr, * patch_addr_end;
+
+	/*
+	 * The trampoline looks like this:
+	 * <normal trampoline>
+	 * <nops>
+	 * patch_addr:
+	 */
+	 /* Align patch location to avoid it crossing a cache line */
+	code = jump_tramp + JUMP_TRAMP_PATCH_OFFSET;
+	while ((guint64)code & 0xF)
+		code++;
+	patch_addr = code;
+	/* Emit code to jump to addr */
+	amd64_mov_reg_imm(code, AMD64_R11, addr);
+	amd64_jump_reg(code, AMD64_R11);
+	patch_addr_end = code;
+
+	/* Overwrite the trampoline to jump to the code above */
+	code = jump_tramp;
+	amd64_jump_code(code, patch_addr);
+
+	mono_arch_flush_icache(jump_tramp, (int)(patch_addr_end - jump_tramp));
 }
 
 #ifndef DISABLE_JIT
@@ -590,6 +621,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	guint8 *code, *buf, *tramp;
 	int size;
 	gboolean far_addr = FALSE;
+	gboolean is_jump_tramp = (tramp_type == MONO_TRAMPOLINE_JUMP);
 
 	tramp = mono_get_trampoline_code (tramp_type);
 
@@ -600,7 +632,11 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 	code = buf = (guint8 *)mono_mem_manager_code_reserve_align (mem_manager, size, 1);
 
-	if (((gint64)tramp - (gint64)code) >> 31 != 0 && ((gint64)tramp - (gint64)code) >> 31 != -1) {
+	if (is_jump_tramp) {
+		size += 64;
+		/* Align the trampoline so the first instruction doesn't cross a cache line */
+		code = buf = (guint8*)mono_mem_manager_code_reserve_align(mem_manager, size, 16);
+	} else if (((gint64)tramp - (gint64)code) >> 31 != 0 && ((gint64)tramp - (gint64)code) >> 31 != -1) {
 #ifndef MONO_ARCH_NOMAP32BIT
 		g_assert_not_reached ();
 #endif
@@ -609,14 +645,18 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 		code = buf = (guint8 *)mono_mem_manager_code_reserve_align (mem_manager, size, 1);
 	}
 
-	if (far_addr) {
+	if (is_jump_tramp) {
+		size += 64;
+		/* Align the trampoline so the first instruction doesn't cross a cache line */
+		code = buf = (guint8*)mono_mem_manager_code_reserve_align(mem_manager, size, 16);
+	} else if (far_addr) {
 		amd64_mov_reg_imm (code, AMD64_R11, tramp);
 		amd64_call_reg (code, AMD64_R11);
 	} else {
 		amd64_call_code (code, tramp);
 	}
 	/* The trampoline code will obtain the argument from the instruction stream */
-	if ((((guint64)arg1) >> 32) == 0) {
+	if ((((guint64)arg1) >> 32) == 0 && !is_jump_tramp) {
 		*code = 0x4;
 		*(guint32*)(code + 1) = (gint64)arg1;
 		code += 5;
@@ -624,6 +664,16 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 		*code = 0x8;
 		*(guint64*)(code + 1) = (gint64)arg1;
 		code += 9;
+	}
+
+	if (is_jump_tramp) {
+		g_assert(code - buf == JUMP_TRAMP_PATCH_OFFSET);
+		/* Allocate space for the code emitted by mono_arch_patch_jump_trampoline () */
+		/* Align it so it doesn't cross a cache line */
+		while ((guint64)code & 0xF)
+			x86_nop(code);
+		for (int i = 0; i < 16; ++i)
+			x86_nop(code);
 	}
 
 	g_assert ((code - buf) <= size);
