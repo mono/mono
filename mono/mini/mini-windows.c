@@ -210,6 +210,9 @@ get_win32_restore_stack (void)
  */
 LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
+	if (ep->ExceptionRecord->ExceptionCode == DBG_PRINTEXCEPTION_C)
+		return EXCEPTION_CONTINUE_SEARCH;
+
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
 	LONG res;
