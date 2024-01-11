@@ -662,8 +662,14 @@ mono_compile_create_var_for_vreg (MonoCompile *cfg, MonoType *type, int opcode, 
 	inst->backend.is_pinvoke = 0;
 	inst->dreg = vreg;
 
-	if (mono_class_has_failure (inst->klass))
+	if (mono_class_has_failure (inst->klass)) {
 		mono_cfg_set_exception (cfg, MONO_EXCEPTION_TYPE_LOAD);
+		MonoErrorBoxed* box = mono_class_get_exception_data (inst->klass);
+		if (box) {
+			MonoErrorInternal* err = (MonoErrorInternal*)&box->error;
+			cfg->exception_message = mono_error_get_message (err);
+		}
+	}
 
 	if (cfg->compute_gc_maps) {
 		if (type->byref) {
