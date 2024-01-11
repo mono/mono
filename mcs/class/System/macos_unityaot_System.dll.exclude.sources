@@ -4,4 +4,5 @@ System.Security.Cryptography.X509Certificates/OSX509Certificates.cs
 System.IO/FileSystemWatcher.DefaultEventAttribute.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.cs
 ../../../external/corefx/src/System.IO.FileSystem.Watcher/src/System/IO/FileSystemWatcher.UnknownUnix.cs
-
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.ProcessWaitHandle.cs
+../../../external/corefx/src/Common/src/Interop/Windows/kernel32/Interop.ProcessWaitHandle.Unix.cs
