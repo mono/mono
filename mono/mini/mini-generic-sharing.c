@@ -726,17 +726,21 @@ inflate_info (MonoRuntimeGenericContextInfoTemplate *oti, MonoGenericContext *co
 		MonoType *t = mono_class_inflate_generic_type_checked (m_class_get_byval_arg (dele_info->klass), context, error);
 		mono_error_assert_msg_ok (error, "Could not inflate generic type"); /* FIXME proper error handling */
 
-		MonoClass *klass = mono_class_from_mono_type_internal (t);
+		MonoClass *inflated_klass = mono_class_from_mono_type_internal (t);
 		mono_metadata_free_type (t);
 
 		MonoMethod *method = mono_class_inflate_generic_method_checked (dele_info->method, context, error);
 		mono_error_assert_msg_ok (error, "Could not inflate generic method"); /* FIXME proper error handling */
 
-		// FIXME: Temporary
-		MonoDelegateClassMethodPair *res = (MonoDelegateClassMethodPair *)mono_domain_alloc0 (domain, sizeof (MonoDelegateClassMethodPair));
+		MonoDelegateClassMethodPair* res = NULL;
+		if (temporary)
+			res = (MonoDelegateClassMethodPair*)g_malloc0 (sizeof (MonoDelegateClassMethodPair));
+		else
+			res = (MonoDelegateClassMethodPair*)mono_image_alloc0 (m_class_get_image (klass), sizeof (MonoDelegateClassMethodPair));
+
 		res->is_virtual = dele_info->is_virtual;
 		res->method = method;
-		res->klass = klass;
+		res->klass = inflated_klass;
 		return res;
 
 	}
@@ -762,6 +766,9 @@ free_inflated_info (MonoRgctxInfoType info_type, gpointer info)
 	case MONO_RGCTX_INFO_REFLECTION_TYPE:
 	case MONO_RGCTX_INFO_CAST_CACHE:
 		mono_metadata_free_type ((MonoType *)info);
+		break;
+	case MONO_RGCTX_INFO_DELEGATE_TRAMP_INFO:
+		g_free (info);
 		break;
 	default:
 		break;
