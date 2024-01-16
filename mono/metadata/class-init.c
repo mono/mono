@@ -311,8 +311,14 @@ mono_class_setup_fields (MonoClass *klass)
 	 * Prevent infinite recursion by using a list in TLS.
 	 */
 	GSList *init_list = (GSList *)mono_native_tls_get_value (setup_fields_tls_id);
-	if (g_slist_find (init_list, klass))
+	if (g_slist_find (init_list, klass)) {
+		// Recursive value types will not resolve their size and assert later when we attempt to fetch it.
+		// Flag here to gracefully handle and trigger exception.
+		// We also ignore special corlib types, int, long, etc that are correct while being recursive
+		if (klass->valuetype && !klass->size_inited && !mono_is_corlib_image (klass->image))
+			mono_class_set_type_load_failure (klass, "Recursive type definition detected %s", mono_type_get_full_name(klass));
 		return;
+	}
 	init_list = g_slist_prepend (init_list, klass);
 	mono_native_tls_set_value (setup_fields_tls_id, init_list);
 
