@@ -35,9 +35,9 @@
 #include <metadata/profiler-private.h>
 #include <mono/metadata/coree.h>
 
-#ifdef _M_X64
+
+#ifdef _WIN64
 #include <mono/mini/mini.h>
-#include <mono/mini/mini-amd64.h>
 extern GList* g_dynamic_function_table_begin;
 extern SRWLOCK g_dynamic_function_table_lock;
 #endif
@@ -152,7 +152,7 @@ mono_unity_oop_shutdown(void)
     memset(&g_oop, 0, sizeof(g_oop));
 }
 
-#ifdef _M_X64
+#ifdef _WIN64
 gboolean TryAcquireSpinWait(PSRWLOCK lock, unsigned int spinWait)
 {
     do
@@ -168,7 +168,7 @@ gboolean TryAcquireSpinWait(PSRWLOCK lock, unsigned int spinWait)
 MONO_API GList*
 mono_unity_lock_dynamic_function_access_tables64(unsigned int spinWait) 
 {
-#ifdef _M_X64
+#ifdef _WIN64
     if (spinWait >= 0x7fffffff) {
         AcquireSRWLockExclusive(&g_dynamic_function_table_lock);
     }
@@ -184,7 +184,7 @@ mono_unity_lock_dynamic_function_access_tables64(unsigned int spinWait)
 MONO_API void
 mono_unity_unlock_dynamic_function_access_tables64(void) 
 {
-#ifdef _M_X64
+#ifdef _WIN64
     ReleaseSRWLockExclusive(&g_dynamic_function_table_lock);
 #else
     return;
@@ -195,7 +195,7 @@ MONO_API GList*
 mono_unity_oop_iterate_dynamic_function_access_tables64(
     GList* current) 
 {
-#ifdef _M_X64
+#ifdef _WIN64
     if (current != NULL)
         return read_glist_next(current);
     else
@@ -213,7 +213,7 @@ mono_unity_oop_get_dynamic_function_access_table64(
     void** functionTable,
     gsize* functionTableSize)
 {
-#ifdef _M_X64
+#ifdef _WIN64
     if (!tableEntry || !moduleStart || !moduleEnd || !functionTable || !functionTableSize)
         return FALSE;
 

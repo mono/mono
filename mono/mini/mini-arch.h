@@ -33,6 +33,10 @@
 #error add arch specific include file in mini-arch.h
 #endif
 
+#ifdef TARGET_WIN32
+#include "mini-windows.h"
+#endif
+
 #if (MONO_ARCH_FRAME_ALIGNMENT == 4)
 #define MONO_ARCH_LOCALLOC_ALIGNMENT 8
 #else

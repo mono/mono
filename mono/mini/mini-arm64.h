@@ -127,6 +127,9 @@ typedef struct {
 	MonoInst *bp_tramp_var;
 	guint8 *thunks;
 	int thunks_size;
+#ifdef HOST_WIN32
+	void* unwindinfo;
+#endif
 } MonoCompileArch;
 
 #define MONO_ARCH_EMULATE_FCONV_TO_U4 1
@@ -312,5 +315,86 @@ GSList* mono_arm_get_exception_trampolines (gboolean aot);
 void mono_arm_resume_unwind (gpointer arg, host_mgreg_t pc, host_mgreg_t *int_regs, gdouble *fp_regs, gboolean corlib, gboolean rethrow);
 
 CallInfo* mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
+
+#if defined(TARGET_WIN32) && !defined(DISABLE_JIT)
+
+#define MONO_ARCH_HAVE_UNWIND_TABLE 1
+#define MONO_ARCH_HAVE_CODE_CHUNK_TRACKING 1
+
+// This is the maximum size of the unwind codes
+// The maximum size of the unwind codes is 31 * 4 bytes
+#define MONO_MAX_UNWIND_CODE_SIZE (31 * 4)
+
+typedef struct _UnwindInfo
+{
+	RUNTIME_FUNCTION pdata;
+	IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA xdata;
+	guint8 unwind_codes[MONO_MAX_UNWIND_CODE_SIZE];
+} UnwindInfo, *PUnwindInfo;
+
+/*
+
+#define ARM64_UNWIND_FLAG_EXCEPTION_INFO_RVA 0x00
+#define ARM64_UNWIND_FLAG_PACKED_UNWIND_DATA 0x01
+
+// These bit fields assume MSVC packing!
+typedef struct _UnwindInfoPData {
+	guint32 function_start_rva;
+	guint32 flag : 2;
+	guint32 xdata_rva_or_packed_unwind_data : 30;
+} UnwindInfoPData, * PUnwindInfoPData;
+
+typedef struct _UnwindInfoXData {
+	guint32 function_length : 18;
+	guint32 version : 2;
+	guint32 xFlag : 1;
+	guint32 eFlag : 1;
+	guint32 epilog_count : 6;
+	guint32 code_words : 6;
+	
+	// Note supported - we don't support extended epilogs or more than 31 code words
+	//guint32 extended_epilog_count : 16;
+	//guint32 extended_code_words : 8;
+	// reserved : 8;
+
+	// Optional: extended epilog scopes
+
+	guint8 undwind_codes[MONO_MAX_UNWIND_CODE_SIZE];
+
+	// Optional: exception handler rva
+	// Optional: exception handler data
+} UnwindInfoXData, * PUnwindInfoXData;
+
+typedef struct _UnwindInfoPacked
+{
+	guint32 flag : 2;
+	guint32 function_length : 11;
+	guint32 regf : 3;
+	guint32 regi : 3;
+	guint32 h_flag : 1;
+	guint32 cr_flag : 2;
+	guint32 frame_size : 9;
+
+} UnwindInfoPacked;
+*/
+
+
+void
+mono_arch_unwindinfo_install_method_unwind_info(PUnwindInfo* monoui, gpointer code, guint code_size);
+
+guint32
+mono_arch_unwindinfo_get_end_address(gpointer rvaRtoot, PRUNTIME_FUNCTION func);
+
+typedef struct _UnwindInfoInMemoryLayout {
+	RUNTIME_FUNCTION pdata;
+	IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA xdata;		// Optional
+	guint32 unwind_codes[1];				// Optional - variable size
+} UnwindInfoInMemoryLayout, *PUnwindInfoInMemoryLayout;
+
+#define MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE (sizeof(struct _UnwindInfoInMemoryLayout) + MONO_MAX_UNWIND_CODE_SIZE - 4)
+
+#else // defined(TARGET_WIN32) && !defined(DISABLE_JIT)
+#define MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE 0
+#endif
 
 #endif /* __MONO_MINI_ARM64_H__ */

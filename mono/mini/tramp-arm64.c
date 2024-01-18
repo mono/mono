@@ -103,7 +103,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	const char *tramp_name;
 
 	buf_len = 768;
-	buf = code = mono_global_codeman_reserve (buf_len);
+	buf = code = mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	/*
 	 * We are getting called by a specific trampoline, ip1 contains the trampoline argument.
@@ -330,7 +330,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 	 */
 	tramp = mono_get_trampoline_code (tramp_type);
 
-	buf = code = mono_mem_manager_code_reserve (mem_manager, buf_len);
+	buf = code = mono_mem_manager_code_reserve (mem_manager, buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	MINI_BEGIN_CODEGEN ();
 
@@ -357,7 +357,7 @@ mono_arch_get_unbox_trampoline (MonoMethod *m, gpointer addr)
 	MonoDomain *domain = mono_domain_get ();
 	MonoMemoryManager *mem_manager = m_method_get_mem_manager (domain, m);
 
-	start = code = mono_mem_manager_code_reserve (mem_manager, size);
+	start = code = mono_mem_manager_code_reserve (mem_manager, size + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	MINI_BEGIN_CODEGEN ();
 
@@ -380,7 +380,7 @@ mono_arch_get_static_rgctx_trampoline (MonoMemoryManager *mem_manager, gpointer 
 	guint8 *code, *start;
 	guint32 buf_len = 32;
 
-	start = code = mono_mem_manager_code_reserve (mem_manager, buf_len);
+	start = code = mono_mem_manager_code_reserve (mem_manager, buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	MINI_BEGIN_CODEGEN ();
 
@@ -421,7 +421,7 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 	}
 
 	buf_size = 64 + 16 * depth;
-	code = buf = mono_global_codeman_reserve (buf_size);
+	code = buf = mono_global_codeman_reserve (buf_size + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	rgctx_null_jumps = g_malloc0 (sizeof (guint8*) * (depth + 2));
 	njumps = 0;
@@ -510,7 +510,7 @@ mono_arch_create_general_rgctx_lazy_fetch_trampoline (MonoTrampInfo **info, gboo
 
 	tramp_size = 32;
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = mono_global_codeman_reserve (tramp_size + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	mono_add_unwind_op_def_cfa (unwind_ops, code, buf, ARMREG_SP, 0);
 
@@ -550,7 +550,7 @@ mono_arch_create_sdb_trampoline (gboolean single_step, MonoTrampInfo **info, gbo
 	GSList *unwind_ops = NULL;
 	MonoJumpInfo *ji = NULL;
 
-	code = buf = mono_global_codeman_reserve (tramp_size);
+	code = buf = mono_global_codeman_reserve (tramp_size + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	/* Compute stack frame size and offsets */
 	offset = 0;
@@ -650,7 +650,7 @@ mono_arch_get_interp_to_native_trampoline (MonoTrampInfo **info)
 	int buf_len, i, framesize = 0, off_methodargs, off_targetaddr;
 
 	buf_len = 512 + 1024;
-	start = code = (guint8 *) mono_global_codeman_reserve (buf_len);
+	start = code = (guint8 *) mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	/* allocate frame */
 	framesize += 2 * sizeof (host_mgreg_t);
@@ -756,7 +756,7 @@ mono_arch_get_native_to_interp_trampoline (MonoTrampInfo **info)
 	int framesize, offset, ccontext_offset;
 
 	buf_len = 512;
-	start = code = (guint8 *) mono_global_codeman_reserve (buf_len);
+	start = code = (guint8 *) mono_global_codeman_reserve (buf_len + MONO_MAX_TRAMPOLINE_UNWINDINFO_SIZE);
 
 	/* Allocate frame (FP + LR + CallContext) */
 	offset = 2 * sizeof (host_mgreg_t);
