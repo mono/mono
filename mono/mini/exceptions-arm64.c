@@ -639,6 +639,12 @@ mono_arch_unwind_add_nop(guint8* unwind_codes, guint32* unwind_code_size) {
 }
 
 static void
+mono_arch_unwind_add_set_fp(guint8* unwind_codes, guint32* unwind_code_size) {
+	mono_arch_unwind_add_assert(1, 0, *unwind_code_size, 0);
+	unwind_codes[(*unwind_code_size)++] = 0b11100001;
+}
+
+static void
 mono_arch_unwind_add_pac_sign_lr(guint8* unwind_codes, guint32* unwind_code_size) {
 	mono_arch_unwind_add_assert(1, 0, *unwind_code_size, 0);
 	unwind_codes[(*unwind_code_size)++] = 0b11111100;
@@ -664,7 +670,7 @@ mono_arch_unwind_add_save_fplr_x(guint8* unwind_codes, guint32* unwind_code_size
 
 	mono_arch_unwind_add_assert(1, 512, *unwind_code_size, offset);
 
-	unwind_codes[(*unwind_code_size)++] = 0b10000000 | offset / 8;
+	unwind_codes[(*unwind_code_size)++] = 0b10000000 | (offset-8) / 8;
 }
 
 static void
@@ -674,8 +680,8 @@ mono_arch_unwind_add_save_reg(guint8* unwind_codes, guint32* unwind_code_size, g
 	g_assert(reg >= ARMREG_R19);
 
 	guint8 reg_offset = reg - ARMREG_R19;
-	unwind_codes[(*unwind_code_size)++] = 0b11010000 | offset / 8;
 	unwind_codes[(*unwind_code_size)++] = (reg_offset & 0x8) << 5 | (offset / 8);
+	unwind_codes[(*unwind_code_size)++] = 0b11010000 | offset / 8;
 }
 
 static void
@@ -685,8 +691,8 @@ mono_arch_unwind_add_save_reg_x(guint8* unwind_codes, guint32* unwind_code_size,
 	g_assert(reg >= ARMREG_R19);
 
 	guint8 reg_offset = reg - ARMREG_R19;
-	unwind_codes[(*unwind_code_size)++] = 0b11010000 | reg_offset / 8;
 	unwind_codes[(*unwind_code_size)++] = (reg_offset & 0x8) << 5 | (offset / 8);
+	unwind_codes[(*unwind_code_size)++] = 0b11010000 | reg_offset / 8;
 }
 
 static void
@@ -701,8 +707,8 @@ mono_arch_unwind_add_alloc_m(guint8* unwind_codes, guint32* unwind_code_size, gu
 
 	mono_arch_unwind_add_assert(2, 0x7FFF, *unwind_code_size, size);
 	size = size / 16; // Size is multiples of 16
-	unwind_codes[(*unwind_code_size)++] = 0b110000000 | (size >> 8);
 	unwind_codes[(*unwind_code_size)++] = size & 0xFF;
+	unwind_codes[(*unwind_code_size)++] = 0b110000000 | (size >> 8);
 }
 
 static void
@@ -710,10 +716,11 @@ mono_arch_unwind_add_alloc_l(guint8* unwind_codes, guint32* unwind_code_size, gu
 
 	mono_arch_unwind_add_assert(4, 0x0FFFFFFF, *unwind_code_size, size);
 	size = size / 16; // Size is multiples of 16
-	unwind_codes[(*unwind_code_size)++] = 0b111000000;
-	unwind_codes[(*unwind_code_size)++] = size >> 16;
-	unwind_codes[(*unwind_code_size)++] = (size >> 8) & 0xFF;
+
 	unwind_codes[(*unwind_code_size)++] = size & 0xFF;
+	unwind_codes[(*unwind_code_size)++] = (size >> 8) & 0xFF;
+	unwind_codes[(*unwind_code_size)++] = size >> 16;
+	unwind_codes[(*unwind_code_size)++] = 0b111000000;
 }
 
 static void
@@ -737,12 +744,17 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 
 	// Frame Setup
 	if (arm_is_ldpx_imm(-stack_offset)) {
-		mono_arch_unwind_add_save_fplr(unwind_codes, unwind_code_size, stack_offset);
+		if (stack_offset > 0)
+			mono_arch_unwind_add_save_fplr_x(unwind_codes, unwind_code_size, stack_offset);
+		else
+			mono_arch_unwind_add_save_fplr(unwind_codes, unwind_code_size, 0);
 	}
 	else {
 		mono_arch_unwind_add_alloc_x(unwind_codes, unwind_code_size, stack_offset);
-		mono_arch_unwind_add_save_fplr_x(unwind_codes, unwind_code_size, 0);
+		mono_arch_unwind_add_save_fplr(unwind_codes, unwind_code_size, 0);
 	}
+
+	mono_arch_unwind_add_set_fp(unwind_codes, unwind_code_size);
 
 	if (param_area) {
 		mono_arch_unwind_add_alloc_x(unwind_codes, unwind_code_size, param_area);
@@ -779,13 +791,16 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 
 				}
 				else {
+
+					guint offset = stack_offset + unwind_op_data->val;
+
 					// TODO - we're probably restoring the correct regs
 					// but we're not matching the instructions we use for, which may be a problem
 					// as the unwind info is supposed to encode the actual instruction stream
-					if (unwind_op_data->when < 256)
-						mono_arch_unwind_add_save_reg_x(unwind_codes, unwind_code_size, unwind_op_data->reg, unwind_op_data->when);
+					if (offset)
+						mono_arch_unwind_add_save_reg_x(unwind_codes, unwind_code_size, unwind_op_data->reg, offset);
 					else
-						mono_arch_unwind_add_save_reg(unwind_codes, unwind_code_size, unwind_op_data->reg, unwind_op_data->when);
+						mono_arch_unwind_add_save_reg(unwind_codes, unwind_code_size, unwind_op_data->reg, offset);
 				}
 				break;
 			}
@@ -795,7 +810,6 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 		}
 	}
 
-	mono_arch_unwind_add_end(unwind_codes, unwind_code_size);
 }
 
 static guint
@@ -807,12 +821,12 @@ mono_arch_unwindinfo_get_size(UnwindInfo* uwi)
 }
 
 PUnwindInfo
-mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_offset, guint param_area, guint code_size) {
+mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_offset, guint param_area, guint code_len) {
 
 	if (unwind_ops == NULL)
 		return 0;
 
-	if (code_size > 0x2FFFF) {
+	if (code_len > 0x2FFFF) {
 		// TODO: Support larger methods - this requires multiple xdata entires
 		// because the function length is only 18 bits
 		return 0;
@@ -822,17 +836,38 @@ mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_o
 	//pdata.function_start_rva = current_cfg->native_code;
 	uwi->pdata.Flag = PdataRefToFullXdata;
 
-	uwi->xdata.FunctionLength = code_size;
+	uwi->xdata.FunctionLength = code_len;
 	uwi->xdata.Version = 0;
 	uwi->xdata.ExceptionDataPresent = 0; // No exception handle data
 	uwi->xdata.EpilogInHeader = 1; // Only one epilog
 
 	guint32 code_word_size = 0;
-	initialize_unwind_info_internal_ex(unwind_ops, stack_offset, param_area ,uwi->unwind_codes, &code_word_size);
+	guint8 unwind_codes[MONO_MAX_UNWIND_CODE_SIZE];
+	initialize_unwind_info_internal_ex(unwind_ops, stack_offset, param_area , unwind_codes, &code_word_size);
+
+
+	// Reverse the codewords - MONO stores the unwind info in prolog order
+	// but we need it in epilog order
+	for (int i = 0; i < code_word_size; i++) {
+		//uwi->unwind_codes[i] = unwind_codes[i];
+		uwi->unwind_codes[i] = unwind_codes[code_word_size - i - 1];
+	}
+
+	mono_arch_unwind_add_end(uwi->unwind_codes, &code_word_size);
+
+	g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE / 2);
+
+	// We need a seperate copy of the code words for the epilog?
+	memcpy(uwi->unwind_codes + code_word_size, uwi->unwind_codes, code_word_size);
+	code_word_size *= 2;
 
 	g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE);
 
 	uwi->xdata.CodeWords = ALIGN_TO(code_word_size, 4);
+
+	uwi->xdata.EpilogCount = 0;
+	uwi->epilog_info.epilog_start_index = 0;
+	uwi->epilog_info.reserved = 0;
 
 	return uwi;
 }
@@ -842,11 +877,15 @@ mono_arch_unwindinfo_init_method_unwind_info(gpointer cfg) {
 
 	MonoCompile* current_cfg = (MonoCompile*)cfg;
 
-	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(current_cfg->unwind_ops, current_cfg->stack_offset, current_cfg->param_area, current_cfg->code_size);
+
+	// I think we need the +4 because we don't seem to account for the size of the ret/retx instruction 
+	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(current_cfg->unwind_ops, current_cfg->stack_offset, current_cfg->param_area, current_cfg->epilog_end + 4);
+
+	uwi->epilog_info.epilog_start_offset = current_cfg->epilog_begin / 4;
 
 	current_cfg->arch.unwindinfo = uwi;
 
-	return ALIGN_TO(mono_arch_unwindinfo_get_size(uwi), sizeof(host_mgreg_t));
+	return mono_arch_unwindinfo_get_size(uwi) + sizeof(host_mgreg_t);
 }
 
 void
@@ -857,7 +896,9 @@ mono_arch_unwindinfo_install_tramp_unwind_info(GSList* unwind_ops, gpointer code
 
 	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(unwind_ops, 0, 0, code_size);
 	if (uwi != NULL)
+	{
 		mono_arch_unwindinfo_install_method_unwind_info(&uwi, code, code_size);
+	}
 }
 
 void
@@ -875,7 +916,6 @@ mono_arch_unwindinfo_install_method_unwind_info(PUnwindInfo* monoui, gpointer co
 
 	guint32 size = mono_arch_unwindinfo_get_size(unwindinfo);
 	memcpy(targetinfo, unwindinfo, size);
-
 
 	g_free(unwindinfo);
 	*monoui = 0;
@@ -896,7 +936,7 @@ mono_arch_unwindinfo_init(gpointer code, gsize code_offset, gsize code_size, gsi
 	if (targetinfo->pdata.Flag == PdataRefToFullXdata)
 	{
 		// Update the pdata to point to the RVA for the xdata
-		targetinfo->pdata.UnwindData = code_offset + (targetlocation - (guint64)code) + sizeof(RUNTIME_FUNCTION);
+		new_rt_func_data.UnwindData = code_offset + (targetlocation - (guint64)code) + sizeof(RUNTIME_FUNCTION);
 	}
 
 	return new_rt_func_data;
