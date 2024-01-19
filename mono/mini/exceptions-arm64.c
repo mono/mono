@@ -24,6 +24,12 @@
 
 #ifndef DISABLE_JIT
 
+#ifdef MONO_ARCH_ENABLE_PTRAUTH
+	static gboolean enable_ptrauth = TRUE;
+#else
+	static gboolean enable_ptrauth = FALSE;
+#endif
+
 gpointer
 mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 {
@@ -738,9 +744,8 @@ mono_arch_unwind_add_alloc_x(guint8* unwind_codes, guint32* unwind_code_size, gu
 static void
 initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint param_area, guint8 *unwind_codes, guint32 *unwind_code_size)
 {
-#ifdef MONO_ARCH_ENABLE_PTRAUTH
-	mono_arch_unwind_add_pac_sign_lr(unwind_codes, unwind_code_size);
-#endif
+	if (enable_ptrauth)
+		mono_arch_unwind_add_pac_sign_lr(unwind_codes, unwind_code_size);
 
 	// Frame Setup
 	if (arm_is_ldpx_imm(-stack_offset)) {
@@ -833,41 +838,55 @@ mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_o
 	}
 
 	UnwindInfo* uwi = g_new0(UnwindInfo, 1);
-	//pdata.function_start_rva = current_cfg->native_code;
-	uwi->pdata.Flag = PdataRefToFullXdata;
-
-	uwi->xdata.FunctionLength = code_len;
-	uwi->xdata.Version = 0;
-	uwi->xdata.ExceptionDataPresent = 0; // No exception handle data
-	uwi->xdata.EpilogInHeader = 1; // Only one epilog
 
 	guint32 code_word_size = 0;
 	guint8 unwind_codes[MONO_MAX_UNWIND_CODE_SIZE];
 	initialize_unwind_info_internal_ex(unwind_ops, stack_offset, param_area , unwind_codes, &code_word_size);
 
-
-	// Reverse the codewords - MONO stores the unwind info in prolog order
-	// but we need it in epilog order
-	for (int i = 0; i < code_word_size; i++) {
-		//uwi->unwind_codes[i] = unwind_codes[i];
-		uwi->unwind_codes[i] = unwind_codes[code_word_size - i - 1];
+	if (code_word_size == 2 + (enable_ptrauth ? 1 : 0) && code_len < 0x2000 && stack_offset < 0x2000)
+	{
+		// We can use the packed format
+		uwi->pdata.Flag = PdataPackedUnwindFunction;
+		uwi->pdata.FunctionLength = code_len / 4;
+		uwi->pdata.FrameSize = stack_offset / MONO_ARCH_FRAME_ALIGNMENT;
+		uwi->pdata.CR = enable_ptrauth ? PdataCrChainedWithPac : PdataCrChained;
+		uwi->pdata.RegI = 0; // No integer registers saved
+		uwi->pdata.RegF = 0; // No floating point registers saved
+		uwi->pdata.H = 0;    // No home area
 	}
+	else
+	{
+		uwi->pdata.Flag = PdataRefToFullXdata;
+		uwi->xdata.FunctionLength = code_len / 4;
+		uwi->xdata.Version = 0;
+		uwi->xdata.ExceptionDataPresent = 0; // No exception handle data
+		uwi->xdata.EpilogInHeader = 1; // Only one epilog
 
-	mono_arch_unwind_add_end(uwi->unwind_codes, &code_word_size);
 
-	g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE / 2);
+		// Reverse the codewords - MONO stores the unwind info in prolog order
+		// but we need it in epilog order
+		for (int i = 0; i < code_word_size; i++) {
+			//uwi->unwind_codes[i] = unwind_codes[i];
+			uwi->unwind_codes[i] = unwind_codes[code_word_size - i - 1];
+		}
 
-	// We need a seperate copy of the code words for the epilog?
-	memcpy(uwi->unwind_codes + code_word_size, uwi->unwind_codes, code_word_size);
-	code_word_size *= 2;
+		mono_arch_unwind_add_end(uwi->unwind_codes, &code_word_size);
 
-	g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE);
+		g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE / 2);
 
-	uwi->xdata.CodeWords = ALIGN_TO(code_word_size, 4);
+		// We need a seperate copy of the code words for the epilog?
+		memcpy(uwi->unwind_codes + code_word_size, uwi->unwind_codes, code_word_size);
+		code_word_size *= 2;
 
-	uwi->xdata.EpilogCount = 0;
-	uwi->epilog_info.epilog_start_index = 0;
-	uwi->epilog_info.reserved = 0;
+		g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE);
+
+		// Count of 32 bit words
+		uwi->xdata.CodeWords = ALIGN_TO(code_word_size, 4) / 4;
+
+		uwi->xdata.EpilogCount = 0;
+		uwi->epilog_info.epilog_start_index = 0;
+		uwi->epilog_info.reserved = 0;
+	}
 
 	return uwi;
 }
@@ -877,6 +896,8 @@ mono_arch_unwindinfo_init_method_unwind_info(gpointer cfg) {
 
 	MonoCompile* current_cfg = (MonoCompile*)cfg;
 
+	if (strcmp(current_cfg->method->name, "Foo") == 0)
+		printf("");
 
 	// I think we need the +4 because we don't seem to account for the size of the ret/retx instruction 
 	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(current_cfg->unwind_ops, current_cfg->stack_offset, current_cfg->param_area, current_cfg->epilog_end + 4);
