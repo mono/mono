@@ -774,8 +774,6 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 	}
 	*/
 
-
-
 	if (unwind_ops != NULL) {
 		MonoUnwindOp* unwind_op_data;
 		gboolean sp_alloced = FALSE;
@@ -826,7 +824,7 @@ mono_arch_unwindinfo_get_size(UnwindInfo* uwi)
 }
 
 PUnwindInfo
-mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_offset, guint param_area, guint code_len) {
+mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_offset, guint param_area, guint epilog_end, guint code_len) {
 
 	if (unwind_ops == NULL)
 		return 0;
@@ -843,7 +841,7 @@ mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_o
 	guint8 unwind_codes[MONO_MAX_UNWIND_CODE_SIZE];
 	initialize_unwind_info_internal_ex(unwind_ops, stack_offset, param_area , unwind_codes, &code_word_size);
 
-	if (code_word_size == 2 + (enable_ptrauth ? 1 : 0) && code_len < 0x2000 && stack_offset < 0x2000)
+	if (code_word_size == 2 + (enable_ptrauth ? 1 : 0) && code_len < 0x2000 && stack_offset < 0x2000 && epilog_end == code_len)
 	{
 		// We can use the packed format
 		uwi->pdata.Flag = PdataPackedUnwindFunction;
@@ -900,7 +898,7 @@ mono_arch_unwindinfo_init_method_unwind_info(gpointer cfg) {
 		printf("");
 
 	// I think we need the +4 because we don't seem to account for the size of the ret/retx instruction 
-	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(current_cfg->unwind_ops, current_cfg->stack_offset, current_cfg->param_area, current_cfg->epilog_end + 4);
+	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(current_cfg->unwind_ops, current_cfg->stack_offset, current_cfg->param_area, current_cfg->epilog_end, current_cfg->code_len);
 
 	uwi->epilog_info.epilog_start_offset = current_cfg->epilog_begin / 4;
 
@@ -915,7 +913,7 @@ mono_arch_unwindinfo_install_tramp_unwind_info(GSList* unwind_ops, gpointer code
 	if (unwind_ops == NULL)
 		return;
 
-	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(unwind_ops, 0, 0, code_size);
+	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(unwind_ops, 0, 0, code_size, code_size);
 	if (uwi != NULL)
 	{
 		mono_arch_unwindinfo_install_method_unwind_info(&uwi, code, code_size);
@@ -958,6 +956,10 @@ mono_arch_unwindinfo_init(gpointer code, gsize code_offset, gsize code_size, gsi
 	{
 		// Update the pdata to point to the RVA for the xdata
 		new_rt_func_data.UnwindData = code_offset + (targetlocation - (guint64)code) + sizeof(RUNTIME_FUNCTION);
+	}
+	else
+	{
+		new_rt_func_data.UnwindData = targetinfo->pdata.UnwindData;
 	}
 
 	return new_rt_func_data;
