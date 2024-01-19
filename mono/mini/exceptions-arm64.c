@@ -702,6 +702,29 @@ mono_arch_unwind_add_save_reg_x(guint8* unwind_codes, guint32* unwind_code_size,
 }
 
 static void
+mono_arch_unwind_add_save_regp(guint8* unwind_codes, guint32* unwind_code_size, guint32 reg, guint32 offset) {
+
+	mono_arch_unwind_add_assert(2, 504, *unwind_code_size, offset);
+	g_assert(reg >= ARMREG_R19 && reg %2);
+
+	guint8 reg_offset = reg - ARMREG_R19;
+	unwind_codes[(*unwind_code_size)++] = (reg_offset & 0x8) << 5 | (offset / 8);
+	unwind_codes[(*unwind_code_size)++] = 0b11001000 | offset / 8;
+}
+
+static void
+mono_arch_unwind_add_save_regp_x(guint8* unwind_codes, guint32* unwind_code_size, guint32 reg, guint32 offset) {
+
+	mono_arch_unwind_add_assert(2, 256, *unwind_code_size, offset);
+	g_assert(reg >= ARMREG_R19 && reg % 2);
+
+	guint8 reg_offset = reg - ARMREG_R19;
+	unwind_codes[(*unwind_code_size)++] = (reg_offset & 0x8) << 5 | (offset / 8);
+	unwind_codes[(*unwind_code_size)++] = 0b11001100 | reg_offset / 8;
+}
+
+
+static void
 mono_arch_unwind_add_alloc_s(guint8* unwind_codes, guint32* unwind_code_size, guint32 size) {
 
 	mono_arch_unwind_add_assert(1, 511, *unwind_code_size, size);
@@ -815,18 +838,35 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 					else if (unwind_op_data->reg != last_saved_in_order_reg + 1 || offset != last_saved_reg_offset + sizeof(host_mgreg_t))
 						res.can_use_packed_format = FALSE;
 
-					res.saved_int_regs++;
-					last_saved_reg_offset = offset;
-					last_saved_in_order_reg = unwind_op_data->reg;
 
+					MonoUnwindOp* next_unwind_op_data = NULL;
+					if (l->next && l->next->data)
+						next_unwind_op_data = (MonoUnwindOp*)l->next->data;
 
-					// TODO - we're probably restoring the correct regs
-					// but we're not matching the instructions we use for, which may be a problem
-					// as the unwind info is supposed to encode the actual instruction stream
-					if (offset)
-						mono_arch_unwind_add_save_reg_x(unwind_codes, unwind_code_size, unwind_op_data->reg, offset);
+					if (next_unwind_op_data && unwind_op_data->reg % 2 && next_unwind_op_data->op == DW_CFA_offset && next_unwind_op_data->reg == unwind_op_data->reg + 1 && next_unwind_op_data->val == unwind_op_data->val + sizeof(host_mgreg_t))
+					{
+						if (offset)
+							mono_arch_unwind_add_save_regp_x(unwind_codes, unwind_code_size, unwind_op_data->reg, offset);
+						else
+							mono_arch_unwind_add_save_regp(unwind_codes, unwind_code_size, unwind_op_data->reg, offset);
+
+						l = l->next;
+
+						res.saved_int_regs += 2;
+						last_saved_reg_offset = offset + sizeof(host_mgreg_t);
+						last_saved_in_order_reg = unwind_op_data->reg + 1;
+					}
 					else
-						mono_arch_unwind_add_save_reg(unwind_codes, unwind_code_size, unwind_op_data->reg, offset);
+					{
+						if (offset)
+							mono_arch_unwind_add_save_reg_x(unwind_codes, unwind_code_size, unwind_op_data->reg, offset);
+						else
+							mono_arch_unwind_add_save_reg(unwind_codes, unwind_code_size, unwind_op_data->reg, offset);
+
+						res.saved_int_regs++;
+						last_saved_reg_offset = offset;
+						last_saved_in_order_reg = unwind_op_data->reg;
+					}
 				}
 				break;
 			}
@@ -868,7 +908,7 @@ mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_o
 
 	UnwindInfo* uwi;
 
-	if (res.saved_int_regs == 0 && res.can_use_packed_format && code_len < 0x2000 && frame_size < 0x2000 && epilog_end == code_len)
+	if (res.can_use_packed_format && code_len < 0x2000 && frame_size < 0x2000 && epilog_end == code_len)
 	{
 		uwi = g_new0(RUNTIME_FUNCTION, 1);
 		// We can use the packed format
