@@ -705,7 +705,7 @@ static void
 mono_arch_unwind_add_alloc_s(guint8* unwind_codes, guint32* unwind_code_size, guint32 size) {
 
 	mono_arch_unwind_add_assert(1, 511, *unwind_code_size, size);
-	unwind_codes[(*unwind_code_size)++] = 0b00000000 | (size / 16);
+	unwind_codes[(*unwind_code_size)++] = 0b00000000 | (size / MONO_ARCH_FRAME_ALIGNMENT);
 }
 
 static void
@@ -740,10 +740,20 @@ mono_arch_unwind_add_alloc_x(guint8* unwind_codes, guint32* unwind_code_size, gu
 		mono_arch_unwind_add_alloc_l(unwind_codes, unwind_code_size, size);
 }
 
+typedef struct _InitilizedWindowInfoResult
+{
+	gint32 saved_int_regs;
+	gboolean can_use_packed_format;
+} InitilizedWindowInfoResult;
 
-static void
+static InitilizedWindowInfoResult
 initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint param_area, guint8 *unwind_codes, guint32 *unwind_code_size)
 {
+
+	InitilizedWindowInfoResult res;
+	res.saved_int_regs = 0;
+	res.can_use_packed_format = TRUE;
+
 	if (enable_ptrauth)
 		mono_arch_unwind_add_pac_sign_lr(unwind_codes, unwind_code_size);
 
@@ -757,13 +767,13 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 	else {
 		mono_arch_unwind_add_alloc_x(unwind_codes, unwind_code_size, stack_offset);
 		mono_arch_unwind_add_save_fplr(unwind_codes, unwind_code_size, 0);
+		res.can_use_packed_format = FALSE;
 	}
 
 	mono_arch_unwind_add_set_fp(unwind_codes, unwind_code_size);
 
-	if (param_area) {
+	if (param_area)
 		mono_arch_unwind_add_alloc_x(unwind_codes, unwind_code_size, param_area);
-	}
 
 	/*
 	if (cfg->method->save_lmf)
@@ -771,13 +781,16 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 		// Do I need to do anything here?
 		// We may need to record some nop's here to make sure evertying stays alligned
 		// but that probably means that we need different unwind codes for the epilog....
+		res.can_use_packed_format = FALSE;
 	}
 	*/
 
+	gint32 last_saved_in_order_reg = -1;
+	guint32 last_saved_reg_offset = -1;
+	
+
 	if (unwind_ops != NULL) {
 		MonoUnwindOp* unwind_op_data;
-		gboolean sp_alloced = FALSE;
-		gboolean fp_alloced = FALSE;
 
 		// Replay collected unwind info and setup Windows format.
 		for (GSList* l = unwind_ops; l; l = l->next) {
@@ -797,6 +810,16 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 
 					guint offset = stack_offset + unwind_op_data->val;
 
+					if (last_saved_in_order_reg == -1)
+						res.can_use_packed_format = (unwind_op_data->reg == ARMREG_R19);
+					else if (unwind_op_data->reg != last_saved_in_order_reg + 1 || offset != last_saved_reg_offset + sizeof(host_mgreg_t))
+						res.can_use_packed_format = FALSE;
+
+					res.saved_int_regs++;
+					last_saved_reg_offset = offset;
+					last_saved_in_order_reg = unwind_op_data->reg;
+
+
 					// TODO - we're probably restoring the correct regs
 					// but we're not matching the instructions we use for, which may be a problem
 					// as the unwind info is supposed to encode the actual instruction stream
@@ -813,6 +836,7 @@ initialize_unwind_info_internal_ex(GSList* unwind_ops, gint stack_offset, guint 
 		}
 	}
 
+	return res;
 }
 
 static guint
@@ -835,55 +859,58 @@ mono_arch_unwindinfo_init_method_unwind_info_ex(GSList* unwind_ops, gint stack_o
 		return 0;
 	}
 
-	UnwindInfo* uwi = g_new0(UnwindInfo, 1);
 
 	guint32 code_word_size = 0;
 	guint8 unwind_codes[MONO_MAX_UNWIND_CODE_SIZE];
-	initialize_unwind_info_internal_ex(unwind_ops, stack_offset, param_area , unwind_codes, &code_word_size);
+	InitilizedWindowInfoResult res = initialize_unwind_info_internal_ex(unwind_ops, stack_offset, param_area , unwind_codes, &code_word_size);
 
-	if (code_word_size == 2 + (enable_ptrauth ? 1 : 0) && code_len < 0x2000 && stack_offset < 0x2000 && epilog_end == code_len)
+	guint32 frame_size = stack_offset + param_area;
+
+	UnwindInfo* uwi;
+
+	if (res.saved_int_regs == 0 && res.can_use_packed_format && code_len < 0x2000 && frame_size < 0x2000 && epilog_end == code_len)
 	{
+		uwi = g_new0(RUNTIME_FUNCTION, 1);
 		// We can use the packed format
 		uwi->pdata.Flag = PdataPackedUnwindFunction;
-		uwi->pdata.FunctionLength = code_len / 4;
-		uwi->pdata.FrameSize = stack_offset / MONO_ARCH_FRAME_ALIGNMENT;
+		uwi->pdata.FunctionLength = code_len / MONO_UNWIND_WORD_SIZE;
+		uwi->pdata.FrameSize = frame_size / MONO_ARCH_FRAME_ALIGNMENT;
 		uwi->pdata.CR = enable_ptrauth ? PdataCrChainedWithPac : PdataCrChained;
-		uwi->pdata.RegI = 0; // No integer registers saved
+		uwi->pdata.RegI = res.saved_int_regs;
 		uwi->pdata.RegF = 0; // No floating point registers saved
 		uwi->pdata.H = 0;    // No home area
 	}
 	else
 	{
+		uwi = g_new0(UnwindInfo, 1);
+
 		uwi->pdata.Flag = PdataRefToFullXdata;
-		uwi->xdata.FunctionLength = code_len / 4;
+		uwi->xdata.FunctionLength = code_len / MONO_UNWIND_WORD_SIZE;
 		uwi->xdata.Version = 0;
 		uwi->xdata.ExceptionDataPresent = 0; // No exception handle data
-		uwi->xdata.EpilogInHeader = 1; // Only one epilog
 
-
-		// Reverse the codewords - MONO stores the unwind info in prolog order
-		// but we need it in epilog order
+		// Reverse the codewords - they should need to be in reverse order
 		for (int i = 0; i < code_word_size; i++) {
-			//uwi->unwind_codes[i] = unwind_codes[i];
 			uwi->unwind_codes[i] = unwind_codes[code_word_size - i - 1];
 		}
 
 		mono_arch_unwind_add_end(uwi->unwind_codes, &code_word_size);
 
-		g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE / 2);
+		// g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE / 2);
 
 		// We need a seperate copy of the code words for the epilog?
-		memcpy(uwi->unwind_codes + code_word_size, uwi->unwind_codes, code_word_size);
-		code_word_size *= 2;
+		//memcpy(uwi->unwind_codes + code_word_size, uwi->unwind_codes, code_word_size);
+		//code_word_size *= 2;
 
 		g_assert(code_word_size < MONO_MAX_UNWIND_CODE_SIZE);
 
 		// Count of 32 bit words
-		uwi->xdata.CodeWords = ALIGN_TO(code_word_size, 4) / 4;
+		uwi->xdata.CodeWords = ALIGN_TO(code_word_size, MONO_UNWIND_WORD_SIZE) / MONO_UNWIND_WORD_SIZE;
 
-		uwi->xdata.EpilogCount = 0;
-		uwi->epilog_info.epilog_start_index = 0;
-		uwi->epilog_info.reserved = 0;
+		uwi->xdata.EpilogInHeader = 1;			// Only one epilog in the header
+		uwi->xdata.EpilogCount = 0;			// Epilog starts at offset 0 (when EpilogInHeader == 1, the is offset not count)
+		//uwi->epilog_info.epilog_start_index = 0;
+		//uwi->epilog_info.reserved = 0;
 	}
 
 	return uwi;
@@ -894,13 +921,10 @@ mono_arch_unwindinfo_init_method_unwind_info(gpointer cfg) {
 
 	MonoCompile* current_cfg = (MonoCompile*)cfg;
 
-	if (strcmp(current_cfg->method->name, "Foo") == 0)
-		printf("");
-
 	// I think we need the +4 because we don't seem to account for the size of the ret/retx instruction 
 	UnwindInfo* uwi = mono_arch_unwindinfo_init_method_unwind_info_ex(current_cfg->unwind_ops, current_cfg->stack_offset, current_cfg->param_area, current_cfg->epilog_end, current_cfg->code_len);
 
-	uwi->epilog_info.epilog_start_offset = current_cfg->epilog_begin / 4;
+	//uwi->epilog_info.epilog_start_offset = current_cfg->epilog_begin / MONO_UNWIND_WORD_SIZE;
 
 	current_cfg->arch.unwindinfo = uwi;
 
@@ -931,7 +955,7 @@ mono_arch_unwindinfo_install_method_unwind_info(PUnwindInfo* monoui, gpointer co
 
 	unwindinfo = *monoui;
 	targetlocation = (guint64) & (((guchar*)code)[code_size]);
-	PUnwindInfoInMemoryLayout targetinfo = (PUnwindInfoInMemoryLayout)ALIGN_TO(targetlocation, sizeof(host_mgreg_t));
+	PUnwindInfoInMemoryLayout targetinfo = (PUnwindInfoInMemoryLayout)ALIGN_TO(targetlocation, MONO_UNWIND_WORD_SIZE);
 
 	guint32 size = mono_arch_unwindinfo_get_size(unwindinfo);
 	memcpy(targetinfo, unwindinfo, size);
@@ -950,7 +974,7 @@ mono_arch_unwindinfo_init(gpointer code, gsize code_offset, gsize code_size, gsi
 	new_rt_func_data.BeginAddress = code_offset;
 
 	guint64 targetlocation = (guint64) & (((guchar*)code)[code_size]);
-	PUnwindInfoInMemoryLayout targetinfo = (PUnwindInfoInMemoryLayout)ALIGN_TO(targetlocation, sizeof(host_mgreg_t));
+	PUnwindInfoInMemoryLayout targetinfo = (PUnwindInfoInMemoryLayout)ALIGN_TO(targetlocation, MONO_UNWIND_WORD_SIZE);
 
 	if (targetinfo->pdata.Flag == PdataRefToFullXdata)
 	{
@@ -973,10 +997,10 @@ mono_arch_unwindinfo_get_end_address(gpointer rvaRoot, PRUNTIME_FUNCTION func)
 		// TODO: This isn't correct for functions > 1MB...
 		PUnwindInfoInMemoryLayout unwindInfo = (PUnwindInfoInMemoryLayout)func;
 		IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA* xData = (IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA*)((guint8*)mono_arch_unwindinfo_init + func->UnwindData + sizeof(guint32));
-		return func->BeginAddress + xData->FunctionLength * 4;
+		return func->BeginAddress + xData->FunctionLength * MONO_UNWIND_WORD_SIZE;
 	}
 
-	return func->BeginAddress + func->FunctionLength * 4;
+	return func->BeginAddress + func->FunctionLength * MONO_UNWIND_WORD_SIZE;
 }
 
 #endif /* MONO_ARCH_HAVE_UNWIND_TABLE*/

@@ -321,6 +321,8 @@ CallInfo* mono_arch_get_call_info (MonoMemPool *mp, MonoMethodSignature *sig);
 #define MONO_ARCH_HAVE_UNWIND_TABLE 1
 #define MONO_ARCH_HAVE_CODE_CHUNK_TRACKING 1
 
+#define MONO_UNWIND_WORD_SIZE		4
+
 // This is the maximum size of the unwind codes
 // The maximum size of the unwind codes is 31 * 4 bytes
 #define MONO_MAX_UNWIND_CODE_SIZE (31 * 4)
@@ -335,7 +337,7 @@ typedef struct _UnwindInfo
 {
 	RUNTIME_FUNCTION pdata;
 	IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA xdata;
-	UnwindInfoEpilogInfo epilog_info;
+	//UnwindInfoEpilogInfo epilog_info;
 	guint8 unwind_codes[MONO_MAX_UNWIND_CODE_SIZE];
 } UnwindInfo, *PUnwindInfo;
 
@@ -395,7 +397,7 @@ mono_arch_unwindinfo_get_end_address(gpointer rvaRtoot, PRUNTIME_FUNCTION func);
 typedef struct _UnwindInfoInMemoryLayout {
 	RUNTIME_FUNCTION pdata;
 	IMAGE_ARM64_RUNTIME_FUNCTION_ENTRY_XDATA xdata;		// Optional
-	UnwindInfoEpilogInfo epilog_info;			// Optional
+	//UnwindInfoEpilogInfo epilog_info;			// Optional
 	guint32 unwind_codes[1];				// Optional - variable size
 } UnwindInfoInMemoryLayout, *PUnwindInfoInMemoryLayout;
 
