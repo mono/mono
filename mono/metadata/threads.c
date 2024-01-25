@@ -97,8 +97,8 @@ mono_native_thread_join_handle (HANDLE thread_handle, gboolean close_handle);
 
 #include "icall-decl.h"
 
-/*#define THREAD_DEBUG(a) do { a; } while (0)*/
-#define THREAD_DEBUG(a)
+#define THREAD_DEBUG(a) do { a; } while (0)
+/*#define THREAD_DEBUG(a)*/
 /*#define THREAD_WAIT_DEBUG(a) do { a; } while (0)*/
 #define THREAD_WAIT_DEBUG(a)
 /*#define LIBGC_DEBUG(a) do { a; } while (0)*/
