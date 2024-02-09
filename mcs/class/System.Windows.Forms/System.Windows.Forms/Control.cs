@@ -3215,7 +3215,8 @@ namespace System.Windows.Forms
 				while (p != null && !p.GetTopLevel()) {
 					p = p.parent;
 				}
-				return p;
+				// If the control is not parented on a Form, this property will return null
+				return p as Form as Control;
 			}
 		}
 
