@@ -182,7 +182,7 @@ namespace System.Windows.Forms
 
 			propertypages_toolbarbutton.Enabled = false;
 			propertypages_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
-			propertypages_toolbarbutton.ToolTipText = "Property Pages";
+			propertypages_toolbarbutton.ToolTipText = Locale.GetText("Property Pages");
 
 			properties_tab = CreatePropertyTab (this.DefaultTabType);
 			selected_tab = properties_tab;
