@@ -39,6 +39,7 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty domainProp;
 		static ConfigurationProperty httpOnlyCookiesProp;
 		static ConfigurationProperty requireSSLProp;
+		static ConfigurationProperty sameSiteProp;
 		static ConfigurationPropertyCollection properties;
 
 		static HttpCookiesSection ()
@@ -46,11 +47,13 @@ namespace System.Web.Configuration {
 			domainProp = new ConfigurationProperty ("domain", typeof (string), "");
 			httpOnlyCookiesProp = new ConfigurationProperty ("httpOnlyCookies", typeof (bool), false);
 			requireSSLProp = new ConfigurationProperty ("requireSSL", typeof (bool), false);
+			sameSiteProp = new ConfigurationProperty ("sameSite", typeof (SameSiteMode), (SameSiteMode)(-1), new SameSiteModeConverter(), null, ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (domainProp);
 			properties.Add (httpOnlyCookiesProp);
 			properties.Add (requireSSLProp);
+			properties.Add (sameSiteProp);
 		}
 
 		[ConfigurationProperty ("domain", DefaultValue = "")]
@@ -69,6 +72,13 @@ namespace System.Web.Configuration {
 		public bool RequireSSL {
 			get { return (bool) base [requireSSLProp];}
 			set { base[requireSSLProp] = value; }
+		}
+
+		[ConfigurationProperty("sameSite", DefaultValue = (SameSiteMode)(-1))]
+		public SameSiteMode SameSite
+		{
+			get { return (SameSiteMode)base[sameSiteProp]; }
+			set { base[sameSiteProp] = value; }
 		}
 
 		protected internal override ConfigurationPropertyCollection Properties {

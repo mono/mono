@@ -52,6 +52,7 @@ namespace System.Web
 		string name;
 		CookieFlags flags = 0;
 		NameValueCollection values;
+		SameSiteMode sameSite;
 
 		[Obsolete]
 		internal HttpCookie (string name, string value, string path, DateTime expires)
@@ -79,6 +80,8 @@ namespace System.Web
 
 			if(cookieConfig.RequireSSL)
 				flags |= CookieFlags.Secure;
+
+			sameSite = cookieConfig.SameSite;
 		}
 
 		public HttpCookie (string name, string value)
@@ -116,6 +119,11 @@ namespace System.Web
 
 			if ((flags & CookieFlags.HttpOnly) != 0){
 				builder.Append ("; HttpOnly");
+			}
+
+			if ( (int) sameSite > -1 ) {
+				builder.Append("; SameSite=");
+				builder.Append(sameSite);
 			}
 
 			return builder.ToString ();
@@ -225,6 +233,19 @@ namespace System.Web
 					flags |= CookieFlags.HttpOnly;
 				else
 					flags &= ~CookieFlags.HttpOnly;
+			}
+		}
+
+		public SameSiteMode SameSite
+		{
+			get
+			{
+				return sameSite;
+			}
+
+			set
+			{
+				sameSite = value;
 			}
 		}
 

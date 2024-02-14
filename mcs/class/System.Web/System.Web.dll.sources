@@ -498,6 +498,7 @@ System.Web.SessionState_2.0/SessionStateStoreData.cs
 System.Web.SessionState_2.0/SessionStateStoreProviderBase.cs
 System.Web.SessionState_2.0/SessionStateUtility.cs
 System.Web.SessionState_2.0/StateServerItem.cs
+System.Web/SameSiteMode.cs
 System.Web/SiteMap.cs
 System.Web/SiteMapNodeCollection.cs
 System.Web/SiteMapNode.cs
