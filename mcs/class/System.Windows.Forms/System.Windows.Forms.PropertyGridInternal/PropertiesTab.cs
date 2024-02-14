@@ -70,7 +70,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		}
 
 		public override string TabName {
-			get { return "Properties"; }
+			get { return Locale.GetText("Properties"); }
 		}
 	}
 }
