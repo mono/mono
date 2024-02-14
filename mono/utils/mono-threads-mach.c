@@ -15,6 +15,10 @@
 #define _DARWIN_C_SOURCE 1
 #endif
 
+#if defined __APPLE__
+#include <AvailabilityMacros.h>
+#endif
+
 #include <mono/utils/mono-threads.h>
 #include <mono/utils/mono-mmap.h>
 
@@ -283,7 +287,17 @@ guint64
 mono_native_thread_os_id_get (void)
 {
 	uint64_t tid;
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < 1060) || defined(__POWERPC__)
+	tid = pthread_mach_thread_np (pthread_self ());
+#elif MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+	if (&pthread_threadid_np) {
+		pthread_threadid_np (pthread_self (), &tid);
+	} else {
+		tid = pthread_mach_thread_np (pthread_self ());
+	}
+#else
 	pthread_threadid_np (pthread_self (), &tid);
+#endif
 	return tid;
 }
 

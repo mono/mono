@@ -138,6 +138,20 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 
 		ppc_load (code, ppc_r0, shifted);
 		ppc_mtctr (code, ppc_r0);
+#if defined(__APPLE__)
+		//g_assert (sreg == ppc_r11);
+		ppc_addi (code, ppc_r12, dreg, (doffset - sizeof (target_mgreg_t)));
+		ppc_addi (code, ppc_r11, sreg, (soffset - sizeof (target_mgreg_t)));
+		copy_loop_start = code;
+		ppc_ldptr_update (code, ppc_r0, (unsigned int)sizeof (target_mgreg_t), ppc_r11);
+		ppc_stptr_update (code, ppc_r0, (unsigned int)sizeof (target_mgreg_t), ppc_r12);
+		copy_loop_jump = code;
+		ppc_bc (code, PPC_BR_DEC_CTR_NONZERO, 0, 0);
+		ppc_patch (copy_loop_jump, copy_loop_start);
+		size -= shifted * sizeof (target_mgreg_t);
+		doffset = soffset = 0;
+		dreg = ppc_r12;
+#else
 		//g_assert (sreg == ppc_r12);
 		ppc_addi (code, ppc_r11, dreg, (doffset - sizeof (target_mgreg_t)));
 		ppc_addi (code, ppc_r12, sreg, (soffset - sizeof (target_mgreg_t)));
@@ -150,11 +164,25 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 		size -= shifted * sizeof (target_mgreg_t);
 		doffset = soffset = 0;
 		dreg = ppc_r11;
+#endif
 	}
 #ifdef __mono_ppc64__
 	/* the hardware has multiple load/store units and the move is long
 	   enough to use more then one register, then use load/load/store/store
 	   to execute 2 instructions per cycle. */
+#if defined(__APPLE__)
+	if ((cpu_hw_caps & PPC_MULTIPLE_LS_UNITS) && (dreg != ppc_r12) && (sreg != ppc_r12)) { 
+		while (size >= 16) {
+			ppc_ldptr (code, ppc_r0, soffset, sreg);
+			ppc_ldptr (code, ppc_r12, soffset+8, sreg);
+			ppc_stptr (code, ppc_r0, doffset, dreg);
+			ppc_stptr (code, ppc_r12, doffset+8, dreg);
+			size -= 16;
+			soffset += 16;
+			doffset += 16; 
+		}
+	}
+#else
 	if ((cpu_hw_caps & PPC_MULTIPLE_LS_UNITS) && (dreg != ppc_r11) && (sreg != ppc_r11)) { 
 		while (size >= 16) {
 			ppc_ldptr (code, ppc_r0, soffset, sreg);
@@ -166,12 +194,26 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 			doffset += 16; 
 		}
 	}
+#endif
 	while (size >= 8) {
 		ppc_ldr (code, ppc_r0, soffset, sreg);
 		ppc_str (code, ppc_r0, doffset, dreg);
 		size -= 8;
 		soffset += 8;
 		doffset += 8;
+	}
+#else
+#if defined(__APPLE__)
+	if ((cpu_hw_caps & PPC_MULTIPLE_LS_UNITS) && (dreg != ppc_r12) && (sreg != ppc_r12)) { 
+		while (size >= 8) {
+			ppc_lwz (code, ppc_r0, soffset, sreg);
+			ppc_lwz (code, ppc_r12, soffset+4, sreg);
+			ppc_stw (code, ppc_r0, doffset, dreg);
+			ppc_stw (code, ppc_r12, doffset+4, dreg);
+			size -= 8;
+			soffset += 8;
+			doffset += 8; 
+		}
 	}
 #else
 	if ((cpu_hw_caps & PPC_MULTIPLE_LS_UNITS) && (dreg != ppc_r11) && (sreg != ppc_r11)) { 
@@ -185,6 +227,7 @@ emit_memcpy (guint8 *code, int size, int dreg, int doffset, int sreg, int soffse
 			doffset += 8; 
 		}
 	}
+#endif
 #endif
 	while (size >= 4) {
 		ppc_lwz (code, ppc_r0, soffset, sreg);
@@ -697,7 +740,7 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 	for (i = 14; i < top; ++i) {
 		/*
 		 * Reserve r29 for holding the vtable address for virtual calls in AOT mode,
-		 * since the trampolines can clobber r12.
+		 * since the trampolines can clobber r12 (r11 for Darwin).
 		 */
 		if (!(cfg->compile_aot && i == 29))
 			regs = g_list_prepend (regs, GUINT_TO_POINTER (i));
@@ -2898,7 +2941,11 @@ ppc_patch_full (MonoCompile *cfg, MonoDomain *domain, guchar *code, const guchar
 
 			if (!is_fd) {
 				guint8 *buf = (guint8*)&seq [5];
+#if defined(__APPLE__)
+				ppc_mr (buf, PPC_CALL_REG, ppc_r11);
+#else
 				ppc_mr (buf, PPC_CALL_REG, ppc_r12);
+#endif
 				ppc_nop (buf);
 			}
 		} else {
@@ -2979,8 +3026,13 @@ emit_reserve_param_area (MonoCompile *cfg, guint8 *code)
 	if (ppc_is_imm16 (-size)) {
 		ppc_stptr_update (code, ppc_r0, -size, ppc_sp);
 	} else {
+#if defined(__APPLE__)
+		ppc_load (code, ppc_r11, -size);
+		ppc_stptr_update_indexed (code, ppc_r0, ppc_sp, ppc_r11);
+#else
 		ppc_load (code, ppc_r12, -size);
 		ppc_stptr_update_indexed (code, ppc_r0, ppc_sp, ppc_r12);
+#endif
 	}
 
 	return code;
@@ -3001,8 +3053,13 @@ emit_unreserve_param_area (MonoCompile *cfg, guint8 *code)
 	if (ppc_is_imm16 (size)) {
 		ppc_stptr_update (code, ppc_r0, size, ppc_sp);
 	} else {
+#if defined(__APPLE__)
+		ppc_load (code, ppc_r11, size);
+		ppc_stptr_update_indexed (code, ppc_r0, ppc_sp, ppc_r11);
+#else
 		ppc_load (code, ppc_r12, size);
 		ppc_stptr_update_indexed (code, ppc_r0, ppc_sp, ppc_r12);
+#endif
 	}
 
 	return code;
@@ -3063,10 +3120,17 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * We do this _before_ the breakpoint, so single stepping after
 			 * a breakpoint is hit will step to the next IL offset.
 			 */
+#if defined(__APPLE__)
+			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
+				ppc_load (code, ppc_r11, (gsize)ss_trigger_page);
+				ppc_ldptr (code, ppc_r11, 0, ppc_r11);
+			}
+#else
 			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
 				ppc_load (code, ppc_r12, (gsize)ss_trigger_page);
 				ppc_ldptr (code, ppc_r12, 0, ppc_r12);
 			}
+#endif
 
 			mono_add_seq_point (cfg, bb, ins, code - cfg->native_code);
 
@@ -3096,8 +3160,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_stb (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
 				if (ppc_is_imm32 (ins->inst_offset)) {
+#if defined(__APPLE__)
+					ppc_addis (code, ppc_r12, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
+					ppc_stb (code, ins->sreg1, ins->inst_offset, ppc_r12);
+#else
 					ppc_addis (code, ppc_r11, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
 					ppc_stb (code, ins->sreg1, ins->inst_offset, ppc_r11);
+#endif
 				} else {
 					ppc_load (code, ppc_r0, ins->inst_offset);
 					ppc_stbx (code, ins->sreg1, ins->inst_destbasereg, ppc_r0);
@@ -3109,8 +3178,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_sth (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
 				if (ppc_is_imm32 (ins->inst_offset)) {
+#if defined(__APPLE__)
+					ppc_addis (code, ppc_r12, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
+					ppc_sth (code, ins->sreg1, ins->inst_offset, ppc_r12);
+#else
 					ppc_addis (code, ppc_r11, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
 					ppc_sth (code, ins->sreg1, ins->inst_offset, ppc_r11);
+#endif
 				} else {
 					ppc_load (code, ppc_r0, ins->inst_offset);
 					ppc_sthx (code, ins->sreg1, ins->inst_destbasereg, ppc_r0);
@@ -3122,8 +3196,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_stptr (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
 				if (ppc_is_imm32 (ins->inst_offset)) {
+#if defined(__APPLE__)
+					ppc_addis (code, ppc_r12, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
+					ppc_stptr (code, ins->sreg1, ins->inst_offset, ppc_r12);
+#else
 					ppc_addis (code, ppc_r11, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
 					ppc_stptr (code, ins->sreg1, ins->inst_offset, ppc_r11);
+#endif
 				} else {
 					ppc_load (code, ppc_r0, ins->inst_offset);
 					ppc_stptr_indexed (code, ins->sreg1, ins->inst_destbasereg, ppc_r0);
@@ -3706,34 +3785,52 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 */
 			g_assert (!cfg->method->save_lmf);
 			/*
-			 * Note: we can use ppc_r12 here because it is dead anyway:
-			 * we're leaving the method.
+			 * Note: we can use ppc_r12 (ppc_r11 on Darwin) here because it is dead
+			 * anyway: we're leaving the method.
 			 */
 			if (1 || cfg->flags & MONO_CFG_HAS_CALLS) {
 				long ret_offset = cfg->stack_usage + PPC_RET_ADDR_OFFSET;
 				if (ppc_is_imm16 (ret_offset)) {
 					ppc_ldptr (code, ppc_r0, ret_offset, cfg->frame_reg);
 				} else {
+#if defined(__APPLE__)
+					ppc_load (code, ppc_r11, ret_offset);
+					ppc_ldptr_indexed (code, ppc_r0, cfg->frame_reg, ppc_r11);
+#else
 					ppc_load (code, ppc_r12, ret_offset);
 					ppc_ldptr_indexed (code, ppc_r0, cfg->frame_reg, ppc_r12);
+#endif
 				}
 				ppc_mtlr (code, ppc_r0);
 			}
 
 			if (ppc_is_imm16 (cfg->stack_usage)) {
+#if defined(__APPLE__)
+				ppc_addi (code, ppc_r11, cfg->frame_reg, cfg->stack_usage);
+#else
 				ppc_addi (code, ppc_r12, cfg->frame_reg, cfg->stack_usage);
+#endif
 			} else {
 				/* cfg->stack_usage is an int, so we can use
 				 * an addis/addi sequence here even in 64-bit.  */
+#if defined(__APPLE__)
+				ppc_addis (code, ppc_r11, cfg->frame_reg, ppc_ha(cfg->stack_usage));
+				ppc_addi (code, ppc_r11, ppc_r11, cfg->stack_usage);
+#else
 				ppc_addis (code, ppc_r12, cfg->frame_reg, ppc_ha(cfg->stack_usage));
 				ppc_addi (code, ppc_r12, ppc_r12, cfg->stack_usage);
+#endif
 			}
 			if (!cfg->method->save_lmf) {
 				pos = 0;
 				for (i = 31; i >= 13; --i) {
 					if (cfg->used_int_regs & (1 << i)) {
 						pos += sizeof (target_mgreg_t);
+#if defined(__APPLE__)
+						ppc_ldptr (code, i, -pos, ppc_r11);
+#else
 						ppc_ldptr (code, i, -pos, ppc_r12);
+#endif
 					}
 				}
 			} else {
@@ -3741,6 +3838,23 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			/* Copy arguments on the stack to our argument area */
+#if defined(__APPLE__)
+			if (call->stack_usage) {
+				code = emit_memcpy (code, call->stack_usage, ppc_r11, PPC_STACK_PARAM_OFFSET, ppc_sp, PPC_STACK_PARAM_OFFSET);
+				/* r11 was clobbered */
+				g_assert (cfg->frame_reg == ppc_sp);
+				if (ppc_is_imm16 (cfg->stack_usage)) {
+					ppc_addi (code, ppc_r11, cfg->frame_reg, cfg->stack_usage);
+				} else {
+					/* cfg->stack_usage is an int, so we can use
+					 * an addis/addi sequence here even in 64-bit.  */
+					ppc_addis (code, ppc_r11, cfg->frame_reg, ppc_ha(cfg->stack_usage));
+					ppc_addi (code, ppc_r11, ppc_r11, cfg->stack_usage);
+				}
+			}
+
+			ppc_mr (code, ppc_sp, ppc_r11);
+#else
 			if (call->stack_usage) {
 				code = emit_memcpy (code, call->stack_usage, ppc_r12, PPC_STACK_PARAM_OFFSET, ppc_sp, PPC_STACK_PARAM_OFFSET);
 				/* r12 was clobbered */
@@ -3756,6 +3870,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 
 			ppc_mr (code, ppc_sp, ppc_r12);
+#endif
 			mono_add_patch_info (cfg, (guint8*) code - cfg->native_code, MONO_PATCH_INFO_METHOD_JUMP, call->method);
 			cfg->thunk_area += THUNK_SIZE;
 			if (cfg->compile_aot) {
@@ -3842,7 +3957,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_VCALL2_MEMBASE:
 		case OP_VOIDCALL_MEMBASE:
 		case OP_CALL_MEMBASE:
+#if defined(__APPLE__)
+			if (cfg->compile_aot && ins->sreg1 == ppc_r11) {
+#else
 			if (cfg->compile_aot && ins->sreg1 == ppc_r12) {
+#endif
 				/* The trampolines clobber this */
 				ppc_mr (code, ppc_r29, ins->sreg1);
 				ppc_ldptr (code, ppc_r0, ins->inst_offset, ppc_r29);
@@ -3860,9 +3979,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			int alloca_waste = PPC_STACK_PARAM_OFFSET + cfg->param_area + 31;
 			int area_offset = alloca_waste;
 			area_offset &= ~31;
+#if defined(__APPLE__)
+			ppc_addi (code, ppc_r11, ins->sreg1, alloca_waste + 31);
+			/* FIXME: should be calculated from MONO_ARCH_FRAME_ALIGNMENT */
+			ppc_clear_right_imm (code, ppc_r11, ppc_r11, 4);
+#else
 			ppc_addi (code, ppc_r12, ins->sreg1, alloca_waste + 31);
 			/* FIXME: should be calculated from MONO_ARCH_FRAME_ALIGNMENT */
 			ppc_clear_right_imm (code, ppc_r12, ppc_r12, 4);
+#endif
 			/* use ctr to store the number of words to 0 if needed */
 			if (ins->flags & MONO_INST_INIT) {
 				/* we zero 4 bytes at a time:
@@ -3875,9 +4000,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_mtctr (code, ppc_r0);
 			}
 			ppc_ldptr (code, ppc_r0, 0, ppc_sp);
+#if defined(__APPLE__)
+			ppc_neg (code, ppc_r11, ppc_r11);
+			ppc_stptr_update_indexed (code, ppc_r0, ppc_sp, ppc_r11);
+#else
 			ppc_neg (code, ppc_r12, ppc_r12);
 			ppc_stptr_update_indexed (code, ppc_r0, ppc_sp, ppc_r12);
-
+#endif
 			/* FIXME: make this loop work in 8 byte
 			   increments on PPC64 */
 			if (ins->flags & MONO_INST_INIT) {
@@ -3886,9 +4015,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				 * run at least once
 				 */
 				ppc_addi (code, ins->dreg, ppc_sp, (area_offset - 8));
+#if defined(__APPLE__)
+				ppc_li (code, ppc_r11, 0);
+				zero_loop_start = code;
+				ppc_stwu (code, ppc_r11, 4, ins->dreg);
+#else
 				ppc_li (code, ppc_r12, 0);
 				zero_loop_start = code;
 				ppc_stwu (code, ppc_r12, 4, ins->dreg);
+#endif
 				zero_loop_jump = code;
 				ppc_bc (code, PPC_BR_DEC_CTR_NONZERO, 0, 0);
 				ppc_patch (zero_loop_jump, zero_loop_start);
@@ -3931,8 +4066,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (spvar->inst_offset)) {
 				ppc_stptr (code, ppc_r0, spvar->inst_offset, spvar->inst_basereg);
 			} else {
+#if defined(__APPLE__)
+				ppc_load (code, ppc_r11, spvar->inst_offset);
+				ppc_stptr_indexed (code, ppc_r0, ppc_r11, spvar->inst_basereg);
+#else
 				ppc_load (code, ppc_r12, spvar->inst_offset);
 				ppc_stptr_indexed (code, ppc_r0, ppc_r12, spvar->inst_basereg);
+#endif
 			}
 			break;
 		}
@@ -3945,8 +4085,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (ppc_is_imm16 (spvar->inst_offset)) {
 				ppc_ldptr (code, ppc_r0, spvar->inst_offset, spvar->inst_basereg);
 			} else {
+#if defined(__APPLE__)
+				ppc_load (code, ppc_r11, spvar->inst_offset);
+				ppc_ldptr_indexed (code, ppc_r0, spvar->inst_basereg, ppc_r11);
+#else
 				ppc_load (code, ppc_r12, spvar->inst_offset);
 				ppc_ldptr_indexed (code, ppc_r0, spvar->inst_basereg, ppc_r12);
+#endif
 			}
 			ppc_mtlr (code, ppc_r0);
 			ppc_blr (code);
@@ -4070,11 +4215,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 
 			/* FIXME: Optimize this */
 			ppc_bl (code, 1);
+#if defined(__APPLE__)
+			ppc_mflr (code, ppc_r11);
+			ppc_b (code, 3);
+			*(double*)code = *(double*)ins->inst_p0;
+			code += 8;
+			ppc_lfd (code, ins->dreg, 8, ppc_r11);
+#else
 			ppc_mflr (code, ppc_r12);
 			ppc_b (code, 3);
 			*(double*)code = *(double*)ins->inst_p0;
 			code += 8;
 			ppc_lfd (code, ins->dreg, 8, ppc_r12);
+#endif
 			break;
 		case OP_R4CONST:
 			g_assert_not_reached ();
@@ -4084,8 +4237,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_stfd (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
 				if (ppc_is_imm32 (ins->inst_offset)) {
+#if defined(__APPLE__)
 					ppc_addis (code, ppc_r11, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
 					ppc_stfd (code, ins->sreg1, ins->inst_offset, ppc_r11);
+#else
+					ppc_addis (code, ppc_r12, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
+					ppc_stfd (code, ins->sreg1, ins->inst_offset, ppc_r12);
+#endif
 				} else {
 					ppc_load (code, ppc_r0, ins->inst_offset);
 					ppc_stfdx (code, ins->sreg1, ins->inst_destbasereg, ppc_r0);
@@ -4097,8 +4255,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_lfd (code, ins->dreg, ins->inst_offset, ins->inst_basereg);
 			} else {
 				if (ppc_is_imm32 (ins->inst_offset)) {
+#if defined(__APPLE__)
+					ppc_addis (code, ppc_r12, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
+					ppc_lfd (code, ins->dreg, ins->inst_offset, ppc_r12);
+#else
 					ppc_addis (code, ppc_r11, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
 					ppc_lfd (code, ins->dreg, ins->inst_offset, ppc_r11);
+#endif
 				} else {
 					ppc_load (code, ppc_r0, ins->inst_offset);
 					ppc_lfdx (code, ins->dreg, ins->inst_destbasereg, ppc_r0);
@@ -4111,8 +4274,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_stfs (code, ins->sreg1, ins->inst_offset, ins->inst_destbasereg);
 			} else {
 				if (ppc_is_imm32 (ins->inst_offset)) {
+#if defined(__APPLE__)
+					ppc_addis (code, ppc_r12, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
+					ppc_stfs (code, ins->sreg1, ins->inst_offset, ppc_r12);
+#else
 					ppc_addis (code, ppc_r11, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
 					ppc_stfs (code, ins->sreg1, ins->inst_offset, ppc_r11);
+#endif
 				} else {
 					ppc_load (code, ppc_r0, ins->inst_offset);
 					ppc_stfsx (code, ins->sreg1, ins->inst_destbasereg, ppc_r0);
@@ -4124,8 +4292,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				ppc_lfs (code, ins->dreg, ins->inst_offset, ins->inst_basereg);
 			} else {
 				if (ppc_is_imm32 (ins->inst_offset)) {
+#if defined(__APPLE__)
+					ppc_addis (code, ppc_r12, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
+					ppc_lfs (code, ins->dreg, ins->inst_offset, ppc_r12);
+#else
 					ppc_addis (code, ppc_r11, ins->inst_destbasereg, ppc_ha(ins->inst_offset));
 					ppc_lfs (code, ins->dreg, ins->inst_offset, ppc_r11);
+#endif
 				} else {
 					ppc_load (code, ppc_r0, ins->inst_offset);
 					ppc_lfsx (code, ins->dreg, ins->inst_destbasereg, ppc_r0);
@@ -4786,12 +4959,21 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			code = save_registers (cfg, code, alloc_size - pos, ppc_sp, method->save_lmf, cfg->used_int_regs, cfa_offset);
 		} else {
 			if (pos)
+#if defined(__APPLE__)
+				ppc_addi (code, ppc_r11, ppc_sp, -pos);
+			ppc_load (code, ppc_r0, -alloc_size);
+			ppc_str_update_indexed (code, ppc_sp, ppc_sp, ppc_r0);
+			cfa_offset = alloc_size;
+			mono_emit_unwind_op_def_cfa_offset (cfg, code, alloc_size);
+			code = save_registers (cfg, code, 0, ppc_r11, method->save_lmf, cfg->used_int_regs, cfa_offset);
+#else
 				ppc_addi (code, ppc_r12, ppc_sp, -pos);
 			ppc_load (code, ppc_r0, -alloc_size);
 			ppc_str_update_indexed (code, ppc_sp, ppc_sp, ppc_r0);
 			cfa_offset = alloc_size;
 			mono_emit_unwind_op_def_cfa_offset (cfg, code, alloc_size);
 			code = save_registers (cfg, code, 0, ppc_r12, method->save_lmf, cfg->used_int_regs, cfa_offset);
+#endif
 		}
 	}
 	if (cfg->frame_reg != ppc_sp) {
@@ -4834,8 +5016,13 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		if (ppc_is_imm16 (inst->inst_offset)) {
 			ppc_stptr (code, ainfo->reg, inst->inst_offset, inst->inst_basereg);
 		} else {
+#if defined(__APPLE__)
+			ppc_load (code, ppc_r11, inst->inst_offset);
+			ppc_stptr_indexed (code, ainfo->reg, ppc_r11, inst->inst_basereg);
+#else
 			ppc_load (code, ppc_r12, inst->inst_offset);
 			ppc_stptr_indexed (code, ainfo->reg, ppc_r12, inst->inst_basereg);
+#endif
 		}
 	}
 
@@ -4852,8 +5039,13 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			else if (ainfo->regtype == RegTypeFP)
 				ppc_fmr (code, inst->dreg, ainfo->reg);
 			else if (ainfo->regtype == RegTypeBase) {
+#if defined(__APPLE__)
+				ppc_ldr (code, ppc_r11, 0, ppc_sp);
+				ppc_ldptr (code, inst->dreg, ainfo->offset, ppc_r11);
+#else
 				ppc_ldr (code, ppc_r12, 0, ppc_sp);
 				ppc_ldptr (code, inst->dreg, ainfo->offset, ppc_r12);
+#endif
 			} else
 				g_assert_not_reached ();
 
@@ -4867,6 +5059,15 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_stb (code, ainfo->reg, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						if (ppc_is_imm32 (inst->inst_offset)) {
+							ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+							ppc_stb (code, ainfo->reg, inst->inst_offset, ppc_r11);
+						} else {
+							ppc_load (code, ppc_r11, inst->inst_offset);
+							ppc_stbx (code, ainfo->reg, inst->inst_basereg, ppc_r11);
+						}
+#else
 						if (ppc_is_imm32 (inst->inst_offset)) {
 							ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 							ppc_stb (code, ainfo->reg, inst->inst_offset, ppc_r12);
@@ -4874,12 +5075,22 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							ppc_load (code, ppc_r12, inst->inst_offset);
 							ppc_stbx (code, ainfo->reg, inst->inst_basereg, ppc_r12);
 						}
+#endif
 					}
 					break;
 				case 2:
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_sth (code, ainfo->reg, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						if (ppc_is_imm32 (inst->inst_offset)) {
+							ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+							ppc_sth (code, ainfo->reg, inst->inst_offset, ppc_r11);
+						} else {
+							ppc_load (code, ppc_r11, inst->inst_offset);
+							ppc_sthx (code, ainfo->reg, inst->inst_basereg, ppc_r11);
+						}
+#else
 						if (ppc_is_imm32 (inst->inst_offset)) {
 							ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 							ppc_sth (code, ainfo->reg, inst->inst_offset, ppc_r12);
@@ -4887,6 +5098,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							ppc_load (code, ppc_r12, inst->inst_offset);
 							ppc_sthx (code, ainfo->reg, inst->inst_basereg, ppc_r12);
 						}
+#endif
 					}
 					break;
 #ifdef __mono_ppc64__
@@ -4894,6 +5106,15 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_stw (code, ainfo->reg, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						if (ppc_is_imm32 (inst->inst_offset)) {
+							ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+							ppc_stw (code, ainfo->reg, inst->inst_offset, ppc_r11);
+						} else {
+							ppc_load (code, ppc_r11, inst->inst_offset);
+							ppc_stwx (code, ainfo->reg, inst->inst_basereg, ppc_r11);
+						}
+#else
 						if (ppc_is_imm32 (inst->inst_offset)) {
 							ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 							ppc_stw (code, ainfo->reg, inst->inst_offset, ppc_r12);
@@ -4901,14 +5122,20 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							ppc_load (code, ppc_r12, inst->inst_offset);
 							ppc_stwx (code, ainfo->reg, inst->inst_basereg, ppc_r12);
 						}
+#endif
 					}
 					break;
 				case 8:
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_str (code, ainfo->reg, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						ppc_load (code, ppc_r11, inst->inst_offset);
+						ppc_str_indexed (code, ainfo->reg, ppc_r11, inst->inst_basereg);
+#else
 						ppc_load (code, ppc_r12, inst->inst_offset);
 						ppc_str_indexed (code, ainfo->reg, ppc_r12, inst->inst_basereg);
+#endif
 					}
 					break;
 #else
@@ -4917,10 +5144,17 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 						ppc_stw (code, ainfo->reg, inst->inst_offset, inst->inst_basereg);
 						ppc_stw (code, ainfo->reg + 1, inst->inst_offset + 4, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+						ppc_addi (code, ppc_r11, ppc_r11, inst->inst_offset);
+						ppc_stw (code, ainfo->reg, 0, ppc_r11);
+						ppc_stw (code, ainfo->reg + 1, 4, ppc_r11);
+#else
 						ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 						ppc_addi (code, ppc_r12, ppc_r12, inst->inst_offset);
 						ppc_stw (code, ainfo->reg, 0, ppc_r12);
 						ppc_stw (code, ainfo->reg + 1, 4, ppc_r12);
+#endif
 					}
 					break;
 #endif
@@ -4928,6 +5162,15 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_stptr (code, ainfo->reg, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						if (ppc_is_imm32 (inst->inst_offset)) {
+							ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+							ppc_stptr (code, ainfo->reg, inst->inst_offset, ppc_r11);
+						} else {
+							ppc_load (code, ppc_r11, inst->inst_offset);
+							ppc_stptr_indexed (code, ainfo->reg, inst->inst_basereg, ppc_r11);
+						}
+#else
 						if (ppc_is_imm32 (inst->inst_offset)) {
 							ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 							ppc_stptr (code, ainfo->reg, inst->inst_offset, ppc_r12);
@@ -4935,19 +5178,35 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							ppc_load (code, ppc_r12, inst->inst_offset);
 							ppc_stptr_indexed (code, ainfo->reg, inst->inst_basereg, ppc_r12);
 						}
+#endif
 					}
 					break;
 				}
 			} else if (ainfo->regtype == RegTypeBase) {
 				g_assert (ppc_is_imm16 (ainfo->offset));
+#if defined(__APPLE__)
+				/* load the previous stack pointer in r11 */
+				ppc_ldr (code, ppc_r11, 0, ppc_sp);
+				ppc_ldptr (code, ppc_r0, ainfo->offset, ppc_r11);
+#else
 				/* load the previous stack pointer in r12 */
 				ppc_ldr (code, ppc_r12, 0, ppc_sp);
 				ppc_ldptr (code, ppc_r0, ainfo->offset, ppc_r12);
+#endif
 				switch (ainfo->size) {
 				case 1:
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_stb (code, ppc_r0, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						if (ppc_is_imm32 (inst->inst_offset)) {
+							ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+							ppc_stb (code, ppc_r0, inst->inst_offset, ppc_r11);
+						} else {
+							ppc_load (code, ppc_r11, inst->inst_offset);
+							ppc_stbx (code, ppc_r0, inst->inst_basereg, ppc_r11);
+						}
+#else
 						if (ppc_is_imm32 (inst->inst_offset)) {
 							ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 							ppc_stb (code, ppc_r0, inst->inst_offset, ppc_r12);
@@ -4955,12 +5214,22 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							ppc_load (code, ppc_r12, inst->inst_offset);
 							ppc_stbx (code, ppc_r0, inst->inst_basereg, ppc_r12);
 						}
+#endif
 					}
 					break;
 				case 2:
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_sth (code, ppc_r0, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						if (ppc_is_imm32 (inst->inst_offset)) {
+							ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+							ppc_sth (code, ppc_r0, inst->inst_offset, ppc_r11);
+						} else {
+							ppc_load (code, ppc_r11, inst->inst_offset);
+							ppc_sthx (code, ppc_r0, inst->inst_basereg, ppc_r11);
+						}
+#else
 						if (ppc_is_imm32 (inst->inst_offset)) {
 							ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 							ppc_sth (code, ppc_r0, inst->inst_offset, ppc_r12);
@@ -4968,6 +5237,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							ppc_load (code, ppc_r12, inst->inst_offset);
 							ppc_sthx (code, ppc_r0, inst->inst_basereg, ppc_r12);
 						}
+#endif
 					}
 					break;
 #ifdef __mono_ppc64__
@@ -4975,6 +5245,15 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_stw (code, ppc_r0, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						if (ppc_is_imm32 (inst->inst_offset)) {
+							ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+							ppc_stw (code, ppc_r0, inst->inst_offset, ppc_r11);
+						} else {
+							ppc_load (code, ppc_r11, inst->inst_offset);
+							ppc_stwx (code, ppc_r0, inst->inst_basereg, ppc_r11);
+						}
+#else
 						if (ppc_is_imm32 (inst->inst_offset)) {
 							ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 							ppc_stw (code, ppc_r0, inst->inst_offset, ppc_r12);
@@ -4982,19 +5261,39 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							ppc_load (code, ppc_r12, inst->inst_offset);
 							ppc_stwx (code, ppc_r0, inst->inst_basereg, ppc_r12);
 						}
+#endif
 					}
 					break;
 				case 8:
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_str (code, ppc_r0, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						ppc_load (code, ppc_r11, inst->inst_offset);
+						ppc_str_indexed (code, ppc_r0, ppc_r11, inst->inst_basereg);
+#else
 						ppc_load (code, ppc_r12, inst->inst_offset);
 						ppc_str_indexed (code, ppc_r0, ppc_r12, inst->inst_basereg);
+#endif
 					}
 					break;
 #else
 				case 8:
 					g_assert (ppc_is_imm16 (ainfo->offset + 4));
+#if defined(__APPLE__)
+					if (ppc_is_imm16 (inst->inst_offset + 4)) {
+						ppc_stw (code, ppc_r0, inst->inst_offset, inst->inst_basereg);
+						ppc_lwz (code, ppc_r0, ainfo->offset + 4, ppc_r11);
+						ppc_stw (code, ppc_r0, inst->inst_offset + 4, inst->inst_basereg);
+					} else {
+						/* use r12 to load the 2nd half of the long before we clobber r11.  */
+						ppc_lwz (code, ppc_r12, ainfo->offset + 4, ppc_r11);
+						ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+						ppc_addi (code, ppc_r11, ppc_r11, inst->inst_offset);
+						ppc_stw (code, ppc_r0, 0, ppc_r11);
+						ppc_stw (code, ppc_r12, 4, ppc_r11);
+					}
+#else
 					if (ppc_is_imm16 (inst->inst_offset + 4)) {
 						ppc_stw (code, ppc_r0, inst->inst_offset, inst->inst_basereg);
 						ppc_lwz (code, ppc_r0, ainfo->offset + 4, ppc_r12);
@@ -5007,12 +5306,22 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 						ppc_stw (code, ppc_r0, 0, ppc_r12);
 						ppc_stw (code, ppc_r11, 4, ppc_r12);
 					}
+#endif
 					break;
 #endif
 				default:
 					if (ppc_is_imm16 (inst->inst_offset)) {
 						ppc_stptr (code, ppc_r0, inst->inst_offset, inst->inst_basereg);
 					} else {
+#if defined(__APPLE__)
+						if (ppc_is_imm32 (inst->inst_offset)) {
+							ppc_addis (code, ppc_r11, inst->inst_basereg, ppc_ha(inst->inst_offset));
+							ppc_stptr (code, ppc_r0, inst->inst_offset, ppc_r11);
+						} else {
+							ppc_load (code, ppc_r11, inst->inst_offset);
+							ppc_stptr_indexed (code, ppc_r0, inst->inst_basereg, ppc_r11);
+						}
+#else
 						if (ppc_is_imm32 (inst->inst_offset)) {
 							ppc_addis (code, ppc_r12, inst->inst_basereg, ppc_ha(inst->inst_offset));
 							ppc_stptr (code, ppc_r0, inst->inst_offset, ppc_r12);
@@ -5020,6 +5329,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							ppc_load (code, ppc_r12, inst->inst_offset);
 							ppc_stptr_indexed (code, ppc_r0, inst->inst_basereg, ppc_r12);
 						}
+#endif
 					}
 					break;
 				}
@@ -5108,6 +5418,19 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					/* FIXME: we need to do the shifting here, too */
 					if (ainfo->bytes)
 						NOT_IMPLEMENTED;
+#if defined(__APPLE__)
+					/* load the previous stack pointer in r11 (r0 gets overwritten by the memcpy) */
+					ppc_ldr (code, ppc_r11, 0, ppc_sp);
+					if ((size & MONO_PPC_32_64_CASE (3, 7)) != 0) {
+						code = emit_memcpy (code, size - soffset,
+							inst->inst_basereg, doffset,
+							ppc_r11, ainfo->offset + soffset);
+					} else {
+						code = emit_memcpy (code, ainfo->vtsize * sizeof (target_mgreg_t),
+							inst->inst_basereg, doffset,
+							ppc_r11, ainfo->offset + soffset);
+					}
+#else
 					/* load the previous stack pointer in r12 (r0 gets overwritten by the memcpy) */
 					ppc_ldr (code, ppc_r12, 0, ppc_sp);
 					if ((size & MONO_PPC_32_64_CASE (3, 7)) != 0) {
@@ -5119,9 +5442,19 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 							inst->inst_basereg, doffset,
 							ppc_r12, ainfo->offset + soffset);
 					}
+#endif
 				}
 			} else if (ainfo->regtype == RegTypeStructByAddr) {
 				/* if it was originally a RegTypeBase */
+#if defined(__APPLE__)
+				if (ainfo->offset) {
+					/* load the previous stack pointer in r11 */
+					ppc_ldr (code, ppc_r11, 0, ppc_sp);
+					ppc_ldptr (code, ppc_r11, ainfo->offset, ppc_r11);
+				} else {
+					ppc_mr (code, ppc_r11, ainfo->reg);
+				}
+#else
 				if (ainfo->offset) {
 					/* load the previous stack pointer in r12 */
 					ppc_ldr (code, ppc_r12, 0, ppc_sp);
@@ -5129,7 +5462,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				} else {
 					ppc_mr (code, ppc_r12, ainfo->reg);
 				}
-
+#endif
 				g_assert (ppc_is_imm16 (inst->inst_offset));
 				code = emit_memcpy (code, ainfo->vtsize, inst->inst_basereg, inst->inst_offset, ppc_r12, 0);
 				/*g_print ("copy in %s: %d bytes from %d to offset: %d\n", method->name, ainfo->vtsize, ainfo->reg, inst->inst_offset);*/
@@ -5157,9 +5490,27 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		/* lmf_offset is the offset from the previous stack pointer,
 		 * alloc_size is the total stack space allocated, so the offset
 		 * of MonoLMF from the current stack ptr is alloc_size - lmf_offset.
-		 * The pointer to the struct is put in ppc_r12 (new_lmf).
-		 * The callee-saved registers are already in the MonoLMF structure
+		 * The pointer to the struct is put in ppc_r12 (new_lmf) (ppc_r11 on Darwin).
+		 * The callee-saved registers are already in the MonoLMF structure.
 		 */
+#if defined(__APPLE__)
+		ppc_addi (code, ppc_r11, ppc_sp, alloc_size - lmf_offset);
+		/* ppc_r3 is the result from mono_get_lmf_addr () */
+		ppc_stptr (code, ppc_r3, G_STRUCT_OFFSET(MonoLMF, lmf_addr), ppc_r11);
+		/* new_lmf->previous_lmf = *lmf_addr */
+		ppc_ldptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r3);
+		ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r11);
+		/* *(lmf_addr) = r11 */
+		ppc_stptr (code, ppc_r11, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r3);
+		/* save method info */
+		if (cfg->compile_aot)
+			// FIXME:
+			ppc_load (code, ppc_r0, 0);
+		else
+			ppc_load_ptr (code, ppc_r0, method);
+		ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, method), ppc_r11);
+		ppc_stptr (code, ppc_sp, G_STRUCT_OFFSET(MonoLMF, ebp), ppc_r11);
+#else
 		ppc_addi (code, ppc_r12, ppc_sp, alloc_size - lmf_offset);
 		/* ppc_r3 is the result from mono_get_lmf_addr () */
 		ppc_stptr (code, ppc_r3, G_STRUCT_OFFSET(MonoLMF, lmf_addr), ppc_r12);
@@ -5176,6 +5527,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			ppc_load_ptr (code, ppc_r0, method);
 		ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, method), ppc_r12);
 		ppc_stptr (code, ppc_sp, G_STRUCT_OFFSET(MonoLMF, ebp), ppc_r12);
+#endif
 		/* save the current IP */
 		if (cfg->compile_aot) {
 			ppc_bl (code, 1);
@@ -5188,7 +5540,11 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			ppc_load_sequence (code, ppc_r0, (gulong)0x01010101L);
 #endif
 		}
+#if defined(__APPLE__)
+		ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, eip), ppc_r11);
+#else
 		ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, eip), ppc_r12);
+#endif
 	}
 
 	set_code_cursor (cfg, code);
@@ -5218,6 +5574,24 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		lmf_offset = pos;
 		/* save the frame reg in r8 */
 		ppc_mr (code, ppc_r8, cfg->frame_reg);
+#if defined(__APPLE__)
+		ppc_addi (code, ppc_r11, cfg->frame_reg, cfg->stack_usage - lmf_offset);
+		/* r5 = previous_lmf */
+		ppc_ldptr (code, ppc_r5, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r11);
+		/* r6 = lmf_addr */
+		ppc_ldptr (code, ppc_r6, G_STRUCT_OFFSET(MonoLMF, lmf_addr), ppc_r11);
+		/* *(lmf_addr) = previous_lmf */
+		ppc_stptr (code, ppc_r5, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r6);
+		/* FIXME: speedup: there is no actual need to restore the registers if
+		 * we didn't actually change them (idea from Zoltan).
+		 */
+		/* restore iregs */
+		ppc_ldr_multiple (code, ppc_r13, G_STRUCT_OFFSET(MonoLMF, iregs), ppc_r11);
+		/* restore fregs */
+		/*for (i = 14; i < 32; i++) {
+			ppc_lfd (code, i, G_STRUCT_OFFSET(MonoLMF, fregs) + ((i-14) * sizeof (gdouble)), ppc_r11);
+		}*/
+#else
 		ppc_addi (code, ppc_r12, cfg->frame_reg, cfg->stack_usage - lmf_offset);
 		/* r5 = previous_lmf */
 		ppc_ldptr (code, ppc_r5, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r12);
@@ -5234,6 +5608,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		/*for (i = 14; i < 32; i++) {
 			ppc_lfd (code, i, G_STRUCT_OFFSET(MonoLMF, fregs) + ((i-14) * sizeof (gdouble)), ppc_r12);
 		}*/
+#endif
 		g_assert (ppc_is_imm16 (cfg->stack_usage + PPC_RET_ADDR_OFFSET));
 		/* use the saved copy of the frame reg in r8 */
 		if (1 || cfg->flags & MONO_CFG_HAS_CALLS) {
@@ -5247,8 +5622,13 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 			if (ppc_is_imm16 (return_offset)) {
 				ppc_ldr (code, ppc_r0, return_offset, cfg->frame_reg);
 			} else {
+#if defined(__APPLE__)
+				ppc_load (code, ppc_r11, return_offset);
+				ppc_ldr_indexed (code, ppc_r0, cfg->frame_reg, ppc_r11);
+#else
 				ppc_load (code, ppc_r12, return_offset);
 				ppc_ldr_indexed (code, ppc_r0, cfg->frame_reg, ppc_r12);
+#endif
 			}
 			ppc_mtlr (code, ppc_r0);
 		}
@@ -5259,7 +5639,11 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 					offset -= sizeof (target_mgreg_t);
 			}
 			if (cfg->frame_reg != ppc_sp)
+#if defined(__APPLE__)
+				ppc_mr (code, ppc_r11, cfg->frame_reg);
+#else
 				ppc_mr (code, ppc_r12, cfg->frame_reg);
+#endif
 			/* note r31 (possibly the frame register) is restored last */
 			for (i = 13; i <= 31; i++) {
 				if (cfg->used_int_regs & (1 << i)) {
@@ -5267,6 +5651,27 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 					offset += sizeof (target_mgreg_t);
 				}
 			}
+#if defined(__APPLE__)
+			if (cfg->frame_reg != ppc_sp)
+				ppc_addi (code, ppc_sp, ppc_r11, cfg->stack_usage);
+			else
+				ppc_addi (code, ppc_sp, ppc_sp, cfg->stack_usage);
+		} else {
+			ppc_load32 (code, ppc_r11, cfg->stack_usage);
+			if (cfg->used_int_regs) {
+				ppc_add (code, ppc_r11, cfg->frame_reg, ppc_r11);
+				for (i = 31; i >= 13; --i) {
+					if (cfg->used_int_regs & (1 << i)) {
+						pos += sizeof (target_mgreg_t);
+						ppc_ldr (code, i, -pos, ppc_r11);
+					}
+				}
+				ppc_mr (code, ppc_sp, ppc_r11);
+			} else {
+				ppc_add (code, ppc_sp, cfg->frame_reg, ppc_r11);
+			}
+		}
+#else
 			if (cfg->frame_reg != ppc_sp)
 				ppc_addi (code, ppc_sp, ppc_r12, cfg->stack_usage);
 			else
@@ -5286,6 +5691,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 				ppc_add (code, ppc_sp, cfg->frame_reg, ppc_r12);
 			}
 		}
+#endif
 	}
 	ppc_blr (code);
 
@@ -5520,15 +5926,20 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 	start = code;
 
 	/*
-	 * We need to save and restore r12 because it might be
-	 * used by the caller as the vtable register, so
-	 * clobbering it will trip up the magic trampoline.
+	 * We need to save and restore r12 (r11 on Darwin) because
+	 * it might be used by the caller as the vtable register,
+	 * so clobbering it will trip up the magic trampoline.
 	 *
-	 * FIXME: Get rid of this by making sure that r12 is
-	 * not used as the vtable register in interface calls.
+	 * FIXME: Get rid of this by making sure that r12 (r11 on Darwin)
+	 * is not used as the vtable register in interface calls.
 	 */
+#if defined(__APPLE__)
 	ppc_stptr (code, ppc_r12, PPC_RET_ADDR_OFFSET, ppc_sp);
 	ppc_load (code, ppc_r12, (gsize)(& (vtable->vtable [0])));
+#else
+	ppc_stptr (code, ppc_r11, PPC_RET_ADDR_OFFSET, ppc_sp);
+	ppc_load (code, ppc_r11, (gsize)(& (vtable->vtable [0])));
+#endif
 
 	for (i = 0; i < count; ++i) {
 		MonoIMTCheckItem *item = imt_entries [i];
@@ -5544,8 +5955,13 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 				if (item->has_target_code) {
 					ppc_load_ptr (code, ppc_r0, item->value.target_code);
 				} else {
+#if defined(__APPLE__)
+					ppc_ldptr (code, ppc_r0, (sizeof (target_mgreg_t) * item->value.vtable_slot), ppc_r11);
+					ppc_ldptr (code, ppc_r11, PPC_RET_ADDR_OFFSET, ppc_sp);
+#else
 					ppc_ldptr (code, ppc_r0, (sizeof (target_mgreg_t) * item->value.vtable_slot), ppc_r12);
 					ppc_ldptr (code, ppc_r12, PPC_RET_ADDR_OFFSET, ppc_sp);
+#endif
 				}
 				ppc_mtctr (code, ppc_r0);
 				ppc_bcctr (code, PPC_BR_ALWAYS, 0);
@@ -5577,8 +5993,13 @@ mono_arch_build_imt_trampoline (MonoVTable *vtable, MonoDomain *domain, MonoIMTC
 					item->jmp_code = code;
 					ppc_bc (code, PPC_BR_FALSE, PPC_BR_EQ, 0);
 #endif
+#if defined(__APPLE__)
+					ppc_ldptr (code, ppc_r0, (sizeof (target_mgreg_t) * item->value.vtable_slot), ppc_r11);
+					ppc_ldptr (code, ppc_r11, PPC_RET_ADDR_OFFSET, ppc_sp);
+#else
 					ppc_ldptr (code, ppc_r0, (sizeof (target_mgreg_t) * item->value.vtable_slot), ppc_r12);
 					ppc_ldptr (code, ppc_r12, PPC_RET_ADDR_OFFSET, ppc_sp);
+#endif
 					ppc_mtctr (code, ppc_r0);
 					ppc_bcctr (code, PPC_BR_ALWAYS, 0);
 #if ENABLE_WRONG_METHOD_CHECK
@@ -5805,12 +6226,19 @@ guint8*
 mono_arch_emit_load_aotconst (guint8 *start, guint8 *code, MonoJumpInfo **ji, MonoJumpInfoType tramp_type, gconstpointer target)
 {
 	/* Load the mscorlib got address */
+#if defined(__APPLE__)
+	ppc_ldptr (code, ppc_r11, sizeof (target_mgreg_t), ppc_r30);
+	*ji = mono_patch_info_list_prepend (*ji, code - start, tramp_type, target);
+	/* arch_emit_got_access () patches this */
+	ppc_load32 (code, ppc_r0, 0);
+	ppc_ldptr_indexed (code, ppc_r11, ppc_r11, ppc_r0);
+#else
 	ppc_ldptr (code, ppc_r12, sizeof (target_mgreg_t), ppc_r30);
 	*ji = mono_patch_info_list_prepend (*ji, code - start, tramp_type, target);
 	/* arch_emit_got_access () patches this */
 	ppc_load32 (code, ppc_r0, 0);
 	ppc_ldptr_indexed (code, ppc_r12, ppc_r12, ppc_r0);
-
+#endif
 	return code;
 }
 
@@ -5831,10 +6259,13 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 {
 	guint8 *code = ip;
 	guint8 *orig_code = code;
-
+#if defined(__APPLE__)
+	ppc_load_sequence (code, ppc_r11, (gsize)bp_trigger_page);
+	ppc_ldptr (code, ppc_r11, 0, ppc_r11);
+#else
 	ppc_load_sequence (code, ppc_r12, (gsize)bp_trigger_page);
 	ppc_ldptr (code, ppc_r12, 0, ppc_r12);
-
+#endif
 	g_assert (code - orig_code == BREAKPOINT_SIZE);
 
 	mono_arch_flush_icache (orig_code, code - orig_code);

@@ -303,13 +303,47 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		ppc_ldptr (code, ppc_r2, sizeof (target_mgreg_t), ppc_r12);
 		ppc_ldptr (code, ppc_r12, 0, ppc_r12);
 #endif
+#if defined(__APPLE__)
+		ppc_mtlr (code, ppc_r11);
+#else
 		ppc_mtlr (code, ppc_r12);
+#endif
 		ppc_blrl (code);
 	}  else {
 		ppc_load_func (code, PPC_CALL_REG, mono_get_lmf_addr);
 		ppc_mtlr (code, PPC_CALL_REG);
 		ppc_blrl (code);
 	}
+#if defined(__APPLE__)
+	/* we build the MonoLMF structure on the stack - see mini-ppc.h
+	 * The pointer to the struct is put in ppc_r11.
+	 */
+	ppc_addi (code, ppc_r11, ppc_sp, STACK - sizeof (MonoLMF));
+	ppc_stptr (code, ppc_r3, G_STRUCT_OFFSET(MonoLMF, lmf_addr), ppc_r11);
+	/* new_lmf->previous_lmf = *lmf_addr */
+	ppc_ldptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r3);
+	ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r11);
+	/* *(lmf_addr) = r11 */
+	ppc_stptr (code, ppc_r11, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r3);
+	/* save method info (it's stored on the stack, so get it first). */
+	if ((tramp_type == MONO_TRAMPOLINE_JIT) || (tramp_type == MONO_TRAMPOLINE_JUMP)) {
+		ppc_ldr (code, ppc_r0, GREGS_OFFSET, ppc_r1);
+		ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, method), ppc_r11);
+	} else {
+		ppc_load (code, ppc_r0, 0);
+		ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, method), ppc_r11);
+	}
+	/* store the frame pointer of the calling method */
+	ppc_addi (code, ppc_r0, ppc_sp, STACK);
+	ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, ebp), ppc_r11);
+	/* save the IP (caller ip) */
+	if (tramp_type == MONO_TRAMPOLINE_JUMP) {
+		ppc_li (code, ppc_r0, 0);
+	} else {
+		ppc_ldr (code, ppc_r0, STACK + PPC_RET_ADDR_OFFSET, ppc_r1);
+	}
+	ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, eip), ppc_r11);
+#else
 	/* we build the MonoLMF structure on the stack - see mini-ppc.h
 	 * The pointer to the struct is put in ppc_r12.
 	 */
@@ -338,6 +372,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		ppc_ldr (code, ppc_r0, STACK + PPC_RET_ADDR_OFFSET, ppc_r1);
 	}
 	ppc_stptr (code, ppc_r0, G_STRUCT_OFFSET(MonoLMF, eip), ppc_r12);
+#endif
 
 	/*
 	 * Now we are ready to call trampoline (target_mgreg_t *regs, guint8 *code, gpointer value, guint8 *tramp)
@@ -361,7 +396,11 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		ppc_ldptr (code, ppc_r2, sizeof (target_mgreg_t), ppc_r12);
 		ppc_ldptr (code, ppc_r12, 0, ppc_r12);
 #endif
+#if defined(__APPLE__)
+		ppc_mtlr (code, ppc_r11);
+#else
 		ppc_mtlr (code, ppc_r12);
+#endif
 		ppc_blrl (code);
 	} else {
 		tramp_handler = mono_get_trampoline_func (tramp_type);
@@ -387,8 +426,17 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	 * Now we restore the MonoLMF (see emit_epilogue in mini-ppc.c)
 	 * and the rest of the registers, so the method called will see
 	 * the same state as before we executed.
-	 * The pointer to MonoLMF is in ppc_r12.
+	 * The pointer to MonoLMF is in ppc_r12 (ppc_r11 on Darwin).
 	 */
+#if defined(__APPLE__)
+	ppc_addi (code, ppc_r11, ppc_r1, STACK - sizeof (MonoLMF));
+	/* r3 = previous_lmf */
+	ppc_ldptr (code, ppc_r3, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r11);
+	/* r11 = lmf_addr */
+	ppc_ldptr (code, ppc_r11, G_STRUCT_OFFSET(MonoLMF, lmf_addr), ppc_r11);
+	/* *(lmf_addr) = previous_lmf */
+	ppc_stptr (code, ppc_r3, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r11);
+#else
 	ppc_addi (code, ppc_r12, ppc_r1, STACK - sizeof (MonoLMF));
 	/* r3 = previous_lmf */
 	ppc_ldptr (code, ppc_r3, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r12);
@@ -396,7 +444,7 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	ppc_ldptr (code, ppc_r12, G_STRUCT_OFFSET(MonoLMF, lmf_addr), ppc_r12);
 	/* *(lmf_addr) = previous_lmf */
 	ppc_stptr (code, ppc_r3, G_STRUCT_OFFSET(MonoLMF, previous_lmf), ppc_r12);
-
+#endif
 	/* thread interruption check */
 	if (aot) {
 		g_error ("Not implemented");
@@ -416,8 +464,13 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	/* restore caller frame, as we want to throw from there */
 	ppc_ldr  (code, ppc_r14, offset_r14, ppc_r1); /* unclobber r14 */
 	ppc_ldr  (code, ppc_r1,  0, ppc_r1);
+#if defined(__APPLE__)
+	ppc_ldr  (code, ppc_r11, PPC_RET_ADDR_OFFSET, ppc_r1);
+	ppc_mtlr (code, ppc_r11);
+#else
 	ppc_ldr  (code, ppc_r12, PPC_RET_ADDR_OFFSET, ppc_r1);
 	ppc_mtlr (code, ppc_r12);
+#endif
 
 	if (aot) {
 		g_error ("Not implemented");
@@ -440,13 +493,21 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 		ppc_mr (code, ppc_r3, ppc_r14);
 	}
 
+#if defined(__APPLE__)
+	ppc_addi (code, ppc_r11, ppc_r1, STACK - sizeof (MonoLMF));
+	/* restore iregs */
+	ppc_ldr_multiple (code, ppc_r13, G_STRUCT_OFFSET(MonoLMF, iregs), ppc_r11);
+	/* restore fregs */
+	for (i = 14; i < 32; i++)
+		ppc_lfd (code, i, G_STRUCT_OFFSET(MonoLMF, fregs) + ((i-14) * sizeof (gdouble)), ppc_r11);
+#else
 	ppc_addi (code, ppc_r12, ppc_r1, STACK - sizeof (MonoLMF));
 	/* restore iregs */
 	ppc_ldr_multiple (code, ppc_r13, G_STRUCT_OFFSET(MonoLMF, iregs), ppc_r12);
 	/* restore fregs */
 	for (i = 14; i < 32; i++)
 		ppc_lfd (code, i, G_STRUCT_OFFSET(MonoLMF, fregs) + ((i-14) * sizeof (gdouble)), ppc_r12);
-
+#endif
 	/* restore the volatile registers, we skip r1, of course */
 	offset = STACK - sizeof (MonoLMF) - (14 * sizeof (double));
 	for (i = 0; i < 14; i++) {
@@ -467,8 +528,13 @@ mono_arch_create_generic_trampoline (MonoTrampolineType tramp_type, MonoTrampInf
 	 */
 	/* Restore stack pointer and LR and jump to the code */
 	ppc_ldr  (code, ppc_r1,  0, ppc_r1);
+#if defined(__APPLE__)
+	ppc_ldr  (code, ppc_r11, PPC_RET_ADDR_OFFSET, ppc_r1);
+	ppc_mtlr (code, ppc_r11);
+#else
 	ppc_ldr  (code, ppc_r12, PPC_RET_ADDR_OFFSET, ppc_r1);
 	ppc_mtlr (code, ppc_r12);
+#endif
 	if (MONO_TRAMPOLINE_TYPE_MUST_RETURN (tramp_type))
 		ppc_blr (code);
 	else
@@ -638,7 +704,11 @@ mono_arch_create_rgctx_lazy_fetch_trampoline (guint32 slot, MonoTrampInfo **info
 #ifdef PPC_USES_FUNCTION_DESCRIPTOR
 		ppc_ldptr (code, ppc_r12, 0, ppc_r12);
 #endif
+#if defined(__APPLE__)
+		ppc_mtctr (code, ppc_r11);
+#else
 		ppc_mtctr (code, ppc_r12);
+#endif
 		ppc_bcctr (code, PPC_BR_ALWAYS, 0);
 	} else {
 		MonoMemoryManager *mem_manager = mono_domain_ambient_memory_manager (mono_get_root_domain ());
