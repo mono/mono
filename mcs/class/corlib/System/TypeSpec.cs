@@ -316,10 +316,13 @@ namespace System {
 			}
 
 			Type type = null;
-			if (typeResolver != null)
+			if (typeResolver != null) {
 				type = typeResolver (asm, name.DisplayName, ignoreCase);
-			else
+			}
+			else if(asm != null) {
 				type = asm.GetType (name.DisplayName, false, ignoreCase);
+			}
+			
 			if (type == null) {
 				if (throwOnError)
 					throw new TypeLoadException ("Could not resolve type '" + name + "'");
