@@ -287,21 +287,24 @@ namespace System.Windows.Forms {
 			internal Int32 yHotspot;
 			internal IntPtr hbmMask;
 			internal IntPtr hbmColor;
-		}    
+		}
 		
 		[StructLayout(LayoutKind.Explicit)]
-		internal struct INPUT {
+		internal struct InputUnion {
 			[FieldOffset(0)]
-			internal Int32 type;
-
-			[FieldOffset(4)]
 			internal MOUSEINPUT mi;
 
-			[FieldOffset(4)]
+			[FieldOffset(0)]
 			internal KEYBDINPUT ki;
 
-			[FieldOffset(4)]
+			[FieldOffset(0)]
 			internal HARDWAREINPUT hi;
+		}
+		
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct INPUT {
+			internal Int32 type;
+			internal InputUnion U;
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
@@ -3251,10 +3254,10 @@ namespace System.Windows.Forms {
 				MSG msg = (MSG)keys.Dequeue();
 
 				
-				inputs[i].ki.wScan = 0;
-				inputs[i].ki.time = 0;
-				inputs[i].ki.dwFlags = (Int32)(msg.message == Msg.WM_KEYUP ? InputFlags.KEYEVENTF_KEYUP : 0);
-				inputs[i].ki.wVk = (short)msg.wParam.ToInt32();
+				inputs[i].U.ki.wScan = 0;
+				inputs[i].U.ki.time = 0;
+				inputs[i].U.ki.dwFlags = (Int32)(msg.message == Msg.WM_KEYUP ? InputFlags.KEYEVENTF_KEYUP : 0);
+				inputs[i].U.ki.wVk = (short)msg.wParam.ToInt32();
 				inputs[i].type = INPUT_KEYBOARD;
 				i++;
 			}
