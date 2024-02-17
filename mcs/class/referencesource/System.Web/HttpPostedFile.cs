@@ -17,6 +17,7 @@ namespace System.Web {
     using System.Configuration;
     using System.Web.Configuration;
     using System.Web.Management;
+    
 
 
     /// <devdoc>
@@ -104,7 +105,7 @@ namespace System.Web {
             if (!Path.IsPathRooted(filename)) {
                 HttpRuntimeSection config = RuntimeConfig.GetConfig().HttpRuntime;
                 if (config.RequireRootedSaveAsPath) {
-                    throw new HttpException(SR.GetString(SR.SaveAs_requires_rooted_path, filename));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.SaveAs_requires_rooted_path, filename));
                 }
             }
 

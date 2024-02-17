@@ -173,7 +173,7 @@ namespace System.Web.Configuration {
         public ProfileSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

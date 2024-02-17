@@ -44,15 +44,15 @@ namespace System.Web.UI.WebControls.WebParts {
         private static readonly WebPartDescriptionCollection DesignModeAvailableWebPart =
             new WebPartDescriptionCollection(new WebPartDescription[] {
                 new WebPartDescription("webpart1", String.Format(CultureInfo.CurrentCulture,
-                    SR.GetString(SR.CatalogPart_SampleWebPartTitle), "1"), null, null)});
+                    System.Web.SR.GetString(System.Web.SR.CatalogPart_SampleWebPartTitle), "1"), null, null)});
 
         [WebCategory("Appearance")]
-        [WebSysDefaultValue(SR.ImportCatalogPart_Browse)]
-        [WebSysDescription(SR.ImportCatalogPart_BrowseHelpText)]
+        [WebSysDefaultValue(System.Web.SR.ImportCatalogPart_Browse)]
+        [WebSysDescription(System.Web.SR.ImportCatalogPart_BrowseHelpText)]
         public string BrowseHelpText {
             get {
                 object o = ViewState["BrowseHelpText"];
-                return (o != null) ? (string)o : SR.GetString(SR.ImportCatalogPart_Browse);
+                return (o != null) ? (string)o : System.Web.SR.GetString(System.Web.SR.ImportCatalogPart_Browse);
             }
             set {
                 ViewState["BrowseHelpText"] = value;
@@ -66,12 +66,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [WebCategory("Appearance")]
-        [WebSysDefaultValue(SR.ImportCatalogPart_ImportedPartLabel)]
-        [WebSysDescription(SR.ImportCatalogPart_ImportedPartLabelText)]
+        [WebSysDefaultValue(System.Web.SR.ImportCatalogPart_ImportedPartLabel)]
+        [WebSysDescription(System.Web.SR.ImportCatalogPart_ImportedPartLabelText)]
         public string ImportedPartLabelText {
             get {
                 object o = ViewState["ImportedPartLabelText"];
-                return (o != null) ? (string)o : SR.GetString(SR.ImportCatalogPart_ImportedPartLabel);
+                return (o != null) ? (string)o : System.Web.SR.GetString(System.Web.SR.ImportCatalogPart_ImportedPartLabel);
             }
             set {
                 ViewState["ImportedPartLabelText"] = value;
@@ -79,12 +79,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [WebCategory("Appearance")]
-        [WebSysDefaultValue(SR.ImportCatalogPart_ImportedPartErrorLabel)]
-        [WebSysDescription(SR.ImportCatalogPart_PartImportErrorLabelText)]
+        [WebSysDefaultValue(System.Web.SR.ImportCatalogPart_ImportedPartErrorLabel)]
+        [WebSysDescription(System.Web.SR.ImportCatalogPart_PartImportErrorLabelText)]
         public string PartImportErrorLabelText {
             get {
                 object o = ViewState["PartImportErrorLabelText"];
-                return (o != null) ? (string)o : SR.GetString(SR.ImportCatalogPart_ImportedPartErrorLabel);
+                return (o != null) ? (string)o : System.Web.SR.GetString(System.Web.SR.ImportCatalogPart_ImportedPartErrorLabel);
             }
             set {
                 ViewState["PartImportErrorLabelText"] = value;
@@ -92,12 +92,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.ImportCatalogPart_PartTitle),
+        WebSysDefaultValue(System.Web.SR.ImportCatalogPart_PartTitle),
         ]
         public override string Title {
             get {
                 string s = (string)ViewState["Title"];
-                return (s != null) ? s : SR.GetString(SR.ImportCatalogPart_PartTitle);
+                return (s != null) ? s : System.Web.SR.GetString(System.Web.SR.ImportCatalogPart_PartTitle);
             }
             set {
                 ViewState["Title"] = value;
@@ -105,12 +105,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [WebCategory("Appearance")]
-        [WebSysDefaultValue(SR.ImportCatalogPart_UploadButton)]
-        [WebSysDescription(SR.ImportCatalogPart_UploadButtonText)]
+        [WebSysDefaultValue(System.Web.SR.ImportCatalogPart_UploadButton)]
+        [WebSysDescription(System.Web.SR.ImportCatalogPart_UploadButtonText)]
         public string UploadButtonText {
             get {
                 object o = ViewState["UploadButtonText"];
-                return (o != null) ? (string)o : SR.GetString(SR.ImportCatalogPart_UploadButton);
+                return (o != null) ? (string)o : System.Web.SR.GetString(System.Web.SR.ImportCatalogPart_UploadButton);
             }
             set {
                 ViewState["UploadButtonText"] = value;
@@ -118,12 +118,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [WebCategory("Appearance")]
-        [WebSysDefaultValue(SR.ImportCatalogPart_Upload)]
-        [WebSysDescription(SR.ImportCatalogPart_UploadHelpText)]
+        [WebSysDefaultValue(System.Web.SR.ImportCatalogPart_Upload)]
+        [WebSysDescription(System.Web.SR.ImportCatalogPart_UploadHelpText)]
         public string UploadHelpText {
             get {
                 object o = ViewState["UploadHelpText"];
-                return (o != null) ? (string)o : SR.GetString(SR.ImportCatalogPart_Upload);
+                return (o != null) ? (string)o : System.Web.SR.GetString(System.Web.SR.ImportCatalogPart_Upload);
             }
             set {
                 ViewState["UploadHelpText"] = value;
@@ -168,14 +168,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 _availableWebPartDescriptions = new WebPartDescriptionCollection();
                 return;
             }
-
-            // Run in minimal trust
-            PermissionSet pset = new PermissionSet(PermissionState.None);
-            // add in whatever perms are appropriate
-            pset.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
-            pset.AddPermission(new AspNetHostingPermission(AspNetHostingPermissionLevel.Minimal));
-
-            pset.PermitOnly();
+            
             bool permitOnly = true;
             string title = null;
             string description = null;
@@ -213,40 +206,25 @@ namespace System.Web.UI.WebControls.WebParts {
                                 // If we are in shared scope, we are importing a shared WebPart
                                 bool isShared = (WebPartManager.Personalization.Scope == PersonalizationScope.Shared);
 
-                                if (!String.IsNullOrEmpty(partTypeName)) {
-                                    // Need medium trust to call BuildManager.GetType()
-                                    PermissionSet mediumPset = new PermissionSet(PermissionState.None);
-                                    mediumPset.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
-                                    mediumPset.AddPermission(new AspNetHostingPermission(AspNetHostingPermissionLevel.Medium));
-
-                                    CodeAccessPermission.RevertPermitOnly();
-                                    permitOnly = false;
-                                    mediumPset.PermitOnly();
-                                    permitOnly = true;
-
+                                if (!String.IsNullOrEmpty(partTypeName)) {                                    
                                     Type partType = WebPartUtil.DeserializeType(partTypeName, true);
-
-                                    CodeAccessPermission.RevertPermitOnly();
-                                    permitOnly = false;
-                                    pset.PermitOnly();
-                                    permitOnly = true;
-
+                                    
                                     // First check if the type is authorized
                                     if (!WebPartManager.IsAuthorized(partType, null, null, isShared)) {
-                                        _importErrorMessage = SR.GetString(SR.WebPartManager_ForbiddenType);
+                                        _importErrorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_ForbiddenType);
                                         return;
                                     }
                                     // If the type is not a webpart, create a generic Web Part
                                     if (!partType.IsSubclassOf(typeof(WebPart)) && !partType.IsSubclassOf(typeof(Control))) {
                                         // We only allow for Controls (VSWhidbey 428511)
-                                        _importErrorMessage = SR.GetString(SR.WebPartManager_TypeMustDeriveFromControl);
+                                        _importErrorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_TypeMustDeriveFromControl);
                                         return;
                                     }
                                 }
                                 else {
                                     // Check if the path is authorized
                                     if (!WebPartManager.IsAuthorized(typeof(UserControl), userControlTypeName, null, isShared)) {
-                                        _importErrorMessage = SR.GetString(SR.WebPartManager_ForbiddenType);
+                                        _importErrorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_ForbiddenType);
                                         return;
                                     }
                                 }
@@ -283,7 +261,7 @@ namespace System.Web.UI.WebControls.WebParts {
                             }
                         }
                         if (String.IsNullOrEmpty(title)) {
-                            title = SR.GetString(SR.Part_Untitled);
+                            title = System.Web.SR.GetString(System.Web.SR.Part_Untitled);
                         }
 
                         _availableWebPartDescriptions = new WebPartDescriptionCollection(
@@ -291,21 +269,15 @@ namespace System.Web.UI.WebControls.WebParts {
                     }
                 }
                 catch (XmlException) {
-                    _importErrorMessage = SR.GetString(SR.WebPartManager_ImportInvalidFormat);
+                    _importErrorMessage = System.Web.SR.GetString(System.Web.SR.WebPartManager_ImportInvalidFormat);
                     return;
                 }
                 catch {
                     _importErrorMessage = (!String.IsNullOrEmpty(_importErrorMessage)) ?
                         _importErrorMessage :
-                        SR.GetString(SR.WebPart_DefaultImportErrorMessage);
+                        System.Web.SR.GetString(System.Web.SR.WebPart_DefaultImportErrorMessage);
                     return;
-                }
-                finally {
-                    if (permitOnly) {
-                        // revert if you're not just exiting the stack frame anyway
-                        CodeAccessPermission.RevertPermitOnly();
-                    }
-                }
+                }                
             }
             catch {
                 throw;
@@ -319,7 +291,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             WebPartDescriptionCollection webPartDescriptions = GetAvailableWebPartDescriptions();
             if (!webPartDescriptions.Contains(description)) {
-                throw new ArgumentException(SR.GetString(SR.CatalogPart_UnknownDescription), "description");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.CatalogPart_UnknownDescription), "description");
             }
 
             if (_availableWebPart != null) {
@@ -351,7 +323,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[])savedState;
                 if (myState.Length != controlStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_ControlState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_ControlState));
                 }
 
                 base.LoadControlState(myState[baseIndex]);
@@ -388,7 +360,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     _importErrorMessage = null;
 
                     if (String.IsNullOrEmpty(_importedPartDescription)) {
-                        _importErrorMessage = SR.GetString(SR.ImportCatalogPart_NoFileName);
+                        _importErrorMessage = System.Web.SR.GetString(System.Web.SR.ImportCatalogPart_NoFileName);
                     }
                     else {
                         GetAvailableWebPartDescriptions();
@@ -396,7 +368,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 }
             }
             else {
-                _importErrorMessage = SR.GetString(SR.ImportCatalogPart_NoFileName);
+                _importErrorMessage = System.Web.SR.GetString(System.Web.SR.ImportCatalogPart_NoFileName);
             }
         }
 

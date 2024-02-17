@@ -16,6 +16,7 @@ namespace System.Web.Configuration {
     using System.Globalization;
     using System.Web.Util;
     using System.Security.Permissions;
+    
 
     /* 
         <!--
@@ -83,7 +84,7 @@ namespace System.Web.Configuration {
         public GlobalizationSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -243,10 +244,10 @@ namespace System.Web.Configuration {
         }
 
         private void CheckCulture(string configCulture) {
-            if (StringUtil.EqualsIgnoreCase(configCulture, HttpApplication.AutoCulture)) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(configCulture, HttpApplication.AutoCulture)) {
                 return;
             }
-            else if (StringUtil.StringStartsWithIgnoreCase(configCulture, HttpApplication.AutoCulture)) {
+            else if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(configCulture, HttpApplication.AutoCulture)) {
                 // This will throw if bad
                 CultureInfo dummyCultureInfo = new CultureInfo(configCulture.Substring(5));
                 return;
@@ -335,7 +336,7 @@ namespace System.Web.Configuration {
             }
 
             if (errorProperty != null) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_value_for_globalization_attr, errorProperty.Name),
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_value_for_globalization_attr, errorProperty.Name),
                     ElementInformation.Properties[errorProperty.Name].Source, ElementInformation.Properties[errorProperty.Name].LineNumber);
 
             }

@@ -15,6 +15,7 @@ namespace System.Web.Configuration {
     using System.Text;
     using System.Diagnostics;
     using System.Security.Permissions;
+    
 
     /*             <!-- sqlCacheDependency Attributes:
                 enabled="[true|false]" - Enable or disable SQL cache dependency polling
@@ -79,12 +80,12 @@ namespace System.Web.Configuration {
         public SqlCacheDependencySection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
         }
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -94,7 +95,7 @@ namespace System.Web.Configuration {
             if (value == null) {
                 throw new ArgumentNullException("sqlCacheDependency");
             }
-            Debug.Assert(value is SqlCacheDependencySection);
+            System.Web.Util.Debug.Assert(value is SqlCacheDependencySection);
 
             SqlCacheDependencySection elem = (SqlCacheDependencySection)value;
 
@@ -102,7 +103,7 @@ namespace System.Web.Configuration {
 
             if (defaultPollTime != 0 && defaultPollTime < 500) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_sql_cache_dep_polltime),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_sql_cache_dep_polltime),
                     elem.ElementInformation.Properties["pollTime"].Source, 
                     elem.ElementInformation.Properties["pollTime"].LineNumber);
             }

@@ -74,7 +74,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     // Don't need to check arg, since we know it is valid since it came
                     // from a CatalogPartCollection.
                     if (_ids.Contains(existingVerb.ID)) {
-                        throw new ArgumentException(SR.GetString(SR.WebPart_Collection_DuplicateID, "WebPartVerb", existingVerb.ID), "existingVerbs");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_Collection_DuplicateID, "WebPartVerb", existingVerb.ID), "existingVerbs");
                     }
                     _ids.Add(existingVerb.ID, existingVerb);
 
@@ -85,15 +85,15 @@ namespace System.Web.UI.WebControls.WebParts {
             if (verbs != null) {
                 foreach (object obj in verbs) {
                     if (obj == null) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "verbs");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "verbs");
                     }
                     WebPartVerb webPartVerb = obj as WebPartVerb;
                     if (webPartVerb == null) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "WebPartVerb"), "verbs");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "WebPartVerb"), "verbs");
                     }
 
                     if (_ids.Contains(webPartVerb.ID)) {
-                        throw new ArgumentException(SR.GetString(SR.WebPart_Collection_DuplicateID, "WebPartVerb", webPartVerb.ID), "verbs");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_Collection_DuplicateID, "WebPartVerb", webPartVerb.ID), "verbs");
                     }
                     _ids.Add(webPartVerb.ID, webPartVerb);
 

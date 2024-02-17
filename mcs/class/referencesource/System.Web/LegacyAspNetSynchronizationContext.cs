@@ -12,6 +12,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Util;
 
+
 namespace System.Web {
 
     // Represents a SynchronizationContext that has legacy behavior (<= FX 4.0) when it comes to asynchronous operations.
@@ -96,7 +97,7 @@ namespace System.Web {
         // the _lastCompletionCallback.  If the _lastCompletionCallback is non-null, then the last completion will invoke the callback;
         // otherwise, the caller of PendingCompletion will handle the completion.
         internal override bool PendingCompletion(WaitCallback callback) {
-            Debug.Assert(_lastCompletionCallback == null); // only one at a time
+            System.Web.Util.Debug.Assert(_lastCompletionCallback == null); // only one at a time
             bool pending = false;
             if (_pendingCount != 0) {
                 lock (_lastCompletionCallbackLock) {
@@ -111,16 +112,16 @@ namespace System.Web {
 
         public override void Send(SendOrPostCallback callback, Object state) {
 #if DBG
-            Debug.Trace("Async", "Send");
-            Debug.Trace("AsyncStack", "Send from:\r\n" + GetDebugStackTrace());
+            System.Web.Util.Debug.Trace("Async", "Send");
+            System.Web.Util.Debug.Trace("AsyncStack", "Send from:\r\n" + GetDebugStackTrace());
 #endif
             CallCallback(callback, state);
         }
 
         public override void Post(SendOrPostCallback callback, Object state) {
 #if DBG
-            Debug.Trace("Async", "Post");
-            Debug.Trace("AsyncStack", "Post from:\r\n" + GetDebugStackTrace());
+            System.Web.Util.Debug.Trace("Async", "Post");
+            System.Web.Util.Debug.Trace("AsyncStack", "Post from:\r\n" + GetDebugStackTrace());
 #endif
             CallCallback(callback, state);
         }
@@ -128,8 +129,8 @@ namespace System.Web {
 #if DBG
         [EnvironmentPermission(SecurityAction.Assert, Unrestricted=true)]
         private void CreateCopyDumpStack() {
-            Debug.Trace("Async", "CreateCopy");
-            Debug.Trace("AsyncStack", "CreateCopy from:\r\n" + GetDebugStackTrace());
+            System.Web.Util.Debug.Trace("Async", "CreateCopy");
+            System.Web.Util.Debug.Trace("AsyncStack", "CreateCopy from:\r\n" + GetDebugStackTrace());
         }
 #endif
 
@@ -147,13 +148,13 @@ namespace System.Web {
         public override void OperationStarted() {
             if (_invalidOperationEncountered || (_disabled && _pendingCount == 0)) {
                 _invalidOperationEncountered = true;
-                throw new InvalidOperationException(SR.GetString(SR.Async_operation_disabled));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_operation_disabled));
             }
 
             Interlocked.Increment(ref _pendingCount);
 #if DBG
-            Debug.Trace("Async", "OperationStarted(count=" + _pendingCount + ")");
-            Debug.Trace("AsyncStack", "OperationStarted(count=" + _pendingCount + ") from:\r\n" + GetDebugStackTrace());
+            System.Web.Util.Debug.Trace("Async", "OperationStarted(count=" + _pendingCount + ")");
+            System.Web.Util.Debug.Trace("AsyncStack", "OperationStarted(count=" + _pendingCount + ") from:\r\n" + GetDebugStackTrace());
 #endif
         }
 
@@ -166,8 +167,8 @@ namespace System.Web {
             int pendingCount = Interlocked.Decrement(ref _pendingCount);
 
 #if DBG
-            Debug.Trace("Async", "OperationCompleted(pendingCount=" + pendingCount + ")");
-            Debug.Trace("AsyncStack", "OperationCompleted(pendingCount=" + pendingCount + ") from:\r\n" + GetDebugStackTrace());
+            System.Web.Util.Debug.Trace("Async", "OperationCompleted(pendingCount=" + pendingCount + ")");
+            System.Web.Util.Debug.Trace("AsyncStack", "OperationCompleted(pendingCount=" + pendingCount + ") from:\r\n" + GetDebugStackTrace());
 #endif
 
             // notify (once) about the last completion to resume the async work
@@ -179,7 +180,7 @@ namespace System.Web {
                 }
 
                 if (callback != null) {
-                    Debug.Trace("Async", "Queueing LastCompletionWorkItemCallback");
+                    System.Web.Util.Debug.Trace("Async", "Queueing LastCompletionWorkItemCallback");
                     ThreadPool.QueueUserWorkItem(callback);
                 }
             }

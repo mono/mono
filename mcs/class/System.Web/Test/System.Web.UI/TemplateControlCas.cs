@@ -61,7 +61,7 @@ namespace MonoCasTests.System.Web.UI {
 		public void LoadControl_Deny_Unrestricted ()
 		{
 			NonAbstractTemplateControl tc = new NonAbstractTemplateControl ();
-			tc.LoadControl (null);
+			tc.LoadControl ((string)null);
 		}
 
 		[Test]
@@ -70,7 +70,7 @@ namespace MonoCasTests.System.Web.UI {
 		public void LoadTemplate_Deny_Unrestricted ()
 		{
 			NonAbstractTemplateControl tc = new NonAbstractTemplateControl ();
-			tc.LoadTemplate (null);
+			tc.LoadTemplate ((string)null);
 		}
 
 		[Test]

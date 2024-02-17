@@ -71,7 +71,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private void CheckReadOnly() {
             if (_readOnly) {
-                throw new InvalidOperationException(SR.GetString(_readOnlyExceptionMessage));
+                throw new InvalidOperationException(System.Web.SR.GetString(_readOnlyExceptionMessage));
             }
         }
 
@@ -138,10 +138,10 @@ namespace System.Web.UI.WebControls.WebParts {
         protected override void OnValidate(object value) {
             base.OnValidate(value);
             if (value == null) {
-                throw new ArgumentNullException("value", SR.GetString(SR.Collection_CantAddNull));
+                throw new ArgumentNullException("value", System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull));
             }
             if (!(value is WebPartConnection)) {
-                throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "WebPartConnection"), "value");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "WebPartConnection"), "value");
             }
         }
 

@@ -3,9 +3,23 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.Web.DynamicData.dll
-LIB_REFS = System System.Core System.ComponentModel.DataAnnotations System.Data System.Data.Linq System.Drawing System.Web System.Web.Extensions System.Web.Abstractions System.Web.Routing
+
+OTHER_RES = \
+	resources/System.Web.DynamicData.DynamicControl.bmp \
+	resources/System.Web.DynamicData.DynamicDataManager.bmp \
+	resources/System.Web.DynamicData.DynamicEntity.bmp \
+	resources/System.Web.DynamicData.DynamicHyperLink.bmp \
+	resources/System.Web.DynamicData.DynamicValidator.bmp \
+
+RESOURCE_DEFS = \
+	System.Web.Resources.DynamicDataResources,resources/System.Web.Resources.DynamicDataResources.resx
+
+
+LIB_REFS = System System.Core System.ComponentModel.DataAnnotations System.Data System.Data.Entity \
+	System.Data.Linq System.Drawing System.Web System.Web.Extensions System.Web.Entity System.Xml System.Xml.Linq
 KEYFILE = ../winfx.pub
-LIB_MCS_FLAGS =
+LIB_MCS_FLAGS = \
+	$(OTHER_RES:%=/resource:%)
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 LIB_REFS += System.Web.ApplicationServices
@@ -86,26 +100,41 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Char.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Char.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Collections.Generic.List\`1[System.String].ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.Generic.List\`1[System.String].ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Collections.Generic.List\`1[System.String].ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.Generic.List\`1[System.String].ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Collections.Generic.List\`2[System.String].ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.Generic.List\`2[System.String].ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Collections.ICollection.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.ICollection.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Collections.ICollection.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.ICollection.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Int16.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Int16.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Int16.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Int16.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Int32.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Int32.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Int32.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Int32.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Int32[].ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Int32[].ascx	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Int32[].ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Int32[].ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Int64.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Int64.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Int64.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Int64.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Object.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Object.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Object.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Object.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Object[].ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Object[].ascx	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.Object[].ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Object[].ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.SByte.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.SByte.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.SByte.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.SByte.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.SByte_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.SByte_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.SByte_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.SByte_Edit.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.String.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.String.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.String.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.String.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.String[].ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.String[].ascx	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.String[].ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.String[].ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt16.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt16.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt16.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt16.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt16_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt16_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt16_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt16_Edit.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt32.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt32.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt32.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt32.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt32_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt32_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt32_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt32_Edit.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt64.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt64.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt64.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt64.ascx.cs	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt64_Edit.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt64_Edit.ascx	\
+	Test/WebPages/DynamicData/FieldTemplates_NonDefault/System.UInt64_Edit.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.UInt64_Edit.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/UInt16.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.UInt16.ascx	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/UInt16.ascx.cs,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.UInt16.ascx.cs	\
 	Test/WebPages/DynamicData/FieldTemplates_NonDefault/UInt32.ascx,MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.UInt32.ascx	\
@@ -129,7 +158,7 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/DynamicData/PageTemplates/ListDetails.aspx,MonoTests.WebPages.DynamicData.PageTemplates.ListDetails.aspx	\
 	Test/WebPages/DynamicData/PageTemplates/ListDetails.aspx.cs,MonoTests.WebPages.DynamicData.PageTemplates.ListDetails.aspx.cs	\
 	Test/WebPages/DynamicData/web.config,MonoTests.WebPages.DynamicData.web.config	\
-	Test/WebPages/Global.asax,MonoTests.WebPages.Global.asax	\
+	Test/WebPages/global.asax,MonoTests.WebPages.Global.asax	\
 	Test/WebPages/ListView_DynamicControl_01.aspx,MonoTests.WebPages.ListView_DynamicControl_01.aspx	\
 	Test/WebPages/ListView_DynamicControl_01.aspx.cs,MonoTests.WebPages.ListView_DynamicControl_01.aspx.cs	\
 	Test/WebPages/ListView_DynamicControl_02.aspx,MonoTests.WebPages.ListView_DynamicControl_02.aspx	\
@@ -154,6 +183,8 @@ TEST_RESOURCE_FILES = \
 	Test/WebPages/DynamicValidator_01.aspx.cs,MonoTests.WebPages.DynamicValidator_01.aspx.cs		\
 	Test/WebPages/DynamicValidator_02.aspx,MonoTests.WebPages.DynamicValidator_02.aspx			\
 	Test/WebPages/DynamicValidator_02.aspx.cs,MonoTests.WebPages.DynamicValidator_02.aspx.cs		\
+	Test/WebPages/MetaColumn_RequiredField.aspx,MonoTests.WebPages.MetaColumn_RequiredField.aspx			\
+	Test/WebPages/MetaColumn_RequiredField.aspx.cs,MonoTests.WebPages.MetaColumn_RequiredField.aspx.cs	\
 	Test/WebPages/Site.css,MonoTests.WebPages.Site.css	\
 	Test/WebPages/Site.master,MonoTests.WebPages.Site.master	\
 	Test/WebPages/Site.master.cs,MonoTests.WebPages.Site.master.cs	\

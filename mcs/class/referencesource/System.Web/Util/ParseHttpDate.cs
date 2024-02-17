@@ -27,7 +27,7 @@ namespace System.Web.Util
                 return s_tensDigit[tens] + ones;
             } 
             catch {
-                throw new FormatException(SR.GetString(SR.Atio2BadString, s, startIndex));
+                throw new FormatException(System.Web.SR.GetString(System.Web.SR.Atio2BadString, s, startIndex));
             }
         }
         
@@ -101,7 +101,7 @@ namespace System.Web.Util
                         monthIndex = 4;
                     }
                 } else {
-                    throw new FormatException(SR.GetString(SR.MakeMonthBadString, s, startIndex));
+                    throw new FormatException(System.Web.SR.GetString(System.Web.SR.MakeMonthBadString, s, startIndex));
                 }
             }
 
@@ -121,7 +121,7 @@ namespace System.Web.Util
                 return monthIndex;
             }
 
-            throw new FormatException(SR.GetString(SR.MakeMonthBadString, s, startIndex));
+            throw new FormatException(System.Web.SR.GetString(System.Web.SR.MakeMonthBadString, s, startIndex));
 
         } // make_month
         
@@ -169,7 +169,7 @@ namespace System.Web.Util
                 if (time[i+2] == '-' ) {      /* First format */
         
                     if (length < 18) {
-                        throw new FormatException(SR.GetString(SR.UtilParseDateTimeBad, time));
+                        throw new FormatException(System.Web.SR.GetString(System.Web.SR.UtilParseDateTimeBad, time));
                     }
         
                     day = atoi2(time, i);
@@ -188,7 +188,7 @@ namespace System.Web.Util
                 } else {                         /* Second format */
         
                     if (length < 20) {
-                        throw new FormatException(SR.GetString(SR.UtilParseDateTimeBad, time));
+                        throw new FormatException(System.Web.SR.GetString(System.Web.SR.UtilParseDateTimeBad, time));
                     }
         
                     day = atoi2(time, i);
@@ -205,7 +205,7 @@ namespace System.Web.Util
                 while (--length > 0 && time[++i] == ' ');
         
                 if (length < 24) {
-                    throw new FormatException(SR.GetString(SR.UtilParseDateTimeBad, time));
+                    throw new FormatException(System.Web.SR.GetString(System.Web.SR.UtilParseDateTimeBad, time));
                 }
 
                 day = atoi2(time, i + 8);

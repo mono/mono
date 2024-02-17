@@ -70,10 +70,10 @@ namespace System.Web.UI.WebControls.WebParts {
             if (catalogParts != null) {
                 foreach (object obj in catalogParts) {
                     if (obj == null) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "catalogParts");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "catalogParts");
                     }
                     if (!(obj is CatalogPart)) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "CatalogPart"), "catalogParts");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "CatalogPart"), "catalogParts");
                     }
                     InnerList.Add(obj);
                 }

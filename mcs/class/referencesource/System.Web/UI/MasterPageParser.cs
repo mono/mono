@@ -21,6 +21,7 @@ namespace System.Web.UI {
     using System.Globalization;
     using System.Web;
     using System.Web.Util;
+    
 
     /*
      * Parser for MasterPage
@@ -64,9 +65,9 @@ namespace System.Web.UI {
 
         internal override void ProcessDirective(string directiveName, IDictionary directive) {
 
-            if (StringUtil.EqualsIgnoreCase(directiveName, "masterType")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "masterType")) {
                 if (_masterPageType != null) {
-                    ProcessError(SR.GetString(SR.Only_one_directive_allowed, directiveName));
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.Only_one_directive_allowed, directiveName));
                     return;
                 }
 
@@ -74,8 +75,8 @@ namespace System.Web.UI {
                 Util.CheckAssignableType(typeof(MasterPage), _masterPageType);
             }
             // outputcaching is not allowed on masterpages.
-            else if (StringUtil.EqualsIgnoreCase(directiveName, "outputcache")) {
-                ProcessError(SR.GetString(SR.Directive_not_allowed, directiveName));
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "outputcache")) {
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Directive_not_allowed, directiveName));
                 return;
             }
             else {
@@ -104,7 +105,7 @@ namespace System.Web.UI {
                 // outputcaching is not allowed on masterpages.
                 case "outputcaching" : 
 
-                    ProcessError(SR.GetString(SR.Attr_not_supported_in_directive,
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.Attr_not_supported_in_directive,
                             name, DefaultDirectiveName));
 
                     // Return false to let the generic attribute processing continue

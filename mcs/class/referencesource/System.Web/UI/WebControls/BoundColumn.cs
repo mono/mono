@@ -13,6 +13,7 @@ namespace System.Web.UI.WebControls {
     using System.Web;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     /// <devdoc>
     /// <para>Creates a column bounded to a data field in a <see cref='System.Web.UI.WebControls.DataGrid'/>.</para>
@@ -45,7 +46,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Data"),
             DefaultValue(""),
-            WebSysDescription(SR.BoundColumn_DataField)
+            WebSysDescription(System.Web.SR.BoundColumn_DataField)
         ]
         public virtual string DataField {
             get {
@@ -68,7 +69,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(""),
-            WebSysDescription(SR.BoundColumn_DataFormatString)
+            WebSysDescription(System.Web.SR.BoundColumn_DataFormatString)
         ]
         public virtual string DataFormatString {
             get {
@@ -91,7 +92,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(false),
-            WebSysDescription(SR.BoundColumn_ReadOnly)
+            WebSysDescription(System.Web.SR.BoundColumn_ReadOnly)
         ]
         public virtual bool ReadOnly {
             get {
@@ -190,7 +191,7 @@ namespace System.Web.UI.WebControls {
         /// <devdoc>
         /// </devdoc>
         private void OnDataBindColumn(object sender, EventArgs e) {
-            Debug.Assert(DataField.Length != 0, "Shouldn't be DataBinding without a DataField");
+            System.Web.Util.Debug.Assert(DataField.Length != 0, "Shouldn't be DataBinding without a DataField");
 
             Control boundControl = (Control)sender;
             DataGridItem item = (DataGridItem)boundControl.NamingContainer;
@@ -200,7 +201,7 @@ namespace System.Web.UI.WebControls {
                 if (!boundField.Equals(thisExpr)) {
                     boundFieldDesc = TypeDescriptor.GetProperties(dataItem).Find(boundField, true);
                     if ((boundFieldDesc == null) && !DesignMode) {
-                        throw new HttpException(SR.GetString(SR.Field_Not_Found, boundField));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, boundField));
                     }
                 }
                 boundFieldDescValid = true;
@@ -210,7 +211,7 @@ namespace System.Web.UI.WebControls {
             string dataValue;
 
             if ((boundFieldDesc == null) && DesignMode) {
-                dataValue = SR.GetString(SR.Sample_Databound_Text);
+                dataValue = System.Web.SR.GetString(System.Web.SR.Sample_Databound_Text);
             }
             else {
                 if (boundFieldDesc != null) {
@@ -226,7 +227,7 @@ namespace System.Web.UI.WebControls {
                 ((TableCell)boundControl).Text = dataValue;
             }
             else {
-                Debug.Assert(boundControl is TextBox, "Expected the bound control to be a TextBox");
+                System.Web.Util.Debug.Assert(boundControl is TextBox, "Expected the bound control to be a TextBox");
                 ((TextBox)boundControl).Text = dataValue;
             }
         }

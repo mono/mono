@@ -160,7 +160,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				base.AddAttributesToRender (writer);
 			}
 
-			protected internal override void PerformDataBinding (IEnumerable dataSource)
+			protected override void PerformDataBinding (IEnumerable dataSource)
 			{
 				base.PerformDataBinding (Databound());
 			}

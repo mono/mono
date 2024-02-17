@@ -291,7 +291,7 @@ namespace Microsoft.Build.Utilities
 
 		public static IList<string> GetSupportedTargetFrameworks()
 		{
-			throw new NotImplementedException();
+			return new List<string>();
 		}
 	}
 }

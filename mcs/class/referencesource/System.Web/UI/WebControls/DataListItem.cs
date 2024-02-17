@@ -148,7 +148,7 @@ namespace System.Web.UI.WebControls {
                 else if (hasControls) {
                     // there was a template, since there were controls but
                     // none of them was a table... so throw an exception here
-                    throw new HttpException(SR.GetString(SR.DataList_TemplateTableNotFound,
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataList_TemplateTableNotFound,
                                                                          Parent.ID, itemType.ToString()));
                 }
             }

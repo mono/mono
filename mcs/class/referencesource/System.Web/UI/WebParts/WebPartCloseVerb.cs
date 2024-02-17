@@ -16,7 +16,7 @@ namespace System.Web.UI.WebControls.WebParts {
         private string DefaultDescription {
             get {
                 if (_defaultDescription == null) {
-                    _defaultDescription = SR.GetString(SR.WebPartCloseVerb_Description);
+                    _defaultDescription = System.Web.SR.GetString(System.Web.SR.WebPartCloseVerb_Description);
                 }
                 return _defaultDescription;
             }
@@ -25,7 +25,7 @@ namespace System.Web.UI.WebControls.WebParts {
         private string DefaultText {
             get {
                 if (_defaultText == null) {
-                    _defaultText = SR.GetString(SR.WebPartCloseVerb_Text);
+                    _defaultText = System.Web.SR.GetString(System.Web.SR.WebPartCloseVerb_Text);
                 }
                 return _defaultText;
             }
@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls.WebParts {
         // Properties must look at viewstate directly instead of the property in the base class,
         // so we can distinguish between an unset property and a property set to String.Empty.
         [
-        WebSysDefaultValue(SR.WebPartCloseVerb_Description)
+        WebSysDefaultValue(System.Web.SR.WebPartCloseVerb_Description)
         ]
         public override string Description {
             get {
@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.WebPartCloseVerb_Text)
+        WebSysDefaultValue(System.Web.SR.WebPartCloseVerb_Text)
         ]
         public override string Text {
             get {

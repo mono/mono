@@ -16,6 +16,7 @@ namespace System.Web.UI {
     using System.Reflection;
     using System.Web.Util;
     using System.ComponentModel;
+    
 
     internal sealed class PropertyMapper {
         private const char PERSIST_CHAR = '-';
@@ -91,7 +92,7 @@ namespace System.Web.UI {
 
                 // Throw if the type of not CLS-compliant (ASURT 83438)
                 if (!IsTypeCLSCompliant(currentType)) {
-                    throw new HttpException(SR.GetString(SR.Property_Not_ClsCompliant, name, ctrlType.FullName, currentType.FullName));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Property_Not_ClsCompliant, name, ctrlType.FullName, currentType.FullName));
                 }
 
                 if (propName != null) {

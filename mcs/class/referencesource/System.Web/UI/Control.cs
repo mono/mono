@@ -28,6 +28,7 @@ namespace System.Web.UI {
     using System.Web.UI.WebControls;
     using System.Web.Util;
     using HttpException = System.Web.HttpException;
+    
 
     // Delegate used for the compiled template
     public delegate void RenderMethod(HtmlTextWriter output, Control container);
@@ -39,9 +40,9 @@ namespace System.Web.UI {
     [
     Bindable(true),
     DefaultProperty("ID"),
-    DesignerCategory("Code"),
-    Designer("System.Web.UI.Design.ControlDesigner, " + AssemblyRef.SystemDesign),
-    DesignerSerializer("Microsoft.VisualStudio.Web.WebForms.ControlCodeDomSerializer, " + AssemblyRef.MicrosoftVisualStudioWeb,  "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + AssemblyRef.SystemDesign),
+    //DesignerCategory("Code"),
+    //Designer("System.Web.UI.Design.ControlDesigner, " + AssemblyRef.SystemDesign),
+    //DesignerSerializer("Microsoft.VisualStudio.Web.WebForms.ControlCodeDomSerializer, " + AssemblyRef.MicrosoftVisualStudioWeb,  "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + AssemblyRef.SystemDesign),
     Themeable(false),
     ToolboxItemFilter("System.Web.UI", ToolboxItemFilterType.Require),
     ToolboxItemAttribute("System.Web.UI.Design.WebControlToolboxItem, " + AssemblyRef.SystemDesign)
@@ -165,7 +166,7 @@ namespace System.Web.UI {
         DefaultValue(ClientIDMode.Inherit),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_ClientIDMode)
+        WebSysDescription(System.Web.SR.Control_ClientIDMode)
         ]
         public virtual ClientIDMode ClientIDMode {
             get {
@@ -346,7 +347,7 @@ namespace System.Web.UI {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_ClientID)
+        WebSysDescription(System.Web.SR.Control_ClientID)
         ]
         public virtual string ClientID {
             // This property is required to render a unique client-friendly id.
@@ -371,7 +372,7 @@ namespace System.Web.UI {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         [
-        WebSysDescription(SR.Control_OnDisposed)
+        WebSysDescription(System.Web.SR.Control_OnDisposed)
         ]
         public event EventHandler Disposed {
             add {
@@ -529,7 +530,7 @@ namespace System.Web.UI {
         MergableProperty(false),
         Filterable(false),
         Themeable(false),
-        WebSysDescription(SR.Control_ID)
+        WebSysDescription(System.Web.SR.Control_ID)
         ]
         public virtual string ID {
             get {
@@ -570,7 +571,7 @@ namespace System.Web.UI {
         DefaultValue(true),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_EnableTheming)
+        WebSysDescription(System.Web.SR.Control_EnableTheming)
         ]
         public virtual bool EnableTheming {
             get {
@@ -586,7 +587,7 @@ namespace System.Web.UI {
             }
             set {
                 if ((_controlState >= ControlState.FrameworkInitialized) && !DesignMode) {
-                    throw new InvalidOperationException(SR.GetString(SR.PropertySetBeforePreInitOrAddToControls, "EnableTheming"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetBeforePreInitOrAddToControls, "EnableTheming"));
                 }
 
                 if(!value) {
@@ -626,7 +627,7 @@ namespace System.Web.UI {
         DefaultValue(""),
         Filterable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_SkinId),
+        WebSysDescription(System.Web.SR.Control_SkinId),
         ]
         public virtual string SkinID {
             get {
@@ -638,11 +639,11 @@ namespace System.Web.UI {
             set {
                 if (!DesignMode) {
                     if (flags[styleSheetApplied]) {
-                        throw new InvalidOperationException(SR.GetString(SR.PropertySetBeforeStyleSheetApplied, "SkinId"));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetBeforeStyleSheetApplied, "SkinId"));
                     }
 
                     if (_controlState >= ControlState.FrameworkInitialized) {
-                        throw new InvalidOperationException(SR.GetString(SR.PropertySetBeforePreInitOrAddToControls, "SkinId"));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetBeforePreInitOrAddToControls, "SkinId"));
                     }
                 }
 
@@ -691,7 +692,7 @@ namespace System.Web.UI {
         DefaultValue(EnableViewStateDefault),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_MaintainState)
+        WebSysDescription(System.Web.SR.Control_MaintainState)
         ]
         public virtual bool EnableViewState {
             get {
@@ -706,7 +707,7 @@ namespace System.Web.UI {
         DefaultValue(ViewStateMode.Inherit),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_ViewStateMode)
+        WebSysDescription(System.Web.SR.Control_ViewStateMode)
         ]
         public virtual ViewStateMode ViewStateMode {
             get {
@@ -772,7 +773,7 @@ namespace System.Web.UI {
         Bindable(false),
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_NamingContainer)
+        WebSysDescription(System.Web.SR.Control_NamingContainer)
         ]
         public virtual Control NamingContainer {
             get {
@@ -887,7 +888,7 @@ namespace System.Web.UI {
         Bindable(false),
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_Page)
+        WebSysDescription(System.Web.SR.Control_Page)
         ]
         public virtual Page Page {
             get {
@@ -905,8 +906,8 @@ namespace System.Web.UI {
                 }
                 // This is necessary because we need to set the page in generated
                 // code before controls are added to the tree (ASURT 75330)
-                Debug.Assert(_page == null);
-                Debug.Assert(Parent == null || Parent.Page == null);
+                System.Web.Util.Debug.Assert(_page == null);
+                System.Web.Util.Debug.Assert(Parent == null || Parent.Page == null);
                 _page = value;
             }
         }
@@ -967,7 +968,7 @@ namespace System.Web.UI {
             else {
                 xhtmlConformanceSection = RuntimeConfig.GetConfig().XhtmlConformance;
             }
-            Debug.Assert(xhtmlConformanceSection != null);
+            System.Web.Util.Debug.Assert(xhtmlConformanceSection != null);
             return xhtmlConformanceSection;
         }
 
@@ -1065,7 +1066,7 @@ namespace System.Web.UI {
         Bindable(false),
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_TemplateControl)
+        WebSysDescription(System.Web.SR.Control_TemplateControl)
         ]
         public TemplateControl TemplateControl {
             get {
@@ -1108,7 +1109,7 @@ namespace System.Web.UI {
         Bindable(false),
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_Parent)
+        WebSysDescription(System.Web.SR.Control_Parent)
         ]
         public virtual Control Parent {
             get {
@@ -1135,7 +1136,7 @@ namespace System.Web.UI {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_TemplateSourceDirectory)
+        WebSysDescription(System.Web.SR.Control_TemplateSourceDirectory)
         ]
         public virtual string TemplateSourceDirectory {
             get {
@@ -1155,7 +1156,7 @@ namespace System.Web.UI {
         Browsable(false),
         EditorBrowsable(EditorBrowsableState.Advanced),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_TemplateSourceDirectory)
+        WebSysDescription(System.Web.SR.Control_TemplateSourceDirectory)
         ]
         public string AppRelativeTemplateSourceDirectory {
             get {
@@ -1225,7 +1226,7 @@ namespace System.Web.UI {
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         EditorBrowsable(EditorBrowsableState.Advanced),
-        WebSysDescription(SR.Control_Site)
+        WebSysDescription(System.Web.SR.Control_Site)
         ]
         public ISite Site {
             get {
@@ -1240,7 +1241,7 @@ namespace System.Web.UI {
             }
             set {
                 if (OwnerControl != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.Substitution_SiteNotAllowed));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Substitution_SiteNotAllowed));
                 }
 
                 RareFieldsEnsured.Site = value;
@@ -1259,7 +1260,7 @@ namespace System.Web.UI {
         Bindable(true),
         DefaultValue(true),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_Visible)
+        WebSysDescription(System.Web.SR.Control_Visible)
         ]
         public virtual bool Visible {
             get {
@@ -1316,7 +1317,7 @@ namespace System.Web.UI {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_UniqueID)
+        WebSysDescription(System.Web.SR.Control_UniqueID)
         ]
         public virtual string UniqueID {
             get {
@@ -1363,7 +1364,7 @@ namespace System.Web.UI {
             }
 
             if (!IsDescendentOf(control.NamingContainer)) {
-                throw new InvalidOperationException(SR.GetString(SR.Control_NotADescendentOfNamingContainer, control.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Control_NotADescendentOfNamingContainer, control.ID));
             }
 
             if (control.NamingContainer == Page) {
@@ -1378,7 +1379,7 @@ namespace System.Web.UI {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.Control_OnDataBind)
+        WebSysDescription(System.Web.SR.Control_OnDataBind)
         ]
         public event EventHandler DataBinding {
             add {
@@ -1396,7 +1397,7 @@ namespace System.Web.UI {
         ///       instantiation.</para>
         /// </devdoc>
         [
-        WebSysDescription(SR.Control_OnInit)
+        WebSysDescription(System.Web.SR.Control_OnInit)
         ]
         public event EventHandler Init {
             add {
@@ -1413,7 +1414,7 @@ namespace System.Web.UI {
         ///    need to occur on each page request.</para>
         /// </devdoc>
         [
-        WebSysDescription(SR.Control_OnLoad)
+        WebSysDescription(System.Web.SR.Control_OnLoad)
         ]
         public event EventHandler Load {
             add {
@@ -1431,7 +1432,7 @@ namespace System.Web.UI {
         ///       rendering content to the <see cref='System.Web.UI.Page'/> object.</para>
         /// </devdoc>
         [
-        WebSysDescription(SR.Control_OnPreRender)
+        WebSysDescription(System.Web.SR.Control_OnPreRender)
         ]
         public event EventHandler PreRender {
             add {
@@ -1448,7 +1449,7 @@ namespace System.Web.UI {
         ///       final cleanup before this instance of it is </para>
         /// </devdoc>
         [
-        WebSysDescription(SR.Control_OnUnload)
+        WebSysDescription(System.Web.SR.Control_OnUnload)
         ]
         public event EventHandler Unload {
             add {
@@ -1473,7 +1474,7 @@ namespace System.Web.UI {
 
             // Only apply stylesheet if not already applied.
             if (flags[styleSheetApplied]) {
-                throw new InvalidOperationException(SR.GetString(SR.StyleSheetAreadyAppliedOnControl));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.StyleSheetAreadyAppliedOnControl));
             }
 
             if (page.ApplyControlStyleSheet(this)) {
@@ -1564,7 +1565,7 @@ namespace System.Web.UI {
         /// </devdoc>
         protected virtual void DataBindChildren() {
             if (HasControls()) {
-                string oldmsg = _controls.SetCollectionReadOnly(SR.Parent_collections_readonly);
+                string oldmsg = _controls.SetCollectionReadOnly(System.Web.SR.Parent_collections_readonly);
 
                 try {
                     try {
@@ -1642,8 +1643,8 @@ namespace System.Web.UI {
         }
 
         private void GenerateAutomaticID() {
-            Debug.Assert(_namingContainer != null);
-            Debug.Assert(_id == null);
+            System.Web.Util.Debug.Assert(_namingContainer != null);
+            System.Web.Util.Debug.Assert(_id == null);
 
             // Remember that a generated ID is used for this control.
             flags.Set(useGeneratedID);
@@ -1705,7 +1706,7 @@ namespace System.Web.UI {
                 if (flags[isNamingContainer]) {
                     namingContainer = this;
                 }
-                string oldmsg = _controls.SetCollectionReadOnly(SR.Parent_collections_readonly);
+                string oldmsg = _controls.SetCollectionReadOnly(System.Web.SR.Parent_collections_readonly);
 
                 int controlCount = _controls.Count;
                 for (int i = 0; i < controlCount; i++) {
@@ -1762,7 +1763,7 @@ namespace System.Web.UI {
                 if (flags[isNamingContainer]) {
                     namingContainer = this;
                 }
-                string oldmsg = _controls.SetCollectionReadOnly(SR.Parent_collections_readonly);
+                string oldmsg = _controls.SetCollectionReadOnly(System.Web.SR.Parent_collections_readonly);
 
                 int controlCount = _controls.Count;
                 for (int i = 0; i < controlCount; i++) {
@@ -1826,7 +1827,7 @@ namespace System.Web.UI {
                     // Top-level UserControls do not have a page or a naming container in the designer
                     // hence the special casing.
 
-                    Debug.Assert((_namingContainer != null) || (this is Page) || (this is UserControl));
+                    System.Web.Util.Debug.Assert((_namingContainer != null) || (this is Page) || (this is UserControl));
 
                     // 
 
@@ -1835,9 +1836,9 @@ namespace System.Web.UI {
                 }
                 else {
                     if (!(this is Page)) {
-                        Debug.Assert(_namingContainer != null);
+                        System.Web.Util.Debug.Assert(_namingContainer != null);
                     }
-                    Debug.Assert(Page != null);
+                    System.Web.Util.Debug.Assert(Page != null);
                 }
             }
             // If naming container is set and the name table exists, the ID should exist in it.
@@ -1846,7 +1847,7 @@ namespace System.Web.UI {
                _namingContainer._occasionalFields != null &&
                _namingContainer._occasionalFields.NamedControls != null &&
                _id != null) {
-                Debug.Assert(_namingContainer._occasionalFields.NamedControls.Contains(_id));
+                System.Web.Util.Debug.Assert(_namingContainer._occasionalFields.NamedControls.Contains(_id));
             }
         }
 
@@ -2021,7 +2022,7 @@ namespace System.Web.UI {
                     childState = (ArrayList)allSavedState.Second;
                 }
                 else {
-                    Debug.Assert(savedState is Triplet);
+                    System.Web.Util.Debug.Assert(savedState is Triplet);
                     Triplet t = (Triplet)savedState;
 
                     controlState = t.First;
@@ -2049,11 +2050,11 @@ namespace System.Web.UI {
                 }
                 catch (InvalidCastException) {
                     // catch all viewstate loading problems with casts.  They are most likely changed control trees.
-                    throw new HttpException(SR.GetString(SR.Controls_Cant_Change_Between_Posts));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Controls_Cant_Change_Between_Posts));
                 }
                 catch (IndexOutOfRangeException) {
                     // catch all viewstate loading problems with indeces.  They are most likely changed control trees.
-                    throw new HttpException(SR.GetString(SR.Controls_Cant_Change_Between_Posts));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Controls_Cant_Change_Between_Posts));
                 }
             }
 
@@ -2139,7 +2140,7 @@ namespace System.Web.UI {
         /// </devdoc>
         protected internal string MapPathSecure(string virtualPath) {
             if (String.IsNullOrEmpty(virtualPath)) {
-                throw new ArgumentNullException("virtualPath", SR.GetString(SR.VirtualPath_Length_Zero));
+                throw new ArgumentNullException("virtualPath", System.Web.SR.GetString(System.Web.SR.VirtualPath_Length_Zero));
             }
 
             string physicalPath;
@@ -2176,7 +2177,7 @@ namespace System.Web.UI {
             // Need to Trim it since MapPath no longer allows trailing space (VSWhidbey 441210)
             path = path.Trim();
 
-            if (UrlPath.IsAbsolutePhysicalPath(path)) {
+            if (System.Web.Util.UrlPath.IsAbsolutePhysicalPath(path)) {
                 // Absolute physical path
                 physicalPath = path;
             }
@@ -2208,7 +2209,7 @@ namespace System.Web.UI {
         internal Stream OpenFileAndGetDependency(VirtualPath virtualPath, string physicalPath, out CacheDependency dependency) {
 
             // Only one of the paths should be non-null
-            Debug.Assert((virtualPath == null) != (physicalPath == null));
+            System.Web.Util.Debug.Assert((virtualPath == null) != (physicalPath == null));
 
             // If we got a virtual path, and we're using the default VPP, call MapPath
             if (physicalPath == null && HostingEnvironment.UsingMapPathBasedVirtualPathProvider) {
@@ -2262,7 +2263,7 @@ namespace System.Web.UI {
 
             // Call Load on all our children
             if (_controls != null) {
-                string oldmsg = _controls.SetCollectionReadOnly(SR.Parent_collections_readonly);
+                string oldmsg = _controls.SetCollectionReadOnly(System.Web.SR.Parent_collections_readonly);
 
                 int controlCount = _controls.Count;
                 for (int i = 0; i < controlCount; i++) {
@@ -2293,7 +2294,7 @@ namespace System.Web.UI {
 
             // Call Load on all our children
             if (_controls != null) {
-                string oldmsg = _controls.SetCollectionReadOnly(SR.Parent_collections_readonly);
+                string oldmsg = _controls.SetCollectionReadOnly(System.Web.SR.Parent_collections_readonly);
 
                 int controlCount = _controls.Count;
                 for (int i = 0; i < controlCount; i++) {
@@ -2339,7 +2340,7 @@ namespace System.Web.UI {
                 }
 
                 if (_controls != null) {
-                    string oldmsg = _controls.SetCollectionReadOnly(SR.Parent_collections_readonly);
+                    string oldmsg = _controls.SetCollectionReadOnly(System.Web.SR.Parent_collections_readonly);
 
                     int controlCount = _controls.Count;
                     for (int i=0; i < controlCount; i++) {
@@ -2382,7 +2383,7 @@ namespace System.Web.UI {
                 }
 
                 if (_controls != null) {
-                    string oldmsg = _controls.SetCollectionReadOnly(SR.Parent_collections_readonly);
+                    string oldmsg = _controls.SetCollectionReadOnly(System.Web.SR.Parent_collections_readonly);
 
                     int controlCount = _controls.Count;
                     for (int i = 0; i < controlCount; i++) {
@@ -2695,7 +2696,7 @@ namespace System.Web.UI {
             }
 
             if (_controls != null) {
-                string oldmsg = _controls.SetCollectionReadOnly(SR.Parent_collections_readonly);
+                string oldmsg = _controls.SetCollectionReadOnly(System.Web.SR.Parent_collections_readonly);
 
                 int controlCount = _controls.Count;
                 for (int i = 0; i < controlCount; i++)
@@ -2760,7 +2761,7 @@ namespace System.Web.UI {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_Controls)
+        WebSysDescription(System.Web.SR.Control_Controls)
         ]
         public virtual ControlCollection Controls {
             get {
@@ -2773,7 +2774,7 @@ namespace System.Web.UI {
 
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_ValidateRequestMode),
+        WebSysDescription(System.Web.SR.Control_ValidateRequestMode),
         DefaultValue(ValidateRequestMode.Inherit)
         ]
         public virtual ValidateRequestMode ValidateRequestMode {
@@ -2822,7 +2823,7 @@ namespace System.Web.UI {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Control_State)
+        WebSysDescription(System.Web.SR.Control_State)
         ]
         protected virtual StateBag ViewState {
             get {
@@ -2857,7 +2858,7 @@ namespace System.Web.UI {
         /// </devdoc>
         protected internal virtual void AddedControl(Control control, int index) {
             if (control.OwnerControl != null) {
-                throw new InvalidOperationException(SR.GetString(SR.Substitution_NotAllowed));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Substitution_NotAllowed));
             }
 
             if (control._parent != null) {
@@ -2893,7 +2894,7 @@ namespace System.Web.UI {
              */
             if (_controlState >= ControlState.ChildrenInitialized) {
 
-                Debug.Assert(namingContainer != null);
+                System.Web.Util.Debug.Assert(namingContainer != null);
                 control.InitRecursive(namingContainer);
 
                 // VSWhidbey 396372: We need to reregister the control state if the control is reparented because the control
@@ -2989,7 +2990,7 @@ namespace System.Web.UI {
             }
 
             // check if its empty or already absolute
-            if ((relativeUrl.Length == 0) || (UrlPath.IsRelativeUrl(relativeUrl) == false)) {
+            if ((relativeUrl.Length == 0) || (System.Web.Util.UrlPath.IsRelativeUrl(relativeUrl) == false)) {
                 return relativeUrl;
             }
 
@@ -2999,7 +3000,7 @@ namespace System.Web.UI {
             }
 
             // first make it absolute
-            string url = UrlPath.Combine(baseUrl, relativeUrl);
+            string url = System.Web.Util.UrlPath.Combine(baseUrl, relativeUrl);
 
             // include the session cookie if available (ASURT 47658)
             // As a side effect, this will change an app relative path (~/...) to app absolute
@@ -3034,53 +3035,53 @@ namespace System.Web.UI {
 
             // If the path is app relative (~/...), we cannot take shortcuts, since
             // the ~ is meaningless on the client, and must be resolved
-            if (!UrlPath.IsAppRelativePath(relativeUrl)) {
+            if (!System.Web.Util.UrlPath.IsAppRelativePath(relativeUrl)) {
 
                 // If the template source directory is the same as the directory of the request,
                 // we don't need to do any adjustments to the input path
-                if (StringUtil.EqualsIgnoreCase(baseRequestDir, tplSourceDir))
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(baseRequestDir, tplSourceDir))
                     return relativeUrl;
 
                 // check if it's empty or absolute
-                if ((relativeUrl.Length == 0) || (!UrlPath.IsRelativeUrl(relativeUrl))) {
+                if ((relativeUrl.Length == 0) || (!System.Web.Util.UrlPath.IsRelativeUrl(relativeUrl))) {
                     return relativeUrl;
                 }
             }
 
             // first make it absolute
-            string url = UrlPath.Combine(tplSourceDir, relativeUrl);
+            string url = System.Web.Util.UrlPath.Combine(tplSourceDir, relativeUrl);
 
             // Make sure the path ends with a slash before calling MakeRelative
-            baseRequestDir = UrlPath.AppendSlashToPathIfNeeded(baseRequestDir);
+            baseRequestDir = System.Web.Util.UrlPath.AppendSlashToPathIfNeeded(baseRequestDir);
 
             // Now, make it relative to the current request, so that the client will
             // compute the correct path
-            url = HttpUtility.UrlPathEncode(UrlPath.MakeRelative(baseRequestDir, url));
-            Debug.Trace("ClientUrl", "*** ResolveClientUrl (" + relativeUrl + ") --> " + url + " ***");
+            url = HttpUtility.UrlPathEncode(System.Web.Util.UrlPath.MakeRelative(baseRequestDir, url));
+            System.Web.Util.Debug.Trace("ClientUrl", "*** ResolveClientUrl (" + relativeUrl + ") --> " + url + " ***");
             return url;
         }
 
         internal void DirtyNameTable() {
-            Debug.Assert(this is INamingContainer);
+            System.Web.Util.Debug.Assert(this is INamingContainer);
             if(_occasionalFields != null) {
                 _occasionalFields.NamedControls = null;
             }
         }
 
         private void EnsureNamedControlsTable() {
-            Debug.Assert(this is INamingContainer);
-            Debug.Assert(HasControls());
-            Debug.Assert(_occasionalFields != null);
-            Debug.Assert(_occasionalFields.NamedControls == null);
+            System.Web.Util.Debug.Assert(this is INamingContainer);
+            System.Web.Util.Debug.Assert(HasControls());
+            System.Web.Util.Debug.Assert(_occasionalFields != null);
+            System.Web.Util.Debug.Assert(_occasionalFields.NamedControls == null);
 
             _occasionalFields.NamedControls = new HybridDictionary(/*initialSize*/ _occasionalFields.NamedControlsID, /*caseInsensitive*/ true);
             FillNamedControlsTable(this, _controls);
         }
 
         private void FillNamedControlsTable(Control namingContainer, ControlCollection controls) {
-            Debug.Assert(namingContainer._occasionalFields != null);
-            Debug.Assert(namingContainer._occasionalFields.NamedControls != null);
-            Debug.Assert((controls != null) && (controls.Count != 0));
+            System.Web.Util.Debug.Assert(namingContainer._occasionalFields != null);
+            System.Web.Util.Debug.Assert(namingContainer._occasionalFields.NamedControls != null);
+            System.Web.Util.Debug.Assert((controls != null) && (controls.Count != 0));
 
             int controlCount = controls.Count;
             for (int i=0; i < controlCount; i++) {
@@ -3088,7 +3089,7 @@ namespace System.Web.UI {
                 if (control._id != null) {
 #if DEBUG
                     if (control._namingContainer != null) {
-                        Debug.Assert(control._namingContainer == namingContainer);
+                        System.Web.Util.Debug.Assert(control._namingContainer == namingContainer);
                     }
 #endif // DEBUG
                     try {
@@ -3096,7 +3097,7 @@ namespace System.Web.UI {
                         namingContainer._occasionalFields.NamedControls.Add(control._id, control);
                     }
                     catch {
-                        throw new HttpException(SR.GetString(SR.Duplicate_id_used, control._id, "FindControl"));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Duplicate_id_used, control._id, "FindControl"));
                     }
                 }
                 if (control.HasControls() && (control.flags[isNamingContainer] == false)) {
@@ -3193,7 +3194,7 @@ namespace System.Web.UI {
          * Called when the controls of a naming container are cleared.
          */
         internal void ClearNamingContainer() {
-            Debug.Assert(this is INamingContainer);
+            System.Web.Util.Debug.Assert(this is INamingContainer);
 
             EnsureOccasionalFields();
             _occasionalFields.NamedControlsID = 0;
@@ -3327,7 +3328,7 @@ namespace System.Web.UI {
         /// </devdoc>
         protected internal virtual void RemovedControl(Control control) {
             if (control.OwnerControl != null) {
-                throw new InvalidOperationException(SR.GetString(SR.Substitution_NotAllowed));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Substitution_NotAllowed));
             }
 
             if ((_namingContainer != null) && (control._id != null)) {
@@ -3382,7 +3383,7 @@ namespace System.Web.UI {
             RareFieldsEnsured.RenderMethod = renderMethod;
 
             // Make the collection readonly if there are code blocks (ASURT 78810)
-            Controls.SetCollectionReadOnly(SR.Collection_readonly_Codeblocks);
+            Controls.SetCollectionReadOnly(System.Web.SR.Collection_readonly_Codeblocks);
         }
 
 
@@ -3536,7 +3537,7 @@ namespace System.Web.UI {
 
         void IControlDesignerAccessor.SetOwnerControl(Control owner) {
             if (owner == this) {
-                throw new ArgumentException(SR.GetString(SR.Control_CannotOwnSelf), "owner");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Control_CannotOwnSelf), "owner");
             }
             OwnerControl = owner;
             _parent = owner.Parent;

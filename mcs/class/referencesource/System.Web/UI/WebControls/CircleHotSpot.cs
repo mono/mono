@@ -9,6 +9,7 @@ namespace System.Web.UI.WebControls {
     using System.ComponentModel;
     using System.Globalization;
     using System.Web.UI;
+    
 
     /// <devdoc>
     /// <para>Implements HotSpot for Circular regions.</para>
@@ -28,7 +29,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(0),
         WebCategory("Appearance"),
-        WebSysDescription(SR.CircleHotSpot_Radius),
+        WebSysDescription(System.Web.SR.CircleHotSpot_Radius),
         ]
         public int Radius {
             get {
@@ -47,7 +48,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(0),
         WebCategory("Appearance"),
-        WebSysDescription(SR.CircleHotSpot_X),
+        WebSysDescription(System.Web.SR.CircleHotSpot_X),
         ]
         public int X {
             get {
@@ -63,7 +64,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(0),
         WebCategory("Appearance"),
-        WebSysDescription(SR.CircleHotSpot_Y),
+        WebSysDescription(System.Web.SR.CircleHotSpot_Y),
         ]
         public int Y {
             get {

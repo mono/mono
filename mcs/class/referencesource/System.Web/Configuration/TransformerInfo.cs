@@ -69,7 +69,7 @@ namespace System.Web.Configuration {
         }
 
         /// <internalonly />
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -93,8 +93,8 @@ namespace System.Web.Configuration {
             }
 
             TransformerInfo ti = o as TransformerInfo;
-            return StringUtil.Equals(Name, ti.Name) &&
-                   StringUtil.Equals(Type, ti.Type);
+            return System.Web.Util.StringUtil.Equals(Name, ti.Name) &&
+                   System.Web.Util.StringUtil.Equals(Type, ti.Type);
         }
 
         /// <internalonly />

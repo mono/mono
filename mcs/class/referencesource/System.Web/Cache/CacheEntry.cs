@@ -20,6 +20,7 @@ namespace System.Web.Caching {
     using System.Web.Management;
     using System.Web.Hosting;
     using System.Globalization;
+    
 
     internal class CacheKey {
         protected const byte BitPublic = 0x20;
@@ -44,7 +45,7 @@ namespace System.Web.Caching {
 
 #if DBG
             if (!isPublic) {
-                Debug.Assert(CacheInternal.PrefixFIRST[0] <= key[0] && key[0] <= CacheInternal.PrefixLAST[0],
+                System.Web.Util.Debug.Assert(CacheInternal.PrefixFIRST[0] <= key[0] && key[0] <= CacheInternal.PrefixLAST[0],
                              "CacheInternal.PrefixFIRST[0] <= key[0] && key[0] <= CacheInternal.PrefixLAST[0], key=" + key);
             }
 #endif
@@ -146,7 +147,7 @@ namespace System.Web.Caching {
             }
 
             if (utcAbsoluteExpiration != Cache.NoAbsoluteExpiration && slidingExpiration != Cache.NoSlidingExpiration) {
-                throw new ArgumentException(SR.GetString(SR.Invalid_expiration_combination));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_expiration_combination));
             }
 
             if (priority < CacheItemPriorityMin || CacheItemPriorityMax < priority) {
@@ -252,7 +253,7 @@ namespace System.Web.Caching {
             if (dependency != null && State == EntryState.AddedToCache) {
                 if (!dependency.TakeOwnership()) {
                     throw new InvalidOperationException(
-                            SR.GetString(SR.Cache_dependency_used_more_that_once));
+                            System.Web.SR.GetString(System.Web.SR.Cache_dependency_used_more_that_once));
                 }
 
                 dependency.SetCacheDependencyChanged((Object sender, EventArgs args) => {
@@ -279,9 +280,13 @@ namespace System.Web.Caching {
                 try {
                     // for public need to impersonate if called outside of request context
                     if (HttpContext.Current == null) {
+#if (MONO || FEATURE_PAL)
+                        callback(_key, _value, reason);
+#else
                         using (new ApplicationImpersonationContext()) {
                             callback(_key, _value, reason);
                         }
+#endif
                     }
                     else {
                         callback(_key, _value, reason);
@@ -301,9 +306,13 @@ namespace System.Web.Caching {
             else {
                 // for private items just make the call and eat any exceptions
                 try {
+#if (MONO || FEATURE_PAL)
+                    callback(_key, _value, reason);
+#else
                     using (new ApplicationImpersonationContext()) {
                         callback(_key, _value, reason);
                     }
+#endif
                 }
                 catch {
                 }
@@ -316,7 +325,7 @@ namespace System.Web.Caching {
          * @param reason The reason the item is removed.
          */
         internal void Close(CacheItemRemovedReason reason) {
-            Debug.Assert(State == EntryState.RemovedFromCache, "State == EntryState.RemovedFromCache");
+            System.Web.Util.Debug.Assert(State == EntryState.RemovedFromCache, "State == EntryState.RemovedFromCache");
             State = EntryState.Closed;
 
             object      onRemovedTargets = null;
@@ -364,8 +373,8 @@ namespace System.Web.Caching {
 
             sb.Append(indent + "CacheItem");
             sb.Append(nlindent); sb.Append("_key=");        sb.Append(_key);
-            sb.Append(nlindent); sb.Append("_value=");      sb.Append(Debug.GetDescription(_value, indent));
-            sb.Append(nlindent); sb.Append("_utcExpires="); sb.Append(Debug.FormatUtcDate(_utcExpires));
+            sb.Append(nlindent); sb.Append("_value=");      sb.Append(System.Web.Util.Debug.GetDescription(_value, indent));
+            sb.Append(nlindent); sb.Append("_utcExpires="); sb.Append(System.Web.Util.Debug.FormatUtcDate(_utcExpires));
             sb.Append(nlindent); sb.Append("_bits=0x");     sb.Append(((int)_bits).ToString("x", CultureInfo.InvariantCulture));
             sb.Append("\n");
 

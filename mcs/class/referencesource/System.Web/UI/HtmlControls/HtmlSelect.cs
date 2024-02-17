@@ -19,12 +19,13 @@ namespace System.Web.UI.HtmlControls {
     using System.Globalization;
     using Debug=System.Web.Util.Debug;
     using System.Security.Permissions;
+    
 
     public class HtmlSelectBuilder : ControlBuilder {
 
 
         public override Type GetChildControlType(string tagName, IDictionary attribs) {
-            if (StringUtil.EqualsIgnoreCase(tagName, "option"))
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(tagName, "option"))
                 return typeof(ListItem);
 
             return null;
@@ -86,7 +87,7 @@ namespace System.Web.UI.HtmlControls {
         DefaultValue(""),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         WebCategory("Data"),
-        WebSysDescription(SR.HtmlSelect_DataMember)
+        WebSysDescription(System.Web.SR.HtmlSelect_DataMember)
         ]
         public virtual string DataMember {
             get {
@@ -110,7 +111,7 @@ namespace System.Web.UI.HtmlControls {
         [
         WebCategory("Data"),
         DefaultValue(null),
-        WebSysDescription(SR.BaseDataBoundControl_DataSource),
+        WebSysDescription(System.Web.SR.BaseDataBoundControl_DataSource),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public virtual object DataSource {
@@ -123,7 +124,7 @@ namespace System.Web.UI.HtmlControls {
                     OnDataPropertyChanged();
                 }
                 else {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_DataSource_Type, ID));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_DataSource_Type, ID));
                 }
             }
         }
@@ -138,7 +139,7 @@ namespace System.Web.UI.HtmlControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataBoundControl_DataSourceID),
+        WebSysDescription(System.Web.SR.BaseDataBoundControl_DataSourceID),
         ]
         public virtual string DataSourceID {
             get {
@@ -164,7 +165,7 @@ namespace System.Web.UI.HtmlControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescription(SR.HtmlSelect_DataTextField)
+        WebSysDescription(System.Web.SR.HtmlSelect_DataTextField)
         ]
         public virtual string DataTextField {
             get {
@@ -190,7 +191,7 @@ namespace System.Web.UI.HtmlControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescription(SR.HtmlSelect_DataValueField)
+        WebSysDescription(System.Web.SR.HtmlSelect_DataValueField)
         ]
         public virtual string DataValueField {
             get {
@@ -211,10 +212,10 @@ namespace System.Web.UI.HtmlControls {
         /// </devdoc>
         public override string InnerHtml {
             get {
-                throw new NotSupportedException(SR.GetString(SR.InnerHtml_not_supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.InnerHtml_not_supported, this.GetType().Name));
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.InnerHtml_not_supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.InnerHtml_not_supported, this.GetType().Name));
             }
         }
 
@@ -224,10 +225,10 @@ namespace System.Web.UI.HtmlControls {
         /// </devdoc>
         public override string InnerText {
             get {
-                throw new NotSupportedException(SR.GetString(SR.InnerText_not_supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.InnerText_not_supported, this.GetType().Name));
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.InnerText_not_supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.InnerText_not_supported, this.GetType().Name));
             }
         }
 
@@ -471,7 +472,7 @@ namespace System.Web.UI.HtmlControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.HtmlSelect_OnServerChange)
+        WebSysDescription(System.Web.SR.HtmlSelect_OnServerChange)
         ]
         public event EventHandler ServerChange {
             add {
@@ -488,7 +489,7 @@ namespace System.Web.UI.HtmlControls {
             if (obj is ListItem)
                 Items.Add((ListItem)obj);
             else
-                throw new HttpException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "HtmlSelect", obj.GetType().Name));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "HtmlSelect", obj.GetType().Name));
         }
 
 
@@ -527,11 +528,11 @@ namespace System.Web.UI.HtmlControls {
                 // Try to find a DataSource control with the ID specified in DataSourceID
                 Control control = DataBoundControlHelper.FindControl(this, dataSourceID);
                 if (control == null) {
-                    throw new HttpException(SR.GetString(SR.DataControl_DataSourceDoesntExist, ID, dataSourceID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControl_DataSourceDoesntExist, ID, dataSourceID));
                 }
                 ds = control as IDataSource;
                 if (ds == null) {
-                    throw new HttpException(SR.GetString(SR.DataControl_DataSourceIDMustBeDataControl, ID, dataSourceID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControl_DataSourceIDMustBeDataControl, ID, dataSourceID));
                 }
             }
 
@@ -542,14 +543,14 @@ namespace System.Web.UI.HtmlControls {
             else {
                 // Ensure that both DataSourceID as well as DataSource are not set at the same time
                 if (DataSource != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.DataControl_MultipleDataSources, ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_MultipleDataSources, ID));
                 }
             }
 
             // IDataSource was found, extract the appropriate view and return it
             DataSourceView newView = ds.GetView(DataMember);
             if (newView == null) {
-                throw new InvalidOperationException(SR.GetString(SR.DataControl_ViewNotFound, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_ViewNotFound, ID));
             }
 
             _currentViewIsFromDataSourceID = IsBoundUsingDataSourceID;
@@ -590,7 +591,7 @@ namespace System.Web.UI.HtmlControls {
         protected virtual IEnumerable GetData() {
             DataSourceView view = ConnectToDataSourceView();
 
-            Debug.Assert(_currentViewValid);
+            System.Web.Util.Debug.Assert(_currentViewValid);
 
             if (view != null) {
                 return view.ExecuteSelect(DataSourceSelectArguments.Empty);
@@ -678,7 +679,7 @@ namespace System.Web.UI.HtmlControls {
         /// </devdoc>
         protected virtual void OnDataPropertyChanged() {
             if (_throwOnDataPropertyChange) {
-                throw new HttpException(SR.GetString(SR.DataBoundControl_InvalidDataPropertyChange, ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundControl_InvalidDataPropertyChange, ID));
             }
             
             if (_inited) {
@@ -835,7 +836,7 @@ namespace System.Web.UI.HtmlControls {
                         if (isSingle)
                         {
                             if (selected)
-                                throw new HttpException(SR.GetString(SR.HtmlSelect_Cant_Multiselect_In_Single_Mode));
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.HtmlSelect_Cant_Multiselect_In_Single_Mode));
                             selected=true;
                         }
                         writer.WriteAttribute("selected", "selected");

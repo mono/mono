@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.ImageField_AlternateText)
+        WebSysDescription(System.Web.SR.ImageField_AlternateText)
         ]
         public virtual string AlternateText {
             get {
@@ -64,7 +64,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(true),
-            WebSysDescription(SR.ImageField_ConvertEmptyStringToNull)
+            WebSysDescription(System.Web.SR.ImageField_ConvertEmptyStringToNull)
         ]
         public virtual bool ConvertEmptyStringToNull {
             get {
@@ -83,7 +83,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Data"),
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
-        WebSysDescription(SR.ImageField_DataAlternateTextField)
+        WebSysDescription(System.Web.SR.ImageField_DataAlternateTextField)
         ]
         public virtual string DataAlternateTextField {
             get {
@@ -108,7 +108,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescription(SR.ImageField_DataAlternateTextFormatString)
+        WebSysDescription(System.Web.SR.ImageField_DataAlternateTextFormatString)
         ]
         public virtual string DataAlternateTextFormatString {
             get {
@@ -132,7 +132,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Data"),
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
-        WebSysDescription(SR.ImageField_ImageUrlField)
+        WebSysDescription(System.Web.SR.ImageField_ImageUrlField)
         ]
         public virtual string DataImageUrlField {
             get {
@@ -157,7 +157,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescription(SR.ImageField_ImageUrlFormatString)
+        WebSysDescription(System.Web.SR.ImageField_ImageUrlFormatString)
         ]
         public virtual string DataImageUrlFormatString {
             get {
@@ -183,7 +183,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.BoundField_NullDisplayText)
+        WebSysDescription(System.Web.SR.BoundField_NullDisplayText)
         ]
         public virtual string NullDisplayText {
             get {
@@ -206,7 +206,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.ImageField_NullImageUrl)
+        WebSysDescription(System.Web.SR.ImageField_NullImageUrl)
         ]
         public virtual string NullImageUrl {
             get {
@@ -231,7 +231,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.ImageField_ReadOnly)
+        WebSysDescription(System.Web.SR.ImageField_ReadOnly)
         ]
         public virtual bool ReadOnly {
             get {
@@ -281,7 +281,7 @@ namespace System.Web.UI.WebControls {
             }
 
             if (cell.Controls.Count == 0) { // this should happen only in design mode
-                Debug.Assert(DesignMode, "Unless you're in designmode, there should be a control in the cell.");
+                System.Web.Util.Debug.Assert(DesignMode, "Unless you're in designmode, there should be a control in the cell.");
                 return;
             }
 
@@ -376,34 +376,34 @@ namespace System.Web.UI.WebControls {
         /// Returns a value to be used for design-time rendering
         /// </devdoc>
         protected virtual string GetDesignTimeValue() {
-            return SR.GetString(SR.Sample_Databound_Text);
+            return System.Web.SR.GetString(System.Web.SR.Sample_Databound_Text);
         }
 
         /// <devdoc>
         /// Retrieves the value of the field to be databound to the ImageField.
         /// </devdoc>
         protected virtual object GetValue(Control controlContainer, string fieldName, ref PropertyDescriptor cachedDescriptor) {
-            Debug.Assert(DataImageUrlField.Length != 0, "Shouldn't be DataBinding without an DataImageUrlField");
+            System.Web.Util.Debug.Assert(DataImageUrlField.Length != 0, "Shouldn't be DataBinding without an DataImageUrlField");
 
             object data = null;
             object dataItem = null;
 
             if (controlContainer == null) {
-                throw new HttpException(SR.GetString(SR.DataControlField_NoContainer));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControlField_NoContainer));
             }
 
             // Get the DataItem from the container
             dataItem = DataBinder.GetDataItem(controlContainer);
 
             if (dataItem == null && !DesignMode) {
-                throw new HttpException(SR.GetString(SR.DataItem_Not_Found));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataItem_Not_Found));
             }
             // Get value of field in data item
             if (cachedDescriptor == null) {
                 if (!fieldName.Equals(ThisExpression)) {
                     cachedDescriptor = TypeDescriptor.GetProperties(dataItem).Find(fieldName, true);
                     if ((cachedDescriptor == null) && !DesignMode) {
-                        throw new HttpException(SR.GetString(SR.Field_Not_Found, fieldName));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, fieldName));
                     }
                 }
             }
@@ -480,7 +480,7 @@ namespace System.Web.UI.WebControls {
 
             if (DesignMode && (boundControl is TableCell)) {
                 if (boundControl.Controls.Count == 0 || !(boundControl.Controls[0] is Image)) {
-                    throw new HttpException(SR.GetString(SR.ImageField_WrongControlType, DataImageUrlField));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.ImageField_WrongControlType, DataImageUrlField));
                 }
                 ((Image)boundControl.Controls[0]).Visible = false;
                 ((TableCell)boundControl).Text = GetDesignTimeValue();
@@ -493,7 +493,7 @@ namespace System.Web.UI.WebControls {
             if (boundControl is TableCell) {    // read-only
                 TableCell cell = (TableCell)boundControl;
                 if (cell.Controls.Count < 2 || !(cell.Controls[0] is Image) || !(cell.Controls[1] is Label)) {
-                    throw new HttpException(SR.GetString(SR.ImageField_WrongControlType, DataImageUrlField));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.ImageField_WrongControlType, DataImageUrlField));
                 }
                 Image image = (Image)cell.Controls[0];
                 Label label = (Label)cell.Controls[1];
@@ -516,7 +516,7 @@ namespace System.Web.UI.WebControls {
             }
             else {  // edit/insert
                 if (!(boundControl is TextBox)) {
-                    throw new HttpException(SR.GetString(SR.ImageField_WrongControlType, DataImageUrlField));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.ImageField_WrongControlType, DataImageUrlField));
                 }
                 ((TextBox)boundControl).Text = data.ToString();
                 ((TextBox)boundControl).ToolTip = altText;

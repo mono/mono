@@ -20,9 +20,10 @@ namespace System.Web {
     using System.Threading;
     using System.Web.Util;
     using System.Web.Hosting;
-
+    
+#if (!MONO || !FEATURE_PAL)
     using IIS = System.Web.Hosting.UnsafeIISMethods;
-
+#endif
     //
     //  HttpWriter buffer recycling support
     //
@@ -82,9 +83,14 @@ namespace System.Web {
         internal abstract void AppendEncodedChars(char[] data, int offset, int size, Encoder encoder, bool flushEncoder);
     }
 
-    /*
-     * Memory response buffer
-     */
+    //
+    // Memory response buffer.  
+    //
+    // The first constructor takes in a buffer and assumes it's full regardless.  This 
+    // causes issues in FEATURE_PAL scenarios because flushing the HttpWriter will bomb 
+    // due to not thinking the buffer is free.  
+    // Therefore, the second constructor takes in the same data, but adds a flag that allows
+    // you to track the size. 
     internal sealed class HttpResponseBufferElement : HttpBaseMemoryResponseBufferElement, IHttpResponseElement {
         private byte[] _data;
 
@@ -96,6 +102,13 @@ namespace System.Web {
             _size = size;
             _free = 0;
             _recycle = false;
+        }
+
+        // We need an unused buffer so that free == size
+        internal HttpResponseBufferElement(byte[] data, int size, bool isUnfilled) : this(data, size) {
+            if (isUnfilled) {
+                _free = _size;
+            }
         }
 
         /*
@@ -178,7 +191,7 @@ namespace System.Web {
                 s_Pool = IIS.MgdGetBufferPool(BufferingParams.INTEGRATED_MODE_BUFFER_SIZE);
             }
             else {
-                s_Pool = UnsafeNativeMethods.BufferPoolGetPool(BufferingParams.OUTPUT_BUFFER_SIZE, 
+                s_Pool = UnsafeNativeMethods.BufferPoolGetPool(BufferingParams.OUTPUT_BUFFER_SIZE,
                     BufferingParams.MAX_FREE_OUTPUT_BUFFERS);
 
             }          
@@ -277,7 +290,7 @@ namespace System.Web {
             int byteSize = UnsafeAppendEncodedChars(data, offset, size, _data, _size - _free, _free, encoder, flushEncoder);
             _free -= byteSize;
 #if DBG
-            Debug.Trace("UnmanagedBuffers", "Encoding chars, charCount=" + size + ", byteCount=" + byteSize);
+            System.Web.Util.Debug.Trace("UnmanagedBuffers", "Encoding chars, charCount=" + size + ", byteCount=" + byteSize);
 #endif
         }
 
@@ -331,7 +344,7 @@ namespace System.Web {
             }
 
 #if DBG
-            Debug.Trace("UnmanagedBuffers", "Sending data, byteCount=" + n + ", freeBytes=" + _free);
+            System.Web.Util.Debug.Trace("UnmanagedBuffers", "Sending data, byteCount=" + n + ", freeBytes=" + _free);
 #endif
         }
 
@@ -428,10 +441,10 @@ namespace System.Web {
                                         bool supportsLongTransmitFile)
         {
             if ((!supportsLongTransmitFile && size > Int32.MaxValue) || (size < 0)) {
-                throw new ArgumentOutOfRangeException("size", size, SR.GetString(SR.Invalid_size));
+                throw new ArgumentOutOfRangeException("size", size, System.Web.SR.GetString(System.Web.SR.Invalid_size));
             }
             if ((!supportsLongTransmitFile && offset > Int32.MaxValue) || (offset < 0)) {
-                throw new ArgumentOutOfRangeException("offset", offset, SR.GetString(SR.Invalid_size));
+                throw new ArgumentOutOfRangeException("offset", offset, System.Web.SR.GetString(System.Web.SR.Invalid_size));
             }
             _filename = filename;
             _offset = offset;
@@ -472,7 +485,7 @@ namespace System.Web {
                 long fileSize = f.Length;
 
                 if (_offset < 0 || _size > fileSize - _offset)
-                    throw new HttpException(SR.GetString(SR.Invalid_range));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_range));
 
                 if (_offset > 0)
                     f.Seek(_offset, SeekOrigin.Begin);
@@ -556,7 +569,7 @@ namespace System.Web {
 
         // WOS 1926509: ASP.NET:  WriteSubstitution in integrated mode needs to support callbacks that return String.Empty
         private unsafe void CreateFirstSubstData(String s, IIS7WorkerRequest iis7WorkerRequest, Encoder encoder) {
-            Debug.Assert(s != null, "s != null");
+            System.Web.Util.Debug.Assert(s != null, "s != null");
 
             IntPtr pbBuffer;
             int numBytes = 0;
@@ -593,7 +606,7 @@ namespace System.Web {
         }
 
         internal bool PointerEquals(IntPtr ptr) {
-            Debug.Assert(HttpRuntime.UseIntegratedPipeline, "HttpRuntime.UseIntegratedPipeline");
+            System.Web.Util.Debug.Assert(HttpRuntime.UseIntegratedPipeline, "HttpRuntime.UseIntegratedPipeline");
             return _firstSubstData == ptr;
         }
 
@@ -725,7 +738,7 @@ namespace System.Web {
             if (count < 0)
                 throw new ArgumentOutOfRangeException("count");
             if (buffer.Length - offset < count)
-                throw new ArgumentException(SR.GetString(SR.InvalidOffsetOrCount, "offset", "count"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidOffsetOrCount, "offset", "count"));
             if (count == 0)
                 return;
 
@@ -746,7 +759,7 @@ namespace System.Web {
             // throw exception on unexpected filter writes
 
             if (!_filtering)
-                throw new HttpException(SR.GetString(SR.Invalid_use_of_response_filter));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_use_of_response_filter));
         }
 
         internal bool Filtering {
@@ -898,11 +911,18 @@ namespace System.Web {
         }
 
         private HttpBaseMemoryResponseBufferElement CreateNewMemoryBufferElement() {
+#if (!MONO || !FEATURE_PAL)
             return new HttpResponseUnmanagedBufferElement(); /* using unmanaged buffers */
+#else
+            // We may want to look at this... Taking the integrated mode size works, but
+            // it may not be optimal for all scenarios. 
+            byte[] data = new byte[BufferingParams.INTEGRATED_MODE_BUFFER_SIZE];
+            return new HttpResponseBufferElement(data, BufferingParams.INTEGRATED_MODE_BUFFER_SIZE, true);
+#endif
         }
 
     internal void DisposeIntegratedBuffers() {
-            Debug.Assert(HttpRuntime.UseIntegratedPipeline);
+            System.Web.Util.Debug.Assert(HttpRuntime.UseIntegratedPipeline);
 
             // don't recycle char buffers here (ClearBuffers will)
             // do recycle native output buffers
@@ -1007,7 +1027,7 @@ namespace System.Web {
         private void FlushCharBuffer(bool flushEncoder) {
             int numChars = _charBufferLength - _charBufferFree;
 
-            Debug.Assert(numChars > 0);
+            System.Web.Util.Debug.Assert(numChars > 0);
 
             // remember that response required encoding (to indicate the charset= is needed)
             if (!_responseEncodingUpdated) {
@@ -1039,7 +1059,7 @@ namespace System.Web {
                 }
 
                 // byte buffers must be long enough to keep everything in char buffer
-                Debug.Assert(free >= estByteSize);
+                System.Web.Util.Debug.Assert(free >= estByteSize);
                 _lastBuffer.AppendEncodedChars(CharBuffer, 0, numChars, _responseEncoder, flushEncoder);
             }
 
@@ -1215,7 +1235,7 @@ namespace System.Web {
 
         // Move the specified range of buffers forward in the buffer list.
         internal void MoveResponseBufferRangeForward(int srcIndex, int srcCount, int dstIndex) {
-            Debug.Assert(dstIndex <= srcIndex);
+            System.Web.Util.Debug.Assert(dstIndex <= srcIndex);
 
             // DevDiv Bugs 154630: No need to copy the form between temporary array and the buffer list when
             // no hidden fields are written.
@@ -1326,7 +1346,7 @@ namespace System.Web {
                 }
                 
                 if (substCount != _substElements.Count) {
-                    throw new InvalidOperationException(SR.GetString(SR.Substitution_blocks_cannot_be_modified));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Substitution_blocks_cannot_be_modified));
                 }
 
                 // re-enable dynamic compression when we have a snapshot of the subst blocks.
@@ -1416,7 +1436,7 @@ namespace System.Web {
 
         internal void InstallFilter(Stream filter) {
             if (_filterSink == null)  // have to redirect to the sink -- null means sink wasn't ever asked for
-                throw new HttpException(SR.GetString(SR.Invalid_response_filter));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_response_filter));
 
             _installedFilter = filter;
         }
@@ -1443,7 +1463,7 @@ namespace System.Web {
 
             // push old buffer list through the filter
 
-            Debug.Assert(_filterSink != null);
+            System.Web.Util.Debug.Assert(_filterSink != null);
 
             _filterSink.Filtering = true;
 
@@ -1502,7 +1522,7 @@ namespace System.Web {
             bool fDummy = false;
             nativeBuffers = wr.GetBufferedResponseChunks(false, null, ref fDummy);
             
-            Debug.Assert(_filterSink != null);
+            System.Web.Util.Debug.Assert(_filterSink != null);
             _filterSink.Filtering = true;
            
             try {
@@ -1629,7 +1649,7 @@ namespace System.Web {
             if (count < 0)
                 throw new ArgumentOutOfRangeException("count");
             if (buffer.Length - index < count)
-                throw new ArgumentException(SR.GetString(SR.InvalidOffsetOrCount, "index", "count"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidOffsetOrCount, "index", "count"));
             if (count == 0)
                 return;
 
@@ -1671,7 +1691,7 @@ namespace System.Web {
             else if (s.Length < _charBufferFree) {
                 // fast path - 99% of string writes will not overrun the buffer
                 // avoid redundant arg checking in string.CopyTo
-                StringUtil.UnsafeStringCopy(s, 0, buffer, _charBufferLength - _charBufferFree, s.Length);
+                System.Web.Util.StringUtil.UnsafeStringCopy(s, 0, buffer, _charBufferLength - _charBufferFree, s.Length);
                 _charBufferFree -= s.Length;
             }
             else {
@@ -1687,7 +1707,7 @@ namespace System.Web {
                     n = (count < _charBufferFree) ? count : _charBufferFree;
 
                     // avoid redundant arg checking in string.CopyTo
-                    StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, n);
+                    System.Web.Util.StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, n);
 
                     _charBufferFree -= n;
                     index += n;
@@ -1732,7 +1752,7 @@ namespace System.Web {
             else if (count < _charBufferFree) {
                 // fast path - 99% of string writes will not overrun the buffer
                 // avoid redundant arg checking in string.CopyTo
-                StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, count);
+                System.Web.Util.StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, count);
                 _charBufferFree -= count;
             }
             else {
@@ -1746,7 +1766,7 @@ namespace System.Web {
                     n = (count < _charBufferFree) ? count : _charBufferFree;
     
                     // avoid redundant arg checking in string.CopyTo
-                    StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, n);
+                    System.Web.Util.StringUtil.UnsafeStringCopy(s, index, buffer, _charBufferLength - _charBufferFree, n);
 
                     _charBufferFree -= n;
                     index += n;

@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescription(SR.HyperLinkColumn_DataNavigateUrlField)
+        WebSysDescription(System.Web.SR.HyperLinkColumn_DataNavigateUrlField)
         ]
         public virtual string DataNavigateUrlField {
             get {
@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescription(SR.HyperLinkColumn_DataTextField)
+        WebSysDescription(System.Web.SR.HyperLinkColumn_DataTextField)
         ]
         public virtual string DataTextField {
             get {
@@ -131,7 +131,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(""),
         UrlProperty(),
-        WebSysDescription(SR.HyperLinkColumn_NavigateUrl)
+        WebSysDescription(System.Web.SR.HyperLinkColumn_NavigateUrl)
         ]
         public virtual string NavigateUrl {
             get {
@@ -155,7 +155,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(""),
         TypeConverter(typeof(TargetConverter)),
-        WebSysDescription(SR.HyperLink_Target)
+        WebSysDescription(System.Web.SR.HyperLink_Target)
         ]
         public virtual string Target {
             get {
@@ -178,7 +178,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.HyperLinkColumn_Text)
+        WebSysDescription(System.Web.SR.HyperLinkColumn_Text)
         ]
         public virtual string Text {
             get {
@@ -271,7 +271,7 @@ namespace System.Web.UI.WebControls {
         /// <devdoc>
         /// </devdoc>
         private void OnDataBindColumn(object sender, EventArgs e) {
-            Debug.Assert((DataTextField.Length != 0) || (DataNavigateUrlField.Length != 0),
+            System.Web.Util.Debug.Assert((DataTextField.Length != 0) || (DataNavigateUrlField.Length != 0),
                          "Shouldn't be DataBinding without a DataTextField and DataNavigateUrlField");
 
             HyperLink boundControl = (HyperLink)sender;
@@ -286,7 +286,7 @@ namespace System.Web.UI.WebControls {
                 if (fieldName.Length != 0) {
                     textFieldDesc = props.Find(fieldName, true);
                     if ((textFieldDesc == null) && !DesignMode) {
-                        throw new HttpException(SR.GetString(SR.Field_Not_Found, fieldName));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, fieldName));
                     }
                 }
 
@@ -294,7 +294,7 @@ namespace System.Web.UI.WebControls {
                 if (fieldName.Length != 0) {
                     urlFieldDesc = props.Find(fieldName, true);
                     if ((urlFieldDesc == null) && !DesignMode) {
-                        throw new HttpException(SR.GetString(SR.Field_Not_Found, fieldName));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, fieldName));
                     }
                 }
             }
@@ -306,7 +306,7 @@ namespace System.Web.UI.WebControls {
                 boundControl.Text = dataValue;
             }
             else if (DesignMode && (DataTextField.Length != 0)) {
-                boundControl.Text = SR.GetString(SR.Sample_Databound_Text);
+                boundControl.Text = System.Web.SR.GetString(System.Web.SR.Sample_Databound_Text);
             }
 
             if (urlFieldDesc != null) {

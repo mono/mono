@@ -36,8 +36,8 @@ namespace System.Web.UI.WebControls {
     ParseChildren(true),
     PersistChildren(false),
     ToolboxBitmap(typeof(SqlDataSource)),
-    WebSysDescription(SR.SqlDataSource_Description),
-    WebSysDisplayName(SR.SqlDataSource_DisplayName)
+    WebSysDescription(System.Web.SR.SqlDataSource_Description),
+    WebSysDisplayName(System.Web.SR.SqlDataSource_DisplayName)
     ]
     public class SqlDataSource : DataSourceControl {
 
@@ -98,7 +98,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(DataSourceCache.Infinite),
         TypeConverterAttribute(typeof(DataSourceCacheDurationConverter)),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_Duration),
+        WebSysDescription(System.Web.SR.DataSourceCache_Duration),
         ]
         public virtual int CacheDuration {
             get {
@@ -115,7 +115,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(DataSourceCacheExpiry.Absolute),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_ExpirationPolicy),
+        WebSysDescription(System.Web.SR.DataSourceCache_ExpirationPolicy),
         ]
         public virtual DataSourceCacheExpiry CacheExpirationPolicy {
             get {
@@ -133,7 +133,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_KeyDependency),
+        WebSysDescription(System.Web.SR.DataSourceCache_KeyDependency),
         ]
         public virtual string CacheKeyDependency {
             get {
@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(true),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_CancelSelectOnNullParameter),
+        WebSysDescription(System.Web.SR.SqlDataSource_CancelSelectOnNullParameter),
         ]
         public virtual bool CancelSelectOnNullParameter {
             get {
@@ -167,7 +167,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(ConflictOptions.OverwriteChanges),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_ConflictDetection),
+        WebSysDescription(System.Web.SR.SqlDataSource_ConflictDetection),
         ]
         public ConflictOptions ConflictDetection {
             get {
@@ -186,7 +186,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.WebControls.SqlDataSourceConnectionStringEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Data"),
         MergableProperty(false),
-        WebSysDescription(SR.SqlDataSource_ConnectionString),
+        WebSysDescription(System.Web.SR.SqlDataSource_ConnectionString),
         ]
         public virtual string ConnectionString {
             get {
@@ -207,7 +207,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(SqlDataSourceMode.DataSet),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SqlDataSource_DataSourceMode),
+        WebSysDescription(System.Web.SR.SqlDataSource_DataSourceMode),
         ]
         public SqlDataSourceMode DataSourceMode {
             get {
@@ -215,7 +215,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value < SqlDataSourceMode.DataReader || value > SqlDataSourceMode.DataSet) {
-                    throw new ArgumentOutOfRangeException(SR.GetString(SR.SqlDataSource_InvalidMode, ID));
+                    throw new ArgumentOutOfRangeException(System.Web.SR.GetString(System.Web.SR.SqlDataSource_InvalidMode, ID));
                 }
 
                 if (DataSourceMode != value) {
@@ -232,7 +232,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_DeleteCommand),
+        WebSysDescription(System.Web.SR.SqlDataSource_DeleteCommand),
         ]
         public string DeleteCommand {
             get {
@@ -249,7 +249,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(SqlDataSourceCommandType.Text),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_DeleteCommandType),
+        WebSysDescription(System.Web.SR.SqlDataSource_DeleteCommandType),
         ]
         public SqlDataSourceCommandType DeleteCommandType {
             get {
@@ -270,7 +270,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_DeleteParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_DeleteParameters),
         ]
         public ParameterCollection DeleteParameters {
             get {
@@ -285,7 +285,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_Enabled),
+        WebSysDescription(System.Web.SR.DataSourceCache_Enabled),
         ]
         public virtual bool EnableCaching {
             get {
@@ -303,7 +303,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_FilterExpression),
+        WebSysDescription(System.Web.SR.SqlDataSource_FilterExpression),
         ]
         public string FilterExpression {
             get {
@@ -324,7 +324,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_FilterParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_FilterParameters),
         ]
         public ParameterCollection FilterParameters {
             get {
@@ -339,7 +339,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_InsertCommand),
+        WebSysDescription(System.Web.SR.SqlDataSource_InsertCommand),
         ]
         public string InsertCommand {
             get {
@@ -356,7 +356,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(SqlDataSourceCommandType.Text),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_InsertCommandType),
+        WebSysDescription(System.Web.SR.SqlDataSource_InsertCommandType),
         ]
         public SqlDataSourceCommandType InsertCommandType {
             get {
@@ -377,7 +377,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_InsertParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_InsertParameters),
         ]
         public ParameterCollection InsertParameters {
             get {
@@ -391,7 +391,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue("{0}"),
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_OldValuesParameterFormatString),
+        WebSysDescription(System.Web.SR.DataSource_OldValuesParameterFormatString),
         ]
         public string OldValuesParameterFormatString {
             get {
@@ -410,7 +410,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.WebControls.DataProviderNameConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_ProviderName),
+        WebSysDescription(System.Web.SR.SqlDataSource_ProviderName),
         ]
         public virtual string ProviderName {
             get {
@@ -432,7 +432,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_SelectCommand),
+        WebSysDescription(System.Web.SR.SqlDataSource_SelectCommand),
         ]
         public string SelectCommand {
             get {
@@ -449,7 +449,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(SqlDataSourceCommandType.Text),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_SelectCommandType),
+        WebSysDescription(System.Web.SR.SqlDataSource_SelectCommandType),
         ]
         public SqlDataSourceCommandType SelectCommandType {
             get {
@@ -468,7 +468,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_SelectCountCommand),
+        WebSysDescription(System.Web.SR.SqlDataSource_SelectCountCommand),
         ]
         public string SelectCountCommand {
             get {
@@ -489,7 +489,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_SelectParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_SelectParameters),
         ]
         public ParameterCollection SelectParameters {
             get {
@@ -507,7 +507,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_SortParameterName),
+        WebSysDescription(System.Web.SR.SqlDataSource_SortParameterName),
         ]
         public string SortParameterName {
             get {
@@ -525,7 +525,7 @@ namespace System.Web.UI.WebControls {
             get {
                 SqlDataSourceCache sqlCache = Cache as SqlDataSourceCache;
                 if (sqlCache == null) {
-                    throw new NotSupportedException(SR.GetString(SR.SqlDataSource_SqlCacheDependencyNotSupported, ID));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSource_SqlCacheDependencyNotSupported, ID));
                 }
                 return sqlCache;
             }
@@ -537,7 +537,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Cache"),
-        WebSysDescription(SR.SqlDataSourceCache_SqlCacheDependency),
+        WebSysDescription(System.Web.SR.SqlDataSourceCache_SqlCacheDependency),
         ]
         public virtual string SqlCacheDependency {
             get {
@@ -556,7 +556,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_UpdateCommand),
+        WebSysDescription(System.Web.SR.SqlDataSource_UpdateCommand),
         ]
         public string UpdateCommand {
             get {
@@ -573,7 +573,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(SqlDataSourceCommandType.Text),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_UpdateCommandType),
+        WebSysDescription(System.Web.SR.SqlDataSource_UpdateCommandType),
         ]
         public SqlDataSourceCommandType UpdateCommandType {
             get {
@@ -594,7 +594,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_UpdateParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_UpdateParameters),
         ]
         public ParameterCollection UpdateParameters {
             get {
@@ -610,7 +610,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Deleted),
+        WebSysDescription(System.Web.SR.DataSource_Deleted),
         ]
         public event SqlDataSourceStatusEventHandler Deleted {
             add {
@@ -633,7 +633,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Deleting),
+        WebSysDescription(System.Web.SR.DataSource_Deleting),
         ]
         public event SqlDataSourceCommandEventHandler Deleting {
             add {
@@ -653,7 +653,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Filtering),
+        WebSysDescription(System.Web.SR.DataSource_Filtering),
         ]
         public event SqlDataSourceFilteringEventHandler Filtering {
             add {
@@ -671,7 +671,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Inserted),
+        WebSysDescription(System.Web.SR.DataSource_Inserted),
         ]
         public event SqlDataSourceStatusEventHandler Inserted {
             add {
@@ -694,7 +694,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Inserting),
+        WebSysDescription(System.Web.SR.DataSource_Inserting),
         ]
         public event SqlDataSourceCommandEventHandler Inserting {
             add {
@@ -712,7 +712,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_Selected),
+        WebSysDescription(System.Web.SR.SqlDataSource_Selected),
         ]
         public event SqlDataSourceStatusEventHandler Selected {
             add {
@@ -735,7 +735,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.SqlDataSource_Selecting),
+        WebSysDescription(System.Web.SR.SqlDataSource_Selecting),
         ]
         public event SqlDataSourceSelectingEventHandler Selecting {
             add {
@@ -753,7 +753,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Updated),
+        WebSysDescription(System.Web.SR.DataSource_Updated),
         ]
         public event SqlDataSourceStatusEventHandler Updated {
             add {
@@ -776,7 +776,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Updating),
+        WebSysDescription(System.Web.SR.DataSource_Updating),
         ]
         public event SqlDataSourceCommandEventHandler Updating {
             add {
@@ -941,12 +941,12 @@ namespace System.Web.UI.WebControls {
             if (_providerFactory == null) {
                 _providerFactory = GetDbProviderFactory();
 
-                Debug.Assert(_providerFactory != null);
+                System.Web.Util.Debug.Assert(_providerFactory != null);
 
                 if (!HttpRuntime.DisableProcessRequestInApplicationTrust) {
                     // Perform security check if we're not running in application trust
                     if (!HttpRuntime.ProcessRequestInApplicationTrust && !HttpRuntime.HasDbPermission(_providerFactory)) {
-                        throw new HttpException(SR.GetString(SR.SqlDataSource_NoDbPermission, _providerFactory.GetType().Name, ID));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.SqlDataSource_NoDbPermission, _providerFactory.GetType().Name, ID));
                     }
                 }
             }
@@ -978,7 +978,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override DataSourceView GetView(string viewName) {
             if (viewName == null || (viewName.Length != 0 && !String.Equals(viewName, DefaultViewName, StringComparison.OrdinalIgnoreCase))) {
-                throw new ArgumentException(SR.GetString(SR.DataSource_InvalidViewName, ID, DefaultViewName), "viewName");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.DataSource_InvalidViewName, ID, DefaultViewName), "viewName");
             }
 
             return GetView();
@@ -1007,7 +1007,7 @@ namespace System.Web.UI.WebControls {
         internal void InvalidateCacheEntry() {
             string key = CreateMasterCacheKey();
             DataSourceCache cache = Cache;
-            Debug.Assert(cache != null);
+            System.Web.Util.Debug.Assert(cache != null);
             cache.Invalidate(key);
         }
         

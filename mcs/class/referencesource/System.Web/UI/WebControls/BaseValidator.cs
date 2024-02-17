@@ -12,6 +12,7 @@ namespace System.Web.UI.WebControls {
     using System.Web;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     /// <devdoc>
     ///    <para> Serves as the abstract base
@@ -79,7 +80,7 @@ function ValidatorOnSubmit() {
             }
             set {
                 throw new NotSupportedException(
-                    SR.GetString(SR.Property_Not_Supported,
+                    System.Web.SR.GetString(System.Web.SR.Property_Not_Supported,
                                                      "AssociatedControlID",
                                                      this.GetType().ToString()));
             }
@@ -111,7 +112,7 @@ function ValidatorOnSubmit() {
         Themeable(false),
         DefaultValue(""),
         IDReferenceProperty(),
-        WebSysDescription(SR.BaseValidator_ControlToValidate),
+        WebSysDescription(System.Web.SR.BaseValidator_ControlToValidate),
         TypeConverter(typeof(ValidatedControlConverter))
         ]
         public string ControlToValidate {
@@ -132,7 +133,7 @@ function ValidatorOnSubmit() {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.BaseValidator_ErrorMessage)
+        WebSysDescription(System.Web.SR.BaseValidator_ErrorMessage)
         ]
         public string ErrorMessage {
             get {
@@ -152,7 +153,7 @@ function ValidatorOnSubmit() {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(true),
-        WebSysDescription(SR.BaseValidator_EnableClientScript)
+        WebSysDescription(System.Web.SR.BaseValidator_EnableClientScript)
         ]
         public bool EnableClientScript {
             get {
@@ -201,7 +202,7 @@ function ValidatorOnSubmit() {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(true),
-        WebSysDescription(SR.BaseValidator_IsValid),
+        WebSysDescription(System.Web.SR.BaseValidator_IsValid),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public bool IsValid {
@@ -247,7 +248,7 @@ function ValidatorOnSubmit() {
         WebCategory("Appearance"),
         Themeable(true),
         DefaultValue(ValidatorDisplay.Static),
-        WebSysDescription(SR.BaseValidator_Display)
+        WebSysDescription(System.Web.SR.BaseValidator_Display)
         ]
         public ValidatorDisplay Display {
             get {
@@ -270,7 +271,7 @@ function ValidatorOnSubmit() {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(false),
-        WebSysDescription(SR.BaseValidator_SetFocusOnError)
+        WebSysDescription(System.Web.SR.BaseValidator_SetFocusOnError)
         ]
         public bool SetFocusOnError {
             get {
@@ -289,7 +290,7 @@ function ValidatorOnSubmit() {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.BaseValidator_Text),
+        WebSysDescription(System.Web.SR.BaseValidator_Text),
         PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public override string Text {
@@ -307,7 +308,7 @@ function ValidatorOnSubmit() {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.BaseValidator_ValidationGroup)
+        WebSysDescription(System.Web.SR.BaseValidator_ValidationGroup)
         ]
         public virtual string ValidationGroup {
             get {
@@ -390,9 +391,9 @@ function ValidatorOnSubmit() {
         }
 
         internal static void AddExpandoAttribute(Control control, HtmlTextWriter writer, string controlId, string attributeName, string attributeValue, bool encode) {
-            Debug.Assert(control != null);
+            System.Web.Util.Debug.Assert(control != null);
             Page page = control.Page;
-            Debug.Assert(page != null);
+            System.Web.Util.Debug.Assert(page != null);
 
             // if writer is not null, assuming the expando attribute is written out explicitly
             if (writer != null) {
@@ -402,7 +403,7 @@ function ValidatorOnSubmit() {
                 writer.AddAttribute(attributeName, attributeValue, encode);
             }
             else {
-                Debug.Assert(page.UnobtrusiveValidationMode == UnobtrusiveValidationMode.None, "The writer must have been passed in the Unobtrusive mode");
+                System.Web.Util.Debug.Assert(page.UnobtrusiveValidationMode == UnobtrusiveValidationMode.None, "The writer must have been passed in the Unobtrusive mode");
 
                 // Cannot use the overload of RegisterExpandoAttribute that takes a Control, since that method only works with AJAX 3.5,
                 // and we need to support Validators in AJAX 1.0 (Windows OS Bugs 2015831).
@@ -428,14 +429,14 @@ function ValidatorOnSubmit() {
             Control c = NamingContainer.FindControl(name);
             if (c == null) {
                 throw new HttpException(
-                                       SR.GetString(SR.Validator_control_not_found, name, propertyName, ID));
+                                       System.Web.SR.GetString(System.Web.SR.Validator_control_not_found, name, propertyName, ID));
             }
 
             // get its validation property
             PropertyDescriptor prop = GetValidationProperty(c);
             if (prop == null) {
                 throw new HttpException(
-                                       SR.GetString(SR.Validator_bad_control_type, name, propertyName, ID));
+                                       System.Web.SR.GetString(System.Web.SR.Validator_bad_control_type, name, propertyName, ID));
             }
 
         }
@@ -450,7 +451,7 @@ function ValidatorOnSubmit() {
             string controlToValidate = ControlToValidate;
             if (controlToValidate.Length == 0) {
                 throw new HttpException(
-                                       SR.GetString(SR.Validator_control_blank, ID));
+                                       System.Web.SR.GetString(System.Web.SR.Validator_control_blank, ID));
             }
 
             // Check that the property points to a valid control. Will throw and exception if not found
@@ -494,7 +495,7 @@ function ValidatorOnSubmit() {
             // get the control using the relative name
             Control c = FindControl(name);
             if (c == null) {
-                Debug.Fail("We should have already checked for the presence of this");
+                System.Web.Util.Debug.Fail("We should have already checked for the presence of this");
                 return String.Empty;
             }
             return c.ClientID;
@@ -593,7 +594,7 @@ function ValidatorOnSubmit() {
             if (!PropertiesValid) {
                 // In practice the call to the property PropertiesValid would
                 // throw if bad things happen.
-                Debug.Assert(false, "Exception should have been thrown if properties are invalid");
+                System.Web.Util.Debug.Assert(false, "Exception should have been thrown if properties are invalid");
             }
 
             // work out uplevelness now
@@ -737,7 +738,7 @@ document.getElementById('{0}').dispose = function() {{
                     Style["display"] = "none";
                 }
                 else if (!shouldBeVisible) {
-                    Debug.Assert(display == ValidatorDisplay.Static, "Unknown Display Type");
+                    System.Web.Util.Debug.Assert(display == ValidatorDisplay.Static, "Unknown Display Type");
                     Style["visibility"] = "hidden";
                 }
             }
@@ -784,7 +785,7 @@ document.getElementById('{0}').dispose = function() {{
                 return;
             }
             IsValid = EvaluateIsValid();
-            Debug.Trace("BaseValidator.Validate", "id:" + ID + ", evaluateIsValid = " + IsValid.ToString());
+            System.Web.Util.Debug.Trace("BaseValidator.Validate", "id:" + ID + ", evaluateIsValid = " + IsValid.ToString());
             if (!IsValid) {
                 Page page = Page;
                 if (page != null && SetFocusOnError) {

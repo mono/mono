@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls {
         Themeable(false),
         DefaultValue(""),
         Editor("System.Web.UI.Design.WebControls.RegexTypeEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.RegularExpressionValidator_ValidationExpression)
+        WebSysDescription(System.Web.SR.RegularExpressionValidator_ValidationExpression)
         ]                                         
         public string ValidationExpression {
             get { 
@@ -48,7 +48,7 @@ namespace System.Web.UI.WebControls {
                 }
                 catch (Exception e) {
                     throw new HttpException(
-                                           SR.GetString(SR.Validator_bad_regex, value), e);                    
+                                           System.Web.SR.GetString(System.Web.SR.Validator_bad_regex, value), e);                    
                 }
                 ViewState["ValidationExpression"] = value;
             }
@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls {
 
             // Always succeeds if input is empty or value was not found
             string controlValue = GetControlValidationValue(ControlToValidate);
-            Debug.Assert(controlValue != null, "Should have already been checked");
+            System.Web.Util.Debug.Assert(controlValue != null, "Should have already been checked");
             if (controlValue == null || controlValue.Trim().Length == 0) {
                 return true;
             }
@@ -98,7 +98,7 @@ namespace System.Web.UI.WebControls {
                 throw;
             } 
             catch {
-                Debug.Fail("Regex error should have been caught in property setter.");
+                System.Web.Util.Debug.Fail("Regex error should have been caught in property setter.");
                 return true;
             }
         }

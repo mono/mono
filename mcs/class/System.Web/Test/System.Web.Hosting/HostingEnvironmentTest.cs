@@ -93,7 +93,7 @@ namespace MonoTests.System.Web.Hosting {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void MapPath1 ()
 		{
-			HostingEnvironment.MapPath (null);
+			HostingEnvironment.MapPath ((string)null);
 		}
 
 		[Test]

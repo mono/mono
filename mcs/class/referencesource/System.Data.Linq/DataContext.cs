@@ -1427,7 +1427,7 @@ namespace System.Data.Linq {
                     tracked.ConvertToUnmodified();
                 }
                 if (this.Context.Services.InsertLookupCachedObject(type, entity) != entity) {
-                    throw new DuplicateKeyException(entity, Strings.CantAddAlreadyExistingKey);
+                    throw new DuplicateKeyException(entity, SR.CantAddAlreadyExistingKey);
                 }
                 tracked.InitializeDeferredLoaders();
             }
@@ -1478,7 +1478,7 @@ namespace System.Data.Linq {
                 }
                 tracked.ConvertToPossiblyModified(original);
                 if (this.Context.Services.InsertLookupCachedObject(type, entity) != entity) {
-                    throw new DuplicateKeyException(entity, Strings.CantAddAlreadyExistingKey);
+                    throw new DuplicateKeyException(entity, SR.CantAddAlreadyExistingKey);
                 }
                 tracked.InitializeDeferredLoaders();
             }

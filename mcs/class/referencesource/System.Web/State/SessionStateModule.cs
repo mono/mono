@@ -33,6 +33,7 @@ namespace System.Web.SessionState {
     using Microsoft.Win32;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    
 
     public delegate void SessionStateItemExpireCallback(
             string id, SessionStateStoreData item);
@@ -72,7 +73,7 @@ namespace System.Web.SessionState {
         }
 
         internal void RaiseOnEnd(HttpSessionState sessionState) {
-            Debug.Trace("SessionOnEnd", "Firing OnSessionEnd for " + sessionState.SessionID);
+            System.Web.Util.Debug.Trace("SessionOnEnd", "Firing OnSessionEnd for " + sessionState.SessionID);
 
             if (_sessionEndEventHandlerCount > 0) {
                 HttpApplicationFactory.EndSession(sessionState, this, EventArgs.Empty);
@@ -249,7 +250,7 @@ namespace System.Web.SessionState {
             switch (config.Mode) {
                 case SessionStateMode.SQLServer:
                 case SessionStateMode.StateServer:
-                    return HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium);
+                    return true;
 
                 default:
                 case SessionStateMode.Off:
@@ -257,8 +258,7 @@ namespace System.Web.SessionState {
                     return true;
             }
         }
-
-        [AspNetHostingPermission(SecurityAction.Assert, Level=AspNetHostingPermissionLevel.Low)]
+        
         private SessionStateStoreProviderBase SecureInstantiateProvider(ProviderSettings settings) {
             return (SessionStateStoreProviderBase)ProvidersHelper.InstantiateProvider(settings, typeof(SessionStateStoreProviderBase));
         }
@@ -270,14 +270,14 @@ namespace System.Web.SessionState {
 
             if (String.IsNullOrEmpty(providerName)) {
                 throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_session_custom_provider, providerName),
+                        System.Web.SR.GetString(System.Web.SR.Invalid_session_custom_provider, providerName),
                         config.ElementInformation.Properties["customProvider"].Source, config.ElementInformation.Properties["customProvider"].LineNumber);
             }
 
             ps = config.Providers[providerName];
             if (ps == null) {
                 throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Missing_session_custom_provider, providerName),
+                        System.Web.SR.GetString(System.Web.SR.Missing_session_custom_provider, providerName),
                         config.ElementInformation.Properties["customProvider"].Source, config.ElementInformation.Properties["customProvider"].LineNumber);
             }
 
@@ -295,7 +295,7 @@ namespace System.Web.SessionState {
 
             if (config.Mode != SessionStateMode.StateServer &&
                 config.Mode != SessionStateMode.SQLServer) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Cant_use_partition_resolve),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Cant_use_partition_resolve),
                         config.ElementInformation.Properties["partitionResolverType"].Source, config.ElementInformation.Properties["partitionResolverType"].LineNumber);
             }
 
@@ -323,7 +323,7 @@ namespace System.Web.SessionState {
                 managerType = ConfigUtil.GetType(sessionIDManagerType, "sessionIDManagerType", config);
                 ConfigUtil.CheckAssignableType(typeof(ISessionIDManager), managerType, config, "sessionIDManagerType");
 
-                iManager = (ISessionIDManager)HttpRuntime.CreatePublicInstance(managerType);
+                iManager = (ISessionIDManager)HttpRuntime.CreatePublicInstanceByWebObjectActivator(managerType);
             }
 
             iManager.Initialize();
@@ -441,7 +441,7 @@ namespace System.Web.SessionState {
                         // The last thing to set in this if-block.
                         s_oneTimeInit = true;
 
-                        Debug.Trace("SessionStateModuleInit",
+                        System.Web.Util.Debug.Trace("SessionStateModuleInit",
                                     "Configuration: _mode=" + config.Mode +
                                     ";Timeout=" + config.Timeout +
                                     ";CookieMode=" + config.Cookieless +
@@ -462,7 +462,7 @@ namespace System.Web.SessionState {
             }
 
             if (s_trustLevelInsufficient) {
-                throw new HttpException(SR.GetString(SR.Session_state_need_higher_trust));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Session_state_need_higher_trust));
             }
         }
 
@@ -481,8 +481,8 @@ namespace System.Web.SessionState {
         }
 
         void ResetPerRequestFields() {
-            Debug.Assert(_rqIctx == null, "_rqIctx == null");
-            Debug.Assert(_rqChangeImpersonationRefCount == 0, "_rqChangeImpersonationRefCount == 0");
+            System.Web.Util.Debug.Assert(_rqIctx == null, "_rqIctx == null");
+            System.Web.Util.Debug.Assert(_rqChangeImpersonationRefCount == 0, "_rqChangeImpersonationRefCount == 0");
 
             _rqSessionState = null;
             _rqId = null;
@@ -529,7 +529,7 @@ namespace System.Web.SessionState {
             if (_sessionStartEventHandler == null)
                 return;
 
-            Debug.Trace("SessionStateModuleRaiseOnStart",
+            System.Web.Util.Debug.Trace("SessionStateModuleRaiseOnStart",
                 "Session_Start called for session id:" + _rqId);
 
             // Session_OnStart for ASPCOMPAT pages has to be raised from an STA thread
@@ -606,7 +606,7 @@ namespace System.Web.SessionState {
             bool                isCompleted = true;
             bool                skipReadingId = false;
 
-            Debug.Trace("SessionStateModuleOnAcquireState", "Beginning SessionStateModule::OnAcquireState");
+            System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Beginning SessionStateModule::OnAcquireState");
 
             _acquireCalled = true;
             _releaseCalled = false;
@@ -645,30 +645,30 @@ namespace System.Web.SessionState {
 #if DBG
                     if (!requiresState) {
                         // Case 1
-                        Debug.Trace("SessionStateModuleOnAcquireState", "Skip reading id because page has disabled session state");
+                        System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Skip reading id because page has disabled session state");
                     }
                     else {
                         // Case 2
-                        Debug.Trace("SessionStateModuleOnAcquireState", "Delay reading id because we're using InProc optimization, and we are not using cookieless");
+                        System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Delay reading id because we're using InProc optimization, and we are not using cookieless");
                     }
 #endif
                 }
                 else {
                     /* Get sessionid */
                     _rqId = _idManager.GetSessionID(_rqContext);
-                    Debug.Trace("SessionStateModuleOnAcquireState", "Current request id=" + _rqId);
+                    System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Current request id=" + _rqId);
                 }
 
                 if (!requiresState) {
                     if (_rqId == null) {
-                        Debug.Trace("SessionStateModuleOnAcquireState",
+                        System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState",
                                     "Handler does not require state, " +
                                     "session id skipped or no id found, " +
                                     "skipReadingId=" + skipReadingId +
                                     "\nReturning from SessionStateModule::OnAcquireState");
                     }
                     else {
-                        Debug.Trace("SessionStateModuleOnAcquireState",
+                        System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState",
                                     "Handler does not require state, " +
                                     "resetting timeout for SessionId=" + _rqId +
                                     "\nReturning from SessionStateModule::OnAcquireState");
@@ -734,7 +734,7 @@ namespace System.Web.SessionState {
 
         internal bool CreateSessionId() {
             // CreateSessionId should be called only if:
-            Debug.Assert(_rqId == null ||               // Session id isn't found in the request, OR
+            System.Web.Util.Debug.Assert(_rqId == null ||               // Session id isn't found in the request, OR
 
                 (_rqSessionStateNotFound &&             // The session state isn't found, AND
                  s_configRegenerateExpiredSessionId &&  // We are regenerating expired session id, AND
@@ -742,7 +742,7 @@ namespace System.Web.SessionState {
                  !_rqIdNew),                            // The above three condition should imply the session id
                                                         // isn't just created, but is sent by the request.
                 "CreateSessionId should be called only if we're generating new id, or re-generating expired one");
-            Debug.Assert(_rqChangeImpersonationRefCount > 0, "Must call ChangeImpersonation first");
+            System.Web.Util.Debug.Assert(_rqChangeImpersonationRefCount > 0, "Must call ChangeImpersonation first");
 
             bool redirected;
             _rqId = _idManager.CreateSessionID(_rqContext);
@@ -762,8 +762,8 @@ namespace System.Web.SessionState {
                 return;
             }
 
-            Debug.Assert(_rqId != null, "Session State ID must exist");
-            Debug.Assert(_rqItem != null, "Session State item must exist");
+            System.Web.Util.Debug.Assert(_rqId != null, "Session State ID must exist");
+            System.Web.Util.Debug.Assert(_rqItem != null, "Session State item must exist");
 
             ChangeImpersonation(_rqContext, false);
 
@@ -789,10 +789,10 @@ namespace System.Web.SessionState {
         // Called when AcquireState is done.  This function will add the returned
         // SessionStateStore item to the request context.
         void CompleteAcquireState() {
-            Debug.Trace("SessionStateModuleOnAcquireState", "Item retrieved=" + (_rqItem != null).ToString(CultureInfo.InvariantCulture));
+            System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Item retrieved=" + (_rqItem != null).ToString(CultureInfo.InvariantCulture));
             bool delayInitStateStoreItem = false;
 
-            Debug.Assert(!(s_allowDelayedStateStoreItemCreation && s_configRegenerateExpiredSessionId),
+            System.Web.Util.Debug.Assert(!(s_allowDelayedStateStoreItemCreation && s_configRegenerateExpiredSessionId),
                 "!(s_allowDelayedStateStoreItemCreation && s_configRegenerateExpiredSessionId)");
 
             try {
@@ -800,7 +800,7 @@ namespace System.Web.SessionState {
                     _rqSessionStateNotFound = false;
 
                     if ((_rqActionFlags & SessionStateActions.InitializeItem) != 0) {
-                        Debug.Trace("SessionStateModuleOnAcquireState", "Initialize an uninit item");
+                        System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Initialize an uninit item");
                         _rqIsNewSession = true;
                     }
                     else {
@@ -812,7 +812,7 @@ namespace System.Web.SessionState {
                     _rqSessionStateNotFound = true;
 
                     if (s_allowDelayedStateStoreItemCreation) {
-                        Debug.Trace("SessionStateModuleOnAcquireState", "Delay creating new session state");
+                        System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Delay creating new session state");
                         delayInitStateStoreItem = true;
                     }
 
@@ -824,10 +824,10 @@ namespace System.Web.SessionState {
                         // We will generate a new session id for this expired session state
                         bool redirected = CreateSessionId();
 
-                        Debug.Trace("SessionStateModuleOnAcquireState", "Complete re-creating new id; redirected=" + redirected);
+                        System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Complete re-creating new id; redirected=" + redirected);
 
                         if (redirected) {
-                            Debug.Trace("SessionStateModuleOnAcquireState", "Will redirect because we've reissued a new id and it's cookieless");
+                            System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Will redirect because we've reissued a new id and it's cookieless");
                             CreateUninitializedSessionState();
                             return;
                         }
@@ -845,7 +845,7 @@ namespace System.Web.SessionState {
                 SessionStateUtility.AddHttpSessionStateModuleToContext(_rqContext, this, delayInitStateStoreItem);
 
                 if (_rqIsNewSession) {
-                    Debug.Trace("SessionStateModuleOnAcquireState", "Calling OnStart");
+                    System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Calling OnStart");
                     OnStart(EventArgs.Empty);
                 }
             }
@@ -856,18 +856,18 @@ namespace System.Web.SessionState {
 #if DBG
             if (_rqIsNewSession) {
                 if (_rqId == null) {
-                    Debug.Assert(s_allowInProcOptimization, "s_allowInProcOptimization");
-                    Debug.Trace("SessionStateModuleOnAcquireState", "New session: session id reading is delayed"+
+                    System.Web.Util.Debug.Assert(s_allowInProcOptimization, "s_allowInProcOptimization");
+                    System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "New session: session id reading is delayed"+
                                 "\nReturning from SessionStateModule::OnAcquireState");
                 }
                 else {
-                    Debug.Trace("SessionStateModuleOnAcquireState", "New session: SessionId= " + _rqId +
+                    System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "New session: SessionId= " + _rqId +
                                 "\nReturning from SessionStateModule::OnAcquireState");
                 }
 
             }
             else {
-                Debug.Trace("SessionStateModuleOnAcquireState", "Retrieved old session, SessionId= " + _rqId +
+                System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState", "Retrieved old session, SessionId= " + _rqId +
                             "\nReturning from SessionStateModule::OnAcquireState");
 
             }
@@ -875,7 +875,7 @@ namespace System.Web.SessionState {
         }
 
         void CreateUninitializedSessionState() {
-            Debug.Assert(_rqChangeImpersonationRefCount > 0, "Must call ChangeImpersonation first");
+            System.Web.Util.Debug.Assert(_rqChangeImpersonationRefCount > 0, "Must call ChangeImpersonation first");
 
             // When we generate a new session id in cookieless case, and if "reissueExpiredSession" is
             // true, we need to generate a new temporary empty session and save it
@@ -885,19 +885,19 @@ namespace System.Web.SessionState {
         }
 
         internal void InitStateStoreItem(bool addToContext) {
-            Debug.Assert(_rqId != null || s_allowInProcOptimization, "_rqId != null || s_allowInProcOptimization");
+            System.Web.Util.Debug.Assert(_rqId != null || s_allowInProcOptimization, "_rqId != null || s_allowInProcOptimization");
 
             ChangeImpersonation(_rqContext, false);
             try {
 
                 if (_rqItem == null) {
-                    Debug.Trace("InitStateStoreItem", "Creating new session state");
+                    System.Web.Util.Debug.Trace("InitStateStoreItem", "Creating new session state");
                     _rqItem = _store.CreateNewStoreData(_rqContext, s_timeout);
                 }
 
                 _rqSessionItems = _rqItem.Items;
                 if (_rqSessionItems == null) {
-                    throw new HttpException(SR.GetString(SR.Null_value_for_SessionStateItemCollection));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Null_value_for_SessionStateItemCollection));
                 }
 
                 // No check for null because we allow our custom provider to return a null StaticObjects.
@@ -927,11 +927,11 @@ namespace System.Web.SessionState {
 
         // Used for InProc session id optimization
         internal string DelayedGetSessionId() {
-            Debug.Assert(s_allowInProcOptimization, "Shouldn't be called if we don't allow InProc optimization");
-            Debug.Assert(_rqId == null, "Shouldn't be called if we already have the id");
-            Debug.Assert(!((SessionIDManager)_idManager).UseCookieless(_rqContext), "We can delay session id only if we are not using cookieless");
+            System.Web.Util.Debug.Assert(s_allowInProcOptimization, "Shouldn't be called if we don't allow InProc optimization");
+            System.Web.Util.Debug.Assert(_rqId == null, "Shouldn't be called if we already have the id");
+            System.Web.Util.Debug.Assert(!((SessionIDManager)_idManager).UseCookieless(_rqContext), "We can delay session id only if we are not using cookieless");
 
-            Debug.Trace("DelayedOperation", "Delayed getting session id");
+            System.Web.Util.Debug.Trace("DelayedOperation", "Delayed getting session id");
 
             bool    redirected;
 
@@ -940,10 +940,10 @@ namespace System.Web.SessionState {
                 _rqId = _idManager.GetSessionID(_rqContext);
 
                 if (_rqId == null) {
-                    Debug.Trace("DelayedOperation", "Delayed creating session id");
+                    System.Web.Util.Debug.Trace("DelayedOperation", "Delayed creating session id");
 
                     redirected = CreateSessionId();
-                    Debug.Assert(!redirected, "DelayedGetSessionId shouldn't redirect us here.");
+                    System.Web.Util.Debug.Assert(!redirected, "DelayedGetSessionId shouldn't redirect us here.");
                 }
             }
             finally {
@@ -957,12 +957,12 @@ namespace System.Web.SessionState {
             bool locked;
             TimeSpan lockAge;
 
-            Debug.Assert(_rqId != null, "_rqId != null");
-            Debug.Assert(_rqChangeImpersonationRefCount > 0, "Must call ChangeImpersonation first");
+            System.Web.Util.Debug.Assert(_rqId != null, "_rqId != null");
+            System.Web.Util.Debug.Assert(_rqChangeImpersonationRefCount > 0, "Must call ChangeImpersonation first");
 
             if (!_rqReadonly) {
                 SessionStateStoreData storedItem = _store.GetItemExclusive(_rqContext, _rqId, out locked, out lockAge, out _rqLockId, out _rqActionFlags);
-                Debug.Assert(storedItem != null, "Must succeed in locking session state item.");
+                System.Web.Util.Debug.Assert(storedItem != null, "Must succeed in locking session state item.");
             }
         }
         
@@ -971,8 +971,8 @@ namespace System.Web.SessionState {
             bool            locked;
             TimeSpan        lockAge;
 
-            Debug.Assert(_rqId != null, "_rqId != null");
-            Debug.Assert(_rqChangeImpersonationRefCount > 0, "Must call ChangeImpersonation first");
+            System.Web.Util.Debug.Assert(_rqId != null, "_rqId != null");
+            System.Web.Util.Debug.Assert(_rqChangeImpersonationRefCount > 0, "Must call ChangeImpersonation first");
 
             if (_rqReadonly) {
                 _rqItem = _store.GetItem(_rqContext, _rqId, out locked, out lockAge, out _rqLockId, out _rqActionFlags);
@@ -997,14 +997,14 @@ namespace System.Web.SessionState {
                 // 
                 if (lockAge >= _rqExecutionTimeout) {
                     /* Release the lock on the item, which is held by another thread*/
-                    Debug.Trace("SessionStateModuleOnAcquireState",
+                    System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState",
                                 "Lock timed out, lockAge=" + lockAge +
                                 ", id=" + _rqId);
 
                     _store.ReleaseItemExclusive(_rqContext, _rqId, _rqLockId);
                 }
 
-                Debug.Trace("SessionStateModuleOnAcquireState",
+                System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState",
                             "Item is locked, will poll, id=" + _rqId);
 
                 isCompleted = false;
@@ -1028,7 +1028,7 @@ namespace System.Web.SessionState {
                 // It should not be called in timer's callback
                 QueueRef();
 #if DBG
-                if (!Debug.IsTagPresent("Timer") || Debug.IsTagEnabled("Timer"))
+                if (!System.Web.Util.Debug.IsTagPresent("Timer") || System.Web.Util.Debug.IsTagEnabled("Timer"))
 #endif
                 {
                     if (!s_PollIntervalRegLookedUp)
@@ -1043,7 +1043,7 @@ namespace System.Web.SessionState {
             // In that case, it will be timeout anyway after it gets the session item.
             // So it makes sense to timeout it when waiting longer than executionTimeout.
             if (_rqContext.HasTimeoutExpired) {
-                throw new HttpException(SR.GetString(SR.Request_timed_out));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Request_timed_out));
             }
         }
 
@@ -1064,7 +1064,7 @@ namespace System.Web.SessionState {
             s_queuedRequestsNumPerSession.TryGetValue(_rqId, out count);
 
             if (count >= AppSettings.RequestQueueLimitPerSession) {
-                throw new HttpException(SR.GetString(SR.Request_Queue_Limit_Per_Session_Exceeded));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Request_Queue_Limit_Per_Session_Exceeded));
             }
 
             //
@@ -1147,7 +1147,7 @@ namespace System.Web.SessionState {
                 else {
                     // For a request thread, if we're told to not use hosting id, there's no need
                     // to do anything special.
-                    Debug.Assert(_rqIctx == null, "_rqIctx == null");
+                    System.Web.Util.Debug.Assert(_rqIctx == null, "_rqIctx == null");
                     return;
                 }
             }
@@ -1155,12 +1155,12 @@ namespace System.Web.SessionState {
         }
 
         void RestoreImpersonation() {
-            Debug.Assert(_rqChangeImpersonationRefCount != 0, "_rqChangeImpersonationRefCount != 0");
+            System.Web.Util.Debug.Assert(_rqChangeImpersonationRefCount != 0, "_rqChangeImpersonationRefCount != 0");
 
             _rqChangeImpersonationRefCount--;
 
             if (_rqChangeImpersonationRefCount == 0) {
-                Debug.Assert(!(_rqIctx != null && _rqTimerThreadImpersonationIctx != null), "Should not have mixed mode of impersonation");
+                System.Web.Util.Debug.Assert(!(_rqIctx != null && _rqTimerThreadImpersonationIctx != null), "Should not have mixed mode of impersonation");
 
                 if (_rqIctx != null) {
                     _rqIctx.Undo();
@@ -1168,7 +1168,7 @@ namespace System.Web.SessionState {
                 }
 
                 if (_rqTimerThreadImpersonationIctx != null) {
-                    Debug.Assert(_rqContext != null, "_rqContext != null");
+                    System.Web.Util.Debug.Assert(_rqContext != null, "_rqContext != null");
                     _rqTimerThreadImpersonationIctx.Undo();
                     _rqTimerThreadImpersonationIctx = null;
                 }
@@ -1176,8 +1176,8 @@ namespace System.Web.SessionState {
         }
 
         void PollLockedSessionCallback(object state) {
-            Debug.Assert(_rqId != null, "_rqId != null");
-            Debug.Trace("SessionStateModuleOnAcquireState",
+            System.Web.Util.Debug.Assert(_rqId != null, "_rqId != null");
+            System.Web.Util.Debug.Trace("SessionStateModuleOnAcquireState",
                         "Polling callback called from timer, id=" + _rqId);
 
             bool isCompleted = false;
@@ -1203,7 +1203,7 @@ namespace System.Web.SessionState {
                         isCompleted = GetSessionStateItem();
                         _rqLastPollCompleted = DateTime.UtcNow;
                         if (isCompleted) {
-                            Debug.Assert(_timer != null, "_timer != null");
+                            System.Web.Util.Debug.Assert(_timer != null, "_timer != null");
                             ResetPollTimer();
                             CompleteAcquireState();
                         }
@@ -1236,11 +1236,11 @@ namespace System.Web.SessionState {
         // Called by OnReleaseState to get the session id.
         string ReleaseStateGetSessionID() {
             if (_rqId == null) {
-                Debug.Assert(s_allowInProcOptimization, "s_allowInProcOptimization");
+                System.Web.Util.Debug.Assert(s_allowInProcOptimization, "s_allowInProcOptimization");
                 DelayedGetSessionId();
             }
 
-            Debug.Assert(_rqId != null, "_rqId != null");
+            System.Web.Util.Debug.Assert(_rqId != null, "_rqId != null");
             return _rqId;
         }
 
@@ -1256,9 +1256,9 @@ namespace System.Web.SessionState {
             HttpContext                 context;
             bool                        setItemCalled = false;
 
-            Debug.Trace("SessionStateOnReleaseState", "Beginning SessionStateModule::OnReleaseState");
+            System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Beginning SessionStateModule::OnReleaseState");
 
-            Debug.Assert(!(_rqAddedCookie && !_rqIsNewSession),
+            System.Web.Util.Debug.Assert(!(_rqAddedCookie && !_rqIsNewSession),
                 "If session id was added to the cookie, it must be a new session.");
 
             // !!!
@@ -1276,7 +1276,7 @@ namespace System.Web.SessionState {
                 if (_rqSessionState != null) {
                     bool delayedSessionState = (_rqSessionState == s_delayedSessionState);
 
-                    Debug.Trace("SessionStateOnReleaseState", "Remove session state from context");
+                    System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Remove session state from context");
                     SessionStateUtility.RemoveHttpSessionStateFromContext(_rqContext, delayedSessionState);
 
                     /*
@@ -1297,10 +1297,10 @@ namespace System.Web.SessionState {
                                && (delayedSessionState || _rqStaticObjects == null || _rqStaticObjects.NeverAccessed)
                         ) {
 
-                        Debug.Trace("SessionStateOnReleaseState", "Not storing unused new session.");
+                        System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Not storing unused new session.");
                     }
                     else if (_rqSessionState.IsAbandoned) {
-                        Debug.Trace("SessionStateOnReleaseState", "Removing session due to abandonment, SessionId=" + _rqId);
+                        System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Removing session due to abandonment, SessionId=" + _rqId);
 
                         if (_rqSessionStateNotFound) {
                             // The store provider doesn't have it, and so we don't need to remove it from the store.
@@ -1309,8 +1309,8 @@ namespace System.Web.SessionState {
                             // we need to explicitly call Session_End.
                             if (_supportSessionExpiry) {
                                 if (delayedSessionState) {
-                                    Debug.Assert(s_allowDelayedStateStoreItemCreation, "s_allowDelayedStateStoreItemCreation");
-                                    Debug.Assert(_rqItem == null, "_rqItem == null");
+                                    System.Web.Util.Debug.Assert(s_allowDelayedStateStoreItemCreation, "s_allowDelayedStateStoreItemCreation");
+                                    System.Web.Util.Debug.Assert(_rqItem == null, "_rqItem == null");
 
                                     InitStateStoreItem(false /*addToContext*/);
                                 }
@@ -1319,7 +1319,7 @@ namespace System.Web.SessionState {
                             }
                         }
                         else {
-                            Debug.Assert(_rqItem != null, "_rqItem cannot null if it's not a new session");
+                            System.Web.Util.Debug.Assert(_rqItem != null, "_rqItem cannot null if it's not a new session");
 
                             // Remove it from the store because the session is abandoned.
                             _store.RemoveItem(_rqContext, ReleaseStateGetSessionID(), _rqLockId, _rqItem);
@@ -1344,25 +1344,25 @@ namespace System.Web.SessionState {
                             ) {
 
                             if (delayedSessionState) {
-                                Debug.Assert(_rqIsNewSession, "Saving a session and delayedSessionState is true: _rqIsNewSession must be true");
-                                Debug.Assert(s_allowDelayedStateStoreItemCreation, "Saving a session and delayedSessionState is true: s_allowDelayedStateStoreItemCreation");
-                                Debug.Assert(_rqItem == null, "Saving a session and delayedSessionState is true: _rqItem == null");
+                                System.Web.Util.Debug.Assert(_rqIsNewSession, "Saving a session and delayedSessionState is true: _rqIsNewSession must be true");
+                                System.Web.Util.Debug.Assert(s_allowDelayedStateStoreItemCreation, "Saving a session and delayedSessionState is true: s_allowDelayedStateStoreItemCreation");
+                                System.Web.Util.Debug.Assert(_rqItem == null, "Saving a session and delayedSessionState is true: _rqItem == null");
 
                                 InitStateStoreItem(false /*addToContext*/);
                             }
 
 #if DBG
                             if (_rqSessionItems.Dirty) {
-                                Debug.Trace("SessionStateOnReleaseState", "Setting new session due to dirty SessionItems, SessionId=" + _rqId);
+                                System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Setting new session due to dirty SessionItems, SessionId=" + _rqId);
                             }
                             else if (_rqStaticObjects != null && !_rqStaticObjects.NeverAccessed) {
-                                Debug.Trace("SessionStateOnReleaseState", "Setting new session due to accessed Static Objects, SessionId=" + _rqId);
+                                System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Setting new session due to accessed Static Objects, SessionId=" + _rqId);
                             }
                             else if (_rqSessionStateNotFound) {
-                                Debug.Trace("SessionStateOnReleaseState", "Setting new session because it's not found, SessionId=" + _rqId);
+                                System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Setting new session because it's not found, SessionId=" + _rqId);
                             }
                             else {
-                                Debug.Trace("SessionStateOnReleaseState", "Setting new session due to options change, SessionId=" + _rqId +
+                                System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Setting new session due to options change, SessionId=" + _rqId +
                                             "\n\t_rq.timeout=" + _rqItem.Timeout.ToString(CultureInfo.InvariantCulture) +
                                             ", _rqSessionState.timeout=" + _rqSessionState.Timeout.ToString(CultureInfo.InvariantCulture));
                             }
@@ -1377,21 +1377,21 @@ namespace System.Web.SessionState {
                         }
                         else {
                             // Can't save it because of various reason.  Just release our exclusive lock on it.
-                            Debug.Trace("SessionStateOnReleaseState", "Release exclusive lock on session, SessionId=" + _rqId);
+                            System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Release exclusive lock on session, SessionId=" + _rqId);
 
                             if (!_rqSessionStateNotFound) {
-                                Debug.Assert(_rqItem != null, "_rqItem cannot null if it's not a new session");
+                                System.Web.Util.Debug.Assert(_rqItem != null, "_rqItem cannot null if it's not a new session");
                                 _store.ReleaseItemExclusive(_rqContext, ReleaseStateGetSessionID(), _rqLockId);
                             }
                         }
                     }
 #if DBG
                     else {
-                        Debug.Trace("SessionStateOnReleaseState", "Session is read-only, ignoring SessionId=" + _rqId);
+                        System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Session is read-only, ignoring SessionId=" + _rqId);
                     }
 #endif
 
-                    Debug.Trace("SessionStateOnReleaseState", "Returning from SessionStateModule::OnReleaseState");
+                    System.Web.Util.Debug.Trace("SessionStateOnReleaseState", "Returning from SessionStateModule::OnReleaseState");
                 }
 
                 if (_rqAddedCookie && !setItemCalled && context.Response.IsBuffered()) {
@@ -1427,13 +1427,15 @@ namespace System.Web.SessionState {
             HttpContext context;
             String id;
 
-            Debug.Trace("SessionStateOnEndRequest", "Beginning SessionStateModule::OnEndRequest");
+            System.Web.Util.Debug.Trace("SessionStateOnEndRequest", "Beginning SessionStateModule::OnEndRequest");
 
             app = (HttpApplication)source;
             context = app.Context;
 
             /* determine if the request requires state at all */
             if (!context.RequiresSessionState) {
+                // VSO bug #463831, make sure the fields are reset in classic mode
+                ResetPerRequestFields();
                 return;
             }
 
@@ -1464,12 +1466,12 @@ namespace System.Web.SessionState {
 
                         id = _idManager.GetSessionID(context);
                         if (id != null) {
-                            Debug.Trace("SessionStateOnEndRequest", "Resetting timeout for SessionId=" + id);
+                            System.Web.Util.Debug.Trace("SessionStateOnEndRequest", "Resetting timeout for SessionId=" + id);
                             _store.ResetItemTimeout(context, id);
                         }
 #if DBG
                         else {
-                            Debug.Trace("SessionStateOnEndRequest", "No session id found.");
+                            System.Web.Util.Debug.Trace("SessionStateOnEndRequest", "No session id found.");
                         }
 #endif
                     }
@@ -1485,12 +1487,12 @@ namespace System.Web.SessionState {
                 ResetPerRequestFields();
             }
 
-            Debug.Trace("SessionStateOnEndRequest", "Returning from SessionStateModule::OnEndRequest");
+            System.Web.Util.Debug.Trace("SessionStateOnEndRequest", "Returning from SessionStateModule::OnEndRequest");
         }
 
         internal static void ReadConnectionString(SessionStateSection config, ref string cntString, string propName) {
             ConfigsHelper.GetRegistryStringAttribute(ref cntString, config, propName);
-            HandlerBase.CheckAndReadConnectionString(ref cntString, true);
+            System.Web.Configuration.HandlerBase.CheckAndReadConnectionString(ref cntString, true);
         }
 
         internal bool SessionIDManagerUseCookieless {

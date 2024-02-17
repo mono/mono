@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls {
         private object _dataSource;
 
         public ReadOnlyHierarchicalDataSource(object dataSource) {
-            Debug.Assert(dataSource == null || (dataSource is IHierarchicalEnumerable || dataSource is IHierarchicalDataSource), "Expected dataSource to be either null, an IHierarchicalEnumerable, or an IHierarchicalDataSource.");
+            System.Web.Util.Debug.Assert(dataSource == null || (dataSource is IHierarchicalEnumerable || dataSource is IHierarchicalDataSource), "Expected dataSource to be either null, an IHierarchicalEnumerable, or an IHierarchicalDataSource.");
             _dataSource = dataSource;
         }
 
@@ -51,7 +51,7 @@ namespace System.Web.UI.WebControls {
 
             IHierarchicalEnumerable enumerable = _dataSource as IHierarchicalEnumerable;
             if (enumerable != null && viewPath != null && viewPath.Length != 0) {
-                throw new InvalidOperationException(SR.GetString(SR.ReadOnlyHierarchicalDataSourceView_CantAccessPathInEnumerable));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ReadOnlyHierarchicalDataSourceView_CantAccessPathInEnumerable));
             }
             return new ReadOnlyHierarchicalDataSourceView(enumerable);
         }

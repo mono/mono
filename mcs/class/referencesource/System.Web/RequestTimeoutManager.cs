@@ -37,7 +37,7 @@ namespace System.Web {
             // create the timer
 
 #if DBG
-            if (!Debug.IsTagPresent("Timer") || Debug.IsTagEnabled("Timer"))
+            if (!System.Web.Util.Debug.IsTagPresent("Timer") || System.Web.Util.Debug.IsTagEnabled("Timer"))
 #endif
             {
                 _timer = new Timer(new TimerCallback(this.TimerCompletionCallback), null, _timerPeriod, _timerPeriod);

@@ -64,29 +64,31 @@ namespace DbLinqTest {
         protected override string People(string firstName)
         {
             return string.Format(
-                "SELECT [first_name], [last_name]{0}" + 
-                "FROM [people]{0}" +
-                "WHERE ([first_name] = '" + firstName + "')", 
-                Environment.NewLine); ;
+                "SELECT [t0].[first_name] AS [FirstName], [t0].[last_name] AS [LastName]{0}" + 
+                "FROM [people] AS [t0]{0}" +
+                "WHERE [t0].[first_name] = @p0",
+                Environment.NewLine);
         }
 
         protected override string People(string firstName, string lastName)
         {
-            return People(firstName) + " AND ([last_name] = '" + lastName + "')";
+            return string.Format(
+                "SELECT [t0].[first_name] AS [FirstName], [t0].[last_name] AS [LastName]{0}" + 
+                "FROM [people] AS [t0]{0}" +
+                "WHERE ([t0].[last_name] = @p0) AND ([t0].[first_name] = @p1)",
+                Environment.NewLine);
         }
 
         protected override string People(string firstName, string lastName, int skip, int take)
         {
-            return string.Format("SELECT *{0}" +
+            return string.Format("SELECT [t1].[first_name] AS [FirstName], [t1].[last_name] AS [LastName]{0}" +
                 "FROM ({0}" +
-                "    SELECT [first_name], [last_name]{0}" +
-                ",{0}" +
-                "    ROW_NUMBER() OVER(ORDER BY [first_name], [last_name]{0}" +
-                ") AS [__ROW_NUMBER]{0}" +
-                "    FROM [people]{0}" +
-                "WHERE ([first_name] = '{1}') AND ([last_name] = '{2}')    ) AS [t0]{0}" +
-                "WHERE [__ROW_NUMBER] BETWEEN {3}+1 AND {3}+{4}{0}" +
-                "ORDER BY [__ROW_NUMBER]",
+                "    SELECT ROW_NUMBER() OVER (ORDER BY [t0].[first_name], [t0].[last_name]) AS [ROW_NUMBER], [t0].[first_name], [t0].[last_name]{0}" +
+                "    FROM [people] AS [t0]{0}" +
+                "    WHERE ([t0].[last_name] = @p0) AND ([t0].[first_name] = @p1){0}" +
+                "    ) AS [t1]{0}" +
+                "WHERE [t1].[ROW_NUMBER] BETWEEN @p2 + 1 AND @p2 + @p3{0}" +
+                "ORDER BY [t1].[ROW_NUMBER]",
                 Environment.NewLine, firstName, lastName, skip, take);
         }
 
@@ -106,11 +108,11 @@ namespace DbLinqTest {
             catch (NotSupportedException)
             {
                 Console.WriteLine("# logfile=\n{0}", log.ToString());
-                var expected = string.Format("SELECT COUNT(*){0}" +
-                    "FROM [people]{0}" +
+                var expected = string.Format("SELECT COUNT(*) AS [value]{0}" +
+                    "FROM [people] AS [t0]{0}" +
                     "--",
                     Environment.NewLine);
-                Assert.IsTrue(log.ToString().Contains(expected));
+                StringAssert.Contains (expected, log.ToString());
             }
             catch (Exception e)
             {

@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls {
                 return _containingField.ValidateRequestMode;
             }
             set {
-                throw new InvalidOperationException(SR.GetString(SR.DataControlFieldCell_ShouldNotSetValidateRequestMode));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControlFieldCell_ShouldNotSetValidateRequestMode));
             }
         }
     }

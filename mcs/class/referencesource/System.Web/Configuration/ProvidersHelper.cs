@@ -13,23 +13,23 @@ namespace System.Web.Configuration
     using System;
     using System.Security;
     using System.Security.Permissions;
+    
 
     public static class ProvidersHelper {
         ///////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////
-        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
+        ///////////////////////////////////////////////////////////////////////////////        
         public static ProviderBase InstantiateProvider(ProviderSettings providerSettings, Type providerType)
         {
             ProviderBase provider = null;
             try {
                 string pnType = (providerSettings.Type == null) ? null : providerSettings.Type.Trim();
                 if (string.IsNullOrEmpty(pnType))
-                    throw new ArgumentException(SR.GetString(SR.Provider_no_type_name));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_no_type_name));
                 Type t = ConfigUtil.GetType(pnType, "type", providerSettings, true, true);
 
                 if (!providerType.IsAssignableFrom(t))
-                    throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, providerType.ToString()));
-                provider = (ProviderBase)HttpRuntime.CreatePublicInstance(t);
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, providerType.ToString()));
+                provider = (ProviderBase)HttpRuntime.CreatePublicInstanceByWebObjectActivator(t);
 
                 // Because providers modify the parameters collection (i.e. delete stuff), pass in a clone of the collection
                 NameValueCollection pars = providerSettings.Parameters;
@@ -37,6 +37,8 @@ namespace System.Web.Configuration
                 foreach (string key in pars)
                     cloneParams[key] = pars[key];
                 provider.Initialize(providerSettings.Name, cloneParams);
+
+                TelemetryLogger.LogProvider(t);
             } catch (Exception e) {
                 if (e is ConfigurationException)
                     throw;
@@ -45,26 +47,27 @@ namespace System.Web.Configuration
 
             return provider;
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
+        
         internal static ProviderBase InstantiateProvider(NameValueCollection providerSettings, Type providerType) {
             ProviderBase provider = null;
             try {
                 string pnName = GetAndRemoveStringValue(providerSettings, "name");
                 string pnType = GetAndRemoveStringValue(providerSettings, "type");
                 if (string.IsNullOrEmpty(pnType))
-                    throw new ArgumentException(SR.GetString(SR.Provider_no_type_name));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_no_type_name));
                 Type t = ConfigUtil.GetType(pnType, "type", null, null, true, true);
 
                 if (!providerType.IsAssignableFrom(t))
-                    throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, providerType.ToString()));
-                provider = (ProviderBase)HttpRuntime.CreatePublicInstance(t);
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, providerType.ToString()));
+                provider = (ProviderBase)HttpRuntime.CreatePublicInstanceByWebObjectActivator(t);
 
                 // Because providers modify the parameters collection (i.e. delete stuff), pass in a clone of the collection
                 NameValueCollection cloneParams = new NameValueCollection(providerSettings.Count, StringComparer.Ordinal);
                 foreach (string key in providerSettings)
                     cloneParams[key] = providerSettings[key];
                 provider.Initialize(pnName, cloneParams);
+
+                TelemetryLogger.LogProvider(t);
             }
             catch (Exception e) {
                 if (e is ConfigurationException)
@@ -74,8 +77,7 @@ namespace System.Web.Configuration
 
             return provider;
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
+        
         public static void InstantiateProviders(ProviderSettingsCollection configProviders, ProviderCollection providers, Type providerType)
         {
             foreach (ProviderSettings ps in configProviders) {

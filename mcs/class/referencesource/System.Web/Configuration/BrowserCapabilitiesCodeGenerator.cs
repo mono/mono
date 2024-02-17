@@ -33,6 +33,7 @@ namespace System.Web.Configuration {
     using Microsoft.Build.Utilities;
     using Microsoft.CSharp;
     using System.Diagnostics.CodeAnalysis;
+    
 
     [PermissionSet(SecurityAction.LinkDemand, Unrestricted = true)]
     [PermissionSet(SecurityAction.InheritanceDemand, Unrestricted = true)]
@@ -262,7 +263,7 @@ namespace System.Web.Configuration {
                 }
             }
             catch (Exception ex) {
-                throw new InvalidOperationException(SR.GetString(SR.Browser_W3SVC_Failure_Helper_Text, ex));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Browser_W3SVC_Failure_Helper_Text, ex));
             }
 #endif // !FEATURE_PAL
         }
@@ -290,7 +291,7 @@ namespace System.Web.Configuration {
                 browserInfo = new BrowserDefinition(node);
             }
             else {
-                Debug.Assert(node.Name == "defaultBrowser");
+                System.Web.Util.Debug.Assert(node.Name == "defaultBrowser");
                 browserInfo = new BrowserDefinition(node, true);
             }
 
@@ -301,7 +302,7 @@ namespace System.Web.Configuration {
                     oldNode.MergeWithDefinition(browserInfo);
                 }
                 else {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Duplicate_browser_id, browserInfo.ID), node);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Duplicate_browser_id, browserInfo.ID), node);
                 }
             }
             else {
@@ -346,7 +347,7 @@ namespace System.Web.Configuration {
                 }
                 else {
                     if (isCustomBrowser) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Browser_parentID_Not_Found, bd.ParentID), bd.XmlNode);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_parentID_Not_Found, bd.ParentID), bd.XmlNode);
                     }
                     else {
                         HandleUnRecognizedParentElement(bd, isDefaultBrowser);
@@ -363,7 +364,7 @@ namespace System.Web.Configuration {
                 string currentId = currentBrowser.Name;
                 while (!IsRootNode(currentId)) {
                     if (loopCheck[currentId] != null) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Browser_Circular_Reference, currentId), currentBrowser.XmlNode);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_Circular_Reference, currentId), currentBrowser.XmlNode);
                     }
                     loopCheck[currentId] = currentId;
                     currentBrowser = (BrowserDefinition)browserTree[currentBrowser.ParentName];
@@ -457,10 +458,10 @@ namespace System.Web.Configuration {
                     XmlNode rootNode = doc.DocumentElement;
                     if(rootNode.Name != "browsers") {
                         if(useVirtualPath) {
-                            throw new HttpParseException(SR.GetString(SR.Invalid_browser_root), null /*innerException*/, virtualDir + "/" + NoPathFileName(fileName), null /*sourceCode*/, 1);
+                            throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Invalid_browser_root), null /*innerException*/, virtualDir + "/" + NoPathFileName(fileName), null /*sourceCode*/, 1);
                         }
                         else {
-                            throw new HttpParseException(SR.GetString(SR.Invalid_browser_root), null /*innerException*/, fileName, null /*sourceCode*/, 1);
+                            throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Invalid_browser_root), null /*innerException*/, fileName, null /*sourceCode*/, 1);
                         }
                     }
 
@@ -569,10 +570,10 @@ namespace System.Web.Configuration {
                         XmlNode rootNode = doc.DocumentElement;
                         if (rootNode.Name != "browsers") {
                             if (useVirtualPath) {
-                                throw new HttpParseException(SR.GetString(SR.Invalid_browser_root), null /*innerException*/, virtualDir + "/" + NoPathFileName(fileName), null /*sourceCode*/, 1);
+                                throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Invalid_browser_root), null /*innerException*/, virtualDir + "/" + NoPathFileName(fileName), null /*sourceCode*/, 1);
                             }
                             else {
-                                throw new HttpParseException(SR.GetString(SR.Invalid_browser_root), null /*innerException*/, fileName, null /*sourceCode*/, 1);
+                                throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Invalid_browser_root), null /*innerException*/, fileName, null /*sourceCode*/, 1);
                             }
                         }
                         foreach (XmlNode node in rootNode.ChildNodes) {
@@ -639,7 +640,7 @@ namespace System.Web.Configuration {
         }
 
         internal virtual void HandleUnRecognizedParentElement(BrowserDefinition bd, bool isDefault) {
-            throw new ConfigurationErrorsException(SR.GetString(SR.Browser_parentID_Not_Found, bd.ParentID), bd.XmlNode);
+            throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_parentID_Not_Found, bd.ParentID), bd.XmlNode);
         }
         
         private static FileInfo[] GetFilesNotHidden(DirectoryInfo rootDirectory, DirectoryInfo browserDirInfo) {
@@ -671,7 +672,7 @@ namespace System.Web.Configuration {
         //generate the code from the parsed BrowserDefinitionTree
         //compile it, and install it in the gac
         private void GenerateAssembly() {
-            Debug.Assert(_browserTree != null);
+            System.Web.Util.Debug.Assert(_browserTree != null);
             BrowserDefinition root = (BrowserDefinition)_browserTree["Default"];
             BrowserDefinition defaultRoot = (BrowserDefinition)_defaultTree["Default"];
             ArrayList customTreeRoots = new ArrayList();
@@ -763,7 +764,7 @@ namespace System.Web.Configuration {
             for (int i = 0; i < customTreeRoots.Count; i++) {
                 foreach (DictionaryEntry entry in (BrowserTree)_customTreeList[i]) {
                     BrowserDefinition bd = entry.Value as BrowserDefinition;
-                    Debug.Assert(bd != null);
+                    System.Web.Util.Debug.Assert(bd != null);
                     GenerateProcessMethod(bd, factoryType);
                 }
             }
@@ -771,13 +772,13 @@ namespace System.Web.Configuration {
             //GenerateCallsToProcessMethods(root, method);
             foreach (DictionaryEntry entry in _browserTree) {
                 BrowserDefinition bd = entry.Value as BrowserDefinition;
-                Debug.Assert(bd != null);
+                System.Web.Util.Debug.Assert(bd != null);
                 GenerateProcessMethod(bd, factoryType);
             }
 
             foreach (DictionaryEntry entry in _defaultTree) {
                 BrowserDefinition bd = entry.Value as BrowserDefinition;
-                Debug.Assert(bd != null);
+                System.Web.Util.Debug.Assert(bd != null);
                 GenerateProcessMethod(bd, factoryType, "Default");
             }
 
@@ -830,7 +831,7 @@ namespace System.Web.Configuration {
                     }
                 }
 
-                throw new HttpCompileException(SR.GetString(SR.Browser_compile_error));
+                throw new HttpCompileException(System.Web.SR.GetString(System.Web.SR.Browser_compile_error));
             }
 
             Assembly resultAssembly = results.CompiledAssembly;
@@ -851,10 +852,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        private static string LoadPublicKeyTokenFromFile(string filename) {
-            IStackWalk fileReadAccess = InternalSecurityPermissions.FileReadAccess(filename);
-            Debug.Assert(fileReadAccess != null);
-            fileReadAccess.Assert();
+        private static string LoadPublicKeyTokenFromFile(string filename) {            
             if (!File.Exists(filename)) {
                 return null;
             }
@@ -873,10 +871,7 @@ namespace System.Web.Configuration {
 
                 // Don't throw exception if we don't have permission to the file.
                 return null;
-            }
-            finally {
-                CodeAccessPermission.RevertAssert();
-            }
+            }            
         }
 
         internal void GenerateOverrideBrowserElements(CodeTypeDeclaration typeDeclaration) {
@@ -909,7 +904,7 @@ namespace System.Web.Configuration {
                 if (!bd.IsDeviceNode)
                     continue;
 
-                Debug.Assert(!(bd is GatewayDefinition));
+                System.Web.Util.Debug.Assert(!(bd is GatewayDefinition));
 
                 CodeAssignStatement cas = new CodeAssignStatement();
                 cas.Left = new CodeIndexerExpression(_dictionaryRefExpr, new CodeExpression[] {
@@ -929,7 +924,7 @@ namespace System.Web.Configuration {
                     if (!bd.IsDeviceNode)
                         continue;
 
-                    Debug.Assert(!(bd is GatewayDefinition));
+                    System.Web.Util.Debug.Assert(!(bd is GatewayDefinition));
 
                     CodeAssignStatement cas = new CodeAssignStatement();
                     cas.Left = new CodeIndexerExpression(_dictionaryRefExpr, new CodeExpression[] {
@@ -1004,7 +999,7 @@ namespace System.Web.Configuration {
 
             // Only add the browser node to the browser collection if it represents a device.
             if (bd.IsDeviceNode) {
-                Debug.Assert(!(bd is GatewayDefinition));
+                System.Web.Util.Debug.Assert(!(bd is GatewayDefinition));
 
                 //GEN: browserCaps.AddBrowser("xxx");
                 CodeMethodInvokeExpression cmie = new CodeMethodInvokeExpression(new CodeVariableReferenceExpression(browserCapsVariable), "AddBrowser");

@@ -24,8 +24,11 @@ namespace System.Web.Hosting {
     using System.Web.Security;
     using System.Web.Util;
     using System.Web.WebSockets;
+    
 
+#if !FEATURE_PAL
     using IIS = UnsafeIISMethods;
+#endif
 
     internal sealed class IIS7WorkerRequest : HttpWorkerRequest {
 
@@ -106,8 +109,8 @@ namespace System.Web.Hosting {
 
         internal IIS7WorkerRequest(IntPtr requestContext, bool etwProviderEnabled) {
 
-            PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_TOTAL);
-
+            //PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_TOTAL);
+#if (!MONO || !FEATURE_PAL)
             if ( IntPtr.Zero == requestContext ) {
                 throw new ArgumentNullException("requestContext");
             }
@@ -118,13 +121,14 @@ namespace System.Web.Hosting {
             if (_traceEnabled) {
                 EtwTrace.TraceEnableCheck(EtwTraceConfigType.IIS7_INTEGRATED, requestContext);
 
-                // 
+                //
 
 
                 IIS.MgdGetRequestTraceGuid(_context, out _traceId);
 
                 if (EtwTrace.IsTraceEnabled(EtwTraceLevel.Verbose, EtwTraceFlags.Infrastructure)) EtwTrace.Trace(EtwTraceType.ETW_TYPE_APPDOMAIN_ENTER, this, Thread.GetDomain().FriendlyName);
             }
+#endif
         }
 
         internal IntPtr RequestContext {
@@ -138,6 +142,7 @@ namespace System.Web.Hosting {
         }
 
         internal void ReadRequestBasics() {
+#if (!MONO || !FEATURE_PAL)
             IntPtr pathTranslatedBuffer;
             int pathTranslatedBufferSize;
             IntPtr cacheUrl;
@@ -147,8 +152,8 @@ namespace System.Web.Hosting {
             int hr = IIS.MgdGetRequestBasics(_context, out _contentType, out _contentTotalLength, out pathTranslatedBuffer, out pathTranslatedBufferSize, out cacheUrl, out cacheUrlBufferSize, out httpMethodPtr, out pCookedUrl);
             Misc.ThrowIfFailedHr(hr);
 
-            _cacheUrl = (cacheUrlBufferSize <= 0) ? null : StringUtil.StringFromWCharPtr(cacheUrl, cacheUrlBufferSize);
-            _pathTranslated = (pathTranslatedBufferSize <= 0) ? String.Empty : StringUtil.StringFromWCharPtr(pathTranslatedBuffer, pathTranslatedBufferSize);
+            _cacheUrl = (cacheUrlBufferSize <= 0) ? null : System.Web.Util.StringUtil.StringFromWCharPtr(cacheUrl, cacheUrlBufferSize);
+            _pathTranslated = (pathTranslatedBufferSize <= 0) ? String.Empty : System.Web.Util.StringUtil.StringFromWCharPtr(pathTranslatedBuffer, pathTranslatedBufferSize);
 
             // We used to get the HTTP verb lazily, but pretty much every application depends on it, so
             // we may as well just get it now and save the later p/invoke.
@@ -178,13 +183,14 @@ namespace System.Web.Hosting {
             }
 
             _queryString = GetQueryString();
+#endif
         }
 
         internal static IIS7WorkerRequest CreateWorkerRequest(IntPtr requestContext, bool etwProviderEnabled) {
             IIS7WorkerRequest req = new IIS7WorkerRequest(requestContext, etwProviderEnabled);
 
             if ( null != req ) {
-                Debug.Trace("ClientUrl", " *********** NEW REQUEST ****************");
+                System.Web.Util.Debug.Trace("ClientUrl", " *********** NEW REQUEST ****************");
                 req.Initialize();
             }
 
@@ -192,6 +198,7 @@ namespace System.Web.Hosting {
         }
 
         internal void InitAppVars() {
+#if (!MONO || !FEATURE_PAL)
             IntPtr virtAddr;
             IntPtr physAddr;
             int virtLen, physLen;
@@ -204,21 +211,21 @@ namespace System.Web.Hosting {
 
             if ( hr < 0 ) {
                 throw new HttpException(
-                    SR.GetString(SR.Cannot_retrieve_request_data));
+                    System.Web.SR.GetString(System.Web.SR.Cannot_retrieve_request_data));
             }
             else {
                 unsafe {
-                    _appPath = StringUtil.StringFromWCharPtr(virtAddr, virtLen);
-                    _appPathTranslated = StringUtil.StringFromWCharPtr(physAddr, physLen);
+                    _appPath = System.Web.Util.StringUtil.StringFromWCharPtr(virtAddr, virtLen);
+                    _appPathTranslated = System.Web.Util.StringUtil.StringFromWCharPtr(physAddr, physLen);
                 }
 
                 if ( _appPathTranslated != null &&
                      _appPathTranslated.Length > 2 &&
-                     !StringUtil.StringEndsWith(_appPathTranslated, '\\') )
+                     !System.Web.Util.StringUtil.StringEndsWith(_appPathTranslated, '\\') )
                     // IIS 6.0 doesn't add the trailing '\'
                     _appPathTranslated += "\\";
             }
-
+#endif
         }
 
         internal void Initialize() {
@@ -228,6 +235,7 @@ namespace System.Web.Hosting {
         }
 
         internal void Dispose() {
+#if (!MONO || !FEATURE_PAL)
             CancellationTokenHelper clientDisconnectHelper;
             IntPtr originalContext;
 
@@ -250,7 +258,7 @@ namespace System.Web.Hosting {
                 if (originalContext != IntPtr.Zero) {
                     bool dummy;
                     int hr = IIS.MgdConfigureAsyncDisconnectNotification(originalContext, false /* fEnable */, out dummy);
-                    Debug.Assert(hr == 0); // also ignore the HRESULT, as we can't do anything about it right now
+                    System.Web.Util.Debug.Assert(hr == 0); // also ignore the HRESULT, as we can't do anything about it right now
 
                     // Due to the critical section in MGD_CONNECTION_STORED_CONTEXT, we're guaranteed that
                     // at this point in program execution any async disconnect notifications received by
@@ -261,9 +269,11 @@ namespace System.Web.Hosting {
 
             if (_channelBindingToken != null && !_channelBindingToken.IsInvalid)
                 _channelBindingToken.Dispose();
+#endif
         }
 
         internal override void RaiseTraceEvent(IntegratedTraceType traceType, string eventData) {
+#if (!MONO || !FEATURE_PAL)
             if (_traceEnabled && _context != IntPtr.Zero) {
                 // the area is derivative of the type, either page or module
                 int areaFlag = (traceType < IntegratedTraceType.DiagCritical) ? EtwTraceFlags.Page : EtwTraceFlags.Module;
@@ -272,9 +282,11 @@ namespace System.Web.Hosting {
                     IIS.MgdEmitSimpleTrace(_context, (int)traceType, message);
                 }
             }
+#endif
         }
 
         internal override void RaiseTraceEvent(WebBaseEvent webEvent) {
+#if (!MONO || !FEATURE_PAL)
             if (_traceEnabled && _context != IntPtr.Zero) {
                 if (EtwTrace.IsTraceEnabled(webEvent.InferEtwTraceVerbosity(), EtwTraceFlags.Infrastructure)) {
                     int fieldCount;
@@ -286,14 +298,16 @@ namespace System.Web.Hosting {
                     IIS.MgdEmitWebEventTrace(_context, webEventType, fieldCount, fieldNames, fieldTypes, fieldData);
                 }
             }
+#endif
         }
 
         internal string GetUriPathInternal(bool includePathInfo, bool useParentContext) {
             string uri = String.Empty;
 
-            IntPtr buffer;
-            int bufSize;
+            IntPtr buffer = new IntPtr();
+            int bufSize = 0;
 
+#if (!MONO || !FEATURE_PAL)
             int hr = IIS.MgdGetUriPath(_context,
                                        out buffer,
                                        out bufSize,
@@ -301,12 +315,13 @@ namespace System.Web.Hosting {
                                        useParentContext);
 
             if (hr < 0) {
-                throw new HttpException(SR.GetString(SR.Cannot_retrieve_request_data));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_retrieve_request_data));
             }
+#endif
 
             // is there anything to copy?  if not, just use String.Empty
             if (bufSize > 0) {
-                uri = StringUtil.StringFromWCharPtr(buffer, bufSize);
+                uri = System.Web.Util.StringUtil.StringFromWCharPtr(buffer, bufSize);
             }
 
             return uri;
@@ -343,7 +358,7 @@ namespace System.Web.Hosting {
                 return String.Empty;
             }
             else {
-                return StringUtil.StringFromWCharPtr(buffer, len);
+                return System.Web.Util.StringUtil.StringFromWCharPtr(buffer, len);
             }
         }
 
@@ -355,7 +370,7 @@ namespace System.Web.Hosting {
             // CACHE_URL is the original URI, unaffected by any rewriting or routing
             // that may have occurred on the server
             string rawUrl = GetRawUrlHelper(_cacheUrl);
-            Debug.Trace("ClientUrl", "*** GetRawUrl --> " + rawUrl + " ***");
+            System.Web.Util.Debug.Trace("ClientUrl", "*** GetRawUrl --> " + rawUrl + " ***");
             return rawUrl;
         }
 
@@ -376,7 +391,11 @@ namespace System.Web.Hosting {
         }
 
         public override int GetRemotePort() {
+#if (!MONO || !FEATURE_PAL)
             return IIS.MgdGetRemotePort(_context);
+#else
+            return -1;
+#endif
         }
 
         public override string GetLocalAddress() {
@@ -384,7 +403,11 @@ namespace System.Web.Hosting {
         }
 
         public override int GetLocalPort() {
+#if (!MONO || !FEATURE_PAL)
             return IIS.MgdGetLocalPort(_context);
+#else
+            return -1;
+#endif
         }
 
         public override string GetServerName() {
@@ -426,6 +449,7 @@ namespace System.Web.Hosting {
         // if this is called before the execute state
         // it defeats reloading
         public override int GetPreloadedEntityBodyLength() {
+#if (!MONO || !FEATURE_PAL)
             if( !_preloadedLengthRead ) {
                 int availSize = 0;
                 int hresult = IIS.MgdGetPreloadedSize(_context, out availSize);
@@ -433,6 +457,7 @@ namespace System.Web.Hosting {
                 _preloadedLength = availSize;
                 _preloadedLengthRead = true;
             }
+#endif
             return _preloadedLength;
         }
 
@@ -470,6 +495,8 @@ namespace System.Web.Hosting {
             IntPtr ppAsyncReceiveBuffer;
             int result = 0;
 
+#if (!MONO || !FEATURE_PAL)
+
             try {
                 // Acquire blocking call
                 IsInReadEntitySync = true;  
@@ -495,6 +522,7 @@ namespace System.Web.Hosting {
             if (bytesRead > 0) {
                 PerfCounters.IncrementCounterEx(AppPerfCounter.REQUEST_BYTES_IN, bytesRead);
             }
+#endif
 
             return bytesRead;
         }
@@ -519,7 +547,7 @@ namespace System.Web.Hosting {
 
         public override long GetBytesRead() {
             throw new HttpException(
-                    SR.GetString(SR.Not_supported));
+                    System.Web.SR.GetString(System.Web.SR.Not_supported));
         }
 
         public override bool SupportsAsyncFlush { get { return true; } }
@@ -535,22 +563,27 @@ namespace System.Web.Hosting {
 
             // we only allow one async operation at a time
             if (Interlocked.CompareExchange(ref _asyncResultBase, ar, null) != null)
-                throw new InvalidOperationException(SR.GetString(SR.Async_operation_pending));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_operation_pending));
 
             // initiate async operation here
             bool async = true;
-            bool completedSynchronously;
+            bool completedSynchronously = true;
+
+#if (!MONO || !FEATURE_PAL)
             int hresult = IIS.MgdExplicitFlush(_context, async, out completedSynchronously);
+#else
+            int hresult = -1;
+#endif
 
             if (hresult < 0) {
                 _asyncResultBase = null;
                 // treat every error as if the client disconnected
                 IncrementRequestsDisconnected();
-                throw new HttpException(SR.GetString(SR.ClientDisconnected), hresult);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ClientDisconnected), hresult);
             }
             else if (completedSynchronously) {
                 _asyncResultBase = null;
-                ar.Complete(0, HResults.S_OK, IntPtr.Zero, synchronous: true);
+                ar.Complete(0, System.Web.Util.HResults.S_OK, IntPtr.Zero, synchronous: true);
                 return ar;
             }
             else {
@@ -569,7 +602,7 @@ namespace System.Web.Hosting {
             if (ar.HResult < 0) {
                 // treat every error as if the client disconnected
                 IncrementRequestsDisconnected();
-                throw new HttpException(SR.GetString(SR.ClientDisconnected), ar.HResult);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ClientDisconnected), ar.HResult);
             }
             _headersSent = true;
         }
@@ -602,23 +635,25 @@ namespace System.Web.Hosting {
             if (count < 0)
                 throw new ArgumentOutOfRangeException("count");
             if (buffer.Length - offset < count)
-                throw new ArgumentException(SR.GetString(SR.InvalidOffsetOrCount, "offset", "count"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidOffsetOrCount, "offset", "count"));
 
             ReadAsyncResult ar = new ReadAsyncResult(callback, state, buffer, offset, count, updatePerfCounter: true);
 
             if (count == 0) {
-                ar.Complete(0, HResults.S_OK, IntPtr.Zero, synchronous: true);
+                ar.Complete(0, System.Web.Util.HResults.S_OK, IntPtr.Zero, synchronous: true);
                 return ar;
             }
 
             // we only allow one async operation at a time
             if (Interlocked.CompareExchange(ref _asyncResultBase, ar, null) != null)
-                throw new InvalidOperationException(SR.GetString(SR.Async_operation_pending));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_operation_pending));
 
             // initiate async operation here
             bool fAsync = true;
             int bytesRead = 0;
-            IntPtr ppAsyncReceiveBuffer;
+            IntPtr ppAsyncReceiveBuffer = new IntPtr();
+
+#if (!MONO || !FEATURE_PAL)
             int hresult = IIS.MgdReadEntityBody(_context,
                                                 null, // for async the data is copied from a native buffer to avoid pinning
                                                 0, // for async, offset is ignored
@@ -626,17 +661,19 @@ namespace System.Web.Hosting {
                                                 fAsync,
                                                 out bytesRead,
                                                 out ppAsyncReceiveBuffer);
-
+#else
+            int hresult = -1;
+#endif
             if (hresult < 0) {
                 _asyncResultBase = null;
                 // treat every error as if the client disconnected
                 IncrementRequestsDisconnected();
-                throw new HttpException(SR.GetString(SR.ClientDisconnected), hresult);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ClientDisconnected), hresult);
             }
             // if we completed synchronously, then ppAsyncReceiveBuffer will be non-null
             else if (ppAsyncReceiveBuffer != IntPtr.Zero) {
                 _asyncResultBase = null;
-                ar.Complete(bytesRead, HResults.S_OK, ppAsyncReceiveBuffer, synchronous: true);
+                ar.Complete(bytesRead, System.Web.Util.HResults.S_OK, ppAsyncReceiveBuffer, synchronous: true);
                 return ar;
             }
             else {
@@ -658,7 +695,7 @@ namespace System.Web.Hosting {
             if (ar.HResult < 0) {
                 // treat every error as if the client disconnected
                 IncrementRequestsDisconnected();
-                throw new HttpException(SR.GetString(SR.ClientDisconnected), ar.HResult);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ClientDisconnected), ar.HResult);
             }
             else {
                 return ar.BytesRead;
@@ -681,12 +718,14 @@ namespace System.Web.Hosting {
             ushort correlationIdStringLength;
             bool isWcfFormat;
 
+#if (!MONO || !FEATURE_PAL)
+
             int hr = UnsafeIISMethods.MgdGetCorrelationIdHeader(_context, out correlationIdStringPtr, out correlationIdStringLength, out isWcfFormat);
             Marshal.ThrowExceptionForHR(hr);
 
             try {
                 if (correlationIdStringPtr != IntPtr.Zero && correlationIdStringLength > 0) {
-                    string correlationIdString = StringUtil.StringFromCharPtr(correlationIdStringPtr, correlationIdStringLength);
+                    string correlationIdString = System.Web.Util.StringUtil.StringFromCharPtr(correlationIdStringPtr, correlationIdStringLength);
                     if (isWcfFormat) {
                         // Per WCF guidelines (http://msdn.microsoft.com/en-us/library/hh536924.aspx),
                         // the header is a base64-encoded 16-byte binary blob.
@@ -706,7 +745,7 @@ namespace System.Web.Hosting {
             catch {
                 // Exceptions are not fatal; we just pretend there's no correlation ID.
             }
-
+#endif
             // Either there was no correlation ID or it didn't parse correctly
             return default(Guid);
         }
@@ -749,7 +788,7 @@ namespace System.Web.Hosting {
             int n = _unknownRequestHeaders.Length;
 
             for ( int i = 0; i < n; i++ ) {
-            if (StringUtil.EqualsIgnoreCase(name, _unknownRequestHeaders[i][0]))
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, _unknownRequestHeaders[i][0]))
                     return _unknownRequestHeaders[i][1];
             }
 
@@ -766,7 +805,7 @@ namespace System.Web.Hosting {
         public override String GetServerVariable(String name) {
             // fall back for headers
             // (IIS6 doesn't support them as UNICODE_XXX)
-            if (StringUtil.StringStartsWith(name, "HTTP_")) {
+            if (System.Web.Util.StringUtil.StringStartsWith(name, "HTTP_")) {
                 return GetServerVariableInternalAnsi(name);
             }
             else {
@@ -776,6 +815,7 @@ namespace System.Web.Hosting {
 
 
         internal override void SendStatus(int statusCode, int subStatusCode, string statusDescription) {
+#if (!MONO || !FEATURE_PAL)
             if (null == statusDescription) {
                 statusDescription = String.Empty;
             }
@@ -791,6 +831,7 @@ namespace System.Web.Hosting {
             _trySkipIisCustomErrors = false;
 
             Misc.ThrowIfFailedHr(hr);
+#endif
         }
 
         public override void SendStatus(int statusCode,
@@ -833,7 +874,11 @@ namespace System.Web.Hosting {
         }
 
         public override bool IsClientConnected() {
+#if (!MONO || !FEATURE_PAL)
             return (!_connectionClosed && IIS.MgdIsClientConnected(_context));
+#else
+            return !_connectionClosed;
+#endif
         }
 
         internal bool TryGetClientDisconnectedCancellationToken(out CancellationToken cancellationToken) {
@@ -843,6 +888,7 @@ namespace System.Web.Hosting {
                 return false;
             }
 
+#if !FEAUTRE_PAL
             // The registration is done inside of the dispose lock because we don't want to
             // allow registration while the native context object is being destroyed. If we
             // didn't have this lock, there is a potential race condition where the
@@ -867,10 +913,12 @@ namespace System.Web.Hosting {
                             _clientDisconnectTokenHelper = CancellationTokenHelper.StaticDisposed;
                         }
                         else {
-                            bool isClientConnected;
+                            bool isClientConnected = false;
+
+#if (!MONO || !FEATURE_PAL)
                             int hr = IIS.MgdConfigureAsyncDisconnectNotification(_context, true /* fEnabled */, out isClientConnected);
                             Marshal.ThrowExceptionForHR(hr);
-
+#endif
                             // Seed the helper's initial state with the known client connection status.
                             // Pay attention to the race condition mentioned in NotifyOfAsyncDisconnect.
                             LazyInitializer.EnsureInitialized(ref _clientDisconnectTokenHelper, () => new CancellationTokenHelper(canceled: !isClientConnected));
@@ -880,6 +928,8 @@ namespace System.Web.Hosting {
             }
 
             cancellationToken = _clientDisconnectTokenHelper.Token;
+#endif
+
             return true;
         }
 
@@ -894,7 +944,11 @@ namespace System.Web.Hosting {
         }
 
         internal bool IsHandlerExecutionDenied() {
+#if (!MONO || !FEATURE_PAL)
             return IIS.MgdIsHandlerExecutionDenied(_context);
+#else
+            return true;
+#endif
         }
 
         internal void AbortConnection() {
@@ -903,31 +957,41 @@ namespace System.Web.Hosting {
             // The following lock solves this issue by blocking the Dispose() routine if there's an
             // outstanding call to AbortConnection() and by making this method a no-op if Dispose() has
             // already been invoked.
-
+#if (!MONO || !FEATURE_PAL)
             lock (_disposeLockObj) {
                 if (_context != IntPtr.Zero) {
                     IIS.MgdAbortConnection(_context);
                     _connectionClosed = true;
                 }
             }
+#endif
         }
 
         public override void CloseConnection() {
+#if (!MONO || !FEATURE_PAL)
             IIS.MgdCloseConnection(_context);
+#endif
             _connectionClosed = true;
         }
 
         public override IntPtr GetUserToken() {
             IntPtr token = IntPtr.Zero;
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetUserToken(_context, out token );
             Misc.ThrowIfFailedHr(result);
+#endif
+
             return token;
         }
 
         public override IntPtr GetVirtualPathToken() {
             IntPtr token = IntPtr.Zero;
+
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetVirtualToken(_context, out token );
             Misc.ThrowIfFailedHr(result);
+#endif
+
             return token;
         }
 
@@ -937,7 +1001,7 @@ namespace System.Web.Hosting {
         public override void SendResponseFromMemory(byte[] data, int length) {
             if (_connectionClosed)
                 return;
-            Debug.Trace("IIS7WorkerRequest",
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest",
                         "SendResponseFromMemory(byte[], int)");
 
             if ( length > 0 )
@@ -947,7 +1011,7 @@ namespace System.Web.Hosting {
         public override void SendResponseFromMemory(IntPtr data, int length) {
             if (_connectionClosed)
                 return;
-            Debug.Trace("IIS7WorkerRequest",
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest",
                         "SendResponseFromMemory(IntPtr, int)");
             SendResponseFromMemory(data, length, false);
         }
@@ -956,7 +1020,7 @@ namespace System.Web.Hosting {
         internal override void SendResponseFromMemory(IntPtr data,
                                                       int length,
                                                       bool isBufferFromUnmanagedPool) {
-            Debug.Trace("IIS7WorkerRequest",
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest",
                         "SendResponseFromMemory(IntPtr, int, " +
                         isBufferFromUnmanagedPool.ToString() +
                         ")");
@@ -971,7 +1035,7 @@ namespace System.Web.Hosting {
 
         internal void SendResponseFromIISAllocatedRequestMemory(IntPtr data,
                                                                 int length) {
-            Debug.Trace("IIS7WorkerRequest",
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest",
                         "SendResponseFromIISAllocatedRequestMemory(IntPtr, int)");
 
             // WOS 1926509: ASP.NET:  WriteSubstitution in integrated mode needs to support callbacks that return String.Empty
@@ -986,7 +1050,7 @@ namespace System.Web.Hosting {
         internal override void TransmitFile(String filename, long offset, long length, bool isImpersonating) {
             if (_connectionClosed)
                 return;
-            Debug.Trace("IIS7WorkerRequest",
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest",
                         "TransmitFile(String, long, long, bool)");
 
             if (length > 0) {
@@ -1009,7 +1073,7 @@ namespace System.Web.Hosting {
 
             if (offset < 0 || length > fileSize - offset) {
                 throw new HttpException(
-                        SR.GetString(SR.Invalid_range));
+                        System.Web.SR.GetString(System.Web.SR.Invalid_range));
             }
 
             if (length > 0) {
@@ -1032,7 +1096,7 @@ namespace System.Web.Hosting {
         {
             if (_connectionClosed)
                 return;
-            Debug.Trace("IIS7WorkerRequest",
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest",
                         "SendResponseFromFile(string, long, long)");
 
 
@@ -1062,7 +1126,7 @@ namespace System.Web.Hosting {
                                                   long length) {
             if (_connectionClosed)
                 return;
-            Debug.Trace("IIS7WorkerRequest",
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest",
                         "SendResponseFromFile(IntPtr, long, long)");
 
             if (length == 0) {
@@ -1091,7 +1155,7 @@ namespace System.Web.Hosting {
         public override void FlushResponse(bool finalFlush) {
             if (_connectionClosed)
                 return;
-            Debug.Trace("IIS7WorkerRequest", "FlushResponse( " + finalFlush + ")");
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest", "FlushResponse( " + finalFlush + ")");
             FlushCachedResponse(finalFlush);
         }
 
@@ -1107,6 +1171,7 @@ namespace System.Web.Hosting {
             // 
             // Convert NameValueCollection collection into string arrays
             // Headers (name/value) are expected to be US-ASCII only. Caller should encode accordingly
+#if (!MONO || !FEATURE_PAL)
             string[] headerNames = null;
             string[] headerValues = null;
             int headerCount = 0;
@@ -1141,6 +1206,7 @@ namespace System.Web.Hosting {
 
             // Propagate unknown native error
             Misc.ThrowIfFailedHr(result);
+#endif
         }
 
         internal unsafe HTTP_COOKED_URL* GetCookedUrl() {
@@ -1148,6 +1214,7 @@ namespace System.Web.Hosting {
         }
 
         private string GetServerVariableInternalAnsi(string name) {
+#if (!MONO || !FEATURE_PAL)
             IntPtr buffer;
             int bufLen;
 
@@ -1159,8 +1226,9 @@ namespace System.Web.Hosting {
             Misc.ThrowIfFailedHr(retval);
 
             if (buffer != IntPtr.Zero) {
-                return StringUtil.StringFromCharPtr(buffer, bufLen);
+                return System.Web.Util.StringUtil.StringFromCharPtr(buffer, bufLen);
             }
+#endif
 
             return null;
         }
@@ -1168,7 +1236,7 @@ namespace System.Web.Hosting {
         private string GetServerVariableInternal(string name) {
             IntPtr buffer;
             int bufLen;
-
+#if (!MONO || !FEATURE_PAL)
             int retval = IIS.MgdGetServerVariableW(_context,
                                                    name,
                                                    out buffer,
@@ -1177,8 +1245,9 @@ namespace System.Web.Hosting {
             Misc.ThrowIfFailedHr(retval);
 
             if (buffer != IntPtr.Zero) {
-                return StringUtil.StringFromWCharPtr(buffer, bufLen);
+                return System.Web.Util.StringUtil.StringFromWCharPtr(buffer, bufLen);
             }
+#endif
 
             return null;
         }
@@ -1188,6 +1257,7 @@ namespace System.Web.Hosting {
             int bufferSize;
             string moduleName = null;
 
+#if (!MONO || !FEATURE_PAL)
             int retval = IIS.MgdGetCurrentModuleName(_context,
                                                      out buffer,
                                                      out bufferSize);
@@ -1195,8 +1265,9 @@ namespace System.Web.Hosting {
             Misc.ThrowIfFailedHr(retval);
 
             if (bufferSize > 0) {
-                moduleName = StringUtil.StringFromWCharPtr(buffer, bufferSize);
+                moduleName = System.Web.Util.StringUtil.StringFromWCharPtr(buffer, bufferSize);
             }
+#endif
 
             return moduleName;
         }
@@ -1205,6 +1276,7 @@ namespace System.Web.Hosting {
             IntPtr buffer;
             int bufLen;
 
+#if (!MONO || !FEATURE_PAL)
             int retval = IIS.MgdGetUserAgent(_context,
                                              out buffer,
                                              out bufLen);
@@ -1213,8 +1285,9 @@ namespace System.Web.Hosting {
             Misc.ThrowIfFailedHr(retval);
             // User-Agent is ASCII string
             if (buffer != IntPtr.Zero) {
-                return StringUtil.StringFromCharPtr(buffer, bufLen);
+                return System.Web.Util.StringUtil.StringFromCharPtr(buffer, bufLen);
             }
+#endif
 
             return null;
         }
@@ -1223,6 +1296,7 @@ namespace System.Web.Hosting {
             IntPtr buffer;
             int bufLen;
 
+#if (!MONO || !FEATURE_PAL)
             int retval = IIS.MgdGetCookieHeader(_context,
                                                 out buffer,
                                                 out bufLen);
@@ -1230,8 +1304,9 @@ namespace System.Web.Hosting {
             Misc.ThrowIfFailedHr(retval);
             // Cookie header is ASCII string
             if (buffer != IntPtr.Zero) {
-                return StringUtil.StringFromCharPtr(buffer, bufLen);
+                return System.Web.Util.StringUtil.StringFromCharPtr(buffer, bufLen);
             }
+#endif
 
             return null;
         }
@@ -1321,7 +1396,7 @@ namespace System.Web.Hosting {
             if ( _cachedResponseBodyBytes == null ) {
                 _cachedResponseBodyBytes = new ArrayList();
             }
-            Debug.Assert(null !=bytes, "null != bytes");
+            System.Web.Util.Debug.Assert(null !=bytes, "null != bytes");
 
             _cachedResponseBodyBytes.Add(bytes);
             _cachedResponseBodyLength += bytes.Size;
@@ -1375,9 +1450,9 @@ namespace System.Web.Hosting {
                 }
 
                 int delta = (int) bytesOut;
-                if (delta > 0) {
-                    PerfCounters.IncrementCounterEx(AppPerfCounter.REQUEST_BYTES_OUT, delta);
-                }
+                //if (delta > 0) {
+                //    PerfCounters.IncrementCounterEx(AppPerfCounter.REQUEST_BYTES_OUT, delta);
+                //}
 
                 // send to unmanaged code
                 // sends are always sync now since they're buffered by IIS
@@ -1410,7 +1485,9 @@ namespace System.Web.Hosting {
             if ( _context == IntPtr.Zero )
                 return;
 
-            Debug.Trace("IIS7WorkerRequest", "FlushCore with " +
+#if (!MONO || !FEATURE_PAL)
+
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest", "FlushCore with " +
                     numBodyFragments.ToString(CultureInfo.InvariantCulture) +  " fragments\n");
 
 
@@ -1427,6 +1504,7 @@ namespace System.Web.Hosting {
             if (rc < 0) {
                 RaiseCommunicationError(rc, false  /*throwOnDisconnect*/);
             }
+#endif
         }
 
         internal void UnlockCachedResponseBytes() {
@@ -1464,12 +1542,16 @@ namespace System.Web.Hosting {
             // since the caller has sized it so we'll throw if it fails
             // for any reason
             int bytesReceived = 0;
+
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetPreloadedContent(_context, buffer, offset, length, out bytesReceived);
             Misc.ThrowIfFailedHr(result);
 
             if (bytesReceived  > 0) {
                 PerfCounters.IncrementCounterEx(AppPerfCounter.REQUEST_BYTES_IN, bytesReceived);
             }
+#endif
+
             return bytesReceived;
         }
 
@@ -1491,6 +1573,7 @@ namespace System.Web.Hosting {
                 return null;
             }
 
+#if (!MONO || !FEATURE_PAL)
             // enable kernel caching by setting up the HTTP_CACHE_POLICY
             int result = IIS.MgdSetKernelCachePolicy(_context, secondsToLive);
 
@@ -1499,6 +1582,7 @@ namespace System.Web.Hosting {
             if (result < 0) {
                 return null;
             }
+#endif
 
             // okay, the response will be kernel cached, here's the key
             return cacheUrl;
@@ -1506,14 +1590,18 @@ namespace System.Web.Hosting {
 
         // WOS 1555777: kernel cache support
         internal override void DisableKernelCache() {
+#if (!MONO || !FEATURE_PAL)
             // disable kernel cache for this response in IIS
             IIS.MgdDisableKernelCache(_context);
+#endif
         }
 
         // DevDiv 255268: IIS user-mode cache support
         internal override void DisableUserCache() {
+#if (!MONO || !FEATURE_PAL)
             // disable user cache for this response in IIS
             IIS.MgdDisableUserCache(_context);
+#endif
         }
 
         // DevDiv 255268: IIS cache support
@@ -1534,6 +1622,7 @@ namespace System.Web.Hosting {
             int bufferSize;
             string handlerTypeString = null;
 
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdReMapHandler(_context,
                                              path,
                                              out buffer,
@@ -1542,7 +1631,7 @@ namespace System.Web.Hosting {
             Misc.ThrowIfFailedHr(result);
 
             if( bufferSize > 0 ) {
-                handlerTypeString = StringUtil.StringFromWCharPtr(buffer, bufferSize);
+                handlerTypeString = System.Web.Util.StringUtil.StringFromWCharPtr(buffer, bufferSize);
 
             }
 
@@ -1563,7 +1652,9 @@ namespace System.Web.Hosting {
                     _rewriteNotifyDisabled = false;
                 }
             }
+#endif
 
+            handlerExists = false;
             return handlerTypeString;
         }
 
@@ -1574,6 +1665,7 @@ namespace System.Web.Hosting {
             int bufferSize;
             string handlerTypeString = null;
 
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdMapHandler(_context,
                                            method,
                                            path,
@@ -1584,8 +1676,9 @@ namespace System.Web.Hosting {
             Misc.ThrowIfFailedHr(result);
 
             if( bufferSize > 0 ) {
-                handlerTypeString = StringUtil.StringFromWCharPtr(buffer, bufferSize);
+                handlerTypeString = System.Web.Util.StringUtil.StringFromWCharPtr(buffer, bufferSize);
             }
+#endif
 
             return handlerTypeString;
         }
@@ -1595,28 +1688,34 @@ namespace System.Web.Hosting {
             int bufferSize;
             string handlerTypeString = null;
 
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetHandlerTypeString(_context,
                                                      out buffer,
                                                      out bufferSize);
             Misc.ThrowIfFailedHr(result);
 
             if( bufferSize > 0 ) {
-                handlerTypeString = StringUtil.StringFromWCharPtr(buffer, bufferSize);
+                handlerTypeString = System.Web.Util.StringUtil.StringFromWCharPtr(buffer, bufferSize);
             }
+#endif
 
             return handlerTypeString;
         }
 
         internal void SetRemapHandler(string handlerType, string handlerName) {
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdSetRemapHandler(_context,
                                                 handlerName,
                                                 handlerType);
             Misc.ThrowIfFailedHr(result);
+#endif
         }
 
         internal void SetScriptMapForRemapHandler() {
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdSetScriptMapForRemapHandler(_context);
             Misc.ThrowIfFailedHr(result);
+#endif
         }
 
         internal void RewriteNotifyPipeline(string newPath,
@@ -1625,7 +1724,9 @@ namespace System.Web.Hosting {
             if (_rewriteNotifyDisabled)
                 return;
 
-            Debug.Trace("IIS7WorkerRequest", "RewriteNotifyPipeline(" + newPath + ")");
+#if (!MONO || !FEATURE_PAL)
+
+            System.Web.Util.Debug.Trace("IIS7WorkerRequest", "RewriteNotifyPipeline(" + newPath + ")");
 
             if(IntPtr.Zero != _context) {
                 string url = newPath;
@@ -1639,16 +1740,21 @@ namespace System.Web.Hosting {
                 // recall so that we can fix-up paths after ReMapHandlerAndGetHandlerTypeString is called
                 _rebaseClientPath = rebaseClientPath;
             }
+#endif
         }
 
         internal void DisableNotifications(
                 RequestNotification notifications,
                 RequestNotification postNotifications) {
+#if (!MONO || !FEATURE_PAL)
             IIS.MgdDisableNotifications(_context, notifications, postNotifications);
+#endif
         }
 
         internal void SuppressSendResponseNotifications() {
+#if (!MONO || !FEATURE_PAL)
             IIS.MgdSuppressSendResponseNotifications(_context);
+#endif
         }
 
         internal void PushResponseToNative() {
@@ -1656,7 +1762,9 @@ namespace System.Web.Hosting {
         }
 
         internal void ClearResponse(bool clearEntity, bool clearHeaders) {
+#if (!MONO || !FEATURE_PAL)
             IIS.MgdClearResponse(_context, clearEntity, clearHeaders);
+#endif
         }
 
         private void GetStatusChanges(HttpContext ctx) {
@@ -1666,23 +1774,28 @@ namespace System.Web.Hosting {
             ushort bufLen;
             string description = null;
 
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetStatusChanges( _context, out status, out subStatus, out buffer, out bufLen);
             Misc.ThrowIfFailedHr(result);
 
             if (buffer != IntPtr.Zero) {
-                description = StringUtil.StringFromCharPtr(buffer, bufLen);
+                description = System.Web.Util.StringUtil.StringFromCharPtr(buffer, bufLen);
             }
 
             // set to false after status has been set
             _trySkipIisCustomErrors = false;
 
             ctx.Response.SynchronizeStatus(status, subStatus, description);
+#endif
         }
 
         internal IntPtr AllocateRequestMemory(int size) {
+#if (!MONO || !FEATURE_PAL)
             if (size > 0) {
                 return IIS.MgdAllocateRequestMemory(_context, size);
             }
+#endif
+
             return IntPtr.Zero;
         }
 
@@ -1691,6 +1804,7 @@ namespace System.Web.Hosting {
             int [] fragmentLengths;
             int [] fragmentTypes;
 
+#if (!MONO || !FEATURE_PAL)
             // pick a reasonable size as a guestimate
             int numFragments = 32;
             int startFragments = numFragments;
@@ -1720,7 +1834,7 @@ namespace System.Web.Hosting {
                 // realloc
                 if (result == HResults.E_INSUFFICIENT_BUFFER) {
                     // make sure we really need to realloc
-                    Debug.Assert(numFragments > startFragments, "numFragments > startFragments");
+                    System.Web.Util.Debug.Assert(numFragments > startFragments, "numFragments > startFragments");
 
                     // recycle the current stuff
                     AllocatorProvider.IntPtrBufferAllocator.ReuseBuffer(fragments);
@@ -1745,7 +1859,7 @@ namespace System.Web.Hosting {
                 }
 
                 if (result == HResults.E_INVALID_DATA) {
-                    throw new InvalidOperationException(SR.GetString(SR.Invalid_http_data_chunk));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Invalid_http_data_chunk));
                 }
 
                 Misc.ThrowIfFailedHr(result);
@@ -1878,7 +1992,7 @@ namespace System.Web.Hosting {
                 }
                 // invalid chunk type
                 else {
-                    Debug.Assert(fragmentTypes[i] <= 1, "invalid fragment type");
+                    System.Web.Util.Debug.Assert(fragmentTypes[i] <= 1, "invalid fragment type");
                 }
             }
 
@@ -1893,10 +2007,15 @@ namespace System.Web.Hosting {
             AllocatorProvider.IntBufferAllocator.ReuseBuffer(fragmentTypes);
 
             return buffers;
+#else //!FEATURE_PAL
+            return new ArrayList();
+#endif
         }
 
         internal bool IsResponseBuffered() {
             int numFragments = 0;
+
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetResponseChunks(_context, 
                                                   ref numFragments,
                                                   null /*fragments*/,
@@ -1907,7 +2026,8 @@ namespace System.Web.Hosting {
             if (result != HResults.E_INSUFFICIENT_BUFFER) {
                 Misc.ThrowIfFailedHr(result);
             }
-			
+#endif
+
             return numFragments > 0;
      	}
 
@@ -1916,6 +2036,7 @@ namespace System.Web.Hosting {
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         internal void SetPrincipal(IPrincipal user)
         {
+#if (!MONO || !FEATURE_PAL)
             string userName = null;
             string authType = null;
             IntPtr token = IntPtr.Zero;
@@ -1955,6 +2076,7 @@ namespace System.Web.Hosting {
                     token);
 
             Misc.ThrowIfFailedHr(result);
+#endif
         }
 
         private static bool IsValidUsername(string username) {
@@ -1970,25 +2092,31 @@ namespace System.Web.Hosting {
         }
 
         internal void ResponseFilterInstalled() {
+#if (!MONO || !FEATURE_PAL)
             IIS.MgdSetResponseFilter(_context);
+#endif
         }
 
         private void RaiseCommunicationError(int result, bool throwOnDisconnect) {
+#if (!MONO || !FEATURE_PAL)
             if (IIS.MgdIsClientConnected(_context)) {
-                throw new HttpException(SR.GetString(SR.Server_Support_Function_Error, result.ToString("X8", CultureInfo.InvariantCulture)), Marshal.GetExceptionForHR(result));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_Support_Function_Error, result.ToString("X8", CultureInfo.InvariantCulture)), Marshal.GetExceptionForHR(result));
             }
             else {
                 //give different error if connection was closed
                 IncrementRequestsDisconnected();
                 if (throwOnDisconnect) {
-                    throw new HttpException(SR.GetString(SR.Server_Support_Function_Error_Disconnect, result.ToString("X8", CultureInfo.InvariantCulture)), result);
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_Support_Function_Error_Disconnect, result.ToString("X8", CultureInfo.InvariantCulture)), result);
                 }
             }
+#endif
         }
 
         internal void ExplicitFlush() {
+#if (!MONO || !FEATURE_PAL)
             bool async = false;
             bool completedSynchronously;
+
             int result = IIS.MgdExplicitFlush(_context, async, out completedSynchronously);
             
             // DevDiv Bugs 177323: mimic classic mode and throw if the client disconnected
@@ -1997,13 +2125,17 @@ namespace System.Web.Hosting {
             }
             
             _headersSent = true;
+#endif
         }
 
         internal void SetServerVariable(string name, string value) {
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdSetServerVariableW(_context, name, value);
             Misc.ThrowIfFailedHr(result);
+#endif
         }
 
+//#if (!MONO || !FEATURE_PAL)
         internal void SetRequestHeader(string name, string value, bool replace) {
             int knownIndex = HttpWorkerRequest.GetKnownRequestHeaderIndex(name);
             if (knownIndex >= 0) {
@@ -2013,30 +2145,34 @@ namespace System.Web.Hosting {
                 SetUnknownRequestHeader(name, value, replace);
             }
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
+//#endif
+        
         private void SetKnownRequestHeader(int index, string value, bool replace) {
-            Debug.Assert(HttpWorkerRequest.HeaderUserAgent == 39, "HttpWorkerRequest.HeaderUserAgent == 39");
+#if (!MONO || !FEATURE_PAL)
+            System.Web.Util.Debug.Assert(HttpWorkerRequest.HeaderUserAgent == 39, "HttpWorkerRequest.HeaderUserAgent == 39");
             // User-Agent is 39 in WorkerRequest.cs, but it is 40 in http.h.
             if (index == HttpWorkerRequest.HeaderUserAgent) {
                 index = IisHeaderUserAgent;
             }
             byte[] valueBytes;
-            int valueLength = StringUtil.GetNullTerminatedByteArray(_headerEncoding, value, out valueBytes);
+            int valueLength = System.Web.Util.StringUtil.GetNullTerminatedByteArray(_headerEncoding, value, out valueBytes);
             int result = IIS.MgdSetKnownHeader(_context, true /*fRequest*/, replace, (ushort)index, valueBytes, (ushort)valueLength);
             Misc.ThrowIfFailedHr(result);
+#endif
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
+        
         private void SetUnknownRequestHeader(string name, string value, bool replace) {
+#if (!MONO || !FEATURE_PAL)
             byte[] valueBytes;
-            int valueLength = StringUtil.GetNullTerminatedByteArray(_headerEncoding, value, out valueBytes);
+            int valueLength = System.Web.Util.StringUtil.GetNullTerminatedByteArray(_headerEncoding, value, out valueBytes);
             byte[] nameBytes;
-            StringUtil.GetNullTerminatedByteArray(_headerEncoding, name, out nameBytes);
+            System.Web.Util.StringUtil.GetNullTerminatedByteArray(_headerEncoding, name, out nameBytes);
             int result = IIS.MgdSetUnknownHeader(_context, true /*fRequest*/, replace, nameBytes, valueBytes, (ushort)valueLength);
             Misc.ThrowIfFailedHr(result);
+#endif
         }
 
+//#if (!MONO || !FEATURE_PAL)
         internal void SetResponseHeader(string name, string value, bool replace) {
             int knownIndex = HttpWorkerRequest.GetKnownResponseHeaderIndex(name);
             if (knownIndex >= 0) {
@@ -2046,8 +2182,10 @@ namespace System.Web.Hosting {
                 SetUnknownResponseHeader(name, value, replace);
             }
         }
+//#endif
 
         private void SetKnownResponseHeader(int index, string value, bool replace) {
+#if (!MONO || !FEATURE_PAL)
             if (index == HttpWorkerRequest.HeaderWwwAuthenticate
                 || index == HttpWorkerRequest.HeaderSetCookie
                 || index == HttpWorkerRequest.HeaderServer) {
@@ -2056,26 +2194,29 @@ namespace System.Web.Hosting {
             }
             else {
                 byte[] valueBytes;
-                int valueLength = StringUtil.GetNullTerminatedByteArray(_headerEncoding, value, out valueBytes);
+                int valueLength = System.Web.Util.StringUtil.GetNullTerminatedByteArray(_headerEncoding, value, out valueBytes);
                 int result = IIS.MgdSetKnownHeader(_context, false /*fRequest*/, replace, (ushort)index, valueBytes, (ushort)valueLength);
                 Misc.ThrowIfFailedHr(result);
             }
+#endif
         }
 
         private void SetUnknownResponseHeader(string name, string value, bool replace) {
             // DevDiv 113142 & 255268: We should disable both the HTTP.SYS kernel cache and the IIS user-mode cache
             // for response with set-cookie header
-            if (StringUtil.EqualsIgnoreCase(name, "Set-Cookie")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Set-Cookie")) {
                 DisableIISCache();
             }
-
+#if (!MONO || !FEATURE_PAL)
             byte[] valueBytes;
-            int valueLength = StringUtil.GetNullTerminatedByteArray(_headerEncoding, value, out valueBytes);
+            int valueLength = System.Web.Util.StringUtil.GetNullTerminatedByteArray(_headerEncoding, value, out valueBytes);
             byte[] nameBytes;
-            StringUtil.GetNullTerminatedByteArray(_headerEncoding, name, out nameBytes);
+            System.Web.Util.StringUtil.GetNullTerminatedByteArray(_headerEncoding, name, out nameBytes);
             int result = IIS.MgdSetUnknownHeader(_context, false /*fRequest*/, replace, nameBytes, valueBytes, (ushort)valueLength);
             Misc.ThrowIfFailedHr(result);
+#endif
         }
+
 
         private void GetServerVarChanges(HttpContext ctx) {
             int    count;
@@ -2084,6 +2225,7 @@ namespace System.Web.Hosting {
             int    diffCount;
             IntPtr diffIndices;
 
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetServerVarChanges(_context,
                                                     out count,
                                                     out names,
@@ -2101,16 +2243,17 @@ namespace System.Web.Hosting {
                         int index = indices[i];
                         IntPtr pName = snapshotNames[index];
                         IntPtr pValue = snapshotValues[index];
-                        string name = StringUtil.StringFromCharPtr(pName, UnsafeNativeMethods.lstrlenA(pName));
+                        string name = System.Web.Util.StringUtil.StringFromCharPtr(pName, UnsafeNativeMethods.lstrlenA(pName));
                         string value = null;
                         if (pValue != IntPtr.Zero) {
-                            value = StringUtil.StringFromWCharPtr(pValue, UnsafeNativeMethods.lstrlenW(pValue));
+                            value = System.Web.Util.StringUtil.StringFromWCharPtr(pValue, UnsafeNativeMethods.lstrlenW(pValue));
                         }
-                        Debug.Trace("IIS7ServerVarChanges", "Server Variable Changed: name=" + name + ", value=" + value);
+                        System.Web.Util.Debug.Trace("IIS7ServerVarChanges", "Server Variable Changed: name=" + name + ", value=" + value);
                         ctx.Request.SynchronizeServerVariable(name, value);
                     }
                 }
             }
+#endif
         }
 
         private void GetHeaderChanges(HttpContext ctx, bool forRequest) {
@@ -2124,6 +2267,7 @@ namespace System.Web.Hosting {
             int knownIndicesMaximum = forRequest ? IisRequestHeaderMaximum : HttpWorkerRequest.ResponseHeaderMaximum;
             int headerIndex = -1;
 
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetHeaderChanges(_context,
                                                  forRequest,
                                                  out knownHeaderSnapshot,
@@ -2151,8 +2295,8 @@ namespace System.Web.Hosting {
                         // For IIS, 39 is HttpHeaderTranslate, and 40 is HttpHeaderUserAgent.
                         // ASP.NET is missing HttpHeaderTranslate, and 39 is HttpHeaderUserAgent.
 
-                        Debug.Assert(HttpWorkerRequest.HeaderUserAgent == 39, "HttpWorkerRequest.HeaderUserAgent == 39");
-                        Debug.Assert(HttpWorkerRequest.RequestHeaderMaximum == 40, "HttpWorkerRequest.RequestHeaderMaximum == 40");
+                        System.Web.Util.Debug.Assert(HttpWorkerRequest.HeaderUserAgent == 39, "HttpWorkerRequest.HeaderUserAgent == 39");
+                        System.Web.Util.Debug.Assert(HttpWorkerRequest.RequestHeaderMaximum == 40, "HttpWorkerRequest.RequestHeaderMaximum == 40");
                         if (index > HttpWorkerRequest.RequestHeaderMaximum) {
                             throw new NotSupportedException();
                         }
@@ -2182,15 +2326,15 @@ namespace System.Web.Hosting {
                     IntPtr pValue = snapshot[index];
                     string value = null;
                     if (pValue != IntPtr.Zero) {
-                        value = StringUtil.StringFromCharPtr(pValue, UnsafeNativeMethods.lstrlenA(pValue));
+                        value = System.Web.Util.StringUtil.StringFromCharPtr(pValue, UnsafeNativeMethods.lstrlenA(pValue));
                     }
 
                     if (forRequest) {
-                        Debug.Trace("IIS7ServerVarChanges", "Known Request Header Changed: name=" + name + ", value=" + value);
+                        System.Web.Util.Debug.Trace("IIS7ServerVarChanges", "Known Request Header Changed: name=" + name + ", value=" + value);
                         ctx.Request.SynchronizeHeader(name, value);
                     }
                     else {
-                        Debug.Trace("IIS7ServerVarChanges", "Known Response Header Changed: name=" + name + ", value=" + value);
+                        System.Web.Util.Debug.Trace("IIS7ServerVarChanges", "Known Response Header Changed: name=" + name + ", value=" + value);
                         ctx.Response.SynchronizeHeader(headerIndex, name, value);
                     }
                 }
@@ -2205,20 +2349,20 @@ namespace System.Web.Hosting {
                         int index = unknownIndices[i];
                         IntPtr pName = snapshotNames[index];
                         IntPtr pValue = (index < unknownHeaderSnapshotCount) ? snapshotValues[index] : IntPtr.Zero; // if index >= diffCount, need to delete header
-                        string name = StringUtil.StringFromCharPtr(pName, UnsafeNativeMethods.lstrlenA(pName));
+                        string name = System.Web.Util.StringUtil.StringFromCharPtr(pName, UnsafeNativeMethods.lstrlenA(pName));
                         string value = null;
                         if (pValue!=IntPtr.Zero) {
-                            value = StringUtil.StringFromCharPtr(pValue, UnsafeNativeMethods.lstrlenA(pValue));
+                            value = System.Web.Util.StringUtil.StringFromCharPtr(pValue, UnsafeNativeMethods.lstrlenA(pValue));
                         }
 
                         if (forRequest) {
-                            Debug.Trace("IIS7ServerVarChanges", "Unknown Request Header Changed: name=" + name + ", value=" + value);
+                            System.Web.Util.Debug.Trace("IIS7ServerVarChanges", "Unknown Request Header Changed: name=" + name + ", value=" + value);
                             ctx.Request.SynchronizeHeader(name, value);
                         }
                         else {
-                            Debug.Trace("IIS7ServerVarChanges", "Unknown Response Header Changed: name=" + name + ", value=" + value);
+                            System.Web.Util.Debug.Trace("IIS7ServerVarChanges", "Unknown Response Header Changed: name=" + name + ", value=" + value);
                             int knownHeaderIndex = -1; /*unknown*/
-                            if (StringUtil.EqualsIgnoreCase(name, "Set-Cookie")) {
+                            if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "Set-Cookie")) {
                                 knownHeaderIndex = HttpWorkerRequest.HeaderSetCookie;
                             }
                             ctx.Response.SynchronizeHeader(knownHeaderIndex, name, value);
@@ -2226,6 +2370,7 @@ namespace System.Web.Hosting {
                     }
                 }
             }
+#endif
         }
 
         private IPrincipal GetUserPrincipal()
@@ -2239,6 +2384,7 @@ namespace System.Web.Hosting {
             IPrincipal user = null;
             IntPtr pManagedPrincipal;
 
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdGetPrincipal(_context,
                                              AppDomain.CurrentDomain.Id,
                                              out pToken,
@@ -2263,18 +2409,18 @@ namespace System.Web.Hosting {
                     return (IPrincipal)GCUtil.UnrootObject(pManagedPrincipal);
                 }
                 catch(Exception e) {
-                    throw new HttpException(SR.GetString(SR.Failed_to_execute_child_request), e);
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Failed_to_execute_child_request), e);
                 }
             }
 
             string userName = String.Empty;
             if (pUserName != IntPtr.Zero && cchUserName > 0) {
-                userName = StringUtil.StringFromWCharPtr(pUserName, cchUserName);
+                userName = System.Web.Util.StringUtil.StringFromWCharPtr(pUserName, cchUserName);
             }
 
             string authType = String.Empty;
             if (pAuthType != IntPtr.Zero && cchAuthType > 0) {
-                authType = StringUtil.StringFromWCharPtr(pAuthType, cchAuthType);
+                authType = System.Web.Util.StringUtil.StringFromWCharPtr(pAuthType, cchAuthType);
             }
 
             if ( String.IsNullOrEmpty(userName) )
@@ -2302,17 +2448,20 @@ namespace System.Web.Hosting {
                 user = new IIS7UserPrincipal(this, identity);
             }
 
+#endif
+
             return user;
         }
 
         internal bool IsUserInRole(String role) {
             bool isInRole = false;
 
+#if (!MONO || !FEATURE_PAL)
             int result = IIS.MgdIsInRole(_context,
                                          role,
                                          out isInRole);
             Misc.ThrowIfFailedHr(result);
-
+#endif
 
             return isInRole;
         }
@@ -2363,7 +2512,8 @@ namespace System.Web.Hosting {
 
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         internal void ScheduleExecuteUrl(string url, string queryString, string method, bool preserveForm, byte[] entity, NameValueCollection headers, bool preserveUser) {
-            // prepare headers if specified
+
+#if (!MONO || !FEATURE_PAL)            // prepare headers if specified
             string[] headerNames = null;
             string[] headerValues = null;
             int headerCount = 0;
@@ -2397,10 +2547,11 @@ namespace System.Web.Hosting {
                                            headerValues,
                                            preserveUser);
             if (result == HResults.ERROR_NOT_SUPPORTED) {
-                throw new InvalidOperationException(SR.GetString(SR.TransferRequest_cannot_be_invoked_more_than_once));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.TransferRequest_cannot_be_invoked_more_than_once));
             }
 
             Misc.ThrowIfFailedHr(result);
+#endif
         }
 
 
@@ -2470,6 +2621,8 @@ namespace System.Web.Hosting {
             if (_clientCertFetched)
                 return;
 
+#if (!MONO || !FEATURE_PAL)
+
             _clientCertFetched = true;
 
             IntPtr pClientCert;
@@ -2509,6 +2662,7 @@ namespace System.Web.Hosting {
 
             _clientCertValidFrom = (notBefore != 0) ? DateTime.FromFileTime(notBefore) : DateTime.Now;
             _clientCertValidUntil = (notAfter != 0) ? DateTime.FromFileTime(notAfter) : DateTime.Now;
+#endif
         }
 
         internal ITlsTokenBindingInfo GetTlsTokenBindingInfo() {
@@ -2565,6 +2719,7 @@ namespace System.Web.Hosting {
 
         internal ChannelBinding HttpChannelBindingToken {
             get {
+#if (!MONO || !FEATURE_PAL)
                 if (_channelBindingToken == null) {
                     IntPtr token       = IntPtr.Zero;
                     int    tokenSize   = 0;
@@ -2576,13 +2731,17 @@ namespace System.Web.Hosting {
                     Misc.ThrowIfFailedHr(hr);
                     _channelBindingToken = new HttpChannelBindingToken(token, tokenSize);
                 }
+#endif
+
                 return _channelBindingToken;
             }
         }
 
         internal void InsertEntityBody(byte[] buffer, int offset, int count) {
+#if (!MONO || !FEATURE_PAL)
             int hr = IIS.MgdInsertEntityBody(_context, buffer, offset, count);
             Misc.ThrowIfFailedHr(hr);
+#endif
         }
 
         // Returns a value indicating whether iiswsock.dll is enabled at all
@@ -2597,12 +2756,16 @@ namespace System.Web.Hosting {
 
         // Accepts a WebSocket for the current request
         internal void AcceptWebSocket() {
+#if (!MONO || !FEATURE_PAL)
             int hr = IIS.MgdAcceptWebSocket(_context);
             Misc.ThrowIfFailedHr(hr);
+#endif
         }
 
         internal UnmanagedWebSocketContext GetWebSocketContext() {
             IntPtr pWebSocketContext;
+
+#if (!MONO || !FEATURE_PAL)
             int hr = IIS.MgdGetWebSocketContext(_context, out pWebSocketContext);
 
             // Failure conditions are a bad HRESULT or a null pWebSocketContext pointer
@@ -2612,14 +2775,19 @@ namespace System.Web.Hosting {
             else {
                 return new UnmanagedWebSocketContext(pWebSocketContext);
             }
+#else
+            return null;
+#endif
         }
 
         // Returns a Boolean indicating whether the current request is a child request of a parent ASP.NET request
         internal bool GetIsChildRequest() {
-            bool isChildRequest;
+            bool isChildRequest = false;
+
+#if (!MONO || !FEATURE_PAL)
             int hr = IIS.MgdGetIsChildContext(_context, out isChildRequest);
             Misc.ThrowIfFailedHr(hr);
-
+#endif
             return isChildRequest;
         }
 

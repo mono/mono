@@ -10,6 +10,7 @@ namespace System.Web.UI.WebControls {
     using System.Collections;
     using System.ComponentModel;
     using System.Web.Util;
+    
 
     /// <summary>
     /// A BaseDataBoundControl is bound to a data source and generates its
@@ -47,7 +48,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataBoundControl_DataSource),
+        WebSysDescription(System.Web.SR.BaseDataBoundControl_DataSource),
         ]
         public virtual object DataSource {
             get {
@@ -73,7 +74,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataBoundControl_DataSourceID)
+        WebSysDescription(System.Web.SR.BaseDataBoundControl_DataSourceID)
         ]
         public virtual string DataSourceID {
             get {
@@ -162,7 +163,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataBoundControl_OnDataBound)
+        WebSysDescription(System.Web.SR.BaseDataBoundControl_OnDataBound)
         ]
         public event EventHandler DataBound {
             add {
@@ -241,7 +242,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected virtual void OnDataPropertyChanged() {
             if (_throwOnDataPropertyChange) {
-                throw new HttpException(SR.GetString(SR.DataBoundControl_InvalidDataPropertyChange, ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundControl_InvalidDataPropertyChange, ID));
             }
             if (_inited) {
                 RequiresDataBinding = true;

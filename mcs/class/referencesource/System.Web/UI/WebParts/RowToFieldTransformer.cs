@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         private void GetRowData(object rowData) {
-            Debug.Assert(_callback != null);
+            System.Web.Util.Debug.Assert(_callback != null);
 
             object fieldValue = null;
 
@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls.WebParts {
             private const string fieldNameID = "FieldName";
 
             public RowToFieldConfigurationWizard(RowToFieldTransformer owner) {
-                Debug.Assert(owner != null);
+                System.Web.Util.Debug.Assert(owner != null);
                 _owner = owner;
             }
 
@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             protected override void CreateWizardSteps() {
                 // The WizardSteps should be empty when this is called
-                Debug.Assert(WizardSteps.Count == 0);
+                System.Web.Util.Debug.Assert(WizardSteps.Count == 0);
 
                 WizardStep s = new WizardStep();
 
@@ -134,12 +134,12 @@ namespace System.Web.UI.WebControls.WebParts {
                     }
                 }
                 else {
-                    _fieldName.Items.Add(new ListItem(SR.GetString(SR.RowToFieldTransformer_NoProviderSchema)));
+                    _fieldName.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.RowToFieldTransformer_NoProviderSchema)));
                     _fieldName.Enabled = false;
                 }
 
                 Label fieldNameLabel = new Label();
-                fieldNameLabel.Text = SR.GetString(SR.RowToFieldTransformer_FieldName);
+                fieldNameLabel.Text = System.Web.SR.GetString(System.Web.SR.RowToFieldTransformer_FieldName);
                 fieldNameLabel.AssociatedControlID = _fieldName.ID;
 
                 s.Controls.Add(fieldNameLabel);
@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
 
             protected override void OnFinishButtonClick(WizardNavigationEventArgs e) {
-                Debug.Assert(_fieldName != null);
+                System.Web.Util.Debug.Assert(_fieldName != null);
 
                 string selectedFieldName = null;
                 if (_fieldName.Enabled) {

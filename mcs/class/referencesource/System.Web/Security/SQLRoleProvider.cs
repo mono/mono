@@ -22,6 +22,7 @@ namespace System.Web.Security {
     using  System.Web.DataAccess;
     using  System.Web.Hosting;
     using  System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -42,8 +43,7 @@ namespace System.Web.Security {
         }
 
 
-        public override  void Initialize(string name, NameValueCollection config){
-            HttpRuntime.CheckAspNetHostingPermission (AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
+        public override  void Initialize(string name, NameValueCollection config){            
             if (config == null)
                throw new ArgumentNullException("config");
 
@@ -51,7 +51,7 @@ namespace System.Web.Security {
                 name = "SqlRoleProvider";
             if (string.IsNullOrEmpty(config["description"])) {
                 config.Remove("description");
-                config.Add("description", SR.GetString(SR.RoleSqlProvider_description));
+                config.Add("description", System.Web.SR.GetString(System.Web.SR.RoleSqlProvider_description));
             }
             base.Initialize(name, config);
 
@@ -67,7 +67,7 @@ namespace System.Web.Security {
 
             if( _AppName.Length > 256 )
             {
-                throw new ProviderException(SR.GetString(SR.Provider_application_name_too_long));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long));
             }
 
             config.Remove("connectionString");
@@ -78,7 +78,7 @@ namespace System.Web.Security {
             {
                 string attribUnrecognized = config.GetKey(0);
                 if (!String.IsNullOrEmpty(attribUnrecognized))
-                    throw new ProviderException(SR.GetString(SR.Provider_unrecognized_attribute, attribUnrecognized));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unrecognized_attribute, attribUnrecognized));
             }
         }
 
@@ -132,11 +132,11 @@ namespace System.Web.Security {
                         return true;
                     case 2:
                         return false;
-                        // throw new ProviderException(SR.GetString(SR.Provider_user_not_found));
+                        // throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_user_not_found));
                     case 3:
-                        return false; // throw new ProviderException(SR.GetString(SR.Provider_role_not_found, roleName));
+                        return false; // throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_role_not_found, roleName));
                     }
-                    throw new ProviderException(SR.GetString(SR.Provider_unknown_failure));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unknown_failure));
                 }
                 finally
                 {
@@ -208,9 +208,9 @@ namespace System.Web.Security {
                         return new string[0];
                     case 1:
                         return new string[0];
-                        //throw new ProviderException(SR.GetString(SR.Provider_user_not_found));
+                        //throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_user_not_found));
                     default:
-                        throw new ProviderException(SR.GetString(SR.Provider_unknown_failure));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unknown_failure));
                     }
                 }
                 finally
@@ -260,10 +260,10 @@ namespace System.Web.Security {
                         return;
 
                     case 1 :
-                        throw new ProviderException(SR.GetString(SR.Provider_role_already_exists, roleName));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_role_already_exists, roleName));
 
                     default :
-                        throw new ProviderException(SR.GetString(SR.Provider_unknown_failure));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unknown_failure));
                     }
                 }
                 finally
@@ -310,7 +310,7 @@ namespace System.Web.Security {
 
                     if( returnValue == 2 )
                     {
-                        throw new ProviderException(SR.GetString(SR.Role_is_not_empty));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Role_is_not_empty));
                     }
 
                     return ( returnValue == 0 );
@@ -365,7 +365,7 @@ namespace System.Web.Security {
                     case 1:
                         return true;
                     }
-                    throw new ProviderException(SR.GetString(SR.Provider_unknown_failure));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unknown_failure));
                 }
                 finally
                 {
@@ -491,13 +491,13 @@ namespace System.Web.Security {
             case 0:
                 return;
             case 1:
-                throw new ProviderException(SR.GetString(SR.Provider_this_user_not_found, s1));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_this_user_not_found, s1));
             case 2:
-                throw new ProviderException(SR.GetString(SR.Provider_role_not_found, s1));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_role_not_found, s1));
             case 3:
-                throw new ProviderException(SR.GetString(SR.Provider_this_user_already_in_role, s1, s2));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_this_user_already_in_role, s1, s2));
             }
-            throw new ProviderException(SR.GetString(SR.Provider_unknown_failure));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unknown_failure));
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -602,13 +602,13 @@ namespace System.Web.Security {
                 case 0:
                     return;
                 case 1:
-                    throw new ProviderException(SR.GetString(SR.Provider_this_user_not_found, s1));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_this_user_not_found, s1));
                 case 2:
-                    throw new ProviderException(SR.GetString(SR.Provider_role_not_found, s2));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_role_not_found, s2));
                 case 3:
-                    throw new ProviderException(SR.GetString(SR.Provider_this_user_already_not_in_role, s1, s2));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_this_user_already_not_in_role, s1, s2));
             }
-            throw new ProviderException(SR.GetString(SR.Provider_unknown_failure));
+            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unknown_failure));
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -658,9 +658,9 @@ namespace System.Web.Security {
                         case 0:
                             return new string[0];
                         case 1:
-                            throw new ProviderException(SR.GetString(SR.Provider_role_not_found, roleName));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_role_not_found, roleName));
                         }
-                        throw new ProviderException(SR.GetString(SR.Provider_unknown_failure));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unknown_failure));
                     }
 
                     String [] strReturn = new String[sc.Count];
@@ -789,10 +789,10 @@ namespace System.Web.Security {
                             return new string[0];
 
                         case 1:
-                            throw new ProviderException(SR.GetString(SR.Provider_role_not_found, roleName));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_role_not_found, roleName));
 
                         default:
-                            throw new ProviderException(SR.GetString(SR.Provider_unknown_failure));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unknown_failure));
                         }
                     }
                     String[] strReturn = new String[sc.Count];
@@ -825,7 +825,7 @@ namespace System.Web.Security {
 
                 if ( _AppName.Length > 256 )
                 {
-                    throw new ProviderException( SR.GetString(SR.Provider_application_name_too_long)  );
+                    throw new ProviderException( System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long)  );
                 }
             }
         }

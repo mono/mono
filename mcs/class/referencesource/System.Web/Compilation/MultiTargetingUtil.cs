@@ -13,6 +13,7 @@ using Microsoft.CSharp;
 using Microsoft.VisualBasic;
 using Microsoft.Win32;
 
+
 using FrameworkName=System.Runtime.Versioning.FrameworkName;
 
 namespace System.Web.Compilation {
@@ -77,7 +78,7 @@ namespace System.Web.Compilation {
                     if (s_targetFrameworkName == null) {
                         InitializeKnownAndLatestFrameworkNames();
                         InitializeTargetFrameworkName();
-                        Debug.Assert(s_targetFrameworkName != null, "s_targetFrameworkName should not be null");
+                        System.Web.Util.Debug.Assert(s_targetFrameworkName != null, "s_targetFrameworkName should not be null");
                     }
                 }
             }
@@ -133,6 +134,11 @@ namespace System.Web.Compilation {
         private static void InitializeTargetFrameworkName() {
             string targetFrameworkMoniker = ConfigTargetFrameworkMoniker;
 
+#if (MONO || FEATURE_PAL)
+            // Liberate from total backwards compat 
+            s_targetFrameworkName = FrameworkNameV45;
+            ValidateCompilerVersionFor40AndAbove();
+#else 
             // Check if web.config exists, and if not, assume 4.0
             if (!WebConfigExists) {
                 s_targetFrameworkName = FrameworkNameV40;
@@ -155,6 +161,8 @@ namespace System.Web.Compilation {
                 // The targetFrameworkMonike is specified, so we need to validate it.
                 InitializeTargetFrameworkNameFor40AndAbove(targetFrameworkMoniker);
             }
+#endif
+
         }
 
         /// <summary>
@@ -176,12 +184,12 @@ namespace System.Web.Compilation {
                 s_targetFrameworkName = CreateFrameworkName(moniker);
             }
             catch (ArgumentException e) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_target_framework_version, 
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_target_framework_version, 
                     s_configTargetFrameworkAttributeName, targetFrameworkMoniker, e.Message), source, lineNumber);
             }
             Version ver = GetFrameworkNameVersion(s_targetFrameworkName);
             if (ver < Version40) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_lower_target_version, s_configTargetFrameworkAttributeName),
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_lower_target_version, s_configTargetFrameworkAttributeName),
                     source, lineNumber);
             }
 
@@ -209,7 +217,7 @@ namespace System.Web.Compilation {
             }
 
             // If the above checks failed, report that the version is invalid, higher than expected
-            throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_higher_target_version, s_configTargetFrameworkAttributeName), source, lineNumber);
+            throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_higher_target_version, s_configTargetFrameworkAttributeName), source, lineNumber);
         }
 
         [RegistryPermission(SecurityAction.Assert, Unrestricted = true)]
@@ -322,7 +330,7 @@ namespace System.Web.Compilation {
                 s_targetFrameworkName = FrameworkNameV30;
             }
             else {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Compiler_version_20_35_required, s_configTargetFrameworkAttributeName));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Compiler_version_20_35_required, s_configTargetFrameworkAttributeName));
             }
         }
 
@@ -345,7 +353,7 @@ namespace System.Web.Compilation {
         }
 
         private static void ReportInvalidCompilerVersion(string compilerVersion) {
-            throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_attribute_value, compilerVersion, CompilationUtil.CodeDomProviderOptionPath + "CompilerVersion"));
+            throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_attribute_value, compilerVersion, CompilationUtil.CodeDomProviderOptionPath + "CompilerVersion"));
         }
 
         private static void InitializeTargetFrameworkNameFor40AndAbove(string targetFrameworkMoniker) {
@@ -373,7 +381,7 @@ namespace System.Web.Compilation {
                 try {
                     Version version = CompilationUtil.GetVersionFromVString(compilerVersion);
                     if (version < Version40) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Compiler_version_40_required, s_configTargetFrameworkAttributeName));
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Compiler_version_40_required, s_configTargetFrameworkAttributeName));
                     }
                 }
                 catch (ArgumentNullException e) {

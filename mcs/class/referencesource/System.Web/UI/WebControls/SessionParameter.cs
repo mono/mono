@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Parameter"),
-        WebSysDescription(SR.SessionParameter_SessionField),
+        WebSysDescription(System.Web.SR.SessionParameter_SessionField),
         ]
         public string SessionField {
             get {

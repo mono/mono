@@ -32,20 +32,20 @@ namespace System.Web.UI.WebControls {
             }
 
             if (String.IsNullOrEmpty(ID)) {
-                throw new HttpException(SR.GetString(SR.Control_Missing_Attribute, "ID", type.Name));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Control_Missing_Attribute, "ID", type.Name));
             }
 
             _templateName = ID;
 
             MasterPageParser masterPageParser = parser as MasterPageParser;
             if (masterPageParser == null) {
-                throw new HttpException(SR.GetString(SR.ContentPlaceHolder_only_in_master));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ContentPlaceHolder_only_in_master));
             }
 
 			base.Init(parser, parentBuilder, type, tagName, ID, attribs);
 
             if (masterPageParser.PlaceHolderList.Contains(Name))
-                throw new HttpException(SR.GetString(SR.ContentPlaceHolder_duplicate_contentPlaceHolderID, Name));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ContentPlaceHolder_duplicate_contentPlaceHolderID, Name));
 
             masterPageParser.PlaceHolderList.Add(Name);
         }
@@ -53,7 +53,7 @@ namespace System.Web.UI.WebControls {
         public override object BuildObject() {
             MasterPage masterPage = TemplateControl as MasterPage;
 
-            Debug.Assert(masterPage != null || InDesigner);
+            System.Web.Util.Debug.Assert(masterPage != null || InDesigner);
 
             // Instantiate the ContentPlaceHolder
             ContentPlaceHolder cph = (ContentPlaceHolder) base.BuildObject();

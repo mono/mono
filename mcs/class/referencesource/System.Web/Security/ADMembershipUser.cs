@@ -12,6 +12,7 @@ namespace System.Web.Security {
     using  System.Globalization;
     using  System.Runtime.Serialization;
     using  System.Diagnostics;
+    
 
     [Serializable]
     public class ActiveDirectoryMembershipUser : MembershipUser
@@ -34,11 +35,11 @@ namespace System.Web.Security {
         { 
             get 
             { 
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_UserProperty_not_supported, "LastLoginDate"));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_UserProperty_not_supported, "LastLoginDate"));
             } 
             set 
             { 
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_UserProperty_not_supported, "LastLoginDate"));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_UserProperty_not_supported, "LastLoginDate"));
             }
         }
 
@@ -46,11 +47,11 @@ namespace System.Web.Security {
         { 
             get 
             { 
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_UserProperty_not_supported, "LastActivityDate"));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_UserProperty_not_supported, "LastActivityDate"));
             } 
             set 
             { 
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_UserProperty_not_supported, "LastActivityDate"));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_UserProperty_not_supported, "LastActivityDate"));
             }
         }
 
@@ -131,7 +132,7 @@ namespace System.Web.Security {
                         lastLockoutDate)  
         {
             if ((providerUserKey != null) && !(providerUserKey is SecurityIdentifier))
-                throw new ArgumentException( SR.GetString(SR.ADMembership_InvalidProviderUserKey) , "providerUserKey" );
+                throw new ArgumentException( System.Web.SR.GetString(System.Web.SR.ADMembership_InvalidProviderUserKey) , "providerUserKey" );
 
             sid = (SecurityIdentifier) providerUserKey;
             if (sid != null) 
@@ -181,10 +182,10 @@ namespace System.Web.Security {
                 isApprovedModified = false;
             }  
 
-            Debug.Assert(sidBinaryForm != null);
+            System.Web.Util.Debug.Assert(sidBinaryForm != null);
             this.sidBinaryForm = sidBinaryForm;
 
-            Debug.Assert((providerUserKey != null) && (providerUserKey is SecurityIdentifier));
+            System.Web.Util.Debug.Assert((providerUserKey != null) && (providerUserKey is SecurityIdentifier));
             sid = (SecurityIdentifier) providerUserKey;
             
         }

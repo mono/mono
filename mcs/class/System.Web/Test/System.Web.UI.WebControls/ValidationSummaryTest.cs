@@ -175,7 +175,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			Assert.AreEqual (ValidationSummaryDisplayMode.BulletList, v.DisplayMode, "D1");
 			Assert.AreEqual (true, v.EnableClientScript, "D2");
-			Assert.AreEqual (Color.Red, v.ForeColor, "D3");
+			Assert.AreEqual (Color.Empty, v.ForeColor, "D3");
 			Assert.AreEqual (string.Empty, v.HeaderText, "D4");
 			Assert.AreEqual (true, v.ShowSummary, "D5");
 		}
@@ -247,16 +247,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			Page.Controls.Add(v);
 
 			// Default DisplayMode
-			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text<ul><li>aw shucks</li><li>WhamBamThankYouMam</li></ul>\n</div>", v.Render(), "R2");
+			Assert.AreEqual("<div>\n\tI am the header text<ul><li>aw shucks</li><li>WhamBamThankYouMam</li></ul>\n</div>", v.Render(), "R2");
 
 			v.DisplayMode = ValidationSummaryDisplayMode.BulletList;
-			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text<ul><li>aw shucks</li><li>WhamBamThankYouMam</li></ul>\n</div>", v.Render(), "R3");
+			Assert.AreEqual("<div>\n\tI am the header text<ul><li>aw shucks</li><li>WhamBamThankYouMam</li></ul>\n</div>", v.Render(), "R3");
 
 			v.DisplayMode = ValidationSummaryDisplayMode.List;
-			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text<br />aw shucks<br />WhamBamThankYouMam<br />\n</div>", v.Render(), "R4");
+			Assert.AreEqual("<div>\n\tI am the header text<br />aw shucks<br />WhamBamThankYouMam<br />\n</div>", v.Render(), "R4");
 
 			v.DisplayMode = ValidationSummaryDisplayMode.SingleParagraph;
-			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text aw shucks WhamBamThankYouMam <br />\n</div>", v.Render(), "R5");
+			Assert.AreEqual("<div>\n\tI am the header text aw shucks WhamBamThankYouMam <br />\n</div>", v.Render(), "R5");
 
 			v.ShowSummary = false;
 			v.DisplayMode = ValidationSummaryDisplayMode.BulletList;
@@ -266,7 +266,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			v.EnableClientScript = true;
 			v.ShowMessageBox = true;
 			v.DisplayMode = ValidationSummaryDisplayMode.SingleParagraph;
-			Assert.AreEqual("<div style=\"color:Red;\">\n\tI am the header text aw shucks WhamBamThankYouMam <br />\n</div>", v.Render(), "R7");
+			Assert.AreEqual("<div>\n\tI am the header text aw shucks WhamBamThankYouMam <br />\n</div>", v.Render(), "R7");
 
 			StopValidationTest();
 		}

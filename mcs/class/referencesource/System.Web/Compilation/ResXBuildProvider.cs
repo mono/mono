@@ -14,8 +14,7 @@ using System.Web.Hosting;
 /// BuildProvider for .resx files
 internal sealed class ResXBuildProvider : BaseResourcesBuildProvider {
 
-    protected override IResourceReader GetResourceReader(Stream inputStream) {
-#if !FEATURE_PAL // FEATURE_PAL 
+    protected override IResourceReader GetResourceReader(Stream inputStream) { 
         ResXResourceReader reader = new ResXResourceReader(inputStream);
 
         // Give the BasePath to the reader so it can resolve relative references (VSWhidbey 208154)
@@ -24,10 +23,6 @@ internal sealed class ResXBuildProvider : BaseResourcesBuildProvider {
         reader.BasePath = Path.GetDirectoryName(physicalPath);
 
         return reader;
-#else // !FEATURE_PAL 
-        throw new NotImplementedException("ROTORTODO - ResXResourceReader");
-#endif // !FEATURE_PAL 
-
     }
 }
 

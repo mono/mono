@@ -89,11 +89,11 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
         }
 
         private void RegisterStyle(Style style) {
-            Debug.Assert(_menuUser.Page != null && _menuUser.Page.SupportsStyleSheets);
+            System.Web.Util.Debug.Assert(_menuUser.Page != null && _menuUser.Page.SupportsStyleSheets);
 
             if (style != null && !style.IsEmpty) {
                 // The style should not have already been registered
-                Debug.Assert(style.RegisteredCssClass.Length == 0);
+                System.Web.Util.Debug.Assert(style.RegisteredCssClass.Length == 0);
 
                 string name = _menuUser.ClientID + "__Menu_" + _cssStyleIndex++.ToString(NumberFormatInfo.InvariantInfo);
                 _menuUser.Page.Header.StyleSheet.CreateStyleRule(style, _menuUser.UrlResolver, "." + name);
@@ -104,7 +104,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
 
         public void RegisterStyles() {
             // Assert is fine here as the class is internal
-            Debug.Assert(_menuUser.Page != null && _menuUser.Page.SupportsStyleSheets);
+            System.Web.Util.Debug.Assert(_menuUser.Page != null && _menuUser.Page.SupportsStyleSheets);
 
             // Registering the static label style before hover so hover takes precedence
             RegisterStyle(_menuUser.LabelStyle);
@@ -119,7 +119,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
                            WebPartManager webPartManager) {
             // This method should only be called when Zone.RenderClientScript is true, which means
             // WebPartManager is not null.
-            Debug.Assert(webPartManager != null);
+            System.Web.Util.Debug.Assert(webPartManager != null);
 
             RegisterStartupScript(clientID);
             RenderLabel(writer, clientID, associatedWebPart);
@@ -150,7 +150,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
                 writer.AddAttribute(HtmlTextWriterAttribute.Alt,
                                     (!String.IsNullOrEmpty(text) ?
                                      text :
-                                     SR.GetString(SR.WebPartMenu_DefaultDropDownAlternateText)),
+                                     System.Web.SR.GetString(System.Web.SR.WebPartMenu_DefaultDropDownAlternateText)),
                                     true);
                 writer.AddStyleAttribute("vertical-align", "middle");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, "none");
@@ -172,7 +172,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
                 writer.AddAttribute(HtmlTextWriterAttribute.Alt,
                                     (!String.IsNullOrEmpty(text) ?
                                      text :
-                                     SR.GetString(SR.WebPartMenu_DefaultDropDownAlternateText)),
+                                     System.Web.SR.GetString(System.Web.SR.WebPartMenu_DefaultDropDownAlternateText)),
                                     true);
                 writer.AddStyleAttribute("vertical-align", "middle");
                 writer.AddStyleAttribute(HtmlTextWriterStyle.BorderStyle, "none");
@@ -221,7 +221,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
 
             bool isParentEnabled = associatedWebPart.Zone.IsEnabled;
             foreach (WebPartVerb verb in verbs) {
-                Debug.Assert(verb != null);
+                System.Web.Util.Debug.Assert(verb != null);
                 writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
                 string alt;
@@ -238,7 +238,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
 
                 // Special case help, export, etc.
                 if (verb is WebPartHelpVerb) {
-                    Debug.Assert(associatedWebPart != null);
+                    System.Web.Util.Debug.Assert(associatedWebPart != null);
 
                     string resolvedHelpUrl =
                         ((IUrlResolutionService)associatedWebPart).ResolveClientUrl(associatedWebPart.HelpUrl);
@@ -253,7 +253,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
                     }
                 }
                 else if (verb is WebPartExportVerb) {
-                    Debug.Assert(associatedWebPart != null);
+                    System.Web.Util.Debug.Assert(associatedWebPart != null);
 
                     string exportUrl = webPartManager.GetExportUrl(associatedWebPart);
 
@@ -295,7 +295,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
                         }
 
                         // There must be either an EventArgument or a ClientClickHandler
-                        Debug.Assert(submitScript != null || clientClickScript != null);
+                        System.Web.Util.Debug.Assert(submitScript != null || clientClickScript != null);
 
                         string onclick = String.Empty;
                         if (submitScript != null && clientClickScript != null) {
@@ -309,7 +309,7 @@ menu" + clientID + ".labelHoverClassName = '" + labelHoverClass + @"';
                         }
 
                         if (verb is WebPartCloseVerb) {
-                            Debug.Assert(associatedWebPart != null);
+                            System.Web.Util.Debug.Assert(associatedWebPart != null);
 
                             // PERF: First check if this WebPart even has provider connection points
                             ProviderConnectionPointCollection connectionPoints =

@@ -15,7 +15,7 @@ using MonoTests.DataSource;
 
 namespace MonoTests.Common
 {
-	class TestDataContext2 : ITestDataContext
+	public class TestDataContext2 : ITestDataContext
 	{
 		public const int TableFooBarNoScaffold = 0;
 		public const int TableAssociatedBar = 1;

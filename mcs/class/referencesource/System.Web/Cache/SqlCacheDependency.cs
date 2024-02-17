@@ -37,6 +37,7 @@ namespace System.Web.Caching {
     using System.Web.Management;
     using System.Security;
     
+    
     public sealed class SqlCacheDependency : CacheDependency {
 
         internal static bool        s_hasSqlClientPermission;
@@ -67,7 +68,7 @@ namespace System.Web.Caching {
         public SqlCacheDependency(string databaseEntryName, string tableName) 
         :base(0, null, new string[1] {GetDependKey(databaseEntryName, tableName)})
         {
-            Debug.Trace("SqlCacheDependency", 
+            System.Web.Util.Debug.Trace("SqlCacheDependency", 
                             "Depend on key=" + GetDependKey(databaseEntryName, tableName) + "; value=" +
                             HttpRuntime.Cache.InternalCache.Get(GetDependKey(databaseEntryName, tableName)));
 
@@ -114,7 +115,7 @@ namespace System.Web.Caching {
             // the attached email in the bug.
             if (context != null && context.SqlDependencyCookie != null &&  // That means We have already setup SQL9 dependency for output cache
                 sqlCmd.NotificationAutoEnlist) {    // This command will auto-enlist in that output cache dependency
-                throw new HttpException(SR.GetString(SR.SqlCacheDependency_OutputCache_Conflict));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.SqlCacheDependency_OutputCache_Conflict));
             }
             
             CreateSqlDep(sqlCmd);
@@ -143,7 +144,7 @@ namespace System.Web.Caching {
 
         public override string GetUniqueID() {
 #if DBG
-            Debug.Assert(_isUniqueIDInitialized == true, "_isUniqueIDInitialized == true");
+            System.Web.Util.Debug.Assert(_isUniqueIDInitialized == true, "_isUniqueIDInitialized == true");
 #endif
             return _uniqueID;
         }
@@ -165,12 +166,12 @@ namespace System.Web.Caching {
             }
             
             if (!s_hasSqlClientPermission) {
-                throw new HttpException(SR.GetString(SR.SqlCacheDependency_permission_denied));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.SqlCacheDependency_permission_denied));
             }
         }
 
         void OnSQL9SqlDependencyChanged(Object sender, SqlNotificationEventArgs e) {
-            Debug.Trace("SqlCacheDependency", "SQL9 dependency changed: depId=" + _sqlYukonDep.Id);
+            System.Web.Util.Debug.Trace("SqlCacheDependency", "SQL9 dependency changed: depId=" + _sqlYukonDep.Id);
             NotifyDependencyChanged(sender, e);
         }
 
@@ -185,21 +186,21 @@ namespace System.Web.Caching {
             // Note: sqlCmd is null in output cache case.
             
             if (sqlCmd != null) {
-                Debug.Trace("SqlCacheDependency", "SqlCmd added to SqlDependency object");
+                System.Web.Util.Debug.Trace("SqlCacheDependency", "SqlCmd added to SqlDependency object");
                 _sqlYukonDep.AddCommandDependency(sqlCmd);
             }
             
             _sqlYukonDep.OnChange += new OnChangeEventHandler(OnSQL9SqlDependencyChanged);
             
-            Debug.Trace("SqlCacheDependency", "SQL9 dependency created: depId=" + _sqlYukonDep.Id);
+            System.Web.Util.Debug.Trace("SqlCacheDependency", "SQL9 dependency created: depId=" + _sqlYukonDep.Id);
         }
 
         internal static void ValidateOutputCacheDependencyString(string depString, bool page) {
             if (depString == null) {
-                throw new HttpException(SR.GetString(SR.Invalid_sqlDependency_argument, depString));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_sqlDependency_argument, depString));
             }
 
-            if (StringUtil.EqualsIgnoreCase(depString, SQL9_CACHE_DEPENDENCY_DIRECTIVE)) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(depString, SQL9_CACHE_DEPENDENCY_DIRECTIVE)) {
                 if (!page) {
                     // It's impossible for only a page, but not its controls, to use Yukon Cache Dependency; neither
                     // can the opposite scenario possible.  It's because once we create a SqlDependency and
@@ -207,7 +208,7 @@ namespace System.Web.Caching {
                     // the parts (either a page or a control) that doesn't depend on Yukon.
                     // To keep things simple, we restrict Yukon Cache Dependency only to page.
                     throw new HttpException(
-                        SR.GetString(SR.Attrib_Sql9_not_allowed));
+                        System.Web.SR.GetString(System.Web.SR.Attrib_Sql9_not_allowed));
                 }
             }
             else {
@@ -218,16 +219,16 @@ namespace System.Web.Caching {
 
         public static CacheDependency CreateOutputCacheDependency(string dependency) {
             if (dependency == null) {
-                throw new HttpException(SR.GetString(SR.Invalid_sqlDependency_argument, dependency));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_sqlDependency_argument, dependency));
             }
             
-            if (StringUtil.EqualsIgnoreCase(dependency, SQL9_CACHE_DEPENDENCY_DIRECTIVE)) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(dependency, SQL9_CACHE_DEPENDENCY_DIRECTIVE)) {
                 HttpContext context = HttpContext.Current;
-                Debug.Assert(context != null);
+                System.Web.Util.Debug.Assert(context != null);
                 
                 SqlCacheDependency  dep = new SqlCacheDependency();
 
-                Debug.Trace("SqlCacheDependency", "Setting depId=" + dep._sqlYukonDep.Id);
+                System.Web.Util.Debug.Trace("SqlCacheDependency", "Setting depId=" + dep._sqlYukonDep.Id);
                 context.SqlDependencyCookie = dep._sqlYukonDep.Id;
 
                 return dep;
@@ -240,9 +241,9 @@ namespace System.Web.Caching {
                 sqlDependencies = ParseSql7OutputCacheDependency(dependency);
 
                 // ParseSql7OutputCacheDependency will throw if we cannot find a single entry
-                Debug.Assert(sqlDependencies.Count > 0, "sqlDependencies.Count > 0");
+                System.Web.Util.Debug.Assert(sqlDependencies.Count > 0, "sqlDependencies.Count > 0");
 
-                Debug.Trace("SqlCacheDependency", "Creating SqlCacheDependency for SQL8 output cache");
+                System.Web.Util.Debug.Trace("SqlCacheDependency", "Creating SqlCacheDependency for SQL8 output cache");
 
                 if (sqlDependencies.Count == 1) {
                     info = (Sql7DependencyInfo)sqlDependencies[0];
@@ -266,7 +267,7 @@ namespace System.Web.Caching {
             }
             catch (HttpException e) {
                 HttpException outerException = new HttpException(
-                       SR.GetString(SR.Invalid_sqlDependency_argument2, depString, e.Message), e);
+                       System.Web.SR.GetString(System.Web.SR.Invalid_sqlDependency_argument2, depString, e.Message), e);
                 
                 outerException.SetFormatter(new UseLastUnhandledErrorFormatter(outerException));
                 
@@ -291,7 +292,7 @@ namespace System.Web.Caching {
             }
 
             if (tableName.Length == 0) {
-                throw new ArgumentException(SR.GetString(SR.Cache_null_table));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cache_null_table));
             }
 
             string  monitorKey = SqlCacheDependencyManager.GetMoniterKey(database, tableName);
@@ -412,7 +413,7 @@ namespace System.Web.Caching {
                 
             }
             catch (ArgumentException) {
-                throw new ArgumentException(SR.GetString(SR.Invalid_sqlDependency_argument, outputCacheString));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_sqlDependency_argument, outputCacheString));
             }
         }
     }
@@ -518,8 +519,8 @@ namespace System.Web.Caching {
 
             if (_sqlConn != null) {
                 // We already have a pooled connection.
-                Debug.Assert(_poolConn, "_poolConn");
-                Debug.Assert(_sqlCmd != null, "_sqlCmd != null");
+                System.Web.Util.Debug.Assert(_poolConn, "_poolConn");
+                System.Web.Util.Debug.Assert(_sqlCmd != null, "_sqlCmd != null");
 
                 sqlConn = _sqlConn;
                 sqlCmd = _sqlCmd;
@@ -555,11 +556,11 @@ namespace System.Web.Caching {
             // multithreading.  The caller must do the locking.
 
             if (sqlConn == null) {
-                Debug.Assert(sqlCmd == null, "sqlCmd == null");
+                System.Web.Util.Debug.Assert(sqlCmd == null, "sqlCmd == null");
                 return;
             }
 
-            Debug.Assert(sqlCmd != null, "sqlCmd != null");
+            System.Web.Util.Debug.Assert(sqlCmd != null, "sqlCmd != null");
 
             if (_poolConn && !error) {
                 _sqlConn = sqlConn; 
@@ -629,8 +630,8 @@ namespace System.Web.Caching {
             try {
                 DateTime waitLimit = DateTime.UtcNow.AddMilliseconds(waitTimeoutMs);
 
-                Debug.Assert(s_shutdown != true, "s_shutdown != true");
-                Debug.Trace("SqlCacheDependencyManager", "Dispose is called");
+                System.Web.Util.Debug.Assert(s_shutdown != true, "s_shutdown != true");
+                System.Web.Util.Debug.Trace("SqlCacheDependencyManager", "Dispose is called");
                 
                 s_shutdown = true;
                 
@@ -670,7 +671,7 @@ namespace System.Web.Caching {
             
             obj =  config.Databases[database];
             if (obj == null) {
-                throw new HttpException(SR.GetString(SR.Database_not_found, database));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Database_not_found, database));
             }
             
             return  (SqlCacheDependencyDatabase)obj;
@@ -684,13 +685,13 @@ namespace System.Web.Caching {
             SqlCacheDependencyDatabase  sqlDepDB;
             string connectionString;
 
-            Debug.Trace("SqlCacheDependencyManager", 
+            System.Web.Util.Debug.Trace("SqlCacheDependencyManager", 
                                 "InitPolling is called.  Database=" + database);
 
             // Return if polling isn't even enabled.            
             if (!config.Enabled) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Polling_not_enabled_for_sql_cache),
+                    System.Web.SR.GetString(System.Web.SR.Polling_not_enabled_for_sql_cache),
                     config.ElementInformation.Properties["enabled"].Source, config.ElementInformation.Properties["enabled"].LineNumber);
             }
 
@@ -698,13 +699,13 @@ namespace System.Web.Caching {
             sqlDepDB = GetDatabaseConfig(database);
             if (sqlDepDB.PollTime == 0) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Polltime_zero_for_database_sql_cache, database),
+                    System.Web.SR.GetString(System.Web.SR.Polltime_zero_for_database_sql_cache, database),
                     sqlDepDB.ElementInformation.Properties["pollTime"].Source, sqlDepDB.ElementInformation.Properties["pollTime"].LineNumber);
             }
 
             if (s_DatabaseNotifStates.ContainsKey(database)) {
                 // Someone has already started the timer for this database.
-                Debug.Trace("SqlCacheDependencyManager", 
+                System.Web.Util.Debug.Trace("SqlCacheDependencyManager", 
                                 "InitPolling: Timer already started for " + database);
 
                 return;
@@ -713,7 +714,7 @@ namespace System.Web.Caching {
             connectionString = SqlConnectionHelper.GetConnectionString(sqlDepDB.ConnectionStringName, true, true);
             if (connectionString == null || connectionString.Length < 1) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Connection_string_not_found, sqlDepDB.ConnectionStringName),
+                    System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, sqlDepDB.ConnectionStringName),
                     sqlDepDB.ElementInformation.Properties["connectionStringName"].Source, sqlDepDB.ElementInformation.Properties["connectionStringName"].LineNumber);
             }
 
@@ -722,13 +723,13 @@ namespace System.Web.Caching {
 
                 if (s_DatabaseNotifStates.ContainsKey(database)) {
                     // Someone has already started the timer for this database.
-                    Debug.Trace("SqlCacheDependencyManager", 
+                    System.Web.Util.Debug.Trace("SqlCacheDependencyManager", 
                                 "InitPolling: Timer already started for " + database);
 
                     return;
                 }
 
-                Debug.Trace("SqlCacheDependencyManager", 
+                System.Web.Util.Debug.Trace("SqlCacheDependencyManager", 
                                 "InitPolling: Creating timer for " + database);
 
                 state = new DatabaseNotifState(database, connectionString, sqlDepDB.PollTime);
@@ -740,9 +741,14 @@ namespace System.Web.Caching {
 
         // Timer callback function.
         static void PollCallback(object state) {
+#if (MONO || FEATURE_PAL)
+            PollDatabaseForChanges((DatabaseNotifState)state, true /*fromTimer*/);
+#else
             using (new ApplicationImpersonationContext()) {
                 PollDatabaseForChanges((DatabaseNotifState)state, true /*fromTimer*/);
+
             }
+#endif
         }
 
         // Query all the entries from the AspNet_SqlCacheTablesForChangeNotification 
@@ -763,7 +769,7 @@ namespace System.Web.Caching {
             Exception           pollExpt = null;
             SqlException        sqlExpt = null;
 
-            Debug.Trace("SqlCacheDependencyManagerPolling", 
+            System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", 
                 "PollCallback called; connection=" + dbState._connectionString);
 
             if (s_shutdown) {
@@ -774,7 +780,7 @@ namespace System.Web.Caching {
             // we will ignore it. The exception is if dbState._init == false, 
             // which means the timer is polling it for the first time.
             if (dbState._refCount == 0 && fromTimer && dbState._init  ) {
-                Debug.Trace("SqlCacheDependencyManagerPolling", 
+                System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", 
                     "PollCallback ignored for " + dbState._database + " because refcount is 0");
                 return;
             }
@@ -816,7 +822,7 @@ namespace System.Web.Caching {
                             // Somehow PollCallback haven't finished its first call for this database
                             // Assume we cannot connect to SQL.
                             throw new HttpException(
-                                SR.GetString(SR.Cant_connect_sql_cache_dep_database_polling, dbState._database));
+                                System.Web.SR.GetString(System.Web.SR.Cant_connect_sql_cache_dep_database_polling, dbState._database));
                         }
                     }
                 }
@@ -824,7 +830,7 @@ namespace System.Web.Caching {
                     // For a timer callback, if another thread is updating the data for
                     // this database, this thread will just leave and let that thread
                     // finish the update job.
-                    Debug.Trace("SqlCacheDependencyManagerPolling", 
+                    System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", 
                         "PollCallback returned because another thread is updating the data");
                     return;
                 }
@@ -860,27 +866,27 @@ namespace System.Web.Caching {
                         tableName = sqlReader.GetString(0);
                         changeId = sqlReader.GetInt32(1);
                         
-                        Debug.Trace("SqlCacheDependencyManagerPolling", 
+                        System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", 
                                 "Database=" + dbState._database+ "; tableName=" + tableName + "; changeId=" + changeId);
 
                         monitorKey = GetMoniterKey(dbState._database, tableName);
                         obj = cacheInternal.Get(monitorKey);
 
                         if (obj == null) {
-                            Debug.Assert(!dbState._tables.ContainsKey(tableName), 
+                            System.Web.Util.Debug.Assert(!dbState._tables.ContainsKey(tableName), 
                                         "DatabaseNotifStae._tables and internal cache keys should be in-sync");
                             
-                            Debug.Trace("SqlCacheDependencyManagerPolling", 
+                            System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", 
                                 "Add Database=" + dbState._database+ "; tableName=" + tableName + "; changeId=" + changeId);
                             
                             cacheInternal.Add(monitorKey, changeId, new CacheInsertOptions() { Priority = CacheItemPriority.NotRemovable });
                             dbState._tables.Add(tableName, null);
                         }
                         else if (changeId != (int)obj) {
-                            Debug.Assert(dbState._tables.ContainsKey(tableName), 
+                            System.Web.Util.Debug.Assert(dbState._tables.ContainsKey(tableName), 
                                         "DatabaseNotifStae._tables and internal cache keys should be in-sync");
                             
-                            Debug.Trace("SqlCacheDependencyManagerPolling", 
+                            System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", 
                                     "Change Database=" + dbState._database+ "; tableName=" + tableName + "; old=" + (int)obj + "; new=" + changeId);
                             
                             // ChangeId is different. It means some table changes have happened.
@@ -900,7 +906,7 @@ namespace System.Web.Caching {
                         dbState._tables.Remove((string)key);
                         cacheInternal.Remove(GetMoniterKey(dbState._database, (string)key));
                         
-                        Debug.Trace("SqlCacheDependencyManagerPolling", 
+                        System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", 
                                 "Remove Database=" + dbState._database+ "; key=" + key);
                     }
 
@@ -914,7 +920,7 @@ namespace System.Web.Caching {
                     
                     sqlExpt = e as SqlException;
                     if (sqlExpt != null) {
-                        Debug.Trace("SqlCacheDependencyManagerPolling", "Error reading rows.  SqlException:"+
+                        System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", "Error reading rows.  SqlException:"+
                             "\nMessage=" + sqlExpt.Message +
                             "\nNumber=" + sqlExpt.Number);
                         
@@ -922,7 +928,7 @@ namespace System.Web.Caching {
                     }
                     else {
                         dbState._pollSqlError = 0;
-                        Debug.Trace("SqlCacheDependencyManagerPolling", "Error reading rows.  Exception:"+ pollExpt);
+                        System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", "Error reading rows.  Exception:"+ pollExpt);
                     }
                 }
                 finally {
@@ -954,7 +960,7 @@ namespace System.Web.Caching {
                                 }
                                 catch {}
                                 
-                                Debug.Trace("SqlCacheDependencyManagerPolling", 
+                                System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", 
                                     "Changed to disabled.  Remove Database=" + dbState._database+ "; key=" + key);
                             }
 
@@ -968,7 +974,7 @@ namespace System.Web.Caching {
                         dbState._notifEnabled = notifEnabled;
                         dbState._utcTablesUpdated = DateTime.UtcNow;
                         
-                        Debug.Trace("SqlCacheDependencyManagerPolling", "dbState:_pollExpt="+ dbState._pollExpt + 
+                        System.Web.Util.Debug.Trace("SqlCacheDependencyManagerPolling", "dbState:_pollExpt="+ dbState._pollExpt + 
                                 "; _pollSqlError=" + dbState._pollSqlError + "; _notifEnabled=" + dbState._notifEnabled +
                                 "; __utcTablesUpdated=" + dbState._utcTablesUpdated);
                     }
@@ -994,7 +1000,7 @@ namespace System.Web.Caching {
             
             // First check.  If the cache key exists, that means the first poll request
             // for this table has successfully completed
-            Debug.Trace("SqlCacheDependencyManagerCheck", 
+            System.Web.Util.Debug.Trace("SqlCacheDependencyManagerCheck", 
                                 "Check is called.  Database=" + database+ "; table=" + table);
 
             if (HttpRuntime.Cache.InternalCache.Get(GetMoniterKey(database, table)) != null) {
@@ -1019,7 +1025,7 @@ namespace System.Web.Caching {
                 }
                 DateTime waitLimit = DateTime.UtcNow.Add(new TimeSpan(0, 0, timeout));
                 
-                Debug.Trace("SqlCacheDependencyManagerCheck", "Waiting for intialization: timeout=" + timeout + "s");
+                System.Web.Util.Debug.Trace("SqlCacheDependencyManagerCheck", "Waiting for intialization: timeout=" + timeout + "s");
                 
                 for (;;) {
                     if (dbState._init)
@@ -1033,7 +1039,7 @@ namespace System.Web.Caching {
                         // Still PollCallback haven't finished its first call for this database
                         // Assume we cannot connect to SQL.
                         throw new HttpException(
-                            SR.GetString(SR.Cant_connect_sql_cache_dep_database_polling, database));
+                            System.Web.SR.GetString(System.Web.SR.Cant_connect_sql_cache_dep_database_polling, database));
                     }
                 }
             }
@@ -1045,7 +1051,7 @@ namespace System.Web.Caching {
                 int         pollSqlError = 0;
 
                 lock(dbState) {
-                     Debug.Trace("SqlCacheDependencyManagerCheck", "dbState:_pollExpt="+ dbState._pollExpt + 
+                     System.Web.Util.Debug.Trace("SqlCacheDependencyManagerCheck", "dbState:_pollExpt="+ dbState._pollExpt + 
                                 "; _pollSqlError=" + dbState._pollSqlError + "; _notifEnabled=" + dbState._notifEnabled );
                      
                     pollException = dbState._pollExpt;
@@ -1060,7 +1066,7 @@ namespace System.Web.Caching {
                 if (pollException == null &&    // No exception from polling
                     dbRegistered &&             // The database is registered
                     dbState._tables.ContainsKey(table)) {   // The table is also registered
-                    Debug.Trace("SqlCacheDependencyManagerCheck", "The table is registered too.  Exit now!");
+                    System.Web.Util.Debug.Trace("SqlCacheDependencyManagerCheck", "The table is registered too.  Exit now!");
                     return;
                 }
 
@@ -1084,7 +1090,7 @@ namespace System.Web.Caching {
                 if (!doubleChecked && 
                     DateTime.UtcNow - utcTablesLastUpdated >= OneSec) {
                     
-                    Debug.Trace("SqlCacheDependencyManagerCheck", "Double check...");
+                    System.Web.Util.Debug.Trace("SqlCacheDependencyManagerCheck", "Double check...");
                     UpdateDatabaseNotifState(database);
                     doubleChecked = true;
                     continue;
@@ -1093,7 +1099,7 @@ namespace System.Web.Caching {
                 if (pollSqlError == SQL_EXCEPTION_SP_NOT_FOUND) {
                     // This error happens if the database isn't enabled for notification.
                     // This doesn't count as a real Sql error
-                    Debug.Assert(dbRegistered == false, "When this error happened, we shouldn't be able to poll the database");
+                    System.Web.Util.Debug.Assert(dbRegistered == false, "When this error happened, we shouldn't be able to poll the database");
                     pollException = null;
                 }
                 
@@ -1103,14 +1109,14 @@ namespace System.Web.Caching {
                     
                     if (pollSqlError == SQL_EXCEPTION_PERMISSION_DENIED_ON_OBJECT ||
                         pollSqlError == SQL_EXCEPTION_PERMISSION_DENIED_ON_DATABASE) {
-                        error = SR.Permission_denied_database_polling;
+                        error = System.Web.SR.Permission_denied_database_polling;
                     }
                     else {
-                        error = SR.Cant_connect_sql_cache_dep_database_polling;
+                        error = System.Web.SR.Cant_connect_sql_cache_dep_database_polling;
                     }
 
                     HttpException outerException = new HttpException(
-                           SR.GetString(error, database), pollException);
+                           System.Web.SR.GetString(error, database), pollException);
 
                     outerException.SetFormatter(new UseLastUnhandledErrorFormatter(outerException));
                     
@@ -1120,11 +1126,11 @@ namespace System.Web.Caching {
                 // If we don't get any error, then either the database or the table isn't registered.
                 if (dbRegistered == false) {
                     throw new DatabaseNotEnabledForNotificationException(
-                            SR.GetString(SR.Database_not_enabled_for_notification, database));
+                            System.Web.SR.GetString(System.Web.SR.Database_not_enabled_for_notification, database));
                 }
                 else {
                     throw new TableNotEnabledForNotificationException(
-                            SR.GetString(SR.Table_not_enabled_for_notification, table, database));
+                            System.Web.SR.GetString(System.Web.SR.Table_not_enabled_for_notification, table, database));
                 }
             }
         }
@@ -1132,16 +1138,27 @@ namespace System.Web.Caching {
         // Do a on-demand polling of the database in order to obtain the latest
         // data.
         internal static void UpdateDatabaseNotifState(string database) {
+#if (MONO || FEATURE_PAL)
+            System.Web.Util.Debug.Trace("SqlCacheDependencyManager", "UpdateDatabaseNotifState called for database " + database +
+                "; running as " + WindowsIdentity.GetCurrent().Name);
+
+            // Make sure we have initialized the polling of this database
+            InitPolling(database);
+            System.Web.Util.Debug.Assert(s_DatabaseNotifStates[database] != null, "s_DatabaseNotifStates[database] != null");
+
+            PollDatabaseForChanges((DatabaseNotifState)s_DatabaseNotifStates[database], false /*fromTimer*/);
+#else
             using (new ApplicationImpersonationContext()) {
-                Debug.Trace("SqlCacheDependencyManager", "UpdateDatabaseNotifState called for database " + database +
+                System.Web.Util.Debug.Trace("SqlCacheDependencyManager", "UpdateDatabaseNotifState called for database " + database +
                     "; running as " + WindowsIdentity.GetCurrent().Name);
 
                 // Make sure we have initialized the polling of this database
                 InitPolling(database);
-                Debug.Assert(s_DatabaseNotifStates[database] != null, "s_DatabaseNotifStates[database] != null");
+                System.Web.Util.Debug.Assert(s_DatabaseNotifStates[database] != null, "s_DatabaseNotifStates[database] != null");
 
                 PollDatabaseForChanges((DatabaseNotifState)s_DatabaseNotifStates[database], false /*fromTimer*/);
             }
+#endif
         }
 
         // Update all initialized databases
@@ -1158,15 +1175,15 @@ namespace System.Web.Caching {
 
         internal static DatabaseNotifState AddRef(string database) {
             DatabaseNotifState dbState = (DatabaseNotifState)s_DatabaseNotifStates[database];
-            Debug.Assert(dbState != null, "AddRef: s_DatabaseNotifStates[database] != null");
+            System.Web.Util.Debug.Assert(dbState != null, "AddRef: s_DatabaseNotifStates[database] != null");
 
 #if DBG
             int res = 
 #endif            
             Interlocked.Increment(ref dbState._refCount);
 #if DBG
-            Debug.Trace("SqlCacheDependencyManager", "AddRef called for " + database + "; res=" + res);
-            Debug.Assert(res > 0, "AddRef result for " + database + " must be > 0");
+            System.Web.Util.Debug.Trace("SqlCacheDependencyManager", "AddRef called for " + database + "; res=" + res);
+            System.Web.Util.Debug.Assert(res > 0, "AddRef result for " + database + " must be > 0");
 #endif
             return dbState;
         }
@@ -1177,13 +1194,12 @@ namespace System.Web.Caching {
 #endif            
             Interlocked.Decrement(ref dbState._refCount);
 #if DBG
-            Debug.Trace("SqlCacheDependencyManager", "Release called for " + dbState._database + "; res=" + res);
-            Debug.Assert(res >= 0, "Release result for " + dbState._database + " must be >= 0");
+            System.Web.Util.Debug.Trace("SqlCacheDependencyManager", "Release called for " + dbState._database + "; res=" + res);
+            System.Web.Util.Debug.Assert(res >= 0, "Release result for " + dbState._database + " must be >= 0");
 #endif
         }
     }
-
-    [AspNetHostingPermission(SecurityAction.LinkDemand, Level=AspNetHostingPermissionLevel.High)]
+    
     public static class SqlCacheDependencyAdmin {
         
         // Note:
@@ -1470,7 +1486,7 @@ namespace System.Web.Caching {
                 bool    tables = (flags & SETUP_TABLES) != 0;
                 if (table == null) {
                     if (tables) {
-                        throw new ArgumentException(SR.GetString(SR.Cache_null_table_in_tables),
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cache_null_table_in_tables),
                                             "tables");
                     }
                     else {
@@ -1479,11 +1495,11 @@ namespace System.Web.Caching {
                 }
                 else if (table.Length == 0) {
                     if (tables) {
-                        throw new ArgumentException(SR.GetString(SR.Cache_null_table_in_tables),
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cache_null_table_in_tables),
                                     "tables");
                     }
                     else {
-                        throw new ArgumentException(SR.GetString(SR.Cache_null_table),
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cache_null_table),
                                     "table");
                     }
                 }
@@ -1529,7 +1545,7 @@ namespace System.Web.Caching {
                     }
                 }
                 
-                Debug.Trace("SqlCacheDependencyAdmin", "\n" +
+                System.Web.Util.Debug.Trace("SqlCacheDependencyAdmin", "\n" +
                     sqlCmd.CommandText);
                 
                 sqlCmd.ExecuteNonQuery();
@@ -1553,7 +1569,7 @@ namespace System.Web.Caching {
                 bool throwError = true;
                 
                 if (sqlExpt != null) {
-                    Debug.Trace("SqlCacheDependencyAdmin", "SqlException:"+
+                    System.Web.Util.Debug.Trace("SqlCacheDependencyAdmin", "SqlException:"+
                         "\nMessage=" + sqlExpt.Message +
                         "\nNumber=" + sqlExpt.Number);
 
@@ -1561,7 +1577,7 @@ namespace System.Web.Caching {
                         if (!disable) {
                             if (table != null) {
                                 throw new DatabaseNotEnabledForNotificationException(
-                                    SR.GetString(SR.Database_not_enabled_for_notification,
+                                    System.Web.SR.GetString(System.Web.SR.Database_not_enabled_for_notification,
                                                                     sqlConnection.Database));
                             }
                             else {
@@ -1571,7 +1587,7 @@ namespace System.Web.Caching {
                         else {
                             if (table != null) {
                                 throw new DatabaseNotEnabledForNotificationException(
-                                    SR.GetString(SR.Cant_disable_table_sql_cache_dep));
+                                    System.Web.SR.GetString(System.Web.SR.Cant_disable_table_sql_cache_dep));
                             }
                             else {
                                 // If we cannot find the SP for disabling the database, it maybe because
@@ -1589,45 +1605,45 @@ namespace System.Web.Caching {
 
                         if (!disable) {
                             if (table != null) {
-                                error = SR.Permission_denied_table_enable_notification;
+                                error = System.Web.SR.Permission_denied_table_enable_notification;
                             }
                             else {
-                                error = SR.Permission_denied_database_enable_notification;
+                                error = System.Web.SR.Permission_denied_database_enable_notification;
                             }
                         }
                         else {
                             if (table != null) {
-                                error = SR.Permission_denied_table_disable_notification;
+                                error = System.Web.SR.Permission_denied_table_disable_notification;
                             }
                             else {
-                                error = SR.Permission_denied_database_disable_notification;
+                                error = System.Web.SR.Permission_denied_database_disable_notification;
                             }
                         }
 
                         if (table != null) {
                             throw new HttpException(
-                                SR.GetString(error, table));
+                                System.Web.SR.GetString(error, table));
                         }
                         else {
                             throw new HttpException(
-                                SR.GetString(error));
+                                System.Web.SR.GetString(error));
                         }
                     }
                     else if (sqlExpt.Number == SqlCacheDependencyManager.SQL_EXCEPTION_ADHOC &&
                             sqlExpt.Message == SqlCacheDependencyManager.SQL_CUSTOM_ERROR_TABLE_NOT_FOUND) {
-                        Debug.Assert(!disable && table != null, "disable && table != null");
-                        throw new HttpException(SR.GetString(SR.Cache_dep_table_not_found, table));
+                        System.Web.Util.Debug.Assert(!disable && table != null, "disable && table != null");
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cache_dep_table_not_found, table));
                     }
                 }
 
                 string  errString;
                 
                 if (sqlCmd != null && sqlCmd.CommandText.Length != 0) {
-                    errString = SR.GetString(SR.Cant_connect_sql_cache_dep_database_admin_cmdtxt, 
+                    errString = System.Web.SR.GetString(System.Web.SR.Cant_connect_sql_cache_dep_database_admin_cmdtxt, 
                                     sqlCmd.CommandText);
                 }
                 else {
-                    errString = SR.GetString(SR.Cant_connect_sql_cache_dep_database_admin);
+                    errString = System.Web.SR.GetString(System.Web.SR.Cant_connect_sql_cache_dep_database_admin);
                 }
 
                 if (throwError) {
@@ -1704,11 +1720,11 @@ namespace System.Web.Caching {
                     sqlExpt.Number == SqlCacheDependencyManager.SQL_EXCEPTION_SP_NOT_FOUND) {
                     
                         throw new DatabaseNotEnabledForNotificationException(
-                                SR.GetString(SR.Database_not_enabled_for_notification,
+                                System.Web.SR.GetString(System.Web.SR.Database_not_enabled_for_notification,
                                                                 sqlConn.Database));
                 }
                 else {
-                    throw new HttpException(SR.GetString(SR.Cant_get_enabled_tables_sql_cache_dep), e);
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_get_enabled_tables_sql_cache_dep), e);
                 }
             }
             finally {

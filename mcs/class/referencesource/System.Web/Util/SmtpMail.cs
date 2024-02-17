@@ -60,7 +60,7 @@ public class SmtpMail {
                     }
 
                     if (_type == null)
-                        throw new HttpException(SR.GetString(SR.SMTP_TypeCreationError, _progId));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.SMTP_TypeCreationError, _progId));
                 }
 
                 return _type;
@@ -448,17 +448,15 @@ public class SmtpMail {
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
-    /// </devdoc>
-    [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
-    [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
+    /// </devdoc>        
     public static void Send(String from, String to, String subject, String messageText) {
         lock (_lockObject) {
 #if !FEATURE_PAL // FEATURE_PAL does not enable SmtpMail
             if (Environment.OSVersion.Platform != PlatformID.Win32NT) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.RequiresNT));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.RequiresNT));
             }
             else if (!CdoSysHelper.OsSupportsCdoSys()) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.SmtpMail_not_supported_on_Win7_and_higher));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.SmtpMail_not_supported_on_Win7_and_higher));
             }
             else if (Environment.OSVersion.Version.Major <= 4) {
                 CdoNtsHelper.Send(from, to, subject, messageText);
@@ -475,17 +473,15 @@ public class SmtpMail {
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
-    /// </devdoc>
-    [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
-    [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
+    /// </devdoc>    
     public static void Send(MailMessage message) {
         lock (_lockObject) {
 #if !FEATURE_PAL // FEATURE_PAL does not enable SmtpMail
             if (Environment.OSVersion.Platform != PlatformID.Win32NT) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.RequiresNT));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.RequiresNT));
             }
             else if (!CdoSysHelper.OsSupportsCdoSys()) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.SmtpMail_not_supported_on_Win7_and_higher));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.SmtpMail_not_supported_on_Win7_and_higher));
             }
             else if (Environment.OSVersion.Version.Major <= 4) {
                 CdoNtsHelper.Send(message);
@@ -613,7 +609,7 @@ public class MailAttachment {
             File.Open(_filename, FileMode.Open, FileAccess.Read,  FileShare.Read).Close();
         }
         catch {
-            throw new HttpException(SR.GetString(SR.Bad_attachment, _filename));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Bad_attachment, _filename));
         }
     }
 }

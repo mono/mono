@@ -97,7 +97,9 @@ namespace System.Web.UI.WebControls {
         [
         Category("Appearance"),
         DefaultValue(""),
+#if !MONO
         Editor(typeof(System.Web.UI.Design.ImageUrlEditor), typeof(UITypeEditor)),
+#endif
         ResourceDescription("NumericPagerField_NextPageImageUrl"),
         SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
                         Justification = "Required by ASP.NET parser."),
@@ -188,7 +190,9 @@ namespace System.Web.UI.WebControls {
         [
         Category("Appearance"),
         DefaultValue(""),
+#if !MONO
         Editor(typeof(System.Web.UI.Design.ImageUrlEditor), typeof(UITypeEditor)),
+#endif
         ResourceDescription("NumericPagerField_PreviousPageImageUrl"),
         SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings",
                         Justification = "Required by ASP.NET parser."),

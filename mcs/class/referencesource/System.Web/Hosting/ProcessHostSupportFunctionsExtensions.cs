@@ -17,10 +17,10 @@ namespace System.Web.Hosting {
         //
         // Example inputs: MapPathInternal(appId, "/appVPath", "/bin/foo.dll");
         public static string MapPathInternal(this IProcessHostSupportFunctions supportFunctions, string appId, string appVirtualPath, string relativePath) {
-            Debug.Assert(supportFunctions != null);
-            Debug.Assert(!String.IsNullOrWhiteSpace(appId));
-            Debug.Assert(!String.IsNullOrWhiteSpace(appVirtualPath) && appVirtualPath[0] == '/');
-            Debug.Assert(relativePath != null);
+            System.Web.Util.Debug.Assert(supportFunctions != null);
+            System.Web.Util.Debug.Assert(!String.IsNullOrWhiteSpace(appId));
+            System.Web.Util.Debug.Assert(!String.IsNullOrWhiteSpace(appVirtualPath) && appVirtualPath[0] == '/');
+            System.Web.Util.Debug.Assert(relativePath != null);
 
             StringBuilder fullVirtualPath = new StringBuilder(appVirtualPath.Length + relativePath.Length + 2 /* for slashes */);
 

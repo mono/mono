@@ -12,6 +12,7 @@ namespace System.Web.UI {
     using System.Web.SessionState;
     using System.Web.Configuration;
     using System.Web.Security.Cryptography;
+    
 
     public class SessionPageStatePersister : PageStatePersister {
         private const string _viewStateSessionKey = "__SESSIONVIEWSTATE";
@@ -26,7 +27,7 @@ namespace System.Web.UI {
                 // ignore, throw if session is null.
             }
             if (session == null) {
-                throw new ArgumentException(SR.GetString(SR.SessionPageStatePersister_SessionMustBeEnabled));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.SessionPageStatePersister_SessionMustBeEnabled));
             }
         }
 
@@ -78,7 +79,7 @@ namespace System.Web.UI {
             catch (Exception e) {
                 // Setup the formatter for this exception, to make sure this message shows up
                 // in an error page as opposed to the inner-most exception's message.
-                HttpException newException = new HttpException(SR.GetString(SR.Invalid_ControlState), e);
+                HttpException newException = new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_ControlState), e);
                 newException.SetFormatter(new UseLastUnhandledErrorFormatter(newException));
 
                 throw newException;

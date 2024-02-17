@@ -16,6 +16,7 @@ namespace System.Web.Management {
     using System.IO;
     using System.Runtime.Remoting.Messaging;
     using System.Security.Permissions;
+    
 
     /*
         The class MailWebEventProvider is supposed to be used internally.  But if I don't mark it public,
@@ -44,7 +45,7 @@ namespace System.Web.Management {
         
         override public void Initialize(string name, NameValueCollection config)
         {
-            Debug.Trace("MailWebEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("MailWebEventProvider", "Initializing: name=" + name);
 
             ProviderUtil.GetAndRemoveRequiredNonEmptyStringAttribute(config, "from", name, ref _from);
 
@@ -58,7 +59,7 @@ namespace System.Web.Management {
                 String.IsNullOrEmpty(_bcc) )
             {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.MailWebEventProvider_no_recipient_error, this.GetType().ToString(),
+                    System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_no_recipient_error, this.GetType().ToString(),
                     name));
             }
 
@@ -87,7 +88,7 @@ namespace System.Web.Management {
             WebBaseEvent    eventRaised = events[0];
             
             if (count == 1) {
-                return HttpUtility.HtmlEncode(SR.GetString(SR.WebEvent_event_email_subject,
+                return HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.WebEvent_event_email_subject,
                         new string[] {
                             notificationSequence.ToString(CultureInfo.InstalledUICulture),
                             messageSequence.ToString(CultureInfo.InstalledUICulture),
@@ -97,7 +98,7 @@ namespace System.Web.Management {
                         ));
             }
             else {
-                return HttpUtility.HtmlEncode(SR.GetString(SR.WebEvent_event_group_email_subject, 
+                return HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.WebEvent_event_group_email_subject, 
                         new string[] {
                             notificationSequence.ToString(CultureInfo.InstalledUICulture),
                             messageSequence.ToString(CultureInfo.InstalledUICulture),
@@ -125,12 +126,12 @@ namespace System.Web.Management {
         [SmtpPermission(SecurityAction.Assert, Access = "Connect")]
         internal void SendMail(MailMessage msg) {
             try {
-                Debug.Trace("MailWebEventProvider", "Sending a message: subject=" + msg.Subject);
+                System.Web.Util.Debug.Trace("MailWebEventProvider", "Sending a message: subject=" + msg.Subject);
                 _smtpClient.Send(msg);
             }
             catch (Exception e) {
                 throw new HttpException(
-                    SR.GetString(SR.MailWebEventProvider_cannot_send_mail),
+                    System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_cannot_send_mail),
                     e);
             }
         }
@@ -139,7 +140,7 @@ namespace System.Web.Management {
         
         public override void ProcessEvent(WebBaseEvent eventRaised)
         {
-            Debug.Trace("MailWebEventProvider", "ProcessEvent: type =" + eventRaised.GetType() + 
+            System.Web.Util.Debug.Trace("MailWebEventProvider", "ProcessEvent: type =" + eventRaised.GetType() + 
                             ", ID=" + eventRaised.EventID + ", buffer=" + UseBuffering);
             if (UseBuffering) {
                 base.ProcessEvent(eventRaised);
@@ -213,7 +214,7 @@ namespace System.Web.Management {
                     eventsToSend = flushInfo.Events;
                 }
 
-                Debug.Trace("MailWebEventProvider", "Calling SendMessageInternal; # of events: " + eventsToSend.Count);
+                System.Web.Util.Debug.Trace("MailWebEventProvider", "Calling SendMessageInternal; # of events: " + eventsToSend.Count);
 
 
                 SendMessage(
@@ -228,7 +229,7 @@ namespace System.Web.Management {
                     out fatalError);
 
                 if (fatalError) {
-                    Debug.Trace("MailWebEventProvider", "Stop sending because we hit a fatal error");
+                    System.Web.Util.Debug.Trace("MailWebEventProvider", "Stop sending because we hit a fatal error");
                     break;
                 }
 

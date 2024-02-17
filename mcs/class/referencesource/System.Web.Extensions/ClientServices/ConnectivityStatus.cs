@@ -31,19 +31,17 @@ namespace System.Web.ClientServices
         private static bool _IsOffline;
         private static bool _IsOfflineFetched;
 
-        //[PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         private static void FetchIsOffline()
         {
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, "AppIsOffline");
+            string path = Path.Combine("", "AppIsOffline");
             _IsOffline = File.Exists(path);
             _IsOfflineFetched = true;
         }
 
 
-        //[PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         private static void StoreIsOffline()
         {
-            string path = Path.Combine(System.Windows.Forms.Application.UserAppDataPath, "AppIsOffline");
+            string path = Path.Combine("", "AppIsOffline");
             if (!_IsOffline) {
                 File.Delete(path);
             } else {

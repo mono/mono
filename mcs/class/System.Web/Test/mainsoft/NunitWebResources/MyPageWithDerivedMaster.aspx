@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/MyDerived.master" AutoEventWireup="true" CodeFile="MyPage.aspx.cs" Inherits="MyPage" %>
+<%@ Page Language="C#" MasterPageFile="MyDerived.master" AutoEventWireup="true" CodeFile="MyPage.aspx.cs" Inherits="MyPage" %>
 
 <asp:content ID="LiteralContent" ContentPlaceHolderID="Main" runat="server">
      Page main text <br />

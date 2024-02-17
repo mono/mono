@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls {
             private int _count = -1; // -1 indicates we have not yet calculated the count
 
             public XmlDataSourceNodeDescriptorEnumeration(XmlNodeList nodes) {
-                Debug.Assert(nodes != null, "Did not expect null node list");
+                System.Web.Util.Debug.Assert(nodes != null, "Did not expect null node list");
                 _nodes = nodes;
             }
 

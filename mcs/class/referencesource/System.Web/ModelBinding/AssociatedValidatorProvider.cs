@@ -4,6 +4,7 @@
     using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
+    
 
     public abstract class AssociatedValidatorProvider : ModelValidatorProvider {
         protected virtual ICustomTypeDescriptor GetTypeDescriptor(Type type) {
@@ -34,7 +35,7 @@
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.Common_PropertyNotFound),
+                        System.Web.SR.GetString(System.Web.SR.Common_PropertyNotFound),
                         metadata.ContainerType.FullName, metadata.PropertyName),
                     "metadata");
             }

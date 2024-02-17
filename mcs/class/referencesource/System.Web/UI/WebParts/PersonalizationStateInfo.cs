@@ -18,7 +18,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         // We only want our assembly to inherit this class, so make it internal
         internal PersonalizationStateInfo(string path, DateTime lastUpdatedDate, int size) {
-            _path = StringUtil.CheckAndTrimString(path, "path");
+            _path = System.Web.Util.StringUtil.CheckAndTrimString(path, "path");
             PersonalizationProviderHelper.CheckNegativeInteger(size, "size");
             _lastUpdatedDate = lastUpdatedDate.ToUniversalTime();
             _size = size;

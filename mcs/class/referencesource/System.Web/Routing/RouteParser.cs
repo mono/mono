@@ -3,6 +3,7 @@
     using System.Diagnostics;
     using System.Globalization;
     using System.Linq;
+    
 
     internal static class RouteParser {
         private static string GetLiteral(string segmentLiteral) {
@@ -72,7 +73,7 @@
             }
 
             if (IsInvalidRouteUrl(routeUrl)) {
-                throw new ArgumentException(SR.GetString(SR.Route_InvalidRouteUrl), "routeUrl");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Route_InvalidRouteUrl), "routeUrl");
             }
 
             IList<string> urlParts = SplitUrlToPathSegmentStrings(routeUrl);
@@ -83,7 +84,7 @@
 
             IList<PathSegment> pathSegments = SplitUrlToPathSegments(urlParts);
 
-            Debug.Assert(urlParts.Count == pathSegments.Count, "The number of string segments should be the same as the number of path segments");
+            System.Web.Util.Debug.Assert(urlParts.Count == pathSegments.Count, "The number of string segments should be the same as the number of path segments");
 
             return new ParsedRoute(pathSegments);
         }
@@ -104,7 +105,7 @@
                         exception = new ArgumentException(
                             String.Format(
                                 CultureInfo.CurrentUICulture,
-                                SR.GetString(SR.Route_MismatchedParameter),
+                                System.Web.SR.GetString(System.Web.SR.Route_MismatchedParameter),
                                 segment
                             ),
                             "routeUrl");
@@ -121,7 +122,7 @@
                     exception = new ArgumentException(
                         String.Format(
                             CultureInfo.CurrentUICulture,
-                            SR.GetString(SR.Route_MismatchedParameter),
+                            System.Web.SR.GetString(System.Web.SR.Route_MismatchedParameter),
                             segment
                         ),
                         "routeUrl");
@@ -133,7 +134,7 @@
                     exception = new ArgumentException(
                         String.Format(
                             CultureInfo.CurrentUICulture,
-                            SR.GetString(SR.Route_MismatchedParameter),
+                            System.Web.SR.GetString(System.Web.SR.Route_MismatchedParameter),
                             segment
                         ),
                         "routeUrl");
@@ -164,7 +165,7 @@
                 else {
                     Exception exception;
                     IList<PathSubsegment> subsegments = ParseUrlSegment(pathSegment, out exception);
-                    Debug.Assert(exception == null, "This only gets called after the path has been validated, so there should never be an exception here");
+                    System.Web.Util.Debug.Assert(exception == null, "This only gets called after the path has been validated, so there should never be an exception here");
                     pathSegments.Add(new ContentPathSegment(subsegments));
                 }
             }
@@ -196,7 +197,7 @@
                 if (nextPart.Length > 0) {
                     parts.Add(nextPart);
                 }
-                Debug.Assert(url[indexOfNextSeparator] == '/', "The separator char itself should always be a '/'.");
+                System.Web.Util.Debug.Assert(url[indexOfNextSeparator] == '/', "The separator char itself should always be a '/'.");
                 parts.Add("/");
                 currentIndex = indexOfNextSeparator + 1;
             }
@@ -207,7 +208,7 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly",
             Justification = "The exceptions are just constructed here, but they are thrown from a method that does have those parameter names.")]
         private static Exception ValidateUrlParts(IList<string> pathSegments) {
-            Debug.Assert(pathSegments != null, "The value should always come from SplitUrl(), and that function should never return null.");
+            System.Web.Util.Debug.Assert(pathSegments != null, "The value should always come from SplitUrl(), and that function should never return null.");
 
             HashSet<string> usedParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             bool? isPreviousPartSeparator = null;
@@ -221,7 +222,7 @@
                     return new ArgumentException(
                         String.Format(
                             CultureInfo.CurrentCulture,
-                            SR.GetString(SR.Route_CatchAllMustBeLast)
+                            System.Web.SR.GetString(System.Web.SR.Route_CatchAllMustBeLast)
                         ),
                         "routeUrl");
                 }
@@ -237,9 +238,9 @@
 
                     // If both the previous part and the current part are separators, it's invalid
                     if (isCurrentPartSeparator && isPreviousPartSeparator.Value) {
-                        return new ArgumentException(SR.GetString(SR.Route_CannotHaveConsecutiveSeparators), "routeUrl");
+                        return new ArgumentException(System.Web.SR.GetString(System.Web.SR.Route_CannotHaveConsecutiveSeparators), "routeUrl");
                     }
-                    Debug.Assert(isCurrentPartSeparator != isPreviousPartSeparator.Value, "This assert should only happen if both the current and previous parts are non-separators. This should never happen because consecutive non-separators are always parsed as a single part.");
+                    System.Web.Util.Debug.Assert(isCurrentPartSeparator != isPreviousPartSeparator.Value, "This assert should only happen if both the current and previous parts are non-separators. This should never happen because consecutive non-separators are always parsed as a single part.");
                     isPreviousPartSeparator = isCurrentPartSeparator;
                 }
 
@@ -274,7 +275,7 @@
                         return new ArgumentException(
                             String.Format(
                                 CultureInfo.CurrentCulture,
-                                SR.GetString(SR.Route_CannotHaveConsecutiveParameters)
+                                System.Web.SR.GetString(System.Web.SR.Route_CannotHaveConsecutiveParameters)
                             ),
                             "routeUrl");
                     }
@@ -299,7 +300,7 @@
                             return new ArgumentException(
                                 String.Format(
                                     CultureInfo.CurrentUICulture,
-                                    SR.GetString(SR.Route_InvalidParameterName),
+                                    System.Web.SR.GetString(System.Web.SR.Route_InvalidParameterName),
                                     parameterName
                                 ),
                                 "routeUrl");
@@ -309,7 +310,7 @@
                             return new ArgumentException(
                                 String.Format(
                                     CultureInfo.CurrentUICulture,
-                                    SR.GetString(SR.Route_RepeatedParameter),
+                                    System.Web.SR.GetString(System.Web.SR.Route_RepeatedParameter),
                                     parameterName
                                 ),
                                 "routeUrl");
@@ -319,7 +320,7 @@
                         }
                     }
                     else {
-                        Debug.Fail("Invalid path subsegment type");
+                        System.Web.Util.Debug.Fail("Invalid path subsegment type");
                     }
                 }
             }
@@ -328,7 +329,7 @@
                 return new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.Route_CannotHaveCatchAllInMultiSegment)
+                        System.Web.SR.GetString(System.Web.SR.Route_CannotHaveCatchAllInMultiSegment)
                     ),
                     "routeUrl");
             }

@@ -16,6 +16,7 @@ using System.Web.Util;
 using Util=System.Web.UI.Util;
 using System.Security.Permissions;
 
+
 /*
  * Base class for virtual path providers
  */
@@ -157,8 +158,8 @@ public abstract class VirtualPathProvider: MarshalByRefObject {
             return null;
 
         // Make sure the VirtualFile's path is the same as what was passed to GetFile
-        if (!StringUtil.EqualsIgnoreCase(virtualPath, virtualFile.VirtualPath)) {
-            throw new HttpException(SR.GetString(SR.Bad_VirtualPath_in_VirtualFileBase,
+        if (!System.Web.Util.StringUtil.EqualsIgnoreCase(virtualPath, virtualFile.VirtualPath)) {
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Bad_VirtualPath_in_VirtualFileBase,
                 "VirtualFile", virtualFile.VirtualPath, virtualPath));
         }
 
@@ -181,7 +182,7 @@ public abstract class VirtualPathProvider: MarshalByRefObject {
     }
 
     internal VirtualDirectory GetDirectory(VirtualPath virtualDir) {
-        Debug.Assert(virtualDir.HasTrailingSlash);
+        System.Web.Util.Debug.Assert(virtualDir.HasTrailingSlash);
         return GetDirectoryWithCheck(virtualDir.VirtualPathString);
     }
 
@@ -193,8 +194,8 @@ public abstract class VirtualPathProvider: MarshalByRefObject {
             return null;
 
         // Make sure the VirtualDirectory's path is the same as what was passed to GetDirectory
-        if (!StringUtil.EqualsIgnoreCase(virtualPath, virtualDir.VirtualPath)) {
-            throw new HttpException(SR.GetString(SR.Bad_VirtualPath_in_VirtualFileBase,
+        if (!System.Web.Util.StringUtil.EqualsIgnoreCase(virtualPath, virtualDir.VirtualPath)) {
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Bad_VirtualPath_in_VirtualFileBase,
                 "VirtualDirectory", virtualDir.VirtualPath, virtualPath));
         }
 
@@ -240,10 +241,10 @@ public abstract class VirtualPathProvider: MarshalByRefObject {
 
         string baseDir = null;
         if (!String.IsNullOrEmpty(basePath))
-            baseDir = UrlPath.GetDirectory(basePath);
+            baseDir = System.Web.Util.UrlPath.GetDirectory(basePath);
 
         // By default, just combine them normally
-        return UrlPath.Combine(baseDir, relativePath);
+        return System.Web.Util.UrlPath.Combine(baseDir, relativePath);
     }
 
     internal VirtualPath CombineVirtualPaths(VirtualPath basePath, VirtualPath relativePath) {

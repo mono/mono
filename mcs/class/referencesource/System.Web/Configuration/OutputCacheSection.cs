@@ -15,6 +15,7 @@ namespace System.Web.Configuration {
     using System.Text;
     using System.Security.Permissions;
     using System.Web.Caching;
+    
 
     /*             <!--
             outputCache Attributes:
@@ -98,7 +99,7 @@ namespace System.Web.Configuration {
         public OutputCacheSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -216,7 +217,7 @@ namespace System.Web.Configuration {
             // if the defaultProvider is defined, it must be in the providers collection
             OutputCacheProvider defaultProvider = (providers == null) ? null : providers[defaultProviderName];
             if (defaultProvider == null) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Def_provider_not_found),
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Def_provider_not_found),
                                                        ElementInformation.Properties["defaultProvider"].Source,
                                                        ElementInformation.Properties["defaultProvider"].LineNumber);
             }

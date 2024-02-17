@@ -165,7 +165,7 @@ namespace MonoTests.SystemWeb.Framework
 
 		public override MembershipUser GetUser (string username, bool userIsOnline)
 		{
-			MembershipUser u = new MembershipUser ("FakeProvider", username, null, "name@email.com", "", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
+			MembershipUser u = new MembershipUser ("FakeProvider", username, null, "name@email.com", "What is reality?", "", true, false, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now, DateTime.Now);
 			return u;
 		}
 

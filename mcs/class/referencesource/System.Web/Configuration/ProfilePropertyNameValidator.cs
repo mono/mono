@@ -14,6 +14,7 @@ namespace System.Web.Configuration
     using System.IO;
     using System.Text;
     using System.Web.Util;
+    
 
     internal sealed class ProfilePropertyNameValidator : ConfigurationValidatorBase
     {
@@ -30,11 +31,11 @@ namespace System.Web.Configuration
                 s = s.Trim();
             }
             if (string.IsNullOrEmpty(s)) {
-                throw new ArgumentException(SR.GetString(SR.Profile_name_can_not_be_empty));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Profile_name_can_not_be_empty));
             }
 
             if (s.Contains(".")) {
-                throw new ArgumentException(SR.GetString(SR.Profile_name_can_not_contain_period));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Profile_name_can_not_contain_period));
             }
         }
         internal static ProfilePropertyNameValidator SingletonInstance = new ProfilePropertyNameValidator();

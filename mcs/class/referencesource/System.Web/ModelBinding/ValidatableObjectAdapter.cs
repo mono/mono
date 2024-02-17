@@ -4,6 +4,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.Globalization;
     using System.Linq;
+    
 
     public class ValidatableObjectAdapter : ModelValidator {
         public ValidatableObjectAdapter(ModelMetadata metadata, ModelBindingExecutionContext context)
@@ -24,7 +25,7 @@
                 throw new InvalidOperationException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.ValidatableObjectAdapter_IncompatibleType),
+                        System.Web.SR.GetString(System.Web.SR.ValidatableObjectAdapter_IncompatibleType),
                         typeof(IValidatableObject).FullName,
                         model.GetType().FullName
                     )

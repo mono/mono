@@ -10,6 +10,7 @@ namespace System.Web.UI.WebControls {
     using System.Web;
     using System.Globalization;
     using System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -29,7 +30,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.CompareValidator_ControlToCompare),
+        WebSysDescription(System.Web.SR.CompareValidator_ControlToCompare),
         TypeConverter(typeof(ValidatedControlConverter))
         ]                                         
         public string ControlToCompare {
@@ -50,7 +51,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(ValidationCompareOperator.Equal),
-        WebSysDescription(SR.CompareValidator_Operator)
+        WebSysDescription(System.Web.SR.CompareValidator_Operator)
         ]                                         
         public ValidationCompareOperator Operator {
             get { 
@@ -73,7 +74,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.CompareValidator_ValueToCompare)
+        WebSysDescription(System.Web.SR.CompareValidator_ValueToCompare)
         ]                                         
         public string ValueToCompare {
             get { 
@@ -130,8 +131,8 @@ namespace System.Web.UI.WebControls {
             if (ControlToCompare.Length > 0) {
                 CheckControlValidationProperty(ControlToCompare, "ControlToCompare");
 
-                if (StringUtil.EqualsIgnoreCase(ControlToValidate, ControlToCompare)) {
-                    throw new HttpException(SR.GetString(SR.Validator_bad_compare_control, 
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(ControlToValidate, ControlToCompare)) {
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Validator_bad_compare_control, 
                                                                              ID, 
                                                                              ControlToCompare));
                 }
@@ -141,7 +142,7 @@ namespace System.Web.UI.WebControls {
                 if (Operator != ValidationCompareOperator.DataTypeCheck &&
                     !CanConvert(ValueToCompare, Type, CultureInvariantValues)) {
                         throw new HttpException(
-                                           SR.GetString(SR.Validator_value_bad_type, 
+                                           System.Web.SR.GetString(System.Web.SR.Validator_value_bad_type, 
                                                                            new string [] {
                                                                                ValueToCompare,
                                                                                "ValueToCompare",
@@ -160,11 +161,11 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override bool EvaluateIsValid() {
 
-            Debug.Assert(PropertiesValid, "Properties should have already been checked");
+            System.Web.Util.Debug.Assert(PropertiesValid, "Properties should have already been checked");
 
             // Get the peices of text from the control.
             string leftText = GetControlValidationValue(ControlToValidate);
-            Debug.Assert(leftText != null, "Should have already caught this!");
+            System.Web.Util.Debug.Assert(leftText != null, "Should have already caught this!");
 
             // Special case: if the string is blank, we don't try to validate it. The input should be
             // trimmed for coordination with the RequiredFieldValidator.
@@ -183,7 +184,7 @@ namespace System.Web.UI.WebControls {
             string rightText = string.Empty;
             if (ControlToCompare.Length > 0) {
                 rightText = GetControlValidationValue(ControlToCompare);
-                Debug.Assert(rightText != null, "Should have already caught this!");
+                System.Web.Util.Debug.Assert(rightText != null, "Should have already caught this!");
 
                 // VSWhidbey 83089
                 if (convertDate && !IsInStandardDateFormat(rightText)) {

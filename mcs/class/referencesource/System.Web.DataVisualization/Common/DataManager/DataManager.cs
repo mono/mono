@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -1092,7 +1092,9 @@ using System.Drawing.Design;
 #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.InnerProperty),
 #endif
+#if !FEATURE_PAL
 		Editor(Editors.SeriesCollectionEditor.Editor, Editors.SeriesCollectionEditor.Base),
+#endif
 		Bindable(true)
 		]
 		public SeriesCollection Series
@@ -1114,7 +1116,9 @@ using System.Drawing.Design;
 		PersistenceMode(PersistenceMode.InnerProperty),
 #endif
         DefaultValue(ChartColorPalette.BrightPastel),
+#if !FEATURE_PAL
         Editor(Editors.ColorPaletteEditor.Editor, Editors.ColorPaletteEditor.Base)
+#endif
 		]
 		public ChartColorPalette Palette
 		{

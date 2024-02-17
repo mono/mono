@@ -14,7 +14,6 @@ namespace System.Web.ClientServices.Providers
     using System.Data.Common;
     using System.Data.OleDb;
     using System.IO;
-    using System.Windows.Forms;
     using System.Data.SqlClient;
     using System.Reflection;
     using System.Diagnostics.CodeAnalysis;
@@ -296,7 +295,8 @@ namespace System.Web.ClientServices.Providers
         /////////////////////////////////////////////////////////////////////////////////
         internal static string GetFullDBFileName(string username, string extension)
         {
-            return Path.Combine(Application.UserAppDataPath, GetPartialDBFileName(username, extension));
+            return Path.Combine("", GetPartialDBFileName(username, extension));
+            //return Path.Combine(Application.UserAppDataPath, GetPartialDBFileName(username, extension));
         }
         internal static string GetPartialDBFileName(string username, string extension)
         {

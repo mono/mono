@@ -75,7 +75,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(AutoCompleteType.None),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.TextBox_AutoCompleteType)
+        WebSysDescription(System.Web.SR.TextBox_AutoCompleteType)
         ]
         public virtual AutoCompleteType AutoCompleteType {
             get {
@@ -100,7 +100,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(false),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.TextBox_AutoPostBack),
+        WebSysDescription(System.Web.SR.TextBox_AutoPostBack),
         ]
         public virtual bool AutoPostBack {
             get {
@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(false),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.AutoPostBackControl_CausesValidation)
+        WebSysDescription(System.Web.SR.AutoPostBackControl_CausesValidation)
         ]
         public virtual bool CausesValidation {
             get {
@@ -137,7 +137,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(0),
-        WebSysDescription(SR.TextBox_Columns)
+        WebSysDescription(System.Web.SR.TextBox_Columns)
         ]
         public virtual int Columns {
             get {
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value < 0) {
-                    throw new ArgumentOutOfRangeException("Columns", SR.GetString(SR.TextBox_InvalidColumns));
+                    throw new ArgumentOutOfRangeException("Columns", System.Web.SR.GetString(System.Web.SR.TextBox_InvalidColumns));
                 }
                 ViewState["Columns"] = value;
             }
@@ -160,7 +160,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(0),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.TextBox_MaxLength),
+        WebSysDescription(System.Web.SR.TextBox_MaxLength),
         ]
         public virtual int MaxLength {
             get {
@@ -184,7 +184,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(TextBoxMode.SingleLine),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.TextBox_TextMode)
+        WebSysDescription(System.Web.SR.TextBox_TextMode)
         ]
         public virtual TextBoxMode TextMode {
             get {
@@ -208,7 +208,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(false),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.TextBox_ReadOnly)
+        WebSysDescription(System.Web.SR.TextBox_ReadOnly)
         ]
         public virtual bool ReadOnly {
             get {
@@ -228,7 +228,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(0),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.TextBox_Rows)
+        WebSysDescription(System.Web.SR.TextBox_Rows)
         ]
         public virtual int Rows {
             get {
@@ -237,7 +237,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value < 0) {
-                    throw new ArgumentOutOfRangeException("Rows", SR.GetString(SR.TextBox_InvalidRows));
+                    throw new ArgumentOutOfRangeException("Rows", System.Web.SR.GetString(System.Web.SR.TextBox_InvalidRows));
                 }
                 ViewState["Rows"] = value;
             }
@@ -297,7 +297,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true, BindingDirection.TwoWay),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.TextBox_Text),
+        WebSysDescription(System.Web.SR.TextBox_Text),
         PersistenceMode(PersistenceMode.EncodedInnerDefaultProperty),
         Editor("System.ComponentModel.Design.MultilineStringEditor," + AssemblyRef.SystemDesign, typeof(UITypeEditor))
         ]
@@ -316,7 +316,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.PostBackControl_ValidationGroup)
+        WebSysDescription(System.Web.SR.PostBackControl_ValidationGroup)
         ]
         public virtual string ValidationGroup {
             get {
@@ -336,7 +336,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(true),
-        WebSysDescription(SR.TextBox_Wrap)
+        WebSysDescription(System.Web.SR.TextBox_Wrap)
         ]
         public virtual bool Wrap {
             get {
@@ -361,7 +361,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.TextBox_OnTextChanged)
+        WebSysDescription(System.Web.SR.TextBox_OnTextChanged)
         ]
         public event EventHandler TextChanged {
             add {
@@ -418,6 +418,11 @@ namespace System.Web.UI.WebControls {
 
                 if (!Wrap) {
                     writer.AddAttribute(HtmlTextWriterAttribute.Wrap,"off");
+                }
+
+                //VSO449020 Add MaxLength Support for mutiple lines textbox, since in HTML5 this attribute is supported for textarea.
+                if (BinaryCompatibility.Current.TargetsAtLeastFramework472 &&  MaxLength > 0) {
+                    writer.AddAttribute(HtmlTextWriterAttribute.Maxlength, MaxLength.ToString(NumberFormatInfo.InvariantInfo));
                 }
             }
             else {
@@ -543,7 +548,7 @@ namespace System.Web.UI.WebControls {
                 Text = ((LiteralControl)obj).Text;
             }
             else {
-                throw new HttpException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "TextBox", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "TextBox", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
             }
         }
 

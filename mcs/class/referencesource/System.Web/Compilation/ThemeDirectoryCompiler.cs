@@ -19,6 +19,7 @@ using System.Web.Hosting;
 using System.Web.Util;
 using System.Web.UI;
 
+
 internal static class ThemeDirectoryCompiler {
 
     internal const string skinExtension = ".skin";
@@ -34,9 +35,7 @@ internal static class ThemeDirectoryCompiler {
     // We need to Assert here since there could be user code on the stack (VSWhidbey 259563)
     [PermissionSet(SecurityAction.Assert, Unrestricted=true)]
     internal static BuildResultCompiledType GetThemeBuildResultType(HttpContext context, string themeName) {
-        using (new ApplicationImpersonationContext()) {
-            return GetThemeBuildResultType(themeName);
-        }
+        return GetThemeBuildResultType(themeName);
     }
 
     private static BuildResultCompiledType GetThemeBuildResultType(string themeName) {
@@ -92,7 +91,7 @@ internal static class ThemeDirectoryCompiler {
             globalVirtualDir = GetGlobalThemeVirtualDir(themeName);
 
             if (!globalVirtualDir.DirectoryExists()) {
-                throw new HttpException(SR.GetString(SR.Page_theme_not_found, themeName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Page_theme_not_found, themeName));
             }
 
             virtualDir = globalVirtualDir;
@@ -148,12 +147,12 @@ internal static class ThemeDirectoryCompiler {
 
             // We only process .skin and .css files
             string extension = Path.GetExtension(child.Name);
-            if ((StringUtil.EqualsIgnoreCase(extension, skinExtension)) && topLevel) {
+            if ((System.Web.Util.StringUtil.EqualsIgnoreCase(extension, skinExtension)) && topLevel) {
                 themeBuildProvider.AddSkinFile(child.VirtualPathObject);
                 continue;
             }
 
-            if (StringUtil.EqualsIgnoreCase(extension, ".css")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(extension, ".css")) {
                 themeBuildProvider.AddCssFile(child.VirtualPathObject);
                 continue;
             }

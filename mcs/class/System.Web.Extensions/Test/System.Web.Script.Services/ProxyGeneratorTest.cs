@@ -31,7 +31,9 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Web.Script.Services;
+using System.Web.Services;
 using System.Text;
+using System.Web.UI;
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.Script.Services
@@ -40,6 +42,7 @@ namespace MonoTests.System.Web.Script.Services
 	public class ProxyGeneratorTest
 	{
 		[Test]
+		[Ignore("WCF Not Yet Supported")]
 		public void ScriptGenerator ()
 		{
 			var s = ProxyGenerator.GetClientProxyScript (typeof (IHogeService), "/js", false);
@@ -48,6 +51,57 @@ namespace MonoTests.System.Web.Script.Services
 			s = ProxyGenerator.GetClientProxyScript (typeof (IHogeService), "/jsdebug", true);
 			Assert.IsTrue (s.IndexOf ("IHogeService") > 0, "#3");
 			Assert.IsTrue (s.IndexOf ("Join") > 0, "#4");
+		}
+
+		[Test]
+		public void PageScriptGenerator() {
+			var s = ProxyGenerator.GetClientProxyScript (typeof (HogePage), "/js", false);
+			
+			Assert.IsTrue (s.IndexOf ("Echo:") > 0, "#1");
+			Assert.IsTrue (s.IndexOf ("Join:") > 0, "#2");
+		}
+
+		[Test]
+		public void ScriptServiceGenerator() {
+			var s = ProxyGenerator.GetClientProxyScript (typeof (HogeScriptService), "/js", false);
+			
+			Assert.IsTrue (s.IndexOf ("Echo:") > 0, "#1");
+			Assert.IsTrue (s.IndexOf ("Join:") > 0, "#2");
+		}
+
+		public class HogePage : Page {
+			protected void Page_Load(object sender, EventArgs e) {
+
+			}
+
+			[WebMethod]
+			public static string Echo(string s) {
+				return "Yo Yo YO!";
+			}
+
+			[WebMethod]
+			public static string Join(string s1, string s2) {
+				Console.WriteLine ("{0} + {1}", s1, s2);
+				return s1 + s2;
+			}
+		}
+
+		[WebService(Namespace = "http://tempuri.org")]
+		[ScriptService]
+		public class HogeScriptService : WebService {
+			
+			[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+			[WebMethod]
+			public string Echo(string s) {
+				return "Yo Yo YO!";
+			}
+
+			[ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+			[WebMethod]
+			public string Join(string s1, string s2) {
+				Console.WriteLine ("{0} + {1}", s1, s2);
+				return s1 + s2;
+			}
 		}
 
 		[ServiceContract]

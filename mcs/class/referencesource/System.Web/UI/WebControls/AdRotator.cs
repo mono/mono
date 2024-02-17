@@ -22,6 +22,7 @@ namespace System.Web.UI.WebControls {
     using System.Web.Util;
     using System.Reflection;
     using System.Text;
+    
 
 
     /// <devdoc>
@@ -76,7 +77,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.XmlUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.AdRotator_AdvertisementFile)
+        WebSysDescription(System.Web.SR.AdRotator_AdvertisementFile)
         ]
         public string AdvertisementFile {
             get {
@@ -91,7 +92,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(AdCreatedEventArgs.AlternateTextElement),
-        WebSysDescription(SR.AdRotator_AlternateTextField)
+        WebSysDescription(System.Web.SR.AdRotator_AlternateTextField)
         ]
         public String AlternateTextField {
             get {
@@ -118,8 +119,8 @@ namespace System.Web.UI.WebControls {
                     String absoluteFile = null;
                     String fileDirectory = null;
                     if (!String.IsNullOrEmpty(AdvertisementFile)) {
-                        absoluteFile = UrlPath.Combine(tplSourceDir, AdvertisementFile);
-                        fileDirectory = UrlPath.GetDirectory(absoluteFile);
+                        absoluteFile = System.Web.Util.UrlPath.Combine(tplSourceDir, AdvertisementFile);
+                        fileDirectory = System.Web.Util.UrlPath.GetDirectory(absoluteFile);
                     }
 
                     _baseUrl = string.Empty;
@@ -153,7 +154,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(AdCreatedEventArgs.ImageUrlElement),
-        WebSysDescription(SR.AdRotator_ImageUrlField)
+        WebSysDescription(System.Web.SR.AdRotator_ImageUrlField)
         ]
         public String ImageUrlField {
             get {
@@ -188,7 +189,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.AdRotator_KeywordFilter)
+        WebSysDescription(System.Web.SR.AdRotator_KeywordFilter)
         ]
         public string KeywordFilter {
             get {
@@ -210,7 +211,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(AdCreatedEventArgs.NavigateUrlElement),
-        WebSysDescription(SR.AdRotator_NavigateUrlField)
+        WebSysDescription(System.Web.SR.AdRotator_NavigateUrlField)
         ]
         public String NavigateUrlField {
             get {
@@ -241,7 +242,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Behavior"),
         DefaultValue("_top"),
-        WebSysDescription(SR.AdRotator_Target),
+        WebSysDescription(System.Web.SR.AdRotator_Target),
         TypeConverter(typeof(TargetConverter))
         ]
         public string Target {
@@ -277,7 +278,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.AdRotator_OnAdCreated)
+        WebSysDescription(System.Web.SR.AdRotator_OnAdCreated)
         ]
         public event AdCreatedEventHandler AdCreated {
             add {
@@ -294,7 +295,7 @@ namespace System.Web.UI.WebControls {
             numOfDataSources += ((DataSource != null) ? 1 : 0);
 
             if (numOfDataSources > 1) {
-                throw new HttpException(SR.GetString(SR.AdRotator_only_one_datasource, ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.AdRotator_only_one_datasource, ID));
             }
         }
 
@@ -356,7 +357,7 @@ namespace System.Web.UI.WebControls {
                     if (IsBindableType(sampleItem.GetType())) {
                         // Raise error since we are expecting some record
                         // containing multiple data values.
-                        throw new HttpException(SR.GetString(SR.AdRotator_expect_records_with_advertisement_properties,
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.AdRotator_expect_records_with_advertisement_properties,
                                 ID, sampleItem.GetType()));
                     }
                     else {
@@ -463,17 +464,17 @@ namespace System.Web.UI.WebControls {
                 try {
                     using (Stream stream = OpenFileAndGetDependency(virtualPath, physicalPath, out dependency)) {
                         adRecs = LoadStream(stream);
-                        Debug.Assert(adRecs != null);
+                        System.Web.Util.Debug.Assert(adRecs != null);
                     }
                 }
                 catch (Exception e) {
                     if (!String.IsNullOrEmpty(physicalPath) && HttpRuntime.HasPathDiscoveryPermission(physicalPath)) {
                         // We want to catch the error message, but not propage the inner exception. Otherwise we can throw up
                         // logon prompts through IE;
-                        throw new HttpException(SR.GetString(SR.AdRotator_cant_open_file, ID, e.Message));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.AdRotator_cant_open_file, ID, e.Message));
                     }
                     else {
-                        throw new HttpException(SR.GetString(SR.AdRotator_cant_open_file_no_permission, ID));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.AdRotator_cant_open_file_no_permission, ID));
                     }
                 }
 
@@ -496,7 +497,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private AdRec [] GetXmlDataSourceData(XmlDataSource xmlDataSource) {
-            Debug.Assert(xmlDataSource != null);
+            System.Web.Util.Debug.Assert(xmlDataSource != null);
 
             XmlDocument doc = xmlDataSource.GetXmlDocument();
             if (doc == null) {
@@ -581,12 +582,12 @@ namespace System.Web.UI.WebControls {
             }
             catch (Exception e) {
                 throw new HttpException(
-                    SR.GetString(SR.AdRotator_parse_error, ID, e.Message), e);
+                    System.Web.SR.GetString(System.Web.SR.AdRotator_parse_error, ID, e.Message), e);
             }
 
             if (adRecs == null) {
                 throw new HttpException(
-                    SR.GetString(SR.AdRotator_no_advertisements, ID, AdvertisementFile));
+                    System.Web.SR.GetString(System.Web.SR.AdRotator_no_advertisements, ID, AdvertisementFile));
             }
 
             return adRecs;
@@ -631,7 +632,7 @@ namespace System.Web.UI.WebControls {
         ///   KeywordFilter if it is set.
         /// </devdoc>
         private bool MatchingAd(AdRec adRec, string keywordFilter) {
-            Debug.Assert(keywordFilter != null && keywordFilter.Length > 0);
+            System.Web.Util.Debug.Assert(keywordFilter != null && keywordFilter.Length > 0);
             return(String.Equals(keywordFilter, adRec.keyword, StringComparison.OrdinalIgnoreCase));
         }
 
@@ -754,8 +755,8 @@ namespace System.Web.UI.WebControls {
         }
 
         private void RenderLink(HtmlTextWriter writer, AdCreatedEventArgs adArgs) {
-            Debug.Assert(writer != null);
-            Debug.Assert(adArgs != null);
+            System.Web.Util.Debug.Assert(writer != null);
+            System.Web.Util.Debug.Assert(adArgs != null);
 
             HyperLink bannerLink = new HyperLink();
 
@@ -850,14 +851,14 @@ namespace System.Web.UI.WebControls {
 
             if ((relativeUrl == null) ||
                 (relativeUrl.Length == 0) ||
-                (UrlPath.IsRelativeUrl(relativeUrl) == false) ||
+                (System.Web.Util.UrlPath.IsRelativeUrl(relativeUrl) == false) ||
                 (baseUrl == null) ||
                 (baseUrl.Length == 0)) {
                 return relativeUrl;
             }
 
             // make it absolute
-            return UrlPath.Combine(baseUrl, relativeUrl);
+            return System.Web.Util.UrlPath.Combine(baseUrl, relativeUrl);
         }
 
         /// <devdoc>
@@ -902,7 +903,7 @@ namespace System.Web.UI.WebControls {
                     }
                 }
             }
-            Debug.Assert(selectedIndex >= 0 && selectedIndex < _adRecs.Length, "Index not found");
+            System.Web.Util.Debug.Assert(selectedIndex >= 0 && selectedIndex < _adRecs.Length, "Index not found");
 
             return _adRecs[selectedIndex].adProperties;
         }
@@ -921,7 +922,7 @@ namespace System.Web.UI.WebControls {
                     iRec++;
                 }
             }
-            Debug.Assert(iRec == adDicts.Count, "Record count did not match non-null entries");
+            System.Web.Util.Debug.Assert(iRec == adDicts.Count, "Record count did not match non-null entries");
 
             return adRecs;
         }
@@ -944,7 +945,7 @@ namespace System.Web.UI.WebControls {
             public void Initialize(IDictionary adProperties) {
 
                 // Initialize the values we need to keep for ad selection
-                Debug.Assert(adProperties != null, "Required here");
+                System.Web.Util.Debug.Assert(adProperties != null, "Required here");
                 this.adProperties = adProperties;
 
                 // remove null and trim keyword for easier comparisons.

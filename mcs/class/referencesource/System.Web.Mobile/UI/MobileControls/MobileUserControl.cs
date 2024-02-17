@@ -14,7 +14,9 @@ namespace System.Web.UI.MobileControls
 {
     /// <include file='doc\MobileUserControl.uex' path='docs/doc[@for="MobileUserControl"]/*' />
     [
+#if !MONO
         Designer("Microsoft.VisualStudio.Web.WebForms.MobileWebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
+#endif
         Designer(typeof(System.Web.UI.Design.MobileControls.MobileUserControlDesigner))
     ]
     [AspNetHostingPermission(SecurityAction.LinkDemand, Level=AspNetHostingPermissionLevel.Minimal)]

@@ -96,17 +96,6 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		[Category ("NotDotNet")] // .NET throws NRE. yuck.
-#if TARGET_DOTNET
-		[Ignore ("Throws a NREX on .NET...")]
-#endif
-		public void GetActionFromRouteDataNullArg ()
-		{
-			new DynamicDataRoute ("x").GetActionFromRouteData (null);
-		}
-
-		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetActionFromRouteData ()
 		{
@@ -124,17 +113,6 @@ namespace MonoTests.System.Web.DynamicData
 			rd.Values["Action"] = "y";
 			var a = r.GetActionFromRouteData (rd);
 			Assert.AreEqual ("y", a);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
-		[Category ("NotDotNet")] // .NET throws NRE. yuck.
-#if TARGET_DOTNET
-		[Ignore ("Throws a NREX on .NET...")]
-#endif
-		public void GetTableFromRouteDataNullArg ()
-		{
-			new DynamicDataRoute ("x").GetTableFromRouteData (null);
 		}
 
 		[Test]
@@ -230,13 +208,13 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#B1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#B1-1");
 			Assert.AreEqual (PageAction.Details, ddr.Defaults["Action"], "#B1-2");
 
 			ddr.Action = "MyAction";
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#C1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#C1-1");
 			Assert.AreEqual (PageAction.Details, ddr.Defaults["Action"], "#B1-2");
@@ -266,13 +244,13 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#B1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#B1-1");
 			Assert.AreEqual ("BazTable", ddr.Defaults["Table"], "#B1-2");
 
 			ddr.Table = "AnotherTable";
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#C1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#C1-1");
 			Assert.AreEqual ("BazTable", ddr.Defaults["Table"], "#C1-2");
@@ -299,7 +277,7 @@ namespace MonoTests.System.Web.DynamicData
 			var hc = new HttpContextWrapper (HttpContext.Current);
 			
 			Assert.Throws <ArgumentException> (() => {
-				ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+				ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			}, "#A1");
 		}
 
@@ -323,7 +301,7 @@ namespace MonoTests.System.Web.DynamicData
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
 			Assert.IsNull (ddr.Defaults, "#A1");
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNull (ddr.Defaults, "#A2");
 		}
 
@@ -351,12 +329,13 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNull (ddr.Defaults, "#B1");
 			
 			ddr.Action = "MyAction";
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
-			Assert.IsNull (ddr.Defaults, "#C1");
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
+			Assert.IsNotNull (ddr.Defaults["Action"], "#C1");
+			Assert.AreEqual (ddr.Defaults["Action"], ddr.Action, "#C2");
 		}
 
 		[Test]
@@ -383,13 +362,13 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#B1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#B1-1");
 			Assert.AreEqual (String.Empty, ddr.Defaults["Action"], "#B1-2");
 
 			ddr.Action = "MyAction";
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#C1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#C1-1");
 			Assert.AreEqual (String.Empty, ddr.Defaults["Action"], "#B1-2");
@@ -419,7 +398,7 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNull (ddr.Defaults, "#B1");
 		}
 
@@ -445,7 +424,7 @@ namespace MonoTests.System.Web.DynamicData
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
 			Assert.Throws<ArgumentException> (() => {
-				ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+				ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			}, "#A1");
 		}
 
@@ -476,13 +455,13 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#B1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#B1-1");
 			Assert.AreEqual (PageAction.Details, ddr.Defaults["Action"], "#B1-2");
 
 			ddr.Action = "MyAction";
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#C1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#C1-1");
 			Assert.AreEqual (PageAction.Details, ddr.Defaults["Action"], "#B1-2");
@@ -515,13 +494,13 @@ namespace MonoTests.System.Web.DynamicData
 			var rd = new RouteData ();
 			var hc = new HttpContextWrapper (HttpContext.Current);
 
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#B1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#B1-1");
 			Assert.AreEqual ("BazTable", ddr.Defaults["Table"], "#B1-2");
 
 			ddr.Table = "AnotherTable";
-			ddr.GetVirtualPath (new RequestContext (hc, rd), null);
+			ddr.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary());
 			Assert.IsNotNull (ddr.Defaults, "#C1");
 			Assert.AreEqual (1, ddr.Defaults.Count, "#C1-1");
 			Assert.AreEqual ("BazTable", ddr.Defaults["Table"], "#C1-2");

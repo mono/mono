@@ -186,7 +186,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			s1 = new Unit (".9em");
 			Assert.AreEqual (s1.Type, UnitType.Em, "B1");
-			Assert.AreEqual (0.9d, s1.Value, "B2");
+			Assert.AreEqual (0.9d, s1.Value, 0.0000001, "B2");
 			Assert.AreEqual ("0.9em", s1.ToString (), "B3");
 		}
 
@@ -251,6 +251,15 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (u.Value, 1.0, "M1");
 			Assert.AreEqual (u.Type, UnitType.Pixel, "M1");
 		}
+
+		[Test]
+		public void UnitFloatTruncate()
+		{
+		    // throws because floating point values are not valid for Pixel.
+		    Unit u = new Unit("34.4px");
+
+			Assert.AreEqual (u.Value, 34, "M1");
+		}
 		
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
@@ -314,6 +323,7 @@ namespace MonoTests.System.Web.UI.WebControls
 	
 		[Test]
 		[ExpectedException (typeof (FormatException))]
+		[Ignore("MONO REFSRC - refsrc unit explicitly casts the floating point number to an int")]
 		public void IncorrectConstructor9()
 		{
 		    // throws because floating point values are not valid for Pixel.

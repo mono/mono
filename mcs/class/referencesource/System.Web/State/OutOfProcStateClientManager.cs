@@ -23,6 +23,7 @@ namespace System.Web.SessionState {
     using System.Web.Management;
     using System.Web.Security.Cryptography;
     using System.Web.Util;
+    
 
     internal sealed class OutOfProcSessionStateStore : SessionStateStoreProviderBase {
         internal static readonly IntPtr INVALID_SOCKET = UnsafeNativeMethods.INVALID_HANDLE_VALUE;
@@ -76,7 +77,7 @@ namespace System.Web.SessionState {
 
             if (!s_usePartition) {
                 // For single partition, the connection info won't change from request to request
-                Debug.Assert(s_partitionManager == null);
+                System.Web.Util.Debug.Assert(s_partitionManager == null);
                 _partitionInfo = s_singlePartitionInfo;
             }
         }
@@ -123,7 +124,7 @@ namespace System.Web.SessionState {
         }
 
         void OnAppDomainUnload(Object unusedObject, EventArgs unusedEventArgs) {
-            Debug.Trace("OutOfProcSessionStateStore", "OnAppDomainUnload called");
+            System.Web.Util.Debug.Trace("OutOfProcSessionStateStore", "OnAppDomainUnload called");
 
             Thread.GetDomain().DomainUnload -= s_onAppDomainUnload;
 
@@ -159,11 +160,11 @@ namespace System.Web.SessionState {
             catch {
                 if (s_usePartition) {
                     throw new HttpException(
-                           SR.GetString(SR.Error_parsing_state_server_partition_resolver_string, s_configPartitionResolverType));
+                           System.Web.SR.GetString(System.Web.SR.Error_parsing_state_server_partition_resolver_string, s_configPartitionResolverType));
                 }
                 else {
                     throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Invalid_value_for_sessionstate_stateConnectionString, s_configStateConnectionString),
+                            System.Web.SR.GetString(System.Web.SR.Invalid_value_for_sessionstate_stateConnectionString, s_configStateConnectionString),
                             s_configStateConnectionStringFileName, s_configStateConnectionStringLineNumber);
                 }
             }
@@ -226,12 +227,12 @@ namespace System.Web.SessionState {
         internal static HttpException CreateConnectionException(string server, int port, int hr) {
             if (s_usePartition) {
                 return new HttpException(
-                        SR.GetString(SR.Cant_make_session_request_partition_resolver,
+                        System.Web.SR.GetString(System.Web.SR.Cant_make_session_request_partition_resolver,
                                     s_configPartitionResolverType, server, port.ToString(CultureInfo.InvariantCulture)), hr);
             }
             else {
                 return new HttpException(
-                    SR.GetString(SR.Cant_make_session_request), hr);
+                    System.Web.SR.GetString(System.Web.SR.Cant_make_session_request), hr);
             }
         }
 
@@ -246,7 +247,7 @@ namespace System.Web.SessionState {
         public override void InitializeRequest(HttpContext context) {
             if (s_usePartition) {
                 // For multiple partition case, the connection info can change from request to request
-                Debug.Assert(_partitionResolver != null);
+                System.Web.Util.Debug.Assert(_partitionResolver != null);
                 _partitionInfo = null;
             }
         }
@@ -269,19 +270,19 @@ namespace System.Web.SessionState {
             HandleRef                   socketHandle;
             bool                        checkVersion = false;
 
-            Debug.Assert(timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES, "item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES");
+            System.Web.Util.Debug.Assert(timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES, "item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES");
 
             SessionIDManager.CheckIdLength(id, true /* throwOnFail */);
 
             if (_partitionInfo == null) {
-                Debug.Assert(s_partitionManager != null);
-                Debug.Assert(_partitionResolver != null);
+                System.Web.Util.Debug.Assert(s_partitionManager != null);
+                System.Web.Util.Debug.Assert(_partitionResolver != null);
 
                 _partitionInfo = (StateServerPartitionInfo)s_partitionManager.GetPartition(_partitionResolver, id);
 
                 // If its still null, we give up
                 if (_partitionInfo == null) {
-                    throw new HttpException(SR.GetString(SR.Bad_partition_resolver_connection_string, "PartitionManager"));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Bad_partition_resolver_connection_string, "PartitionManager"));
                 }
             }
 
@@ -301,7 +302,7 @@ namespace System.Web.SessionState {
                     checkVersion = true;
                 }
 
-                Debug.Trace("OutOfProcSessionStateStoreMakeRequest",
+                System.Web.Util.Debug.Trace("OutOfProcSessionStateStoreMakeRequest",
                             "Calling MakeRequest, " +
                             "socket=" + (IntPtr)socketHandle.Handle +
                             "verb=" + verb +
@@ -321,7 +322,7 @@ namespace System.Web.SessionState {
                         exclusiveAccess, extraFlags, timeout, lockCookie,
                         buf, cb, checkVersion, out results);
 
-                Debug.Trace("OutOfProcSessionStateStoreMakeRequest", "MakeRequest returned: " +
+                System.Web.Util.Debug.Trace("OutOfProcSessionStateStoreMakeRequest", "MakeRequest returned: " +
                             "hr=" + hr +
                             " socket=" + (IntPtr)results.socket +
                             " httpstatus=" + results.httpStatus +
@@ -370,27 +371,27 @@ namespace System.Web.SessionState {
 
                 switch (results.lastPhase) {
                 case (int)UnsafeNativeMethods.SessionNDMakeRequestPhase.Initialization:
-                    phase = SR.GetString(SR.State_Server_detailed_error_phase0);
+                    phase = System.Web.SR.GetString(System.Web.SR.State_Server_detailed_error_phase0);
                     break;
 
                 case (int)UnsafeNativeMethods.SessionNDMakeRequestPhase.Connecting:
-                    phase = SR.GetString(SR.State_Server_detailed_error_phase1);
+                    phase = System.Web.SR.GetString(System.Web.SR.State_Server_detailed_error_phase1);
                     break;
 
                 case (int)UnsafeNativeMethods.SessionNDMakeRequestPhase.SendingRequest:
-                    phase = SR.GetString(SR.State_Server_detailed_error_phase2);
+                    phase = System.Web.SR.GetString(System.Web.SR.State_Server_detailed_error_phase2);
                     break;
 
                 case (int)UnsafeNativeMethods.SessionNDMakeRequestPhase.ReadingResponse:
-                    phase = SR.GetString(SR.State_Server_detailed_error_phase3);
+                    phase = System.Web.SR.GetString(System.Web.SR.State_Server_detailed_error_phase3);
                     break;
 
                 default:
-                    Debug.Assert(false, "Unknown results.lastPhase: " + results.lastPhase);
+                    System.Web.Util.Debug.Assert(false, "Unknown results.lastPhase: " + results.lastPhase);
                     break;
                 }
 
-                WebBaseEvent.RaiseSystemEvent(SR.GetString(SR.State_Server_detailed_error,
+                WebBaseEvent.RaiseSystemEvent(System.Web.SR.GetString(System.Web.SR.State_Server_detailed_error,
                             phase,
                             "0x" + hr.ToString("X08", CultureInfo.InvariantCulture),
                             cb.ToString(CultureInfo.InvariantCulture)),
@@ -402,12 +403,12 @@ namespace System.Web.SessionState {
             if (results.httpStatus == 400) {
                 if (s_usePartition) {
                     throw new HttpException(
-                        SR.GetString(SR.Bad_state_server_request_partition_resolver,
+                        System.Web.SR.GetString(System.Web.SR.Bad_state_server_request_partition_resolver,
                                     s_configPartitionResolverType, _partitionInfo.Server, _partitionInfo.Port.ToString(CultureInfo.InvariantCulture)));
                 }
                 else {
                     throw new HttpException(
-                        SR.GetString(SR.Bad_state_server_request));
+                        System.Web.SR.GetString(System.Web.SR.Bad_state_server_request));
                 }
             }
 
@@ -417,12 +418,12 @@ namespace System.Web.SessionState {
                     // We won't work with versions lower than Whidbey
                     if (s_usePartition) {
                         throw new HttpException(
-                            SR.GetString(SR.Need_v2_State_Server_partition_resolver,
+                            System.Web.SR.GetString(System.Web.SR.Need_v2_State_Server_partition_resolver,
                                         s_configPartitionResolverType, _partitionInfo.Server, _partitionInfo.Port.ToString(CultureInfo.InvariantCulture)));
                     }
                     else {
                         throw new HttpException(
-                            SR.GetString(SR.Need_v2_State_Server));
+                            System.Web.SR.GetString(System.Web.SR.Need_v2_State_Server));
                     }
                 }
             }
@@ -500,7 +501,7 @@ namespace System.Web.SessionState {
                         locked = true;
                         lockId = results.lockCookie;
 
-                        Debug.Assert((results.actionFlags & (int)SessionStateActions.InitializeItem) == 0,
+                        System.Web.Util.Debug.Assert((results.actionFlags & (int)SessionStateActions.InitializeItem) == 0,
                             "(results.actionFlags & (int)SessionStateActions.InitializeItem) == 0; uninitialized item cannot be locked");
                         break;
                 }
@@ -520,7 +521,7 @@ namespace System.Web.SessionState {
                                                             out TimeSpan lockAge,
                                                             out object lockId,
                                                             out SessionStateActions actionFlags) {
-            Debug.Trace("OutOfProcSessionStateStore", "Calling Get, id=" + id);
+            System.Web.Util.Debug.Trace("OutOfProcSessionStateStore", "Calling Get, id=" + id);
 
             return DoGet(context, id, UnsafeNativeMethods.StateProtocolExclusive.NONE,
                         out locked, out lockAge, out lockId, out actionFlags);
@@ -533,7 +534,7 @@ namespace System.Web.SessionState {
                                                 out TimeSpan lockAge,
                                                 out object lockId,
                                                 out SessionStateActions actionFlags) {
-            Debug.Trace("OutOfProcSessionStateStore", "Calling GetExlusive, id=" + id);
+            System.Web.Util.Debug.Trace("OutOfProcSessionStateStore", "Calling GetExlusive, id=" + id);
 
             return DoGet(context, id, UnsafeNativeMethods.StateProtocolExclusive.ACQUIRE,
                         out locked, out lockAge, out lockId, out actionFlags);
@@ -542,12 +543,12 @@ namespace System.Web.SessionState {
         public override void ReleaseItemExclusive(HttpContext context,
                                 String id,
                                 object lockId) {
-            Debug.Assert(lockId != null, "lockId != null");
+            System.Web.Util.Debug.Assert(lockId != null, "lockId != null");
 
             UnsafeNativeMethods.SessionNDMakeRequestResults results;
             int lockCookie = (int)lockId;
 
-            Debug.Trace("OutOfProcSessionStateStore", "Calling ReleaseExclusive, id=" + id);
+            System.Web.Util.Debug.Trace("OutOfProcSessionStateStore", "Calling ReleaseExclusive, id=" + id);
             MakeRequest(UnsafeNativeMethods.StateProtocolVerb.GET, id,
                         UnsafeNativeMethods.StateProtocolExclusive.RELEASE, 0, 0,
                         lockCookie, null, 0, s_networkTimeout, out results);
@@ -564,10 +565,10 @@ namespace System.Web.SessionState {
             int             length;
             int             lockCookie;
 
-            Debug.Assert(item.Items != null, "item.Items != null");
-            Debug.Assert(item.StaticObjects != null, "item.StaticObjects != null");
+            System.Web.Util.Debug.Assert(item.Items != null, "item.Items != null");
+            System.Web.Util.Debug.Assert(item.StaticObjects != null, "item.StaticObjects != null");
 
-            Debug.Trace("OutOfProcSessionStateStore", "Calling Set, id=" + id + " sessionItems=" + item.Items + " timeout=" + item.Timeout);
+            System.Web.Util.Debug.Trace("OutOfProcSessionStateStore", "Calling Set, id=" + id + " sessionItems=" + item.Items + " timeout=" + item.Timeout);
 
             try {
                 SessionStateUtility.SerializeStoreData(item, 0, out buf, out length, s_configCompressionEnabled);
@@ -597,8 +598,8 @@ namespace System.Web.SessionState {
                                         String id,
                                         object lockId,
                                         SessionStateStoreData item) {
-            Debug.Assert(lockId != null, "lockId != null");
-            Debug.Trace("OutOfProcSessionStateStore", "Calling Remove, id=" + id);
+            System.Web.Util.Debug.Assert(lockId != null, "lockId != null");
+            System.Web.Util.Debug.Trace("OutOfProcSessionStateStore", "Calling Remove, id=" + id);
 
             UnsafeNativeMethods.SessionNDMakeRequestResults results;
             int             lockCookie = (int)lockId;
@@ -612,7 +613,7 @@ namespace System.Web.SessionState {
         public override void ResetItemTimeout(HttpContext context, String id) {
             UnsafeNativeMethods.SessionNDMakeRequestResults results;
 
-            Debug.Trace("OutOfProcSessionStateStore", "Calling ResetTimeout, id=" + id);
+            System.Web.Util.Debug.Trace("OutOfProcSessionStateStore", "Calling ResetTimeout, id=" + id);
             MakeRequest(UnsafeNativeMethods.StateProtocolVerb.HEAD, id,
                         UnsafeNativeMethods.StateProtocolExclusive.NONE, 0, 0, 0,
                         null, 0, s_networkTimeout, out results);
@@ -620,7 +621,7 @@ namespace System.Web.SessionState {
 
         public override SessionStateStoreData CreateNewStoreData(HttpContext context, int timeout)
         {
-            Debug.Assert(timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES, "item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES");
+            System.Web.Util.Debug.Assert(timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES, "item.Timeout <= SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES");
 
             return SessionStateUtility.CreateLegitStoreData(context, null, null, timeout);
         }
@@ -630,7 +631,7 @@ namespace System.Web.SessionState {
             byte[]          buf;
             int             length;
 
-            Debug.Trace("OutOfProcSessionStateStore", "Calling CreateUninitializedItem, id=" + id + " timeout=" + timeout);
+            System.Web.Util.Debug.Trace("OutOfProcSessionStateStore", "Calling CreateUninitializedItem, id=" + id + " timeout=" + timeout);
 
             // Create an empty item
             SessionStateUtility.SerializeStoreData(CreateNewStoreData(context, timeout), 0, out buf, out length, s_configCompressionEnabled);
@@ -657,7 +658,7 @@ namespace System.Web.SessionState {
                 _serverIsIPv6NumericAddress = serverIsIPv6NumericAddress;
                 _port = port;
                 _stateServerVersion = -1;
-                Debug.Trace("PartitionInfo", "Created a new info, server=" + server + ", port=" + port);
+                System.Web.Util.Debug.Trace("PartitionInfo", "Created a new info, server=" + server + ", port=" + port);
             }
 
             internal string Server {
@@ -691,7 +692,7 @@ namespace System.Web.SessionState {
             internal HandleRef _socketHandle;
 
             internal OutOfProcConnection(IntPtr socket) {
-                Debug.Assert(socket != OutOfProcSessionStateStore.INVALID_SOCKET,
+                System.Web.Util.Debug.Assert(socket != OutOfProcSessionStateStore.INVALID_SOCKET,
                              "socket != OutOfProcSessionStateStore.INVALID_SOCKET");
 
                 _socketHandle = new HandleRef(this, socket);
@@ -703,7 +704,7 @@ namespace System.Web.SessionState {
             }
 
             public void Dispose() {
-                Debug.Trace("ResourcePool", "Disposing OutOfProcConnection");
+                System.Web.Util.Debug.Trace("ResourcePool", "Disposing OutOfProcConnection");
 
                 Dispose(true);
                 System.GC.SuppressFinalize(this);

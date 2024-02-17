@@ -49,7 +49,7 @@ namespace System.Web.Configuration {
             }
 
             if (Get(virtualDirectory) != null) {
-                throw ExceptionUtil.ParameterInvalid("virtualDirectory");
+                throw System.Web.Util.ExceptionUtil.ParameterInvalid("virtualDirectory");
             }
 
             mapping.SetVirtualDirectory(VirtualPath.CreateAbsoluteAllowNull(virtualDirectory));

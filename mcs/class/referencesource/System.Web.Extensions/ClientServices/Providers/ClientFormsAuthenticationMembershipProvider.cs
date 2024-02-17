@@ -11,7 +11,6 @@ namespace System.Web.ClientServices.Providers
     using System.Data;
     using System.Data.OleDb;
     using System.IO;
-    using System.Windows.Forms;
     using System.Web;
     using System.Web.Resources;
     using System.Web.Security;
@@ -77,17 +76,19 @@ namespace System.Web.ClientServices.Providers
                                                 string connectionString, string connectionStringProvider)
         {
             if (useWFCService) {
+#if MONO
                 throw new NotImplementedException();
-
-//                 CustomBinding binding = ProxyHelper.GetBinding();
-//                 ChannelFactory<LoginService> channelFactory = new ChannelFactory<LoginService>(binding, new EndpointAddress(serviceUri)); //(@"http://localhost/AuthSvc/service.svc"));
-//                 LoginService clientService = channelFactory.CreateChannel();
-//                 using (new OperationContextScope((IContextChannel)clientService)) {
-//                     ProxyHelper.AddCookiesToWCF(cookies, serviceUri, username, connectionString, connectionStringProvider);
-//                     bool validated = clientService.Login(username, password, string.Empty, rememberMe);
-//                     ProxyHelper.GetCookiesFromWCF(cookies, serviceUri, username, connectionString, connectionStringProvider);
-//                     return validated;
-//                 }
+#else
+                CustomBinding binding = ProxyHelper.GetBinding();
+                ChannelFactory<LoginService> channelFactory = new ChannelFactory<LoginService>(binding, new EndpointAddress(serviceUri)); //(@"http://localhost/AuthSvc/service.svc"));
+                LoginService clientService = channelFactory.CreateChannel();
+                using (new OperationContextScope((IContextChannel)clientService)) {
+                    ProxyHelper.AddCookiesToWCF(cookies, serviceUri, username, connectionString, connectionStringProvider);
+                    bool validated = clientService.Login(username, password, string.Empty, rememberMe);
+                    ProxyHelper.GetCookiesFromWCF(cookies, serviceUri, username, connectionString, connectionStringProvider);
+                    return validated;
+                }
+#endif
             } else {
                 serviceUri = serviceUri + "/Login";
                 string [] paramNames = new string [] { "userName", "password", "createPersistentCookie"};
@@ -203,16 +204,18 @@ namespace System.Web.ClientServices.Providers
                     CookieContainer cookies = ((ClientFormsIdentity)p.Identity).AuthenticationCookies;
 
                     if (_UsingWFCService) {
+#if MONO
                         throw new NotImplementedException();
-
-//                         CustomBinding binding = ProxyHelper.GetBinding();
-//                         ChannelFactory<LoginService> channelFactory = new ChannelFactory<LoginService>(binding, new EndpointAddress(GetServiceUri()));
-//                         LoginService clientService = channelFactory.CreateChannel();
-//                         using (new OperationContextScope((IContextChannel)clientService)) {
-//                             ProxyHelper.AddCookiesToWCF(cookies, GetServiceUri(), p.Identity.Name, _ConnectionString, _ConnectionStringProvider);
-//                             clientService.Logout();
-//                             ProxyHelper.GetCookiesFromWCF(cookies, GetServiceUri(), p.Identity.Name, _ConnectionString, _ConnectionStringProvider);
-//                         }
+#else
+                        CustomBinding binding = ProxyHelper.GetBinding();
+                        ChannelFactory<LoginService> channelFactory = new ChannelFactory<LoginService>(binding, new EndpointAddress(GetServiceUri()));
+                        LoginService clientService = channelFactory.CreateChannel();
+                        using (new OperationContextScope((IContextChannel)clientService)) {
+                            ProxyHelper.AddCookiesToWCF(cookies, GetServiceUri(), p.Identity.Name, _ConnectionString, _ConnectionStringProvider);
+                            clientService.Logout();
+                            ProxyHelper.GetCookiesFromWCF(cookies, GetServiceUri(), p.Identity.Name, _ConnectionString, _ConnectionStringProvider);
+                        }
+#endif
                     } else {
                         ProxyHelper.CreateWebRequestAndGetResponse(GetServiceUri() + "/Logout",
                                                                    ref cookies,
@@ -572,17 +575,19 @@ namespace System.Web.ClientServices.Providers
         private bool ValidateByCallingIsLoggedIn(string username, ref CookieContainer cookies)
         {
             if (_UsingWFCService) {
+#if MONO
                 throw new NotImplementedException();
-
-//                 CustomBinding binding = ProxyHelper.GetBinding();
-//                 ChannelFactory<LoginService> channelFactory = new ChannelFactory<LoginService>(binding, new EndpointAddress(GetServiceUri()));
-//                 LoginService clientService = channelFactory.CreateChannel();
-//                 using (new OperationContextScope((IContextChannel)clientService)) {
-//                     ProxyHelper.AddCookiesToWCF(cookies, GetServiceUri(), username, _ConnectionString, _ConnectionStringProvider);
-//                     bool validated = clientService.IsLoggedIn();
-//                     ProxyHelper.GetCookiesFromWCF(cookies, GetServiceUri(), username, _ConnectionString, _ConnectionStringProvider);
-//                     return validated;
-//                 }
+#else
+                CustomBinding binding = ProxyHelper.GetBinding();
+                ChannelFactory<LoginService> channelFactory = new ChannelFactory<LoginService>(binding, new EndpointAddress(GetServiceUri()));
+                LoginService clientService = channelFactory.CreateChannel();
+                using (new OperationContextScope((IContextChannel)clientService)) {
+                    ProxyHelper.AddCookiesToWCF(cookies, GetServiceUri(), username, _ConnectionString, _ConnectionStringProvider);
+                    bool validated = clientService.IsLoggedIn();
+                    ProxyHelper.GetCookiesFromWCF(cookies, GetServiceUri(), username, _ConnectionString, _ConnectionStringProvider);
+                    return validated;
+                }
+#endif
             } else {
                 object o = ProxyHelper.CreateWebRequestAndGetResponse(GetServiceUri() + "/IsLoggedIn",
                                                                       ref cookies,

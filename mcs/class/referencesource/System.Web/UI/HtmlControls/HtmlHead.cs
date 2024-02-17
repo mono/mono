@@ -14,6 +14,7 @@ namespace System.Web.UI.HtmlControls {
     using System.Web.UI;
     using System.Web.UI.WebControls;
     using System.Security.Permissions;
+    
 
     public class HtmlHeadBuilder : ControlBuilder {
 
@@ -138,7 +139,7 @@ namespace System.Web.UI.HtmlControls {
 
             if (control is HtmlTitle) {
                 if (_title != null) {
-                    throw new HttpException(SR.GetString(SR.HtmlHead_OnlyOneTitleAllowed));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.HtmlHead_OnlyOneTitleAllowed));
                 }
 
                 _title = (HtmlTitle)control;
@@ -164,10 +165,10 @@ namespace System.Web.UI.HtmlControls {
 
             Page p = Page;
             if (p == null) {
-                throw new HttpException(SR.GetString(SR.Head_Needs_Page));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Head_Needs_Page));
             }
             if (p.Header != null) {
-                throw new HttpException(SR.GetString(SR.HtmlHead_OnlyOneHeadAllowed));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.HtmlHead_OnlyOneHeadAllowed));
             }
             p.SetHeader(this);
         }
@@ -351,7 +352,7 @@ namespace System.Web.UI.HtmlControls {
                 }
                 else if (style.RegisteredCssClass.Length != 0) {
                     // if it's already registered, throw an exception
-                    throw new InvalidOperationException(SR.GetString(SR.HtmlHead_StyleAlreadyRegistered));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.HtmlHead_StyleAlreadyRegistered));
                 }
 
                 if (urlResolver == null) {

@@ -31,6 +31,7 @@ namespace System.Web.DataAccess
     using System.Web.Configuration;
     using System.Diagnostics;
     using System.Text;
+    
 
     //////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +46,7 @@ namespace System.Web.DataAccess
     {
         internal static string GetCurrentName()
         {
+#if (!MONO || !FEATURE_PAL)
             string userName = "NETWORK SERVICE";
             string domainName = "NT AUTHORITY";
 
@@ -93,9 +95,11 @@ namespace System.Web.DataAccess
                 {
                     UnsafeNativeMethods.LocalFree( pSid );
                 }
-            }
 
-            return String.Empty;
+            }
+#endif
+
+            return "";
         }
 
     }
@@ -121,7 +125,7 @@ namespace System.Web.DataAccess
         {
             get
             {
-                return SR.GetString(SR.DataAccessError_MiscSectionTitle) ;
+                return System.Web.SR.GetString(System.Web.SR.DataAccessError_MiscSectionTitle) ;
             }
         }
 
@@ -131,39 +135,39 @@ namespace System.Web.DataAccess
             {
                 string url;
                 int currentNumber = 1;
-                string resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_1);
+                string resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_1);
                 string miscContent = "<ol>\n<li>" + resourceString + "</li>\n";
 
                 switch (_Error)
                 {
                     case DataConnectionErrorEnum.CanNotCreateDataDir:
-                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_2_CanNotCreateDataDir);
+                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_2_CanNotCreateDataDir);
                         miscContent += "<li>" + resourceString + "</li>\n";
 
-                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_2);
+                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_2);
                         miscContent += "<li>" + resourceString + "</li>\n";
                         break;
 
                     case DataConnectionErrorEnum.CanNotWriteToDataDir:
-                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_2);
+                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_2);
                         miscContent += "<li>" + resourceString + "</li>\n";
                         break;
 
                     case DataConnectionErrorEnum.CanNotWriteToDBFile:
-                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_2_CanNotWriteToDBFile_a);
+                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_2_CanNotWriteToDBFile_a);
                         miscContent += "<li>" + resourceString + "</li>\n";
 
-                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_2_CanNotWriteToDBFile_b);
+                        resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_2_CanNotWriteToDBFile_b);
                         miscContent += "<li>" + resourceString + "</li>\n";
                         break;
                 }
-                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_3);
+                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_3);
                 miscContent += "<li>" + resourceString + "<br></li>\n";
 
                 url = AssemblyResourceLoader.GetWebResourceUrl(typeof(Page), "properties_security_tab.gif", true);
                 miscContent += "<br><br><IMG SRC=\"" + url + "\"><br><br><br>";
 
-                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_ClickAdd);
+                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_ClickAdd);
                 miscContent += "<li>" + resourceString + "</li>\n";
 
                 url = AssemblyResourceLoader.GetWebResourceUrl(typeof(Page), "add_permissions_for_users.gif", true);
@@ -171,21 +175,21 @@ namespace System.Web.DataAccess
 
                 string four;
                 if (!String.IsNullOrEmpty(_UserName))
-                    four = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_4, _UserName);
+                    four = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_4, _UserName);
                 else
-                    four = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_4_2);
+                    four = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_4_2);
                 miscContent += "<li>" + four + "</li>\n";
 
-                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_ClickOK);
+                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_ClickOK);
                 miscContent += "<li>" + resourceString + "</li>\n";
 
-                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_5);
+                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_5);
                 miscContent += "<li>" + resourceString + "</li>\n";
 
                 url = AssemblyResourceLoader.GetWebResourceUrl(typeof(Page), "properties_security_tab_w_user.gif", true);
                 miscContent += "<br><br><IMG SRC=\"" + url + "\"><br><br>";
 
-                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, SR.DataAccessError_MiscSection_ClickOK);
+                resourceString = GetResourceStringAndSetAdaptiveNumberedText(ref currentNumber, System.Web.SR.DataAccessError_MiscSection_ClickOK);
                 miscContent += "<li>" + resourceString + "</li>\n";
                 return miscContent;
             }
@@ -207,13 +211,13 @@ namespace System.Web.DataAccess
         }
 
         private string GetResourceStringAndSetAdaptiveNumberedText(ref int currentNumber, string resourceId) {
-            string resourceString = SR.GetString(resourceId);
+            string resourceString = System.Web.SR.GetString(resourceId);
             SetAdaptiveNumberedText(ref currentNumber, resourceString);
             return resourceString;
         }
 
         private string GetResourceStringAndSetAdaptiveNumberedText(ref int currentNumber, string resourceId, string parameter1) {
-            string resourceString = SR.GetString(resourceId, parameter1);
+            string resourceString = System.Web.SR.GetString(resourceId, parameter1);
             SetAdaptiveNumberedText(ref currentNumber, resourceString);
             return resourceString;
         }
@@ -248,18 +252,18 @@ namespace System.Web.DataAccess
                 switch ( _Error )
                 {
                     case DataConnectionErrorEnum.CanNotCreateDataDir:
-                        resourceKey = SR.DataAccessError_CanNotCreateDataDir_Title;
+                        resourceKey = System.Web.SR.DataAccessError_CanNotCreateDataDir_Title;
                         break;
 
                     case DataConnectionErrorEnum.CanNotWriteToDataDir:
-                        resourceKey = SR.SqlExpressError_CanNotWriteToDataDir_Title;
+                        resourceKey = System.Web.SR.SqlExpressError_CanNotWriteToDataDir_Title;
                         break;
 
                     case DataConnectionErrorEnum.CanNotWriteToDBFile:
-                        resourceKey = SR.SqlExpressError_CanNotWriteToDbfFile_Title;
+                        resourceKey = System.Web.SR.SqlExpressError_CanNotWriteToDbfFile_Title;
                         break;
                 }
-                return SR.GetString (resourceKey);
+                return System.Web.SR.GetString (resourceKey);
             }
         }
 
@@ -273,26 +277,26 @@ namespace System.Web.DataAccess
                 switch (_Error)
                 {
                     case DataConnectionErrorEnum.CanNotCreateDataDir:
-                        resourceKey1 = SR.DataAccessError_CanNotCreateDataDir_Description;
-                        resourceKey2 = SR.DataAccessError_CanNotCreateDataDir_Description_2;
+                        resourceKey1 = System.Web.SR.DataAccessError_CanNotCreateDataDir_Description;
+                        resourceKey2 = System.Web.SR.DataAccessError_CanNotCreateDataDir_Description_2;
                         break;
 
                     case DataConnectionErrorEnum.CanNotWriteToDataDir:
-                        resourceKey1 = SR.SqlExpressError_CanNotWriteToDataDir_Description;
-                        resourceKey2 = SR.SqlExpressError_CanNotWriteToDataDir_Description_2;
+                        resourceKey1 = System.Web.SR.SqlExpressError_CanNotWriteToDataDir_Description;
+                        resourceKey2 = System.Web.SR.SqlExpressError_CanNotWriteToDataDir_Description_2;
                         break;
 
                     case DataConnectionErrorEnum.CanNotWriteToDBFile:
-                        resourceKey1 = SR.SqlExpressError_CanNotWriteToDbfFile_Description;
-                        resourceKey2 = SR.SqlExpressError_CanNotWriteToDbfFile_Description_2;
+                        resourceKey1 = System.Web.SR.SqlExpressError_CanNotWriteToDbfFile_Description;
+                        resourceKey2 = System.Web.SR.SqlExpressError_CanNotWriteToDbfFile_Description_2;
                         break;
                 }
                 string desc;
                 if (!String.IsNullOrEmpty(_UserName))
-                    desc = SR.GetString (resourceKey1, _UserName);
+                    desc = System.Web.SR.GetString (resourceKey1, _UserName);
                 else
-                    desc = SR.GetString (resourceKey2);
-                desc += " " + SR.GetString(SR.SqlExpressError_Description_1);
+                    desc = System.Web.SR.GetString (resourceKey2);
+                desc += " " + System.Web.SR.GetString(System.Web.SR.SqlExpressError_Description_1);
                 return desc;
             }
         }
@@ -310,7 +314,7 @@ namespace System.Web.DataAccess
         {
             get
             {
-                return SR.GetString(SR.SqlExpress_MDF_File_Auto_Creation_MiscSectionTitle) ;
+                return System.Web.SR.GetString(System.Web.SR.SqlExpress_MDF_File_Auto_Creation_MiscSectionTitle) ;
             }
         }
 
@@ -334,18 +338,18 @@ namespace System.Web.DataAccess
                         {
                             string resourceString;
 
-                            resourceString = SR.GetString(SR.SqlExpress_MDF_File_Auto_Creation) ;
+                            resourceString = System.Web.SR.GetString(System.Web.SR.SqlExpress_MDF_File_Auto_Creation) ;
                             s_errMessage += "<br><br><p>" + resourceString + "<br></p>\n";
 
                             s_errMessage += "<ol>\n";
 
-                            resourceString = SR.GetString(SR.SqlExpress_MDF_File_Auto_Creation_1) ;
+                            resourceString = System.Web.SR.GetString(System.Web.SR.SqlExpress_MDF_File_Auto_Creation_1) ;
                             s_errMessage += "<li>" + resourceString + "</li>\n";
-                            resourceString = SR.GetString(SR.SqlExpress_MDF_File_Auto_Creation_2) ;
+                            resourceString = System.Web.SR.GetString(System.Web.SR.SqlExpress_MDF_File_Auto_Creation_2) ;
                             s_errMessage += "<li>" + resourceString + "</li>\n";
-                            resourceString = SR.GetString(SR.SqlExpress_MDF_File_Auto_Creation_3) ;
+                            resourceString = System.Web.SR.GetString(System.Web.SR.SqlExpress_MDF_File_Auto_Creation_3) ;
                             s_errMessage += "<li>" + resourceString + "</li>\n";
-                            resourceString = SR.GetString(SR.SqlExpress_MDF_File_Auto_Creation_4) ;
+                            resourceString = System.Web.SR.GetString(System.Web.SR.SqlExpress_MDF_File_Auto_Creation_4) ;
                             s_errMessage += "<li>" + resourceString + "</li>\n";
                             s_errMessage += "</ol>\n";
                         }

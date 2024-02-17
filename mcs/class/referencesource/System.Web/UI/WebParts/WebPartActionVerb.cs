@@ -22,7 +22,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.WebPartActionVerb_CantSetChecked));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.WebPartActionVerb_CantSetChecked));
             }
         }
 

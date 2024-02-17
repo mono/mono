@@ -48,7 +48,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest.CopyResource (GetType (), "Mapping.aspx", "Mapping.aspx");
 			WebTest.CopyResource (GetType (), "Mapping1.aspx", "Mapping1.aspx");
-			WebTest.CopyResource (GetType (), "WebMapping.config", "Web.config");
+			WebTest.CopyResource (GetType (), "WebMapping.config", "web.config");
 		}
 
 		[Test]

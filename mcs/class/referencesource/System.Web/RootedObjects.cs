@@ -94,7 +94,7 @@ namespace System.Web {
         // Fully releases all managed resources associated with this request, including
         // the HttpContext, WebSocketContext, principal, worker request, etc.
         public void Destroy() {
-            Debug.Trace("RootedObjects", "Destroy");
+            System.Web.Util.Debug.Trace("RootedObjects", "Destroy");
 
             // 'isDestroying = true' means that we'll release the implicit 'this' ref in _requestActivityIdRefCount
             using (WithinTraceBlock(isDestroying: true)) {
@@ -145,7 +145,7 @@ namespace System.Web {
 
         // Fully releases the HttpContext instance associated with this request.
         public void ReleaseHttpContext() {
-            Debug.Trace("RootedObjects", "ReleaseHttpContext");
+            System.Web.Util.Debug.Trace("RootedObjects", "ReleaseHttpContext");
             if (HttpContext != null) {
                 HttpContext.FinishPipelineRequest();
             }
@@ -155,7 +155,7 @@ namespace System.Web {
 
         // Disposes of the principal associated with this request.
         public void ReleasePrincipal() {
-            Debug.Trace("RootedObjects", "ReleasePrincipal");
+            System.Web.Util.Debug.Trace("RootedObjects", "ReleasePrincipal");
             if (Principal != null && Principal != WindowsAuthenticationModule.AnonymousPrincipal) {
                 WindowsIdentity identity = Principal.Identity as WindowsIdentity; // original code only disposed of WindowsIdentity, not arbitrary IDisposable types
                 if (identity != null) {
@@ -174,7 +174,7 @@ namespace System.Web {
 
         // Disposes of the WebSocketPipeline instance associated with this request.
         public void ReleaseWebSocketPipeline() {
-            Debug.Trace("RootedObjects", "ReleaseWebSocketContext");
+            System.Web.Util.Debug.Trace("RootedObjects", "ReleaseWebSocketContext");
             if (WebSocketPipeline != null) {
                 WebSocketPipeline.Dispose();
             }
@@ -184,7 +184,7 @@ namespace System.Web {
 
         // Disposes of the worker request associated with this request.
         public void ReleaseWorkerRequest() {
-            Debug.Trace("RootedObjects", "ReleaseWorkerRequest");
+            System.Web.Util.Debug.Trace("RootedObjects", "ReleaseWorkerRequest");
             if (WorkerRequest != null) {
                 WorkerRequest.Dispose();
             }
@@ -215,9 +215,9 @@ namespace System.Web {
 
         // Called once per request; emits an ETW event saying that we transitioned from IIS -> ASP.NET
         public void WriteTransferEventIfNecessary() {
-            Debug.Assert(WorkerRequest != null);
+            System.Web.Util.Debug.Assert(WorkerRequest != null);
             if (_activityIdTracingIsEnabled) {
-                Debug.Assert(_requestActivityId != Guid.Empty);
+                System.Web.Util.Debug.Assert(_requestActivityId != Guid.Empty);
                 AspNetEventSource.Instance.RequestEnteredAspNetPipeline(WorkerRequest, _requestActivityId);
             }
         }
@@ -228,12 +228,12 @@ namespace System.Web {
             private readonly RootedObjects _rootedObjects; // might be null if this is a dummy token
 
             internal ActivityIdToken(RootedObjects rootedObjects, bool isDestroying) {
-                Debug.Assert(ActivityIdHelper.Instance != null);
+                System.Web.Util.Debug.Assert(ActivityIdHelper.Instance != null);
                 ActivityIdHelper.Instance.SetCurrentThreadActivityId(rootedObjects._requestActivityId, out _originalActivityId);
 
                 lock (rootedObjects) {
                     rootedObjects._requestActivityIdRefCount++;
-                    Debug.Assert(rootedObjects._requestActivityIdRefCount >= 2, "The original ref count should have been 1 or higher, else the activity ID could already have been released.");
+                    System.Web.Util.Debug.Assert(rootedObjects._requestActivityIdRefCount >= 2, "The original ref count should have been 1 or higher, else the activity ID could already have been released.");
                 }
 
                 _rootedObjects = rootedObjects;
@@ -250,15 +250,15 @@ namespace System.Web {
             }
 
             private void DisposeImpl() {
-                Debug.Assert(ActivityIdHelper.Instance != null);
-                Debug.Assert(ActivityIdHelper.Instance.CurrentThreadActivityId == _rootedObjects._requestActivityId, "Unexpected activity ID on current thread.");
+                System.Web.Util.Debug.Assert(ActivityIdHelper.Instance != null);
+                System.Web.Util.Debug.Assert(ActivityIdHelper.Instance.CurrentThreadActivityId == _rootedObjects._requestActivityId, "Unexpected activity ID on current thread.");
 
                 // We use a lock instead of Interlocked.Decrement so that we can guarantee that no thread
                 // ever invokes the 'if' code path below before some other thread invokes the 'else' code
                 // path.
                 lock (_rootedObjects) {
                     _rootedObjects._requestActivityIdRefCount -= (_isDestroying) ? 2 : 1;
-                    Debug.Assert(_rootedObjects._requestActivityIdRefCount >= 0, "Somebody called Dispose() too many times.");
+                    System.Web.Util.Debug.Assert(_rootedObjects._requestActivityIdRefCount >= 0, "Somebody called Dispose() too many times.");
 
                     if (_rootedObjects._requestActivityIdRefCount == 0) {
                         // this overload restores the original activity ID and releases the current activity ID

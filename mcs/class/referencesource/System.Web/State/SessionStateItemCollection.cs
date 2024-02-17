@@ -20,6 +20,7 @@ namespace System.Web.SessionState {
     using System.Security;
     using System.Security.Permissions;
     using System.Diagnostics.CodeAnalysis;
+    
 
     public interface ISessionStateItemCollection : ICollection {
 
@@ -129,7 +130,7 @@ namespace System.Web.SessionState {
                     MarkDeserializedOffset();
                 }
                 else {
-                    Debug.Fail("Offset shouldn't be negative inside MarkDeserializedOffsetAndCheck.");
+                    System.Web.Util.Debug.Fail("Offset shouldn't be negative inside MarkDeserializedOffsetAndCheck.");
                 }
             }
 
@@ -220,7 +221,7 @@ namespace System.Web.SessionState {
             // The keys in _serializedItems should match the beginning part of
             // the list in NameObjectCollectionBase
             for (int i=0; i < _serializedItems.Count; i++) {
-                Debug.Assert(_serializedItems.GetKey(i) == BaseGetKey(i));
+                System.Web.Util.Debug.Assert(_serializedItems.GetKey(i) == BaseGetKey(i));
             }
 #endif
 
@@ -255,8 +256,8 @@ namespace System.Web.SessionState {
                     }
                 }
 
-                Debug.Assert(_serializedItems != null);
-                Debug.Assert(_stream != null);
+                System.Web.Util.Debug.Assert(_serializedItems != null);
+                System.Web.Util.Debug.Assert(_stream != null);
 
                 SerializedItemPosition position = (SerializedItemPosition)_serializedItems[name];
                 if (position.IsDeserialized) {
@@ -268,7 +269,7 @@ namespace System.Web.SessionState {
                 _stream.Seek(position.Offset, SeekOrigin.Begin);
 
                 // Set the value
-                Debug.Trace("SessionStateItemCollection", "Deserialized an item: keyname=" + name);
+                System.Web.Util.Debug.Trace("SessionStateItemCollection", "Deserialized an item: keyname=" + name);
 
                 if (!HttpRuntime.DisableProcessRequestInApplicationTrust) {
                     // VSWhidbey 427316: Sandbox Serialization in non full trust cases
@@ -318,7 +319,7 @@ namespace System.Web.SessionState {
             // The keys in _serializedItems should match the beginning part of
             // the list in NameObjectCollectionBase
             for (int i=0; i < _serializedItems.Count; i++) {
-                Debug.Assert(_serializedItems.GetKey(i) == BaseGetKey(i));
+                System.Web.Util.Debug.Assert(_serializedItems.GetKey(i) == BaseGetKey(i));
             }
 #endif
 
@@ -348,7 +349,7 @@ namespace System.Web.SessionState {
                         // If the item is immutable (e.g. an array), then the caller has the ability to change
                         // its content without calling our setter.  So we have to mark the collection
                         // as dirty.
-                        Debug.Trace("SessionStateItemCollection", "Setting _dirty to true in get");
+                        System.Web.Util.Debug.Trace("SessionStateItemCollection", "Setting _dirty to true in get");
                         _dirty = true;
                     }
                 }
@@ -358,7 +359,7 @@ namespace System.Web.SessionState {
 
             set {
                 MarkItemDeserialized(name);
-                Debug.Trace("SessionStateItemCollection", "Setting _dirty to true in set");
+                System.Web.Util.Debug.Trace("SessionStateItemCollection", "Setting _dirty to true in set");
                 BaseSet(name, value);
                 _dirty = true;
             }
@@ -372,7 +373,7 @@ namespace System.Web.SessionState {
                 Object obj = BaseGet(index);
                 if (obj != null) {
                     if (!IsImmutable(obj)) {
-                        Debug.Trace("SessionStateItemCollection", "Setting _dirty to true in get");
+                        System.Web.Util.Debug.Trace("SessionStateItemCollection", "Setting _dirty to true in get");
                         _dirty = true;
                     }
                 }
@@ -382,7 +383,7 @@ namespace System.Web.SessionState {
 
             set {
                 MarkItemDeserialized(index);
-                Debug.Trace("SessionStateItemCollection", "Setting _dirty to true in set");
+                System.Web.Util.Debug.Trace("SessionStateItemCollection", "Setting _dirty to true in set");
                 BaseSet(index, value);
                 _dirty = true;
             }
@@ -481,7 +482,7 @@ namespace System.Web.SessionState {
                             }
                         }
 
-                        Debug.Assert(i != count);
+                        System.Web.Util.Debug.Assert(i != count);
                     }
                     else {
                         writer.Write(NO_NULL_KEY);
@@ -513,7 +514,7 @@ namespace System.Web.SessionState {
 
                             SerializedItemPosition position = (SerializedItemPosition)_serializedItems[i];
 
-                            Debug.Assert(_stream != null);
+                            System.Web.Util.Debug.Assert(_stream != null);
 
                             // The item is read as serialized data from a store, and it's still
                             // serialized, meaning no one has referenced it.  Just copy
@@ -530,7 +531,7 @@ namespace System.Web.SessionState {
 #endif
                             _stream.Read(buffer, 0, position.DataLength);
 #if DBG
-                            Debug.Assert(read == position.DataLength);
+                            System.Web.Util.Debug.Assert(read == position.DataLength);
 #endif
 
                             baseStream.Write(buffer, 0, position.DataLength);
@@ -549,7 +550,7 @@ namespace System.Web.SessionState {
                         // Move back to current position
                         baseStream.Seek(curPos, SeekOrigin.Begin);
 
-                        Debug.Trace("SessionStateItemCollection",
+                        System.Web.Util.Debug.Trace("SessionStateItemCollection",
                             "Serialize: curPost=" + curPos + ", offset= " + (int)(curPos - iValueStart));
                     }
                 }
@@ -603,7 +604,7 @@ namespace System.Web.SessionState {
                 // 
                 d._iLastOffset = offset0;
 
-                Debug.Trace("SessionStateItemCollection",
+                System.Web.Util.Debug.Trace("SessionStateItemCollection",
                     "Deserialize: _iLastOffset= " + d._iLastOffset);
 
                 // _iLastOffset is the first byte past the last item, which equals
@@ -611,13 +612,13 @@ namespace System.Web.SessionState {
                 buffer = new byte[d._iLastOffset];
                 int bytesRead = reader.BaseStream.Read(buffer, 0, d._iLastOffset);
                 if (bytesRead != d._iLastOffset) {
-                    throw new HttpException(SR.GetString(SR.Invalid_session_state));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_session_state));
                 }
                 d._stream = new MemoryStream(buffer);
             }
 
     #if DBG
-            Debug.Assert(reader.ReadByte() == 0xff);
+            System.Web.Util.Debug.Assert(reader.ReadByte() == 0xff);
     #endif
 
             d._dirty = false;

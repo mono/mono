@@ -19,7 +19,7 @@ namespace System.Web.UI.WebControls.WebParts {
         /// </devdoc>
         public WebPartUserCapability(string name) {
             if (String.IsNullOrEmpty(name)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("name");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("name");
             }
 
             _name = name;

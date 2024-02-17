@@ -10,6 +10,7 @@ namespace System.Web.UI {
     using System.Threading;
     using System.Threading.Tasks;
     using System.Web;
+    
 
     // Handles execution of asynchronous tasks that are registered with a Page
 
@@ -21,7 +22,7 @@ namespace System.Web.UI {
         public void EnqueueTask(IPageAsyncTask task) {
             if (_executeTasksAsyncHasCompleted) {
                 // don't allow multiple calls to the execution routine
-                throw new InvalidOperationException(SR.GetString(SR.PageAsyncManager_CannotEnqueue));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PageAsyncManager_CannotEnqueue));
             }
 
             _registeredTasks.Enqueue(task);

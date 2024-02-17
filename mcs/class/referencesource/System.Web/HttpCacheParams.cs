@@ -50,12 +50,12 @@ namespace System.Web {
             if (parameters != null) {
                 _isModified = true;
                 if (parameters[0].Length == 0) {
-                    Debug.Assert(parameters.Length == 1, "parameters.Length == 1");
+                    System.Web.Util.Debug.Assert(parameters.Length == 1, "parameters.Length == 1");
 
                     IgnoreParams = true;
                 }
                 else if (parameters[0].Equals("*")) {
-                    Debug.Assert(parameters.Length == 1, "parameters.Length == 1");
+                    System.Web.Util.Debug.Assert(parameters.Length == 1, "parameters.Length == 1");
 
                     _paramsStar = true;
                 }
@@ -112,7 +112,7 @@ namespace System.Web {
                         }
                     }
 
-                    Debug.Assert(j == c, "j == c");
+                    System.Web.Util.Debug.Assert(j == c, "j == c");
                 }
             }
 

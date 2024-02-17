@@ -30,7 +30,7 @@ namespace System.Web.Configuration {
         public AuthorizationRuleCollection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

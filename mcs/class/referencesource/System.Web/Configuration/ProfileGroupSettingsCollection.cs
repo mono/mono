@@ -14,6 +14,7 @@ namespace System.Web.Configuration {
     using System.Text;
     using System.Web.Util;
     using System.Security.Permissions;
+    
 
     [ConfigurationCollection(typeof(ProfileGroupSettings), AddItemName = "group")]
     public sealed class ProfileGroupSettingsCollection : ConfigurationElementCollection {
@@ -30,7 +31,7 @@ namespace System.Web.Configuration {
             EmitClear = false;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -39,7 +40,7 @@ namespace System.Web.Configuration {
         // public properties
         public String[] AllKeys {
             get {
-                return StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
+                return System.Web.Util.StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
             }
         }
         
@@ -110,7 +111,7 @@ namespace System.Web.Configuration {
 
         internal bool InternalSerialize(XmlWriter writer, bool serializeCollectionKey) {
             if (EmitClear == true) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Clear_not_valid));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Clear_not_valid));
             }
 
             return SerializeElement(writer, serializeCollectionKey);
@@ -149,7 +150,7 @@ namespace System.Web.Configuration {
                     BaseRemove(name);
                 }
                 else {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_base_cannot_remove_inherited_items));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_base_cannot_remove_inherited_items));
                 }
             }
         }
@@ -162,7 +163,7 @@ namespace System.Web.Configuration {
                     BaseRemoveAt(index);
                 }
                 else {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_base_cannot_remove_inherited_items));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_base_cannot_remove_inherited_items));
                 }
             }
         }
@@ -182,12 +183,12 @@ namespace System.Web.Configuration {
             }
         }
         
-        protected override void ResetModified() {
+        protected internal override void ResetModified() {
             bModified = false;
             base.ResetModified();
         }
 
-        protected override bool IsModified() {
+        protected internal override bool IsModified() {
             if (bModified == true) {
                 return true;
             }

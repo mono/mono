@@ -20,6 +20,7 @@ namespace System.Web.Configuration {
     using System.Web.Hosting;
     using System.Runtime.ConstrainedExecution;
     
+    
     //
     // Uses IIS 7 native config
     //
@@ -54,18 +55,21 @@ namespace System.Web.Configuration {
             string physicalPath = null;
             IntPtr pBstr = IntPtr.Zero;
             int cBstr = 0;
+
+#if (!MONO || !FEATURE_PAL)
             try {
                 int result = UnsafeIISMethods.MgdMapPathDirect(IntPtr.Zero, siteName, path.VirtualPathString, out pBstr, out cBstr);
                 if (result < 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.Cannot_map_path, path.VirtualPathString));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cannot_map_path, path.VirtualPathString));
                 }
-                physicalPath = (pBstr != IntPtr.Zero) ? StringUtil.StringFromWCharPtr(pBstr, cBstr) : null;
+                physicalPath = (pBstr != IntPtr.Zero) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstr, cBstr) : null;
             }
             finally {
                 if (pBstr != IntPtr.Zero) {
                     Marshal.FreeBSTR(pBstr);
                 }                 
             }
+#endif
             return physicalPath;
         }
 
@@ -76,9 +80,10 @@ namespace System.Web.Configuration {
             IntPtr pBstr = IntPtr.Zero;
             int cBstr = 0;
             string siteName = null;
+#if (!MONO || !FEATURE_PAL)
             try {
                 int result = UnsafeIISMethods.MgdGetSiteNameFromId(IntPtr.Zero, siteId, out pBstr, out cBstr);
-                siteName = (result == 0 && pBstr != IntPtr.Zero) ? StringUtil.StringFromWCharPtr(pBstr, cBstr) : String.Empty;
+                siteName = (result == 0 && pBstr != IntPtr.Zero) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstr, cBstr) : String.Empty;
             }
             finally {
                 if (pBstr != IntPtr.Zero) {
@@ -88,24 +93,29 @@ namespace System.Web.Configuration {
 
             if ( siteId == DEFAULT_SITE_ID_UINT) {
                 s_defaultSiteName = siteName;
-            }            
+            }
+#endif
 
             return siteName;
         }
 
         private class NativeConfigWrapper : CriticalFinalizerObject {
             internal NativeConfigWrapper() {
+#if (!MONO || !FEATURE_PAL)
                 int result = UnsafeIISMethods.MgdInitNativeConfig();
 
                 if (result < 0) {
                     s_InitedExternalConfig = 0;
-                    throw new InvalidOperationException(SR.GetString(SR.Cant_Init_Native_Config, result.ToString("X8", CultureInfo.InvariantCulture)));
-                }                
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cant_Init_Native_Config, result.ToString("X8", CultureInfo.InvariantCulture)));
+                }
+#endif
             }
 
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
             ~NativeConfigWrapper() {
-                UnsafeIISMethods.MgdTerminateNativeConfig();                    
+#if (!MONO || !FEATURE_PAL)
+                UnsafeIISMethods.MgdTerminateNativeConfig();
+#endif
             }
         }        
     }    
