@@ -6,14 +6,14 @@ namespace Microsoft.Build.Evaluation
 	public enum ProjectCollectionChangedState
 	{
 		DefaultToolsVersion,
-		DisableMarkDirty,
-		GlobalProperties,
-		HostServices,
-		IsBuildEnabled,
+		Toolsets,
 		Loggers,
+		GlobalProperties,
+		IsBuildEnabled,
 		OnlyLogCriticalEvents,
-		SkipEvaluation,
-		Toolsets
+		HostServices,
+		DisableMarkDirty,
+		SkipEvaluation
 	}
 }
 
