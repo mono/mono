@@ -36,6 +36,9 @@ NUNIT_RESOURCE_FILES= \
 	$(wildcard ../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/*.as?x) \
 	$(wildcard ../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/*.master)
 
+RESOURCE_DEFS = \
+	System.Web.Resources.AtlasWeb,../referencesource/System.Web.Extensions/Resources/AtlasWeb.resx
+
 CLASSLIB_DIR = $(topdir)/class/lib/$(PROFILE)
 
 STANDALONE_RUNNER_SUPPORT_ASSEMBLY = $(CLASSLIB_DIR)/standalone-runner-support.dll
