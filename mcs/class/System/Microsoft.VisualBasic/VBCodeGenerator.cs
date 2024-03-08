@@ -54,46 +54,46 @@ namespace Microsoft.VisualBasic
 				throw new ArgumentNullException(nameof(fileNames));
 
 			CompilerResults results = new CompilerResults (options.TempFiles);
-			Process vbnc = new Process ();
+			Process vbc = new Process ();
 
-			string vbnc_output = "";
-			string[] vbnc_output_lines;
+			string vbc_output = "";
+			string[] vbc_output_lines;
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
-				vbnc.StartInfo.FileName = MonoToolsLocator.Mono;
-				vbnc.StartInfo.Arguments = MonoToolsLocator.VBCompiler + ' ' + BuildArgs (options, fileNames);
+				vbc.StartInfo.FileName = MonoToolsLocator.Mono;
+				vbc.StartInfo.Arguments = MonoToolsLocator.VBCompiler + ' ' + BuildArgs (options, fileNames);
 			} else {
-				vbnc.StartInfo.FileName = MonoToolsLocator.VBCompiler;
-				vbnc.StartInfo.Arguments = BuildArgs (options, fileNames);
+				vbc.StartInfo.FileName = MonoToolsLocator.VBCompiler;
+				vbc.StartInfo.Arguments = BuildArgs (options, fileNames);
 			}
-			//Console.WriteLine (vbnc.StartInfo.Arguments);
-			vbnc.StartInfo.CreateNoWindow = true;
-			vbnc.StartInfo.UseShellExecute = false;
-			vbnc.StartInfo.RedirectStandardOutput = true;
+			//Console.WriteLine (vbc.StartInfo.Arguments);
+			vbc.StartInfo.CreateNoWindow = true;
+			vbc.StartInfo.UseShellExecute = false;
+			vbc.StartInfo.RedirectStandardOutput = true;
 			try {
-				vbnc.Start ();
+				vbc.Start ();
 			} catch (Exception e) {
 				Win32Exception exc = e as Win32Exception;
 				if (exc != null) {
-					throw new SystemException (String.Format ("Error running {0}: {1}", vbnc.StartInfo.FileName,
+					throw new SystemException (String.Format ("Error running {0}: {1}", vbc.StartInfo.FileName,
 											Win32Exception.GetErrorMessage (exc.NativeErrorCode)));
 				}
 				throw;
 			}
 
 			try {
-				vbnc_output = vbnc.StandardOutput.ReadToEnd ();
-				vbnc.WaitForExit ();
+				vbc_output = vbc.StandardOutput.ReadToEnd ();
+				vbc.WaitForExit ();
 			} finally {
-				results.NativeCompilerReturnValue = vbnc.ExitCode;
-				vbnc.Close ();
+				results.NativeCompilerReturnValue = vbc.ExitCode;
+				vbc.Close ();
 			}
 
 			bool loadIt = true;
 			if (results.NativeCompilerReturnValue == 1) {
 				loadIt = false;
-				vbnc_output_lines = vbnc_output.Split (Environment.NewLine.ToCharArray ());
-				foreach (string error_line in vbnc_output_lines) {
+				vbc_output_lines = vbc_output.Split (Environment.NewLine.ToCharArray ());
+				foreach (string error_line in vbc_output_lines) {
 					CompilerError error = CreateErrorFromString (error_line);
 					if (null != error) {
 						results.Errors.Add (error);
@@ -106,7 +106,7 @@ namespace Microsoft.VisualBasic
 			{
 				// Show the entire output as one big error message.
 				loadIt = false;
-				CompilerError error = new CompilerError (string.Empty, 0, 0, "VBNC_CRASH", vbnc_output);
+				CompilerError error = new CompilerError (string.Empty, 0, 0, "VBC_CRASH", vbc_output);
 				results.Errors.Add (error);
 			};
 
@@ -146,7 +146,7 @@ namespace Microsoft.VisualBasic
 			if (options.TreatWarningsAsErrors)
 				args.Append ("/warnaserror ");
 
-			/* Disabled. vbnc does not support warninglevels.
+			/* Disabled. vbc does not support warninglevels.
 			if (options.WarningLevel != -1)
 				args.AppendFormat ("/wlevel:{0} ", options.WarningLevel);
 			*/
@@ -176,8 +176,8 @@ namespace Microsoft.VisualBasic
 				args.Append (options.CompilerOptions);
 				args.Append (" ");
 			}
-			/* Disabled, vbnc does not support this.
-			args.Append (" -- "); // makes vbnc not try to process filenames as options
+			/* Disabled, vbc does not support this.
+			args.Append (" -- "); // makes vbc not try to process filenames as options
 			*/
 			foreach (string source in fileNames)
 				args.AppendFormat (" \"{0}\" ", source);

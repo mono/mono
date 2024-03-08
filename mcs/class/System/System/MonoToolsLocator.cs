@@ -55,7 +55,7 @@ namespace System {
 				//if (!File.Exists (CSharpCompiler))
 				//	throw new FileNotFoundException ("C# compiler not found at " + CSharpCompiler);
 
-				VBCompiler = Path.Combine (GacPath,  "4.5\\vbnc.exe");
+				VBCompiler = Path.Combine (GacPath,  "4.5\\vbc.exe");
 				AssemblyLinker = Path.Combine (GacPath, "4.5\\al.exe");
 
 				if (!File.Exists (AssemblyLinker)) {
@@ -73,9 +73,9 @@ namespace System {
 				if (!File.Exists (McsCSharpCompiler))
 					McsCSharpCompiler = "mcs";
 
-				VBCompiler = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "vbnc"));
+				VBCompiler = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "vbc"));
 				if (!File.Exists (VBCompiler))
-					VBCompiler = "vbnc";
+					VBCompiler = "vbc";
 
 				AssemblyLinker = Path.GetFullPath (Path.Combine (mscorlibPath, "..", "..", "..", "..", "bin", "al"));
 				if (!File.Exists (AssemblyLinker))
