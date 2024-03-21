@@ -2410,6 +2410,8 @@ ves_icall_RuntimeFieldInfo_ResolveType (MonoReflectionFieldHandle ref_field, Mon
 	MonoClassField *field = MONO_HANDLE_GETVAL (ref_field, field);
 	MonoType *type = mono_field_get_type_checked (field, error);
 	return_val_if_nok (error, MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE));
+	mono_error_set_for_type_exceptions (error, type);
+	return_val_if_nok (error, MONO_HANDLE_CAST (MonoReflectionType, NULL_HANDLE));
 	return mono_type_get_object_handle (domain, type, error);
 }
 

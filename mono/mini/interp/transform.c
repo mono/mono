@@ -2650,6 +2650,9 @@ interp_transform_call (TransformData *td, MonoMethod *method, MonoMethod *target
 	int fp_sreg = -1, first_sreg = -1, dreg = -1;
 	gboolean is_delegate_invoke = FALSE;
 
+	mono_error_set_for_method_exceptions (error, method);
+	return_val_if_nok (error, FALSE);
+
 	guint32 token = read32 (td->ip + 1);
 
 	if (target_method == NULL) {
@@ -3044,6 +3047,10 @@ interp_field_from_token (MonoMethod *method, guint32 token, MonoClass **klass, M
 		field = mono_field_from_token_checked (m_class_get_image (method->klass), token, klass, generic_context, error);
 		return_val_if_nok (error, NULL);
 	}
+
+	MonoType *type = mono_field_get_type_internal (field);
+	mono_error_set_for_type_exceptions (error, type);
+	return_val_if_nok (error, NULL);
 
 	if (!method->skip_visibility && !mono_method_can_access_field (method, field)) {
 		char *method_fname = mono_method_full_name (method, TRUE);
@@ -5254,6 +5261,17 @@ generate_code (TransformData *td, MonoMethod *method, MonoMethodHeader *header, 
 				guint32 tos_offset = get_tos_offset (td);
 				td->sp -= csignature->param_count;
 				guint32 params_stack_size = tos_offset - get_tos_offset (td);
+
+				if (mono_class_is_ginst (klass))
+				{
+					gpointer iter = NULL;
+					MonoClassField *field;
+					while ((field = mono_class_get_fields_internal (klass, &iter)))
+					{
+						mono_error_set_for_type_exceptions (error, mono_field_get_type (field));
+						goto_if_nok (error, exit);
+					}
+				}
 
 				// Move params types in temporary buffer
 				// FIXME stop leaking sp_params

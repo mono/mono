@@ -1606,6 +1606,51 @@ mono_type_has_exceptions (MonoType *type)
 }
 
 void
+mono_error_set_for_type_exceptions (MonoError *oerror, MonoType *type)
+{
+	MonoClass *klass;
+
+	switch (type->type) {
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_VALUETYPE:
+	case MONO_TYPE_SZARRAY:
+		klass = type->data.klass;
+		break;
+	case MONO_TYPE_ARRAY:
+		klass = type->data.array->eklass;
+		break;
+	case MONO_TYPE_GENERICINST:
+		klass = mono_class_create_generic_inst (type->data.generic_class);
+		break;
+	default:
+		return;
+	}
+
+	if (!mono_class_has_failure (klass))
+		return;
+
+	MonoErrorBoxed *box = mono_class_get_exception_data (klass);
+	mono_error_set_from_boxed (oerror, box);
+}
+
+void
+mono_error_set_for_method_exceptions (MonoError *oerror, MonoMethod *method)
+{
+	MonoMethodSignature *sig = mono_method_signature_internal (method);
+	if (!sig)
+		return;
+
+	mono_error_set_for_type_exceptions (oerror, sig->ret);
+	return_if_nok (oerror);
+
+	for (int i = 0; i < sig->param_count; ++i)
+	{
+		mono_error_set_for_type_exceptions (oerror, sig->params [i]);
+		return_if_nok (oerror);
+	}
+}
+
+void
 mono_error_set_for_class_failure (MonoError *oerror, const MonoClass *klass)
 {
 	g_assert (mono_class_has_failure (klass));
