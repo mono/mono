@@ -683,11 +683,11 @@ namespace Mono.Security {
 					return "MD2";
 				case "1.2.840.113549.2.5" :
 					return "MD5";
-				case "2.16.840.1.101.3.4.1" :
+				case "2.16.840.1.101.3.4.2.1" :
 					return "SHA256";
-				case "2.16.840.1.101.3.4.2" :
+				case "2.16.840.1.101.3.4.2.2" :
 					return "SHA384";
-				case "2.16.840.1.101.3.4.3" :
+				case "2.16.840.1.101.3.4.2.3" :
 					return "SHA512";
 				default :
 					break;
