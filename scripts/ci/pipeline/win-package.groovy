@@ -86,8 +86,8 @@ try {
             }
         }
 
-        def packageUrlX86 = "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/unsigned/${packageFileNameX86}"
-        def packageUrlX64 = "https://xamjenkinsartifact.azureedge.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/unsigned/${packageFileNameX64}";
+        def packageUrlX86 = "https://xamjenkinsartifact.blob.core.windows.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/unsigned/${packageFileNameX86}"
+        def packageUrlX64 = "https://xamjenkinsartifact.blob.core.windows.net/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/unsigned/${packageFileNameX64}";
 
         currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"${packageUrlX86}\">${packageFileNameX86}</a> -- <a href=\"${packageUrlX64}\">${packageFileNameX64}</a></h2><hr/>"
     }
