@@ -69,7 +69,7 @@ try {
             }
         }
 
-        def downloadHost = (isPrivate ? "dl.internalx.com" : "xamjenkinsartifact.azureedge.net")
+        def downloadHost = (isPrivate ? "dl.internalx.com" : "xamjenkinsartifact.blob.core.windows.net")
         def packageUrl = "https://${downloadHost}/${jobName}/${monoBranch}/${env.BUILD_NUMBER}/${commitHash}/unsigned"
         currentBuild.description = "<hr/><h2>DOWNLOAD: <a href=\"${packageUrl}/${packageFileName}\">${packageFileName}</a></h2><hr/>"
     }
