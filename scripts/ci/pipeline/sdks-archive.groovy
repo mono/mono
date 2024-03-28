@@ -152,10 +152,10 @@ def archive (product, configuration, platform, chrootname = "", chrootadditional
                     // include xcode version in virtual path if necessary
                     if (xcodeVersion == "") {
                         azureVirtualPath = ""
-                        azureArtifactUrl = "https://xamjenkinsartifact.azureedge.net/${azureContainerName}/${packageFileName}"
+                        azureArtifactUrl = "https://xamjenkinsartifact.blob.core.windows.net/${azureContainerName}/${packageFileName}"
                     } else {
                         azureVirtualPath = "xcode-" + readFile ("xcode_version.txt")
-                        azureArtifactUrl = "https://xamjenkinsartifact.azureedge.net/${azureContainerName}/${azureVirtualPath}/${packageFileName}"
+                        azureArtifactUrl = "https://xamjenkinsartifact.blob.core.windows.net/${azureContainerName}/${azureVirtualPath}/${packageFileName}"
                     }
                 }
                 stage('Upload Archive to Azure') {
