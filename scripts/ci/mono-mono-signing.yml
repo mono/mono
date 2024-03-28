@@ -281,9 +281,9 @@ extends:
         displayName: Mono .MSI Signing
         condition: ne(${{ parameters.windows_build_number }}, 0)
         pool:
-          name: NetCore1ESPool-Internal
-          image: 1es-ubuntu-2204
-          os: linux
+          name: Azure Pipelines
+          vmImage: macOS-12
+          os: macOS
         timeoutInMinutes: 180
         workspace:
           clean: all
