@@ -76,6 +76,8 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 		return NULL;
 
 	z = z_new0 (z_stream);
+	z->zalloc = z_alloc;
+	z->zfree = z_free;
 	if (compress) {
 		retval = deflateInit2 (z, Z_DEFAULT_COMPRESSION, Z_DEFLATED, gzip ? 31 : -15, 8, Z_DEFAULT_STRATEGY);
 	} else {
@@ -86,8 +88,6 @@ CreateZStream (gint compress, guchar gzip, read_write_func func, void *gchandle)
 		free (z);
 		return NULL;
 	}
-	z->zalloc = z_alloc;
-	z->zfree = z_free;
 	result = z_new0 (ZStream);
 	result->stream = z;
 	result->func = func;
