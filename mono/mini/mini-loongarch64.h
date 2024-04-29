@@ -24,8 +24,8 @@
 #error Unknown REGISTER_SIZE
 #endif
 
-#define IREG_SIZE	8
-#define FREG_SIZE	8
+#define IREG_SIZE 8
+#define FREG_SIZE 8
 
 #define MONO_ARCH_HAVE_PATCH_CODE_NEW 1
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
@@ -35,8 +35,6 @@
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
 #define MONO_ARCH_HAVE_SDB_TRAMPOLINES 1
 
-//#define MONO_ARCH_HAVE_DECOMPOSE_OPTS 1
-
 #define MONO_ARCH_HAVE_GENERALIZED_IMT_TRAMPOLINE 1
 #define MONO_ARCH_SOFT_DEBUG_SUPPORTED 1
 #define MONO_ARCH_HAVE_SETUP_RESUME_FROM_SIGNAL_HANDLER_CTX 1
@@ -45,14 +43,15 @@
 /* set the next to 0 once inssel-loongarch.brg is updated */
 #define LOONGARCH_PASS_STRUCTS_BY_VALUE 1
 
-#define MONO_ARCH_USE_SIGACTION  1
+#define MONO_ARCH_USE_SIGACTION 1
 #define MONO_ARCH_NEED_DIV_CHECK 1
 #define MONO_ARCH_NO_IOV_CHECK 1
+#define MONO_ARCH_HAVE_DECOMPOSE_OPTS 1
 
 // Does the ABI have a volatile non-parameter register, so tailcall
 // can pass context to generics or interfaces?
 #define MONO_ARCH_HAVE_VOLATILE_NON_PARAM_REGISTER 1
-
+#define MONO_CONTEXT_SET_LLVM_EXC_REG(ctx, exc) do { (ctx)->regs [4] = (gsize)exc; } while (0)
 #define MONO_INIT_CONTEXT_FROM_FUNC(ctx,func) do {	\
 	MONO_CONTEXT_SET_BP ((ctx), __builtin_frame_address (0));			\
 	MONO_CONTEXT_SET_SP ((ctx), __builtin_frame_address (0));			\
@@ -61,17 +60,13 @@
 
 #define MONO_ARCH_INIT_TOP_LMF_ENTRY(lmf)
 
-///* re-attaches with gdb - sometimes causes executable to hang */
-//#undef HAVE_BACKTRACE_SYMBOLS
-//#undef DEBUG_EXCEPTIONS
-
 /*
  * r21 and t0/t8 used internally,
  * a0-a7 are for arguments,
  */
 #define loongarch_temp  loongarch_t8
 
-#define LOONGARCH_T_REGS	((1 << loongarch_t1) | \
+#define LOONGARCH_T_REGS ((1 << loongarch_t1) | \
 			 (1 << loongarch_t2) | \
 			 (1 << loongarch_t3) | \
 			 (1 << loongarch_t4) | \
@@ -79,7 +74,7 @@
 			 (1 << loongarch_t6) | \
 			 (1 << loongarch_t7))
 
-#define LOONGARCH_S_REGS	((1 << loongarch_s0) | \
+#define LOONGARCH_S_REGS ((1 << loongarch_s0) | \
 			 (1 << loongarch_s1) | \
 			 (1 << loongarch_s2) | \
 			 (1 << loongarch_s3) | \
@@ -89,7 +84,7 @@
 			 (1 << loongarch_s7) | \
 			 (1 << loongarch_s8))
 
-#define LOONGARCH_A_REGS	((1 << loongarch_a0) | \
+#define LOONGARCH_A_REGS ((1 << loongarch_a0) | \
 			 (1 << loongarch_a1) | \
 			 (1 << loongarch_a2) | \
 			 (1 << loongarch_a3) | \
@@ -98,16 +93,15 @@
 			 (1 << loongarch_a6) | \
 			 (1 << loongarch_a7))
 
-#define PARAM_REGS  (loongarch_a7+1)
+#define PARAM_REGS (loongarch_a7+1)
 #define FP_PARAM_REGS 8
 #define RETURN_REGS 2
 #define FLOAT_RETURN_REGS 2
 
-#define MONO_ARCH_CALLEE_REGS		(LOONGARCH_T_REGS | LOONGARCH_A_REGS)
-#define MONO_ARCH_CALLEE_SAVED_REGS	LOONGARCH_S_REGS
-//#define LOONGARCH_ARG_REGS			LOONGARCH_A_REGS
+#define MONO_ARCH_CALLEE_REGS (LOONGARCH_T_REGS | LOONGARCH_A_REGS)
+#define MONO_ARCH_CALLEE_SAVED_REGS LOONGARCH_S_REGS
 
-#define MONO_ARCH_CALLEE_FREGS		((1 << loongarch_f0) |  \
+#define MONO_ARCH_CALLEE_FREGS ((1 << loongarch_f0) |  \
 			 (1 << loongarch_f1) | \
 			 (1 << loongarch_f2) | \
 			 (1 << loongarch_f3) | \
@@ -130,7 +124,7 @@
 			 (1 << loongarch_ft12) | \
 			 (1 << loongarch_ft13))
 
-#define MONO_ARCH_CALLEE_SAVED_FREGS	((1 << loongarch_fs0) |  \
+#define MONO_ARCH_CALLEE_SAVED_FREGS ((1 << loongarch_fs0) |  \
 			 (1 << loongarch_fs1) | \
 			 (1 << loongarch_fs2) | \
 			 (1 << loongarch_fs3) | \
@@ -145,32 +139,26 @@
 #define MONO_ARCH_USE_FPSTACK FALSE
 
 /* Parameters used by the register allocator */
-#define MONO_ARCH_INST_SREG2_MASK(ins)		(0)
-#define MONO_ARCH_INST_IS_REGPAIR(desc)		(0)
+#define MONO_ARCH_INST_SREG2_MASK(ins) (0)
+#define MONO_ARCH_INST_IS_REGPAIR(desc) (0)
 #define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (-1)
-#define MONO_ARCH_INST_IS_FLOAT(desc)		(desc == 'f')
+#define MONO_ARCH_INST_IS_FLOAT(desc) (desc == 'f')
 
 // This define is called to get specific dest register as defined
 // by md file (letter after "dest"). Overwise return -1
-#define MONO_ARCH_INST_FIXED_REG(desc)		((desc) == 'a' ? loongarch_a0 : -1)
+#define MONO_ARCH_INST_FIXED_REG(desc) ((desc) == 'a' ? loongarch_a0 : -1)
 
 /* fixme: align to 16byte instead of 32byte (we align to 32byte to get
  * reproduceable results for benchmarks */
 #define MONO_ARCH_CODE_ALIGNMENT 32
 
-
-/* Registers saved in lmf->iregs */
-//#define LOONGARCH64_LMF_IREGMASK (0xffffffff & ~((1 << loongarch_zero) | (1 << loongarch_r21) | MONO_ARCH_CALLEE_REGS))
-
+/* callee saved regs + fp + sp */
 #define MONO_ARCH_LMF_REGS ((0x1ff << 23) | (1 << loongarch_fp) | (1 << loongarch_sp))
 #define MONO_ARCH_NUM_LMF_REGS (9 + 2)
 #define MONO_ARCH_NUM_LMF_FREGS (8)
 #define MONO_ARCH_FIRST_LMF_REG loongarch_s0
-#define MONO_ARCH_LMF_REG_FP 9
-#define MONO_ARCH_LMF_REG_SP 10
-
-//#define MONO_SAVED_GREGS 32
-//#define MONO_SAVED_FREGS 8
+#define MONO_ARCH_LMF_REG_FP 1
+#define MONO_ARCH_LMF_REG_SP 0
 
 struct MonoLMF {
 	gpointer	previous_lmf;
@@ -178,12 +166,12 @@ struct MonoLMF {
 	MonoMethod	*method;
 	gpointer	pc;
 	host_mgreg_t    gregs [MONO_ARCH_NUM_LMF_REGS];
-	gdouble	fregs [MONO_ARCH_NUM_LMF_FREGS];
+	gdouble	fregs [MONO_ARCH_NUM_LMF_FREGS];//should confirm ?! why not fpr ?!
 	gulong		magic;
 };
 
 /* Structure used by the sequence points in AOTed code */
-struct SeqPointInfo {
+struct SeqPointInfo {// metadata/object-offsets.h
 	gpointer ss_tramp_addr;
 	guint8* bp_addrs [MONO_ZERO_LEN_ARRAY];
 };
@@ -193,7 +181,7 @@ typedef struct {
 	int saved_gregs_offset;
 	/* Points to arguments received on the stack */
 	int args_reg;
-	gboolean cond_branch_islands;
+	gint8 cond_branch_islands;
 	MonoInst *vret_addr_loc;
 	MonoInst *seq_point_info_var;
 	MonoInst *ss_tramp_var;
@@ -202,30 +190,44 @@ typedef struct {
 	int thunks_size;
 } MonoCompileArch;
 
+#define MONO_ARCH_EMULATE_FCONV_TO_U4 1
 #define MONO_ARCH_EMULATE_FCONV_TO_U8 1
+#define MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS 1
+#define MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS 1
+#define MONO_ARCH_EMULATE_FREM 1
+#define MONO_ARCH_EMULATE_LONG_MUL_OVF_OPTS 1
+#define MONO_ARCH_EMULATE_MUL_OVF 1
+#define MONO_ARCH_FLOAT32_SUPPORTED 1
 
-#define LOONGARCH_RET_ADDR_OFFSET	(-sizeof (target_mgreg_t))
+#define LOONGARCH_RET_ADDR_OFFSET (-sizeof (target_mgreg_t))
 
-#define LOONGARCH_STACK_ALIGNMENT	16
+#define LOONGARCH_STACK_ALIGNMENT 16
 #define MONO_ARCH_FRAME_ALIGNMENT 16
 
-#define LOONGARCH_FIRST_ARG_REG	loongarch_a0
-#define LOONGARCH_LAST_ARG_REG	loongarch_a7
-#define LOONGARCH_FIRST_FPARG_REG	loongarch_f0
-#define LOONGARCH_LAST_FPARG_REG	loongarch_f7
+#define LOONGARCH_FIRST_ARG_REG loongarch_a0
+#define LOONGARCH_LAST_ARG_REG loongarch_a7
+#define LOONGARCH_FIRST_FPARG_REG loongarch_f0
+#define LOONGARCH_LAST_FPARG_REG loongarch_f7
 
-#define MONO_ARCH_IMT_REG	loongarch_t0
-#define MONO_ARCH_RGCTX_REG	MONO_ARCH_IMT_REG
+#define MONO_ARCH_IMT_REG loongarch_t1
+#define MONO_ARCH_RGCTX_REG MONO_ARCH_IMT_REG
 
-#define MONO_ARCH_VTABLE_REG	loongarch_a0
+#define MONO_ARCH_VTABLE_REG loongarch_a0
 
 /* Relocations */
-#define MONO_R_LOONGARCH64_BL  1
-#define MONO_R_LOONGARCH64_B   2
-#define MONO_R_LOONGARCH64_BC  3
-#define MONO_R_LOONGARCH64_BZ  4
-#define MONO_R_LOONGARCH64_J   5
-#define MONO_R_LOONGARCH64_JR  6
+#define MONO_R_LOONGARCH64_BL 1
+#define MONO_R_LOONGARCH64_B 2
+#define MONO_R_LOONGARCH64_BC 3
+#define MONO_R_LOONGARCH64_BZ 4
+#define MONO_R_LOONGARCH64_J 5
+#define MONO_R_LOONGARCH64_JR 6
+
+
+/// some features's macros for LoongArch64
+#define MONO_ARCH_HAVE_INTERP_NATIVE_TO_MANAGED 1
+#define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
+#define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP 1
+#define MONO_ARCH_AOT_SUPPORTED 1
 
 typedef enum {
 	ArgInIReg,
@@ -249,6 +251,8 @@ typedef struct {
 	guint8  slot_size;
 	ArgStorage storage;
 	gboolean sign;
+	gboolean fin_ireg;  //float in ireg when freg is not available.
+	guint32 size;   //for ArgStructByVal size is struction size, for ArgInFReg size is isR.
 } ArgInfo;
 
 struct CallInfo {
@@ -256,7 +260,6 @@ struct CallInfo {
 	int gr;
 	int fr;
 	guint32 stack_usage;
-	//guint32 struct_ret;
 	gboolean pinvoke, vararg;
 	ArgInfo ret;
 	ArgInfo sig_cookie;
@@ -277,5 +280,9 @@ guint8* mono_loongarch64_emit_destroy_frame (guint8 *code, int stack_offset);
 void mono_loongarch64_patch (guint8 *code, guint8 *target, int relocation);
 void mono_loongarch_gsharedvt_init (void);
 GSList* mono_loongarch_get_exception_trampolines (gboolean aot);
-
+guint8* mono_loongarch_emit_imm64 (guint8 *code, int dreg, gint64 imm);
+guint8* mono_loongarch_emit_jirl (guint8 *code, int reg);
+guint8* mono_loongarch_emit_store_regarray (guint8 *code, guint64 regs, int basereg, int offset);
+guint8* mono_loongarch_emit_store_regset (guint8 *code, guint64 regs, int basereg, int offset);
+guint8* mono_loongarch_emit_load_regarray (guint8 *code, guint64 regs, int basereg, int offset);
 #endif /* __MONO_MINI_LOONGARCH64_H__ */

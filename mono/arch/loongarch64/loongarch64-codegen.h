@@ -123,6 +123,7 @@ enum {
 
 #define IS_B_SI28_LOONGARCH(dist)  (((dist) >= -(1 << 27)) && ((dist) < (1 << 27)))
 #define IS_B_SI23_LOONGARCH(dist)  (((dist) >= -(1 << 22)) && ((dist) < (1 << 22)))
+#define IS_B_SI18_LOONGARCH(dist)  (((dist) >= -(1 << 17)) && ((dist) < (1 << 17)))
 
 #define loongarch_is_imm12(val)  (((val) >= -0x800) && ((val) <= 0x7ff))
 #define loongarch_is_imm14(val)  (((val) >= -0x2000) && ((val) <= 0x1fff))
@@ -130,11 +131,10 @@ enum {
 
 #define GASSERT_IS_INT32(val) g_assert((gint)(val) == (long)(val))
 
-/* load constant - no patch-up , will refactor later. */
 #define loongarch_load_const(c,D,v) do {	\
-		if (!loongarch_is_imm12 ((v)))	{	\
-			GASSERT_IS_INT32(v);            \
-			loongarch_lu12iw ((c), (D), ((v)>>12) & 0xfffff); \
+		GASSERT_IS_INT32(v);				\
+		if (!loongarch_is_imm12 ((v))) {	\
+			loongarch_lu12iw ((c), (D), ((v) >> 12) & 0xfffff); \
 			loongarch_ori ((c), (D), (D), ((guint32)(v)) & 0xfff); \
 		}							\
 		else							\
@@ -333,10 +333,10 @@ enum {
 #define loongarch_std(c,src,base,si12)    loongarch_format_2rui(c,0x29c00000,si12,base,src)
 #define loongarch_stptrw(c,src,base,si14) loongarch_format_2rui(c,0x25000000,si14,base,src)
 #define loongarch_stptrd(c,src,base,si14) loongarch_format_2rui(c,0x27000000,si14,base,src)
-#define loongarch_stxb(c,src,base,indx)   loongarch_format_2rui(c,0x38100000,base,src,indx)
-#define loongarch_stxh(c,src,base,indx)   loongarch_format_2rui(c,0x38140000,base,src,indx)
-#define loongarch_stxw(c,src,base,indx)   loongarch_format_2rui(c,0x38180000,base,src,indx)
-#define loongarch_stxd(c,src,base,indx)   loongarch_format_2rui(c,0x381c0000,base,src,indx)
+#define loongarch_stxb(c,src,base,indx)   loongarch_format_3r(c,0x38100000,indx,base,src)
+#define loongarch_stxh(c,src,base,indx)   loongarch_format_3r(c,0x38140000,indx,base,src)
+#define loongarch_stxw(c,src,base,indx)   loongarch_format_3r(c,0x38180000,indx,base,src)
+#define loongarch_stxd(c,src,base,indx)   loongarch_format_3r(c,0x381c0000,indx,base,src)
 /* atomic ops */
 #define loongarch_llw(c,dest,base,si14) loongarch_format_2rui(c,0x20000000,si14,base,dest)
 #define loongarch_lld(c,dest,base,si14) loongarch_format_2rui(c,0x22000000,si14,base,dest)
