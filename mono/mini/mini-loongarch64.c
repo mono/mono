@@ -3,7 +3,7 @@
  * LOONGARCH64 backend for the Mono code generator
  *
  * Authors:
- *   Qiao Pengcheng (qiaopengcheng@loongson.cn)
+ *   Qiao Pengcheng (qiaopengcheng@loongson.cn), Liu An (liuan@loongson.cn)
  *
  * Copyright (c) 2021 Loongson Technology, Inc
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
@@ -74,10 +74,10 @@ static gpointer bp_trampoline;
  * The code generated for sequence points reads from this location, which is
  * made read-only when single stepping is enabled.
  */
-static gpointer ss_trigger_page;
+// static gpointer ss_trigger_page;
 
 /* Enabled breakpoints read from this trigger page */
-static gpointer bp_trigger_page;
+// static gpointer bp_trigger_page;
 
 #undef DEBUG
 #define DEBUG(a) if (cfg->verbose_level > 1) a
@@ -94,6 +94,15 @@ static gpointer bp_trigger_page;
 		inst->inst_p0 = (void*)(addr);	       \
 		mono_bblock_add_inst (cfg->cbb, inst); \
 	} while (0)
+
+#define ins_is_compare(ins) ((ins) && (((ins)->opcode == OP_COMPARE) \
+				       || ((ins)->opcode == OP_ICOMPARE) \
+				       || ((ins)->opcode == OP_LCOMPARE) \
+				       || ((ins)->opcode == OP_RCOMPARE) \
+				       || ((ins)->opcode == OP_FCOMPARE)))
+#define ins_is_compare_imm(ins) ((ins) && (((ins)->opcode == OP_COMPARE_IMM) \
+					   || ((ins)->opcode == OP_ICOMPARE_IMM) \
+					   || ((ins)->opcode == OP_LCOMPARE_IMM)))
 
 #define INS_REWRITE(ins, op, _s1, _s2)	do { \
 			int s1 = _s1;			\
@@ -117,7 +126,7 @@ void
 mono_arch_flush_icache (guint8 *code, gint size)
 {
     /* Linux specific */
-    __builtin___clear_cache(code, code + size);
+	__builtin___clear_cache((char *)code, (char *)(code + size));
 }
 
 void
@@ -424,8 +433,9 @@ mono_arch_cpu_optimizations (guint32 *exclude_mask)
 * 004:one member transmit by reg another by stack;
 * 005:one member transmit by reg another by freg;
 */
-void
-set_struct_field_info (guint8 *field_info, int *index, int size, gboolean is_float) {
+static void
+set_struct_field_info (guint8 *field_info, int *index, int size, gboolean is_float)
+{
 	int i = *index;
 	switch (i) {
 	case 0:			//first field
@@ -546,7 +556,8 @@ add_general (CallInfo *cinfo, ArgInfo *ainfo, int size, gboolean sign)
    Interger standard for struct that size at 0-16 byte
 */
 static void __attribute__((noinline))
-add_iter_struct (CallInfo *cinfo, ArgInfo *ainfo, int size, int align) {
+add_iter_struct (CallInfo *cinfo, ArgInfo *ainfo, int size, int align)
+{
 	int nregs;
 	size = ALIGN_TO (size, 8);
 	nregs = size / 8;
@@ -874,7 +885,8 @@ mono_arch_finish_init (void)
 }
 
 guint8*
-mono_loongarch_emit_imm64 (guint8 *code, int dreg, gint64 imm) {
+mono_loongarch_emit_imm64 (guint8 *code, int dreg, gint64 imm)
+{
 	if (imm >= -0x800 && imm <= 0x7ff) {
 		loongarch_addid (code, dreg, loongarch_zero, imm & 0xfff);
 	} else if (imm >= -0x80000000L && imm <= 0x7fffffffL) {
@@ -894,10 +906,12 @@ mono_loongarch_emit_imm64 (guint8 *code, int dreg, gint64 imm) {
 }
 
 guint8*
-mono_loongarch_emit_jirl (guint8 *code, int reg){
+mono_loongarch_emit_jirl (guint8 *code, int reg)
+{
 	loongarch_jirl (code, 0, reg, 0);
 	return code;
 }
+
 void
 mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_reg, int this_type, int vt_reg)
 {
@@ -941,6 +955,7 @@ mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
 	return ctx->regs [reg];
 }
+
 void
 mono_arch_context_set_int_reg (MonoContext *ctx, int reg, host_mgreg_t val)
 {
@@ -986,6 +1001,7 @@ emit_std (guint8 *code, int rt, int rn, int imm)
 	}
 	return code;
 }
+
 static guint8*
 emit_aotconst (MonoCompile *cfg, guint8 *code, int dreg, guint32 patch_type, gconstpointer data)
 {
@@ -1026,20 +1042,23 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 		EMIT_NEW_BIALU_IMM (cfg, inst_tmp2, OP_LA_SLTI, tmp2, tmp1, 0);
 		EMIT_NEW_BIALU_IMM (cfg, inst_tmp3, OP_ISHL_IMM, tmp3, ins->sreg2, 0x0);
 		EMIT_NEW_BIALU_IMM (cfg, inst_tmp4, OP_LA_SLTI, tmp4, tmp3, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK_LA (cfg, OP_LBNE_UN, tmp2, tmp4, target_bb, NULL);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, tmp2, tmp4);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_LBNE_UN, target_bb);
 
 		//second,judge whether the sreg1 is a positive number
-		MONO_EMIT_NEW_BRANCH_BLOCK_LA (cfg, OP_LBEQZ, tmp2, 0, pos_ov, NULL);
+		MONO_EMIT_NEW_ICOMPARE_IMM (cfg, tmp2, 0);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, pos_ov);
 
 		//start handler sreg1 < 0,sreg < 0
-		tmp1 = ins->sreg1;
-		tmp2 = ins->dreg;
-		MONO_EMIT_NEW_COND_EXC_LA (cfg, ILT, "OverflowException",  ins->sreg1, ins->dreg);
-		MONO_EMIT_NEW_BRANCH_BLOCK_LA (cfg, OP_IBGE, tmp1, tmp2, target_bb, NULL);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->sreg1, ins->dreg);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT, "OverflowException");
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->sreg1, ins->dreg);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE, target_bb);
 
 		//start handler sreg1 > 0,sreg2 > 0
 		MONO_START_BB (cfg, pos_ov);
-		MONO_EMIT_NEW_COND_EXC_LA (cfg, ILT, "OverflowException", ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT, "OverflowException");
 
 		//skip overflow
 		MONO_START_BB (cfg, target_bb);
@@ -1047,7 +1066,8 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 		}
 	case OP_IADD_OVF_UN: {
 		ins->opcode = OP_IADD;
-		MONO_EMIT_NEW_COND_EXC_LA (cfg, ILT_UN, "OverflowException", ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT_UN, "OverflowException");
 		break;
 		}
 	case OP_ISUB_OVF: {
@@ -1065,20 +1085,23 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 		EMIT_NEW_BIALU_IMM (cfg, inst_tmp2, OP_LA_SLTI, tmp2, tmp1, 0);
 		EMIT_NEW_BIALU_IMM (cfg, inst_tmp3, OP_ISHL_IMM, tmp3, ins->sreg2, 0x0);
 		EMIT_NEW_BIALU_IMM (cfg, inst_tmp4, OP_LA_SLTI, tmp4, tmp3, 0);
-		MONO_EMIT_NEW_BRANCH_BLOCK_LA (cfg, OP_LBEQ, tmp2, tmp4, target_bb, NULL);
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, tmp2, tmp4);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_LBEQ, target_bb);
 
 		//second,judge whether the sreg1 is a positive number
-		MONO_EMIT_NEW_BRANCH_BLOCK_LA (cfg, OP_LBEQZ, tmp2, 0, pos_ov, NULL);
+		MONO_EMIT_NEW_LCOMPARE_IMM (cfg, tmp2, 0);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, pos_ov);
 
 		//start handler sreg1 < 0,sreg2 > 0
-		tmp1 = ins->sreg1;
-		tmp2 = ins->dreg;
-		MONO_EMIT_NEW_COND_EXC_LA (cfg, ILT, "OverflowException", ins->sreg1, ins->dreg);
-		MONO_EMIT_NEW_BRANCH_BLOCK_LA (cfg, OP_IBGE, tmp1, tmp2, target_bb, NULL);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->sreg1, ins->dreg);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT, "OverflowException");
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->sreg1, ins->dreg);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBGE, target_bb);
 
 		//start handler sreg1 > 0,sreg2 < 0
 		MONO_START_BB (cfg, pos_ov);
-		MONO_EMIT_NEW_COND_EXC_LA (cfg, ILT, "OverflowException", ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT, "OverflowException");
 
 		//skip overflow
 		MONO_START_BB (cfg, target_bb);
@@ -1086,7 +1109,8 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 		}
 	case OP_ISUB_OVF_UN: {
 		ins->opcode = OP_ISUB;
-		MONO_EMIT_NEW_COND_EXC_LA (cfg, ILT_UN, "OverflowException", ins->sreg1, ins->sreg2);
+		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->sreg1, ins->sreg2);
+		MONO_EMIT_NEW_COND_EXC (cfg, ILT_UN, "OverflowException");
 		break;
 		}
 	}
@@ -1422,22 +1446,21 @@ arg_get_val (CallContext *ccontext, ArgInfo *ainfo, gpointer dest)
 	g_assert (arg_need_temp (ainfo));
 
 	guint8 field_info = ainfo->field_info;
-	int second_exist = (field_info >> 2) & 0x1;
 	int stor_type = (field_info >> 5) & 0x7;
 	int fp1_size = (field_info & 0x2) ? 8 : 4;
 	int fp2_size = (field_info & 0x10) ? 8 : 4;
 	if (stor_type == 5) {
-	 //one store in reg another in freg
+		// one store in reg another in freg
 		if (field_info & 0x1) {
 			if (fp1_size == 4)
 				*(float*)dest = *(float*)&ccontext->fregs [ainfo->freg];
 			else
 				*(double*)dest = *(double*)&ccontext->fregs [ainfo->freg];
 			if (fp2_size == 4) {
-				dest += fp1_size;
+				dest = (gpointer)((long)dest + fp1_size);
 				*(int*)dest = *(int*)&ccontext->gregs [ainfo->reg];
 			} else {
-				dest += 8;
+				dest = (gpointer)((long)dest + 8);
 				*(long*)dest = *(long*)&ccontext->gregs [ainfo->reg];
 			}
 		} else {
@@ -1446,10 +1469,10 @@ arg_get_val (CallContext *ccontext, ArgInfo *ainfo, gpointer dest)
 			else
 				*(long*)dest = *(long*)&ccontext->gregs [ainfo->reg];
 			if (fp2_size == 4) {
-				dest += fp1_size;
+				dest = (gpointer)((long)dest + fp1_size);
 				*(float*)dest = *(float*)&ccontext->fregs [ainfo->freg];
 			} else {
-				dest += 8;
+				dest = (gpointer)((long)dest + 8);
 				*(double*)dest = *(double*)&ccontext->fregs [ainfo->freg];
 			}
 		}
@@ -1464,15 +1487,14 @@ arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 	g_assert (arg_need_temp (ainfo));
 
 	guint8 field_info = ainfo->field_info;
-	int second_exist = (field_info >> 2) & 0x1;
 	int stor_type = (field_info >> 5) & 0x7;
 	int fp1_size = (field_info & 0x2) ? 8 : 4;
 	int fp2_size = (field_info & 0x10) ? 8 : 4;
 	switch (stor_type) {
 		case 0x4: //one store in reg another in stack
-			*(long*)&ccontext->gregs [ainfo->reg] = *(long*)src;
-			(long*)src++;
-			*(gpointer*)(ccontext->stack + ainfo->offset) = *(gsize*)src;
+			*(long *)&ccontext->gregs [ainfo->reg] = *(long *)src;
+			src = (gpointer)((long)src + 8);
+			*(gsize *)(ccontext->stack + ainfo->offset) = *(gsize *)src;
 			break;
 		case 0x5: //one store in reg another in freg
 			if (field_info & 0x1) {
@@ -1481,10 +1503,10 @@ arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 				else
 					*(double*)&ccontext->fregs [ainfo->freg] = *(double*)src;
 				if (fp2_size == 4) {
-					src += fp1_size;
+					src = (gpointer)((long)src + fp1_size);
 					*(int*)&ccontext->gregs [ainfo->reg] = *(int*)src;
 				} else {
-					src += 8;
+					src = (gpointer)((long)src + 8);
 					*(long*)&ccontext->gregs [ainfo->reg] = *(long*)src;
 				}
 			} else {
@@ -1493,10 +1515,10 @@ arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 				else
 					*(long*)&ccontext->gregs [ainfo->reg] = *(long*)src;
 				if (fp2_size == 4) {
-					src += fp1_size;
+					src = (gpointer)((long)src + fp1_size);
 					*(float*)&ccontext->fregs [ainfo->freg] = *(float*)src;
 				} else {
-					src += 8;
+					src = (gpointer)((long)src + 8);
 					*(double*)&ccontext->fregs [ainfo->freg] = *(double*)src;
 				}
 			}
@@ -1506,6 +1528,7 @@ arg_set_val (CallContext *ccontext, ArgInfo *ainfo, gpointer src)
 			break;
 	}
 }
+
 /* Set arguments in the ccontext (for i2n entry) */
 void
 mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, MonoMethodSignature *sig)
@@ -1536,7 +1559,7 @@ mono_arch_set_native_call_context_args (CallContext *ccontext, gpointer frame, M
 
 		if (ainfo->storage == ArgStructByRef) {
 			storage = arg_get_storage (ccontext, ainfo);
-			*(gpointer *)storage = (host_mgreg_t)interp_cb->frame_arg_to_storage ((MonoInterpFrameHandle)frame, sig, i);
+			*(host_mgreg_t *)storage = (host_mgreg_t)interp_cb->frame_arg_to_storage ((MonoInterpFrameHandle)frame, sig, i);
 			continue;
 		}
 
@@ -2025,7 +2048,6 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 	ArgInfo *ainfo;
 	int i, n;
 	CallInfo *cinfo;
-	int is_virtual = 0;
 
 	sig = call->signature;
 
@@ -2140,7 +2162,6 @@ mono_arch_emit_outarg_vt (MonoCompile *cfg, MonoInst *ins, MonoInst *src)
 	MonoCallInst *call = (MonoCallInst*)ins->inst_p0;
 	ArgInfo *ainfo = (ArgInfo*)ins->inst_p1;
 	MonoInst *load;
-	int i;
 
 	switch (ainfo->storage) {
 	case ArgStructByVal: {
@@ -2324,7 +2345,7 @@ mono_arch_tailcall_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig,
 	gboolean res = IS_SUPPORTED_TAILCALL (callee_info->stack_usage <= caller_info->stack_usage)
 		  && IS_SUPPORTED_TAILCALL (caller_info->ret.storage == callee_info->ret.storage);
 
-	// FIXME Limit stack_usage to 1G. emit_ldrx / strx has 32bit limits.
+	// FIXME Limit stack_usage to 1G. emit_ld / st has 32bit limits.
 	res &= IS_SUPPORTED_TAILCALL (callee_info->stack_usage < (1 << 30));
 	res &= IS_SUPPORTED_TAILCALL (caller_info->stack_usage < (1 << 30));
 
@@ -2511,6 +2532,11 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
         mono_bblock_insert_before_ins (bb, ins, (dest)); \
 	} while (0)
 
+#define NEW_INS(cfg,after,dest,op) do {					\
+		MONO_INST_NEW((cfg), (dest), (op));			\
+		mono_bblock_insert_after_ins (bb, (after), (dest));	\
+	} while (0)
+
 /*
  * Remove from the instruction list the instructions that can't be
  * represented with very simple instructions with no register
@@ -2522,10 +2548,238 @@ mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *ins)
 void
 mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 {
-	MonoInst *ins, *temp, *last_ins = NULL;
+	MonoInst *ins, *next, *temp, *last_ins = NULL;
 
 	MONO_BB_FOR_EACH_INS (bb, ins) {
+loop_start:
 		switch (ins->opcode) {
+		case OP_COMPARE:
+			next = ins->next;
+			/* Branch opts can eliminate the branch */
+			if (!next || (!(MONO_IS_COND_BRANCH_OP (next) || MONO_IS_COND_EXC (next) || MONO_IS_SETCC (next)))) {
+				NULLIFY_INS(ins);
+				break;
+			}
+			if (next->opcode == OP_IBEQ)
+				next->opcode = OP_LBEQ;
+			else if (next->opcode == OP_IBGE)
+				next->opcode = OP_LBGE;
+			else if (next->opcode == OP_IBGT)
+				next->opcode = OP_LBGT;
+			else if (next->opcode == OP_IBLE)
+				next->opcode = OP_LBLE;
+			else if (next->opcode == OP_IBLT)
+				next->opcode = OP_LBLT;
+			else if (next->opcode == OP_IBNE_UN)
+				next->opcode = OP_LBNE_UN;
+			else if (next->opcode == OP_IBGE_UN)
+				next->opcode = OP_LBGE_UN;
+			else if (next->opcode == OP_IBGT_UN)
+				next->opcode = OP_LBGT_UN;
+			else if (next->opcode == OP_IBLE_UN)
+				next->opcode = OP_LBLE_UN;
+			else if (next->opcode == OP_IBLT_UN)
+				next->opcode = OP_LBLT_UN;
+			else if (next->opcode == OP_ICEQ)
+				next->opcode = OP_LCEQ;
+			else if (next->opcode == OP_ICGT)
+				next->opcode = OP_LCGT;
+			else if (next->opcode == OP_ICGT_UN)
+				next->opcode = OP_LCGT_UN;
+			else if (next->opcode == OP_ICLT)
+				next->opcode = OP_LCLT;
+			else if (next->opcode == OP_ICLT_UN)
+				next->opcode = OP_LCLT_UN;
+			else if (next->opcode == OP_COND_EXC_IEQ)
+				next->opcode = OP_COND_EXC_EQ;
+			else if (next->opcode == OP_COND_EXC_IGE)
+				next->opcode = OP_COND_EXC_GE;
+			else if (next->opcode == OP_COND_EXC_IGT)
+				next->opcode = OP_COND_EXC_GT;
+			else if (next->opcode == OP_COND_EXC_ILE)
+				next->opcode = OP_COND_EXC_LE;
+			else if (next->opcode == OP_COND_EXC_ILT)
+				next->opcode = OP_COND_EXC_LT;
+			else if (next->opcode == OP_COND_EXC_INE_UN)
+				next->opcode = OP_COND_EXC_NE_UN;
+			else if (next->opcode == OP_COND_EXC_IGE_UN)
+				next->opcode = OP_COND_EXC_GE_UN;
+			else if (next->opcode == OP_COND_EXC_IGT_UN)
+				next->opcode = OP_COND_EXC_GT_UN;
+			else if (next->opcode == OP_COND_EXC_ILE_UN)
+				next->opcode = OP_COND_EXC_LE_UN;
+			else if (next->opcode == OP_COND_EXC_ILT_UN)
+				next->opcode = OP_COND_EXC_LT_UN;
+			else if (next->opcode == OP_COND_EXC_IOV)
+				next->opcode = OP_COND_EXC_OV;
+			else if (next->opcode == OP_COND_EXC_INO)
+				next->opcode = OP_COND_EXC_NO;
+			else if (next->opcode == OP_COND_EXC_IC)
+				next->opcode = OP_COND_EXC_C;
+			else if (next->opcode == OP_COND_EXC_INC)
+				next->opcode = OP_COND_EXC_NC;
+			break;
+
+		case OP_ICOMPARE:
+			next = ins->next;
+			/* Branch opts can eliminate the branch */
+			if (!next || (!(MONO_IS_COND_BRANCH_OP (next) || MONO_IS_COND_EXC (next) || MONO_IS_SETCC (next)))) {
+				NULLIFY_INS(ins);
+				break;
+			}
+			if (next->opcode == OP_LBEQ)
+				next->opcode = OP_IBEQ;
+			else if (next->opcode == OP_LBGE)
+				next->opcode = OP_IBGE;
+			else if (next->opcode == OP_LBGT)
+				next->opcode = OP_IBGT;
+			else if (next->opcode == OP_LBLE)
+				next->opcode = OP_IBLE;
+			else if (next->opcode == OP_LBLT)
+				next->opcode = OP_IBLT;
+			else if (next->opcode == OP_LBNE_UN)
+				next->opcode = OP_IBNE_UN;
+			else if (next->opcode == OP_LBGE_UN)
+				next->opcode = OP_IBGE_UN;
+			else if (next->opcode == OP_LBGT_UN)
+				next->opcode = OP_IBGT_UN;
+			else if (next->opcode == OP_LBLE_UN)
+				next->opcode = OP_IBLE_UN;
+			else if (next->opcode == OP_LBLT_UN)
+				next->opcode = OP_IBLT_UN;
+			else if (next->opcode == OP_LCEQ)
+				next->opcode = OP_ICEQ;
+			else if (next->opcode == OP_LCGT)
+				next->opcode = OP_ICGT;
+			else if (next->opcode == OP_LCGT_UN)
+				next->opcode = OP_ICGT_UN;
+			else if (next->opcode == OP_LCLT)
+				next->opcode = OP_ICLT;
+			else if (next->opcode == OP_LCLT_UN)
+				next->opcode = OP_ICLT_UN;
+			else if (next->opcode == OP_COND_EXC_EQ)
+				next->opcode = OP_COND_EXC_IEQ;
+			else if (next->opcode == OP_COND_EXC_GE)
+				next->opcode = OP_COND_EXC_IGE;
+			else if (next->opcode == OP_COND_EXC_GT)
+				next->opcode = OP_COND_EXC_IGT;
+			else if (next->opcode == OP_COND_EXC_LE)
+				next->opcode = OP_COND_EXC_ILE;
+			else if (next->opcode == OP_COND_EXC_LT)
+				next->opcode = OP_COND_EXC_ILT;
+			else if (next->opcode == OP_COND_EXC_NE_UN)
+				next->opcode = OP_COND_EXC_INE_UN;
+			else if (next->opcode == OP_COND_EXC_GE_UN)
+				next->opcode = OP_COND_EXC_IGE_UN;
+			else if (next->opcode == OP_COND_EXC_GT_UN)
+				next->opcode = OP_COND_EXC_IGT_UN;
+			else if (next->opcode == OP_COND_EXC_LE_UN)
+				next->opcode = OP_COND_EXC_ILE_UN;
+			else if (next->opcode == OP_COND_EXC_LT_UN)
+				next->opcode = OP_COND_EXC_ILT_UN;
+			else if (next->opcode == OP_COND_EXC_OV)
+				next->opcode = OP_COND_EXC_IOV;
+			else if (next->opcode == OP_COND_EXC_NO)
+				next->opcode = OP_COND_EXC_INO;
+			else if (next->opcode == OP_COND_EXC_C)
+				next->opcode = OP_COND_EXC_IC;
+			else if (next->opcode == OP_COND_EXC_NC)
+				next->opcode = OP_COND_EXC_INC;
+			break;
+		case OP_LCOMPARE:
+			next = ins->next;
+			/* Branch opts can eliminate the branch */
+			if (!next || (!(MONO_IS_COND_BRANCH_OP (next) || MONO_IS_COND_EXC (next) || MONO_IS_SETCC (next)))) {
+				NULLIFY_INS(ins);
+				break;
+			}
+			if (next->opcode == OP_IBEQ)
+				next->opcode = OP_LBEQ;
+			else if (next->opcode == OP_IBGE)
+				next->opcode = OP_LBGE;
+			else if (next->opcode == OP_IBGT)
+				next->opcode = OP_LBGT;
+			else if (next->opcode == OP_IBLE)
+				next->opcode = OP_LBLE;
+			else if (next->opcode == OP_IBLT)
+				next->opcode = OP_LBLT;
+			else if (next->opcode == OP_IBNE_UN)
+				next->opcode = OP_LBNE_UN;
+			else if (next->opcode == OP_IBGE_UN)
+				next->opcode = OP_LBGE_UN;
+			else if (next->opcode == OP_IBGT_UN)
+				next->opcode = OP_LBGT_UN;
+			else if (next->opcode == OP_IBLE_UN)
+				next->opcode = OP_LBLE_UN;
+			else if (next->opcode == OP_IBLT_UN)
+				next->opcode = OP_LBLT_UN;
+			else if (next->opcode == OP_ICEQ)
+				next->opcode = OP_LCEQ;
+			else if (next->opcode == OP_ICGT)
+				next->opcode = OP_LCGT;
+			else if (next->opcode == OP_ICGT_UN)
+				next->opcode = OP_LCGT_UN;
+			else if (next->opcode == OP_ICLT)
+				next->opcode = OP_LCLT;
+			else if (next->opcode == OP_ICLT_UN)
+				next->opcode = OP_LCLT_UN;
+			else if (next->opcode == OP_COND_EXC_IEQ)
+				next->opcode = OP_COND_EXC_EQ;
+			else if (next->opcode == OP_COND_EXC_IGE)
+				next->opcode = OP_COND_EXC_GE;
+			else if (next->opcode == OP_COND_EXC_IGT)
+				next->opcode = OP_COND_EXC_GT;
+			else if (next->opcode == OP_COND_EXC_ILE)
+				next->opcode = OP_COND_EXC_LE;
+			else if (next->opcode == OP_COND_EXC_ILT)
+				next->opcode = OP_COND_EXC_LT;
+			else if (next->opcode == OP_COND_EXC_INE_UN)
+				next->opcode = OP_COND_EXC_NE_UN;
+			else if (next->opcode == OP_COND_EXC_IGE_UN)
+				next->opcode = OP_COND_EXC_GE_UN;
+			else if (next->opcode == OP_COND_EXC_IGT_UN)
+				next->opcode = OP_COND_EXC_GT_UN;
+			else if (next->opcode == OP_COND_EXC_ILE_UN)
+				next->opcode = OP_COND_EXC_LE_UN;
+			else if (next->opcode == OP_COND_EXC_ILT_UN)
+				next->opcode = OP_COND_EXC_LT_UN;
+			else if (next->opcode == OP_COND_EXC_IOV)
+				next->opcode = OP_COND_EXC_OV;
+			else if (next->opcode == OP_COND_EXC_INO)
+				next->opcode = OP_COND_EXC_NO;
+			else if (next->opcode == OP_COND_EXC_IC)
+				next->opcode = OP_COND_EXC_C;
+			else if (next->opcode == OP_COND_EXC_INC)
+				next->opcode = OP_COND_EXC_NC;
+			break;
+
+		case OP_COMPARE_IMM:
+		case OP_ICOMPARE_IMM:
+		case OP_LCOMPARE_IMM:
+			next = ins->next;
+			/* Branch opts can eliminate the branch */
+			if (!next || (!(MONO_IS_COND_BRANCH_OP (next) || MONO_IS_COND_EXC (next) || MONO_IS_SETCC (next)))) {
+				NULLIFY_INS(ins);
+				break;
+			}
+			if (ins->inst_imm) {
+				NEW_INS (cfg, last_ins, temp, OP_I8CONST);
+				temp->inst_c0 = ins->inst_imm;
+				temp->dreg = mono_alloc_ireg (cfg);
+				ins->sreg2 = temp->dreg;
+				last_ins = temp;
+			}
+			else {
+				ins->sreg2 = loongarch_zero;
+			}
+			if (ins->opcode == OP_COMPARE_IMM)
+				ins->opcode = OP_COMPARE;
+			else if (ins->opcode == OP_ICOMPARE_IMM)
+				ins->opcode = OP_ICOMPARE;
+			else if (ins->opcode == OP_LCOMPARE_IMM)
+				ins->opcode = OP_LCOMPARE;
+			goto loop_start;
+
 		case OP_IDIV_IMM:
 		case OP_IREM_IMM:
 		case OP_IDIV_UN_IMM:
@@ -2542,6 +2796,509 @@ mono_arch_lowering_pass (MonoCompile *cfg, MonoBasicBlock *bb)
 				ins->opcode = mono_op_imm_to_op (ins->opcode);
 			}
 			break;
+		case OP_IBEQ:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->sreg2 == loongarch_zero) {
+				INS_REWRITE(ins, OP_LA_LBEQZ, last_ins->sreg1, -1);
+			} else {
+				INS_REWRITE(ins, OP_LA_IBEQ, last_ins->sreg1, last_ins->sreg2);
+			}
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBNE_UN:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->sreg2 == loongarch_zero) {
+				INS_REWRITE(ins, OP_LA_LBNEZ, last_ins->sreg1, -1);
+			} else {
+				INS_REWRITE(ins, OP_LA_IBNE_UN, last_ins->sreg1, last_ins->sreg2);
+			}
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBGE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_IBGE, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBGE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_IBGE_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBLT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_IBLT, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBLT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_IBLT_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBLE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_IBLE, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBLE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_IBLE_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBGT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_IBGT, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_IBGT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_IBGT_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBEQ:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->sreg2 == loongarch_zero) {
+				INS_REWRITE(ins, OP_LA_LBEQZ, last_ins->sreg1, -1);
+			} else {
+				INS_REWRITE(ins, OP_LA_LBEQ, last_ins->sreg1, last_ins->sreg2);
+			}
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBNE_UN:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->sreg2 == loongarch_zero) {
+				INS_REWRITE(ins, OP_LA_LBNEZ, last_ins->sreg1, -1);
+			} else {
+				INS_REWRITE(ins, OP_LA_LBNE_UN, last_ins->sreg1, last_ins->sreg2);
+			}
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBGE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LBGE, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBGE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LBGE_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBLT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LBLT, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBLT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LBLT_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBLE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LBLE, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBLE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LBLE_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBGT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LBGT, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LBGT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LBGT_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_CEQ:
+		case OP_ICEQ:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICEQ, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_CLT:
+		case OP_ICLT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICLT, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_CLT_UN:
+		case OP_ICLT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICLT_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_CGT:
+		case OP_ICGT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICGT, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_CGT_UN:
+		case OP_ICGT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICGT_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_ICNEQ:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICNEQ, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_ICGE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICGE, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_ICGE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICGE_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_ICLE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICLE, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_ICLE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_ICLE_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LCEQ:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LCEQ, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LCLT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LCLT, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LCLT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LCLT_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LCGT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LCGT, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_LCGT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_LCGT_UN, last_ins->sreg1, last_ins->sreg2);
+			NULLIFY_INS(last_ins);
+			break;
+
+		case OP_COND_EXC_EQ:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_EQ, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_GE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_GE, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_GT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_GT, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_LE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_LE, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_LT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_LT, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_NE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_NE_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_GE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_GE_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_GT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_GT_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_LE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_LE_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_LT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_LT_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_OV:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_OV, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_NO:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_NO, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_C:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_C, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_NC:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_NC, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_IEQ:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_IEQ, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_IGE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_IGE, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_IGT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_IGT, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_ILE:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_ILE, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_ILT:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_ILT, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_INE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_INE_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_IGE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_IGE_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_IGT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_IGT_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_ILE_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_ILE_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_ILT_UN:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_ILT_UN, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_IOV:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_IOV, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_INO:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_INO, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_IC:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_IC, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_COND_EXC_INC:
+			g_assert (ins_is_compare(last_ins));
+			INS_REWRITE(ins, OP_LA_COND_EXC_INC, last_ins->sreg1, last_ins->sreg2);
+			MONO_DELETE_INS(bb, last_ins);
+			break;
+
+		case OP_FCOMPARE:
+		case OP_RCOMPARE:
+			next = ins->next;
+			/* Branch opts can eliminate the branch */
+			if (!next || (!(MONO_IS_COND_BRANCH_OP (next) || MONO_IS_COND_EXC (next) || MONO_IS_SETCC (next)))) {
+				NULLIFY_INS(ins);
+				break;
+			}
+			ins->dreg = mono_alloc_ireg (cfg);
+			break;
+
+		case OP_FBEQ:
+		case OP_RBEQ:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_FCEQ;
+			else
+				last_ins->opcode = OP_RCEQ;
+			break;
+
+		case OP_FBGE:
+		case OP_RBGE:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_FCGE;
+			else
+				last_ins->opcode = OP_RCGE;
+			break;
+
+		case OP_FBGT:
+		case OP_RBGT:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_FCGT;
+			else
+				last_ins->opcode = OP_RCGT;
+			break;
+
+		case OP_FBLE:
+		case OP_RBLE:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_FCLE;
+			else
+				last_ins->opcode = OP_RCLE;
+			break;
+
+		case OP_FBLT:
+		case OP_RBLT:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_FCLT;
+			else
+				last_ins->opcode = OP_RCLT;
+			break;
+
+		case OP_FBNE_UN:
+		case OP_RBNE_UN:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_LA_FCNEQ_UN;
+			else
+				last_ins->opcode = OP_LA_RCNEQ_UN;
+			break;
+
+		case OP_FBGE_UN:
+		case OP_RBGE_UN:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_LA_FCGE_UN;
+			else
+				last_ins->opcode = OP_LA_RCGE_UN;
+			break;
+
+		case OP_FBGT_UN:
+		case OP_RBGT_UN:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_FCGT_UN;
+			else
+				last_ins->opcode = OP_RCGT_UN;
+			break;
+
+		case OP_FBLE_UN:
+		case OP_RBLE_UN:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_LA_FCLE_UN;
+			else
+				last_ins->opcode = OP_LA_RCLE_UN;
+			break;
+
+		case OP_FBLT_UN:
+		case OP_RBLT_UN:
+			g_assert (ins_is_compare(last_ins));
+			if (last_ins->opcode == OP_FCOMPARE)
+				last_ins->opcode = OP_FCLT_UN;
+			else
+				last_ins->opcode = OP_RCLT_UN;
+			break;
+
+		case OP_RCNEQ:
+			ins->opcode == OP_LA_RCNEQ_UN;
+			break;
 		default:
 			break;
 		}
@@ -2557,79 +3314,79 @@ opcode_to_loongarchcond (int opcode, gint *src1, gint *src2)
 {
 	gint swp;
 	switch (opcode) {
-	case OP_IBEQ:
-	case OP_LBEQ:
+	case OP_LA_IBEQ:
+	case OP_LA_LBEQ:
 	case OP_FBEQ:
-	case OP_COND_EXC_EQ:
-	case OP_COND_EXC_IEQ:
+	case OP_LA_COND_EXC_EQ:
+	case OP_LA_COND_EXC_IEQ:
 		return 0x58000000;
-	case OP_IBGE:
-	case OP_LBGE:
+	case OP_LA_IBGE:
+	case OP_LA_LBGE:
 	case OP_FBGE:
-	case OP_COND_EXC_IGE:
-	case OP_COND_EXC_GE:
+	case OP_LA_COND_EXC_IGE:
+	case OP_LA_COND_EXC_GE:
 		return 0x64000000;
-	case OP_IBGT:
-	case OP_LBGT:
+	case OP_LA_IBGT:
+	case OP_LA_LBGT:
 	case OP_FBGT:
-	case OP_COND_EXC_IGT:
-	case OP_COND_EXC_GT:
+	case OP_LA_COND_EXC_IGT:
+	case OP_LA_COND_EXC_GT:
 		swp = *src1;
 		*src1 = *src2;
 		*src2 = swp;
 		return 0x60000000;
-	case OP_IBLE:
-	case OP_LBLE:
+	case OP_LA_IBLE:
+	case OP_LA_LBLE:
 	case OP_FBLE:
-	case OP_COND_EXC_ILE:
-	case OP_COND_EXC_LE:
+	case OP_LA_COND_EXC_ILE:
+	case OP_LA_COND_EXC_LE:
 		swp = *src1;
 		*src1 = *src2;
 		*src2 = swp;
 		return 0x64000000;
-	case OP_IBLT:
-	case OP_LBLT:
+	case OP_LA_IBLT:
+	case OP_LA_LBLT:
 	case OP_FBLT:
-	case OP_COND_EXC_ILT:
-	case OP_COND_EXC_LT:
+	case OP_LA_COND_EXC_ILT:
+	case OP_LA_COND_EXC_LT:
 		return 0x60000000;
-	case OP_IBNE_UN:
-	case OP_LBNE_UN:
+	case OP_LA_IBNE_UN:
+	case OP_LA_LBNE_UN:
 	case OP_FBNE_UN:
-	case OP_COND_EXC_NE_UN:
-	case OP_COND_EXC_INE_UN:
+	case OP_LA_COND_EXC_NE_UN:
+	case OP_LA_COND_EXC_INE_UN:
 		return 0x5c000000;
-	case OP_IBGE_UN:
-	case OP_LBGE_UN:
+	case OP_LA_IBGE_UN:
+	case OP_LA_LBGE_UN:
 	case OP_FBGE_UN:
-	case OP_COND_EXC_IGE_UN:
-	case OP_COND_EXC_GE_UN:
-	case OP_COND_EXC_C:
-	case OP_COND_EXC_IC:
+	case OP_LA_COND_EXC_IGE_UN:
+	case OP_LA_COND_EXC_GE_UN:
+	case OP_LA_COND_EXC_C:
+	case OP_LA_COND_EXC_IC:
 		return 0x6c000000;
-	case OP_IBGT_UN:
-	case OP_LBGT_UN:
+	case OP_LA_IBGT_UN:
+	case OP_LA_LBGT_UN:
 	case OP_FBGT_UN:
-	case OP_COND_EXC_IGT_UN:
-	case OP_COND_EXC_GT_UN:
+	case OP_LA_COND_EXC_IGT_UN:
+	case OP_LA_COND_EXC_GT_UN:
 		swp = *src1;
 		*src1 = *src2;
 		*src2 = swp;
 		return 0x68000000;
-	case OP_IBLE_UN:
-	case OP_LBLE_UN:
-	case OP_COND_EXC_ILE_UN:
-	case OP_COND_EXC_LE_UN:
+	case OP_LA_IBLE_UN:
+	case OP_LA_LBLE_UN:
+	case OP_LA_COND_EXC_ILE_UN:
+	case OP_LA_COND_EXC_LE_UN:
 		swp = *src1;
 		*src1 = *src2;
 		*src2 = swp;
 		return 0x6c000000;
-	case OP_IBLT_UN:
-	case OP_LBLT_UN:
-	case OP_COND_EXC_ILT_UN:
-	case OP_COND_EXC_LT_UN:
-	case OP_COND_EXC_NC:
-	case OP_COND_EXC_INC:
+	case OP_LA_IBLT_UN:
+	case OP_LA_LBLT_UN:
+	case OP_LA_COND_EXC_ILT_UN:
+	case OP_LA_COND_EXC_LT_UN:
+	case OP_LA_COND_EXC_NC:
+	case OP_LA_COND_EXC_INC:
 		return 0x68000000;
 	default:
 		printf ("%s\n", mono_inst_name (opcode));
@@ -3168,7 +3925,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IDIV:
 		case OP_IREM: {
 			/* Check for zero */
-			loongarch_pcaddi (code, loongarch_t0, 0);
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, "DivideByZeroException", MONO_R_LOONGARCH64_BZ);
 			loongarch_beqz (code, ins->sreg2, 0);
 
@@ -3179,6 +3936,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_or (code, loongarch_r21, loongarch_r21, loongarch_ra);
 			loongarch_bstrpickd (code, loongarch_r21, loongarch_r21, 31, 0);
 
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, "OverflowException", MONO_R_LOONGARCH64_BZ);
 			loongarch_beqz (code, loongarch_r21, 0);
 
@@ -3194,7 +3952,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_IDIV_UN:
 		case OP_IREM_UN: {
 			/* Check for zero */
-			loongarch_pcaddi (code, loongarch_t0, 0);
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, "DivideByZeroException", MONO_R_LOONGARCH64_BZ);
 			loongarch_beqz (code, ins->sreg2, 0);
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
@@ -3209,7 +3967,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LDIV:
 		case OP_LREM: {
 			/* Check for zero */
-			loongarch_pcaddi (code, loongarch_t0, 0);
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, "DivideByZeroException", MONO_R_LOONGARCH64_BZ);
 			loongarch_beqz (code, ins->sreg2, 0);
 
@@ -3219,6 +3977,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_addid (code, loongarch_ra, ins->sreg2, 1);
 			loongarch_or (code, loongarch_r21, loongarch_r21, loongarch_ra);
 
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, "OverflowException", MONO_R_LOONGARCH64_BZ);
 			loongarch_beqz (code, loongarch_r21, 0);
 
@@ -3232,7 +3991,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_LDIV_UN:
 		case OP_LREM_UN: {
 			/* Check for zero */
-			loongarch_pcaddi (code, loongarch_t0, 0);
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, "DivideByZeroException", MONO_R_LOONGARCH64_BZ);
 			loongarch_beqz (code, ins->sreg2, 0);
 			if (ins->opcode == OP_LDIV_UN) {
@@ -3602,20 +4361,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		}
 			/* EH */
-		case OP_COND_EXC_IC:
-		case OP_COND_EXC_IOV:
-		case OP_COND_EXC_INC:
-		case OP_COND_EXC_INO:
-		case OP_COND_EXC_IEQ:
-		case OP_COND_EXC_INE_UN:
-		case OP_COND_EXC_ILT_UN:
-		case OP_COND_EXC_ILT:
-		case OP_COND_EXC_IGT:
-		case OP_COND_EXC_IGT_UN:
-		case OP_COND_EXC_IGE:
-		case OP_COND_EXC_IGE_UN:
-		case OP_COND_EXC_ILE:
-		case OP_COND_EXC_ILE_UN: {
+		case OP_LA_COND_EXC_IC:
+		case OP_LA_COND_EXC_IOV:
+		case OP_LA_COND_EXC_INC:
+		case OP_LA_COND_EXC_INO:
+		case OP_LA_COND_EXC_IEQ:
+		case OP_LA_COND_EXC_INE_UN:
+		case OP_LA_COND_EXC_ILT_UN:
+		case OP_LA_COND_EXC_ILT:
+		case OP_LA_COND_EXC_IGT:
+		case OP_LA_COND_EXC_IGT_UN:
+		case OP_LA_COND_EXC_IGE:
+		case OP_LA_COND_EXC_IGE_UN:
+		case OP_LA_COND_EXC_ILE:
+		case OP_LA_COND_EXC_ILE_UN: {
 			gint src1;
 			gint src2;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
@@ -3624,32 +4383,32 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			src2 = ins->sreg2;
 			gint cond = opcode_to_loongarchcond (ins->opcode, &src1, &src2);
 			/* Capture PC */
-			loongarch_pcaddi (code, loongarch_t0, 0);
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, (const char*)ins->inst_p1, MONO_R_LOONGARCH64_BC);
 			loongarch_format_2rui (code, cond, 0, src1, src2);
 			break;
 		}
-		case OP_COND_EXC_C:
-		case OP_COND_EXC_OV:
-		case OP_COND_EXC_NC:
-		case OP_COND_EXC_NO:
-		case OP_COND_EXC_EQ:
-		case OP_COND_EXC_NE_UN:
-		case OP_COND_EXC_LT:
-		case OP_COND_EXC_LT_UN:
-		case OP_COND_EXC_GT:
-		case OP_COND_EXC_GT_UN:
-		case OP_COND_EXC_GE:
-		case OP_COND_EXC_GE_UN:
-		case OP_COND_EXC_LE:
-		case OP_COND_EXC_LE_UN: {
+		case OP_LA_COND_EXC_C:
+		case OP_LA_COND_EXC_OV:
+		case OP_LA_COND_EXC_NC:
+		case OP_LA_COND_EXC_NO:
+		case OP_LA_COND_EXC_EQ:
+		case OP_LA_COND_EXC_NE_UN:
+		case OP_LA_COND_EXC_LT:
+		case OP_LA_COND_EXC_LT_UN:
+		case OP_LA_COND_EXC_GT:
+		case OP_LA_COND_EXC_GT_UN:
+		case OP_LA_COND_EXC_GE:
+		case OP_LA_COND_EXC_GE_UN:
+		case OP_LA_COND_EXC_LE:
+		case OP_LA_COND_EXC_LE_UN: {
 			gint src1;
 			gint src2;
 			src1 = ins->sreg1;
 			src2 = ins->sreg2;
 			gint cond = opcode_to_loongarchcond (ins->opcode, &src1, &src2);
 			/* Capture PC */
-			loongarch_pcaddi (code, loongarch_t0, 0);
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, (const char*)ins->inst_p1, MONO_R_LOONGARCH64_BC);
 			loongarch_format_2rui (code, cond, 0, src1, src2);
 			break;
@@ -3745,19 +4504,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_BR_REG:
 			loongarch_jirl (code, 0, ins->sreg1, 0);
 			break;
-
-		case OP_CEQ:
-		case OP_CLT:
-		case OP_CLT_UN:
-		case OP_CGT:
-		case OP_CGT_UN:
-			g_assert_not_reached ();
-			break;
 		case OP_RCNEQ:
 			loongarch_fcmpcnes (code, 1, ins->sreg1, ins->sreg2);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
-		case OP_RCNEQ_UN:
+		case OP_LA_RCNEQ_UN:
 			loongarch_fcmpcunes (code, 1, ins->sreg1, ins->sreg2);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
@@ -3765,7 +4516,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_fcmpcles (code, 1, ins->sreg1, ins->sreg2);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
-		case OP_RCLE_UN:
+		case OP_LA_RCLE_UN:
 			loongarch_fcmpcules (code, 1, ins->sreg1, ins->sreg2);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
@@ -3773,15 +4524,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_fcmpcles (code, 1, ins->sreg2, ins->sreg1);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
-		case OP_RCGE_UN:
+		case OP_LA_RCGE_UN:
 			loongarch_fcmpcules (code, 1, ins->sreg2, ins->sreg1);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
 		case OP_FCNEQ:
-			loongarch_fcmpcned (code, 1, ins->sreg1, ins->sreg2);//cc=1
+			loongarch_fcmpcuned (code, 1, ins->sreg1, ins->sreg2);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
-		case OP_FCNEQ_UN:
+		case OP_LA_FCNEQ_UN:
 			loongarch_fcmpcuned (code, 1, ins->sreg1, ins->sreg2);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
@@ -3789,7 +4540,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_fcmpcled (code, 1, ins->sreg1, ins->sreg2);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
-		case OP_FCLE_UN:
+		case OP_LA_FCLE_UN:
 			loongarch_fcmpculed (code, 1, ins->sreg1, ins->sreg2);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
@@ -3797,7 +4548,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_fcmpcled (code, 1, ins->sreg2, ins->sreg1);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
-		case OP_FCGE_UN:
+		case OP_LA_FCGE_UN:
 			loongarch_fcmpculed (code, 1, ins->sreg2, ins->sreg1);//cc=1
 			loongarch_movcf2gr (code, ins->dreg, 1);
 			break;
@@ -3817,14 +4568,15 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 
-		case OP_ICEQ:
+		case OP_LA_CEQ:
+		case OP_LA_ICEQ:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
 			loongarch_xor (code, ins->dreg, ins->sreg1, ins->sreg2);
 			loongarch_sltui (code, ins->dreg, ins->dreg, 1);
 			break;
-		case OP_ICNEQ:
+		case OP_LA_ICNEQ:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
@@ -3832,52 +4584,56 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_sltui (code, ins->dreg, ins->dreg, 1);
 			loongarch_xori (code, ins->dreg, ins->dreg, 1);
 			break;
-		case OP_ICLT:
+		case OP_LA_CLT:
+		case OP_LA_ICLT:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
 			loongarch_slt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case OP_ICLT_UN:
+		case OP_LA_CLT_UN:
+		case OP_LA_ICLT_UN:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
 			loongarch_sltu (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case OP_ICLE:
+		case OP_LA_ICLE:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
 			loongarch_slt (code, ins->dreg, ins->sreg2, ins->sreg1);
 			loongarch_xori (code, ins->dreg, ins->dreg, 1);
 			break;
-		case OP_ICLE_UN:
+		case OP_LA_ICLE_UN:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
 			loongarch_sltu (code, ins->dreg, ins->sreg2, ins->sreg1);
 			loongarch_xori (code, ins->dreg, ins->dreg, 1);
 			break;
-		case OP_ICGT:
+		case OP_LA_CGT:
+		case OP_LA_ICGT:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
 			loongarch_slt (code, ins->dreg, ins->sreg2, ins->sreg1);
 			break;
-		case OP_ICGT_UN:
+		case OP_LA_CGT_UN:
+		case OP_LA_ICGT_UN:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
 			loongarch_sltu (code, ins->dreg, ins->sreg2, ins->sreg1);
 			break;
-		case OP_ICGE:
+		case OP_LA_ICGE:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
 			loongarch_slt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			loongarch_xori (code, ins->dreg, ins->dreg, 1);
 			break;
-		case OP_ICGE_UN:
+		case OP_LA_ICGE_UN:
 			//NOTE:sreg1 and sreg2 should had been sign-extented.;
 			loongarch_slliw (code, ins->sreg1, ins->sreg1, 0x0);
 			loongarch_slliw (code, ins->sreg2, ins->sreg2, 0x0);
@@ -3885,20 +4641,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_xori (code, ins->dreg, ins->dreg, 1);
 			break;
 
-		case OP_LCEQ:
+		case OP_LA_LCEQ:
 			loongarch_xor (code, ins->dreg, ins->sreg1, ins->sreg2);
 			loongarch_sltui (code, ins->dreg, ins->dreg, 1);
 			break;
-		case OP_LCLT:
+		case OP_LA_LCLT:
 			loongarch_slt (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case OP_LCLT_UN:
+		case OP_LA_LCLT_UN:
 			loongarch_sltu (code, ins->dreg, ins->sreg1, ins->sreg2);
 			break;
-		case OP_LCGT:
+		case OP_LA_LCGT:
 			loongarch_slt (code, ins->dreg, ins->sreg2, ins->sreg1);
 			break;
-		case OP_LCGT_UN:
+		case OP_LA_LCGT_UN:
 			loongarch_sltu (code, ins->dreg, ins->sreg2, ins->sreg1);
 			break;
 
@@ -4337,13 +5093,13 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_fabsd (code, loongarch_ftemp2, ins->sreg1);
 			loongarch_fcmpcltd (code, 1, loongarch_ftemp, loongarch_ftemp2);//cc=1
 
-			loongarch_pcaddi (code, loongarch_t0, 0);
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, "ArithmeticException", MONO_R_LOONGARCH64_BZ);
 			loongarch_bcnez (code, 1, 0);//cc=1
 
 			/* Check for nans */
 			loongarch_fcmpcund (code, 1, loongarch_ftemp2, loongarch_ftemp2);//cc=1
-			loongarch_pcaddi (code, loongarch_t0, 0);
+			loongarch_pcaddi (code, loongarch_t0, 1);
 			mono_add_patch_info_rel (cfg, code - cfg->native_code, MONO_PATCH_INFO_EXC, "ArithmeticException", MONO_R_LOONGARCH64_BZ);
 			loongarch_bcnez (code, 1, 0);//cc=1
 			loongarch_fmovd (code, ins->dreg, ins->sreg1);
@@ -4386,16 +5142,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 					loongarch_std (code, i, ins->sreg1, MONO_STRUCT_OFFSET (MonoContext, regs) + i * sizeof (target_mgreg_t));
 			break;
 
-		case OP_IBEQ:
-		case OP_IBGE:
-		case OP_IBGT:
-		case OP_IBLE:
-		case OP_IBLT:
-		case OP_IBNE_UN:
-		case OP_IBGE_UN:
-		case OP_IBGT_UN:
-		case OP_IBLE_UN:
-		case OP_IBLT_UN: {
+		case OP_LA_IBEQ:
+		case OP_LA_IBGE:
+		case OP_LA_IBGT:
+		case OP_LA_IBLE:
+		case OP_LA_IBLT:
+		case OP_LA_IBNE_UN:
+		case OP_LA_IBGE_UN:
+		case OP_LA_IBGT_UN:
+		case OP_LA_IBLE_UN:
+		case OP_LA_IBLT_UN: {
 			gint src1;
 			gint src2;
 			gint cond;
@@ -4408,16 +5164,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_format_2rui (code, cond, 0, src1, src2);
 			break;
 		}
-		case OP_LBEQ:
-		case OP_LBGE:
-		case OP_LBGT:
-		case OP_LBLE:
-		case OP_LBLT:
-		case OP_LBNE_UN:
-		case OP_LBGE_UN:
-		case OP_LBGT_UN:
-		case OP_LBLE_UN:
-		case OP_LBLT_UN: {
+		case OP_LA_LBEQ:
+		case OP_LA_LBGE:
+		case OP_LA_LBGT:
+		case OP_LA_LBLE:
+		case OP_LA_LBLT:
+		case OP_LA_LBNE_UN:
+		case OP_LA_LBGE_UN:
+		case OP_LA_LBGT_UN:
+		case OP_LA_LBLE_UN:
+		case OP_LA_LBLT_UN: {
 			gint src1;
 			gint src2;
 			gint cond;
@@ -4442,11 +5198,11 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			loongarch_bcnez (code, 1, 0);
 			break;
 		}
-		case OP_LBEQZ:
+		case OP_LA_LBEQZ:
 			mono_add_patch_info_rel (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_true_bb, MONO_R_LOONGARCH64_BZ);
 			loongarch_beqz (code, ins->sreg1, 0);
 			break;
-		case OP_LBNEZ:
+		case OP_LA_LBNEZ:
 			mono_add_patch_info_rel (cfg, offset, MONO_PATCH_INFO_BB, ins->inst_true_bb, MONO_R_LOONGARCH64_BZ);
 			loongarch_bnez (code, ins->sreg1, 0);
 			break;
@@ -4733,7 +5489,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		MonoInst *ins;
 		CallInfo *cinfo;
 		ArgInfo *ainfo;
-		int i, part;
+		int i;
 		guint8 field_info;
 
 		cinfo = cfg->arch.cinfo;
@@ -4804,7 +5560,6 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					int stor_type = (field_info >> 5) & 0x7;
 					int fp1_size = (field_info & 0x2) ? 8 : 4;
 					int fp2_size = (field_info & 0x10) ? 8 : 4;
-					int offsets = 0;
 					switch (stor_type) {
 					case 0x1: //all store in the freg
 						if (second_exist) {
