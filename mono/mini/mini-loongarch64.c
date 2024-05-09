@@ -125,7 +125,7 @@ MonoInst *mono_arch_get_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, 
 void
 mono_arch_flush_icache (guint8 *code, gint size)
 {
-    /* Linux specific */
+	/* Linux specific */
 	__builtin___clear_cache((char *)code, (char *)(code + size));
 }
 
@@ -1025,16 +1025,16 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 	MonoInst* inst_tmp2 = NULL;
 	MonoInst* inst_tmp3 = NULL;
 	MonoInst* inst_tmp4 = NULL;
+	MonoBasicBlock *target_bb = NULL;
+	MonoBasicBlock *pos_ov = NULL;
 
 	switch (ins->opcode) {
-	case OP_IADD_OVF: {
+	case OP_IADD_OVF:
 		tmp1 = mono_alloc_ireg (cfg);
 		tmp2 = mono_alloc_ireg (cfg);
 		tmp3 = mono_alloc_ireg (cfg);
 		tmp4 = mono_alloc_ireg (cfg);
-		MonoBasicBlock *target_bb = NULL;
 		NEW_BBLOCK (cfg, target_bb);
-		MonoBasicBlock *pos_ov = NULL;
 		NEW_BBLOCK (cfg, pos_ov);
 		//first,judge whether the two sreg signs are same (sreg1 > 0 && sreg2 > 0) || (sreg1 < 0 && sreg2 < 0)
 		ins->opcode = OP_IADD;
@@ -1063,21 +1063,17 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 		//skip overflow
 		MONO_START_BB (cfg, target_bb);
 		break;
-		}
-	case OP_IADD_OVF_UN: {
+	case OP_IADD_OVF_UN:
 		ins->opcode = OP_IADD;
 		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->dreg, ins->sreg1);
 		MONO_EMIT_NEW_COND_EXC (cfg, ILT_UN, "OverflowException");
 		break;
-		}
-	case OP_ISUB_OVF: {
+	case OP_ISUB_OVF:
 		tmp1 = mono_alloc_ireg (cfg);
 		tmp2 = mono_alloc_ireg (cfg);
 		tmp3 = mono_alloc_ireg (cfg);
 		tmp4 = mono_alloc_ireg (cfg);
-		MonoBasicBlock *target_bb = NULL;
 		NEW_BBLOCK (cfg, target_bb);
-		MonoBasicBlock *pos_ov = NULL;
 		NEW_BBLOCK (cfg, pos_ov);
 		//first,judge whether the two sreg signs are different
 		ins->opcode = OP_ISUB;
@@ -1106,13 +1102,89 @@ mono_arch_decompose_opts (MonoCompile *cfg, MonoInst *ins)
 		//skip overflow
 		MONO_START_BB (cfg, target_bb);
 		break;
-		}
-	case OP_ISUB_OVF_UN: {
+	case OP_ISUB_OVF_UN:
 		ins->opcode = OP_ISUB;
 		MONO_EMIT_NEW_BIALU (cfg, OP_ICOMPARE, -1, ins->sreg1, ins->sreg2);
 		MONO_EMIT_NEW_COND_EXC (cfg, ILT_UN, "OverflowException");
 		break;
-		}
+	case OP_LADD_OVF:
+		tmp1 = mono_alloc_ireg (cfg);
+		tmp2 = mono_alloc_ireg (cfg);
+		NEW_BBLOCK (cfg, target_bb);
+		NEW_BBLOCK (cfg, pos_ov);
+		if (COMPILE_LLVM (cfg))
+			break;
+		//first,judge whether the two sreg signs are same (sreg1 > 0 && sreg2 > 0) || (sreg1 < 0 && sreg 2 < 0)
+		ins->opcode = OP_LADD;
+		EMIT_NEW_BIALU_IMM (cfg, inst_tmp1, OP_LA_SLTI, tmp1, ins->sreg1, 0);
+		EMIT_NEW_BIALU_IMM (cfg, inst_tmp2, OP_LA_SLTI, tmp2, ins->sreg2, 0);
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, tmp1, tmp2);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_LBNE_UN, target_bb);
+
+		//second,judge whether the sreg1 is a positive number
+		MONO_EMIT_NEW_LCOMPARE_IMM (cfg, tmp1, 0);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, pos_ov);
+
+		//start handler sreg1 < 0,sreg < 0
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->sreg1, ins->dreg);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->sreg1, ins->dreg);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_LBGE, target_bb);
+
+		//start handler sreg1 > 0,sreg2 < 0
+		MONO_START_BB (cfg, pos_ov);
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+
+		//skip overflow
+		MONO_START_BB (cfg, target_bb);
+		break;
+	case OP_LADD_OVF_UN:
+		if (COMPILE_LLVM (cfg))
+			break;
+		ins->opcode = OP_LADD;
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "OverflowException");
+		break;
+	case OP_LSUB_OVF:
+		tmp1 = mono_alloc_ireg (cfg);
+		tmp2 = mono_alloc_ireg (cfg);
+		NEW_BBLOCK (cfg, target_bb);
+		NEW_BBLOCK (cfg, pos_ov);
+		if (COMPILE_LLVM (cfg))
+			break;
+		//first,judge whether the two sreg signs are different
+		ins->opcode = OP_LSUB;
+		EMIT_NEW_BIALU_IMM (cfg, inst_tmp1, OP_LA_SLTI, tmp1, ins->sreg1, 0);
+		EMIT_NEW_BIALU_IMM (cfg, inst_tmp2, OP_LA_SLTI, tmp2, ins->sreg2, 0);
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, tmp1, tmp2);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_LBEQ, target_bb);
+
+		//second,judge whether the sreg1 is a positive number
+		MONO_EMIT_NEW_LCOMPARE_IMM (cfg, tmp1, 0);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_IBEQ, pos_ov);
+
+		//start handler sreg1 < 0,sreg > 0
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->sreg1, ins->dreg);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->sreg1, ins->dreg);
+		MONO_EMIT_NEW_BRANCH_BLOCK (cfg, OP_LBGE, target_bb);
+
+		//start handler sreg1 > 0,sreg2 < 0
+		MONO_START_BB (cfg, pos_ov);
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->dreg, ins->sreg1);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT, "OverflowException");
+
+		//skip overflow
+		MONO_START_BB (cfg, target_bb);
+		break;
+	case OP_LSUB_OVF_UN:
+		if (COMPILE_LLVM (cfg))
+			break;
+		ins->opcode = OP_LSUB;
+		MONO_EMIT_NEW_BIALU (cfg, OP_LCOMPARE, -1, ins->sreg1, ins->sreg2);
+		MONO_EMIT_NEW_COND_EXC (cfg, LT_UN, "OverflowException");
+		break;
 	}
 }
 
