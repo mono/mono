@@ -198,6 +198,8 @@ typedef struct {
 #define MONO_ARCH_EMULATE_LONG_MUL_OVF_OPTS 1
 #define MONO_ARCH_EMULATE_MUL_OVF 1
 #define MONO_ARCH_FLOAT32_SUPPORTED 1
+#define MONO_ARCH_HAVE_OP_TAILCALL_MEMBASE 1
+#define MONO_ARCH_HAVE_OP_TAILCALL_REG 1
 
 #define LOONGARCH_RET_ADDR_OFFSET (-sizeof (target_mgreg_t))
 
@@ -228,6 +230,7 @@ typedef struct {
 #define MONO_ARCH_HAVE_SETUP_ASYNC_CALLBACK 1
 #define MONO_ARCH_HAVE_INTERP_PINVOKE_TRAMP 1
 #define MONO_ARCH_AOT_SUPPORTED 1
+#define MONO_ARCH_HAVE_CONTEXT_SET_INT_REG 1
 
 typedef enum {
 	ArgInIReg,
@@ -284,5 +287,6 @@ guint8* mono_loongarch_emit_imm64 (guint8 *code, int dreg, gint64 imm);
 guint8* mono_loongarch_emit_jirl (guint8 *code, int reg);
 guint8* mono_loongarch_emit_store_regarray (guint8 *code, guint64 regs, int basereg, int offset);
 guint8* mono_loongarch_emit_store_regset (guint8 *code, guint64 regs, int basereg, int offset);
+guint8* mono_loongarch_emit_load_regset (guint8 *code, guint64 regs, int basereg, int offset);
 guint8* mono_loongarch_emit_load_regarray (guint8 *code, guint64 regs, int basereg, int offset);
 #endif /* __MONO_MINI_LOONGARCH64_H__ */

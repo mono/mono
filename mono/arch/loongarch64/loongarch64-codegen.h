@@ -132,7 +132,6 @@ enum {
 #define GASSERT_IS_INT32(val) g_assert((gint)(val) == (long)(val))
 
 #define loongarch_load_const(c,D,v) do {	\
-		GASSERT_IS_INT32(v);				\
 		if (!loongarch_is_imm12 ((v))) {	\
 			loongarch_lu12iw ((c), (D), ((v) >> 12) & 0xfffff); \
 			loongarch_ori ((c), (D), (D), ((guint32)(v)) & 0xfff); \
