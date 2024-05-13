@@ -4678,6 +4678,15 @@ case "$host" in
 		arch_target=riscv64
 		boehm_supported=false
 		;;
+	loongarch64-*)
+		TARGET=LOONGARCH64
+		AOT_SUPPORTED="yes"
+		BTLS_SUPPORTED=yes
+		BTLS_PLATFORM=loongarch64
+		arch_target=loongarch64
+		boehm_supported=false
+		AC_CHECK_HEADER(stdalign.h,[],[BTLS_SUPPORTED=no])
+		;;
 esac
 
 HOST=$TARGET
@@ -4852,6 +4861,10 @@ RISCV64)
 	AC_DEFINE([TARGET_RISCV], [1], [Target is RISC-V])
 	AC_DEFINE([TARGET_RISCV64], [1], [Target is 64-bit RISC-V])
 	;;
+LOONGARCH64)
+	AC_DEFINE(TARGET_LOONGARCH64, 1, [...])
+	arch_target=loongarch64
+	;;
 esac
 
 case "$TARGET" in
@@ -4909,11 +4922,14 @@ RISCV64)
 	AC_DEFINE([HOST_RISCV], [1], [Host is RISC-V])
 	AC_DEFINE([HOST_RISCV64], [1], [Host is 64-bit RISC-V])
 	;;
+LOONGARCH64)
+	AC_DEFINE(HOST_LOONGARCH64, 1, [...])
+	;;
 esac
 
 MONO_ARCH_GSHAREDVT_SUPPORTED=0
 case "$HOST" in
-X86 | AMD64 | ARM | ARM64)
+X86 | AMD64 | ARM | ARM64 | LOONGARCH64)
 	MONO_ARCH_GSHAREDVT_SUPPORTED=1 # keep in sync with mini-{x86,amd64,arm,arm64}.h
 	;;
 esac
@@ -4964,7 +4980,7 @@ fi
 dnl Use GCC atomic ops if they work on the target.
 if test x$GCC = "xyes"; then
 	case $TARGET in
-	X86 | AMD64 | ARM | ARM64 | ARM6432 | POWERPC | POWERPC64 | MIPS | S390X | SPARC | SPARC64 | RISCV32 | RISCV64)
+	X86 | AMD64 | ARM | ARM64 | ARM6432 | POWERPC | POWERPC64 | MIPS | S390X | SPARC | SPARC64 | RISCV32 | RISCV64 | LOONGARCH64)
 		AC_DEFINE(USE_GCC_ATOMIC_OPS, 1, [...])
 		;;
 	esac
@@ -6049,6 +6065,9 @@ if test "x$enable_btls" = "xyes"; then
 	riscv64)
 		btls_arch=riscv64
 		;;
+	loongarch64)
+		btls_arch=loongarch64
+		;;
 	*)
 		AC_MSG_ERROR(Invalid BTLS platform)
 	esac
@@ -6118,6 +6137,7 @@ AM_CONDITIONAL([HOST_RISCV], [test x$HOST = xRISCV32 -o x$HOST = xRISCV64])
 AM_CONDITIONAL([HOST_RISCV32], [test x$HOST = xRISCV32])
 AM_CONDITIONAL([HOST_RISCV64], [test x$HOST = xRISCV64])
 AM_CONDITIONAL(HOST_WASM, test x$HOST = xWASM)
+AM_CONDITIONAL(LOONGARCH64, test x$TARGET = xLOONGARCH64)
 
 AM_CONDITIONAL(CROSS_COMPILE, test "x$host" != "x$target")
 

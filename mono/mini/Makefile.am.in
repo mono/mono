@@ -352,6 +352,15 @@ amd64_sources = \
 	mini-amd64-gsharedvt.h	\
 	tramp-amd64-gsharedvt.c
 
+loongarch64_sources = \
+	mini-loongarch64.c		\
+	mini-loongarch64.h		\
+	exceptions-loongarch64.c	\
+	tramp-loongarch64.c		\
+	mini-loongarch64-gsharedvt.c	\
+	mini-loongarch64-gsharedvt.h	\
+	tramp-loongarch64-gsharedvt.c
+
 ppc_sources = \
 	mini-ppc.c		\
 	mini-ppc.h		\
@@ -615,6 +624,13 @@ target_define=TARGET_AMD64
 ARCH_FULLAOT_EXCLUDE=
 endif
 
+if LOONGARCH64
+arch_sources = $(loongarch64_sources)
+arch_built=cpu-loongarch64.h
+arch_define=__loongarch64
+target_define=TARGET_LOONGARCH64
+endif
+
 if POWERPC
 arch_sources = $(ppc_sources)
 arch_built=cpu-ppc.h
@@ -831,6 +847,9 @@ cpu-x86.h: mini-ops.h cpu-x86.md $(srcdir)/genmdesc.py
 
 cpu-amd64.h: mini-ops.h cpu-amd64.md $(srcdir)/genmdesc.py
 	$(GENMDESC_PRG) cpu-amd64.h amd64_desc $(srcdir)/cpu-amd64.md
+
+cpu-loongarch64.h: mini-ops.h cpu-loongarch64.md $(srcdir)/genmdesc.py
+	$(GENMDESC_PRG) cpu-loongarch64.h loongarch64_desc $(srcdir)/cpu-loongarch64.md
 
 cpu-ppc.h: mini-ops.h cpu-ppc.md $(srcdir)/genmdesc.py
 	$(GENMDESC_PRG) cpu-ppc.h ppcg4 $(srcdir)/cpu-ppc.md
@@ -1069,6 +1088,7 @@ EXTRA_DIST = TestDriver.cs \
 	$(wasm_sources) cpu-wasm.md 		\
 	$(x86_sources) cpu-x86.md 		\
 	$(amd64_sources) cpu-amd64.md 		\
+	$(loongarch64_sources) cpu-loongarch64.md 		\
 	$(ppc_sources) cpu-ppc.md cpu-ppc64.md 	\
 	$(arm_sources) cpu-arm.md 		\
 	$(arm64_sources) cpu-arm64.md 		\

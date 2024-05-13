@@ -95,6 +95,9 @@
 #elif defined(TARGET_WASM)
 #define CONFIG_CPU "wasm"
 #define CONFIG_WORDSIZE "32"
+#elif defined(__loongarch64) || defined(TARGET_LOONGARCH64)
+#define CONFIG_CPU "loongarch64"
+#define CONFIG_WORDSIZE "64"
 #else
 #error Unknown CPU
 #define CONFIG_CPU "unknownCPU"

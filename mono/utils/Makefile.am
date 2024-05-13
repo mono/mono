@@ -312,6 +312,10 @@ if RISCV
 arch_sources += mono-hwcap-riscv.c
 endif
 
+if LOONGARCH64
+arch_sources += mono-hwcap-loongarch64.c
+endif
+
 if HOST_WASM
 arch_sources += mono-hwcap-wasm.c
 endif
