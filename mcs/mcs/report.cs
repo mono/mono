@@ -789,21 +789,20 @@ namespace Mono.CSharp {
 		{
 			string term = Environment.GetEnvironmentVariable ("TERM");
 			bool xterm_colors = false;
-			
-			switch (term){
-			case "xterm":
-			case "rxvt":
-			case "rxvt-unicode": 
-				if (Environment.GetEnvironmentVariable ("COLORTERM") != null){
-					xterm_colors = true;
-				}
-				break;
 
-			case "xterm-color":
-			case "xterm-256color":
+			if (term.IndexOf("color") != -1)
 				xterm_colors = true;
-				break;
-			}
+			else
+				switch (term){
+				case "xterm":
+				case "rxvt":
+				case "rxvt-unicode": 
+					if (Environment.GetEnvironmentVariable ("COLORTERM") != null){
+						xterm_colors = true;
+					}
+					break;
+				}
+
 			if (!xterm_colors)
 				return;
 
