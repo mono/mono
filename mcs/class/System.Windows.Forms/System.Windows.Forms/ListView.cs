@@ -3036,6 +3036,9 @@ namespace System.Windows.Forms
 					if (!Focused)
 						owner.Select (false, true);
 					break;
+				case Msg.WM_RBUTTONUP:
+					m.HWnd = owner.Handle;
+					break;
 				default:
 					break;
 				}
