@@ -21,11 +21,6 @@ namespace System.Net {
             return new string[1]{value};
         }
 
-        //
-        // <
-
-
-
         private static string[] ParseMultiValue(string value) {
             StringCollection tempStringCollection = new StringCollection();
 
@@ -72,7 +67,7 @@ namespace System.Net {
                 new HeaderInfo(HttpKnownHeaderNames.AcceptCharset,      false,  false,  true,   MultiParser),
                 new HeaderInfo(HttpKnownHeaderNames.AcceptEncoding,     false,  false,  true,   MultiParser),
                 new HeaderInfo(HttpKnownHeaderNames.AcceptLanguage,     false,  false,  true,   MultiParser),
-                new HeaderInfo(HttpKnownHeaderNames.Cookie,             false,  false,  true,   MultiParser),
+                new HeaderInfo(HttpKnownHeaderNames.Cookie,             false,  false,  true,   SingleParser),
                 new HeaderInfo(HttpKnownHeaderNames.Connection,         true,   false,  true,   MultiParser),
                 new HeaderInfo(HttpKnownHeaderNames.ContentMD5,         false,  false,  false,  SingleParser),
                 new HeaderInfo(HttpKnownHeaderNames.ContentType,        true,   false,  false,  SingleParser),
@@ -105,8 +100,8 @@ namespace System.Net {
                 new HeaderInfo(HttpKnownHeaderNames.Referer,            true,   false,  false,  SingleParser),
                 new HeaderInfo(HttpKnownHeaderNames.RetryAfter,         false,  false,  false,  SingleParser),
                 new HeaderInfo(HttpKnownHeaderNames.Server,             false,  false,  false,  SingleParser),
-                new HeaderInfo(HttpKnownHeaderNames.SetCookie,          false,  false,  true,   MultiParser),
-                new HeaderInfo(HttpKnownHeaderNames.SetCookie2,         false,  false,  true,   MultiParser),
+                new HeaderInfo(HttpKnownHeaderNames.SetCookie,          false,  false,  true,   SingleParser),
+                new HeaderInfo(HttpKnownHeaderNames.SetCookie2,         false,  false,  true,   SingleParser),
                 new HeaderInfo(HttpKnownHeaderNames.TE,                 false,  false,  true,   MultiParser),
                 new HeaderInfo(HttpKnownHeaderNames.Trailer,            false,  false,  true,   MultiParser),
                 new HeaderInfo(HttpKnownHeaderNames.TransferEncoding,   true,   true,   true,   MultiParser),
