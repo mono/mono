@@ -36,7 +36,7 @@ using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
-	public class TransactionMessageProperty
+	public sealed class TransactionMessageProperty
 	{
 		Transaction tx;
 		Message msg;
