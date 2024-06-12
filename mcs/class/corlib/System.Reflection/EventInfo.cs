@@ -94,12 +94,20 @@ namespace System.Reflection {
 				throw new TargetException ("Object doesn't match target");
 			if (!(dele is D))
 				throw new ArgumentException ($"Object of type {dele.GetType ()} cannot be converted to type {typeof (D)}.");
-			addEvent ((T)obj, (D)dele);
+			try {
+				addEvent ((T)obj, (D)dele);
+			} catch (Exception ex) {
+				throw new TargetInvocationException (ex);
+			}
 		}
 
 		static void StaticAddEventAdapterFrame<D> (StaticAddEvent<D> addEvent, object obj, object dele)
 		{
-			addEvent ((D)dele);
+			try {
+				addEvent ((D)dele);
+			} catch (Exception ex) {
+				throw new TargetInvocationException (ex);
+			}
 		}
 #pragma warning restore 169
 
