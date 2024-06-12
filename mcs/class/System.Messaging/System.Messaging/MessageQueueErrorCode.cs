@@ -99,6 +99,7 @@ namespace System.Messaging
 		MachineExists = -1072824256,
 		MachineNotFound = -1072824307,
 		MessageAlreadyReceived = -1072824291,
+		MessageNotFound = -1072824184,
 		MessageStorageFailed = -1072824278,
 		MissingConnectorType = -1072824235,
 		MqisReadOnlyMode = -1072824224,
