@@ -403,7 +403,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		static string GetTypeNameFromAssemblyQualifiedName (string aqname)
 		{
-			int p = aqname.IndexOf ("]]");
+			int p = aqname.LastIndexOf ("]]");
 			int i = aqname.IndexOf(',', p == -1 ? 0 : p + 2);
 			if (i != -1) aqname = aqname.Substring (0, i).Trim ();
 			return aqname;
