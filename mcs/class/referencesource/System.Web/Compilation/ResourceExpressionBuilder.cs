@@ -21,6 +21,7 @@ namespace System.Web.Compilation {
     using System.Web.Hosting;
     using System.Web.Util;
     using System.Web.UI;
+    
 
 
     [ExpressionPrefix("Resources")]
@@ -51,7 +52,7 @@ namespace System.Web.Compilation {
             // If the parsing failed for any reason throw an error
             if (fields == null) {
                 throw new HttpException(
-                    SR.GetString(SR.Invalid_res_expr, expression));
+                    System.Web.SR.GetString(System.Web.SR.Invalid_res_expr, expression));
             }
 
             // The resource expression was successfully parsed. We now need to check whether
@@ -74,7 +75,7 @@ namespace System.Web.Compilation {
                 // If it doesn't throw an exception
                 if (o == null) {
                     throw new HttpException(
-                        SR.GetString(SR.Res_not_found, fields.ResourceKey));
+                        System.Web.SR.GetString(System.Web.SR.Res_not_found, fields.ResourceKey));
                 }
             }
 
@@ -195,12 +196,12 @@ namespace System.Web.Compilation {
 
             // Get the PropertyDescriptor for the property
             PropertyDescriptor pd = TypeDescriptor.GetProperties(objType)[propName];
-            Debug.Assert(pd != null);
+            System.Web.Util.Debug.Assert(pd != null);
             if (pd == null) return null;
 
             // Get its type descriptor
             TypeConverter converter = pd.Converter;
-            Debug.Assert(converter != null);
+            System.Web.Util.Debug.Assert(converter != null);
             if (converter == null) return null;
 
             // Perform the conversion
@@ -262,7 +263,7 @@ namespace System.Web.Compilation {
                 s_resourceProviderFactory = new ResXResourceProviderFactory();
             }
             else {
-                s_resourceProviderFactory = (ResourceProviderFactory) HttpRuntime.CreatePublicInstance(t);
+                s_resourceProviderFactory = (ResourceProviderFactory) HttpRuntime.CreatePublicInstanceByWebObjectActivator(t);
             }
         }
 

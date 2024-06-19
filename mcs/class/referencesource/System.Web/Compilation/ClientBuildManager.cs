@@ -267,8 +267,8 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
         }
 
         EnsureHostCreated();
-        Debug.Assert(_appId != null);
-        Debug.Assert(_appHost != null);
+        System.Web.Util.Debug.Assert(_appId != null);
+        System.Web.Util.Debug.Assert(_appHost != null);
 
         _host.RegisterAssembly(type.Assembly.FullName, type.Assembly.Location);
 
@@ -280,7 +280,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
      * Return the list of directories that would cause appdomain shutdown.
      */
     public string[] GetAppDomainShutdownDirectories() {
-        Debug.Trace("CBM", "GetAppDomainShutdownDirectories");
+        System.Web.Util.Debug.Trace("CBM", "GetAppDomainShutdownDirectories");
 
         return FileChangesMonitor.s_dirsToMonitor;
     }
@@ -290,7 +290,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
      */
 
     public void CompileApplicationDependencies() {
-        Debug.Trace("CBM", "CompileApplicationDependencies");
+        System.Web.Util.Debug.Trace("CBM", "CompileApplicationDependencies");
 
         EnsureHostCreated();
 
@@ -299,7 +299,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
 
 
     public IDictionary GetBrowserDefinitions() {
-        Debug.Trace("CBM", "GetBrowserDefinitions");
+        System.Web.Util.Debug.Trace("CBM", "GetBrowserDefinitions");
 
         EnsureHostCreated();
 
@@ -312,7 +312,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
      * "/[appname]/App_WebReferences/{[subDir]/}"
      */
     public string GetGeneratedSourceFile(string virtualPath) {
-        Debug.Trace("CBM", "GetGeneratedSourceFile " + virtualPath);
+        System.Web.Util.Debug.Trace("CBM", "GetGeneratedSourceFile " + virtualPath);
 
         if (virtualPath == null) {
             throw new ArgumentNullException("virtualPath");
@@ -328,7 +328,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     * Note the filepath needs to be a full path.
     */
     public string GetGeneratedFileVirtualPath(string filePath) {
-        Debug.Trace("CBM", "GetGeneratedFileVirtualPath " + filePath);
+        System.Web.Util.Debug.Trace("CBM", "GetGeneratedFileVirtualPath " + filePath);
 
         if (filePath == null) {
             throw new ArgumentNullException("filePath");
@@ -343,7 +343,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
      */
 
     public string[] GetVirtualCodeDirectories() {
-        Debug.Trace("CBM", "GetHostedVirtualCodeDirectories");
+        System.Web.Util.Debug.Trace("CBM", "GetHostedVirtualCodeDirectories");
 
         EnsureHostCreated();
 
@@ -355,7 +355,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
      */
 
     public String[] GetTopLevelAssemblyReferences(string virtualPath) {
-        Debug.Trace("CBM", "GetHostedVirtualCodeDirectories");
+        System.Web.Util.Debug.Trace("CBM", "GetHostedVirtualCodeDirectories");
 
         if (virtualPath == null) {
             throw new ArgumentNullException("virtualPath");
@@ -375,7 +375,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     public void GetCodeDirectoryInformation(string virtualCodeDir,
         out Type codeDomProviderType, out CompilerParameters compilerParameters,
         out string generatedFilesDir) {
-        Debug.Trace("CBM", "GetCodeDirectoryInformation " + virtualCodeDir);
+        System.Web.Util.Debug.Trace("CBM", "GetCodeDirectoryInformation " + virtualCodeDir);
 
         if (virtualCodeDir == null) {
             throw new ArgumentNullException("virtualCodeDir");
@@ -386,7 +386,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
         _host.GetCodeDirectoryInformation(VirtualPath.CreateTrailingSlash(virtualCodeDir),
             out codeDomProviderType, out compilerParameters, out generatedFilesDir);
 
-        Debug.Trace("CBM", "GetCodeDirectoryInformation " + virtualCodeDir + " end");
+        System.Web.Util.Debug.Trace("CBM", "GetCodeDirectoryInformation " + virtualCodeDir + " end");
     }
 
     /*
@@ -396,7 +396,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
 
     public void GetCompilerParameters(string virtualPath,
         out Type codeDomProviderType, out CompilerParameters compilerParameters) {
-        Debug.Trace("CBM", "GetCompilerParameters " + virtualPath);
+        System.Web.Util.Debug.Trace("CBM", "GetCompilerParameters " + virtualPath);
 
         if (virtualPath == null) {
             throw new ArgumentNullException("virtualPath");
@@ -414,7 +414,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     public CodeCompileUnit GenerateCodeCompileUnit(
         string virtualPath, out Type codeDomProviderType,
         out CompilerParameters compilerParameters, out IDictionary linePragmasTable) {
-        Debug.Trace("CBM", "GenerateCodeCompileUnit " + virtualPath);
+        System.Web.Util.Debug.Trace("CBM", "GenerateCodeCompileUnit " + virtualPath);
 
         return GenerateCodeCompileUnit(virtualPath, null, 
             out codeDomProviderType, out compilerParameters, out linePragmasTable);
@@ -424,7 +424,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     public CodeCompileUnit GenerateCodeCompileUnit(
         string virtualPath, String virtualFileString, out Type codeDomProviderType,
         out CompilerParameters compilerParameters, out IDictionary linePragmasTable) {
-        Debug.Trace("CBM", "GenerateCodeCompileUnit " + virtualPath);
+        System.Web.Util.Debug.Trace("CBM", "GenerateCodeCompileUnit " + virtualPath);
 
         if (virtualPath == null) {
             throw new ArgumentNullException("virtualPath");
@@ -438,7 +438,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
 
     public string GenerateCode(
         string virtualPath, String virtualFileString, out IDictionary linePragmasTable) {
-        Debug.Trace("CBM", "GenerateCode " + virtualPath);
+        System.Web.Util.Debug.Trace("CBM", "GenerateCode " + virtualPath);
 
         if (virtualPath == null) {
             throw new ArgumentNullException("virtualPath");
@@ -454,7 +454,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
      */
 
     public Type GetCompiledType(string virtualPath) {
-        Debug.Trace("CBM", "GetCompiledType " + virtualPath);
+        System.Web.Util.Debug.Trace("CBM", "GetCompiledType " + virtualPath);
 
         if (virtualPath == null) {
             throw new ArgumentNullException("virtualPath");
@@ -479,7 +479,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     }
 
     public void CompileFile(string virtualPath, ClientBuildManagerCallback callback) {
-        Debug.Trace("CBM", "CompileFile " + virtualPath);
+        System.Web.Util.Debug.Trace("CBM", "CompileFile " + virtualPath);
 
         if (virtualPath == null) {
             throw new ArgumentNullException("virtualPath");
@@ -502,7 +502,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
      * Indicates whether an assembly is a code assembly.
      */
     public bool IsCodeAssembly(string assemblyName) {
-        Debug.Trace("CBM", "IsCodeAssembly " + assemblyName);
+        System.Web.Util.Debug.Trace("CBM", "IsCodeAssembly " + assemblyName);
 
         if (assemblyName == null) {
             throw new ArgumentNullException("assemblyName");
@@ -513,13 +513,13 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
         EnsureHostCreated();
         bool result = _host.IsCodeAssembly(assemblyName);
 
-        Debug.Trace("CBM", "IsCodeAssembly " + result.ToString());
+        System.Web.Util.Debug.Trace("CBM", "IsCodeAssembly " + result.ToString());
         return result;
     }
 
 
     public bool Unload() {
-        Debug.Trace("CBM", "Unload");
+        System.Web.Util.Debug.Trace("CBM", "Unload");
 
         BuildManagerHost host = _host;
         if (host != null) {
@@ -545,7 +545,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     }
 
     public void PrecompileApplication(ClientBuildManagerCallback callback, bool forceCleanBuild) {
-        Debug.Trace("CBM", "PrecompileApplication");
+        System.Web.Util.Debug.Trace("CBM", "PrecompileApplication");
 
         PrecompilationFlags savedFlags = _hostingParameters.ClientBuildManagerParameter.PrecompilationFlags;
 
@@ -556,7 +556,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
             // DevDiv 46290
             _waitForCallBack = _host != null;
 
-            Debug.Trace("CBM", "Started Unload");
+            System.Web.Util.Debug.Trace("CBM", "Started Unload");
             // Unload the existing appdomain so the new one will be created with the clean flag
             Unload();
 
@@ -588,17 +588,17 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     // we do not run into a concurrency issue where _host could be set to null.
     // DevDiv 46290
     private void WaitForCallBack() {
-        Debug.Trace("CBM", "WaitForCallBack");
+        System.Web.Util.Debug.Trace("CBM", "WaitForCallBack");
         int waited = 0;
         while (_waitForCallBack && waited <= 50) {
             Thread.Sleep(200);
             waited++;
         }
         if (_waitForCallBack) {
-            Debug.Trace("CBM", "timeout while waiting for callback");
+            System.Web.Util.Debug.Trace("CBM", "timeout while waiting for callback");
         }
         else {
-            Debug.Trace("CBM", "callback received before timeout");
+            System.Web.Util.Debug.Trace("CBM", "callback received before timeout");
         }
     }
 
@@ -607,11 +607,11 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     }
 
     internal void Initialize(VirtualPath virtualPath, string physicalPath) {
-        Debug.Trace("CBM", "Initialize");
+        System.Web.Util.Debug.Trace("CBM", "Initialize");
 
         _virtualPath = virtualPath;
 
-        _physicalPath = FileUtil.FixUpPhysicalDirectory(physicalPath);
+        _physicalPath = System.Web.Util.FileUtil.FixUpPhysicalDirectory(physicalPath);
 
         _onAppDomainUnloadedCallback = new WaitCallback(OnAppDomainUnloadedCallback);
         _onAppDomainShutdown = new WaitCallback(OnAppDomainShutdownCallback);
@@ -629,14 +629,14 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
                 // Create the host if necessary
                 if (_host == null) {
                     CreateHost();
-                    Debug.Trace("CBM", "EnsureHostCreated: after CreateHost()");
+                    System.Web.Util.Debug.Trace("CBM", "EnsureHostCreated: after CreateHost()");
                 }
             }
         }
 
         // If an exception happened during host creation, rethrow it
         if (_hostCreationException != null) {
-            Debug.Trace("CBM", "EnsureHostCreated: failed. " + _hostCreationException);
+            System.Web.Util.Debug.Trace("CBM", "EnsureHostCreated: failed. " + _hostCreationException);
 
             // We need to wrap it in a new exception, otherwise we lose the original stack.
             throw new HttpException(_hostCreationException.Message,
@@ -645,10 +645,10 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
     }
 
     private void CreateHost() {
-        Debug.Trace("CBM", "CreateHost");
-        Debug.Assert(_host == null);
+        System.Web.Util.Debug.Trace("CBM", "CreateHost");
+        System.Web.Util.Debug.Assert(_host == null);
 
-        Debug.Assert(!_hostCreationPending, "CreateHost: creation already pending");
+        System.Web.Util.Debug.Assert(!_hostCreationPending, "CreateHost: creation already pending");
 
         _hostCreationPending = true;
 
@@ -699,12 +699,12 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
             }
         }
 
-        Debug.Trace("CBM", "CreateHost LEAVE");
+        System.Web.Util.Debug.Trace("CBM", "CreateHost LEAVE");
     }
 
     // Called by BuildManagerHost when the ASP appdomain is unloaded
     internal void OnAppDomainUnloaded(ApplicationShutdownReason reason) {
-        Debug.Trace("CBM", "OnAppDomainUnloaded " + reason.ToString());
+        System.Web.Util.Debug.Trace("CBM", "OnAppDomainUnloaded " + reason.ToString());
 
         _reason = reason;
         _waitForCallBack = false;
@@ -725,7 +725,7 @@ public sealed class ClientBuildManager : MarshalByRefObject, IDisposable {
 
     [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
     private void OnAppDomainUnloadedCallback(Object unused) {
-        Debug.Trace("CBM", "OnAppDomainUnloadedCallback");
+        System.Web.Util.Debug.Trace("CBM", "OnAppDomainUnloadedCallback");
 
         // Notify the client that the appdomain is unloaded
         if (AppDomainUnloaded != null) {

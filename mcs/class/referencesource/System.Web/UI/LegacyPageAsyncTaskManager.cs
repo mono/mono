@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.Util;
 
+
 internal class LegacyPageAsyncTaskManager {
     private Page _page;
     private HttpApplication _app;
@@ -166,7 +167,7 @@ internal class LegacyPageAsyncTaskManager {
                 }
                 catch (SynchronizationLockException) {
                     _failedToStart = true;
-                    throw new InvalidOperationException(SR.GetString(SR.Async_tasks_wrong_thread));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_tasks_wrong_thread));
                 }
             }
         }
@@ -189,12 +190,12 @@ internal class LegacyPageAsyncTaskManager {
     private void ResumeTasks(bool waitUntilDone, bool onCallerThread) {
 
 #if DBG
-        Debug.Trace("Async", "TaskManager.ResumeTasks: onCallerThread=" + onCallerThread + 
+        System.Web.Util.Debug.Trace("Async", "TaskManager.ResumeTasks: onCallerThread=" + onCallerThread + 
             ", _tasksCompleted=" + _tasksCompleted + ", _tasksStarted=" + _tasksStarted);
 
         if (waitUntilDone) {
             // must be on caller thread to wait
-            Debug.Assert(onCallerThread);
+            System.Web.Util.Debug.Assert(onCallerThread);
         }
 #endif
 
@@ -313,7 +314,7 @@ internal class LegacyPageAsyncTaskManager {
     internal void TaskCompleted(bool onCallerThread) {
         int newTasksCompleted = Interlocked.Increment(ref _tasksCompleted);
 
-        Debug.Trace("Async", "TaskManager.TaskCompleted: onCallerThread=" + onCallerThread + 
+        System.Web.Util.Debug.Trace("Async", "TaskManager.TaskCompleted: onCallerThread=" + onCallerThread + 
             ", _tasksCompleted=" + newTasksCompleted + ", _tasksStarted=" + _tasksStarted);
   
         if (newTasksCompleted < _tasksStarted) {
@@ -360,7 +361,7 @@ internal class LegacyPageAsyncTaskManager {
         }
 
         // start the timer
-        Debug.Trace("Async", "Starting timeout timer for " + timerPeriod + " ms");
+        System.Web.Util.Debug.Trace("Async", "Starting timeout timer for " + timerPeriod + " ms");
         _timeoutTimer = new Timer(new TimerCallback(this.TimeoutTimerCallback), null, (int)timerPeriod, -1);
     }
 

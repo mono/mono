@@ -27,6 +27,7 @@ using System.Web.Caching;
 using System.Web.UI;
 using System.Web.Configuration;
 
+
 internal class BuildProvidersCompiler {
     private ICollection _buildProviders;
     private VirtualPath _configPath;
@@ -92,7 +93,7 @@ internal class BuildProvidersCompiler {
         // First, delete all the existing satellite assemblies of the assembly
         // we're about to build (VSWhidbey 87022) (only if it has a fixed name)
         if (OutputAssemblyName != null) {
-            Debug.Assert(!CbmGenerateOnlyMode);
+            System.Web.Util.Debug.Assert(!CbmGenerateOnlyMode);
             StandardDiskBuildResultCache.RemoveSatelliteAssemblies(OutputAssemblyName);
         }
 
@@ -125,7 +126,7 @@ internal class BuildProvidersCompiler {
 
                 // If it specifies a language, it can't also have a culture
                 if (cultureName != null) {
-                    throw new HttpException(SR.GetString(SR.Both_culture_and_language, BuildProvider.GetDisplayName(buildProvider)));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Both_culture_and_language, BuildProvider.GetDisplayName(buildProvider)));
                 }
 
                 // Do we already know the language we'll be using
@@ -133,7 +134,7 @@ internal class BuildProvidersCompiler {
 
                     // If it's different from the current one, fail
                     if (!ctwp.Equals(compilerType)) {
-                        throw new HttpException(SR.GetString(SR.Inconsistent_language,
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Inconsistent_language,
                             BuildProvider.GetDisplayName(buildProvider),
                             BuildProvider.GetDisplayName(firstLanguageBuildProvider)));
                     }
@@ -314,7 +315,7 @@ internal class WebDirectoryBatchCompiler {
 
         // Report all parse exceptions
         if (_parserErrors != null && _parserErrors.Count > 0) {
-            Debug.Assert(!_ignoreProvidersWithErrors);
+            System.Web.Util.Debug.Assert(!_ignoreProvidersWithErrors);
 
             // Throw the first exception as inner exception along with the parse errors.
             HttpParseException newException = 
@@ -365,7 +366,7 @@ internal class WebDirectoryBatchCompiler {
                 continue;
 
             // IgnoreFileBuildProvider's should never be created
-            Debug.Assert(!(buildProvider is IgnoreFileBuildProvider));
+            System.Web.Util.Debug.Assert(!(buildProvider is IgnoreFileBuildProvider));
 
             _buildProviders[vfile.VirtualPath] = buildProvider;
         }
@@ -375,13 +376,13 @@ internal class WebDirectoryBatchCompiler {
         // deleting the assembly, we may have invalidated other BuildResult that we had earlier found
         // to be up to date (VSWhidbey 269297)
         if (DiskBuildResultCache.InUseAssemblyWasDeleted) {
-            Debug.Assert(retryIfDeletionHappens);
+            System.Web.Util.Debug.Assert(retryIfDeletionHappens);
 
             // Only retry if we're doing precompilation.  For standard batching, we can live
             // with the fact that not everything will be built after we're done (and we want to
             // be done as quickly as possible since the user is waiting).
             if (retryIfDeletionHappens && BuildManager.PerformingPrecompilation) {
-                Debug.Trace("WebDirectoryBatchCompiler", "Rerunning AddBuildProviders for '" +
+                System.Web.Util.Debug.Trace("WebDirectoryBatchCompiler", "Rerunning AddBuildProviders for '" +
                     _vdir.VirtualPath + "' because an assembly was out of date.");
 
                 // Pass false for retryIfDeletionHappens to make sure we don't get in an
@@ -409,13 +410,13 @@ internal class WebDirectoryBatchCompiler {
 #if DBG
             if (results != null) {
                 if (DelayLoadType.Enabled) {
-                    Debug.Trace("BuildManager", buildProvider.VirtualPath + " Delay Load Assembly");
+                    System.Web.Util.Debug.Trace("BuildManager", buildProvider.VirtualPath + " Delay Load Assembly");
                 } else {
-                    Debug.Trace("BuildManager", buildProvider.VirtualPath + results.CompiledAssembly.EscapedCodeBase);
+                    System.Web.Util.Debug.Trace("BuildManager", buildProvider.VirtualPath + results.CompiledAssembly.EscapedCodeBase);
                 }
             }
             else {
-                Debug.Trace("BuildManager", buildProvider.VirtualPath + ": no assembly");
+                System.Web.Util.Debug.Trace("BuildManager", buildProvider.VirtualPath + ": no assembly");
             }
 #endif
         }
@@ -519,7 +520,7 @@ internal class WebDirectoryBatchCompiler {
                             if (maxdepth <= (int)depth[child])
                                 maxdepth = (int)depth[child] + 1;
                             else if ((int)depth[child] == -1)
-                                throw new HttpException(SR.GetString(SR.File_Circular_Reference, child.VirtualPath));
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.File_Circular_Reference, child.VirtualPath));
                         }
                         else {
                             recurse = true;
@@ -554,11 +555,11 @@ internal class WebDirectoryBatchCompiler {
 #if DBG
         int i = 0;
         foreach (ICollection buildProviders in _nonDependentBuckets) {
-            Debug.Trace("BuildManager", String.Empty);
-            Debug.Trace("BuildManager", "Bucket " + i + " contains " + buildProviders.Count + " files");
+            System.Web.Util.Debug.Trace("BuildManager", String.Empty);
+            System.Web.Util.Debug.Trace("BuildManager", "Bucket " + i + " contains " + buildProviders.Count + " files");
 
             foreach (BuildProvider buildProvider in buildProviders)
-                Debug.Trace("BuildManager", buildProvider.VirtualPath);
+                System.Web.Util.Debug.Trace("BuildManager", buildProvider.VirtualPath);
             i++;
         }
 #endif

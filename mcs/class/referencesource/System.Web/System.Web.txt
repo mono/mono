@@ -15,19 +15,19 @@
 ; Exceptions messages
 ;
 
-; ExceptionUtil.ParameterInvalid(string parameter)
+; System.Web.Util.ExceptionUtil.ParameterInvalid(string parameter)
 Parameter_Invalid=The parameter '{0}' is invalid.
 
-; ExceptionUtil.ParameterNullOrEmpty(string parameter)
+; System.Web.Util.ExceptionUtil.ParameterNullOrEmpty(string parameter)
 Parameter_NullOrEmpty=The string parameter '{0}' cannot be null or empty.
 
-; ExceptionUtil.PropertyNullOrEmpty(string property)
+; System.Web.Util.ExceptionUtil.PropertyNullOrEmpty(string property)
 Property_NullOrEmpty=The value assigned to property '{0}' cannot be null or empty.
 
-; ExceptionUtil.PropertyInvalid(string property)
+; System.Web.Util.ExceptionUtil.PropertyInvalid(string property)
 Property_Invalid=The value assigned to property '{0}' is invalid.
 
-; ExceptionUtil.UnexpectedError(string methodName)
+; System.Web.Util.ExceptionUtil.UnexpectedError(string methodName)
 Unexpected_Error=An unexpected error occurred in '{0}'.
 
 ; Use with ArgumentException or InvalidOperationException when the parameter name differs from the message name

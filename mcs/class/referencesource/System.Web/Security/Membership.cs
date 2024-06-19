@@ -22,6 +22,7 @@ namespace System.Web.Security {
     using  System.Web.Util;
     using  System.Collections.Specialized;
     using System.Web.Compilation;
+    
 
 
     /// <devdoc>
@@ -46,7 +47,7 @@ namespace System.Web.Security {
             get {
                 Initialize();
                 if (s_Provider == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.Def_membership_provider_not_found));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Def_membership_provider_not_found));
                 }
                 return s_Provider;
             }
@@ -280,12 +281,12 @@ namespace System.Web.Security {
         {
             if ( pageIndex < 0 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageIndex_bad), "pageIndex");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_bad), "pageIndex");
             }
 
             if ( pageSize < 1 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageSize_bad), "pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageSize_bad), "pageSize");
             }
 
             return Provider.GetAllUsers(pageIndex, pageSize, out totalRecords);
@@ -302,12 +303,12 @@ namespace System.Web.Security {
         public static string GeneratePassword(int length, int numberOfNonAlphanumericCharacters) {
             if (length < 1 || length > 128)
             {
-                throw new ArgumentException(SR.GetString(SR.Membership_password_length_incorrect));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Membership_password_length_incorrect));
             }
 
             if( numberOfNonAlphanumericCharacters > length || numberOfNonAlphanumericCharacters < 0 )
             {
-                throw new ArgumentException(SR.GetString(SR.Membership_min_required_non_alphanumeric_characters_incorrect,
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Membership_min_required_non_alphanumeric_characters_incorrect,
                                                          "numberOfNonAlphanumericCharacters"));
             }
 
@@ -371,10 +372,7 @@ namespace System.Web.Security {
             }
             if (s_InitializeException != null)
                 throw s_InitializeException;
-
-            if (HostingEnvironment.IsHosted)
-                HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
-
+            
             lock (s_lock) {
                 if (s_Initialized && s_InitializedDefaultProvider) {
                     return;
@@ -431,9 +429,9 @@ namespace System.Web.Security {
                     foreach (ProviderSettings ps in settings.Providers) {
                         if (ps != null && ps.Parameters != null) {
                             string passwordFormat = ps.Parameters["passwordFormat"];
-                            if (StringUtil.EqualsIgnoreCase(passwordFormat, "Clear") || StringUtil.EqualsIgnoreCase(passwordFormat, "Encrypted")) {
+                            if (System.Web.Util.StringUtil.EqualsIgnoreCase(passwordFormat, "Clear") || System.Web.Util.StringUtil.EqualsIgnoreCase(passwordFormat, "Encrypted")) {
                                 string providerName = ps.Name ?? string.Empty;
-                                WebBaseEvent.RaiseRuntimeError(new ConfigurationErrorsException(SR.GetString(SR.MembershipPasswordFormat_Obsoleted, providerName, passwordFormat)), typeof(MembershipProvider));
+                                WebBaseEvent.RaiseRuntimeError(new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.MembershipPasswordFormat_Obsoleted, providerName, passwordFormat)), typeof(MembershipProvider));
                             }
                         }
                     }
@@ -465,7 +463,7 @@ namespace System.Web.Security {
                 foreach (ProviderSettings ps in settings.Providers) {
                     Type t = Type.GetType(ps.Type, true, true);
                     if (!typeof(MembershipProvider).IsAssignableFrom(t))
-                        throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, typeof(MembershipProvider).ToString()));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, typeof(MembershipProvider).ToString()));
                     MembershipProvider provider = (MembershipProvider)Activator.CreateInstance(t);
                     NameValueCollection pars = ps.Parameters;
                     NameValueCollection cloneParams = new NameValueCollection(pars.Count, StringComparer.Ordinal);
@@ -490,11 +488,11 @@ namespace System.Web.Security {
             s_Providers.SetReadOnly();
 
             if (settings.DefaultProvider == null || s_Providers.Count < 1)
-                throw new ProviderException(SR.GetString(SR.Def_membership_provider_not_specified));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Def_membership_provider_not_specified));
 
             s_Provider = s_Providers[settings.DefaultProvider];
             if (s_Provider == null) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Def_membership_provider_not_found), settings.ElementInformation.Properties["defaultProvider"].Source, settings.ElementInformation.Properties["defaultProvider"].LineNumber);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Def_membership_provider_not_found), settings.ElementInformation.Properties["defaultProvider"].Source, settings.ElementInformation.Properties["defaultProvider"].LineNumber);
             }
 
             return true;
@@ -514,12 +512,12 @@ namespace System.Web.Security {
 
             if ( pageIndex < 0 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageIndex_bad), "pageIndex");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_bad), "pageIndex");
             }
 
             if ( pageSize < 1 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageSize_bad), "pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageSize_bad), "pageSize");
             }
 
             return Provider.FindUsersByName( usernameToMatch,
@@ -559,12 +557,12 @@ namespace System.Web.Security {
 
             if ( pageIndex < 0 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageIndex_bad), "pageIndex");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_bad), "pageIndex");
             }
 
             if ( pageSize < 1 )
             {
-                throw new ArgumentException(SR.GetString(SR.PageSize_bad), "pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageSize_bad), "pageSize");
             }
 
             return Provider.FindUsersByEmail( emailToMatch,

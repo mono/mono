@@ -88,8 +88,7 @@ namespace System.Web.Configuration {
 
             return String.Empty;
         }
-
-        [AspNetHostingPermission(SecurityAction.Assert, Level=AspNetHostingPermissionLevel.Low)]
+        
         string ResolveServerVariableWithAssert(string varname) {
             string result = _request.ServerVariables[varname];
             if (result == null)

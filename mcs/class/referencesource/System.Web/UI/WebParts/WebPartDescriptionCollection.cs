@@ -27,11 +27,11 @@ namespace System.Web.UI.WebControls.WebParts {
             _ids = new HybridDictionary(webPartDescriptions.Count, true /* caseInsensitive */);
             foreach (object obj in webPartDescriptions) {
                 if (obj == null) {
-                    throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "webPartDescriptions");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "webPartDescriptions");
                 }
                 WebPartDescription description = obj as WebPartDescription;
                 if (description == null) {
-                    throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "WebPartDescription"),
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "WebPartDescription"),
                                                 "webPartDescriptions");
                 }
                 string id = description.ID;
@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     _ids.Add(id, description);
                 }
                 else {
-                    throw new ArgumentException(SR.GetString(SR.WebPart_Collection_DuplicateID, "WebPartDescription", id), "webPartDescriptions");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_Collection_DuplicateID, "WebPartDescription", id), "webPartDescriptions");
                 }
             }
         }

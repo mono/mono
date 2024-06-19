@@ -4,6 +4,7 @@
     using System.Collections.ObjectModel;
     using System.Globalization;
     using System.Linq;
+    
 
     public sealed class ModelBinderProviderCollection : Collection<ModelBinderProvider> {
 
@@ -123,7 +124,7 @@
                 provider = new SimpleModelBinderProvider(modelType, binderInstance) { SuppressPrefixCheck = attr.SuppressPrefixCheck };
             }
             else {
-                string errorMessage = String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.ModelBinderProviderCollection_InvalidBinderType),
+                string errorMessage = String.Format(CultureInfo.CurrentCulture, System.Web.SR.GetString(System.Web.SR.ModelBinderProviderCollection_InvalidBinderType),
                     attr.BinderType, typeof(ModelBinderProvider), typeof(IModelBinder));
                 throw new InvalidOperationException(errorMessage);
             }

@@ -23,6 +23,7 @@ namespace System.Web.Configuration {
     using System.Threading;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     /*
         <!-- compilation Attributes:
@@ -127,12 +128,12 @@ namespace System.Web.Configuration {
             new ConfigurationProperty("maxBatchGeneratedFileSize", typeof(int), 1000, ConfigurationPropertyOptions.None);
         private static readonly ConfigurationProperty _propNumRecompilesBeforeAppRestart =
             new ConfigurationProperty("numRecompilesBeforeAppRestart", typeof(int), 15, ConfigurationPropertyOptions.None);
-#if !FEATURE_PAL // FEATURE_PAL does not support VisualBasic
+#if MONO || !FEATURE_PAL // FEATURE_PAL does not support VisualBasic
         private static readonly ConfigurationProperty _propDefaultLanguage =
             new ConfigurationProperty("defaultLanguage", typeof(string), "vb", ConfigurationPropertyOptions.None);
 #else // !FEATURE_PAL
         private static readonly ConfigurationProperty _propDefaultLanguage =
-            new ConfigurationProperty("defaultLanguage", typeof(string),"c#",ConfigurationPropertyFlags.None);
+            new ConfigurationProperty("defaultLanguage", typeof(string),"c#",ConfigurationPropertyOptions.None);
 #endif // !FEATURE_PAL
         private static readonly ConfigurationProperty _propTargetFramework =
             new ConfigurationProperty("targetFramework", typeof(string), null, ConfigurationPropertyOptions.None);
@@ -231,13 +232,13 @@ namespace System.Web.Configuration {
         public CompilationSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
         }
 
-        protected override object GetRuntimeObject() {
+        protected internal override object GetRuntimeObject() {
             _isRuntimeObject = true;
             return base.GetRuntimeObject();
         }
@@ -447,7 +448,7 @@ namespace System.Web.Configuration {
 
                             // Only allow this in full trust
                             if (!HttpRuntime.HasUnmanagedPermission()) {
-                                throw new ConfigurationErrorsException(SR.GetString(SR.Insufficient_trust_for_attribute, assemblyPostProcessorTypeAttributeName),
+                                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Insufficient_trust_for_attribute, assemblyPostProcessorTypeAttributeName),
                                     ElementInformation.Properties[assemblyPostProcessorTypeAttributeName].Source,
                                     ElementInformation.Properties[assemblyPostProcessorTypeAttributeName].LineNumber);
                             }
@@ -590,7 +591,7 @@ namespace System.Web.Configuration {
                 if (!throwOnFail) return null;
 
                 // Unsupported extension: throw an exception
-                throw new HttpException(SR.GetString(SR.Invalid_lang_extension, extension));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_lang_extension, extension));
             }
 
             // Clone it so the original is not modified
@@ -639,7 +640,7 @@ namespace System.Web.Configuration {
             if (compilerType == null) {
 
                 // Unsupported language: throw an exception
-                throw new HttpException(SR.GetString(SR.Invalid_lang, language));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_lang, language));
             }
 
             // Only allow the use of compilerOptions when we have UnmanagedCode access (ASURT 73678)
@@ -743,7 +744,7 @@ namespace System.Web.Configuration {
                             for (int i = 0; i < a.Length; i++) {
                                 // use new AssemblyName(FullName).Name
                                 // instead of a.GetName().Name, because GetName() does not work in medium trust
-                                if (StringUtil.EqualsIgnoreCase(asmName.Name, new AssemblyName(a[i].FullName).Name)) {
+                                if (System.Web.Util.StringUtil.EqualsIgnoreCase(asmName.Name, new AssemblyName(a[i].FullName).Name)) {
                                     return a[i];
                                 }
                             }
@@ -799,13 +800,13 @@ namespace System.Web.Configuration {
                     if (String.IsNullOrEmpty(Message)) {
                         // try and make a better message than empty string
                         if (e is FileLoadException) {
-                            Message = SR.GetString(SR.Config_base_file_load_exception_no_message, "assembly");
+                            Message = System.Web.SR.GetString(System.Web.SR.Config_base_file_load_exception_no_message, "assembly");
                         }
                         else if (e is BadImageFormatException) {
-                            Message = SR.GetString(SR.Config_base_bad_image_exception_no_message, assemblyName);
+                            Message = System.Web.SR.GetString(System.Web.SR.Config_base_bad_image_exception_no_message, assemblyName);
                         }
                         else {
-                            Message = SR.GetString(SR.Config_base_report_exception_type, e.GetType().ToString()); // at least this is better than no message
+                            Message = System.Web.SR.GetString(System.Web.SR.Config_base_report_exception_type, e.GetType().ToString()); // at least this is better than no message
                         }
                     }
                     // default to section if the assembly is not in the collection 
@@ -839,7 +840,7 @@ namespace System.Web.Configuration {
             Assembly[] assemblies = null;
             ArrayList list;
 
-            if (!FileUtil.DirectoryExists(binPath)) {
+            if (!System.Web.Util.FileUtil.DirectoryExists(binPath)) {
                 // This is expected to fail if there is no 'bin' dir
                 System.Web.Util.Debug.Trace("Template", "Failed to access bin dir \"" + binPath + "\"");
             }
@@ -898,18 +899,18 @@ namespace System.Web.Configuration {
                 if (context.ApplicationLevel == WebApplicationLevel.BelowApplication) {
                     if (CodeSubDirectories.ElementInformation.IsPresent) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Config_element_below_app_illegal,
+                            System.Web.SR.GetString(System.Web.SR.Config_element_below_app_illegal,
                                          _propCodeSubDirs.Name), CodeSubDirectories.ElementInformation.Source, CodeSubDirectories.ElementInformation.LineNumber);
                     }
                     if (BuildProviders.ElementInformation.IsPresent) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Config_element_below_app_illegal,
+                            System.Web.SR.GetString(System.Web.SR.Config_element_below_app_illegal,
                                          _propBuildProviders.Name), BuildProviders.ElementInformation.Source, BuildProviders.ElementInformation.LineNumber);
                     }
 
                     if (FolderLevelBuildProviders.ElementInformation.IsPresent) {
                         throw new ConfigurationErrorsException(
-                            SR.GetString(SR.Config_element_below_app_illegal,
+                            System.Web.SR.GetString(System.Web.SR.Config_element_below_app_illegal,
                                          _propFolderLevelBuildProviders.Name), FolderLevelBuildProviders.ElementInformation.Source, FolderLevelBuildProviders.ElementInformation.LineNumber);
                     }
                 }
@@ -932,7 +933,7 @@ namespace System.Web.Configuration {
 
         // This is called as the last step of the deserialization process before the newly created section is seen by the consumer.
         // We can use it to change defaults on-the-fly.
-        protected override void SetReadOnly() {
+        protected internal override void SetReadOnly() {
             // Unless overridden, set <compilation targetFramework="4.5" />
             ConfigUtil.SetFX45DefaultValue(this, _propTargetFramework, BinaryCompatibility.Current.TargetFramework.ToString());
 

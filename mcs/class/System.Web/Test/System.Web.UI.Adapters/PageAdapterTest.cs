@@ -76,6 +76,7 @@ namespace MonoTests.System.Web.UI.Adapters
 		}
 		
 		[Test]
+		[Ignore ("Fails on .NET too.")]
 		public void GetStatePersister ()
 		{
 			PageStatePersister persister = mpa.GetStatePersister ();
@@ -91,6 +92,7 @@ namespace MonoTests.System.Web.UI.Adapters
 		}
 		
 		[Test]
+		[Ignore ("Fails on .NET too.")]
 		public void DeterminePostBackMode ()
 		{
 			Assert.AreEqual(page.MyDeterminePostBackMode (), mpa.DeterminePostBackMode (),
@@ -103,7 +105,7 @@ namespace MonoTests.System.Web.UI.Adapters
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter htw = new HtmlTextWriter (sw);
 			mpa.RenderBeginHyperlink (htw, "url with &, <, and \"", false, "softKeyLabel");
-			Assert.AreEqual("<a href=\"url with &, <, and \"\">", sw.ToString(),
+			Assert.AreEqual("<a href=\"url with &amp;, &lt;, and &quot;\">", sw.ToString(),
 				"RenderBeginHyperlink_NoEncode #1");
 		}
 
@@ -113,7 +115,7 @@ namespace MonoTests.System.Web.UI.Adapters
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter htw = new HtmlTextWriter (sw);
 			mpa.RenderBeginHyperlink (htw, "url with &, <, and \"", true, "softKeyLabel");
-			Assert.AreEqual("<a href=\"url with &amp;, &lt;, and &quot;\">", sw.ToString(),
+			Assert.AreEqual("<a href=\"url with &amp;amp;, &amp;lt;, and &amp;quot;\">", sw.ToString(),
 				"RenderBeginHyperlink_Encode #1");
 		}
 
@@ -123,7 +125,7 @@ namespace MonoTests.System.Web.UI.Adapters
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter htw = new HtmlTextWriter (sw);
 			mpa.RenderBeginHyperlink (htw, "url with &, <, and \"", false, "softKeyLabel", "X");
-			Assert.AreEqual("<a href=\"url with &, <, and \"\" accesskey=\"X\">",
+			Assert.AreEqual("<a href=\"url with &amp;, &lt;, and &quot;\" accessKey=\"X\">",
 				sw.ToString(), "RenderBeginHyperlink_NoEncode_AccessKey #1");
 		}
 
@@ -133,7 +135,7 @@ namespace MonoTests.System.Web.UI.Adapters
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter htw = new HtmlTextWriter (sw);
 			mpa.RenderBeginHyperlink (htw, "url with &, <, and \"", true, "softKeyLabel", "X");
-			Assert.AreEqual("<a href=\"url with &amp;, &lt;, and &quot;\" accesskey=\"X\">",
+			Assert.AreEqual("<a href=\"url with &amp;amp;, &amp;lt;, and &amp;quot;\" accessKey=\"X\">",
 				sw.ToString(), "RenderBeginHyperlink_Encode_AccessKey #1");
 		}
 
@@ -158,6 +160,7 @@ namespace MonoTests.System.Web.UI.Adapters
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Ignore ("Fails on .NET too.")]
 		public void RenderPostBackEvent ()
 		{
 			WebTest t = new WebTest ("PageWithAdapter.aspx");
@@ -207,6 +210,7 @@ namespace MonoTests.System.Web.UI.Adapters
 		}
 		
 		[Test]
+		[Ignore ("Fails on .NET too.")]
 		public void RadioButtons ()
 		{
 			ArrayList group = new ArrayList (mpa.GetRadioButtonsByGroup ("Group1"));
@@ -241,6 +245,7 @@ namespace MonoTests.System.Web.UI.Adapters
 		}
 
 		[Test]
+		[Ignore ("Fails on .NET too.")]
 		public void ClientState ()
 		{
 			page.RawViewState = "test";
@@ -280,7 +285,7 @@ namespace MonoTests.System.Web.UI.Adapters
 		{
 			NameValueCollection post_back_mode = new NameValueCollection ();
 			
-			override protected internal NameValueCollection DeterminePostBackMode ()
+			protected override NameValueCollection DeterminePostBackMode ()
 			{
 				return post_back_mode;
 			}

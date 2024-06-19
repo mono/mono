@@ -38,20 +38,10 @@ namespace MonoTests.System.Web.Security {
 	public class FormsIdentityTest {
 
 		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void Null ()
 		{
 			FormsIdentity identity = new FormsIdentity (null);
-			Assert.AreEqual ("Forms", identity.AuthenticationType, "AuthenticationType");
-			Assert.IsTrue (identity.IsAuthenticated, "IsAuthenticated");
-			Assert.IsNull (identity.Ticket, "Ticket");
-		}
-
-		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void Null_Name ()
-		{
-			FormsIdentity identity = new FormsIdentity (null);
-			Assert.IsNull (identity.Name, "Name");
 		}
 
 		[Test]

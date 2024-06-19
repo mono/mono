@@ -15,7 +15,7 @@ using MonoTests.DataSource;
 
 namespace MonoTests.Common
 {
-	class TestDataContext : ITestDataContext
+	public class TestDataContext : ITestDataContext
 	{
 		public const int TableFooWithDefaults = 0;
 		public const int TableFooNoPrimaryColumns = 1;

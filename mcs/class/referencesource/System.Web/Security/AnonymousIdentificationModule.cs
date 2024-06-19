@@ -27,6 +27,7 @@ namespace System.Web.Security {
     using System.IO;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Web.Security.Cryptography;
+    
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
@@ -69,7 +70,7 @@ namespace System.Web.Security {
             // VSWhidbey 418835: When this feature is enabled, prevent infinite loop when cookieless
             // mode != Cookies and there was no cookie, also we cannot clear when current user is anonymous.
             if (!s_Enabled || !context.Request.IsAuthenticated) {
-                throw new NotSupportedException(SR.GetString(SR.Anonymous_ClearAnonymousIdentifierNotSupported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Anonymous_ClearAnonymousIdentifierNotSupported));
             }
 
             ////////////////////////////////////////////////////////////
@@ -155,7 +156,7 @@ namespace System.Web.Security {
             } else {
                 cookieLess = CookielessHelperClass.UseCookieless(context, true /* do redirect */, s_CookieMode);
                 //if (!cookieLess && s_RequireSSL && !context.Request.IsSecureConnection)
-                //    throw new HttpException(SR.GetString(SR.Connection_not_secure_creating_secure_cookie));
+                //    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Connection_not_secure_creating_secure_cookie));
             }
 
             ////////////////////////////////////////////////////////////////////////
@@ -228,7 +229,7 @@ namespace System.Web.Security {
                     context.Request.AnonymousID = Guid.NewGuid().ToString("D", CultureInfo.InvariantCulture);
                 } else {
                     if (context.Request.AnonymousID.Length > MAX_ID_LENGTH)
-                        throw new HttpException(SR.GetString(SR.Anonymous_id_too_long));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Anonymous_id_too_long));
                 }
                 if (s_RequireSSL && !context.Request.IsSecureConnection && !cookieLess)
                     return; // Don't create secure-cookie in un-secured connection
@@ -258,7 +259,7 @@ namespace System.Web.Security {
                 DateTime dtExpireTime = dtNow.AddMinutes(s_CookieTimeout);
                 encValue = GetEncodedValue(new AnonymousIdData(context.Request.AnonymousID, dtExpireTime));
                 if (encValue.Length > MAX_ENCODED_COOKIE_STRING)
-                    throw new HttpException(SR.GetString(SR.Anonymous_id_too_long_2));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Anonymous_id_too_long_2));
 
                 if (!cookieLess) {
                     cookie          = new HttpCookie(s_CookieName, encValue);

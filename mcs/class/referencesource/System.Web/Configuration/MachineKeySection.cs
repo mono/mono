@@ -21,6 +21,7 @@ namespace System.Web.Configuration
     using System.Web.Security.Cryptography;
     using System.Web.Util;
     using System.Xml;
+    
 
     /******************************************************************
      * !! NOTICE !!                                                   *
@@ -135,7 +136,7 @@ namespace System.Web.Configuration
         }
 
 
-        protected override ConfigurationPropertyCollection Properties
+        protected internal override ConfigurationPropertyCollection Properties
         {
             get
             {
@@ -180,12 +181,12 @@ namespace System.Web.Configuration
             get {
                 string s = GetDecryptionAttributeSkipValidation();
                 if (s != "Auto" && s != "AES" && s != "3DES" && s != "DES" && !s.StartsWith(ALGO_PREFIX, StringComparison.Ordinal))
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_decryption_enum), ElementInformation.Properties["decryption"].Source, ElementInformation.Properties["decryption"].LineNumber);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_decryption_enum), ElementInformation.Properties["decryption"].Source, ElementInformation.Properties["decryption"].LineNumber);
                 return s;
             }
             set {
                 if (value != "AES" && value != "3DES" && value != "Auto" && value != "DES" && !value.StartsWith(ALGO_PREFIX, StringComparison.Ordinal))
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_decryption_enum), ElementInformation.Properties["decryption"].Source, ElementInformation.Properties["decryption"].LineNumber);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_decryption_enum), ElementInformation.Properties["decryption"].Source, ElementInformation.Properties["decryption"].LineNumber);
                 base[_propDecryption] = value;
             }
         }
@@ -289,7 +290,7 @@ namespace System.Web.Configuration
             }
         }
 
-        protected override void Reset(ConfigurationElement parentElement)
+        protected internal override void Reset(ConfigurationElement parentElement)
         {
             MachineKeySection parent = parentElement as MachineKeySection;
             base.Reset(parentElement);
@@ -316,9 +317,6 @@ namespace System.Web.Configuration
 
                 if( appName == null )
                 {
-#if !FEATURE_PAL // FEATURE_PAL does not enable cryptography
-			// FEATURE_PAL 
-
                     appName = System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
 
                     if( ValidationKey.Contains( "AutoGenerate" ) ||
@@ -330,15 +328,14 @@ namespace System.Web.Configuration
                         // Gernerate random keys
                         RandomNumberGenerator.GetBytes(bKeysRandom);
                     }
-#endif // !FEATURE_PAL
                 }
 
-                bool fAppIdSpecific = StringUtil.StringEndsWith(strKey, ",IsolateByAppId");
+                bool fAppIdSpecific = System.Web.Util.StringUtil.StringEndsWith(strKey, ",IsolateByAppId");
                 if (fAppIdSpecific)
                 {
                     strKey = strKey.Substring(0, strKey.Length - ",IsolateByAppId".Length);
                 }
-                bool fAppSpecific = StringUtil.StringEndsWith(strKey, ",IsolateApps");
+                bool fAppSpecific = System.Web.Util.StringUtil.StringEndsWith(strKey, ",IsolateApps");
                 if (fAppSpecific)
                 {
                     strKey = strKey.Substring(0, strKey.Length - ",IsolateApps".Length);
@@ -359,17 +356,17 @@ namespace System.Web.Configuration
                 else
                 {
                     if (strKey.Length < 40 || (strKey.Length & 0x1) == 1)
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Unable_to_get_cookie_authentication_validation_key, strKey.Length.ToString(CultureInfo.InvariantCulture)), ElementInformation.Properties["validationKey"].Source, ElementInformation.Properties["validationKey"].LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Unable_to_get_cookie_authentication_validation_key, strKey.Length.ToString(CultureInfo.InvariantCulture)), ElementInformation.Properties["validationKey"].Source, ElementInformation.Properties["validationKey"].LineNumber);
 
 #pragma warning disable 618 // obsolete
                     _ValidationKey = HexStringToByteArray(strKey);
 #pragma warning restore 618
                     if (_ValidationKey == null)
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_validation_key), ElementInformation.Properties["validationKey"].Source, ElementInformation.Properties["validationKey"].LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_validation_key), ElementInformation.Properties["validationKey"].Source, ElementInformation.Properties["validationKey"].LineNumber);
                 }
                 if (fAppSpecific)
                 {
-                    int dwCode = StringUtil.GetNonRandomizedStringComparerHashCode(appName);
+                    int dwCode = System.Web.Util.StringUtil.GetNonRandomizedStringComparerHashCode(appName);
                     _ValidationKey[0] = (byte)(dwCode & 0xff);
                     _ValidationKey[1] = (byte)((dwCode & 0xff00) >> 8);
                     _ValidationKey[2] = (byte)((dwCode & 0xff0000) >> 16);
@@ -377,7 +374,7 @@ namespace System.Web.Configuration
                 }
                 if (fAppIdSpecific)
                 {
-                    int dwCode = StringUtil.GetNonRandomizedStringComparerHashCode(appId);
+                    int dwCode = System.Web.Util.StringUtil.GetNonRandomizedStringComparerHashCode(appId);
                     _ValidationKey[4] = (byte)(dwCode & 0xff);
                     _ValidationKey[5] = (byte)((dwCode & 0xff00) >> 8);
                     _ValidationKey[6] = (byte)((dwCode & 0xff0000) >> 16);
@@ -385,12 +382,12 @@ namespace System.Web.Configuration
                 }
 
                 strKey = DecryptionKey;
-                fAppIdSpecific = StringUtil.StringEndsWith(strKey, ",IsolateByAppId");
+                fAppIdSpecific = System.Web.Util.StringUtil.StringEndsWith(strKey, ",IsolateByAppId");
                 if (fAppIdSpecific)
                 {
                     strKey = strKey.Substring(0, strKey.Length - ",IsolateByAppId".Length);
                 }
-                fAppSpecific = StringUtil.StringEndsWith(strKey, ",IsolateApps");
+                fAppSpecific = System.Web.Util.StringUtil.StringEndsWith(strKey, ",IsolateApps");
                 if (fAppSpecific)
                 {
                     strKey = strKey.Substring(0, strKey.Length - ",IsolateApps".Length);
@@ -415,17 +412,17 @@ namespace System.Web.Configuration
                 {
                     _AutogenKey = false;
                     if ((strKey.Length & 1) != 0)
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_decryption_key), ElementInformation.Properties["decryptionKey"].Source, ElementInformation.Properties["decryptionKey"].LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_decryption_key), ElementInformation.Properties["decryptionKey"].Source, ElementInformation.Properties["decryptionKey"].LineNumber);
 
 #pragma warning disable 618 // obsolete
                     _DecryptionKey = HexStringToByteArray(strKey);
 #pragma warning restore 618
                     if (_DecryptionKey == null)
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_decryption_key), ElementInformation.Properties["decryptionKey"].Source, ElementInformation.Properties["decryptionKey"].LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_decryption_key), ElementInformation.Properties["decryptionKey"].Source, ElementInformation.Properties["decryptionKey"].LineNumber);
                 }
                 if (fAppSpecific)
                 {
-                    int dwCode = StringUtil.GetNonRandomizedStringComparerHashCode(appName);
+                    int dwCode = System.Web.Util.StringUtil.GetNonRandomizedStringComparerHashCode(appName);
                     _DecryptionKey[0] = (byte)(dwCode & 0xff);
                     _DecryptionKey[1] = (byte)((dwCode & 0xff00) >> 8);
                     _DecryptionKey[2] = (byte)((dwCode & 0xff0000) >> 16);
@@ -433,7 +430,7 @@ namespace System.Web.Configuration
                 }
                 if (fAppIdSpecific)
                 {
-                    int dwCode = StringUtil.GetNonRandomizedStringComparerHashCode(appId);
+                    int dwCode = System.Web.Util.StringUtil.GetNonRandomizedStringComparerHashCode(appId);
                     _DecryptionKey[4] = (byte)(dwCode & 0xff);
                     _DecryptionKey[5] = (byte)((dwCode & 0xff00) >> 8);
                     _DecryptionKey[6] = (byte)((dwCode & 0xff0000) >> 16);
@@ -528,7 +525,7 @@ namespace System.Web.Configuration
 
                     if (buf == null) {
                         // signature verification failed
-                        throw new HttpException(SR.GetString(SR.Unable_to_validate_data));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_validate_data));
                     }
 
                     // need to fix up again since GetUnhashedData() returned a different array
@@ -565,7 +562,7 @@ namespace System.Web.Configuration
                             break;
                     }
 
-                    Debug.Assert(iv != null, "Invalid value for IVType: " + ivType.ToString("G"));
+                    System.Web.Util.Debug.Assert(iv != null, "Invalid value for IVType: " + ivType.ToString("G"));
                     cs.Write(iv, 0, iv.Length);
                 }
 
@@ -596,7 +593,7 @@ namespace System.Web.Configuration
                     int ivLength = (useValidationSymAlgo ? _IVLengthValidation : _IVLengthDecryption);
                     int bDataLength = paddedData.Length - ivLength;
                     if (bDataLength < 0) {
-                        throw new HttpException(SR.GetString(SR.Unable_to_validate_data));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_validate_data));
                     }
 
                     bData = new byte[bDataLength];
@@ -613,14 +610,9 @@ namespace System.Web.Configuration
 
                 if (!fEncrypt && modifier != null && modifier.Length > 0)
                 {
-                    // MSRC 10405: Crypto board suggests blinding where signature failed
-                    // to prevent timing attacks.
-                    bool modifierCheckFailed = false;
-                    for(int iter=0; iter<modifier.Length; iter++)
-                        if (bData[bData.Length - modifier.Length + iter] != modifier[iter])
-                            modifierCheckFailed = true;
-                    if (modifierCheckFailed) {
-                        throw new HttpException(SR.GetString(SR.Unable_to_validate_data));
+                    // Compare the end of bData with the expected modifier to validate they are the same
+                    if (!CryptoUtil.BuffersAreEqual(bData, bData.Length - modifier.Length, modifier.Length, modifier, 0, modifier.Length)) {
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_validate_data));
                     }
 
                     byte[] bData2 = new byte[bData.Length - modifier.Length];
@@ -650,7 +642,7 @@ namespace System.Web.Configuration
             } catch {
                 // It's important that we don't propagate the original exception here as we don't want a production
                 // server which has unintentionally left YSODs enabled to leak cryptographic information.
-                throw new HttpException(SR.GetString(SR.Unable_to_validate_data));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_validate_data));
             }
         }
 
@@ -667,9 +659,16 @@ namespace System.Web.Configuration
             byte[] hash = buf;
             while (bytesWritten < ivLength)
             {
-                byte[] newHash = new byte[_HashSize];
+                byte[] newHash;
+
+#if (MONO || FEATURE_PAL)
+                var hashAlgo = GetHashAlgorithmFromHashSize(_HashSize);
+                newHash = hashAlgo.ComputeHash(hash);
+#else
+                newHash = new byte[_HashSize];
                 int hr = UnsafeNativeMethods.GetSHA1Hash(hash, hash.Length, newHash, newHash.Length);
                 Marshal.ThrowExceptionForHR(hr);
+#endif                           
                 hash = newHash;
 
                 int bytesToCopy = Math.Min(_HashSize, bytesToWrite);
@@ -695,9 +694,14 @@ namespace System.Web.Configuration
             byte[] key = null;
             if (validationKey.Length > _AutoGenValidationKeySize)
             {
+#if (MONO || FEATURE_PAL)
+                var hashAlgo = GetHashAlgorithmFromHashSize(_HashSize);
+                key = hashAlgo.ComputeHash(validationKey);
+#else
                 key = new byte[_HashSize];
                 int hr = UnsafeNativeMethods.GetSHA1Hash(validationKey, validationKey.Length, key, key.Length);
-                Marshal.ThrowExceptionForHR(hr);
+                Marshal.ThrowExceptionForHR(hr);                
+#endif
             }
 
             if (inner == null)
@@ -718,19 +722,87 @@ namespace System.Web.Configuration
 
         private static byte[] GetHMACSHA1Hash(byte[] buf, byte[] modifier, int start, int length) {
             if (start < 0 || start > buf.Length)
-                throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "start"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidArgumentValue, "start"));
             if (length < 0 || buf == null || (start + length) > buf.Length)
-                throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "length"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidArgumentValue, "length"));
+
+#if (MONO || FEATURE_PAL)
+            HashAlgorithm hmac = GetHMACHashAlgorithmFromHashSize(_HashSize);
+           
+            try 
+            {   
+                byte[] hash = hmac.ComputeHash(buf, start, length);
+
+                return hash;
+            }
+            catch { }
+            finally 
+            {
+                hmac.Dispose();
+            }
+#else
             byte[] hash = new byte[_HashSize];
             int hr = UnsafeNativeMethods.GetHMACSHA1Hash(buf, start, length,
                                                          modifier, (modifier == null) ? 0 : modifier.Length,
                                                          s_inner, s_inner.Length, s_outer, s_outer.Length,
                                                          hash, hash.Length);
             if (hr == 0)
-                return hash;
+                return hash;            
+#endif
+
             _UseHMACSHA = false;
             return null;
         }
+
+#if (MONO || FEATURE_PAL)
+        static HashAlgorithm GetHashAlgorithmFromHashSize(int size)
+        {
+            switch(size)
+            {
+                case HMACSHA256_HASH_SIZE:
+                    return new SHA256Managed();
+                    break;
+                case HMACSHA384_HASH_SIZE:
+                    return new SHA384Managed();
+                    break;
+                case HMACSHA512_HASH_SIZE:
+                    return new SHA512Managed();
+                    break;
+                case SHA1_HASH_SIZE:
+                    return new SHA1Managed();
+                    break;
+                case MD5_HASH_SIZE:
+                    return MD5.Create();
+                    break;
+                default:
+                    throw new NotSupportedException ($"Can't map hash size to algorithm: {size}.");
+            }
+        }
+
+        static HashAlgorithm GetHMACHashAlgorithmFromHashSize(int size) 
+        {
+            switch(size)
+            {
+                case HMACSHA256_HASH_SIZE:
+                    return new HMACSHA256(s_validationKey);
+                    break;
+                case HMACSHA384_HASH_SIZE:
+                    return new HMACSHA384(s_validationKey);
+                    break;
+                case HMACSHA512_HASH_SIZE:
+                    return new HMACSHA512(s_validationKey);
+                    break;
+                case SHA1_HASH_SIZE:
+                    return new HMACSHA1(s_validationKey, true);
+                    break;
+                case MD5_HASH_SIZE:
+                    return new HMACMD5(s_validationKey);
+                    break;
+                default:
+                    throw new NotSupportedException ($"Can't map hash size to algorithm: {size}.");
+            }
+        }
+#endif
 
         [Obsolete(OBSOLETE_CRYPTO_API_MESSAGE)]
         internal static string HashAndBase64EncodeString(string s)
@@ -833,17 +905,17 @@ namespace System.Web.Configuration
             if (s_config.Validation == MachineKeyValidation.TripleDES || s_config.Validation == MachineKeyValidation.AES) {
                 buf = EncryptOrDecryptData(false, buf, modifier, start, length, true);
                 if (buf == null || buf.Length < _HashSize)
-                    throw new HttpException(SR.GetString(SR.Unable_to_validate_data));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_validate_data));
                 length = buf.Length;
                 start = 0;
             }
 
             if (length < _HashSize || start < 0 || start >= length)
-                throw new HttpException(SR.GetString(SR.Unable_to_validate_data));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_validate_data));
             byte[] bHash = HashData(buf, modifier, start, length - _HashSize);
             for (int iter = 0; iter < bHash.Length; iter++)
                 if (bHash[iter] != buf[start + length - _HashSize + iter])
-                    throw new HttpException(SR.GetString(SR.Unable_to_validate_data));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unable_to_validate_data));
 
             dataLength = length - _HashSize;
             return buf;
@@ -877,7 +949,10 @@ namespace System.Web.Configuration
             // These deprecated algorithms are *not* enabled by default. Developers must opt-in to
             // them, so we're secure by default.
 #pragma warning disable 618
+
+#if !FEATURE_PAL
             using (new ApplicationImpersonationContext())  {
+#endif
                 s_validationKey = ValidationKeyInternal;
                 byte[] dKey = DecryptionKeyInternal;
                 if (_UseHMACSHA)
@@ -932,7 +1007,10 @@ namespace System.Web.Configuration
                 _IVLengthDecryption = RoundupNumBitsToNumBytes(s_oSymAlgoDecryption.KeySize);
                 InitLegacyEncAlgorithm(dKey);
                 DestroyByteArray(dKey);
+
+#if !FEATURE_PAL
             }
+#endif 
 #pragma warning restore 618
         }
 
@@ -950,7 +1028,7 @@ namespace System.Web.Configuration
                 symAlgo.GenerateIV();
                 symAlgo.IV = new byte[symAlgo.IV.Length];
             } catch (Exception e) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Bad_machine_key, e.Message), ElementInformation.Properties["decryptionKey"].Source, ElementInformation.Properties["decryptionKey"].LineNumber);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Bad_machine_key, e.Message), ElementInformation.Properties["decryptionKey"].Source, ElementInformation.Properties["decryptionKey"].LineNumber);
             }
         }
 
@@ -1098,7 +1176,7 @@ namespace System.Web.Configuration
             default:
                 _UseHMACSHA = false;
                 if (!_CustomValidationName.StartsWith(ALGO_PREFIX, StringComparison.Ordinal)) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_validation_enum),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_validation_enum),
                                                            ElementInformation.Properties["validation"].Source,
                                                            ElementInformation.Properties["validation"].LineNumber);
                 }
@@ -1108,12 +1186,12 @@ namespace System.Web.Configuration
                     _CustomValidationTypeIsKeyed = false;
                     alg = HashAlgorithm.Create(_CustomValidationName);
                 } catch (Exception e) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_validation_enum), e,
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_validation_enum), e,
                                                            ElementInformation.Properties["validation"].Source,
                                                            ElementInformation.Properties["validation"].LineNumber);
                 }
                 if (alg == null)
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_validation_enum),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_validation_enum),
                                                            ElementInformation.Properties["validation"].Source,
                                                            ElementInformation.Properties["validation"].LineNumber);
 
@@ -1121,7 +1199,7 @@ namespace System.Web.Configuration
                 _HashSize = 0;
                 _CustomValidationTypeIsKeyed = (alg is KeyedHashAlgorithm);
                 if (!_CustomValidationTypeIsKeyed) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_validation_enum),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_validation_enum),
                                                            ElementInformation.Properties["validation"].Source,
                                                            ElementInformation.Properties["validation"].LineNumber);
                 }
@@ -1182,19 +1260,19 @@ namespace System.Web.Configuration
             default:
                 _UsingCustomEncryption = true;
                 if (!Decryption.StartsWith(ALGO_PREFIX, StringComparison.Ordinal)) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_decryption_enum),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_decryption_enum),
                                                            ElementInformation.Properties["decryption"].Source,
                                                            ElementInformation.Properties["decryption"].LineNumber);
                 }
                 try {
                     s_oSymAlgoDecryption = SymmetricAlgorithm.Create(Decryption.Substring(ALGO_PREFIX.Length));
                 } catch(Exception e) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_decryption_enum), e,
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_decryption_enum), e,
                                                            ElementInformation.Properties["decryption"].Source,
                                                            ElementInformation.Properties["decryption"].LineNumber);
                 }
                 if (s_oSymAlgoDecryption == null)
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_decryption_enum),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_decryption_enum),
                                                            ElementInformation.Properties["decryption"].Source,
                                                            ElementInformation.Properties["decryption"].LineNumber);
 
@@ -1228,8 +1306,13 @@ namespace System.Web.Configuration
                 return hashAlgo.ComputeHash(bAll);
             } else {
                 byte[] newHash = new byte[MD5_HASH_SIZE];
+#if (MONO || FEATURE_PAL)
+                var newHashAlgo = GetHashAlgorithmFromHashSize(newHash.Length);
+                newHash = newHashAlgo.ComputeHash(bAll);
+#else
                 int hr = UnsafeNativeMethods.GetSHA1Hash(bAll, bAll.Length, newHash, newHash.Length);
                 Marshal.ThrowExceptionForHR(hr);
+#endif
                 return newHash;
             }
         }
@@ -1283,13 +1366,7 @@ namespace System.Web.Configuration
                 return false;
             int lastPos = bufHashed.Length - _HashSize;
 
-            // From Tolga: To prevent a timing attack, we should verify the entire hash instead of failing
-            // early the first time we see a mismatched byte.
-            bool hashCheckFailed = false;
-            for (int iter = 0; iter < _HashSize; iter++)
-                if (bMac[iter] != bufHashed[lastPos + iter])
-                    hashCheckFailed = true;
-            return !hashCheckFailed;
+            return CryptoUtil.BuffersAreEqual(bMac, 0, _HashSize, bufHashed, lastPos, _HashSize);
         }
 
         internal static bool UsingCustomEncryption {
@@ -1319,7 +1396,7 @@ namespace System.Web.Configuration
 
         // This is called as the last step of the deserialization process before the newly created section is seen by the consumer.
         // We can use it to change defaults on-the-fly.
-        protected override void SetReadOnly() {
+        protected internal override void SetReadOnly() {
             // Unless overridden, set <machineKey compatibilityMode="Framework45" />
             ConfigUtil.SetFX45DefaultValue(this, _propCompatibilityMode, MachineKeyCompatibilityMode.Framework45);
 

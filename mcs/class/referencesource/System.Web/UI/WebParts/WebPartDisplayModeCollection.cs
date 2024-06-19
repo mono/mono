@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private void CheckReadOnly() {
             if (_readOnly) {
-                throw new InvalidOperationException(SR.GetString(_readOnlyExceptionMessage));
+                throw new InvalidOperationException(System.Web.SR.GetString(_readOnlyExceptionMessage));
             }
         }
 
@@ -87,7 +87,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         protected override void OnClear() {
-            throw new InvalidOperationException(SR.GetString(SR.WebPartDisplayModeCollection_CantRemove));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartDisplayModeCollection_CantRemove));
         }
 
         protected override void OnInsert(int index, object value) {
@@ -95,27 +95,27 @@ namespace System.Web.UI.WebControls.WebParts {
             WebPartDisplayMode displayMode = (WebPartDisplayMode)value;
             foreach (WebPartDisplayMode existingDisplayMode in List) {
                 if (displayMode.Name == existingDisplayMode.Name) {
-                    throw new ArgumentException(SR.GetString(SR.WebPartDisplayModeCollection_DuplicateName, displayMode.Name));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartDisplayModeCollection_DuplicateName, displayMode.Name));
                 }
             }
             base.OnInsert(index, value);
         }
 
         protected override void OnRemove(int index, object value) {
-            throw new InvalidOperationException(SR.GetString(SR.WebPartDisplayModeCollection_CantRemove));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartDisplayModeCollection_CantRemove));
         }
 
         protected override void OnSet(int index, object oldValue, object newValue) {
-            throw new InvalidOperationException(SR.GetString(SR.WebPartDisplayModeCollection_CantSet));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartDisplayModeCollection_CantSet));
         }
 
         protected override void OnValidate(object value) {
             base.OnValidate(value);
             if (value == null) {
-                throw new ArgumentNullException("value", SR.GetString(SR.Collection_CantAddNull));
+                throw new ArgumentNullException("value", System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull));
             }
             if (!(value is WebPartDisplayMode)) {
-                throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "WebPartDisplayMode"), "value");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "WebPartDisplayMode"), "value");
             }
         }
 

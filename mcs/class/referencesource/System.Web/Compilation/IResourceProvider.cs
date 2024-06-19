@@ -17,6 +17,7 @@ namespace System.Web.Compilation {
     using System.Web.Compilation;
     using System.Web.Util;
     using System.Web.UI;
+    
 
 
     /*
@@ -134,7 +135,7 @@ namespace System.Web.Compilation {
                 resourceManager.IgnoreCase = true;
             }
             else {
-                throw new InvalidOperationException(SR.GetString(SR.ResourceExpresionBuilder_PageResourceNotFound));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ResourceExpresionBuilder_PageResourceNotFound));
             }
 
             return resourceManager;

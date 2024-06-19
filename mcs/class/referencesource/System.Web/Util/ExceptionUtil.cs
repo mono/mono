@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// <copyright file="ExceptionUtil.cs" company="Microsoft">
+// <copyright file="System.Web.Util.ExceptionUtil.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 //------------------------------------------------------------------------------
@@ -10,23 +10,23 @@ namespace System.Web.Util {
 
     static internal class ExceptionUtil {
         static internal ArgumentException ParameterInvalid(string parameter) {
-            return new ArgumentException(SR.GetString(SR.Parameter_Invalid, parameter), parameter);
+            return new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_Invalid, parameter), parameter);
         }
 
         static internal ArgumentException ParameterNullOrEmpty(string parameter) {
-            return new ArgumentException(SR.GetString(SR.Parameter_NullOrEmpty, parameter), parameter);
+            return new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_NullOrEmpty, parameter), parameter);
         }
 
         static internal ArgumentException PropertyInvalid(string property) {
-            return new ArgumentException(SR.GetString(SR.Property_Invalid, property), property);
+            return new ArgumentException(System.Web.SR.GetString(System.Web.SR.Property_Invalid, property), property);
         }
 
         static internal ArgumentException PropertyNullOrEmpty(string property) {
-            return new ArgumentException(SR.GetString(SR.Property_NullOrEmpty, property), property);
+            return new ArgumentException(System.Web.SR.GetString(System.Web.SR.Property_NullOrEmpty, property), property);
         }
 
         static internal InvalidOperationException UnexpectedError(string methodName) {
-            return new InvalidOperationException(SR.GetString(SR.Unexpected_Error, methodName));
+            return new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Unexpected_Error, methodName));
         }
     }
 }

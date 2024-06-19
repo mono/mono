@@ -29,14 +29,143 @@
 //
 
 
-using Orig = System.Web.Util.UrlUtils;
+//using Orig = System.Web.Util.UrlUtils;
+using System;
+using System.Text;
+using System.Web;
 
 namespace SystemWebTestShim {
 	public class UrlUtils {
 		public static string Canonic (string path)
 		{
-			return Orig.Canonic (path);
+			return Canonic_Int (path);
 		}
+
+		static char [] path_sep = {'\\', '/'};
+
+		public static string Canonic_Int (string path)
+		{
+			bool isRooted = IsRooted(path);
+			bool endsWithSlash = path.EndsWith("/");
+			string [] parts = path.Split (path_sep);
+			int end = parts.Length;
+
+			int dest = 0;
+
+			for (int i = 0; i < end; i++) {
+				string current = parts [i];
+
+				if (current.Length == 0)
+					continue;
+
+				if (current == "." )
+					continue;
+
+				if (current == "..") {
+					dest --;
+					continue;
+				}
+				if (dest < 0)
+					if (!isRooted)
+						throw new HttpException ("Invalid path.");
+					else
+						dest = 0;
+
+				parts [dest++] = current;
+			}
+			if (dest < 0)
+				throw new HttpException ("Invalid path.");
+
+			if (dest == 0)
+				return "/";
+
+			string str = String.Join ("/", parts, 0, dest);
+			str = RemoveDoubleSlashes (str);
+			if (isRooted)
+				str = "/" + str;
+			if (endsWithSlash)
+				str = str + "/";
+
+			return str;
+		}
+
+		public static string GetDirectory (string url)
+		{
+			url = url.Replace('\\','/');
+			int last = url.LastIndexOf ('/');
+
+			if (last > 0) {
+				if (last < url.Length)
+					last++;
+				return RemoveDoubleSlashes (url.Substring (0, last));
+			}
+
+			return "/";
+		}
+
+		public static string RemoveDoubleSlashes (string input)
+		{
+			// MS VirtualPathUtility removes duplicate '/'
+
+			int index = -1;
+			for (int i = 1; i < input.Length; i++)
+				if (input [i] == '/' && input [i - 1] == '/') {
+					index = i - 1;
+					break;
+				}
+
+			if (index == -1) // common case optimization
+				return input;
+
+			StringBuilder sb = new StringBuilder (input.Length);
+			sb.Append (input, 0, index);
+
+			for (int i = index; i < input.Length; i++) {
+				if (input [i] == '/') {
+					int next = i + 1;
+					if (next < input.Length && input [next] == '/')
+						continue;
+					sb.Append ('/');
+				}
+				else {
+					sb.Append (input [i]);
+				}
+			}
+
+			return sb.ToString ();
+		}
+
+		public static string GetFile (string url)
+		{
+			url = url.Replace('\\','/');
+			int last = url.LastIndexOf ('/');
+			if (last >= 0) {
+				if (url.Length == 1) // Empty file name instead of ArgumentOutOfRange
+					return "";
+				return url.Substring (last+1);
+			}
+
+			throw new ArgumentException (String.Format ("GetFile: `{0}' does not contain a /", url));
+		}
+
+		public static bool IsRooted (string path)
+		{
+			if (path == null || path.Length == 0)
+				return true;
+
+			char c = path [0];
+			if (c == '/' || c == '\\')
+				return true;
+
+			return false;
+		}
+
+		public static bool IsRelativeUrl (string path)
+		{
+			return (path [0] != '/' && path.IndexOf (':') == -1);
+		}
+
+
 	}
 }
 

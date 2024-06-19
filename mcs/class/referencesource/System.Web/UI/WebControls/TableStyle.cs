@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         UrlProperty(),
-        WebSysDescription(SR.TableStyle_BackImageUrl),
+        WebSysDescription(System.Web.SR.TableStyle_BackImageUrl),
         NotifyParentProperty(true)
         ]
         public virtual string BackImageUrl {
@@ -78,7 +78,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(-1),
-        WebSysDescription(SR.TableStyle_CellPadding),
+        WebSysDescription(System.Web.SR.TableStyle_CellPadding),
         NotifyParentProperty(true)
         ]
         public virtual int CellPadding {
@@ -90,7 +90,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value < -1) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.TableStyle_InvalidCellPadding));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.TableStyle_InvalidCellPadding));
                 }
                 ViewState["CellPadding"] = value;
                 SetBit(PROP_CELLPADDING);
@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(-1),
-        WebSysDescription(SR.TableStyle_CellSpacing),
+        WebSysDescription(System.Web.SR.TableStyle_CellSpacing),
         NotifyParentProperty(true)
         ]
         public virtual int CellSpacing {
@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value < -1) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.TableStyle_InvalidCellSpacing));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.TableStyle_InvalidCellSpacing));
                 }
                 ViewState["CellSpacing"] = value;
                 SetBit(PROP_CELLSPACING);
@@ -130,7 +130,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(GridLines.None),
-        WebSysDescription(SR.TableStyle_GridLines),
+        WebSysDescription(System.Web.SR.TableStyle_GridLines),
         NotifyParentProperty(true)
         ]
         public virtual GridLines GridLines {
@@ -156,7 +156,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(HorizontalAlign.NotSet),
-        WebSysDescription(SR.TableStyle_HorizontalAlign),
+        WebSysDescription(System.Web.SR.TableStyle_HorizontalAlign),
         NotifyParentProperty(true)
         ]
         public virtual HorizontalAlign HorizontalAlign {

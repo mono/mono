@@ -30,6 +30,7 @@ using System.Web.Util;
 using Debug = System.Web.Util.Debug;
 
 
+
 //
 // Instances of this class are created in the ASP.NET app domain.  The class
 // methods are called by ClientBuildManager (cross app domain)
@@ -105,7 +106,7 @@ internal class BuildManagerHost : MarshalByRefObject, IRegisteredObject {
     }
 
     internal void RegisterAssembly(String assemblyName, String assemblyLocation) {
-        Debug.Trace("BuildManagerHost", "RegisterAssembly '" + assemblyName + "','" + assemblyLocation + "'");
+        System.Web.Util.Debug.Trace("BuildManagerHost", "RegisterAssembly '" + assemblyName + "','" + assemblyLocation + "'");
 
         if (_assemblyCollection == null) {
             lock (_lock) {
@@ -121,7 +122,7 @@ internal class BuildManagerHost : MarshalByRefObject, IRegisteredObject {
 
     [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
     private Assembly ResolveAssembly(object sender, ResolveEventArgs e) {
-        Debug.Trace("BuildManagerHost", "ResolveAssembly '" + e.Name + "'");
+        System.Web.Util.Debug.Trace("BuildManagerHost", "ResolveAssembly '" + e.Name + "'");
         if (_assemblyCollection == null)
             return null;
 
@@ -129,7 +130,7 @@ internal class BuildManagerHost : MarshalByRefObject, IRegisteredObject {
         if (assemblyLocation == null)
             return null;
 
-        Debug.Trace("BuildManagerHost", "ResolveAssembly: found");
+        System.Web.Util.Debug.Trace("BuildManagerHost", "ResolveAssembly: found");
 
         return Assembly.LoadFrom(assemblyLocation);
     }
@@ -286,7 +287,7 @@ internal class BuildManagerHost : MarshalByRefObject, IRegisteredObject {
 
         try {
             if (!virtualPath.DirectoryExists()) {
-                throw new ArgumentException(SR.GetString(SR.GetGeneratedSourceFile_Directory_Only, 
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.GetGeneratedSourceFile_Directory_Only, 
                     virtualPath.VirtualPathString), "virtualPath");
             }
 
@@ -503,7 +504,7 @@ internal class BuildManagerHost : MarshalByRefObject, IRegisteredObject {
         BuildProvider buildProvider = null;
 
         // Special case global asax build provider here since we do not want to compile every files with ".asax" extension.
-        if (StringUtil.EqualsIgnoreCase(virtualPath.VirtualPathString, BuildManager.GlobalAsaxVirtualPath.VirtualPathString)) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(virtualPath.VirtualPathString, BuildManager.GlobalAsaxVirtualPath.VirtualPathString)) {
             ApplicationBuildProvider provider = new ApplicationBuildProvider();
             provider.SetVirtualPath(virtualPath);
             provider.SetReferencedAssemblies(referencedAssemblies);
@@ -635,7 +636,7 @@ internal class BuildManagerHost : MarshalByRefObject, IRegisteredObject {
             IEnumerable virtualPathDependencies, DateTime utcStart) {
 
             if (virtualPath != null) {
-                virtualPath = UrlPath.MakeVirtualPathAppAbsolute(virtualPath);
+                virtualPath = System.Web.Util.UrlPath.MakeVirtualPathAppAbsolute(virtualPath);
                 // Return now so the build result will be invalidated based on hashcode.
                 // This is for the case that Venus passed in the file content so we don't
                 // get file change notification
@@ -666,7 +667,7 @@ internal class BuildManagerHost : MarshalByRefObject, IRegisteredObject {
                         hashCodeCombiner = new HashCodeCombiner();
                     }
 
-                    hashCodeCombiner.AddInt(StringUtil.GetNonRandomizedHashCode((string)_stringDictionary[virtualDependency]));
+                    hashCodeCombiner.AddInt(System.Web.Util.StringUtil.GetNonRandomizedHashCode((string)_stringDictionary[virtualDependency]));
                     continue;
                 }
 

@@ -41,7 +41,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private WebPartVerb(string id) {
             if (String.IsNullOrEmpty(id)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("id");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("id");
             }
 
             _id = id;
@@ -76,7 +76,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DefaultValue(false),
         NotifyParentProperty(true),
         Themeable(false),
-        WebSysDescription(SR.WebPartVerb_Checked),
+        WebSysDescription(System.Web.SR.WebPartVerb_Checked),
         ]
         public virtual bool Checked {
             get {
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         // Must use WebSysDefaultValue instead of DefaultValue, since it is overridden in extending classes
         WebSysDefaultValue(""),
-        WebSysDescription(SR.WebPartVerb_Description),
+        WebSysDescription(System.Web.SR.WebPartVerb_Description),
         ]
         public virtual string Description {
             get {
@@ -119,7 +119,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DefaultValue(true),
         NotifyParentProperty(true),
         Themeable(false),
-        WebSysDescription(SR.WebPartVerb_Enabled),
+        WebSysDescription(System.Web.SR.WebPartVerb_Enabled),
         ]
         public virtual bool Enabled {
             get {
@@ -158,7 +158,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         NotifyParentProperty(true),
         UrlProperty(),
-        WebSysDescription(SR.WebPartVerb_ImageUrl),
+        WebSysDescription(System.Web.SR.WebPartVerb_ImageUrl),
         ]
         public virtual string ImageUrl {
             get {
@@ -194,7 +194,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         // Must use WebSysDefaultValue instead of DefaultValue, since it is overridden in extending classes
         WebSysDefaultValue(""),
-        WebSysDescription(SR.WebPartVerb_Text),
+        WebSysDescription(System.Web.SR.WebPartVerb_Text),
         ]
         public virtual string Text {
             get {
@@ -210,7 +210,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DefaultValue(true),
         NotifyParentProperty(true),
         Themeable(false),
-        WebSysDescription(SR.WebPartVerb_Visible),
+        WebSysDescription(System.Web.SR.WebPartVerb_Visible),
         ]
         public virtual bool Visible {
             get {

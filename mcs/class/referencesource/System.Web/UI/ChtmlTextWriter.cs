@@ -96,7 +96,7 @@ namespace System.Web.UI {
 
         protected override bool OnStyleAttributeRender(string name,string value, HtmlTextWriterStyle key) {
             if (key == HtmlTextWriterStyle.TextDecoration) {
-                if (StringUtil.EqualsIgnoreCase("line-through", value)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase("line-through", value)) {
                     return false;
                 }
             }

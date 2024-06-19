@@ -33,7 +33,7 @@ namespace MonoTests.Common
 		public static void CopyResources ()
 		{
 			Type type = typeof (TestsSetup);
-			WebTest.CopyResource (type, "MonoTests.WebPages.Global.asax", "Global.asax");
+			WebTest.CopyResource (type, "MonoTests.WebPages.Global.asax", "global.asax");
 			WebTest.CopyResource (type, "MonoTests.WebPages.web.config.4.x", "web.config");
 			WebTest.CopyResource (type, "MonoTests.WebPages.Site.css", "Site.css");
 			WebTest.CopyResource (type, "MonoTests.WebPages.Site.master", "Site.master");
@@ -96,6 +96,13 @@ namespace MonoTests.Common
 
 			WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates.CustomColor.ascx", BuildPath ("DynamicData/FieldTemplates/CustomColor.ascx"));
 			WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates.CustomColor.ascx.cs", BuildPath ("DynamicData/FieldTemplates/CustomColor.ascx.cs"));
+		
+			//WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.Generic.List`1[System.String].ascx", BuildPath("DynamicData/FieldTemplates/System.Collections.Generic.List`1[System.String].ascx"));
+			//WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.Generic.List`2[System.String].ascx", BuildPath("DynamicData/FieldTemplates/System.Collections.Generic.List`2[System.String].ascx"));
+			//WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.Generic.Dictionary`2[System.String].ascx", BuildPath("DynamicData/FieldTemplates/System.Collections.Generic.Dictionary`2[System.String].ascx"));
+			//WebTest.CopyResource (type, "MonoTests.WebPages.DynamicData.FieldTemplates_NonDefault.System.Collections.Generic.List`1[System.String].ascx.cs", BuildPath("DynamicData/FieldTemplates/System.Collections.Generic.List`1[System.String].ascx.cs"));
+	
+			
 		}
 	}
 }

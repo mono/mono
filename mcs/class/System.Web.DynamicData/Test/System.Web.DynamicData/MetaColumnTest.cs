@@ -75,6 +75,10 @@ namespace MonoTests.System.Web.DynamicData
 
 			dynamicModelProviderNoScaffold = new DynamicDataContainerModelProvider <TestDataContext2> ();
 			Utils.RegisterContext (dynamicModelProviderNoScaffold, new ContextConfiguration () { ScaffoldAllTables = false }, false);
+	
+			Type type = GetType ();
+			WebTest.CopyResource (type, "MonoTests.WebPages.MetaColumn_RequiredField.aspx", "MetaColumn_RequiredField.aspx");
+			WebTest.CopyResource (type, "MonoTests.WebPages.MetaColumn_RequiredField.aspx.cs", "MetaColumn_RequiredField.aspx.cs");
 		}
 
 		[Test]
@@ -877,7 +881,19 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void RequiredErrorMessage ()
 		{
-			MetaModel m = Utils.CommonInitialize ();
+			var test = new WebTest("MetaColumn_RequiredField.aspx");
+			test.Invoker = PageInvoker.CreateOnLoad (OnRequiredErrorMessage_PageLoad);
+			var p = test.Run ();
+		}
+
+		public static void OnRequiredErrorMessage_PageLoad (Page p)
+		{
+			// We need HttpRuntime set up because the required error message
+			// tries to use the HttpRuntime vpath - and that is only set up 
+			// via the normal request pipeline.
+			
+			// can't get the default, as there are multiple contexts in global
+			MetaModel m = Utils.GetModel<TestDataContext>();
 
 			MetaTable t = m.Tables[TestDataContext.TableBaz];
 			MetaColumn mc = t.GetColumn ("Column1");
@@ -1020,7 +1036,7 @@ namespace MonoTests.System.Web.DynamicData
 			MetaColumn mc = t.GetColumn ("Char_Column");
 			Assert.IsNotNull (mc, "#A1");
 			Assert.AreEqual (typeof (char), mc.ColumnType, "#A1-1");
-			Assert.AreEqual (TypeCode.Object, mc.TypeCode, "#A1-2");
+			Assert.AreEqual (TypeCode.Char, mc.TypeCode, "#A1-2");
 
 			mc = t.GetColumn ("String_Column");
 			Assert.IsNotNull (mc, "#B1");

@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.PagerSettings_FirstPageImageUrl)
+        WebSysDescription(System.Web.SR.PagerSettings_FirstPageImageUrl)
         ]
         public string FirstPageImageUrl {
             get {
@@ -74,7 +74,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue("&lt;&lt;"),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerSettings_FirstPageText)
+        WebSysDescription(System.Web.SR.PagerSettings_FirstPageText)
         ]
         public string FirstPageText {
             get {
@@ -126,7 +126,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.PagerSettings_LastPageImageUrl)
+        WebSysDescription(System.Web.SR.PagerSettings_LastPageImageUrl)
         ]
         public string LastPageImageUrl {
             get {
@@ -154,7 +154,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue("&gt;&gt;"),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerSettings_LastPageText)
+        WebSysDescription(System.Web.SR.PagerSettings_LastPageText)
         ]
         public string LastPageText {
             get {
@@ -181,7 +181,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(PagerButtons.Numeric),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerSettings_Mode)
+        WebSysDescription(System.Web.SR.PagerSettings_Mode)
         ]
         public PagerButtons Mode {
             get {
@@ -214,7 +214,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.PagerSettings_NextPageImageUrl)
+        WebSysDescription(System.Web.SR.PagerSettings_NextPageImageUrl)
         ]
         public string NextPageImageUrl {
             get {
@@ -242,7 +242,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue("&gt;"),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerSettings_NextPageText)
+        WebSysDescription(System.Web.SR.PagerSettings_NextPageText)
         ]
         public string NextPageText {
             get {
@@ -271,7 +271,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(10),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerSettings_PageButtonCount)
+        WebSysDescription(System.Web.SR.PagerSettings_PageButtonCount)
         ]
         public int PageButtonCount {
             get {
@@ -302,7 +302,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Layout"),
         DefaultValue(PagerPosition.Bottom),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerStyle_Position)
+        WebSysDescription(System.Web.SR.PagerStyle_Position)
         ]
         public PagerPosition Position {
             get {
@@ -331,7 +331,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.PagerSettings_PreviousPageImageUrl)
+        WebSysDescription(System.Web.SR.PagerSettings_PreviousPageImageUrl)
         ]
         public string PreviousPageImageUrl {
             get {
@@ -359,7 +359,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue("&lt;"),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerSettings_PreviousPageText)
+        WebSysDescription(System.Web.SR.PagerSettings_PreviousPageText)
         ]
         public string PreviousPageText {
             get {
@@ -386,7 +386,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(true),
         NotifyParentProperty(true),
-        WebSysDescription(SR.PagerStyle_Visible)
+        WebSysDescription(System.Web.SR.PagerStyle_Visible)
         ]
         public bool Visible {
             get {

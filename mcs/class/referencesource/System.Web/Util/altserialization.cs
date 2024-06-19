@@ -130,7 +130,7 @@ namespace System.Web.Util {
                     writer.Write((Int32)v.ToInt32());
                 }
                 else {
-                    Debug.Assert(IntPtr.Size == 8);
+                    System.Web.Util.Debug.Assert(IntPtr.Size == 8);
                     writer.Write((Int64)v.ToInt64());
                 }
             }
@@ -141,7 +141,7 @@ namespace System.Web.Util {
                     writer.Write((UInt32)v.ToUInt32());
                 }
                 else {
-                    Debug.Assert(UIntPtr.Size == 8);
+                    System.Web.Util.Debug.Assert(UIntPtr.Size == 8);
                     writer.Write((UInt64)v.ToUInt64());
                 }
             }
@@ -154,7 +154,7 @@ namespace System.Web.Util {
                 try {
                     formatter.Serialize(writer.BaseStream, value);
                 } catch (Exception innerException) {
-                    HttpException outerException = new HttpException(SR.GetString(SR.Cant_serialize_session_state), innerException);
+                    HttpException outerException = new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_serialize_session_state), innerException);
                     outerException.SetFormatter(new UseLastUnhandledErrorFormatter(outerException));
                     throw outerException;
                 }
@@ -251,7 +251,7 @@ namespace System.Web.Util {
                         value = new IntPtr(reader.ReadInt32());
                     }
                     else {
-                        Debug.Assert(IntPtr.Size == 8);
+                        System.Web.Util.Debug.Assert(IntPtr.Size == 8);
                         value = new IntPtr(reader.ReadInt64());
                     }
                     break;
@@ -261,7 +261,7 @@ namespace System.Web.Util {
                         value = new UIntPtr(reader.ReadUInt32());
                     }
                     else {
-                        Debug.Assert(UIntPtr.Size == 8);
+                        System.Web.Util.Debug.Assert(UIntPtr.Size == 8);
                         value = new UIntPtr(reader.ReadUInt64());
                     }
                     break;

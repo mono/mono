@@ -11,11 +11,14 @@ namespace System.Configuration
     using System.Configuration.Provider;
     using System.Xml;
     using System.Text;
-    using  System.Runtime.InteropServices;
+    using System.Runtime.InteropServices;
     using Microsoft.Win32;
     using System.Security.Permissions;
     using Microsoft.Win32.SafeHandles;
     using System.Runtime.CompilerServices;
+
+
+#if (!MONO) || (MONO && !FEATURE_PAL)   
 
     [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
     public sealed class DpapiProtectedConfigurationProvider : ProtectedConfigurationProvider
@@ -264,5 +267,26 @@ namespace System.Configuration
             throw new ConfigurationErrorsException(SR.GetString(SR.Config_invalid_boolean_attribute, valueName));
         }
     }
+#else 
+
+    [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+    public sealed class DpapiProtectedConfigurationProvider : ProtectedConfigurationProvider {
+        
+        public override void Initialize(string name, NameValueCollection configurationValues)
+        {
+            base.Initialize(name, configurationValues);
+        }
+
+        public bool     UseMachineProtection   { get { return false; }}
+
+        public override XmlNode Encrypt(XmlNode node) {
+            throw new NotImplementedException();
+        }
+
+        public override XmlNode Decrypt(XmlNode encryptedNode) {
+            throw new NotImplementedException();
+        }
+    }
+#endif
 
 }

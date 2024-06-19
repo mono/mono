@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -111,7 +111,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeImage"),
 		Bindable(true),
 		DefaultValue(""),
+#if !FEATURE_PAL
 		Editor(Editors.ImageValueEditor.Editor, Editors.ImageValueEditor.Base),
+#endif
 		SRDescription("DescriptionAttributeImageAnnotation_Image"),
 		]
 		public virtual string Image
@@ -165,7 +167,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
         SRDescription("DescriptionAttributeImageTransparentColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		public Color ImageTransparentColor
 		{
@@ -306,7 +310,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Browsable(false),
 		DefaultValue(typeof(Color), "Black"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		override public Color ForeColor
 		{
@@ -352,7 +358,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		override public Color BackColor
 		{
@@ -374,7 +382,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Browsable(false),
 		DefaultValue(ChartHatchStyle.None),
 		NotifyParentPropertyAttribute(true),
+#if !FEATURE_PAL
 		Editor(Editors.HatchStyleEditor.Editor, Editors.HatchStyleEditor.Base)
+#endif
 		]
 		override public ChartHatchStyle BackHatchStyle
 		{
@@ -396,7 +406,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Browsable(false),
 		DefaultValue(GradientStyle.None),
 		NotifyParentPropertyAttribute(true),
+#if !FEATURE_PAL
 		Editor(Editors.GradientEditor.Editor, Editors.GradientEditor.Base)
+#endif
 		]		
 		override public GradientStyle BackGradientStyle
 		{
@@ -419,7 +431,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		] 
 		override public Color BackSecondaryColor
 		{
@@ -441,7 +455,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Browsable(false),
 		DefaultValue(typeof(Color), "Black"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base)
+#endif
 		]
 		override public Color LineColor
 		{

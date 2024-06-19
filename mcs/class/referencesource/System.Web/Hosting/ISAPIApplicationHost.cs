@@ -19,6 +19,7 @@ namespace System.Web.Hosting {
     using System.Web.Util;
     using System.Web.Management;
     using System.Diagnostics.CodeAnalysis;
+    
 
 
     // helper class to implement AppHost based on ISAPI
@@ -58,7 +59,7 @@ namespace System.Web.Hosting {
 
             IServerConfig serverConfig = ServerConfig.GetDefaultDomainInstance(_iisVersion);
 
-            if (StringUtil.StringStartsWithIgnoreCase(appIdOrVirtualPath, LMW3SVC_PREFIX)) {
+            if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(appIdOrVirtualPath, LMW3SVC_PREFIX)) {
                 _appId = appIdOrVirtualPath;
                 _virtualPath = VirtualPath.Create(ExtractVPathFromAppId(_appId));
                 _siteID = ExtractSiteIdFromAppId(_appId);
@@ -81,7 +82,7 @@ namespace System.Web.Hosting {
 
             if (validatePhysicalPath) {
                 if (!Directory.Exists(_physicalPath)) {
-                    throw new HttpException(SR.GetString(SR.Invalid_IIS_app, appIdOrVirtualPath));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_IIS_app, appIdOrVirtualPath));
                 }
             }
         }

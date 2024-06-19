@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls.WebParts {
             get {
                 string consumerID = ConsumerID;
                 if (consumerID.Length == 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_ConsumerIDNotSet));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_ConsumerIDNotSet));
                 }
 
                 if (_webPartManager != null) {
@@ -160,7 +160,7 @@ namespace System.Web.UI.WebControls.WebParts {
             get {
                 string providerID = ProviderID;
                 if (providerID.Length == 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartConnection_ProviderIDNotSet));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartConnection_ProviderIDNotSet));
                 }
 
                 if (_webPartManager != null) {
@@ -249,36 +249,36 @@ namespace System.Web.UI.WebControls.WebParts {
         internal void Activate() {
             // This method should only be called on WebPartConnections in the WebPartManager, so
             // _webPartManager should never be null.
-            Debug.Assert(_webPartManager != null);
+            System.Web.Util.Debug.Assert(_webPartManager != null);
 
             Transformers.SetReadOnly();
 
             WebPart providerWebPart = Provider;
             // Cannot be null because Activate() is only called on valid Connections
-            Debug.Assert(providerWebPart != null);
+            System.Web.Util.Debug.Assert(providerWebPart != null);
 
             WebPart consumerWebPart = Consumer;
             // Cannot be null because Activate() is only called on valid Connections
-            Debug.Assert(consumerWebPart != null);
+            System.Web.Util.Debug.Assert(consumerWebPart != null);
 
             Control providerControl = providerWebPart.ToControl();
             Control consumerControl = consumerWebPart.ToControl();
 
             ProviderConnectionPoint providerConnectionPoint = ProviderConnectionPoint;
             // Cannot be null because Activate() is only called on valid Connections
-            Debug.Assert(providerConnectionPoint != null);
+            System.Web.Util.Debug.Assert(providerConnectionPoint != null);
 
             if (!providerConnectionPoint.GetEnabled(providerControl)) {
-                consumerWebPart.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_DisabledConnectionPoint, providerConnectionPoint.DisplayName, providerWebPart.DisplayTitle));
+                consumerWebPart.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_DisabledConnectionPoint, providerConnectionPoint.DisplayName, providerWebPart.DisplayTitle));
                 return;
             }
 
             ConsumerConnectionPoint consumerConnectionPoint = ConsumerConnectionPoint;
             // Cannot be null because Activate() is only called on valid Connections
-            Debug.Assert(consumerConnectionPoint != null);
+            System.Web.Util.Debug.Assert(consumerConnectionPoint != null);
 
             if (!consumerConnectionPoint.GetEnabled(consumerControl)) {
-                consumerWebPart.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_DisabledConnectionPoint, consumerConnectionPoint.DisplayName, consumerWebPart.DisplayTitle));
+                consumerWebPart.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_DisabledConnectionPoint, consumerConnectionPoint.DisplayName, consumerWebPart.DisplayTitle));
                 return;
             }
 
@@ -294,13 +294,13 @@ namespace System.Web.UI.WebControls.WebParts {
                             _isActive = true;
                         }
                         else {
-                            consumerWebPart.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_IncompatibleSecondaryInterfaces, new string[] {
+                            consumerWebPart.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_IncompatibleSecondaryInterfaces, new string[] {
                                     consumerConnectionPoint.DisplayName, consumerWebPart.DisplayTitle,
                                     providerConnectionPoint.DisplayName, providerWebPart.DisplayTitle}));
                         }
                     }
                     else {
-                        consumerWebPart.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_NoCommonInterface, new string[] {
+                        consumerWebPart.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_NoCommonInterface, new string[] {
                                 providerConnectionPoint.DisplayName, providerWebPart.DisplayTitle,
                                 consumerConnectionPoint.DisplayName, consumerWebPart.DisplayTitle}));
                     }
@@ -311,10 +311,10 @@ namespace System.Web.UI.WebControls.WebParts {
                     if (!_webPartManager.AvailableTransformers.Contains(transformerType)) {
                         string errorMessage;
                         if (_webPartManager.Context != null && _webPartManager.Context.IsCustomErrorEnabled) {
-                            errorMessage = SR.GetString(SR.WebPartConnection_TransformerNotAvailable);
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartConnection_TransformerNotAvailable);
                         }
                         else {
-                            errorMessage = SR.GetString(SR.WebPartConnection_TransformerNotAvailableWithType, transformerType.FullName);
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartConnection_TransformerNotAvailableWithType, transformerType.FullName);
                         }
                         consumerWebPart.SetConnectErrorMessage(errorMessage);
                         
@@ -336,18 +336,18 @@ namespace System.Web.UI.WebControls.WebParts {
                             _isActive = true;
                         }
                         else {
-                            consumerWebPart.SetConnectErrorMessage(SR.GetString(SR.WebPartConnection_ConsumerRequiresSecondaryInterfaces,
+                            consumerWebPart.SetConnectErrorMessage(System.Web.SR.GetString(System.Web.SR.WebPartConnection_ConsumerRequiresSecondaryInterfaces,
                                 consumerConnectionPoint.DisplayName, consumerWebPart.DisplayTitle));
                         }
                     }
                     else if (providerConnectionPoint.InterfaceType != transformerConsumerType) {
                         string errorMessage;
                         if (_webPartManager.Context != null && _webPartManager.Context.IsCustomErrorEnabled) {
-                            errorMessage = SR.GetString(SR.WebPartConnection_IncompatibleProviderTransformer,
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartConnection_IncompatibleProviderTransformer,
                                 providerConnectionPoint.DisplayName, providerWebPart.DisplayTitle);
                         }
                         else {
-                            errorMessage = SR.GetString(SR.WebPartConnection_IncompatibleProviderTransformerWithType,
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartConnection_IncompatibleProviderTransformerWithType,
                                 providerConnectionPoint.DisplayName, providerWebPart.DisplayTitle, transformerType.FullName);
 
                         }
@@ -356,11 +356,11 @@ namespace System.Web.UI.WebControls.WebParts {
                     else {
                         string errorMessage;
                         if (_webPartManager.Context != null && _webPartManager.Context.IsCustomErrorEnabled) {
-                            errorMessage = SR.GetString(SR.WebPartConnection_IncompatibleConsumerTransformer,
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartConnection_IncompatibleConsumerTransformer,
                                 consumerConnectionPoint.DisplayName, consumerWebPart.DisplayTitle);
                         }
                         else {
-                            errorMessage = SR.GetString(SR.WebPartConnection_IncompatibleConsumerTransformerWithType,
+                            errorMessage = System.Web.SR.GetString(System.Web.SR.WebPartConnection_IncompatibleConsumerTransformerWithType,
                                 transformerType.FullName, consumerConnectionPoint.DisplayName, consumerWebPart.DisplayTitle);
                         }
                         consumerWebPart.SetConnectErrorMessage(errorMessage);

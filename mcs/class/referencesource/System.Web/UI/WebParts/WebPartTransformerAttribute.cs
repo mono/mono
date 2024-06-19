@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             if (!transformerType.IsSubclassOf(typeof(WebPartTransformer))) {
                 throw new InvalidOperationException(
-                    SR.GetString(SR.WebPartTransformerAttribute_NotTransformer, transformerType.FullName));
+                    System.Web.SR.GetString(System.Web.SR.WebPartTransformerAttribute_NotTransformer, transformerType.FullName));
             }
 
             Type[] types = (Type[])transformerCache[transformerType];
@@ -82,18 +82,18 @@ namespace System.Web.UI.WebControls.WebParts {
 
             object[] attributes = transformerType.GetCustomAttributes(typeof(WebPartTransformerAttribute), true);
             // WebPartTransformerAttribute.AllowMultiple is false
-            Debug.Assert(attributes.Length == 0 || attributes.Length == 1);
+            System.Web.Util.Debug.Assert(attributes.Length == 0 || attributes.Length == 1);
             if (attributes.Length == 1) {
                 WebPartTransformerAttribute attribute = (WebPartTransformerAttribute)attributes[0];
                 if (attribute.ConsumerType == attribute.ProviderType) {
-                    throw new InvalidOperationException(SR.GetString(SR.WebPartTransformerAttribute_SameTypes));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartTransformerAttribute_SameTypes));
                 }
                 types[0] = attribute.ConsumerType;
                 types[1] = attribute.ProviderType;
             }
             else {
                 throw new InvalidOperationException(
-                    SR.GetString(SR.WebPartTransformerAttribute_Missing, transformerType.FullName));
+                    System.Web.SR.GetString(System.Web.SR.WebPartTransformerAttribute_Missing, transformerType.FullName));
             }
 
             return types;

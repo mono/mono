@@ -39,7 +39,7 @@ namespace System.Web.Compilation {
 
             foreach (VirtualFile vfile in _vdir.Files) {
 
-                string extension = UrlPath.GetExtension(vfile.VirtualPath);
+                string extension = System.Web.Util.UrlPath.GetExtension(vfile.VirtualPath);
 
                 // Skip any file for which we can't get a BuildProvider type, as it is not
                 // compilable.

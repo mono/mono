@@ -22,6 +22,7 @@ namespace System.Web.Handlers {
     using System.Web.Security.Cryptography;
     using System.Web.UI;
     using System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -91,11 +92,11 @@ namespace System.Web.Handlers {
             if (!_handlerExistenceChecked) { 
                 HttpContext context = HttpContext.Current;
                 IIS7WorkerRequest iis7WorkerRequest = (context != null) ? context.WorkerRequest as IIS7WorkerRequest : null;
-                string webResourcePath = UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, _webResourceUrl);
+                string webResourcePath = System.Web.Util.UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, _webResourceUrl);
                 if (iis7WorkerRequest != null) {
                     // check the IIS <handlers> section by mapping the handler
                     string handlerTypeString = iis7WorkerRequest.MapHandlerAndGetHandlerTypeString(method: "GET",
-                                               path: UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, _webResourceUrl),
+                                               path: System.Web.Util.UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, _webResourceUrl),
                                                convertNativeStaticFileModule: false, ignoreWildcardMappings: true);
                     if (!String.IsNullOrEmpty(handlerTypeString)) {
                         _handlerExists = (typeof(AssemblyResourceLoader) == BuildManager.GetType(handlerTypeString, true /*throwOnFail*/, false /*ignoreCase*/));
@@ -142,7 +143,7 @@ namespace System.Web.Handlers {
                 assemblyInfo = GetAssemblyInfoWithAssertInternal(assembly);
                 _assemblyInfoCache[assembly] = assemblyInfo;
             }
-            Debug.Assert(assemblyInfo != null, "Assembly info should not be null");
+            System.Web.Util.Debug.Assert(assemblyInfo != null, "Assembly info should not be null");
             return assemblyInfo;
         }
 
@@ -190,7 +191,7 @@ namespace System.Web.Handlers {
         /// </devdoc>
         internal static string GetWebResourceUrl(Type type, string resourceName, bool htmlEncoded, IScriptManager scriptManager, bool enableCdn) {
             Assembly assembly = GetAssemblyFromType(type);
-            Debug.Assert(assembly != null, "Type.Assembly should never be null.");
+            System.Web.Util.Debug.Assert(assembly != null, "Type.Assembly should never be null.");
 
             // If the resource request is for System.Web.dll and more specifically
             // it is for a file that we shipped in v1.x, we have to check if a
@@ -291,7 +292,7 @@ namespace System.Web.Handlers {
             
             EnsureHandlerExistenceChecked();
             if (!_handlerExists) {
-                throw new InvalidOperationException(SR.GetString(SR.AssemblyResourceLoader_HandlerNotRegistered));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_HandlerNotRegistered));
             }
             Assembly effectiveAssembly = assembly;
             string effectiveResourceName = resourceName;
@@ -395,7 +396,7 @@ namespace System.Web.Handlers {
                     // a full absolute uri (http://..) as in the case of a CDN Path.
                     // An overridden Path that is not a CDN Path is required to be absolute
                     // or app relative.
-                    if (UrlPath.IsAppRelativePath(path)) {
+                    if (System.Web.Util.UrlPath.IsAppRelativePath(path)) {
                         // expand ~/. If it is rooted (/) or an absolute uri, no conversion needed
                         if (_applicationRootPath == null) {
                             url = VirtualPathUtility.ToAbsolute(path);
@@ -452,7 +453,7 @@ namespace System.Web.Handlers {
                         // When this url is being inserted as a substitution in another resource,
                         // it should just be "WebResource.axd?d=..." since the resource is already coming
                         // from the app root (i.e. no need for a full absolute /app/WebResource.axd).
-                        url = UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, url);
+                        url = System.Web.Util.UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, url);
                     }
                 }
                 _urlCache[urlCacheKey] = url;
@@ -468,7 +469,7 @@ namespace System.Web.Handlers {
                 return false;
             }
 
-            string webResourceHandlerUrl = UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, _webResourceUrl);
+            string webResourceHandlerUrl = System.Web.Util.UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, _webResourceUrl);
             string requestPath = context.Request.Path;
             if (String.Equals(requestPath, webResourceHandlerUrl, StringComparison.OrdinalIgnoreCase)) {
                 return true;
@@ -480,10 +481,10 @@ namespace System.Web.Handlers {
         internal static void LogWebResourceFailure(string decryptedData, Exception exception) {
             string errorMessage = null;
             if (decryptedData != null) {
-                errorMessage = SR.GetString(SR.Webevent_msg_RuntimeErrorWebResourceFailure_ResourceMissing, decryptedData);
+                errorMessage = System.Web.SR.GetString(System.Web.SR.Webevent_msg_RuntimeErrorWebResourceFailure_ResourceMissing, decryptedData);
             }
             else {
-                errorMessage = SR.GetString(SR.Webevent_msg_RuntimeErrorWebResourceFailure_DecryptionError);
+                errorMessage = System.Web.SR.GetString(System.Web.SR.Webevent_msg_RuntimeErrorWebResourceFailure_DecryptionError);
             }
             WebBaseEvent.RaiseSystemEvent(message: errorMessage,
                 source: null,
@@ -515,23 +516,23 @@ namespace System.Web.Handlers {
 
                 string encryptedData = queryString["d"];
                 if (String.IsNullOrEmpty(encryptedData)) {
-                    throw new HttpException(404, SR.GetString(SR.AssemblyResourceLoader_InvalidRequest));
+                    throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_InvalidRequest));
                 }
                 resourceIdentifierPresent = true;
 
                 decryptedData = Page.DecryptString(encryptedData, Purpose.AssemblyResourceLoader_WebResourceUrl);
 
                 int separatorIndex = decryptedData.IndexOf('|');
-                Debug.Assert(separatorIndex != -1, "The decrypted data must contain a separator.");
+                System.Web.Util.Debug.Assert(separatorIndex != -1, "The decrypted data must contain a separator.");
 
                 string assemblyName = decryptedData.Substring(0, separatorIndex);
                 if (String.IsNullOrEmpty(assemblyName)) {
-                    throw new HttpException(404, SR.GetString(SR.AssemblyResourceLoader_AssemblyNotFound, assemblyName));
+                    throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_AssemblyNotFound, assemblyName));
                 }
 
                 string resourceName = decryptedData.Substring(separatorIndex + 1);
                 if (String.IsNullOrEmpty(resourceName)) {
-                    throw new HttpException(404, SR.GetString(SR.AssemblyResourceLoader_ResourceNotFound, resourceName));
+                    throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_ResourceNotFound, resourceName));
                 }
 
                 char nameType = assemblyName[0];
@@ -544,7 +545,7 @@ namespace System.Web.Handlers {
                     string[] parts = assemblyName.Split(',');
 
                     if (parts.Length != 4) {
-                        throw new HttpException(404, SR.GetString(SR.AssemblyResourceLoader_InvalidRequest));
+                        throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_InvalidRequest));
                     }
 
                     AssemblyName realName = new AssemblyName();
@@ -579,14 +580,14 @@ namespace System.Web.Handlers {
                     assembly = Assembly.Load(assemblyName);
                 }
                 else {
-                    throw new HttpException(404, SR.GetString(SR.AssemblyResourceLoader_InvalidRequest));
+                    throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_InvalidRequest));
                 }
 
                 // Dev10 Bugs 602949: Throw 404 if resource not found rather than do nothing.
                 // This is done before creating the cache entry, since it could be that the assembly is loaded
                 // later on without the app restarting.
                 if (assembly == null) {
-                    throw new HttpException(404, SR.GetString(SR.AssemblyResourceLoader_InvalidRequest));
+                    throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_InvalidRequest));
                 }
 
                 bool performSubstitution = false;
@@ -670,7 +671,7 @@ namespace System.Web.Handlers {
                                         if (embeddedResourceName.Length > 0) {
                                             // 
                                             if (String.Equals(embeddedResourceName, resourceName, StringComparison.Ordinal)) {
-                                                throw new HttpException(404, SR.GetString(SR.AssemblyResourceLoader_NoCircularReferences, resourceName));
+                                                throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_NoCircularReferences, resourceName));
                                             }
                                             newContent.Append(GetWebResourceUrlInternal(assembly, embeddedResourceName, htmlEncoded: false, forSubstitution: true, scriptManager: null));
                                         }
@@ -719,7 +720,7 @@ namespace System.Web.Handlers {
                 if (resourceIdentifierPresent) {
                     LogWebResourceFailure(decryptedData, exception);
                 }
-                throw new HttpException(404, SR.GetString(SR.AssemblyResourceLoader_InvalidRequest));
+                throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.AssemblyResourceLoader_InvalidRequest));
             }
 
             context.Response.IgnoreFurtherWrites();

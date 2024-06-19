@@ -122,7 +122,7 @@ namespace MonoTests.System.Web.DynamicData
 	}
     
 	[Table (Name = "BarTable")]
-	class Bar
+	public class Bar
 	{
 		[Column (Name = "Col1")]
 		public string Column1 { get; set; }

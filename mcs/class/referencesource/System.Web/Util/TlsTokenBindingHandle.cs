@@ -20,6 +20,12 @@ namespace System.Web.Util {
         private readonly uint _referredtokenBlobSize;
 
         internal TlsTokenBindingHandle(IntPtr mgdContext) {
+            _providedTokenBlob = new IntPtr();
+            _providedTokenBlobSize = 0;
+            _referredTokenBlob = new IntPtr();
+            _referredtokenBlobSize = 0;
+
+#if (!MONO || !FEATURE_PAL)
             int hr = UnsafeIISMethods.MgdGetTlsTokenBindingIdentifiers(
                 mgdContext,
                 ref handle,
@@ -28,6 +34,7 @@ namespace System.Web.Util {
                 out _referredTokenBlob,
                 out _referredtokenBlobSize);
             Misc.ThrowIfFailedHr(hr);
+#endif
         }
 
         public byte[] GetProvidedToken() {

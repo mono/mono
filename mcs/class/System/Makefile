@@ -114,6 +114,7 @@ API_BIN_REFS := System.Net.Http System.Xml System.Core System.Numerics
 ifndef MOBILE_PROFILE
 API_BIN_REFS += System.Configuration
 LIB_MCS_FLAGS += -d:CONFIGURATION_DEP
+TEST_MCS_FLAGS += -d:CONFIGURATION_DEP
 endif
 
 ifeq (wasm,$(PROFILE))

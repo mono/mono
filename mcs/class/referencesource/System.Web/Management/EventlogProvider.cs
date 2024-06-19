@@ -15,6 +15,7 @@ namespace System.Web.Management {
     using System.Web.UI;
     using System.Security.Permissions;
     using System.Text;
+    
 
     ////////////
     // Events
@@ -30,7 +31,7 @@ namespace System.Web.Management {
 
         public override void Initialize(string name, NameValueCollection config)
         {
-            Debug.Trace("WebEventLogEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("WebEventLogEventProvider", "Initializing: name=" + name);
 
             _maxTruncatedParamLen = EventLogParameterMaxLength - _truncateWarning.Length;
 
@@ -166,7 +167,7 @@ namespace System.Web.Management {
         }
 
         void AddViewStateExceptionDataFields(ArrayList dataFields, ViewStateException vse) {
-            dataFields.Add(SR.GetString(vse.ShortMessage));
+            dataFields.Add(System.Web.SR.GetString(vse.ShortMessage));
             dataFields.Add(vse.RemoteAddress);
             dataFields.Add(vse.RemotePort);
             dataFields.Add(vse.UserAgent);
@@ -177,7 +178,7 @@ namespace System.Web.Management {
 
         public override void ProcessEvent(WebBaseEvent eventRaised)
         {
-            Debug.Trace("EventLogWebEventProvider", "ProcessEvent: event=" + eventRaised.GetType().Name);
+            System.Web.Util.Debug.Trace("EventLogWebEventProvider", "ProcessEvent: event=" + eventRaised.GetType().Name);
 
             int             hr;
             ArrayList       dataFields = new ArrayList(35);
@@ -249,7 +250,7 @@ namespace System.Web.Management {
 #if !FEATURE_PAL // FEATURE_PAL does not enable IIS-based hosting features
             hr = UnsafeNativeMethods.RaiseEventlogEvent((int)eventType, (string[])dataFields.ToArray(typeof(string)), dataFields.Count);
             if (hr != 0) {
-                throw new HttpException(SR.GetString(SR.Event_log_provider_error, "0x" + hr.ToString("X8", CultureInfo.InstalledUICulture)));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Event_log_provider_error, "0x" + hr.ToString("X8", CultureInfo.InstalledUICulture)));
             }
 #endif // !FEATURE_PAL
         }

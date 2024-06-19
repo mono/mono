@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -207,7 +207,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), "White"),
 		SRDescription("DescriptionAttributeBorderSkin_PageColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -264,7 +266,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), "Gray"),
         SRDescription("DescriptionAttributeFrameBackColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -293,7 +297,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), "Black"),
         SRDescription("DescriptionAttributeBorderColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -324,7 +330,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
+#if !FEATURE_PAL
 		Editor(Editors.HatchStyleEditor.Editor, Editors.HatchStyleEditor.Base)
+#endif
 		]
 		public ChartHatchStyle BackHatchStyle
 		{
@@ -349,7 +357,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		NotifyParentPropertyAttribute(true),
 		DefaultValue(""),
         SRDescription("DescriptionAttributeBackImage"),
+#if !FEATURE_PAL
 		Editor(Editors.ImageValueEditor.Editor, Editors.ImageValueEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -406,7 +416,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
         SRDescription("DescriptionAttributeImageTransparentColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -467,7 +479,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
+#if !FEATURE_PAL
 		Editor(Editors.GradientEditor.Editor, Editors.GradientEditor.Base)
+#endif
 		]
 		public GradientStyle BackGradientStyle
 		{
@@ -497,7 +511,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(typeof(Color), ""),
 		SRDescription("DescriptionAttributeBorderSkin_FrameBackSecondaryColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif

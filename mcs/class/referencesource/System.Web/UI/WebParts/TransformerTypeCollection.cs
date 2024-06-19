@@ -27,7 +27,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         internal int Add(Type value) {
             if (!value.IsSubclassOf(typeof(WebPartTransformer))) {
-                throw new InvalidOperationException(SR.GetString(SR.WebPartTransformerAttribute_NotTransformer, value.Name));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPartTransformerAttribute_NotTransformer, value.Name));
             }
             return InnerList.Add(value);
         }
@@ -44,13 +44,13 @@ namespace System.Web.UI.WebControls.WebParts {
             if (transformerTypes != null) {
                 foreach (object obj in transformerTypes) {
                     if (obj == null) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "transformerTypes");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "transformerTypes");
                     }
                     if (!(obj is Type)) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "Type"), "transformerTypes");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "Type"), "transformerTypes");
                     }
                     if (!((Type)obj).IsSubclassOf(typeof(WebPartTransformer))) {
-                        throw new ArgumentException(SR.GetString(SR.WebPartTransformerAttribute_NotTransformer, ((Type)obj).Name),
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartTransformerAttribute_NotTransformer, ((Type)obj).Name),
                                                     "transformerTypes");
                     }
                     InnerList.Add(obj);

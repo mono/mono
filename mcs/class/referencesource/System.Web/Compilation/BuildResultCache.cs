@@ -34,6 +34,7 @@ using System.Web.Util;
 using System.Web.Caching;
 using System.Web.UI;
 
+
 internal abstract class BuildResultCache {
     internal BuildResult GetBuildResult(string cacheKey) {
         return GetBuildResult(cacheKey, null /*virtualPath*/, 0 /*hashCode*/);
@@ -54,12 +55,12 @@ internal abstract class BuildResultCache {
     }
 
     internal static string GetAssemblyCacheKey(Assembly assembly) {
-        Debug.Assert(!assembly.GlobalAssemblyCache);
+        System.Web.Util.Debug.Assert(!assembly.GlobalAssemblyCache);
         return GetAssemblyCacheKeyFromName(assembly.GetName().Name);
     }
 
     internal static string GetAssemblyCacheKeyFromName(string assemblyName) {
-        Debug.Assert(StringUtil.StringStartsWith(assemblyName, BuildManager.AssemblyNamePrefix));
+        System.Web.Util.Debug.Assert(System.Web.Util.StringUtil.StringStartsWith(assemblyName, BuildManager.AssemblyNamePrefix));
         return CacheInternal.PrefixAssemblyPath + assemblyName.ToLowerInvariant();
     }
 
@@ -89,14 +90,14 @@ internal class MemoryBuildResultCache: BuildResultCache {
 
         // Ignore assemblies that don't start with our prefix
         string name = a.GetName().Name;
-        if (!StringUtil.StringStartsWith(name, BuildManager.AssemblyNamePrefix))
+        if (!System.Web.Util.StringUtil.StringStartsWith(name, BuildManager.AssemblyNamePrefix))
             return;
 
         // Go through all the assemblies it references
         foreach (AssemblyName assemblyName in a.GetReferencedAssemblies()) {
 
             // Ignore references that don't start with our prefix
-            if (!StringUtil.StringStartsWith(assemblyName.Name, BuildManager.AssemblyNamePrefix))
+            if (!System.Web.Util.StringUtil.StringStartsWith(assemblyName.Name, BuildManager.AssemblyNamePrefix))
                 continue;
 
             lock (_dependentAssemblies) {
@@ -109,21 +110,21 @@ internal class MemoryBuildResultCache: BuildResultCache {
                 }
 
                 // Add the assembly that just got loaded as a dependent
-                Debug.Assert(!dependentList.Contains(name));
+                System.Web.Util.Debug.Assert(!dependentList.Contains(name));
                 dependentList.Add(name);
             }
         }
     }
 
     internal override BuildResult GetBuildResult(string cacheKey, VirtualPath virtualPath, long hashCode, bool ensureIsUpToDate) {
-        Debug.Trace("BuildResultCache", "Looking for '" + cacheKey + "' in the memory cache");
+        System.Web.Util.Debug.Trace("BuildResultCache", "Looking for '" + cacheKey + "' in the memory cache");
 
         string key = GetMemoryCacheKey(cacheKey);
         BuildResult result = (BuildResult) HttpRuntime.Cache.InternalCache.Get(key);
 
         // Not found in the cache
         if (result == null) {
-            Debug.Trace("BuildResultCache", "'" + cacheKey + "' was not found in the memory cache");
+            System.Web.Util.Debug.Trace("BuildResultCache", "'" + cacheKey + "' was not found in the memory cache");
             return null;
         }
 
@@ -132,17 +133,17 @@ internal class MemoryBuildResultCache: BuildResultCache {
         // If not, then we need to explicitely check that it's up to date (more expensive)
         if (!result.UsesCacheDependency && !result.IsUpToDate(virtualPath, ensureIsUpToDate)) {
 
-            Debug.Trace("BuildResultCache", "'" + cacheKey + "' was found but is out of date");
+            System.Web.Util.Debug.Trace("BuildResultCache", "'" + cacheKey + "' was found but is out of date");
 
             // Remove it from the cache
             HttpRuntime.Cache.InternalCache.Remove(key);
 
-            Debug.Assert(HttpRuntime.Cache.InternalCache.Get(key) == null);
+            System.Web.Util.Debug.Assert(HttpRuntime.Cache.InternalCache.Get(key) == null);
 
             return null;
         }
 
-        Debug.Trace("BuildResultCache", "'" + cacheKey + "' was found in the memory cache");
+        System.Web.Util.Debug.Trace("BuildResultCache", "'" + cacheKey + "' was found in the memory cache");
 
         // It's up to date: return it
         return result;
@@ -153,7 +154,7 @@ internal class MemoryBuildResultCache: BuildResultCache {
 
         ICollection virtualDependencies = result.VirtualPathDependencies;
 
-        Debug.Trace("BuildResultCache", "Adding cache " + cacheKey + " in the memory cache");
+        System.Web.Util.Debug.Trace("BuildResultCache", "Adding cache " + cacheKey + " in the memory cache");
 
         CacheDependency cacheDependency = null;
 
@@ -183,12 +184,13 @@ internal class MemoryBuildResultCache: BuildResultCache {
             string assemblyKey = GetAssemblyCacheKey(compiledResult.ResultAssembly);
             Assembly a = (Assembly) HttpRuntime.Cache.InternalCache.Get(assemblyKey);
             if (a == null) {
-                Debug.Trace("BuildResultCache", "Adding marker cache entry " + compiledResult.ResultAssembly);
+                System.Web.Util.Debug.Trace("BuildResultCache", "Adding marker cache entry " + compiledResult.ResultAssembly);
                 // VSWhidbey 500049 - add as NotRemovable to prevent the assembly from being prematurely deleted
-                HttpRuntime.Cache.InternalCache.Insert(assemblyKey, compiledResult.ResultAssembly, null);
+                HttpRuntime.Cache.InternalCache.Insert(assemblyKey, compiledResult.ResultAssembly,
+                    new CacheInsertOptions() { Priority = CacheItemPriority.NotRemovable });
             }
             else {
-                Debug.Assert(a == compiledResult.ResultAssembly);
+                System.Web.Util.Debug.Assert(a == compiledResult.ResultAssembly);
             }
 
             // Now create a dependency based on that key. This way, by removing that key, we are able to
@@ -247,7 +249,7 @@ internal class MemoryBuildResultCache: BuildResultCache {
 
         // Only handle case when the dependency is removed.
         if (reason == CacheItemRemovedReason.DependencyChanged) {
-            Debug.Trace("BuildResultCache", "OnCacheItemRemoved Key=" + key);
+            System.Web.Util.Debug.Trace("BuildResultCache", "OnCacheItemRemoved Key=" + key);
 
             // Remove the assembly if a buildresult becomes obsolete
             if (HostingEnvironment.ShutdownInitiated) {
@@ -340,7 +342,7 @@ internal class MemoryBuildResultCache: BuildResultCache {
         // Get the physical path to the assembly
         String assemblyPath = Util.GetAssemblyCodeBase(assembly);
 
-        Debug.Trace("BuildResultCache", "removing cacheKey for assembly " + assemblyPath + " because of dependency change");
+        System.Web.Util.Debug.Trace("BuildResultCache", "removing cacheKey for assembly " + assemblyPath + " because of dependency change");
 
         // Remove the cache entry in order to kick out all the pages that are in that batch
         HttpRuntime.Cache.InternalCache.Remove(cacheKey);
@@ -409,19 +411,19 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
     protected void EnsureDiskCacheDirectoryCreated() {
 
         // Create the disk cache directory if it's not already there
-        if (!FileUtil.DirectoryExists(_cacheDir)) {
+        if (!System.Web.Util.FileUtil.DirectoryExists(_cacheDir)) {
             try {
                 Directory.CreateDirectory(_cacheDir);
             }
             catch (IOException e) {
-                throw new HttpException(SR.GetString(SR.Failed_to_create_temp_dir, HttpRuntime.GetSafePath(_cacheDir)), e);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Failed_to_create_temp_dir, HttpRuntime.GetSafePath(_cacheDir)), e);
             }
         }
     }
 
     internal override BuildResult GetBuildResult(string cacheKey, VirtualPath virtualPath, long hashCode, bool ensureIsUpToDate) {
 
-        Debug.Trace("BuildResultCache", "Looking for '" + cacheKey + "' in the disk cache");
+        System.Web.Util.Debug.Trace("BuildResultCache", "Looking for '" + cacheKey + "' in the disk cache");
         
         string preservationFile = GetPreservedDataFileName(cacheKey);
 
@@ -431,9 +433,9 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
         BuildResult result = pfr.ReadBuildResultFromFile(virtualPath, preservationFile, hashCode, ensureIsUpToDate);
 
         if (result != null)
-            Debug.Trace("BuildResultCache", "'" + cacheKey + "' was found in the disk cache");
+            System.Web.Util.Debug.Trace("BuildResultCache", "'" + cacheKey + "' was found in the disk cache");
         else
-            Debug.Trace("BuildResultCache", "'" + cacheKey + "' was not found in the disk cache");
+            System.Web.Util.Debug.Trace("BuildResultCache", "'" + cacheKey + "' was not found in the disk cache");
 
         return result;
     }
@@ -484,7 +486,7 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
         
         cacheKey = Path.Combine(_cacheDir, cacheKey);
 
-        cacheKey = FileUtil.TruncatePathIfNeeded(cacheKey, 9 /*length of ".compiled"*/);
+        cacheKey = System.Web.Util.FileUtil.TruncatePathIfNeeded(cacheKey, 9 /*length of ".compiled"*/);
 
         // Use a ".compiled" extension for the preservation file
         return cacheKey + preservationFileExtension;
@@ -501,7 +503,7 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
      */
     internal virtual void RemoveAssemblyAndRelatedFiles(string assemblyName) {
 
-        Debug.Trace("DiskBuildResultCache", "RemoveAssemblyAndRelatedFiles(" + assemblyName + ")");
+        System.Web.Util.Debug.Trace("DiskBuildResultCache", "RemoveAssemblyAndRelatedFiles(" + assemblyName + ")");
 
         // If the name doesn't start with the prefix, the cleanup code doesn't apply
         if (!assemblyName.StartsWith(BuildManager.WebAssemblyNamePrefix, StringComparison.Ordinal)) {
@@ -579,7 +581,7 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
         // It had to be renamed, so increment the recompilations count,
         // and restart the appdomain if it reaches the limit
 
-        Debug.Trace("DiskBuildResultCache", "RemoveAssembly: " + f.Name + " was renamed");
+        System.Web.Util.Debug.Trace("DiskBuildResultCache", "RemoveAssembly: " + f.Name + " was renamed");
 
         if (++s_recompilations == s_maxRecompilations) {
             s_shutdownStatus = SHUTDOWN_NEEDED;
@@ -627,7 +629,7 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
 
         try {
             f.Delete();
-            Debug.Trace("DiskBuildResultCache", "TryDeleteFile removed " + f.Name);
+            System.Web.Util.Debug.Trace("DiskBuildResultCache", "TryDeleteFile removed " + f.Name);
             return true;
         } 
         catch { }
@@ -644,10 +646,10 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
             return false;
 
         string baseName = Path.GetDirectoryName(f.FullName) + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(f.FullName);
-        if (FileUtil.FileExists(baseName)) {
+        if (System.Web.Util.FileUtil.FileExists(baseName)) {
             try {
                 File.Delete(baseName);
-                Debug.Trace("DiskBuildResultCache", "CheckAndRemoveDotDeleteFile deleted " + baseName);
+                System.Web.Util.Debug.Trace("DiskBuildResultCache", "CheckAndRemoveDotDeleteFile deleted " + baseName);
             } 
             catch {
                 return false;
@@ -656,7 +658,7 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
 
         try {
             f.Delete();
-            Debug.Trace("DiskBuildResultCache", "CheckAndRemoveDotDeleteFile deleted " + f.Name);
+            System.Web.Util.Debug.Trace("DiskBuildResultCache", "CheckAndRemoveDotDeleteFile deleted " + f.Name);
         } 
         catch { }
         
@@ -674,10 +676,10 @@ internal abstract class DiskBuildResultCache: BuildResultCache {
         if (!File.Exists(newName)) {
             try {
                 (new StreamWriter(newName)).Close();
-                Debug.Trace("DiskBuildResultCache", "CreateDotDeleteFile succeeded: " + newName);
+                System.Web.Util.Debug.Trace("DiskBuildResultCache", "CreateDotDeleteFile succeeded: " + newName);
             }
             catch {
-                Debug.Trace("DiskBuildResultCache", "CreateDotDeleteFile failed: " + newName);
+                System.Web.Util.Debug.Trace("DiskBuildResultCache", "CreateDotDeleteFile failed: " + newName);
             } // If we fail the .delete probably just got created by another process.
         }
     }
@@ -694,7 +696,7 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
     internal StandardDiskBuildResultCache(string cacheDir)
         : base(cacheDir) {
 
-        Debug.Assert(cacheDir == HttpRuntime.CodegenDirInternal);
+        System.Web.Util.Debug.Assert(cacheDir == HttpRuntime.CodegenDirInternal);
 
         EnsureDiskCacheDirectoryCreated();
 
@@ -714,7 +716,7 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
      * Return the combined hash that was preserved to file.  Return 0 if not valid.
      */
     internal static Tuple<long, long> GetPreservedSpecialFilesCombinedHash(string fileName) {
-        if (!FileUtil.FileExists(fileName)) {
+        if (!System.Web.Util.FileUtil.FileExists(fileName)) {
             return Tuple.Create<long, long>(0, 0);
         }
 
@@ -745,12 +747,12 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
      */
     internal static void SavePreservedSpecialFilesCombinedHash(string hashFilePath, Tuple<long, long> hash) {
 
-        Debug.Assert(hash != null && hash.Item1 != 0 && hash.Item2 != 0, "SavePreservedSpecialFilesCombinedHash: hash0 != 0, hash1 != 0");
+        System.Web.Util.Debug.Assert(hash != null && hash.Item1 != 0 && hash.Item2 != 0, "SavePreservedSpecialFilesCombinedHash: hash0 != 0, hash1 != 0");
         
         String hashDirPath = Path.GetDirectoryName(hashFilePath);
 
         // Create the hashweb directory if needed
-        if (!FileUtil.DirectoryExists(hashDirPath)) {
+        if (!System.Web.Util.FileUtil.DirectoryExists(hashDirPath)) {
             Directory.CreateDirectory(hashDirPath);
         }
 
@@ -763,7 +765,7 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
 
     private void FindSatelliteDirectories() {
 
-        Debug.Assert(_satelliteDirectories == null);
+        System.Web.Util.Debug.Assert(_satelliteDirectories == null);
 
         //
         // Look for all the subdirectories of the codegen dir that look like
@@ -817,12 +819,61 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
      * Delete all temporary files from the codegen directory (e.g. source files, ...)
      */
     internal void RemoveOldTempFiles() {
-        Debug.Trace("BuildResultCache", "Deleting old temporary files from " + _cacheDir);
+        System.Web.Util.Debug.Trace("BuildResultCache", "Deleting old temporary files from " + _cacheDir);
 
         RemoveCodegenResourceDir();
 
-        string codegen = _cacheDir + "\\";
+        string codegen = _cacheDir + Path.DirectorySeparatorChar;
 
+#if (MONO || FEATURE_PAL)
+        DirectoryInfo dir = new DirectoryInfo(codegen);
+
+        foreach(FileInfo fileData in dir.EnumerateFiles()) {
+            String ext = fileData.Extension;
+
+            if (ext == ".dll" || ext == ".pdb" || ext == ".web" || ext == ".ccu" || ext == ".prof" || ext == preservationFileExtension) {
+                continue;
+            }
+
+            if (ext != dotDelete) {
+                // Don't delete the temp file if it's named after a dll that's still around
+                // since it could still be useful for debugging.
+                // Note that we can't use GetFileNameWithoutExtension here because
+                // some of the files are named 5hvoxl6v.0.cs, and it would return
+                // 5hvoxl6v.0 instead of just 5hvoxl6v
+                int periodIndex = fileData.Name.LastIndexOf('.');
+                if (periodIndex > 0) {
+                    string baseName = fileData.Name.Substring(0, periodIndex);
+
+                    int secondPeriodIndex = baseName.LastIndexOf('.');
+                    if (secondPeriodIndex > 0) {
+                        baseName = baseName.Substring(0, secondPeriodIndex);
+                    }
+
+                    // Generated source files uses assemblyname as prefix so we should keep them.
+                    if (System.Web.Util.FileUtil.FileExists(codegen + baseName + ".dll"))
+                        continue;
+
+                    // other generated files, such as .cmdline, .err and .out need to add the 
+                    // WebAssemblyNamePrefix, since they do not use the assembly name as prefix.
+                    if (System.Web.Util.FileUtil.FileExists(codegen + BuildManager.WebAssemblyNamePrefix + baseName + ".dll"))
+                        continue;
+                }
+            }
+            else {
+                // Additional logic for VSWhidbey 564168 / Visual Studio QFE 4710.
+                // Delete both original .dll and .delete if possible
+                DiskBuildResultCache.CheckAndRemoveDotDeleteFile(fileData);
+                continue;
+            }
+
+            System.Web.Util.Debug.Trace("BuildResultCache", "Deleting old temporary files: " + fileData.FullName);
+            try {
+                File.Delete(fileData.FullName);
+            } catch { }
+            
+        }
+#else 
         // Go through all the files in the codegen dir
         foreach (FileData fileData in FileEnumerator.Create(codegen)) {
 
@@ -852,12 +903,12 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
                     }
 
                     // Generated source files uses assemblyname as prefix so we should keep them.
-                    if (FileUtil.FileExists(codegen + baseName + ".dll"))
+                    if (System.Web.Util.FileUtil.FileExists(codegen + baseName + ".dll"))
                         continue;
 
                     // other generated files, such as .cmdline, .err and .out need to add the 
                     // WebAssemblyNamePrefix, since they do not use the assembly name as prefix.
-                    if (FileUtil.FileExists(codegen + BuildManager.WebAssemblyNamePrefix + baseName + ".dll"))
+                    if (System.Web.Util.FileUtil.FileExists(codegen + BuildManager.WebAssemblyNamePrefix + baseName + ".dll"))
                         continue;
                 }
             }
@@ -868,16 +919,18 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
                 continue;
             }
 
-            Debug.Trace("BuildResultCache", "Deleting old temporary files: " + fileData.FullName);
+            System.Web.Util.Debug.Trace("BuildResultCache", "Deleting old temporary files: " + fileData.FullName);
             try {
                 File.Delete(fileData.FullName);
             } catch { }
         }
+#endif
+
     }
 
     private void RemoveCodegenResourceDir() {
         string path = BuildManager.CodegenResourceDir;
-        Debug.Trace("BuildResultCache", "Deleting codegen temporary resource directory: " + path);
+        System.Web.Util.Debug.Trace("BuildResultCache", "Deleting codegen temporary resource directory: " + path);
         if (Directory.Exists(path)){
             try {
                 Directory.Delete(path, recursive:true);
@@ -892,7 +945,7 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
     [SuppressMessage("Microsoft.Usage","CA1806:DoNotIgnoreMethodResults", MessageId="System.Web.UnsafeNativeMethods.DeleteShadowCache(System.String,System.String)", 
         Justification="Reviewed - we are just trying to clean up the codegen folder as much as possible, so it is ok to ignore any errors.")]
     internal void RemoveAllCodegenFiles() {
-        Debug.Trace("BuildResultCache", "Deleting all files from " + _cacheDir);
+        System.Web.Util.Debug.Trace("BuildResultCache", "Deleting all files from " + _cacheDir);
 
         RemoveCodegenResourceDir();
 
@@ -901,6 +954,41 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
 
         // Go through all the files in the codegen dir.  Delete everything, except
         // for the fusion cache, which is in the "assembly" subdirectory
+
+#if (MONO || FEATURE_PAL)
+        DirectoryInfo dir = new DirectoryInfo(_cacheDir);
+
+        foreach(FileSystemInfo fileData in dir.EnumerateFileSystemInfos()) {
+            if ((fileData.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
+                // Skip the fusion cache
+                if (fileData.Name == fusionCacheDirectoryName)
+                    continue;
+
+                // Skip the "hash" folder
+                if (fileData.Name == webHashDirectoryName)
+                    continue;
+
+                // Skip the source files generated for the designer (VSWhidbey 138194)
+                if (System.Web.Util.StringUtil.StringStartsWith(fileData.Name, CodeDirectoryCompiler.sourcesDirectoryPrefix))
+                    continue;
+
+                try {
+                    // If it is a directory, only remove the files inside and not the directory itself
+                    // VSWhidbey 596757
+                    DeleteFilesInDirectory(fileData.FullName);
+                }
+                catch { } // Ignore all exceptions
+
+                continue;
+            }
+
+            // VSWhidbey 564168 Do not delete files that cannot be deleted, these files are still
+            // referenced by other appdomains that are in the process of shutting down.
+            // We also do not rename as renaming can cause an assembly not to be found if another
+            // appdomain tries to compile against it.
+            DiskBuildResultCache.TryDeleteFile(fileData.FullName);
+        }
+#else
         foreach (FileData fileData in FileEnumerator.Create(_cacheDir)) {
 
             // If it's a directories
@@ -915,7 +1003,7 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
                     continue;
 
                 // Skip the source files generated for the designer (VSWhidbey 138194)
-                if (StringUtil.StringStartsWith(fileData.Name, CodeDirectoryCompiler.sourcesDirectoryPrefix))
+                if (System.Web.Util.StringUtil.StringStartsWith(fileData.Name, CodeDirectoryCompiler.sourcesDirectoryPrefix))
                     continue;
 
                 try {
@@ -938,14 +1026,27 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
 
 
         // Clean up the fusion shadow copy cache
-
-        AppDomainSetup appDomainSetup = Thread.GetDomain().SetupInformation;
+        
+        AppDomainSetup appDomainSetup= Thread.GetDomain().SetupInformation;
         UnsafeNativeMethods.DeleteShadowCache(appDomainSetup.CachePath,
             appDomainSetup.ApplicationName);
+#endif
     }
 
     // Deletes all files in the directory, but leaves the directory there
     internal void DeleteFilesInDirectory(string path) {
+#if (MONO || FEATURE_PAL)
+        DirectoryInfo dir = new DirectoryInfo(path);
+
+        foreach(FileSystemInfo fileData in dir.EnumerateFileSystemInfos()) {
+            if ((fileData.Attributes & FileAttributes.Directory) == FileAttributes.Directory) {
+                Directory.Delete(fileData.FullName, true);
+                continue;
+            }
+
+            Util.RemoveOrRenameFile(fileData.FullName);
+        }
+#else
         foreach (FileData fileData in FileEnumerator.Create(path)) {
             if (fileData.IsDirectory) {
                 Directory.Delete(fileData.FullName, true /*recursive*/);
@@ -953,6 +1054,7 @@ internal class StandardDiskBuildResultCache: DiskBuildResultCache {
             }
             Util.RemoveOrRenameFile(fileData.FullName);
         }
+#endif
     }
 }
 

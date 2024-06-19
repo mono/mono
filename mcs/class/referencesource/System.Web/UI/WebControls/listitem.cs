@@ -368,10 +368,10 @@ namespace System.Web.UI.WebControls {
             }
             else {
                 if (obj is DataBoundLiteralControl) {
-                    throw new HttpException(SR.GetString(SR.Control_Cannot_Databind, "ListItem"));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Control_Cannot_Databind, "ListItem"));
                 }
                 else {
-                    throw new HttpException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "ListItem", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "ListItem", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
                 }
             }
         }

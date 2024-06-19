@@ -551,29 +551,29 @@ namespace MonoTests.System.Web.Script.Serialization
 			Assert.AreEqual("null", ser.Serialize(null));
 
 			string js = ser.Serialize (1234);
-			Assert.AreEqual ("1234", js);
-			Assert.AreEqual (1234, ser.Deserialize<int> (js));
+			Assert.AreEqual ("1234", js, "#A1");
+			Assert.AreEqual (1234, ser.Deserialize<int> (js), "#B1");
 			js = ser.Serialize (1.1);
-			Assert.AreEqual ("1.1", js);
+			Assert.AreEqual ("1.1", js, "#C1");
 			Assert.AreEqual (1.1f, ser.Deserialize<float> (js));
 			char [] chars = "faskjhfasd0981234".ToCharArray ();
 			js = ser.Serialize (chars);
 			char[] actual = ser.Deserialize<char[]> (js);
-			Assert.AreEqual (chars.Length, actual.Length);
+			Assert.AreEqual (chars.Length, actual.Length, "#D1");
 			for (int i = 0; i < chars.Length; i++)
-				Assert.AreEqual (chars[i], actual[i]);
+				Assert.AreEqual (chars[i], actual[i], String.Format("#E1-{0}", i.ToString()));
 
-			string expected = @"""\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f !\""#$%&\u0027()*+,-./0123456789:;\u003c=\u003e?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~""";
+			string expected = @"""\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f !\""#$%\u0026\u0027()*+,-./0123456789:;\u003c=\u003e?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~""";
 			string data = "\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\b\t\n\u000b\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f !\"#$%&\u0027()*+,-./0123456789:;\u003c=\u003e?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 			string serRes = ser.Serialize (data);
-			Assert.AreEqual (expected, serRes);
+			Assert.AreEqual (expected, serRes, "#F1");
 			string deserRes = ser.Deserialize<string> (serRes);
-			Assert.AreEqual (data, deserRes);
+			Assert.AreEqual (data, deserRes, "#G1");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (NullReferenceException))]
 		[Category ("NotDotNet")]
 		public void TestSerialize2 () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
@@ -1287,7 +1287,10 @@ namespace MonoTests.System.Web.Script.Serialization
 			}
 		}
 
+		// NOT supported in refsrc
+
 		[Test] //bug #424704
+		[ExpectedException(typeof(InvalidOperationException))]
 		public void NonGenericClassImplementingClosedGenericIDictionary ()
 		{
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
@@ -1469,8 +1472,7 @@ namespace MonoTests.System.Web.Script.Serialization
 			array.value = new[] { 123.345, 0.69 };
 
 			string arrayJson = serializer.Serialize (array);
-			Console.WriteLine (arrayJson);
-
+			
 			// This throwed incorrectly a "System.ArgumentException: Invalid JSON primitive: 123.345" with a CurrentThread.CultureInfo that has a comma as the number separator.
 			DoubleTest obj = serializer.Deserialize<DoubleTest> (arrayJson);
 

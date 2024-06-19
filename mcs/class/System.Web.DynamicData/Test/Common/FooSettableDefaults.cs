@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MonoTests.Common
 {
-	class FooSettableDefaults
+	public class FooSettableDefaults
 	{
 		public string Column1 { get; set; }
 		public int Column2 { get; set; }

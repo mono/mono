@@ -28,7 +28,7 @@ namespace System.Web.UI.WebControls {
         private object _dataSource;
 
         public ReadOnlyDataSource(object dataSource, string dataMember) {
-            Debug.Assert(dataSource == null || (dataSource is IEnumerable || dataSource is IDataSource || dataSource is IListSource), "Expected dataSource to be either null, an IEnumerable, an IDataSource, or an IListSource.");
+            System.Web.Util.Debug.Assert(dataSource == null || (dataSource is IEnumerable || dataSource is IDataSource || dataSource is IListSource), "Expected dataSource to be either null, an IEnumerable, an IDataSource, or an IListSource.");
             _dataSource = dataSource;
             _dataMember = dataMember;
         }

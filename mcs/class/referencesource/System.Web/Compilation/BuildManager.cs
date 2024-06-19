@@ -31,6 +31,7 @@ namespace System.Web.Compilation {
     using System.Web.UI;
     using System.Web.Util;
     using System.Xml;
+    
 
 
     /// <devdoc>
@@ -145,7 +146,7 @@ namespace System.Web.Compilation {
 
                 // If Fusion was not yet initialized, skip the init.
                 // This can happen when there is a very early failure (e.g. see VSWhidbey 137366)
-                Debug.Trace("BuildManager", "InitializeBuildManager " + HttpRuntime.FusionInited);
+                System.Web.Util.Debug.Trace("BuildManager", "InitializeBuildManager " + HttpRuntime.FusionInited);
                 if (!HttpRuntime.FusionInited)
                     return false;
 
@@ -180,7 +181,7 @@ namespace System.Web.Compilation {
         }
 
         private void ReportTopLevelCompilationException() {
-            Debug.Assert(_topLevelFileCompilationException != null);
+            System.Web.Util.Debug.Assert(_topLevelFileCompilationException != null);
 
             // Try to report the cached error to the CBM callback
             ReportErrorsFromException(_topLevelFileCompilationException);
@@ -378,7 +379,7 @@ namespace System.Web.Compilation {
         /// <param name="dependency">String representation of a dependency.</param>
         public static void AddCompilationDependency(string dependency) {
             if (String.IsNullOrEmpty(dependency)) {
-                throw new ArgumentException(SR.GetString(SR.Parameter_can_not_be_empty), "dependency");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_can_not_be_empty), "dependency");
             }
             BuildManager.ThrowIfPreAppStartNotRunning();
             _theBuildManager._preAppStartHashCodeCombiner.AddObject(dependency);
@@ -389,7 +390,7 @@ namespace System.Web.Compilation {
          */
         private void Initialize() {
 
-            Debug.Assert(_caches == null);
+            System.Web.Util.Debug.Assert(_caches == null);
 
             // Register an AssemblyResolve event
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(this.ResolveAssembly);
@@ -397,7 +398,7 @@ namespace System.Web.Compilation {
             _globalAsaxVirtualPath = HttpRuntime.AppDomainAppVirtualPathObject.SimpleCombine(
                 HttpApplicationFactory.applicationFileName);
 
-            _webHashFilePath = Path.Combine(HttpRuntime.CodegenDirInternal, "hash\\hash.web");
+            _webHashFilePath = Path.Combine(HttpRuntime.CodegenDirInternal, "hash" + Path.DirectorySeparatorChar + "hash.web");
 
             // Indicate whether we should ignore the top level compilation exceptions.
             // In CBM case, we want to continue processing the page and return partial info even
@@ -565,7 +566,7 @@ namespace System.Web.Compilation {
          * if they are not.
          */
         private long CheckTopLevelFilesUpToDateInternal(long cachedHash) {
-            Debug.Trace("BuildManager", "specialFilesCombinedHash=" + cachedHash);
+            System.Web.Util.Debug.Trace("BuildManager", "specialFilesCombinedHash=" + cachedHash);
             var specialFilesHashCodeCombiner = new HashCodeCombiner();
 
             // Delete all the non essential files left over in the codegen dir, unless
@@ -687,7 +688,7 @@ namespace System.Web.Compilation {
                 // will use the up-to-date assemblies.
                 HttpRuntime.FileChangesMonitor.StartMonitoringFile(_webHashFilePath,
                     new FileChangeEventHandler(this.OnWebHashFileChange));
-                Debug.Assert(File.Exists(_webHashFilePath), _webHashFilePath);
+                System.Web.Util.Debug.Assert(File.Exists(_webHashFilePath), _webHashFilePath);
             }
             finally {
                 // Always release the mutex if we had taken it
@@ -703,24 +704,24 @@ namespace System.Web.Compilation {
 
             if (PrecompilingForCleanBuild || currentHash != cachedTopLevelFilesHash) {
                 if (PrecompilingForCleanBuild) {
-                    Debug.Trace("BuildManager", "Precompiling for clean build.");
+                    System.Web.Util.Debug.Trace("BuildManager", "Precompiling for clean build.");
                 }
                 else {
-                    Debug.Trace("BuildManager", "EnsureFirstTimeInit: hash codes don't match.  Old=" +
+                    System.Web.Util.Debug.Trace("BuildManager", "EnsureFirstTimeInit: hash codes don't match.  Old=" +
                         cachedTopLevelFilesHash + " New=" + currentHash);
                 }
 
                 _codeGenCache.RemoveAllCodegenFiles();
             }
             else {
-                Debug.Trace("BuildManager", "BuildManager: the special files are up to date");
+                System.Web.Util.Debug.Trace("BuildManager", "BuildManager: the special files are up to date");
             }
         }
 
         private void OnWebHashFileChange(Object sender, FileChangeEvent e) {
             // Shutdown the app domain
-            Debug.Trace("BuildManager", _webHashFilePath + " changed - shutting down the app domain");
-            Debug.Trace("AppDomainFactory", "Shutting down appdomain because " + _webHashFilePath + " file changed");
+            System.Web.Util.Debug.Trace("BuildManager", _webHashFilePath + " changed - shutting down the app domain");
+            System.Web.Util.Debug.Trace("AppDomainFactory", "Shutting down appdomain because " + _webHashFilePath + " file changed");
             string message = FileChangesMonitor.GenerateErrorMessage(e.Action, _webHashFilePath);
             if (message == null) {
                 message = "Change in " + _webHashFilePath;
@@ -750,7 +751,7 @@ namespace System.Web.Compilation {
 
         internal static void ThrowIfPreAppStartNotRunning() {
             if (PreStartInitStage != PreStartInitStage.DuringPreStartInit) {
-                throw new InvalidOperationException(SR.GetString(SR.Method_can_only_be_called_during_pre_start_init));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Method_can_only_be_called_during_pre_start_init));
             }
         }
 
@@ -781,43 +782,44 @@ namespace System.Web.Compilation {
 
         // this method requires global lock as the part of the fix of DevDiv bug 501777
         private static ISet<string> CallPreStartInitMethods(string preStartInitListPath, out bool isRefAssemblyLoaded) {
-            Debug.Assert(PreStartInitStage == Compilation.PreStartInitStage.BeforePreStartInit);
+            System.Web.Util.Debug.Assert(PreStartInitStage == Compilation.PreStartInitStage.BeforePreStartInit);
             isRefAssemblyLoaded = false;
-            using (new ApplicationImpersonationContext()) {
-                ICollection<MethodInfo> methods = null;
-                ICollection<Assembly> cachedPreStartAssemblies = LoadCachedPreAppStartAssemblies(preStartInitListPath);
-                if (cachedPreStartAssemblies != null) {
-                    methods = GetPreStartInitMethodsFromAssemblyCollection(cachedPreStartAssemblies, buildingFromCache: true);
-                }
-
-                if (methods == null) {
-                    // In case of ctlr-f5 scenario, two processes (VS and IisExpress) will start compilation simultaneously.
-                    // GetPreStartInitMethodsFromReferencedAssemblies() will load all referenced assemblies
-                    // If shallow copy is enabled, one process may fail due race condition in copying assemblies (DevDiv bug 501777) 
-                    // to fix it, put GetPreStartInitMethodsFromReferencedAssemblies() under the global lock 
-                    bool gotLock = false;
-                    try {
-                        CompilationLock.GetLock(ref gotLock);
-                        methods = GetPreStartInitMethodsFromReferencedAssemblies();
-                        isRefAssemblyLoaded = true;
-                    }
-                    finally {
-                        if (gotLock) {
-                            CompilationLock.ReleaseLock();
-                        }
-                    }
-                }
-
-                InvokePreStartInitMethods(methods);
-
-                Debug.Assert(PreStartInitStage == Compilation.PreStartInitStage.AfterPreStartInit);
-
-                return new HashSet<string>(methods.Select(m => m.DeclaringType.Assembly.FullName), StringComparer.OrdinalIgnoreCase);
+           
+            ICollection<MethodInfo> methods = null;
+            ICollection<Assembly> cachedPreStartAssemblies = LoadCachedPreAppStartAssemblies(preStartInitListPath);
+            
+            if (cachedPreStartAssemblies != null) {
+                methods = GetPreStartInitMethodsFromAssemblyCollection(cachedPreStartAssemblies, buildingFromCache: true);
             }
+
+            if (methods == null) {
+                // In case of ctlr-f5 scenario, two processes (VS and IisExpress) will start compilation simultaneously.
+                // GetPreStartInitMethodsFromReferencedAssemblies() will load all referenced assemblies
+                // If shallow copy is enabled, one process may fail due race condition in copying assemblies (DevDiv bug 501777) 
+                // to fix it, put GetPreStartInitMethodsFromReferencedAssemblies() under the global lock 
+                bool gotLock = false;
+                try {
+                    CompilationLock.GetLock(ref gotLock);
+                    methods = GetPreStartInitMethodsFromReferencedAssemblies();
+                    isRefAssemblyLoaded = true;
+                }
+                finally {
+                    if (gotLock) {
+                        CompilationLock.ReleaseLock();
+                    }
+                }
+            }
+
+            InvokePreStartInitMethods(methods);
+
+            System.Web.Util.Debug.Assert(PreStartInitStage == Compilation.PreStartInitStage.AfterPreStartInit);
+
+            return new HashSet<string>(methods.Select(m => m.DeclaringType.Assembly.FullName), StringComparer.OrdinalIgnoreCase);
+            
         }
 
         internal static ISet<string> GetPreStartInitAssembliesFromFile(string path) {
-            if (FileUtil.FileExists(path)) {
+            if (System.Web.Util.FileUtil.FileExists(path)) {
                 try {
                     return new HashSet<string>(File.ReadAllLines(path), StringComparer.OrdinalIgnoreCase);
                 }
@@ -834,9 +836,9 @@ namespace System.Web.Compilation {
 
         // this method requires global lock as the part of the fix of DevDiv bug 501777
         internal static void SavePreStartInitAssembliesToFile(string path, ISet<string> assemblies) {
-            Debug.Assert(assemblies != null);
-            Debug.Assert(!String.IsNullOrEmpty(path));
-            Debug.Assert(!assemblies.Any(String.IsNullOrEmpty));
+            System.Web.Util.Debug.Assert(assemblies != null);
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(path));
+            System.Web.Util.Debug.Assert(!assemblies.Any(String.IsNullOrEmpty));
             bool gotLock = false;
             try {
                 //put write under the global lock to avoid race condition
@@ -904,7 +906,7 @@ namespace System.Web.Compilation {
                 catch (TargetInvocationException e) {
                     string message = (e.InnerException != null ? e.InnerException.Message : String.Empty);
                     throw new InvalidOperationException(
-                        SR.GetString(SR.Pre_application_start_init_method_threw_exception,
+                        System.Web.SR.GetString(System.Web.SR.Pre_application_start_init_method_threw_exception,
                             method.Name,
                             method.DeclaringType.FullName,
                             message),
@@ -955,7 +957,7 @@ namespace System.Web.Compilation {
                             methods.Add(method);
                         }
                         else {
-                            throw new HttpException(SR.GetString(SR.Invalid_PreApplicationStartMethodAttribute_value,
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_PreApplicationStartMethodAttribute_value,
                                 assembly.FullName,
                                 (attribute.Type != null ? attribute.Type.FullName : String.Empty),
                                 attribute.MethodName));
@@ -967,8 +969,8 @@ namespace System.Web.Compilation {
         }
 
         internal static MethodInfo FindPreStartInitMethod(Type type, string methodName) {
-            Debug.Assert(type != null);
-            Debug.Assert(!String.IsNullOrEmpty(methodName));
+            System.Web.Util.Debug.Assert(type != null);
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(methodName));
             MethodInfo method = null;
             if (type.IsPublic) {
                 // Verify that type is public to avoid allowing internal code execution. This implementation will not match
@@ -987,7 +989,7 @@ namespace System.Web.Compilation {
         private Assembly CompileCodeDirectory(VirtualPath virtualDir, CodeDirectoryType dirType,
             string assemblyName, StringSet excludedSubdirectories) {
 
-            Debug.Trace("BuildManager", "CompileCodeDirectory(" + virtualDir.VirtualPathString + ")");
+            System.Web.Util.Debug.Trace("BuildManager", "CompileCodeDirectory(" + virtualDir.VirtualPathString + ")");
 
             bool isDirectoryAllowed = true;
             if (IsPrecompiledApp) {
@@ -1046,7 +1048,7 @@ namespace System.Web.Compilation {
                 }
             }
 
-            Debug.Trace("BuildManager", "CompileCodeDirectory generated assembly: " +
+            System.Web.Util.Debug.Trace("BuildManager", "CompileCodeDirectory generated assembly: " +
                 (codeAssembly == null ? "None" : codeAssembly.ToString()));
 
             return codeAssembly;
@@ -1057,7 +1059,7 @@ namespace System.Web.Compilation {
 
             VirtualPath virtualDir = HttpRuntime.ResourcesDirectoryVirtualPath;
 
-            Debug.Assert(_appResourcesAssembly == null);
+            System.Web.Util.Debug.Assert(_appResourcesAssembly == null);
             _appResourcesAssembly = CompileCodeDirectory(virtualDir, CodeDirectoryType.AppResources,
                 ResourcesDirectoryAssemblyName, null /*excludedSubdirectories*/);
         }
@@ -1153,11 +1155,11 @@ namespace System.Web.Compilation {
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         internal void EnsureTopLevelFilesCompiled() {
             if (PreStartInitStage != Compilation.PreStartInitStage.AfterPreStartInit) {
-                throw new InvalidOperationException(SR.GetString(SR.Method_cannot_be_called_during_pre_start_init));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Method_cannot_be_called_during_pre_start_init));
             }
 
             // This should never get executed in non-hosted appdomains
-            Debug.Assert(HostingEnvironment.IsHosted);
+            System.Web.Util.Debug.Assert(HostingEnvironment.IsHosted);
 
             // If we already tried and got an exception, just rethrow it
             if (_topLevelFileCompilationException != null && !SkipTopLevelCompilationExceptions) {
@@ -1167,75 +1169,74 @@ namespace System.Web.Compilation {
             if (_topLevelFilesCompiledStarted)
                 return;
 
-            // Set impersonation to hosting identity (process or UNC)
-            using (new ApplicationImpersonationContext()) {
-                bool gotLock = false;
-                _parseErrorReported = false;
+            
+            bool gotLock = false;
+            _parseErrorReported = false;
 
-                try {
-                    // Grab the compilation mutex, since this method accesses the codegen files
-                    CompilationLock.GetLock(ref gotLock);
+            try {
+                // Grab the compilation mutex, since this method accesses the codegen files
+                CompilationLock.GetLock(ref gotLock);
 
-                    // Check again if there is an exception
-                    if (_topLevelFileCompilationException != null && !SkipTopLevelCompilationExceptions) {
-                        ReportTopLevelCompilationException();
-                    }
-
-                    // Check again if we're done
-                    if (_topLevelFilesCompiledStarted)
-                        return;
-
-                    _topLevelFilesCompiledStarted = true;
-                    _topLevelAssembliesIndexTable =
-                        new Dictionary<String, AssemblyReferenceInfo>(StringComparer.OrdinalIgnoreCase);
-
-                    _compilationStage = CompilationStage.TopLevelFiles;
-
-                    CompileResourcesDirectory();
-                    CompileWebRefDirectory();
-                    CompileCodeDirectories();
-
-                    _compilationStage = CompilationStage.GlobalAsax;
-
-                    CompileGlobalAsax();
-
-                    _compilationStage = CompilationStage.BrowserCapabilities;
-
-                    // Call GetBrowserCapabilitiesType() to make sure browserCap directory is compiled
-                    // early on.  This avoids getting into potential deadlock situations later (VSWhidbey 530732).
-                    // For the same reason, get the EmptyHttpCapabilitiesBase.
-                    BrowserCapabilitiesCompiler.GetBrowserCapabilitiesType();
-                    IFilterResolutionService dummy = HttpCapabilitiesBase.EmptyHttpCapabilitiesBase;
-
-                    _compilationStage = CompilationStage.AfterTopLevelFiles;
+                // Check again if there is an exception
+                if (_topLevelFileCompilationException != null && !SkipTopLevelCompilationExceptions) {
+                    ReportTopLevelCompilationException();
                 }
-                catch (Exception e) {
-                    // Remember the exception, and rethrow it
-                    _topLevelFileCompilationException = e;
 
-                    // Do not rethrow the exception since so CBM can still provide partial support
-                    if (!SkipTopLevelCompilationExceptions) {
+                // Check again if we're done
+                if (_topLevelFilesCompiledStarted)
+                    return;
 
-                        if (!_parseErrorReported) {
-                            // Report the error if this is not a CompileException. CompileExceptions are handled
-                            // directly by the AssemblyBuilder already.
-                            if (!(e is HttpCompileException)) {
-                                ReportTopLevelCompilationException();
-                            }
+                _topLevelFilesCompiledStarted = true;
+                _topLevelAssembliesIndexTable =
+                    new Dictionary<String, AssemblyReferenceInfo>(StringComparer.OrdinalIgnoreCase);
+
+                _compilationStage = CompilationStage.TopLevelFiles;
+
+                CompileResourcesDirectory();
+                CompileWebRefDirectory();
+                CompileCodeDirectories();
+
+                _compilationStage = CompilationStage.GlobalAsax;
+
+                CompileGlobalAsax();
+
+                _compilationStage = CompilationStage.BrowserCapabilities;
+
+                // Call GetBrowserCapabilitiesType() to make sure browserCap directory is compiled
+                // early on.  This avoids getting into potential deadlock situations later (VSWhidbey 530732).
+                // For the same reason, get the EmptyHttpCapabilitiesBase.
+                BrowserCapabilitiesCompiler.GetBrowserCapabilitiesType();
+                IFilterResolutionService dummy = HttpCapabilitiesBase.EmptyHttpCapabilitiesBase;
+
+                _compilationStage = CompilationStage.AfterTopLevelFiles;
+            }
+            catch (Exception e) {
+                // Remember the exception, and rethrow it
+                _topLevelFileCompilationException = e;
+
+                // Do not rethrow the exception since so CBM can still provide partial support
+                if (!SkipTopLevelCompilationExceptions) {
+
+                    if (!_parseErrorReported) {
+                        // Report the error if this is not a CompileException. CompileExceptions are handled
+                        // directly by the AssemblyBuilder already.
+                        if (!(e is HttpCompileException)) {
+                            ReportTopLevelCompilationException();
                         }
-
-                        throw;
                     }
-                }
-                finally {
-                    _topLevelFilesCompiledCompleted = true;
 
-                    // Always release the mutex if we had taken it
-                    if (gotLock) {
-                        CompilationLock.ReleaseLock();
-                    }
+                    throw;
                 }
             }
+            finally {
+                _topLevelFilesCompiledCompleted = true;
+
+                // Always release the mutex if we had taken it
+                if (gotLock) {
+                    CompilationLock.ReleaseLock();
+                }
+            }
+            
         }
 
         // Generate a random file name with 8 characters
@@ -1324,7 +1325,7 @@ namespace System.Web.Compilation {
                 // assembly name is malformed.  In that case, throw our own error instead
                 // of the cryptic ArgumentException (VSWhidbey 275586)
                 throw new HttpException(
-                    SR.GetString(SR.Invalid_type, typeName), e);
+                    System.Web.SR.GetString(System.Web.SR.Invalid_type, typeName), e);
             }
 
             if (type != null) return type;
@@ -1342,7 +1343,7 @@ namespace System.Web.Compilation {
 
             if (type == null && throwOnError) {
                 throw new HttpException(
-                    SR.GetString(SR.Invalid_type, typeName));
+                    System.Web.SR.GetString(System.Web.SR.Invalid_type, typeName));
             }
 
             return type;
@@ -1355,7 +1356,7 @@ namespace System.Web.Compilation {
             CompilationSection compilationConfiguration = MTConfigUtil.GetCompilationAppConfig();
             AssemblyCollection assemblyInfoCollection = compilationConfiguration.Assemblies;
 
-            Debug.Assert(s_dynamicallyAddedReferencedAssembly != null);
+            System.Web.Util.Debug.Assert(s_dynamicallyAddedReferencedAssembly != null);
 
             if (assemblyInfoCollection == null) {
                 return s_dynamicallyAddedReferencedAssembly.OfType<Assembly>();
@@ -1400,7 +1401,7 @@ namespace System.Web.Compilation {
             if (buildProviderType == null)
                 return null;
 
-            object o = HttpRuntime.CreatePublicInstance(buildProviderType);
+            object o = HttpRuntime.CreatePublicInstanceByWebObjectActivator(buildProviderType);
 
             BuildProvider buildProvider = (BuildProvider)o;
 
@@ -1420,7 +1421,7 @@ namespace System.Web.Compilation {
             List<Type> buildProviderTypes = CompilationUtil.GetFolderLevelBuildProviderTypes(compConfig, appliesTo);
             if (buildProviderTypes != null) {
                 foreach (Type buildProviderType in buildProviderTypes) {
-                    object o = HttpRuntime.CreatePublicInstance(buildProviderType);
+                    object o = HttpRuntime.CreatePublicInstanceByWebObjectActivator(buildProviderType);
 
                     BuildProvider buildProvider = (BuildProvider)o;
 
@@ -1474,7 +1475,7 @@ namespace System.Web.Compilation {
 
             // If it's a forbidden directory, fail
             if (_forbiddenTopLevelDirectories.Contains(dir)) {
-                throw new HttpException(SR.GetString(SR.Illegal_special_dir, virtualPathString, dir));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Illegal_special_dir, virtualPathString, dir));
             }
         }
 
@@ -1496,8 +1497,8 @@ namespace System.Web.Compilation {
 
             // Return a single hash code based on both of the BuildResult's hash codes
             string dependenciesHash = result.VirtualPathDependenciesHash;
-            Debug.Assert(result.DependenciesHashComputed);
-            return result.ComputeHashCode(s_topLevelHash, StringUtil.GetStringHashCode(dependenciesHash));
+            System.Web.Util.Debug.Assert(result.DependenciesHashComputed);
+            return result.ComputeHashCode(s_topLevelHash, System.Web.Util.StringUtil.GetStringHashCode(dependenciesHash));
         }
 
         internal static BuildResult GetVPathBuildResult(VirtualPath virtualPath) {
@@ -1558,10 +1559,7 @@ namespace System.Web.Compilation {
 
         internal static BuildResult GetVPathBuildResultWithNoAssert(
             HttpContext context, VirtualPath virtualPath, bool noBuild, bool allowCrossApp, bool allowBuildInPrecompile, bool throwIfNotFound, bool ensureIsUpToDate = true) {
-
-            using (new ApplicationImpersonationContext()) {
-                return _theBuildManager.GetVPathBuildResultInternal(virtualPath, noBuild, allowCrossApp, allowBuildInPrecompile, throwIfNotFound, ensureIsUpToDate);
-            }
+            return _theBuildManager.GetVPathBuildResultInternal(virtualPath, noBuild, allowCrossApp, allowBuildInPrecompile, throwIfNotFound, ensureIsUpToDate); 
         }
 
         // name of the slot in call context
@@ -1569,15 +1567,15 @@ namespace System.Web.Compilation {
 
         private BuildResult GetVPathBuildResultInternal(VirtualPath virtualPath, bool noBuild, bool allowCrossApp, bool allowBuildInPrecompile, bool throwIfNotFound, bool ensureIsUpToDate = true) {
 
-            Debug.Trace("BuildManager", "GetBuildResult(" + virtualPath + ")");
+            System.Web.Util.Debug.Trace("BuildManager", "GetBuildResult(" + virtualPath + ")");
 
             // This should never be called while building top level files (VSWhidbey 480256)
             if (_compilationStage == CompilationStage.TopLevelFiles) {
-                throw new HttpException(SR.GetString(SR.Too_early_for_webfile, virtualPath));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Too_early_for_webfile, virtualPath));
             }
 
             // Make sure the path is not relative
-            Debug.Assert(!virtualPath.IsRelative);
+            System.Web.Util.Debug.Assert(!virtualPath.IsRelative);
 
             // Try the cache first before getting the mutex
             BuildResult result = GetVPathBuildResultFromCacheInternal(virtualPath, ensureIsUpToDate);
@@ -1604,7 +1602,7 @@ namespace System.Web.Compilation {
             // If this is a precompiled app, complain if we couldn't find it in the cache
             if (IsNonUpdatablePrecompiledApp && !allowBuildInPrecompile) {
                 throw new HttpException(
-                    SR.GetString(SR.Cant_update_precompiled_app, virtualPath));
+                    System.Web.SR.GetString(System.Web.SR.Cant_update_precompiled_app, virtualPath));
             }
 
             bool gotLock = false;
@@ -1632,7 +1630,7 @@ namespace System.Web.Compilation {
                 // If a circular reference is detected, throw an error
                 if (circularReferenceChecker.Contains(virtualPath)) {
                     throw new HttpException(
-                        SR.GetString(SR.Circular_include));
+                        System.Web.SR.GetString(System.Web.SR.Circular_include));
                 }
 
                 // Add the current virtualPath to the circular reference checker
@@ -1645,7 +1643,7 @@ namespace System.Web.Compilation {
                 }
                 finally {
                     // Remove the current virtualPath from the circular reference checker
-                    Debug.Assert(circularReferenceChecker.Contains(virtualPath));
+                    System.Web.Util.Debug.Assert(circularReferenceChecker.Contains(virtualPath));
                     circularReferenceChecker.Remove(virtualPath);
                 }
             }
@@ -1785,7 +1783,7 @@ namespace System.Web.Compilation {
             if (!virtualDir.IsWithinAppRoot)
                 return;
 
-            Debug.Trace("BuildManager", "EnsureFirstTimeDirectoryInit(" + virtualDir + ")");
+            System.Web.Util.Debug.Trace("BuildManager", "EnsureFirstTimeDirectoryInit(" + virtualDir + ")");
 
             // Get the virtual path to the LocalResources subdirectory for this directory
             VirtualPath localResDir = virtualDir.SimpleCombineWithDir(HttpRuntime.LocalResourcesDirectoryName);
@@ -1803,7 +1801,7 @@ namespace System.Web.Compilation {
                 return;
             }
 
-            Debug.Trace("BuildManager", "EnsureFirstTimeDirectoryInit: dirExists=" + dirExists);
+            System.Web.Util.Debug.Trace("BuildManager", "EnsureFirstTimeDirectoryInit: dirExists=" + dirExists);
 
             try {
                 // Monitor changes to it so the appdomain can shut down when it changes
@@ -2101,11 +2099,11 @@ namespace System.Web.Compilation {
                 _compilationStage = CompilationStage.TopLevelFiles;
             }
 
-            Debug.Assert(virtualCodeDir.HasTrailingSlash);
+            System.Web.Util.Debug.Assert(virtualCodeDir.HasTrailingSlash);
             AssemblyReferenceInfo info = TheBuildManager.TopLevelAssembliesIndexTable[virtualCodeDir.VirtualPathString];
             if (info == null) {
                 throw new InvalidOperationException(
-                    SR.GetString(SR.Invalid_CodeSubDirectory_Not_Exist, virtualCodeDir));
+                    System.Web.SR.GetString(System.Web.SR.Invalid_CodeSubDirectory_Not_Exist, virtualCodeDir));
             }
 
             // Get the info we need for this code directory
@@ -2228,7 +2226,7 @@ namespace System.Web.Compilation {
             key = GetCacheKeyFromVirtualPathInternal(virtualPath);
 
             // The key should always be lower case
-            Debug.Assert(key == key.ToLowerInvariant());
+            System.Web.Util.Debug.Assert(key == key.ToLowerInvariant());
 
             // Cache it for next time
             _keyCache[virtualPath.VirtualPathString] = key;
@@ -2247,20 +2245,20 @@ namespace System.Web.Compilation {
             // change the virtual path to be app relative
 
             /* Disable assertion since global theme needs to compile theme files in different vroot.
-            Debug.Assert(StringUtil.VirtualPathStartsWithAppPath(virtualPath),
+            System.Web.Util.Debug.Assert(System.Web.Util.StringUtil.VirtualPathStartsWithAppPath(virtualPath),
                 String.Format("VPath {0} is outside the application: {1}", virtualPath, HttpRuntime.AppDomainAppVirtualPath));
             */
             string virtualPathString = virtualPath.AppRelativeVirtualPathString.ToLowerInvariant();
-            virtualPathString = UrlPath.RemoveSlashFromPathIfNeeded(virtualPathString);
+            virtualPathString = System.Web.Util.UrlPath.RemoveSlashFromPathIfNeeded(virtualPathString);
 
             // Split the path into the directory and the name
             int slashIndex = virtualPathString.LastIndexOf('/');
-            Debug.Assert(slashIndex >= 0 || virtualPathString == "~");
+            System.Web.Util.Debug.Assert(slashIndex >= 0 || virtualPathString == "~");
 
             if (virtualPathString == "~")
                 return "root";
 
-            Debug.Assert(slashIndex != virtualPathString.Length - 1);
+            System.Web.Util.Debug.Assert(slashIndex != virtualPathString.Length - 1);
             string name = virtualPathString.Substring(slashIndex + 1);
             string dir;
             if (slashIndex <= 0)
@@ -2269,7 +2267,7 @@ namespace System.Web.Compilation {
                 dir = virtualPathString.Substring(0, slashIndex);
             }
 
-            return name + "." + StringUtil.GetStringHashCode(dir).ToString("x", CultureInfo.InvariantCulture);
+            return name + "." + System.Web.Util.StringUtil.GetStringHashCode(dir).ToString("x", CultureInfo.InvariantCulture);
         }
 
         internal static BuildResult GetVPathBuildResultFromCache(VirtualPath virtualPath) {
@@ -2300,12 +2298,12 @@ namespace System.Web.Compilation {
 
             // Allow the possibility that BuildManager was not initialized due to
             // a very early failure (e.g. see VSWhidbey 137366)
-            //Debug.Trace("BuildManager", "GetBuildResultFromCacheInternal " + _theBuildManagerInitialized);
+            //System.Web.Util.Debug.Trace("BuildManager", "GetBuildResultFromCacheInternal " + _theBuildManagerInitialized);
             if (!_theBuildManagerInitialized)
                 return null;
 
             // The first cache should always be memory
-            Debug.Assert(_caches[0] == _memoryCache);
+            System.Web.Util.Debug.Assert(_caches[0] == _memoryCache);
 
             // Try to get it from the memeory cache before taking any locks (for perf reasons)
             result = _memoryCache.GetBuildResult(cacheKey, virtualPath, hashCode, ensureIsUpToDate);
@@ -2313,7 +2311,7 @@ namespace System.Web.Compilation {
                 return PostProcessFoundBuildResult(result, keyFromVPP, virtualPath);
             }
 
-            Debug.Trace("BuildManager", "Didn't find '" + virtualPath + "' in memory cache before lock");
+            System.Web.Util.Debug.Trace("BuildManager", "Didn't find '" + virtualPath + "' in memory cache before lock");
 
             lock (this) {
                 // Try to get the BuildResult from the cheapest to most expensive cache
@@ -2354,14 +2352,14 @@ namespace System.Web.Compilation {
                 if (result == null)
                     return null;
 
-                Debug.Assert(_memoryCache != null);
+                System.Web.Util.Debug.Assert(_memoryCache != null);
 
                 // If we found it in a cache, cache it in all the caches that come before
                 // the one where we found it.  If we found it in the memory cache, this is a no op.
                 for (int j = 0; j < i; j++)
                     _caches[j].CacheBuildResult(cacheKey, result, DateTime.UtcNow);
 
-                Debug.Trace("BuildManager", "Found '" + virtualPath + "' in " + _caches[i]);
+                System.Web.Util.Debug.Trace("BuildManager", "Found '" + virtualPath + "' in " + _caches[i]);
 
                 return result;
             }
@@ -2374,7 +2372,7 @@ namespace System.Web.Compilation {
             // calling VirtualPathProvider.GetCacheKey, as it may legitimately not match.
             if (!keyFromVPP) {
                 if (virtualPath != null && virtualPath != result.VirtualPath) {
-                    Debug.Assert(false);
+                    System.Web.Util.Debug.Assert(false);
                     return null;
                 }
             }
@@ -2458,7 +2456,7 @@ namespace System.Web.Compilation {
 
                 // If it's not empty and OverwriteTarget is off, fail
                 if ((_precompilationFlags & PrecompilationFlags.OverwriteTarget) == 0) {
-                    throw new HttpException(SR.GetString(SR.Dir_not_empty));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Dir_not_empty));
                 }
 
                 // Does it contain the precomp marker file
@@ -2467,7 +2465,7 @@ namespace System.Web.Compilation {
 
                 // If not, refuse to delete the directory, even if OverwriteTarget is on (VSWhidbey 425095)
                 if (!precompiled) {
-                    throw new HttpException(SR.GetString(SR.Dir_not_empty_not_precomp));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Dir_not_empty_not_precomp));
                 }
 
                 // The OverwriteTarget flag was specified, so delete the directory
@@ -2475,17 +2473,17 @@ namespace System.Web.Compilation {
                     // If we failed to delete it, sleep 250 ms and try again, in case there is
                     // an appdomain in the process of shutting down (the shut down would
                     // have been triggered by the first delete attempt)
-                    Debug.Trace("BuildManager", "Failed to delete " + _precompTargetPhysicalDir + ".  Sleeping and trying once more...");
+                    System.Web.Util.Debug.Trace("BuildManager", "Failed to delete " + _precompTargetPhysicalDir + ".  Sleeping and trying once more...");
                     Thread.Sleep(250);
 
                     if (!DeletePrecompTargetDirectory()) {
-                        Debug.Trace("BuildManager", "Failed to delete " + _precompTargetPhysicalDir + ".  Sleeping and trying once more...");
+                        System.Web.Util.Debug.Trace("BuildManager", "Failed to delete " + _precompTargetPhysicalDir + ".  Sleeping and trying once more...");
                         // Try again after 1 second.
                         Thread.Sleep(1000);
 
                         // If we still couldn't delete it, fail
                         if (!DeletePrecompTargetDirectory()) {
-                            throw new HttpException(SR.GetString(SR.Cant_delete_dir));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_delete_dir));
                         }
                     }
                 }
@@ -2512,7 +2510,7 @@ namespace System.Web.Compilation {
             }
 #if DEBUG
             catch (Exception e) {
-                Debug.Trace("BuildManager", "DeletePrecompTargetDirectory failed: " + e.Message);
+                System.Web.Util.Debug.Trace("BuildManager", "DeletePrecompTargetDirectory failed: " + e.Message);
             }
 #else
             catch { }
@@ -2523,7 +2521,7 @@ namespace System.Web.Compilation {
         private void FailIfPrecompiledApp() {
 
             if (IsPrecompiledApp) {
-                throw new HttpException(SR.GetString(SR.Already_precomp));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Already_precomp));
             }
         }
 
@@ -2554,23 +2552,22 @@ namespace System.Web.Compilation {
 
         [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
         private void PrecompileApp(VirtualPath startingVirtualDir, IEnumerable<string> excludedVirtualPaths) {
-            using (new ApplicationImpersonationContext()) {
-                try {
-                    PerformingPrecompilation = true;
+            try {
+                PerformingPrecompilation = true;
 
-                    PrecompileAppInternal(startingVirtualDir, excludedVirtualPaths);
-                }
-                catch {
-                    // If anything fails during precompilation, wipe out the target to avoid
-                    // leaving it in a random state (VSWhidbey 447338)
-                    DeletePrecompTargetDirectory();
-
-                    throw;
-                }
-                finally {
-                    PerformingPrecompilation = false;
-                }
+                PrecompileAppInternal(startingVirtualDir, excludedVirtualPaths);
             }
+            catch {
+                // If anything fails during precompilation, wipe out the target to avoid
+                // leaving it in a random state (VSWhidbey 447338)
+                DeletePrecompTargetDirectory();
+
+                throw;
+            }
+            finally {
+                PerformingPrecompilation = false;
+            }
+            
         }
 
         private void PrecompileAppInternal(VirtualPath startingVirtualDir, IEnumerable<string> excludedVirtualPaths) {
@@ -2579,7 +2576,7 @@ namespace System.Web.Compilation {
             FailIfPrecompiledApp();
 
             excludedVirtualPaths = excludedVirtualPaths ?? Enumerable.Empty<string>();
-            _excludedCompilationPaths = excludedVirtualPaths.Select(path => VirtualPath.Create(UrlPath.Combine("~", path))).ToList();
+            _excludedCompilationPaths = excludedVirtualPaths.Select(path => VirtualPath.Create(System.Web.Util.UrlPath.Combine("~", path))).ToList();
 
             VirtualDirectory appVdir = startingVirtualDir.GetDirectory();
 
@@ -2618,7 +2615,7 @@ namespace System.Web.Compilation {
         // Create a small file that marks that app as being precompiled
         private void CreatePrecompMarkerFile() {
 
-            Debug.Assert(PrecompilingForDeployment);
+            System.Web.Util.Debug.Assert(PrecompilingForDeployment);
 
             Directory.CreateDirectory(_precompTargetPhysicalDir);
             string precompMarkerFile = Path.Combine(_precompTargetPhysicalDir, precompMarkerFileName);
@@ -2659,7 +2656,7 @@ namespace System.Web.Compilation {
 
             // Get the root element, and make sure it's what we expect
             XmlNode root = doc.DocumentElement;
-            Debug.Assert(root != null && root.Name == "precompiledApp");
+            System.Web.Util.Debug.Assert(root != null && root.Name == "precompiledApp");
             if (root == null || root.Name != "precompiledApp")
                 return false;
 
@@ -2751,12 +2748,12 @@ namespace System.Web.Compilation {
         // deployed file needs to be different from the original (as is the case for aspx files).
         internal static TextWriter GetUpdatableDeploymentTargetWriter(VirtualPath virtualPath, Encoding fileEncoding) {
 
-            Debug.Assert(fileEncoding != null);
+            System.Web.Util.Debug.Assert(fileEncoding != null);
 
             if (!PrecompilingForUpdatableDeployment)
                 return null;
 
-            Debug.Assert(!virtualPath.IsRelative);
+            System.Web.Util.Debug.Assert(!virtualPath.IsRelative);
 
             string path = virtualPath.AppRelativeVirtualPathString;
 
@@ -2811,8 +2808,8 @@ namespace System.Web.Compilation {
         }
 
         private bool IsExcludedFromPrecompilation(VirtualDirectory dir) {
-            Debug.Assert(dir != null);
-            return _excludedCompilationPaths.Any(path => UrlPath.IsEqualOrSubpath(path.VirtualPathString, dir.VirtualPath));
+            System.Web.Util.Debug.Assert(dir != null);
+            return _excludedCompilationPaths.Any(path => System.Web.Util.UrlPath.IsEqualOrSubpath(path.VirtualPathString, dir.VirtualPath));
         }
 
         private void PrecompileWebDirectoriesRecursive(VirtualDirectory vdir, bool topLevel) {
@@ -2905,16 +2902,16 @@ namespace System.Web.Compilation {
                     // Skip the special top level directories, since they never contain relevant
                     // static files.  Note that we don't skip Themes, which does contain static files.
                     if (topLevel &&
-                        (StringUtil.EqualsIgnoreCase(child.Name, HttpRuntime.CodeDirectoryName) ||
-                        StringUtil.EqualsIgnoreCase(child.Name, HttpRuntime.ResourcesDirectoryName) ||
-                        StringUtil.EqualsIgnoreCase(child.Name, HttpRuntime.WebRefDirectoryName))) {
+                        (System.Web.Util.StringUtil.EqualsIgnoreCase(child.Name, HttpRuntime.CodeDirectoryName) ||
+                        System.Web.Util.StringUtil.EqualsIgnoreCase(child.Name, HttpRuntime.ResourcesDirectoryName) ||
+                        System.Web.Util.StringUtil.EqualsIgnoreCase(child.Name, HttpRuntime.WebRefDirectoryName))) {
 
                         continue;
                     }
 
                     // Also, skip the LocalResources directory at any level, except when precompiling
                     // for updatable deployment (in which case, we deploy the local resources file)
-                    if (!PrecompilingForUpdatableDeployment && StringUtil.EqualsIgnoreCase(child.Name,
+                    if (!PrecompilingForUpdatableDeployment && System.Web.Util.StringUtil.EqualsIgnoreCase(child.Name,
                         HttpRuntime.LocalResourcesDirectoryName)) {
                         continue;
                     }
@@ -3002,7 +2999,7 @@ namespace System.Web.Compilation {
                     // First, get the just-compiled BuildResult.  It should always exist
                     BuildResultCompiledType result = GetVPathBuildResult(null, vfile.VirtualPathObject,
                         true /*noBuild*/, false /*allowCrossApp*/) as BuildResultCompiledType;
-                    Debug.Assert(result != null);
+                    System.Web.Util.Debug.Assert(result != null);
 
                     // VSWhidbey 527299. Need to use the same encoding of the original file to
                     // read and write to the new file.
@@ -3032,7 +3029,7 @@ namespace System.Web.Compilation {
                 if (createStub) {
                     // Create the stub file, with a helpful static message
                     StreamWriter writer = new StreamWriter(destPhysicalPath);
-                    writer.Write(SR.GetString(SR.Precomp_stub_file));
+                    writer.Write(System.Web.SR.GetString(System.Web.SR.Precomp_stub_file));
                     writer.Close();
                 }
             }
@@ -3048,24 +3045,25 @@ namespace System.Web.Compilation {
             string sourcePhysicalDir = HostingEnvironment.MapPathInternal(sourceDir.VirtualPath);
 
             // Make sure they're normalized and end with a '\' before comparing (VSWhidbey 452554)
-            sourcePhysicalDir = FileUtil.FixUpPhysicalDirectory(sourcePhysicalDir);
-            string destPhysicalDir = FileUtil.FixUpPhysicalDirectory(_precompTargetPhysicalDir);
+            sourcePhysicalDir = System.Web.Util.FileUtil.FixUpPhysicalDirectory(sourcePhysicalDir);
+            string destPhysicalDir = System.Web.Util.FileUtil.FixUpPhysicalDirectory(_precompTargetPhysicalDir);
 
-            return StringUtil.StringStartsWithIgnoreCase(sourcePhysicalDir, destPhysicalDir);
+            return System.Web.Util.StringUtil.StringStartsWithIgnoreCase(sourcePhysicalDir, destPhysicalDir);
         }
 
         internal static void ReportDirectoryCompilationProgress(VirtualPath virtualDir) {
 
             // Nothing to do if there is no CBM callback
-            if (CBMCallback == null)
+            ClientBuildManagerCallback callback = CBMCallback;
+            if (callback == null)
                 return;
 
             // Don't report anything if the directory doesn't exist
             if (!virtualDir.DirectoryExists())
                 return;
 
-            string message = SR.GetString(SR.Directory_progress, virtualDir.VirtualPathString);
-            CBMCallback.ReportProgress(message);
+            string message = System.Web.SR.GetString(System.Web.SR.Directory_progress, virtualDir.VirtualPathString);
+            callback.ReportProgress(message);
         }
 
 
@@ -3149,10 +3147,8 @@ namespace System.Web.Compilation {
             // (compilation is done while not impersonating client)
 
             Object instance;
-            using (new ClientImpersonationContext(context)) {
-                instance = objectFactory.CreateInstance();
-            }
-
+            instance = objectFactory.CreateInstance();
+        
             return instance;
         }
 

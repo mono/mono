@@ -5,6 +5,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    
 
     public class ModelMetadata {
         public const int DefaultOrder = 10000;
@@ -297,7 +298,7 @@
             }
 
             if (!legalExpression) {
-                throw new InvalidOperationException(SR.GetString(SR.TemplateHelpers_TemplateLimitations));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.TemplateHelpers_TemplateLimitations));
             }
 
             TParameter container = viewData.Model;

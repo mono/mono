@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Text.RegularExpressions;
     using  System.Web.Util;
+    
 
     /// <summary>
     /// Validates whether a password field meets the current Membership Provider's password requirements.
@@ -197,7 +198,7 @@
                     passwordStrengthRegex = RegexUtil.CreateRegex(passwordStrengthRegularExpression, RegexOptions.None, PasswordStrengthRegexTimeout);
                 }
                 catch (ArgumentException ex) {
-                    throw new InvalidOperationException(SR.GetString(SR.MembershipPasswordAttribute_InvalidRegularExpression), ex);
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.MembershipPasswordAttribute_InvalidRegularExpression), ex);
                 }
 
                 if (!passwordStrengthRegex.IsMatch(valueAsString)) {
@@ -241,7 +242,7 @@
         /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This method does work using a property of the same name")]
         private string GetMinPasswordLengthError() {
-            return this._minPasswordLengthError.GetLocalizableValue() ?? SR.GetString(SR.MembershipPasswordAttribute_InvalidPasswordLength);
+            return this._minPasswordLengthError.GetLocalizableValue() ?? System.Web.SR.GetString(System.Web.SR.MembershipPasswordAttribute_InvalidPasswordLength);
         }
 
         /// <summary>
@@ -271,7 +272,7 @@
         /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This method does work using a property of the same name")]
         private string GetMinNonAlphanumericCharactersError() {
-            return this._minNonAlphanumericCharactersError.GetLocalizableValue() ?? SR.GetString(SR.MembershipPasswordAttribute_InvalidPasswordNonAlphanumericCharacters);
+            return this._minNonAlphanumericCharactersError.GetLocalizableValue() ?? System.Web.SR.GetString(System.Web.SR.MembershipPasswordAttribute_InvalidPasswordNonAlphanumericCharacters);
         }
 
         /// <summary>
@@ -300,7 +301,7 @@
         /// </exception>
         [SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "This method does work using a property of the same name")]
         private string GetPasswordStrengthError() {
-            return this._passwordStrengthError.GetLocalizableValue() ?? SR.GetString(SR.MembershipPasswordAttribute_InvalidPasswordStrength);
+            return this._passwordStrengthError.GetLocalizableValue() ?? System.Web.SR.GetString(System.Web.SR.MembershipPasswordAttribute_InvalidPasswordStrength);
         }
 
         private string FormatErrorMessage(string errorMessageString, string name, object additionalArgument) {

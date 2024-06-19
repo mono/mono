@@ -15,6 +15,7 @@ namespace System.Web.Configuration {
     using System.Text;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     /*         <!-- membership config:
               Attributes:
@@ -110,7 +111,7 @@ namespace System.Web.Configuration {
         public MembershipSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -145,7 +146,7 @@ namespace System.Web.Configuration {
         }
 
         internal void ThrowHashAlgorithmException() {
-            throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_hash_algorithm_type, HashAlgorithmType), ElementInformation.Properties["hashAlgorithmType"].Source, ElementInformation.Properties["hashAlgorithmType"].LineNumber);
+            throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_hash_algorithm_type, HashAlgorithmType), ElementInformation.Properties["hashAlgorithmType"].Source, ElementInformation.Properties["hashAlgorithmType"].LineNumber);
         }
 
         [ConfigurationProperty("userIsOnlineTimeWindow", DefaultValue = "00:15:00")]

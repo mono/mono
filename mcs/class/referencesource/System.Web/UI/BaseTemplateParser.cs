@@ -29,6 +29,7 @@ namespace System.Web.UI {
     using System.Text.RegularExpressions;
     using System.Globalization;
     using System.Security.Permissions;
+    
 
     /*
      * Parser for Template Files (TemplateControls and PageTheme)
@@ -45,7 +46,7 @@ namespace System.Web.UI {
         private const string _tagnameString = "tagname";
 
         internal Type GetDesignTimeUserControlType(string tagPrefix, string tagName) {
-            Debug.Assert(FInDesigner);
+            System.Web.Util.Debug.Assert(FInDesigner);
 
             Type type = typeof(UserControl);
 
@@ -83,7 +84,7 @@ namespace System.Web.UI {
                     t = _pageParserFilter.GetNoCompileUserControlType();
 
                 if (t == null)
-                    ProcessError(SR.GetString(SR.Cant_use_nocompile_uc, virtualPath));
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.Cant_use_nocompile_uc, virtualPath));
             }
             else {
                 // Make sure it has the correct base type
@@ -111,7 +112,7 @@ namespace System.Web.UI {
 
             // If we have a page parser filter, make sure the reference is allowed
             if (_pageParserFilter != null && !_pageParserFilter.AllowVirtualReference(CompConfig, virtualPath)) {
-                ProcessError(SR.GetString(SR.Reference_not_allowed, virtualPath));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Reference_not_allowed, virtualPath));
             }
 
             BuildResult result = null;
@@ -158,15 +159,15 @@ namespace System.Web.UI {
             }
             else if (result is BuildResultCompiledType) {
                 BuildResultCompiledType compiledResult = (BuildResultCompiledType) result;
-                Debug.Assert(compiledResult != null);
+                System.Web.Util.Debug.Assert(compiledResult != null);
 
                 t = compiledResult.ResultType;
             }
             else {
-                throw new HttpException(SR.GetString(SR.Invalid_typeless_reference, _sourceString));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_typeless_reference, _sourceString));
             }
 
-            Debug.Assert(t != null);
+            System.Web.Util.Debug.Assert(t != null);
 
             // Add a dependency on the Type
             AddTypeDependency(t);
@@ -178,7 +179,7 @@ namespace System.Web.UI {
         }
 
         internal override void ProcessDirective(string directiveName, IDictionary directive) {
-            if (StringUtil.EqualsIgnoreCase(directiveName, "register")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "register")) {
                 // Register directive
 
                 // Get the tagprefix, which is required
@@ -204,19 +205,19 @@ namespace System.Web.UI {
 
                     // 'src' is required
                     if (src == null) {
-                        throw new HttpException(SR.GetString(SR.Missing_attr, _sourceString));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_attr, _sourceString));
                     }
 
                     // 'namespace' is not allowed
                     if (ns != null) {
                         throw new HttpException(
-                            SR.GetString(SR.Invalid_attr, _namespaceString, "tagname"));
+                            System.Web.SR.GetString(System.Web.SR.Invalid_attr, _namespaceString, "tagname"));
                     }
 
                     // 'assembly' is not allowed
                     if (assemblyName != null) {
                         throw new HttpException(
-                            SR.GetString(SR.Invalid_attr, "assembly", "tagname"));
+                            System.Web.SR.GetString(System.Web.SR.Invalid_attr, "assembly", "tagname"));
                     }
 
                     UserControlRegisterEntry ucRegisterEntry = new UserControlRegisterEntry(tagPrefix, tagName);
@@ -227,13 +228,13 @@ namespace System.Web.UI {
                 }
                 else if (src != null) {
                     // It's missing the tagname attribute.
-                    throw new HttpException(SR.GetString(SR.Missing_attr, _tagnameString));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_attr, _tagnameString));
                 }
                 else {
                     // It's a namespace prefix registration
                     // 'namespace' is required
                     if (ns == null) {
-                        throw new HttpException(SR.GetString(SR.Missing_attr, _namespaceString));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Missing_attr, _namespaceString));
                     }
 
                     TagNamespaceRegisterEntry nsRegisterEntry = new TagNamespaceRegisterEntry(tagPrefix, ns, assemblyName);

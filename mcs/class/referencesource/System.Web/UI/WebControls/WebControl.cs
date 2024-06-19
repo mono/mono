@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.WebControl_AccessKey)
+        WebSysDescription(System.Web.SR.WebControl_AccessKey)
         ]
         public virtual string AccessKey {
             get {
@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls {
             set {
                 // Valid values are null, String.Empty, and single character strings
                 if ((value != null) && (value.Length > 1)) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.WebControl_InvalidAccessKey));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.WebControl_InvalidAccessKey));
                 }
 
                 ViewState["AccessKey"] = value;
@@ -115,7 +115,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.WebControl_Attributes)
+        WebSysDescription(System.Web.SR.WebControl_Attributes)
         ]
         public AttributeCollection Attributes {
             get {
@@ -140,7 +140,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Color), ""),
-        WebSysDescription(SR.WebControl_BackColor),
+        WebSysDescription(System.Web.SR.WebControl_BackColor),
         TypeConverterAttribute(typeof(WebColorConverter))
         ]
         public virtual Color BackColor {
@@ -162,7 +162,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Color), ""),
-        WebSysDescription(SR.WebControl_BorderColor),
+        WebSysDescription(System.Web.SR.WebControl_BorderColor),
         TypeConverterAttribute(typeof(WebColorConverter))
         ]
         public virtual Color BorderColor {
@@ -184,7 +184,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.WebControl_BorderWidth)
+        WebSysDescription(System.Web.SR.WebControl_BorderWidth)
         ]
         public virtual Unit BorderWidth {
             get {
@@ -205,7 +205,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(BorderStyle.NotSet),
-        WebSysDescription(SR.WebControl_BorderStyle)
+        WebSysDescription(System.Web.SR.WebControl_BorderStyle)
         ]
         public virtual BorderStyle BorderStyle {
             get {
@@ -226,7 +226,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.WebControl_ControlStyle)
+        WebSysDescription(System.Web.SR.WebControl_ControlStyle)
         ]
         public Style ControlStyle {
             get {
@@ -251,7 +251,7 @@ namespace System.Web.UI.WebControls {
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         EditorBrowsable(EditorBrowsableState.Advanced),
-        WebSysDescription(SR.WebControl_ControlStyleCreated)
+        WebSysDescription(System.Web.SR.WebControl_ControlStyleCreated)
         ]
         public bool ControlStyleCreated {
             get {
@@ -266,7 +266,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.WebControl_CSSClassName),
+        WebSysDescription(System.Web.SR.WebControl_CSSClassName),
         CssClassProperty()
         ]
         public virtual string CssClass {
@@ -297,7 +297,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.WebControl_Style)
+        WebSysDescription(System.Web.SR.WebControl_Style)
         ]
         public CssStyleCollection Style {
             get {
@@ -314,7 +314,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(true),
-        WebSysDescription(SR.WebControl_Enabled)
+        WebSysDescription(System.Web.SR.WebControl_Enabled)
         ]
         public virtual bool Enabled {
             get {
@@ -359,7 +359,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.WebControl_Font),
+        WebSysDescription(System.Web.SR.WebControl_Font),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true)
         ]
@@ -377,7 +377,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Color), ""),
-        WebSysDescription(SR.WebControl_ForeColor),
+        WebSysDescription(System.Web.SR.WebControl_ForeColor),
         TypeConverterAttribute(typeof(WebColorConverter))
         ]
         public virtual Color ForeColor {
@@ -412,7 +412,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.WebControl_Height)
+        WebSysDescription(System.Web.SR.WebControl_Height)
         ]
         public virtual Unit Height {
             get {
@@ -486,7 +486,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue((short)0),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.WebControl_TabIndex)
+        WebSysDescription(System.Web.SR.WebControl_TabIndex)
         ]
         public virtual short TabIndex {
             get {
@@ -542,7 +542,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Localizable(true),
         DefaultValue(""),
-        WebSysDescription(SR.WebControl_Tooltip)
+        WebSysDescription(System.Web.SR.WebControl_Tooltip)
         ]
         public virtual string ToolTip {
             get {
@@ -565,7 +565,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.WebControl_Width)
+        WebSysDescription(System.Web.SR.WebControl_Width)
         ]
         public virtual Unit Width {
             get {

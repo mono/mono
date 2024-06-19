@@ -7,6 +7,7 @@
 namespace System.Web.Configuration {
     using System;
     using System.Configuration;
+    
 
     internal sealed class VersionValidator : ConfigurationValidatorBase {
         private readonly Version _minimumVersion;
@@ -25,7 +26,7 @@ namespace System.Web.Configuration {
             }
             if (((Version)value) < _minimumVersion) {
                 throw new ArgumentOutOfRangeException("value", 
-                    SR.GetString(SR.Config_control_rendering_compatibility_version_is_less_than_minimum_version));
+                    System.Web.SR.GetString(System.Web.SR.Config_control_rendering_compatibility_version_is_less_than_minimum_version));
             }
         }
     }

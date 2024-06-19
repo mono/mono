@@ -12,7 +12,7 @@ namespace System.Data.Linq.SqlClient {
         /// Exception thrown when a query cannot execute against a particular SQL server version.
         /// </summary>
         static internal Exception ExpressionNotSupportedForSqlServerVersion(Collection<string> reasons) {
-            StringBuilder exceptionMessage = new StringBuilder(Strings.CannotTranslateExpressionToSql);
+            StringBuilder exceptionMessage = new StringBuilder(SR.CannotTranslateExpressionToSql);
             foreach (string reason in reasons) {
                 exceptionMessage.AppendLine(reason);                    
             }

@@ -4,6 +4,7 @@
     using System.Globalization;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    
 
     [TypeForwardedFrom("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
     public class HttpMethodConstraint : IRouteConstraint {
@@ -62,7 +63,7 @@
                     string parameterValueString = parameterValue as string;
                     if (parameterValueString == null) {
                         throw new InvalidOperationException(String.Format(CultureInfo.CurrentUICulture,
-                            SR.GetString(SR.HttpMethodConstraint_ParameterValueMustBeString), parameterName, route.Url));
+                            System.Web.SR.GetString(System.Web.SR.HttpMethodConstraint_ParameterValueMustBeString), parameterName, route.Url));
                     }
 
                     return AllowedMethods.Any(method => String.Equals(method, parameterValueString,

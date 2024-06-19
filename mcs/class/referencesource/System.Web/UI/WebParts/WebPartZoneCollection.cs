@@ -24,10 +24,10 @@ namespace System.Web.UI.WebControls.WebParts {
 
             foreach (object obj in webPartZones) {
                 if (obj == null) {
-                    throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "webPartZones");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "webPartZones");
                 }
                 if (!(obj is WebPartZone)) {
-                    throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "WebPartZone"), "webPartZones");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "WebPartZone"), "webPartZones");
                 }
                 InnerList.Add(obj);
             }

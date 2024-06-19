@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         private void CheckReadOnly() {
             if (IsReadOnly) {
-                throw new InvalidOperationException(SR.GetString(SR.ProxyWebPartConnectionCollection_ReadOnly));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ProxyWebPartConnectionCollection_ReadOnly));
             }
         }
 
@@ -114,7 +114,7 @@ namespace System.Web.UI.WebControls.WebParts {
             if (_webPartManager != null) {
                 int webPartManagerIndex = _webPartManager.StaticConnections.IndexOf((WebPartConnection)oldValue);
                 // It is a bug if the main WebPartManager does not contain the oldValue
-                Debug.Assert(webPartManagerIndex >= 0);
+                System.Web.Util.Debug.Assert(webPartManagerIndex >= 0);
                 _webPartManager.StaticConnections[webPartManagerIndex] = (WebPartConnection)newValue;
             }
             base.OnSet(index, oldValue, newValue);
@@ -124,10 +124,10 @@ namespace System.Web.UI.WebControls.WebParts {
         protected override void OnValidate(object value) {
             base.OnValidate(value);
             if (value == null) {
-                throw new ArgumentNullException("value", SR.GetString(SR.Collection_CantAddNull));
+                throw new ArgumentNullException("value", System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull));
             }
             if (!(value is WebPartConnection)) {
-                throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "WebPartConnection"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "WebPartConnection"));
             }
         }
 
@@ -137,9 +137,9 @@ namespace System.Web.UI.WebControls.WebParts {
 
         internal void SetWebPartManager(WebPartManager webPartManager) {
             // This method should only be called once in the lifetime of the ProxyWebPartConnectionCollection
-            Debug.Assert(_webPartManager == null);
+            System.Web.Util.Debug.Assert(_webPartManager == null);
 
-            Debug.Assert(webPartManager != null);
+            System.Web.Util.Debug.Assert(webPartManager != null);
 
             _webPartManager = webPartManager;
 

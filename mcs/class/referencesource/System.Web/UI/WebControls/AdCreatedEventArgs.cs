@@ -10,6 +10,7 @@ namespace System.Web.UI.WebControls {
     using System.Collections.Specialized;
     using System.Globalization;
     using System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -145,7 +146,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private bool GetUnitValue(IDictionary properties, String keyIndex, ref Unit unitValue) {
-            Debug.Assert(properties != null);
+            System.Web.Util.Debug.Assert(properties != null);
 
             string temp = properties[keyIndex] as string;
             if (!String.IsNullOrEmpty(temp)) {
@@ -154,7 +155,7 @@ namespace System.Web.UI.WebControls {
                 }
                 catch {
                     throw new FormatException(
-                        SR.GetString(SR.AdRotator_invalid_integer_format, temp, keyIndex, typeof(Unit).FullName));
+                        System.Web.SR.GetString(System.Web.SR.AdRotator_invalid_integer_format, temp, keyIndex, typeof(Unit).FullName));
                 }
                 return true;
             }

@@ -22,6 +22,7 @@ namespace System.Web.SessionState {
     using System.Text;
     using System.Globalization;
     using System.Security.Permissions;
+    
 
     public class HttpSessionStateContainer : IHttpSessionState {
         String                      _id;
@@ -80,7 +81,7 @@ namespace System.Web.SessionState {
         public String SessionID {
             get {
                 if (_id == null) {
-                    Debug.Assert(_stateModule != null, "_stateModule != null");
+                    System.Web.Util.Debug.Assert(_stateModule != null, "_stateModule != null");
                     _id = _stateModule.DelayedGetSessionId();
                 }
                 return _id;
@@ -94,14 +95,14 @@ namespace System.Web.SessionState {
             get {return _timeout;}
             set {
                 if (value <= 0) {
-                    throw new ArgumentException(SR.GetString(SR.Timeout_must_be_positive));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Timeout_must_be_positive));
                 }
 
                 if (value > SessionStateModule.MAX_CACHE_BASED_TIMEOUT_MINUTES &&
                     (Mode == SessionStateMode.InProc ||
                     Mode == SessionStateMode.StateServer)) {
                     throw new ArgumentException(
-                        SR.GetString(SR.Invalid_cache_based_session_timeout));
+                        System.Web.SR.GetString(System.Web.SR.Invalid_cache_based_session_timeout));
                 }
 
                 _timeout = value;

@@ -9,6 +9,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Tasks;
 using Microsoft.Build.Utilities;
 
+
 using FrameworkName=System.Runtime.Versioning.FrameworkName;
 
 namespace System.Web.Compilation {
@@ -80,7 +81,7 @@ namespace System.Web.Compilation {
                         // Require 3.5 to be installed to be able to target pre-4.0
                         var fxPath35 = ToolLocationHelper.GetPathToDotNetFramework(TargetDotNetFrameworkVersion.Version35);
                         if (string.IsNullOrEmpty(fxPath35)) {
-                            throw new HttpException(SR.GetString(SR.Downlevel_requires_35));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Downlevel_requires_35));
                         }
 
                         // For 2.0 and 3.5, verify that the reference assemblies are actually present.
@@ -90,14 +91,14 @@ namespace System.Web.Compilation {
                         bool missing35assemblies = MultiTargetingUtil.IsTargetFramework35 && (assemblyPaths30.Count == count || assemblyPaths20.Count == count);
 
                         if (count == 0 || missing35assemblies) {
-                            throw new HttpException(SR.GetString(SR.Reference_assemblies_not_found));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Reference_assemblies_not_found));
                         }
                     }
                     else {
                         // When we are performing a build through VS, we require the reference assemblies
                         // to be present.
                         if (BuildManagerHost.SupportsMultiTargeting && count == 0) {
-                            throw new HttpException(SR.GetString(SR.Reference_assemblies_not_found));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Reference_assemblies_not_found));
                         }
                     }
 
@@ -314,7 +315,7 @@ namespace System.Web.Compilation {
             }
 
             if (dependencies != null) {
-                string message = SR.GetString(SR.Higher_dependencies, assemblyName, dependencies);
+                string message = System.Web.SR.GetString(System.Web.SR.Higher_dependencies, assemblyName, dependencies);
                 ReportWarningOrError(message);
             }
         }
@@ -446,7 +447,7 @@ namespace System.Web.Compilation {
                     if (!string.IsNullOrEmpty(MultiTargetingUtil.TargetFrameworkName.Profile)) {
                         profile = " '" + MultiTargetingUtil.TargetFrameworkName.Profile + "'";
                     }
-                    ReportWarningOrError(SR.GetString(SR.Assembly_not_found_in_profile, assemblyName, profile));
+                    ReportWarningOrError(System.Web.SR.GetString(System.Web.SR.Assembly_not_found_in_profile, assemblyName, profile));
                     // Return as OnlyPresentInHigherVersion so that it will not be used as a reference assembly.
                     return ReferenceAssemblyType.FrameworkAssemblyOnlyPresentInHigherVersion;
                 }

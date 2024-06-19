@@ -23,8 +23,11 @@ namespace System.Web.Hosting {
     using System.Web;
     using System.Web.Management;
     using System.IO;
+    
 
+#if (!MONO || !FEATURE_PAL)
     using IIS = UnsafeIISMethods;
+#endif
 
     delegate void AsyncCompletionDelegate(
         IntPtr rootedObjectsPointer, 
@@ -235,7 +238,7 @@ namespace System.Web.Hosting {
         [SecurityPermission(SecurityAction.Demand, UnmanagedCode=true)]
         public PipelineRuntime() {
             HostingEnvironment.RegisterObject(this);
-            Debug.Trace("PipelineDomain", "RegisterObject(this) called");
+            System.Web.Util.Debug.Trace("PipelineDomain", "RegisterObject(this) called");
         }
 
         [SecurityPermissionAttribute(SecurityAction.LinkDemand, Flags=SecurityPermissionFlag.Infrastructure)]
@@ -244,13 +247,13 @@ namespace System.Web.Hosting {
         }
 
         public void StartProcessing() {
-            Debug.Trace("PipelineDomain", "StartProcessing AppId = " + s_thisAppDomainsIsapiAppId);
+            System.Web.Util.Debug.Trace("PipelineDomain", "StartProcessing AppId = " + s_thisAppDomainsIsapiAppId);
             HostingEnvironment.SetupStopListeningHandler();
         }
 
         [EnvironmentPermission(SecurityAction.Assert, Unrestricted = true)]
         public void StopProcessing() {
-            Debug.Trace("PipelineDomain", "StopProcessing with stack = " + Environment.StackTrace
+            System.Web.Util.Debug.Trace("PipelineDomain", "StopProcessing with stack = " + Environment.StackTrace
                         + " for AppId= " +  s_thisAppDomainsIsapiAppId);
 
             if (!HostingEnvironment.StopListeningWasCalled && !HostingEnvironment.ShutdownInitiated) {
@@ -340,6 +343,7 @@ namespace System.Web.Hosting {
             finally {
                 s_InitializationCompleted = true;
 
+#if (!MONO || !FEATURE_PAL)
                 if (HttpRuntime.InitializationException != null) {
 
                     // at least one module must be registered so that we
@@ -356,7 +360,7 @@ namespace System.Web.Hosting {
                         false /*useHighPriority*/);
 
                     if (hresult < 0) {
-                        throw new COMException( SR.GetString(SR.Failed_Pipeline_Subscription, InitExceptionModuleName),
+                        throw new COMException( System.Web.SR.GetString(System.Web.SR.Failed_Pipeline_Subscription, InitExceptionModuleName),
                                                 hresult );
                     }
 
@@ -374,10 +378,11 @@ namespace System.Web.Hosting {
                         false /*useHighPriority*/);
 
                     if (hresult < 0) {
-                        throw new COMException( SR.GetString(SR.Failed_Pipeline_Subscription, HttpApplication.IMPLICIT_HANDLER),
+                        throw new COMException( System.Web.SR.GetString(System.Web.SR.Failed_Pipeline_Subscription, HttpApplication.IMPLICIT_HANDLER),
                                                 hresult );
                     }
                 }
+#endif
 
                 if (app != null) {
                     HttpApplicationFactory.RecyclePipelineApplicationInstance(app);
@@ -408,13 +413,13 @@ namespace System.Web.Hosting {
             // Every object we're about to call into should be live / non-disposed,
             // but since we're paranoid we should put guard clauses everywhere.
 
-            Debug.Assert(pManagedRootedObjects != IntPtr.Zero);
+            System.Web.Util.Debug.Assert(pManagedRootedObjects != IntPtr.Zero);
             if (pManagedRootedObjects != IntPtr.Zero) {
                 RootedObjects rootObj = RootedObjects.FromPointer(pManagedRootedObjects);
-                Debug.Assert(rootObj != null);
+                System.Web.Util.Debug.Assert(rootObj != null);
                 if (rootObj != null) {
                     IIS7WorkerRequest workerRequest = rootObj.WorkerRequest;
-                    Debug.Assert(workerRequest != null);
+                    System.Web.Util.Debug.Assert(workerRequest != null);
                     if (workerRequest != null) {
                         workerRequest.NotifyOfAsyncDisconnect();
                     }
@@ -428,7 +433,7 @@ namespace System.Web.Hosting {
             IPrincipal principal = RootedObjects.FromPointer(pRootedObjects).Principal;
             if (principal != null) {
                 try {
-                    isInRole = principal.IsInRole(StringUtil.StringFromWCharPtr(pszRole, cchRole));
+                    isInRole = principal.IsInRole(System.Web.Util.StringUtil.StringFromWCharPtr(pszRole, cchRole));
                 }
                 catch (Exception e) {
                     return Marshal.GetHRForException(e);
@@ -460,9 +465,11 @@ namespace System.Web.Hosting {
         
         // called from managed code as a perf optimization to avoid calling back later
         internal static void DisposeHandler(HttpContext context, IntPtr nativeRequestContext, RequestNotificationStatus status) {
+#if (!MONO || !FEATURE_PAL)
             if (IIS.MgdCanDisposeManagedContext(nativeRequestContext, status)) {
                 context.RootedObjects.Destroy();
             }
+#endif
         }
 
         //
@@ -503,6 +510,8 @@ namespace System.Web.Hosting {
             RootedObjects root;
             bool workerRequestWasJustCreated = false;
 
+#if (!MONO || !FEATURE_PAL)
+
             if (rootedObjectsPointer == IntPtr.Zero) {
                 InitializeRequestContext(nativeRequestContext, flags, out wr, out context);
                 workerRequestWasJustCreated = true;
@@ -524,8 +533,8 @@ namespace System.Web.Hosting {
                 wr = root.WorkerRequest as IIS7WorkerRequest;
             }
 
-            Debug.Assert(root != null, "We should have a RootedObjects instance by this point.");
-            Debug.Assert(wr != null, "We should have an IIS7WorkerRequest instance by this point.");
+            System.Web.Util.Debug.Assert(root != null, "We should have a RootedObjects instance by this point.");
+            System.Web.Util.Debug.Assert(wr != null, "We should have an IIS7WorkerRequest instance by this point.");
 
             using (root.WithinTraceBlock()) {
                 if (workerRequestWasJustCreated) {
@@ -681,6 +690,9 @@ namespace System.Web.Hosting {
 
                 return (int)status;
             }
+#else
+                return -1;
+#endif
         }
 
         private static void InitializeRequestContext(IntPtr nativeRequestContext, int flags, out IIS7WorkerRequest wr, out HttpContext context) {
@@ -697,14 +709,16 @@ namespace System.Web.Hosting {
             }
             catch {
                 // treat as "400 Bad Request" since that's the only reason the HttpContext.ctor should throw
+#if (!MONO || !FEATURE_PAL)
                 IIS.MgdSetBadRequestStatus(nativeRequestContext);
+#endif
             }
         }
 
         /// <include file='doc\ISAPIRuntime.uex' path='docs/doc[@for="ISAPIRuntime.IRegisteredObject.Stop"]/*' />
         /// <internalonly/>
         void IRegisteredObject.Stop(bool immediate) {
-            Debug.Trace("PipelineDomain", "IRegisteredObject.Stop appId = " +
+            System.Web.Util.Debug.Trace("PipelineDomain", "IRegisteredObject.Stop appId = " +
                         s_thisAppDomainsIsapiAppId);
 
             while (!s_InitializationCompleted && !s_StopProcessingCalled) {
@@ -717,7 +731,7 @@ namespace System.Web.Hosting {
         }
 
         internal void SetThisAppDomainsIsapiAppId(String appId) {
-            Debug.Trace("PipelineDomain", "SetThisAppDomainsPipelineAppId appId=" + appId);
+            System.Web.Util.Debug.Trace("PipelineDomain", "SetThisAppDomainsPipelineAppId appId=" + appId);
             s_thisAppDomainsIsapiAppId = appId;
         }
 
@@ -726,6 +740,7 @@ namespace System.Web.Hosting {
                 return;
             }
 
+#if (!MONO || !FEATURE_PAL)
             //
             // only notify mgdeng of this shutdown if we went through
             // Initialize from the there
@@ -734,19 +749,20 @@ namespace System.Web.Hosting {
             //
             try {
                 if (s_thisAppDomainsIsapiAppId != null  && s_ApplicationContext != IntPtr.Zero) {
-                    Debug.Trace("PipelineDomain", "Calling MgdAppDomainShutdown appId=" +
+                    System.Web.Util.Debug.Trace("PipelineDomain", "Calling MgdAppDomainShutdown appId=" +
                         s_thisAppDomainsIsapiAppId + " (AppDomainAppId=" + HttpRuntime.AppDomainAppId + ")");
 
                     UnsafeIISMethods.MgdAppDomainShutdown(s_ApplicationContext);
                 }
 
-                HttpRuntime.AddAppDomainTraceMessage(SR.GetString(SR.App_Domain_Restart));
+                HttpRuntime.AddAppDomainTraceMessage(System.Web.SR.GetString(System.Web.SR.App_Domain_Restart));
             }
             catch(Exception e) {
                 if (ShouldRethrowException(e)) {
                     throw;
                 }
             }
+#endif
         }
 
         internal static bool ShouldRethrowException(Exception ex) {

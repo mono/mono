@@ -136,6 +136,21 @@ namespace System.Web.Util {
                             if (settings == null || !Boolean.TryParse(settings["aspnet:LogMembershipPasswordFormatWarning"], out _logMembershipPasswordFormatWarning))
                                 _logMembershipPasswordFormatWarning = true;
 
+                            if (settings == null || !Boolean.TryParse(settings["aspnet:AvoidDuplicatedSetCookie"], out _avoidDuplicatedSetCookie))
+                                _avoidDuplicatedSetCookie = false;
+
+                             if (settings == null || !Boolean.TryParse(settings["aspnet:GetValidationMemberName"], out _getValidationMemberName))
+                                _getValidationMemberName = false;
+
+                             if (settings == null || !Boolean.TryParse(settings["aspnet:UseLegacyClientServicesJsonHandling"], out _useLegacyClientServicesJsonHandling))
+                                _useLegacyClientServicesJsonHandling = false;
+
+                             if (settings == null || !Boolean.TryParse(settings["aspnet:UseLegacyMultiValueHeaderHandling"], out _useLegacyMultiValueHeaderHandling))
+                                _useLegacyMultiValueHeaderHandling = !BinaryCompatibility.Current.TargetsAtLeastFramework48; // Opt in for 4.7.2 and earlier. Opt out for 4.8.
+
+                             if (settings == null || !Boolean.TryParse(settings["aspnet:SuppressSameSiteNone"], out _suppressSameSiteNone))
+                                _suppressSameSiteNone = false; // Use the new stricter behavior by default, as the old behavior is likely to cause problems with newer browsers.
+
                             _settingsInitialized = true;
                         }
                     }
@@ -253,7 +268,7 @@ namespace System.Web.Util {
         }
 
         // false [default] to use the default heuristic for determining when to suppress __VIEWSTATE MAC validation errors and when to display a YSOD
-        // true to always ---- errors and never show a YSOD
+        // true to always swallow errors and never show a YSOD
         private static bool _alwaysIgnoreViewStateValidationErrors;
         internal static bool AlwaysIgnoreViewStateValidationErrors {
             get {
@@ -517,6 +532,63 @@ namespace System.Web.Util {
             get {
                 EnsureSettingsLoaded();
                 return _logMembershipPasswordFormatWarning;
+            }
+        }
+
+        // false [default] 
+        // true - adopt new behavior to fix duplicated cookie issue.
+        private static bool _avoidDuplicatedSetCookie;
+        internal static bool AvoidDuplicatedSetCookie {
+            get {
+                EnsureSettingsLoaded();
+                return _avoidDuplicatedSetCookie;
+            }
+        }
+
+         // false [Default]
+        // true - new behavior to retrive MemberName
+        private static bool _getValidationMemberName;
+        internal static bool GetValidationMemberName
+        {
+            get
+            {
+                EnsureSettingsLoaded();
+                return _getValidationMemberName;
+            }
+        }
+
+         // false [default] 
+        // true - adopt new behavior to avoid trusting json from compromised client web services.
+        private static bool _useLegacyClientServicesJsonHandling;
+        internal static bool UseLegacyClientServicesJsonHandling {
+            get
+            {
+                EnsureSettingsLoaded();
+                return _useLegacyClientServicesJsonHandling;
+            }
+        }
+
+         // false [default] 
+        // true - adopt new behavior to avoid trusting json from compromised client web services.
+        private static bool _useLegacyMultiValueHeaderHandling;
+        internal static bool UseLegacyMultiValueHeaderHandling
+        {
+            get
+            {
+                EnsureSettingsLoaded();
+                return _useLegacyMultiValueHeaderHandling;
+            }
+        }
+
+         // false [default] - Emit SameSite cookie header for all valid valudes, even if value is 'None'.
+        // true - Don't emit the SameSite cookie header if the value is 'None'.
+        private static bool _suppressSameSiteNone;
+        internal static bool SuppressSameSiteNone
+        {
+            get
+            {
+                EnsureSettingsLoaded();
+                return _suppressSameSiteNone;
             }
         }
     }

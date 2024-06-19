@@ -37,7 +37,7 @@ namespace System.Web {
         }
         
         private IAsyncResult OnEnter(Object sender, EventArgs e, AsyncCallback cb, Object state) {
-            Debug.Assert(_inputStream == null);
+            System.Web.Util.Debug.Assert(_inputStream == null);
             _app = (HttpApplication)sender;
             HttpContext context = _app.Context;
             HttpRequest request = context.Request;
@@ -58,18 +58,18 @@ namespace System.Web {
                 || context.Handler is TransferRequestHandler
                 || context.Handler is DefaultHttpHandler
                 || (contentLength = request.ContentLength) > RuntimeConfig.GetConfig(context).HttpRuntime.MaxRequestLengthBytes
-                || ((isForm = StringUtil.StringStartsWithIgnoreCase(request.ContentType, "application/x-www-form-urlencoded"))
+                || ((isForm = System.Web.Util.StringUtil.StringStartsWithIgnoreCase(request.ContentType, "application/x-www-form-urlencoded"))
                     && (asyncPreloadMode & AsyncPreloadModeFlags.Form) != AsyncPreloadModeFlags.Form)
-                || ((isFormMultiPart = StringUtil.StringStartsWithIgnoreCase(request.ContentType, "multipart/form-data"))
+                || ((isFormMultiPart = System.Web.Util.StringUtil.StringStartsWithIgnoreCase(request.ContentType, "multipart/form-data"))
                     && (asyncPreloadMode & AsyncPreloadModeFlags.FormMultiPart) != AsyncPreloadModeFlags.FormMultiPart)
                 || !isForm && !isFormMultiPart && (asyncPreloadMode & AsyncPreloadModeFlags.NonForm) != AsyncPreloadModeFlags.NonForm
                 ) {
-                Debug.Trace("AsyncPreload", " *** AsyncPreload skipped *** ");
+                System.Web.Util.Debug.Trace("AsyncPreload", " *** AsyncPreload skipped *** ");
                 httpAsyncResult.Complete(true, null, null);
                 return httpAsyncResult;
             }
 
-            Debug.Trace("AsyncPreload", " *** AsyncPreload started *** ");
+            System.Web.Util.Debug.Trace("AsyncPreload", " *** AsyncPreload started *** ");
             try {
                 if (_callback == null) {
                     _callback = new AsyncCallback(OnAsyncCompletion);
@@ -96,7 +96,7 @@ namespace System.Web {
         
         private void OnLeave(IAsyncResult httpAsyncResult) {
             Reset();
-            Debug.Trace("AsyncPreload", " *** AsyncPreload finished *** ");
+            System.Web.Util.Debug.Trace("AsyncPreload", " *** AsyncPreload finished *** ");
             ((HttpAsyncResult)httpAsyncResult).End();
         }
 

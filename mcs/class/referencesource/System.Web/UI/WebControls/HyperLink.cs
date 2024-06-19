@@ -61,7 +61,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.HyperLink_ImageUrl)
+        WebSysDescription(System.Web.SR.HyperLink_ImageUrl)
         ]
         public virtual string ImageUrl {
             get {
@@ -76,7 +76,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.HyperLink_ImageHeight)
+        WebSysDescription(System.Web.SR.HyperLink_ImageHeight)
         ]
         public virtual Unit ImageHeight {
             get {
@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.HyperLink_ImageWidth)
+        WebSysDescription(System.Web.SR.HyperLink_ImageWidth)
         ]
         public virtual Unit ImageWidth {
             get {
@@ -118,7 +118,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.HyperLink_NavigateUrl)
+        WebSysDescription(System.Web.SR.HyperLink_NavigateUrl)
         ]
         public string NavigateUrl {
             get {
@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Navigation"),
         DefaultValue(""),
-        WebSysDescription(SR.HyperLink_Target),
+        WebSysDescription(System.Web.SR.HyperLink_Target),
         TypeConverter(typeof(TargetConverter))
         ]
         public string Target {
@@ -173,7 +173,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.HyperLink_Text),
+        WebSysDescription(System.Web.SR.HyperLink_Text),
         PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public virtual string Text {

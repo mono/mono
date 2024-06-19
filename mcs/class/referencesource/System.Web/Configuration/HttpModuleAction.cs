@@ -17,6 +17,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Globalization;
     using System.Security.Permissions;
+    
 
     public sealed class HttpModuleAction : ConfigurationElement {
         private static readonly ConfigurationElementProperty s_elemProperty =
@@ -61,7 +62,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override ConfigurationPropertyCollection Properties  {
+        protected internal override ConfigurationPropertyCollection Properties  {
             get {
                 return _properties;
             }
@@ -122,10 +123,10 @@ namespace System.Web.Configuration {
         }
 
         internal static bool IsSpecialModuleName(String name) {
-            return (StringUtil.EqualsIgnoreCase(name, "DefaultAuthentication"));
+            return (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "DefaultAuthentication"));
         }
 
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -140,14 +141,14 @@ namespace System.Web.Configuration {
 
             if (HttpModuleAction.IsSpecialModule(elem.Type)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Special_module_cannot_be_added_manually, elem.Type),
+                    System.Web.SR.GetString(System.Web.SR.Special_module_cannot_be_added_manually, elem.Type),
                     elem.ElementInformation.Properties["type"].Source,
                     elem.ElementInformation.Properties["type"].LineNumber);
             }
 
             if (HttpModuleAction.IsSpecialModuleName(elem.Name)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Special_module_cannot_be_added_manually, elem.Name),
+                    System.Web.SR.GetString(System.Web.SR.Special_module_cannot_be_added_manually, elem.Name),
                     elem.ElementInformation.Properties["name"].Source,
                     elem.ElementInformation.Properties["name"].LineNumber);
             }

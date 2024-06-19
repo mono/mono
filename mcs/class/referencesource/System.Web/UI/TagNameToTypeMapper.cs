@@ -23,7 +23,8 @@ namespace System.Web.UI {
     using System.Web.Util;
     using System.Web.Compilation;
     using System.Web.Configuration;
-#if !FEATURE_PAL
+    
+#if (!MONO || !FEATURE_PAL)
     using System.Web.UI.Design;
 #endif // !FEATURE_PAL
 
@@ -113,7 +114,7 @@ namespace System.Web.UI {
                 return type;
             }
 
-#if !FEATURE_PAL
+#if (!MONO || !FEATURE_PAL)
             // If we're in the designer, check the WebFormsReferenceManager and ITypeResolutionService first.
             if (_parser.FInDesigner && (_parser.DesignerHost != null)) {
                 // If we are in the DesignTimeThemes Host, we can't actually go down this code path, let the TypeResolutionService try instead
@@ -177,7 +178,7 @@ namespace System.Web.UI {
                         foundType = t;
                     }
                     else if (foundType != t) {
-                        throw new HttpParseException(SR.GetString(SR.Ambiguous_server_tag, _tagPrefix + ":" + tagName),
+                        throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Ambiguous_server_tag, _tagPrefix + ":" + tagName),
                                                      null, nsMapper.RegisterEntry.VirtualPath, null, nsMapper.RegisterEntry.Line);
                     }
                 }
@@ -204,11 +205,11 @@ namespace System.Web.UI {
             }
 
             if (loadException != null) {
-                throw new HttpException(SR.GetString(SR.ControlAdapters_TypeNotFound, _tagPrefix + ":" + tagName) + " " + loadException.Message, loadException);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ControlAdapters_TypeNotFound, _tagPrefix + ":" + tagName) + " " + loadException.Message, loadException);
             }
 
             if (foundType == null) {
-                throw new HttpException(SR.GetString(SR.Unknown_server_tag, _tagPrefix + ":" + tagName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Unknown_server_tag, _tagPrefix + ":" + tagName));
             }
 
             return foundType;
@@ -402,7 +403,7 @@ namespace System.Web.UI {
                 VirtualPath ucDirectory = ucRegisterEntry.UserControlSource.Parent;
                 if (ucDirectory == _parser.BaseVirtualDir) {
                     throw new HttpException(
-                        SR.GetString(SR.Invalid_use_of_config_uc,
+                        System.Web.SR.GetString(System.Web.SR.Invalid_use_of_config_uc,
                             _parser.CurrentVirtualPath, ucRegisterEntry.UserControlSource));
                 }
             }
@@ -445,7 +446,7 @@ namespace System.Web.UI {
             }
             catch (ArgumentException) {
                 // Duplicate mapping
-                throw new HttpException(SR.GetString(SR.Duplicate_registered_tag, tagName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Duplicate_registered_tag, tagName));
             }
         }
 

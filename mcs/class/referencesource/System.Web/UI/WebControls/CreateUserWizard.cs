@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Themeable(false),
-        WebSysDescription(SR.CreateUserWizard_Answer)
+        WebSysDescription(System.Web.SR.CreateUserWizard_Answer)
         ]
         public virtual string Answer {
             get {
@@ -186,13 +186,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultAnswerLabelText),
-        WebSysDescription(SR.CreateUserWizard_AnswerLabelText)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultAnswerLabelText),
+        WebSysDescription(System.Web.SR.CreateUserWizard_AnswerLabelText)
         ]
         public virtual string AnswerLabelText {
             get {
                 object obj = ViewState["AnswerLabelText"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultAnswerLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultAnswerLabelText) : (string)obj;
             }
             set {
                 ViewState["AnswerLabelText"] = value;
@@ -206,13 +206,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultAnswerRequiredErrorMessage),
-        WebSysDescription(SR.LoginControls_AnswerRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultAnswerRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.LoginControls_AnswerRequiredErrorMessage)
         ]
         public virtual string AnswerRequiredErrorMessage {
             get {
                 object obj = ViewState["AnswerRequiredErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultAnswerRequiredErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultAnswerRequiredErrorMessage) : (string)obj;
             }
             set {
                 ViewState["AnswerRequiredErrorMessage"] = value;
@@ -223,7 +223,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(false),
         Themeable(false),
-        WebSysDescription(SR.CreateUserWizard_AutoGeneratePassword)
+        WebSysDescription(System.Web.SR.CreateUserWizard_AutoGeneratePassword)
         ]
         public virtual bool AutoGeneratePassword {
             get {
@@ -246,7 +246,7 @@ namespace System.Web.UI.WebControls {
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         WebCategory("Appearance"),
-        WebSysDescription(SR.CreateUserWizard_CompleteStep)
+        WebSysDescription(System.Web.SR.CreateUserWizard_CompleteStep)
         ]
         public CompleteWizardStep CompleteStep {
             get {
@@ -262,13 +262,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultCompleteSuccessText),
-        WebSysDescription(SR.CreateUserWizard_CompleteSuccessText)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultCompleteSuccessText),
+        WebSysDescription(System.Web.SR.CreateUserWizard_CompleteSuccessText)
         ]
         public virtual string CompleteSuccessText {
             get {
                 object obj = ViewState["CompleteSuccessText"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultCompleteSuccessText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultCompleteSuccessText) : (string)obj;
             }
             set {
                 ViewState["CompleteSuccessText"] = value;
@@ -281,7 +281,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.CreateUserWizard_CompleteSuccessTextStyle)
+        WebSysDescription(System.Web.SR.CreateUserWizard_CompleteSuccessTextStyle)
         ]
         public TableItemStyle CompleteSuccessTextStyle {
             get {
@@ -316,13 +316,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultConfirmPasswordCompareErrorMessage),
-        WebSysDescription(SR.ChangePassword_ConfirmPasswordCompareErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultConfirmPasswordCompareErrorMessage),
+        WebSysDescription(System.Web.SR.ChangePassword_ConfirmPasswordCompareErrorMessage)
         ]
         public virtual string ConfirmPasswordCompareErrorMessage {
             get {
                 object obj = ViewState["ConfirmPasswordCompareErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultConfirmPasswordCompareErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultConfirmPasswordCompareErrorMessage) : (string)obj;
             }
             set {
                 ViewState["ConfirmPasswordCompareErrorMessage"] = value;
@@ -336,13 +336,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultConfirmPasswordLabelText),
-        WebSysDescription(SR.CreateUserWizard_ConfirmPasswordLabelText)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultConfirmPasswordLabelText),
+        WebSysDescription(System.Web.SR.CreateUserWizard_ConfirmPasswordLabelText)
         ]
         public virtual string ConfirmPasswordLabelText {
             get {
                 object obj = ViewState["ConfirmPasswordLabelText"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultConfirmPasswordLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultConfirmPasswordLabelText) : (string)obj;
             }
             set {
                 ViewState["ConfirmPasswordLabelText"] = value;
@@ -356,13 +356,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultConfirmPasswordRequiredErrorMessage),
-        WebSysDescription(SR.LoginControls_ConfirmPasswordRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultConfirmPasswordRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.LoginControls_ConfirmPasswordRequiredErrorMessage)
         ]
         public virtual string ConfirmPasswordRequiredErrorMessage {
             get {
                 object obj = ViewState["ConfirmPasswordRequiredErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultConfirmPasswordRequiredErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultConfirmPasswordRequiredErrorMessage) : (string)obj;
             }
             set {
                 ViewState["ConfirmPasswordRequiredErrorMessage"] = value;
@@ -376,7 +376,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.ChangePassword_ContinueButtonImageUrl),
+        WebSysDescription(System.Web.SR.ChangePassword_ContinueButtonImageUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -400,7 +400,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.CreateUserWizard_ContinueButtonStyle)
+        WebSysDescription(System.Web.SR.CreateUserWizard_ContinueButtonStyle)
         ]
         public Style ContinueButtonStyle {
             get {
@@ -421,13 +421,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultContinueButtonText),
-        WebSysDescription(SR.CreateUserWizard_ContinueButtonText)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultContinueButtonText),
+        WebSysDescription(System.Web.SR.CreateUserWizard_ContinueButtonText)
         ]
         public virtual string ContinueButtonText {
             get {
                 object obj = ViewState["ContinueButtonText"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultContinueButtonText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultContinueButtonText) : (string)obj;
             }
             set {
                 ViewState["ContinueButtonText"] = value;
@@ -441,7 +441,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.CreateUserWizard_ContinueButtonType)
+        WebSysDescription(System.Web.SR.CreateUserWizard_ContinueButtonType)
         ]
         public virtual ButtonType ContinueButtonType {
             get {
@@ -465,7 +465,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginControls_ContinueDestinationPageUrl),
+        WebSysDescription(System.Web.SR.LoginControls_ContinueDestinationPageUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         Themeable(false),
         UrlProperty()
@@ -494,7 +494,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.CreateUserWizard_CreateUserStep)
+        WebSysDescription(System.Web.SR.CreateUserWizard_CreateUserStep)
         ]
         public CreateUserWizardStep CreateUserStep {
             get {
@@ -510,7 +510,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.CreateUserWizard_CreateUserButtonImageUrl),
+        WebSysDescription(System.Web.SR.CreateUserWizard_CreateUserButtonImageUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -534,7 +534,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.CreateUserWizard_CreateUserButtonStyle)
+        WebSysDescription(System.Web.SR.CreateUserWizard_CreateUserButtonStyle)
         ]
         public Style CreateUserButtonStyle {
             get {
@@ -555,13 +555,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultCreateUserButtonText),
-        WebSysDescription(SR.CreateUserWizard_CreateUserButtonText)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultCreateUserButtonText),
+        WebSysDescription(System.Web.SR.CreateUserWizard_CreateUserButtonText)
         ]
         public virtual string CreateUserButtonText {
             get {
                 object obj = ViewState["CreateUserButtonText"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultCreateUserButtonText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultCreateUserButtonText) : (string)obj;
             }
             set {
                 ViewState["CreateUserButtonText"] = value;
@@ -575,7 +575,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.CreateUserWizard_CreateUserButtonType)
+        WebSysDescription(System.Web.SR.CreateUserWizard_CreateUserButtonType)
         ]
         public virtual ButtonType CreateUserButtonType {
             get {
@@ -614,7 +614,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(false),
         Themeable(false),
-        WebSysDescription(SR.CreateUserWizard_DisableCreatedUser)
+        WebSysDescription(System.Web.SR.CreateUserWizard_DisableCreatedUser)
         ]
         public virtual bool DisableCreatedUser {
             get {
@@ -646,13 +646,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultDuplicateEmailErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_DuplicateEmailErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultDuplicateEmailErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_DuplicateEmailErrorMessage)
         ]
         public virtual string DuplicateEmailErrorMessage {
             get {
                 object obj = ViewState["DuplicateEmailErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultDuplicateEmailErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultDuplicateEmailErrorMessage) : (string)obj;
             }
             set {
                 ViewState["DuplicateEmailErrorMessage"] = value;
@@ -666,13 +666,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultDuplicateUserNameErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_DuplicateUserNameErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultDuplicateUserNameErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_DuplicateUserNameErrorMessage)
         ]
         public virtual string DuplicateUserNameErrorMessage {
             get {
                 object obj = ViewState["DuplicateUserNameErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultDuplicateUserNameErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultDuplicateUserNameErrorMessage) : (string)obj;
             }
             set {
                 ViewState["DuplicateUserNameErrorMessage"] = value;
@@ -686,7 +686,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginControls_EditProfileIconUrl),
+        WebSysDescription(System.Web.SR.LoginControls_EditProfileIconUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -708,7 +708,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.CreateUserWizard_EditProfileText)
+        WebSysDescription(System.Web.SR.CreateUserWizard_EditProfileText)
         ]
         public virtual string EditProfileText {
             get {
@@ -727,7 +727,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.CreateUserWizard_EditProfileUrl),
+        WebSysDescription(System.Web.SR.CreateUserWizard_EditProfileUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -748,7 +748,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.CreateUserWizard_Email)
+        WebSysDescription(System.Web.SR.CreateUserWizard_Email)
         ]
         public virtual string Email {
             get {
@@ -780,13 +780,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultEmailLabelText),
-        WebSysDescription(SR.CreateUserWizard_EmailLabelText)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultEmailLabelText),
+        WebSysDescription(System.Web.SR.CreateUserWizard_EmailLabelText)
         ]
         public virtual string EmailLabelText {
             get {
                 object obj = ViewState["EmailLabelText"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultEmailLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultEmailLabelText) : (string)obj;
             }
             set {
                 ViewState["EmailLabelText"] = value;
@@ -800,7 +800,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Validation"),
         WebSysDefaultValue(""),
-        WebSysDescription(SR.CreateUserWizard_EmailRegularExpression)
+        WebSysDescription(System.Web.SR.CreateUserWizard_EmailRegularExpression)
         ]
         public virtual string EmailRegularExpression {
             get {
@@ -818,13 +818,13 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultEmailRegularExpressionErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_EmailRegularExpressionErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultEmailRegularExpressionErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_EmailRegularExpressionErrorMessage)
         ]
         public virtual string EmailRegularExpressionErrorMessage {
             get {
                 object obj = ViewState["EmailRegularExpressionErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultEmailRegularExpressionErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultEmailRegularExpressionErrorMessage) : (string)obj;
             }
             set {
                 ViewState["EmailRegularExpressionErrorMessage"] = value;
@@ -838,13 +838,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultEmailRequiredErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_EmailRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultEmailRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_EmailRequiredErrorMessage)
         ]
         public virtual string EmailRequiredErrorMessage {
             get {
                 object obj = ViewState["EmailRequiredErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultEmailRequiredErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultEmailRequiredErrorMessage) : (string)obj;
             }
             set {
                 ViewState["EmailRequiredErrorMessage"] = value;
@@ -858,13 +858,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultUnknownErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_UnknownErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultUnknownErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_UnknownErrorMessage)
         ]
         public virtual string UnknownErrorMessage {
             get {
                 object obj = ViewState["UnknownErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultUnknownErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultUnknownErrorMessage) : (string)obj;
             }
             set {
                 ViewState["UnknownErrorMessage"] = value;
@@ -880,7 +880,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.CreateUserWizard_ErrorMessageStyle)
+        WebSysDescription(System.Web.SR.CreateUserWizard_ErrorMessageStyle)
         ]
         public TableItemStyle ErrorMessageStyle {
             get {
@@ -901,7 +901,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginControls_HelpPageIconUrl),
+        WebSysDescription(System.Web.SR.LoginControls_HelpPageIconUrl),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -923,7 +923,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.ChangePassword_HelpPageText)
+        WebSysDescription(System.Web.SR.ChangePassword_HelpPageText)
         ]
         public virtual string HelpPageText {
             get {
@@ -942,7 +942,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Links"),
         DefaultValue(""),
-        WebSysDescription(SR.LoginControls_HelpPageUrl),
+        WebSysDescription(System.Web.SR.LoginControls_HelpPageUrl),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty()
         ]
@@ -966,7 +966,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_HyperLinkStyle)
+        WebSysDescription(System.Web.SR.WebControl_HyperLinkStyle)
         ]
         public TableItemStyle HyperLinkStyle {
             get {
@@ -988,7 +988,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.WebControl_InstructionText)
+        WebSysDescription(System.Web.SR.WebControl_InstructionText)
         ]
         public virtual string InstructionText {
             get {
@@ -1010,7 +1010,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_InstructionTextStyle)
+        WebSysDescription(System.Web.SR.WebControl_InstructionTextStyle)
         ]
         public TableItemStyle InstructionTextStyle {
             get {
@@ -1031,13 +1031,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultInvalidAnswerErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_InvalidAnswerErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultInvalidAnswerErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_InvalidAnswerErrorMessage)
         ]
         public virtual string InvalidAnswerErrorMessage {
             get {
                 object obj = ViewState["InvalidAnswerErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultInvalidAnswerErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultInvalidAnswerErrorMessage) : (string)obj;
             }
             set {
                 ViewState["InvalidAnswerErrorMessage"] = value;
@@ -1051,13 +1051,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultInvalidEmailErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_InvalidEmailErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultInvalidEmailErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_InvalidEmailErrorMessage)
         ]
         public virtual string InvalidEmailErrorMessage {
             get {
                 object obj = ViewState["InvalidEmailErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultInvalidEmailErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultInvalidEmailErrorMessage) : (string)obj;
             }
             set {
                 ViewState["InvalidEmailErrorMessage"] = value;
@@ -1071,13 +1071,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultInvalidPasswordErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_InvalidPasswordErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultInvalidPasswordErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_InvalidPasswordErrorMessage)
         ]
         public virtual string InvalidPasswordErrorMessage {
             get {
                 object obj = ViewState["InvalidPasswordErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultInvalidPasswordErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultInvalidPasswordErrorMessage) : (string)obj;
             }
             set {
                 ViewState["InvalidPasswordErrorMessage"] = value;
@@ -1091,13 +1091,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultInvalidQuestionErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_InvalidQuestionErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultInvalidQuestionErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_InvalidQuestionErrorMessage)
         ]
         public virtual string InvalidQuestionErrorMessage {
             get {
                 object obj = ViewState["InvalidQuestionErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultInvalidQuestionErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultInvalidQuestionErrorMessage) : (string)obj;
             }
             set {
                 ViewState["InvalidQuestionErrorMessage"] = value;
@@ -1114,7 +1114,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_LabelStyle)
+        WebSysDescription(System.Web.SR.LoginControls_LabelStyle)
         ]
         public TableItemStyle LabelStyle {
             get {
@@ -1136,7 +1136,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(true),
         Themeable(false),
-        WebSysDescription(SR.CreateUserWizard_LoginCreatedUser)
+        WebSysDescription(System.Web.SR.CreateUserWizard_LoginCreatedUser)
         ]
         public virtual bool LoginCreatedUser {
             get {
@@ -1158,7 +1158,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         Themeable(false),
-        WebSysDescription(SR.CreateUserWizard_MailDefinition)
+        WebSysDescription(System.Web.SR.CreateUserWizard_MailDefinition)
         ]
         public MailDefinition MailDefinition {
             get {
@@ -1180,7 +1180,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Data"),
         DefaultValue(""),
         Themeable(false),
-        WebSysDescription(SR.MembershipProvider_Name)
+        WebSysDescription(System.Web.SR.MembershipProvider_Name)
         ]
         public virtual string MembershipProvider {
             get {
@@ -1232,7 +1232,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.CreateUserWizard_PasswordHintStyle)
+        WebSysDescription(System.Web.SR.CreateUserWizard_PasswordHintStyle)
         ]
         public TableItemStyle PasswordHintStyle {
             get {
@@ -1254,7 +1254,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         WebSysDefaultValue(""),
-        WebSysDescription(SR.ChangePassword_PasswordHintText)
+        WebSysDescription(System.Web.SR.ChangePassword_PasswordHintText)
         ]
         public virtual string PasswordHintText {
             get {
@@ -1273,13 +1273,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.LoginControls_DefaultPasswordLabelText),
-        WebSysDescription(SR.LoginControls_PasswordLabelText)
+        WebSysDefaultValue(System.Web.SR.LoginControls_DefaultPasswordLabelText),
+        WebSysDescription(System.Web.SR.LoginControls_PasswordLabelText)
         ]
         public virtual string PasswordLabelText {
             get {
                 object obj = ViewState["PasswordLabelText"];
-                return (obj == null) ? SR.GetString(SR.LoginControls_DefaultPasswordLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.LoginControls_DefaultPasswordLabelText) : (string)obj;
             }
             set {
                 ViewState["PasswordLabelText"] = value;
@@ -1293,7 +1293,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Validation"),
         WebSysDefaultValue(""),
-        WebSysDescription(SR.CreateUserWizard_PasswordRegularExpression)
+        WebSysDescription(System.Web.SR.CreateUserWizard_PasswordRegularExpression)
         ]
         public virtual string PasswordRegularExpression {
             get {
@@ -1312,13 +1312,13 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.Password_InvalidPasswordErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_PasswordRegularExpressionErrorMessage)
+        WebSysDefaultValue(System.Web.SR.Password_InvalidPasswordErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_PasswordRegularExpressionErrorMessage)
         ]
         public virtual string PasswordRegularExpressionErrorMessage {
             get {
                 object obj = ViewState["PasswordRegularExpressionErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.Password_InvalidPasswordErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.Password_InvalidPasswordErrorMessage) : (string)obj;
             }
             set {
                 ViewState["PasswordRegularExpressionErrorMessage"] = value;
@@ -1332,13 +1332,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultPasswordRequiredErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_PasswordRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultPasswordRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_PasswordRequiredErrorMessage)
         ]
         public virtual string PasswordRequiredErrorMessage {
             get {
                 object obj = ViewState["PasswordRequiredErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultPasswordRequiredErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultPasswordRequiredErrorMessage) : (string)obj;
             }
             set {
                 ViewState["PasswordRequiredErrorMessage"] = value;
@@ -1354,7 +1354,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Themeable(false),
-        WebSysDescription(SR.CreateUserWizard_Question)
+        WebSysDescription(System.Web.SR.CreateUserWizard_Question)
         ]
         public virtual string Question {
             get {
@@ -1388,7 +1388,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Validation"),
         DefaultValue(true),
-        WebSysDescription(SR.CreateUserWizard_QuestionAndAnswerRequired)
+        WebSysDescription(System.Web.SR.CreateUserWizard_QuestionAndAnswerRequired)
         ]
         protected internal bool QuestionAndAnswerRequired {
             get {
@@ -1410,13 +1410,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultQuestionLabelText),
-        WebSysDescription(SR.CreateUserWizard_QuestionLabelText)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultQuestionLabelText),
+        WebSysDescription(System.Web.SR.CreateUserWizard_QuestionLabelText)
         ]
         public virtual string QuestionLabelText {
             get {
                 object obj = ViewState["QuestionLabelText"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultQuestionLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultQuestionLabelText) : (string)obj;
             }
             set {
                 ViewState["QuestionLabelText"] = value;
@@ -1430,13 +1430,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultQuestionRequiredErrorMessage),
-        WebSysDescription(SR.CreateUserWizard_QuestionRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultQuestionRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.CreateUserWizard_QuestionRequiredErrorMessage)
         ]
         public virtual string QuestionRequiredErrorMessage {
             get {
                 object obj = ViewState["QuestionRequiredErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultQuestionRequiredErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultQuestionRequiredErrorMessage) : (string)obj;
             }
             set {
                 ViewState["QuestionRequiredErrorMessage"] = value;
@@ -1452,7 +1452,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(true),
         Themeable(false),
-        WebSysDescription(SR.CreateUserWizard_RequireEmail)
+        WebSysDescription(System.Web.SR.CreateUserWizard_RequireEmail)
         ]
         public virtual bool RequireEmail {
             get {
@@ -1496,7 +1496,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_TextBoxStyle)
+        WebSysDescription(System.Web.SR.LoginControls_TextBoxStyle)
         ]
         public Style TextBoxStyle {
             get {
@@ -1520,7 +1520,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginControls_TitleTextStyle)
+        WebSysDescription(System.Web.SR.LoginControls_TitleTextStyle)
         ]
         public TableItemStyle TitleTextStyle {
             get {
@@ -1541,7 +1541,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.UserName_InitialValue)
+        WebSysDescription(System.Web.SR.UserName_InitialValue)
         ]
         public virtual string UserName {
             get {
@@ -1573,13 +1573,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultUserNameLabelText),
-        WebSysDescription(SR.LoginControls_UserNameLabelText)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultUserNameLabelText),
+        WebSysDescription(System.Web.SR.LoginControls_UserNameLabelText)
         ]
         public virtual string UserNameLabelText {
             get {
                 object obj = ViewState["UserNameLabelText"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultUserNameLabelText) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultUserNameLabelText) : (string)obj;
             }
             set {
                 ViewState["UserNameLabelText"] = value;
@@ -1593,13 +1593,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Validation"),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultUserNameRequiredErrorMessage),
-        WebSysDescription(SR.ChangePassword_UserNameRequiredErrorMessage)
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultUserNameRequiredErrorMessage),
+        WebSysDescription(System.Web.SR.ChangePassword_UserNameRequiredErrorMessage)
         ]
         public virtual string UserNameRequiredErrorMessage {
             get {
                 object obj = ViewState["UserNameRequiredErrorMessage"];
-                return (obj == null) ? SR.GetString(SR.CreateUserWizard_DefaultUserNameRequiredErrorMessage) : (string)obj;
+                return (obj == null) ? System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultUserNameRequiredErrorMessage) : (string)obj;
             }
             set {
                 ViewState["UserNameRequiredErrorMessage"] = value;
@@ -1612,7 +1612,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.CreateUserWizard_ValidatorTextStyle)
+        WebSysDescription(System.Web.SR.CreateUserWizard_ValidatorTextStyle)
         ]
         public Style ValidatorTextStyle {
             get {
@@ -1656,7 +1656,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.CreateUserWizard_ContinueButtonClick)
+        WebSysDescription(System.Web.SR.CreateUserWizard_ContinueButtonClick)
         ]
         public event EventHandler ContinueButtonClick {
             add {
@@ -1673,7 +1673,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.CreateUserWizard_CreatingUser)
+        WebSysDescription(System.Web.SR.CreateUserWizard_CreatingUser)
         ]
         public event LoginCancelEventHandler CreatingUser {
             add {
@@ -1690,7 +1690,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.CreateUserWizard_CreatedUser)
+        WebSysDescription(System.Web.SR.CreateUserWizard_CreatedUser)
         ]
         public event EventHandler CreatedUser {
             add {
@@ -1707,7 +1707,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.CreateUserWizard_CreateUserError)
+        WebSysDescription(System.Web.SR.CreateUserWizard_CreateUserError)
         ]
         public event CreateUserErrorEventHandler CreateUserError {
             add {
@@ -1724,7 +1724,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.ChangePassword_SendingMail)
+        WebSysDescription(System.Web.SR.ChangePassword_SendingMail)
         ]
         public event MailMessageEventHandler SendingMail {
             add {
@@ -1741,7 +1741,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.CreateUserWizard_SendMailError)
+        WebSysDescription(System.Web.SR.CreateUserWizard_SendMailError)
         ]
         public event SendMailErrorEventHandler SendMailError {
             add {
@@ -2301,7 +2301,7 @@ namespace System.Web.UI.WebControls {
                 ControlToValidate = targetTextBox.ID,
                 ValidationGroup = validationGroup,
                 Display = _requiredFieldValidatorDisplay,
-                Text = SR.GetString(SR.LoginControls_DefaultRequiredFieldValidatorText),
+                Text = System.Web.SR.GetString(System.Web.SR.LoginControls_DefaultRequiredFieldValidatorText),
                 Enabled = enableValidation,
                 Visible = enableValidation
             };
@@ -2385,7 +2385,7 @@ namespace System.Web.UI.WebControls {
             if (label == null) {
                 if (!DesignMode) {
                     throw new InvalidOperationException(
-                        SR.GetString(SR.CreateUserWizard_SideBar_Label_Not_Found, DataListID, _sideBarLabelID));
+                        System.Web.SR.GetString(System.Web.SR.CreateUserWizard_SideBar_Label_Not_Found, DataListID, _sideBarLabelID));
                 }
 
                 return;
@@ -2423,7 +2423,7 @@ namespace System.Web.UI.WebControls {
                 var createUserStep = step as CreateUserWizardStep;
                 if (createUserStep != null) {
                     if (foundCreate) {
-                        throw new HttpException(SR.GetString(SR.CreateUserWizard_DuplicateCreateUserWizardStep));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DuplicateCreateUserWizardStep));
                     }
 
                     foundCreate = true;
@@ -2432,7 +2432,7 @@ namespace System.Web.UI.WebControls {
                     var completeStep = step as CompleteWizardStep;
                     if (completeStep != null) {
                         if (foundComplete) {
-                            throw new HttpException(SR.GetString(SR.CreateUserWizard_DuplicateCompleteWizardStep));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DuplicateCompleteWizardStep));
                         }
 
                         foundComplete = true;
@@ -2536,7 +2536,7 @@ namespace System.Web.UI.WebControls {
             } else {
                 object[] myState = (object[])savedState;
                 if (myState.Length != _viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[0]);
@@ -2766,7 +2766,7 @@ namespace System.Web.UI.WebControls {
             if (!String.IsNullOrEmpty(providerString)) {
                 MembershipProvider provider = Membership.Providers[providerString];
                 if (provider == null) {
-                    throw new HttpException(SR.GetString(SR.WebControl_CantFindProvider));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.WebControl_CantFindProvider));
                 }
             }
         }
@@ -2869,7 +2869,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private void SetDefaultCreateUserNavigationTemplateProperties() {
-            Debug.Assert(_defaultCreateUserNavigationTemplate != null);
+            System.Web.Util.Debug.Assert(_defaultCreateUserNavigationTemplate != null);
 
             WebControl createUserButton = (WebControl)_defaultCreateUserNavigationTemplate.CreateUserButton;
             WebControl previousButton = (WebControl)_defaultCreateUserNavigationTemplate.PreviousButton;
@@ -3577,7 +3577,7 @@ namespace System.Web.UI.WebControls {
                             return answerTextBox;
                         } else {
                             if (!_createUserWizard.DesignMode && _createUserWizard.QuestionAndAnswerRequired) {
-                                throw new HttpException(SR.GetString(SR.CreateUserWizard_NoAnswerTextBox,
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.CreateUserWizard_NoAnswerTextBox,
                                                                                          _createUserWizard.ID, _answerID));
                             }
                             return null;
@@ -3632,7 +3632,7 @@ namespace System.Web.UI.WebControls {
                             return emailTextBox;
                         } else {
                             if (!_createUserWizard.DesignMode && _createUserWizard.RequireEmail) {
-                                throw new HttpException(SR.GetString(SR.CreateUserWizard_NoEmailTextBox,
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.CreateUserWizard_NoEmailTextBox,
                                                                                          _createUserWizard.ID, _emailID));
                             }
                             return null;
@@ -3695,7 +3695,7 @@ namespace System.Web.UI.WebControls {
                             return passwordTextBox;
                         } else {
                             if (!_createUserWizard.DesignMode && !_createUserWizard.AutoGeneratePassword) {
-                                throw new HttpException(SR.GetString(SR.CreateUserWizard_NoPasswordTextBox,
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.CreateUserWizard_NoPasswordTextBox,
                                                                                          _createUserWizard.ID, _passwordID));
                             }
                             return null;
@@ -3731,7 +3731,7 @@ namespace System.Web.UI.WebControls {
                             return questionTextBox;
                         } else {
                             if (!_createUserWizard.DesignMode && _createUserWizard.QuestionAndAnswerRequired) {
-                                throw new HttpException(SR.GetString(SR.CreateUserWizard_NoQuestionTextBox,
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.CreateUserWizard_NoQuestionTextBox,
                                                                                          _createUserWizard.ID, _questionID));
                             }
                             return null;
@@ -3756,7 +3756,7 @@ namespace System.Web.UI.WebControls {
                             // 
                             return userNameTextBox;
                         } else if (!_createUserWizard.DesignMode) {
-                            throw new HttpException(SR.GetString(SR.CreateUserWizard_NoUserNameTextBox,
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.CreateUserWizard_NoUserNameTextBox,
                                                                                      _createUserWizard.ID, _userNameID));
                         }
 

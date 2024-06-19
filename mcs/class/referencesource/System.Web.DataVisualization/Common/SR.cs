@@ -9902,6 +9902,10 @@ namespace System.Web.UI.DataVisualization.Charting
 		{
 			return Keys.GetString(Keys.DiagnosticChartImageServedFailPrivacyFail, keyType);
 		}
+
+		public const string CombinationOfAccessibilitySwitchesNotSupported = "Desktop applications are required to opt in to all earlier accessibility improvements to get the later improvements. To do this, ensure that if the AppContext switch 'Switch.UseLegacyAccessibilityFeatures.N' is set to 'false', then 'Switch.UseLegacyAccessibilityFeatures' and all 'Switch.UseLegacyAccessibilityFeatures.M' switches, when M < N, evaluate to false as well. Note that, if a switch for a particular set of accessibility improvements is not present, its value is determined by the target framework version. You can remedy this by adding these switches and setting their value to false.";
+
+		public const string KeyboardToolTipDisplayBehaviorRequiresAccessibilityImprovementsLevel3 = "ToolTips display on keyboard focus requires the following AppContextSwitchOverrides: 'Switch.UseLegacyAccessibilityFeatures.3' and 'Switch.System.Windows.Forms.UseLegacyToolTipDisplay'";
 		
 		[System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
 		public class Keys

@@ -100,6 +100,23 @@ namespace System.Web.Security
 		public abstract MembershipPasswordFormat PasswordFormat { get; }
 		public abstract string PasswordStrengthRegularExpression { get; }
 		public abstract bool RequiresUniqueEmail { get; }
+
+		// GetUser() can throw 1 type of exception:
+        // 1. ArgumentException is thrown if:
+        //    A. Username is null, is empty, contains commas, or is longer than 256 characters
+        internal MembershipUser GetUser(string username, bool userIsOnline, bool throwOnError) {
+            MembershipUser user = null;
+
+            try {
+                user = GetUser(username, userIsOnline);
+            }
+            catch (ArgumentException) {
+                if (throwOnError) throw;
+            }
+
+            return user;
+        }
+
 		
 		protected virtual void OnValidatingPassword (ValidatePasswordEventArgs e)
 		{
@@ -132,6 +149,5 @@ namespace System.Web.Security
 		}
 	}
 }
-
 
 

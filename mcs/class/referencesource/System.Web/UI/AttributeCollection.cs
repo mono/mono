@@ -55,7 +55,7 @@ namespace System.Web.UI {
         public string this[string key]
         {
             get {
-                if (_styleColl != null && StringUtil.EqualsIgnoreCase(key, "style"))
+                if (_styleColl != null && System.Web.Util.StringUtil.EqualsIgnoreCase(key, "style"))
                     return _styleColl.Value;
                 else
                     return _bag[key] as string;
@@ -112,7 +112,7 @@ namespace System.Web.UI {
         ///    </para>
         /// </devdoc>
         public void Add(string key, string value) {
-            if (_styleColl != null && StringUtil.EqualsIgnoreCase(key, "style"))
+            if (_styleColl != null && System.Web.Util.StringUtil.EqualsIgnoreCase(key, "style"))
                 _styleColl.Value = value;
             else
                 _bag[key] = value;
@@ -155,7 +155,7 @@ namespace System.Web.UI {
         ///    </para>
         /// </devdoc>
         public void Remove(string key) {
-            if (_styleColl != null && StringUtil.EqualsIgnoreCase(key, "style"))
+            if (_styleColl != null && System.Web.Util.StringUtil.EqualsIgnoreCase(key, "style"))
                 _styleColl.Clear();
             else
                 _bag.Remove(key);

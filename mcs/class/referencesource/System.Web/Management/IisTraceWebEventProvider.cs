@@ -11,6 +11,7 @@ namespace System.Web.Management {
     using System.Web.Util;
     using System.Web.Hosting;
     using System.Security.Permissions;
+    
 
     ////////////
     // Events
@@ -23,14 +24,14 @@ namespace System.Web.Management {
             HttpContext context = HttpContext.Current;
             if (context != null) {
                 if (!HttpRuntime.UseIntegratedPipeline && !(context.WorkerRequest is ISAPIWorkerRequestInProcForIIS7)) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_7));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_7));
                 }
             }
         }
 
         public override void Initialize(string name, NameValueCollection config)
         {
-            Debug.Trace("IisTraceWebEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("IisTraceWebEventProvider", "Initializing: name=" + name);
             base.Initialize(name, config);
 
             ProviderUtil.CheckUnrecognizedAttributes(config, name);

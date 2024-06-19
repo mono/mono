@@ -20,8 +20,8 @@ namespace System.Web.UI.WebControls {
     ParseChildren(true),
     PersistChildren(false),
     ToolboxBitmap(typeof(SiteMapDataSource)),
-    WebSysDescription(SR.SiteMapDataSource_Description),
-    WebSysDisplayName(SR.SiteMapDataSource_DisplayName)
+    WebSysDescription(System.Web.SR.SiteMapDataSource_Description),
+    WebSysDisplayName(System.Web.SR.SiteMapDataSource_DisplayName)
     ]
 
     public class SiteMapDataSource : HierarchicalDataSourceControl, IDataSource, IListSource {
@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.SiteMapDataSource_ContainsListCollection)
+        WebSysDescription(System.Web.SR.SiteMapDataSource_ContainsListCollection)
         ]
         public virtual bool ContainsListCollection {
             get {
@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.SiteMapDataSource_Provider)
+        WebSysDescription(System.Web.SR.SiteMapDataSource_Provider)
         ]
         public SiteMapProvider Provider {
             get {
@@ -61,14 +61,14 @@ namespace System.Web.UI.WebControls {
                     _provider = SiteMap.Provider;
 
                     if (_provider == null) {
-                        throw new HttpException(SR.GetString(SR.SiteMapDataSource_DefaultProviderNotFound));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.SiteMapDataSource_DefaultProviderNotFound));
                     }
                 }
                 else {
                     _provider = SiteMap.Providers[SiteMapProvider];
 
                     if (_provider == null) {
-                        throw new HttpException(SR.GetString(SR.SiteMapDataSource_ProviderNotFound, SiteMapProvider));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.SiteMapDataSource_ProviderNotFound, SiteMapProvider));
                     }
                 }
 
@@ -89,7 +89,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(true),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SiteMapDataSource_ShowStartingNode)
+        WebSysDescription(System.Web.SR.SiteMapDataSource_ShowStartingNode)
         ]
         public virtual bool ShowStartingNode {
             get {
@@ -111,7 +111,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SiteMapDataSource_SiteMapProvider)
+        WebSysDescription(System.Web.SR.SiteMapDataSource_SiteMapProvider)
         ]
         public virtual string SiteMapProvider {
             get {
@@ -134,7 +134,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(0),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SiteMapDataSource_StartingNodeOffset)
+        WebSysDescription(System.Web.SR.SiteMapDataSource_StartingNodeOffset)
         ]
         public virtual int StartingNodeOffset {
             get{
@@ -158,7 +158,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SiteMapDataSource_StartFromCurrentNode)
+        WebSysDescription(System.Web.SR.SiteMapDataSource_StartFromCurrentNode)
         ]
         public virtual bool StartFromCurrentNode {
             get {
@@ -182,7 +182,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
         WebCategory("Behavior"),
-        WebSysDescription(SR.SiteMapDataSource_StartingNodeUrl)
+        WebSysDescription(System.Web.SR.SiteMapDataSource_StartingNodeUrl)
         ]
         public virtual string StartingNodeUrl {
             get {
@@ -203,7 +203,7 @@ namespace System.Web.UI.WebControls {
             int startingNodeOffset = StartingNodeOffset;
 
             if (!String.IsNullOrEmpty(StartingNodeUrl) && StartFromCurrentNode) {
-                throw new InvalidOperationException(SR.GetString(SR.SiteMapDataSource_StartingNodeUrlAndStartFromcurrentNode_Defined));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SiteMapDataSource_StartingNodeUrlAndStartFromcurrentNode_Defined));
             }
 
             if (StartFromCurrentNode) {
@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls {
             else if (!String.IsNullOrEmpty(StartingNodeUrl)) {
                 node = Provider.FindSiteMapNode(MakeUrlAbsolute(StartingNodeUrl));
                 if (node == null) {
-                    throw new ArgumentException(SR.GetString(SR.SiteMapPath_CannotFindUrl, StartingNodeUrl));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.SiteMapPath_CannotFindUrl, StartingNodeUrl));
                 }
             }
             else {
@@ -281,7 +281,7 @@ namespace System.Web.UI.WebControls {
         protected override HierarchicalDataSourceView GetHierarchicalView(string viewPath) {
 
             if (Provider == null)
-                throw new HttpException(SR.GetString(SR.SiteMapDataSource_ProviderNotFound, SiteMapProvider));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.SiteMapDataSource_ProviderNotFound, SiteMapProvider));
 
             return GetTreeView(viewPath);
         }
@@ -340,7 +340,7 @@ namespace System.Web.UI.WebControls {
 
         public virtual DataSourceView GetView(string viewName) {
             if (Provider == null)
-                throw new HttpException(SR.GetString(SR.SiteMapDataSource_ProviderNotFound, SiteMapProvider));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.SiteMapDataSource_ProviderNotFound, SiteMapProvider));
 
             if (_dataSourceView == null) {
                 _dataSourceView = SiteMapNodeCollection.ReadOnly(GetPathNodeCollection(viewName)).GetDataSourceView(this, String.Empty);
@@ -360,7 +360,7 @@ namespace System.Web.UI.WebControls {
 
         private string MakeUrlAbsolute(string url) {
             // check if its empty or already absolute
-            if (url.Length == 0 || !UrlPath.IsRelativeUrl(url)) {
+            if (url.Length == 0 || !System.Web.Util.UrlPath.IsRelativeUrl(url)) {
                 return url;
             }
 
@@ -370,7 +370,7 @@ namespace System.Web.UI.WebControls {
             }
 
             // Make it absolute
-            return UrlPath.Combine(baseUrl, url);
+            return System.Web.Util.UrlPath.Combine(baseUrl, url);
         }
 
         #region IDataSource implementations

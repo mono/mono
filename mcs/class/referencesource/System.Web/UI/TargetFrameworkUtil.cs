@@ -358,7 +358,7 @@ namespace System.Web.UI {
         /// is not directly available, for example in the CBM case where it is in another appdomain.
         /// </summary>
         private static PropertyDescriptorCollection GetFilteredPropertyDescriptorCollection(Type objectType, object instance) {
-            Debug.Assert(s_cbmTdpBridge != null, "s_cbmTdpBridge should not be null");
+            System.Web.Util.Debug.Assert(s_cbmTdpBridge != null, "s_cbmTdpBridge should not be null");
             PropertyDescriptorCollection propertyDescriptors = null;
             if (instance != null) {
                 propertyDescriptors = TypeDescriptor.GetProperties(instance);
@@ -413,7 +413,7 @@ namespace System.Web.UI {
         /// is not directly available, for example in the CBM case where it is in another appdomain.
         /// </summary>
         private static EventDescriptorCollection GetFilteredEventDescriptorCollection(Type objectType, object instance) {
-            Debug.Assert(s_cbmTdpBridge != null, "s_cbmTdpBridge should not be null");
+            System.Web.Util.Debug.Assert(s_cbmTdpBridge != null, "s_cbmTdpBridge should not be null");
             EventDescriptorCollection eventDescriptors = null;
             if (instance != null) {
                 eventDescriptors = TypeDescriptor.GetEvents(instance);
@@ -470,7 +470,7 @@ namespace System.Web.UI {
             // We need to make sure a type is a framework type, before we try to use s_cbmTdpBridge on it.
             // Also, isFrameworkType should only be called in this specific scenario, when we are trying
             // to use s_cbmTdpBridge.
-            Debug.Assert(s_cbmTdpBridge != null, "s_cbmTdpBridge should not be null in IsFrameworkType");
+            System.Web.Util.Debug.Assert(s_cbmTdpBridge != null, "s_cbmTdpBridge should not be null in IsFrameworkType");
             bool result;
             if (!s_isFrameworkType.TryGetValue(type, out result)) {
                 Assembly a = type.Assembly;

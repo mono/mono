@@ -16,6 +16,7 @@ namespace System.Web.UI {
     using System.Web;
     using System.Web.Util;
     using System.Web.Configuration;
+    
 
 
     /// <internalonly/>
@@ -148,7 +149,7 @@ namespace System.Web.UI {
 
                 return parser.RootBuilder;
             } catch (Exception e) {
-                throw new Exception(SR.GetString(SR.DesignTimeTemplateParser_ErrorParsingTheme) + " " + e.Message);
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.DesignTimeTemplateParser_ErrorParsingTheme) + " " + e.Message);
             }
         }
 
@@ -165,7 +166,7 @@ namespace System.Web.UI {
                     return true;
                 }
 
-                if (StringUtil.EqualsIgnoreCase(((_currentFilter == null) ? String.Empty : _currentFilter), filterName)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(((_currentFilter == null) ? String.Empty : _currentFilter), filterName)) {
                     return true;
                 }
 

@@ -26,6 +26,7 @@ namespace System.Web {
     using System.Web.Hosting;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     internal abstract class ErrorFormatterGenerator {
         internal abstract ErrorFormatter GetErrorFormatter(Exception e);
@@ -80,7 +81,7 @@ namespace System.Web {
             }
 
             if (type == null) {
-                throw new HttpException(SR.GetString(SR.Could_not_create_object_of_type, progID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Could_not_create_object_of_type, progID));
             }
 
             // Disallow Apartment components in non-compat mode
@@ -152,7 +153,7 @@ namespace System.Web {
 
             if (obj == null) {
                 throw new HttpException(
-                    SR.GetString(SR.Could_not_create_object_from_clsid, clsid));
+                    System.Web.SR.GetString(System.Web.SR.Could_not_create_object_from_clsid, clsid));
             }
 
             // For ASP compat: take care of OnPageStart/OnPageEnd
@@ -211,7 +212,7 @@ namespace System.Web {
         /// </devdoc>
         public string MapPath(string path) {
             if (_context == null)
-                throw new HttpException(SR.GetString(SR.Server_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_not_available));
             // Disable hiding the request so that Server.MapPath works when called from
             // Application_Start in integrated mode
             bool unhideRequest = _context.HideRequestResponse;
@@ -308,7 +309,7 @@ namespace System.Web {
             EnsureHasNotTransitionedToWebSocket();
 
             if (_context == null)
-                throw new HttpException(SR.GetString(SR.Server_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_not_available));
 
             if (path == null)
                 throw new ArgumentNullException("path");
@@ -327,8 +328,8 @@ namespace System.Web {
                 path = path.Substring(0, iqs);
             }
 
-            if (!UrlPath.IsValidVirtualPathWithoutProtocol(path)) {
-                throw new ArgumentException(SR.GetString(SR.Invalid_path_for_child_request, path));
+            if (!System.Web.Util.UrlPath.IsValidVirtualPathWithoutProtocol(path)) {
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_path_for_child_request, path));
             }
 
             VirtualPath virtualPath = VirtualPath.Create(path);
@@ -351,7 +352,7 @@ namespace System.Web {
             try {
                 // paths that ends with . are disallowed as they are used to get around
                 // extension mappings and server source as static file
-                if (StringUtil.StringEndsWith(virtualPath.VirtualPathString, '.'))
+                if (System.Web.Util.StringUtil.StringEndsWith(virtualPath.VirtualPathString, '.'))
                     throw new HttpException(404, String.Empty);
 
                 bool useAppConfig = !filePath.IsWithinAppRoot;
@@ -396,7 +397,7 @@ namespace System.Web {
                     }
                 }
 
-                throw new HttpException(SR.GetString(SR.Error_executing_child_request_for_path, path), e);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Error_executing_child_request_for_path, path), e);
             }
 
             ExecuteInternal(handler, writer, preserveForm, true /*setPreviousPage*/,
@@ -406,7 +407,7 @@ namespace System.Web {
 
         public void Execute(IHttpHandler handler, TextWriter writer, bool preserveForm) {
             if (_context == null)
-                throw new HttpException(SR.GetString(SR.Server_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_not_available));
 
             Execute(handler, writer, preserveForm, true /*setPreviousPage*/);
         }
@@ -599,7 +600,7 @@ namespace System.Web {
 
                                     // If we blocked the thread, YSOD the request to display a diagnostic message.
                                     if (blockedThread && !_context.SyncContext.AllowAsyncDuringSyncStages) {
-                                        throw new InvalidOperationException(SR.GetString(SR.Server_execute_blocked_on_async_handler));
+                                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Server_execute_blocked_on_async_handler));
                                     }
                                 }
                                 catch (Exception e) {
@@ -668,9 +669,9 @@ namespace System.Web {
                     error = null;
 
                 if (path != null)
-                    throw new HttpException(SR.GetString(SR.Error_executing_child_request_for_path, path), error);
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Error_executing_child_request_for_path, path), error);
 
-                throw new HttpException(SR.GetString(SR.Error_executing_child_request_for_handler, handler.GetType().ToString()), error);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Error_executing_child_request_for_handler, handler.GetType().ToString()), error);
             }
         }
 
@@ -685,7 +686,7 @@ namespace System.Web {
         public void Transfer(string path, bool preserveForm) {
             Page page = _context.Handler as Page;
             if ((page != null) && page.IsCallback) {
-                throw new ApplicationException(SR.GetString(SR.Transfer_not_allowed_in_callback));
+                throw new ApplicationException(System.Web.SR.GetString(System.Web.SR.Transfer_not_allowed_in_callback));
             }
             
             // execute child request
@@ -720,7 +721,7 @@ namespace System.Web {
         public void Transfer(IHttpHandler handler, bool preserveForm) {
             Page page = handler as Page;
             if ((page != null) && page.IsCallback) {
-                throw new ApplicationException(SR.GetString(SR.Transfer_not_allowed_in_callback));
+                throw new ApplicationException(System.Web.SR.GetString(System.Web.SR.Transfer_not_allowed_in_callback));
             }
             
             Execute(handler, null, preserveForm);
@@ -748,11 +749,11 @@ namespace System.Web {
             EnsureHasNotTransitionedToWebSocket();
 
             if (!HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
 
             if (_context == null) {
-                throw new HttpException(SR.GetString(SR.Server_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_not_available));
             }
 
             if (path == null) {
@@ -764,7 +765,7 @@ namespace System.Web {
             HttpResponse response = _context.Response;
 
             if (wr == null) {
-                throw new HttpException(SR.GetString(SR.Server_not_available));            
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_not_available));            
             }
                 
             // Remove potential cookie-less session id (ASURT 100558)
@@ -778,8 +779,8 @@ namespace System.Web {
                 path = path.Substring(0, iqs);   
             }
 
-            if (!UrlPath.IsValidVirtualPathWithoutProtocol(path)) {
-                throw new ArgumentException(SR.GetString(SR.Invalid_path_for_child_request, path));
+            if (!System.Web.Util.UrlPath.IsValidVirtualPathWithoutProtocol(path)) {
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_path_for_child_request, path));
             }
 
             VirtualPath virtualPath = request.FilePathObject.Combine(VirtualPath.Create(path));
@@ -810,7 +811,7 @@ namespace System.Web {
                 topPage != null && !topPage.IsInAspCompatMode &&    // top page is not aspcompat
                 Transactions.Utils.IsInTransaction) {               // we are in transaction
 
-                throw new HttpException(SR.GetString(SR.Transacted_page_calls_aspcompat));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Transacted_page_calls_aspcompat));
             }
         }
 
@@ -864,8 +865,7 @@ namespace System.Web {
         ///       the server machine name.
         ///    </para>
         /// </devdoc>
-        public string MachineName {
-            [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
+        public string MachineName {            
             get {
                 return GetMachineNameInternal();
             }
@@ -880,13 +880,16 @@ namespace System.Web {
                 if (_machineName != null)
                     return _machineName;
 
+                /*
                 StringBuilder   buf = new StringBuilder (_maxMachineNameLength);
                 int             len = _maxMachineNameLength;
 
                 if (UnsafeNativeMethods.GetComputerName (buf, ref len) == 0)
-                    throw new HttpException (SR.GetString(SR.Get_computer_name_failed));
+                    throw new HttpException (System.Web.SR.GetString(System.Web.SR.Get_computer_name_failed));
 
                 _machineName = buf.ToString();
+                */
+                _machineName = Environment.MachineName;
             }
             return _machineName;
         }
@@ -910,11 +913,10 @@ namespace System.Web {
                     return HttpRuntimeSection.DefaultExecutionTimeout;
                 }
             }
-
-            [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
+            
             set {
                 if (_context == null)
-                    throw new HttpException(SR.GetString(SR.Server_not_available));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_not_available));
                 if (value <= 0)
                     throw new ArgumentOutOfRangeException("value");
                 _context.Timeout = new TimeSpan(0, 0, value);

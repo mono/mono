@@ -165,7 +165,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			set { initCalled = value; }
 		}
 
-		protected internal override void OnInit (EventArgs e)
+		protected override void OnInit (EventArgs e)
 		{
 			initCalled = true;
 			base.OnInit (e);
@@ -181,7 +181,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			set { loadCalled = value; }
 		}
 
-		protected internal override void OnLoad (EventArgs e)
+		protected override void OnLoad (EventArgs e)
 		{
 			loadCalled = true;
 			base.OnLoad (e);
@@ -197,7 +197,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			set { preRenderCalled = value; }
 		}
 
-		protected internal override void OnPreRender (EventArgs e)
+		protected override void OnPreRender (EventArgs e)
 		{
 			preRenderCalled = true;
 			base.OnPreRender (e);
@@ -252,7 +252,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 		}
 
-		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
+		protected override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
 			ArrayList al = new ArrayList (3);
 			for (int i=0; i < 3; i++)

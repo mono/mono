@@ -193,7 +193,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         Editor("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.SqlDataSource_DeleteParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_DeleteParameters),
         ]
         public ParameterCollection DeleteParameters {
             get {
@@ -229,7 +229,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         Editor("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.SqlDataSource_FilterParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_FilterParameters),
         ]
         public ParameterCollection FilterParameters {
             get {
@@ -280,7 +280,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         Editor("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.SqlDataSource_InsertParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_InsertParameters),
         ]
         public ParameterCollection InsertParameters {
             get {
@@ -306,7 +306,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue("{0}"),
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_OldValuesParameterFormatString),
+        WebSysDescription(System.Web.SR.DataSource_OldValuesParameterFormatString),
         ]
         public string OldValuesParameterFormatString {
             get {
@@ -461,7 +461,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         Editor("System.Web.UI.Design.WebControls.ParameterCollectionEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.SqlDataSource_UpdateParameters),
+        WebSysDescription(System.Web.SR.SqlDataSource_UpdateParameters),
         ]
         public ParameterCollection UpdateParameters {
             get {
@@ -613,7 +613,7 @@ namespace System.Web.UI.WebControls {
         /// to the command's parameter collection.
         /// </devdoc>
         private void AddParameters(DbCommand command, ParameterCollection reference, IDictionary parameters, IDictionary exclusionList, string oldValuesParameterFormatString) {
-            Debug.Assert(command != null);
+            System.Web.Util.Debug.Assert(command != null);
 
             IDictionary caseInsensitiveExclusionList = null;
             if (exclusionList != null) {
@@ -694,10 +694,10 @@ namespace System.Web.UI.WebControls {
                         parameterNames = sb.ToString();
                     }
                     else {
-                        parameterNames = SR.GetString(SR.SqlDataSourceView_NoParameters);
+                        parameterNames = System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_NoParameters);
                     }
                     isCustomException = true;
-                    return new InvalidOperationException(SR.GetString(SR.SqlDataSourceView_MissingParameters, operation, _owner.ID, parameterNames));
+                    return new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_MissingParameters, operation, _owner.ID, parameterNames));
                 }
             }
             isCustomException = false;
@@ -791,13 +791,13 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override int ExecuteDelete(IDictionary keys, IDictionary oldValues) {
             if (!CanDelete) {
-                throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_DeleteNotSupported, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_DeleteNotSupported, _owner.ID));
             }
 
             DbConnection connection = _owner.CreateConnection(_owner.ConnectionString);
 
             if (connection == null) {
-                throw new InvalidOperationException(SR.GetString(SR.SqlDataSourceView_CouldNotCreateConnection, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_CouldNotCreateConnection, _owner.ID));
             }
 
             // Create command and add parameters
@@ -807,7 +807,7 @@ namespace System.Web.UI.WebControls {
             AddParameters(command, DeleteParameters, keys, null, oldValuesParameterFormatString);
             if (ConflictDetection == ConflictOptions.CompareAllValues) {
                 if (oldValues == null || oldValues.Count == 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.SqlDataSourceView_Pessimistic, SR.GetString(SR.DataSourceView_delete), _owner.ID, "values"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_Pessimistic, System.Web.SR.GetString(System.Web.SR.DataSourceView_delete), _owner.ID, "values"));
                 }
                 AddParameters(command, DeleteParameters, oldValues, null, oldValuesParameterFormatString);
             }
@@ -834,13 +834,13 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override int ExecuteInsert(IDictionary values) {
             if (!CanInsert) {
-                throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_InsertNotSupported, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_InsertNotSupported, _owner.ID));
             }
 
             DbConnection connection = _owner.CreateConnection(_owner.ConnectionString);
 
             if (connection == null) {
-                throw new InvalidOperationException(SR.GetString(SR.SqlDataSourceView_CouldNotCreateConnection, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_CouldNotCreateConnection, _owner.ID));
             }
 
             // Create command and add parameters
@@ -879,7 +879,7 @@ namespace System.Web.UI.WebControls {
             DbConnection connection = _owner.CreateConnection(_owner.ConnectionString);
 
             if (connection == null) {
-                throw new InvalidOperationException(SR.GetString(SR.SqlDataSourceView_CouldNotCreateConnection, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_CouldNotCreateConnection, _owner.ID));
             }
 
             DataSourceCache cache = _owner.Cache;
@@ -904,7 +904,7 @@ namespace System.Web.UI.WebControls {
             // If caching is enabled, load DataSet from cache
             if (cacheEnabled) {
                 if (_owner.DataSourceMode != SqlDataSourceMode.DataSet) {
-                    throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_CacheNotSupported, _owner.ID));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_CacheNotSupported, _owner.ID));
                 }
 
                 arguments.RaiseUnsupportedCapabilitiesError(this);
@@ -954,7 +954,7 @@ namespace System.Web.UI.WebControls {
             string sortParameterName = SortParameterName;
             if (sortParameterName.Length > 0) {
                 if (command.CommandType != CommandType.StoredProcedure) {
-                    throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_SortParameterRequiresStoredProcedure, _owner.ID));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_SortParameterRequiresStoredProcedure, _owner.ID));
                 }
                 command.Parameters.Add(_owner.CreateParameter(ParameterPrefix + sortParameterName, sortExpression));
 
@@ -1014,7 +1014,7 @@ namespace System.Web.UI.WebControls {
                         SqlDataSourceCache sqlCache = (SqlDataSourceCache)cache;
                         if (String.Equals(sqlCache.SqlCacheDependency, SqlDataSourceCache.Sql9CacheDependencyDirective, StringComparison.OrdinalIgnoreCase)) {
                             if (!(command is System.Data.SqlClient.SqlCommand)) {
-                                throw new InvalidOperationException(SR.GetString(SR.SqlDataSourceView_CommandNotificationNotSupported, _owner.ID));
+                                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_CommandNotificationNotSupported, _owner.ID));
                             }
                             cacheDependency = new SqlCacheDependency((System.Data.SqlClient.SqlCommand)command);
                         }
@@ -1083,11 +1083,11 @@ namespace System.Web.UI.WebControls {
                 case SqlDataSourceMode.DataReader:
                 {
                     if (FilterExpression.Length > 0) {
-                        throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_FilterNotSupported, _owner.ID));
+                        throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_FilterNotSupported, _owner.ID));
                     }
 
                     if (sortExpression.Length > 0) {
-                        throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_SortNotSupported, _owner.ID));
+                        throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_SortNotSupported, _owner.ID));
                     }
 
                     bool eventRaised = false;
@@ -1135,13 +1135,13 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override int ExecuteUpdate(IDictionary keys, IDictionary values, IDictionary oldValues) {
             if (!CanUpdate) {
-                throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_UpdateNotSupported, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_UpdateNotSupported, _owner.ID));
             }
 
             DbConnection connection = _owner.CreateConnection(_owner.ConnectionString);
 
             if (connection == null) {
-                throw new InvalidOperationException(SR.GetString(SR.SqlDataSourceView_CouldNotCreateConnection, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_CouldNotCreateConnection, _owner.ID));
             }
 
             // Create command and add parameters
@@ -1152,7 +1152,7 @@ namespace System.Web.UI.WebControls {
             AddParameters(command, UpdateParameters, keys, null, oldValuesParameterFormatString);
             if (ConflictDetection == ConflictOptions.CompareAllValues) {
                 if (oldValues == null || oldValues.Count == 0) {
-                    throw new InvalidOperationException(SR.GetString(SR.SqlDataSourceView_Pessimistic, SR.GetString(SR.DataSourceView_update), _owner.ID, "oldValues"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_Pessimistic, System.Web.SR.GetString(System.Web.SR.DataSourceView_update), _owner.ID, "oldValues"));
                 }
                 AddParameters(command, UpdateParameters, oldValues, null, oldValuesParameterFormatString);
             }
@@ -1189,8 +1189,8 @@ namespace System.Web.UI.WebControls {
         /// to the command's parameter collection.
         /// </devdoc>
         private void InitializeParameters(DbCommand command, ParameterCollection parameters, IDictionary exclusionList) {
-            Debug.Assert(command != null);
-            Debug.Assert(parameters != null);
+            System.Web.Util.Debug.Assert(command != null);
+            System.Web.Util.Debug.Assert(parameters != null);
 
             string parameterPrefix = ParameterPrefix;
 
@@ -1425,15 +1425,15 @@ namespace System.Web.UI.WebControls {
 
         protected internal override void RaiseUnsupportedCapabilityError(DataSourceCapabilities capability) {
             if (!CanPage && ((capability & DataSourceCapabilities.Page) != 0)) {
-                throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_NoPaging, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_NoPaging, _owner.ID));
             }
 
             if (!CanSort && ((capability & DataSourceCapabilities.Sort) != 0)) {
-                throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_NoSorting, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_NoSorting, _owner.ID));
             }
 
             if (!CanRetrieveTotalRowCount && ((capability & DataSourceCapabilities.RetrieveTotalRowCount) != 0)) {
-                throw new NotSupportedException(SR.GetString(SR.SqlDataSourceView_NoRowCount, _owner.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.SqlDataSourceView_NoRowCount, _owner.ID));
             }
             base.RaiseUnsupportedCapabilityError(capability);
         }

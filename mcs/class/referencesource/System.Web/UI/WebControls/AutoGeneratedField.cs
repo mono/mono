@@ -10,6 +10,7 @@ namespace System.Web.UI.WebControls {
     using System.Collections;    
     using System.Collections.Specialized;    
     using System.ComponentModel;
+    
 
     /// <devdoc>
     /// <para>Creates a field bounded to a data field in a <see cref='System.Web.UI.WebControls.DataBoundControl'/>.</para>
@@ -215,7 +216,7 @@ namespace System.Web.UI.WebControls {
                 object data = GetValue(controlContainer);
      
                 if (!(boundControl is CheckBox)) {
-                    throw new HttpException(SR.GetString(SR.CheckBoxField_WrongControlType, DataField));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_WrongControlType, DataField));
                 }
                 if (DataBinder.IsNull(data)) {
                     ((CheckBox)boundControl).Checked = false;
@@ -229,7 +230,7 @@ namespace System.Web.UI.WebControls {
                             ((CheckBox)boundControl).Checked = Boolean.Parse(data.ToString());
                         }
                         catch (FormatException fe) {
-                            throw new HttpException(SR.GetString(SR.CheckBoxField_CouldntParseAsBoolean, DataField), fe);
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_CouldntParseAsBoolean, DataField), fe);
                         }
                     }                
                 }

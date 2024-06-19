@@ -15,7 +15,7 @@ namespace System.Web.UI.WebControls {
     internal static class ValidatorCompatibilityHelper {
         public static void RegisterArrayDeclaration(Control control, string arrayName, string arrayValue) {
             Type scriptManagerType = control.Page.ScriptManagerType;
-            Debug.Assert(scriptManagerType != null);
+            System.Web.Util.Debug.Assert(scriptManagerType != null);
             
             scriptManagerType.InvokeMember("RegisterArrayDeclaration",
                                            BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod,
@@ -27,7 +27,7 @@ namespace System.Web.UI.WebControls {
         [SuppressMessage("Microsoft.Globalization", "CA1304:SpecifyCultureInfo", MessageId = "System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[])", Justification = @"The default is for the thread's culture to be used, which is fine.")]
         public static void RegisterClientScriptResource(Control control, string resourceName) {
             Type scriptManagerType = control.Page.ScriptManagerType;
-            Debug.Assert(scriptManagerType != null);
+            System.Web.Util.Debug.Assert(scriptManagerType != null);
 
             scriptManagerType.InvokeMember("RegisterNamedClientScriptResource",
                                            BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod,
@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
         [SuppressMessage("Microsoft.Globalization", "CA1304:SpecifyCultureInfo", MessageId = "System.Type.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[])", Justification = @"The default is for the thread's culture to be used, which is fine.")]
         public static void RegisterClientScriptResource(Control control, Type type, string resourceName) {
             Type scriptManagerType = control.Page.ScriptManagerType;
-            Debug.Assert(scriptManagerType != null);
+            System.Web.Util.Debug.Assert(scriptManagerType != null);
             
             scriptManagerType.InvokeMember("RegisterClientScriptResource",
                                            BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod,
@@ -50,7 +50,7 @@ namespace System.Web.UI.WebControls {
         
         public static void RegisterExpandoAttribute(Control control, string controlId, string attributeName, string attributeValue, bool encode) {
             Type scriptManagerType = control.Page.ScriptManagerType;
-            Debug.Assert(scriptManagerType != null);
+            System.Web.Util.Debug.Assert(scriptManagerType != null);
             
             scriptManagerType.InvokeMember("RegisterExpandoAttribute",
                                            BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod,
@@ -61,7 +61,7 @@ namespace System.Web.UI.WebControls {
         
         public static void RegisterOnSubmitStatement(Control control, Type type, string key, string script) {
             Type scriptManagerType = control.Page.ScriptManagerType;
-            Debug.Assert(scriptManagerType != null);
+            System.Web.Util.Debug.Assert(scriptManagerType != null);
             
             scriptManagerType.InvokeMember("RegisterOnSubmitStatement",
                                            BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod,
@@ -72,7 +72,7 @@ namespace System.Web.UI.WebControls {
         
         public static void RegisterStartupScript(Control control, Type type, string key, string script, bool addScriptTags) {
             Type scriptManagerType = control.Page.ScriptManagerType;
-            Debug.Assert(scriptManagerType != null);
+            System.Web.Util.Debug.Assert(scriptManagerType != null);
             
             scriptManagerType.InvokeMember("RegisterStartupScript",
                                            BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod,

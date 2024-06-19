@@ -24,7 +24,9 @@ namespace System.Web.UI.WebControls {
     [
     DefaultEvent("Selecting"),
     DefaultProperty("ContextTypeName"),
+#if !MONO
     Designer("System.Web.UI.Design.WebControls.LinqDataSourceDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#endif
     ParseChildren(true),
     PersistChildren(false),
     ResourceDescription("LinqDataSource_Description"),

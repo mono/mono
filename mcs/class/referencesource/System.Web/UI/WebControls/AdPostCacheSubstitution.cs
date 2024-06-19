@@ -40,12 +40,12 @@ namespace System.Web.UI.WebControls {
             // 
 
 
-            Debug.Assert(_adRotatorHelper != null && _adRotatorHelper.Page != null);
+            System.Web.Util.Debug.Assert(_adRotatorHelper != null && _adRotatorHelper.Page != null);
 
             // In PostCache Substitution, we use a string writer to return the markup.
             StringWriter stringWriter = new StringWriter(CultureInfo.CurrentCulture);
             HtmlTextWriter htmlWriter = _adRotatorHelper.Page.CreateHtmlTextWriter(stringWriter);
-            Debug.Assert(htmlWriter != null);
+            System.Web.Util.Debug.Assert(htmlWriter != null);
             _adRotatorHelper.RenderControl(htmlWriter);
 
             // Dump the content out as needed for post-cache substitution.

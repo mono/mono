@@ -168,7 +168,11 @@ namespace System.Web.Services.Description {
         public static XmlSchema Schema {
             get {
                 if (schema == null) {
-                    schema = XmlSchema.Read(new StringReader(Schemas.Wsdl), null);
+                    using (XmlTextReader reader = new XmlTextReader(new StringReader(Schemas.Wsdl)))
+                    {
+                        reader.DtdProcessing = DtdProcessing.Ignore;
+                        schema = XmlSchema.Read(reader, null);
+                    }
                 }
                 return schema;
             }
@@ -177,7 +181,11 @@ namespace System.Web.Services.Description {
         internal static XmlSchema SoapEncodingSchema {
             get {
                 if (soapEncodingSchema == null) {
-                    soapEncodingSchema = XmlSchema.Read(new StringReader(Schemas.SoapEncoding), null);
+                    using (XmlTextReader reader = new XmlTextReader(new StringReader(Schemas.SoapEncoding)))
+                    {
+                        reader.DtdProcessing = DtdProcessing.Ignore;
+                        soapEncodingSchema = XmlSchema.Read(reader, null);
+                    }
                 }
                 return soapEncodingSchema;
             }
@@ -578,7 +586,11 @@ namespace System.Web.Services.Description {
                 StringWriter writer = new StringWriter(CultureInfo.InvariantCulture);
                 XmlTextWriter xmlWriter = new XmlTextWriter(writer);
                 xmlWriter.WriteElementString(ServiceDescription.Prefix, "documentation", ServiceDescription.Namespace, value);
-                Parent.LoadXml(writer.ToString());
+                using (XmlTextReader reader = new XmlTextReader(new StringReader(writer.ToString())))
+                {
+                    reader.DtdProcessing = DtdProcessing.Ignore;
+                    Parent.Load(reader);
+                }
                 documentationElement = parent.DocumentElement;
                 xmlWriter.Close();
             }

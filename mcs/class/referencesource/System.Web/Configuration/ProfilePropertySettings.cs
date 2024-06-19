@@ -97,7 +97,7 @@ namespace System.Web.Configuration {
             CustomProviderData = customProviderData;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

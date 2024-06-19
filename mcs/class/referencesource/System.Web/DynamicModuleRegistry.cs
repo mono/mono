@@ -8,6 +8,7 @@ namespace System.Web {
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    
 
     internal sealed class DynamicModuleRegistry {
 
@@ -22,14 +23,14 @@ namespace System.Web {
                 throw new ArgumentNullException("moduleType");
             }
             if (!typeof(IHttpModule).IsAssignableFrom(moduleType)) {
-                string message = String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.DynamicModuleRegistry_TypeIsNotIHttpModule), moduleType);
+                string message = String.Format(CultureInfo.CurrentCulture, System.Web.SR.GetString(System.Web.SR.DynamicModuleRegistry_TypeIsNotIHttpModule), moduleType);
                 throw new ArgumentException(message, "moduleType");
             }
 
             lock (_lockObj) {
                 if (_entriesReadonly) {
                     // modules have already been initialized, e.g. Application_Start has already run
-                    throw new InvalidOperationException(SR.GetString(SR.DynamicModuleRegistry_ModulesAlreadyInitialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DynamicModuleRegistry_ModulesAlreadyInitialized));
                 }
 
                 _entries.Add(new DynamicModuleRegistryEntry(MakeUniqueModuleName(moduleType), moduleType.AssemblyQualifiedName));

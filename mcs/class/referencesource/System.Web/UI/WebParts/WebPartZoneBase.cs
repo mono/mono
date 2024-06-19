@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DefaultValue(true),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebPartZoneBase_AllowLayoutChange),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_AllowLayoutChange),
         ]
         public virtual bool AllowLayoutChange {
             get {
@@ -176,7 +176,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.WebPartZoneBase_CloseVerb),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_CloseVerb),
         ]
         public virtual WebPartVerb CloseVerb {
             get {
@@ -196,7 +196,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.WebPartZoneBase_ConnectVerb),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_ConnectVerb),
         ]
         public virtual WebPartVerb ConnectVerb {
             get {
@@ -216,7 +216,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.WebPartZoneBase_DeleteVerb),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_DeleteVerb),
         ]
         public virtual WebPartVerb DeleteVerb {
             get {
@@ -254,7 +254,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 if (WebPartManager != null) {
                     index = WebPartManager.Zones.IndexOf(this) + 1;
                 }
-                return SR.GetString(SR.WebPartZoneBase_DisplayTitleFallback,
+                return System.Web.SR.GetString(System.Web.SR.WebPartZoneBase_DisplayTitleFallback,
                                                         index.ToString(CultureInfo.CurrentCulture));
             }
         }
@@ -273,7 +273,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DefaultValue(typeof(Color), "Blue"),
         TypeConverterAttribute(typeof(WebColorConverter)),
         WebCategory("Appearance"),
-        WebSysDescription(SR.WebPartZoneBase_DragHighlightColor),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_DragHighlightColor),
         ]
         public virtual Color DragHighlightColor {
             get {
@@ -297,7 +297,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.WebPartZoneBase_EditVerb),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_EditVerb),
         ]
         public virtual WebPartVerb EditVerb {
             get {
@@ -312,14 +312,14 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.WebPartZoneBase_DefaultEmptyZoneText)
+        WebSysDefaultValue(System.Web.SR.WebPartZoneBase_DefaultEmptyZoneText)
         ]
         public override string EmptyZoneText {
             // Must look at viewstate directly instead of the property in the base class,
             // so we can distinguish between an unset property and a property set to String.Empty.
             get {
                 string s = (string)ViewState["EmptyZoneText"];
-                return((s == null) ? SR.GetString(SR.WebPartZoneBase_DefaultEmptyZoneText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.WebPartZoneBase_DefaultEmptyZoneText) : s);
             }
             set {
                 ViewState["EmptyZoneText"] = value;
@@ -332,7 +332,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.WebPartZoneBase_ExportVerb),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_ExportVerb),
         ]
         public virtual WebPartVerb ExportVerb {
             get {
@@ -372,7 +372,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.WebPartZoneBase_HelpVerb),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_HelpVerb),
         ]
         public virtual WebPartVerb HelpVerb {
             get {
@@ -402,7 +402,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.WebPartZoneBase_MenuCheckImageStyle)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuCheckImageStyle)
         ]
         public Style MenuCheckImageStyle {
             get {
@@ -424,7 +424,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
         WebCategory("Appearance"),
-        WebSysDescription(SR.WebPartZoneBase_MenuCheckImageUrl)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuCheckImageUrl)
         ]
         public virtual string MenuCheckImageUrl {
             get {
@@ -442,7 +442,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.WebPartZoneBase_MenuLabelHoverStyle)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuLabelHoverStyle)
         ]
         public Style MenuLabelHoverStyle {
             get {
@@ -463,7 +463,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.WebPartZoneBase_MenuLabelStyle)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuLabelStyle)
         ]
         public Style MenuLabelStyle {
             get {
@@ -482,7 +482,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DefaultValue(""),
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDescription(SR.WebPartZoneBase_MenuLabelText)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuLabelText)
         ]
         public virtual string MenuLabelText {
             get {
@@ -501,7 +501,7 @@ namespace System.Web.UI.WebControls.WebParts {
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
         WebCategory("Appearance"),
-        WebSysDescription(SR.WebPartZoneBase_MenuPopupImageUrl)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuPopupImageUrl)
         ]
         public virtual string MenuPopupImageUrl {
             get {
@@ -519,7 +519,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.WebPartZoneBase_MenuPopupStyle)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuPopupStyle)
         ]
         public WebPartMenuStyle MenuPopupStyle {
             get {
@@ -540,7 +540,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.WebPartZoneBase_MenuVerbHoverStyle)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuVerbHoverStyle)
         ]
         public Style MenuVerbHoverStyle {
             get {
@@ -561,7 +561,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.WebPartZoneBase_MenuVerbStyle)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MenuVerbStyle)
         ]
         public Style MenuVerbStyle {
             get {
@@ -582,7 +582,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.WebPartZoneBase_MinimizeVerb),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_MinimizeVerb),
         ]
         public virtual WebPartVerb MinimizeVerb {
             get {
@@ -603,7 +603,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(Orientation.Vertical),
         WebCategory("Layout"),
-        WebSysDescription(SR.WebPartZoneBase_LayoutOrientation),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_LayoutOrientation),
         ]
         public virtual Orientation LayoutOrientation {
             get {
@@ -625,7 +625,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.WebPartZoneBase_RestoreVerb),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_RestoreVerb),
         ]
         public virtual WebPartVerb RestoreVerb {
             get {
@@ -646,7 +646,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("WebPart"),
-        WebSysDescription(SR.WebPartZoneBase_SelectedPartChromeStyle),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_SelectedPartChromeStyle),
         ]
         public Style SelectedPartChromeStyle {
             get {
@@ -667,7 +667,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(true),
         WebCategory("WebPart"),
-        WebSysDescription(SR.WebPartZoneBase_ShowTitleIcons),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_ShowTitleIcons),
         ]
         public virtual bool ShowTitleIcons {
             get {
@@ -682,7 +682,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(ButtonType.Image),
         WebCategory("Appearance"),
-        WebSysDescription(SR.WebPartZoneBase_TitleBarVerbButtonType),
+        WebSysDescription(System.Web.SR.WebPartZoneBase_TitleBarVerbButtonType),
         ]
         public virtual ButtonType TitleBarVerbButtonType {
             get {
@@ -703,7 +703,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.WebPartZoneBase_TitleBarVerbStyle)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_TitleBarVerbStyle)
         ]
         public Style TitleBarVerbStyle {
             get {
@@ -774,7 +774,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(WebPartVerbRenderMode.Menu),
         WebCategory("WebPart"),
-        WebSysDescription(SR.WebPartZoneBase_WebPartVerbRenderMode)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_WebPartVerbRenderMode)
         ]
         public virtual WebPartVerbRenderMode WebPartVerbRenderMode {
             get {
@@ -791,7 +791,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.WebPartZoneBase_CreateVerbs)
+        WebSysDescription(System.Web.SR.WebPartZoneBase_CreateVerbs)
         ]
         public event WebPartVerbsEventHandler CreateVerbs {
             add {
@@ -919,7 +919,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[]) savedState;
                 if (myState.Length != viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[baseIndex]);

@@ -52,7 +52,7 @@ namespace System.Web.Configuration {
             PolicyFile = policyFile;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

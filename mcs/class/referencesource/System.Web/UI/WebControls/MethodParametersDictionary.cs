@@ -47,7 +47,7 @@
 
         private void LoadViewState(object savedState) {
             if (savedState != null) {
-                Debug.Assert(savedState is Pair);
+                System.Web.Util.Debug.Assert(savedState is Pair);
                 Pair pair = (Pair)savedState;
 
                 string[] names = (string[])pair.First;
@@ -55,7 +55,7 @@
 
                 for (int i = 0; i < names.Length; i++) {
                     string key = names[i];
-                    Debug.Assert(!InnerDictionary.ContainsKey(key), "The collection was not empty when loading the viewstate");
+                    System.Web.Util.Debug.Assert(!InnerDictionary.ContainsKey(key), "The collection was not empty when loading the viewstate");
                     MethodParameterValue parameter = new MethodParameterValue();
                     Add(key, parameter);
                     ((IStateManager)parameter).LoadViewState(states[i]);

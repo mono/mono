@@ -70,7 +70,7 @@ namespace System.Web.UI.WebControls {
         IDReferenceProperty(),
         TypeConverter(typeof(AssociatedControlConverter)),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.Label_AssociatedControlID),
+        WebSysDescription(System.Web.SR.Label_AssociatedControlID),
         Themeable(false)
         ]
         public virtual string AssociatedControlID {
@@ -125,7 +125,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Label_Text),
+        WebSysDescription(System.Web.SR.Label_Text),
         PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public virtual string Text {
@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls {
                     if (wc == null) {
                         // Don't throw in the designer.
                         if (!DesignMode)
-                            throw new HttpException(SR.GetString(SR.LabelForNotFound, associatedControlID, ID));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.LabelForNotFound, associatedControlID, ID));
                     }
                     else {
                         writer.AddAttribute(HtmlTextWriterAttribute.For, wc.ClientID);

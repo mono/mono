@@ -240,6 +240,7 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
         if (session == null)
             return false;
 
+#if (!MONO || !FEATURE_PAL)
         int numObjects = session.Count;
 
         for (int i = 0; i < numObjects; i++) {
@@ -250,6 +251,7 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
                     return true;
             }
         }
+#endif
 
         return false;
     }
@@ -259,12 +261,14 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
         if (!IsInAspCompatMode)
             return;
 
+#if (!MONO || !FEATURE_PAL)
         int rc = UnsafeNativeMethods.AspCompatOnPageStart(component);
         if (rc != 1)
-            throw new HttpException(SR.GetString(SR.Error_onpagestart));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Error_onpagestart));
 
         if (UnsafeNativeMethods.AspCompatIsApartmentComponent(component) != 0)
             Current.RememberStaComponent(component);
+#endif
     }
 
     internal static void OnPageStartSessionObjects() {
@@ -280,6 +284,7 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
         if (session == null)
             return;
 
+#if (!MONO || !FEATURE_PAL)
         // enumerate objects and call OnPageStart
         int numObjects = session.Count;
         for (int i = 0; i < numObjects; i++) {
@@ -288,9 +293,10 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
             if (component != null && !(component is string)) {
                 int rc = UnsafeNativeMethods.AspCompatOnPageStart(component);
                 if (rc != 1)
-                    throw new HttpException(SR.GetString(SR.Error_onpagestart));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Error_onpagestart));
             }
         }
+#endif
     }
 
     // Disallow Apartment components in when ASPCOMPAT is off
@@ -324,9 +330,9 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
             cacheInternal.Insert(key, threadingModel, null);
         }
 
-        if (StringUtil.EqualsIgnoreCase(threadingModel, "Apartment")) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(threadingModel, "Apartment")) {
             throw new HttpException(
-                SR.GetString(SR.Apartment_component_not_allowed, progidDisplayName));
+                System.Web.SR.GetString(System.Web.SR.Apartment_component_not_allowed, progidDisplayName));
         }
     }
 
@@ -352,18 +358,20 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
             bool sharedActivity = (_sessionId != null);
             int    activityHash = sharedActivity ? _sessionId.GetHashCode() : 0;
 
+#if (!MONO || !FEATURE_PAL)
             if (UnsafeNativeMethods.AspCompatProcessRequest(_execCallback, this, sharedActivity, activityHash) != 1) {
                 // failed to queue up the execution in ASP compat mode
                 _rootedThis.Free();
-                _ar.Complete(true, null, new HttpException(SR.GetString(SR.Cannot_access_AspCompat)));
+                _ar.Complete(true, null, new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_access_AspCompat)));
             }
+#endif
         }
 
         return _ar;
     }
 
     internal /*public*/ void EndAspCompatExecution(IAsyncResult ar) {
-        Debug.Assert(_ar == ar);
+        System.Web.Util.Debug.Assert(_ar == ar);
         _ar.End();
     }
 
@@ -429,8 +437,10 @@ internal class AspCompatApplicationStep : HttpApplication.IExecutionStep, IManag
             }
         }
         finally {
+#if (!MONO || !FEATURE_PAL)
             // call PageEnd
             UnsafeNativeMethods.AspCompatOnPageEnd();
+#endif
         
             // release all STA components not in session
             if (_staComponents != null) {

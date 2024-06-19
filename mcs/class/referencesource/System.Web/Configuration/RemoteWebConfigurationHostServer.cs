@@ -22,6 +22,7 @@ namespace System.Web.Configuration {
 #endif // !FEATURE_PAL
     using System.Security.Permissions;
     using System.Diagnostics.CodeAnalysis;
+    
 
 
 #if !FEATURE_PAL // FEATURE_PAL does not enable COM
@@ -42,7 +43,7 @@ namespace System.Web.Configuration {
         public byte[] GetData(string fileName, bool getReadTimeOnly, out long readTime)
         {
             if (!fileName.ToLowerInvariant().EndsWith(".config", StringComparison.Ordinal))
-                throw new Exception(SR.GetString(SR.Can_not_access_files_other_than_config));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Can_not_access_files_other_than_config));
 
             byte [] buf;
             if (File.Exists(fileName)) {
@@ -64,7 +65,7 @@ namespace System.Web.Configuration {
         public void WriteData(string fileName, string templateFileName, byte[] data, ref long readTime)
         {
             if (!fileName.ToLowerInvariant().EndsWith(".config", StringComparison.Ordinal))
-                throw new Exception(SR.GetString(SR.Can_not_access_files_other_than_config));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Can_not_access_files_other_than_config));
 
             bool            fileExists          = File.Exists(fileName);
             FileInfo        fileInfo            = null;
@@ -78,7 +79,7 @@ namespace System.Web.Configuration {
             /////////////////////////////////////////////////////////////////////
             // Step 1: If the file exists, then make sure it hasn't been written to since it was read
             if (fileExists && File.GetLastWriteTimeUtc(fileName).Ticks > readTime) {
-                throw new Exception(SR.GetString(SR.File_changed_since_read, fileName));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.File_changed_since_read, fileName));
             }
 
             /////////////////////////////////////////////////////////////////////
@@ -89,7 +90,7 @@ namespace System.Web.Configuration {
                     fileAttributes = fileInfo.Attributes;
                 } catch { }
                 if (((int)(fileAttributes & (FileAttributes.ReadOnly | FileAttributes.Hidden))) != 0)
-                    throw new Exception(SR.GetString(SR.File_is_read_only, fileName));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.File_is_read_only, fileName));
             }
 
             /////////////////////////////////////////////////////////////////////
@@ -97,7 +98,7 @@ namespace System.Web.Configuration {
             tempFile = fileName + "." + GetRandomFileExt() + ".tmp";
             for (int iter = 0; File.Exists(tempFile); iter++) { // if it exists, then use a different random name
                 if (iter > 100) // don't try more than 100 times
-                    throw new Exception(SR.GetString(SR.Unable_to_create_temp_file));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.Unable_to_create_temp_file));
                 else
                     tempFile = fileName + "." + GetRandomFileExt() + ".tmp";
             }
@@ -124,11 +125,13 @@ namespace System.Web.Configuration {
                     DuplicateFileAttributes(fileName, tempFile);
                 } catch { }
             }
+#if (!MONO || !FEATURE_PAL)
             else if ( templateFileName != null ) {
                 try {
                     DuplicateTemplateAttributes(fileName, templateFileName);
                 } catch { }
             }
+#endif
 
             /////////////////////////////////////////////////////////////////////
             // Step 4: Move the temp filt to the actual file
@@ -221,7 +224,7 @@ namespace System.Web.Configuration {
         {
             Type t = Type.GetType(protectionProviderType, true);
             if (!typeof(ProtectedConfigurationProvider).IsAssignableFrom(t)) {
-                throw new Exception(SR.GetString(SR.WrongType_of_Protected_provider));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.WrongType_of_Protected_provider));
             }
 
             ProtectedConfigurationProvider  provider        = (ProtectedConfigurationProvider)Activator.CreateInstance(t);
@@ -245,7 +248,7 @@ namespace System.Web.Configuration {
         }
         public void GetFileDetails(string name, out bool exists, out long size, out long createDate, out long lastWriteDate) {
             if (!name.ToLowerInvariant().EndsWith(".config", StringComparison.Ordinal))
-                throw new Exception(SR.GetString(SR.Can_not_access_files_other_than_config));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Can_not_access_files_other_than_config));
             UnsafeNativeMethods.WIN32_FILE_ATTRIBUTE_DATA data;
             if (UnsafeNativeMethods.GetFileAttributesEx(name, UnsafeNativeMethods.GetFileExInfoStandard, out data) && (data.fileAttributes & (int)FileAttributes.Directory) == 0) {
                 exists = true;

@@ -47,6 +47,9 @@ RESOURCE_FILES_2 = \
 	resources/TreeView_tplus.gif \
 	resources/transparent.gif \
 	resources/webform.js \
+	resources/WebForms.js \
+	resources/SmartNav.htm \
+	resources/SmartNav.js \
 	resources/WebUIValidation_2.0.js \
 	resources/ErrorTemplateCommon_Top.html \
 	resources/DefaultErrorTemplate_CustomErrorDefault.html \
@@ -58,8 +61,11 @@ RESOURCE_FILES_2 = \
 	resources/HtmlizedExceptionPage_CompilerOutput.html \
 	System.Web.UI.WebControls/GridView.js \
 	System.Web.UI.WebControls/DetailsView.js \
+	System.Web.UI.WebControls/Focus.js \
 	System.Web.UI.WebControls/TreeView.js \
-	System.Web.UI.WebControls/Menu.js
+	System.Web.UI.WebControls/Menu.js \
+	System.Web.UI.WebControls/MenuStandards.js \
+	resources/System.Web.resources
 
 RESOURCE_FILES_4 = \
 	System.Web.UI.WebControls/MenuModern.js
@@ -148,6 +154,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/CrossPagePosting2.aspx \
 	Test/mainsoft/NunitWebResources/MyDerived.master \
 	Test/mainsoft/NunitWebResources/MyPageWithDerivedMaster.aspx \
+	Test/mainsoft/NunitWebResources/MyPageWithMasterInvalidPlaceHolder.aspx \
 	Test/mainsoft/NunitWebResources/MasterTypeTest1.aspx \
 	Test/mainsoft/NunitWebResources/MasterTypeTest2.aspx \
 	Test/mainsoft/NunitWebResources/PageLifecycleTest.aspx \
@@ -238,7 +245,7 @@ NUNIT_APP_CODE_FILES = $(TEST_APP_CODE_FILES)
 NUNIT_APP_GLOBALRESOURCES_FILES = $(TEST_APP_GLOBALRESOURCES_FILES)
 
 OTHER_RES += $(RESOURCE_FILES_2)
-OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:436,618
+OTHER_LIB_MCS_FLAGS = -d:WEBSERVICES_DEP -d:INSIDE_SYSTEM_WEB -d:FEATURE_PAL -d:CONFIGPATHUTILITY_SYSTEMWEB -d:SYSTEM_WEB -nowarn:436,618
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_RES += $(RESOURCE_FILES_4)
@@ -246,19 +253,31 @@ endif
 
 TXT_RESOURCE_STRINGS = ../referencesource/System.Web/System.Web.txt
 
-LIB_REFS = System System.Core System.Drawing System.Data System.Xml System.EnterpriseServices System.Runtime.Serialization.Formatters.Soap \
-	System.ComponentModel.DataAnnotations System.Web.ApplicationServices System.Configuration Mono.Data.Sqlite System.Web.Services System.Design
+MONO_ASPNET_TEMP = mono-aspnet-temp 
+MONO_ASPNET_CLIENTFILES = asp.netclientfiles 
+MONO_ASPNET_CLIENTFILES_DATA = \
+	resources/SmartNav.htm \
+	resources/SmartNav.js \
+	resources/WebForms.js \
+	resources/WebUIValidation.js
+
+LIB_REFS = mscorlib System System.Core System.Drawing System.Data System.DirectoryServices System.DirectoryServices.Protocols System.Xml System.EnterpriseServices \
+	System.Runtime.Serialization.Formatters.Soap System.Web.Services System.Design \
+	System.Runtime.Caching System.Security System.Web.RegularExpressions System.ComponentModel.DataAnnotations System.Web.ApplicationServices System.Configuration Microsoft.Build Microsoft.Build.Framework Microsoft.Build.Utilities.v4.0 Microsoft.Build.Tasks.v4.0 Mono.Data.Sqlite
 KEYFILE = ../msfinal.pub
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-nowarn:612,618	\
+	-warn:0 \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)
 
 #all-local: System.Web/UplevelHelper.cs 
 
-TEST_LIB_REFS = SystemWebTestShim
+TEST_LIB_REFS = SystemWebTestShim mscorlib System System.Core System.Drawing System.Data System.DirectoryServices System.DirectoryServices.Protocols System.Xml System.EnterpriseServices \
+	System.Runtime.Serialization.Formatters.Soap System.Web.Services System.Design \
+	System.Runtime.Caching System.Security System.Web.RegularExpressions System.ComponentModel.DataAnnotations System.Web.ApplicationServices System.Configuration Microsoft.Build Microsoft.Build.Framework Microsoft.Build.Utilities.v4.0 Microsoft.Build.Tasks.v4.0 Mono.Data.Sqlite
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 \
 	$(NUNIT_RESOURCE_FILES:%=/resource:%) \
 	$(foreach r, $(TEST_RESOURCE_FILES_WITH_DIR), -resource:$(r),$(r)) \
@@ -273,7 +292,6 @@ EXTRA_DISTFILES = \
 	$(TEST_RESOURCE_FILES_WITH_DIR) \
 	$(TEST_APP_CODE_FILES) \
 	$(TEST_APP_GLOBALRESOURCES_FILES) \
-	UplevelHelperDefinitions.xml \
 	SQLiteProviders_DatabaseSchema.sql \
 	$(shell find Test/standalone-runner-support/ -name "*.cs" -type f -printf "'%p' ") \
 	$(shell find Test/standalone-tests/ -name "*.cs" -type f -printf "'%p' " -o -name "*.cs.in" -type f -printf "'%p' ") \
@@ -281,10 +299,7 @@ EXTRA_DISTFILES = \
 	$(shell find Test/tools/ -path '*/.svn' -prune -o -type f -printf "'%p' ") \
 	ASPState.sql
 
-# This breaks for strange reason
-# 	$(shell find Test/System.Web.Caching/CacheItemPriorityQueueTestData/ -name "Sequence*.*" -type f -printf "'%p' ") \
-
-BUILT_SOURCES = System.Web/UplevelHelper.cs 
+#BUILT_SOURCES = System.Web/UplevelHelper.cs 
 
 include ../../build/library.make
 
@@ -353,13 +368,20 @@ ifdef STANDALONE_VERBOSE
 RUN_STANDALONE += --verbose
 endif
 
-$(build_lib): $(RESX_RES) $(RESOURCE_FILES_2) $(RESOURCE_FILES_1)
+$(build_lib): $(RESX_RES) $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) 
+
+#copy-build-aspnet-folders:
+#ifdef MONO_ASPNET_FOLDERS
+#	$(MKINSTALLDIRS) $(CLASSLIB_DIR)/$(MONO_ASPNET_TEMP)
+#	$(MKINSTALLDIRS) $(CLASSLIB_DIR)/$(MONO_ASPNET_CLIENTFILES)
+#	$(INSTALL) $(MONO_ASPNET_CLIENTFILES_DATA) $(CLASSLIB_DIR)/$(MONO_ASPNET_CLIENTFILES)
+#endif
 
 $(RESX_RES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
 
-System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
-	MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/culevel.exe -o $@ $^
+#System.Web/UplevelHelper.cs: UplevelHelperDefinitions.xml
+#	MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BUILD_TOOLS_PROFILE)/culevel.exe -o $@ $^
 
 run-aaa: test
 	$(TEST_RUNTIME) $(TEST_RUNTIME_FLAGS) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) \
@@ -411,6 +433,13 @@ $(STANDALONE_RUNNER_SUPPORT_ASSEMBLY):
 
 Test/standalone-tests/Consts.cs: Test/standalone-tests/Consts.cs.in
 	@sed 's,@SystemWebClassDir@,$(shell pwd),' $< > $@
+
+#install-local:
+#ifdef MONO_ASPNET_FOLDERS
+#	$(MKINSTALLDIRS) $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)/$(MONO_ASPNET_TEMP)
+#	$(MKINSTALLDIRS) $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)/$(MONO_ASPNET_CLIENTFILES)
+#	$(INSTALL) $(MONO_ASPNET_CLIENTFILES_DATA) $(DESTDIR)$(mono_libdir)/mono/$(FRAMEWORK_VERSION)/$(MONO_ASPNET_CLIENTFILES)
+#endif
 
 clean-local:
 ifdef STANDALONE_TEST_COMPILABLE_TESTS

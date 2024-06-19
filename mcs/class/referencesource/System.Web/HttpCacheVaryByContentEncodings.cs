@@ -15,7 +15,7 @@ namespace System.Web {
     using System.Runtime.InteropServices;
     using System.Web.Util;
     using System.Security.Permissions;
-
+    
 
     /// <devdoc>
     ///    <para>Provides a type-safe way to vary by Content-Encoding.</para>
@@ -105,7 +105,7 @@ namespace System.Web {
         {
             get {
                 if (String.IsNullOrEmpty(contentEncoding)) {
-                    throw new ArgumentNullException(SR.GetString(SR.Parameter_NullOrEmpty, "contentEncoding"));
+                    throw new ArgumentNullException(System.Web.SR.GetString(System.Web.SR.Parameter_NullOrEmpty, "contentEncoding"));
                 }
                 if (_contentEncodings == null) {
                     return false;
@@ -120,7 +120,7 @@ namespace System.Web {
 
             set {
                 if (String.IsNullOrEmpty(contentEncoding)) {
-                    throw new ArgumentNullException(SR.GetString(SR.Parameter_NullOrEmpty, "contentEncoding"));
+                    throw new ArgumentNullException(System.Web.SR.GetString(System.Web.SR.Parameter_NullOrEmpty, "contentEncoding"));
                 }
 
                 // if someone enabled it, don't allow someone else to disable it.

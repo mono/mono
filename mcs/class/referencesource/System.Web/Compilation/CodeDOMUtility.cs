@@ -24,6 +24,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using Util = System.Web.UI.Util;
 
+
 internal static class CodeDomUtility {
 
     internal static BooleanSwitch WebFormsCompilation = new BooleanSwitch("WebFormsCompilation", "Outputs information about the WebForms compilation of ASPX templates");
@@ -207,7 +208,7 @@ internal static class CodeDomUtility {
 
                 }
                 else {
-                    throw new HttpException(SR.GetString(SR.CantGenPropertySet, propertyInfo.Name, valueType.FullName));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.CantGenPropertySet, propertyInfo.Name, valueType.FullName));
                 }
             }
         }
