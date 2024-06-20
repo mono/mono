@@ -33,7 +33,7 @@ using System;
 namespace System.DirectoryServices.Protocols
 {
 	[Flags]
-	public enum LocatorFlags
+	public enum LocatorFlags : long
 	{
 		None = 0,
 		ForceRediscovery = 1,
