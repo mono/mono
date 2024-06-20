@@ -29,6 +29,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.IO;
 
 namespace System.Windows.Forms {
 	public sealed class InputLanguage {
@@ -98,6 +100,31 @@ namespace System.Windows.Forms {
 							CultureInfo cultureInfo = CultureInfo.GetCultureInfo (languageId);
 							inputLanguageList.Add (new InputLanguage (IntPtr.Zero, cultureInfo, cultureInfo.Name));
 						}
+					} else if (Environment.OSVersion.Platform == PlatformID.Unix) {
+						// Call the command 'locale -a' to retrieve a list of all available locales.
+						Process p = new Process ();
+						p.StartInfo.UseShellExecute = false;
+						p.StartInfo.RedirectStandardOutput = true;
+						p.StartInfo.FileName = "locale";
+						p.StartInfo.Arguments = "-a";
+						try {
+							p.Start ();
+							var output = p.StandardOutput.ReadToEnd ();
+							p.WaitForExit ();
+
+							using (StringReader reader = new StringReader (output)) {
+								string locale;
+								while ((locale = reader.ReadLine ()) != null) {
+									try {
+										// The syntax for locales is: language[_country][.charset]
+										// The syntax for culture infos is: language[-country]
+										var cultureName = locale.Split ('.')[0].Replace ('_', '-');
+										CultureInfo cultureInfo = new CultureInfo (cultureName);
+										inputLanguageList.Add (new InputLanguage (IntPtr.Zero, cultureInfo, cultureInfo.Name));
+									} catch { /* Invalid culture name */ }
+								}
+							}
+						} catch { /* The command 'locale' is not found on the system. */ }
 					}
 					if (inputLanguageList.Count == 0)
 						inputLanguageList.Add (new InputLanguage (IntPtr.Zero, new CultureInfo(string.Empty), "US"));
