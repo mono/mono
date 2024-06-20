@@ -4793,7 +4793,7 @@ namespace System.Windows.Forms {
 						   UTF8_STRING, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 				if ((long)nitems > 0 && prop != IntPtr.Zero) {
-					text = Marshal.PtrToStringUni (prop, (int)nitems);
+					text = Marshal.PtrToStringUTF8 (prop, (int)nitems);
 					XFree (prop);
 					return true;
 				}
