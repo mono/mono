@@ -21,6 +21,7 @@
 #endif
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include "mono-mmap.h"
 
@@ -37,9 +38,13 @@ mono_file_map_open (const char* name)
 	g_free (wname);
 	return result;
 #else
-	int fd = open (name, O_RDONLY);
-	if (fd < 0)
+	int fd;
+	do {
+		fd = open (name, O_RDONLY);
+	} while (fd == -1 && errno == EINTR);
+	if (fd == -1)
 		return NULL;
+
 	return (MonoFileMap *)(size_t)fd;
 #endif
 }
@@ -47,10 +52,15 @@ mono_file_map_open (const char* name)
 guint64 
 mono_file_map_size (MonoFileMap *fmap)
 {
+	int r;
 	struct stat stat_buf;
-	if (fstat (mono_file_map_fd (fmap), &stat_buf) < 0)
-		return 0;
-	return stat_buf.st_size;
+	int fd = mono_file_map_fd (fmap);
+
+	do {
+		r = fstat (fd, &stat_buf);
+	} while (r == -1 && errno == EINTR);
+
+	return (r < 0) ? 0 : stat_buf.st_size;
 }
 
 int
@@ -98,7 +108,9 @@ mono_file_map_fileio (size_t length, int flags, int fd, guint64 offset, void **r
 		(*release_fn) (ptr);
 		return NULL;
 	}
-	bytes_read = read (fd, ptr, length);
+	do {
+		bytes_read = read (fd, ptr, length);
+	} while (bytes_read == (size_t)-1 && errno == EINTR);
 	if (bytes_read != length)
 		return NULL;
 	lseek (fd, cur_offset, SEEK_SET);
