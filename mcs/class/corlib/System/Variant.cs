@@ -244,8 +244,14 @@ namespace System
 				obj = !(Marshal.ReadInt16(addr) == 0);
 				break;
 			case VarEnum.VT_BSTR:
-				obj = Marshal.PtrToStringBSTR(Marshal.ReadIntPtr(addr));
+			{
+				IntPtr ptr = Marshal.ReadIntPtr (addr);
+				if (ptr != IntPtr.Zero)
+					obj = Marshal.PtrToStringBSTR (ptr);
+				else
+					obj = null;
 				break;
+			}
 // GetObjectForIUnknown is excluded from Marshal using FULL_AOT_RUNTIME
 #if !DISABLE_COM
 			case VarEnum.VT_UNKNOWN:
@@ -299,7 +305,10 @@ namespace System
 				obj = !(boolVal == 0);
 				break;
 			case VarEnum.VT_BSTR:
-				obj = Marshal.PtrToStringBSTR(bstrVal);
+				if (bstrVal != IntPtr.Zero)
+					obj = Marshal.PtrToStringBSTR(bstrVal);
+				else
+					obj = null;
 				break;
 #if FEATURE_COMINTEROP
 			case VarEnum.VT_UNKNOWN:
