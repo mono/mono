@@ -3756,7 +3756,12 @@ namespace System.Windows.Forms
 			fs.MainTopNode = topFolderFSEntry;
 			fs.FileType = FSEntry.FSEntryType.Directory;
 			fs.IconIndex = MimeIconEngine.GetIconIndexForMimeType ("inode/directory");
-			fs.LastAccessTime = dirinfo.LastAccessTime;
+
+			try {
+				fs.LastAccessTime = dirinfo.LastAccessTime;
+			} catch (ArgumentOutOfRangeException) {
+				// before year 1 and after year 9999 are unsupported by DateTime / DateTimeOffset
+			}
 			
 			return fs;
 		}
@@ -3776,7 +3781,12 @@ namespace System.Windows.Forms
 			fs.FileType = FSEntry.FSEntryType.File;
 			fs.IconIndex = MimeIconEngine.GetIconIndexForFile (fileinfo.FullName);
 			fs.FileSize = fileinfo.Length;
-			fs.LastAccessTime = fileinfo.LastAccessTime;
+
+			try {
+				fs.LastAccessTime = fileinfo.LastAccessTime;
+			} catch (ArgumentOutOfRangeException) {
+				// before year 1 and after year 9999 are unsupported by DateTime / DateTimeOffset
+			}
 			
 			return fs;
 		}
