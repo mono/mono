@@ -63,6 +63,9 @@ public class Tests
 	[DllImport ("libtest")]
 	public static extern int mono_test_marshal_variant_in_bool_false ([MarshalAs (UnmanagedType.Struct)]object obj);
 
+	[DllImport ("libtest")]
+	public static extern int mono_test_marshal_variant_in_obj_array (int count, [MarshalAs (UnmanagedType.LPArray, SizeParamIndex=0)]object[] arr);
+
 	[DllImport("libtest")]
 	public static extern int mono_test_marshal_variant_out_sbyte([MarshalAs(UnmanagedType.Struct)]out object obj);
 
@@ -355,6 +358,7 @@ public class Tests
 
 	public static int Main ()
 	{
+		bool pass;
 		bool isWindows = !(((int)Environment.OSVersion.Platform == 4) ||
 			((int)Environment.OSVersion.Platform == 128));
 
@@ -514,6 +518,27 @@ public class Tests
 			swithV.data = (object)-123;
 			if (mono_test_marshal_struct_with_variant_out_unmanaged (swithV) != 0)
 				return 109;
+
+			object[] obj_array =
+			{
+				null,
+				(sbyte)42,
+				(byte)42,
+				(short)-313,
+				(ushort)313,
+				(int)-314,
+				(uint)314,
+				(long)-315,
+				(ulong)315,
+				(float)3.14,
+				(double)3.14,
+				(bool)true,
+				(bool)false,
+				"FOO"
+			};
+
+			if (mono_test_marshal_variant_in_obj_array (obj_array.Length, obj_array) != 0)
+				return 110;
 
 			#endregion // VARIANT Tests
 
@@ -839,7 +864,79 @@ public class Tests
 			IntPtr pDisp = Marshal.GetIDispatchForObject(test_vis);
 			if (pDisp == IntPtr.Zero)
 				return 300;
+
+			pass = false;
+			try
+			{
+				Marshal.IsTypeVisibleFromCom(null);
+			}
+			catch (ArgumentNullException)
+			{
+				pass = true;
+			}
+			if (!pass)
+				return 301;
+
+			if (!Marshal.IsTypeVisibleFromCom(typeof(int)))
+				return 302;
+			if (!Marshal.IsTypeVisibleFromCom(typeof(TestVisible)))
+				return 303;
+			if (Marshal.IsTypeVisibleFromCom(typeof(TestInvisible)))
+				return 304;
 			#endregion 
+
+			#region COM GetStartComSlot Tests
+			pass = false;
+			try
+			{
+				Marshal.GetStartComSlot(null);
+			}
+			catch (ArgumentNullException)
+			{
+				pass = true;
+			}
+			if (!pass)
+				return 401;
+			pass = false;
+			try
+			{
+				Marshal.GetStartComSlot(typeof(TestInvisible));
+			}
+			catch (ArgumentException)
+			{
+				pass = true;
+			}
+			if (!pass)
+				return 402;
+
+			(Type type, int slot)[] gscs_test =
+			{
+				(typeof(int), -1),
+				(typeof(int*), -1),
+				(typeof(string), -1),
+				(typeof(Object), 7),
+				(typeof(IDefTest1), 3),
+				(typeof(TestDefaultInterfaceClass), -1),
+				(typeof(TestDefaultInterfaceClass1), 3),
+				(typeof(ITest), 3),
+				(typeof(_TestClass), 3),
+				(typeof(ManagedTest), -1),
+				(typeof(ITestVisible), 7),
+				(typeof(ITestVisibleIDispatch), 7),
+				(typeof(TestVisible), -1),
+				(typeof(TestVisibleAutoDispatch), -1),
+				(typeof(TestVisibleAutoDual), 7),
+				(typeof(TestVisibleNone), 7),
+				(typeof(TestVisibleNone2), 3),
+				(typeof(TestVisibleNone3), 7),
+				(typeof(TestVisibleDisp), -1)
+			};
+			for (int i = 0; i < gscs_test.Length; i++)
+			{
+				if (Marshal.GetStartComSlot(gscs_test[i].type) != gscs_test[i].slot)
+					return 403 + i;
+			}
+			#endregion
 		}
 
         return 0;
@@ -1716,7 +1813,55 @@ public class Tests
 
 }
 
+[ComVisible (false)]
+public class TestInvisible
+{
+}
+
+public interface ITestVisible
+{
+}
+
+[InterfaceType (ComInterfaceType.InterfaceIsIDispatch)]
+public interface ITestVisibleIDispatch
+{
+}
+
+[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+public interface ITestVisibleIUnknown
+{
+}
+
 public class TestVisible
+{
+}
+
+[System.Runtime.InteropServices.ClassInterfaceAttribute (ClassInterfaceType.AutoDispatch)]
+public class TestVisibleAutoDispatch
+{
+}
+
+[System.Runtime.InteropServices.ClassInterfaceAttribute (ClassInterfaceType.AutoDual)]
+public class TestVisibleAutoDual
+{
+}
+
+[System.Runtime.InteropServices.ClassInterfaceAttribute (ClassInterfaceType.None)]
+public class TestVisibleNone
+{
+}
+
+[System.Runtime.InteropServices.ClassInterfaceAttribute (ClassInterfaceType.None)]
+public class TestVisibleNone2 : ITestVisibleIUnknown, ITestVisibleIDispatch
+{
+}
+
+[System.Runtime.InteropServices.ClassInterfaceAttribute (ClassInterfaceType.None)]
+public class TestVisibleNone3 : ITestVisibleIDispatch, ITestVisibleIUnknown
+{
+}
+
+public class TestVisibleDisp : ITestVisibleIDispatch
 {
 }
 
