@@ -315,6 +315,8 @@ namespace System.Security.Cryptography.X509Certificates
 				throw new CryptographicException (empty_error);
 
 			X509Chain chain = X509Chain.Create ();
+			chain.RevocationMode = X509RevocationMode.NoCheck;
+			chain.RevocationFlag = X509RevocationMode.ExcludeRoot;
 			if (!chain.Build (thisCertificate))
 				return false;
 			// TODO - check chain and other stuff ???
