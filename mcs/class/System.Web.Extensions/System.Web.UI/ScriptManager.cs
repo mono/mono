@@ -43,6 +43,7 @@ using System.Web.UI.HtmlControls;
 using System.IO;
 using System.Globalization;
 using System.Threading;
+using System.Web.Resources;
 using System.Web.Script.Serialization;
 using System.Web.Script.Services;
 using System.Xml;
@@ -128,6 +129,7 @@ namespace System.Web.UI
 		ProfileServiceManager _profileService;
 		List<ScriptManagerProxy> _proxies;
 
+		[ResourceDescription("ScriptManager_AllowCustomErrorsRedirect")]
 		[DefaultValue (true)]
 		[Category ("Behavior")]
 		public bool AllowCustomErrorsRedirect {
@@ -139,6 +141,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_AsyncPostBackErrorMessage")]
 		[Category ("Behavior")]
 		[DefaultValue ("")]
 		public string AsyncPostBackErrorMessage {
@@ -161,6 +164,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_AsyncPostBackTimeout")]
 		[DefaultValue (90)]
 		[Category ("Behavior")]
 		public int AsyncPostBackTimeout {
@@ -172,6 +176,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_AuthenticationService")]
 		[Category ("Behavior")]
 		[MergableProperty (false)]
 		[DefaultValue ("")]
@@ -185,6 +190,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_EnablePageMethods")]
 		[Category ("Behavior")]
 		[DefaultValue (false)]
 		public bool EnablePageMethods {
@@ -196,6 +202,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_EnablePartialRendering")]
 		[DefaultValue (true)]
 		[Category ("Behavior")]
 		public bool EnablePartialRendering {
@@ -204,11 +211,12 @@ namespace System.Web.UI
 			}
 			set {
 				if (_init)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException (AtlasWeb.ScriptManager_CannotChangeEnablePartialRendering);
 				_enablePartialRendering = value;
 			}
 		}
 
+		[ResourceDescription("ScriptManager_EnableScriptGlobalization")]
 		[DefaultValue (false)]
 		[Category ("Behavior")]
 		public bool EnableScriptGlobalization {
@@ -216,10 +224,15 @@ namespace System.Web.UI
 				return _enableScriptGlobalization;
 			}
 			set {
+				if (_init) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_CannotChangeEnableScriptGlobalization);
+				}
+
 				_enableScriptGlobalization = value;
 			}
 		}
 
+		[ResourceDescription("ScriptManager_EnableScriptLocalization")]
 		[Category ("Behavior")]
 		[DefaultValue (false)]
 		public bool EnableScriptLocalization {
@@ -270,6 +283,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_LoadScriptsBeforeUI")]
 		[Category ("Behavior")]
 		[DefaultValue (true)]
 		public bool LoadScriptsBeforeUI {
@@ -281,6 +295,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_ProfileService")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -294,7 +309,9 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_ScriptMode")]
 		[Category ("Behavior")]
+		[DefaultValue(ScriptMode.Auto)]
 		public ScriptMode ScriptMode {
 			get {
 				return _scriptMode;
@@ -306,6 +323,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_ScriptPath")]
 		[DefaultValue ("")]
 		[Category ("Behavior")]
 		public string ScriptPath {
@@ -319,6 +337,7 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_Scripts")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DefaultValue ("")]
 		[Category ("Behavior")]
@@ -331,6 +350,8 @@ namespace System.Web.UI
 				return _scripts;
 			}
 		}
+
+		[ResourceDescription("ScriptManager_CompositeScript")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[Category ("Behavior")]
 		[DefaultValue (null)]
@@ -343,6 +364,8 @@ namespace System.Web.UI
 				return _compositeScript;
 			}
 		}
+
+		[ResourceDescription("ScriptManager_Services")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DefaultValue ("")]
 		[MergableProperty (false)]
@@ -365,10 +388,13 @@ namespace System.Web.UI
 				return _supportsPartialRendering.Value;
 			}
 			set {
-				if (_init)
-					throw new InvalidOperationException ();
-				if (!EnablePartialRendering && value)
-					throw new InvalidOperationException ("The SupportsPartialRendering property cannot be set when EnablePartialRendering is false.");
+				if (!EnablePartialRendering) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_CannotSetSupportsPartialRenderingWhenDisabled);
+				}
+
+				if (_init) {
+					throw new InvalidOperationException(AtlasWeb.ScriptManager_CannotChangeSupportsPartialRendering);
+				}
 
 				_supportsPartialRendering = value;
 			}
@@ -393,11 +419,15 @@ namespace System.Web.UI
 			}
 		}
 
+		[ResourceDescription("ScriptManager_AsyncPostBackError")]
 		[Category ("Action")]
 		public event EventHandler<AsyncPostBackErrorEventArgs> AsyncPostBackError;
 
+		[ResourceDescription("ScriptManager_ResolveScriptReference")]
 		[Category ("Action")]
 		public event EventHandler<ScriptReferenceEventArgs> ResolveScriptReference;
+
+		[ResourceDescription("ScriptManager_ResolveCompositeScriptReference")]
 		[Category ("Action")]
 		public event EventHandler<CompositeScriptReferenceEventArgs> ResolveCompositeScriptReference;
 		public static ScriptManager GetCurrent (Page page) {
@@ -463,7 +493,7 @@ namespace System.Web.UI
 			base.OnInit (e);
 
 			if (GetCurrentInternal (Page) != null)
-				throw new InvalidOperationException ("Only one instance of a ScriptManager can be added to the page.");
+				throw new InvalidOperationException (AtlasWeb.ScriptManager_OnlyOneScriptManager);
 
 			SetCurrent (Page, this);
 			Page.Error += new EventHandler (OnPageError);
