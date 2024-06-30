@@ -4604,6 +4604,11 @@ case "$host" in
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=powerpc
 			;;
+		  darwin*)
+			BTLS_SUPPORTED=no
+			BTLS_PLATFORM=powerpc
+			with_tls=pthread
+			;;
 		esac
 		;;
 	armv7k-*-darwin*)
