@@ -247,6 +247,10 @@ case "$host" in
 			support_boehm=no
 			with_gc=sgen
 			;;
+		powerpc*)
+			# https://bugzilla.novell.com/show_bug.cgi?id=504411
+			disable_munmap=yes
+			;;
 		esac
 		with_sgen_default_concurrent=yes
 		;;
@@ -361,10 +365,6 @@ case "$host" in
 			COREARCH="arm64"
 			;;
 		powerpc*-*-linux*)
-			# https://bugzilla.novell.com/show_bug.cgi?id=504411
-			disable_munmap=yes
-			;;
-		powerpc*-*-freebsd*)
 			# https://bugzilla.novell.com/show_bug.cgi?id=504411
 			disable_munmap=yes
 			;;
