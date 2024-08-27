@@ -509,7 +509,7 @@ namespace System.Xaml
 				if (xt.IsContentValue (service_provider)) // it is for collection/dictionary key and item
 					return null;
 				else
-					return xt.IsNullable ? null : xt.Invoker.CreateInstance (new object [0]);
+					return xt.IsNullable ? null : xt.Invoker.CreateInstance (Array.Empty<object> ());
 			}
 			if (xt == null)
 				return value;
