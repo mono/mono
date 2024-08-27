@@ -956,6 +956,7 @@ TESTS_IL_SRC=			\
 	initblkTest.il		\
 	qt-instance.il		\
 	vararg3.il		\
+	vararg_pinvoke.il		\
 	bug-29859.il		\
 	bug-78549.il		\
 	static-fields-nonconst.il	\

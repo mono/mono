@@ -6014,6 +6014,23 @@ _mono_test_managed_thiscall3 (int (__thiscall*fn)(int,int,int), int arg, int arg
 	return fn(arg, arg2, arg3);
 }
 
+LIBTEST_API int
+mono_test_vararg_cdecl(int index, ...)
+{
+	va_list argp;
+	int result;
+
+	result = index;
+	va_start(argp, index);
+	while (index-- >= 0)
+	{
+		result = va_arg(argp, int);
+	}
+	va_end(argp);
+
+	return result;
+}
+
 typedef struct {
 	char f1;
 } sbyte1;
