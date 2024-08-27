@@ -56,6 +56,7 @@
 #include <sys/proc.h>
 #if defined(__APPLE__)
 #include <mach/mach.h>
+#include <AvailabilityMacros.h>
 #endif
 #ifdef HAVE_SYS_USER_H
 #include <sys/user.h>
@@ -608,6 +609,7 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 	
 	gint64 ret;
 	task_t task;
+#if MAC_OS_X_VERSION_MIN_REQUIRED > 1080
 	task_vm_info_data_t t_info;
 	mach_msg_type_number_t info_count = TASK_VM_INFO_COUNT;
 	kern_return_t mach_ret;
@@ -657,6 +659,40 @@ get_pid_status_item (int pid, const char *item, MonoProcessError *error, int mul
 		ret = th_count;
 	} else if (strcmp (item, "VmSwap") == 0)
 		ret = t_info.compressed;
+#else /* Fallback code for macOS < 10.9 */
+	struct task_basic_info t_info;
+	mach_msg_type_number_t th_count = TASK_BASIC_INFO_COUNT;
+	kern_return_t mach_ret;
+
+	if (pid == getpid ()) {
+		/* task_for_pid () doesn't work on ios, even for the current process */
+		task = mach_task_self ();
+	} else {
+		do {
+			mach_ret = task_for_pid (mach_task_self (), pid, &task);
+		} while (mach_ret == KERN_ABORTED);
+
+		if (mach_ret != KERN_SUCCESS)
+			RET_ERROR (MONO_PROCESS_ERROR_NOT_FOUND);
+	}
+
+	do {
+		mach_ret = task_info (task, TASK_BASIC_INFO, (task_info_t)&t_info, &th_count);
+	} while (mach_ret == KERN_ABORTED);
+
+	if (mach_ret != KERN_SUCCESS) {
+		if (pid != getpid ())
+			mach_port_deallocate (mach_task_self (), task);
+		RET_ERROR (MONO_PROCESS_ERROR_OTHER);
+	}
+
+	if (strcmp (item, "VmRSS") == 0 || strcmp (item, "VmHWM") == 0 || strcmp (item, "VmData") == 0)
+		ret = t_info.resident_size;
+	else if (strcmp (item, "VmSize") == 0 || strcmp (item, "VmPeak") == 0)
+		ret = t_info.virtual_size;
+	else if (strcmp (item, "Threads") == 0)
+		ret = th_count;
+#endif /* MAC_OS_X_VERSION_MIN_REQUIRED > 1080 */
 	else
 		ret = 0;
 

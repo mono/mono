@@ -445,6 +445,14 @@ case "$host" in
 				RID="osx-x64"
 				COREARCH="x64"
 				;;
+			powerpc-*-darwin*)
+				COREARCH="ppc"
+				PPC32_LDFLAGS="-latomic"
+				LDFLAGS="$LDFLAGS $PPC32_LDFLAGS"
+				;;
+			powerpc64-*-darwin*)
+				COREARCH="ppc64"
+				;;
 			arm*-darwin*)
 				platform_ios=yes
 				has_dtrace=no
@@ -4595,6 +4603,11 @@ case "$host" in
 		  freebsd*)
 			BTLS_SUPPORTED=yes
 			BTLS_PLATFORM=powerpc
+			;;
+		  darwin*)
+			BTLS_SUPPORTED=no
+			BTLS_PLATFORM=powerpc
+			with_tls=pthread
 			;;
 		esac
 		;;
