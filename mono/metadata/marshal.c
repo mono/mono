@@ -77,6 +77,32 @@ enum {
 };
 #undef OPDEF
 
+struct native_variant {
+	guint16 vt;
+	guint16 wReserved1;
+	guint16 wReserved2;
+	guint16 wReserved3;
+	union {
+		gint64 llVal;
+		gint32 lVal;
+		guint8  bVal;
+		gint16 iVal;
+		float  fltVal;
+		double dblVal;
+		gint16 boolVal;
+		gunichar2* bstrVal;
+		gint8 cVal;
+		guint16 uiVal;
+		guint32 ulVal;
+		guint64 ullVal;
+		gpointer byref;
+		struct {
+			gpointer pvRecord;
+			gpointer pRecInfo;
+		};
+	};
+};
+
 /* 
  * This mutex protects the various marshalling related caches in MonoImage
  * and a few other data structures static to this file.
@@ -284,6 +310,22 @@ void
 mono_marshal_unlock_internal (void)
 {
 	mono_marshal_unlock ();
+}
+
+G_GNUC_UNUSED
+MonoMethod*
+mono_get_Marshal_GetNativeVariantForObject (void)
+{
+	MONO_STATIC_POINTER_INIT (MonoMethod, get_native_variant_for_object)
+
+		ERROR_DECL (error);
+		get_native_variant_for_object = mono_class_get_method_from_name_checked (mono_defaults.marshal_class, "GetNativeVariantForObject", 2, 0, error);
+		mono_error_assert_ok (error);
+
+	MONO_STATIC_POINTER_INIT_END (MonoMethod, get_native_variant_for_object)
+
+	g_assert (get_native_variant_for_object);
+	return get_native_variant_for_object;
 }
 
 // This is a JIT icall, it sets the pending exception (in wrapper) and return NULL on error.
@@ -615,16 +657,34 @@ mono_array_to_lparray_impl (MonoArrayHandle array_handle, MonoError *error)
 	MonoArray *array = MONO_HANDLE_RAW (array_handle); // FIXMEcoop
 
 #ifndef DISABLE_COM
+	struct native_variant *nativeVarArray;
 	gpointer *nativeArray = NULL;
 	int nativeArraySize = 0;
 	int i = 0;
 	MonoClass *klass = array->obj.vtable->klass;
 	MonoClass *klass_element_class = m_class_get_element_class (klass);
+	MonoMethod *method;
 
 	switch (m_class_get_byval_arg (klass_element_class)->type) {
 	case MONO_TYPE_VOID:
 		g_assert_not_reached ();
 		break;
+	case MONO_TYPE_OBJECT:
+		nativeArraySize = array->max_length;
+		nativeVarArray = g_new (struct native_variant, nativeArraySize);
+		method = mono_get_Marshal_GetNativeVariantForObject ();
+
+		for (i = 0; i < array->max_length; i++) {
+			gpointer variant_addr = nativeVarArray + i;
+			gpointer args [2] = { ((MonoObject **)array->vector)[i], &variant_addr };
+
+			mono_runtime_invoke_checked (method, NULL, args, error);
+			if (!is_ok (error)) {
+				// FIXME? Returns uninitialized.
+				break;
+			}
+		}
+		return nativeVarArray;
 	case MONO_TYPE_CLASS:
 		nativeArraySize = array->max_length;
 		nativeArray = g_new (gpointer, nativeArraySize);
@@ -655,7 +715,6 @@ mono_array_to_lparray_impl (MonoArrayHandle array_handle, MonoError *error)
 		/* nothing to do */
 		break;
 	case MONO_TYPE_GENERICINST:
-	case MONO_TYPE_OBJECT:
 	case MONO_TYPE_ARRAY: 
 	case MONO_TYPE_SZARRAY:
 	case MONO_TYPE_STRING:
@@ -676,7 +735,8 @@ mono_free_lparray_impl (MonoArrayHandle array, gpointer* nativeArray, MonoError 
 
 	MonoClass * const klass = mono_handle_class (array);
 
-	if (m_class_get_byval_arg (m_class_get_element_class (klass))->type == MONO_TYPE_CLASS)
+	if (m_class_get_byval_arg (m_class_get_element_class (klass))->type == MONO_TYPE_CLASS ||
+		m_class_get_byval_arg (m_class_get_element_class (klass))->type == MONO_TYPE_OBJECT)
 		g_free (nativeArray);
 #endif
 }
