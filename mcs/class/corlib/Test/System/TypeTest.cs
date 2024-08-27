@@ -4372,7 +4372,11 @@ namespace MonoTests.System
 
 			// assembly resolve without type resolve
 			res = Type.GetType ("System.String,mscorlib", delegate (AssemblyName aname) { return typeof (int).Assembly; }, null);
-			Assert.AreEqual (typeof (string), res);
+			Assert.AreEqual (typeof (string), res, "#17");
+
+			// assembly resolve returning null, and without type resolve
+			res = Type.GetType ("System.String", delegate (AssemblyName aname) { return null; }, null, false);
+			Assert.IsNull (res, "#18");
 		}
 
 
