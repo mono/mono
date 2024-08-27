@@ -168,7 +168,7 @@ enum {
 };
 
 typedef union {
-	int32_t raw;
+	int32_t raw; // FIXME shouldn't these be unsigned?
 	struct {
 		int32_t state : 7;
 		int32_t no_safepoints : 1;
