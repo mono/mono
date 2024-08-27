@@ -535,11 +535,16 @@ ves_icall_System_Diagnostics_Process_ProcessName_internal (HANDLE process, MonoE
 	guint32 needed = 0;
 	guint32 len = 0;
 
-	if (!mono_w32process_try_get_modules (process, (gpointer *)&mod, sizeof (mod), &needed))
-		return NULL_HANDLE_STRING;
-
-	if (!mono_w32process_module_get_name (process, mod, &name, &len))
-		return NULL_HANDLE_STRING;
+	if (mono_w32process_try_get_modules (process, (gpointer *)&mod, sizeof (mod), &needed))
+	{
+		if (!mono_w32process_module_get_name (process, mod, &name, &len))
+			return NULL_HANDLE_STRING;
+	}
+	else
+	{
+		if (!mono_w32process_get_process_name_fallback (process, &name, &len))
+			return NULL_HANDLE_STRING;
+	}
 
 	MonoStringHandle res = mono_string_new_utf16_handle (mono_domain_get (), name, len, error);
 	g_free (name);
