@@ -191,6 +191,14 @@ namespace System.IO {
 		{
 			RenamedEventArgs renamed = null;
 
+			string basePath = fsw.FullPath;
+
+			if (!basePath.EndsWith(Path.DirectorySeparatorChar))
+				basePath += Path.DirectorySeparatorChar;
+
+			if (filename.StartsWith(basePath))
+				filename = filename.Substring(basePath.Length);
+
 			lock (fsw) {
 				fsw.DispatchEvents (action, filename, ref renamed);
 				if (fsw.Waiting) {
