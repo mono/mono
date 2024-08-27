@@ -60,7 +60,7 @@ if HOST_DARWIN
 if BITCODE
 prof_ldflags += -no-undefined
 else
-prof_ldflags += -Wl,-undefined -Wl,suppress -Wl,-flat_namespace
+prof_ldflags += -Wl,-undefined -Wl,dynamic_lookup
 endif
 endif
 
