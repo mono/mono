@@ -5,6 +5,19 @@ standards for C# and the Common Language Runtime.
 
 The Mono project is part of the [.NET Foundation](https://www.dotnetfoundation.org/)
 
+> [!IMPORTANT]
+> The [Mono Project (mono/mono)]( https://github.com/mono/mono) (‘original mono’) has been an important part of the .NET ecosystem since it was launched in 2001. Microsoft became the steward of the Mono Project when it acquired Xamarin in 2016.
+>
+> The last major release of the Mono Project was in July 2019, with minor patch releases since that time. The last patch release was February 2024.
+>
+> We are happy to announce that the WineHQ organization will be taking over as the stewards of the Mono Project upstream at [wine-mono / Mono · GitLab (winehq.org)](https://gitlab.winehq.org/wine-mono/mono).  Source code in existing [mono/mono](https://github.com/mono/mono) and other repos will remain available, although repos may be archived. Binaries will remain available for up to four years.
+>
+> Microsoft maintains a modern fork of [Mono runtime in the dotnet/runtime repo](https://github.com/dotnet/runtime/tree/main/src/mono) and has been progressively moving workloads to that fork. That work is now complete, and we recommend that active Mono users and maintainers of Mono-based app frameworks migrate to [.NET](https://github.com/dotnet/core) which includes work from this fork.
+>
+> We want to recognize that the Mono Project was the first .NET implementation on Android, iOS, Linux, and other operating systems. The Mono Project was a trailblazer for the .NET platform across many operating systems. It helped make cross-platform .NET a reality and enabled .NET in many new places and we appreciate the work of those who came before us.
+>
+> Thank you to all the Mono developers!
+
 Join us on [Discord](https://aka.ms/dotnet-discord) in the `#monovm` channel:
 
 <a href="https://aka.ms/dotnet-discord">
