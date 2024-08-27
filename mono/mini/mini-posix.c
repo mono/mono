@@ -903,7 +903,7 @@ fork_crash_safe (void)
 #if defined(HOST_ANDROID)
 	/* SYS_fork is defined to be __NR_fork which is not defined in some ndk versions */
 	g_assert_not_reached ();
-#elif !defined(HOST_DARWIN) && defined(SYS_fork)
+#elif defined(__linux__) && defined(SYS_fork)
 	pid = (pid_t) syscall (SYS_fork);
 #elif HAVE_FORK
 	pid = (pid_t) fork ();
