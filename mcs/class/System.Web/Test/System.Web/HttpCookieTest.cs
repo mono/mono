@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -51,6 +51,7 @@ namespace MonoTests.System.Web {
 			Assert.IsFalse  (cookie.Secure, "default cookie.Secure");
 			Assert.AreEqual ("", cookie.Value, "default cookie.Value");
 			Assert.AreEqual ("", cookie.Values.ToString(), "default cookie.Values");
+			Assert.AreEqual (-1, (int)cookie.SameSite);
 		}
 
 		[Test]
@@ -72,13 +73,13 @@ namespace MonoTests.System.Web {
 		{
 			BinaryFormatter bf = new BinaryFormatter();
 			HttpCookie c = new HttpCookie ("stuff", "value1");
-		
+
 			using (var ms = new MemoryStream()) {
 				bf.Serialize(ms, c.Values);
 				ms.Seek(0, SeekOrigin.Begin);
 			}
 		}
-		
+
 		[Test]
 		public void PropertySetters ()
 		{
@@ -97,6 +98,9 @@ namespace MonoTests.System.Web {
 
 			cookie.Secure = true;
 			Assert.IsTrue (cookie.Secure, "Secure setter");
+
+			cookie.SameSite = SameSiteMode.Lax;
+			Assert.AreEqual(SameSiteMode.Lax, cookie.SameSite, "SameSite setter");
 		}
 
 		[Test]
@@ -202,7 +206,7 @@ namespace MonoTests.System.Web {
 			cookie.Values[null] = "value1";
 			Assert.AreEqual ("value1", cookie.Values.ToString(), "Values getter");
 			Assert.AreEqual ("value1", cookie.Value, "Value getter");
-	
+
 			// This strikes me as odd behavior..  We fail
 			// this test presently, but I'm not sure if
 			// it's because of a bug in
@@ -215,7 +219,7 @@ namespace MonoTests.System.Web {
 			cookie[null] = "value1";
 			Assert.AreEqual ("value1", cookie.Values.ToString(), "Values getter");
 			Assert.AreEqual ("value1", cookie.Value, "Value getter");
-			
+
 			// try the same test above, but circumvent the
 			// HttpCookie.item property.
 			cookie.Value = "value1&name2=value2&value3";
@@ -243,6 +247,16 @@ namespace MonoTests.System.Web {
 			Assert.IsTrue (cookie.Secure, "#01");
 			cookie.Secure = false;
 			Assert.IsFalse (cookie.Secure, "#02");
+		}
+
+		[Test]
+		public void SetSameSite ()
+		{
+			HttpCookie cookie = new HttpCookie ("cookie", "hola");
+			cookie.SameSite = SameSiteMode.Strict;
+			Assert.AreEqual (SameSiteMode.Strict, cookie.SameSite, "#01");
+			cookie.SameSite = SameSiteMode.None;
+			Assert.AreEqual (SameSiteMode.None, cookie.SameSite, "#02");
 		}
 
 		[Test] // bug #81333
