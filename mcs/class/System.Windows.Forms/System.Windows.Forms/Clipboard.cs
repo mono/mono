@@ -63,10 +63,7 @@ namespace System.Windows.Forms {
 		#region Public Static Methods
 		public static void Clear ()
 		{
-			IntPtr clipboard_handle;
-
-			clipboard_handle = XplatUI.ClipboardOpen (false);
-			XplatUI.ClipboardStore (clipboard_handle, null, 0, null, false);
+			ClearImpl (false);
 		}
 
 		public static bool ContainsAudio ()
@@ -144,7 +141,26 @@ namespace System.Windows.Forms {
 			if (data == null)
 				return null;
 
-			return (StringCollection)data.GetData (DataFormats.FileDrop, true);
+			// CAUTION: DataFormats.FileDrop has multiple storage types
+			//    string[] - Carbon, X11, Win32
+			//    StringCollection - SetFileDropList
+			// support both here
+			string[] array;
+			StringCollection collection;
+
+			object raw = data.GetData (DataFormats.FileDrop, true);
+
+			if (raw != null) {
+				array = raw as string[];
+				if (array != null) {
+					collection = new StringCollection ();
+					collection.AddRange (array);
+				} else
+					collection = raw as StringCollection;
+			} else
+				collection = null;
+
+			return collection;
 		}
 		
 		public static Image GetImage ()
@@ -231,7 +247,12 @@ namespace System.Windows.Forms {
 			SetDataObject(data, copy, 10, 100);   // MSDN says default behavior is to try 10 times with 100 ms delay
 		}
 
-		internal static void SetDataObjectImpl(object data, bool copy) {
+		internal static void SetDataObjectImpl(object data, bool copy, bool primary_selection = false) {
+			if (XplatUI.ClipboardSetContent != null) {
+				XplatUI.ClipboardSetContent (primary_selection, data, copy);
+				return;
+			}
+
 			IntPtr			clipboard_handle;
 			XplatUI.ObjectToClipboard converter;
 			int			native_format;
@@ -239,7 +260,7 @@ namespace System.Windows.Forms {
 
 			converter = new XplatUI.ObjectToClipboard(ConvertToClipboardData);
 
-			clipboard_handle = XplatUI.ClipboardOpen(false);
+			clipboard_handle = XplatUI.ClipboardOpen(primary_selection);
 			XplatUI.ClipboardStore(clipboard_handle, null, 0, null, copy);	// Empty clipboard
 
 			native_format = -1;
@@ -363,8 +384,24 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Methods
 
 		#region Internal Static Methods
-		internal static IDataObject GetDataObject (bool primary_selection)
+		internal static void ClearImpl (bool primary_selection = false)
 		{
+			if (XplatUI.ClipboardClear != null) {
+				XplatUI.ClipboardClear (primary_selection);
+				return;
+			}
+
+			IntPtr clipboard_handle;
+
+			clipboard_handle = XplatUI.ClipboardOpen (primary_selection);
+			XplatUI.ClipboardStore (clipboard_handle, null, 0, null, false);
+		}
+
+		internal static IDataObject GetDataObject (bool primary_selection = false)
+		{
+			if (XplatUI.ClipboardGetContent != null)
+				return XplatUI.ClipboardGetContent (primary_selection);
+
 			DataObject clipboard;
 			IntPtr clipboard_handle;
 			int[] native_formats;
@@ -406,11 +443,29 @@ namespace System.Windows.Forms {
 		
 		internal static bool ClipboardContainsFormat (params string[] formats)
 		{
+			return ClipboardContainsFormat (false, formats);
+		}
+
+		internal static bool ClipboardContainsFormat (bool primary_selection, params string[] formats)
+		{
+			if (XplatUI.ClipboardGetFormats != null) {
+				string[] available = XplatUI.ClipboardGetFormats (primary_selection);
+				if (available == null)
+					return false;
+
+				foreach (string native in available)
+					foreach (string wanted in formats)
+						if (string.Equals(native, wanted, StringComparison.OrdinalIgnoreCase))
+							return true;
+
+				return false;
+			}
+
 			IntPtr clipboard_handle;
 			int[] native_formats;
 			DataFormats.Format item_format;
 
-			clipboard_handle = XplatUI.ClipboardOpen (false);
+			clipboard_handle = XplatUI.ClipboardOpen (primary_selection);
 			native_formats = XplatUI.ClipboardAvailableFormats (clipboard_handle);
 			
 			if (native_formats == null)
