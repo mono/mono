@@ -53,4 +53,3 @@ namespace System.Web.Configuration
 		internal static VersionConverter VersionConverter = new VersionConverter ();
 	}
 }
-

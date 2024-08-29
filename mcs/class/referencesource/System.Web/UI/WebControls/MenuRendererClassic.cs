@@ -27,10 +27,10 @@ namespace System.Web.UI.WebControls {
                 // If we don't have access to the header, we can't add the necessary styles
                 if (Menu.Page.Header == null) {
                     if (Menu._staticHoverStyle != null) {
-                        throw new InvalidOperationException(SR.GetString(SR.NeedHeader, "Menu.StaticHoverStyle"));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.NeedHeader, "Menu.StaticHoverStyle"));
                     }
                     if (Menu._dynamicHoverStyle != null) {
-                        throw new InvalidOperationException(SR.GetString(SR.NeedHeader, "Menu.DynamicHoverStyle"));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.NeedHeader, "Menu.DynamicHoverStyle"));
                     }
                     return;
                 }

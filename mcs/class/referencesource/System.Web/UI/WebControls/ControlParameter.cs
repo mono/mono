@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls {
         RefreshProperties(RefreshProperties.All),
         TypeConverter(typeof(ControlIDConverter)),
         WebCategory("Control"),
-        WebSysDescription(SR.ControlParameter_ControlID),
+        WebSysDescription(System.Web.SR.ControlParameter_ControlID),
         ]
         public string ControlID {
             get {
@@ -111,7 +111,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter(typeof(ControlPropertyNameConverter)),
         WebCategory("Control"),
-        WebSysDescription(SR.ControlParameter_PropertyName),
+        WebSysDescription(System.Web.SR.ControlParameter_PropertyName),
         ]
         public string PropertyName {
             get {
@@ -150,13 +150,13 @@ namespace System.Web.UI.WebControls {
             string propertyName = PropertyName;
 
             if (controlID.Length == 0) {
-                throw new ArgumentException(SR.GetString(SR.ControlParameter_ControlIDNotSpecified, Name));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ControlParameter_ControlIDNotSpecified, Name));
             }
 
             Control foundControl = DataBoundControlHelper.FindControl(control, controlID);
 
             if (foundControl == null) {
-                throw new InvalidOperationException(SR.GetString(SR.ControlParameter_CouldNotFindControl, controlID, Name));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ControlParameter_CouldNotFindControl, controlID, Name));
             }
 
             ControlValuePropertyAttribute controlValueProp = (ControlValuePropertyAttribute)TypeDescriptor.GetAttributes(foundControl)[typeof(ControlValuePropertyAttribute)];
@@ -167,7 +167,7 @@ namespace System.Web.UI.WebControls {
                     propertyName = controlValueProp.Name;
                 }
                 else {
-                    throw new InvalidOperationException(SR.GetString(SR.ControlParameter_PropertyNameNotSpecified, controlID, Name));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ControlParameter_PropertyNameNotSpecified, controlID, Name));
                 }
             }
 

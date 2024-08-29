@@ -20,6 +20,7 @@ namespace System.Web.Configuration {
     using System.Web.Management;
     using System.Web.Compilation;
     using System.Security.Permissions;
+    
 
     public sealed class BufferModeSettings : ConfigurationElement {
         private static readonly ConfigurationElementProperty s_elemProperty = new ConfigurationElementProperty(new CallbackValidator(typeof(BufferModeSettings), Validate));
@@ -112,7 +113,7 @@ namespace System.Web.Configuration {
             MaxBufferThreads = maxBufferThreads;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -199,7 +200,7 @@ namespace System.Web.Configuration {
                 base[_propMaxBufferThreads] = value;
             }
         }
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -208,13 +209,13 @@ namespace System.Web.Configuration {
             if (value == null) {
                 throw new ArgumentNullException("bufferMode");
             }
-            Debug.Assert(value is BufferModeSettings);
+            System.Web.Util.Debug.Assert(value is BufferModeSettings);
 
             BufferModeSettings elem = (BufferModeSettings)value;
 
             if (!(elem.UrgentFlushThreshold <= elem.MaxBufferSize)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_attribute1_must_less_than_or_equal_attribute2,
+                    System.Web.SR.GetString(System.Web.SR.Invalid_attribute1_must_less_than_or_equal_attribute2,
                         elem.UrgentFlushThreshold.ToString(CultureInfo.InvariantCulture),
                         "urgentFlushThreshold",
                         elem.MaxBufferSize.ToString(CultureInfo.InvariantCulture),
@@ -224,7 +225,7 @@ namespace System.Web.Configuration {
 
             if (!(elem.MaxFlushSize <= elem.MaxBufferSize)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_attribute1_must_less_than_or_equal_attribute2,
+                    System.Web.SR.GetString(System.Web.SR.Invalid_attribute1_must_less_than_or_equal_attribute2,
                         elem.MaxFlushSize.ToString(CultureInfo.InvariantCulture),
                         "maxFlushSize",
                         elem.MaxBufferSize.ToString(CultureInfo.InvariantCulture),
@@ -234,7 +235,7 @@ namespace System.Web.Configuration {
 
             if (!(elem.UrgentFlushInterval < elem.RegularFlushInterval)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_attribute1_must_less_than_attribute2,
+                    System.Web.SR.GetString(System.Web.SR.Invalid_attribute1_must_less_than_attribute2,
                         elem.UrgentFlushInterval.ToString(),
                         "urgentFlushInterval",
                         elem.RegularFlushInterval.ToString(),

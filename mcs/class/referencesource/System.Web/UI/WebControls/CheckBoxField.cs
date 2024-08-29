@@ -10,6 +10,7 @@ namespace System.Web.UI.WebControls {
     using System.Collections;
     using System.Collections.Specialized;
     using System.ComponentModel;
+    
 
     /// <devdoc>
     /// <para>Creates a field bounded to a data field in a <see cref='System.Web.UI.WebControls.DataBoundControl'/>.</para>
@@ -36,13 +37,13 @@ namespace System.Web.UI.WebControls {
         public override bool ApplyFormatInEditMode {
             get {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "ApplyFormatInEditMode"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "ApplyFormatInEditMode"));
                 }
                 return false;
             }
             set {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "ApplyFormatInEditMode"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "ApplyFormatInEditMode"));
                 }
             }
         }
@@ -77,13 +78,13 @@ namespace System.Web.UI.WebControls {
         public override string DataFormatString {
             get {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "DataFormatString"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "DataFormatString"));
                 }
                 return String.Empty;
             }
             set {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "DataFormatString"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "DataFormatString"));
                 }
             }
         }
@@ -100,13 +101,13 @@ namespace System.Web.UI.WebControls {
         public override bool HtmlEncode {
             get {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "HtmlEncode"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "HtmlEncode"));
                 }
                 return false;
             }
             set {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "HtmlEncode"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "HtmlEncode"));
                 }
             }
         }
@@ -120,13 +121,13 @@ namespace System.Web.UI.WebControls {
         public override bool HtmlEncodeFormatString {
             get {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "HtmlEncodeFormatString"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "HtmlEncodeFormatString"));
                 }
                 return false;
             }
             set {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "HtmlEncodeFormatString"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "HtmlEncodeFormatString"));
                 }
             }
         }
@@ -144,13 +145,13 @@ namespace System.Web.UI.WebControls {
         public override string NullDisplayText {
             get {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "NullDisplayText"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "NullDisplayText"));
                 }
                 return String.Empty;
             }
             set {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "NullDisplayText"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "NullDisplayText"));
                 }
             }
         }
@@ -170,7 +171,7 @@ namespace System.Web.UI.WebControls {
             Localizable(true),
             WebCategory("Appearance"),
             DefaultValue(""),
-            WebSysDescription(SR.CheckBoxField_Text)
+            WebSysDescription(System.Web.SR.CheckBoxField_Text)
         ]
         public virtual string Text {
             get {
@@ -200,13 +201,13 @@ namespace System.Web.UI.WebControls {
         public override bool ConvertEmptyStringToNull {
             get {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "ConvertEmptyStringToNull"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "ConvertEmptyStringToNull"));
                 }
                 return false;
             }
             set {
                 if (!_suppressPropertyThrows) {
-                    throw new NotSupportedException(SR.GetString(SR.CheckBoxField_NotSupported, "ConvertEmptyStringToNull"));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_NotSupported, "ConvertEmptyStringToNull"));
                 }
             }
         }
@@ -311,7 +312,7 @@ namespace System.Web.UI.WebControls {
             object data = GetValue(controlContainer);
 
             if (!(boundControl is CheckBox)) {
-                throw new HttpException(SR.GetString(SR.CheckBoxField_WrongControlType, DataField));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_WrongControlType, DataField));
             }
             if (DataBinder.IsNull(data)) {
                 ((CheckBox)boundControl).Checked = false;
@@ -325,7 +326,7 @@ namespace System.Web.UI.WebControls {
                         ((CheckBox)boundControl).Checked = Boolean.Parse(data.ToString());
                     }
                     catch (FormatException fe) {
-                        throw new HttpException(SR.GetString(SR.CheckBoxField_CouldntParseAsBoolean, DataField), fe);
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.CheckBoxField_CouldntParseAsBoolean, DataField), fe);
                     }
                 }
             }

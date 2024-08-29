@@ -21,7 +21,9 @@ namespace System.Web.UI {
 
     [
     DefaultProperty("Triggers"),
+#if !MONO
     Designer("System.Web.UI.Design.UpdatePanelDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#endif
     ParseChildren(true),
     PersistChildren(false),
     ToolboxBitmap(typeof(EmbeddedResourceFinder), "System.Web.Resources.UpdatePanel.bmp")
@@ -203,8 +205,10 @@ namespace System.Web.UI {
         [
         Category("Behavior"),
         DefaultValue(null),
+#if !MONO
         Editor("System.Web.UI.Design.UpdatePanelTriggerCollectionEditor, " +
             AssemblyRef.SystemWebExtensionsDesign, typeof(UITypeEditor)),
+#endif
         ResourceDescription("UpdatePanel_Triggers"),
         PersistenceMode(PersistenceMode.InnerProperty),
         MergableProperty(false),

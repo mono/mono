@@ -11,6 +11,7 @@ namespace System.Web.Util {
 
         static internal int GetNumProcessCPUs() {
             if (_trueNumberOfProcessors == 0) {
+                /*
                 UnsafeNativeMethods.SYSTEM_INFO si;
                 UnsafeNativeMethods.GetSystemInfo(out si);
 
@@ -52,9 +53,11 @@ namespace System.Web.Util {
                         _trueNumberOfProcessors = numProcessors;
                     }
                 }
+                */
+                _trueNumberOfProcessors = Environment.ProcessorCount;
             }
 
-            Debug.Assert(_trueNumberOfProcessors > 0);
+            System.Web.Util.Debug.Assert(_trueNumberOfProcessors > 0);
             return _trueNumberOfProcessors;
         }
     }

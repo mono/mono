@@ -57,10 +57,10 @@ namespace System.Web.UI.WebControls.WebParts {
             if (editorParts != null) {
                 foreach (object obj in editorParts) {
                     if (obj == null) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "editorParts");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "editorParts");
                     }
                     if (!(obj is EditorPart)) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "EditorPart"), "editorParts");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "EditorPart"), "editorParts");
                     }
                     InnerList.Add(obj);
                 }

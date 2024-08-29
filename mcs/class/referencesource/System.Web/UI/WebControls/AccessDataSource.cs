@@ -19,6 +19,7 @@ namespace System.Web.UI.WebControls {
     using System.Text;
     using System.Web.Caching;
     using System.Web.UI;
+    
 
 
     /// <devdoc>
@@ -27,8 +28,8 @@ namespace System.Web.UI.WebControls {
     [
     Designer("System.Web.UI.Design.WebControls.AccessDataSourceDesigner, " + AssemblyRef.SystemDesign),
     ToolboxBitmap(typeof(AccessDataSource)),
-    WebSysDescription(SR.AccessDataSource_Description),
-    WebSysDisplayName(SR.AccessDataSource_DisplayName)
+    WebSysDescription(System.Web.SR.AccessDataSource_Description),
+    WebSysDisplayName(System.Web.SR.AccessDataSource_DisplayName)
     ]
     public class AccessDataSource : SqlDataSource {
 
@@ -90,7 +91,7 @@ namespace System.Web.UI.WebControls {
                 return _connectionString;
             }
             set {
-                throw new InvalidOperationException(SR.GetString(SR.AccessDataSource_CannotSetConnectionString));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AccessDataSource_CannotSetConnectionString));
             }
         }
 
@@ -103,7 +104,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.MdbDataFileEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
         WebCategory("Data"),
-        WebSysDescription(SR.AccessDataSource_DataFile),
+        WebSysDescription(System.Web.SR.AccessDataSource_DataFile),
         ]
         public string DataFile {
             get {
@@ -125,7 +126,7 @@ namespace System.Web.UI.WebControls {
         private FileDataSourceCache FileDataSourceCache {
             get {
                 FileDataSourceCache fileCache = Cache as FileDataSourceCache;
-                Debug.Assert(fileCache != null, "Cache object should be a FileDataSourceCache");
+                System.Web.Util.Debug.Assert(fileCache != null, "Cache object should be a FileDataSourceCache");
                 return fileCache;
             }
         }
@@ -170,7 +171,7 @@ namespace System.Web.UI.WebControls {
                 return OleDbProviderName;
             }
             set {
-                throw new InvalidOperationException(SR.GetString(SR.AccessDataSource_CannotSetProvider, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AccessDataSource_CannotSetProvider, ID));
             }
         }
 
@@ -183,10 +184,10 @@ namespace System.Web.UI.WebControls {
         ]
         public override string SqlCacheDependency {
             get {
-                throw new NotSupportedException(SR.GetString(SR.AccessDataSource_SqlCacheDependencyNotSupported, ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.AccessDataSource_SqlCacheDependencyNotSupported, ID));
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.AccessDataSource_SqlCacheDependencyNotSupported, ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.AccessDataSource_SqlCacheDependencyNotSupported, ID));
             }
         }
 
@@ -231,7 +232,7 @@ namespace System.Web.UI.WebControls {
                 if (DesignMode) {
                     // This exception should never be thrown - the designer always maps paths
                     // before using the runtime control.
-                    throw new NotSupportedException(SR.GetString(SR.AccessDataSource_DesignTimeRelativePathsNotSupported, ID));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.AccessDataSource_DesignTimeRelativePathsNotSupported, ID));
                 }
                 filename = Context.Request.MapPath(filename, AppRelativeTemplateSourceDirectory, true);
             }
@@ -242,7 +243,7 @@ namespace System.Web.UI.WebControls {
             // file since the page developer will be able to see the physical
             // path in the ConnectionString property.
             if (!HttpRuntime.HasPathDiscoveryPermission(filename)) {
-                throw new HttpException(SR.GetString(SR.AccessDataSource_NoPathDiscoveryPermission, HttpRuntime.GetSafePath(filename), ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.AccessDataSource_NoPathDiscoveryPermission, HttpRuntime.GetSafePath(filename), ID));
             }
             return filename;
         }

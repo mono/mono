@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.Panel_BackImageUrl)
+        WebSysDescription(System.Web.SR.Panel_BackImageUrl)
         ]
         public virtual string BackImageUrl {
             get {
@@ -77,7 +77,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Panel_DefaultButton)
+        WebSysDescription(System.Web.SR.Panel_DefaultButton)
         ]
         public virtual string DefaultButton {
             get {
@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(ContentDirection.NotSet),
         WebCategory("Layout"),
-        WebSysDescription(SR.Panel_Direction)
+        WebSysDescription(System.Web.SR.Panel_Direction)
         ]
         public virtual ContentDirection Direction {
             get {
@@ -127,7 +127,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         DefaultValue(""),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Panel_GroupingText)
+        WebSysDescription(System.Web.SR.Panel_GroupingText)
         ]
         public virtual string GroupingText {
             get {
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(HorizontalAlign.NotSet),
-        WebSysDescription(SR.Panel_HorizontalAlign)
+        WebSysDescription(System.Web.SR.Panel_HorizontalAlign)
         ]
         public virtual HorizontalAlign HorizontalAlign {
             get {
@@ -186,7 +186,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(ScrollBars.None),
         WebCategory("Layout"),
-        WebSysDescription(SR.Panel_ScrollBars)
+        WebSysDescription(System.Web.SR.Panel_ScrollBars)
         ]
         public virtual ScrollBars ScrollBars {
             get {
@@ -219,7 +219,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(true),
-        WebSysDescription(SR.Panel_Wrap)
+        WebSysDescription(System.Web.SR.Panel_Wrap)
         ]
         public virtual bool Wrap {
             get {
@@ -297,7 +297,7 @@ namespace System.Web.UI.WebControls {
                         Page.ClientScript.RegisterDefaultButtonScript(c, writer, true /* UseAddAttribute */);
                     }
                     else {
-                        throw new InvalidOperationException(SR.GetString(SR.HtmlForm_OnlyIButtonControlCanBeDefaultButton, ID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.HtmlForm_OnlyIButtonControlCanBeDefaultButton, ID));
                     }
                 }
             }

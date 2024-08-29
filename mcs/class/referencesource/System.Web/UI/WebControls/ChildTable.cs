@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls {
 
         /// <internalonly/>
         internal ChildTable(int parentLevel) {
-            Debug.Assert(parentLevel >= 1);
+            System.Web.Util.Debug.Assert(parentLevel >= 1);
             _parentLevel = parentLevel;
             _parentIDSet = false;
         }
@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls {
                 }
             }
 
-            Debug.Assert(parent != null);
+            System.Web.Util.Debug.Assert(parent != null);
             if (parent != null) {
                 string id = parent.ID;
                 if (!String.IsNullOrEmpty(id)) {

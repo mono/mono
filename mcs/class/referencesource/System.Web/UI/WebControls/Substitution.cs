@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Substitution_MethodNameDescr)
+        WebSysDescription(System.Web.SR.Substitution_MethodNameDescr)
         ]
         public virtual string MethodName {
             get {
@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls {
             while (parent != null) {
                 if (parent is BasePartialCachingControl) {
                     throw new HttpException(
-                        SR.GetString(SR.Substitution_CannotBeInCachedControl));
+                        System.Web.SR.GetString(System.Web.SR.Substitution_CannotBeInCachedControl));
                 }
                 parent = parent.Parent;
             }
@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls {
 
             if (callback == null) {
                 throw new HttpException(
-                    SR.GetString(SR.Substitution_BadMethodName, MethodName));
+                    System.Web.SR.GetString(System.Web.SR.Substitution_BadMethodName, MethodName));
             }
 
             // add the substitution to the response

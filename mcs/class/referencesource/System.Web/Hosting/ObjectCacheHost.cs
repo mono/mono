@@ -71,7 +71,7 @@ namespace System.Web.Hosting {
             }
             state = target;
 #if DBG            
-            Debug.Assert(fad.UtcLastWriteTime.Kind == DateTimeKind.Utc, "fad.UtcLastWriteTime.Kind == DateTimeKind.Utc");
+            System.Web.Util.Debug.Assert(fad.UtcLastWriteTime.Kind == DateTimeKind.Utc, "fad.UtcLastWriteTime.Kind == DateTimeKind.Utc");
 #endif
             lastWrite = fad.UtcLastWriteTime;
             fileSize = fad.FileSize;

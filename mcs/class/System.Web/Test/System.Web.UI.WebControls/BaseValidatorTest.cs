@@ -185,7 +185,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, p.EnableClientScript, "D3");
 			Assert.AreEqual (true, p.Enabled, "D4");
 			Assert.AreEqual (String.Empty, p.ErrorMessage, "D5");
-			Assert.AreEqual (Color.Red, p.ForeColor, "D6");
+			Assert.AreEqual (Color.Empty, p.ForeColor, "D6");
 			Assert.AreEqual (true, p.IsValid, "D7");
 
 			/* get/set */

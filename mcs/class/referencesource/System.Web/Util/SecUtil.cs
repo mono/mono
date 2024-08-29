@@ -56,7 +56,7 @@ namespace System.Web.Util {
         }
 
         internal static string GetConnectionString(NameValueCollection config) {
-            Debug.Assert(config != null);
+            System.Web.Util.Debug.Assert(config != null);
 
             string connectionString = config["connectionString"];
             if (!String.IsNullOrEmpty(connectionString)) {
@@ -65,11 +65,11 @@ namespace System.Web.Util {
             else {
                 string connectionStringName = config["connectionStringName"];
                 if (String.IsNullOrEmpty(connectionStringName))
-                    throw new ProviderException(SR.GetString(SR.Connection_name_not_specified));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Connection_name_not_specified));
 
                 connectionString = SqlConnectionHelper.GetConnectionString(connectionStringName, lookupConnectionString: true, appLevel: true);
                 if (String.IsNullOrEmpty(connectionString)) {
-                    throw new ProviderException(SR.GetString(SR.Connection_string_not_found, connectionStringName));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, connectionStringName));
                 }
                 else {
                     return connectionString;
@@ -116,11 +116,11 @@ namespace System.Web.Util {
             }
 
             if (param.Length < 1) {
-                throw new ArgumentException(SR.GetString(SR.Parameter_can_not_be_empty, paramName), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_can_not_be_empty, paramName), paramName);
             }
 
             if (maxSize > 0 && param.Length > maxSize) {
-                throw new ArgumentException(SR.GetString(SR.Parameter_too_long, paramName, maxSize.ToString(CultureInfo.InvariantCulture)), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_too_long, paramName, maxSize.ToString(CultureInfo.InvariantCulture)), paramName);
             }
         }
 
@@ -135,15 +135,15 @@ namespace System.Web.Util {
 
             param = param.Trim();
             if (checkIfEmpty && param.Length < 1) {
-                throw new ArgumentException(SR.GetString(SR.Parameter_can_not_be_empty, paramName), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_can_not_be_empty, paramName), paramName);
             }
 
             if (maxSize > 0 && param.Length > maxSize) {
-                throw new ArgumentException(SR.GetString(SR.Parameter_too_long, paramName, maxSize.ToString(CultureInfo.InvariantCulture)), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_too_long, paramName, maxSize.ToString(CultureInfo.InvariantCulture)), paramName);
             }
 
             if (checkForCommas && param.Contains(",")) {
-                throw new ArgumentException(SR.GetString(SR.Parameter_can_not_contain_comma, paramName), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_can_not_contain_comma, paramName), paramName);
             }
         }
 
@@ -153,7 +153,7 @@ namespace System.Web.Util {
             }
 
             if (param.Length < 1) {
-                throw new ArgumentException(SR.GetString(SR.Parameter_array_empty, paramName), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_array_empty, paramName), paramName);
             }
 
             Hashtable values = new Hashtable(param.Length);
@@ -161,7 +161,7 @@ namespace System.Web.Util {
                 SecUtility.CheckParameter(ref param[i], checkForNull, checkIfEmpty, checkForCommas, maxSize,
                     paramName + "[ " + i.ToString(CultureInfo.InvariantCulture) + " ]");
                 if (values.Contains(param[i])) {
-                    throw new ArgumentException(SR.GetString(SR.Parameter_duplicate_array_element, paramName), paramName);
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_duplicate_array_element, paramName), paramName);
                 }
                 else {
                     values.Add(param[i], param[i]);
@@ -180,7 +180,7 @@ namespace System.Web.Util {
                 return result;
             }
             else {
-                throw new ProviderException(SR.GetString(SR.Value_must_be_boolean, valueName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Value_must_be_boolean, valueName));
             }
         }
 
@@ -194,22 +194,22 @@ namespace System.Web.Util {
             int iValue;
             if (!Int32.TryParse(sValue, out iValue)) {
                 if (zeroAllowed) {
-                    throw new ProviderException(SR.GetString(SR.Value_must_be_non_negative_integer, valueName));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Value_must_be_non_negative_integer, valueName));
                 }
 
-                throw new ProviderException(SR.GetString(SR.Value_must_be_positive_integer, valueName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Value_must_be_positive_integer, valueName));
             }
 
             if (zeroAllowed && iValue < 0) {
-                throw new ProviderException(SR.GetString(SR.Value_must_be_non_negative_integer, valueName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Value_must_be_non_negative_integer, valueName));
             }
 
             if (!zeroAllowed && iValue <= 0) {
-                throw new ProviderException(SR.GetString(SR.Value_must_be_positive_integer, valueName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Value_must_be_positive_integer, valueName));
             }
 
             if (maxValueAllowed > 0 && iValue > maxValueAllowed) {
-                throw new ProviderException(SR.GetString(SR.Value_too_big, valueName, maxValueAllowed.ToString(CultureInfo.InvariantCulture)));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Value_too_big, valueName, maxValueAllowed.ToString(CultureInfo.InvariantCulture)));
             }
 
             return iValue;
@@ -252,12 +252,12 @@ namespace System.Web.Util {
             }
 
             if (schemaVersionCheck == -1) {
-                throw new ProviderException(SR.GetString(SR.Provider_Schema_Version_Not_Match, provider.ToString(), version));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_Schema_Version_Not_Match, provider.ToString(), version));
             }
             else if (schemaVersionCheck == 0) {
                 lock (provider) {
                     if (schemaVersionCheck == -1) {
-                        throw new ProviderException(SR.GetString(SR.Provider_Schema_Version_Not_Match, provider.ToString(), version));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_Schema_Version_Not_Match, provider.ToString(), version));
                     }
                     else if (schemaVersionCheck == 0) {
                         int iStatus = 0;
@@ -285,7 +285,7 @@ namespace System.Web.Util {
                             if (iStatus != 0) {
                                 schemaVersionCheck = -1;
 
-                                throw new ProviderException(SR.GetString(SR.Provider_Schema_Version_Not_Match, provider.ToString(), version));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_Schema_Version_Not_Match, provider.ToString(), version));
                             }
                         }
 
@@ -293,6 +293,10 @@ namespace System.Web.Util {
                     }
                 }
             }
+        }
+#else
+        internal static void CheckSchemaVersion(ProviderBase provider, SqlConnection connection, string[] features, string version, ref int schemaVersionCheck) {
+
         }
 #endif // !FEATURE_PAL
     }

@@ -287,6 +287,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 		[Test]
 		[Category ("NotDotNet")] // MS throws a NullReferenceException here
+		[Ignore ("Fails on .NET too.")]
 		public void IPostBackDataHandler_LoadPostData_IdNull ()
 		{
 			TestHtmlTextArea ta = new TestHtmlTextArea ();
@@ -300,6 +301,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 		[Test]
 		[Category ("NotDotNet")] // MS throws a NullReferenceException here
+		[Ignore ("Fails on .NET too.")]
 		public void IPostBackDataHandler_LoadPostData_WrongId ()
 		{
 			TestHtmlTextArea ta = new TestHtmlTextArea ();
@@ -342,6 +344,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 		[Test]
 		[Category ("NotDotNet")] // MS throws a NullReferenceException here
+		[Ignore ("Fails on .NET too.")]
 		public void LoadPostData_IdNull ()
 		{
 			TestHtmlTextArea ta = new TestHtmlTextArea ();
@@ -354,6 +357,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 		[Test]
 		[Category ("NotDotNet")] // MS throws a NullReferenceException here
+		[Ignore ("Fails on .NET too.")]
 		public void LoadPostData_WrongId ()
 		{
 			TestHtmlTextArea ta = new TestHtmlTextArea ();

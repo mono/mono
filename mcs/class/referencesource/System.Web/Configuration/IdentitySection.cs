@@ -15,6 +15,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Web.Configuration;
     using System.Security.Permissions;
+    
 
         /*        <!--
             identity Attributes:
@@ -52,7 +53,7 @@ namespace System.Web.Configuration {
             _properties.Add(_propPassword);
         }
 
-        protected override object GetRuntimeObject() {
+        protected internal override object GetRuntimeObject() {
             // VSWhidbey 554776: The method ValidateCredentials() is not safe
             // when multiple threads are accessing it, because the method access
             // and modify member variables.  After reviewing the code,
@@ -74,7 +75,7 @@ namespace System.Web.Configuration {
             impersonateCached = false;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -115,7 +116,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override void Reset(ConfigurationElement parentElement) {
+        protected internal override void Reset(ConfigurationElement parentElement) {
             base.Reset(parentElement);
             IdentitySection parent = parentElement as IdentitySection;
             if (parent != null) {
@@ -131,7 +132,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override void Unmerge(ConfigurationElement sourceElement,
+        protected internal override void Unmerge(ConfigurationElement sourceElement,
                                                 ConfigurationElement parentElement,
                                                 ConfigurationSaveMode saveMode) {
             base.Unmerge(sourceElement, parentElement, saveMode); // do this to unmerge locks
@@ -155,12 +156,12 @@ namespace System.Web.Configuration {
 
             if (HandlerBase.CheckAndReadRegistryValue(ref _username, false) == false) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_registry_config), 
+                    System.Web.SR.GetString(System.Web.SR.Invalid_registry_config), 
                     ElementInformation.Source, ElementInformation.LineNumber);
             }
             if (HandlerBase.CheckAndReadRegistryValue(ref _password, false) == false) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_registry_config), 
+                    System.Web.SR.GetString(System.Web.SR.Invalid_registry_config), 
                     ElementInformation.Source, 
                     ElementInformation.LineNumber);
             }
@@ -176,20 +177,20 @@ namespace System.Web.Configuration {
             }
             else if (_password != null && _username == null && _password.Length > 0 && Impersonate) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_credentials), 
+                    System.Web.SR.GetString(System.Web.SR.Invalid_credentials), 
                     ElementInformation.Properties["password"].Source, 
                     ElementInformation.Properties["password"].LineNumber);
             }
             if (Impersonate && ImpersonateToken == IntPtr.Zero && _username != null) {
                 if (error.Length > 0) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_credentials_2, error), 
+                        System.Web.SR.GetString(System.Web.SR.Invalid_credentials_2, error), 
                         ElementInformation.Properties["userName"].Source, 
                         ElementInformation.Properties["userName"].LineNumber);
                 }
                 else {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_credentials), 
+                        System.Web.SR.GetString(System.Web.SR.Invalid_credentials), 
                         ElementInformation.Properties["userName"].Source, 
                         ElementInformation.Properties["userName"].LineNumber);
                 }
@@ -205,13 +206,13 @@ namespace System.Web.Configuration {
             if (_impersonateTokenRef.Handle == IntPtr.Zero) {
                 if (error.Length > 0) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_credentials_2, error), 
+                        System.Web.SR.GetString(System.Web.SR.Invalid_credentials_2, error), 
                         ElementInformation.Properties["userName"].Source, 
                         ElementInformation.Properties["userName"].LineNumber);
                 }
                 else {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Invalid_credentials), 
+                        System.Web.SR.GetString(System.Web.SR.Invalid_credentials), 
                         ElementInformation.Properties["userName"].Source, 
                         ElementInformation.Properties["userName"].LineNumber);
                 }
@@ -250,7 +251,7 @@ namespace System.Web.Configuration {
                     }
                     token = (IntPtr)iToken;
 
-                    Debug.Trace("Token", "Token " + token + " for (" + name + "," + password + ") obtained via ISAPI");
+                    System.Web.Util.Debug.Trace("Token", "Token " + token + " for (" + name + "," + password + ") obtained via ISAPI");
                 }
             }
             // try to create the token directly
@@ -260,7 +261,7 @@ namespace System.Web.Configuration {
                 error = errorBuffer.ToString();
 
                 if (token != IntPtr.Zero) {
-                    Debug.Trace("Token", "Token " + token + " for (" + name + "," + password + ") obtained directly");
+                    System.Web.Util.Debug.Trace("Token", "Token " + token + " for (" + name + "," + password + ") obtained directly");
                 }
             }
             else {
@@ -268,7 +269,7 @@ namespace System.Web.Configuration {
             }
 
             if (token == IntPtr.Zero) {
-                Debug.Trace("Token", "Failed to create token for (" + name + "," + password + ")");
+                System.Web.Util.Debug.Trace("Token", "Failed to create token for (" + name + "," + password + ")");
             }
 
             return token;

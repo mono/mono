@@ -125,7 +125,7 @@ namespace System.Web.Configuration {
             Custom = custom;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

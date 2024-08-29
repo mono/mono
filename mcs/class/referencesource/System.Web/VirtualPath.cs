@@ -35,21 +35,21 @@ namespace System.Web {
         // Debug only method to check that the object is in a consistent state
         private void ValidateState() {
 
-            Debug.Assert(_virtualPath != null || _appRelativeVirtualPath != null);
+            System.Web.Util.Debug.Assert(_virtualPath != null || _appRelativeVirtualPath != null);
 
             if (_virtualPath != null) {
                 CheckValidVirtualPath(_virtualPath);
             }
 
             if (_appRelativeVirtualPath != null) {
-                Debug.Assert(UrlPath.IsAppRelativePath(_appRelativeVirtualPath));
+                System.Web.Util.Debug.Assert(System.Web.Util.UrlPath.IsAppRelativePath(_appRelativeVirtualPath));
                 CheckValidVirtualPath(_appRelativeVirtualPath);
             }
         }
 
         private static void CheckValidVirtualPath(string virtualPath) {
-            Debug.Assert(virtualPath.IndexOfAny(s_illegalVirtualPathChars) < 0);
-            Debug.Assert(virtualPath.IndexOf('\\') < 0);
+            System.Web.Util.Debug.Assert(virtualPath.IndexOfAny(s_illegalVirtualPathChars) < 0);
+            System.Web.Util.Debug.Assert(virtualPath.IndexOf('\\') < 0);
         }
 #endif
 
@@ -60,7 +60,7 @@ namespace System.Web {
         // This is called to set the appropriate virtual path field when we already know
         // that the path is generally well formed.
         private VirtualPath(string virtualPath) {
-            if (UrlPath.IsAppRelativePath(virtualPath)) {
+            if (System.Web.Util.UrlPath.IsAppRelativePath(virtualPath)) {
                 _appRelativeVirtualPath = virtualPath;
             }
             else {
@@ -87,11 +87,11 @@ namespace System.Web {
         public string VirtualPathString {
             get {
                 if (_virtualPath == null) {
-                    Debug.Assert(_appRelativeVirtualPath != null);
+                    System.Web.Util.Debug.Assert(_appRelativeVirtualPath != null);
 
                     // This is not valid if we don't know the app path
                     if (HttpRuntime.AppDomainAppVirtualPathObject == null) {
-                        throw new HttpException(SR.GetString(SR.VirtualPath_CantMakeAppAbsolute,
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.VirtualPath_CantMakeAppAbsolute,
                             _appRelativeVirtualPath));
                     }
 
@@ -110,7 +110,7 @@ namespace System.Web {
 
         internal string VirtualPathStringNoTrailingSlash {
             get {
-                return UrlPath.RemoveSlashFromPathIfNeeded(VirtualPathString);
+                return System.Web.Util.UrlPath.RemoveSlashFromPathIfNeeded(VirtualPathString);
             }
         }
 
@@ -124,7 +124,7 @@ namespace System.Web {
         internal string AppRelativeVirtualPathStringOrNull {
             get {
                 if (_appRelativeVirtualPath == null) {
-                    Debug.Assert(_virtualPath != null);
+                    System.Web.Util.Debug.Assert(_virtualPath != null);
 
                     // If we already tried to get it and couldn't, return null
                     if (flags[appRelativeAttempted])
@@ -132,10 +132,10 @@ namespace System.Web {
 
                     // This is not valid if we don't know the app path
                     if (HttpRuntime.AppDomainAppVirtualPathObject == null) {
-                        throw new HttpException(SR.GetString(SR.VirtualPath_CantMakeAppRelative, _virtualPath));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.VirtualPath_CantMakeAppRelative, _virtualPath));
                     }
 
-                    _appRelativeVirtualPath = UrlPath.MakeVirtualPathAppRelativeOrNull(_virtualPath);
+                    _appRelativeVirtualPath = System.Web.Util.UrlPath.MakeVirtualPathAppRelativeOrNull(_virtualPath);
 
                     // Remember that we've attempted it
                     flags[appRelativeAttempted] = true;
@@ -176,13 +176,13 @@ namespace System.Web {
 
         public string Extension {
             get {
-                return UrlPath.GetExtension(VirtualPathString);
+                return System.Web.Util.UrlPath.GetExtension(VirtualPathString);
             }
         }
 
         public string FileName {
             get {
-                return UrlPath.GetFileName(VirtualPathStringNoTrailingSlash);
+                return System.Web.Util.UrlPath.GetFileName(VirtualPathStringNoTrailingSlash);
             }
         }
 
@@ -206,7 +206,7 @@ namespace System.Web {
             string virtualPath = VirtualPathStringWhicheverAvailable;
 
             // Combine it with the relative
-            virtualPath = UrlPath.Combine(virtualPath, relativePath.VirtualPathString);
+            virtualPath = System.Web.Util.UrlPath.Combine(virtualPath, relativePath.VirtualPathString);
 
             // Set the appropriate virtual path in the new object
             return new VirtualPath(virtualPath);
@@ -226,10 +226,10 @@ namespace System.Web {
         private VirtualPath SimpleCombine(string filename, bool addTrailingSlash) {
 
             // The left part should always be a directory
-            Debug.Assert(HasTrailingSlash);
+            System.Web.Util.Debug.Assert(HasTrailingSlash);
 
             // The right part should not start or end with a slash
-            Debug.Assert(filename[0] != '/' && !UrlPath.HasTrailingSlash(filename));
+            System.Web.Util.Debug.Assert(filename[0] != '/' && !System.Web.Util.UrlPath.HasTrailingSlash(filename));
 
             // Use either _appRelativeVirtualPath or _virtualPath
             string virtualPath = VirtualPathStringWhicheverAvailable + filename;
@@ -255,7 +255,7 @@ namespace System.Web {
             toVirtualPath.FailIfRelativePath();
 
             // Set it directly since we know the slashes are already ok
-            resultVirtualPath._virtualPath = UrlPath.MakeRelative(this.VirtualPathString, toVirtualPath.VirtualPathString);
+            resultVirtualPath._virtualPath = System.Web.Util.UrlPath.MakeRelative(this.VirtualPathString, toVirtualPath.VirtualPathString);
 #if DBG
             resultVirtualPath.ValidateState();
 #endif
@@ -302,7 +302,7 @@ namespace System.Web {
         }
 
         public VirtualDirectory GetDirectory() {
-            Debug.Assert(this.HasTrailingSlash);
+            System.Web.Util.Debug.Assert(this.HasTrailingSlash);
             return HostingEnvironment.VirtualPathProvider.GetDirectory(this);
         }
 
@@ -320,10 +320,10 @@ namespace System.Web {
         internal bool HasTrailingSlash {
             get {
                 if (_virtualPath != null) {
-                    return UrlPath.HasTrailingSlash(_virtualPath);
+                    return System.Web.Util.UrlPath.HasTrailingSlash(_virtualPath);
                 }
                 else {
-                    return UrlPath.HasTrailingSlash(_appRelativeVirtualPath);
+                    return System.Web.Util.UrlPath.HasTrailingSlash(_appRelativeVirtualPath);
                 }
             }
         }
@@ -333,7 +333,7 @@ namespace System.Web {
                 // If we don't already know it, compute it and cache it
                 if (!flags[isWithinAppRootComputed]) {
                     if (HttpRuntime.AppDomainIdInternal == null) {
-                        Debug.Assert(false);
+                        System.Web.Util.Debug.Assert(false);
                         return true;    // app domain not initialized
                     }
 
@@ -343,7 +343,7 @@ namespace System.Web {
                         flags[isWithinAppRoot] = (_appRelativeVirtualPath != null);
                     }
                     else {
-                        flags[isWithinAppRoot] = UrlPath.IsEqualOrSubpath(HttpRuntime.AppDomainAppVirtualPathString,
+                        flags[isWithinAppRoot] = System.Web.Util.UrlPath.IsEqualOrSubpath(HttpRuntime.AppDomainAppVirtualPathString,
                             VirtualPathString);
                     }
 
@@ -356,13 +356,13 @@ namespace System.Web {
 
         internal void FailIfNotWithinAppRoot() {
             if (!this.IsWithinAppRoot) {
-                throw new ArgumentException(SR.GetString(SR.Cross_app_not_allowed, this.VirtualPathString));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cross_app_not_allowed, this.VirtualPathString));
             }
         }
 
         internal void FailIfRelativePath() {
             if (this.IsRelative) {
-                throw new ArgumentException(SR.GetString(SR.VirtualPath_AllowRelativePath, _virtualPath));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.VirtualPath_AllowRelativePath, _virtualPath));
             }
         }
 
@@ -393,14 +393,14 @@ namespace System.Web {
                 string virtualPath = VirtualPathStringWhicheverAvailable;
 
                 // Get rid of the ending slash, otherwise we end up with Parent("/app/sub/") == "/app/sub/"
-                virtualPath = UrlPath.RemoveSlashFromPathIfNeeded(virtualPath);
+                virtualPath = System.Web.Util.UrlPath.RemoveSlashFromPathIfNeeded(virtualPath);
 
                 // But if it's just "~", use the absolute path instead to get the parent
                 if (virtualPath == "~")
                     virtualPath = VirtualPathStringNoTrailingSlash;
 
                 int index = virtualPath.LastIndexOf('/');
-                Debug.Assert(index >= 0);
+                System.Web.Util.Debug.Assert(index >= 0);
 
                 // e.g. the parent of "/blah" is "/"
                 if (index == 0)
@@ -461,7 +461,7 @@ namespace System.Web {
 
             VirtualPath virtualPath = value as VirtualPath;
             if ((object)virtualPath == null) {
-                Debug.Assert(false);
+                System.Web.Util.Debug.Assert(false);
                 return false;
             }
 
@@ -481,7 +481,7 @@ namespace System.Web {
             // If we only have the app relative path, and we don't know the app root, return
             // the app relative path instead of accessing VirtualPathString, which would throw
             if (_virtualPath == null && HttpRuntime.AppDomainAppVirtualPathObject == null) {
-                Debug.Assert(_appRelativeVirtualPath != null);
+                System.Web.Util.Debug.Assert(_appRelativeVirtualPath != null);
                 return _appRelativeVirtualPath;
             }
 
@@ -593,7 +593,7 @@ namespace System.Web {
                                 break;
                             // invalid chars
                             case '\0':
-                                throw new HttpException(SR.GetString(SR.Invalid_vpath, virtualPath));
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_vpath, virtualPath));
                             default:
                                 break;
                         }
@@ -604,26 +604,26 @@ namespace System.Web {
             if (slashes) {
                 // If we're supposed to fail on malformed path, then throw
                 if ((options & VirtualPathOptions.FailIfMalformed) != 0) {
-                    throw new HttpException(SR.GetString(SR.Invalid_vpath, virtualPath));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_vpath, virtualPath));
                 }
                 // Flip ----lashes, and remove duplicate slashes                
-                virtualPath = UrlPath.FixVirtualPathSlashes(virtualPath);
+                virtualPath = System.Web.Util.UrlPath.FixVirtualPathSlashes(virtualPath);
             }
 
             // Make sure it ends with a trailing slash if requested
             if ((options & VirtualPathOptions.EnsureTrailingSlash) != 0)
-                virtualPath = UrlPath.AppendSlashToPathIfNeeded(virtualPath);
+                virtualPath = System.Web.Util.UrlPath.AppendSlashToPathIfNeeded(virtualPath);
 
             VirtualPath virtualPathObject = new VirtualPath();
 
-            if (UrlPath.IsAppRelativePath(virtualPath)) {
+            if (System.Web.Util.UrlPath.IsAppRelativePath(virtualPath)) {
                 
                 if (dot)
-                    virtualPath = UrlPath.ReduceVirtualPath(virtualPath);
+                    virtualPath = System.Web.Util.UrlPath.ReduceVirtualPath(virtualPath);
 
-                if (virtualPath[0] == UrlPath.appRelativeCharacter) {
+                if (virtualPath[0] == System.Web.Util.UrlPath.appRelativeCharacter) {
                     if ((options & VirtualPathOptions.AllowAppRelativePath) == 0) {
-                        throw new ArgumentException(SR.GetString(SR.VirtualPath_AllowAppRelativePath, virtualPath));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.VirtualPath_AllowAppRelativePath, virtualPath));
                     }
 
                     virtualPathObject._appRelativeVirtualPath = virtualPath;
@@ -634,7 +634,7 @@ namespace System.Web {
                     // "~/../hello.aspx", it becomes "/hello.aspx", which is absolute
 
                     if ((options & VirtualPathOptions.AllowAbsolutePath) == 0) {
-                        throw new ArgumentException(SR.GetString(SR.VirtualPath_AllowAbsolutePath, virtualPath));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.VirtualPath_AllowAbsolutePath, virtualPath));
                     }
 
                     virtualPathObject._virtualPath = virtualPath;
@@ -643,7 +643,7 @@ namespace System.Web {
             else {
                 if (virtualPath[0] != '/') {
                     if ((options & VirtualPathOptions.AllowRelativePath) == 0) {
-                        throw new ArgumentException(SR.GetString(SR.VirtualPath_AllowRelativePath, virtualPath));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.VirtualPath_AllowRelativePath, virtualPath));
                     }
 
                     // Don't Reduce relative paths, since the Reduce method is broken (e.g. "../foo.aspx" --> "/foo.aspx!")
@@ -652,11 +652,11 @@ namespace System.Web {
                 }
                 else {
                     if ((options & VirtualPathOptions.AllowAbsolutePath) == 0) {
-                        throw new ArgumentException(SR.GetString(SR.VirtualPath_AllowAbsolutePath, virtualPath));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.VirtualPath_AllowAbsolutePath, virtualPath));
                     }
 
                     if (dot)
-                        virtualPath = UrlPath.ReduceVirtualPath(virtualPath);
+                        virtualPath = System.Web.Util.UrlPath.ReduceVirtualPath(virtualPath);
 
                     virtualPathObject._virtualPath = virtualPath;
                 }

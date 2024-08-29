@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -371,7 +371,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			Bindable(true),
 			DefaultValue(AreaAlignmentOrientations.Vertical),
 			SRDescription("DescriptionAttributeChartArea_AlignOrientation"),
+#if !FEATURE_PAL
             Editor(Editors.FlagsEnumUITypeEditor.Editor, Editors.FlagsEnumUITypeEditor.Base),
+#endif
 		    #if !Microsoft_CONTROL
 		    PersistenceMode(PersistenceMode.Attribute)
 		    #endif
@@ -398,10 +400,13 @@ namespace System.Web.UI.DataVisualization.Charting
 			Bindable(true),
 			DefaultValue(AreaAlignmentStyles.All),
 			SRDescription("DescriptionAttributeChartArea_AlignType"),
+#if !FEATURE_PAL
             Editor(Editors.FlagsEnumUITypeEditor.Editor, Editors.FlagsEnumUITypeEditor.Base),
-		#if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute)
-		#endif
+#endif
+
+#if !Microsoft_CONTROL
+			PersistenceMode(PersistenceMode.Attribute)
+#endif
 			]
 			public AreaAlignmentStyles AlignmentStyle
 			{
@@ -424,7 +429,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			Bindable(true),
 			SRDescription("DescriptionAttributeChartArea_Axes"),
 			TypeConverter(typeof(AxesArrayConverter)),
+#if !FEATURE_PAL
             Editor(Editors.AxesArrayEditor.Editor, Editors.AxesArrayEditor.Base),
+#endif
 			DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden),
 			SerializationVisibilityAttribute(SerializationVisibility.Hidden)
 			]
@@ -702,10 +709,12 @@ namespace System.Web.UI.DataVisualization.Charting
             SRDescription("DescriptionAttributeBackColor"),
 			NotifyParentPropertyAttribute(true),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
-		#if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute)
-		#endif
+#endif
+#if !Microsoft_CONTROL
+			PersistenceMode(PersistenceMode.Attribute)
+#endif
 			]
 			public Color BackColor
 			{
@@ -731,11 +740,12 @@ namespace System.Web.UI.DataVisualization.Charting
 			DefaultValue(ChartHatchStyle.None),
 			NotifyParentPropertyAttribute(true),
             SRDescription("DescriptionAttributeBackHatchStyle"),
-		#if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute),
-		#endif
+#if !Microsoft_CONTROL
+			PersistenceMode(PersistenceMode.Attribute),
+#endif
+#if !FEATURE_PAL
             Editor(Editors.HatchStyleEditor.Editor, Editors.HatchStyleEditor.Base)
-
+#endif
 			]
 			public ChartHatchStyle BackHatchStyle
 			{
@@ -758,9 +768,11 @@ namespace System.Web.UI.DataVisualization.Charting
 			Bindable(true),
 			DefaultValue(""),
             SRDescription("DescriptionAttributeBackImage"),
+#if !FEATURE_PAL
             Editor(Editors.ImageValueEditor.Editor, Editors.ImageValueEditor.Base),
+#endif
 #if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute),
+			PersistenceMode(PersistenceMode.Attribute),
 #endif
 			NotifyParentPropertyAttribute(true)
 			]
@@ -813,10 +825,12 @@ namespace System.Web.UI.DataVisualization.Charting
 			NotifyParentPropertyAttribute(true),
             SRDescription("DescriptionAttributeImageTransparentColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
-		#if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute)
-		#endif
+#endif
+#if !Microsoft_CONTROL
+			PersistenceMode(PersistenceMode.Attribute)
+#endif
 			]
 			public Color BackImageTransparentColor
 			{
@@ -869,9 +883,11 @@ namespace System.Web.UI.DataVisualization.Charting
 			NotifyParentPropertyAttribute(true),
             SRDescription("DescriptionAttributeBackGradientStyle"),
 		#if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute),
+			PersistenceMode(PersistenceMode.Attribute),
 		#endif
+#if !FEATURE_PAL
             Editor(Editors.GradientEditor.Editor, Editors.GradientEditor.Base)
+#endif
 			]		
 			public GradientStyle BackGradientStyle
 			{
@@ -897,7 +913,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			NotifyParentPropertyAttribute(true),
             SRDescription("DescriptionAttributeBackSecondaryColor"),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -925,10 +943,12 @@ namespace System.Web.UI.DataVisualization.Charting
             SRDescription("DescriptionAttributeShadowColor"),
 			NotifyParentPropertyAttribute(true),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
-		#if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute)
-		#endif
+#endif
+#if !Microsoft_CONTROL
+			PersistenceMode(PersistenceMode.Attribute)
+#endif
 			]
 			public Color ShadowColor
 			{
@@ -980,10 +1000,12 @@ namespace System.Web.UI.DataVisualization.Charting
             SRDescription("DescriptionAttributeBorderColor"),
 			NotifyParentPropertyAttribute(true),
             TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
             Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
-		#if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute)
-		#endif
+#endif
+#if !Microsoft_CONTROL
+			PersistenceMode(PersistenceMode.Attribute)
+#endif
 			]
 			public Color BorderColor
 			{

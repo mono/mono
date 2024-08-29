@@ -43,7 +43,7 @@ namespace System.Web.Util {
 
         internal virtual void ReleaseRead() {
             lock(this) {
-                Debug.Assert(_lock > 0);
+                System.Web.Util.Debug.Assert(_lock > 0);
 
                 _lock--;
                 if (_lock == 0) {
@@ -69,7 +69,7 @@ namespace System.Web.Util {
 
         internal virtual void ReleaseWrite() {
             lock(this) {
-                Debug.Assert(_lock == -1);
+                System.Web.Util.Debug.Assert(_lock == -1);
 
                 _lock = 0;
                 Monitor.PulseAll(this);
@@ -78,14 +78,14 @@ namespace System.Web.Util {
 /*
         internal virtual void AssertReadLock() {
 #if DBG
-            Debug.Assert(_lock > 0);
+            System.Web.Util.Debug.Assert(_lock > 0);
 #endif
         }
 
 
         internal virtual void AssertWriteLock() {
 #if DBG
-            Debug.Assert(_lock == -1);
+            System.Web.Util.Debug.Assert(_lock == -1);
 #endif
         }
 */

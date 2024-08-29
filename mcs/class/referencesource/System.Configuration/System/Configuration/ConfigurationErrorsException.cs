@@ -34,8 +34,11 @@ namespace System.Configuration {
         private ConfigurationException[]    _errors;
 
         void Init(string filename, int line) {
+#if MONO
+            HResult = unchecked((int)0x80131902);
+#else
             HResult = HResults.Configuration;
-
+#endif 
             // BaseConfigurationRecord.cs uses -1 as uninitialized line number.
             if (line == -1) {
                 line = 0;

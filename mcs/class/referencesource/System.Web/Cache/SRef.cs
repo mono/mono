@@ -4,9 +4,42 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 using System.Web;
 
 namespace System.Web.Caching {
+
+#if MONO 
+    // At least on Mono, the SizedReference createinstance bombs.  In order to get
+    // this to roll an approximate size is good enough (Marshal.SizeOf).
+    // We will need to revisit.
+    internal class SRef
+    { 
+        private long _lastReportedSize;
+        private WeakReference _ref;
+
+        internal SRef(object target)
+        {
+            this._ref = new WeakReference(target, false);
+        }
+
+        internal long ApproximateSize
+        {
+            [PermissionSet(SecurityAction.Assert, Unrestricted = true)] get
+            {
+                this._lastReportedSize = (this._ref.IsAlive) ? (long)Marshal.SizeOf(this._ref.Target.GetType()) : 0;
+                return this._lastReportedSize;
+            }
+        }
+
+        [PermissionSet(SecurityAction.Assert, Unrestricted = true)]
+        internal void Dispose()
+        {
+        
+        }
+    }
+
+#else 
     internal class SRef {
         private static Type s_type = Type.GetType("System.SizedReference", true, false);
         private Object _sizedRef;
@@ -39,6 +72,7 @@ namespace System.Web.Caching {
                                 CultureInfo.InvariantCulture);
         }
     }
+#endif
 
     internal class SRefMultiple {
         private List<SRef> _srefs = new List<SRef>();

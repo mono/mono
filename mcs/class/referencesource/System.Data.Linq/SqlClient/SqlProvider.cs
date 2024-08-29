@@ -720,7 +720,7 @@ namespace System.Data.Linq.SqlClient {
                         SqlConnection.ClearAllPools();
                     }
                     if (this.log != null) {
-                        this.log.WriteLine(Strings.LogAttemptingToDeleteDatabase(this.dbName));
+                        this.log.WriteLine(SR.Format(SR.LogAttemptingToDeleteDatabase, this.dbName));
                     }
                     this.ExecuteCommand(SqlBuilder.GetDropDatabaseCommand(this.dbName));
                     this.deleted = true;

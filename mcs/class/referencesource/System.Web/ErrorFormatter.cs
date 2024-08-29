@@ -63,7 +63,7 @@ namespace System.Web {
     using System.Configuration;
     using System.Security;
     using System.Security.Permissions;
-
+    
     /*
      * This is an abstract base class from which we derive other formatters.
      */
@@ -72,26 +72,33 @@ namespace System.Web {
         private StringCollection _adaptiveMiscContent;
         private StringCollection _adaptiveStackTrace;
         protected bool           _dontShowVersion = false;
+        internal bool            _fusionLogWritten = false;
 
-        private const string startExpandableBlock =
+        internal const string startExpandableBlock =
             "<br><div class=\"expandable\" onclick=\"OnToggleTOCLevel1('{0}')\">" +
             "{1}" +
             ":</div>\r\n" +
             "<div id=\"{0}\" style=\"display: none;\">\r\n" +
-            "            <br><table width=100% bgcolor=\"#ffffcc\">\r\n" +
+            "            <br>";
+
+        internal const string startColoredSquare =
+            "            <table width=100% bgcolor=\"#ffffcc\">\r\n" +
             "               <tr>\r\n" +
             "                  <td>\r\n" +
-            "                      <code><pre>\r\n\r\n";
+            "                      <code>";
+        
 
-        private const string endExpandableBlock =
-            "                      </pre></code>\r\n\r\n" +
+        internal const string endColoredSquare =
+            "                      </code>\r\n\r\n" +
             "                  </td>\r\n" +
             "               </tr>\r\n" +
-            "            </table>\r\n\r\n" +
+            "            </table>\r\n\r\n";
+
+        internal const string endExpandableBlock =
             "            \r\n\r\n" +
             "</div>\r\n";
 
-        private const string toggleScript = @"
+        internal const string toggleScript = @"
         <script type=""text/javascript"">
         function OnToggleTOCLevel1(level2ID)
         {
@@ -180,7 +187,7 @@ namespace System.Web {
                 IParserAccessor formAdd = (IParserAccessor) form;
 
                 // Display a server error text with the application name
-                Label label = CreateLabelFromText(SR.GetString(SR.Error_Formatter_ASPNET_Error, HttpRuntime.AppDomainAppVirtualPath));
+                Label label = CreateLabelFromText(System.Web.SR.GetString(System.Web.SR.Error_Formatter_ASPNET_Error, HttpRuntime.AppDomainAppVirtualPath));
                 label.ForeColor = Color.Red;
                 label.Font.Bold = true;
                 label.Font.Size = FontUnit.Large;
@@ -196,7 +203,7 @@ namespace System.Web {
                 formAdd.AddParsedSubObject(CreateBreakLiteral());
 
                 // Description
-                formAdd.AddParsedSubObject(CreateLabelFromText(SR.GetString(SR.Error_Formatter_Description) + " " + Description));
+                formAdd.AddParsedSubObject(CreateLabelFromText(System.Web.SR.GetString(System.Web.SR.Error_Formatter_Description) + " " + Description));
                 formAdd.AddParsedSubObject(CreateBreakLiteral());
 
                 // Misc Title
@@ -218,11 +225,11 @@ namespace System.Web {
                 // File & line# info
                 String sourceFilePath = GetDisplayPath();
                 if (!String.IsNullOrEmpty(sourceFilePath)) {
-                    String text = SR.GetString(SR.Error_Formatter_Source_File) + " " + sourceFilePath;
+                    String text = System.Web.SR.GetString(System.Web.SR.Error_Formatter_Source_File) + " " + sourceFilePath;
                     formAdd.AddParsedSubObject(CreateLabelFromText(text));
                     formAdd.AddParsedSubObject(CreateBreakLiteral());
 
-                    text = SR.GetString(SR.Error_Formatter_Line) + " " + SourceFileLineNumber;
+                    text = System.Web.SR.GetString(System.Web.SR.Error_Formatter_Line) + " " + SourceFileLineNumber;
                     formAdd.AddParsedSubObject(CreateLabelFromText(text));
                     formAdd.AddParsedSubObject(CreateBreakLiteral());
                 }
@@ -267,14 +274,14 @@ namespace System.Web {
 
         private string GetStaticErrorMessage(HttpContext context) {
             string preferredRenderingType = GetPreferredRenderingType(context);
-            Debug.Assert(preferredRenderingType != null);
+            System.Web.Util.Debug.Assert(preferredRenderingType != null);
 
             string errorMessage;
-            if (StringUtil.StringStartsWithIgnoreCase(preferredRenderingType, "xhtml")) {
+            if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(preferredRenderingType, "xhtml")) {
                 errorMessage = FormatStaticErrorMessage(StaticErrorFormatterHelper.XhtmlErrorBeginTemplate,
                                                         StaticErrorFormatterHelper.XhtmlErrorEndTemplate);
             }
-            else if (StringUtil.StringStartsWithIgnoreCase(preferredRenderingType, "wml")) {
+            else if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(preferredRenderingType, "wml")) {
                 errorMessage = FormatStaticErrorMessage(StaticErrorFormatterHelper.WmlErrorBeginTemplate,
                                                         StaticErrorFormatterHelper.WmlErrorEndTemplate);
 
@@ -299,11 +306,11 @@ namespace System.Web {
             StringBuilder errorContent = new StringBuilder();
 
             // Server error text with the application name and Title
-            string errorHeader = SR.GetString(SR.Error_Formatter_ASPNET_Error, HttpRuntime.AppDomainAppVirtualPath);
+            string errorHeader = System.Web.SR.GetString(System.Web.SR.Error_Formatter_ASPNET_Error, HttpRuntime.AppDomainAppVirtualPath);
             errorContent.Append(String.Format(CultureInfo.CurrentCulture, errorBeginTemplate, errorHeader, ErrorTitle));
 
             // Description
-            errorContent.Append(SR.GetString(SR.Error_Formatter_Description) + " " + Description);
+            errorContent.Append(System.Web.SR.GetString(System.Web.SR.Error_Formatter_Description) + " " + Description);
             errorContent.Append(StaticErrorFormatterHelper.Break);
 
             // Misc Title
@@ -325,11 +332,11 @@ namespace System.Web {
             // File & line# info
             String sourceFilePath = GetDisplayPath();
             if (!String.IsNullOrEmpty(sourceFilePath)) {
-                String text = SR.GetString(SR.Error_Formatter_Source_File) + " " + sourceFilePath;
+                String text = System.Web.SR.GetString(System.Web.SR.Error_Formatter_Source_File) + " " + sourceFilePath;
                 errorContent.Append(text);
                 errorContent.Append(StaticErrorFormatterHelper.Break);
 
-                text = SR.GetString(SR.Error_Formatter_Line) + " " + SourceFileLineNumber;
+                text = System.Web.SR.GetString(System.Web.SR.Error_Formatter_Line) + " " + SourceFileLineNumber;
                 errorContent.Append(text);
                 errorContent.Append(StaticErrorFormatterHelper.Break);
             }
@@ -396,7 +403,7 @@ namespace System.Web {
             sb.Append("         .marker {font-weight: bold; color: black;text-decoration: none;}\r\n");
             sb.Append("         .version {color: gray;}\r\n");
             sb.Append("         .error {margin-bottom: 10px;}\r\n");
-            sb.Append("         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:hand; }\r\n");
+            sb.Append("         .expandable { text-decoration:underline; font-weight:bold; color:navy; cursor:pointer; }\r\n");
             sb.Append("         @media screen and (max-width: 639px) {\r\n");
             sb.Append("          pre { width: 440px; overflow: auto; white-space: pre-wrap; word-wrap: break-word; }\r\n");
             sb.Append("         }\r\n");
@@ -406,85 +413,100 @@ namespace System.Web {
             sb.Append("        </style>\r\n");
             sb.Append("    </head>\r\n\r\n");
             sb.Append("    <body bgcolor=\"white\">\r\n\r\n");
-            sb.Append("            <span><H1>" + SR.GetString(SR.Error_Formatter_ASPNET_Error, HttpRuntime.AppDomainAppVirtualPath) + "<hr width=100% size=1 color=silver></H1>\r\n\r\n");
+            sb.Append("            <span><H1>" + System.Web.SR.GetString(System.Web.SR.Error_Formatter_ASPNET_Error, HttpRuntime.AppDomainAppVirtualPath) + "<hr width=100% size=1 color=silver></H1>\r\n\r\n");
             sb.Append("            <h2> <i>" + ErrorTitle + "</i> </h2></span>\r\n\r\n");
             sb.Append("            <font face=\"Arial, Helvetica, Geneva, SunSans-Regular, sans-serif \">\r\n\r\n");
-            sb.Append("            <b> " + SR.GetString(SR.Error_Formatter_Description) +  " </b>" + Description + "\r\n");
+
+            // Top-level description
+            sb.Append("            <b> " + SR.GetString(SR.Error_Formatter_Description) + " </b>" + Description + "\r\n");
             sb.Append("            <br><br>\r\n\r\n");
-            if (MiscSectionTitle != null) {
-                sb.Append("            <b> " + MiscSectionTitle + ": </b>" + MiscSectionContent + "<br><br>\r\n\r\n");
-            }
 
-            WriteColoredSquare(sb, ColoredSquareTitle, ColoredSquareDescription, ColoredSquareContent, WrapColoredSquareContentLines);
-            if (ShowSourceFileInfo) {
-                string displayPath = GetDisplayPath();
-                if (displayPath == null)
-                    displayPath = SR.GetString(SR.Error_Formatter_No_Source_File);
-                sb.Append("            <b> " + SR.GetString(SR.Error_Formatter_Source_File) + " </b> " + displayPath + "<b> &nbsp;&nbsp; " + SR.GetString(SR.Error_Formatter_Line) + " </b> " + SourceFileLineNumber + "\r\n");
-                sb.Append("            <br><br>\r\n\r\n");
-            }
+            // Error details
+            WriteErrorDetails(sb, dontShowSensitiveInfo);
 
-            ConfigurationErrorsException configErrors = Exception as ConfigurationErrorsException;
-            if (configErrors != null && configErrors.Errors.Count > 1) {
-                sb.Append(String.Format(CultureInfo.InvariantCulture, startExpandableBlock, "additionalConfigurationErrors",
-                    SR.GetString(SR.TmplConfigurationAdditionalError)));
-
-                //
-                // Get the configuration message as though there were user code on the stack,
-                // so that the full path to the configuration file is not shown if the app
-                // does not have PathDiscoveryPermission.
-                // 
-                bool revertPermitOnly = false;
-                try {
-                    PermissionSet ps = HttpRuntime.NamedPermissionSet;
-                    if (ps != null) {
-                        ps.PermitOnly();
-                        revertPermitOnly = true;
-                    }
-                    
-                    int errorNumber = 0;
-                    foreach(ConfigurationException configurationError in configErrors.Errors) {
-                        if (errorNumber > 0) {
-                            sb.Append(configurationError.Message);
-                            sb.Append("<BR/>\r\n");
-                        }
-
-                        errorNumber++;
-                    }
-                }
-                finally {
-                    if (revertPermitOnly) {
-                        CodeAccessPermission.RevertPermitOnly();
-                    }
-                }
-
-                sb.Append(endExpandableBlock);
-                sb.Append(toggleScript);
-            }
-            // If it's a FileNotFoundException/FileLoadException/BadImageFormatException with a FusionLog,
-            // write it out (ASURT 83587)
-            if (!dontShowSensitiveInfo && Exception != null) {
-                // (Only display the fusion log in medium or higher (ASURT 126827)
-                if (HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                    WriteFusionLogWithAssert(sb);
-                }
-            }
-
-            WriteColoredSquare(sb, ColoredSquare2Title, ColoredSquare2Description, ColoredSquare2Content, false);
-
+             // Footer
             if (!(dontShowSensitiveInfo || _dontShowVersion)) {  // don't show version for security reasons
                 sb.Append("            <hr width=100% size=1 color=silver>\r\n\r\n");
                 sb.Append("            <b>" + SR.GetString(SR.Error_Formatter_Version) + "</b>&nbsp;" +
                                        SR.GetString(SR.Error_Formatter_CLR_Build) + VersionInfo.ClrVersion +
                                        SR.GetString(SR.Error_Formatter_ASPNET_Build) + VersionInfo.EngineVersion + "\r\n\r\n");
-                sb.Append("            </font>\r\n\r\n");
             }
+            sb.Append("            </font>\r\n\r\n");
             sb.Append("    </body>\r\n");
             sb.Append("</html>\r\n");
 
-            sb.Append(PostMessage);
+             sb.Append(PostMessage);
 
-            return sb.ToString();
+             return sb.ToString();
+        }
+
+        internal void WriteErrorDetails(StringBuilder sb, bool dontShowSensitiveInfo) {
+
+             // Error Message
+            if (MiscSectionTitle != null) {
+                sb.Append("            <b> " + MiscSectionTitle + ": </b>" + MiscSectionContent + "<br><br>\r\n\r\n");
+            }
+
+            // Source Code Box
+            WritePrimaryBox(sb, dontShowSensitiveInfo);
+
+            // Additional config lines
+            ConfigurationErrorsException configErrors = Exception as ConfigurationErrorsException;
+            if (configErrors != null && configErrors.Errors.Count > 1) {
+                sb.Append(String.Format(CultureInfo.InvariantCulture, startExpandableBlock, "additionalConfigurationErrors",
+                    System.Web.SR.GetString(System.Web.SR.TmplConfigurationAdditionalError)));
+                sb.Append(startColoredSquare + "<pre>");
+
+                //
+                // Get the configuration message as though there were user code on the stack,
+                // so that the full path to the configuration file is not shown if the app
+                // does not have PathDiscoveryPermission.
+                //                                 
+                int errorNumber = 0;
+                foreach(ConfigurationException configurationError in configErrors.Errors) {
+                    if (errorNumber > 0) {
+                        sb.Append(configurationError.Message);
+                        sb.Append("<BR/>\r\n");
+                    }
+
+                    errorNumber++;
+                }
+                
+                sb.Append("</pre>" + endColoredSquare);
+                sb.Append(endExpandableBlock);
+                sb.Append(toggleScript);
+            }
+
+            // FusionLog
+            // If it's a FileNotFoundException/FileLoadException/BadImageFormatException with a FusionLog,
+            // write it out (ASURT 83587)
+#if (!MONO || !FEATURE_PAL)
+            if (!dontShowSensitiveInfo && Exception != null) {
+
+                // (Only display the fusion log in medium or higher (ASURT 126827)
+                if (HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
+                    WriteFusionLogWithAssert(sb);
+                }            
+            }
+#endif
+
+            WriteSecondaryBox(sb, dontShowSensitiveInfo);
+        }
+
+        protected virtual void WritePrimaryBox(StringBuilder sb, bool dontShowSensitiveInfo) {
+            WriteColoredSquare(sb, ColoredSquareTitle, ColoredSquareDescription, ColoredSquareContent, WrapColoredSquareContentLines);
+            if (ShowSourceFileInfo) {
+                string displayPath = GetDisplayPath();
+                if (displayPath == null)
+                    displayPath = SR.GetString(SR.Error_Formatter_No_Source_File);
+
+                sb.Append("            <b> " + SR.GetString(SR.Error_Formatter_Source_File) + " </b> " + displayPath + "<b> &nbsp;&nbsp; " + SR.GetString(SR.Error_Formatter_Line) + " </b> " + SourceFileLineNumber + "\r\n");
+                sb.Append("            <br><br>\r\n\r\n");
+            }
+        }
+
+        protected virtual void WriteSecondaryBox(StringBuilder sb, bool dontShowSensitiveInfo) {
+            WriteColoredSquare(sb, ColoredSquare2Title, ColoredSquare2Description, ColoredSquare2Content, false);
         }
 
         [PermissionSet(SecurityAction.Assert, Unrestricted=true)]
@@ -509,33 +531,28 @@ namespace System.Web {
                 }
                 if (!String.IsNullOrEmpty(fusionLog)) {
                     WriteColoredSquare(sb,
-                                       SR.GetString(SR.Error_Formatter_FusionLog),
-                                       SR.GetString(SR.Error_Formatter_FusionLogDesc, filename),
+                                       System.Web.SR.GetString(System.Web.SR.Error_Formatter_FusionLog),
+                                       System.Web.SR.GetString(System.Web.SR.Error_Formatter_FusionLogDesc, filename),
                                        HttpUtility.HtmlEncode(fusionLog),
                                        false /*WrapColoredSquareContentLines*/);
+                    _fusionLogWritten = true;
                     break;
                 }
             }
         }
 
-        private void WriteColoredSquare(StringBuilder sb, string title, string description,
+        protected void WriteColoredSquare(StringBuilder sb, string title, string description,
             string content, bool wrapContentLines) {
             if (title != null) {
                 sb.Append("            <b>" + title + ":</b> " + description + "<br><br>\r\n\r\n");
-                sb.Append("            <table width=100% bgcolor=\"#ffffcc\">\r\n");
-                sb.Append("               <tr>\r\n");
-                sb.Append("                  <td>\r\n");
-                sb.Append("                      <code>");
+                sb.Append(startColoredSquare);                
                 if (!wrapContentLines)
                     sb.Append("<pre>");
                 sb.Append("\r\n\r\n");
                 sb.Append(content);
                 if (!wrapContentLines)
                     sb.Append("</pre>");
-                sb.Append("</code>\r\n\r\n");
-                sb.Append("                  </td>\r\n");
-                sb.Append("               </tr>\r\n");
-                sb.Append("            </table>\r\n\r\n");
+                sb.Append(endColoredSquare);
                 sb.Append("            <br>\r\n\r\n");
             }
         }
@@ -851,7 +868,7 @@ namespace System.Web {
                     return HttpUtility.FormatPlainTextAsHtml(msg);
 
                 // Otherwise, use some default string
-                return SR.GetString(SR.Unhandled_Err_Error);
+                return System.Web.SR.GetString(System.Web.SR.Unhandled_Err_Error);
             }
         }
 
@@ -861,13 +878,13 @@ namespace System.Web {
                     return _message;
                 }
                 else {
-                    return SR.GetString(SR.Unhandled_Err_Desc);
+                    return System.Web.SR.GetString(System.Web.SR.Unhandled_Err_Desc);
                 }
             }
         }
 
         protected override string MiscSectionTitle {
-            get { return SR.GetString(SR.Unhandled_Err_Exception_Details);}
+            get { return System.Web.SR.GetString(System.Web.SR.Unhandled_Err_Exception_Details);}
         }
 
         protected override string MiscSectionContent {
@@ -886,13 +903,13 @@ namespace System.Web {
 
                 if (_initialException is UnauthorizedAccessException) {
                     msg.Append("\r\n<br><br>");
-                    String errDesc = SR.GetString(SR.Unauthorized_Err_Desc1);
+                    String errDesc = System.Web.SR.GetString(System.Web.SR.Unauthorized_Err_Desc1);
                     errDesc = HttpUtility.HtmlEncode(errDesc);
                     msg.Append(errDesc);
                     AdaptiveMiscContent.Add(errDesc);
 
                     msg.Append("\r\n<br><br>");
-                    errDesc = SR.GetString(SR.Unauthorized_Err_Desc2);
+                    errDesc = System.Web.SR.GetString(System.Web.SR.Unauthorized_Err_Desc2);
                     errDesc = HttpUtility.HtmlEncode(errDesc);
                     msg.Append(errDesc);
                     AdaptiveMiscContent.Add(errDesc);
@@ -913,7 +930,7 @@ namespace System.Web {
         }
 
         protected override string ColoredSquareTitle {
-            get { return SR.GetString(SR.TmplCompilerSourceSecTitle);}
+            get { return System.Web.SR.GetString(System.Web.SR.TmplCompilerSourceSecTitle);}
         }
 
         protected override string ColoredSquareContent {
@@ -930,9 +947,13 @@ namespace System.Web {
                     // Also, if trust is less than medium, never display the message that
                     // explains how to turn on debugging, since it's not allowed (Whidbey 9176)
                     string msg;
+#if (!MONO || !FEATURE_PAL)                    
                     if (!_fGeneratedCodeOnStack ||
                         !HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                        msg = SR.GetString(SR.Src_not_available_nodebug);
+#else
+                    if (!_fGeneratedCodeOnStack) {
+#endif
+                        msg = System.Web.SR.GetString(System.Web.SR.Src_not_available_nodebug);
                     }
                     else {
                         if (IsTextRightToLeft) {
@@ -949,7 +970,7 @@ namespace System.Web {
                         // that identify the beginnings and ends of config/code samples.  After
                         // FormatPlainTextAsHtml() is called, and the markers will be replaced with
                         // left-to-right markup tags below.
-                        msg = SR.GetString(SR.Src_not_available,
+                        msg = System.Web.SR.GetString(System.Web.SR.Src_not_available,
                                            ((setLeftToRightMarker) ? BeginLeftToRightMarker : string.Empty),
                                            ((setLeftToRightMarker) ? EndLeftToRightMarker : string.Empty),
                                            ((setLeftToRightMarker) ? BeginLeftToRightMarker : string.Empty),
@@ -981,7 +1002,7 @@ namespace System.Web {
         }
 
         protected override string ColoredSquare2Title {
-            get { return SR.GetString(SR.Unhandled_Err_Stack_Trace);}
+            get { return System.Web.SR.GetString(System.Web.SR.Unhandled_Err_Stack_Trace);}
         }
 
         protected override string ColoredSquare2Content {
@@ -1077,7 +1098,7 @@ namespace System.Web {
 
                                 // Remember the file/line number of the top level stack
                                 // item for which we have symbols
-                                if (_physicalPath == null && FileUtil.FileExists(fileName)) {
+                                if (_physicalPath == null && System.Web.Util.FileUtil.FileExists(fileName)) {
                                     _physicalPath = fileName;
 
                                     _line = sf.GetFileLineNumber();
@@ -1150,14 +1171,14 @@ namespace System.Web {
 
         protected override string ErrorTitle {
             get {
-                return SR.GetString(SR.Security_Err_Error);
+                return System.Web.SR.GetString(System.Web.SR.Security_Err_Error);
             }
         }
 
         protected override string Description {
             get {
                 // VSWhidbey 493720: Do Html encode to preserve space characters
-                return HttpUtility.FormatPlainTextAsHtml(SR.GetString(SR.Security_Err_Desc));
+                return HttpUtility.FormatPlainTextAsHtml(System.Web.SR.GetString(System.Web.SR.Security_Err_Desc));
             }
         }
     }
@@ -1175,15 +1196,15 @@ namespace System.Web {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.NotFound_Resource_Not_Found);}
+            get { return System.Web.SR.GetString(System.Web.SR.NotFound_Resource_Not_Found);}
         }
 
         protected override string Description {
-            get { return HttpUtility.FormatPlainTextAsHtml(SR.GetString(SR.NotFound_Http_404));}
+            get { return HttpUtility.FormatPlainTextAsHtml(System.Web.SR.GetString(System.Web.SR.NotFound_Http_404));}
         }
 
         protected override string MiscSectionTitle {
-            get { return SR.GetString(SR.NotFound_Requested_Url);}
+            get { return System.Web.SR.GetString(System.Web.SR.NotFound_Requested_Url);}
         }
 
         protected override string MiscSectionContent {
@@ -1221,7 +1242,7 @@ namespace System.Web {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.Forbidden_Type_Not_Served);}
+            get { return System.Web.SR.GetString(System.Web.SR.Forbidden_Type_Not_Served);}
         }
 
         protected override string Description {
@@ -1234,14 +1255,14 @@ namespace System.Web {
                 String extMessage = String.Empty;
 
                 if (m.Success)
-                    extMessage = SR.GetString(SR.Forbidden_Extension_Incorrect, m.ToString());
+                    extMessage = System.Web.SR.GetString(System.Web.SR.Forbidden_Extension_Incorrect, m.ToString());
 
-                return HttpUtility.FormatPlainTextAsHtml(SR.GetString(SR.Forbidden_Extension_Desc, extMessage));
+                return HttpUtility.FormatPlainTextAsHtml(System.Web.SR.GetString(System.Web.SR.Forbidden_Extension_Desc, extMessage));
             }
         }
 
         protected override string MiscSectionTitle {
-            get { return SR.GetString(SR.NotFound_Requested_Url);}
+            get { return System.Web.SR.GetString(System.Web.SR.NotFound_Requested_Url);}
         }
 
         protected override string MiscSectionContent {
@@ -1274,15 +1295,15 @@ namespace System.Web {
 
         protected override string ErrorTitle {
             get {
-                return SR.GetString(SR.Generic_Err_Title);
+                return System.Web.SR.GetString(System.Web.SR.Generic_Err_Title);
             }
         }
 
         protected override string Description {
             get {
-                return SR.GetString(
-                                    _local ? SR.Generic_Err_Local_Desc
-                                           : SR.Generic_Err_Remote_Desc);
+                return System.Web.SR.GetString(
+                                    _local ? System.Web.SR.Generic_Err_Local_Desc
+                                           : System.Web.SR.Generic_Err_Remote_Desc);
             }
         }
 
@@ -1300,7 +1321,7 @@ namespace System.Web {
 
         protected override string ColoredSquareTitle {
             get {
-                String detailsTitle = SR.GetString(SR.Generic_Err_Details_Title);
+                String detailsTitle = System.Web.SR.GetString(System.Web.SR.Generic_Err_Details_Title);
                 AdaptiveMiscContent.Add(detailsTitle);
                 return detailsTitle;
             }
@@ -1308,9 +1329,9 @@ namespace System.Web {
 
         protected override string ColoredSquareDescription {
             get {
-                String detailsDesc = SR.GetString(
-                                    _local ? SR.Generic_Err_Local_Details_Desc
-                                           : SR.Generic_Err_Remote_Details_Desc);
+                String detailsDesc = System.Web.SR.GetString(
+                                    _local ? System.Web.SR.Generic_Err_Local_Details_Desc
+                                           : System.Web.SR.Generic_Err_Remote_Details_Desc);
                 detailsDesc = HttpUtility.HtmlEncode(detailsDesc);
                 AdaptiveMiscContent.Add(detailsDesc);
                 return detailsDesc;
@@ -1319,9 +1340,9 @@ namespace System.Web {
 
         protected override string ColoredSquareContent {
             get {
-                string content = HttpUtility.HtmlEncode(SR.GetString(
-                                    _local ? SR.Generic_Err_Local_Details_Sample
-                                           : SR.Generic_Err_Remote_Details_Sample));
+                string content = HttpUtility.HtmlEncode(System.Web.SR.GetString(
+                                    _local ? System.Web.SR.Generic_Err_Local_Details_Sample
+                                           : System.Web.SR.Generic_Err_Remote_Details_Sample));
 
                 return (WrapWithLeftToRightTextFormatIfNeeded(content));
             }
@@ -1329,7 +1350,7 @@ namespace System.Web {
 
         protected override string ColoredSquare2Title {
             get {
-                String noteTitle = SR.GetString(SR.Generic_Err_Notes_Title);
+                String noteTitle = System.Web.SR.GetString(System.Web.SR.Generic_Err_Notes_Title);
                 AdaptiveMiscContent.Add(noteTitle);
                 return noteTitle;
             }
@@ -1337,7 +1358,7 @@ namespace System.Web {
 
         protected override string ColoredSquare2Description {
             get {
-                String notesDesc = SR.GetString(SR.Generic_Err_Notes_Desc);
+                String notesDesc = System.Web.SR.GetString(System.Web.SR.Generic_Err_Notes_Desc);
                 notesDesc = HttpUtility.HtmlEncode(notesDesc);
                 AdaptiveMiscContent.Add(notesDesc);
                 return notesDesc;
@@ -1346,9 +1367,9 @@ namespace System.Web {
 
         protected override string ColoredSquare2Content {
             get {
-                string content = HttpUtility.HtmlEncode(SR.GetString(
-                                    _local ? SR.Generic_Err_Local_Notes_Sample
-                                           : SR.Generic_Err_Remote_Notes_Sample));
+                string content = HttpUtility.HtmlEncode(System.Web.SR.GetString(
+                                    _local ? System.Web.SR.Generic_Err_Local_Notes_Sample
+                                           : System.Web.SR.Generic_Err_Remote_Notes_Sample));
 
                 return (WrapWithLeftToRightTextFormatIfNeeded(content));
             }
@@ -1371,11 +1392,11 @@ namespace System.Web {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.Generic_Err_Title); }
+            get { return System.Web.SR.GetString(System.Web.SR.Generic_Err_Title); }
         }
 
         protected override string Description {
-            get { return HttpUtility.FormatPlainTextAsHtml(SR.GetString(SR.CustomErrorFailed_Err_Desc)); }
+            get { return HttpUtility.FormatPlainTextAsHtml(System.Web.SR.GetString(System.Web.SR.CustomErrorFailed_Err_Desc)); }
         }
 
         protected override string MiscSectionTitle {
@@ -1417,13 +1438,13 @@ namespace System.Web {
 
             // Don't show any source file if the user doesn't have access to it (ASURT 122430)
             if (fileName != null && !HttpRuntime.HasFilePermission(fileName))
-                return SR.GetString(SR.WithFile_No_Relevant_Line);
+                return System.Web.SR.GetString(System.Web.SR.WithFile_No_Relevant_Line);
 
             // 
             StringBuilder sb = new StringBuilder();
 
             if (lineNumber <= 0) {
-                return SR.GetString(SR.WithFile_No_Relevant_Line);
+                return System.Web.SR.GetString(System.Web.SR.WithFile_No_Relevant_Line);
             }
 
             TextReader reader = null;
@@ -1447,7 +1468,7 @@ namespace System.Web {
 
             if (reader == null) {
                 if (sourceCode == null)
-                    return SR.GetString(SR.WithFile_No_Relevant_Line);
+                    return System.Web.SR.GetString(System.Web.SR.WithFile_No_Relevant_Line);
 
                 // Can't open the file?  Use the dynamically generated content...
                 reader = new StringReader(sourceCode);
@@ -1475,7 +1496,7 @@ namespace System.Web {
                         fFoundLine = true;
                         String linestr = i.ToString("G", CultureInfo.CurrentCulture);
 
-                        sb.Append(SR.GetString(SR.WithFile_Line_Num, linestr));
+                        sb.Append(System.Web.SR.GetString(System.Web.SR.WithFile_Line_Num, linestr));
                         if (linestr.Length < 3)
                             sb.Append(' ', 3 - linestr.Length);
                         sb.Append(HttpUtility.HtmlEncode(sourceLine));
@@ -1496,7 +1517,7 @@ namespace System.Web {
                 }
 
                 if (!fFoundLine)
-                    return SR.GetString(SR.WithFile_No_Relevant_Line);
+                    return System.Web.SR.GetString(System.Web.SR.WithFile_No_Relevant_Line);
             }
             finally {
                 // Make sure we always close the reader
@@ -1521,7 +1542,7 @@ namespace System.Web {
                 // Make sure _virtualPath is really a virtual path.  Sometimes,
                 // it can actually be a physical path, in which case we keep
                 // it as is.
-                if (UrlPath.IsValidVirtualPathWithoutProtocol(_virtualPath))
+                if (System.Web.Util.UrlPath.IsValidVirtualPathWithoutProtocol(_virtualPath))
                     _physicalPath = HostingEnvironment.MapPath(_virtualPath);
                 else
                     _physicalPath = _virtualPath;
@@ -1560,25 +1581,7 @@ namespace System.Web {
      * Formatter used for compilation errors
      */
     internal class DynamicCompileErrorFormatter : ErrorFormatter {
-
-        private const string startExpandableBlock =
-            "<br><div class=\"expandable\" onclick=\"OnToggleTOCLevel1('{0}')\">" +
-            "{1}" +
-            ":</div>\r\n" +
-            "<div id=\"{0}\" style=\"display: none;\">\r\n" +
-            "            <br><table width=100% bgcolor=\"#ffffcc\">\r\n" +
-            "               <tr>\r\n" +
-            "                  <td>\r\n" +
-            "                      <code><pre>\r\n\r\n";
-
-        private const string endExpandableBlock =
-            "</pre></code>\r\n\r\n" +
-            "                  </td>\r\n" +
-            "               </tr>\r\n" +
-            "            </table>\r\n\r\n" +
-            "            \r\n\r\n" +
-            "</div>\r\n";
-
+        
         // Number of lines before and after the error lines included in the report
         private const int errorRange = 2;
 
@@ -1603,19 +1606,19 @@ namespace System.Web {
 
         protected override string ErrorTitle {
             get {
-                return SR.GetString(SR.TmplCompilerErrorTitle);
+                return System.Web.SR.GetString(System.Web.SR.TmplCompilerErrorTitle);
             }
         }
 
         protected override string Description {
             get {
-                return SR.GetString(SR.TmplCompilerErrorDesc);
+                return System.Web.SR.GetString(System.Web.SR.TmplCompilerErrorDesc);
             }
         }
 
         protected override string MiscSectionTitle {
             get {
-                return SR.GetString(SR.TmplCompilerErrorSecTitle);
+                return System.Web.SR.GetString(System.Web.SR.TmplCompilerErrorSecTitle);
             }
         }
 
@@ -1627,7 +1630,7 @@ namespace System.Web {
 
                 // Handle fatal errors where we couldn't find an error line
                 if (results.Errors.Count == 0 && results.NativeCompilerReturnValue != 0) {
-                    string fatalError = SR.GetString(SR.TmplCompilerFatalError,
+                    string fatalError = System.Web.SR.GetString(System.Web.SR.TmplCompilerFatalError,
                                             results.NativeCompilerReturnValue.ToString("G",
                                                 CultureInfo.CurrentCulture));
                     AdaptiveMiscContent.Add(fatalError);
@@ -1643,18 +1646,17 @@ namespace System.Web {
                         string htmlEncodedText = HttpUtility.HtmlEncode(e.ErrorNumber);
                         string adaptiveContentLine = htmlEncodedText;
                         sb.Append(htmlEncodedText);
-                        // Don't show the error message in low trust (VSWhidbey 87012)
-                        if (HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                            htmlEncodedText = HttpUtility.HtmlEncode(e.ErrorText);
-                            sb.Append(": ");
-                            sb.Append(htmlEncodedText);
-                            adaptiveContentLine += ": " + htmlEncodedText;
-                        }
+                                                
+                        htmlEncodedText = HttpUtility.HtmlEncode(e.ErrorText);
+                        sb.Append(": ");
+                        sb.Append(htmlEncodedText);
+                        adaptiveContentLine += ": " + htmlEncodedText;
+                        
                         AdaptiveMiscContent.Add(adaptiveContentLine);
                         sb.Append("<br><br>\r\n");
 
                         sb.Append("<b>");
-                        sb.Append(SR.GetString(SR.TmplCompilerSourceSecTitle));
+                        sb.Append(System.Web.SR.GetString(System.Web.SR.TmplCompilerSourceSecTitle));
                         sb.Append(":</b><br><br>\r\n");
                         sb.Append("            <table width=100% bgcolor=\"#ffffcc\">\r\n");
                         sb.Append("               <tr><td>\r\n");
@@ -1672,7 +1674,7 @@ namespace System.Web {
 
                         // display file
                         sb.Append("            <b>");
-                        sb.Append(SR.GetString(SR.TmplCompilerSourceFileTitle));
+                        sb.Append(System.Web.SR.GetString(System.Web.SR.TmplCompilerSourceFileTitle));
                         sb.Append(":</b> ");
                         _sourceFilePath = GetSafePath(e.FileName);
                         sb.Append(HttpUtility.HtmlEncode(_sourceFilePath));
@@ -1681,7 +1683,7 @@ namespace System.Web {
                         // display number
                         TypeConverter itc = new Int32Converter();
                         sb.Append("            &nbsp;&nbsp; <b>");
-                        sb.Append(SR.GetString(SR.TmplCompilerSourceFileLine));
+                        sb.Append(System.Web.SR.GetString(System.Web.SR.TmplCompilerSourceFileLine));
                         sb.Append(":</b>  ");
                         _sourceFileLineNumber = e.Line;
                         sb.Append(HttpUtility.HtmlEncode(itc.ConvertToString(_sourceFileLineNumber)));
@@ -1692,24 +1694,23 @@ namespace System.Web {
 
                 if (results.Errors.HasWarnings) {
                     sb.Append("<br><div class=\"expandable\" onclick=\"OnToggleTOCLevel1('warningDiv')\">");
-                    sb.Append(SR.GetString(SR.TmplCompilerWarningBanner));
+                    sb.Append(System.Web.SR.GetString(System.Web.SR.TmplCompilerWarningBanner));
                     sb.Append(":</div>\r\n");
                     sb.Append("<div id=\"warningDiv\" style=\"display: none;\">\r\n");
                     foreach (CompilerError e in results.Errors) {
                         if (e.IsWarning) {
                             sb.Append("<b>");
-                            sb.Append(SR.GetString(SR.TmplCompilerWarningSecTitle));
+                            sb.Append(System.Web.SR.GetString(System.Web.SR.TmplCompilerWarningSecTitle));
                             sb.Append(":</b> ");
                             sb.Append(HttpUtility.HtmlEncode(e.ErrorNumber));
-                            // Don't show the error message in low trust (VSWhidbey 87012)
-                            if (HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                                sb.Append(": ");
-                                sb.Append(HttpUtility.HtmlEncode(e.ErrorText));
-                            }
+                                                        
+                            sb.Append(": ");
+                            sb.Append(HttpUtility.HtmlEncode(e.ErrorText));
+                            
                             sb.Append("<br>\r\n");
 
                             sb.Append("<b>");
-                            sb.Append(SR.GetString(SR.TmplCompilerSourceSecTitle));
+                            sb.Append(System.Web.SR.GetString(System.Web.SR.TmplCompilerSourceSecTitle));
                             sb.Append(":</b><br><br>\r\n");
                             sb.Append("            <table width=100% bgcolor=\"#ffffcc\">\r\n");
                             sb.Append("               <tr><td>\r\n");
@@ -1732,32 +1733,29 @@ namespace System.Web {
                 }
 
                 if (!_hideDetailedCompilerOutput) {
-                    if (results.Output.Count > 0) {
-                        // (Only display the compiler output in medium or higher (ASURT 126827)
-                        if (HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                            sb.Append(String.Format(CultureInfo.CurrentCulture, startExpandableBlock, "compilerOutputDiv",
-                                SR.GetString(SR.TmplCompilerCompleteOutput)));
-                            foreach (string line in results.Output) {
-                                sb.Append(HttpUtility.HtmlEncode(line));
-                                sb.Append("\r\n");
-                            }
-                            sb.Append(endExpandableBlock);
+                    if (results.Output.Count > 0) {                                                
+                        sb.Append(String.Format(CultureInfo.CurrentCulture, startExpandableBlock, "compilerOutputDiv",
+                            System.Web.SR.GetString(System.Web.SR.TmplCompilerCompleteOutput)));
+                        sb.Append(startColoredSquare + "<pre>");
+                        foreach (string line in results.Output) {
+                            sb.Append(HttpUtility.HtmlEncode(line));
+                            sb.Append("\r\n");
                         }
+                        sb.Append("</pre>" + endColoredSquare);
+                        sb.Append(endExpandableBlock);                        
                     }
 
                     // If we have the generated source code, display it
                     // (Only display the source in medium or higher (ASURT 128039)
-                    if (_excep.SourceCodeWithoutDemand != null &&
-                        HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-
+                    if (_excep.SourceCodeWithoutDemand != null) {
                         sb.Append(String.Format(CultureInfo.CurrentCulture, startExpandableBlock, "dynamicCodeDiv",
-                            SR.GetString(SR.TmplCompilerGeneratedFile)));
-
+                            System.Web.SR.GetString(System.Web.SR.TmplCompilerGeneratedFile)));
+                        sb.Append(startColoredSquare + "<pre>");
                         string[] sourceLines = _excep.SourceCodeWithoutDemand.Split('\n');
                         int currentLine = 1;
                         foreach (string s in sourceLines) {
                             string number = currentLine.ToString("G", CultureInfo.CurrentCulture);
-                            sb.Append(SR.GetString(SR.TmplCompilerLineHeader, number));
+                            sb.Append(System.Web.SR.GetString(System.Web.SR.TmplCompilerLineHeader, number));
                             if (number.Length < 5) {
                                 sb.Append(' ', 5 - number.Length);
                             }
@@ -1765,24 +1763,11 @@ namespace System.Web {
 
                             sb.Append(HttpUtility.HtmlEncode(s));
                         }
+                        sb.Append("</pre>" + endColoredSquare);
                         sb.Append(endExpandableBlock);
                     }
 
-                    sb.Append(@"
-    <script type=""text/javascript"">
-    function OnToggleTOCLevel1(level2ID)
-    {
-      var elemLevel2 = document.getElementById(level2ID);
-      if (elemLevel2.style.display == 'none')
-      {
-        elemLevel2.style.display = '';
-      }
-      else {
-        elemLevel2.style.display = 'none';
-      }
-    }
-    </script>
-                          ");
+                    sb.Append(toggleScript);                    
                 }
 
                 return sb.ToString();
@@ -1820,15 +1805,15 @@ namespace System.Web {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.Parser_Error);}
+            get { return System.Web.SR.GetString(System.Web.SR.Parser_Error);}
         }
 
         protected override string Description {
-            get { return SR.GetString(SR.Parser_Desc);}
+            get { return System.Web.SR.GetString(System.Web.SR.Parser_Desc);}
         }
 
         protected override string MiscSectionTitle {
-            get { return SR.GetString(SR.Parser_Error_Message);}
+            get { return System.Web.SR.GetString(System.Web.SR.Parser_Error_Message);}
         }
 
         protected override string MiscSectionContent {
@@ -1836,7 +1821,7 @@ namespace System.Web {
         }
 
         protected override string ColoredSquareTitle {
-            get { return SR.GetString(SR.Parser_Source_Error);}
+            get { return System.Web.SR.GetString(System.Web.SR.Parser_Source_Error);}
         }
 
         protected override StringCollection AdaptiveMiscContent {
@@ -1876,15 +1861,15 @@ namespace System.Web {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.Config_Error);}
+            get { return System.Web.SR.GetString(System.Web.SR.Config_Error);}
         }
 
         protected override string Description {
-            get { return SR.GetString(SR.Config_Desc);}
+            get { return System.Web.SR.GetString(System.Web.SR.Config_Desc);}
         }
 
         protected override string MiscSectionTitle {
-            get { return SR.GetString(SR.Parser_Error_Message);}
+            get { return System.Web.SR.GetString(System.Web.SR.Parser_Error_Message);}
         }
 
         protected override string MiscSectionContent {
@@ -1892,7 +1877,7 @@ namespace System.Web {
         }
 
         protected override string ColoredSquareTitle {
-            get { return SR.GetString(SR.Parser_Source_Error);}
+            get { return System.Web.SR.GetString(System.Web.SR.Parser_Source_Error);}
         }
 
         protected override StringCollection AdaptiveMiscContent {
@@ -1902,11 +1887,86 @@ namespace System.Web {
         protected override string ColoredSquareContent {
             get {
                 if (!AllowSourceCode) {
-                    return SR.GetString(SR.Generic_Err_Remote_Desc);
+                    return System.Web.SR.GetString(System.Web.SR.Generic_Err_Remote_Desc);
                 }
 
                 return base.ColoredSquareContent;
             }
+        }
+
+        protected override bool WrapColoredSquareContentLines {
+            get {
+                if (!AllowSourceCode) {
+                    return true;
+                }
+
+                 return base.WrapColoredSquareContentLines;
+            }
+        }
+
+         protected override void WriteSecondaryBox(StringBuilder sb, bool dontShowSensitiveInfo) {
+
+             ErrorFormatter nestedFormatter = GetFormatterForInnerException((ConfigurationException)_e);
+
+             // If there are no further relevant details, write the old-style box instead of the nested stuff.
+            if (nestedFormatter == null || _fusionLogWritten) {
+                base.WriteSecondaryBox(sb, dontShowSensitiveInfo);
+                return;
+            }
+
+             // Special nested formatting to give more context for config builder errors
+            sb.Append(String.Format(CultureInfo.InvariantCulture, startExpandableBlock, "additionalConfigErrorInfo",
+                SR.GetString(SR.AdditionalConfigErrorInfo)));
+            nestedFormatter.PrepareFormatter();
+            nestedFormatter.WriteErrorDetails(sb, dontShowSensitiveInfo);
+            sb.Append(endExpandableBlock);
+            sb.Append(toggleScript);
+        }
+
+         // Factory method to get the appropriate type of error formatter for the given
+        // exception. There are already multiple options for obtaining a top-level error
+        // formatter - and they kind of assume the top exception is an HttpException, or
+        // the formatter is being created for a specific context (HttpResponse, or
+        // TemplatedMailProvider). This helper is ONLY intended for NESTED formatting
+        // of non-config exceptions that result in config exceptions.
+        private static ErrorFormatter GetFormatterForInnerException(Exception e)
+        {
+            ErrorFormatter exceptionFormatter = null;
+
+             // First, grab the appropriate inner exception. Ignore config errors.
+            Exception nested = e.InnerException;
+            while (nested != null) {
+                if (!(nested is ConfigurationException))
+                    break;
+                nested = nested.InnerException;
+            }
+            if (nested == null) {
+                return null;
+            }
+
+
+             // Security errors
+            if (nested is SecurityException) {
+                return new SecurityErrorFormatter(e);
+            }
+
+             // Other known exceptions are HttpException-derived
+            if (exceptionFormatter == null) {
+                exceptionFormatter = HttpException.GetErrorFormatter(nested);
+
+                 // HttpException.GetErrorFormatter() might have returned a ConfigErrorFormatter. Don't use it.
+                // If we did use it though, be sure to propagate the value of this.AllowSourceCode.
+                if (exceptionFormatter is ConfigErrorFormatter) {
+                    exceptionFormatter = null;
+                }
+            }
+
+             // Unhandled/generic-unknown
+            if (exceptionFormatter == null) {
+                exceptionFormatter = new UnhandledErrorFormatter(nested);
+            }
+
+             return exceptionFormatter;
         }
     }
 

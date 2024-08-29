@@ -19,6 +19,7 @@ namespace System.Web {
     using System.Web.Configuration;
     using System.Web.Management;
     using Util;
+    using System.ComponentModel;
 
 
     /// <devdoc>
@@ -39,6 +40,7 @@ namespace System.Web {
         private HttpValueCollection _multiValue;
         private bool _changed;
         private bool _added;
+        private SameSiteMode _sameSite;
 
         internal HttpCookie() {
             _changed = true;
@@ -83,6 +85,7 @@ namespace System.Web {
             HttpCookiesSection config = RuntimeConfig.GetConfig().HttpCookies;
             _secure = config.RequireSSL;
             _httpOnly = config.HttpOnlyCookies;
+            _sameSite = config.SameSite;
             
             if (config.Domain != null && config.Domain.Length > 0)
                 _domain = config.Domain;
@@ -266,6 +269,20 @@ namespace System.Web {
             }
         }
 
+        /// <devdoc>
+        ///     <para>SameSite mode for the current cookie</para>
+        /// </devdoc>
+        public SameSiteMode SameSite {
+            get {
+                return _sameSite;
+            }
+
+             set {
+                _sameSite = value;
+                _changed = true;
+            }
+        }
+
         /*
          * Checks is cookie has sub-keys
          */
@@ -380,7 +397,7 @@ namespace System.Web {
 
                 //
                 // Expires
-                if (StringUtil.EqualsIgnoreCase(attributeName, "Expires")) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "Expires")) {
                     DateTime dt;
                     if (DateTime.TryParse(attributeValue, out dt)) {
                         cookie.Expires = dt;
@@ -388,23 +405,31 @@ namespace System.Web {
                 }
                 //
                 // Domain
-                else if (attributeValue != null && StringUtil.EqualsIgnoreCase(attributeName, "Domain")) {
+                else if (attributeValue != null && System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "Domain")) {
                     cookie.Domain = attributeValue;
                 }
                 //
                 // Path
-                else if (attributeValue != null && StringUtil.EqualsIgnoreCase(attributeName, "Path")) {
+                else if (attributeValue != null && System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "Path")) {
                     cookie.Path = attributeValue;
                 }
                 //
                 // Secure
-                else if (StringUtil.EqualsIgnoreCase(attributeName, "Secure")) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "Secure")) {
                     cookie.Secure = true;
                 }
                 //
                 // HttpOnly
-                else if (StringUtil.EqualsIgnoreCase(attributeName, "HttpOnly")) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "HttpOnly")) {
                     cookie.HttpOnly = true;
+                }
+                //
+                // SameSite
+                else if(StringUtil.EqualsIgnoreCase(attributeName, "SameSite")) {
+                    SameSiteMode sameSite = (SameSiteMode)(-1);
+                    if(Enum.TryParse<SameSiteMode>(attributeValue, true, out sameSite)) {
+                        cookie.SameSite = sameSite;
+                    }
                 }
             }
 
@@ -458,6 +483,12 @@ namespace System.Web {
                 s.Append("; HttpOnly");
             }
 
+            // SameSite
+            if(_sameSite > (AppSettings.SuppressSameSiteNone ? SameSiteMode.None : (SameSiteMode)(-1) /* Unspecified */)) {
+                s.Append("; SameSite=");
+                s.Append(_sameSite);
+            }
+
             // return as HttpResponseHeader
             return new HttpResponseHeader(HttpWorkerRequest.HeaderSetCookie, s.ToString());
         }
@@ -476,5 +507,32 @@ namespace System.Web {
         AutoDetect,      // cookieless=AutoDetect; Probe if device is cookied
 
         UseDeviceProfile // cookieless=UseDeviceProfile; Base decision on caps
+    }
+
+    // Due to modern browser updates, "None" is now required to be emitted in the cookie header. To prevent
+    // any the header from being written, Cookies should be SameSite=Unspecified. But we can't update the
+    // enum in a servicing patch. So...
+    // Unspecified == -1
+    public enum SameSiteMode {
+        None,
+
+         Lax,
+
+         Strict
+    }
+
+    internal class SameSiteConverter : EnumConverter
+    {
+        public SameSiteConverter() : base(typeof(SameSiteMode)) { }
+
+         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            string strval = value as string;
+
+             if (strval != null && strval.Equals("Unspecified", StringComparison.InvariantCultureIgnoreCase))
+                return (SameSiteMode)(-1);
+
+             return base.ConvertFrom(context, culture, value);
+        }
     }
 }

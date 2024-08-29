@@ -18,6 +18,7 @@ namespace System.Web.SessionState {
     using System.Web;
     using System.Web.Util;
     using System.Xml;
+    
 
     public static class SessionStateUtility {
         internal const String SESSION_KEY = "AspSession";
@@ -43,7 +44,7 @@ namespace System.Web.SessionState {
                 context.Items.Add(SESSION_KEY, sessionState);
             }
             catch (ArgumentException) {
-                throw new HttpException(SR.GetString(SR.Cant_have_multiple_session_module));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_have_multiple_session_module));
             }
         }
 
@@ -151,7 +152,7 @@ namespace System.Web.SessionState {
             HttpStaticObjectsCollection staticObjects;
             Byte                eof;
 
-            Debug.Assert(context != null);
+            System.Web.Util.Debug.Assert(context != null);
 
             try {
                 BinaryReader reader = new BinaryReader(stream);
@@ -175,11 +176,11 @@ namespace System.Web.SessionState {
 
                 eof = reader.ReadByte();
                 if (eof != 0xff) {
-                    throw new HttpException(SR.GetString(SR.Invalid_session_state));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_session_state));
                 }
             }
             catch (EndOfStreamException) {
-                throw new HttpException(SR.GetString(SR.Invalid_session_state));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_session_state));
             }
 
             return new SessionStateStoreData(sessionItems, staticObjects, timeout);

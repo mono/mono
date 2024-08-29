@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls.WebParts {
             set {
                 if (!DesignMode) {
                     if (_registrationComplete) {
-                        throw new InvalidOperationException(SR.GetString(SR.WebPart_SetZoneTemplateTooLate));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.WebPart_SetZoneTemplateTooLate));
                     }
                 }
                 _zoneTemplate = value;

@@ -11,6 +11,7 @@ namespace System.Web.UI {
     using System.Security.Cryptography;
     using System.Web.Security.Cryptography;
     using System.Web.Util;
+    
 
     // Represents a store of all of the event validation (target, argument) tuples
     // that are valid for a given WebForms page.
@@ -74,7 +75,7 @@ namespace System.Web.UI {
             byte versionHeader = reader.ReadByte();
             if (versionHeader != (byte)0x00) {
                 // the only version we support is v0; throw if unsupported
-                throw new InvalidOperationException(SR.GetString(SR.InvalidSerializedData));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.InvalidSerializedData));
             }
 
             EventValidationStore store = new EventValidationStore();
@@ -86,7 +87,7 @@ namespace System.Web.UI {
                 byte[] entry = reader.ReadBytes(HASH_SIZE_IN_BYTES);
                 if (entry.Length != HASH_SIZE_IN_BYTES) {
                     // bad data (EOF)
-                    throw new InvalidOperationException(SR.GetString(SR.InvalidSerializedData));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.InvalidSerializedData));
                 }
                 store._hashes.Add(entry);
             }
@@ -107,7 +108,7 @@ namespace System.Web.UI {
             int currentOffset = 0;
             CopyStringToBuffer(target, bufferToBeHashed, ref currentOffset);
             CopyStringToBuffer(argument, bufferToBeHashed, ref currentOffset);
-            Debug.Assert(currentOffset == bufferToBeHashed.Length, "Should have populated the entire buffer.");
+            System.Web.Util.Debug.Assert(currentOffset == bufferToBeHashed.Length, "Should have populated the entire buffer.");
 
             // hash the buffer
             byte[] fullHash;
@@ -141,8 +142,8 @@ namespace System.Web.UI {
             public bool Equals(byte[] x, byte[] y) {
                 // The lengths of 'x' and 'y' are checked before the values are added to the HashSet.
                 // Add a debug assert here just to check it if we ever change the algorithm from SHA256.
-                Debug.Assert(x.Length == HASH_SIZE_IN_BYTES);
-                Debug.Assert(y.Length == HASH_SIZE_IN_BYTES);
+                System.Web.Util.Debug.Assert(x.Length == HASH_SIZE_IN_BYTES);
+                System.Web.Util.Debug.Assert(y.Length == HASH_SIZE_IN_BYTES);
 
                 // We're not too concerned about timing attacks here since the event validation
                 // hashes are all public knowledge.

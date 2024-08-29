@@ -3,6 +3,7 @@
     using System.Collections;
     using System.ComponentModel;
     using System.Globalization;
+    
 
     [Serializable]
     public class ValueProviderResult {
@@ -70,7 +71,7 @@
                     return ConvertSimpleType(culture, value, underlyingType);
                 }
 
-                string message = String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.ValueProviderResult_NoConverterExists),
+                string message = String.Format(CultureInfo.CurrentCulture, System.Web.SR.GetString(System.Web.SR.ValueProviderResult_NoConverterExists),
                     value.GetType().FullName, destinationType.FullName);
                 throw new InvalidOperationException(message);
             }
@@ -82,7 +83,7 @@
                 return convertedValue;
             }
             catch (Exception ex) {
-                string message = String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.ValueProviderResult_ConversionThrew),
+                string message = String.Format(CultureInfo.CurrentCulture, System.Web.SR.GetString(System.Web.SR.ValueProviderResult_ConversionThrew),
                     value.GetType().FullName, destinationType.FullName);
                 throw new InvalidOperationException(message, ex);
             }

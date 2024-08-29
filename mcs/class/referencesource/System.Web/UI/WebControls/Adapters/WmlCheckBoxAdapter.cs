@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls.Adapters {
             // For a checkbox, our selection list
             // has only one item.
 
-            Debug.Assert(selectedItems.Length == 1, "Checkbox selection " + 
+            System.Web.Util.Debug.Assert(selectedItems.Length == 1, "Checkbox selection " + 
                          "list has more than one value");
 
             string selectedItem = selectedItems[0];
@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls.Adapters {
                 Control.Checked = false;
             }
 
-            else if (StringUtil.EqualsIgnoreCase(selectedItem, "1")) {
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(selectedItem, "1")) {
                 dataChanged = Control.Checked == false;
                 Control.Checked = true;
             }

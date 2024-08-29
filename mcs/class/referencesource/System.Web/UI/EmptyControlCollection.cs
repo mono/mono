@@ -9,6 +9,7 @@ namespace System.Web.UI {
     using System;
     using System.Collections;
     using System.Security.Permissions;
+    
 
 
     /// <devdoc>
@@ -26,7 +27,7 @@ namespace System.Web.UI {
         }
 
         private void ThrowNotSupportedException() {
-            throw new HttpException(SR.GetString(SR.Control_does_not_allow_children,
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Control_does_not_allow_children,
                                                                      Owner.GetType().ToString()));
         }
 

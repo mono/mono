@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls {
         ///     Gets and sets the checked state
         /// </devdoc>
         [DefaultValue(false)]
-        [WebSysDescription(SR.TreeNode_Checked)]
+        [WebSysDescription(System.Web.SR.TreeNode_Checked)]
         public bool Checked {
             get {
                 object o = ViewState["Checked"];
@@ -221,7 +221,7 @@ namespace System.Web.UI.WebControls {
         ///     Gets and sets the expand state
         /// </devdoc>
         [DefaultValue(typeof(Nullable<bool>), "")]
-        [WebSysDescription(SR.TreeNode_Expanded)]
+        [WebSysDescription(System.Web.SR.TreeNode_Expanded)]
         public bool? Expanded {
             get {
                 object o = ViewState["Expanded"];
@@ -281,7 +281,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [Localizable(true)]
-        [WebSysDescription(SR.TreeNode_ImageToolTip)]
+        [WebSysDescription(System.Web.SR.TreeNode_ImageToolTip)]
         public string ImageToolTip {
             get {
                 string s = (string)ViewState["ImageToolTip"];
@@ -304,7 +304,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
-        [WebSysDescription(SR.TreeNode_ImageUrl)]
+        [WebSysDescription(System.Web.SR.TreeNode_ImageUrl)]
         public string ImageUrl {
             get {
                 string s = (string)ViewState["ImageUrl"];
@@ -371,7 +371,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
-        [WebSysDescription(SR.TreeNode_NavigateUrl)]
+        [WebSysDescription(System.Web.SR.TreeNode_NavigateUrl)]
         public string NavigateUrl {
             get {
                 string s = (string)ViewState["NavigateUrl"];
@@ -435,7 +435,7 @@ namespace System.Web.UI.WebControls {
         ///     only when the node is expanded.
         /// </devdoc>
         [DefaultValue(false)]
-        [WebSysDescription(SR.TreeNode_PopulateOnDemand)]
+        [WebSysDescription(System.Web.SR.TreeNode_PopulateOnDemand)]
         public bool PopulateOnDemand {
             get {
                 object o = ViewState["PopulateOnDemand"];
@@ -475,7 +475,7 @@ namespace System.Web.UI.WebControls {
         ///     Gets and sets the action which the TreeNode will perform when selected
         /// </devdoc>
         [DefaultValue(TreeNodeSelectAction.Select)]
-        [WebSysDescription(SR.TreeNode_SelectAction)]
+        [WebSysDescription(System.Web.SR.TreeNode_SelectAction)]
         public TreeNodeSelectAction SelectAction {
             get {
                 object o = ViewState["SelectAction"];
@@ -494,7 +494,7 @@ namespace System.Web.UI.WebControls {
         ///     Gets and sets the selected state
         /// </devdoc>
         [DefaultValue(false)]
-        [WebSysDescription(SR.TreeNode_Selected)]
+        [WebSysDescription(System.Web.SR.TreeNode_Selected)]
         public bool Selected {
             get {
                 object o = ViewState["Selected"];
@@ -536,7 +536,7 @@ namespace System.Web.UI.WebControls {
         ///     See ShouldSerializeShowCheckBox remarks.
         /// </devdoc>
         [DefaultValue(typeof(Nullable<bool>), "")]
-        [WebSysDescription(SR.TreeNode_ShowCheckBox)]
+        [WebSysDescription(System.Web.SR.TreeNode_ShowCheckBox)]
         public bool? ShowCheckBox {
             get {
                 object o = ViewState["ShowCheckBox"];
@@ -554,7 +554,7 @@ namespace System.Web.UI.WebControls {
         ///     Gets and sets the target window that the TreeNode will browse to if selected
         /// </devdoc>
         [DefaultValue("")]
-        [WebSysDescription(SR.TreeNode_Target)]
+        [WebSysDescription(System.Web.SR.TreeNode_Target)]
         public string Target {
             get {
                 string s = (string)ViewState["Target"];
@@ -574,7 +574,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [Localizable(true)]
-        [WebSysDescription(SR.TreeNode_Text)]
+        [WebSysDescription(System.Web.SR.TreeNode_Text)]
         public string Text {
             get {
                 string s = (string)ViewState["Text"];
@@ -597,7 +597,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [Localizable(true)]
-        [WebSysDescription(SR.TreeNode_ToolTip)]
+        [WebSysDescription(System.Web.SR.TreeNode_ToolTip)]
         public string ToolTip {
             get {
                 string s = (string)ViewState["ToolTip"];
@@ -617,7 +617,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [Localizable(true)]
-        [WebSysDescription(SR.TreeNode_Value)]
+        [WebSysDescription(System.Web.SR.TreeNode_Value)]
         public string Value {
             get {
                 string s = (string)ViewState["Value"];
@@ -810,7 +810,7 @@ namespace System.Web.UI.WebControls {
         ///     Adds the href javascript for doing client-side node expand state toggling
         /// </devdoc>
         private string GetToggleNodeAttributeValue(string myId, string lineType) {
-            Debug.Assert(ChildNodes.Count > 0, "No nodes for expansion, why are we rendering an expander?");
+            System.Web.Util.Debug.Assert(ChildNodes.Count > 0, "No nodes for expansion, why are we rendering an expander?");
             if (_toggleNodeAttributeValue == null) {
                 if (_owner.IsNotIE) {
                     _toggleNodeAttributeValue = "javascript:TreeView_ToggleNode(" +
@@ -886,7 +886,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         internal void Render(HtmlTextWriter writer, int position, bool[] isLast, bool enabled) {
             string myId = String.Empty;
-            Debug.Assert(Index != -1, "Didn't assign an index to a node.");
+            System.Web.Util.Debug.Assert(Index != -1, "Didn't assign an index to a node.");
             myId = _owner.CreateNodeId(Index);
 
             int depth = Depth;
@@ -1176,7 +1176,7 @@ namespace System.Web.UI.WebControls {
                             // If we are populating from the client, add all the needed attributes and call the client script needed to make the callback
                             if (_owner.PopulateNodesFromClient) {
                                 if (ChildNodes.Count != 0) {
-                                    throw new InvalidOperationException(SR.GetString(SR.TreeView_PopulateOnlyEmptyNodes, _owner.ID));
+                                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.TreeView_PopulateOnlyEmptyNodes, _owner.ID));
                                 }
                                 writer.AddAttribute(HtmlTextWriterAttribute.Href, GetPopulateNodeAttribute(writer, myId, SelectID, selectImageId, lineType, depth, isLast));
                             }

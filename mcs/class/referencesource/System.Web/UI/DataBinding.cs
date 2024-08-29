@@ -48,7 +48,7 @@ namespace System.Web.UI {
                 return expression;
             }
             set {
-                Debug.Assert((value != null) && (value.Length != 0),
+                System.Web.Util.Debug.Assert((value != null) && (value.Length != 0),
                              "Invalid expression");
                 expression = value;
             }
@@ -94,7 +94,7 @@ namespace System.Web.UI {
             if ((obj != null) && (obj is DataBinding)) {
                 DataBinding binding = (DataBinding)obj;
 
-                return StringUtil.EqualsIgnoreCase(propertyName, binding.PropertyName);
+                return System.Web.Util.StringUtil.EqualsIgnoreCase(propertyName, binding.PropertyName);
             }
             return false;
         }

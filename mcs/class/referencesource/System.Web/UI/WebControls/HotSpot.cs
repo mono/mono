@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Localizable(true),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.HotSpot_AccessKey)
+        WebSysDescription(System.Web.SR.HotSpot_AccessKey)
         ]
         public virtual string AccessKey {
             get {
@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.HotSpot_AlternateText),
+        WebSysDescription(System.Web.SR.HotSpot_AlternateText),
         NotifyParentProperty(true)
         ]
         public virtual String AlternateText {
@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(HotSpotMode.NotSet),
-        WebSysDescription(SR.HotSpot_HotSpotMode),
+        WebSysDescription(System.Web.SR.HotSpot_HotSpotMode),
         NotifyParentProperty(true)
         ]
         public virtual HotSpotMode HotSpotMode {
@@ -107,7 +107,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.HotSpot_PostBackValue),
+        WebSysDescription(System.Web.SR.HotSpot_PostBackValue),
         NotifyParentProperty(true)
         ]
         public String PostBackValue {
@@ -136,7 +136,7 @@ namespace System.Web.UI.WebControls {
         Bindable(true),
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescription(SR.HotSpot_NavigateUrl),
+        WebSysDescription(System.Web.SR.HotSpot_NavigateUrl),
         NotifyParentProperty(true),
         UrlProperty(),
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
@@ -159,7 +159,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue((short)0),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.HotSpot_TabIndex)
+        WebSysDescription(System.Web.SR.HotSpot_TabIndex)
         ]
         public virtual short TabIndex {
             get {
@@ -182,7 +182,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(""),
         TypeConverter(typeof(TargetConverter)),
-        WebSysDescription(SR.HotSpot_Target),
+        WebSysDescription(System.Web.SR.HotSpot_Target),
         NotifyParentProperty(true)
         ]
         public virtual string Target {

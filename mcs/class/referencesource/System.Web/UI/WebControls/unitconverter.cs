@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls {
                     args = new object[] { u.Value, u.Type };
                 }
 
-                Debug.Assert(member != null, "Looks like we're missing Unit.Empty or Unit::ctor(double, UnitType)");
+                System.Web.Util.Debug.Assert(member != null, "Looks like we're missing Unit.Empty or Unit::ctor(double, UnitType)");
                 if (member != null) {
                     return new InstanceDescriptor(member, args);
                 }

@@ -6,6 +6,7 @@
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Web.Hosting;
+    
 
     [TypeForwardedFrom("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
     public class RouteCollection : Collection<RouteBase> {
@@ -71,7 +72,7 @@
                     throw new ArgumentException(
                         String.Format(
                             CultureInfo.CurrentUICulture,
-                            SR.GetString(SR.RouteCollection_DuplicateName),
+                            System.Web.SR.GetString(System.Web.SR.RouteCollection_DuplicateName),
                             name),
                         "name");
                 }
@@ -83,10 +84,10 @@
             }
 
             // RouteBase doesn't have handler info, so we only log Route.RouteHandler
-            var route = item as Route;
-            if (route != null && route.RouteHandler != null) {
-                TelemetryLogger.LogHttpHandler(route.RouteHandler.GetType());
-            }            
+            //var route = item as Route;
+            //if (route != null && route.RouteHandler != null) {
+            //    TelemetryLogger.LogHttpHandler(route.RouteHandler.GetType());
+            //}            
         }
 
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings",
@@ -142,7 +143,7 @@
             }
             HttpContext httpContext = HttpContext.Current;
             if (httpContext == null) {
-                throw new InvalidOperationException(SR.GetString(SR.RouteCollection_RequiresContext));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.RouteCollection_RequiresContext));
             }
             return new RequestContext(new HttpContextWrapper(httpContext), new RouteData());
         }
@@ -161,7 +162,7 @@
                 throw new ArgumentNullException("httpContext");
             }
             if (httpContext.Request == null) {
-                throw new ArgumentException(SR.GetString(SR.RouteTable_ContextMissingRequest), "httpContext");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.RouteTable_ContextMissingRequest), "httpContext");
             }
 
             // Optimize performance when the route collection is empty.  The main improvement is that we avoid taking
@@ -280,7 +281,7 @@
                     throw new ArgumentException(
                         String.Format(
                             CultureInfo.CurrentUICulture,
-                            SR.GetString(SR.RouteCollection_NameNotFound),
+                            System.Web.SR.GetString(System.Web.SR.RouteCollection_NameNotFound),
                             name),
                         "name");
                 }
@@ -326,7 +327,7 @@
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.RouteCollection_DuplicateEntry)),
+                        System.Web.SR.GetString(System.Web.SR.RouteCollection_DuplicateEntry)),
                     "item");
             }
             base.InsertItem(index, item);
@@ -359,7 +360,7 @@
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.RouteCollection_DuplicateEntry)),
+                        System.Web.SR.GetString(System.Web.SR.RouteCollection_DuplicateEntry)),
                     "item");
             }
             RemoveRouteName(index);

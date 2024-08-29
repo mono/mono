@@ -12,6 +12,7 @@ namespace System.Web {
     using System.Collections;
     using System.Web.Hosting;
     using System.Web.Util;
+    
 
     internal class IdleTimeoutMonitor {
 
@@ -76,7 +77,7 @@ namespace System.Web {
 
             // shutdown
             HttpRuntime.SetShutdownReason(ApplicationShutdownReason.IdleTimeout, 
-                                          SR.GetString(SR.Hosting_Env_IdleTimeout));
+                                          System.Web.SR.GetString(System.Web.SR.Hosting_Env_IdleTimeout));
             HostingEnvironment.InitiateShutdownWithoutDemand();
         }
     }

@@ -11,6 +11,7 @@ namespace System.Web.UI {
     using System.ComponentModel;
     using System.ComponentModel.Design;
     using System.Data;
+    
 
     internal sealed class DataSourceHelper {
 
@@ -57,10 +58,10 @@ namespace System.Web.UI {
                             }
                         }
 
-                        throw new HttpException(SR.GetString(SR.ListSource_Missing_DataMember, dataMember));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.ListSource_Missing_DataMember, dataMember));
                     }
                     else {
-                        throw new HttpException(SR.GetString(SR.ListSource_Without_DataMembers));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.ListSource_Without_DataMembers));
                     }
                 }
             }

@@ -19,6 +19,7 @@ namespace System.Web.Handlers {
     using System.Web;
     using System.Web.UI;
     using System.Web.Compilation;
+    
 
 
     /// <devdoc>
@@ -37,7 +38,7 @@ namespace System.Web.Handlers {
             BuildManager.TheBuildManager.PrecompileApp(context.Request.FilePathObject, true);
 
             context.Response.Write("<html><body><h2>");
-            context.Response.Write(SR.GetString(SR.Success_precompile));
+            context.Response.Write(System.Web.SR.GetString(System.Web.SR.Success_precompile));
             context.Response.Write("</h2></body></html>");
         }
 

@@ -75,7 +75,7 @@ namespace System.Web.UI.WebControls {
             }
 
             IDesignerHost host = (IDesignerHost)context.GetService(typeof(IDesignerHost));
-            Debug.Assert(host != null, "Unable to get IDesignerHost in ControlIDConverter");
+            System.Web.Util.Debug.Assert(host != null, "Unable to get IDesignerHost in ControlIDConverter");
 
             if (host != null) {
                 string[] controlIDs = GetControls(host, context.Instance);

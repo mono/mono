@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
 
             if (!controlType.IsSubclassOf(typeof(Control))) {
-                throw new ArgumentException(SR.GetString(SR.ConnectionPoint_InvalidControlType), "controlType");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ConnectionPoint_InvalidControlType), "controlType");
             }
 
             if (String.IsNullOrEmpty(displayName)) {

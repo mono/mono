@@ -3,6 +3,7 @@ using System.Configuration.Provider;
 using System.Security.Permissions;
 using System.Web;
 
+
 namespace System.Web.Caching {
     public sealed class OutputCacheProviderCollection : ProviderCollection {
 
@@ -18,7 +19,7 @@ namespace System.Web.Caching {
             }
             
             if (!(provider is OutputCacheProvider)) {
-                throw new ArgumentException(SR.GetString(SR.Provider_must_implement_type, typeof(OutputCacheProvider).Name),
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Provider_must_implement_type, typeof(OutputCacheProvider).Name),
                                             "provider");
             }
             

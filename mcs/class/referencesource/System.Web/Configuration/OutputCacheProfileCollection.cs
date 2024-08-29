@@ -28,7 +28,7 @@ namespace System.Web.Configuration {
             _properties = new ConfigurationPropertyCollection();
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -40,7 +40,7 @@ namespace System.Web.Configuration {
         // public properties
         public String[] AllKeys {
             get {
-                return StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
+                return System.Web.Util.StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
             }
         }
 

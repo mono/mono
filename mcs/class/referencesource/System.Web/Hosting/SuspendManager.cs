@@ -21,12 +21,12 @@ namespace System.Web.Hosting {
         private readonly ConcurrentDictionary<ISuspendibleRegisteredObject, object> _registeredObjects = new ConcurrentDictionary<ISuspendibleRegisteredObject, object>();
 
         public void RegisterObject(ISuspendibleRegisteredObject o) {
-            Debug.Assert(o != null);
+            System.Web.Util.Debug.Assert(o != null);
             _registeredObjects[o] = null;
         }
 
         public void UnregisterObject(ISuspendibleRegisteredObject o) {
-            Debug.Assert(o != null);
+            System.Web.Util.Debug.Assert(o != null);
             ((IDictionary<ISuspendibleRegisteredObject, object>)_registeredObjects).Remove(o);
         }
 
@@ -93,7 +93,7 @@ namespace System.Web.Hosting {
                 countdownEvent.Signal();
             }, null);
 
-            if (Debug.IsDebuggerPresent()) {
+            if (System.Web.Util.Debug.IsDebuggerPresent()) {
                 countdownEvent.Wait(); // to assist with debugging, don't time out if a debugger is attached
             }
             else {
@@ -143,7 +143,7 @@ namespace System.Web.Hosting {
 
             public void Resume() {
                 lock (this) {
-                    Debug.Assert(!_resumeWasCalled, "Resume was called too many times!");
+                    System.Web.Util.Debug.Assert(!_resumeWasCalled, "Resume was called too many times!");
                     _resumeWasCalled = true;
 
                     foreach (Action callback in _resumeCallbacks) {

@@ -9,7 +9,7 @@ using MonoTests.ModelProviders;
 
 namespace MonoTests.Common
 {
-	class Baz
+	public class Baz
 	{
 		// DO NOT change the order of properties - tests depend on it
 		// DO NOT change the column types - tests depend on it

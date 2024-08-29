@@ -15,6 +15,7 @@ using System.Web.Util;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
+
 namespace System.Web.Caching {
 
     /*
@@ -143,19 +144,19 @@ namespace System.Web.Caching {
             else {
                 provider = s_providers[providerName];
                 if (provider == null) {
-                    Debug.Assert(false, "Unexpected, " + providerName + " should be a member of the collection.");
-                    throw new ProviderException(SR.GetString(SR.Provider_Not_Found, providerName));
+                    System.Web.Util.Debug.Assert(false, "Unexpected, " + providerName + " should be a member of the collection.");
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_Not_Found, providerName));
                 }
             }
 #if DBG
             string msg = (provider != null) ? provider.GetType().Name : "null";
-            Debug.Trace("OutputCache", "GetFragmentProvider(" + providerName + ") --> " + msg);
+            System.Web.Util.Debug.Trace("OutputCache", "GetFragmentProvider(" + providerName + ") --> " + msg);
 #endif
             return provider;
         }
 
         private static OutputCacheProvider GetProvider(HttpContext context) {
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
             if (context == null) {
                 return null;
             }
@@ -164,7 +165,7 @@ namespace System.Web.Caching {
             HttpApplication app = context.ApplicationInstance;
             string name = app.GetOutputCacheProviderName(context);
             if (name == null) {
-                throw new ProviderException(SR.GetString(SR.GetOutputCacheProviderName_Invalid, name));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.GetOutputCacheProviderName_Invalid, name));
             }
             // AspNetInternalProvider means use the internal cache
             if (name == OutputCache.ASPNET_INTERNAL_PROVIDER_NAME) {
@@ -172,7 +173,7 @@ namespace System.Web.Caching {
             }
             OutputCacheProvider provider = (s_providers == null) ? null : s_providers[name];
             if (provider == null) {
-                throw new ProviderException(SR.GetString(SR.GetOutputCacheProviderName_Invalid, name));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.GetOutputCacheProviderName_Invalid, name));
             }
             return provider;
         }
@@ -324,9 +325,11 @@ namespace System.Web.Caching {
 
         // only used by providers
         private static void DependencyRemovedCallback(string key, object value, CacheItemRemovedReason reason) {
-            Debug.Trace("OutputCache", "DependencyRemovedCallback: reason=" + reason + ", key=" + key);
+            System.Web.Util.Debug.Trace("OutputCache", "DependencyRemovedCallback: reason=" + reason + ", key=" + key);
 
             DependencyCacheEntry dce = value as DependencyCacheEntry;
+
+#if (!MONO && !FEATURE_PAL)
             if (dce.KernelCacheEntryKey != null) {
                 // invalidate kernel cache entry
                 if (HttpRuntime.UseIntegratedPipeline) {
@@ -336,6 +339,7 @@ namespace System.Web.Caching {
                     UnsafeNativeMethods.InvalidateKernelCache(dce.KernelCacheEntryKey);
                 }
             }
+#endif
             if (reason == CacheItemRemovedReason.DependencyChanged) {
                 if (dce.OutputCacheEntryKey != null) {
                     try {
@@ -350,7 +354,7 @@ namespace System.Web.Caching {
 
         // only used by providers
         private static void DependencyRemovedCallbackForFragment(string key, object value, CacheItemRemovedReason reason) {
-            Debug.Trace("OutputCache", "DependencyRemovedCallbackForFragment: reason=" + reason + ", key=" + key);
+            System.Web.Util.Debug.Trace("OutputCache", "DependencyRemovedCallbackForFragment: reason=" + reason + ", key=" + key);
 
             if (reason == CacheItemRemovedReason.DependencyChanged) {
                 DependencyCacheEntry dce = value as DependencyCacheEntry;
@@ -367,7 +371,7 @@ namespace System.Web.Caching {
 
         // only used by internal cache
         private static void EntryRemovedCallback(string key, object value, CacheItemRemovedReason reason) {
-            Debug.Trace("OutputCache", "EntryRemovedCallback: reason=" + reason + ", key=" + key);
+            System.Web.Util.Debug.Trace("OutputCache", "EntryRemovedCallback: reason=" + reason + ", key=" + key);
 
             DecrementCount();
 
@@ -375,10 +379,13 @@ namespace System.Web.Caching {
             PerfCounters.IncrementCounter(AppPerfCounter.OUTPUT_CACHE_TURNOVER_RATE);
 
             CachedRawResponse cachedRawResponse = value as CachedRawResponse;
+
+#if (!MONO && !FEATURE_PAL)
             if (cachedRawResponse != null) {
                 String kernelCacheUrl = cachedRawResponse._kernelCacheUrl;
                 // if it is kernel cached, the url will be non-null.
                 // if the entry was re-inserted, don't remove kernel entry since it will be updated
+
                 if (kernelCacheUrl != null && HttpRuntime.Cache.InternalCache.Get(key) == null) {
                     // invalidate kernel cache entry
                     if (HttpRuntime.UseIntegratedPipeline) {
@@ -389,6 +396,7 @@ namespace System.Web.Caching {
                     }
                 }
             }
+#endif
         }
 
         //
@@ -435,7 +443,7 @@ namespace System.Web.Caching {
             OutputCacheProviderCollection providers = Providers;
 
             if (providers == null || providers[providerName] == null) {
-                throw new ProviderException(SR.GetString(SR.Provider_Not_Found, providerName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_Not_Found, providerName));
             }
         }
 
@@ -444,7 +452,7 @@ namespace System.Web.Caching {
             if (depKey == null)
             {
 #if DBG
-                Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> false");
+                System.Web.Util.Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> false");
 #endif
                 return false;
             }
@@ -452,7 +460,7 @@ namespace System.Web.Caching {
             // is the file dependency already in the in-memory cache?
             if (HttpRuntime.Cache.InternalCache.Get(depKey) != null) {
 #if DBG
-                Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> false");
+                System.Web.Util.Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> false");
 #endif
                 return false;
             }
@@ -473,7 +481,7 @@ namespace System.Web.Caching {
                                                                                                                             OnRemovedCallback = callback
                                                                                                                         });
 #if DBG
-                Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> false, DEPENDENCY RE-INSERTED");
+                System.Web.Util.Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> false, DEPENDENCY RE-INSERTED");
 #endif
                 return false;
             }
@@ -481,7 +489,7 @@ namespace System.Web.Caching {
                 // file dependencies have changed
                 dep.Dispose();
 #if DBG
-                Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> true, " + dep.GetUniqueID());
+                System.Web.Util.Debug.Trace("OutputCache", "HasDependencyChanged(" + depKey + ", ..., " + oceKey + ", ...) --> true, " + dep.GetUniqueID());
 #endif
                 return true;
             }
@@ -495,7 +503,7 @@ namespace System.Web.Caching {
                 formatter.Serialize(stream, data);
             }
             else {
-                throw new ArgumentException(SR.GetString(SR.OutputCacheExtensibility_CantSerializeDeserializeType));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.OutputCacheExtensibility_CantSerializeDeserializeType));
             }
         }
 
@@ -505,7 +513,7 @@ namespace System.Web.Caching {
             Object data = formatter.Deserialize(stream);
             if (!(data is OutputCacheEntry || data is PartialCachingCacheEntry || data is CachedVary || data is ControlCachedVary ||
                   data is FileResponseElement || data is MemoryResponseElement || data is SubstitutionResponseElement)) {
-                throw new ArgumentException(SR.GetString(SR.OutputCacheExtensibility_CantSerializeDeserializeType));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.OutputCacheExtensibility_CantSerializeDeserializeType));
             }
             return data;
         }
@@ -525,7 +533,7 @@ namespace System.Web.Caching {
                     if (HasDependencyChanged(false /*isFragment*/, oce.DependenciesKey, oce.Dependencies, oce.KernelCacheUrl, key, provider.Name)) {
                         OutputCache.RemoveFromProvider(key, provider.Name);
 #if DBG
-                        Debug.Trace("OutputCache", "Get(" + key + ") --> null, " + provider.Name);
+                        System.Web.Util.Debug.Trace("OutputCache", "Get(" + key + ") --> null, " + provider.Name);
 #endif
                         return null;
 
@@ -537,10 +545,10 @@ namespace System.Web.Caching {
                 result = HttpRuntime.Cache.InternalCache.Get(key);
 #if DBG
                 string typeName = (result != null) ? result.GetType().Name : "null";            
-                Debug.Trace("OutputCache", "Get(" + key + ") --> " + typeName + ", CacheInternal");
+                System.Web.Util.Debug.Trace("OutputCache", "Get(" + key + ") --> " + typeName + ", CacheInternal");
             }
             else {
-                Debug.Trace("OutputCache", "Get(" + key + ") --> " + result.GetType().Name + ", " + provider.Name);
+                System.Web.Util.Debug.Trace("OutputCache", "Get(" + key + ") --> " + result.GetType().Name + ", " + provider.Name);
 #endif
             }
             return result;
@@ -561,7 +569,7 @@ namespace System.Web.Caching {
                     if (HasDependencyChanged(true /*isFragment*/, fragment._dependenciesKey, fragment._dependencies, null /*kernelKey*/, key, provider.Name)) {
                         OutputCache.RemoveFragment(key, provider.Name);
 #if DBG
-                        Debug.Trace("OutputCache", "GetFragment(" + key + "," + providerName + ") --> null, " + providerName);
+                        System.Web.Util.Debug.Trace("OutputCache", "GetFragment(" + key + "," + providerName + ") --> null, " + providerName);
 #endif
                         return null;
                     }
@@ -572,10 +580,10 @@ namespace System.Web.Caching {
                 result = HttpRuntime.Cache.InternalCache.Get(key);
 #if DBG
                 string typeName = (result != null) ? result.GetType().Name : "null";                
-                Debug.Trace("OutputCache", "GetFragment(" + key + "," + providerName + ") --> " + typeName + ", CacheInternal");
+                System.Web.Util.Debug.Trace("OutputCache", "GetFragment(" + key + "," + providerName + ") --> " + typeName + ", CacheInternal");
             }
             else {
-                Debug.Trace("OutputCache", "GetFragment(" + key + "," + providerName + ") --> " + result.GetType().Name + ", " + providerName);
+                System.Web.Util.Debug.Trace("OutputCache", "GetFragment(" + key + "," + providerName + ") --> " + result.GetType().Name + ", " + providerName);
 #endif
             }
             return result;
@@ -608,7 +616,7 @@ namespace System.Web.Caching {
                 }
             }
 #if DBG
-            Debug.Trace("OutputCache", "Remove(" + key + ", context)");
+            System.Web.Util.Debug.Trace("OutputCache", "Remove(" + key + ", context)");
 #endif
         }
 
@@ -625,12 +633,12 @@ namespace System.Web.Caching {
             OutputCacheProviderCollection providers = Providers;
             OutputCacheProvider provider = (providers == null) ? null : providers[providerName];
             if (provider == null) {
-                throw new ProviderException(SR.GetString(SR.Provider_Not_Found, providerName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_Not_Found, providerName));
             }
 
             provider.Remove(key);
 #if DBG
-            Debug.Trace("OutputCache", "Remove(" + key + ", " + providerName + ")");
+            System.Web.Util.Debug.Trace("OutputCache", "Remove(" + key + ", " + providerName + ")");
 #endif
         }
 
@@ -645,7 +653,7 @@ namespace System.Web.Caching {
             }
             HttpRuntime.Cache.InternalCache.Remove(key);
 #if DBG
-            Debug.Trace("OutputCache", "RemoveFragment(" + key + "," + providerName + ")");
+            System.Web.Util.Debug.Trace("OutputCache", "RemoveFragment(" + key + "," + providerName + ")");
 #endif
         }
 
@@ -672,7 +680,7 @@ namespace System.Web.Caching {
                                        && (dependencies == null || dependencies.IsFileDependency()));
             
                 if (useProvider && !canUseProvider) {
-                    throw new ProviderException(SR.GetString(SR.Provider_does_not_support_policy_for_fragments, providerName));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_does_not_support_policy_for_fragments, providerName));
                 }
             }
 
@@ -753,7 +761,7 @@ namespace System.Web.Caching {
 #if DBG
             string cachedVaryType = (cachedVaryPutInCache) ? "ControlCachedVary" : "";
             string providerUsed = (useProvider) ? provider.Name : "CacheInternal";
-            Debug.Trace("OutputCache", "InsertFragment(" 
+            System.Web.Util.Debug.Trace("OutputCache", "InsertFragment(" 
                         + cachedVaryKey + ", " 
                         + cachedVaryType + ", " 
                         + fragmentKey + ", PartialCachingCacheEntry, ...) -->"
@@ -784,7 +792,7 @@ namespace System.Web.Caching {
                                        && (dependencies == null || dependencies.IsFileDependency()));
 
                 if (useProvider && !canUseProvider) {
-                    throw new ProviderException(SR.GetString(SR.Provider_does_not_support_policy_for_responses, provider.Name));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_does_not_support_policy_for_responses, provider.Name));
                 }
             }
 
@@ -873,7 +881,7 @@ namespace System.Web.Caching {
 #if DBG
             string cachedVaryType = (cachedVaryPutInCache) ? "CachedVary" : "";
             string providerUsed = (useProvider) ? provider.Name : "CacheInternal";
-            Debug.Trace("OutputCache", "InsertResposne(" 
+            System.Web.Util.Debug.Trace("OutputCache", "InsertResposne(" 
                         + cachedVaryKey + ", " 
                         + cachedVaryType + ", " 
                         + rawResponseKey + ", CachedRawResponse, ...) -->"

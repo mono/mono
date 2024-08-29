@@ -80,12 +80,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.LayoutEditorPart_PartTitle),
+        WebSysDefaultValue(System.Web.SR.LayoutEditorPart_PartTitle),
         ]
         public override string Title {
             get {
                 string s = (string)ViewState["Title"];
-                return (s != null) ? s : SR.GetString(SR.LayoutEditorPart_PartTitle);
+                return (s != null) ? s : System.Web.SR.GetString(System.Web.SR.LayoutEditorPart_PartTitle);
             }
             set {
                 ViewState["Title"] = value;
@@ -111,11 +111,11 @@ namespace System.Web.UI.WebControls.WebParts {
                 if (CanChangeZoneIndex) {
                     if (Int32.TryParse(_zoneIndex.Text, NumberStyles.Integer, CultureInfo.CurrentCulture, out zoneIndex)) {
                         if (zoneIndex < MinZoneIndex) {
-                            _zoneIndexErrorMessage = SR.GetString(SR.EditorPart_PropertyMinValue, MinZoneIndex.ToString(CultureInfo.CurrentCulture));
+                            _zoneIndexErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_PropertyMinValue, MinZoneIndex.ToString(CultureInfo.CurrentCulture));
                         }
                     }
                     else {
-                        _zoneIndexErrorMessage = SR.GetString(SR.EditorPart_PropertyMustBeInteger);
+                        _zoneIndexErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_PropertyMustBeInteger);
                     }
                 }
 
@@ -148,9 +148,9 @@ namespace System.Web.UI.WebControls.WebParts {
 
             TypeConverter chromeStateConverter = TypeDescriptor.GetConverter(typeof(PartChromeState));
             _chromeState = new DropDownList();
-            _chromeState.Items.Add(new ListItem(SR.GetString(SR.PartChromeState_Normal),
+            _chromeState.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.PartChromeState_Normal),
                                                chromeStateConverter.ConvertToString(PartChromeState.Normal)));
-            _chromeState.Items.Add(new ListItem(SR.GetString(SR.PartChromeState_Minimized),
+            _chromeState.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.PartChromeState_Minimized),
                                                chromeStateConverter.ConvertToString(PartChromeState.Minimized)));
             controls.Add(_chromeState);
 
@@ -199,13 +199,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
             if (DesignMode) {
                 // Add sample zone to dropdown
-                _zone.Items.Add(SR.GetString(SR.Zone_SampleHeaderText));
+                _zone.Items.Add(System.Web.SR.GetString(System.Web.SR.Zone_SampleHeaderText));
             }
 
             string[] propertyDisplayNames = new string[] {
-                SR.GetString(SR.LayoutEditorPart_ChromeState),
-                SR.GetString(SR.LayoutEditorPart_Zone),
-                SR.GetString(SR.LayoutEditorPart_ZoneIndex),
+                System.Web.SR.GetString(System.Web.SR.LayoutEditorPart_ChromeState),
+                System.Web.SR.GetString(System.Web.SR.LayoutEditorPart_Zone),
+                System.Web.SR.GetString(System.Web.SR.LayoutEditorPart_ZoneIndex),
             };
 
             WebControl[] propertyEditors = new WebControl[] {
@@ -227,7 +227,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public override void SyncChanges() {
             WebPart webPart = WebPartToEdit;
 
-            Debug.Assert(webPart != null);
+            System.Web.Util.Debug.Assert(webPart != null);
             if (webPart != null) {
                 WebPartZoneBase currentZone = webPart.Zone;
                 bool allowLayoutChange = currentZone.AllowLayoutChange;
@@ -239,7 +239,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 _chromeState.Enabled = CanChangeChromeState;
 
                 WebPartManager manager = WebPartManager;
-                Debug.Assert(manager != null);
+                System.Web.Util.Debug.Assert(manager != null);
                 if (manager != null) {
                     WebPartZoneCollection zones = manager.Zones;
                     bool allowZoneChange = webPart.AllowZoneChange;

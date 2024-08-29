@@ -57,7 +57,7 @@ public class UserControlControlBuilder : ControlBuilder {
 
     /// <internalonly/>
     public override void SetTagInnerText(string text) {
-        Debug.Assert(InDesigner == true, "Should only be called in design-mode!");
+        System.Web.Util.Debug.Assert(InDesigner == true, "Should only be called in design-mode!");
         _innerText = text;
     }
 }
@@ -77,10 +77,10 @@ public class FileLevelUserControlBuilder: RootBuilder {
 [
 ControlBuilder(typeof(UserControlControlBuilder)),
 DefaultEvent("Load"),
-Designer("System.Web.UI.Design.UserControlDesigner, " + AssemblyRef.SystemDesign, typeof(IDesigner)),
-Designer("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
+//Designer("System.Web.UI.Design.UserControlDesigner, " + AssemblyRef.SystemDesign, typeof(IDesigner)),
+//Designer("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
 DesignerCategory("ASPXCodeBehind"),
-DesignerSerializer("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + AssemblyRef.MicrosoftVisualStudioWeb, "System.ComponentModel.Design.Serialization.TypeCodeDomSerializer, " + AssemblyRef.SystemDesign),
+//DesignerSerializer("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + AssemblyRef.MicrosoftVisualStudioWeb, "System.ComponentModel.Design.Serialization.TypeCodeDomSerializer, " + AssemblyRef.SystemDesign),
 ParseChildren(true),
 ToolboxItem(false)
 ]

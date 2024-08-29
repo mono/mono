@@ -60,7 +60,7 @@ namespace System.Web.Configuration {
 
             set {
                 if (!WebConfigurationHost.IsValidSiteArgument(value)) {
-                    throw ExceptionUtil.PropertyInvalid("Site");
+                    throw System.Web.Util.ExceptionUtil.PropertyInvalid("Site");
                 }
 
                 _site = value;

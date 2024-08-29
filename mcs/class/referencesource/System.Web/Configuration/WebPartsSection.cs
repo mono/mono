@@ -135,7 +135,7 @@ namespace System.Web.Configuration {
         }
 
         /// <internalonly />
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -148,7 +148,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override object GetRuntimeObject() {
+        protected internal override object GetRuntimeObject() {
             Personalization.ValidateAuthorization();
             return base.GetRuntimeObject();
         }

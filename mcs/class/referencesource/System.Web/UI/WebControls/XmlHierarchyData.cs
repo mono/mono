@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls {
                     return "/*[position()=" + Convert.ToString(index, CultureInfo.InvariantCulture) + "]";
             }
 
-            throw new ArgumentException(SR.GetString(SR.XmlHierarchyData_CouldNotFindNode));
+            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.XmlHierarchyData_CouldNotFindNode));
         }
 
         public override string ToString() {

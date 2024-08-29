@@ -17,6 +17,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Diagnostics;
     using System.Security.Permissions;
+    
 
     public sealed class UrlMapping : ConfigurationElement {
         private static ConfigurationPropertyCollection _properties;
@@ -54,7 +55,7 @@ namespace System.Web.Configuration {
             base[_propMappedUrl] = mappedUrl;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -80,8 +81,8 @@ namespace System.Web.Configuration {
 
             string url = (string)value;
 
-            if (!UrlPath.IsAppRelativePath(url)) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.UrlMappings_only_app_relative_url_allowed, url));
+            if (!System.Web.Util.UrlPath.IsAppRelativePath(url)) {
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.UrlMappings_only_app_relative_url_allowed, url));
             }
         }
     }

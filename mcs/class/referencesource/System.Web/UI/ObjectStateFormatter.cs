@@ -26,6 +26,7 @@ namespace System.Web.UI {
     using System.Web.Management;
     using System.Web.UI.WebControls;
     using System.Web.Security.Cryptography;
+    
 
     // 
 
@@ -248,7 +249,7 @@ namespace System.Web.UI {
         /// for future reference by index.
         /// </devdoc>
         private void AddDeserializationStringReference(string s) {
-            Debug.Assert((s != null) && (s.Length != 0));
+            System.Web.Util.Debug.Assert((s != null) && (s.Length != 0));
 
             if (_stringTableCount == StringTableSize) {
                 // loop around to the start of the table
@@ -277,7 +278,7 @@ namespace System.Web.UI {
         /// for quick lookup.
         /// </devdoc>
         private void AddSerializationStringReference(string s) {
-            Debug.Assert((s != null) && (s.Length != 0));
+            System.Web.Util.Debug.Assert((s != null) && (s.Length != 0));
 
             if (_stringTableCount == StringTableSize) {
                 // loop around to the start of the table
@@ -288,7 +289,7 @@ namespace System.Web.UI {
             if (oldString != null) {
                 // it means we're looping around, and the existing table entry
                 // needs to be removed, as a new one will replace it
-                Debug.Assert(_stringTable.Contains(oldString));
+                System.Web.Util.Debug.Assert(_stringTable.Contains(oldString));
                 _stringTable.Remove(oldString);
             }
 
@@ -302,7 +303,7 @@ namespace System.Web.UI {
         /// can be later referred to by its index.
         /// </devdoc>
         private void AddSerializationTypeReference(Type type) {
-            Debug.Assert(type != null);
+            System.Web.Util.Debug.Assert(type != null);
 
             int typeID = _typeTable.Count;
             _typeTable[type] = typeID;
@@ -333,7 +334,7 @@ namespace System.Web.UI {
                 if (formatMarker == Marker_Format) {
                     byte versionMarker = reader.ReadByte();
 
-                    Debug.Assert(versionMarker == Marker_Version_1);
+                    System.Web.Util.Debug.Assert(versionMarker == Marker_Version_1);
                     if (versionMarker == Marker_Version_1) {
                         return DeserializeValue(reader);
                     }
@@ -347,7 +348,7 @@ namespace System.Web.UI {
             // or if deserialization was skipped because of invalid format or
             // version data in the stream
 
-            throw new ArgumentException(SR.GetString(SR.InvalidSerializedData), deserializationException);
+            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidSerializedData), deserializationException);
         }
 
 
@@ -421,13 +422,13 @@ namespace System.Web.UI {
         /// first occurrence), or a reference to it by index into the string table.
         /// </devdoc>
         private IndexedString DeserializeIndexedString(SerializerBinaryReader reader, byte token) {
-            Debug.Assert((token == Token_IndexedStringAdd) || (token == Token_IndexedString));
+            System.Web.Util.Debug.Assert((token == Token_IndexedStringAdd) || (token == Token_IndexedString));
 
             if (token == Token_IndexedString) {
                 // reference to string in the current string table
                 int tableIndex = (int)reader.ReadByte();
 
-                Debug.Assert(_stringList[tableIndex] != null);
+                System.Web.Util.Debug.Assert(_stringList[tableIndex] != null);
                 return new IndexedString(_stringList[tableIndex]);
             }
             else {
@@ -448,7 +449,7 @@ namespace System.Web.UI {
         /// </devdoc>
         private Type DeserializeType(SerializerBinaryReader reader) {
             byte token = reader.ReadByte();
-            Debug.Assert((token == Token_TypeRef) ||
+            System.Web.Util.Debug.Assert((token == Token_TypeRef) ||
                          (token == Token_TypeRefAdd) ||
                          (token == Token_TypeRefAddLocal));
 
@@ -478,7 +479,7 @@ namespace System.Web.UI {
                     else {
                         // Log error message
                         WebBaseEvent.RaiseSystemEvent(
-                            SR.GetString(SR.Webevent_msg_OSF_Deserialization_Type, typeName),
+                            System.Web.SR.GetString(System.Web.SR.Webevent_msg_OSF_Deserialization_Type, typeName),
                             this, 
                             WebEventCodes.WebErrorObjectStateFormatterDeserializationError, 
                             WebEventCodes.UndefinedEventDetailCode, 
@@ -620,7 +621,7 @@ namespace System.Web.UI {
 
                         // Guard against bad data
                         if (itemCount > count) {
-                            throw new InvalidOperationException(SR.GetString(SR.InvalidSerializedData));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.InvalidSerializedData));
                         }
 
                         Array list = Array.CreateInstance(elementType, count);
@@ -630,7 +631,7 @@ namespace System.Web.UI {
 
                             // Guard against bad data (nextPos way too big, or nextPos not increasing)
                             if (nextPos >= count || nextPos < 0) {
-                                throw new InvalidOperationException(SR.GetString(SR.InvalidSerializedData));
+                                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.InvalidSerializedData));
                             }
                             list.SetValue(DeserializeValue(reader), nextPos);
                         }
@@ -657,7 +658,7 @@ namespace System.Web.UI {
                                 }
                                 else {
                                     WebBaseEvent.RaiseSystemEvent(
-                                        SR.GetString(SR.Webevent_msg_OSF_Deserialization_String, valueType.AssemblyQualifiedName),
+                                        System.Web.SR.GetString(System.Web.SR.Webevent_msg_OSF_Deserialization_String, valueType.AssemblyQualifiedName),
                                         this, 
                                         WebEventCodes.WebErrorObjectStateFormatterDeserializationError, 
                                         WebEventCodes.UndefinedEventDetailCode, 
@@ -692,7 +693,7 @@ namespace System.Web.UI {
                             }
                             else {
                                 WebBaseEvent.RaiseSystemEvent(
-                                    SR.GetString(SR.Webevent_msg_OSF_Deserialization_Binary), 
+                                    System.Web.SR.GetString(System.Web.SR.Webevent_msg_OSF_Deserialization_Binary), 
                                     this, 
                                     WebEventCodes.WebErrorObjectStateFormatterDeserializationError, 
                                     WebEventCodes.UndefinedEventDetailCode, 
@@ -705,7 +706,7 @@ namespace System.Web.UI {
                         return result;
                     }
                 default:
-                    throw new InvalidOperationException(SR.GetString(SR.InvalidSerializedData));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.InvalidSerializedData));
             }
         }
 
@@ -941,7 +942,7 @@ namespace System.Web.UI {
                     }
 
                     if (value is IndexedString) {
-                        Debug.Assert(((IndexedString)value).Value != null);
+                        System.Web.Util.Debug.Assert(((IndexedString)value).Value != null);
                         SerializeIndexedString(writer, ((IndexedString)value).Value);
                         continue;
                     }
@@ -1191,7 +1192,7 @@ namespace System.Web.UI {
             }
             catch (Exception serializationException) {
                 if (value != null)
-                    throw new ArgumentException(SR.GetString(SR.ErrorSerializingValue, value.ToString(), value.GetType().FullName),
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ErrorSerializingValue, value.ToString(), value.GetType().FullName),
                                             serializationException);
                 throw serializationException;
             }

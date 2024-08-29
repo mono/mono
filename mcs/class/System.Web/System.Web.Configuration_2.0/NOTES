@@ -1,6 +1,0 @@
-
-* Test/standalone/configuration/dumper.cs can be used to dump out some
-  information gleaned through reflection of the 2.0 config classes.
-  It was used to generate the validator/converter info in the static
-  constructors, as well as figure out the ElementProperty and
-  GetRuntimeObject implementations.

@@ -10,9 +10,9 @@ namespace MonoTests.SystemWeb.Framework
 			CopyPrefixedResources (myself, "App_GlobalResources/", "App_GlobalResources");
 			CopyPrefixedResources (myself, "App_Code/", "App_Code");
 #if DOTNET
-			CopyResource (myself, "Web.config", "Web.config");
+			CopyResource (myself, "Web.config", "web.config");
 #else
-			CopyResource (myself, "Web.mono.config.4.0", "Web.config");
+			CopyResource (myself, "Web.mono.config.4.0", "web.config");
 #endif
 		}
 	}

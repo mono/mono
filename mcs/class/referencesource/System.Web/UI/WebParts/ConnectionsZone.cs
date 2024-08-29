@@ -129,7 +129,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.ConnectionsZone_CancelVerb),
+        WebSysDescription(System.Web.SR.ConnectionsZone_CancelVerb),
         ]
         public virtual WebPartVerb CancelVerb {
             get {
@@ -150,7 +150,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.ConnectionsZone_CloseVerb),
+        WebSysDescription(System.Web.SR.ConnectionsZone_CloseVerb),
         ]
         public virtual WebPartVerb CloseVerb {
             get {
@@ -168,13 +168,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConfigureConnectionTitleDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConfigureConnectionTitle),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConfigureConnectionTitleDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConfigureConnectionTitle),
         ]
         public virtual string ConfigureConnectionTitle {
             get {
                 string s = (string)ViewState["ConfigureConnectionTitle"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConfigureConnectionTitle) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConfigureConnectionTitle) : s);
             }
             set {
                 ViewState["ConfigureConnectionTitle"] = value;
@@ -187,7 +187,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.ConnectionsZone_ConfigureVerb),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConfigureVerb),
         ]
         public virtual WebPartVerb ConfigureVerb {
             get {
@@ -204,13 +204,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConnectToConsumerInstructionTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConnectToConsumerInstructionText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConnectToConsumerInstructionTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConnectToConsumerInstructionText),
         ]
         public virtual string ConnectToConsumerInstructionText {
             get {
                 string s = (string)ViewState["ConnectToConsumerInstructionText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConnectToConsumerInstructionText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConnectToConsumerInstructionText) : s);
             }
             set {
                 ViewState["ConnectToConsumerInstructionText"] = value;
@@ -219,13 +219,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConnectToConsumerTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConnectToConsumerText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConnectToConsumerTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConnectToConsumerText),
         ]
         public virtual string ConnectToConsumerText {
             get {
                 string s = (string)ViewState["ConnectToConsumerText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConnectToConsumerText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConnectToConsumerText) : s);
             }
             set {
                 ViewState["ConnectToConsumerText"] = value;
@@ -234,13 +234,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConnectToConsumerTitleDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConnectToConsumerTitle),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConnectToConsumerTitleDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConnectToConsumerTitle),
         ]
         public virtual string ConnectToConsumerTitle {
             get {
                 string s = (string)ViewState["ConnectToConsumerTitle"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConnectToConsumerTitle) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConnectToConsumerTitle) : s);
             }
             set {
                 ViewState["ConnectToConsumerTitle"] = value;
@@ -250,13 +250,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConnectToProviderInstructionTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConnectToProviderInstructionText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConnectToProviderInstructionTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConnectToProviderInstructionText),
         ]
         public virtual string ConnectToProviderInstructionText {
             get {
                 string s = (string)ViewState["ConnectToProviderInstructionText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConnectToProviderInstructionText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConnectToProviderInstructionText) : s);
             }
             set {
                 ViewState["ConnectToProviderInstructionText"] = value;
@@ -265,13 +265,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConnectToProviderTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConnectToProviderText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConnectToProviderTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConnectToProviderText),
         ]
         public virtual string ConnectToProviderText {
             get {
                 string s = (string)ViewState["ConnectToProviderText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConnectToProviderText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConnectToProviderText) : s);
             }
             set {
                 ViewState["ConnectToProviderText"] = value;
@@ -280,13 +280,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConnectToProviderTitleDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConnectToProviderTitle),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConnectToProviderTitleDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConnectToProviderTitle),
         ]
         public virtual string ConnectToProviderTitle {
             get {
                 string s = (string)ViewState["ConnectToProviderTitle"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConnectToProviderTitle) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConnectToProviderTitle) : s);
             }
             set {
                 ViewState["ConnectToProviderTitle"] = value;
@@ -299,7 +299,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.ConnectionsZone_ConnectVerb),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConnectVerb),
         ]
         public virtual WebPartVerb ConnectVerb {
             get {
@@ -317,13 +317,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConsumersTitleDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConsumersTitle),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConsumersTitleDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConsumersTitle),
         ]
         public virtual string ConsumersTitle {
             get {
                 string s = (string)ViewState["ConsumersTitle"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConsumersTitle) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConsumersTitle) : s);
             }
             set {
                 ViewState["ConsumersTitle"] = value;
@@ -332,13 +332,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ConsumersInstructionTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ConsumersInstructionText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ConsumersInstructionTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ConsumersInstructionText),
         ]
         public virtual string ConsumersInstructionText {
             get {
                 string s = (string)ViewState["ConsumersInstructionText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ConsumersInstructionText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ConsumersInstructionText) : s);
             }
             set {
                 ViewState["ConsumersInstructionText"] = value;
@@ -351,7 +351,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.ConnectionsZone_DisconnectVerb),
+        WebSysDescription(System.Web.SR.ConnectionsZone_DisconnectVerb),
         ]
         public virtual WebPartVerb DisconnectVerb {
             get {
@@ -388,13 +388,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_WarningMessage),
-        WebSysDefaultValue(SR.ConnectionsZone_WarningConnectionDisabled),
+        WebSysDescription(System.Web.SR.ConnectionsZone_WarningMessage),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_WarningConnectionDisabled),
         ]
         public virtual string ExistingConnectionErrorMessage {
             get {
                 string s = (string)ViewState["ExistingConnectionErrorMessage"];
-                return s == null ? SR.GetString(SR.ConnectionsZone_WarningConnectionDisabled) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_WarningConnectionDisabled) : s;
             }
             set {
                 ViewState["ExistingConnectionErrorMessage"] = value;
@@ -403,13 +403,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_GetDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_Get),
+        WebSysDescription(System.Web.SR.ConnectionsZone_GetDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_Get),
         ]
         public virtual string GetText {
             get {
                 string s = (string)ViewState["GetText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_Get) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_Get) : s);
             }
             set {
                 ViewState["GetText"] = value;
@@ -418,13 +418,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_GetFromTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_GetFromText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_GetFromTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_GetFromText),
         ]
         public virtual string GetFromText {
             get {
                 string s = (string)ViewState["GetFromText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_GetFromText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_GetFromText) : s);
             }
             set {
                 ViewState["GetFromText"] = value;
@@ -433,13 +433,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_HeaderTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_HeaderText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_HeaderTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_HeaderText),
         ]
         public override string HeaderText {
             get {
                 string s = (string)ViewState["HeaderText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_HeaderText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_HeaderText) : s);
             }
             set {
                 ViewState["HeaderText"] = value;
@@ -448,13 +448,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_InstructionTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_InstructionText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_InstructionTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_InstructionText),
         ]
         public override string InstructionText {
             get {
                 string s = (string)ViewState["InstructionText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_InstructionText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_InstructionText) : s);
             }
             set {
                 ViewState["InstructionText"] = value;
@@ -463,13 +463,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_InstructionTitleDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_InstructionTitle),
+        WebSysDescription(System.Web.SR.ConnectionsZone_InstructionTitleDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_InstructionTitle),
         ]
         public virtual string InstructionTitle {
             get {
                 string s = (string)ViewState["InstructionTitle"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_InstructionTitle) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_InstructionTitle) : s);
             }
             set {
                 ViewState["InstructionTitle"] = value;
@@ -478,13 +478,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ErrorMessage),
-        WebSysDefaultValue(SR.ConnectionsZone_ErrorCantContinueConnectionCreation),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ErrorMessage),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ErrorCantContinueConnectionCreation),
         ]
         public virtual string NewConnectionErrorMessage {
             get {
                 string s = (string)ViewState["NewConnectionErrorMessage"];
-                return s == null ? SR.GetString(SR.ConnectionsZone_ErrorCantContinueConnectionCreation) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ErrorCantContinueConnectionCreation) : s;
             }
             set {
                 ViewState["NewConnectionErrorMessage"] = value;
@@ -493,13 +493,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_NoExistingConnectionInstructionTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_NoExistingConnectionInstructionText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_NoExistingConnectionInstructionTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_NoExistingConnectionInstructionText),
         ]
         public virtual string NoExistingConnectionInstructionText {
             get {
                 string s = (string)ViewState["NoExistingConnectionInstructionText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_NoExistingConnectionInstructionText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_NoExistingConnectionInstructionText) : s);
             }
             set {
                 ViewState["NoExistingConnectionInstructionText"] = value;
@@ -508,13 +508,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_NoExistingConnectionTitleDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_NoExistingConnectionTitle),
+        WebSysDescription(System.Web.SR.ConnectionsZone_NoExistingConnectionTitleDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_NoExistingConnectionTitle),
         ]
         public virtual string NoExistingConnectionTitle {
             get {
                 string s = (string)ViewState["NoExistingConnectionTitle"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_NoExistingConnectionTitle) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_NoExistingConnectionTitle) : s);
             }
             set {
                 ViewState["NoExistingConnectionTitle"] = value;
@@ -537,13 +537,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ProvidersTitleDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ProvidersTitle),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ProvidersTitleDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ProvidersTitle),
         ]
         public virtual string ProvidersTitle {
             get {
                 string s = (string)ViewState["ProvidersTitle"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ProvidersTitle) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ProvidersTitle) : s);
             }
             set {
                 ViewState["ProvidersTitle"] = value;
@@ -552,13 +552,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_ProvidersInstructionTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_ProvidersInstructionText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_ProvidersInstructionTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_ProvidersInstructionText),
         ]
         public virtual string ProvidersInstructionText {
             get {
                 string s = (string)ViewState["ProvidersInstructionText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_ProvidersInstructionText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_ProvidersInstructionText) : s);
             }
             set {
                 ViewState["ProvidersInstructionText"] = value;
@@ -567,13 +567,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_SendTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_SendText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_SendTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_SendText),
         ]
         public virtual string SendText {
             get {
                 string s = (string)ViewState["SendText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_SendText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_SendText) : s);
             }
             set {
                 ViewState["SendText"] = value;
@@ -582,13 +582,13 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.ConnectionsZone_SendToTextDescription),
-        WebSysDefaultValue(SR.ConnectionsZone_SendToText),
+        WebSysDescription(System.Web.SR.ConnectionsZone_SendToTextDescription),
+        WebSysDefaultValue(System.Web.SR.ConnectionsZone_SendToText),
         ]
         public virtual string SendToText {
             get {
                 string s = (string)ViewState["SendToText"];
-                return((s == null) ? SR.GetString(SR.ConnectionsZone_SendToText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.ConnectionsZone_SendToText) : s);
             }
             set {
                 ViewState["SendToText"] = value;
@@ -670,7 +670,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 ProviderInfo provider = (ProviderInfo)providers[selectedValue];
                 Type transformerType = provider.TransformerType;
                 if (transformerType != null) {
-                    Debug.Assert(transformerType.IsSubclassOf(typeof(WebPartTransformer)));
+                    System.Web.Util.Debug.Assert(transformerType.IsSubclassOf(typeof(WebPartTransformer)));
                     WebPartTransformer transformer =
                         (WebPartTransformer)WebPartUtil.CreateObjectFromType(transformerType);
                     if (GetConfigurationControl(transformer) == null) {
@@ -754,7 +754,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 ConsumerInfo consumer = (ConsumerInfo)consumers[selectedValue];
                 Type transformerType = consumer.TransformerType;
                 if (transformerType != null) {
-                    Debug.Assert(transformerType.IsSubclassOf(typeof(WebPartTransformer)));
+                    System.Web.Util.Debug.Assert(transformerType.IsSubclassOf(typeof(WebPartTransformer)));
                     WebPartTransformer transformer =
                         (WebPartTransformer)WebPartUtil.CreateObjectFromType(transformerType);
                     if (GetConfigurationControl(transformer) == null) {
@@ -802,7 +802,7 @@ namespace System.Web.UI.WebControls.WebParts {
             WebPart webPartToConnect = WebPartToConnect;
             if (webPartToConnect != null && !webPartToConnect.IsClosed) {
                 WebPartManager webPartManager = WebPartManager;
-                Debug.Assert(webPartManager != null);
+                System.Web.Util.Debug.Assert(webPartManager != null);
 
                 ProviderConnectionPointCollection providerConnectionPoints =
                     WebPartManager.GetEnabledProviderConnectionPoints(webPartToConnect);
@@ -838,7 +838,7 @@ namespace System.Web.UI.WebControls.WebParts {
                             IDictionary providers = (IDictionary)_connectionPointInfo[_pendingConsumerConnectionPoint];
                             ProviderInfo providerInfo = (ProviderInfo)providers[_pendingSelectedValue];
 
-                            Debug.Assert(providerInfo != null && providerInfo.TransformerType != null && providerInfo.TransformerType.IsSubclassOf(typeof(WebPartTransformer)));
+                            System.Web.Util.Debug.Assert(providerInfo != null && providerInfo.TransformerType != null && providerInfo.TransformerType.IsSubclassOf(typeof(WebPartTransformer)));
                             _pendingTransformer = (WebPartTransformer)WebPartUtil.CreateObjectFromType(
                                 providerInfo.TransformerType);
                         }
@@ -863,11 +863,11 @@ namespace System.Web.UI.WebControls.WebParts {
                         Control pendingConsumerControl = _pendingConsumer.ToControl();
 
                         ConsumerInfo consumerInfo;
-                        Debug.Assert(_pendingSelectedValue != null);
+                        System.Web.Util.Debug.Assert(_pendingSelectedValue != null);
 
                         IDictionary consumers = (IDictionary)_connectionPointInfo[_pendingProviderConnectionPoint];
                         consumerInfo = (ConsumerInfo)consumers[_pendingSelectedValue];
-                        Debug.Assert(consumerInfo != null && consumerInfo.TransformerType != null && consumerInfo.TransformerType.IsSubclassOf(typeof(WebPartTransformer)));
+                        System.Web.Util.Debug.Assert(consumerInfo != null && consumerInfo.TransformerType != null && consumerInfo.TransformerType.IsSubclassOf(typeof(WebPartTransformer)));
                         _pendingTransformer = (WebPartTransformer)WebPartUtil.CreateObjectFromType(
                             consumerInfo.TransformerType);
 
@@ -905,7 +905,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
 
             if (_pendingConnectionType == ConnectionType.Provider) {
-                Debug.Assert(_pendingSelectedValue != null);
+                System.Web.Util.Debug.Assert(_pendingSelectedValue != null);
 
                 _pendingProvider = WebPartToConnect;
                 _pendingProviderConnectionPoint =
@@ -989,7 +989,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
             else {
                 // No pending connection
-                Debug.Assert(_pendingConnectionType == ConnectionType.None);
+                System.Web.Util.Debug.Assert(_pendingConnectionType == ConnectionType.None);
 
                 ClearPendingConnection();
 
@@ -1001,7 +1001,7 @@ namespace System.Web.UI.WebControls.WebParts {
             WebPartConnection connection = WebPartManager.Connections[connectionID];
             if (connection != null) {
                 if (connection.Provider != WebPartToConnect && connection.Consumer != WebPartToConnect) {
-                    throw new InvalidOperationException(SR.GetString(SR.ConnectionsZone_DisconnectInvalid));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ConnectionsZone_DisconnectInvalid));
                 }
                 WebPartManager.DisconnectWebParts(connection);
             }
@@ -1030,13 +1030,13 @@ namespace System.Web.UI.WebControls.WebParts {
                 }
             }
             else {
-                throw new InvalidOperationException(SR.GetString(SR.ConnectionsZone_MustImplementITransformerConfigurationControl));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ConnectionsZone_MustImplementITransformerConfigurationControl));
             }
         }
 
         private string GetDisplayTitle(WebPart part, ConnectionPoint connectionPoint, bool isConsumer) {
             if (part == null) {
-                return SR.GetString(SR.Part_Unknown);
+                return System.Web.SR.GetString(System.Web.SR.Part_Unknown);
             }
 
             int connectionPointCount = isConsumer ?
@@ -1050,7 +1050,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 return part.DisplayTitle + " (" +
                     (connectionPoint != null ?
                      connectionPoint.DisplayName :
-                     SR.GetString(SR.Part_Unknown)) + ")";
+                     System.Web.SR.GetString(System.Web.SR.Part_Unknown)) + ")";
             }
         }
 
@@ -1162,7 +1162,7 @@ namespace System.Web.UI.WebControls.WebParts {
             if (savedState != null) {
                 object[] state = (object[])savedState;
                 if (state.Length != controlStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_ControlState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_ControlState));
                 }
 
                 base.LoadControlState(state[baseIndex]);
@@ -1201,7 +1201,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[]) savedState;
                 if (myState.Length != viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[baseIndex]);
@@ -1239,7 +1239,7 @@ namespace System.Web.UI.WebControls.WebParts {
         private void OnConfigurationControlSucceeded(object sender, EventArgs e) {
             // The pending data came from control state, which came from the available
             // data in the drop-downs, which was checked for AllowConnect.
-            Debug.Assert(_pendingTransformer != null);
+            System.Web.Util.Debug.Assert(_pendingTransformer != null);
             EnsurePendingData();
             if (_pendingConnectionType == ConnectionType.Consumer && !String.IsNullOrEmpty(_pendingConnectionID)) {
                 // Editing an existing connection.  Just tell the WebPartManager that its personalization
@@ -1824,7 +1824,7 @@ namespace System.Web.UI.WebControls.WebParts {
         private void RenderExistingConsumerConnection(HtmlTextWriter writer, WebPartConnection connection) {
             WebPart webPartToConnect = WebPartToConnect;
 
-            Debug.Assert(connection.Provider == webPartToConnect);
+            System.Web.Util.Debug.Assert(connection.Provider == webPartToConnect);
 
             ProviderConnectionPoint providerConnectionPoint =
                WebPartManager.GetProviderConnectionPoint(webPartToConnect, connection.ProviderConnectionPointID);
@@ -1847,12 +1847,12 @@ namespace System.Web.UI.WebControls.WebParts {
                 connection.Consumer != null &&
                 connection.IsActive;
             // IsActive already checks for those:
-            Debug.Assert(!connection.Provider.IsClosed && !connection.Consumer.IsClosed);
+            System.Web.Util.Debug.Assert(!connection.Provider.IsClosed && !connection.Consumer.IsClosed);
 
             RenderExistingConnection(writer,
                                      (providerConnectionPoint != null ?
                                         providerConnectionPoint.DisplayName :
-                                        SR.GetString(SR.Part_Unknown)),
+                                        System.Web.SR.GetString(System.Web.SR.Part_Unknown)),
                                      consumerString,
                                      String.Join(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
                                                  new string[] { disconnectEventArgument, connection.ID }),
@@ -1864,7 +1864,7 @@ namespace System.Web.UI.WebControls.WebParts {
         private void RenderExistingProviderConnection(HtmlTextWriter writer, WebPartConnection connection) {
             WebPart webPartToConnect = WebPartToConnect;
 
-            Debug.Assert(connection.Consumer == webPartToConnect);
+            System.Web.Util.Debug.Assert(connection.Consumer == webPartToConnect);
 
             ConsumerConnectionPoint consumerConnectionPoint =
                WebPartManager.GetConsumerConnectionPoint(webPartToConnect, connection.ConsumerConnectionPointID);
@@ -1887,12 +1887,12 @@ namespace System.Web.UI.WebControls.WebParts {
                 connection.Consumer != null &&
                 connection.IsActive;
             // IsActive already checks for these:
-            Debug.Assert(!connection.Provider.IsClosed && !connection.Consumer.IsClosed);
+            System.Web.Util.Debug.Assert(!connection.Provider.IsClosed && !connection.Consumer.IsClosed);
 
             RenderExistingConnection(writer,
                                      (consumerConnectionPoint != null ?
                                       consumerConnectionPoint.DisplayName :
-                                      SR.GetString(SR.Part_Unknown)),
+                                      System.Web.SR.GetString(System.Web.SR.Part_Unknown)),
                                      providerString,
                                      String.Join(ID_SEPARATOR.ToString(CultureInfo.InvariantCulture),
                                                  new string[] { disconnectEventArgument, connection.ID }),
@@ -1959,10 +1959,10 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         private void RenderTransformerConfigurationHeader(HtmlTextWriter writer) {
-            Debug.Assert(_pendingTransformer != null);
+            System.Web.Util.Debug.Assert(_pendingTransformer != null);
 
             if (EnsurePendingData()) {
-                Debug.Assert(_pendingConsumer != null && _pendingProvider != null
+                System.Web.Util.Debug.Assert(_pendingConsumer != null && _pendingProvider != null
                              && _pendingConsumerConnectionPoint != null
                              && _pendingProviderConnectionPoint != null);
 
@@ -2117,7 +2117,7 @@ namespace System.Web.UI.WebControls.WebParts {
             bool anyRelevantControl = false;
             WebPart webPartToConnect = WebPartToConnect;
             if (webPartToConnect != null && !webPartToConnect.IsClosed) {
-                Debug.Assert(WebPartManager != null);
+                System.Web.Util.Debug.Assert(WebPartManager != null);
 
                 WebPartCollection webParts = WebPartManager.WebParts;
 
@@ -2136,7 +2136,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     IDictionary consumers = GetValidConsumers(webPartToConnect, providerConnectionPoint, webParts);
                     if (consumers.Count == 0) {
                         list.Enabled = false;
-                        list.Items.Add(new ListItem(SR.GetString(SR.ConnectionsZone_NoConsumers), String.Empty));
+                        list.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.ConnectionsZone_NoConsumers), String.Empty));
                     }
                     else {
                         list.Enabled = true;
@@ -2191,7 +2191,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     IDictionary providers = GetValidProviders(webPartToConnect, consumerConnectionPoint, webParts);
                     if (providers.Count == 0) {
                         list.Enabled = false;
-                        list.Items.Add(new ListItem(SR.GetString(SR.ConnectionsZone_NoProviders), String.Empty));
+                        list.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.ConnectionsZone_NoProviders), String.Empty));
                     }
                     else {
                         list.Enabled = true;
@@ -2238,7 +2238,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
                     if (_pendingConsumerConnectionPoint != null) {
                         // Display the pending connection in the appropriate DropDownList
-                        Debug.Assert(_pendingSelectedValue != null);
+                        System.Web.Util.Debug.Assert(_pendingSelectedValue != null);
                         DropDownList list = (DropDownList)_connectDropDownLists[_pendingConsumerConnectionPoint];
                         if (list == null) {
                             _mode = ConnectionsZoneMode.ExistingConnections;
@@ -2256,7 +2256,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
                     if (_pendingProviderConnectionPoint != null) {
                         // Display the pending connection in the appropriate DropDownList
-                        Debug.Assert(_pendingSelectedValue != null);
+                        System.Web.Util.Debug.Assert(_pendingSelectedValue != null);
                         DropDownList list = (DropDownList)_connectDropDownLists[_pendingProviderConnectionPoint];
                         if (list == null) {
                             _mode = ConnectionsZoneMode.ExistingConnections;

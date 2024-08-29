@@ -17,6 +17,7 @@ namespace System.Web.UI.WebControls.Adapters {
     using System.Web.UI;
     using System.Web.UI.Adapters;
     
+    
     public class WmlListControlAdapter : ListControlAdapter, IPostBackDataHandler {
 
         private const String ClientPrefix = "__slst_";        
@@ -150,7 +151,7 @@ namespace System.Web.UI.WebControls.Adapters {
                     // VSWhidbey 115824
                     if (item.Selected) {
                         if (selected && !IsMultiSelect) {
-                            throw new HttpException(SR.GetString(SR.Cant_Multiselect_In_Single_Mode));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_Multiselect_In_Single_Mode));
                         }
                         selected = true;
                     }

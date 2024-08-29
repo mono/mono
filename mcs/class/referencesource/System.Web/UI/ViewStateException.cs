@@ -5,6 +5,7 @@ namespace System.Web.UI {
     using System.Web.Util;
     using System.Globalization;
     using System.Security.Permissions;
+    
  
     [Serializable]
     public sealed class ViewStateException : Exception, ISerializable {
@@ -58,8 +59,7 @@ namespace System.Web.UI {
             HttpResponse response = context != null ? context.Response : null;
 
             // Return the generic viewstate error if the request does not have permission to ServerVariables
-            if (request == null || response == null || 
-                !HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Low)) {
+            if (request == null || response == null) {                
                 _message = ShortMessage;
                 return;
             }
@@ -80,7 +80,7 @@ namespace System.Web.UI {
                                              _userAgent,
                                              _persistedState);
             
-            _message = SR.GetString(SR.ViewState_InvalidViewStatePlus, debugInfo);
+            _message = System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewStatePlus, debugInfo);
         }
 
         [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter=true)]
@@ -89,15 +89,15 @@ namespace System.Web.UI {
         }
 
         internal string ShortMessage {
-            get { return SR.ViewState_InvalidViewState; }
+            get { return System.Web.SR.ViewState_InvalidViewState; }
         }
 
         // if the client disconnected, we want to display that at the top of the error page
         private static string GetCorrectErrorPageMessage(ViewStateException vse, string message) {
             if (!vse.IsConnected)
-                return SR.GetString(SR.ViewState_ClientDisconnected);
+                return System.Web.SR.GetString(System.Web.SR.ViewState_ClientDisconnected);
             else
-                return SR.GetString(message);
+                return System.Web.SR.GetString(message);
         }
 
         private static void ThrowError(Exception inner, string persistedState, string errorPageMessage,
@@ -117,11 +117,11 @@ namespace System.Web.UI {
         }
 
         internal static void ThrowMacValidationError(Exception inner, string persistedState) {
-            ThrowError(inner, persistedState, SR.ViewState_AuthenticationFailed, true);
+            ThrowError(inner, persistedState, System.Web.SR.ViewState_AuthenticationFailed, true);
         }
 
         internal static void ThrowViewStateError(Exception inner, string persistedState) {
-            ThrowError(inner, persistedState, SR.Invalid_ControlState, false);
+            ThrowError(inner, persistedState, System.Web.SR.Invalid_ControlState, false);
         }
 
         // Returns true if this exception was caused by a view state MAC validation failure; false otherwise

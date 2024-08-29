@@ -82,7 +82,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				ensureCreateChildControls = true;
 			}
 
-			protected internal override void CreateChildControls () {
+			protected override void CreateChildControls () {
 				base.CreateChildControls ();
 				createChildControls1 = true;
 			}

@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_DataMember)
+        WebSysDescription(System.Web.SR.DataBoundControl_DataMember)
         ]
         public virtual string DataMember {
             get {
@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_OnCreatingModelDataSource)
+        WebSysDescription(System.Web.SR.DataBoundControl_OnCreatingModelDataSource)
         ]
         public event CreatingModelDataSourceEventHandler CreatingModelDataSource {
             add {
@@ -120,7 +120,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_ItemType)
+        WebSysDescription(System.Web.SR.DataBoundControl_ItemType)
         ]
         public virtual string ItemType {
             get {
@@ -141,7 +141,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_SelectMethod)
+        WebSysDescription(System.Web.SR.DataBoundControl_SelectMethod)
         ]
         public virtual string SelectMethod {
             get {
@@ -161,7 +161,7 @@ namespace System.Web.UI.WebControls {
         /// </summary>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataBoundControl_CallingDataMethods)
+        WebSysDescription(System.Web.SR.DataBoundControl_CallingDataMethods)
         ]
         public event CallingDataMethodsEventHandler CallingDataMethods {
             add {
@@ -212,11 +212,11 @@ namespace System.Web.UI.WebControls {
             if (!DesignMode) {
                 if (IsUsingModelBinders) {
                     if (DataSourceID.Length != 0 || DataSource != null) {
-                        throw new InvalidOperationException(SR.GetString(SR.DataControl_ItemType_MultipleDataSources, ID));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_ItemType_MultipleDataSources, ID));
                     }
                 }
                 else if (DataSourceID.Length != 0 && DataSource != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.DataControl_MultipleDataSources, ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_MultipleDataSources, ID));
                 }
             }
         }
@@ -254,7 +254,7 @@ namespace System.Web.UI.WebControls {
             // IDataSource was found, extract the appropriate view and return it
             DataSourceView newView = _currentDataSource.GetView(dataMember);
             if (newView == null) {
-                throw new InvalidOperationException(SR.GetString(SR.DataControl_ViewNotFound, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_ViewNotFound, ID));
             }
 
             _currentViewIsFromDataSourceID = IsDataBindingAutomatic;
@@ -283,7 +283,7 @@ namespace System.Web.UI.WebControls {
         protected virtual DataSourceView GetData() {
             DataSourceView view = ConnectToDataSourceView();
 
-            Debug.Assert(_currentViewValid);
+            System.Web.Util.Debug.Assert(_currentViewValid);
 
             return view;
         }
@@ -325,11 +325,11 @@ namespace System.Web.UI.WebControls {
                 // Try to find a DataSource control with the ID specified in DataSourceID
                 Control control = DataBoundControlHelper.FindControl(this, dataSourceID);
                 if (control == null) {
-                    throw new HttpException(SR.GetString(SR.DataControl_DataSourceDoesntExist, ID, dataSourceID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControl_DataSourceDoesntExist, ID, dataSourceID));
                 }
                 ds = control as IDataSource;
                 if (ds == null) {
-                    throw new HttpException(SR.GetString(SR.DataControl_DataSourceIDMustBeDataControl, ID, dataSourceID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControl_DataSourceIDMustBeDataControl, ID, dataSourceID));
                 }
             }
             return ds;
@@ -460,7 +460,7 @@ namespace System.Web.UI.WebControls {
                 (dataSource is IDataSource)) {
                 return;
             }
-            throw new InvalidOperationException(SR.GetString(SR.DataBoundControl_InvalidDataSourceType));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataBoundControl_InvalidDataSourceType));
         }
 
         /// <devdoc>
@@ -532,7 +532,7 @@ namespace System.Web.UI.WebControls {
         /// </summary>
         /// <param name="modelDataSource"></param>
         internal virtual void UpdateModelDataSourceProperties(ModelDataSource modelDataSource) {
-            Debug.Assert(modelDataSource != null, "A non-null ModelDataSource should be passed in");
+            System.Web.Util.Debug.Assert(modelDataSource != null, "A non-null ModelDataSource should be passed in");
             modelDataSource.UpdateProperties(ItemType, SelectMethod);
         }
     }

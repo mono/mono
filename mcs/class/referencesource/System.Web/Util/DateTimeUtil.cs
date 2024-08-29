@@ -72,7 +72,7 @@ namespace System.Web.Util {
                     break;
             }
 
-            throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "timeoutUnit"));
+            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidArgumentValue, "timeoutUnit"));
         }
     }
 }

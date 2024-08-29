@@ -58,7 +58,7 @@ namespace System.Web.UI.WebControls {
 
             // Get designer host
             IDesignerHost host = (IDesignerHost)context.GetService(typeof(IDesignerHost));
-            Debug.Assert(host != null, "Unable to get IDesignerHost in ControlPropertyNameConverter");
+            System.Web.Util.Debug.Assert(host != null, "Unable to get IDesignerHost in ControlPropertyNameConverter");
 
             if (host == null)
                 return null;

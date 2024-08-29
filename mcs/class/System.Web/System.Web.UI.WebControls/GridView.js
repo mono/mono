@@ -1,37 +1,44 @@
-function GridView_ClientEvent (ctrlId, evnt)
-{
-	var gridData = getGrid (ctrlId);
-	if (!gridData)
-	    return null;
-	var clientData = gridData.pageIndex + '|' + escape (gridData.sortExp) + '|' + gridData.sortDir + '|' + evnt;
-	WebForm_DoCallback (gridData.uid, clientData, GridView_ClientRender, ctrlId, GridView_ClientRender_Error, false, gridData.form);
+function GridView() {
+    this.pageIndex = null;
+    this.sortExpression = null;
+    this.sortDirection = null;
+    this.dataKeys = null;
+
+     this.createPropertyString = GridView_createPropertyString;
+    this.setStateField = GridView_setStateValue;
+    this.getHiddenFieldContents = GridView_getHiddenFieldContents;
+
+     this.stateField = null;
+    this.panelElement = null;
+
+     this.callback = null;
 }
 
-function GridView_ClientRender (data, ctx)
-{
-	var gridData = getGrid (ctx);
-	if (!gridData)
-	    return;
-	var grid = document.getElementById (ctx + "_div");
-	var i = data.indexOf ("|");
-	var j = data.indexOf ("|", i+1);
-	var k = data.indexOf ("|", j+1);
-	gridData.pageIndex = parseInt (data.substring (0, i));
-	gridData.sortExp = unescape (data.substring (i+1, j));
-	gridData.sortDir = parseInt (data.substring (j+1, k));
-	grid.innerHTML = data.substr (k+1);
-	
-	var page = document.getElementById(ctx + "_Page");
-	page.value = gridData.pageIndex;
-	var sortExp = document.getElementById(ctx + "_SortExpression");
-	sortExp.value = gridData.sortExp;
-	var sortDir = document.getElementById(ctx + "_SortDirection");
-	sortDir.value = gridData.sortDir;
+ function GridView_createPropertyString() {
+    return createPropertyStringFromValues_GridView(this.pageIndex, this.sortDirection, this.sortExpression, this.dataKeys);
 }
 
-function GridView_ClientRender_Error (data, ctx)
-{
+ function GridView_setStateValue() {
+    this.stateField.value = this.createPropertyString();
 }
 
-function getGrid (gridId) { try { return eval (gridId + "_data"); } catch(e) { return null; } }
+ function GridView_OnCallback (result, context) {
+    var value = new String(result);
+    var valsArray = value.split("|");
+    var innerHtml = valsArray[4];
+    for (var i = 5; i < valsArray.length; i++) {
+        innerHtml += "|" + valsArray[i];
+    }
+    context.panelElement.innerHTML = innerHtml;
 
+     context.stateField.value = createPropertyStringFromValues_GridView(valsArray[0], valsArray[1], valsArray[2], valsArray[3]);
+}
+
+ function GridView_getHiddenFieldContents(arg) {
+    return arg + "|" + this.stateField.value;
+}
+
+ function createPropertyStringFromValues_GridView(pageIndex, sortDirection, sortExpression, dataKeys) {
+    var value = new Array(pageIndex, sortDirection, sortExpression, dataKeys);
+    return value.join("|");
+}

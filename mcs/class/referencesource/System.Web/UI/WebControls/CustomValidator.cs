@@ -32,7 +32,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.CustomValidator_ClientValidationFunction)
+        WebSysDescription(System.Web.SR.CustomValidator_ClientValidationFunction)
         ]                                         
         public string ClientValidationFunction {
             get { 
@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(false),
-        WebSysDescription(SR.CustomValidator_ValidateEmptyText),
+        WebSysDescription(System.Web.SR.CustomValidator_ValidateEmptyText),
         ]
         public bool ValidateEmptyText {
             get {
@@ -68,7 +68,7 @@ namespace System.Web.UI.WebControls {
         ///    <see cref='System.Web.UI.WebControls.CustomValidator'/>.</para>
         /// </devdoc>
         [
-        WebSysDescription(SR.CustomValidator_ServerValidate)
+        WebSysDescription(System.Web.SR.CustomValidator_ServerValidate)
         ]                                         
         public event ServerValidateEventHandler ServerValidate {
             add {
@@ -130,7 +130,7 @@ namespace System.Web.UI.WebControls {
             string controlToValidate = ControlToValidate;
             if (controlToValidate.Length > 0) {
                 controlValue = GetControlValidationValue(controlToValidate);
-                Debug.Assert(controlValue != null, "Should have been caught be property check");
+                System.Web.Util.Debug.Assert(controlValue != null, "Should have been caught be property check");
                 // If the text is empty, we return true. Whitespace is ignored for coordination wiht
                 // RequiredFieldValidator.
                 if ((controlValue == null || controlValue.Trim().Length == 0) &&

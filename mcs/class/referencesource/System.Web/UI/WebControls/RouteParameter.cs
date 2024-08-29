@@ -63,7 +63,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Parameter"),
-        WebSysDescription(SR.RouteParameter_RouteKey),
+        WebSysDescription(System.Web.SR.RouteParameter_RouteKey),
         ]
         public string RouteKey {
             get {

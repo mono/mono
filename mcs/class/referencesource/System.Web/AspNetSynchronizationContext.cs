@@ -55,7 +55,7 @@ namespace System.Web {
             _state.AllowVoidAsyncOperations = true;
         }
 
-        [SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Used only during debug.")]
+        [SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Used only during System.Web.Util.Debug.")]
         internal override void AssociateWithCurrentThread() {
             IDisposable disassociationAction = _state.Helper.EnterSynchronousControl();
 
@@ -63,7 +63,7 @@ namespace System.Web {
             IDisposable capturedDisassociationAction = disassociationAction;
             Thread capturedThread = Thread.CurrentThread;
             disassociationAction = new DisposableAction(() => {
-                Debug.Assert(capturedThread == Thread.CurrentThread, String.Format("AssociateWithCurrentThread was called on thread ID '{0}', but DisassociateFromCurrentThread was called on thread ID '{1}'.", capturedThread.ManagedThreadId, Thread.CurrentThread.ManagedThreadId));
+                System.Web.Util.Debug.Assert(capturedThread == Thread.CurrentThread, String.Format("AssociateWithCurrentThread was called on thread ID '{0}', but DisassociateFromCurrentThread was called on thread ID '{1}'.", capturedThread.ManagedThreadId, Thread.CurrentThread.ManagedThreadId));
                 capturedDisassociationAction.Dispose();
             });
 #endif
@@ -91,7 +91,7 @@ namespace System.Web {
             // Don't need to synchronize access to SyncControlDisassociationActions since we assume that our callers are 
             // well-behaved and won't call DisassociateFromCurrentThread() on a thread other than the one which called
             // AssociateWithCurrentThread(), which itself serializes access.
-            Debug.Assert(_state.SyncControlDisassociationActions.Count > 0, "DisassociateFromCurrentThread() was called on a thread which hadn't previously called AssociateWithCurrentThread().");
+            System.Web.Util.Debug.Assert(_state.SyncControlDisassociationActions.Count > 0, "DisassociateFromCurrentThread() was called on a thread which hadn't previously called AssociateWithCurrentThread().");
             IDisposable disassociationAction = _state.SyncControlDisassociationActions.Pop();
             disassociationAction.Dispose();
         }
@@ -109,7 +109,7 @@ namespace System.Web {
             // If the caller tries to kick off an asynchronous operation while we are not
             // processing an async module, handler, or Page, we should prohibit the operation.
             if (!AllowAsyncDuringSyncStages && !_state.AllowVoidAsyncOperations) {
-                InvalidOperationException ex = new InvalidOperationException(SR.GetString(SR.Async_operation_cannot_be_started));
+                InvalidOperationException ex = new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_operation_cannot_be_started));
                 throw ex;
             }
 
@@ -149,7 +149,7 @@ namespace System.Web {
             // But it's actually not terrible if that happens, since the error is really
             // just meant to be used for diagnostic purposes.
             if (!AllowAsyncDuringSyncStages && Volatile.Read(ref _state.VoidAsyncOutstandingOperationCount) > 0) {
-                InvalidOperationException ex = new InvalidOperationException(SR.GetString(SR.Async_operation_cannot_be_pending));
+                InvalidOperationException ex = new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_operation_cannot_be_pending));
                 _state.Helper.Error = ExceptionDispatchInfo.Capture(ex);
             }
         }

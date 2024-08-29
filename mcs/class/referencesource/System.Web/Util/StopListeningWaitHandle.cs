@@ -21,8 +21,11 @@ namespace System.Web.Util {
 
         public StopListeningWaitHandle() {
             // This handle is process-wide and not ref counted, so no need to wrap inside a SafeHandle
+#if !FEATURE_PAL
             IntPtr eventHandle = UnsafeIISMethods.MgdGetStopListeningEventHandle();
-
+#else
+            IntPtr eventHandle = new IntPtr();
+#endif
             // Per documentation for RegisterWaitForSingleObject, we need to duplicate handles
             // before asynchronously waiting on them.
             SafeWaitHandle safeWaitHandle;

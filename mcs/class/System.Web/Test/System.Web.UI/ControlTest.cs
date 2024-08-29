@@ -1124,18 +1124,18 @@ namespace MonoTests.System.Web.UI
 				set { ViewState ["Viewstate"] = value; }
 			}
 
-			protected internal override void OnInit (EventArgs e)
+			protected override void OnInit (EventArgs e)
 			{
 				base.OnInit (e);
 				Page.RegisterRequiresControlState (this);
 			}
 
-			protected internal override object SaveControlState ()
+			protected override object SaveControlState ()
 			{
 				return State;
 			}
 
-			protected internal override void LoadControlState (object savedState)
+			protected override void LoadControlState (object savedState)
 			{
 				State = (string) savedState;
 			}
@@ -1244,7 +1244,7 @@ namespace MonoTests.System.Web.UI
 				set { _template = value; }
 			}
 
-			protected internal override void CreateChildControls ()
+			protected override void CreateChildControls ()
 			{
 				Controls.Clear ();
 
@@ -1286,7 +1286,7 @@ namespace MonoTests.System.Web.UI
 
 	public class ChildControlsCreatedControl : Control
 	{
-		protected internal override void CreateChildControls () {
+		protected override void CreateChildControls () {
 			Controls.Add (new Control ());
 		}
 

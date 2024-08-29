@@ -315,7 +315,7 @@ namespace System.Web.Configuration {
         public HealthMonitoringSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

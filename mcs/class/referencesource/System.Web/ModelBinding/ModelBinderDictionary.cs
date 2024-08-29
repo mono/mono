@@ -3,6 +3,7 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    
 
     public class ModelBinderDictionary : IDictionary<Type, IModelBinder> {
 
@@ -125,7 +126,7 @@
             }
 
             binder = ModelBinders.GetBinderFromAttributes(modelType,
-                () => String.Format(CultureInfo.CurrentCulture, SR.GetString(SR.ModelBinderDictionary_MultipleAttributes), modelType.FullName));
+                () => String.Format(CultureInfo.CurrentCulture, System.Web.SR.GetString(System.Web.SR.ModelBinderDictionary_MultipleAttributes), modelType.FullName));
 
             return binder ?? fallbackBinder;
         }

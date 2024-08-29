@@ -10,6 +10,7 @@ namespace System.Web.UI {
     using System.Globalization;
     using System.Reflection;
     using System.Runtime.Serialization.Formatters;
+    
 
     /// <internalonly/>
     /// <devdoc>
@@ -140,7 +141,7 @@ namespace System.Web.UI {
                 // do not give any information about where the bad value existed on
                 // the object being initialized, whereas, our exception gives that
                 // information.
-                throw new HttpException(SR.GetString(SR.Type_not_creatable_from_string,
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Type_not_creatable_from_string,
                                                                          objType.FullName, value, propertyInfo.Name));
             }
 

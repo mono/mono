@@ -1551,7 +1551,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			string html = t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			
-#if DOT_NET
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("treeview1_ExpandState");
@@ -1565,21 +1564,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			fr.Controls["treeview1_SelectedNode"].Value = "treeview1t0";
 			fr.Controls["treeview1_PopulateLog"].Value = "";
 			fr.Controls["treeview1n0CheckBox"].Value = "on";
-#else
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-			//fr.Controls.Add ("treeview1_ExpandState");
-			//fr.Controls.Add ("treeview1_SelectedNode");
-			//fr.Controls.Add ("treeview1_PopulateLog");
-			fr.Controls.Add ("treeview1_cs_0");
-
-			fr.Controls ["__EVENTTARGET"].Value = "treeview1";
-			fr.Controls ["__EVENTARGUMENT"].Value = "sel|0";
-			//fr.Controls ["treeview1_ExpandState"].Value = "n";
-			//fr.Controls ["treeview1_SelectedNode"].Value = "treeview1t0";
-			//fr.Controls ["treeview1_PopulateLog"].Value = "";
-			fr.Controls ["treeview1_cs_0"].Value = "on";
-#endif
 
 			t.Request = fr;
 			html = t.Run ();
@@ -1611,7 +1595,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 		[Category ("NunitWeb")]
 		public void TreeView_PostBackFireEvents_3 ()
 		{
-			WebTest t = new WebTest (PageInvoker.CreateOnLoad (PostBackFireEvents_3));
+			WebTest t = new WebTest ("NoEventValidation.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (PostBackFireEvents_3);
+
 			String html = t.Run ();
 			if (t.UserData == null)
 				Assert.Fail ("Event not fired fail");
@@ -1621,11 +1607,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls["__EVENTTARGET"].Value = "treeview1";
-#if DOT_NET
 			fr.Controls["__EVENTARGUMENT"].Value = "tBook";
-#else
-			fr.Controls ["__EVENTARGUMENT"].Value = "ec|0";
-#endif
+
 			t.Request = fr;
 			html = t.Run ();
 			Assert.AreEqual ("TreeNodeCollapsed", t.UserData.ToString (), "PostBackFireEvents#2");
@@ -1704,7 +1687,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.Invoker = PageInvoker.CreateOnLoad (PostBackFireEvents_5);
 			t.Run ();
 			FormRequest fr = new FormRequest (t.Response, "form1");
-#if DOT_NET
+
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
 			fr.Controls.Add ("TreeView2_ExpandState");
@@ -1714,17 +1697,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			fr.Controls["__EVENTARGUMENT"].Value = "snode";
 			fr.Controls["TreeView2_ExpandState"].Value = "nn";
 			fr.Controls["TreeView2_SelectedNode"].Value = "treeview1t1";
-#else
-			fr.Controls.Add ("__EVENTTARGET");
-			fr.Controls.Add ("__EVENTARGUMENT");
-			//fr.Controls.Add ("TreeView2_ExpandState");
-			//fr.Controls.Add ("TreeView2_SelectedNode");
 
-			fr.Controls ["__EVENTTARGET"].Value = "treeview1";
-			fr.Controls ["__EVENTARGUMENT"].Value = "sel|1";
-			//fr.Controls ["TreeView2_ExpandState"].Value = "nn";
-			//fr.Controls ["TreeView2_SelectedNode"].Value = "treeview1t1";
-#endif
 			t.Request = fr;
 			t.Run ();
 			Assert.AreEqual ("SelectedNodeChanged", t.UserData.ToString (), "PostBackFireEvents");

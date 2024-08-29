@@ -16,6 +16,7 @@ namespace System.Web.UI.WebControls {
     using System.Text;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     public class AccessDataSourceView : SqlDataSourceView {
         private AccessDataSource _owner;
@@ -25,7 +26,7 @@ namespace System.Web.UI.WebControls {
         /// Creates a new instance of AccessDataSourceView.
         /// </devdoc>
         public AccessDataSourceView(AccessDataSource owner, string name, HttpContext context) : base(owner, name, context) {
-            Debug.Assert(owner != null);
+            System.Web.Util.Debug.Assert(owner != null);
             _owner = owner;
         }
 
@@ -36,7 +37,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected internal override IEnumerable ExecuteSelect(DataSourceSelectArguments arguments) {
             if (String.IsNullOrEmpty(_owner.DataFile)) {
-                throw new InvalidOperationException(SR.GetString(SR.AccessDataSourceView_SelectRequiresDataFile, _owner.ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AccessDataSourceView_SelectRequiresDataFile, _owner.ID));
             }
             return base.ExecuteSelect(arguments);
         }

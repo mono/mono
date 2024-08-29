@@ -128,10 +128,10 @@ namespace Microsoft.Web.Infrastructure.DynamicValidationHelper
 		
 		string Validate (string key, string value)
 		{
-			if (String.IsNullOrEmpty (value))
-				return value;
+			//if (String.IsNullOrEmpty (value))
+			//	return value;
 
-			HttpRequest.ValidateString (key, value, validationSource);
+			//HttpRequest.ValidateString (key, value, validationSource);
 			return value;
 		}
 	}

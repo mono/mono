@@ -12,6 +12,7 @@ namespace System.Web.Compilation {
     using System.Configuration;
     using System.Diagnostics;
     using System.Web.UI;
+    
 
 
     [ExpressionPrefix("AppSettings")]
@@ -53,7 +54,7 @@ namespace System.Web.Compilation {
             string value = ConfigurationManager.AppSettings[key];
 
             if (value == null) {
-                throw new InvalidOperationException(SR.GetString(SR.AppSetting_not_found, key));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AppSetting_not_found, key));
             }
             return value;
         }
@@ -70,14 +71,14 @@ namespace System.Web.Compilation {
                             return converter.ConvertFrom(value);
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.AppSetting_not_convertible, value, propDesc.PropertyType.Name, propDesc.Name));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AppSetting_not_convertible, value, propDesc.PropertyType.Name, propDesc.Name));
                         }
                     }
                 }
             }
 
             if (value == null) {
-                throw new InvalidOperationException(SR.GetString(SR.AppSetting_not_found, key));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.AppSetting_not_found, key));
             }
             return value;
         }

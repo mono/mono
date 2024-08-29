@@ -23,9 +23,9 @@ namespace System.Web.Util {
 
         // for unit testing
         internal static Uri BuildUriImpl(string scheme, string serverName, string port, string path, string queryString, bool useLegacyRequestUrlGeneration) {
-            Debug.Assert(!String.IsNullOrEmpty(scheme));
-            Debug.Assert(!String.IsNullOrEmpty(serverName));
-            Debug.Assert(!String.IsNullOrEmpty(path));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(scheme));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(serverName));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(path));
 
             if (!useLegacyRequestUrlGeneration) {
                 if (path != null) {

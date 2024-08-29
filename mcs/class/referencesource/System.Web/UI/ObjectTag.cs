@@ -20,6 +20,7 @@ using System.Web.Util;
 using System.Globalization;
 using System.Security.Permissions;
 
+
 /*
  * ObjectTag is a marker class, that should never be instantiated.  Its
  * only purpose is to point to the ObjectTagBuilder class through its
@@ -56,7 +57,7 @@ public sealed class ObjectTagBuilder : ControlBuilder {
 
         if (id == null) {
             throw new HttpException(
-                SR.GetString(SR.Object_tag_must_have_id));
+                System.Web.SR.GetString(System.Web.SR.Object_tag_must_have_id));
         }
 
         ID = id;
@@ -67,16 +68,16 @@ public sealed class ObjectTagBuilder : ControlBuilder {
         // Map it to an ObjectTagScope enum
         if (scope == null)
             _scope = ObjectTagScope.Default;
-        else if (StringUtil.EqualsIgnoreCase(scope, "page"))
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(scope, "page"))
             _scope = ObjectTagScope.Page;
-        else if (StringUtil.EqualsIgnoreCase(scope, "session"))
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(scope, "session"))
             _scope = ObjectTagScope.Session;
-        else if (StringUtil.EqualsIgnoreCase(scope, "application"))
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(scope, "application"))
             _scope = ObjectTagScope.Application;
-        else if (StringUtil.EqualsIgnoreCase(scope, "appinstance"))
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(scope, "appinstance"))
             _scope = ObjectTagScope.AppInstance;
         else
-            throw new HttpException(SR.GetString(SR.Invalid_scope, scope));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_scope, scope));
 
         Util.GetAndRemoveBooleanAttribute(attribs, "latebinding",
             ref _fLateBinding);
@@ -101,7 +102,7 @@ public sealed class ObjectTagBuilder : ControlBuilder {
                 _type = Type.GetTypeFromCLSID(clsid);
 
                 if (_type == null)
-                    throw new HttpException(SR.GetString(SR.Invalid_clsid, tmp));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_clsid, tmp));
 
                 // 
 
@@ -135,9 +136,9 @@ public sealed class ObjectTagBuilder : ControlBuilder {
 
 
                 if (_type == null)
-                    throw new HttpException(SR.GetString(SR.Invalid_progid, tmp));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_progid, tmp));
 
-                Debug.Trace("Template", "<object> type: " + _type.FullName);
+                System.Web.Util.Debug.Trace("Template", "<object> type: " + _type.FullName);
 
                 // 
 
@@ -160,7 +161,7 @@ public sealed class ObjectTagBuilder : ControlBuilder {
         // If we still don't have a type, fail
         if (_type == null) {
             throw new HttpException(
-                SR.GetString(SR.Object_tag_must_have_class_classid_or_progid));
+                System.Web.SR.GetString(System.Web.SR.Object_tag_must_have_class_classid_or_progid));
         }
     }
 

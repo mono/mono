@@ -20,6 +20,7 @@ using System.Runtime.Versioning;
 using System.Diagnostics;
 using Debug = System.Web.Util.Debug;
 
+
 internal sealed class CompilationMutex : IDisposable {
 
     private String  _name;
@@ -61,17 +62,17 @@ internal sealed class CompilationMutex : IDisposable {
 
         _comment = comment;
 
-        Debug.Trace("Mutex", "Creating Mutex " + MutexDebugName);
+        System.Web.Util.Debug.Trace("Mutex", "Creating Mutex " + MutexDebugName);
 
         _mutexHandle = new HandleRef(this, UnsafeNativeMethods.InstrumentedMutexCreate(_name));
 
         if (_mutexHandle.Handle == IntPtr.Zero) {
-            Debug.Trace("Mutex", "Failed to create Mutex " + MutexDebugName);
+            System.Web.Util.Debug.Trace("Mutex", "Failed to create Mutex " + MutexDebugName);
 
-            throw new InvalidOperationException(SR.GetString(SR.CompilationMutex_Create));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CompilationMutex_Create));
         }
 
-        Debug.Trace("Mutex", "Successfully created Mutex " + MutexDebugName);
+        System.Web.Util.Debug.Trace("Mutex", "Successfully created Mutex " + MutexDebugName);
 #endif // !FEATURE_PAL
     }
 
@@ -101,25 +102,25 @@ internal sealed class CompilationMutex : IDisposable {
 #if !FEATURE_PAL // No unmanaged aspnet_isapi mutex in Coriolis
 
         if (_mutexHandle.Handle == IntPtr.Zero)
-            throw new InvalidOperationException(SR.GetString(SR.CompilationMutex_Null));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CompilationMutex_Null));
 
         // check the lock status
         for (;;) {
             int lockStatus = _lockStatus;
 
             if (lockStatus == -1 || _draining)
-                throw new InvalidOperationException(SR.GetString(SR.CompilationMutex_Drained));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CompilationMutex_Drained));
 
             if (Interlocked.CompareExchange(ref _lockStatus, lockStatus+1, lockStatus) == lockStatus)
                 break; // got the lock
         }
 
-        Debug.Trace("Mutex", "Waiting for mutex " + MutexDebugName);
+        System.Web.Util.Debug.Trace("Mutex", "Waiting for mutex " + MutexDebugName);
 
         if (UnsafeNativeMethods.InstrumentedMutexGetLock(_mutexHandle, -1) == -1) {
             // failed to get the lock
             Interlocked.Decrement(ref _lockStatus);
-            throw new InvalidOperationException(SR.GetString(SR.CompilationMutex_Failed));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CompilationMutex_Failed));
         }
 
 #if MUTEXINSTRUMENTATION
@@ -127,7 +128,7 @@ internal sealed class CompilationMutex : IDisposable {
         _stackTrace = (new StackTrace()).ToString();
 #endif
 
-        Debug.Trace("Mutex", "Got mutex " + MutexDebugName);
+        System.Web.Util.Debug.Trace("Mutex", "Got mutex " + MutexDebugName);
 #endif // !FEATURE_PAL
     }
 
@@ -135,9 +136,9 @@ internal sealed class CompilationMutex : IDisposable {
 
 #if !FEATURE_PAL // No unmanaged aspnet_isapi mutex in Coriolis
         if (_mutexHandle.Handle == IntPtr.Zero)
-            throw new InvalidOperationException(SR.GetString(SR.CompilationMutex_Null));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CompilationMutex_Null));
 
-        Debug.Trace("Mutex", "Releasing mutex " + MutexDebugName);
+        System.Web.Util.Debug.Trace("Mutex", "Releasing mutex " + MutexDebugName);
 
 #if MUTEXINSTRUMENTATION
         // Clear out the stack trace
@@ -169,7 +170,7 @@ internal static class CompilationLock {
 
         // Create the mutex (or just get it if another process created it).
         // Make the mutex unique per application
-        int hashCode = StringUtil.GetNonRandomizedHashCode("CompilationLock" + HttpRuntime.AppDomainAppId.ToLower(CultureInfo.InvariantCulture));
+        int hashCode = System.Web.Util.StringUtil.GetNonRandomizedHashCode("CompilationLock" + HttpRuntime.AppDomainAppId.ToLower(CultureInfo.InvariantCulture));
 
 
         _mutex = new CompilationMutex(

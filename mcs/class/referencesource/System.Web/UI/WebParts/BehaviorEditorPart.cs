@@ -83,12 +83,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.BehaviorEditorPart_PartTitle),
+        WebSysDefaultValue(System.Web.SR.BehaviorEditorPart_PartTitle),
         ]
         public override string Title {
             get {
                 string s = (string)ViewState["Title"];
-                return (s != null) ? s : SR.GetString(SR.BehaviorEditorPart_PartTitle);
+                return (s != null) ? s : System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_PartTitle);
             }
             set {
                 ViewState["Title"] = value;
@@ -98,7 +98,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public override bool ApplyChanges() {
             WebPart webPart = WebPartToEdit;
 
-            Debug.Assert(webPart != null);
+            System.Web.Util.Debug.Assert(webPart != null);
             if (webPart != null) {
                 EnsureChildControls();
 
@@ -173,7 +173,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
                 string value = _titleUrl.Text;
                 if (CrossSiteScriptingValidation.IsDangerousUrl(value)) {
-                    _titleUrlErrorMessage = SR.GetString(SR.EditorPart_ErrorBadUrl);
+                    _titleUrlErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorBadUrl);
                 }
                 else {
                     try {
@@ -186,7 +186,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
                 value = _titleIconImageUrl.Text;
                 if (CrossSiteScriptingValidation.IsDangerousUrl(value)) {
-                    _titleIconImageUrlErrorMessage = SR.GetString(SR.EditorPart_ErrorBadUrl);
+                    _titleIconImageUrlErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorBadUrl);
                 }
                 else {
                     try {
@@ -199,7 +199,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
                 value = _catalogIconImageUrl.Text;
                 if (CrossSiteScriptingValidation.IsDangerousUrl(value)) {
-                    _catalogIconImageUrlErrorMessage = SR.GetString(SR.EditorPart_ErrorBadUrl);
+                    _catalogIconImageUrlErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorBadUrl);
                 }
                 else {
                     try {
@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
                 value = _helpUrl.Text;
                 if (CrossSiteScriptingValidation.IsDangerousUrl(value)) {
-                    _helpUrlErrorMessage = SR.GetString(SR.EditorPart_ErrorBadUrl);
+                    _helpUrlErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorBadUrl);
                 }
                 else {
                     try {
@@ -270,11 +270,11 @@ namespace System.Web.UI.WebControls.WebParts {
             TypeConverter exportModeConverter = TypeDescriptor.GetConverter(typeof(WebPartExportMode));
             _exportMode = new DropDownList();
             _exportMode.Items.AddRange(new ListItem[] {
-                new ListItem(SR.GetString(SR.BehaviorEditorPart_ExportModeNone),
+                new ListItem(System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_ExportModeNone),
                              exportModeConverter.ConvertToString(WebPartExportMode.None)),
-                new ListItem(SR.GetString(SR.BehaviorEditorPart_ExportModeAll),
+                new ListItem(System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_ExportModeAll),
                              exportModeConverter.ConvertToString(WebPartExportMode.All)),
-                new ListItem(SR.GetString(SR.BehaviorEditorPart_ExportModeNonSensitiveData),
+                new ListItem(System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_ExportModeNonSensitiveData),
                              exportModeConverter.ConvertToString(WebPartExportMode.NonSensitiveData)),
             });
             controls.Add(_exportMode);
@@ -282,11 +282,11 @@ namespace System.Web.UI.WebControls.WebParts {
             TypeConverter helpModeConverter = TypeDescriptor.GetConverter(typeof(WebPartHelpMode));
             _helpMode = new DropDownList();
             _helpMode.Items.AddRange(new ListItem[] {
-                new ListItem(SR.GetString(SR.BehaviorEditorPart_HelpModeModal),
+                new ListItem(System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_HelpModeModal),
                              helpModeConverter.ConvertToString(WebPartHelpMode.Modal)),
-                new ListItem(SR.GetString(SR.BehaviorEditorPart_HelpModeModeless),
+                new ListItem(System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_HelpModeModeless),
                              helpModeConverter.ConvertToString(WebPartHelpMode.Modeless)),
-                new ListItem(SR.GetString(SR.BehaviorEditorPart_HelpModeNavigate),
+                new ListItem(System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_HelpModeNavigate),
                              helpModeConverter.ConvertToString(WebPartHelpMode.Navigate)),
             });
             controls.Add(_helpMode);
@@ -347,21 +347,21 @@ namespace System.Web.UI.WebControls.WebParts {
             EnsureChildControls();
 
             string[] propertyDisplayNames = new string[] {
-                SR.GetString(SR.BehaviorEditorPart_Description),
-                SR.GetString(SR.BehaviorEditorPart_TitleLink),
-                SR.GetString(SR.BehaviorEditorPart_TitleIconImageLink),
-                SR.GetString(SR.BehaviorEditorPart_CatalogIconImageLink),
-                SR.GetString(SR.BehaviorEditorPart_HelpLink),
-                SR.GetString(SR.BehaviorEditorPart_HelpMode),
-                SR.GetString(SR.BehaviorEditorPart_ImportErrorMessage),
-                SR.GetString(SR.BehaviorEditorPart_ExportMode),
-                SR.GetString(SR.BehaviorEditorPart_AuthorizationFilter),
-                SR.GetString(SR.BehaviorEditorPart_AllowClose),
-                SR.GetString(SR.BehaviorEditorPart_AllowConnect),
-                SR.GetString(SR.BehaviorEditorPart_AllowEdit),
-                SR.GetString(SR.BehaviorEditorPart_AllowHide),
-                SR.GetString(SR.BehaviorEditorPart_AllowMinimize),
-                SR.GetString(SR.BehaviorEditorPart_AllowZoneChange),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_Description),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_TitleLink),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_TitleIconImageLink),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_CatalogIconImageLink),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_HelpLink),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_HelpMode),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_ImportErrorMessage),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_ExportMode),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_AuthorizationFilter),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_AllowClose),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_AllowConnect),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_AllowEdit),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_AllowHide),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_AllowMinimize),
+                System.Web.SR.GetString(System.Web.SR.BehaviorEditorPart_AllowZoneChange),
             };
 
             WebControl[] propertyEditors = new WebControl[] {
@@ -407,7 +407,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public override void SyncChanges() {
             WebPart webPart = WebPartToEdit;
 
-            Debug.Assert(webPart != null);
+            System.Web.Util.Debug.Assert(webPart != null);
             if (webPart != null) {
                 bool allowLayoutChange = webPart.Zone.AllowLayoutChange;
 

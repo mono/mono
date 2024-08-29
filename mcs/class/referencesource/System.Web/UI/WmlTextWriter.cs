@@ -445,14 +445,14 @@ namespace System.Web.UI {
                 return false;
             }
 
-            Debug.Assert(_postBackEventTargetVarName.ToLower(CultureInfo.InvariantCulture) == _postBackEventTargetVarName &&
+            System.Web.Util.Debug.Assert(_postBackEventTargetVarName.ToLower(CultureInfo.InvariantCulture) == _postBackEventTargetVarName &&
                 _postBackEventArgumentVarName.ToLower(CultureInfo.InvariantCulture) == _postBackEventArgumentVarName &&
                 _shortNamePrefix.ToLower(CultureInfo.InvariantCulture) == _shortNamePrefix);
 
             name = name.ToLower(CultureInfo.InvariantCulture);
             return name == _postBackEventTargetVarName ||
                 name == _postBackEventArgumentVarName ||
-                StringUtil.StringStartsWith(name, _shortNamePrefix);
+                System.Web.Util.StringUtil.StringStartsWith(name, _shortNamePrefix);
         }
 
 
@@ -620,7 +620,7 @@ namespace System.Web.UI {
         /// </devdoc>
         public void PopLayout() {
             if (_layoutStack.Count == 0) {
-                Debug.Fail("Layout stack is empty.");
+                System.Web.Util.Debug.Fail("Layout stack is empty.");
                 return;
             }
             _layoutStack.Pop();
@@ -631,7 +631,7 @@ namespace System.Web.UI {
         /// </devdoc>
         internal void PopPanelStyle() {
             if (_panelStyleStack.Count == 0) {
-                Debug.Fail("Stack is empty.");
+                System.Web.Util.Debug.Fail("Stack is empty.");
                 return;
             }
             _panelStyleStack.Pop();

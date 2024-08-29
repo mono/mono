@@ -48,10 +48,10 @@ namespace System.Web.UI.WebControls {
         protected override void OnValidate(object value) {
             base.OnValidate(value);
             if (value == null) {
-                throw new ArgumentNullException("value", SR.GetString(SR.Collection_CantAddNull));
+                throw new ArgumentNullException("value", System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull));
             }
             if (!(value is EmbeddedMailObject)) {
-                throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "EmbeddedMailObject"), "value");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "EmbeddedMailObject"), "value");
             }
         }
 

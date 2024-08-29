@@ -21,6 +21,7 @@ namespace System.Web {
     using System.Text;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     [Serializable()]
     internal class HttpValueCollection : NameValueCollection {
@@ -279,7 +280,7 @@ namespace System.Web {
         // as a large number of items potentially can result in too many hash collisions that may cause DoS
         internal void ThrowIfMaxHttpCollectionKeysExceeded() {
             if (base.Count >= AppSettings.MaxHttpCollectionKeys) {
-                throw new InvalidOperationException(SR.GetString(SR.CollectionCountExceeded_HttpValueCollection, AppSettings.MaxHttpCollectionKeys));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CollectionCountExceeded_HttpValueCollection, AppSettings.MaxHttpCollectionKeys));
             }
         }
 

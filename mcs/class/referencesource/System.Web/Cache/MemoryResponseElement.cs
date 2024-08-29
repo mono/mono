@@ -4,8 +4,7 @@ using System.Web;
 using System.Web.Caching;
 
 namespace System.Web.Caching {
-    [Serializable]
-    [AspNetHostingPermission(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Unrestricted)]
+    [Serializable]    
     public class MemoryResponseElement: ResponseElement {
         private  byte[]               _buffer;
         private  long                 _length;

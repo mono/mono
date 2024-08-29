@@ -9,6 +9,8 @@ namespace System.Web.UI {
     using System.CodeDom;
     using System.Collections.Generic;
     using System.Text.RegularExpressions;
+    using System.Web.Compilation;
+    using System.Web.Util;
 
     /// <summary>
     /// Abstract base class for an object that wants to be notified of parse
@@ -33,19 +35,29 @@ namespace System.Web.UI {
         }
 
         internal static ParseRecorder CreateRecorders(TemplateParser parser) {
-            if (_factories == null) {
-                return ParseRecorder.Null;
-            }
-
             List<ParseRecorder> recorders = new List<ParseRecorder>();
-            foreach (Func<ParseRecorder> factory in _factories) {
-                ParseRecorder recorder = factory();
-
-                if (recorder != null) {
-                    recorders.Add(recorder);
+            if(_factories != null) {
+                foreach (Func<ParseRecorder> factory in _factories) {
+                    ParseRecorder recorder = factory();
+                
+                    if (recorder != null) {
+                        recorders.Add(recorder);
+                    }
+                }
+            }
+            else {
+                if (!BinaryCompatibility.Current.TargetsAtLeastFramework472) {
+                    return ParseRecorder.Null;
                 }
             }
 
+            // Support depedency injection in control type.
+            // Have to replace the codeAssignStatement through a ParseRecorder,
+            // because some existing ParseRecorder(e.g. PageInspector) may have hard dependency on the old codedom tree structure
+            if (BinaryCompatibility.Current.TargetsAtLeastFramework472) {
+                recorders.Add(new WebObjectActivatorParseRecorder());
+            }
+            
             ParseRecorderList list = new ParseRecorderList(recorders);
 
             list.Initialize(parser);

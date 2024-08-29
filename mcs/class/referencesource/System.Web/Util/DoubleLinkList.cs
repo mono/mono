@@ -52,7 +52,7 @@ namespace System.Web.Util {
                 if (l2 == this)
                     break;
 
-                Debug.CheckValid(l2 != l1, "Invalid loop in list, first move.");
+                System.Web.Util.Debug.CheckValid(l2 != l1, "Invalid loop in list, first move.");
                 l2.DebugValidate();
 
                 /* move l2 forward again */
@@ -60,7 +60,7 @@ namespace System.Web.Util {
                 if (l2 == this)
                     break;
 
-                Debug.CheckValid(l2 != l1, "Invalid loop in list, second move.");
+                System.Web.Util.Debug.CheckValid(l2 != l1, "Invalid loop in list, second move.");
                 l2.DebugValidate();
 
                 /* move l1 forward */
@@ -84,7 +84,7 @@ namespace System.Web.Util {
                 sb = new StringBuilder(indent + "DoubleLinkList has " + c + " entries.\n");
                 lenum = GetEnumerator();
                 while (lenum.MoveNext()) {
-                    sb.Append(Debug.GetDescription(lenum.GetDoubleLink(), i2));
+                    sb.Append(System.Web.Util.Debug.GetDescription(lenum.GetDoubleLink(), i2));
                 }
 
                 desc = sb.ToString();
@@ -99,7 +99,7 @@ namespace System.Web.Util {
                 DoubleLinkListEnumerator    lenum;
                 int                         c;
 
-                Debug.Validate(this);
+                System.Web.Util.Debug.Validate(this);
 
                 c = 0;
                 lenum = GetEnumerator();

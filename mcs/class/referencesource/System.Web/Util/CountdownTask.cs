@@ -34,11 +34,11 @@ namespace System.Web.Util {
 
         private void AddCount(int delta) {
             int newCount = Interlocked.Add(ref _pendingCount, delta);
-            Debug.Assert(newCount >= 0, "The counter should never hit a negative value.");
+            System.Web.Util.Debug.Assert(newCount >= 0, "The counter should never hit a negative value.");
 
             if (newCount == 0) {
                 bool success = _tcs.TrySetResult(null);
-                Debug.Assert(success, "TrySetResult shouldn't have been already called.");
+                System.Web.Util.Debug.Assert(success, "TrySetResult shouldn't have been already called.");
             }
         }
 

@@ -10,6 +10,7 @@ namespace System.Web.UI {
     using System;
     using System.Collections;
     using System.Security.Permissions;
+    
 
 
     /// <devdoc>
@@ -69,7 +70,7 @@ namespace System.Web.UI {
                 throw new ArgumentNullException("child");
 
             if (_readOnlyErrorMsg != null) {
-                throw new HttpException(SR.GetString(_readOnlyErrorMsg ));
+                throw new HttpException(System.Web.SR.GetString(_readOnlyErrorMsg ));
             }
 
             // Make sure we have room
@@ -117,7 +118,7 @@ namespace System.Web.UI {
             }
 
             if (_readOnlyErrorMsg != null) {
-                throw new HttpException(SR.GetString(_readOnlyErrorMsg ));
+                throw new HttpException(System.Web.SR.GetString(_readOnlyErrorMsg ));
             }
 
             // Make sure we have room
@@ -240,7 +241,7 @@ namespace System.Web.UI {
             if (_controls == null)
                 return;
             if ((array != null) && (array.Rank != 1))
-                throw new HttpException(SR.GetString(SR.InvalidArgumentValue, "array"));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.InvalidArgumentValue, "array"));
 
             Array.Copy(_controls, 0, array, index, _size);
         }
@@ -305,7 +306,7 @@ namespace System.Web.UI {
         public virtual void RemoveAt(int index) {
 
             if (_readOnlyErrorMsg != null) {
-                throw new HttpException(SR.GetString(_readOnlyErrorMsg ));
+                throw new HttpException(System.Web.SR.GetString(_readOnlyErrorMsg ));
             }
 
             Control child = this[index];
@@ -349,7 +350,7 @@ namespace System.Web.UI {
             public bool MoveNext() {
                 if (index < (list.Count-1)) {
                     if (version != list._version) {
-                        throw new InvalidOperationException(SR.GetString(SR.ListEnumVersionMismatch));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListEnumVersionMismatch));
                     }
 
                     index++;
@@ -370,16 +371,16 @@ namespace System.Web.UI {
             public Control Current {
                 get {
                     if (index == -1)
-                        throw new InvalidOperationException(SR.GetString(SR.ListEnumCurrentOutOfRange));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListEnumCurrentOutOfRange));
                     if (index >= list.Count)
-                        throw new InvalidOperationException(SR.GetString(SR.ListEnumCurrentOutOfRange));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListEnumCurrentOutOfRange));
                     return currentElement;
                 }
             }
 
             public void Reset() {
                 if (version != list._version)
-                    throw new InvalidOperationException(SR.GetString(SR.ListEnumVersionMismatch));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListEnumVersionMismatch));
                 currentElement = null;
                 index = -1;
             }

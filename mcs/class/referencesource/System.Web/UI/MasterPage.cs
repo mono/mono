@@ -24,6 +24,7 @@ namespace System.Web.UI {
     using System.Web.Compilation;
     using System.Web.UI.WebControls;
     using System.Web.Util;
+    
 
     public class MasterPageControlBuilder : UserControlControlBuilder {
         internal static readonly String AutoTemplatePrefix = "Template_";
@@ -48,7 +49,7 @@ namespace System.Web.UI {
     ///          needs to instantiate it when opening .master files</para>
     /// </devdoc>
     [
-    Designer("Microsoft.VisualStudio.Web.WebForms.MasterPageWebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
+    //Designer("Microsoft.VisualStudio.Web.WebForms.MasterPageWebFormDesigner, " + AssemblyRef.MicrosoftVisualStudioWeb, typeof(IRootDesigner)),
     ControlBuilder(typeof(MasterPageControlBuilder)),
     ParseChildren(false)
     ]
@@ -105,7 +106,7 @@ namespace System.Web.UI {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.MasterPage_MasterPage)
+        WebSysDescription(System.Web.SR.MasterPage_MasterPage)
         ]
         public MasterPage Master {
             get {
@@ -124,7 +125,7 @@ namespace System.Web.UI {
         [
         DefaultValue(""),
         WebCategory("Behavior"),
-        WebSysDescription(SR.MasterPage_MasterPageFile)
+        WebSysDescription(System.Web.SR.MasterPage_MasterPageFile)
         ]
         public string MasterPageFile {
             get {
@@ -132,7 +133,7 @@ namespace System.Web.UI {
             }
             set {
                 if (_masterPageApplied) {
-                    throw new InvalidOperationException(SR.GetString(SR.PropertySetBeforePageEvent, "MasterPageFile", "Page_PreInit"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.PropertySetBeforePageEvent, "MasterPageFile", "Page_PreInit"));
                 }
 
                 if (value != VirtualPath.GetVirtualPathString(_masterPageFile)) {
@@ -157,20 +158,20 @@ namespace System.Web.UI {
                 _contentTemplateCollection.Add(templateName, template);
             } 
             catch (ArgumentException) {
-                throw new HttpException(SR.GetString(SR.MasterPage_Multiple_content, templateName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.MasterPage_Multiple_content, templateName));
             }
         }
 
         internal static MasterPage CreateMaster(TemplateControl owner, HttpContext context,
             VirtualPath masterPageFile, IDictionary contentTemplateCollection) {
 
-            Debug.Assert(owner is MasterPage || owner is Page);
+            System.Web.Util.Debug.Assert(owner is MasterPage || owner is Page);
 
             MasterPage master = null;
 
             if (masterPageFile == null) {
                 if (contentTemplateCollection != null && contentTemplateCollection.Count > 0) {
-                    throw new HttpException(SR.GetString(SR.Content_only_allowed_in_content_page));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Content_only_allowed_in_content_page));
                 }
  
                 return null;
@@ -187,7 +188,7 @@ namespace System.Web.UI {
 
             // Make sure it has the correct base type
             if (!typeof(MasterPage).IsAssignableFrom(result.InstantiatedType)) {
-                throw new HttpException(SR.GetString(SR.Invalid_master_base,
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_master_base,
                     masterPageFile));
             }
 
@@ -199,7 +200,7 @@ namespace System.Web.UI {
                 foreach (Control control in owner.Controls) {
                     LiteralControl literal = control as LiteralControl;
                     if (literal == null || Util.FirstNonWhiteSpaceIndex(literal.Text) >= 0) {
-                        throw new HttpException(SR.GetString(SR.Content_allowed_in_top_level_only));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Content_allowed_in_top_level_only));
                     }
                 }
 
@@ -209,13 +210,13 @@ namespace System.Web.UI {
 
             // Make sure the control collection is writable.
             if (owner.Controls.IsReadOnly) {
-                throw new HttpException(SR.GetString(SR.MasterPage_Cannot_ApplyTo_ReadOnly_Collection));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.MasterPage_Cannot_ApplyTo_ReadOnly_Collection));
             }
 
             if (contentTemplateCollection != null) {
                 foreach(String contentName in contentTemplateCollection.Keys) {
                     if (!master.ContentPlaceHolders.Contains(contentName.ToLower(CultureInfo.InvariantCulture))) {
-                        throw new HttpException(SR.GetString(SR.MasterPage_doesnt_have_contentplaceholder, contentName, masterPageFile));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.MasterPage_doesnt_have_contentplaceholder, contentName, masterPageFile));
                     }
                 }
                 master._contentTemplates = contentTemplateCollection;
@@ -229,14 +230,14 @@ namespace System.Web.UI {
 
         internal static void ApplyMasterRecursive(MasterPage master, IList appliedMasterFilePaths) {
 
-            Debug.Assert(appliedMasterFilePaths != null);
+            System.Web.Util.Debug.Assert(appliedMasterFilePaths != null);
 
             // Recursively apply master pages to the nested masterpages.
             if (master.Master != null) {
 
                 string pageFile = master._masterPageFile.VirtualPathString.ToLower(CultureInfo.InvariantCulture);
                 if (appliedMasterFilePaths.Contains(pageFile)) {
-                    throw new InvalidOperationException(SR.GetString(SR.MasterPage_Circular_Master_Not_Allowed, master._masterPageFile));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.MasterPage_Circular_Master_Not_Allowed, master._masterPageFile));
                 }
 
                 appliedMasterFilePaths.Add(pageFile);

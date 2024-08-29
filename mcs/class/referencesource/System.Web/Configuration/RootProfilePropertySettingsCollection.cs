@@ -29,7 +29,7 @@ namespace System.Web.Configuration {
             _properties = new ConfigurationPropertyCollection();
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -86,11 +86,11 @@ namespace System.Web.Configuration {
             return handled;
         }
 
-        protected override bool IsModified() {
+        protected internal override bool IsModified() {
             return base.IsModified() || GroupSettings.InternalIsModified();
         }
 
-        protected override void ResetModified() {
+        protected internal override void ResetModified() {
             base.ResetModified();
             GroupSettings.InternalResetModified();
         }
@@ -104,13 +104,13 @@ namespace System.Web.Configuration {
             return HashCodeCombiner.CombineHashCodes(base.GetHashCode(), GroupSettings.GetHashCode());
         }
 
-        protected override void Reset(ConfigurationElement parentElement) {
+        protected internal override void Reset(ConfigurationElement parentElement) {
             RootProfilePropertySettingsCollection parent = parentElement as RootProfilePropertySettingsCollection;
             base.Reset(parentElement);
             GroupSettings.InternalReset(parent.GroupSettings);
         }
 
-        protected override void Unmerge(ConfigurationElement sourceElement,
+        protected internal override void Unmerge(ConfigurationElement sourceElement,
                                         ConfigurationElement parentElement,
                                         ConfigurationSaveMode saveMode) {
             RootProfilePropertySettingsCollection parent = parentElement as RootProfilePropertySettingsCollection;
@@ -120,7 +120,7 @@ namespace System.Web.Configuration {
             GroupSettings.InternalUnMerge(source.GroupSettings, (parent != null) ? parent.GroupSettings : null, saveMode);
         }
 
-        protected override bool SerializeElement(XmlWriter writer, bool serializeCollectionKey) {
+        protected internal override bool SerializeElement(XmlWriter writer, bool serializeCollectionKey) {
             bool DataToWrite = false;
             if (base.SerializeElement(null, false) == true ||
                 GroupSettings.InternalSerialize(null, false) == true) {

@@ -25,7 +25,7 @@ namespace System.Web.UI.WebControls {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.CannotSetValidationOnPagerButtons));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CannotSetValidationOnPagerButtons));
             }
         }
 
@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls {
                     control = control.Parent;
 
                     // pager buttons are usually inside a table that's inside the pager row
-                    Debug.Assert(((i == 0) && (control is TableCell)) ||
+                    System.Web.Util.Debug.Assert(((i == 0) && (control is TableCell)) ||
                                  ((i == 1) && (control is TableRow)) ||
                                  ((i == 2) && (control is Table)) ||
                                  ((i == 3) && (control is TableCell)) ||

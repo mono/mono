@@ -17,6 +17,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     public sealed class AuthorizationRule : ConfigurationElement {
         private static readonly TypeConverter s_PropConverter = new CommaDelimitedStringCollectionConverter();
@@ -85,13 +86,13 @@ namespace System.Web.Configuration {
             Action = action;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
         }
 
-        protected override void Unmerge(ConfigurationElement sourceElement,
+        protected internal override void Unmerge(ConfigurationElement sourceElement,
                                                 ConfigurationElement parentElement,
                                                 ConfigurationSaveMode saveMode) {
             AuthorizationRule parentProviders = parentElement as AuthorizationRule;
@@ -106,7 +107,7 @@ namespace System.Web.Configuration {
             base.Unmerge(sourceElement, parentElement, saveMode);
         }
 
-        protected override void Reset(ConfigurationElement parentElement) {
+        protected internal override void Reset(ConfigurationElement parentElement) {
             AuthorizationRule parentProviders = parentElement as AuthorizationRule;
 
             if (parentProviders != null) {
@@ -155,14 +156,14 @@ namespace System.Web.Configuration {
                 base[_propVerbs] = verbs;  // Update property bag
             }
         }
-        protected override bool IsModified() {
+        protected internal override bool IsModified() {
             UpdateUsersRolesVerbs();
             return _ActionModified || base.IsModified() || (((CommaDelimitedStringCollection)Users).IsModified) ||
                 (((CommaDelimitedStringCollection)Roles).IsModified) ||
                 (((CommaDelimitedStringCollection)Verbs).IsModified);
         }
 
-        protected override void ResetModified() {
+        protected internal override void ResetModified() {
             _ActionModified = false;
             base.ResetModified();
         }
@@ -202,7 +203,7 @@ namespace System.Web.Configuration {
             return hHashCode;
         }
         
-        protected override void SetReadOnly() {
+        protected internal override void SetReadOnly() {
             ((CommaDelimitedStringCollection)Users).SetReadOnly();
             ((CommaDelimitedStringCollection)Roles).SetReadOnly();
             ((CommaDelimitedStringCollection)Verbs).SetReadOnly();
@@ -332,7 +333,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override bool SerializeElement(XmlWriter writer, bool serializeCollectionKey) {
+        protected internal override bool SerializeElement(XmlWriter writer, bool serializeCollectionKey) {
             bool DataToWrite = false;
             UpdateUsersRolesVerbs();            // the ismodifed can be short circuited
 
@@ -351,7 +352,7 @@ namespace System.Web.Configuration {
         private string ExpandName(string name) {
             string ExpandedName = name;
 
-            if (StringUtil.StringStartsWith(name, @".\")) {
+            if (System.Web.Util.StringUtil.StringStartsWith(name, @".\")) {
                 if (machineName == null) {
                     machineName = HttpServerUtility.GetMachineNameInternal().ToLower(CultureInfo.InvariantCulture);
                 }
@@ -381,7 +382,7 @@ namespace System.Web.Configuration {
                             int foundIndex = User.IndexOfAny(new char[] { '*', '?' });
 
                             if (foundIndex >= 0) {
-                                throw new ConfigurationErrorsException(SR.GetString(SR.Auth_rule_names_cant_contain_char, User[foundIndex].ToString(CultureInfo.InvariantCulture)));
+                                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Auth_rule_names_cant_contain_char, User[foundIndex].ToString(CultureInfo.InvariantCulture)));
                             }
                         }
 
@@ -401,7 +402,7 @@ namespace System.Web.Configuration {
                             int foundIndex = Role.IndexOfAny(new char[] { '*', '?' });
 
                             if (foundIndex >= 0) {
-                                throw new ConfigurationErrorsException(SR.GetString(SR.Auth_rule_names_cant_contain_char, Role[foundIndex].ToString(CultureInfo.InvariantCulture)));
+                                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Auth_rule_names_cant_contain_char, Role[foundIndex].ToString(CultureInfo.InvariantCulture)));
                             }
                         }
                     }
@@ -411,7 +412,7 @@ namespace System.Web.Configuration {
                 _RolesExpanded = CreateExpandedCollection(Roles);
                 _UsersExpanded = CreateExpandedCollection(Users);
                 if (Roles.Count == 0 && Users.Count == 0) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Auth_rule_must_specify_users_andor_roles));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Auth_rule_must_specify_users_andor_roles));
                 }
                 DataReady = true;
             }

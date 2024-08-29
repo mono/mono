@@ -16,6 +16,7 @@ namespace System.Web.Security {
     using System.Web.Configuration;
     using System.Web.Security.Cryptography;
     using System.Web.Util;
+    
 
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
@@ -161,7 +162,7 @@ namespace System.Web.Security {
             // Technically we don't care if the purposes array contains whitespace-only entries,
             // but the DataProtector class does, so we'll just block them right here.
             if (purposes != null && purposes.Any(String.IsNullOrWhiteSpace)) {
-                throw new ArgumentException(SR.GetString(SR.MachineKey_InvalidPurpose), "purposes");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.MachineKey_InvalidPurpose), "purposes");
             }
 
             return Protect(AspNetCryptoServiceProvider.Instance, userData, purposes);
@@ -195,7 +196,7 @@ namespace System.Web.Security {
             // Technically we don't care if the purposes array contains whitespace-only entries,
             // but the DataProtector class does, so we'll just block them right here.
             if (purposes != null && purposes.Any(String.IsNullOrWhiteSpace)) {
-                throw new ArgumentException(SR.GetString(SR.MachineKey_InvalidPurpose), "purposes");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.MachineKey_InvalidPurpose), "purposes");
             }
 
             return Unprotect(AspNetCryptoServiceProvider.Instance, protectedData, purposes);

@@ -109,6 +109,7 @@ namespace System.Configuration {
                     }
                 }
                 else {
+#if (!MONO) || (MONO && !FEATURE_PAL)                   
                     StringBuilder sb = new StringBuilder(MAX_PATH);
                     int noOfTimes = 1;
                     int length = 0;
@@ -124,6 +125,9 @@ namespace System.Configuration {
                     sb.Length = length;
                     applicationUri = Path.GetFullPath(sb.ToString());
                     applicationFilename = applicationUri;
+#else 
+                    throw new NotSupportedException("Need a platform agnostic way of finding the exe module");
+#endif
                 }
             }
             else {

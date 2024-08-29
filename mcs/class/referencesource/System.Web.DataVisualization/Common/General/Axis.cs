@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -525,7 +525,9 @@ namespace System.Web.UI.DataVisualization.Charting
 #else
 		PersistenceMode(PersistenceMode.InnerProperty),
 #endif
+#if !FEATURE_PAL
         Editor(Editors.ChartCollectionEditor.Editor, Editors.ChartCollectionEditor.Base)
+#endif
 		]
 		virtual public SubAxisCollection SubAxes
 		{
@@ -573,7 +575,9 @@ namespace System.Web.UI.DataVisualization.Charting
         SRDescription("DescriptionAttributeInterlacedColor"),
         NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 #if !Microsoft_CONTROL
  PersistenceMode(PersistenceMode.Attribute)
 #endif
@@ -914,7 +918,9 @@ namespace System.Web.UI.DataVisualization.Charting
         DefaultValue(LabelAutoFitStyles.DecreaseFont | LabelAutoFitStyles.IncreaseFont | LabelAutoFitStyles.LabelsAngleStep30 | LabelAutoFitStyles.StaggeredLabels | LabelAutoFitStyles.WordWrap),
         SRDescription("DescriptionAttributeLabelsAutoFitStyle"),
         NotifyParentPropertyAttribute(true),
+#if !FEATURE_PAL
         Editor(Editors.FlagsEnumUITypeEditor.Editor, Editors.FlagsEnumUITypeEditor.Base),
+#endif
 #if !Microsoft_CONTROL
  PersistenceMode(PersistenceMode.Attribute),
 #endif
@@ -996,7 +1002,9 @@ namespace System.Web.UI.DataVisualization.Charting
         SRDescription("DescriptionAttributeTitleColor"),
         NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 #if !Microsoft_CONTROL
  PersistenceMode(PersistenceMode.Attribute)
 #endif
@@ -1076,7 +1084,9 @@ namespace System.Web.UI.DataVisualization.Charting
         SRDescription("DescriptionAttributeLineColor"),
         NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 #if !Microsoft_CONTROL
  PersistenceMode(PersistenceMode.Attribute)
 #endif
@@ -1162,7 +1172,9 @@ namespace System.Web.UI.DataVisualization.Charting
 #else
  PersistenceMode(PersistenceMode.InnerProperty),
 #endif
+#if !FEATURE_PAL
         Editor(Editors.ChartCollectionEditor.Editor, Editors.ChartCollectionEditor.Base)
+#endif
         ]
         public StripLinesCollection StripLines
         {
@@ -1236,8 +1248,10 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRDescription("DescriptionAttributeUrl"),
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
         Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base)
-		]
+#endif		
+        ]
 		public string Url
 		{
 			set

@@ -123,7 +123,7 @@ namespace System.Web.UI {
         public object this[string key] {
             get {
                 if (String.IsNullOrEmpty(key))
-                    throw ExceptionUtil.ParameterNullOrEmpty("key");
+                    throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("key");
               
                 StateItem item = bag[key] as StateItem;
                 if (item != null)
@@ -159,7 +159,7 @@ namespace System.Web.UI {
         public StateItem Add(string key,object value) {
 
             if (String.IsNullOrEmpty(key))
-                throw ExceptionUtil.ParameterNullOrEmpty("key");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("key");
               
             StateItem item = bag[key] as StateItem;
 

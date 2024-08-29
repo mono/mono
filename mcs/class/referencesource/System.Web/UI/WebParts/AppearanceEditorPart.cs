@@ -50,12 +50,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.AppearanceEditorPart_PartTitle),
+        WebSysDefaultValue(System.Web.SR.AppearanceEditorPart_PartTitle),
         ]
         public override string Title {
             get {
                 string s = (string)ViewState["Title"];
-                return (s != null) ? s : SR.GetString(SR.AppearanceEditorPart_PartTitle);
+                return (s != null) ? s : System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_PartTitle);
             }
             set {
                 ViewState["Title"] = value;
@@ -65,7 +65,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public override bool ApplyChanges() {
             WebPart webPart = WebPartToEdit;
 
-            Debug.Assert(webPart != null);
+            System.Web.Util.Debug.Assert(webPart != null);
             if (webPart != null) {
                 EnsureChildControls();
                 bool allowLayoutChange = webPart.Zone.AllowLayoutChange;
@@ -103,17 +103,17 @@ namespace System.Web.UI.WebControls.WebParts {
                         if (Double.TryParse(_height.Value, NumberStyles.Float | NumberStyles.AllowThousands,
                                             CultureInfo.CurrentCulture, out heightValue)) {
                             if (heightValue < MinUnitValue) {
-                                _heightErrorMessage = SR.GetString(SR.EditorPart_PropertyMinValue, MinUnitValue.ToString(CultureInfo.CurrentCulture));
+                                _heightErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_PropertyMinValue, MinUnitValue.ToString(CultureInfo.CurrentCulture));
                             }
                             else if (heightValue > MaxUnitValue) {
-                                _heightErrorMessage = SR.GetString(SR.EditorPart_PropertyMaxValue, MaxUnitValue.ToString(CultureInfo.CurrentCulture));
+                                _heightErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_PropertyMaxValue, MaxUnitValue.ToString(CultureInfo.CurrentCulture));
                             }
                             else {
                                 height = new Unit(heightValue, _height.Type);
                             }
                         }
                         else {
-                            _heightErrorMessage = SR.GetString(SR.EditorPart_PropertyMustBeDecimal);
+                            _heightErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_PropertyMustBeDecimal);
                         }
                     }
 
@@ -135,17 +135,17 @@ namespace System.Web.UI.WebControls.WebParts {
                         if (Double.TryParse(_width.Value, NumberStyles.Float| NumberStyles.AllowThousands,
                                             CultureInfo.CurrentCulture, out widthValue)) {
                             if (widthValue < MinUnitValue) {
-                                _widthErrorMessage = SR.GetString(SR.EditorPart_PropertyMinValue, MinUnitValue.ToString(CultureInfo.CurrentCulture));
+                                _widthErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_PropertyMinValue, MinUnitValue.ToString(CultureInfo.CurrentCulture));
                             }
                             else if (widthValue > MaxUnitValue) {
-                                _widthErrorMessage = SR.GetString(SR.EditorPart_PropertyMaxValue, MaxUnitValue.ToString(CultureInfo.CurrentCulture));
+                                _widthErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_PropertyMaxValue, MaxUnitValue.ToString(CultureInfo.CurrentCulture));
                             }
                             else {
                                 width = new Unit(widthValue, _width.Type);
                             }
                         }
                         else {
-                            _widthErrorMessage = SR.GetString(SR.EditorPart_PropertyMustBeDecimal);
+                            _widthErrorMessage = System.Web.SR.GetString(System.Web.SR.EditorPart_PropertyMustBeDecimal);
                         }
                     }
                     if (_widthErrorMessage == null) {
@@ -181,25 +181,25 @@ namespace System.Web.UI.WebControls.WebParts {
 
             TypeConverter chromeTypeConverter = TypeDescriptor.GetConverter(typeof(PartChromeType));
             _chromeType = new DropDownList();
-            _chromeType.Items.Add(new ListItem(SR.GetString(SR.PartChromeType_Default),
+            _chromeType.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.PartChromeType_Default),
                                               chromeTypeConverter.ConvertToString(PartChromeType.Default)));
-            _chromeType.Items.Add(new ListItem(SR.GetString(SR.PartChromeType_TitleAndBorder),
+            _chromeType.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.PartChromeType_TitleAndBorder),
                                               chromeTypeConverter.ConvertToString(PartChromeType.TitleAndBorder)));
-            _chromeType.Items.Add(new ListItem(SR.GetString(SR.PartChromeType_TitleOnly),
+            _chromeType.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.PartChromeType_TitleOnly),
                                               chromeTypeConverter.ConvertToString(PartChromeType.TitleOnly)));
-            _chromeType.Items.Add(new ListItem(SR.GetString(SR.PartChromeType_BorderOnly),
+            _chromeType.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.PartChromeType_BorderOnly),
                                               chromeTypeConverter.ConvertToString(PartChromeType.BorderOnly)));
-            _chromeType.Items.Add(new ListItem(SR.GetString(SR.PartChromeType_None),
+            _chromeType.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.PartChromeType_None),
                                               chromeTypeConverter.ConvertToString(PartChromeType.None)));
             controls.Add(_chromeType);
 
             TypeConverter directionConverter = TypeDescriptor.GetConverter(typeof(ContentDirection));
             _direction = new DropDownList();
-            _direction.Items.Add(new ListItem(SR.GetString(SR.ContentDirection_NotSet),
+            _direction.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.ContentDirection_NotSet),
                                               directionConverter.ConvertToString(ContentDirection.NotSet)));
-            _direction.Items.Add(new ListItem(SR.GetString(SR.ContentDirection_LeftToRight),
+            _direction.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.ContentDirection_LeftToRight),
                                               directionConverter.ConvertToString(ContentDirection.LeftToRight)));
-            _direction.Items.Add(new ListItem(SR.GetString(SR.ContentDirection_RightToLeft),
+            _direction.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.ContentDirection_RightToLeft),
                                               directionConverter.ConvertToString(ContentDirection.RightToLeft)));
             controls.Add(_direction);
 
@@ -237,12 +237,12 @@ namespace System.Web.UI.WebControls.WebParts {
             EnsureChildControls();
 
             string[] propertyDisplayNames = new string[] {
-                SR.GetString(SR.AppearanceEditorPart_Title),
-                SR.GetString(SR.AppearanceEditorPart_ChromeType),
-                SR.GetString(SR.AppearanceEditorPart_Direction),
-                SR.GetString(SR.AppearanceEditorPart_Height),
-                SR.GetString(SR.AppearanceEditorPart_Width),
-                SR.GetString(SR.AppearanceEditorPart_Hidden),
+                System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Title),
+                System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_ChromeType),
+                System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Direction),
+                System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Height),
+                System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Width),
+                System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Hidden),
             };
 
             WebControl[] propertyEditors = new WebControl[] {
@@ -270,7 +270,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public override void SyncChanges() {
             WebPart webPart = WebPartToEdit;
 
-            Debug.Assert(webPart != null);
+            System.Web.Util.Debug.Assert(webPart != null);
             if (webPart != null) {
                 bool allowLayoutChange = webPart.Zone.AllowLayoutChange;
 
@@ -335,23 +335,23 @@ namespace System.Web.UI.WebControls.WebParts {
                 Controls.Add(_value);
 
                 _type = new DropDownList();
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Pixels),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Pixels),
                                              ((int)UnitType.Pixel).ToString(CultureInfo.InvariantCulture)));
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Points),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Points),
                                              ((int)UnitType.Point).ToString(CultureInfo.InvariantCulture)));
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Picas),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Picas),
                                              ((int)UnitType.Pica).ToString(CultureInfo.InvariantCulture)));
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Inches),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Inches),
                                              ((int)UnitType.Inch).ToString(CultureInfo.InvariantCulture)));
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Millimeters),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Millimeters),
                                              ((int)UnitType.Mm).ToString(CultureInfo.InvariantCulture)));
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Centimeters),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Centimeters),
                                              ((int)UnitType.Cm).ToString(CultureInfo.InvariantCulture)));
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Percent),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Percent),
                                              ((int)UnitType.Percentage).ToString(CultureInfo.InvariantCulture)));
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Em),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Em),
                                              ((int)UnitType.Em).ToString(CultureInfo.InvariantCulture)));
-                _type.Items.Add(new ListItem(SR.GetString(SR.AppearanceEditorPart_Ex),
+                _type.Items.Add(new ListItem(System.Web.SR.GetString(System.Web.SR.AppearanceEditorPart_Ex),
                                              ((int)UnitType.Ex).ToString(CultureInfo.InvariantCulture)));
                 Controls.Add(_type);
             }

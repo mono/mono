@@ -14,20 +14,30 @@ namespace System.Web.UI.DataVisualization.Charting
 
 #if WINFORMS_CONTROL
         private const string AssemblyName = "System.Windows.Forms.DataVisualization.Design";
-        internal const string Version = ThisAssembly.Version;
         private const string Culture = "neutral";
+#if !MONO
+        internal const string Version = ThisAssembly.Version;
         private const string PublicKeyToken = AssemblyRef.SharedLibPublicKeyToken;
+#else
+        private const string Version = Consts.FxVersion;
+        private const string PublicKeyToken = AssemblyRef.MicrosoftPublicKey;
+#endif
         private const string Namespace = "System.Windows.Forms.Design.DataVisualization.Charting";
 #else
         private const string AssemblyName = "System.Web.DataVisualization.Design";
-        internal const string Version = ThisAssembly.Version;
         private const string Culture = "neutral";
+#if !MONO
+        internal const string Version = ThisAssembly.Version;
         private const string PublicKeyToken = AssemblyRef.SharedLibPublicKeyToken;
+#else
+        internal const string Version = Consts.FxVersion;
+        private const string PublicKeyToken = AssemblyRef.MicrosoftPublicKey;
+#endif
         private const string Namespace = "System.Web.UI.Design.DataVisualization.Charting";
 #endif
         #endregion Assembly configuration strings
 
-        public const string UITypeEditorBase = "System.Drawing.Design.UITypeEditor, System.Drawing, Version=" + Version + ", Culture=neutral, PublicKeyToken=" + AssemblyRef.MicrosoftPublicKeyToken;
+        public const string UITypeEditorBase = "System.Drawing.Design.UITypeEditor, System.Drawing, Version=" + Version + ", Culture=neutral, PublicKeyToken=" + AssemblyRef.MicrosoftPublicKey;
 
         internal static class ChartColorEditor
         {

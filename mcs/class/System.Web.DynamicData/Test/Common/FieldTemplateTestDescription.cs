@@ -3,7 +3,7 @@
 
 namespace MonoTests.Common
 {
-	sealed class FieldTemplateTestDescription
+	public sealed class FieldTemplateTestDescription
 	{
 		public string ColumnName { get; private set; }
 		public string ControlVirtualPath { get; private set; }

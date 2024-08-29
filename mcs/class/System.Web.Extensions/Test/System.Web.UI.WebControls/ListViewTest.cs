@@ -396,7 +396,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (null, lvp.EditItemTemplate, "EditItemTemplate");
 			Assert.AreEqual (null, lvp.EmptyDataTemplate, "EmptyDataTemplate");
 			Assert.AreEqual (null, lvp.EmptyItemTemplate, "EmptyItemTemplate");
-			Assert.AreEqual (false, lvp.EnableModelValidation, "EnableModelValidation");
+			Assert.AreEqual (true, lvp.EnableModelValidation, "EnableModelValidation");
 			Assert.AreEqual (1, lvp.GroupItemCount, "GroupItemCount");
 			Assert.AreEqual ("groupPlaceholder", lvp.GroupPlaceholderID, "GroupPlaceholderID");
 			Assert.AreEqual (null, lvp.GroupSeparatorTemplate, "GroupSeparatorTemplate");
@@ -1183,21 +1183,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Run ();
 
 			FormRequest fr = new FormRequest(t.Response, "form1");
-#if DOT_NET
 			fr.Controls.Add ("ListView1$ctrl0$ctl03$EditButton");
 			fr.Controls.Add ("ListView1$ctrl6$ctrl7$CapitalTextBox");
 			fr.Controls.Add ("ListView1$ctrl6$ctrl7$IDTextBox");
 			fr.Controls.Add ("ListView1$ctrl6$ctrl7$NameTextBox");
 			fr.Controls.Add ("ListView1$ctrl6$ctrl7$PopulationTextBox");
 			fr.Controls ["ListView1$ctrl0$ctl03$EditButton"].Value = "Edit";
-#else
-			fr.Controls.Add ("ListView1$ctl13$EditButton");
-			fr.Controls.Add ("ListView1$ctl51$CapitalTextBox");
-			fr.Controls.Add ("ListView1$ctl51$IDTextBox");
-			fr.Controls.Add ("ListView1$ctl51$NameTextBox");
-			fr.Controls.Add ("ListView1$ctl51$PopulationTextBox");
-			fr.Controls ["ListView1$ctl13$EditButton"].Value = "Edit";
-#endif
+
+
 			t.Request = fr;
 			
 			EventRecorder events = new EventRecorder();
@@ -1214,19 +1207,20 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug #535701, test 1")]
 		public void Bug_535701_1 ()
 		{
-			string originalHtml_1 = @"<span id=""ListViewTest"">
+			string originalHtml_1 = @"
         0 1 2 3 4 5 6 7 8 9 
-        </span>
+        
         <span id=""DataPager1""><a class=""aspNetDisabled"">First</a>&nbsp;<a class=""aspNetDisabled"">Previous</a>&nbsp;<span>1</span>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl01$ctl01&#39;,&#39;&#39;)"">2</a>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl02$ctl00&#39;,&#39;&#39;)"">Next</a>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl02$ctl01&#39;,&#39;&#39;)"">Last</a>&nbsp;</span>";
-			string originalHtml_2 = @"<span id=""ListViewTest"">
+    
+		string originalHtml_2 = @"
         10 11 12 
-        </span>
+        
         <span id=""DataPager1""><a href=""javascript:__doPostBack(&#39;DataPager1$ctl00$ctl00&#39;,&#39;&#39;)"">First</a>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl00$ctl01&#39;,&#39;&#39;)"">Previous</a>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl01$ctl00&#39;,&#39;&#39;)"">1</a>&nbsp;<span>2</span>&nbsp;<a class=""aspNetDisabled"">Next</a>&nbsp;<a class=""aspNetDisabled"">Last</a>&nbsp;</span>";
 			WebTest t = new WebTest ("ListViewTotalRowCount_Bug535701_1.aspx");
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			
-			Assert.AreEqual (originalHtml_1.Replace ("\r\n", "\n"), renderedHtml, "#A1");
+			Assert.AreEqual (HtmlDiff.FixupEnvironmentNewLine(originalHtml_1), renderedHtml, "#A1");
 
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
@@ -1236,23 +1230,23 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHtml = t.Run ();
 			renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 
-			Assert.AreEqual (originalHtml_2.Replace ("\r\n", "\n"), renderedHtml, "#A2");
+			Assert.AreEqual (HtmlDiff.FixupEnvironmentNewLine(originalHtml_2), renderedHtml, "#A2");
 		}
 
 		[Test (Description="Bug #535701, test 2")]
 		public void Bug_535701_2 ()
 		{
-			string originalHtml_1 = @"<span id=""ListViewTest2"">
+			string originalHtml_1 = @"
         12345678910
-        </span>
+        
         <span id=""DataPager1""><a class=""aspNetDisabled"">First</a>&nbsp;<a class=""aspNetDisabled"">Previous</a>&nbsp;<span>1</span>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl01$ctl01&#39;,&#39;&#39;)"">2</a>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl02$ctl00&#39;,&#39;&#39;)"">Next</a>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl02$ctl01&#39;,&#39;&#39;)"">Last</a>&nbsp;</span>
         	
         <br /><div>
         DataPager.TotalRowCount = 14<br />
         Actual TotalRowCount = 14</div>";
-			string originalHtml_2 = @"<span id=""ListViewTest2"">
+			string originalHtml_2 = @"
         11121314
-        </span>
+        
         <span id=""DataPager1""><a href=""javascript:__doPostBack(&#39;DataPager1$ctl00$ctl00&#39;,&#39;&#39;)"">First</a>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl00$ctl01&#39;,&#39;&#39;)"">Previous</a>&nbsp;<a href=""javascript:__doPostBack(&#39;DataPager1$ctl01$ctl00&#39;,&#39;&#39;)"">1</a>&nbsp;<span>2</span>&nbsp;<a class=""aspNetDisabled"">Next</a>&nbsp;<a class=""aspNetDisabled"">Last</a>&nbsp;</span>
         	
         <br /><div>
@@ -1262,7 +1256,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			
-			Assert.AreEqual (originalHtml_1.Replace ("\r\n", "\n"), renderedHtml, "#A1");
+			Assert.AreEqual (HtmlDiff.FixupEnvironmentNewLine(originalHtml_1), renderedHtml, "#A1");
 
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
@@ -1272,18 +1266,104 @@ namespace MonoTests.System.Web.UI.WebControls
 			pageHtml = t.Run ();
 			renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 
-			Assert.AreEqual (originalHtml_2.Replace ("\r\n", "\n"), renderedHtml, "#A2");
+			Assert.AreEqual (HtmlDiff.FixupEnvironmentNewLine(originalHtml_2), renderedHtml, "#A2");
 		}
 
 		[Test (Description="Bug #604053")]
 		public void Bug_604053 ()
 		{
-			string originalHtml = "<span id=\"Bug604053ListView1\"><table id=\"Bug604053ListView1_itemPlaceholderContainer\" border=\"0\" style=\"\"><tr style=\"\"><th>\n\t\t\t\t\t\t\t\t\t\t\tM1</th><th>\n\t\t\t\t\t\t\t\t\t\t\tM2</th>\r\n\t</tr>\n\t\t\t\t\t<tr style=\"\">\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t<span id=\"Bug604053ListView1_ctl10_M1Label_0\">0</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t<span id=\"Bug604053ListView1_ctl10_M2Label_0\">0</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\r\n\t\t\n\t\t\t\t\t<tr style=\"\">\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t<span id=\"Bug604053ListView1_ctl12_M1Label_1\">1</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t<span id=\"Bug604053ListView1_ctl12_M2Label_1\">1</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\r\n\r\n\r\n</table>\r\n\n\t\t\t\t\t<table><tr><td>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</td>\r\n\t</tr><tr><td style=\"\">\n\t\t\t\t\t\t\t\t<span id=\"Bug604053ListView1_DataPager1\"><input type=\"submit\" name=\"Bug604053ListView1$DataPager1$ctl00$ctl00\" value=\"First\" disabled=\"disabled\" />&nbsp;<span>1</span>&nbsp;<a href=\"javascript:__doPostBack(&#39;Bug604053ListView1$DataPager1$ctl01$ctl01&#39;,&#39;&#39;)\">2</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;Bug604053ListView1$DataPager1$ctl01$ctl02&#39;,&#39;&#39;)\">3</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;Bug604053ListView1$DataPager1$ctl01$ctl03&#39;,&#39;&#39;)\">4</a>&nbsp;<a href=\"javascript:__doPostBack(&#39;Bug604053ListView1$DataPager1$ctl01$ctl04&#39;,&#39;&#39;)\">5</a>&nbsp;<input type=\"submit\" name=\"Bug604053ListView1$DataPager1$ctl02$ctl00\" value=\"Last\" />&nbsp;</span>\n\t\t\t\t\t\t\t</td>\r\n\t</tr>\r\n\r\n</table>\r\n\n\t\t\t\t</span>\n\t\t\t<span id=\"Bug604053ListView2\"><table id=\"Bug604053ListView2_itemPlaceholderContainer\" border=\"0\" style=\"\"><tr style=\"\"><th>\n\t\t\t\t\t\t\t\t\t\t\tM1</th><th>\n\t\t\t\t\t\t\t\t\t\t\tM2</th>\r\n\t</tr>\n\t\t\t\t\t<tr style=\"\">\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t<span id=\"Bug604053ListView2_ctl10_M1Label_0\">0</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t<span id=\"Bug604053ListView2_ctl10_M2Label_0\">0</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\r\n\t\t\n\t\t\t\t\t<tr style=\"\">\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t<span id=\"Bug604053ListView2_ctl12_M1Label_1\">1</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t\t<td>\n\t\t\t\t\t\t\t<span id=\"Bug604053ListView2_ctl12_M2Label_1\">1</span>\n\t\t\t\t\t\t</td>\n\t\t\t\t\t</tr>\n\t\t\t\t\r\n\r\n\r\n</table>\r\n\n\t\t\t\t\t<table><tr><td>\n\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t</td>\r\n\t</tr><tr><td style=\"\">\n\t\t\t\t\t\t\t\t<span id=\"Bug604053ListView2_DataPager1\"><input type=\"submit\" name=\"Bug604053ListView2$DataPager1$ctl00$ctl00\" value=\"First\" disabled=\"disabled\" />&nbsp;<input type=\"submit\" name=\"Bug604053ListView2$DataPager1$ctl00$ctl01\" value=\"Previous\" disabled=\"disabled\" />&nbsp;<input type=\"submit\" name=\"Bug604053ListView2$DataPager1$ctl00$ctl02\" value=\"Next\" />&nbsp;<input type=\"submit\" name=\"Bug604053ListView2$DataPager1$ctl00$ctl03\" value=\"Last\" />&nbsp;</span>\n\t\t\t\t\t\t\t</td>\r\n\t</tr>\r\n\r\n</table>\r\n\n\t\t\t\t</span>";
+			string originalHtml = @"
+					<table>
+	<tr>
+		<td>
+								<table id=""Bug604053ListView1_itemPlaceholderContainer"" border=""0"" style="""">
+			<tr style="""">
+				<th>
+											M1</th>
+				<th>
+											M2</th>
+			</tr>
+
+				
+					<tr style="""">
+						<td>
+							<span id=""Bug604053ListView1_M1Label_0"">0</span>
+						</td>
+						<td>
+							<span id=""Bug604053ListView1_M2Label_0"">0</span>
+						</td>
+					</tr>
+				
+				
+					<tr style="""">
+						<td>
+							<span id=""Bug604053ListView1_M1Label_1"">1</span>
+						</td>
+						<td>
+							<span id=""Bug604053ListView1_M2Label_1"">1</span>
+						</td>
+					</tr>
+				</table>
+		
+							</td>
+	</tr>
+	<tr>
+		<td style="""">
+								<span id=""Bug604053ListView1_DataPager1""><input type=""submit"" name=""Bug604053ListView1$DataPager1$ctl00$ctl00"" value=""First"" disabled=""disabled"" class=""aspNetDisabled"" />&nbsp;<span>1</span>&nbsp;<a href=""javascript:__doPostBack(&#39;Bug604053ListView1$DataPager1$ctl01$ctl01&#39;,&#39;&#39;)"">2</a>&nbsp;<a href=""javascript:__doPostBack(&#39;Bug604053ListView1$DataPager1$ctl01$ctl02&#39;,&#39;&#39;)"">3</a>&nbsp;<a href=""javascript:__doPostBack(&#39;Bug604053ListView1$DataPager1$ctl01$ctl03&#39;,&#39;&#39;)"">4</a>&nbsp;<a href=""javascript:__doPostBack(&#39;Bug604053ListView1$DataPager1$ctl01$ctl04&#39;,&#39;&#39;)"">5</a>&nbsp;<input type=""submit"" name=""Bug604053ListView1$DataPager1$ctl02$ctl00"" value=""Last"" />&nbsp;</span>
+							</td>
+	</tr>
+</table>
+
+				
+			
+					<table>
+	<tr>
+		<td>
+								<table id=""Bug604053ListView2_itemPlaceholderContainer"" border=""0"" style="""">
+			<tr style="""">
+				<th>
+											M1</th>
+				<th>
+											M2</th>
+			</tr>
+
+				
+					<tr style="""">
+						<td>
+							<span id=""Bug604053ListView2_M1Label_0"">0</span>
+						</td>
+						<td>
+							<span id=""Bug604053ListView2_M2Label_0"">0</span>
+						</td>
+					</tr>
+				
+				
+					<tr style="""">
+						<td>
+							<span id=""Bug604053ListView2_M1Label_1"">1</span>
+						</td>
+						<td>
+							<span id=""Bug604053ListView2_M2Label_1"">1</span>
+						</td>
+					</tr>
+				</table>
+		
+							</td>
+	</tr>
+	<tr>
+		<td style="""">
+								<span id=""Bug604053ListView2_DataPager1""><input type=""submit"" name=""Bug604053ListView2$DataPager1$ctl00$ctl00"" value=""First"" disabled=""disabled"" class=""aspNetDisabled"" />&nbsp;<input type=""submit"" name=""Bug604053ListView2$DataPager1$ctl00$ctl01"" value=""Previous"" disabled=""disabled"" class=""aspNetDisabled"" />&nbsp;<input type=""submit"" name=""Bug604053ListView2$DataPager1$ctl00$ctl02"" value=""Next"" />&nbsp;<input type=""submit"" name=""Bug604053ListView2$DataPager1$ctl00$ctl03"" value=""Last"" />&nbsp;</span>
+							</td>
+	</tr>
+</table>
+
+				";
+			
  			WebTest t = new WebTest ("ListViewTotalRowCount_Bug604053.aspx");
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			
-			Assert.AreEqual (originalHtml, renderedHtml, "#A1");
+			Assert.AreEqual (originalHtml.Replace ("\r\n", "\n"), renderedHtml.Replace ("\r\n", "\n"), "#A1");
 		}
 	}
 }

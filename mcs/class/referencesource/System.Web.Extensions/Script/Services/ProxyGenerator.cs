@@ -39,8 +39,12 @@ namespace System.Web.Script.Services {
                 webServiceData = new WebServiceData(type, true);
             }
             else if(IsWCFServiceType(type)) {
+#if MONO
+                // overlap w/ mono WCF which hasn't been converted yet.
+                return MonoProxyGenerator.GetClientProxyScript(type, path, debug);
+#else
                 // invoke the WCFServiceClientProxyGenerator.GetClientProxyScript method using reflection
-                Assembly wcfWebAssembly = Assembly.Load(AssemblyRef.SystemServiceModelWeb);
+                Assembly wcfWebAssembly = Assembly.Load("System.ServiceModel.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
                 if (wcfWebAssembly != null) {
                     Type wcfProxyType = wcfWebAssembly.GetType(WCFProxyTypeName);
                     if (wcfProxyType != null) {
@@ -55,6 +59,7 @@ namespace System.Web.Script.Services {
                 throw new ArgumentException(String.Format(CultureInfo.CurrentCulture,
                     AtlasWeb.ProxyGenerator_UnsupportedType,
                     type.FullName));
+#endif
             }
             else {
                 throw new ArgumentException(String.Format(CultureInfo.CurrentCulture,

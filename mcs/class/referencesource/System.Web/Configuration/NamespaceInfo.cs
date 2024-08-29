@@ -53,7 +53,7 @@ namespace System.Web.Configuration {
             return Namespace.GetHashCode();
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

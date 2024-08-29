@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(0),
-        WebSysDescription(SR.WebControl_SelectedIndex),
+        WebSysDescription(System.Web.SR.WebControl_SelectedIndex),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public override int SelectedIndex {
@@ -197,7 +197,7 @@ namespace System.Web.UI.WebControls {
         }
 
         protected internal override void VerifyMultiSelect() {
-            throw new HttpException(SR.GetString(SR.Cant_Multiselect, "DropDownList"));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_Multiselect, "DropDownList"));
         }
     }
 }

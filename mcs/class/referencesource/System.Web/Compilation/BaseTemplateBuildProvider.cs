@@ -35,7 +35,7 @@ internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
     internal abstract BaseCodeDomTreeGenerator CreateCodeDomTreeGenerator(TemplateParser parser);
 
     protected internal override CodeCompileUnit GetCodeCompileUnit(out IDictionary linePragmasTable) {
-        Debug.Assert(_parser != null);
+        System.Web.Util.Debug.Assert(_parser != null);
 
         // Return the provider type and compiler params
         Type codeDomProviderType = _parser.CompilerType.CodeDomProviderType;
@@ -68,7 +68,7 @@ internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
 
     public override CompilerType CodeCompilerType {
         get {
-            Debug.Assert(_parser == null);
+            System.Web.Util.Debug.Assert(_parser == null);
 
             _parser = CreateParser();
 
@@ -99,7 +99,7 @@ internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
             return null;
 
         // no-compile pages should not have any compile with dependencies
-        Debug.Assert(Parser.RequiresCompilation);
+        System.Web.Util.Debug.Assert(Parser.RequiresCompilation);
 
         return new SingleObjectCollection(_parser.CodeFileVirtualPath);
     }
@@ -132,7 +132,7 @@ internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
 
         // tell the assembly builder to generate a fast factory for this type
         if (_instantiatableFullTypeName != null)
-            assemblyBuilder.GenerateTypeFactory(_instantiatableFullTypeName);
+            assemblyBuilder.GenerateTypeFactory(_instantiatableFullTypeName, ccu);
 
         _intermediateFullTypeName = treeGenerator.GetIntermediateFullTypeName();
     }
@@ -165,7 +165,7 @@ internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
             typeName = _instantiatableFullTypeName;
         }
 
-        Debug.Assert(typeName != null);
+        System.Web.Util.Debug.Assert(typeName != null);
 
         Type generatedType;
         if (useDelayLoadTypeIfEnabled && DelayLoadType.Enabled) {
@@ -179,7 +179,7 @@ internal abstract class BaseTemplateBuildProvider: InternalBuildProvider {
 
         // It should always extend the required base type
         // Note: removing this assert as advanced ControlBuilder scenarios allow changing the base type
-        //Debug.Assert(Parser.BaseType.IsAssignableFrom(generatedType));
+        //System.Web.Util.Debug.Assert(Parser.BaseType.IsAssignableFrom(generatedType));
 
         return generatedType;
     }

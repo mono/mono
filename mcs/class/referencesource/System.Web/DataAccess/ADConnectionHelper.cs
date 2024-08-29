@@ -18,7 +18,7 @@ namespace System.Web.DataAccess
 
         internal static DirectoryEntryHolder GetDirectoryEntry(DirectoryInformation directoryInfo, string objectDN, bool revertImpersonation)
         {
-            Debug.Assert ((objectDN != null) && (objectDN.Length != 0));
+            System.Web.Util.Debug.Assert ((objectDN != null) && (objectDN.Length != 0));
 
             //
             // Get the adspath and create a directory entry holder
@@ -44,7 +44,7 @@ namespace System.Web.DataAccess
 
         internal DirectoryEntryHolder (DirectoryEntry entry)
         {
-            Debug.Assert (entry != null);
+            System.Web.Util.Debug.Assert (entry != null);
             this.entry = entry;
         }
 

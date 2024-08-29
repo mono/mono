@@ -78,14 +78,14 @@ namespace System.Web.Configuration {
                 }
                 else {
                     // remove trailing '\' if any
-                    if (UrlPath.PathEndsWithExtraSlash(physicalDirectory)) {
+                    if (System.Web.Util.UrlPath.PathEndsWithExtraSlash(physicalDirectory)) {
                         physicalDirectory = physicalDirectory.Substring(0, physicalDirectory.Length - 1);
                     }
 
                     // Throw if the resulting physical path is not canonical, to prevent potential
                     // security issues (VSWhidbey 418125)
-                    if (FileUtil.IsSuspiciousPhysicalPath(physicalDirectory)) {
-                        throw ExceptionUtil.ParameterInvalid("PhysicalDirectory");
+                    if (System.Web.Util.FileUtil.IsSuspiciousPhysicalPath(physicalDirectory)) {
+                        throw System.Web.Util.ExceptionUtil.ParameterInvalid("PhysicalDirectory");
                     }
                 }
 
@@ -118,7 +118,7 @@ namespace System.Web.Configuration {
 
             set {
                 if (string.IsNullOrEmpty(value)) {
-                    throw ExceptionUtil.PropertyInvalid("ConfigFileBaseName");
+                    throw System.Web.Util.ExceptionUtil.PropertyInvalid("ConfigFileBaseName");
                 }
 
                 _configFileBaseName = value;
@@ -136,9 +136,9 @@ namespace System.Web.Configuration {
                 string fullConfigFilename = Path.GetFullPath(configFilename);
                 if (    Path.GetDirectoryName(fullConfigFilename) != _physicalDirectory ||
                         Path.GetFileName(fullConfigFilename) != _configFileBaseName ||
-                        FileUtil.IsSuspiciousPhysicalPath(configFilename)) {
+                        System.Web.Util.FileUtil.IsSuspiciousPhysicalPath(configFilename)) {
 
-                    throw ExceptionUtil.ParameterInvalid("configFileBaseName");
+                    throw System.Web.Util.ExceptionUtil.ParameterInvalid("configFileBaseName");
                 }
             }
         }

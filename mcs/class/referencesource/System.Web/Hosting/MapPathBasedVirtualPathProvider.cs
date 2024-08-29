@@ -25,6 +25,7 @@ using Util=System.Web.UI.Util;
 using System.Security.Permissions;
 using System.Web.Security;
 
+
 internal class MapPathBasedVirtualPathProvider: VirtualPathProvider {
 
     public override string GetFileHash(string virtualPath, IEnumerable virtualPathDependencies) {
@@ -104,7 +105,7 @@ internal class MapPathBasedVirtualPathProvider: VirtualPathProvider {
         // If file does not exist, but it's path is beneath the app root, we will cache it and
         // use the first existing directory as the cache depenedency path.  If it does not exist
         // and it's not beneath the app root, we cannot cache it.
-        string existingDir = (exists) ? physicalPath : FileUtil.GetFirstExistingDirectory(AppRoot, physicalPath);
+        string existingDir = (exists) ? physicalPath : System.Web.Util.FileUtil.GetFirstExistingDirectory(AppRoot, physicalPath);
         if (existingDir != null) {
             dep = new CacheDependency(existingDir);
             TimeSpan slidingExp = CachedPathData.UrlMetadataSlidingExpiration;
@@ -121,7 +122,7 @@ internal class MapPathBasedVirtualPathProvider: VirtualPathProvider {
             if (appRoot == null) {
                 InternalSecurityPermissions.AppPathDiscovery.Assert();
                 appRoot = Path.GetFullPath(HttpRuntime.AppDomainAppPathInternal);
-                appRoot = FileUtil.RemoveTrailingDirectoryBackSlash(appRoot);
+                appRoot = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(appRoot);
                 _AppRoot = appRoot;
             }
             return appRoot;
@@ -163,7 +164,7 @@ internal class MapPathBasedVirtualFile: VirtualFile {
 
         // Get the physical path and FindFileData on demand
         if (_physicalPath == null) {
-            Debug.Assert(_ffd == null);
+            System.Web.Util.Debug.Assert(_ffd == null);
             _physicalPath = HostingEnvironment.MapPathInternal(VirtualPath);
             FindFileData.FindFile(_physicalPath, out _ffd);
         }
@@ -261,7 +262,7 @@ internal class MapPathBasedVirtualPathEnumerator : MarshalByRefObject, IEnumerat
     internal MapPathBasedVirtualPathEnumerator(VirtualPath virtualPath, RequestedEntryType requestedEntryType) {
 
         if (virtualPath.IsRelative) {
-            throw new ArgumentException(SR.GetString(SR.Invalid_app_VirtualPath), "virtualPath");
+            throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_app_VirtualPath), "virtualPath");
         }
 
         _virtualPath = virtualPath;
@@ -299,7 +300,7 @@ internal class MapPathBasedVirtualPathEnumerator : MarshalByRefObject, IEnumerat
                     foreach (string subdir in virtualSubdirsInApp) {
                         VirtualPath subpath = _virtualPath.SimpleCombineWithDir(subdir);
                         string subPhysicalPath = serverConfig.MapPath(null, subpath);
-                        if (FileUtil.DirectoryExists(subPhysicalPath)) {
+                        if (System.Web.Util.FileUtil.DirectoryExists(subPhysicalPath)) {
                             _virtualPaths[subdir] = new MapPathBasedVirtualDirectory(subpath.VirtualPathString);
                         }
                     }
@@ -369,7 +370,7 @@ internal class MapPathBasedVirtualPathEnumerator : MarshalByRefObject, IEnumerat
                         continue;
                     
                     // IServerConfig2
-                    if (_serverConfig2 != null && !_serverConfig2.IsWithinApp(UrlPath.SimpleCombine(_virtualPath.VirtualPathString, name))) {
+                    if (_serverConfig2 != null && !_serverConfig2.IsWithinApp(System.Web.Util.UrlPath.SimpleCombine(_virtualPath.VirtualPathString, name))) {
                         continue;
                     }
                 }

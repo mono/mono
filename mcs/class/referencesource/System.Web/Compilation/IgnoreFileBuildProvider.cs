@@ -19,7 +19,7 @@ internal class IgnoreFileBuildProvider: BuildProvider {
 
     internal IgnoreFileBuildProvider() {
         // Since it's just a marker, it should never be instantiated
-        Debug.Assert(false);
+        System.Web.Util.Debug.Assert(false);
     }
 
 }

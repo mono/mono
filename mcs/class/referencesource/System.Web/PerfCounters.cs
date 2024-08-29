@@ -13,6 +13,107 @@ namespace System.Web {
     using System.Threading;
     using System.Runtime.InteropServices;
 
+#if (MONO || FEATURE_PAL)
+    internal sealed class PerfInstanceDataHandle: SafeHandle {
+        internal PerfInstanceDataHandle() : base(IntPtr.Zero, true) {
+        }
+        
+        internal IntPtr UnsafeHandle {
+            get { return handle; }
+        }
+        
+        public override bool IsInvalid {
+            get { return handle == IntPtr.Zero; }
+        }
+        
+        override protected bool ReleaseHandle() {            
+            handle = IntPtr.Zero;
+            return true;
+        }
+    }
+
+    internal sealed class PerfCounters {
+
+        // singleton used for providing an abstraction to callers who require an interface implementation
+        internal static readonly IPerfCounters Instance = new PerfCountersInstance();
+
+        private static PerfInstanceDataHandle _instance = null;
+        private static IntPtr _global = IntPtr.Zero;
+        private static IntPtr _stateService = IntPtr.Zero;
+
+        private PerfCounters () {}
+
+        internal static void Open(string appName) {            
+        }
+
+        internal static void OpenStateCounters() {            
+        }
+
+
+        // The app name should either be a valid app name or be 'null' to get the state service
+        // counters initialized
+        private static void OpenCounter(string appName) {            
+        }
+
+        // Make sure webengine.dll is loaded before attempting to call into it (ASURT 98531)
+
+        internal static void IncrementCounter(AppPerfCounter counter) {            
+        }
+
+        internal static void DecrementCounter(AppPerfCounter counter) {            
+        }
+
+        internal static void IncrementCounterEx(AppPerfCounter counter, int delta) {            
+        }
+
+        internal static void SetCounter(AppPerfCounter counter, int value) {            
+        }
+
+        // It's important that this be debug only. We don't want production
+        // code to access shared memory that another process could corrupt.
+#if DBG
+        internal static int GetCounter(AppPerfCounter counter) {
+            return -1;
+        }
+#endif
+
+        internal static int GetGlobalCounter(GlobalPerfCounter counter) {
+            return -1;
+        }
+
+        internal static void IncrementGlobalCounter(GlobalPerfCounter counter) {            
+        }
+
+        internal static void DecrementGlobalCounter(GlobalPerfCounter counter) {            
+        }
+
+        internal static void SetGlobalCounter(GlobalPerfCounter counter, int value) {            
+        }
+
+        internal static void IncrementStateServiceCounter(StateServicePerfCounter counter) {            
+        }
+
+        internal static void DecrementStateServiceCounter(StateServicePerfCounter counter) {            
+        }
+
+        internal static void SetStateServiceCounter(StateServicePerfCounter counter, int value) {            
+        }
+
+        private sealed class PerfCountersInstance : IPerfCounters {
+            public void IncrementCounter(AppPerfCounter counter) {                
+            }
+
+            public void IncrementCounter(AppPerfCounter counter, int value) {                
+            }
+
+            public void DecrementCounter(AppPerfCounter counter) {                
+            }
+
+            public void SetCounter(AppPerfCounter counter, int value) {                
+            }
+        }
+    };
+#else
     internal sealed class PerfInstanceDataHandle: SafeHandle {
         internal PerfInstanceDataHandle() : base(IntPtr.Zero, true) {
         }
@@ -44,7 +145,7 @@ namespace System.Web {
         private PerfCounters () {}
 
         internal static void Open(string appName) {
-            Debug.Assert(appName != null);
+            System.Web.Util.Debug.Assert(appName != null);
             
             OpenCounter(appName);
         }
@@ -80,7 +181,7 @@ namespace System.Web {
                 }
             }
             catch (Exception e) {
-                Debug.Trace("Perfcounters", "Exception: " + e.StackTrace);
+                System.Web.Util.Debug.Trace("Perfcounters", "Exception: " + e.StackTrace);
             }
         }
 
@@ -226,6 +327,6 @@ namespace System.Web {
             }
         }
     };
-
+#endif
 }
 

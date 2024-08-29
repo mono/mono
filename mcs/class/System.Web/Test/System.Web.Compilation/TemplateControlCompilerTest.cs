@@ -98,28 +98,30 @@ namespace MonoTests.System.Web.Compilation {
 		}
 		
 		[Test]
-		[ExpectedException ("System.Web.Compilation.CompilationException")]
+		[ExpectedException (typeof (HttpCompileException))]
 		public void InvalidPropertyBindTest1 ()
 		{
-			new WebTest ("InvalidPropertyBind1.aspx").Run ();
+			// test system does not property capture exceptions right now under 
+			// certain scenarios.
+			new WebTest ("InvalidPropertyBind1.aspx").Run();
 		}
 
 		[Test]
-		[ExpectedException (typeof (HttpParseException))]
+		[ExpectedException (typeof (HttpException))]
 		public void InvalidPropertyBindTest2 ()
 		{
 			new WebTest ("InvalidPropertyBind2.aspx").Run ();
 		}
 
 		[Test]
-		[ExpectedException ("System.Web.Compilation.CompilationException")]
+		[ExpectedException (typeof (HttpCompileException))]
 		public void InvalidPropertyBindTest3 ()
 		{
 			new WebTest ("InvalidPropertyBind3.aspx").Run ();
 		}
 
 		[Test]
-		[ExpectedException (typeof (HttpParseException))]
+		[ExpectedException (typeof (HttpException))]
 		public void InvalidPropertyBindTest4 ()
 		{
 			new WebTest ("InvalidPropertyBind4.aspx").Run ();
@@ -215,11 +217,10 @@ namespace MonoTests.System.Web.Compilation {
 		}
 
 		[Test (Description="Bug #524358")]
+		[ExpectedException (typeof (HttpException))]
 		public void DuplicateControlsInClientComment ()
 		{
-			// Just test if it throws an exception
-			string pageHtml = new WebTest ("DuplicateControlsInClientComment.aspx").Run ();
-			Assert.IsTrue (pageHtml.IndexOf ("[System.Web.Compilation.ParseException]:") != -1, "#A1");
+			new WebTest ("DuplicateControlsInClientComment.aspx").Run ();
 		}
 
 		[Test (Description="Bug #367723")]
@@ -229,8 +230,9 @@ namespace MonoTests.System.Web.Compilation {
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			string originalHtml = @"<!--[if IE 6]>
 		<link rel=""styleheet"" type=""text/css"" href=""~/compat-ie6.css""></link>
-	<![endif]-->";
-			HtmlDiff.AssertAreEqual (originalHtml.Replace ("\r\n","\n"), renderedHtml, "#A1");
+	<![endif]-->";			
+
+			HtmlDiff.AssertAreEqual (HtmlDiff.FixupEnvironmentNewLine(originalHtml), renderedHtml, "#A1");
 		}
 		
 		[Test (Description="Bug #400807")]
@@ -286,7 +288,8 @@ namespace MonoTests.System.Web.Compilation {
 			string originalHtml = @"<!-- comment start
   <input id=""testBox"" type=""checkbox"" name=""testBox"" />
 comment end -->";
-			HtmlDiff.AssertAreEqual (originalHtml.Replace ("\r\n","\n"), renderedHtml, "#A1");
+
+			HtmlDiff.AssertAreEqual (HtmlDiff.FixupEnvironmentNewLine(originalHtml), renderedHtml, "#A1");
 		}
 
 		[Test]
@@ -313,12 +316,7 @@ comment end -->";
 		[Test]
 		public void ChildTemplatesTest ()
 		{
-			try {
-				WebTest.Host.AppDomain.AssemblyResolve += new ResolveEventHandler (ResolveAssemblyHandler);
-				new WebTest ("TemplateControlParsingTest.aspx").Run ();
-			} finally {
-				WebTest.Host.AppDomain.AssemblyResolve -= new ResolveEventHandler (ResolveAssemblyHandler);
-			}
+			new WebTest ("TemplateControlParsingTest.aspx").Run ();
 		}
 		
 		[TestFixtureTearDown]

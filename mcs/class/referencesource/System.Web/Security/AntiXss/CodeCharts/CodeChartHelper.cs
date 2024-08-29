@@ -12,7 +12,7 @@ namespace System.Web.Security.AntiXss.CodeCharts {
 
     internal static class CodeChartHelper {
         internal static IEnumerable<int> GetRange(int min, int max, Func<int, bool> exclusionFilter) {
-            Debug.Assert(min <= max);
+            System.Web.Util.Debug.Assert(min <= max);
 
             var range = Enumerable.Range(min, (max - min + 1));
             if (exclusionFilter != null) {

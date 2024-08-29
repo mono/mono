@@ -121,7 +121,7 @@ namespace System.Web.UI.WebControls {
                             fieldName = "XXLarge";
                             break;
                     }
-                    Debug.Assert(fieldName != null, "Invalid FontSize type");
+                    System.Web.Util.Debug.Assert(fieldName != null, "Invalid FontSize type");
                     if (fieldName != null) {
                         member = typeof(FontUnit).GetField(fieldName);
                     }
@@ -131,7 +131,7 @@ namespace System.Web.UI.WebControls {
                     args = new object[] { u.Unit };
                 }
 
-                Debug.Assert(member != null, "Looks like we're missing FontUnit static fields or FontUnit::ctor(Unit)");
+                System.Web.Util.Debug.Assert(member != null, "Looks like we're missing FontUnit static fields or FontUnit::ctor(Unit)");
                 if (member != null) {
                     return new InstanceDescriptor(member, args);
                 }

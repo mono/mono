@@ -185,7 +185,7 @@ namespace System.Web.Security {
                     // this opportunity to purposely inject a non-null byte at this offset, which
                     // intentionally breaks compatibility with Framework40 mode.
                     // LENGTH: 1 byte
-                    Debug.Assert(ticketBlobStream.Position == 10, "Critical that we be at position 10 in the stream at this point.");
+                    System.Web.Util.Debug.Assert(ticketBlobStream.Position == 10, "Critical that we be at position 10 in the stream at this point.");
                     ticketWriter.Write((byte)0xfe);
 
                     // Step 5: Write the ticket expiration date to the stream.

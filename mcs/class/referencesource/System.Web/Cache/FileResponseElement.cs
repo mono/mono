@@ -4,8 +4,7 @@ using System.Web;
 using System.Web.Caching;
 
 namespace System.Web.Caching {
-    [Serializable]
-    [AspNetHostingPermission(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Unrestricted)]
+    [Serializable]    
     public class FileResponseElement: ResponseElement {
         private  String               _path;
         private  long                 _offset;

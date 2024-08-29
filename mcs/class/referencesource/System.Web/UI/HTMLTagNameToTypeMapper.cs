@@ -17,6 +17,7 @@ namespace System.Web.UI {
     using System.Web.Configuration;
     using System.Web.UI.HtmlControls;
     using System.Web.Util;
+    
 
     internal class HtmlTagNameToTypeMapper : ITagNameToTypeMapper {
         static Hashtable _tagMap;
@@ -71,7 +72,7 @@ namespace System.Web.UI {
                 _inputTypes = t;
             }
 
-            if (StringUtil.EqualsIgnoreCase("input", tagName)) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase("input", tagName)) {
                 string type = "text";
                 if (attributeBag != null) {
                     type = (string)attributeBag["type"] ?? type;
@@ -84,7 +85,7 @@ namespace System.Web.UI {
                         controlType = typeof(HtmlInputGenericControl);
                     }
                     else {
-                        throw new HttpException(SR.GetString(SR.Invalid_type_for_input_tag, type));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_type_for_input_tag, type));
                     }
                 }
             }

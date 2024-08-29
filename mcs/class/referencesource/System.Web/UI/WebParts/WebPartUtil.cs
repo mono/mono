@@ -25,7 +25,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         internal static Type[] GetTypesForConstructor(ConstructorInfo constructor) {
-            Debug.Assert(constructor != null);
+            System.Web.Util.Debug.Assert(constructor != null);
             ParameterInfo[] parameters = constructor.GetParameters();
             Type[] types = new Type[parameters.Length];
             for (int i = 0; i < parameters.Length; i++) {

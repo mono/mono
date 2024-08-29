@@ -13,6 +13,7 @@ namespace System.Web.Configuration {
     using System.IO;
     using System.Text;
     using System.Security.Permissions;
+    
 
     /*         <!-- Configuration for siteMap:
                Attributes:
@@ -77,7 +78,7 @@ namespace System.Web.Configuration {
         public SiteMapSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -133,7 +134,7 @@ namespace System.Web.Configuration {
             {
                 if (Providers[DefaultProvider] == null) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Config_provider_must_exist, DefaultProvider),
+                        System.Web.SR.GetString(System.Web.SR.Config_provider_must_exist, DefaultProvider),
                         ElementInformation.Properties[_propDefaultProvider.Name].Source, 
                         ElementInformation.Properties[_propDefaultProvider.Name].LineNumber);
                 }

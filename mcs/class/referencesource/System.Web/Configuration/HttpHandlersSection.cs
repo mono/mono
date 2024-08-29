@@ -33,7 +33,7 @@ namespace System.Web.Configuration {
         public HttpHandlersSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

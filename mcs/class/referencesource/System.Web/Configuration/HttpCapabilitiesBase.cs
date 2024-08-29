@@ -29,6 +29,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.Web.UI.Adapters;
     using Debug=System.Web.Util.Debug;
+    
 
     /*
      * Abstract base class for Capabilities
@@ -135,7 +136,6 @@ namespace System.Web.Configuration {
         // Note: this API will return null if the section isn't found.
         //
         internal static HttpBrowserCapabilities GetBrowserCapabilities(HttpRequest request) {
-
             HttpCapabilitiesBase capabilities = null;
 
             // Get the config evaluator from the cached config object.
@@ -182,7 +182,7 @@ namespace System.Web.Configuration {
                     }
                 }
                 catch {
-                    throw new Exception(SR.GetString(SR.Could_not_create_type_instance, mtw));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.Could_not_create_type_instance, mtw));
                 }
             }
             return CreateHtmlTextWriterInternal(w);
@@ -213,7 +213,7 @@ namespace System.Web.Configuration {
 
         internal void InitInternal(HttpBrowserCapabilities browserCaps) {
             if (_items != null) {
-                throw new ArgumentException(SR.GetString(SR.Caps_cannot_be_inited_twice));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Caps_cannot_be_inited_twice));
             }
 
             _items = browserCaps._items;
@@ -273,7 +273,7 @@ namespace System.Web.Configuration {
                 //do not thrownOnFail or ignoreCase
                 adapterType = BuildManager.GetType(adapterTypename, false, false);
                 if (adapterType == null) {
-                    throw new Exception(SR.GetString(SR.ControlAdapters_TypeNotFound, adapterTypename));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.ControlAdapters_TypeNotFound, adapterTypename));
                 }
 
                 AdapterTypes[controlType] = adapterType;
@@ -312,7 +312,7 @@ namespace System.Web.Configuration {
                             factory = _controlAdapterFactoryGenerator.CreateFactory(adapterType);
                         }
                         catch {
-                            throw new Exception(SR.GetString(SR.Could_not_create_type_instance, adapterType.ToString()));
+                            throw new Exception(System.Web.SR.GetString(System.Web.SR.Could_not_create_type_instance, adapterType.ToString()));
                         }
 
                         _controlAdapterFactoryTable[adapterType] = factory;
@@ -474,7 +474,7 @@ namespace System.Web.Configuration {
         }
 
         Exception BuildParseError(Exception e, string capsKey) {
-            string message = SR.GetString(SR.Invalid_string_from_browser_caps, e.Message, capsKey, this[capsKey]);
+            string message = System.Web.SR.GetString(System.Web.SR.Invalid_string_from_browser_caps, e.Message, capsKey, this[capsKey]);
 
             // to show ConfigurationException in stack trace
             ConfigurationErrorsException configEx = new ConfigurationErrorsException(message, e);

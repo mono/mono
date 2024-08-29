@@ -361,7 +361,7 @@ namespace System.Web.UI.WebControls {
                 }
 
                 if (Menu.IncludeStyleBlock && Menu.Page.Header == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.NeedHeader, "Menu.IncludeStyleBlock"));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.NeedHeader, "Menu.IncludeStyleBlock"));
                 }
 
                 AddScriptReference();  // We always need our script, even if we're disabled, because the script sets our styles

@@ -45,7 +45,7 @@ internal class PreservationFileWriter {
             _writer.WriteStartElement("preserve");
 
             // Save the type of BuildResult we're dealing with
-            Debug.Assert(result.GetCode() != BuildResultTypeCode.Invalid); 
+            System.Web.Util.Debug.Assert(result.GetCode() != BuildResultTypeCode.Invalid); 
             SetAttribute("resultType", ((int)result.GetCode()).ToString(CultureInfo.InvariantCulture));
 
             // Save the virtual path for this BuildResult
@@ -56,7 +56,7 @@ internal class PreservationFileWriter {
             long hash = result.ComputeHashCode(hashCode);
 
             // The hash should always be valid if we got here.
-            Debug.Assert(hash != 0, "hash != 0"); 
+            System.Web.Util.Debug.Assert(hash != 0, "hash != 0"); 
 
             // Save it to the preservation file
             SetAttribute("hash", hash.ToString("x", CultureInfo.InvariantCulture));

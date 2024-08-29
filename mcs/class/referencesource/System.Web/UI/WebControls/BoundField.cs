@@ -12,6 +12,7 @@ namespace System.Web.UI.WebControls {
     using System.Globalization;
     using System.Web;
     using System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -48,7 +49,7 @@ namespace System.Web.UI.WebControls {
         /// </summary>
         [
         WebCategory("Behavior"),
-        WebSysDescription(SR.Control_ValidateRequestMode),
+        WebSysDescription(System.Web.SR.Control_ValidateRequestMode),
         DefaultValue(ValidateRequestMode.Inherit)
         ]
         public new ValidateRequestMode ValidateRequestMode {
@@ -66,7 +67,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(false),
-            WebSysDescription(SR.BoundField_ApplyFormatInEditMode)
+            WebSysDescription(System.Web.SR.BoundField_ApplyFormatInEditMode)
         ]
         public virtual bool ApplyFormatInEditMode {
             get {
@@ -89,7 +90,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(true),
-            WebSysDescription(SR.BoundField_ConvertEmptyStringToNull)
+            WebSysDescription(System.Web.SR.BoundField_ConvertEmptyStringToNull)
         ]
         public virtual bool ConvertEmptyStringToNull {
             get {
@@ -112,7 +113,7 @@ namespace System.Web.UI.WebControls {
             WebCategory("Data"),
             DefaultValue(""),
             TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
-            WebSysDescription(SR.BoundField_DataField)
+            WebSysDescription(System.Web.SR.BoundField_DataField)
         ]
         public virtual string DataField {
             get {
@@ -142,7 +143,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Data"),
             DefaultValue(""),
-            WebSysDescription(SR.BoundField_DataFormatString)
+            WebSysDescription(System.Web.SR.BoundField_DataFormatString)
         ]
         public virtual string DataFormatString {
             get {
@@ -189,7 +190,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.BoundField_HtmlEncode)
+        WebSysDescription(System.Web.SR.BoundField_HtmlEncode)
         ]
         public virtual bool HtmlEncode {
             get {
@@ -255,7 +256,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(""),
-            WebSysDescription(SR.BoundField_NullDisplayText)
+            WebSysDescription(System.Web.SR.BoundField_NullDisplayText)
         ]
         public virtual string NullDisplayText {
             get {
@@ -281,7 +282,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Behavior"),
             DefaultValue(false),
-            WebSysDescription(SR.BoundField_ReadOnly)
+            WebSysDescription(System.Web.SR.BoundField_ReadOnly)
         ]
         public virtual bool ReadOnly {
             get {
@@ -449,7 +450,7 @@ namespace System.Web.UI.WebControls {
         /// Returns a value to be used for design-time rendering
         /// </devdoc>
         protected virtual object GetDesignTimeValue() {
-            return SR.GetString(SR.Sample_Databound_Text);
+            return System.Web.SR.GetString(System.Web.SR.Sample_Databound_Text);
         }
 
 
@@ -457,14 +458,14 @@ namespace System.Web.UI.WebControls {
         /// Retrieves the value of the field to be databound to the BoundField.
         /// </devdoc>
         protected virtual object GetValue(Control controlContainer) {
-            Debug.Assert(DataField.Length != 0, "Shouldn't be DataBinding without a DataField");
+            System.Web.Util.Debug.Assert(DataField.Length != 0, "Shouldn't be DataBinding without a DataField");
 
             object data = null;
             object dataItem = null;
             string boundField = DataField;
 
             if (controlContainer == null) {
-                throw new HttpException(SR.GetString(SR.DataControlField_NoContainer));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControlField_NoContainer));
             }
 
             dataItem = DataBinder.GetDataItem(controlContainer);
@@ -474,7 +475,7 @@ namespace System.Web.UI.WebControls {
                     return GetDesignTimeValue();
                 }
                 else {
-                    throw new HttpException(SR.GetString(SR.DataItem_Not_Found));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataItem_Not_Found));
                 }
             }
 
@@ -514,7 +515,7 @@ namespace System.Web.UI.WebControls {
                 return true;
             }
             else if (!boundField.Contains(_expressionPartSeparator)) {
-                throw new HttpException(SR.GetString(SR.Field_Not_Found, boundField));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, boundField));
             }
             else {
                 // complex property case
@@ -612,7 +613,7 @@ namespace System.Web.UI.WebControls {
             }
             else {
                 if (!(boundControl is TextBox)) {
-                    throw new HttpException(SR.GetString(SR.BoundField_WrongControlType, DataField));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.BoundField_WrongControlType, DataField));
                 }
                 
                 if (ApplyFormatInEditMode) {

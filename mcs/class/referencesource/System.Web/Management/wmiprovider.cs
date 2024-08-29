@@ -15,6 +15,7 @@ namespace System.Web.Management {
     using System.Globalization;
     using System.Web.UI;
     using System.Security.Permissions;
+    
 
     ////////////
     // Events
@@ -24,14 +25,14 @@ namespace System.Web.Management {
         
         public override void Initialize(string name, NameValueCollection config)
         {
-            Debug.Trace("WmiWebEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("WmiWebEventProvider", "Initializing: name=" + name);
 
             int         hr;
             
             hr = UnsafeNativeMethods.InitializeWmiManager();
             if (hr != 0) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Wmi_provider_cant_initialize, "0x" + hr.ToString("X8", CultureInfo.CurrentCulture)));
+                    System.Web.SR.GetString(System.Web.SR.Wmi_provider_cant_initialize, "0x" + hr.ToString("X8", CultureInfo.CurrentCulture)));
             }
             
             base.Initialize(name, config);
@@ -128,7 +129,7 @@ namespace System.Web.Management {
         
         public override void ProcessEvent(WebBaseEvent eventRaised)
         {
-            Debug.Trace("WmiWebEventProvider", "ProcessEvent: event=" + eventRaised.GetType().Name);
+            System.Web.Util.Debug.Trace("WmiWebEventProvider", "ProcessEvent: event=" + eventRaised.GetType().Name);
             UnsafeNativeMethods.WmiData     wmiData = new UnsafeNativeMethods.WmiData();
             
             // Note: WMI sint64 requires a string param
@@ -165,7 +166,7 @@ namespace System.Web.Management {
 
             if (eventRaised is WebViewStateFailureAuditEvent) {
                 ViewStateException  vse = ((WebViewStateFailureAuditEvent)eventRaised).ViewStateException;
-                wmiData.exceptionMessage = SR.GetString(vse.ShortMessage);
+                wmiData.exceptionMessage = System.Web.SR.GetString(vse.ShortMessage);
                 wmiData.remoteAddress = vse.RemoteAddress;
                 wmiData.remotePort = vse.RemotePort;
                 wmiData.userAgent = vse.UserAgent;
@@ -193,7 +194,7 @@ namespace System.Web.Management {
 #if DBG            
                 }
                 catch (Exception e) {
-                    Debug.Trace("WmiWebEventProvider", e.ToString());
+                    System.Web.Util.Debug.Trace("WmiWebEventProvider", e.ToString());
                     throw;
                 }
 #endif                
@@ -231,7 +232,7 @@ namespace System.Web.Management {
 
             int hr = UnsafeNativeMethods.RaiseWmiEvent(ref wmiData, AspCompatApplicationStep.IsInAspCompatMode);
             if (hr != 0) {
-                throw new HttpException(SR.GetString(SR.Wmi_provider_error, "0x" + hr.ToString("X8", CultureInfo.InstalledUICulture)));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Wmi_provider_error, "0x" + hr.ToString("X8", CultureInfo.InstalledUICulture)));
             }
             
         }

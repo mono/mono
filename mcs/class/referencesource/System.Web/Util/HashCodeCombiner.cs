@@ -67,7 +67,7 @@ internal class HashCodeCombiner {
 
     internal void AddInt(int n) {
         _combinedHash = ((_combinedHash << 5) + _combinedHash) ^ n;
-        Debug.Trace("HashCodeCombiner", "Adding " + n.ToString("x") + " --> " + _combinedHash.ToString("x"));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "Adding " + n.ToString("x") + " --> " + _combinedHash.ToString("x"));
     }
 
     internal void AddObject(int n) {
@@ -88,7 +88,7 @@ internal class HashCodeCombiner {
 
     internal void AddObject(string s) {
         if (s != null)
-            AddInt(StringUtil.GetStringHashCode(s));
+            AddInt(System.Web.Util.StringUtil.GetStringHashCode(s));
     }
 
     internal void AddObject(Type t) {
@@ -103,27 +103,27 @@ internal class HashCodeCombiner {
 
     internal void AddCaseInsensitiveString(string s) {
         if (s != null)
-            AddInt(StringUtil.GetNonRandomizedHashCode(s, ignoreCase:true));
+            AddInt(System.Web.Util.StringUtil.GetNonRandomizedHashCode(s, ignoreCase:true));
     }
 
     internal void AddDateTime(DateTime dt) {
-        Debug.Trace("HashCodeCombiner", "Ticks: " + dt.Ticks.ToString("x", CultureInfo.InvariantCulture));
-        Debug.Trace("HashCodeCombiner", "Hashcode: " + dt.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "Ticks: " + dt.Ticks.ToString("x", CultureInfo.InvariantCulture));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "Hashcode: " + dt.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
         AddInt(dt.GetHashCode());
     }
 
     private void AddFileSize(long fileSize) {
-        Debug.Trace("HashCodeCombiner", "file size: " + fileSize.ToString("x", CultureInfo.InvariantCulture));
-        Debug.Trace("HashCodeCombiner", "Hashcode: " + fileSize.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "file size: " + fileSize.ToString("x", CultureInfo.InvariantCulture));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "Hashcode: " + fileSize.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
         AddInt(fileSize.GetHashCode());
     }
 
     [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "This call site is trusted.")]
     private void AddFileVersionInfo(FileVersionInfo fileVersionInfo) {
-        Debug.Trace("HashCodeCombiner", "FileMajorPart: " + fileVersionInfo.FileMajorPart.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
-        Debug.Trace("HashCodeCombiner", "FileMinorPart: " + fileVersionInfo.FileMinorPart.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
-        Debug.Trace("HashCodeCombiner", "FileBuildPart: " + fileVersionInfo.FileBuildPart.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
-        Debug.Trace("HashCodeCombiner", "FilePrivatePart: " + fileVersionInfo.FilePrivatePart.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "FileMajorPart: " + fileVersionInfo.FileMajorPart.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "FileMinorPart: " + fileVersionInfo.FileMinorPart.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "FileBuildPart: " + fileVersionInfo.FileBuildPart.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "FilePrivatePart: " + fileVersionInfo.FilePrivatePart.GetHashCode().ToString("x", CultureInfo.InvariantCulture));
         AddInt(fileVersionInfo.FileMajorPart.GetHashCode());
         AddInt(fileVersionInfo.FileMinorPart.GetHashCode());
         AddInt(fileVersionInfo.FileBuildPart.GetHashCode());
@@ -131,7 +131,7 @@ internal class HashCodeCombiner {
     }
 
     private void AddFileContentHashKey(string fileContentHashKey) {
-        AddInt(StringUtil.GetNonRandomizedHashCode(fileContentHashKey));
+        AddInt(System.Web.Util.StringUtil.GetNonRandomizedHashCode(fileContentHashKey));
     }
 
     internal void AddFileContentHash(string fileName) {
@@ -149,17 +149,17 @@ internal class HashCodeCombiner {
     }
 
     internal void AddFile(string fileName) {
-        Debug.Trace("HashCodeCombiner", "AddFile: " + fileName);
-        if (!FileUtil.FileExists(fileName)) {
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "AddFile: " + fileName);
+        if (!System.Web.Util.FileUtil.FileExists(fileName)) {
 
             // Review: Should we change the dependency model to take directory into account?
-            if (FileUtil.DirectoryExists(fileName)) {
+            if (System.Web.Util.FileUtil.DirectoryExists(fileName)) {
                 // Add as a directory dependency if it's a directory.
                 AddDirectory(fileName);
                 return;
             }
 
-            Debug.Trace("HashCodeCombiner", "Could not find target " + fileName);
+            System.Web.Util.Debug.Trace("HashCodeCombiner", "Could not find target " + fileName);
             return;
         }
 
@@ -168,9 +168,9 @@ internal class HashCodeCombiner {
 
     // Same as AddFile, but only called for a file which is known to exist
     private void AddExistingFile(string fileName) {
-        Debug.Trace("HashCodeCombiner", "AddExistingFile: " + fileName);
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "AddExistingFile: " + fileName);
 
-        AddInt(StringUtil.GetStringHashCode(fileName));
+        AddInt(System.Web.Util.StringUtil.GetStringHashCode(fileName));
         FileInfo file = new FileInfo(fileName);
         if (!AppSettings.PortableCompilationOutput) {
             AddDateTime(file.CreationTimeUtc);
@@ -181,9 +181,9 @@ internal class HashCodeCombiner {
 
     [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "This call site is trusted.")]
     internal void AddExistingFileVersion(string fileName) {
-        Debug.Trace("HashCodeCombiner", "AddExistingFileVersion: " + fileName);
+        System.Web.Util.Debug.Trace("HashCodeCombiner", "AddExistingFileVersion: " + fileName);
 
-        AddInt(StringUtil.GetStringHashCode(fileName));
+        AddInt(System.Web.Util.StringUtil.GetStringHashCode(fileName));
         FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(fileName);
 
         AddFileVersionInfo(fileVersionInfo);
@@ -198,6 +198,16 @@ internal class HashCodeCombiner {
 
         AddObject(directoryName);
 
+#if (MONO || FEATURE_PAL)
+        foreach(FileSystemInfo info in directory.EnumerateFileSystemInfos()) {
+            if ((info.Attributes & FileAttributes.Directory) == (FileAttributes.Directory)) {
+                AddDirectory(info.FullName);
+            }
+            else {
+                AddExistingFile(info.FullName);
+            }
+        }
+#else
         // Go through all the files in the directory
         foreach (FileData fileData in FileEnumerator.Create(directoryName)) {
 
@@ -206,6 +216,7 @@ internal class HashCodeCombiner {
             else
                 AddExistingFile(fileData.FullName);
         }
+#endif
 
         if (!AppSettings.PortableCompilationOutput) {
             AddDateTime(directory.CreationTimeUtc);
@@ -223,6 +234,20 @@ internal class HashCodeCombiner {
 
         AddObject(directoryName);
 
+#if (MONO || FEATURE_PAL)
+        foreach(FileSystemInfo info in directory.EnumerateFileSystemInfos()) {
+            if ((info.Attributes & FileAttributes.Directory) == (FileAttributes.Directory)) {
+                AddResourcesDirectory(info.FullName);
+            }
+            else {
+                // Ignore the file if it has a culture, since only neutral files
+                // need to re-trigger compilation (VSWhidbey 359029)
+                if (System.Web.UI.Util.GetCultureName(info.FullName) == null) {
+                    AddExistingFile(info.FullName);
+                }
+            }
+        }
+#else
         // Go through all the files in the directory
         foreach (FileData fileData in FileEnumerator.Create(directoryName)) {
 
@@ -237,6 +262,7 @@ internal class HashCodeCombiner {
                 }
             }
         }
+#endif
 
         if (!AppSettings.PortableCompilationOutput) {
             AddDateTime(directory.CreationTimeUtc);

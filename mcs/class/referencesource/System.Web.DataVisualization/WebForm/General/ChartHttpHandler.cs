@@ -1,7 +1,7 @@
 
 //--------------------------------------------------------------------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //--------------------------------------------------------------------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -108,13 +108,18 @@ namespace System.Web.UI.DataVisualization.Charting
         // web gadren controller file. stays locked diring process lifetime.
         private const string handlerCheckQry = "check";
 
+#if (!MONO)
+        internal static string DefaultConfigSettings = @"storage=file;timeout=20;dir=c:\TempImageFiles\;";
+#else 
+        internal static string DefaultConfigSettings = @"storage=file;timeout=20;dir=" + Path.Combine(Path.GetDirectoryName(typeof(object).Module.FullyQualifiedName), "mono-aspnet-dataviz") + ";";
+#endif
+
         #endregion //Fields
 
         #region Consts
         
         internal const string ChartHttpHandlerName = "ChartImg.axd";
         internal const string ChartHttpHandlerAppSection = "ChartImageHandler";
-        internal const string DefaultConfigSettings = @"storage=file;timeout=20;dir=c:\TempImageFiles\;";
         internal const string WebDevServerUseConfigSettings = "WebDevServerUseConfigSettings";
         #endregion //Consts
 
@@ -237,7 +242,7 @@ namespace System.Web.UI.DataVisualization.Charting
                         ResetControllerStream();
                         throw;
                     }
-                }
+                }                
                 ResetControllerStream(); 
                 throw new UnauthorizedAccessException(SR.ExceptionHttpHandlerTempDirectoryUnaccesible(Settings.Directory));
             }
@@ -1222,16 +1227,30 @@ namespace System.Web.UI.DataVisualization.Charting
                             throw new InvalidOperationException(SR.ExceptionHttpHandlerUrlInvalid, exception);
                         }
                     }
+
+#if !MONO
                     fileDirectory = fileDirectory.Replace("/", "\\");
-                    if (!fileDirectory.EndsWith("\\", StringComparison.Ordinal))
+#endif            
+    
+                    if (!fileDirectory.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
                     {
-                        fileDirectory += "\\";
+                        fileDirectory += Path.DirectorySeparatorChar.ToString();
                     }
 
+#if MONO 
+                    try {
+                        System.IO.Directory.CreateDirectory(fileDirectory);
+                    }
+                    catch(Exception) {
+                        throw new DirectoryNotFoundException(SR.ExceptionHttpHandlerTempDirectoryInvalid(fileDirectory));
+                    }
+
+#else
                     if (!System.IO.Directory.Exists(fileDirectory))
                     {
                         throw new DirectoryNotFoundException(SR.ExceptionHttpHandlerTempDirectoryInvalid(fileDirectory));
                     }
+#endif
                     Exception thrown = null;
                     try
                     {
@@ -1468,7 +1487,7 @@ namespace System.Web.UI.DataVisualization.Charting
 
                 byte[] data = Encoding.UTF8.GetBytes(sessionID + "/" + currentGuid);
 
-                using (SHA1 sha = new SHA1CryptoServiceProvider())
+                using (SHA256 sha = new SHA256CryptoServiceProvider())
                 {
                     return sha.ComputeHash(data);
                 }

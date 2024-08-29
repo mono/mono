@@ -1,6 +1,7 @@
 ﻿namespace System.Web.ModelBinding {
     using System;
     using System.Globalization;
+    
 
     // Provides configuration settings common to the new model binding system.
     public static class ModelBinderErrorMessageProviders {
@@ -65,11 +66,11 @@
         }
 
         private static string GetValueInvalidResource(ModelBindingExecutionContext modelBindingExecutionContext) {
-            return GetUserResourceString(modelBindingExecutionContext, "PropertyValueInvalid") ?? SR.GetString(SR.ModelBinderConfig_ValueInvalid);
+            return GetUserResourceString(modelBindingExecutionContext, "PropertyValueInvalid") ?? System.Web.SR.GetString(System.Web.SR.ModelBinderConfig_ValueInvalid);
         }
 
         private static string GetValueRequiredResource(ModelBindingExecutionContext modelBindingExecutionContext) {
-            return GetUserResourceString(modelBindingExecutionContext, "PropertyValueRequired") ?? SR.GetString(SR.ModelBinderConfig_ValueRequired);
+            return GetUserResourceString(modelBindingExecutionContext, "PropertyValueRequired") ?? System.Web.SR.GetString(System.Web.SR.ModelBinderConfig_ValueRequired);
         }
     }
 }

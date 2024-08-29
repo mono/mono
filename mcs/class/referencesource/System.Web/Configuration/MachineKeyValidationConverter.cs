@@ -17,6 +17,7 @@ using System.Security;
 using System.Text;
 using System.Configuration;
 
+
 namespace System.Web.Configuration {
 
     [System.Security.Permissions.HostProtection(MayLeakOnAbort = true)]
@@ -24,7 +25,7 @@ namespace System.Web.Configuration {
 
         public override object ConvertTo(ITypeDescriptorContext ctx, CultureInfo ci, object value, Type type) {
             if (!(value is MachineKeyValidation)) {
-                throw new ArgumentException(SR.GetString(SR.Config_Invalid_enum_value, "SHA1, MD5, 3DES, AES, HMACSHA256, HMACSHA384, HMACSHA512"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Config_Invalid_enum_value, "SHA1, MD5, 3DES, AES, HMACSHA256, HMACSHA384, HMACSHA512"));
             }
             return ConvertFromEnum((MachineKeyValidation)value);
         }
@@ -52,7 +53,7 @@ namespace System.Web.Configuration {
                 case MachineKeyValidation.HMACSHA512:
                     return "HMACSHA512";
                 default:
-                    throw new ArgumentException(SR.GetString(SR.Wrong_validation_enum));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Wrong_validation_enum));
             }
         }
 
@@ -80,7 +81,7 @@ namespace System.Web.Configuration {
                 default:
                     if (strValue.StartsWith("alg:", StringComparison.Ordinal))
                         return MachineKeyValidation.Custom;
-                    throw new ArgumentException(SR.GetString(SR.Wrong_validation_enum));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Wrong_validation_enum));
             }
         }
     }

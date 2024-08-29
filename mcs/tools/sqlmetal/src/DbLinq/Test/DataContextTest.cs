@@ -147,22 +147,18 @@ namespace DbLinqTest {
             new DataContext("", mapping);
         }
 
-#if L2SQL
-        // DbLinqProvider/etc. obviously aren't removed under L2SQL
-        [ExpectedException(typeof(ArgumentException))]
-#endif
         [Test]
         public void Ctor_ConnectionString_ExtraParameters_Munging()
         {
-            if (Type.GetType("Mono.Runtime", false) != null)
-                Assert.Ignore("Mono's System.Data.Linq is expected to remove DbLinq parameters.");
-            DataContext ctx = new DataContext("Server=localhost;User id=test;Database=test;DbLinqProvider=Sqlite;DbLinqConnectionType=Mono.Data.Sqlite.SqliteConnection, Mono.Data.Sqlite");
-            Assert.AreEqual(-1, ctx.Connection.ConnectionString.IndexOf("DbLinqProvider"));
-            Assert.AreEqual(-1, ctx.Connection.ConnectionString.IndexOf("DbLinqConnectionType"));
+            var ex = Assert.Throws<ArgumentException> ( () => new DataContext("Server=localhost;User id=test;Database=test;DbLinqProvider=Sqlite;DbLinqConnectionType=Mono.Data.Sqlite.SqliteConnection, Mono.Data.Sqlite"));
+            // Keyword not supported: 'dblinqprovider'
+            Assert.Null(ex.InnerException);
+            Assert.NotNull(ex.Message);
+            Assert.True(ex.Message.IndexOf("'dblinqprovider'") != -1);
+            Assert.Null(ex.ParamName);
         }
-        
-#if !L2SQL
-        [Test, ExpectedException(typeof(NotImplementedException))]
+
+        [Test]
         public void Ctor_FileOrServerOrConnectionIsFilename()
         {
             MappingSource mapping = new AttributeMappingSource();
@@ -170,14 +166,13 @@ namespace DbLinqTest {
             new DataContext(fileOrServerOrConnection, mapping);
         }
 
-        [Test, ExpectedException(typeof(NotImplementedException))]
+        [Test]
         public void Ctor_FileOrServerOrConnectionIsServer()
         {
             MappingSource mapping = new AttributeMappingSource();
             string fileOrServerOrConnection = "ThisIsAssumedToBeAServerName";
             new DataContext(fileOrServerOrConnection, mapping);
         }
-#endif
 
         [Test]
         public void Connection()
@@ -186,10 +181,10 @@ namespace DbLinqTest {
             DataContext dc = new DataContext(connection);
             Assert.AreEqual(connection, dc.Connection);
 
-#if !L2SQL
-            dc = new DataContext (new DummyConnection());
-            Assert.AreEqual(null, dc.Connection);
-#endif
+            var ex = Assert.Throws<Exception> ( () => new DataContext (new DummyConnection()));
+            Assert.Null(ex.InnerException);
+            Assert.NotNull(ex.Message);
+            Assert.True(ex.Message.IndexOf("'connection'") != -1);
         }
 
         [Test, ExpectedException(typeof(ArgumentNullException))]

@@ -126,12 +126,12 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Wizard_ActiveStep)
+        WebSysDescription(System.Web.SR.Wizard_ActiveStep)
         ]
         public WizardStepBase ActiveStep {
             get {
                 if (ActiveStepIndex < -1 || ActiveStepIndex >= WizardSteps.Count) {
-                    throw new InvalidOperationException(SR.GetString(SR.Wizard_ActiveStepIndex_out_of_range));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_ActiveStepIndex_out_of_range));
                 }
 
                 return MultiView.GetActiveView() as WizardStepBase;
@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(-1),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Wizard_ActiveStepIndex),
+        WebSysDescription(System.Web.SR.Wizard_ActiveStepIndex),
         ]
         public virtual int ActiveStepIndex {
             get {
@@ -153,7 +153,7 @@ namespace System.Web.UI.WebControls {
                 if (value < -1 ||
                     (value >= WizardSteps.Count && ControlState >= ControlState.FrameworkInitialized)) {
                     throw new ArgumentOutOfRangeException("value",
-                        SR.GetString(SR.Wizard_ActiveStepIndex_out_of_range));
+                        System.Web.SR.GetString(System.Web.SR.Wizard_ActiveStepIndex_out_of_range));
                 }
 
                 if (MultiView.ActiveViewIndex != value) {
@@ -179,7 +179,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Wizard_CancelButtonImageUrl),
+        WebSysDescription(System.Web.SR.Wizard_CancelButtonImageUrl),
         UrlProperty(),
         ]
         public virtual string CancelButtonImageUrl {
@@ -202,7 +202,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_CancelButtonStyle)
+        WebSysDescription(System.Web.SR.Wizard_CancelButtonStyle)
         ]
         public Style CancelButtonStyle {
             get {
@@ -220,13 +220,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Wizard_Default_CancelButtonText),
-        WebSysDescription(SR.Wizard_CancelButtonText)
+        WebSysDefaultValue(System.Web.SR.Wizard_Default_CancelButtonText),
+        WebSysDescription(System.Web.SR.Wizard_CancelButtonText)
         ]
         public virtual String CancelButtonText {
             get {
                 string s = ViewState["CancelButtonText"] as String;
-                return s == null ? SR.GetString(SR.Wizard_Default_CancelButtonText) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.Wizard_Default_CancelButtonText) : s;
             }
             set {
                 if (value != CancelButtonText) {
@@ -239,7 +239,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(ButtonType.Button),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Wizard_CancelButtonType)
+        WebSysDescription(System.Web.SR.Wizard_CancelButtonType)
         ]
         public virtual ButtonType CancelButtonType {
             get {
@@ -258,7 +258,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Wizard_CancelDestinationPageUrl),
+        WebSysDescription(System.Web.SR.Wizard_CancelDestinationPageUrl),
         UrlProperty(),
         ]
         public virtual String CancelDestinationPageUrl {
@@ -275,7 +275,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(0),
-        WebSysDescription(SR.Wizard_CellPadding)
+        WebSysDescription(System.Web.SR.Wizard_CellPadding)
         ]
         public virtual int CellPadding {
             get {
@@ -293,7 +293,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(0),
-        WebSysDescription(SR.Wizard_CellSpacing)
+        WebSysDescription(System.Web.SR.Wizard_CellSpacing)
         ]
         public virtual int CellSpacing {
             get {
@@ -312,7 +312,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(false),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Wizard_DisplayCancelButton),
+        WebSysDescription(System.Web.SR.Wizard_DisplayCancelButton),
         ]
         public virtual bool DisplayCancelButton {
             get {
@@ -329,7 +329,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(true),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Wizard_DisplaySideBar),
+        WebSysDescription(System.Web.SR.Wizard_DisplaySideBar),
         ]
         public virtual bool DisplaySideBar {
             get {
@@ -352,7 +352,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Wizard_FinishCompleteButtonImageUrl),
+        WebSysDescription(System.Web.SR.Wizard_FinishCompleteButtonImageUrl),
         UrlProperty(),
         ]
         public virtual string FinishCompleteButtonImageUrl {
@@ -375,7 +375,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_FinishCompleteButtonStyle)
+        WebSysDescription(System.Web.SR.Wizard_FinishCompleteButtonStyle)
         ]
         public Style FinishCompleteButtonStyle {
             get {
@@ -393,13 +393,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Wizard_Default_FinishButtonText),
-        WebSysDescription(SR.Wizard_FinishCompleteButtonText)
+        WebSysDefaultValue(System.Web.SR.Wizard_Default_FinishButtonText),
+        WebSysDescription(System.Web.SR.Wizard_FinishCompleteButtonText)
         ]
         public virtual String FinishCompleteButtonText {
             get {
                 string s = ViewState["FinishCompleteButtonText"] as String;
-                return s == null ? SR.GetString(SR.Wizard_Default_FinishButtonText) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.Wizard_Default_FinishButtonText) : s;
             }
             set {
                 ViewState["FinishCompleteButtonText"] = value;
@@ -410,7 +410,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.Wizard_FinishCompleteButtonType)
+        WebSysDescription(System.Web.SR.Wizard_FinishCompleteButtonType)
         ]
         public virtual ButtonType FinishCompleteButtonType {
             get {
@@ -432,7 +432,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Wizard_FinishDestinationPageUrl),
+        WebSysDescription(System.Web.SR.Wizard_FinishDestinationPageUrl),
         UrlProperty(),
         ]
         public virtual string FinishDestinationPageUrl {
@@ -453,7 +453,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Wizard_FinishPreviousButtonImageUrl),
+        WebSysDescription(System.Web.SR.Wizard_FinishPreviousButtonImageUrl),
         UrlProperty(),
         ]
         public virtual string FinishPreviousButtonImageUrl {
@@ -476,7 +476,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_FinishPreviousButtonStyle)
+        WebSysDescription(System.Web.SR.Wizard_FinishPreviousButtonStyle)
         ]
         public Style FinishPreviousButtonStyle {
             get {
@@ -494,13 +494,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Wizard_Default_StepPreviousButtonText),
-        WebSysDescription(SR.Wizard_FinishPreviousButtonText)
+        WebSysDefaultValue(System.Web.SR.Wizard_Default_StepPreviousButtonText),
+        WebSysDescription(System.Web.SR.Wizard_FinishPreviousButtonText)
         ]
         public virtual String FinishPreviousButtonText {
             get {
                 string s = ViewState["FinishPreviousButtonText"] as String;
-                return s == null ? SR.GetString(SR.Wizard_Default_StepPreviousButtonText) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.Wizard_Default_StepPreviousButtonText) : s;
             }
             set {
                 ViewState["FinishPreviousButtonText"] = value;
@@ -511,7 +511,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.Wizard_FinishPreviousButtonType)
+        WebSysDescription(System.Web.SR.Wizard_FinishPreviousButtonType)
         ]
         public virtual ButtonType FinishPreviousButtonType {
             get {
@@ -530,7 +530,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(Wizard)),
-        WebSysDescription(SR.Wizard_FinishNavigationTemplate)
+        WebSysDescription(System.Web.SR.Wizard_FinishNavigationTemplate)
         ]
         public virtual ITemplate FinishNavigationTemplate {
             get {
@@ -549,7 +549,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.WebControl_HeaderStyle)
+        WebSysDescription(System.Web.SR.WebControl_HeaderStyle)
         ]
         public TableItemStyle HeaderStyle {
             get {
@@ -568,7 +568,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(Wizard)),
-        WebSysDescription(SR.WebControl_HeaderTemplate)
+        WebSysDescription(System.Web.SR.WebControl_HeaderTemplate)
         ]
         public virtual ITemplate HeaderTemplate {
             get {
@@ -585,7 +585,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Wizard_HeaderText)
+        WebSysDescription(System.Web.SR.Wizard_HeaderText)
         ]
         public virtual string HeaderText {
             get {
@@ -603,7 +603,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(Wizard)),
-        WebSysDescription(SR.Wizard_LayoutTemplate)
+        WebSysDescription(System.Web.SR.Wizard_LayoutTemplate)
         ]
         public virtual ITemplate LayoutTemplate {
             get {
@@ -625,7 +625,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_NavigationButtonStyle)
+        WebSysDescription(System.Web.SR.Wizard_NavigationButtonStyle)
         ]
         public Style NavigationButtonStyle {
             get {
@@ -646,7 +646,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_NavigationStyle)
+        WebSysDescription(System.Web.SR.Wizard_NavigationStyle)
         ]
         public TableItemStyle NavigationStyle {
             get {
@@ -667,7 +667,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Wizard_StartNextButtonImageUrl),
+        WebSysDescription(System.Web.SR.Wizard_StartNextButtonImageUrl),
         UrlProperty(),
         ]
         public virtual string StartNextButtonImageUrl {
@@ -690,7 +690,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_StartNextButtonStyle)
+        WebSysDescription(System.Web.SR.Wizard_StartNextButtonStyle)
         ]
         public Style StartNextButtonStyle {
             get {
@@ -708,13 +708,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Wizard_Default_StepNextButtonText),
-        WebSysDescription(SR.Wizard_StartNextButtonText)
+        WebSysDefaultValue(System.Web.SR.Wizard_Default_StepNextButtonText),
+        WebSysDescription(System.Web.SR.Wizard_StartNextButtonText)
         ]
         public virtual String StartNextButtonText {
             get {
                 string s = ViewState["StartNextButtonText"] as String;
-                return s == null ? SR.GetString(SR.Wizard_Default_StepNextButtonText) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.Wizard_Default_StepNextButtonText) : s;
             }
             set {
                 ViewState["StartNextButtonText"] = value;
@@ -725,7 +725,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.Wizard_StartNextButtonType)
+        WebSysDescription(System.Web.SR.Wizard_StartNextButtonType)
         ]
         public virtual ButtonType StartNextButtonType {
             get {
@@ -746,7 +746,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Wizard_StepNextButtonImageUrl),
+        WebSysDescription(System.Web.SR.Wizard_StepNextButtonImageUrl),
         UrlProperty(),
         ]
         public virtual string StepNextButtonImageUrl {
@@ -769,7 +769,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_StepNextButtonStyle)
+        WebSysDescription(System.Web.SR.Wizard_StepNextButtonStyle)
         ]
         public Style StepNextButtonStyle {
             get {
@@ -787,13 +787,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Wizard_Default_StepNextButtonText),
-        WebSysDescription(SR.Wizard_StepNextButtonText)
+        WebSysDefaultValue(System.Web.SR.Wizard_Default_StepNextButtonText),
+        WebSysDescription(System.Web.SR.Wizard_StepNextButtonText)
         ]
         public virtual String StepNextButtonText {
             get {
                 string s = ViewState["StepNextButtonText"] as String;
-                return s == null ? SR.GetString(SR.Wizard_Default_StepNextButtonText) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.Wizard_Default_StepNextButtonText) : s;
             }
             set {
                 ViewState["StepNextButtonText"] = value;
@@ -804,7 +804,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.Wizard_StepNextButtonType)
+        WebSysDescription(System.Web.SR.Wizard_StepNextButtonType)
         ]
         public virtual ButtonType StepNextButtonType {
             get {
@@ -825,7 +825,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         WebCategory("Appearance"),
-        WebSysDescription(SR.Wizard_StepPreviousButtonImageUrl),
+        WebSysDescription(System.Web.SR.Wizard_StepPreviousButtonImageUrl),
         UrlProperty(),
         ]
         public virtual string StepPreviousButtonImageUrl {
@@ -848,7 +848,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_StepPreviousButtonStyle)
+        WebSysDescription(System.Web.SR.Wizard_StepPreviousButtonStyle)
         ]
         public Style StepPreviousButtonStyle {
             get {
@@ -866,13 +866,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Wizard_Default_StepPreviousButtonText),
-        WebSysDescription(SR.Wizard_StepPreviousButtonText)
+        WebSysDefaultValue(System.Web.SR.Wizard_Default_StepPreviousButtonText),
+        WebSysDescription(System.Web.SR.Wizard_StepPreviousButtonText)
         ]
         public virtual String StepPreviousButtonText {
             get {
                 string s = ViewState["StepPreviousButtonText"] as String;
-                return s == null ? SR.GetString(SR.Wizard_Default_StepPreviousButtonText) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.Wizard_Default_StepPreviousButtonText) : s;
             }
             set {
                 ViewState["StepPreviousButtonText"] = value;
@@ -883,7 +883,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonType.Button),
-        WebSysDescription(SR.Wizard_StepPreviousButtonType)
+        WebSysDescription(System.Web.SR.Wizard_StepPreviousButtonType)
         ]
         public virtual ButtonType StepPreviousButtonType {
             get {
@@ -906,7 +906,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_SideBarButtonStyle)
+        WebSysDescription(System.Web.SR.Wizard_SideBarButtonStyle)
         ]
         public Style SideBarButtonStyle {
             get {
@@ -927,7 +927,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.Wizard_SideBarStyle)
+        WebSysDescription(System.Web.SR.Wizard_SideBarStyle)
         ]
         public TableItemStyle SideBarStyle {
             get {
@@ -946,7 +946,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(Wizard)),
-        WebSysDescription(SR.Wizard_SideBarTemplate)
+        WebSysDescription(System.Web.SR.Wizard_SideBarTemplate)
         ]
         public virtual ITemplate SideBarTemplate {
             get {
@@ -963,13 +963,13 @@ namespace System.Web.UI.WebControls {
         [
         Localizable(true),
         WebCategory("Appearance"),
-        WebSysDefaultValue(SR.Wizard_Default_SkipToContentText),
-        WebSysDescription(SR.WebControl_SkipLinkText)
+        WebSysDefaultValue(System.Web.SR.Wizard_Default_SkipToContentText),
+        WebSysDescription(System.Web.SR.WebControl_SkipLinkText)
         ]
         public virtual String SkipLinkText {
             get {
                 string s = SkipLinkTextInternal;
-                return s == null ? SR.GetString(SR.Wizard_Default_SkipToContentText) : s;
+                return s == null ? System.Web.SR.GetString(System.Web.SR.Wizard_Default_SkipToContentText) : s;
             }
             set {
                 ViewState["SkipLinkText"] = value;
@@ -982,7 +982,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(Wizard)),
-        WebSysDescription(SR.Wizard_StartNavigationTemplate)
+        WebSysDescription(System.Web.SR.Wizard_StartNavigationTemplate)
         ]
         public virtual ITemplate StartNavigationTemplate {
             get {
@@ -1000,7 +1000,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(Wizard)),
-        WebSysDescription(SR.Wizard_StepNavigationTemplate)
+        WebSysDescription(System.Web.SR.Wizard_StepNavigationTemplate)
         ]
         public virtual ITemplate StepNavigationTemplate {
             get {
@@ -1019,7 +1019,7 @@ namespace System.Web.UI.WebControls {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.Wizard_StepStyle)
+        WebSysDescription(System.Web.SR.Wizard_StepStyle)
         ]
         public TableItemStyle StepStyle {
             get {
@@ -1046,7 +1046,7 @@ namespace System.Web.UI.WebControls {
         Editor("System.Web.UI.Design.WebControls.WizardStepCollectionEditor," + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         PersistenceMode(PersistenceMode.InnerProperty),
         Themeable(false),
-        WebSysDescription(SR.Wizard_WizardSteps),
+        WebSysDescription(System.Web.SR.Wizard_WizardSteps),
         ]
         public virtual WizardStepCollection WizardSteps {
             get {
@@ -1064,7 +1064,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Wizard_ActiveStepChanged)
+        WebSysDescription(System.Web.SR.Wizard_ActiveStepChanged)
         ]
         public event EventHandler ActiveStepChanged {
             add {
@@ -1078,7 +1078,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Wizard_CancelButtonClick)
+        WebSysDescription(System.Web.SR.Wizard_CancelButtonClick)
         ]
         public event EventHandler CancelButtonClick {
             add {
@@ -1093,7 +1093,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Wizard_FinishButtonClick)
+        WebSysDescription(System.Web.SR.Wizard_FinishButtonClick)
         ]
         public event WizardNavigationEventHandler FinishButtonClick {
             add {
@@ -1107,7 +1107,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Wizard_NextButtonClick)
+        WebSysDescription(System.Web.SR.Wizard_NextButtonClick)
         ]
         public event WizardNavigationEventHandler NextButtonClick {
             add {
@@ -1122,7 +1122,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Wizard_PreviousButtonClick)
+        WebSysDescription(System.Web.SR.Wizard_PreviousButtonClick)
         ]
         public event WizardNavigationEventHandler PreviousButtonClick {
             add {
@@ -1136,7 +1136,7 @@ namespace System.Web.UI.WebControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Wizard_SideBarButtonClick)
+        WebSysDescription(System.Web.SR.Wizard_SideBarButtonClick)
         ]
         public virtual event WizardNavigationEventHandler SideBarButtonClick {
             add {
@@ -1399,7 +1399,7 @@ namespace System.Web.UI.WebControls {
             if (button == null) {
                 if (!DesignMode) {
                     throw new InvalidOperationException(
-                        SR.GetString(SR.Wizard_SideBar_Button_Not_Found, DataListID, SideBarButtonID));
+                        System.Web.SR.GetString(System.Web.SR.Wizard_SideBar_Button_Not_Found, DataListID, SideBarButtonID));
                 }
 
                 return;
@@ -1492,7 +1492,7 @@ namespace System.Web.UI.WebControls {
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         protected override IDictionary GetDesignModeState() {
             IDictionary dictionary = base.GetDesignModeState();
-            Debug.Assert(dictionary != null && DesignMode);
+            System.Web.Util.Debug.Assert(dictionary != null && DesignMode);
 
             _designModeState = dictionary;
             int oldIndex = ActiveStepIndex;
@@ -1577,7 +1577,7 @@ namespace System.Web.UI.WebControls {
         }
 
         private WizardStepType GetStepType(int index) {
-            Debug.Assert(index > -1 && index < WizardSteps.Count);
+            System.Web.Util.Debug.Assert(index > -1 && index < WizardSteps.Count);
             WizardStepBase step = WizardSteps[index] as WizardStepBase;
             return GetStepType(step, index);
         }
@@ -1661,7 +1661,7 @@ namespace System.Web.UI.WebControls {
             } else {
                 object[] myState = (object[])savedState;
                 if (myState.Length != _viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[0]);
@@ -1717,7 +1717,7 @@ namespace System.Web.UI.WebControls {
 
             int index = WizardSteps.IndexOf(wizardStep);
             if (index == -1) {
-                throw new ArgumentException(SR.GetString(SR.Wizard_Step_Not_In_Wizard));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Wizard_Step_Not_In_Wizard));
             }
 
             ActiveStepIndex = index;
@@ -1769,7 +1769,7 @@ namespace System.Web.UI.WebControls {
                 if (String.Equals(MoveNextCommandName, ce.CommandName, StringComparison.OrdinalIgnoreCase)) {
                     if (verifyEvent) {
                         if (stepType != WizardStepType.Start && stepType != WizardStepType.Step) {
-                            throw new InvalidOperationException(SR.GetString(SR.Wizard_InvalidBubbleEvent, MoveNextCommandName));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_InvalidBubbleEvent, MoveNextCommandName));
                         }
                     }
 
@@ -1782,7 +1782,7 @@ namespace System.Web.UI.WebControls {
                 } else if (String.Equals(MovePreviousCommandName, ce.CommandName, StringComparison.OrdinalIgnoreCase)) {
                     if (verifyEvent) {
                         if (stepType != WizardStepType.Step && stepType != WizardStepType.Finish) {
-                            throw new InvalidOperationException(SR.GetString(SR.Wizard_InvalidBubbleEvent, MovePreviousCommandName));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_InvalidBubbleEvent, MovePreviousCommandName));
                         }
                     }
 
@@ -1798,7 +1798,7 @@ namespace System.Web.UI.WebControls {
                 } else if (String.Equals(MoveCompleteCommandName, ce.CommandName, StringComparison.OrdinalIgnoreCase)) {
                     if (verifyEvent) {
                         if (stepType != WizardStepType.Finish) {
-                            throw new InvalidOperationException(SR.GetString(SR.Wizard_InvalidBubbleEvent, MoveCompleteCommandName));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_InvalidBubbleEvent, MoveCompleteCommandName));
                         }
                     }
 
@@ -1865,7 +1865,7 @@ namespace System.Web.UI.WebControls {
 
 
         private void OnCommand(object sender, CommandEventArgs e) {
-            Debug.Assert(_commandSender == null);
+            System.Web.Util.Debug.Assert(_commandSender == null);
             _commandSender = sender as IButtonControl;
         }
 
@@ -1982,7 +1982,7 @@ namespace System.Web.UI.WebControls {
         protected override object SaveViewState() {
             object[] myState = new object[_viewStateArrayLength];
 
-            Debug.Assert(_viewStateArrayLength == 15, "Forgot to change array length when adding new item to view state?");
+            System.Web.Util.Debug.Assert(_viewStateArrayLength == 15, "Forgot to change array length when adding new item to view state?");
 
             myState[0] = base.SaveViewState();
             myState[1] = (_navigationButtonStyle != null) ? ((IStateManager)_navigationButtonStyle).SaveViewState() : null;
@@ -2020,7 +2020,7 @@ namespace System.Web.UI.WebControls {
             if (c != null) {
                 Control parent = c.Parent;
                 if (parent != null) {
-                    Debug.Assert(parent is TableCell);
+                    System.Web.Util.Debug.Assert(parent is TableCell);
                     parent.Visible = DisplayCancelButton;
                 }
 
@@ -2364,7 +2364,7 @@ namespace System.Web.UI.WebControls {
                     // Do not throw at designmode otherwise template will not be persisted correctly.
                     if (!Owner.DesignMode) {
                         throw new InvalidOperationException(
-                            SR.GetString(SR.Wizard_DataList_Not_Found, DataListID));
+                            System.Web.SR.GetString(System.Web.SR.Wizard_DataList_Not_Found, DataListID));
                     }
                 }
 
@@ -2480,7 +2480,7 @@ namespace System.Web.UI.WebControls {
                     // only throw if the headertext is set and there is no headerLiteral. This means
                     // that the layout template did not contain a header placeholder.
 
-                    throw new InvalidOperationException(SR.GetString(SR.Wizard_Header_Placeholder_Must_Be_Specified_For_HeaderText, Owner.ID, HeaderPlaceholderId));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_Header_Placeholder_Must_Be_Specified_For_HeaderText, Owner.ID, HeaderPlaceholderId));
                 }
             }
 
@@ -2507,7 +2507,7 @@ namespace System.Web.UI.WebControls {
             private void CreateControlHierarchy_Navigation(Control layoutContainer) {
                 var placeholder = layoutContainer.FindControl(NavigationPlaceholderId);
                 if (placeholder == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.Wizard_Navigation_Placeholder_Must_Be_Specified, Owner.ID, NavigationPlaceholderId));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_Navigation_Placeholder_Must_Be_Specified, Owner.ID, NavigationPlaceholderId));
                 }
 
                 Control navigationContainer = new Control();
@@ -2521,7 +2521,7 @@ namespace System.Web.UI.WebControls {
 
                 if (Owner.HeaderTemplate != null) {
                     if (placeholder == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.Wizard_Header_Placeholder_Must_Be_Specified_For_HeaderTemplate, Owner.ID, HeaderPlaceholderId));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_Header_Placeholder_Must_Be_Specified_For_HeaderTemplate, Owner.ID, HeaderPlaceholderId));
                     } else {
                         // just replace the placeholder with the template
                         ReplacePlaceholderWithTemplateInstance(layoutContainer, placeholder, Owner.HeaderTemplate);
@@ -2546,7 +2546,7 @@ namespace System.Web.UI.WebControls {
 
                 if (placeholder == null) {
                     // 
-                    throw new InvalidOperationException(SR.GetString(SR.Wizard_Sidebar_Placeholder_Must_Be_Specified, Owner.ID, SideBarPlaceholderId));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_Sidebar_Placeholder_Must_Be_Specified, Owner.ID, SideBarPlaceholderId));
                 }
 
                 ITemplate sideBarTemplate = Owner.SideBarTemplate ?? Owner.CreateDefaultSideBarTemplate();
@@ -2561,7 +2561,7 @@ namespace System.Web.UI.WebControls {
                 var placeholder = layoutContainer.FindControl(WizardStepPlaceholderId);
 
                 if (placeholder == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.Wizard_Step_Placeholder_Must_Be_Specified, Owner.ID, WizardStepPlaceholderId));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wizard_Step_Placeholder_Must_Be_Specified, Owner.ID, WizardStepPlaceholderId));
                 }
 
                 ReplacePlaceholderWithControl(layoutContainer, placeholder, Owner.MultiView);
@@ -2724,7 +2724,7 @@ namespace System.Web.UI.WebControls {
                         }
                             // Otherwise HeaderText is defined.
                         else {
-                            Debug.Assert(Owner.HeaderText != null && Owner.HeaderText.Length > 0);
+                            System.Web.Util.Debug.Assert(Owner.HeaderText != null && Owner.HeaderText.Length > 0);
                             if (_titleLiteral != null) {
                                 _titleLiteral.Text = Owner.HeaderText;
                             }
@@ -2920,7 +2920,7 @@ namespace System.Web.UI.WebControls {
             public WizardControlCollection(Wizard wizard)
                 : base(wizard) {
                 if (!wizard.DesignMode)
-                    SetCollectionReadOnly(SR.Wizard_Cannot_Modify_ControlCollection);
+                    SetCollectionReadOnly(System.Web.SR.Wizard_Cannot_Modify_ControlCollection);
             }
         }
 
@@ -3003,7 +3003,7 @@ namespace System.Web.UI.WebControls {
             }
 
             internal void ResetButtonsVisibility() {
-                Debug.Assert(_wizard.DesignMode);
+                System.Web.Util.Debug.Assert(_wizard.DesignMode);
 
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
@@ -3104,7 +3104,7 @@ namespace System.Web.UI.WebControls {
                     ButtonType buttonType = ButtonType.Button;
                     switch (_templateType) {
                         case WizardTemplateType.StartNavigationTemplate:
-                            Debug.Fail("Invalid template/button type");
+                            System.Web.Util.Debug.Fail("Invalid template/button type");
                             break;
 
                         case WizardTemplateType.StepNavigationTemplate:
@@ -3217,7 +3217,7 @@ namespace System.Web.UI.WebControls {
             internal Wizard _owner;
 
             internal BlockControl(Wizard owner) {
-                Debug.Assert(owner != null);
+                System.Web.Util.Debug.Assert(owner != null);
                 _owner = owner;
 
                 _table = new WizardDefaultInnerTable();
@@ -3250,7 +3250,7 @@ namespace System.Web.UI.WebControls {
             }
 
             public override void Focus() {
-                throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
             }
 
             internal void HandleMacIECellHeight() {
@@ -3364,7 +3364,7 @@ namespace System.Web.UI.WebControls {
             }
 
             public override void Focus() {
-                throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
             }
 
             internal void RegisterButtonCommandEvents() {
@@ -3678,7 +3678,7 @@ namespace System.Web.UI.WebControls {
         private static WizardStepBase GetStepAndVerify(object value) {
             WizardStepBase step = value as WizardStepBase;
             if (step == null)
-                throw new ArgumentException(SR.GetString(SR.Wizard_WizardStepOnly));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Wizard_WizardStepOnly));
 
             return step;
         }

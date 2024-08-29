@@ -188,7 +188,7 @@ public abstract class BasePartialCachingControl : Control {
                             _registeredCallDataForEventValidation.Add(registerCallData);
                             break;
                         default:
-                            Debug.Assert(false);
+                            System.Web.Util.Debug.Assert(false);
                             break;
                     }
                 }
@@ -517,7 +517,7 @@ public abstract class BasePartialCachingControl : Control {
             }
             else {
                 prefix = NamingContainer.UniqueID;
-                Debug.Assert(!String.IsNullOrEmpty(prefix));
+                System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(prefix));
                 prefix += IdSeparator;
             }
 
@@ -569,7 +569,7 @@ public abstract class BasePartialCachingControl : Control {
 
     internal void SetVaryByParamsCollectionFromString(string varyByParams) {
 
-        Debug.Assert(_varyByParamsCollection == null);
+        System.Web.Util.Debug.Assert(_varyByParamsCollection == null);
 
         if (varyByParams == null)
             return;
@@ -837,15 +837,15 @@ internal class ControlCachedVary {
         ControlCachedVary cv = (ControlCachedVary) obj;
 
         return  _varyByCustom == cv._varyByCustom               &&
-                StringUtil.StringArrayEquals(_varyByParams, cv._varyByParams) &&
-                StringUtil.StringArrayEquals(_varyByControls, cv._varyByControls);
+                System.Web.Util.StringUtil.StringArrayEquals(_varyByParams, cv._varyByParams) &&
+                System.Web.Util.StringUtil.StringArrayEquals(_varyByControls, cv._varyByControls);
     }
 
     public override int GetHashCode () {
         HashCodeCombiner hashCodeCombiner = new HashCodeCombiner();
         
         // We need non-randomized hash code for _varyByCustom
-        hashCodeCombiner.AddInt(StringUtil.GetNonRandomizedHashCode(_varyByCustom));
+        hashCodeCombiner.AddInt(System.Web.Util.StringUtil.GetNonRandomizedHashCode(_varyByCustom));
         
         hashCodeCombiner.AddArray(_varyByParams);
         hashCodeCombiner.AddArray(_varyByControls);

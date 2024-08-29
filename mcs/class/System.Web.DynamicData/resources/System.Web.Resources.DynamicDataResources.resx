@@ -1,0 +1,423 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="MetaModel_ContextAlreadyRegistered" xml:space="preserve">
+    <value>The context type '{0}' has already been registered. A context type can only be registered once.</value>
+  </data>
+  <data name="FilterUserControlBase_InvalidContextTypeName" xml:space="preserve">
+    <value>The filter control '{0}' has an invalid context type name '{1}'. Make sure its ContextTypeName property contains a valid context type name.</value>
+  </data>
+  <data name="FieldTemplateUserControl_CompareValidationError_Decimal" xml:space="preserve">
+    <value>The field {0} must be a valid decimal.</value>
+  </data>
+  <data name="MetaTable_CantUseChildrenColumnAsSortColumn" xml:space="preserve">
+    <value>Cannot use the column '{0}' in table '{1}' as a sort column because it represents a 1-to-many relationship.</value>
+  </data>
+  <data name="AssociationProvider_DirectionDoesNotSupportSorting" xml:space="preserve">
+    <value>This association has direction {0} and does not support sorting.</value>
+  </data>
+  <data name="FilterRepeater_CouldNotFindControlInTemplate" xml:space="preserve">
+    <value>FilterRepeater '{0}' does not contain a control of type '{1}' with ID '{2}' in its item templates.</value>
+  </data>
+  <data name="DynamicControlFieldCommon_DataFormatString" xml:space="preserve">
+    <value>The formatting that is applied to the bound value. For example, "{0:d}" or "{0:c}".</value>
+  </data>
+  <data name="MetaTableHelper_CantFindTable" xml:space="preserve">
+    <value>Could not determine a MetaTable. A MetaTable could not be determined for the data source '{0}' and one could not be inferred from the request URL. Make sure that the table is mapped to the data source, or that the data source is configured with a valid context type and table name, or that the request is part of a registered DynamicDataRoute.</value>
+  </data>
+  <data name="FilterUserControlBase_MissingContextTypeName" xml:space="preserve">
+    <value>The filter control '{0}' is associated with a table but is missing the context type name. Make sure its ContextTypeName property contains a valid context type name.</value>
+  </data>
+  <data name="FieldTemplateUserControl_CompareValidationError_Date" xml:space="preserve">
+    <value>The field {0} must be a valid date.</value>
+  </data>
+  <data name="DynamicControlFieldCommon_ConvertEmptyStringToNull" xml:space="preserve">
+    <value>Whether the field treats empty strings as null when the value is extracted from the field.</value>
+  </data>
+  <data name="MetadataValidator_UnknownContextType" xml:space="preserve">
+    <value>The context is of an unknown type {0}.</value>
+  </data>
+  <data name="DynamicField_ReadOnly" xml:space="preserve">
+    <value>Whether to always load a read-only template.</value>
+  </data>
+  <data name="DynamicEntity_ControlNeedsToExistInAContextSupportingDynamicData" xml:space="preserve">
+    <value>The DynamicEntity control '{0}' needs to exist in a data control that is bound to a data source that supports Dynamic Data.</value>
+  </data>
+  <data name="FilterUserControlBase_BooleanFilter_FalseString" xml:space="preserve">
+    <value>false</value>
+  </data>
+  <data name="DynamicParameter_NeedExpansion" xml:space="preserve">
+    <value>You need to have a DynamicManager control on the page and register your data control with it in order to use a {0}.</value>
+  </data>
+  <data name="FilterFactory_ColumnHasNoDefaultFilter" xml:space="preserve">
+    <value>The column '{0}' in table '{1}' does not have a default filter.</value>
+  </data>
+  <data name="FilterUserControlBase_BooleanFilter_TrueString" xml:space="preserve">
+    <value>true</value>
+  </data>
+  <data name="MetaModel_ContextDoesNotBelongToModel" xml:space="preserve">
+    <value>The context type {0} does not belong to any registered model.</value>
+  </data>
+  <data name="MetaTable_ColumnNameConflict" xml:space="preserve">
+    <value>Column '{0}' on table '{1}' conflicts with another column of the same name.</value>
+  </data>
+  <data name="DynamicValidator_CannotConvertValue" xml:space="preserve">
+    <value>The value is not valid.</value>
+  </data>
+  <data name="DynamicDataExtensions_ContextTypePropertyOfDynamicDataSourceMustBeSpecified" xml:space="preserve">
+    <value>The ContextTypeName property of control '{0}' must specify a data context.</value>
+  </data>
+  <data name="MetadataHandlerRegistration_InvalidDataContextType" xml:space="preserve">
+    <value>The provided data context type '{0}' must inherit from one of the following types: {1}.</value>
+  </data>
+  <data name="DynamicHyperLink_DataField" xml:space="preserve">
+    <value>An optional DataField that can be used in a data binding context to provide which field should be used for the text of the  DynamicHyperLink.</value>
+  </data>
+  <data name="FilterUserControlBase_SelectedDataKeyNotSupportedForThisField" xml:space="preserve">
+    <value>The filter control '{0}' is associated with the '{1}' data field and does not support this operation.</value>
+  </data>
+  <data name="DynamicControlFieldCommon_ApplyFormatInEditMode" xml:space="preserve">
+    <value>Whether the data should be shown with the DataFormatString formatting applied when in edit mode. If set to true, the data may have to be unformatted before it is updated in the data source.</value>
+  </data>
+  <data name="DataControlReference_ControlID" xml:space="preserve">
+    <value>The data control's control ID.</value>
+  </data>
+  <data name="DynamicDataManager_AutoLoadForeignKeys" xml:space="preserve">
+    <value>Whether foreign keys should be loaded automatically when executing Linq to SQL queries.</value>
+  </data>
+  <data name="DynamicControlFieldCommon_UIHint" xml:space="preserve">
+    <value>An optional UI hint used to load the template to represent this field.</value>
+  </data>
+  <data name="FilterUserControlBase_MissingTableName" xml:space="preserve">
+    <value>The filter control '{0}' is associated with a context type but is missing the table name. Make sure its TableName property contains a valid table name.</value>
+  </data>
+  <data name="FilterUserControlBase_InvalidDataField" xml:space="preserve">
+    <value>The filter control '{0}' has an invalid data field name '{1}'. Make sure its DataField property contains a valid field name.</value>
+  </data>
+  <data name="ControlFilterExpression_CouldNotFindControlID" xml:space="preserve">
+    <value>The ControlFilterExpression belonging to '{0}' could not find a control with ID '{1}'. Please check the value of the ControlID property on the ControlFilterExpression.</value>
+  </data>
+  <data name="FieldTemplateFactory_FolderNotFound" xml:space="preserve">
+    <value>The field template folder '{0}' does not exist.</value>
+  </data>
+  <data name="DynamicControl_Mode" xml:space="preserve">
+    <value>The mode in which to render the FieldTemplate.</value>
+  </data>
+  <data name="FilterRepeater_MissingTableName" xml:space="preserve">
+    <value>FilterRepeater '{0}' is associated with a context type but is missing the table name. Make sure its TableName property contains a valid table name.</value>
+  </data>
+  <data name="DynamicFilter_FilterUIHint" xml:space="preserve">
+    <value>An optional UI hint used to load the template to represent this filter.</value>
+  </data>
+  <data name="DynamicFilter_DataField" xml:space="preserve">
+    <value>The name of the field in the model to which this filter is bound.</value>
+  </data>
+  <data name="Misc_NoNamingContainer" xml:space="preserve">
+    <value>The {0} control '{1}' does not have a naming container.</value>
+  </data>
+  <data name="MetaTable_CannotGetTableFromRoute" xml:space="preserve">
+    <value>Cannot determine table from route. The request did not go through a route or the route is not configured to support ASP.NET Dynamic Data.</value>
+  </data>
+  <data name="FilterRepeater_InvalidTableName" xml:space="preserve">
+    <value>FilterRepeater '{0}' has an invalid table name '{1}'. Make sure its TableName property contains a valid table name.</value>
+  </data>
+  <data name="DynamicControlParameter_InvalidPK" xml:space="preserve">
+    <value>The DynamicControlParameter has no Name property, which means that you are setting the primary key. However, the control '{0}' is for table '{1}', which is not compatible with table '{2}'.</value>
+  </data>
+  <data name="DynamicDataManager_EnableQueryStringSelection" xml:space="preserve">
+    <value>Sets whether the selection may be set from key values in the query string.</value>
+  </data>
+  <data name="DynamicControl_ControlMustHaveDateFieldAttribute" xml:space="preserve">
+    <value>The '{0}' control '{1}' must have a DataField attribute.</value>
+  </data>
+  <data name="DynamicValidator_ControlNotFound" xml:space="preserve">
+    <value>Unable to find control id '{0}' referenced by the 'ControlToValidate' property of '{1}'.</value>
+  </data>
+  <data name="MetaTable_CannotGetTableFromDataSource" xml:space="preserve">
+    <value>Cannot determine table from data source. Use the MetaTable.MapTable method to establish an association between a data source and a MetaTable instance.</value>
+  </data>
+  <data name="DynamicControlParameter_DynamicDataSourceColumnNotCompatibleWithTable" xml:space="preserve">
+    <value>The column '{0}' is not compatible with the table '{1}'.</value>
+  </data>
+  <data name="DynamicEntity_CantFindTemplate" xml:space="preserve">
+    <value>Cannot find an entity template for table '{0}' under the entity template path: '{1}'.</value>
+  </data>
+  <data name="DataSourceUtil_CantDetermineTable" xml:space="preserve">
+    <value>Unable to retrieve table from control '{0}' and a table name could not be inferred from the URL.</value>
+  </data>
+  <data name="SimpleColumnProvider_ColumnTypeRequired" xml:space="preserve">
+    <value>Column must have a type</value>
+  </data>
+  <data name="DynamicField_ValidateRequestMode" xml:space="preserve">
+    <value>Determines whether the control validates client input or not. Defaults to inherit from parent.</value>
+  </data>
+  <data name="MetaTable_NamingContainerIsNotControl" xml:space="preserve">
+    <value>The naming container must be a control.</value>
+  </data>
+  <data name="DynamicHyperLink_TableName" xml:space="preserve">
+    <value>An optional TableName that can be used to associate a MetaTable with the DynamicHyperLink.</value>
+  </data>
+  <data name="MetaModel_UnknownContextType" xml:space="preserve">
+    <value>Unknown context type '{0}'. This context type has not been registered.</value>
+  </data>
+  <data name="DynamicHyperLink_CannotSetTableAndContextWhenDatabinding" xml:space="preserve">
+    <value>The DynamicHyperLink control '{0}' cannot have the properties 'TableName' or 'ContextTypeName' set when data binding.</value>
+  </data>
+  <data name="DynamicEntity_Mode" xml:space="preserve">
+    <value>The mode in which to render the EntityTemplate.</value>
+  </data>
+  <data name="FilterUserControlBase_UnsupportedDataField" xml:space="preserve">
+    <value>The filter control '{0}' does not support this operation because it is associated with an unsupported column '{1}'.</value>
+  </data>
+  <data name="FilterUserControlBase_InvalidTableName" xml:space="preserve">
+    <value>The filter control '{0}' has an invalid table name '{1}'. Make sure its TableName property contains a valid table name.</value>
+  </data>
+  <data name="FilterUserControlBase_MissingDataField" xml:space="preserve">
+    <value>The filter control '{0}' is not associated with a field. Make sure its DataField property contains a valid field name.</value>
+  </data>
+  <data name="FilterRepeater_InvalidContextTypeName" xml:space="preserve">
+    <value>FilterRepeater '{0}' has an invalid context type name '{1}'. Make sure its ContextTypeName property contains a valid context type name.</value>
+  </data>
+  <data name="MetaModel_UnknownTableInContext" xml:space="preserve">
+    <value>The context '{0}' does not have a table with the context-specific name '{1}'.</value>
+  </data>
+  <data name="Misc_CannotConvertType" xml:space="preserve">
+    <value>Unable to convert type '{0}' to '{1}'</value>
+  </data>
+  <data name="SchemaCreator_UnknownModel" xml:space="preserve">
+    <value>Unknown model type {0}.</value>
+  </data>
+  <data name="FilterRepeater_CantInferInformationFromUrl" xml:space="preserve">
+    <value>FilterRepeater '{0}' does not specify a context type name and a table name and this information could not be inferred from the URL. Set the ContextTypeName and TableName properties on this control or make sure that the path for this request maps to a registered Dynamic Data Route.</value>
+  </data>
+  <data name="DynamicHyperLink_CannotBindToNull" xml:space="preserve">
+    <value>The DynamicHyperLink control '{0}' cannot data bind to a null item.</value>
+  </data>
+  <data name="Common_PageCannotBeNull" xml:space="preserve">
+    <value>Page cannot be null. Please ensure that this operation is being performed in the context of an ASP.NET request.</value>
+  </data>
+  <data name="DynamicControlFieldCommon_DataField" xml:space="preserve">
+    <value>The name of the field in the model to which this field is bound.</value>
+  </data>
+  <data name="DynamicControlDesignRender" xml:space="preserve">
+    <value>Databound</value>
+  </data>
+  <data name="FilterUserControlBase_UnknownContextType" xml:space="preserve">
+    <value>The filter control '{0}' has an unknown context type name '{1}' that is not registered with any model. Make sure its ContextTypeName property contains a valid context type name that has been registered with a MetaModel.</value>
+  </data>
+  <data name="MetaTable_CantFindSortColumn" xml:space="preserve">
+    <value>The sort column '{0}' specified for the table '{1}' does not exist.</value>
+  </data>
+  <data name="DynamicControlFieldCommon_NullDisplayText" xml:space="preserve">
+    <value>The text displayed if the data bound to the field is null.</value>
+  </data>
+  <data name="FieldTemplateUserControl_ColumnIsNotFK" xml:space="preserve">
+    <value>'{0}' is not a foreign key column and cannot be used here.</value>
+  </data>
+  <data name="DynamicControlParameter_DynamicDataSourceControlCannotBeUsedAsParent" xml:space="preserve">
+    <value>The control '{0}' cannot be used as a parent control.</value>
+  </data>
+  <data name="DynamicHyperLink_ContextTypeName" xml:space="preserve">
+    <value>An optional ContextTypeName that can be used to associate a MetaModel with the DynamicHyperLink.</value>
+  </data>
+  <data name="MetaModel_EntityNameConflict" xml:space="preserve">
+    <value>The name for entity '{0}' in context '{1}' conflicts with the name for the entity '{2}' in context '{3}'.</value>
+  </data>
+  <data name="MetaModel_EntityTypeDoesNotBelongToModel" xml:space="preserve">
+    <value>The entity type {0} does not belong to any registered model.</value>
+  </data>
+  <data name="FilterRepeater_MissingContextTypeName" xml:space="preserve">
+    <value>FilterRepeater '{0}' is associated with a table but is missing a context type name. Make sure its ContextTypeName property has a valid context type.</value>
+  </data>
+  <data name="MetaTable_NoSuchColumn" xml:space="preserve">
+    <value>The table '{0}' does not have a column named '{1}'.</value>
+  </data>
+  <data name="FieldTemplateUserControl_CompareValidationError_Integer" xml:space="preserve">
+    <value>The field {0} must be a valid integer.</value>
+  </data>
+  <data name="MetaModel_UnknownEntityType" xml:space="preserve">
+    <value>Unknown entity type '{0}'. This entity type is not part of any registered context.</value>
+  </data>
+  <data name="FilterRepeater_UnknownContextTypeName" xml:space="preserve">
+    <value>FilterRepeater '{0}' has an unknown context type name '{1}' that is not registered with any model. Make sure its ContextTypeName property contains a valid context type name that has been registered with a MetaModel.</value>
+  </data>
+  <data name="MetaModel_ContextTypeNotSupported" xml:space="preserve">
+    <value>The context type '{0}' is not supported.</value>
+  </data>
+  <data name="DynamicControlFieldCommon_HtmlEncode" xml:space="preserve">
+    <value>Whether the field is HTML encoded when displayed to the user.</value>
+  </data>
+  <data name="DynamicControlParameter_DynamicDataSourceControlNotFound" xml:space="preserve">
+    <value>The control '{0}' could not be found.</value>
+  </data>
+  <data name="FieldTemplateUserControl_ColumnIsNotChildren" xml:space="preserve">
+    <value>'{0}' is not a children column and cannot be used here.</value>
+  </data>
+  <data name="MetaTable_CannotGetTableFromControl" xml:space="preserve">
+    <value>Cannot determine table from control. Use the MetaTable.MapControl method to establish an association between a control and a MetaTable instance.</value>
+  </data>
+  <data name="AssociationProvider_SortColumnDoesNotBelongToEndTable" xml:space="preserve">
+    <value>The given sort column does not belong to this association's end table.</value>
+  </data>
+  <data name="MetaModel_UnknownTable" xml:space="preserve">
+    <value>Unknown table name '{0}'.</value>
+  </data>
+  <data name="MetaModel_EntityNameOverrideConflict" xml:space="preserve">
+    <value>The name override '{0}' for entity '{1}' in context '{2}' conflicts with the name for the entity '{3}' in context '{4}'.</value>
+  </data>
+  <data name="DynamicControl_ControlNeedsToExistInADataControlUsingDynamicDataSource" xml:space="preserve">
+    <value>The DynamicControl/DynamicField needs to exist inside a data control that is bound to a data source that supports Dynamic Data.</value>
+  </data>
+  <data name="QueryStringHandler_VirtualPathCannotBeEmpty" xml:space="preserve">
+    <value>The virtual path must be a non-empty string.</value>
+  </data>
+  <data name="MetadataHandlerRegistration_ContextAlreadyRegistered" xml:space="preserve">
+    <value>The data context '{0}' has already been registered. Each data context can be registered only once.</value>
+  </data>
+  <data name="DynamicDataManager_OnlyOneDynamicDataManager" xml:space="preserve">
+    <value>Only one instance of a DynamicDataManager can be added to the page.</value>
+  </data>
+  <data name="DynamicDataManager_ControlNotFound" xml:space="preserve">
+    <value>A DataControl with ID '{0}' could not be found for the DynamicDataManager to register.</value>
+  </data>
+  <data name="MetaTable_CantFindDisplayColumn" xml:space="preserve">
+    <value>The display column '{0}' specified for the table '{1}' does not exist.</value>
+  </data>
+  <data name="MetaModel_ContextFactoryReturnsNull" xml:space="preserve">
+    <value>The context factory function must return a non-null value.</value>
+  </data>
+  <data name="DynamicControlFieldCommon_ValidationGroup" xml:space="preserve">
+    <value>The name of the validation group for which this field should cause validation.</value>
+  </data>
+  <data name="DynamicHyperLink_Action" xml:space="preserve">
+    <value>The action to generate a URL for.</value>
+  </data>
+  <data name="DynamicHyperLink_CannotDetermineTable" xml:space="preserve">
+    <value>The DynamicHyperLink control '{0}' could not determine the MetaTable to base the link on. Make sure that the the control is in a page that is in the context of a Dynamic Data route or that the ContextTypeName and TableName properties are set correctly.</value>
+  </data>
+  <data name="MetaModel_RegistrationErrorOccurred" xml:space="preserve">
+    <value>An error occurred during model registration and this operation cannot be performed.</value>
+  </data>
+  <data name="FilterUserControlBase_CantInferInformationFromRequestUrl" xml:space="preserve">
+    <value>The filter control '{0}' does not specify a context type name and a table name and this information could not be inferred from the URL. Set the ContextTypeName and TableName properties on this control or make sure that the path for this request maps to a registered Dynamic Data Route.</value>
+  </data>
+  <data name="DynamicDataManager_UnsupportedControl" xml:space="preserve">
+    <value>Controls of type {0} are not supported.</value>
+  </data>
+</root>

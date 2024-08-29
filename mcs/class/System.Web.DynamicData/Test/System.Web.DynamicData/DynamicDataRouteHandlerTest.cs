@@ -343,7 +343,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsNotNull (t, "#A1");
 
 			// And following the tradition... [drum roll] - NO NULL CHECK!
-			Assert.Throws<NullReferenceException> (() => {
+			Assert.Throws<ArgumentNullException> (() => {
 				DynamicDataRouteHandler.SetRequestMetaTable (null, t);
 			}, "#A2");
 

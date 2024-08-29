@@ -14,6 +14,7 @@ namespace System.Web.UI.WebControls {
     using System.Web;
     using System.Web.UI;
     using System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -50,7 +51,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(true),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Button_CausesValidation),
+        WebSysDescription(System.Web.SR.Button_CausesValidation),
         ]
         public virtual bool CausesValidation {
             get {
@@ -71,7 +72,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebControl_CommandName),
+        WebSysDescription(System.Web.SR.WebControl_CommandName),
         ]
         public string CommandName {
             get {
@@ -94,7 +95,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.WebControl_CommandArgument),
+        WebSysDescription(System.Web.SR.WebControl_CommandArgument),
         ]
         public string CommandArgument {
             get {
@@ -114,7 +115,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Button_OnClientClick),
+        WebSysDescription(System.Web.SR.Button_OnClientClick),
         ]
         public virtual string OnClientClick {
             get {
@@ -136,7 +137,7 @@ namespace System.Web.UI.WebControls {
         Themeable(false),
         UrlProperty("*.aspx"),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Button_PostBackUrl),
+        WebSysDescription(System.Web.SR.Button_PostBackUrl),
         ]
         public virtual string PostBackUrl {
             get {
@@ -157,7 +158,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Button_Text),
+        WebSysDescription(System.Web.SR.Button_Text),
         ]
         public string Text {
             get {
@@ -179,7 +180,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(true),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.Button_UseSubmitBehavior),
+        WebSysDescription(System.Web.SR.Button_UseSubmitBehavior),
         ]
         public virtual bool UseSubmitBehavior {
             get {
@@ -196,7 +197,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.PostBackControl_ValidationGroup),
+        WebSysDescription(System.Web.SR.PostBackControl_ValidationGroup),
         ]
         public virtual string ValidationGroup {
             get {
@@ -214,7 +215,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Button_OnClick)
+        WebSysDescription(System.Web.SR.Button_OnClick)
         ]
         public event EventHandler Click {
             add {
@@ -232,7 +233,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Button_OnCommand)
+        WebSysDescription(System.Web.SR.Button_OnCommand)
         ]
         public event CommandEventHandler Command {
             add {

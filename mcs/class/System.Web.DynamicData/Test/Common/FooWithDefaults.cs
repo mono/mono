@@ -6,7 +6,7 @@ using System.Text;
 
 namespace MonoTests.Common
 {
-	class FooWithDefaults
+	public class FooWithDefaults
 	{
 		public string Column1 { get; set; }
 		public int Column2 { get; set; }

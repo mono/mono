@@ -38,10 +38,10 @@ namespace System.Web.UI.WebControls.WebParts {
             if (connectionInterfaces != null) {
                 foreach (object obj in connectionInterfaces) {
                     if (obj == null) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "connectionInterfaces");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "connectionInterfaces");
                     }
                     if (!(obj is Type)) {
-                        throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "Type"), "connectionInterfaces");
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "Type"), "connectionInterfaces");
                     }
                     InnerList.Add(obj);
                 }

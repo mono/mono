@@ -18,6 +18,8 @@ namespace System.Configuration
     using Microsoft.Win32;
     using System.Security.Permissions;
 
+#if (!MONO) || (MONO && !FEATURE_PAL)
+
     [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
     public sealed class RsaProtectedConfigurationProvider : ProtectedConfigurationProvider
     {
@@ -262,4 +264,61 @@ namespace System.Configuration
                              new EncryptionMethod(EncryptedXml.XmlEncTripleDESUrl);
         }
     }
+#else 
+    [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
+    public sealed class RsaProtectedConfigurationProvider : ProtectedConfigurationProvider
+    {
+        // Note: this name has to match the name used in RegiisUtility 
+        const string DefaultRsaKeyContainerName = "NetFrameworkConfigurationKey";
+        
+        public override XmlNode Decrypt(XmlNode encryptedNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override XmlNode Encrypt(XmlNode node)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddKey(int keySize, bool exportable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteKey()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ImportKey(string xmlFileName, bool exportable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ExportKey(string xmlFileName, bool includePrivateParameters)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string   KeyContainerName    { get { return ""; } }
+        public string   CspProviderName     { get { return ""; } }
+        public bool     UseMachineContainer { get { return false; } }
+        public bool UseOAEP { get { return false; } }
+        public bool UseFIPS { get { return false; } }
+
+        public override void Initialize(string name, NameValueCollection configurationValues)
+        {
+            base.Initialize(name, configurationValues);
+        }
+
+
+
+        public RSAParameters RsaPublicKey { get { throw new NotImplementedException(); } }
+
+        const uint PROV_Rsa_FULL = 1;
+        const uint CRYPT_MACHINE_KEYSET = 0x00000020;
+
+    }
+#endif
 }

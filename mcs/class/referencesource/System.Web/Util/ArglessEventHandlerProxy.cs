@@ -19,7 +19,7 @@ namespace System.Web.Util {
         private MethodInfo _arglessMethod;
 
         internal ArglessEventHandlerProxy(Object target, MethodInfo arglessMethod) {
-            Debug.Assert(arglessMethod.GetParameters().Length == 0);
+            System.Web.Util.Debug.Assert(arglessMethod.GetParameters().Length == 0);
 
             _target = target;
             _arglessMethod = arglessMethod;

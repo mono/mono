@@ -12,6 +12,7 @@
 
 namespace System.Web {
 
+    
 
     /// <devdoc>
     ///    <para>Provides a synchronous Http request handler interface.</para>
@@ -29,7 +30,7 @@ namespace System.Web {
             PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_NOT_FOUND);
 
             throw new HttpException(404, 
-                                    SR.GetString(SR.Path_not_found, context.Request.Path));
+                                    System.Web.SR.GetString(System.Web.SR.Path_not_found, context.Request.Path));
         }
 
 
@@ -56,7 +57,7 @@ namespace System.Web {
             PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_NOT_FOUND);
 
             throw new HttpException(403, 
-                                    SR.GetString(SR.Path_forbidden, context.Request.Path));
+                                    System.Web.SR.GetString(System.Web.SR.Path_forbidden, context.Request.Path));
         }
 
 
@@ -85,7 +86,7 @@ namespace System.Web {
         /// </devdoc>
         public void ProcessRequest(HttpContext context) {
             throw new HttpException(405,
-                                    SR.GetString(SR.Path_forbidden, context.Request.HttpMethod));
+                                    System.Web.SR.GetString(System.Web.SR.Path_forbidden, context.Request.HttpMethod));
         }
 
 
@@ -113,7 +114,7 @@ namespace System.Web {
         /// </devdoc>
         public void ProcessRequest(HttpContext context) {
             throw new HttpException(501, 
-                                    SR.GetString(SR.Method_for_path_not_implemented, context.Request.HttpMethod, context.Request.Path));
+                                    System.Web.SR.GetString(System.Web.SR.Method_for_path_not_implemented, context.Request.HttpMethod, context.Request.Path));
         }
 
 

@@ -20,7 +20,9 @@ namespace System.Web.UI {
 
     [
     DefaultProperty("AssociatedUpdatePanelID"),
+#if !MONO
     Designer("System.Web.UI.Design.UpdateProgressDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#endif
     ParseChildren(true),
     PersistChildren(false),
     ToolboxBitmap(typeof(EmbeddedResourceFinder), "System.Web.Resources.UpdateProgress.bmp")
@@ -40,7 +42,9 @@ namespace System.Web.UI {
         IDReferenceProperty(typeof(UpdatePanel)),
         ResourceDescription("UpdateProgress_AssociatedUpdatePanelID"),
         SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID"),
+#if !MONO       
         TypeConverter("System.Web.UI.Design.UpdateProgressAssociatedUpdatePanelIDConverter")
+#endif
         ]
         public string AssociatedUpdatePanelID {
             get {

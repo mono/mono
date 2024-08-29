@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             if (!(provider is PersonalizationProvider)) {
                 throw new ArgumentException(
-                    SR.GetString(SR.Provider_must_implement_the_interface,
+                    System.Web.SR.GetString(System.Web.SR.Provider_must_implement_the_interface,
                         provider.GetType().FullName, "PersonalizationProvider"));
             }
 

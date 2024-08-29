@@ -30,7 +30,7 @@ internal abstract class SimpleHandlerBuildProvider: InternalBuildProvider {
 
     public override CompilerType CodeCompilerType {
         get {
-            Debug.Assert(_parser == null);
+            System.Web.Util.Debug.Assert(_parser == null);
 
             _parser = CreateParser();
             _parser.SetBuildProvider(this);
@@ -43,7 +43,7 @@ internal abstract class SimpleHandlerBuildProvider: InternalBuildProvider {
     }
 
     protected internal override CodeCompileUnit GetCodeCompileUnit(out IDictionary linePragmasTable) {
-        Debug.Assert(_parser != null);
+        System.Web.Util.Debug.Assert(_parser != null);
 
         CodeCompileUnit ccu = _parser.GetCodeModel();
         linePragmasTable = _parser.GetLinePragmasTable();
@@ -87,7 +87,7 @@ internal abstract class SimpleHandlerBuildProvider: InternalBuildProvider {
             // This is the case where the asmx/ashx has code in the file, and it
             // has been compiled.
 
-            Debug.Assert(results != null);
+            System.Web.Util.Debug.Assert(results != null);
 
             t = _parser.GetTypeToCache(results.CompiledAssembly);
         }

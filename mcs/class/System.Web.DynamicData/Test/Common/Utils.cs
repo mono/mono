@@ -20,12 +20,18 @@ namespace MonoTests.Common
 
 		public static MetaModel CommonInitialize (bool myDynamicDataRoute)
 		{
+			return CommonInitialize(myDynamicDataRoute, true);
+		}
+
+		public static MetaModel CommonInitialize(bool myDynamicDataRoute, bool withFakeRequest) {
 			MetaModel m = MetaModel.Default;
 
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
+			if (withFakeRequest) {
+				var req = new FakeHttpWorkerRequest ();
+				var ctx = new HttpContext (req);
+				HttpContext.Current = ctx;
+			}
+			
 			RouteCollection routes = RouteTable.Routes;
 			routes.Clear ();
 			if (myDynamicDataRoute) {

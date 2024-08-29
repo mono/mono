@@ -14,6 +14,7 @@ namespace System.Web.UI.WebControls {
     using System.Text.RegularExpressions;
     using System.Text;
     using System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -31,7 +32,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(ValidationDataType.String),
-        WebSysDescription(SR.RangeValidator_Type)
+        WebSysDescription(System.Web.SR.RangeValidator_Type)
         ]
         public ValidationDataType Type {
             get {
@@ -55,7 +56,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(false),
-        WebSysDescription(SR.BaseCompareValidator_CultureInvariantValues)
+        WebSysDescription(System.Web.SR.BaseCompareValidator_CultureInvariantValues)
         ]
         public bool CultureInvariantValues {
             get {
@@ -181,7 +182,7 @@ namespace System.Web.UI.WebControls {
         ///    <para>[To be supplied.]</para>
         /// </devdoc>
         protected static int GetFullYear(int shortYear) {
-            Debug.Assert(shortYear >= 0 && shortYear < 100);
+            System.Web.Util.Debug.Assert(shortYear >= 0 && shortYear < 100);
             return DateTimeFormatInfo.CurrentInfo.Calendar.ToFourDigitYear(shortYear);
         }
 
@@ -422,7 +423,7 @@ namespace System.Web.UI.WebControls {
                     break;
 
                 default:
-                    Debug.Fail("Unknown Type");
+                    System.Web.Util.Debug.Fail("Unknown Type");
                     return true;
             }
 
@@ -440,7 +441,7 @@ namespace System.Web.UI.WebControls {
                 case ValidationCompareOperator.LessThanEqual:
                     return compareResult <= 0 ;
                 default:
-                    Debug.Fail("Unknown Operator");
+                    System.Web.Util.Debug.Fail("Unknown Operator");
                     return true;
             }
         }

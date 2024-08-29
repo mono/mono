@@ -151,7 +151,7 @@ namespace System.Web.UI.WebControls {
         /// <devdoc>
         /// </devdoc>
         private void RenderHorizontalRepeater(HtmlTextWriter writer, IRepeatInfoUser user, Style controlStyle, WebControl baseControl) {
-            Debug.Assert(outerTableImplied == false, "Cannot use outer implied table with Horizontal layout");
+            System.Web.Util.Debug.Assert(outerTableImplied == false, "Cannot use outer implied table with Horizontal layout");
 
             int itemCount = user.RepeatedItemCount;
 
@@ -346,16 +346,16 @@ namespace System.Web.UI.WebControls {
         public void RenderRepeater(HtmlTextWriter writer, IRepeatInfoUser user, Style controlStyle, WebControl baseControl) {
             if (IsListLayout) {
                 if (user.HasFooter || user.HasHeader || user.HasSeparators) {
-                    throw new InvalidOperationException(SR.GetString(SR.RepeatInfo_ListLayoutDoesNotSupportHeaderFooterSeparator));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.RepeatInfo_ListLayoutDoesNotSupportHeaderFooterSeparator));
                 }
                 if (RepeatDirection != RepeatDirection.Vertical) {
-                    throw new InvalidOperationException(SR.GetString(SR.RepeatInfo_ListLayoutOnlySupportsVerticalLayout));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.RepeatInfo_ListLayoutOnlySupportsVerticalLayout));
                 }
                 if ((RepeatColumns != 0) && (RepeatColumns != 1)) {
-                    throw new InvalidOperationException(SR.GetString(SR.RepeatInfo_ListLayoutDoesNotSupportMultipleColumn));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.RepeatInfo_ListLayoutDoesNotSupportMultipleColumn));
                 }
                 if (OuterTableImplied) {
-                    throw new InvalidOperationException(SR.GetString(SR.RepeatInfo_ListLayoutDoesNotSupportImpliedOuterTable));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.RepeatInfo_ListLayoutDoesNotSupportImpliedOuterTable));
                 }
             }
 

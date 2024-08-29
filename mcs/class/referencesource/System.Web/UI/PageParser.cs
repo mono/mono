@@ -184,7 +184,7 @@ public sealed class PageParser : TemplateControlParser {
 
                     // Make sure it has the correct base type
                     if (!typeof(MasterPage).IsAssignableFrom(type)) {
-                        ProcessError(SR.GetString(SR.Invalid_master_base, _configMasterPageFile));
+                        ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_master_base, _configMasterPageFile));
                     }
                 }
 
@@ -269,20 +269,20 @@ public sealed class PageParser : TemplateControlParser {
 
     internal override void ProcessDirective(string directiveName, IDictionary directive) {
 
-        if (StringUtil.EqualsIgnoreCase(directiveName, "previousPageType")) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "previousPageType")) {
 
             if (_previousPageType != null) {
-                ProcessError(SR.GetString(SR.Only_one_directive_allowed, directiveName));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Only_one_directive_allowed, directiveName));
                 return;
             }
 
             _previousPageType = GetDirectiveType(directive, directiveName);
             Util.CheckAssignableType(typeof(Page), _previousPageType);
         }
-        else if (StringUtil.EqualsIgnoreCase(directiveName, "masterType")) {
+        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(directiveName, "masterType")) {
 
             if (_masterPageType != null) {
-                ProcessError(SR.GetString(SR.Only_one_directive_allowed, directiveName));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Only_one_directive_allowed, directiveName));
                 return;
             }
 
@@ -347,11 +347,11 @@ public sealed class PageParser : TemplateControlParser {
             if (Util.IsFalseString(value)) {
                 flags[requiresSessionState] = false;
             }
-            else if (StringUtil.EqualsIgnoreCase(value, "readonly")) {
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(value, "readonly")) {
                 flags[readOnlySessionState] = true;
             }
             else if (!Util.IsTrueString(value)) {
-                ProcessError(SR.GetString(SR.Enablesessionstate_must_be_true_false_or_readonly));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Enablesessionstate_must_be_true_false_or_readonly));
             }
 
             if (flags[requiresSessionState]) {
@@ -362,14 +362,9 @@ public sealed class PageParser : TemplateControlParser {
 
         case "culture":
             _culture = Util.GetNonEmptyAttribute(name, value);
-
-            // Setting culture requires medium permission
-            if (!HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                throw new HttpException(SR.GetString(SR.Insufficient_trust_for_attribute, "culture"));
-            }
-
+            
             //do not verify at parse time if potentially using browser AutoDetect
-            if(StringUtil.EqualsIgnoreCase(value, HttpApplication.AutoCulture)) {
+            if(System.Web.Util.StringUtil.EqualsIgnoreCase(value, HttpApplication.AutoCulture)) {
                 return false;
             }
 
@@ -378,20 +373,20 @@ public sealed class PageParser : TemplateControlParser {
             CultureInfo cultureInfo;
 
             try {
-                if(StringUtil.StringStartsWithIgnoreCase(value, HttpApplication.AutoCulture)) {
+                if(System.Web.Util.StringUtil.StringStartsWithIgnoreCase(value, HttpApplication.AutoCulture)) {
                     //safe to trim leading "auto:", string used elsewhere for null check
                     _culture = _culture.Substring(5);
                 }
                 cultureInfo = HttpServerUtility.CreateReadOnlyCultureInfo(_culture);
             }
             catch {
-                ProcessError(SR.GetString(SR.Invalid_attribute_value, _culture, "culture"));
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_attribute_value, _culture, "culture"));
                 return false;
             }
 
             // Don't allow neutral cultures (ASURT 77930)
             if (cultureInfo.IsNeutralCulture) {
-                ProcessError(SR.GetString(SR.Invalid_culture_attribute,
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_culture_attribute,
                         Util.GetSpecificCulturesFormattedList(cultureInfo)));
             }
 
@@ -409,7 +404,7 @@ public sealed class PageParser : TemplateControlParser {
                 HttpServerUtility.CreateReadOnlyCultureInfo(_lcid);
             }
             catch {
-                ProcessError(SR.GetString(SR.Invalid_attribute_value,
+                ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_attribute_value,
                     _lcid.ToString(CultureInfo.InvariantCulture), "lcid"));
             }
 
@@ -462,7 +457,7 @@ public sealed class PageParser : TemplateControlParser {
 
             // Only allow the use of aspcompat when we have UnmanagedCode access (ASURT 76694)
             if (flags[aspCompatMode] && !HttpRuntime.HasUnmanagedPermission()) {
-                throw new HttpException(SR.GetString(SR.Insufficient_trust_for_attribute, "AspCompat"));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Insufficient_trust_for_attribute, "AspCompat"));
             }
 
             break;
@@ -472,12 +467,7 @@ public sealed class PageParser : TemplateControlParser {
             OnFoundAttributeRequiringCompilation(name);
 
             flags[asyncMode] = Util.GetBooleanAttribute(name, value);
-
-            // Async requires Medium trust
-            if (!HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                throw new HttpException(SR.GetString(SR.Insufficient_trust_for_attribute, "async"));
-            }
-
+            
             break;
 
         case "tracemode":
@@ -532,7 +522,7 @@ public sealed class PageParser : TemplateControlParser {
 
                 // Make sure it has the correct base type
                 if (!typeof(MasterPage).IsAssignableFrom(type)) {
-                    ProcessError(SR.GetString(SR.Invalid_master_base, value));
+                    ProcessError(System.Web.SR.GetString(System.Web.SR.Invalid_master_base, value));
                 }
 
                 if (deviceName.Length > 0) {
@@ -577,29 +567,29 @@ public sealed class PageParser : TemplateControlParser {
 
         // Can't have an error page if buffering is off
         if (!flags[buffer] && _errorPage != null) {
-            ProcessError(SR.GetString(SR.Error_page_not_supported_when_buffering_off));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Error_page_not_supported_when_buffering_off));
             return;
         }
 
         if (_culture != null && _lcid > 0) {
-            ProcessError(SR.GetString(SR.Attributes_mutually_exclusive, "Culture", "LCID"));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Attributes_mutually_exclusive, "Culture", "LCID"));
             return;
         }
 
         if (_responseEncoding != null && _codePage > 0) {
-            ProcessError(SR.GetString(SR.Attributes_mutually_exclusive, "ResponseEncoding", "CodePage"));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Attributes_mutually_exclusive, "ResponseEncoding", "CodePage"));
             return;
         }
 
         // async can't be combined with aspcompat
         if (AsyncMode && AspCompatMode) {
-            ProcessError(SR.GetString(SR.Async_and_aspcompat));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Async_and_aspcompat));
             return;
         }
 
         // async can't be combined with transactions
         if (AsyncMode && _transactionMode != 0) {
-            ProcessError(SR.GetString(SR.Async_and_transaction));
+            ProcessError(System.Web.SR.GetString(System.Web.SR.Async_and_transaction));
             return;
         }
 
@@ -620,12 +610,7 @@ public sealed class PageParser : TemplateControlParser {
             _transactionMode = (int) tmpObj;
 
             // Add a reference to the transaction assembly only if needed
-            if (_transactionMode != 0 /*TransactionOption.Disabled*/) {
-
-                if (!HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
-                    throw new HttpException(SR.GetString(SR.Insufficient_trust_for_attribute, "transaction"));
-                }
-
+            if (_transactionMode != 0 /*TransactionOption.Disabled*/) {                
                 AddAssemblyDependency(typeof(TransactionOption).Assembly);
             }
         }
@@ -685,7 +670,7 @@ public sealed class PageParser : TemplateControlParser {
         }
         set {
             if (value != null && !typeof(Page).IsAssignableFrom(value)) {
-                throw ExceptionUtil.PropertyInvalid("DefaultPageBaseType");
+                throw System.Web.Util.ExceptionUtil.PropertyInvalid("DefaultPageBaseType");
             }
             BuildManager.ThrowIfPreAppStartNotRunning();
 
@@ -701,7 +686,7 @@ public sealed class PageParser : TemplateControlParser {
         }
         set {
             if (value != null && !typeof(UserControl).IsAssignableFrom(value)) {
-                throw ExceptionUtil.PropertyInvalid("DefaultUserControlBaseType");
+                throw System.Web.Util.ExceptionUtil.PropertyInvalid("DefaultUserControlBaseType");
             }
             BuildManager.ThrowIfPreAppStartNotRunning();
 
@@ -717,7 +702,7 @@ public sealed class PageParser : TemplateControlParser {
         }
         set {
             if (value != null && !typeof(HttpApplication).IsAssignableFrom(value)) {
-                throw ExceptionUtil.PropertyInvalid("DefaultApplicationBaseType");
+                throw System.Web.Util.ExceptionUtil.PropertyInvalid("DefaultApplicationBaseType");
             }
             BuildManager.ThrowIfPreAppStartNotRunning();
 
@@ -733,7 +718,7 @@ public sealed class PageParser : TemplateControlParser {
         }
         set {
             if (value != null && !typeof(PageParserFilter).IsAssignableFrom(value)) {
-                throw ExceptionUtil.PropertyInvalid("DefaultPageParserFilterType");
+                throw System.Web.Util.ExceptionUtil.PropertyInvalid("DefaultPageParserFilterType");
             }
             BuildManager.ThrowIfPreAppStartNotRunning();
 
@@ -762,7 +747,7 @@ public sealed class PageParser : TemplateControlParser {
     }
 
     internal override string UnknownOutputCacheAttributeError {
-        get { return SR.Attr_not_supported_in_pagedirective; }
+        get { return System.Web.SR.Attr_not_supported_in_pagedirective; }
     }
 }
 

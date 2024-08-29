@@ -25,17 +25,17 @@ namespace System.Web.UI.WebControls.WebParts {
 
             foreach (object obj in webParts) {
                 if (obj == null) {
-                    throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "webParts");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "webParts");
                 }
                 if (!(obj is WebPart)) {
-                    throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "WebPart"), "webParts");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "WebPart"), "webParts");
                 }
                 InnerList.Add(obj);
             }
         }
 
         internal int Add(WebPart value) {
-            Debug.Assert(value != null);
+            System.Web.Util.Debug.Assert(value != null);
             return InnerList.Add(value);
         }
 

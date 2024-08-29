@@ -67,7 +67,7 @@ namespace System.Web.Configuration {
             base[_propWarningLevel] = warningLevel;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

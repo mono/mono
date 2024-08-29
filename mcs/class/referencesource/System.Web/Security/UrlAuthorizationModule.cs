@@ -22,6 +22,7 @@ namespace System.Web.Security {
     using System.Web.Management;
     using System.Web.Hosting;
     using System.Collections.Generic;
+    
 
 
 
@@ -73,7 +74,7 @@ namespace System.Web.Security {
             VirtualPath vPath = VirtualPath.Create(virtualPath);
 
             if (!vPath.IsWithinAppRoot)
-                throw new ArgumentException(SR.GetString(SR.Virtual_path_outside_application_not_supported), "virtualPath");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Virtual_path_outside_application_not_supported), "virtualPath");
 
             if (!s_EnabledDetermined) {
                 if( !HttpRuntime.UseIntegratedPipeline) {

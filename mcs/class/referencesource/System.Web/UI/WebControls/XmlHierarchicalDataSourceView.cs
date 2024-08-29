@@ -31,7 +31,7 @@ namespace System.Web.UI.WebControls {
         /// Creates a new instance of XmlHierarchicalDataSourceView.
         /// </devdoc>
         internal XmlHierarchicalDataSourceView(XmlDataSource owner, string viewPath) {
-            Debug.Assert(owner != null);
+            System.Web.Util.Debug.Assert(owner != null);
             _owner = owner;
             _viewPath = viewPath;
         }

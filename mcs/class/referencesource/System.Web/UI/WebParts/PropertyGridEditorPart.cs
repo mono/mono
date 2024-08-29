@@ -82,12 +82,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.PropertyGridEditorPart_PartTitle),
+        WebSysDefaultValue(System.Web.SR.PropertyGridEditorPart_PartTitle),
         ]
         public override string Title {
             get {
                 string s = (string)ViewState["Title"];
-                return (s != null) ? s : SR.GetString(SR.PropertyGridEditorPart_PartTitle);
+                return (s != null) ? s : System.Web.SR.GetString(System.Web.SR.PropertyGridEditorPart_PartTitle);
             }
             set {
                 ViewState["Title"] = value;
@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public override bool ApplyChanges() {
             object editableObject = GetEditableObject();
 
-            Debug.Assert(editableObject != null);
+            System.Web.Util.Debug.Assert(editableObject != null);
             if (editableObject == null) {
                 return true;
             }
@@ -105,7 +105,7 @@ namespace System.Web.UI.WebControls.WebParts {
             EnsureChildControls();
 
             int count = Controls.Count;
-            Debug.Assert(count > 0);
+            System.Web.Util.Debug.Assert(count > 0);
             if (count == 0) {
                 return true;
             }
@@ -120,7 +120,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     if (pd.Attributes.Matches(urlPropertyAttribute) &&
                         CrossSiteScriptingValidation.IsDangerousUrl(value.ToString())) {
 
-                        _errorMessages[i] = SR.GetString(SR.EditorPart_ErrorBadUrl);
+                        _errorMessages[i] = System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorBadUrl);
                     }
                     else {
                         try {
@@ -135,10 +135,10 @@ namespace System.Web.UI.WebControls.WebParts {
                     // If custom errors are enabled, we do not want to render the property type to the browser.
                     // (VSWhidbey 381646)
                     if (Context != null && Context.IsCustomErrorEnabled) {
-                        _errorMessages[i] = SR.GetString(SR.EditorPart_ErrorConvertingProperty);
+                        _errorMessages[i] = System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorConvertingProperty);
                     }
                     else {
-                        _errorMessages[i] = SR.GetString(SR.EditorPart_ErrorConvertingPropertyWithType, pd.PropertyType.FullName);
+                        _errorMessages[i] = System.Web.SR.GetString(System.Web.SR.EditorPart_ErrorConvertingPropertyWithType, pd.PropertyType.FullName);
                     }
                 }
             }
@@ -245,7 +245,7 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         private PropertyDescriptorCollection GetEditableProperties(object editableObject, bool sort) {
-            Debug.Assert(editableObject != null);
+            System.Web.Util.Debug.Assert(editableObject != null);
 
             PropertyDescriptorCollection propDescs = TypeDescriptor.GetProperties(editableObject, FilterAttributes);
             if (sort) {
@@ -311,7 +311,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             if (propertyDisplayNames != null) {
                 WebControl[] editorControls = (WebControl[])EditorControls.ToArray(typeof(WebControl));
-                Debug.Assert(propertyDisplayNames.Length == editorControls.Length && propertyDisplayNames.Length == _errorMessages.Length);
+                System.Web.Util.Debug.Assert(propertyDisplayNames.Length == editorControls.Length && propertyDisplayNames.Length == _errorMessages.Length);
                 RenderPropertyEditors(writer, propertyDisplayNames, propertyDescriptions, editorControls, _errorMessages);
             }
         }
@@ -319,7 +319,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public override void SyncChanges() {
             object editableObject = GetEditableObject();
 
-            Debug.Assert(editableObject != null);
+            System.Web.Util.Debug.Assert(editableObject != null);
             if (editableObject != null) {
                 EnsureChildControls();
                 int count = 0;
@@ -352,7 +352,7 @@ namespace System.Web.UI.WebControls.WebParts {
         private sealed class DesignModeWebPart : WebPart {
             [
             WebBrowsable(),
-            WebSysWebDisplayName(SR.PropertyGridEditorPart_DesignModeWebPart_BoolProperty)
+            WebSysWebDisplayName(System.Web.SR.PropertyGridEditorPart_DesignModeWebPart_BoolProperty)
             ]
             public bool BoolProperty {
                 get {
@@ -364,7 +364,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             [
             WebBrowsable(),
-            WebSysWebDisplayName(SR.PropertyGridEditorPart_DesignModeWebPart_EnumProperty)
+            WebSysWebDisplayName(System.Web.SR.PropertyGridEditorPart_DesignModeWebPart_EnumProperty)
             ]
             public SampleEnum EnumProperty {
                 get {
@@ -376,7 +376,7 @@ namespace System.Web.UI.WebControls.WebParts {
 
             [
             WebBrowsable(),
-            WebSysWebDisplayName(SR.PropertyGridEditorPart_DesignModeWebPart_StringProperty)
+            WebSysWebDisplayName(System.Web.SR.PropertyGridEditorPart_DesignModeWebPart_StringProperty)
             ]
             public string StringProperty {
                 get {
@@ -413,7 +413,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     get {
                         if (!replaced) {
                             replaced = true;
-                            DisplayNameValue = SR.GetString(base.DisplayName);                
+                            DisplayNameValue = System.Web.SR.GetString(base.DisplayName);                
                         }
                         return base.DisplayName;
                     }

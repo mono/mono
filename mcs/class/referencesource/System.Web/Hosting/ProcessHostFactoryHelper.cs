@@ -14,6 +14,7 @@ namespace System.Web.Hosting {
     using System.Web.Configuration;
     using System.Web.Util;
     
+    
 
     [ComImport, Guid("02fd465d-5c5d-4b7e-95b6-82faa031b74a"), InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IProcessHostFactoryHelper {
@@ -44,7 +45,7 @@ namespace System.Web.Hosting {
                 return ProcessHost.GetProcessHost(functions);
             }
             catch(Exception e) {
-                Misc.ReportUnhandledException(e, new string[] {SR.GetString(SR.Cant_Create_Process_Host)});
+                Misc.ReportUnhandledException(e, new string[] {System.Web.SR.GetString(System.Web.SR.Cant_Create_Process_Host)});
                 throw;
             }
         }

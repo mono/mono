@@ -10,6 +10,7 @@ namespace System.Web.Management {
     using System.Collections;
     using Debug=System.Web.Util.Debug;
     using System.Security.Permissions;
+    
 
     // this class is a container for pre-defined event codes
     // all APIs will take integers so application defined
@@ -155,91 +156,91 @@ namespace System.Web.Management {
             if (eventDetailCode != 0) {
                 switch(eventDetailCode) {
                 case ApplicationShutdownUnknown:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownUnknown);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownUnknown);
                     break;
 
                 case ApplicationShutdownHostingEnvironment:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownHostingEnvironment);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownHostingEnvironment);
                     break;
 
                 case ApplicationShutdownChangeInGlobalAsax:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownChangeInGlobalAsax);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownChangeInGlobalAsax);
                     break;
 
                 case ApplicationShutdownConfigurationChange:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownConfigurationChange);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownConfigurationChange);
                     break;
 
                 case ApplicationShutdownUnloadAppDomainCalled:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownUnloadAppDomainCalled);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownUnloadAppDomainCalled);
                     break;
 
                 case ApplicationShutdownChangeInSecurityPolicyFile:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownChangeInSecurityPolicyFile);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownChangeInSecurityPolicyFile);
                     break;
 
                 case ApplicationShutdownBinDirChangeOrDirectoryRename:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownBinDirChangeOrDirectoryRename);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownBinDirChangeOrDirectoryRename);
                     break;
 
                 case ApplicationShutdownBrowsersDirChangeOrDirectoryRename:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownBrowsersDirChangeOrDirectoryRename);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownBrowsersDirChangeOrDirectoryRename);
                     break;
 
                 case ApplicationShutdownCodeDirChangeOrDirectoryRename:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownCodeDirChangeOrDirectoryRename);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownCodeDirChangeOrDirectoryRename);
                     break;
 
                 case ApplicationShutdownResourcesDirChangeOrDirectoryRename:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownResourcesDirChangeOrDirectoryRename);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownResourcesDirChangeOrDirectoryRename);
                     break;
 
                 case ApplicationShutdownIdleTimeout:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownIdleTimeout);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownIdleTimeout);
                     break;
 
                 case ApplicationShutdownPhysicalApplicationPathChanged:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownPhysicalApplicationPathChanged);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownPhysicalApplicationPathChanged);
                     break;
 
                 case ApplicationShutdownHttpRuntimeClose:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownHttpRuntimeClose);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownHttpRuntimeClose);
                     break;
 
                 case ApplicationShutdownInitializationError:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownInitializationError);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownInitializationError);
                     break;
 
                 case ApplicationShutdownMaxRecompilationsReached:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownMaxRecompilationsReached);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownMaxRecompilationsReached);
                     break;
 
                 case ApplicationShutdownBuildManagerChange:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ApplicationShutdownBuildManagerChange);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ApplicationShutdownBuildManagerChange);
                     break;
 
                 case StateServerConnectionError:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_StateServerConnectionError);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_StateServerConnectionError);
                     break;
 
                 case InvalidTicketFailure:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_InvalidTicketFailure);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_InvalidTicketFailure);
                     break;
                     
                 case ExpiredTicketFailure:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_ExpiredTicketFailure);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_ExpiredTicketFailure);
                     break;
                     
                 case InvalidViewStateMac:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_InvalidViewStateMac);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_InvalidViewStateMac);
                     break;
                     
                 case InvalidViewState:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_InvalidViewState);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_InvalidViewState);
                     break;
                     
                 case SqlProviderEventsDropped:
-                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_detail_SqlProviderEventsDropped);
+                    detailMsg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_detail_SqlProviderEventsDropped);
                     break;
                     
                 default:
@@ -249,111 +250,111 @@ namespace System.Web.Management {
             
             switch(eventCode) {
             case ApplicationStart:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_ApplicationStart);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_ApplicationStart);
                 break;
 
             case ApplicationShutdown:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_ApplicationShutdown);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_ApplicationShutdown);
                 break;
             
             case ApplicationCompilationStart:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_ApplicationCompilationStart);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_ApplicationCompilationStart);
                 break;
             
             case ApplicationCompilationEnd:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_ApplicationCompilationEnd);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_ApplicationCompilationEnd);
                 break;
             
             case ApplicationHeartbeat:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_ApplicationHeartbeat);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_ApplicationHeartbeat);
                 break;
                 
             case RequestTransactionComplete:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_RequestTransactionComplete);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_RequestTransactionComplete);
                 break;
             
             case RequestTransactionAbort:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_RequestTransactionAbort);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_RequestTransactionAbort);
                 break;
             
             case RuntimeErrorRequestAbort:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_RuntimeErrorRequestAbort);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_RuntimeErrorRequestAbort);
                 break;
             
             case RuntimeErrorViewStateFailure:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_RuntimeErrorViewStateFailure);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_RuntimeErrorViewStateFailure);
                 break;
             
             case RuntimeErrorValidationFailure:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_RuntimeErrorValidationFailure);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_RuntimeErrorValidationFailure);
                 break;
             
             case RuntimeErrorPostTooLarge:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_RuntimeErrorPostTooLarge);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_RuntimeErrorPostTooLarge);
                 break;
             
             case RuntimeErrorUnhandledException:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_RuntimeErrorUnhandledException);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_RuntimeErrorUnhandledException);
                 break;
             
             case WebErrorParserError:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_WebErrorParserError);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_WebErrorParserError);
                 break;
             
             case WebErrorCompilationError:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_WebErrorCompilationError);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_WebErrorCompilationError);
                 break;
             
             case WebErrorConfigurationError:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_WebErrorConfigurationError);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_WebErrorConfigurationError);
                 break;
             
             case AuditUnhandledSecurityException:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditUnhandledSecurityException);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditUnhandledSecurityException);
                 break;
 
             case AuditInvalidViewStateFailure:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditInvalidViewStateFailure);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditInvalidViewStateFailure);
                 break;
 
             case AuditFormsAuthenticationSuccess:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditFormsAuthenticationSuccess);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditFormsAuthenticationSuccess);
                 break;
 
             case AuditUrlAuthorizationSuccess:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditUrlAuthorizationSuccess);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditUrlAuthorizationSuccess);
                 break;
 
             case AuditFileAuthorizationFailure:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditFileAuthorizationFailure);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditFileAuthorizationFailure);
                 break;
 
             case AuditFormsAuthenticationFailure:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditFormsAuthenticationFailure);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditFormsAuthenticationFailure);
                 break;
 
             case AuditFileAuthorizationSuccess:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditFileAuthorizationSuccess);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditFileAuthorizationSuccess);
                 break;
 
             case AuditMembershipAuthenticationSuccess:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditMembershipAuthenticationSuccess);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditMembershipAuthenticationSuccess);
                 break;
 
             case AuditMembershipAuthenticationFailure:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditMembershipAuthenticationFailure);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditMembershipAuthenticationFailure);
                 break;
 
             case AuditUrlAuthorizationFailure:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditUrlAuthorizationFailure);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditUrlAuthorizationFailure);
                 break;
 
             case AuditUnhandledAccessException:
-                msg = WebBaseEvent.FormatResourceStringWithCache(SR.Webevent_msg_AuditUnhandledAccessException);
+                msg = WebBaseEvent.FormatResourceStringWithCache(System.Web.SR.Webevent_msg_AuditUnhandledAccessException);
                 break;
                 
             default:
-                Debug.Assert(false, "ASP.NET event code " + eventCode.ToString(CultureInfo.InvariantCulture) + " doesn't have message string mapped to it");
+                System.Web.Util.Debug.Assert(false, "ASP.NET event code " + eventCode.ToString(CultureInfo.InvariantCulture) + " doesn't have message string mapped to it");
                 return String.Empty;
             }
 
@@ -382,7 +383,7 @@ namespace System.Web.Management {
         internal static int[] s_eventArrayDimensionSizes = new int[2];
 
         internal static int GetEventArrayDimensionSize(int dim) {
-            Debug.Assert(dim == 0 || dim == 1, "dim == 0 || dim == 1");
+            System.Web.Util.Debug.Assert(dim == 0 || dim == 1, "dim == 0 || dim == 1");
 
             return s_eventArrayDimensionSizes[dim];
         }
@@ -392,8 +393,8 @@ namespace System.Web.Management {
             index0 = eventCode/1000 - 1;
             index1 = eventCode - (eventCode/1000)*1000 - 1;
 
-            Debug.Assert(index0 >= 0 && index0 < GetEventArrayDimensionSize(0), "Index0 of system eventCode out of expected range: " + eventCode);
-            Debug.Assert(index1 >= 0 && index1 < GetEventArrayDimensionSize(1), "Index1 of system eventCode out of expected range: " + eventCode);
+            System.Web.Util.Debug.Assert(index0 >= 0 && index0 < GetEventArrayDimensionSize(0), "Index0 of system eventCode out of expected range: " + eventCode);
+            System.Web.Util.Debug.Assert(index1 >= 0 && index1 < GetEventArrayDimensionSize(1), "Index1 of system eventCode out of expected range: " + eventCode);
         }
         
         static void InitEventArrayDimensions()

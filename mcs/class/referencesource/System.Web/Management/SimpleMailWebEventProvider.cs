@@ -17,6 +17,7 @@ namespace System.Web.Management {
     using System.Runtime.Remoting.Messaging;
     using System.Security.Permissions;
     using System.Threading;
+    
 
     public sealed class SimpleMailWebEventProvider : MailWebEventProvider, IInternalWebEventProvider {
         const int   DefaultMaxEventLength = 8 * 1024;    
@@ -24,10 +25,10 @@ namespace System.Web.Management {
         const int   MessageIdDiscard = 100;
         const int   MessageIdEventsToDrop = 101;
 
-        static string  s_header_warnings = SR.GetString(SR.MailWebEventProvider_Warnings);
-        static string  s_header_summary = SR.GetString(SR.MailWebEventProvider_Summary);
-        static string  s_header_app_info = SR.GetString(SR.MailWebEventProvider_Application_Info);
-        static string  s_header_events = SR.GetString(SR.MailWebEventProvider_Events);
+        static string  s_header_warnings = System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_Warnings);
+        static string  s_header_summary = System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_Summary);
+        static string  s_header_app_info = System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_Application_Info);
+        static string  s_header_events = System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_Events);
         
         string  _separator = "---------------\n";
         string  _bodyHeader;
@@ -42,7 +43,7 @@ namespace System.Web.Management {
         {
             string  temp = null;
             
-            Debug.Trace("SimpleMailWebEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("SimpleMailWebEventProvider", "Initializing: name=" + name);
 
             ProviderUtil.GetAndRemoveStringAttribute(config, "bodyHeader", name, ref _bodyHeader);
             if (_bodyHeader != null) {
@@ -80,7 +81,7 @@ namespace System.Web.Management {
                 sb.Append(_separator);
                 headerAdded = true;
                 
-                sb.Append(SR.GetString(SR.MailWebEventProvider_discard_warning,
+                sb.Append(System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_discard_warning,
                             MessageIdDiscard.ToString(CultureInfo.InstalledUICulture),
                             discardedSinceLastFlush.ToString(CultureInfo.InstalledUICulture),
                             lastFlush.ToString("r", CultureInfo.InstalledUICulture)));
@@ -96,7 +97,7 @@ namespace System.Web.Management {
                     headerAdded = true;
                 }
                 
-                sb.Append(SR.GetString(SR.MailWebEventProvider_events_drop_warning,
+                sb.Append(System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_events_drop_warning,
                     MessageIdEventsToDrop.ToString(CultureInfo.InstalledUICulture),
                     eventsToDrop.ToString(CultureInfo.InstalledUICulture)));
                 sb.Append("\n\n");
@@ -129,7 +130,7 @@ namespace System.Web.Management {
             firstEvent++;
             lastEvent++;
 
-            sb.Append(SR.GetString(SR.MailWebEventProvider_summary_body, 
+            sb.Append(System.Web.SR.GetString(System.Web.SR.MailWebEventProvider_summary_body, 
                             firstEvent.ToString(CultureInfo.InstalledUICulture),
                             lastEvent.ToString(CultureInfo.InstalledUICulture),
                             eventsInNotif.ToString(CultureInfo.InstalledUICulture),
@@ -160,7 +161,7 @@ namespace System.Web.Management {
             GenerateSummary(sb, begin, begin + totalEvents - 1, eventsInNotification, eventsInBuffer);
 
             // Application Info
-            Debug.Assert(events.Count > 0, "events.Count > 0");
+            System.Web.Util.Debug.Assert(events.Count > 0, "events.Count > 0");
             GenerateApplicationInformation(sb);
 
             // Please note that it's a text message, and thus we shouldn't need to HtmlEncode it.

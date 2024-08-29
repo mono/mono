@@ -143,7 +143,7 @@ namespace System.Web.UI {
                     _propertyTableByFilter[entry.Filter] = filteredProperties;
                 }
 
-                Debug.Assert((entry.Name != null) && (entry.Name.Length > 0));
+                System.Web.Util.Debug.Assert((entry.Name != null) && (entry.Name.Length > 0));
                 filteredProperties[entry.Name] = entry;
 
                 ArrayList properties = (ArrayList)_propertyTableByProperty[entry.Name];

@@ -146,12 +146,12 @@ namespace MonoTests.System.Web.DynamicData
 			field.Page = p;
 			((IFieldTemplate) field).SetHost (dc);
 
-			Assert.Throws<Exception> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				var f = field.ChildrenColumn;
 			}, "#C1");
 
 			// The FirstName column is not a children one
-			Assert.Throws<Exception> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				field.GetChildrenPath ();
 			}, "#C2");
 			Assert.IsNotNull (field.Column, "#C3");
@@ -181,10 +181,10 @@ namespace MonoTests.System.Web.DynamicData
 			//Assert.IsNull (field.FieldValueString, "#C7");
 
 			// The FirstName column is not a foreign key one
-			Assert.Throws<Exception> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				var f = field.ForeignKeyColumn;
 			}, "#C8");
-			Assert.Throws<Exception> (() => {
+			Assert.Throws<InvalidOperationException> (() => {
 				var f = field.GetForeignKeyPath ();
 			}, "#C9");
 			Assert.IsNotNull (field.Host, "#C10");

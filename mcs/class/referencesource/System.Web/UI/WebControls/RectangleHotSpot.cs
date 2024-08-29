@@ -18,7 +18,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(0),
-        WebSysDescription(SR.RectangleHotSpot_Bottom),
+        WebSysDescription(System.Web.SR.RectangleHotSpot_Bottom),
         ]
         public int Bottom {
             get {
@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(0),
-        WebSysDescription(SR.RectangleHotSpot_Left),
+        WebSysDescription(System.Web.SR.RectangleHotSpot_Left),
         ]
         public int Left {
             get {
@@ -50,7 +50,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(0),
-        WebSysDescription(SR.RectangleHotSpot_Right),
+        WebSysDescription(System.Web.SR.RectangleHotSpot_Right),
         ]
         public int Right {
             get {
@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(0),
-        WebSysDescription(SR.RectangleHotSpot_Top),
+        WebSysDescription(System.Web.SR.RectangleHotSpot_Top),
         ]
         public int Top {
             get {

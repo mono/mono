@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls {
 
         public void CopyTo(Array array, int index) {
             if (!(array is MenuItem[])) {
-                throw new ArgumentException(SR.GetString(SR.MenuItemCollection_InvalidArrayType), "array");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.MenuItemCollection_InvalidArrayType), "array");
             }
             _list.CopyTo((MenuItem[])array, index);
         }
@@ -368,7 +368,7 @@ namespace System.Web.UI.WebControls {
 
             public bool MoveNext() {
                 if (version != list._version)
-                    throw new InvalidOperationException(SR.GetString(SR.ListEnumVersionMismatch));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListEnumVersionMismatch));
 
                 if (index < (list.Count - 1)) {
                     index++;
@@ -389,16 +389,16 @@ namespace System.Web.UI.WebControls {
             public MenuItem Current {
                 get {
                     if (index == -1)
-                        throw new InvalidOperationException(SR.GetString(SR.ListEnumCurrentOutOfRange));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListEnumCurrentOutOfRange));
                     if (index >= list.Count)
-                        throw new InvalidOperationException(SR.GetString(SR.ListEnumCurrentOutOfRange));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListEnumCurrentOutOfRange));
                     return currentElement;
                 }
             }
 
             public void Reset() {
                 if (version != list._version)
-                    throw new InvalidOperationException(SR.GetString(SR.ListEnumVersionMismatch));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ListEnumVersionMismatch));
                 currentElement = null;
                 index = -1;
             }

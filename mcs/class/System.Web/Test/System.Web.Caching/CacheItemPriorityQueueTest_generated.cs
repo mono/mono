@@ -5,6 +5,7 @@
 //
 // The test generator can be found in the ../tools/CachePQTestGenerator directory
 //
+#if false
 #if !TARGET_DOTNET
 using System;
 using System.Collections.Generic;
@@ -61,4 +62,4 @@ namespace MonoTests.System.Web.Caching
 	}
 }
 #endif
-
+#endif

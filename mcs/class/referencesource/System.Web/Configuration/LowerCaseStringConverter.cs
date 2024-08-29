@@ -104,8 +104,8 @@ namespace System.Web.Configuration {
             return ((string)value).ToLower(CultureInfo.InvariantCulture);
         }
         public override object ConvertFrom(ITypeDescriptorContext ctx, CultureInfo ci, object data) {
-            Debug.Assert(data != null);
-            Debug.Assert(data is string);
+            System.Web.Util.Debug.Assert(data != null);
+            System.Web.Util.Debug.Assert(data is string);
 
             return ((string)data).ToLower(CultureInfo.InvariantCulture);
         }

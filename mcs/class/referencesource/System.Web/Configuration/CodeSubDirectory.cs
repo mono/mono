@@ -21,6 +21,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     public sealed class CodeSubDirectory : ConfigurationElement {
         private const string dirNameAttribName = "directoryName";
@@ -47,7 +48,7 @@ namespace System.Web.Configuration {
             DirectoryName = directoryName;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -80,7 +81,7 @@ namespace System.Web.Configuration {
             // Make sure it's just a valid simple directory name
             if (!Util.IsValidFileName(directoryName)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_CodeSubDirectory, directoryName),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_CodeSubDirectory, directoryName),
                     ElementInformation.Properties[dirNameAttribName].Source, ElementInformation.Properties[dirNameAttribName].LineNumber);
             }
 
@@ -89,7 +90,7 @@ namespace System.Web.Configuration {
             // Make sure the specified directory exists
             if (!VirtualPathProvider.DirectoryExistsNoThrow(codeVirtualSubDir)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_CodeSubDirectory_Not_Exist, codeVirtualSubDir),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_CodeSubDirectory_Not_Exist, codeVirtualSubDir),
                     ElementInformation.Properties[dirNameAttribName].Source, ElementInformation.Properties[dirNameAttribName].LineNumber);
             }
 
@@ -99,15 +100,15 @@ namespace System.Web.Configuration {
             FindFileData.FindFile(physicalDir, out ffd);
 
             // If the name was not canonical, reject it
-            if (!StringUtil.EqualsIgnoreCase(directoryName, ffd.FileNameLong)) {
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase(directoryName, ffd.FileNameLong)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_CodeSubDirectory, directoryName),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_CodeSubDirectory, directoryName),
                     ElementInformation.Properties[dirNameAttribName].Source, ElementInformation.Properties[dirNameAttribName].LineNumber);
             }
 
             if (BuildManager.IsReservedAssemblyName(directoryName)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Reserved_AssemblyName, directoryName),
+                    System.Web.SR.GetString(System.Web.SR.Reserved_AssemblyName, directoryName),
                     ElementInformation.Properties[dirNameAttribName].Source, ElementInformation.Properties[dirNameAttribName].LineNumber);
             }
         }

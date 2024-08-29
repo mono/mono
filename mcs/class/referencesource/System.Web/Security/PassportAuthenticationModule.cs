@@ -18,6 +18,7 @@ namespace System.Web.Security {
     using System.Globalization;
     using System.Security.Permissions;
     using System.Web.Management;
+    
 
 
 
@@ -187,7 +188,7 @@ namespace System.Web.Security {
                     }
                     String strLogoTag = id.LogoTag2(HttpUtility.UrlEncode(strUrl, context.Request.ContentEncoding));
 
-                    String strMsg = SR.GetString(SR.PassportAuthFailed, strLogoTag);
+                    String strMsg = System.Web.SR.GetString(System.Web.SR.PassportAuthFailed, strLogoTag);
                     context.Response.Write(strMsg);
                 }
                 else {
@@ -203,7 +204,7 @@ namespace System.Web.Security {
                 ////////////////////////////////////////////////////////////
                 // Step 2: Check if we have a valid url to the redirect-page
                 if (redirectUrl == null || redirectUrl.Length <= 0) 
-                    throw new HttpException(SR.GetString(SR.Invalid_Passport_Redirect_URL));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_Passport_Redirect_URL));
 
                 
                 ////////////////////////////////////////////////////////////
@@ -243,15 +244,15 @@ namespace System.Web.Security {
     internal class PassportAuthFailedErrorFormatter : ErrorFormatter {
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.PassportAuthFailed_Title);}
+            get { return System.Web.SR.GetString(System.Web.SR.PassportAuthFailed_Title);}
         }
 
         protected override string Description {
-            get { return SR.GetString(SR.PassportAuthFailed_Description);}
+            get { return System.Web.SR.GetString(System.Web.SR.PassportAuthFailed_Description);}
         }
 
         protected override string MiscSectionTitle {
-            get { return SR.GetString(SR.Assess_Denied_Title);}
+            get { return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Title);}
         }
 
         protected override string MiscSectionContent {

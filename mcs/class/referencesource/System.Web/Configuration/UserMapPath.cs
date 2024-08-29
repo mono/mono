@@ -14,6 +14,7 @@ namespace System.Web.Configuration {
     using System.Web.UI;
     using System.IO;
     using System.Web.Hosting;
+    
 
     //
     // IConfigMapPath that uses information from a ConfigurationFileMap.
@@ -84,8 +85,8 @@ namespace System.Web.Configuration {
 
         bool IsSiteMatch(string site) {
             return  String.IsNullOrEmpty(site) ||
-                StringUtil.EqualsIgnoreCase(site, _siteName) ||
-                StringUtil.EqualsIgnoreCase(site, _siteID);
+                System.Web.Util.StringUtil.EqualsIgnoreCase(site, _siteName) ||
+                System.Web.Util.StringUtil.EqualsIgnoreCase(site, _siteID);
         }
 
         // Get the VirtualDirectoryMapping for a path by walking the parent hierarchy
@@ -135,14 +136,17 @@ namespace System.Web.Configuration {
                     childPart = path.Substring(l);
                 }
 
-                childPart = childPart.Replace('/', '\\');
+                if (Path.DirectorySeparatorChar == '\\') {
+                    childPart = childPart.Replace('/', '\\');
+                }
+                
                 physicalPath = Path.Combine(mapping.PhysicalDirectory, childPart);
             }
 
             // Throw if the resulting physical path is not canonical, to prevent potential
             // security issues (VSWhidbey 418125)
-            if (_pathsAreLocal && FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
-                throw new HttpException(SR.GetString(SR.Cannot_map_path, path));
+            if (_pathsAreLocal && System.Web.Util.FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_map_path, path));
             }
 
             return physicalPath;

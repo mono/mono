@@ -73,7 +73,7 @@ namespace System.Web.Configuration {
 
         public HostingEnvironmentSection() {
         }
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

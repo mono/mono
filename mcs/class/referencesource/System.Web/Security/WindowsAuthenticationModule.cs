@@ -145,7 +145,7 @@ namespace System.Web.Security {
                 }
 
                 if (strLogonUser.Length == 0 && (strAuthType.Length == 0 || 
-                                                 StringUtil.EqualsIgnoreCase(strAuthType, "basic"))) 
+                                                 System.Web.Util.StringUtil.EqualsIgnoreCase(strAuthType, "basic"))) 
                 {
                     ////////////////////////////////////////////////////////
                     // Step 2a: Use the anonymous identity

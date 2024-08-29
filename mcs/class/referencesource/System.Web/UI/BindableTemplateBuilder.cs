@@ -43,7 +43,7 @@ namespace System.Web.UI {
             
             BindableTemplateBuilder bindableTemplateBuilder = this as BindableTemplateBuilder;
 
-            Debug.Assert(bindableTemplateBuilder != null, "ExtractTemplateValuesMethod called on non-BindableTemplateBuilder.");
+            System.Web.Util.Debug.Assert(bindableTemplateBuilder != null, "ExtractTemplateValuesMethod called on non-BindableTemplateBuilder.");
             OrderedDictionary table = new OrderedDictionary();
             if (bindableTemplateBuilder != null) {
                 ExtractTemplateValuesRecursive(bindableTemplateBuilder.SubBuilders, table, container);
@@ -62,8 +62,8 @@ namespace System.Web.UI {
                         entries = subBuilderControlBuilder.BoundPropertyEntries;
                     }
                     else {
-                        Debug.Assert(subBuilderControlBuilder.ServiceProvider == null);
-                        Debug.Assert(subBuilderControlBuilder.TemplateControl != null, "TemplateControl should not be null in no-compile pages. We need it for the FilterResolutionService.");
+                        System.Web.Util.Debug.Assert(subBuilderControlBuilder.ServiceProvider == null);
+                        System.Web.Util.Debug.Assert(subBuilderControlBuilder.TemplateControl != null, "TemplateControl should not be null in no-compile pages. We need it for the FilterResolutionService.");
 
                         ServiceContainer serviceContainer = new ServiceContainer();
                         serviceContainer.AddService(typeof(IFilterResolutionService), subBuilderControlBuilder.TemplateControl);
@@ -102,7 +102,7 @@ namespace System.Web.UI {
                             control = container.FindControl(entry.ControlID);
 
                             if (control == null || !entry.ControlType.IsInstanceOfType(control)) {
-                                Debug.Assert(false, "BoundPropertyEntry is of wrong control type or couldn't be found.  Expected " + entry.ControlType.Name);
+                                System.Web.Util.Debug.Assert(false, "BoundPropertyEntry is of wrong control type or couldn't be found.  Expected " + entry.ControlType.Name);
                                 continue;
                             }
                         }

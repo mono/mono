@@ -53,11 +53,11 @@
         // ambient values associated with the current HttpContext, such as the current
         // user and cultures. It also sets HttpContext.Current.
         internal void AssociateWithCurrentThread(bool setImpersonationContext) {
-            Debug.Assert(HttpContext != null); // only to be used when context is available
-            Debug.Assert(Current != this, "This ThreadContext is already associated with this thread.");
-            Debug.Assert(!HasBeenDisassociatedFromThread, "This ThreadContext has already been disassociated from a thread.");
+            System.Web.Util.Debug.Assert(HttpContext != null); // only to be used when context is available
+            System.Web.Util.Debug.Assert(Current != this, "This ThreadContext is already associated with this thread.");
+            System.Web.Util.Debug.Assert(!HasBeenDisassociatedFromThread, "This ThreadContext has already been disassociated from a thread.");
 
-            Debug.Trace("OnThread", GetTraceMessage("Enter1"));
+            System.Web.Util.Debug.Trace("OnThread", GetTraceMessage("Enter1"));
 
             /*
              * !! IMPORTANT !!
@@ -109,7 +109,7 @@
             _originalThreadContextCurrent = Current;
             Current = this;
 
-            Debug.Trace("OnThread", GetTraceMessage("Enter2"));
+            System.Web.Util.Debug.Trace("OnThread", GetTraceMessage("Enter2"));
         }
 
         private ClientImpersonationContext CreateNewClientImpersonationContext() {
@@ -122,9 +122,9 @@
         // can be restored the next time a ThreadContext associated with this HttpContext is active.
         // Impersonation and other similar modifications to the current thread are undone.
         internal void DisassociateFromCurrentThread() {
-            Debug.Trace("OnThread", GetTraceMessage("Leave1"));
-            Debug.Assert(Current == this, "This ThreadContext isn't associated with current thread.");
-            Debug.Assert(!HasBeenDisassociatedFromThread, "This ThreadContext has already been disassociated from a thread.");
+            System.Web.Util.Debug.Trace("OnThread", GetTraceMessage("Leave1"));
+            System.Web.Util.Debug.Assert(Current == this, "This ThreadContext isn't associated with current thread.");
+            System.Web.Util.Debug.Assert(!HasBeenDisassociatedFromThread, "This ThreadContext has already been disassociated from a thread.");
 
             /*
              * !! IMPORTANT !!
@@ -161,7 +161,7 @@
             DisposableHttpContextWrapper.SwitchContext(_originalHttpContext);
             _originalHttpContext = null;
 
-            Debug.Trace("OnThread", GetTraceMessage("Leave2"));
+            System.Web.Util.Debug.Trace("OnThread", GetTraceMessage("Leave2"));
         }
 
         // Called by AspNetHostExecutionContextManager to signal that ExecutionContext.Run
@@ -170,9 +170,9 @@
         // we need to restore it. This method returns an Action which should be called when
         // the call to ExecutionContext.Run is concluding.
         internal Action EnterExecutionContext() {
-            Debug.Trace("OnThread", GetTraceMessage("EnterExecutionContext1"));
-            Debug.Assert(Current == this, "This ThreadContext isn't associated with current thread.");
-            Debug.Assert(!HasBeenDisassociatedFromThread, "This ThreadContext has already been disassociated from a thread.");
+            System.Web.Util.Debug.Trace("OnThread", GetTraceMessage("EnterExecutionContext1"));
+            System.Web.Util.Debug.Assert(Current == this, "This ThreadContext isn't associated with current thread.");
+            System.Web.Util.Debug.Assert(!HasBeenDisassociatedFromThread, "This ThreadContext has already been disassociated from a thread.");
 
             /*
              * !! IMPORTANT !!
@@ -206,11 +206,11 @@
             // Other items like [ThreadStatic] fields, culture, etc. are untouched by ExecutionContext.Run,
             // so we don't need to worry about them.
 
-            Debug.Trace("OnThread", GetTraceMessage("EnterExecutionContext2"));
+            System.Web.Util.Debug.Trace("OnThread", GetTraceMessage("EnterExecutionContext2"));
 
             // This delegate is the cleanup routine.
             return () => {
-                Debug.Trace("OnThread", GetTraceMessage("LeaveExecutionContext1"));
+                System.Web.Util.Debug.Trace("OnThread", GetTraceMessage("LeaveExecutionContext1"));
 
                 // Undo any impersonation that we performed.
                 if (executionContextClientImpersonationContext != null) {
@@ -222,7 +222,7 @@
                 // the call to ExecutionContext.Run concludes, so we don't need to clean up
                 // here.
 
-                Debug.Trace("OnThread", GetTraceMessage("LeaveExecutionContext2"));
+                System.Web.Util.Debug.Trace("OnThread", GetTraceMessage("LeaveExecutionContext2"));
             };
         }
 

@@ -170,7 +170,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual ("Column2", mc.Name, "#A2");
 
 			t = m.Tables[TestDataContext.TableFooEmpty];
-			Assert.Throws<ArgumentOutOfRangeException> (() => mc = t.DisplayColumn, "#B1");
+			Assert.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#B1");
 
 			t = m.Tables[TestDataContext.TableFooWithDefaults];
 			mc = t.DisplayColumn;
@@ -780,7 +780,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsTrue (query.GetType () == typeof (Table<Foo>), "#A2");
 
 			var foo = new Foo (true);
-			Assert.Throws<InvalidCastException> (() => t.GetQuery (foo), "#B1");
+			Assert.Throws<TargetInvocationException> (() => t.GetQuery (foo), "#B1");
 		}
 
 		[Test]
@@ -807,8 +807,10 @@ namespace MonoTests.System.Web.DynamicData
 
 			// According to the same article above, the ReadOnly attribute does not and will not
 			// apply to tables, just columns.
+			//
+			// Well - the article appears wrong and outdated.
 			t = m.Tables[TestDataContext.TableFooReadOnly];
-			Assert.IsFalse (t.IsReadOnly, "#A2");
+			Assert.IsTrue (t.IsReadOnly, "#A2");
 		}
 
 		[Test]

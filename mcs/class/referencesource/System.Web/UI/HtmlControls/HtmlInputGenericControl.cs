@@ -11,6 +11,7 @@ namespace System.Web.UI.HtmlControls {
     using System.Diagnostics.CodeAnalysis;
     using System.Web;
     using System.Web.UI;
+    
 
     /// <devdoc>
     ///    <para>
@@ -43,7 +44,7 @@ namespace System.Web.UI.HtmlControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.HtmlInputText_ServerChange)
+        WebSysDescription(System.Web.SR.HtmlInputText_ServerChange)
         ]
         public event EventHandler ServerChange {
             add {

@@ -11,6 +11,7 @@ namespace System.Web.Configuration {
     using System.Xml;
     using System.Web.Compilation;
     using System.Web.Util;
+    
 
     internal class ConfigUtil {
         private ConfigUtil() {
@@ -20,7 +21,7 @@ namespace System.Web.Configuration {
             // Make sure the base type is valid
             if (!expectedBaseType.IsAssignableFrom(userBaseType)) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_type_to_inherit_from,
+                    System.Web.SR.GetString(System.Web.SR.Invalid_type_to_inherit_from,
                         userBaseType.FullName,
                         expectedBaseType.FullName), configElement.ElementInformation.Properties[propertyName].Source,
                         configElement.ElementInformation.Properties[propertyName].LineNumber);
@@ -32,7 +33,7 @@ namespace System.Web.Configuration {
 
             // We should get either a propertyName/configElement or node, but not both.
             // They are used only for error reporting.
-            Debug.Assert((propertyName != null) != (node != null));
+            System.Web.Util.Debug.Assert((propertyName != null) != (node != null));
 
             Type val;
             try {
@@ -97,7 +98,7 @@ namespace System.Web.Configuration {
         internal static void CheckAssignableType(Type baseType, Type type, ConfigurationElement configElement, string propertyName) {
             if (!baseType.IsAssignableFrom(type)) {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Type_doesnt_inherit_from_type, type.FullName, baseType.FullName),
+                                System.Web.SR.GetString(System.Web.SR.Type_doesnt_inherit_from_type, type.FullName, baseType.FullName),
                                 configElement.ElementInformation.Properties[propertyName].Source, configElement.ElementInformation.Properties[propertyName].LineNumber);
             }
         }
@@ -105,7 +106,7 @@ namespace System.Web.Configuration {
         internal static void CheckAssignableType(Type baseType, Type baseType2, Type type, ConfigurationElement configElement, string propertyName) {
             if (!baseType.IsAssignableFrom(type) && !baseType2.IsAssignableFrom(type)) {
                 throw new ConfigurationErrorsException(
-                                SR.GetString(SR.Type_doesnt_inherit_from_type, type.FullName, baseType.FullName),
+                                System.Web.SR.GetString(System.Web.SR.Type_doesnt_inherit_from_type, type.FullName, baseType.FullName),
                                 configElement.ElementInformation.Properties[propertyName].Source,
                                 configElement.ElementInformation.Properties[propertyName].LineNumber);
             }
@@ -126,8 +127,8 @@ namespace System.Web.Configuration {
         internal static void SetFX45DefaultValue(ConfigurationSection configSection, ConfigurationProperty property, object newDefaultValue) {
             if (BinaryCompatibility.Current.TargetsAtLeastFramework45 && !configSection.IsReadOnly()) {
                 PropertyInformation propInfo = configSection.ElementInformation.Properties[property.Name];
-                Debug.Assert(propInfo != null);
-                Debug.Assert(propInfo.Type.IsInstanceOfType(newDefaultValue));
+                System.Web.Util.Debug.Assert(propInfo != null);
+                System.Web.Util.Debug.Assert(propInfo.Type.IsInstanceOfType(newDefaultValue));
 
                 if (propInfo.ValueOrigin == PropertyValueOrigin.Default) {
                     try {

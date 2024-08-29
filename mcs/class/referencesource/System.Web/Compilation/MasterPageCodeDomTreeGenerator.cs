@@ -25,7 +25,7 @@ namespace System.Web.Compilation {
             base.BuildDefaultConstructor();
 
             foreach(string placeHolderID in Parser.PlaceHolderList) {
-                BuildAddContentPlaceHolderNames(_ctor, placeHolderID);
+                BuildAddContentPlaceHolderNames(InitMethod, placeHolderID);
             }
         }
 

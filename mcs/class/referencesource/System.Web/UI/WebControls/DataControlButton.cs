@@ -28,7 +28,7 @@ namespace System.Web.UI.WebControls {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.CannotSetValidationOnDataControlButtons));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CannotSetValidationOnDataControlButtons));
             }
         }
         

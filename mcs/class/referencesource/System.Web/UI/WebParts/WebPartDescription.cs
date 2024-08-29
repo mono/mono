@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls.WebParts {
         public WebPartDescription(WebPart part) {
             string id = part.ID;
             if (String.IsNullOrEmpty(id)) {
-                throw new ArgumentException(SR.GetString(SR.WebPartManager_NoWebPartID), "part");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPartManager_NoWebPartID), "part");
             }
 
             _id = id;

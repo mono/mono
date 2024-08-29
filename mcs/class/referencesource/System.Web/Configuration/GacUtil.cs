@@ -8,6 +8,7 @@ namespace System.Web.Configuration {
     using System.Web.Configuration;
     using System.Runtime.InteropServices;
     using System.Security.Permissions;
+    
 
     /*
     class for installing ASP.BrowserCapabilitiesFactory into gac
@@ -26,7 +27,7 @@ namespace System.Web.Configuration {
             int hr = -1;
             try
             {
-                Process gacutilprocess = new System.Diagnostics.Process();
+                System.Diagnostics.Process gacutilprocess = new System.Diagnostics.Process();
                 if (gacutilprocess != null)
                 {
                     gacutilprocess.StartInfo.CreateNoWindow = true;
@@ -40,7 +41,7 @@ namespace System.Web.Configuration {
                     gacutilprocess.Start();
                     while (!gacutilprocess.HasExited)
                     {
-                        Thread.Sleep(250);
+                        System.Threading.Thread.Sleep(250);
                     }
                     hr = gacutilprocess.ExitCode;
                 }
@@ -52,7 +53,7 @@ namespace System.Web.Configuration {
 #endif // FEATURE_PAL
 
             if (0 != hr) {
-                throw new Exception(SR.GetString(SR.Failed_gac_install));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Failed_gac_install));
             }
         }
 
@@ -70,7 +71,7 @@ namespace System.Web.Configuration {
             }
 
             if (0 != hr) {
-                throw new Exception(SR.GetString(SR.Failed_gac_uninstall));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Failed_gac_uninstall));
             }
 
             return true;

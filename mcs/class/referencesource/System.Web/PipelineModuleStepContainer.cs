@@ -28,10 +28,10 @@ namespace System.Web {
 
         internal string DebugModuleName {
             set {
-                Debug.Assert( !String.IsNullOrEmpty(value), "!String.IsNullOrEmpty(value)");
+                System.Web.Util.Debug.Assert( !String.IsNullOrEmpty(value), "!String.IsNullOrEmpty(value)");
                 if (_moduleName != null) {
                     // make sure we're not ever crossing the modules
-                    Debug.Assert(value == _moduleName, "value == _moduleName");
+                    System.Web.Util.Debug.Assert(value == _moduleName, "value == _moduleName");
                 }
                 
                 _moduleName = value;
@@ -57,7 +57,7 @@ namespace System.Web {
         private List<HttpApplication.IExecutionStep> GetStepArray(RequestNotification notification, bool isPostEvent) {
 
 #if DBG
-            Debug.Trace("PipelineRuntime",
+            System.Web.Util.Debug.Trace("PipelineRuntime",
                         "GetStepArray for " + DebugModuleName + " for " + notification.ToString() +
                         " and " + isPostEvent + "\r\n");
 #endif            
@@ -68,18 +68,18 @@ namespace System.Web {
                 steps = _modulePostSteps;
             }
 
-            Debug.Assert(null != steps, "null != steps");
+            System.Web.Util.Debug.Assert(null != steps, "null != steps");
 
             int index = EventToIndex(notification);
-            Debug.Assert(index != -1, "index != -1");
+            System.Web.Util.Debug.Assert(index != -1, "index != -1");
 
-            Debug.Trace("PipelineRuntime",
+            System.Web.Util.Debug.Trace("PipelineRuntime",
                         "GetStepArray: " + notification.ToString() + " mapped to index " + index.ToString(CultureInfo.InvariantCulture) + "\r\n");
 
             List<HttpApplication.IExecutionStep> stepArray = steps[index];
             // we shouldn't be asking for events that aren't mapped to this
             // module at all
-            Debug.Assert(null != stepArray, "null != stepArray");            
+            System.Web.Util.Debug.Assert(null != stepArray, "null != stepArray");            
             
             return stepArray;                
         }
@@ -96,8 +96,8 @@ namespace System.Web {
         internal HttpApplication.IExecutionStep GetNextEvent(RequestNotification notification, bool isPostEvent, int eventIndex) {
             List<HttpApplication.IExecutionStep> stepArray = GetStepArray(notification, isPostEvent);
 
-            Debug.Assert(eventIndex >= 0, "eventIndex >= 0");
-            Debug.Assert(eventIndex < stepArray.Count, "eventIndex < stepArray.Count");
+            System.Web.Util.Debug.Assert(eventIndex >= 0, "eventIndex >= 0");
+            System.Web.Util.Debug.Assert(eventIndex < stepArray.Count, "eventIndex < stepArray.Count");
 
             return stepArray[eventIndex];
         }
@@ -149,11 +149,11 @@ namespace System.Web {
         internal void AddEvent(RequestNotification notification, bool isPostEvent, HttpApplication.IExecutionStep step) {
             int index = EventToIndex(notification);
 #if DBG            
-            Debug.Trace("PipelineRuntime", "Adding event: " + DebugModuleName + " " + notification.ToString() + " " +
+            System.Web.Util.Debug.Trace("PipelineRuntime", "Adding event: " + DebugModuleName + " " + notification.ToString() + " " +
                         isPostEvent.ToString() + "@ index " + index.ToString(CultureInfo.InvariantCulture) + "\r\n");
 #endif            
 
-            Debug.Assert(index != -1, "index != -1");
+            System.Web.Util.Debug.Assert(index != -1, "index != -1");
 
             List<HttpApplication.IExecutionStep>[] steps = null;
             
@@ -171,7 +171,7 @@ namespace System.Web {
                 steps = _moduleSteps;
             }
 
-            Debug.Assert(steps != null, "steps != null");
+            System.Web.Util.Debug.Assert(steps != null, "steps != null");
             
             // retrieve the steps for this event (typically none at this point)
             // allocate a new container as necessary and add this step
@@ -250,7 +250,7 @@ namespace System.Web {
                     return 12;
 
                 default:
-                    Debug.Assert(index != -1, "invalid request notification--need to update switch table?");
+                    System.Web.Util.Debug.Assert(index != -1, "invalid request notification--need to update switch table?");
                     return index;
             }
         }

@@ -26,6 +26,7 @@ namespace System.Web.Handlers {
     using System.Text;
     using System.Drawing;
     using System.Security.Permissions;
+    
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
@@ -161,49 +162,49 @@ namespace System.Web.Handlers {
 
             Table table;
 
-            _writer.Write("<h1>" + SR.GetString(SR.Trace_Request_Details) + "</h1><br>");
+            _writer.Write("<h1>" + System.Web.SR.GetString(System.Web.SR.Trace_Request_Details) + "</h1><br>");
 
-            table = CreateDetailsTable(data.Tables[SR.Trace_Request]);
+            table = CreateDetailsTable(data.Tables[System.Web.SR.Trace_Request]);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTraceTable(data.Tables[SR.Trace_Trace_Information]);
+            table = CreateTraceTable(data.Tables[System.Web.SR.Trace_Trace_Information]);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateControlTable(data.Tables[SR.Trace_Control_Tree]);
+            table = CreateControlTable(data.Tables[System.Web.SR.Trace_Control_Tree]);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTable(data.Tables[SR.Trace_Session_State], true /*encodeSpaces*/);
+            table = CreateTable(data.Tables[System.Web.SR.Trace_Session_State], true /*encodeSpaces*/);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTable(data.Tables[SR.Trace_Application_State], true /*encodeSpaces*/);
+            table = CreateTable(data.Tables[System.Web.SR.Trace_Application_State], true /*encodeSpaces*/);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTable(data.Tables[SR.Trace_Request_Cookies_Collection], true /*encodeSpaces*/);
+            table = CreateTable(data.Tables[System.Web.SR.Trace_Request_Cookies_Collection], true /*encodeSpaces*/);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTable(data.Tables[SR.Trace_Response_Cookies_Collection], true /*encodeSpaces*/);
+            table = CreateTable(data.Tables[System.Web.SR.Trace_Response_Cookies_Collection], true /*encodeSpaces*/);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTable(data.Tables[SR.Trace_Headers_Collection], true /*encodeSpaces*/);
+            table = CreateTable(data.Tables[System.Web.SR.Trace_Headers_Collection], true /*encodeSpaces*/);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTable(data.Tables[SR.Trace_Form_Collection]);
+            table = CreateTable(data.Tables[System.Web.SR.Trace_Form_Collection]);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTable(data.Tables[SR.Trace_Querystring_Collection]);
+            table = CreateTable(data.Tables[System.Web.SR.Trace_Querystring_Collection]);
             if (table != null)
                 table.RenderControl(_writer);
 
-            table = CreateTable(data.Tables[SR.Trace_Server_Variables], true /*encodeSpaces*/);
+            table = CreateTable(data.Tables[System.Web.SR.Trace_Server_Variables], true /*encodeSpaces*/);
             if (table != null)
                 table.RenderControl(_writer);
 
@@ -211,8 +212,8 @@ namespace System.Web.Handlers {
 
         protected void ShowVersionDetails() {
             _writer.Write("<hr width=100% size=1 color=silver>\r\n\r\n");
-            _writer.Write(SR.GetString(SR.Error_Formatter_CLR_Build) + VersionInfo.ClrVersion +
-                          SR.GetString(SR.Error_Formatter_ASPNET_Build) + VersionInfo.EngineVersion + "\r\n\r\n");
+            _writer.Write(System.Web.SR.GetString(System.Web.SR.Error_Formatter_CLR_Build) + VersionInfo.ClrVersion +
+                          System.Web.SR.GetString(System.Web.SR.Error_Formatter_ASPNET_Build) + VersionInfo.EngineVersion + "\r\n\r\n");
             _writer.Write("</font>\r\n\r\n");
         }
 
@@ -225,7 +226,7 @@ namespace System.Web.Handlers {
             TableRow trow = AddRow(table);
 
             TableCell tcell;
-            AddCell(trow, SR.GetString(SR.Trace_Application_Trace));
+            AddCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Application_Trace));
 
             string vroot = _request.ApplicationPath;
             int vrootLen = vroot.Length;
@@ -234,12 +235,12 @@ namespace System.Web.Handlers {
             AddCell(trow, "<h2>" + HttpUtility.HtmlEncode(vroot.Substring(1)) + "<h2><p>");
 
             trow = AddRow(table);
-            AddCell(trow, "[ <a href=\"Trace.axd?clear=1\" class=\"link\">" + SR.GetString(SR.Trace_Clear_Current) + "</a> ]");
+            AddCell(trow, "[ <a href=\"Trace.axd?clear=1\" class=\"link\">" + System.Web.SR.GetString(System.Web.SR.Trace_Clear_Current) + "</a> ]");
 
             // check if we have permission to show the physical path.  If not, don't show anything.
             string physicalPath = "&nbsp";
             if (HttpRuntime.HasAppPathDiscoveryPermission())
-                physicalPath  = SR.GetString(SR.Trace_Physical_Directory) + _request.PhysicalApplicationPath;
+                physicalPath  = System.Web.SR.GetString(System.Web.SR.Trace_Physical_Directory) + _request.PhysicalApplicationPath;
             trow = AddRow(table);
             tcell = AddCell(trow, physicalPath);
 
@@ -254,12 +255,12 @@ namespace System.Web.Handlers {
             trow = AddRow(table);
 
             // title for the table
-            tcell = AddHeaderCell(trow, "<h3><b>" + SR.GetString(SR.Trace_Requests_This) + "</b></h3>");
+            tcell = AddHeaderCell(trow, "<h3><b>" + System.Web.SR.GetString(System.Web.SR.Trace_Requests_This) + "</b></h3>");
             tcell.ColumnSpan = 5;
             tcell.CssClass = "alt";
             tcell.HorizontalAlign = HorizontalAlign.Left;
 
-            tcell = AddHeaderCell(trow, SR.GetString(SR.Trace_Remaining) + " " + HttpRuntime.Profile.RequestsRemaining.ToString(NumberFormatInfo.InvariantInfo));
+            tcell = AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Remaining) + " " + HttpRuntime.Profile.RequestsRemaining.ToString(NumberFormatInfo.InvariantInfo));
             tcell.CssClass = "alt";
             tcell.HorizontalAlign = HorizontalAlign.Right;
 
@@ -268,11 +269,11 @@ namespace System.Web.Handlers {
             trow = AddRow(table);
             trow.HorizontalAlign = HorizontalAlign.Left;
             trow.CssClass = "subhead";
-            AddHeaderCell(trow, SR.GetString(SR.Trace_No));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Time_of_Request));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_File));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Status_Code));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Verb));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_No));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Time_of_Request));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_File));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Status_Code));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Verb));
             AddHeaderCell(trow, "&nbsp");
 
             // now fill the table with requests
@@ -285,15 +286,15 @@ namespace System.Web.Handlers {
                     trow.CssClass = "alt";
 
                 AddCell(trow, (i + 1).ToString(NumberFormatInfo.InvariantInfo));
-                AddCell(trow, (string) current.Tables[SR.Trace_Request].Rows[0][SR.Trace_Time_of_Request]);
-                AddCell(trow, HttpUtility.HtmlEncode((string) current.Tables[SR.Trace_Request].Rows[0][SR.Trace_Url]).Substring(vrootLen));
-                AddCell(trow, current.Tables[SR.Trace_Request].Rows[0][SR.Trace_Status_Code].ToString());
-                AddCell(trow, (string) current.Tables[SR.Trace_Request].Rows[0][SR.Trace_Request_Type]);
+                AddCell(trow, (string) current.Tables[System.Web.SR.Trace_Request].Rows[0][System.Web.SR.Trace_Time_of_Request]);
+                AddCell(trow, HttpUtility.HtmlEncode((string) current.Tables[System.Web.SR.Trace_Request].Rows[0][System.Web.SR.Trace_Url]).Substring(vrootLen));
+                AddCell(trow, current.Tables[System.Web.SR.Trace_Request].Rows[0][System.Web.SR.Trace_Status_Code].ToString());
+                AddCell(trow, (string) current.Tables[System.Web.SR.Trace_Request].Rows[0][System.Web.SR.Trace_Request_Type]);
 
                 TableCell linkcell = AddCell(trow, String.Empty);
                 HtmlAnchor a = new HtmlAnchor();
                 a.HRef = "Trace.axd?id=" + i;
-                a.InnerHtml = "<nobr>" + SR.GetString(SR.Trace_View_Details);
+                a.InnerHtml = "<nobr>" + System.Web.SR.GetString(System.Web.SR.Trace_View_Details);
                 a.Attributes["class"] = "link";
                 linkcell.Controls.Add(a);
 
@@ -347,7 +348,7 @@ namespace System.Web.Handlers {
 
             // add a title for the table - same as table name
             trow = AddRow(table);
-            tcell = AddHeaderCell(trow, "<h3><b>" + SR.GetString(datatable.TableName) + "</b></h3>");
+            tcell = AddHeaderCell(trow, "<h3><b>" + System.Web.SR.GetString(datatable.TableName) + "</b></h3>");
             tcell.CssClass = "alt";
             tcell.ColumnSpan = 5;
             tcell.HorizontalAlign = HorizontalAlign.Left;
@@ -356,11 +357,11 @@ namespace System.Web.Handlers {
             trow = AddRow(table);
             trow.CssClass = "subhead";
             trow.HorizontalAlign = HorizontalAlign.Left;
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Control_Id));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Type));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Render_Size_children));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Viewstate_Size_Nochildren));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Controlstate_Size_Nochildren));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Control_Id));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Type));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Render_Size_children));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Viewstate_Size_Nochildren));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Controlstate_Size_Nochildren));
 
             // prime the indentLevels hashtable with an initial value
             indentLevels["ROOT"] = 0;
@@ -370,8 +371,8 @@ namespace System.Web.Handlers {
             while (en.MoveNext()) {
                 // DevDivBugs 173345: Error when enabling trace in an ASPX page
                 // We also need to HtmlEncode parentId, as we HtmlEncode the controlId.
-                parent = HttpUtility.HtmlEncode ((string) ((DataRow) en.Current)[SR.Trace_Parent_Id]);
-                control = HttpUtility.HtmlEncode((string) ((DataRow) en.Current)[SR.Trace_Control_Id]);
+                parent = HttpUtility.HtmlEncode ((string) ((DataRow) en.Current)[System.Web.SR.Trace_Parent_Id]);
+                control = HttpUtility.HtmlEncode((string) ((DataRow) en.Current)[System.Web.SR.Trace_Control_Id]);
 
                 // this lets us determine how far to indent each control
                 indent = (int) indentLevels[parent];
@@ -387,27 +388,27 @@ namespace System.Web.Handlers {
 
                 // page has a blank ID, so we'll fill in something nice for it
                 if (control.Length == 0)
-                    indentedControl.Append(SR.GetString(SR.Trace_Page));
+                    indentedControl.Append(System.Web.SR.GetString(System.Web.SR.Trace_Page));
                 else
                     indentedControl.Append(control);
 
                 trow = AddRow(table);
                 AddCell(trow, indentedControl.ToString());
-                AddCell(trow, (string) ((DataRow) en.Current)[SR.Trace_Type]);
+                AddCell(trow, (string) ((DataRow) en.Current)[System.Web.SR.Trace_Type]);
 
-                object size = ((DataRow) en.Current)[SR.Trace_Render_Size];
+                object size = ((DataRow) en.Current)[System.Web.SR.Trace_Render_Size];
                 if (size != null)
                     AddCell(trow, ((int) size).ToString(NumberFormatInfo.InvariantInfo));
                 else
                     AddCell(trow, "---");
 
-                size = ((DataRow) en.Current)[SR.Trace_Viewstate_Size];
+                size = ((DataRow) en.Current)[System.Web.SR.Trace_Viewstate_Size];
                 if (size != null)
                     AddCell(trow, ((int) size).ToString(NumberFormatInfo.InvariantInfo));
                 else
                     AddCell(trow, "---");
 
-                size = ((DataRow) en.Current)[SR.Trace_Controlstate_Size];
+                size = ((DataRow) en.Current)[System.Web.SR.Trace_Controlstate_Size];
                 if (size != null)
                     AddCell(trow, ((int) size).ToString(NumberFormatInfo.InvariantInfo));
                 else
@@ -438,7 +439,7 @@ namespace System.Web.Handlers {
 
             // add a title for the table - same as table name
             trow = AddRow(table);
-            tcell = AddHeaderCell(trow, "<h3><b>" + SR.GetString(datatable.TableName) + "</b></h3>");
+            tcell = AddHeaderCell(trow, "<h3><b>" + System.Web.SR.GetString(datatable.TableName) + "</b></h3>");
             tcell.CssClass = "alt";
             tcell.ColumnSpan = 10;
             tcell.HorizontalAlign = HorizontalAlign.Left;
@@ -447,10 +448,10 @@ namespace System.Web.Handlers {
             trow = AddRow(table);
             trow.CssClass = "subhead";
             trow.HorizontalAlign = HorizontalAlign.Left;
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Category));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Message));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_From_First));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_From_Last));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Category));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Message));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_From_First));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_From_Last));
 
             // now fill in the values, but don't display null values
             en = datatable.DefaultView.GetEnumerator();
@@ -458,13 +459,13 @@ namespace System.Web.Handlers {
                 trow = AddRow(table);
                 datarow = ((DataRowView) en.Current).Row;
 
-                bool isErr = datarow[SR.Trace_Warning].Equals("yes");
+                bool isErr = datarow[System.Web.SR.Trace_Warning].Equals("yes");
 
                 // FormatPlainTextAsHtml the values first
-                tcell = AddCell(trow, HttpUtility.FormatPlainTextAsHtml((string) datarow[SR.Trace_Category]));
+                tcell = AddCell(trow, HttpUtility.FormatPlainTextAsHtml((string) datarow[System.Web.SR.Trace_Category]));
                 if (isErr) tcell.CssClass = "err";
 
-                StringBuilder message = new StringBuilder(HttpUtility.FormatPlainTextAsHtml((string) datarow[SR.Trace_Message]));
+                StringBuilder message = new StringBuilder(HttpUtility.FormatPlainTextAsHtml((string) datarow[System.Web.SR.Trace_Message]));
 
                 object errormessage = datarow["ErrorInfoMessage"];
                 object errorstack =   datarow["ErrorInfoStack"];
@@ -476,10 +477,10 @@ namespace System.Web.Handlers {
                 tcell = AddCell(trow, message.ToString());
                 if (isErr) tcell.CssClass = "err";
 
-                tcell = AddCell(trow, FormatPotentialDouble(datarow[SR.Trace_From_First]));
+                tcell = AddCell(trow, FormatPotentialDouble(datarow[System.Web.SR.Trace_From_First]));
                 if (isErr) tcell.CssClass = "err";
 
-                tcell = AddCell(trow, FormatPotentialDouble(datarow[SR.Trace_From_Last]));
+                tcell = AddCell(trow, FormatPotentialDouble(datarow[System.Web.SR.Trace_From_Last]));
                 if (isErr) tcell.CssClass = "err";
 
 
@@ -518,7 +519,7 @@ namespace System.Web.Handlers {
 
             // add a title for the table - same as table name
             trow = AddRow(table);
-            tcell = AddHeaderCell(trow, "<h3><b>" + SR.GetString(datatable.TableName) + "</b></h3>");
+            tcell = AddHeaderCell(trow, "<h3><b>" + System.Web.SR.GetString(datatable.TableName) + "</b></h3>");
             tcell.CssClass = "alt";
             tcell.ColumnSpan = 10;
             tcell.HorizontalAlign = HorizontalAlign.Left;
@@ -529,7 +530,7 @@ namespace System.Web.Handlers {
             trow.HorizontalAlign = HorizontalAlign.Left;
             en = datatable.Columns.GetEnumerator();
             while (en.MoveNext())
-                AddHeaderCell(trow, SR.GetString(((DataColumn) en.Current).ColumnName));
+                AddHeaderCell(trow, System.Web.SR.GetString(((DataColumn) en.Current).ColumnName));
 
             // now fill in the values, but don't display null values
             en = datatable.Rows.GetEnumerator();
@@ -565,31 +566,31 @@ namespace System.Web.Handlers {
             if (datatable == null) return table;
 
             TableRow trow = AddRow(table);
-            TableCell tcell = AddHeaderCell(trow, "<h3><b>" + SR.GetString(SR.Trace_Request_Details) + "</b></h3>");
+            TableCell tcell = AddHeaderCell(trow, "<h3><b>" + System.Web.SR.GetString(System.Web.SR.Trace_Request_Details) + "</b></h3>");
             tcell.ColumnSpan = 10;
             tcell.CssClass = "alt";
             tcell.HorizontalAlign = HorizontalAlign.Left;
 
             trow = AddRow(table);
             trow.HorizontalAlign = HorizontalAlign.Left;
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Session_Id) + ":");
-            AddCell(trow, HttpUtility.HtmlEncode(datatable.Rows[0][SR.Trace_Session_Id].ToString()));
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Request_Type) + ":");
-            AddCell(trow, datatable.Rows[0][SR.Trace_Request_Type].ToString());
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Session_Id) + ":");
+            AddCell(trow, HttpUtility.HtmlEncode(datatable.Rows[0][System.Web.SR.Trace_Session_Id].ToString()));
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Request_Type) + ":");
+            AddCell(trow, datatable.Rows[0][System.Web.SR.Trace_Request_Type].ToString());
 
             trow = AddRow(table);
             trow.HorizontalAlign = HorizontalAlign.Left;
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Time_of_Request) + ":");
-            AddCell(trow, datatable.Rows[0][SR.Trace_Time_of_Request].ToString());
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Status_Code) + ":");
-            AddCell(trow, datatable.Rows[0][SR.Trace_Status_Code].ToString());
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Time_of_Request) + ":");
+            AddCell(trow, datatable.Rows[0][System.Web.SR.Trace_Time_of_Request].ToString());
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Status_Code) + ":");
+            AddCell(trow, datatable.Rows[0][System.Web.SR.Trace_Status_Code].ToString());
 
             trow = AddRow(table);
             trow.HorizontalAlign = HorizontalAlign.Left;
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Request_Encoding) + ":");
-            AddCell(trow, datatable.Rows[0][SR.Trace_Request_Encoding].ToString());
-            AddHeaderCell(trow, SR.GetString(SR.Trace_Response_Encoding) + ":");
-            AddCell(trow, datatable.Rows[0][SR.Trace_Response_Encoding].ToString());
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Request_Encoding) + ":");
+            AddCell(trow, datatable.Rows[0][System.Web.SR.Trace_Request_Encoding].ToString());
+            AddHeaderCell(trow, System.Web.SR.GetString(System.Web.SR.Trace_Response_Encoding) + ":");
+            AddCell(trow, datatable.Rows[0][System.Web.SR.Trace_Response_Encoding].ToString());
 
             return table;
         }

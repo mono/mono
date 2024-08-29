@@ -18,6 +18,7 @@ namespace System.Web.Configuration {
     using System.Threading;
     using System.Web.Configuration;
     using System.Security.Permissions;
+    
 
     [ConfigurationCollection(typeof(TagMapInfo))]
     public sealed class TagMapCollection : ConfigurationElementCollection {
@@ -33,7 +34,7 @@ namespace System.Web.Configuration {
         public TagMapCollection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -84,7 +85,7 @@ namespace System.Web.Configuration {
 
                                 if (tagType.IsAssignableFrom(mappedTagType) == false) {
                                     throw new ConfigurationErrorsException(
-                                        SR.GetString(SR.Mapped_type_must_inherit, 
+                                        System.Web.SR.GetString(System.Web.SR.Mapped_type_must_inherit, 
                                             tmi.MappedTagType, 
                                             tmi.TagType), 
                                         tmi.ElementInformation.Properties["mappedTagType"].Source, 

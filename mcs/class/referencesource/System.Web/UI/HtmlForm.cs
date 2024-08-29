@@ -20,6 +20,7 @@ namespace System.Web.UI.HtmlControls {
     using System.Web.UI.WebControls;
     using System.Web.Security;
     using System.Security.Permissions;
+    
 
 
     /// <devdoc>
@@ -246,7 +247,7 @@ namespace System.Web.UI.HtmlControls {
         protected internal override void Render(HtmlTextWriter output) {
             Page p = Page;
             if (p == null)
-                throw new HttpException(SR.GetString(SR.Form_Needs_Page));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Form_Needs_Page));
 
 #pragma warning disable 0618    // To avoid deprecation warning
             if (p.SmartNavigation) {
@@ -314,7 +315,7 @@ namespace System.Web.UI.HtmlControls {
 
             // Dev11 177096: The action may be empty if the RawUrl does not point to a file (for e.g. http://localhost:8080/) but is never null. 
             // Empty action values work fine since the form does not emit the action attribute.
-            Debug.Assert(action != null);
+            System.Web.Util.Debug.Assert(action != null);
 
             string queryString = Page.ClientQueryString;
             // ASURT 15355: Don't lose the query string if there is one.
@@ -401,7 +402,7 @@ namespace System.Web.UI.HtmlControls {
                         // If there was an onsubmit on the form, register it as an onsubmit statement and remove it from the attribute collection
                         string formOnSubmit = Attributes["onsubmit"];
                         if (formOnSubmit.Length > 0) {
-                            if (!StringUtil.StringEndsWith(formOnSubmit, ';')) {
+                            if (!System.Web.Util.StringUtil.StringEndsWith(formOnSubmit, ';')) {
                                 formOnSubmit += ";";
                             }
                             if (page.ClientSupportsJavaScript || !formOnSubmit.ToLower(CultureInfo.CurrentCulture).Contains("javascript")) {
@@ -432,7 +433,7 @@ namespace System.Web.UI.HtmlControls {
                             page.ClientScript.RegisterDefaultButtonScript(c, writer, false /* UseAddAttribute */);
                         }
                         else {
-                            throw new InvalidOperationException(SR.GetString(SR.HtmlForm_OnlyIButtonControlCanBeDefaultButton, ID));
+                            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.HtmlForm_OnlyIButtonControlCanBeDefaultButton, ID));
                         }
                     }
                 }

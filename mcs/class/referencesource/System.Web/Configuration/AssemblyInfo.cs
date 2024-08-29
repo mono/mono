@@ -52,7 +52,7 @@ namespace System.Web.Configuration {
             Assembly = assemblyName;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -71,15 +71,15 @@ namespace System.Web.Configuration {
 
         internal Assembly[] AssemblyInternal {
             get {
-                Debug.Trace("AssemblyInternal", "Loading assembly: " + Assembly);
+                System.Web.Util.Debug.Trace("AssemblyInternal", "Loading assembly: " + Assembly);
                 if (_assembly == null) {
-                    Debug.Assert(_compilationSection != null);
+                    System.Web.Util.Debug.Assert(_compilationSection != null);
                     _assembly = _compilationSection.LoadAssembly(this);
                 }
                 return _assembly;
             }
             set {
-                Debug.Trace("AssemblyInternal", "Set assembly: " + Assembly);
+                System.Web.Util.Debug.Trace("AssemblyInternal", "Set assembly: " + Assembly);
                 _assembly = value;
             }
         }

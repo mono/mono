@@ -17,6 +17,7 @@ namespace System.Web {
     using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;
     using System.Web.Util;
+    
 
     /// <devdoc>
     ///    <para>
@@ -87,7 +88,7 @@ namespace System.Web {
         // as a large number of items potentially can result in too many hash collisions that may cause DoS
         private void ThrowIfMaxHttpCollectionKeysExceeded() {
             if (Count >= AppSettings.MaxHttpCollectionKeys) {
-                throw new InvalidOperationException(SR.GetString(SR.CollectionCountExceeded_HttpValueCollection, AppSettings.MaxHttpCollectionKeys));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CollectionCountExceeded_HttpValueCollection, AppSettings.MaxHttpCollectionKeys));
             }
         }
 

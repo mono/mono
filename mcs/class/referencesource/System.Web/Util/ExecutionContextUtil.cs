@@ -24,7 +24,7 @@ namespace System.Web.Util {
             PropertyInfo propInfo = typeof(ExecutionContext).GetProperty("PreAllocatedDefault", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
 
             if (propInfo == null) {
-                throw new Exception(SR.GetString(SR.Type_doesnt_have_property, typeof(ExecutionContext).FullName, "PreAllocatedDefault"));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Type_doesnt_have_property, typeof(ExecutionContext).FullName, "PreAllocatedDefault"));
             }
 
             return (ExecutionContext) propInfo.GetValue(null, null);

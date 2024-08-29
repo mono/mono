@@ -150,6 +150,9 @@ namespace StandAloneRunnerSupport
 					runner = null;
 					response = null;
 					try {
+						if (tri.CopyAssemblies)
+							CopyAssemblies(test.PhysicalPath);
+
 						runner = appMan.CreateObject (Info.Name, typeof (TestRunner), test.VirtualPath, test.PhysicalPath, true) as TestRunner;
 						if (runner == null) {
 							Success = false;
@@ -221,6 +224,47 @@ namespace StandAloneRunnerSupport
 
 				domain.SetData (name, data [i + 1]);
 			}
+		}
+
+		void CopyAssemblies(string path) {
+			string binDir = Path.Combine(path, "bin");
+			
+			EnsureDirectoryExists(binDir);
+			
+			string[] files = Directory.GetFiles(binDir);
+			
+			foreach(string file in files) {
+				File.Delete(file);
+			}
+			
+			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ())
+				CopyAssembly (ass, binDir);
+		}
+
+		private void CopyAssembly (Assembly ass, string dir)
+		{
+			if (ass.GlobalAssemblyCache || ass.IsDynamic || ass.FullName.StartsWith ("mscorlib"))
+				return;
+			string oldfn = ass.Location;
+			if (oldfn.EndsWith (".exe"))
+				return;
+			string newfn = Path.Combine (dir, Path.GetFileName (oldfn));
+			if (File.Exists (newfn))
+				return;
+			File.Copy (oldfn, newfn);
+			if (File.Exists (oldfn + ".mdb"))
+				File.Copy (oldfn + ".mdb", newfn + ".mdb");
+			if (File.Exists (oldfn + ".pdb"))
+				File.Copy (oldfn + ".pdb", newfn + ".pdb");
+		}
+
+		private void EnsureDirectoryExists (string directory)
+		{
+			if (directory == string.Empty)
+				return;
+			if (Directory.Exists (directory))
+				return;
+			Directory.CreateDirectory (directory);
 		}
 		
 		string[] ExtractFormAndHiddenControls (Response response)

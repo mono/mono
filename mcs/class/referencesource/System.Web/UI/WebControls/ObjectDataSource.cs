@@ -30,8 +30,8 @@ namespace System.Web.UI.WebControls {
     ParseChildren(true),
     PersistChildren(false),
     ToolboxBitmap(typeof(ObjectDataSource)),
-    WebSysDescription(SR.ObjectDataSource_Description),
-    WebSysDisplayName(SR.ObjectDataSource_DisplayName)
+    WebSysDescription(System.Web.SR.ObjectDataSource_Description),
+    WebSysDisplayName(System.Web.SR.ObjectDataSource_DisplayName)
     ]
     public class ObjectDataSource : DataSourceControl {
 
@@ -81,7 +81,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(DataSourceCache.Infinite),
         TypeConverterAttribute(typeof(DataSourceCacheDurationConverter)),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_Duration),
+        WebSysDescription(System.Web.SR.DataSourceCache_Duration),
         ]
         public virtual int CacheDuration {
             get {
@@ -99,7 +99,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(DataSourceCacheExpiry.Absolute),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_ExpirationPolicy),
+        WebSysDescription(System.Web.SR.DataSourceCache_ExpirationPolicy),
         ]
         public virtual DataSourceCacheExpiry CacheExpirationPolicy {
             get {
@@ -118,7 +118,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_KeyDependency),
+        WebSysDescription(System.Web.SR.DataSourceCache_KeyDependency),
         ]
         public virtual string CacheKeyDependency {
             get {
@@ -135,7 +135,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(ConflictOptions.OverwriteChanges),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_ConflictDetection),
+        WebSysDescription(System.Web.SR.ObjectDataSource_ConflictDetection),
         ]
         public ConflictOptions ConflictDetection {
             get {
@@ -153,7 +153,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_ConvertNullToDBNull),
+        WebSysDescription(System.Web.SR.ObjectDataSource_ConvertNullToDBNull),
         ]
         public bool ConvertNullToDBNull {
             get {
@@ -173,7 +173,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_DataObjectTypeName),
+        WebSysDescription(System.Web.SR.ObjectDataSource_DataObjectTypeName),
         ]
         public string DataObjectTypeName {
             get {
@@ -191,7 +191,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_DeleteMethod),
+        WebSysDescription(System.Web.SR.ObjectDataSource_DeleteMethod),
         ]
         public string DeleteMethod {
             get {
@@ -212,7 +212,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_DeleteParameters),
+        WebSysDescription(System.Web.SR.ObjectDataSource_DeleteParameters),
         ]
         public ParameterCollection DeleteParameters {
             get {
@@ -227,7 +227,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Cache"),
-        WebSysDescription(SR.DataSourceCache_Enabled),
+        WebSysDescription(System.Web.SR.DataSourceCache_Enabled),
         ]
         public virtual bool EnableCaching {
             get {
@@ -247,7 +247,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Paging"),
-        WebSysDescription(SR.ObjectDataSource_EnablePaging),
+        WebSysDescription(System.Web.SR.ObjectDataSource_EnablePaging),
         ]
         public bool EnablePaging {
             get {
@@ -265,7 +265,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_FilterExpression),
+        WebSysDescription(System.Web.SR.ObjectDataSource_FilterExpression),
         ]
         public string FilterExpression {
             get {
@@ -286,7 +286,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_FilterParameters),
+        WebSysDescription(System.Web.SR.ObjectDataSource_FilterParameters),
         ]
         public ParameterCollection FilterParameters {
             get {
@@ -301,7 +301,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_InsertMethod),
+        WebSysDescription(System.Web.SR.ObjectDataSource_InsertMethod),
         ]
         public string InsertMethod {
             get {
@@ -322,7 +322,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_InsertParameters),
+        WebSysDescription(System.Web.SR.ObjectDataSource_InsertParameters),
         ]
         public ParameterCollection InsertParameters {
             get {
@@ -337,7 +337,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue("maximumRows"),
         WebCategory("Paging"),
-        WebSysDescription(SR.ObjectDataSource_MaximumRowsParameterName),
+        WebSysDescription(System.Web.SR.ObjectDataSource_MaximumRowsParameterName),
         ]
         public string MaximumRowsParameterName {
             get {
@@ -354,7 +354,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue("{0}"),
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_OldValuesParameterFormatString),
+        WebSysDescription(System.Web.SR.DataSource_OldValuesParameterFormatString),
         ]
         public string OldValuesParameterFormatString {
             get {
@@ -371,7 +371,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Paging"),
-        WebSysDescription(SR.ObjectDataSource_SelectCountMethod),
+        WebSysDescription(System.Web.SR.ObjectDataSource_SelectCountMethod),
         ]
         public string SelectCountMethod {
             get {
@@ -389,7 +389,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_SelectMethod),
+        WebSysDescription(System.Web.SR.ObjectDataSource_SelectMethod),
         ]
         public string SelectMethod {
             get {
@@ -410,7 +410,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_SelectParameters),
+        WebSysDescription(System.Web.SR.ObjectDataSource_SelectParameters),
         ]
         public ParameterCollection SelectParameters {
             get {
@@ -427,7 +427,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_SortParameterName),
+        WebSysDescription(System.Web.SR.ObjectDataSource_SortParameterName),
         ]
         public string SortParameterName {
             get {
@@ -445,7 +445,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Cache"),
-        WebSysDescription(SR.SqlDataSourceCache_SqlCacheDependency),
+        WebSysDescription(System.Web.SR.SqlDataSourceCache_SqlCacheDependency),
         ]
         public virtual string SqlCacheDependency {
             get {
@@ -464,7 +464,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue("startRowIndex"),
         WebCategory("Paging"),
-        WebSysDescription(SR.ObjectDataSource_StartRowIndexParameterName),
+        WebSysDescription(System.Web.SR.ObjectDataSource_StartRowIndexParameterName),
         ]
         public string StartRowIndexParameterName {
             get {
@@ -482,7 +482,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_TypeName),
+        WebSysDescription(System.Web.SR.ObjectDataSource_TypeName),
         ]
         public string TypeName {
             get {
@@ -500,7 +500,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_UpdateMethod),
+        WebSysDescription(System.Web.SR.ObjectDataSource_UpdateMethod),
         ]
         public string UpdateMethod {
             get {
@@ -521,7 +521,7 @@ namespace System.Web.UI.WebControls {
         MergableProperty(false),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_UpdateParameters),
+        WebSysDescription(System.Web.SR.ObjectDataSource_UpdateParameters),
         ]
         public ParameterCollection UpdateParameters {
             get {
@@ -537,7 +537,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(ParsingCulture.Invariant),
         WebCategory("Behavior"),
-        WebSysDescription(SR.ObjectDataSource_ParsingCulture)
+        WebSysDescription(System.Web.SR.ObjectDataSource_ParsingCulture)
         ]
         public ParsingCulture ParsingCulture {
             get {
@@ -557,7 +557,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Deleted),
+        WebSysDescription(System.Web.SR.DataSource_Deleted),
         ]
         public event ObjectDataSourceStatusEventHandler Deleted {
             add {
@@ -576,7 +576,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Deleting),
+        WebSysDescription(System.Web.SR.DataSource_Deleting),
         ]
         public event ObjectDataSourceMethodEventHandler Deleting {
             add {
@@ -596,7 +596,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Filtering),
+        WebSysDescription(System.Web.SR.DataSource_Filtering),
         ]
         public event ObjectDataSourceFilteringEventHandler Filtering {
             add {
@@ -615,7 +615,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Inserted),
+        WebSysDescription(System.Web.SR.DataSource_Inserted),
         ]
         public event ObjectDataSourceStatusEventHandler Inserted {
             add {
@@ -634,7 +634,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Inserting),
+        WebSysDescription(System.Web.SR.DataSource_Inserting),
         ]
         public event ObjectDataSourceMethodEventHandler Inserting {
             add {
@@ -654,7 +654,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_ObjectCreated),
+        WebSysDescription(System.Web.SR.ObjectDataSource_ObjectCreated),
         ]
         public event ObjectDataSourceObjectEventHandler ObjectCreated {
             add {
@@ -675,7 +675,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_ObjectCreating),
+        WebSysDescription(System.Web.SR.ObjectDataSource_ObjectCreating),
         ]
         public event ObjectDataSourceObjectEventHandler ObjectCreating {
             add {
@@ -697,7 +697,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_ObjectDisposing),
+        WebSysDescription(System.Web.SR.ObjectDataSource_ObjectDisposing),
         ]
         public event ObjectDataSourceDisposingEventHandler ObjectDisposing {
             add {
@@ -716,7 +716,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_Selected),
+        WebSysDescription(System.Web.SR.ObjectDataSource_Selected),
         ]
         public event ObjectDataSourceStatusEventHandler Selected {
             add {
@@ -735,7 +735,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.ObjectDataSource_Selecting),
+        WebSysDescription(System.Web.SR.ObjectDataSource_Selecting),
         ]
         public event ObjectDataSourceSelectingEventHandler Selecting {
             add {
@@ -754,7 +754,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Updated),
+        WebSysDescription(System.Web.SR.DataSource_Updated),
         ]
         public event ObjectDataSourceStatusEventHandler Updated {
             add {
@@ -773,7 +773,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Data"),
-        WebSysDescription(SR.DataSource_Updating),
+        WebSysDescription(System.Web.SR.DataSource_Updating),
         ]
         public event ObjectDataSourceMethodEventHandler Updating {
             add {
@@ -880,7 +880,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected override DataSourceView GetView(string viewName) {
             if (viewName == null || (viewName.Length != 0 && !String.Equals(viewName, DefaultViewName, StringComparison.OrdinalIgnoreCase))) {
-                throw new ArgumentException(SR.GetString(SR.DataSource_InvalidViewName, ID, DefaultViewName), "viewName");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.DataSource_InvalidViewName, ID, DefaultViewName), "viewName");
             }
 
             return GetView();

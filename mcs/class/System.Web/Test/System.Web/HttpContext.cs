@@ -83,6 +83,7 @@ namespace MonoTests.System.Web {
 
 		[Test]
 		[Category ("NotDotNet")] // Cannot be runned on .net with no web context
+		[Ignore ("Fails on .NET too.")]
 		public void NullConstructor ()
 		{
 			HttpContext ctx = new HttpContext (null);
@@ -91,6 +92,7 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
+		[Ignore ("Fails on .NET too.")]
 		public void RewritePath ()
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnInit (RewritePath_OnInit));

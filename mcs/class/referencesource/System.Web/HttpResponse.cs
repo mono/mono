@@ -27,6 +27,7 @@ namespace System.Web {
     using System.Security.Permissions;
     using System.Web.Management;
     using System.Diagnostics.CodeAnalysis;
+    
 
 
     /// <devdoc>
@@ -212,7 +213,7 @@ namespace System.Web {
             if (_customHeaders == null)
                 _customHeaders = new ArrayList();
             _customHeaders.Add(h);
-            if (_cachePolicy != null && StringUtil.EqualsIgnoreCase("Set-Cookie", h.Name)) {
+            if (_cachePolicy != null && System.Web.Util.StringUtil.EqualsIgnoreCase("Set-Cookie", h.Name)) {
                 _cachePolicy.SetHasSetCookieHeader();
             }
         }
@@ -279,7 +280,16 @@ namespace System.Web {
                 {
                     cookie = _cookies[c];
                     if (cookie.Added) {
-                        if (!cookie.IsInResponseHeader) {
+                        bool setHeader = true;
+                        if (AppSettings.AvoidDuplicatedSetCookie) {
+                            if(!cookie.IsInResponseHeader) { 
+                                cookie.IsInResponseHeader = true;
+                            }
+                            else {
+                                setHeader = false;
+                            }
+                        }
+                        if(setHeader) {
                             // if a cookie was added, we generate a Set-Cookie header for it
                             cookieHeader = cookie.GetSetCookieHeader(_context);
                             headers.SetHeader(cookieHeader.Name, cookieHeader.Value, false);
@@ -314,6 +324,9 @@ namespace System.Web {
                     cookie.IsInResponseHeader = true;
                     cookie.Added = false;
                     cookie.Changed = false;
+                    if(AppSettings.AvoidDuplicatedSetCookie) {
+                        cookie.IsInResponseHeader = true;
+                    }
                 }
 
                 _cookies.Changed = false;
@@ -520,7 +533,7 @@ namespace System.Web {
             // headers encoding
 
             // unicode messes up the response badly
-            Debug.Assert(!this.HeaderEncoding.Equals(Encoding.Unicode));
+            System.Web.Util.Debug.Assert(!this.HeaderEncoding.Equals(Encoding.Unicode));
             _wr.SetHeaderEncoding(this.HeaderEncoding);
 
             // headers
@@ -722,7 +735,7 @@ namespace System.Web {
         // for IIS 6.0 and higher.
         public IAsyncResult BeginFlush(AsyncCallback callback, Object state) {
             if (_completed)
-                throw new HttpException(SR.GetString(SR.Cannot_flush_completed_response));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_flush_completed_response));
 
             // perform async flush if it is supported
             if (_wr != null && _wr.SupportsAsyncFlush && !_context.IsInCancellablePeriod) {
@@ -738,7 +751,7 @@ namespace System.Web {
             catch(Exception e) {
                 ar.SetError(e);
             }
-            ar.Complete(0, HResults.S_OK, IntPtr.Zero, synchronous: true);
+            ar.Complete(0, System.Web.Util.HResults.S_OK, IntPtr.Zero, synchronous: true);
             return ar;
         }
 
@@ -909,10 +922,11 @@ namespace System.Web {
 
         public NameValueCollection Headers {
             get {
+#if (!MONO || !FEATURE_PAL)
                 if ( !(_wr is IIS7WorkerRequest) ) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
-
+#endif
                 if (_headers == null) {
                     _headers = new HttpHeaderCollection(_wr, this, 16);
                 }
@@ -976,7 +990,7 @@ namespace System.Web {
                 return;
             }
             if (_cacheDependencyForResponse != null) {
-                throw new InvalidOperationException(SR.GetString(SR.Invalid_operation_cache_dependency));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Invalid_operation_cache_dependency));
             }
             if (_userAddedDependencies == null) {
                 // copy array argument contents so they can't be changed beneath us
@@ -1003,8 +1017,8 @@ namespace System.Web {
         public static void RemoveOutputCacheItem(string path, string providerName) {
             if (path == null)
                 throw new ArgumentNullException("path");
-            if (StringUtil.StringStartsWith(path, "\\\\") || path.IndexOf(':') >= 0 || !UrlPath.IsRooted(path))
-                throw new ArgumentException(SR.GetString(SR.Invalid_path_for_remove, path));
+            if (System.Web.Util.StringUtil.StringStartsWith(path, "\\\\") || path.IndexOf(':') >= 0 || !System.Web.Util.UrlPath.IsRooted(path))
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_path_for_remove, path));
 
             string key = OutputCacheModule.CreateOutputCachedItemKey(
                     path, HttpVerb.GET, null, null);
@@ -1076,7 +1090,7 @@ namespace System.Web {
             bool hasSubstBlocks = false;
 
             if (!IsBuffered())
-                throw new HttpException(SR.GetString(SR.Cannot_get_snapshot_if_not_buffered));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_get_snapshot_if_not_buffered));
 
             IIS7WorkerRequest iis7WorkerRequest = _wr as IIS7WorkerRequest;
 
@@ -1110,10 +1124,10 @@ namespace System.Web {
         // Send saved response snapshot as the entire response
         internal void UseSnapshot(HttpRawResponse rawResponse, bool sendBody) {
             if (_headersWritten)
-                throw new HttpException(SR.GetString(SR.Cannot_use_snapshot_after_headers_sent));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_use_snapshot_after_headers_sent));
 
             if (_httpWriter == null)
-                throw new HttpException(SR.GetString(SR.Cannot_use_snapshot_for_TextWriter));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_use_snapshot_for_TextWriter));
 
             ClearAll();
 
@@ -1138,7 +1152,7 @@ namespace System.Web {
         // set the response content bufffers
         internal void SetResponseBuffers(ArrayList buffers) {
             if (_httpWriter == null) {
-                throw new HttpException(SR.GetString(SR.Cannot_use_snapshot_for_TextWriter));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_use_snapshot_for_TextWriter));
             }
 
             _httpWriter.UseSnapshot(buffers);
@@ -1184,12 +1198,12 @@ namespace System.Web {
                     // Try to get an error formatter
                     errorFormatter = GetErrorFormatter(e);
 #if DBG
-                    Debug.Trace("internal", "Error stack for " + Request.Path, e);
+                    System.Web.Util.Debug.Trace("internal", "Error stack for " + Request.Path, e);
 #endif
                     if (dontShowSensitiveErrors && !errorFormatter.CanBeShownToAllUsers)
                         errorFormatter = new GenericApplicationErrorFormatter(Request.IsLocal);
 
-                    Debug.Trace("internal", "errorFormatter's type = " +  errorFormatter.GetType());
+                    System.Web.Util.Debug.Trace("internal", "errorFormatter's type = " +  errorFormatter.GetType());
 
                     if (ErrorFormatter.RequiresAdaptiveErrorReporting(Context)) {
                         _writer.Write(errorFormatter.GetAdaptiveErrorMessage(Context, dontShowSensitiveErrors));
@@ -1199,15 +1213,14 @@ namespace System.Web {
 
                         // Write a stack dump in an HTML comment for debugging purposes
                         // Only show it for Asp permission medium or higher (ASURT 126373)
-                        if (!dontShowSensitiveErrors &&
-                            HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Medium)) {
+                        if (!dontShowSensitiveErrors) {                            
                             _writer.Write("<!-- \r\n");
                             WriteExceptionStack(e);
                             _writer.Write("-->");
                         }
                          if (!dontShowSensitiveErrors && !Request.IsLocal ) {
                              _writer.Write("<!-- \r\n");
-                             _writer.Write(SR.GetString(SR.Information_Disclosure_Warning));
+                             _writer.Write(System.Web.SR.GetString(System.Web.SR.Information_Disclosure_Warning));
                              _writer.Write("-->");
                          }
                     }
@@ -1463,7 +1476,7 @@ namespace System.Web {
         }
 
         internal void SyncStatusIntegrated() {
-            Debug.Assert(_wr is IIS7WorkerRequest, "_wr is IIS7WorkerRequest");
+            System.Web.Util.Debug.Assert(_wr is IIS7WorkerRequest, "_wr is IIS7WorkerRequest");
              if (!_headersWritten && _statusSet) {
                  // For integrated pipeline, synchronize the status immediately so that the FREB log
                  // correctly indicates the module and notification that changed the status.
@@ -1483,7 +1496,7 @@ namespace System.Web {
 
             set {
                 if (_headersWritten)
-                    throw new HttpException(SR.GetString(SR.Cannot_set_status_after_headers_sent));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_status_after_headers_sent));
 
                 if (_statusCode != value) {
                     _statusCode = value;
@@ -1501,18 +1514,18 @@ namespace System.Web {
         public int SubStatusCode {
             get {
                 if ( !(_wr is IIS7WorkerRequest) ) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
 
                 return _subStatusCode;
             }
             set {
                 if ( !(_wr is IIS7WorkerRequest) ) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
 
                 if (_headersWritten) {
-                    throw new HttpException(SR.GetString(SR.Cannot_set_status_after_headers_sent));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_status_after_headers_sent));
                 }
 
                 _subStatusCode = value;
@@ -1545,7 +1558,7 @@ namespace System.Web {
 
             set {
                 if (_headersWritten)
-                    throw new HttpException(SR.GetString(SR.Cannot_set_status_after_headers_sent));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_status_after_headers_sent));
 
                 if (value != null && value.Length > 512)  // ASURT 124743
                     throw new ArgumentOutOfRangeException("value");
@@ -1656,7 +1669,7 @@ namespace System.Web {
                     if (_contentType == value)
                         return;
 
-                    throw new HttpException(SR.GetString(SR.Cannot_set_content_type_after_headers_sent));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_content_type_after_headers_sent));
                 }
 
                 _contentTypeSetByManagedCaller = true;
@@ -1676,7 +1689,7 @@ namespace System.Web {
 
             set {
                 if (_headersWritten)
-                    throw new HttpException(SR.GetString(SR.Cannot_set_content_type_after_headers_sent));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_content_type_after_headers_sent));
 
                 if (value != null)
                     _charSet = value;
@@ -1740,12 +1753,12 @@ namespace System.Web {
                     throw new ArgumentNullException("value");
 
                 if (value.Equals(Encoding.Unicode)) {
-                    throw new HttpException(SR.GetString(SR.Invalid_header_encoding, value.WebName));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_header_encoding, value.WebName));
                 }
 
                 if (_headerEncoding == null || !_headerEncoding.Equals(value)) {
                     if (_headersWritten)
-                        throw new HttpException(SR.GetString(SR.Cannot_set_header_encoding_after_headers_sent));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_header_encoding_after_headers_sent));
 
                     _headerEncoding = value;
                 }
@@ -1860,7 +1873,7 @@ namespace System.Web {
                     return cancellationToken;
                 }
                 else {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_75_Integrated));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_75_Integrated));
                 }
             }
         }
@@ -1882,7 +1895,7 @@ namespace System.Web {
             get { return _redirectLocation; }
             set {
                 if (_headersWritten)
-                    throw new HttpException(SR.GetString(SR.Cannot_append_header_after_headers_sent));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_append_header_after_headers_sent));
 
                 _redirectLocation = value;
                 _redirectLocationSet = true;
@@ -1921,7 +1934,7 @@ namespace System.Web {
         public Stream OutputStream {
             get {
                 if (!UsingHttpWriter)
-                    throw new HttpException(SR.GetString(SR.OutputStream_NotAvail));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.OutputStream_NotAvail));
 
                 return _httpWriter.OutputStream;
             }
@@ -1959,7 +1972,7 @@ namespace System.Web {
                     }
                 }
                 else
-                    throw new HttpException(SR.GetString(SR.Filtering_not_allowed));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Filtering_not_allowed));
             }
 
         }
@@ -1996,7 +2009,7 @@ namespace System.Web {
             bool isCacheHeader = false;
 
             if (_headersWritten)
-                throw new HttpException(SR.GetString(SR.Cannot_append_header_after_headers_sent));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_append_header_after_headers_sent));
 
             // some headers are stored separately or require special action
             int knownHeaderIndex = HttpWorkerRequest.GetKnownResponseHeaderIndex(name);
@@ -2066,7 +2079,7 @@ namespace System.Web {
         /// </devdoc>
         public void AppendCookie(HttpCookie cookie) {
             if (_headersWritten)
-                throw new HttpException(SR.GetString(SR.Cannot_append_cookie_after_headers_sent));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_append_cookie_after_headers_sent));
 
             Cookies.AddCookie(cookie, true);
             OnCookieAdd(cookie);
@@ -2078,7 +2091,7 @@ namespace System.Web {
         /// </devdoc>
         public void SetCookie(HttpCookie cookie) {
             if (_headersWritten)
-                throw new HttpException(SR.GetString(SR.Cannot_append_cookie_after_headers_sent));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_append_cookie_after_headers_sent));
 
             Cookies.AddCookie(cookie, false);
             OnCookieCollectionChange();
@@ -2086,7 +2099,7 @@ namespace System.Web {
 
         internal void BeforeCookieCollectionChange() {
             if (_headersWritten)
-                throw new HttpException(SR.GetString(SR.Cannot_modify_cookies_after_headers_sent));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_modify_cookies_after_headers_sent));
         }
 
         internal void OnCookieAdd(HttpCookie cookie) {
@@ -2103,7 +2116,7 @@ namespace System.Web {
         //    Clears all headers from the buffer stream.
         public void ClearHeaders() {
             if (_headersWritten)
-                throw new HttpException(SR.GetString(SR.Cannot_clear_headers_after_headers_sent));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_clear_headers_after_headers_sent));
 
             StatusCode = 200;
             _subStatusCode = 0;
@@ -2211,7 +2224,7 @@ namespace System.Web {
         /// </devdoc>
         public void Flush() {
             if (_completed)
-                throw new HttpException(SR.GetString(SR.Cannot_flush_completed_response));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_flush_completed_response));
 
             Flush(false);
         }
@@ -2243,11 +2256,11 @@ namespace System.Web {
             }
 
             if (!(_wr is IIS7WorkerRequest)) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
 
             if (HeadersWritten) {
-                throw new HttpException(SR.GetString(SR.Cannot_call_method_after_headers_sent_generic));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_call_method_after_headers_sent_generic));
             }
 
             return _onSendingHeadersSubscriptionQueue.Enqueue(callback);
@@ -2261,8 +2274,7 @@ namespace System.Web {
 
         /// <devdoc>
         ///    <para>Adds custom log information to the IIS log file.</para>
-        /// </devdoc>
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.Medium)]
+        /// </devdoc>        
         public void AppendToLog(String param) {
             // only makes sense for IIS
             if (_wr is System.Web.Hosting.ISAPIWorkerRequest)
@@ -2314,7 +2326,7 @@ namespace System.Web {
             }
 
             if (String.IsNullOrEmpty(destinationUrl)) {
-                throw new InvalidOperationException(SR.GetString(SR.No_Route_Found_For_Redirect));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.No_Route_Found_For_Redirect));
             }
 
             Redirect(destinationUrl, false /* endResponse */, permanent);
@@ -2367,14 +2379,14 @@ namespace System.Web {
                 throw new ArgumentNullException("url");
 
             if (url.IndexOf('\n') >= 0)
-                throw new ArgumentException(SR.GetString(SR.Cannot_redirect_to_newline));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cannot_redirect_to_newline));
 
             if (_headersWritten)
-                throw new HttpException(SR.GetString(SR.Cannot_redirect_after_headers_sent));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_redirect_after_headers_sent));
 
             Page page = _context.Handler as Page;
             if ((page != null) && page.IsCallback) {
-                throw new ApplicationException(SR.GetString(SR.Redirect_not_allowed_in_callback));
+                throw new ApplicationException(System.Web.SR.GetString(System.Web.SR.Redirect_not_allowed_in_callback));
             }
 
             url = ApplyRedirectQueryStringIfRequired(url);
@@ -2424,7 +2436,7 @@ namespace System.Web {
             _isRequestBeingRedirected = true;
 
 #if DBG
-            Debug.Trace("ClientUrl", "*** Redirect (" + originalUrl + ") --> " + RedirectLocation + " ***");
+            System.Web.Util.Debug.Trace("ClientUrl", "*** Redirect (" + originalUrl + ") --> " + RedirectLocation + " ***");
 #endif
 
             var redirectingHandler = Redirecting;
@@ -2543,7 +2555,7 @@ namespace System.Web {
         internal IAsyncResult BeginExecuteUrlForEntireResponse(
                                     String pathOverride, NameValueCollection requestHeaders,
                                     AsyncCallback cb, Object state) {
-            Debug.Assert(CanExecuteUrlForEntireResponse);
+            System.Web.Util.Debug.Assert(CanExecuteUrlForEntireResponse);
 
             // prepare user information
             String userName, userAuthType;
@@ -2588,7 +2600,7 @@ namespace System.Web {
                 entity = _context.Request.EntityBody;
             }
 
-            Debug.Trace("ExecuteUrl", "HttpResponse.BeginExecuteUrlForEntireResponse:" +
+            System.Web.Util.Debug.Trace("ExecuteUrl", "HttpResponse.BeginExecuteUrlForEntireResponse:" +
                 " path=" + path + " headers=" + headers +
                 " userName=" + userName + " authType=" + userAuthType);
 
@@ -2615,7 +2627,7 @@ namespace System.Web {
         }
 
         internal void EndExecuteUrlForEntireResponse(IAsyncResult result) {
-            Debug.Trace("ExecuteUrl", "HttpResponse.EndExecuteUrlForEntireResponse");
+            System.Web.Util.Debug.Trace("ExecuteUrl", "HttpResponse.EndExecuteUrlForEntireResponse");
             _wr.EndExecuteUrl(result);
         }
 
@@ -2654,7 +2666,7 @@ namespace System.Web {
         public void WriteSubstitution(HttpResponseSubstitutionCallback callback) {
             // cannot be instance method on a control
             if (callback.Target != null && callback.Target is Control) {
-                throw new ArgumentException(SR.GetString(SR.Invalid_substitution_callback), "callback");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_substitution_callback), "callback");
             }
 
             if (UsingHttpWriter) {
@@ -2693,7 +2705,7 @@ namespace System.Web {
 
         // support for VirtualPathProvider
         internal void WriteVirtualFile(VirtualFile vf) {
-            Debug.Trace("WriteVirtualFile", vf.Name);
+            System.Web.Util.Debug.Trace("WriteVirtualFile", vf.Name);
 
             using (Stream s = vf.Open()) {
                 if (UsingHttpWriter) {
@@ -2716,7 +2728,7 @@ namespace System.Web {
         // Helper method to get absolute physical filename from the argument to WriteFile
         private String GetNormalizedFilename(String fn) {
             // If it's not a physical path, call MapPath on it
-            if (!UrlPath.IsAbsolutePhysicalPath(fn)) {
+            if (!System.Web.Util.UrlPath.IsAbsolutePhysicalPath(fn)) {
                 if (Request != null)
                     fn = Request.MapPath(fn); // relative to current request
                 else
@@ -2796,9 +2808,9 @@ namespace System.Web {
                 throw new ArgumentNullException("filename");
             }
             if (offset < 0)
-                throw new ArgumentException(SR.GetString(SR.Invalid_range), "offset");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_range), "offset");
             if (length < -1)
-                throw new ArgumentException(SR.GetString(SR.Invalid_range), "length");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_range), "length");
 
             filename = GetNormalizedFilename(filename);
 
@@ -2810,10 +2822,10 @@ namespace System.Web {
                     length =  size - offset;
                 }
                 if (size < offset) {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_range), "offset");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_range), "offset");
                 }
                 else if ((size - offset) < length) {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_range), "length");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_range), "length");
                 }
                 if (!UsingHttpWriter) {
                     WriteStreamAsText(f, offset, length);
@@ -2842,7 +2854,7 @@ namespace System.Web {
                     length = fileSize - offset;
 
                 if (offset < 0 || length > fileSize - offset)
-                    throw new HttpException(SR.GetString(SR.Invalid_range));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_range));
             }
             finally {
                 if (f != null)
@@ -2920,7 +2932,7 @@ namespace System.Web {
                         size = fileSize - offset;
 
                     if (offset < 0 || size > fileSize - offset)
-                        throw new HttpException(SR.GetString(SR.Invalid_range));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_range));
 
                     if (offset > 0)
                         f.Seek(offset, SeekOrigin.Begin);
@@ -2987,15 +2999,15 @@ namespace System.Web {
             // "~/path"  - app relative
             // "path"    - request relative
             // "../path" - reduced 
-            if (string.IsNullOrEmpty(path) || !UrlPath.IsValidVirtualPathWithoutProtocol(path)) {
-                throw new ArgumentException(SR.GetString(SR.Invalid_path_for_push_promise, path));
+            if (string.IsNullOrEmpty(path) || !System.Web.Util.UrlPath.IsValidVirtualPathWithoutProtocol(path)) {
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_path_for_push_promise, path));
             }
 
             VirtualPath virtualPath = Request.FilePathObject.Combine(VirtualPath.Create(path));
 
             try {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
 
                 // Do push promise
@@ -3035,7 +3047,7 @@ namespace System.Web {
                     descr = value.Substring(i+1);
                 }
                 catch {
-                    throw new HttpException(SR.GetString(SR.Invalid_status_string));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_status_string));
                 }
 
                 this.StatusCode = code;
@@ -3171,20 +3183,20 @@ namespace System.Web {
                     _cacheControl = null;
                     Cache.SetCacheability(HttpCacheability.NoCache);
                 }
-                else if (StringUtil.EqualsIgnoreCase(value, "private")) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(value, "private")) {
                     _cacheControl = value;
                     Cache.SetCacheability(HttpCacheability.Private);
                 }
-                else if (StringUtil.EqualsIgnoreCase(value, "public")) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(value, "public")) {
                     _cacheControl = value;
                     Cache.SetCacheability(HttpCacheability.Public);
                 }
-                else if (StringUtil.EqualsIgnoreCase(value, "no-cache")) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(value, "no-cache")) {
                     _cacheControl = value;
                     Cache.SetCacheability(HttpCacheability.NoCache);
                 }
                 else {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_value_for_CacheControl, value));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_value_for_CacheControl, value));
                 }
             }
         }
@@ -3195,12 +3207,12 @@ namespace System.Web {
                 appPathModifier[0] == '/' ||
                 appPathModifier[appPathModifier.Length - 1] == '/')) {
 
-                throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "appPathModifier"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidArgumentValue, "appPathModifier"));
             }
 
             _appPathModifier = appPathModifier;
 
-            Debug.Trace("ClientUrl", "*** SetAppPathModifier (" + appPathModifier + ") ***");
+            System.Web.Util.Debug.Trace("ClientUrl", "*** SetAppPathModifier (" + appPathModifier + ") ***");
         }
 
 
@@ -3212,23 +3224,23 @@ namespace System.Web {
             if (virtualPath == null)
                 return null;
 
-            if (UrlPath.IsRelativeUrl(virtualPath)) {
+            if (System.Web.Util.UrlPath.IsRelativeUrl(virtualPath)) {
                 // DevDiv 173208: RewritePath returns an HTTP 500 error code when requested with certain user agents
                 // We should use ClientBaseDir instead of FilePathObject.
-                virtualPath = UrlPath.Combine(Request.ClientBaseDir.VirtualPathString, virtualPath);
+                virtualPath = System.Web.Util.UrlPath.Combine(Request.ClientBaseDir.VirtualPathString, virtualPath);
             }
             else {
                 // ignore paths with http://server/... or //
-                if (!UrlPath.IsRooted(virtualPath) || virtualPath.StartsWith("//", StringComparison.Ordinal)) {
+                if (!System.Web.Util.UrlPath.IsRooted(virtualPath) || virtualPath.StartsWith("//", StringComparison.Ordinal)) {
                     return virtualPath;
                 }
 
-                virtualPath = UrlPath.Reduce(virtualPath);
+                virtualPath = System.Web.Util.UrlPath.Reduce(virtualPath);
             }
 
             if (_appPathModifier == null || virtualPath.IndexOf(_appPathModifier, StringComparison.Ordinal) >= 0) {
 #if DBG
-                Debug.Trace("ClientUrl", "*** ApplyAppPathModifier (" + originalUrl + ") --> " + virtualPath + " ***");
+                System.Web.Util.Debug.Trace("ClientUrl", "*** ApplyAppPathModifier (" + originalUrl + ") --> " + virtualPath + " ***");
 #endif
                 return virtualPath;
             }
@@ -3246,7 +3258,7 @@ namespace System.Web {
                 return virtualPath;
             }
 
-            if (!StringUtil.EqualsIgnoreCase(virtualPath, 0, appPath, 0, compareLength)) {
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase(virtualPath, 0, appPath, 0, compareLength)) {
                 return virtualPath;
             }
 
@@ -3254,7 +3266,7 @@ namespace System.Web {
                 virtualPath += "/";
             }
 
-            Debug.Assert(virtualPath.Length >= appPath.Length);
+            System.Web.Util.Debug.Assert(virtualPath.Length >= appPath.Length);
             if (virtualPath.Length == appPath.Length) {
                 virtualPath = virtualPath.Substring(0, appPath.Length) + _appPathModifier + "/";
             }
@@ -3266,7 +3278,7 @@ namespace System.Web {
                     virtualPath.Substring(appPath.Length);
             }
 #if DBG
-            Debug.Trace("ClientUrl", "*** ApplyAppPathModifier (" + originalUrl + ") --> " + virtualPath + " ***");
+            System.Web.Util.Debug.Trace("ClientUrl", "*** ApplyAppPathModifier (" + originalUrl + ") --> " + virtualPath + " ***");
 #endif
 
             return virtualPath;
@@ -3304,10 +3316,10 @@ namespace System.Web {
 
         private String UrlEncodeIDNSafe(String url) {
             // Bug 86594: Should not encode the domain part of the url. For example,
-            // http://Übersite/Überpage.aspx should only encode the 2nd Ü.
+            // http://ï¿½bersite/ï¿½berpage.aspx should only encode the 2nd ï¿½.
             // To accomplish this we must separate the scheme+host+port portion of the url from the path portion,
             // encode the path portion, then reconstruct the url.
-            Debug.Assert(!url.Contains("?"), "Querystring should have been stripped off.");
+            System.Web.Util.Debug.Assert(!url.Contains("?"), "Querystring should have been stripped off.");
 
             string schemeAndAuthority;
             string path;

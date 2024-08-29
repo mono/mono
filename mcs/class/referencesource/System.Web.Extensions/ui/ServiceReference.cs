@@ -23,7 +23,7 @@ namespace System.Web.UI {
         private string _path;
         private bool _inlineScript;
         // needed at design time to remember what control owns this service reference (SM or SMP)
-        internal Control _containingControl;
+        internal Control _containingControl = null;
 
         public ServiceReference() {
         }

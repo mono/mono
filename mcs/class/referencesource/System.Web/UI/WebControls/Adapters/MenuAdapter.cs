@@ -14,6 +14,7 @@ namespace System.Web.UI.WebControls.Adapters {
     using System.Web.UI;
     using System.Web.UI.HtmlControls;
     using System.Web.UI.WebControls;
+    
 
     public class MenuAdapter : WebControlAdapter, IPostBackEventHandler {
         
@@ -191,10 +192,10 @@ namespace System.Web.UI.WebControls.Adapters {
             int position = 0;
             if (_titleItem != null) {
                 if (_titleItem.Depth + 1 >= owner.MaximumDepth) {
-                    throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDepth));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDepth));
                 }
                 if (!_titleItem.IsEnabled) {
-                    throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidNavigation));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidNavigation));
                 }
                 RenderItem(writer, _titleItem, position++);
                 foreach (MenuItem child in _titleItem.ChildItems) {
@@ -204,13 +205,13 @@ namespace System.Web.UI.WebControls.Adapters {
                     PageAdapter.RenderPostBackEvent(writer,
                                                     owner.UniqueID,
                                                     "u",
-                                                    SR.GetString(SR.MenuAdapter_Up),
-                                                    SR.GetString(SR.MenuAdapter_UpOneLevel));
+                                                    System.Web.SR.GetString(System.Web.SR.MenuAdapter_Up),
+                                                    System.Web.SR.GetString(System.Web.SR.MenuAdapter_UpOneLevel));
                 }
                 else {
                     HyperLink link = new HyperLink();
                     link.NavigateUrl = Page.ClientScript.GetPostBackClientHyperlink(owner, "u");
-                    link.Text = SR.GetString(SR.MenuAdapter_UpOneLevel);
+                    link.Text = System.Web.SR.GetString(System.Web.SR.MenuAdapter_UpOneLevel);
                     link.Page = Page;
                     link.RenderControl(writer);
                 }
@@ -293,7 +294,7 @@ namespace System.Web.UI.WebControls.Adapters {
                         item.Text)));
                 }
                 else {
-                    writer.Write(HttpUtility.HtmlEncode(SR.GetString(SR.MenuAdapter_Expand, item.Text)));
+                    writer.Write(HttpUtility.HtmlEncode(System.Web.SR.GetString(System.Web.SR.MenuAdapter_Expand, item.Text)));
                 }
             }
         }
@@ -422,7 +423,7 @@ namespace System.Web.UI.WebControls.Adapters {
                         PageAdapter.RenderBeginHyperlink(writer,
                                                          owner.ResolveClientUrl(navigateUrl),
                                                          true,
-                                                         SR.GetString(SR.Adapter_GoLabel),
+                                                         System.Web.SR.GetString(System.Web.SR.Adapter_GoLabel),
                                                          itemAccessKey != null ?
                                                           itemAccessKey :
                                                           (_currentAccessKey < 10 ?
@@ -468,7 +469,7 @@ namespace System.Web.UI.WebControls.Adapters {
                                                         owner.UniqueID,
                                                         (clickOpensThisNode ? 'o' : 'b') +
                                                             Escape(item.InternalValuePath),
-                                                        SR.GetString(SR.Adapter_OKLabel),
+                                                        System.Web.SR.GetString(System.Web.SR.Adapter_OKLabel),
                                                         item.FormattedText,
                                                         null,
                                                         itemAccessKey != null ?
@@ -601,7 +602,7 @@ namespace System.Web.UI.WebControls.Adapters {
                     for (int i = 0; i < newPath.Length; i++) {
                         if (newPath[i] == TreeView.InternalPathSeparator) {
                             if (++matches >= Control.MaximumDepth) {
-                                throw new InvalidOperationException(SR.GetString(SR.Menu_InvalidDepth));
+                                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Menu_InvalidDepth));
                             }
                         }
                     }

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PropertyDescription_EnableDelete" xml:space="preserve">
+    <value>Specifies whether the Delete operation is enabled.</value>
+  </data>
+  <data name="EntityDataSourceView_EntitySetDoesNotExistOnTheContainer" xml:space="preserve">
+    <value>EntitySet '{0}' that was specified in page markup does not exist on the Container.</value>
+  </data>
+  <data name="PropertyDescription_AutoPage" xml:space="preserve">
+    <value>Specifies whether data is automatically paged.</value>
+  </data>
+  <data name="PropertyDescription_AutoSort" xml:space="preserve">
+    <value>Specifies whether data is automatically sorted.</value>
+  </data>
+  <data name="WebControlParameterProxy_TypeDbTypeMutuallyExclusive" xml:space="preserve">
+    <value>For the EntityDataSource, either Type or DbType (but not both) must be specified for each Parameter.</value>
+  </data>
+  <data name="PropertyDescription_StoreOriginalValuesInViewState" xml:space="preserve">
+    <value>Specifies whether to store original data values in ViewState. This property must be true for Update and Delete operations.</value>
+  </data>
+  <data name="EntityDataSourceView_ColumnHeader" xml:space="preserve">
+    <value>column header</value>
+  </data>
+  <data name="EntityDataSourceView_ObjectContextMustBeSpecified" xml:space="preserve">
+    <value>The ObjectContext must be configured by 1) defining ContextTypeName, 2) defining both ConnectionString and DefaultContainerName, 3) defining ContextType, or 4) supplying it in the OnSelecting event.</value>
+  </data>
+  <data name="PropertyDescription_AutoGenerateWhereClause" xml:space="preserve">
+    <value>Specifies whether to automatically generate the Where clause from the WhereParameters.</value>
+  </data>
+  <data name="EntityDataSourceView_EntitySetMismatchWithQueryResults" xml:space="preserve">
+    <value>Query results contain entities from EntitySet '{0}' but only entities from EntitySet '{1}' were expected. Results from multiple EntitySets are not supported when EntityDataSource.EnableUpdate or EntityDataSource.EnableDelete is set to true.</value>
+  </data>
+  <data name="EntityDataSource_GroupByNotEditable" xml:space="preserve">
+    <value>GroupBy cannot be set if EnableDelete, EnableInsert, or EnableUpdate is enabled.</value>
+  </data>
+  <data name="EntityDataSource_CommandTextNotEditable" xml:space="preserve">
+    <value>CommandText cannot be set if EnableDelete, EnableInsert, or EnableUpdate is enabled.</value>
+  </data>
+  <data name="PropertyDescription_Inserted" xml:space="preserve">
+    <value>Event raised after the Insert operation is completed.</value>
+  </data>
+  <data name="PropertyDescription_Updating" xml:space="preserve">
+    <value>Event raised before the Update operation is executed.</value>
+  </data>
+  <data name="EntityDataSourceUtil_EntityQueryCannotReturnPolymorphicTypes" xml:space="preserve">
+    <value>The defined query has a polymorphic or abstract return type. Define EntityTypeFilter to restrict the query to a single concrete type.</value>
+  </data>
+  <data name="EntityDataSource_DisplayName" xml:space="preserve">
+    <value>Entity</value>
+  </data>
+  <data name="EntityDataSourceUtil_UnableToConvertStringToType" xml:space="preserve">
+    <value>Cannot convert the value of parameter '{0}' to the type '{1}'.</value>
+  </data>
+  <data name="PropertyNotFound" xml:space="preserve">
+    <value>Could not find property '{0}' on type '{1}'.</value>
+  </data>
+  <data name="EntityDataSourceView_InsertDisabledForThisControl" xml:space="preserve">
+    <value>Insert is disabled for this control.</value>
+  </data>
+  <data name="EntityDataSource_AutoGenerateWhereNotAllowedIfWhereDefined" xml:space="preserve">
+    <value>AutoGenerateWhereClause cannot be true if Where is defined.</value>
+  </data>
+  <data name="EntityDataSource_WhereParametersNeedsWhereOrAutoGenerateWhere" xml:space="preserve">
+    <value>WhereParameters cannot be specified unless AutoGenerateWhere==true or Where is specified.</value>
+  </data>
+  <data name="EntityDataSource_CommandTextCantHaveEntityTypeFilter" xml:space="preserve">
+    <value>EntityTypeFilter is not supported with queries that use CommandText.</value>
+  </data>
+  <data name="EntityDataSource_CommandParametersNeedCommandText" xml:space="preserve">
+    <value>CommandParameters cannot be specified unless CommandText is specified.</value>
+  </data>
+  <data name="EntityDataSourceView_UpdateDisabledForThisControl" xml:space="preserve">
+    <value>Update is disabled for this control.</value>
+  </data>
+  <data name="PropertyDescription_QueryCreated" xml:space="preserve">
+    <value>Event raised after the query has been created. Allows the user to extend the query instance.</value>
+  </data>
+  <data name="EntityDataSourceView_FilteredEntityTypeMustBeDerivableFromEntitySet" xml:space="preserve">
+    <value>The EntityTypeFilter type '{0}' is not assignable from the base type specified by the EntitySet '{1}'. The EntityTypeFilter must be a concrete type that derives from the EntitySet type '{1}'.</value>
+  </data>
+  <data name="ComponentNotFromProperCollection" xml:space="preserve">
+    <value>The given component is not a member of the current collection.</value>
+  </data>
+  <data name="PropertyDescription_ContextTypeName" xml:space="preserve">
+    <value>A fully-qualified type name for the ObjectContext.</value>
+  </data>
+  <data name="EntityDataSourceView_NoKeyProperty" xml:space="preserve">
+    <value>No key property values were found during an update or delete operation. Check to ensure that key properties specified as binding expressions are available to the data source.</value>
+  </data>
+  <data name="PropertyDescription_Selected" xml:space="preserve">
+    <value>Event raised after the Select operation is completed.</value>
+  </data>
+  <data name="EntityDataSourceView_QueryCreatedWrongType" xml:space="preserve">
+    <value>An instance of ObjectQuery for unexpected result type '{0}' was assigned to Query in the QueryCreated event. An ObjectQuery for a result type compatible with '{1}' was expected.</value>
+  </data>
+  <data name="EntityDataSourceView_PropertyDoesNotExistOnEntity" xml:space="preserve">
+    <value>A property with name '{0}' does not exist in metadata for entity type '{1}'.</value>
+  </data>
+  <data name="EntityDataSourceView_ContainerNameMustBeSpecified" xml:space="preserve">
+    <value>ContainerName must be specified either by setting DefaultContainerName in the ObjectContext or by setting DefaultContainerName in the page markup.</value>
+  </data>
+  <data name="EntityDataSourceView_UnknownProperty" xml:space="preserve">
+    <value>A property named '{0}' was not found on the entity during an insert, update, or delete operation. Check to ensure that properties specified as binding expressions are available to the data source.</value>
+  </data>
+  <data name="EntityDataSource_SelectNotEditable" xml:space="preserve">
+    <value>Select cannot be set if EnableDelete, EnableInsert, or EnableUpdate is enabled.</value>
+  </data>
+  <data name="PropertyDescription_AutoGenerateOrderByClause" xml:space="preserve">
+    <value>Specifies whether to automatically generate the OrderBy clause from the OrderByParameters.</value>
+  </data>
+  <data name="ValueNotResettable" xml:space="preserve">
+    <value>No properties can be reset for type '{0}'.</value>
+  </data>
+  <data name="EntityDataSourceView_NoParameterlessConstructorForTheContext" xml:space="preserve">
+    <value>No constructor for the strongly-typed ObjectContext takes 0 parameters.</value>
+  </data>
+  <data name="EntityDataSourceView_AutoGenerateOrderByParameters" xml:space="preserve">
+    <value>AutoGenerateOrderBy parameters</value>
+  </data>
+  <data name="EntityDataSourceView_QueryCreatedNotAnObjectQuery" xml:space="preserve">
+    <value>An object of incorrect type '{0}' was assigned to Query in the QueryCreated event. An object of a type compatible with ObjectQuery of '{1}' was expected.</value>
+  </data>
+  <data name="PropertyDescription_Updated" xml:space="preserve">
+    <value>Event raised after the Update operation is completed.</value>
+  </data>
+  <data name="PropertyDescription_Inserting" xml:space="preserve">
+    <value>Event raised before the Insert operation is executed.</value>
+  </data>
+  <data name="EntityDataSourceView_DataConversionError" xml:space="preserve">
+    <value>Error while setting property '{0}': '{1}'.</value>
+  </data>
+  <data name="DisplayNameCollision" xml:space="preserve">
+    <value>Unable to create unique names for all columns. Consider adding a NavigationProperty to the model to disambiguate '{0}'.</value>
+  </data>
+  <data name="PropertyDescription_Selecting" xml:space="preserve">
+    <value>Event raised before the Select operation is executed.</value>
+  </data>
+  <data name="EntityDataSourceView_EmptyPropertyName" xml:space="preserve">
+    <value>An empty property name was found in the SortExpression during ExecuteSelect. The SortExpression must contain a comma separated list of property names on which to sort data source results.</value>
+  </data>
+  <data name="PropertyDescription_GroupBy" xml:space="preserve">
+    <value>The expression passed to the GroupBy query builder method. It requires the Select property to be defined. Query results will be read-only if this value is set.</value>
+  </data>
+  <data name="EntityDataSource_CommandTextOrEntitySetName" xml:space="preserve">
+    <value>Either CommandText or EntitySetName can be set, but not both.</value>
+  </data>
+  <data name="PropertyDescription_ContextDisposing" xml:space="preserve">
+    <value>Event raised before the ObjectContext is disposed.</value>
+  </data>
+  <data name="EntityDataSource_CommandTextOrEntitySetNameRequired" xml:space="preserve">
+    <value>Either CommandText or EntitySetName must be defined.</value>
+  </data>
+  <data name="EntityDataSource_GroupByNeedsSelect" xml:space="preserve">
+    <value>GroupBy cannot be specified unless Select is specified.</value>
+  </data>
+  <data name="EntityDataSourceView_ContainerNameDoesNotExistOnTheContext" xml:space="preserve">
+    <value>ContainerName '{0}' does not exist on the ObjectContext.</value>
+  </data>
+  <data name="EntityDataSourceUtil_UnableToConvertTypeCodeToType" xml:space="preserve">
+    <value>The ParameterCollection returned a Parameter object with a TypeCode of '{0}'. It could not be converted into a Type.</value>
+  </data>
+  <data name="PropertyDescription_EnableFlattening" xml:space="preserve">
+    <value>Specifies whether the entity type is flattened.</value>
+  </data>
+  <data name="PropertyDescription_Include" xml:space="preserve">
+    <value>A comma-separated list of navigation paths to include in the query.</value>
+  </data>
+  <data name="EntityDataSource_OrderByParametersNeedsOrderByOrAutoGenerateOrderBy" xml:space="preserve">
+    <value>OrderByParameters cannot be specified unless AutoGenerateOrderByClause is set to true or OrderBy is specified.</value>
+  </data>
+  <data name="EntityDataSource_Description" xml:space="preserve">
+    <value>Connect to an ADO.NET Entity Framework Model.</value>
+  </data>
+  <data name="DefaultConstructorNotFound" xml:space="preserve">
+    <value>A default constructor was not found for type '{0}'.</value>
+  </data>
+  <data name="EntityDataSourceUtil_InsertUpdateParametersDontMatchPropertyNameOnEntity" xml:space="preserve">
+    <value>The property name '{0}' provided on an InsertParameters, UpdateParameters, or DeleteParameters collection does not match a property on the entity of type '{1}'.</value>
+  </data>
+  <data name="PropertyDescription_EnableUpdate" xml:space="preserve">
+    <value>Specifies whether the Update operation is enabled.</value>
+  </data>
+  <data name="PropertyDescription_Deleting" xml:space="preserve">
+    <value>Event raised before the Delete operation is executed.</value>
+  </data>
+  <data name="PropertyDescription_EnableInsert" xml:space="preserve">
+    <value>Specifies whether the Insert operation is enabled.</value>
+  </data>
+  <data name="EntityDataSource_AutoGenerateOrderByNotAllowedIfOrderByIsDefined" xml:space="preserve">
+    <value>AutoGenerateOrderByClause cannot be true if OrderBy is defined.</value>
+  </data>
+  <data name="PropertyDescription_ContextCreating" xml:space="preserve">
+    <value>Event raised before the ObjectContext is created. Allows the user to specify a custom ObjectContext.</value>
+  </data>
+  <data name="EntityDataSource_SelectParametersNeedSelect" xml:space="preserve">
+    <value>SelectParameters cannot be specified unless Select is specified.</value>
+  </data>
+  <data name="EntityDataSourceQueryBuilder_PagingRequiresOrderBy" xml:space="preserve">
+    <value>For the EntityDataSource, if the query specifies a projection and paging is enabled, a sort expression must be defined. Either set the OrderBy property or set AutoGenerateOrderByClause to true.</value>
+  </data>
+  <data name="SetValueNotSupported" xml:space="preserve">
+    <value>This property descriptor does not support the SetValue method.</value>
+  </data>
+  <data name="EntityDataSourceView_DeleteDisabledForThiscontrol" xml:space="preserve">
+    <value>Delete is disabled for this control.</value>
+  </data>
+  <data name="PropertyDescription_ContextCreated" xml:space="preserve">
+    <value>Event raised after the ObjectContext is created. Provides the user with a reference to the new ObjectContext.</value>
+  </data>
+  <data name="PropertyDescription_Deleted" xml:space="preserve">
+    <value>Event raised after the Delete operation is completed.</value>
+  </data>
+</root>

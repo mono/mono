@@ -3,6 +3,7 @@
     using System.Globalization;
     using System.Runtime.CompilerServices;
     using System.Web.Security;
+    
 
     [TypeForwardedFrom("System.Web.Routing, Version=3.5.0.0, Culture=Neutral, PublicKeyToken=31bf3856ad364e35")]
     public class UrlRoutingModule : IHttpModule {
@@ -68,7 +69,7 @@
                 throw new InvalidOperationException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.UrlRoutingModule_NoRouteHandler)));
+                        System.Web.SR.GetString(System.Web.SR.UrlRoutingModule_NoRouteHandler)));
             }
 
             // This is a special IRouteHandler that tells the routing module to stop processing
@@ -87,7 +88,7 @@
                 throw new InvalidOperationException(
                     String.Format(
                         CultureInfo.CurrentUICulture,
-                        SR.GetString(SR.UrlRoutingModule_NoHttpHandler),
+                        System.Web.SR.GetString(System.Web.SR.UrlRoutingModule_NoHttpHandler),
                         routeHandler.GetType()));
             }
 
@@ -97,7 +98,7 @@
                     return;
                 }
                 else {
-                    throw new HttpException(401, SR.GetString(SR.Assess_Denied_Description3));
+                    throw new HttpException(401, System.Web.SR.GetString(System.Web.SR.Assess_Denied_Description3));
                 }
             }
 

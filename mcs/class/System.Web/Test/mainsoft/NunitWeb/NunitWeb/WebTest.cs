@@ -128,7 +128,8 @@ namespace MonoTests.SystemWeb.Framework
 			try {
 				WebTest newTestInstance = Host.Run (this);
 				CopyFrom (newTestInstance);
-			} finally {
+			} 
+			finally {
 				_unloadHandler.FinishedRequest();
 			}
 			return _response.Body;
@@ -494,7 +495,7 @@ namespace MonoTests.SystemWeb.Framework
 		
 		static void LoadAssemblyRecursive (Assembly ass)
 		{
-			if (ass.GlobalAssemblyCache)
+			if (ass.GlobalAssemblyCache || ass.IsDynamic)
 				return;
 			foreach (AssemblyName ran in ass.GetReferencedAssemblies ()) {
 				bool found = false;
@@ -513,7 +514,7 @@ namespace MonoTests.SystemWeb.Framework
 
 		private static void CopyAssembly (Assembly ass, string dir)
 		{
-			if (ass.GlobalAssemblyCache || ass.FullName.StartsWith ("mscorlib"))
+			if (ass.GlobalAssemblyCache || ass.IsDynamic || ass.FullName.StartsWith ("mscorlib"))
 				return;
 			string oldfn = ass.Location;
 			if (oldfn.EndsWith (".exe"))
@@ -567,7 +568,7 @@ namespace MonoTests.SystemWeb.Framework
 			Type myself = typeof (WebTest);
 			
 			CopyResource (myself, "My.ashx", "My.ashx");
-			CopyResource (myself, "Global.asax", "Global.asax");
+			CopyResource (myself, "Global.asax", "global.asax");
 			CopyResource (myself, "MyPage.aspx", "MyPage.aspx");
 			CopyResource (myself, "MyPage.aspx.cs", "MyPage.aspx.cs");
 			CopyResource (myself, "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");

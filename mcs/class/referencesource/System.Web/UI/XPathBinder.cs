@@ -42,7 +42,7 @@ namespace System.Web.UI {
 
             IXPathNavigable node = container as IXPathNavigable;
             if (node == null) {
-                throw new ArgumentException(SR.GetString(SR.XPathBinder_MustBeIXPathNavigable, container.GetType().FullName));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.XPathBinder_MustBeIXPathNavigable, container.GetType().FullName));
             }
             XPathNavigator navigator = node.CreateNavigator();
 
@@ -106,7 +106,7 @@ namespace System.Web.UI {
 
             IXPathNavigable node = container as IXPathNavigable;
             if (node == null) {
-                throw new ArgumentException(SR.GetString(SR.XPathBinder_MustBeIXPathNavigable, container.GetType().FullName));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.XPathBinder_MustBeIXPathNavigable, container.GetType().FullName));
             }
             XPathNavigator navigator = node.CreateNavigator();
             XPathNodeIterator iterator = navigator.Select(xPath, resolver);
@@ -114,7 +114,7 @@ namespace System.Web.UI {
             while (iterator.MoveNext()) {
                 IHasXmlNode hasXmlNode = iterator.Current as IHasXmlNode;
                 if (hasXmlNode == null) {
-                    throw new InvalidOperationException(SR.GetString(SR.XPathBinder_MustHaveXmlNodes));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.XPathBinder_MustHaveXmlNodes));
                 }
                 results.Add(hasXmlNode.GetNode());
             }

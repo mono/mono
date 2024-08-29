@@ -50,7 +50,7 @@ namespace System.Web.Security.AntiXss {
         /// </summary>
         /// <param name="input">The input string to decompose into scalar values.</param>
         public Utf16StringReader(string input) {
-            Debug.Assert(input != null);
+            System.Web.Util.Debug.Assert(input != null);
 
             _input = input;
             _currentOffset = 0;
@@ -65,8 +65,8 @@ namespace System.Web.Security.AntiXss {
         /// <remarks>The caller must ensure that the inputs are valid surrogate characters. If not,
         /// the output of this routine is undefined.</remarks>
         private static int ConvertToUtf32(char leadingSurrogate, char trailingSurrogate) {
-            Debug.Assert(Char.IsHighSurrogate(leadingSurrogate), "'leadingSurrogate' was not a high surrogate.");
-            Debug.Assert(Char.IsLowSurrogate(trailingSurrogate), "'trailingSurrogate' was not a low surrogate.");
+            System.Web.Util.Debug.Assert(Char.IsHighSurrogate(leadingSurrogate), "'leadingSurrogate' was not a high surrogate.");
+            System.Web.Util.Debug.Assert(Char.IsLowSurrogate(trailingSurrogate), "'trailingSurrogate' was not a low surrogate.");
 
             return (int)((leadingSurrogate - LeadingSurrogateStart) * 0x400 + (trailingSurrogate - TrailingSurrogateStart)) + 0x10000;
         }

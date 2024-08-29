@@ -7,6 +7,7 @@
 namespace System.Web.UI {
     using System;
     using System.Collections;
+    
 
     /// <devdoc>
     /// Builds inner string properties.
@@ -48,7 +49,7 @@ namespace System.Web.UI {
         /// Throws an exception - string properties cannot contain other objects.
         /// </devdoc>
         public override void AppendSubBuilder(ControlBuilder subBuilder) {
-            throw new HttpException(SR.GetString(SR.StringPropertyBuilder_CannotHaveChildObjects, TagName, (ParentBuilder != null ? ParentBuilder.TagName : String.Empty)));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.StringPropertyBuilder_CannotHaveChildObjects, TagName, (ParentBuilder != null ? ParentBuilder.TagName : String.Empty)));
         }
 
         public override object BuildObject() {

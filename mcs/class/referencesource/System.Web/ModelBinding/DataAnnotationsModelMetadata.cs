@@ -3,6 +3,7 @@
     using System.ComponentModel.DataAnnotations;
     using System.Globalization;
     using System.Reflection;
+    
 
     public class DataAnnotationsModelMetadata : ModelMetadata {
         private DisplayColumnAttribute _displayColumnAttribute;
@@ -35,14 +36,14 @@
                 throw new InvalidOperationException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.DataAnnotationsModelMetadataProvider_UnknownProperty),
+                        System.Web.SR.GetString(System.Web.SR.DataAnnotationsModelMetadataProvider_UnknownProperty),
                         modelType.FullName, displayColumnAttribute.DisplayColumn));
             }
             if (displayColumnProperty.GetGetMethod() == null) {
                 throw new InvalidOperationException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.DataAnnotationsModelMetadataProvider_UnreadableProperty),
+                        System.Web.SR.GetString(System.Web.SR.DataAnnotationsModelMetadataProvider_UnreadableProperty),
                         modelType.FullName, displayColumnAttribute.DisplayColumn));
             }
         }

@@ -1525,11 +1525,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest t = new WebTest (PageInvoker.CreateOnInit (LayoutTemplateRender));
 			t.UserData = "RenderSideBar";
 			string result = t.Run ();
-#if DOT_NET
 			string origHtml = "<table id=\"MyWizard_SideBarList\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td style=\"font-weight:bold;\"><a id=\"MyWizard_SideBarList_SideBarButton_0\" href=\"javascript:__doPostBack(&#39;MyWizard$SideBarList$ctl00$SideBarButton&#39;,&#39;&#39;)\">step1</a></td>\r\n\t</tr>\r\n</table><table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\r\n\t</tr>\r\n</table>Step";
-#else
-			string origHtml = "<table id=\"MyWizard_SideBarList\" cellspacing=\"0\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td style=\"font-weight:bold;\"><a id=\"MyWizard_SideBarList_ctl00_SideBarButton_0\" href=\"javascript:__doPostBack(&#39;MyWizard$SideBarList$ctl00$SideBarButton&#39;,&#39;&#39;)\">step1</a></td>\n\t</tr>\n</table><table cellspacing=\"5\" cellpadding=\"5\">\r\n\t<tr>\r\n\t\t<td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepPreviousButton\" value=\"Previous\" id=\"MyWizard_StepNavigationTemplateContainerID_StepPreviousButton\" /></td><td align=\"right\"><input type=\"submit\" name=\"MyWizard$StepNavigationTemplateContainerID$StepNextButton\" value=\"Next\" id=\"MyWizard_StepNavigationTemplateContainerID_StepNextButton\" /></td>\n\t</tr>\n</table>Step";
-#endif
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (result);
 			Console.WriteLine (origHtml);
 			Console.WriteLine ("----------------------------");

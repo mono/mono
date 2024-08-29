@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.TreeNodeStyle_ChildNodesPadding),
+        WebSysDescription(System.Web.SR.TreeNodeStyle_ChildNodesPadding),
         WebCategory("Layout"),
         NotifyParentProperty(true)
         ]
@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.TreeNodeStyle_HorizontalPadding),
+        WebSysDescription(System.Web.SR.TreeNodeStyle_HorizontalPadding),
         WebCategory("Layout"),
         NotifyParentProperty(true)
         ]
@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
         [NotifyParentProperty(true)]
         [UrlProperty()]
         [WebCategory("Appearance")]
-        [WebSysDescription(SR.TreeNodeStyle_ImageUrl)]
+        [WebSysDescription(System.Web.SR.TreeNodeStyle_ImageUrl)]
         public string ImageUrl {
             get {
                 if (IsSet(PROP_IMAGEURL)) {
@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.TreeNodeStyle_NodeSpacing),
+        WebSysDescription(System.Web.SR.TreeNodeStyle_NodeSpacing),
         WebCategory("Layout"),
         NotifyParentProperty(true)
         ]
@@ -142,7 +142,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.TreeNodeStyle_VerticalPadding),
+        WebSysDescription(System.Web.SR.TreeNodeStyle_VerticalPadding),
         WebCategory("Layout"),
         NotifyParentProperty(true)
         ]

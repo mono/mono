@@ -10,6 +10,7 @@ namespace System.Web.UI {
     using System;
     using System.IO;
     using System.Text;
+    
 
 
     /// <devdoc>
@@ -463,9 +464,10 @@ namespace System.Web.UI {
                 else if (ch == 'b') {
                     string text = ConsumeOneToken();
                     byte[] serializedData;
-                    serializedData = Convert.FromBase64String(text);
 
-                    if (!String.IsNullOrEmpty(serializedData)) {
+                    if (!String.IsNullOrEmpty(text)) {
+                        serializedData = Convert.FromBase64String(text);
+
                         System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
                         value = formatter.Deserialize(new MemoryStream(serializedData));
                     }
@@ -815,7 +817,7 @@ namespace System.Web.UI {
                             formatter.Serialize(ms, value);
                         }
                         catch (SerializationException) {
-                            throw new HttpException(SR.GetString(SR.NonSerializableType, value.GetType().FullName));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.NonSerializableType, value.GetType().FullName));
                         }
 
                         output.Write('b');

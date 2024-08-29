@@ -23,6 +23,7 @@ namespace System.Web.Compilation {
     using System.Web.Util;
     using System.Web.UI;
     using System.Xml;
+    
 
     static class BrowserCapabilitiesCompiler {
 
@@ -94,65 +95,58 @@ namespace System.Web.Compilation {
 
         internal static Type GetBrowserCapabilitiesType() {
 
-            //Need to assert here to check directories and files
-            InternalSecurityPermissions.Unrestricted.Assert();
-
             BuildResult result = null;
 
-            try {
-                // Try the cache first, and if it's not there, compile it
-                result = BuildManager.GetBuildResultFromCache(browerCapabilitiesCacheKey);
-                if (result == null) {
-                    DateTime utcStart = DateTime.UtcNow;
+            // Try the cache first, and if it's not there, compile it
+            result = BuildManager.GetBuildResultFromCache(browerCapabilitiesCacheKey);
+            if (result == null) {
+                DateTime utcStart = DateTime.UtcNow;
 
-                    VirtualDirectory directory = AppBrowsersVirtualDir.GetDirectory();
+                VirtualDirectory directory = AppBrowsersVirtualDir.GetDirectory();
 
-                    // first try if app browser dir exists
-                    string physicalDir = HostingEnvironment.MapPathInternal(AppBrowsersVirtualDir);
+                // first try if app browser dir exists
+                string physicalDir = HostingEnvironment.MapPathInternal(AppBrowsersVirtualDir);
 
-                    /* DevDivBugs 173531
-                     * For the App_Browsers scenario, we need to cache the generated browser caps processing 
-                     * code. We need to add path dependency on all files so that changes to them will 
-                     * invalidate the cache entry and cause recompilation. */
-                    if (directory != null && Directory.Exists(physicalDir)) {
-                        ArrayList browserFileList = new ArrayList();
-                        ArrayList browserFileDependenciesList = new ArrayList();
-                        bool hasCustomCaps = AddBrowserFilesToList(directory, browserFileList, false);
-                        if (hasCustomCaps) {
-                            AddBrowserFilesToList(directory, browserFileDependenciesList, true);
+                /* DevDivBugs 173531
+                    * For the App_Browsers scenario, we need to cache the generated browser caps processing 
+                    * code. We need to add path dependency on all files so that changes to them will 
+                    * invalidate the cache entry and cause recompilation. */
+                if (directory != null && Directory.Exists(physicalDir)) {
+                    ArrayList browserFileList = new ArrayList();
+                    ArrayList browserFileDependenciesList = new ArrayList();
+                    bool hasCustomCaps = AddBrowserFilesToList(directory, browserFileList, false);
+                    if (hasCustomCaps) {
+                        AddBrowserFilesToList(directory, browserFileDependenciesList, true);
+                    }
+                    else {
+                        browserFileDependenciesList = browserFileList;
+                    }
+
+                    if (browserFileDependenciesList.Count > 0) {
+                        ApplicationBrowserCapabilitiesBuildProvider buildProvider = new ApplicationBrowserCapabilitiesBuildProvider();
+                        foreach (string virtualPath in browserFileList) {
+                            buildProvider.AddFile(virtualPath);
                         }
-                        else {
-                            browserFileDependenciesList = browserFileList;
-                        }
+                        
+                        BuildProvidersCompiler bpc = new BuildProvidersCompiler(null /*configPath*/,
+                            BuildManager.GenerateRandomAssemblyName(BuildManager.AppBrowserCapAssemblyNamePrefix));
+                        
+                        bpc.SetBuildProviders(new SingleObjectCollection(buildProvider));
+                        CompilerResults results = bpc.PerformBuild();
+                        Assembly assembly = results.CompiledAssembly;
+                        // Get the type we want from the assembly
+                        Type t = assembly.GetType(
+                            BaseCodeDomTreeGenerator.defaultNamespace + "." + ApplicationBrowserCapabilitiesCodeGenerator.FactoryTypeName);
+                        // Cache it for next time
+                        result = new BuildResultCompiledType(t);
+                        result.VirtualPath = AppBrowsersVirtualDir;
+                        result.AddVirtualPathDependencies(browserFileDependenciesList);
 
-                        if (browserFileDependenciesList.Count > 0) {
-                            ApplicationBrowserCapabilitiesBuildProvider buildProvider = new ApplicationBrowserCapabilitiesBuildProvider();
-                            foreach (string virtualPath in browserFileList) {
-                                buildProvider.AddFile(virtualPath);
-                            }
-                            
-                            BuildProvidersCompiler bpc = new BuildProvidersCompiler(null /*configPath*/,
-                                BuildManager.GenerateRandomAssemblyName(BuildManager.AppBrowserCapAssemblyNamePrefix));
-                            
-                            bpc.SetBuildProviders(new SingleObjectCollection(buildProvider));
-                            CompilerResults results = bpc.PerformBuild();
-                            Assembly assembly = results.CompiledAssembly;
-                            // Get the type we want from the assembly
-                            Type t = assembly.GetType(
-                                BaseCodeDomTreeGenerator.defaultNamespace + "." + ApplicationBrowserCapabilitiesCodeGenerator.FactoryTypeName);
-                            // Cache it for next time
-                            result = new BuildResultCompiledType(t);
-                            result.VirtualPath = AppBrowsersVirtualDir;
-                            result.AddVirtualPathDependencies(browserFileDependenciesList);
-
-                            BuildManager.CacheBuildResult(browerCapabilitiesCacheKey, result, utcStart);
-                        }
+                        BuildManager.CacheBuildResult(browerCapabilitiesCacheKey, result, utcStart);
                     }
                 }
             }
-            finally {
-                CodeAccessPermission.RevertAssert();
-            }
+           
 
             // Simply return the global factory type.
             if (result == null)
@@ -180,7 +174,7 @@ namespace System.Web.Compilation {
                 }
 
                 string extension = Path.GetExtension(fileBase.Name);
-                if (StringUtil.EqualsIgnoreCase(extension, ".browser")) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(extension, ".browser")) {
                     list.Add(fileBase.VirtualPath);
                 }
             }
@@ -262,7 +256,7 @@ namespace System.Web.Compilation {
             
             CodeCompileUnit ccu = new CodeCompileUnit();
 
-            Debug.Assert(BrowserTree != null);
+            System.Web.Util.Debug.Assert(BrowserTree != null);
             ArrayList customTreeRoots = new ArrayList();
             for (int i = 0; i < CustomTreeNames.Count; i++) {
                 customTreeRoots.Add((BrowserDefinition)(((BrowserTree)CustomTreeList[i])[CustomTreeNames[i]]));
@@ -323,9 +317,9 @@ namespace System.Web.Compilation {
                     String parentID = firstBrowserDefinition.ParentID;
 
                     if (firstBrowserDefinition != null) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Browser_parentID_Not_Found, parentID), firstBrowserDefinition.XmlNode);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_parentID_Not_Found, parentID), firstBrowserDefinition.XmlNode);
                     } else {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Browser_parentID_Not_Found, parentID));
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_parentID_Not_Found, parentID));
                     }
                 }
                
@@ -366,7 +360,7 @@ namespace System.Web.Compilation {
                     }
                     else {
                         if (!ignoreApplicationBrowsersVarRefGenerated) {
-                            Debug.Assert(isBrowserDefinition);
+                            System.Web.Util.Debug.Assert(isBrowserDefinition);
 
                             // Gen: if (ignoreApplicationBrowsers) {
                             //      }
@@ -414,7 +408,7 @@ namespace System.Web.Compilation {
                 if (baseType.GetMethod("Default" + parentName + "ProcessBrowsers", flags) == null) {
                     String parentID = firstDefaultBrowserDefinition.ParentID;
                     if (firstDefaultBrowserDefinition != null) {
-                        throw new ConfigurationErrorsException(SR.GetString(SR.DefaultBrowser_parentID_Not_Found, parentID), firstDefaultBrowserDefinition.XmlNode);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.DefaultBrowser_parentID_Not_Found, parentID), firstDefaultBrowserDefinition.XmlNode);
                     }
                 }
 
@@ -441,7 +435,7 @@ namespace System.Web.Compilation {
 
                 foreach(string browserID in overrides) {
                     bd = (BrowserDefinition)DefaultTree[browserID];
-                    Debug.Assert(!(bd is GatewayDefinition));
+                    System.Web.Util.Debug.Assert(!(bd is GatewayDefinition));
 
                     if(bd.IsRefID) {
                         GenerateSingleProcessCall(bd, cmm, "Default");
@@ -455,14 +449,14 @@ namespace System.Web.Compilation {
             // Generate process method for the browser elements
             foreach (DictionaryEntry entry in BrowserTree) {
                 bd = entry.Value as BrowserDefinition;
-                Debug.Assert(bd != null);
+                System.Web.Util.Debug.Assert(bd != null);
                 GenerateProcessMethod(bd, factoryType);
             }
 
             for (int i = 0; i < customTreeRoots.Count; i++) {
                 foreach (DictionaryEntry entry in (BrowserTree)CustomTreeList[i]) {
                     bd = entry.Value as BrowserDefinition;
-                    Debug.Assert(bd != null);
+                    System.Web.Util.Debug.Assert(bd != null);
                     GenerateProcessMethod(bd, factoryType);
                 }
             }
@@ -470,7 +464,7 @@ namespace System.Web.Compilation {
             // Generate process method for the default browser elements
             foreach (DictionaryEntry entry in DefaultTree) {
                 bd = entry.Value as BrowserDefinition;
-                Debug.Assert(bd != null);
+                System.Web.Util.Debug.Assert(bd != null);
                 GenerateProcessMethod(bd, factoryType, "Default");
             }
             GenerateOverrideMatchedHeaders(factoryType);
@@ -483,7 +477,7 @@ namespace System.Web.Compilation {
 
         internal override void ProcessBrowserNode(XmlNode node, BrowserTree browserTree) {
             if (node.Name == "defaultBrowser") {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Browser_Not_Allowed_InAppLevel, node.Name), node);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Browser_Not_Allowed_InAppLevel, node.Name), node);
             }
 
             base.ProcessBrowserNode(node, browserTree);

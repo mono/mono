@@ -31,7 +31,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(typeof(Unit), ""),
         WebCategory("Layout"),
         NotifyParentProperty(true),
-        WebSysDescription(SR.SubMenuStyle_HorizontalPadding),
+        WebSysDescription(System.Web.SR.SubMenuStyle_HorizontalPadding),
         ]
         public Unit HorizontalPadding {
             get {
@@ -57,7 +57,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(typeof(Unit), ""),
         WebCategory("Layout"),
         NotifyParentProperty(true),
-        WebSysDescription(SR.SubMenuStyle_VerticalPadding),
+        WebSysDescription(System.Web.SR.SubMenuStyle_VerticalPadding),
         ]
         public Unit VerticalPadding {
             get {

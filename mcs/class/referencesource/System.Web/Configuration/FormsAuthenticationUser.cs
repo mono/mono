@@ -122,7 +122,7 @@ namespace System.Web.Configuration {
             Password = password;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

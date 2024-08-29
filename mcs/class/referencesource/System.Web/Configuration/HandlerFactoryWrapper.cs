@@ -27,14 +27,14 @@ namespace System.Web.Configuration {
 
         public IHttpHandler GetHandler(HttpContext context, String requestType, String url, String pathTranslated) {
             if (_handler == null)
-                _handler = (IHttpHandler)HttpRuntime.CreateNonPublicInstance(_handlerType);
+                _handler = (IHttpHandler)HttpRuntime.CreateNonPublicInstanceByWebObjectActivator(_handlerType);
 
             return _handler;
         }
 
         public void ReleaseHandler(IHttpHandler handler) {
             if (_handler != null) {
-                Debug.Assert(handler == _handler);
+                System.Web.Util.Debug.Assert(handler == _handler);
 
                 if (!_handler.IsReusable) {
                     _handler = null;

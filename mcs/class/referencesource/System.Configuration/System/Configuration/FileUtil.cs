@@ -20,6 +20,7 @@ namespace System.Configuration {
         // If trueOnError is set, then return true if we cannot confirm that the file does NOT exist.
         //
         internal static bool FileExists(string filename, bool trueOnError) {
+#if (!MONO) || (MONO && !FEATURE_PAL)
             UnsafeNativeMethods.WIN32_FILE_ATTRIBUTE_DATA data;
             bool ok = UnsafeNativeMethods.GetFileAttributesEx(filename, UnsafeNativeMethods.GetFileExInfoStandard, out data);
             if (ok) {
@@ -41,6 +42,9 @@ namespace System.Configuration {
                     }
                 }
             }
+#else
+            return File.Exists(filename);
+#endif
         }
     }
 }

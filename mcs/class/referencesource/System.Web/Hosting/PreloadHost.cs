@@ -10,6 +10,7 @@ namespace System.Web.Hosting {
     using System.Web;
     using System.Web.Util;
     using System.Configuration;
+    
 
     internal sealed class PreloadHost : MarshalByRefObject, IRegisteredObject {
 
@@ -28,11 +29,11 @@ namespace System.Web.Hosting {
                 catch (Exception e) {
                     throw new InvalidOperationException (
                         Misc.FormatExceptionMessage(e, new string[]{
-                            SR.GetString(SR.Failure_Create_Application_Preload_Provider_Type, preloadObjTypeName)} ));
+                            System.Web.SR.GetString(System.Web.SR.Failure_Create_Application_Preload_Provider_Type, preloadObjTypeName)} ));
                 }
 
                 if (!typeof(IProcessHostPreloadClient).IsAssignableFrom(preloadObjType)) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_Application_Preload_Provider_Type, preloadObjTypeName));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_Application_Preload_Provider_Type, preloadObjTypeName));
                 }
 
                 // Let all other exceptons fall through to the default AppDomain

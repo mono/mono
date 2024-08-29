@@ -23,7 +23,8 @@ namespace System.Web.UI {
     using System.Web.Compilation;
     using System.Web.UI.WebControls;
     using System.Web.Util;
-#if !FEATURE_PAL
+    
+#if (!MONO || !FEATURE_PAL)
     using System.Web.UI.Design;
 #endif // !FEATURE_PAL
 
@@ -67,7 +68,7 @@ namespace System.Web.UI {
                     }
                 }
                 catch (Exception e) {
-                    Debug.Fail(e.Message);
+                    System.Web.Util.Debug.Fail(e.Message);
                 }
 #pragma warning disable 1058
                 catch {
@@ -104,7 +105,7 @@ namespace System.Web.UI {
                         if (desc != null) {
                             string str = value as string;
                             if (value != null && desc.Attributes[typeof(UrlPropertyAttribute)] != null &&
-                                UrlPath.IsRelativeUrl(str)) {
+                                System.Web.Util.UrlPath.IsRelativeUrl(str)) {
                                 value = _themePath + str;
                             }
                         }
@@ -143,7 +144,7 @@ namespace System.Web.UI {
                         // Make the UrlProperty based on theme path for control themes.
                         string str = value as string;
                         if (value != null && desc.Attributes[typeof(UrlPropertyAttribute)] != null &&
-                            UrlPath.IsRelativeUrl(str)) {
+                            System.Web.Util.UrlPath.IsRelativeUrl(str)) {
                             value = _themePath + str;
                         }
 
@@ -151,7 +152,7 @@ namespace System.Web.UI {
                     }
                 }
                 catch (Exception e) {
-                    Debug.Fail(e.Message);
+                    System.Web.Util.Debug.Fail(e.Message);
                 }
 #pragma warning disable 1058
                 catch {
@@ -184,7 +185,7 @@ namespace System.Web.UI {
                 dataBindings.Add(new DataBinding(entry.Name, entry.Type, entry.Expression.Trim()));
             }
             else {
-                throw new InvalidOperationException(SR.GetString(SR.ControlBuilder_ExpressionsNotAllowedInThemes));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_ExpressionsNotAllowedInThemes));
             }
         }
 

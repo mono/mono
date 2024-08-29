@@ -69,6 +69,11 @@ namespace MonoTests.stand_alone.WebHarness
 			get {return _compareStatus.ToString();}
 		}
 
+		public static string FixupEnvironmentNewLine(string html) {
+			return (Environment.OSVersion.Platform != PlatformID.Win32NT) ?
+				html.Replace ("\r\n", "\n") : html;
+		}
+
 		public static string GetControlFromPageHtml (string str)
 		{
 			return GetControlFromPageHtml (str, BEGIN_TAG, END_TAG);

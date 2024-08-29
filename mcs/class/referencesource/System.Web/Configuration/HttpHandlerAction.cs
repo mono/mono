@@ -16,6 +16,7 @@ namespace System.Web.Configuration {
     using System.Web.Compilation;
     using System.Globalization;
     using System.Security.Permissions;
+    
 
     public sealed class HttpHandlerAction : ConfigurationElement {
         private static ConfigurationPropertyCollection _properties;
@@ -79,7 +80,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -160,7 +161,7 @@ namespace System.Web.Configuration {
 
                 if (!ConfigUtil.IsTypeHandlerOrFactory(_type)) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Type_not_factory_or_handler, Type),
+                        System.Web.SR.GetString(System.Web.SR.Type_not_factory_or_handler, Type),
                         ElementInformation.Source, ElementInformation.LineNumber);
                 }
             }
@@ -181,14 +182,14 @@ namespace System.Web.Configuration {
                 // throw for bad types in deferred case
                 if (!ConfigUtil.IsTypeHandlerOrFactory(t)) {
                     throw new ConfigurationErrorsException(
-                        SR.GetString(SR.Type_not_factory_or_handler, Type),
+                        System.Web.SR.GetString(System.Web.SR.Type_not_factory_or_handler, Type),
                         ElementInformation.Source, ElementInformation.LineNumber);
                 }
 
                 _type = t;
             }
 
-            return HttpRuntime.CreateNonPublicInstance(_type);
+            return HttpRuntime.CreateNonPublicInstanceByWebObjectActivator(_type);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace System.Web.Configuration {
         internal FolderLevelBuildProvider() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -58,10 +58,10 @@ namespace System.Web.Configuration {
         // them different depending on order in the persisted string.
         public override bool Equals(object provider) {
             FolderLevelBuildProvider o = provider as FolderLevelBuildProvider;
-            return (o != null && StringUtil.EqualsIgnoreCase(Name, o.Name) && Type == o.Type);
+            return (o != null && System.Web.Util.StringUtil.EqualsIgnoreCase(Name, o.Name) && Type == o.Type);
         }
         public override int GetHashCode() {
-            return HashCodeCombiner.CombineHashCodes(StringUtil.GetNonRandomizedHashCode(Name.ToLower(CultureInfo.InvariantCulture)),
+            return HashCodeCombiner.CombineHashCodes(System.Web.Util.StringUtil.GetNonRandomizedHashCode(Name.ToLower(CultureInfo.InvariantCulture)),
                                                      Type.GetHashCode());
         }
 
@@ -112,7 +112,7 @@ namespace System.Web.Configuration {
                     typeof(FolderLevelBuildProviderAppliesToAttribute), /*inherit*/ true);
 
                 if ((attrs != null) && (attrs.Length > 0)) {
-                    Debug.Assert(attrs[0] is FolderLevelBuildProviderAppliesToAttribute);
+                    System.Web.Util.Debug.Assert(attrs[0] is FolderLevelBuildProviderAppliesToAttribute);
                     _appliesToInternal = ((FolderLevelBuildProviderAppliesToAttribute)attrs[0]).AppliesTo;
                 }
                 else {

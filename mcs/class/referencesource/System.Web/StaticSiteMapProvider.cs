@@ -19,6 +19,7 @@ namespace System.Web {
     using System.Security.Permissions;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     public abstract class StaticSiteMapProvider : SiteMapProvider {
 
@@ -102,26 +103,26 @@ namespace System.Web {
                 if (!String.IsNullOrEmpty(url)) {
                     if (HttpRuntime.AppDomainAppVirtualPath != null) {
 
-                        if (!UrlPath.IsAbsolutePhysicalPath(url)) {
-                            url = UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, url);
+                        if (!System.Web.Util.UrlPath.IsAbsolutePhysicalPath(url)) {
+                            url = System.Web.Util.UrlPath.Combine(HttpRuntime.AppDomainAppVirtualPathString, url);
 
                             // Normalize url
-                            url = UrlPath.MakeVirtualPathAppAbsolute(url);
+                            url = System.Web.Util.UrlPath.MakeVirtualPathAppAbsolute(url);
                         }
 
                         if (UrlTable[url] != null)
                             throw new InvalidOperationException(
-                                SR.GetString(SR.XmlSiteMapProvider_Multiple_Nodes_With_Identical_Url, url));
+                                System.Web.SR.GetString(System.Web.SR.XmlSiteMapProvider_Multiple_Nodes_With_Identical_Url, url));
                     }
 
                     validUrl = true;
                 }
 
                 String key = node.Key;
-                Debug.Assert(key != null);
+                System.Web.Util.Debug.Assert(key != null);
                 if (KeyTable.Contains(key)) {
                     throw new InvalidOperationException(
-                    SR.GetString(SR.XmlSiteMapProvider_Multiple_Nodes_With_Identical_Key, key));
+                    System.Web.SR.GetString(System.Web.SR.XmlSiteMapProvider_Multiple_Nodes_With_Identical_Key, key));
                 }
 
                 KeyTable[key] = node;
@@ -187,8 +188,8 @@ namespace System.Web {
             }
 
             // Make sure it is an app absolute url
-            if (UrlPath.IsAppRelativePath(rawUrl)) {
-                rawUrl = UrlPath.MakeVirtualPathAppAbsolute(rawUrl);
+            if (System.Web.Util.UrlPath.IsAppRelativePath(rawUrl)) {
+                rawUrl = System.Web.Util.UrlPath.MakeVirtualPathAppAbsolute(rawUrl);
             }
 
             BuildSiteMap();

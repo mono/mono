@@ -25,6 +25,7 @@ namespace System.Web.SessionState {
     using System.Web.Security;
     using System.Web.Management;
     using System.Web.Hosting;
+    
 
     public interface ISessionIDManager {
 
@@ -110,7 +111,7 @@ namespace System.Web.SessionState {
         static SessionStateSection Config {
             get {
                 if (s_config == null) {
-                    throw new HttpException(SR.GetString(SR.SessionIDManager_uninit));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.SessionIDManager_uninit));
                 }
 
                 return s_config;
@@ -132,7 +133,7 @@ namespace System.Web.SessionState {
 
             _isInherited = !(this.GetType() == typeof(SessionIDManager));
             
-            Debug.Trace("SessionIDManager", "cookieMode = " + Config.Cookieless +
+            System.Web.Util.Debug.Trace("SessionIDManager", "cookieMode = " + Config.Cookieless +
                         ", cookieName = " + Config.CookieName +
                         ", inherited = " + _isInherited);
         }
@@ -141,7 +142,7 @@ namespace System.Web.SessionState {
             HttpRequest     request;
             string          id;
 
-            Debug.Trace("SessionIDManager", "Beginning SessionIDManager::GetCookielessSessionID");
+            System.Web.Util.Debug.Trace("SessionIDManager", "Beginning SessionIDManager::GetCookielessSessionID");
 
             request = context.Request;
 
@@ -151,7 +152,7 @@ namespace System.Web.SessionState {
             cookieless = CookielessHelperClass.UseCookieless(context, allowRedirect, Config.Cookieless);
             context.Items[COOKIELESS_BOOL_SESSION_KEY] = cookieless;
 
-            Debug.Trace("SessionIDManager", "cookieless=" + cookieless);
+            System.Web.Util.Debug.Trace("SessionIDManager", "cookieless=" + cookieless);
 
             if (cookieless) {
                 /*
@@ -164,13 +165,13 @@ namespace System.Web.SessionState {
                 // Decode() is caled on all id's before saved to URL or cookie
                 id = Decode(id);
                 if (!ValidateInternal(id, false)) {
-                    Debug.Trace("SessionIDManager", "No legitimate cookie on path\nReturning from SessionStateModule::GetCookielessSessionID");
+                    System.Web.Util.Debug.Trace("SessionIDManager", "No legitimate cookie on path\nReturning from SessionStateModule::GetCookielessSessionID");
                     return;
                 }
 
                 context.Items.Add(COOKIELESS_SESSION_KEY, id);
 
-                Debug.Trace("SessionIDManager", "CookielessSessionModule found SessionId=" + id +
+                System.Web.Util.Debug.Trace("SessionIDManager", "CookielessSessionModule found SessionId=" + id +
                             "\nReturning from SessionIDManager::GetCookielessSessionID");            
             }
 
@@ -181,6 +182,7 @@ namespace System.Web.SessionState {
 
             cookie = new HttpCookie(Config.CookieName, id);
             cookie.Path = "/";
+            cookie.SameSite = Config.CookieSameSite;
 
             // VSWhidbey 414687 Use HttpOnly to prevent client side script manipulation of cookie
             cookie.HttpOnly = true;
@@ -194,7 +196,7 @@ namespace System.Web.SessionState {
             if (id.Length > SESSION_ID_LENGTH_LIMIT) {
                 if (throwOnFail) {
                     throw new HttpException(
-                        SR.GetString(SR.Session_id_too_long,
+                        System.Web.SR.GetString(System.Web.SR.Session_id_too_long,
                             SESSION_ID_LENGTH_LIMIT.ToString(CultureInfo.InvariantCulture), id));
                 }
                 else {
@@ -219,11 +221,11 @@ namespace System.Web.SessionState {
         public virtual String Encode(String id) {
             // Need to do UrlEncode if the session id could be custom created.
             if (_isInherited) {
-                Debug.Trace("SessionIDManager", "Encode is doing UrlEncode ");
+                System.Web.Util.Debug.Trace("SessionIDManager", "Encode is doing UrlEncode ");
                 return HttpUtility.UrlEncode(id);
             }
             else {
-                Debug.Trace("SessionIDManager", "Encode is doing nothing ");
+                System.Web.Util.Debug.Trace("SessionIDManager", "Encode is doing nothing ");
                 return id;
             }
         }
@@ -231,17 +233,17 @@ namespace System.Web.SessionState {
         public virtual String Decode(String id) {
             // Need to do UrlDecode if the session id could be custom created.
             if (_isInherited) {
-                Debug.Trace("SessionIDManager", "Decode is doing UrlDecode ");
+                System.Web.Util.Debug.Trace("SessionIDManager", "Decode is doing UrlDecode ");
                 return HttpUtility.UrlDecode(id);
             }
             else {
-                Debug.Trace("SessionIDManager", "Decode is doing nothing");
+                System.Web.Util.Debug.Trace("SessionIDManager", "Decode is doing nothing");
                 return id.ToLower(CultureInfo.InvariantCulture);
             }
         }
 
         internal bool UseCookieless(HttpContext context) {
-            Debug.Assert(context.Items[ASP_SESSIONID_MANAGER_INITIALIZEREQUEST_CALLED_KEY] != null);
+            System.Web.Util.Debug.Assert(context.Items[ASP_SESSIONID_MANAGER_INITIALIZEREQUEST_CALLED_KEY] != null);
             
             if (Config.Cookieless == HttpCookieMode.UseCookies) {
                 return false;
@@ -249,7 +251,7 @@ namespace System.Web.SessionState {
             else {
                 object o = context.Items[COOKIELESS_BOOL_SESSION_KEY];
 
-                Debug.Assert(o != null, "GetCookielessSessionID should be run already");
+                System.Web.Util.Debug.Assert(o != null, "GetCookielessSessionID should be run already");
                 
                 return (bool)o;
             }
@@ -257,7 +259,7 @@ namespace System.Web.SessionState {
 
         void CheckInitializeRequestCalled(HttpContext context) {
             if (context.Items[ASP_SESSIONID_MANAGER_INITIALIZEREQUEST_CALLED_KEY] == null) {
-                throw new HttpException(SR.GetString(SR.SessionIDManager_InitializeRequest_not_called));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.SessionIDManager_InitializeRequest_not_called));
             }
         }
 
@@ -333,13 +335,13 @@ namespace System.Web.SessionState {
                 // We support setting the session ID in a cookie or by redirecting to a munged URL.
                 // Both techniques require that response headers haven't yet been flushed.
                 throw new HttpException(
-                    SR.GetString(SR.Cant_save_session_id_because_response_was_flushed));
+                    System.Web.SR.GetString(System.Web.SR.Cant_save_session_id_because_response_was_flushed));
             }
 
             if (!ValidateInternal(id, true)) {
                 // VSWhidbey 439376
                 throw new HttpException(
-                    SR.GetString(SR.Cant_save_session_id_because_id_is_invalid, id));
+                    System.Web.SR.GetString(System.Web.SR.Cant_save_session_id_because_id_is_invalid, id));
             }
 
             idEncoded = Encode(id);
@@ -348,7 +350,7 @@ namespace System.Web.SessionState {
                 /*
                  * Set the cookie.
                  */
-                Debug.Trace("SessionIDManager",
+                System.Web.Util.Debug.Trace("SessionIDManager",
                             "Creating session cookie, id=" + id + ", idEncoded=" + idEncoded);
 
                 cookie = CreateSessionCookie(idEncoded);
@@ -368,7 +370,7 @@ namespace System.Web.SessionState {
                     path = path + "?" + qs;
                 }
 
-                Debug.Trace("SessionIDManager",
+                System.Web.Util.Debug.Trace("SessionIDManager",
                             "Redirecting to create cookieless session, path=" + path + ", idEncoded=" + idEncoded +
                             "\nReturning from SessionIDManager::SaveSessionID");
 
@@ -388,7 +390,7 @@ namespace System.Web.SessionState {
 
         // If cookieless, we can't do anything.
         public void RemoveSessionID(HttpContext context) {
-            Debug.Trace("SessionIDManager", "Removing session id cookie");
+            System.Web.Util.Debug.Trace("SessionIDManager", "Removing session id cookie");
             context.Response.Cookies.RemoveCookie(Config.CookieName);
         }
     }
@@ -454,7 +456,7 @@ namespace System.Web.SessionState {
             int     i, j, k, n;
             char[]  chars = new char[ID_LENGTH_CHARS];
 
-            Debug.Assert(buffer.Length == ID_LENGTH_BYTES);
+            System.Web.Util.Debug.Assert(buffer.Length == ID_LENGTH_BYTES);
 
             j = 0;
             for (i = 0; i < ID_LENGTH_BYTES; i += 5) {
@@ -490,7 +492,7 @@ namespace System.Web.SessionState {
                 chars[j++] = s_encoding[k];
             }
 
-            Debug.Assert(j == ID_LENGTH_CHARS);
+            System.Web.Util.Debug.Assert(j == ID_LENGTH_CHARS);
 
             return new String(chars);
         }

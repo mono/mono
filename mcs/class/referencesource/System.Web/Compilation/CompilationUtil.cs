@@ -30,6 +30,7 @@ namespace System.Web.Compilation {
     using System.Threading;
     using System.Threading.Tasks;
     
+    
     internal static class CompilationUtil {
 
         internal const string CodeDomProviderOptionPath = "system.codedom/compilers/compiler/ProviderOption/";
@@ -81,7 +82,7 @@ namespace System.Web.Compilation {
             // Make sure there is an extension
             if (extension.Length == 0) {
                 throw new HttpException(
-                    SR.GetString(SR.Empty_extension, virtualPath));
+                    System.Web.SR.GetString(System.Web.SR.Empty_extension, virtualPath));
             }
 
             return GetCompilerInfoFromExtension(virtualPath, extension);
@@ -229,10 +230,18 @@ namespace System.Web.Compilation {
             // Make sure the <system.CodeDom> section is hashed properly.
             CompilerInfo[] compilerInfoArray = CodeDomProvider.GetAllCompilerInfo();
             if (compilerInfoArray != null) {
-                CompilerInfo cppCodeProvider = CodeDomProvider.GetCompilerInfo("cpp");
+                CompilerInfo cppCodeProvider = null; 
+                
+                // May not be there and it throws an exception. Swallow and continue.
+                try {
+                    cppCodeProvider = CodeDomProvider.GetCompilerInfo("cpp");
+                }
+                catch {
+                }
+
                 foreach (CompilerInfo info in compilerInfoArray) {
                     // Skip cpp code provider (Dev11 193323).
-                    if (info == cppCodeProvider) {
+                    if ((cppCodeProvider != null) && (info == cppCodeProvider)) {
                         continue;
                     }
 
@@ -320,7 +329,7 @@ namespace System.Web.Compilation {
             }
 
             if (failIfUnknown) {
-                throw new HttpException( SR.GetString(SR.Unknown_buildprovider_extension, extension, neededFor.ToString()));
+                throw new HttpException( System.Web.SR.GetString(System.Web.SR.Unknown_buildprovider_extension, extension, neededFor.ToString()));
             }
 
             return null;
@@ -343,7 +352,7 @@ namespace System.Web.Compilation {
             }
 
             if (!HttpRuntime.HasUnmanagedPermission()) {
-                string errorString = SR.GetString(SR.Insufficient_trust_for_attribute, CompilerDirectoryPath);
+                string errorString = System.Web.SR.GetString(System.Web.SR.Insufficient_trust_for_attribute, CompilerDirectoryPath);
                 throw new HttpException(errorString);
             }
         }
@@ -356,7 +365,7 @@ namespace System.Web.Compilation {
 
             // Only allow the use of compilerOptions when we have UnmanagedCode access (ASURT 73678)
             if (!HttpRuntime.HasUnmanagedPermission()) {
-                string errorString = SR.GetString(SR.Insufficient_trust_for_attribute, "compilerOptions");
+                string errorString = System.Web.SR.GetString(System.Web.SR.Insufficient_trust_for_attribute, "compilerOptions");
 
                 if (config)
                     throw new ConfigurationErrorsException(errorString, file, line);
@@ -420,9 +429,9 @@ namespace System.Web.Compilation {
             // don't have a registered BuildProvider (but don't skip .skin files during
             // updatable precomp).
             // 
-            if (StringUtil.EqualsIgnoreCase(extension, ".asax"))
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(extension, ".asax"))
                 return false;
-            if (!updatable && StringUtil.EqualsIgnoreCase(extension, ThemeDirectoryCompiler.skinExtension))
+            if (!updatable && System.Web.Util.StringUtil.EqualsIgnoreCase(extension, ThemeDirectoryCompiler.skinExtension))
                 return false;
 
             //
@@ -509,7 +518,7 @@ namespace System.Web.Compilation {
             }
 
             if (providerOptions != null && providerOptions.Count > 0) {
-                Debug.Assert(codeDomProviderType != null, "codeDomProviderType should not be null");
+                System.Web.Util.Debug.Assert(codeDomProviderType != null, "codeDomProviderType should not be null");
                 // Check whether the codedom provider supports a constructor that takes in providerOptions.
                 // Currently only VB and C# support providerOptions for sure, while others such as JScript might not.
                 ConstructorInfo ci = codeDomProviderType.GetConstructor(new Type[] { typeof(IDictionary<string, string>) });
@@ -548,7 +557,7 @@ namespace System.Web.Compilation {
 
         [ReflectionPermission(SecurityAction.Assert, Unrestricted = true)]
         private static IDictionary<string, string> GetProviderOptions(CompilerInfo ci) {
-            Debug.Assert(ci != null, "CompilerInfo ci should not be null");
+            System.Web.Util.Debug.Assert(ci != null, "CompilerInfo ci should not be null");
             PropertyInfo pi = ci.GetType().GetProperty("ProviderOptions",
                 BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.IgnoreCase | BindingFlags.Instance);
             if (pi != null)
@@ -638,7 +647,7 @@ namespace System.Web.Compilation {
             if (string.IsNullOrEmpty(version)) {
                 return null;
             }
-            Debug.Assert(version.Length > 1, "Version has invalid length");
+            System.Web.Util.Debug.Assert(version.Length > 1, "Version has invalid length");
             return new Version(version.Substring(1));
         }
 

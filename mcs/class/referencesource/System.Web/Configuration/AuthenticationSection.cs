@@ -88,6 +88,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     public sealed class AuthenticationSection : ConfigurationSection {
         private static ConfigurationPropertyCollection _properties;
@@ -115,7 +116,7 @@ namespace System.Web.Configuration {
         public AuthenticationSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -153,7 +154,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override void Reset(ConfigurationElement parentElement) {
+        protected internal override void Reset(ConfigurationElement parentElement) {
             base.Reset(parentElement);
             authenticationModeCached = false;
         }
@@ -164,7 +165,7 @@ namespace System.Web.Configuration {
 #pragma warning disable 618
             if (Mode == AuthenticationMode.Passport && UnsafeNativeMethods.PassportVersion() < 0) {
 #pragma warning restore 618
-                throw new ConfigurationErrorsException(SR.GetString(SR.Passport_not_installed));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Passport_not_installed));
             }
         }
     }

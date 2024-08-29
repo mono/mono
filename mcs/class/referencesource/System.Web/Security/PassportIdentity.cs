@@ -18,6 +18,7 @@ namespace System.Web.Security {
     using System.Runtime.InteropServices;
     using System.Security.Permissions;
     using System.Globalization;
+    
 
 
     /// <devdoc>
@@ -72,7 +73,7 @@ namespace System.Web.Security {
                 int iRet = UnsafeNativeMethods.PassportCreate(strTVariable, strPVariable, strMSPAuthCookie, 
                                                               strMSPProfCookie, strMSPProfCCookie, strA, strP, 1024, ref _iPassport);
                 if (_iPassport == IntPtr.Zero)
-                    throw new COMException(SR.GetString(SR.Could_not_create_passport_identity), iRet);
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Could_not_create_passport_identity), iRet);
 
                 String strACookie = UrlEncodeCookie(strA.ToString()); //HttpUtility.AspCompatUrlEncode(strA.ToString());
                 String strPCookie = UrlEncodeCookie(strP.ToString()); //HttpUtility.AspCompatUrlEncode(strP.ToString());
@@ -96,7 +97,7 @@ namespace System.Web.Security {
                                                                      szOut, 4090, ref _iPassport);
                 
                 if (_iPassport == IntPtr.Zero)
-                    throw new COMException(SR.GetString(SR.Could_not_create_passport_identity), iRet);
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Could_not_create_passport_identity), iRet);
                 
                 String strResponseHeaders = szOut.ToString();                
                 SetHeaders(context, strResponseHeaders);
@@ -248,7 +249,7 @@ namespace System.Web.Security {
                                                                    iForceLogin, 
                                                                    iCheckSecure);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
                      
             return (iRet == 0);            
         }
@@ -267,7 +268,7 @@ namespace System.Web.Security {
 
             int iRet = UnsafeNativeMethods.PassportGetProfile(_iPassport, strProfileName, out oOut);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return oOut;
         } 
 
@@ -301,7 +302,7 @@ namespace System.Web.Security {
             get {
                 int iRet = UnsafeNativeMethods.PassportGetFromNetworkServer(_iPassport);
                 if (iRet < 0)
-                    throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
                 return(iRet == 0);
             }
         }
@@ -319,7 +320,7 @@ namespace System.Web.Security {
             StringBuilder str = new StringBuilder(1028);                
             int iRet = UnsafeNativeMethods.PassportDomainFromMemberName(_iPassport, strMemberName, str, 1024);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return str.ToString();
         }
 
@@ -335,7 +336,7 @@ namespace System.Web.Security {
         public bool HasProfile(String strProfile) {
             int iRet = UnsafeNativeMethods.PassportHasProfile(_iPassport, strProfile);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return(iRet == 0);
         }
 
@@ -343,7 +344,7 @@ namespace System.Web.Security {
         public bool HasFlag(int iFlagMask) {
             int iRet = UnsafeNativeMethods.PassportHasFlag(_iPassport, iFlagMask);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return(iRet == 0);
         }
 
@@ -354,7 +355,7 @@ namespace System.Web.Security {
         public bool HaveConsent(bool bNeedFullConsent, bool bNeedBirthdate) {
             int iRet = UnsafeNativeMethods.PassportHasConsent(_iPassport, bNeedFullConsent ? 1 : 0, bNeedBirthdate ? 1 : 0);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return(iRet == 0);
         }
 
@@ -364,7 +365,7 @@ namespace System.Web.Security {
             Object vOut = new Object();
             int iRet = UnsafeNativeMethods.PassportGetOption(_iPassport, strOpt, out vOut);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return vOut;
         } 
 
@@ -372,7 +373,7 @@ namespace System.Web.Security {
         public void SetOption(String strOpt, Object vOpt) {
             int iRet = UnsafeNativeMethods.PassportSetOption(_iPassport, strOpt, vOpt);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
         } 
 
 
@@ -397,7 +398,7 @@ namespace System.Web.Security {
                                                              4096);
 
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return szOut.ToString();
         }
 
@@ -415,7 +416,7 @@ namespace System.Web.Security {
             get {
                 int iRet = UnsafeNativeMethods.PassportGetHasSavedPassword(_iPassport);
                 if (iRet < 0)
-                    throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
                 return(iRet == 0);
             }
         }
@@ -433,7 +434,7 @@ namespace System.Web.Security {
             get {
                 int iRet = UnsafeNativeMethods.PassportHasTicket(_iPassport);
                 if (iRet < 0)
-                    throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
                 return(iRet == 0);
             }
         }
@@ -452,7 +453,7 @@ namespace System.Web.Security {
             get {
                 int iRet = UnsafeNativeMethods.PassportGetTicketAge(_iPassport);
                 if (iRet < 0)
-                    throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
                 return iRet;
             }
         }
@@ -470,7 +471,7 @@ namespace System.Web.Security {
             get {
                 int iRet = UnsafeNativeMethods.PassportGetTimeSinceSignIn(_iPassport);
                 if (iRet < 0)
-                    throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
                 return iRet;
             }
         }
@@ -570,7 +571,7 @@ namespace System.Web.Security {
                                                      4090);
 
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return str.ToString();
         }
 
@@ -625,7 +626,7 @@ namespace System.Web.Security {
                                                      4090);
 
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return str.ToString();
         }
 
@@ -687,7 +688,7 @@ namespace System.Web.Security {
                                                      4090);
 
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return str.ToString();
         }
 
@@ -716,7 +717,7 @@ namespace System.Web.Security {
                                                      4090);
 
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return str.ToString();
         }
 
@@ -745,7 +746,7 @@ namespace System.Web.Security {
                                                      4090);
 
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return str.ToString();
         }
 
@@ -772,7 +773,7 @@ namespace System.Web.Security {
                                                      4090);
 
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return str.ToString();
         }
 
@@ -888,9 +889,9 @@ namespace System.Web.Security {
                     str, 4090);
 
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             String strRet = str.ToString();
-            if (strRet != null && !StringUtil.StringStartsWith(strRet, "WWW-Authenticate"))
+            if (strRet != null && !System.Web.Util.StringUtil.StringStartsWith(strRet, "WWW-Authenticate"))
                 strRet = "WWW-Authenticate: " + strRet;
             return strRet;
         }
@@ -910,7 +911,7 @@ namespace System.Web.Security {
             if (iRet >= 0)
                 return str.ToString();
             else
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
         }
 
 
@@ -918,7 +919,7 @@ namespace System.Web.Security {
             Object oOut = new Object();
             int iRet = UnsafeNativeMethods.PassportTicket(_iPassport, strAttribute, out oOut);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return oOut;
         }    
 
@@ -927,7 +928,7 @@ namespace System.Web.Security {
             Object oOut = new Object();
             int iRet = UnsafeNativeMethods.PassportGetCurrentConfig(_iPassport, strAttribute, out oOut);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return oOut;
         }    
 
@@ -939,7 +940,7 @@ namespace System.Web.Security {
                 if (iRet >= 0)
                     return str.ToString();
                 else
-                    throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             } 
         }
         
@@ -1071,7 +1072,7 @@ namespace System.Web.Security {
         static public int CryptPutHost(String strHost) {
             int iRet =  UnsafeNativeMethods.PassportCryptPut(0, strHost);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
 
             return iRet;
         }
@@ -1080,7 +1081,7 @@ namespace System.Web.Security {
         static public int CryptPutSite(String strSite) {
             int iRet = UnsafeNativeMethods.PassportCryptPut(1, strSite);
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
 
             return iRet;
         }
@@ -1089,7 +1090,7 @@ namespace System.Web.Security {
         static public bool CryptIsValid() {
             int iRet = UnsafeNativeMethods.PassportCryptIsValid();
             if (iRet < 0)
-                throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             return (iRet == 0);
         }  
 
@@ -1106,7 +1107,7 @@ namespace System.Web.Security {
                 if (iRet == 0) // Worked
                     return str.ToString();
                 if (iRet != HResults.E_INSUFFICIENT_BUFFER && iRet < 0)
-                    throw new COMException(SR.GetString(SR.Passport_method_failed), iRet);                    
+                    throw new COMException(System.Web.SR.GetString(System.Web.SR.Passport_method_failed), iRet);                    
             }
             while  ( iRet ==  HResults.E_INSUFFICIENT_BUFFER &&
                      iSize < 10*1024*1024 ); // Less than 10MB

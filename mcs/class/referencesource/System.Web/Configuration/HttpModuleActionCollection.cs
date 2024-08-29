@@ -15,6 +15,7 @@ namespace System.Web.Configuration {
     using System.Web.Configuration;
     using System.Globalization;
     using System.Security.Permissions;
+    
 
     // class HttpModulesSection
 
@@ -27,7 +28,7 @@ namespace System.Web.Configuration {
             _properties = new ConfigurationPropertyCollection();
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -82,11 +83,11 @@ namespace System.Web.Configuration {
             if (BaseIndexOf(module) == -1) // does it exist?
             {
                 if (HttpModuleAction.IsSpecialModuleName(module.Name)) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Special_module_cannot_be_removed_manually, module.Name),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Special_module_cannot_be_removed_manually, module.Name),
                                 module.FileName, module.LineNumber);
                 }
                 else {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Module_not_in_app, module.Name),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Module_not_in_app, module.Name),
                                 module.FileName, module.LineNumber);
                 }
             }

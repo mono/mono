@@ -27,6 +27,7 @@ namespace System.Web.Security {
     using System.Collections.Specialized;
     using System.Web.Compilation;
     using System.Web.Security.Cryptography;
+    
 
 
 
@@ -59,18 +60,18 @@ namespace System.Web.Security {
                 throw new ArgumentNullException("passwordFormat");
             }
             HashAlgorithm hashAlgorithm;
-            if (StringUtil.EqualsIgnoreCase(passwordFormat, "sha1"))
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(passwordFormat, "sha1"))
                 hashAlgorithm = CryptoAlgorithms.CreateSHA1();
-            else if (StringUtil.EqualsIgnoreCase(passwordFormat, "md5"))
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(passwordFormat, "md5"))
                 hashAlgorithm = CryptoAlgorithms.CreateMD5();
-            else if (StringUtil.EqualsIgnoreCase(passwordFormat, "sha256"))
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(passwordFormat, "sha256"))
                 hashAlgorithm = CryptoAlgorithms.CreateSHA256();
-            else if (StringUtil.EqualsIgnoreCase(passwordFormat, "sha384"))
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(passwordFormat, "sha384"))
                 hashAlgorithm = CryptoAlgorithms.CreateSHA384();
-            else if (StringUtil.EqualsIgnoreCase(passwordFormat, "sha512"))
+            else if (System.Web.Util.StringUtil.EqualsIgnoreCase(passwordFormat, "sha512"))
                 hashAlgorithm = CryptoAlgorithms.CreateSHA512();
             else
-                throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "passwordFormat"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidArgumentValue, "passwordFormat"));
 
             using (hashAlgorithm) {
                 return CryptoUtil.BinaryToHex(hashAlgorithm.ComputeHash(Encoding.UTF8.GetBytes(password)));
@@ -116,6 +117,7 @@ namespace System.Web.Security {
                 _CookieDomain = settings.Forms.Domain;
                 _EnableCrossAppRedirects = settings.Forms.EnableCrossAppRedirects;
                 _TicketCompatibilityMode = settings.Forms.TicketCompatibilityMode;
+                _cookieSameSite = settings.Forms.CookieSameSite;
 
                 _Initialized = true;
             }
@@ -133,7 +135,7 @@ namespace System.Web.Security {
         /// </devdoc>
         public static FormsAuthenticationTicket Decrypt(string encryptedTicket) {
             if (String.IsNullOrEmpty(encryptedTicket) || encryptedTicket.Length > MAX_TICKET_LENGTH)
-                throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "encryptedTicket"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidArgumentValue, "encryptedTicket"));
 
             Initialize();
             byte[] bBlob = null;
@@ -145,7 +147,7 @@ namespace System.Web.Security {
             if (bBlob == null)
                 bBlob = HttpServerUtility.UrlTokenDecode(encryptedTicket);
             if (bBlob == null || bBlob.Length < 1)
-                throw new ArgumentException(SR.GetString(SR.InvalidArgumentValue, "encryptedTicket"));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.InvalidArgumentValue, "encryptedTicket"));
 
             int ticketLength;
 
@@ -416,6 +418,7 @@ namespace System.Web.Security {
                 cookie.Secure = _RequireSSL;
                 if (_CookieDomain != null)
                     cookie.Domain = _CookieDomain;
+                cookie.SameSite = _cookieSameSite;
                 context.Response.Cookies.RemoveCookie(FormsCookieName);
                 context.Response.Cookies.Add(cookie);
             }
@@ -446,7 +449,7 @@ namespace System.Web.Security {
             HttpContext context = HttpContext.Current;
 
             if (!context.Request.IsSecureConnection && RequireSSL)
-                throw new HttpException(SR.GetString(SR.Connection_not_secure_creating_secure_cookie));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Connection_not_secure_creating_secure_cookie));
             bool        cookieless  = CookielessHelperClass.UseCookieless(context, false, CookieMode);
             HttpCookie  cookie      = GetAuthCookie(userName, createPersistentCookie, cookieless ? "/" : strCookiePath, !cookieless);
 
@@ -500,7 +503,7 @@ namespace System.Web.Security {
             String strTicket = Encrypt(ticket, hexEncodedTicket);
             if (strTicket == null || strTicket.Length < 1)
                         throw new HttpException(
-                                SR.GetString(SR.Unable_to_encrypt_cookie_ticket));
+                                System.Web.SR.GetString(System.Web.SR.Unable_to_encrypt_cookie_ticket));
 
 
             HttpCookie cookie = new HttpCookie(FormsCookieName, strTicket);
@@ -512,6 +515,7 @@ namespace System.Web.Security {
                 cookie.Domain = _CookieDomain;
             if (ticket.IsPersistent)
                 cookie.Expires = ticket.Expiration;
+            cookie.SameSite = _cookieSameSite;
             return cookie;
         }
 
@@ -535,13 +539,13 @@ namespace System.Web.Security {
 
             // Make sure it is on the current server if EnableCrossAppRedirects is false
             if (!string.IsNullOrEmpty(returnUrl) && !EnableCrossAppRedirects) {
-                if (!UrlPath.IsPathOnSameServer(returnUrl, context.Request.Url))
+                if (!System.Web.Util.UrlPath.IsPathOnSameServer(returnUrl, context.Request.Url))
                     returnUrl = null;
             }
 
             // Make sure it is not dangerous, i.e. does not contain script, etc.
             if (!string.IsNullOrEmpty(returnUrl) && CrossSiteScriptingValidation.IsDangerousUrl(returnUrl))
-                throw new HttpException(SR.GetString(SR.Invalid_redirect_return_url));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_redirect_return_url));
 
             return ((returnUrl == null && useDefaultIfAbsent) ? DefaultUrl : returnUrl);
         }
@@ -603,7 +607,7 @@ namespace System.Web.Security {
 
             } else {
                 // Broken scenario:
-                throw new HttpException(SR.GetString(SR.Can_not_issue_cookie_or_redirect));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Can_not_issue_cookie_or_redirect));
             }
 
             context.Response.Redirect(strUrl, false);
@@ -677,6 +681,8 @@ namespace System.Web.Security {
         public static bool EnableCrossAppRedirects { get { Initialize(); return _EnableCrossAppRedirects; } }
 
         public static TicketCompatibilityMode TicketCompatibilityMode { get { Initialize(); return _TicketCompatibilityMode; } }
+
+        public static SameSiteMode CookieSameSite { get { Initialize(); return _cookieSameSite; }}
 
         public static bool CookiesSupported {
             get {
@@ -790,6 +796,7 @@ namespace System.Web.Security {
         private static string              _CookieDomain = null;
         private static bool                _EnableCrossAppRedirects;
         private static TicketCompatibilityMode _TicketCompatibilityMode;
+        private static SameSiteMode        _cookieSameSite;
 
         /////////////////////////////////////////////////////////////////////////////
         private static byte[] MakeTicketIntoBinaryBlob(FormsAuthenticationTicket ticket) {

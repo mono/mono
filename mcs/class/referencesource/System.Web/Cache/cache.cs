@@ -29,6 +29,7 @@ namespace System.Web.Caching {
     using System.Web.Hosting;
     using System.Web.Management;
     using Debug = System.Web.Util.Debug;
+    
 
 
     /// <devdoc>
@@ -354,7 +355,7 @@ namespace System.Web.Caching {
                         }
                         break;
                     case CacheItemRemovedReason.Underused:
-                        Debug.Fail("Reason should never be CacheItemRemovedReason.Underused since the entry was inserted as NotRemovable.");
+                        System.Web.Util.Debug.Fail("Reason should never be CacheItemRemovedReason.Underused since the entry was inserted as NotRemovable.");
                         return;
                     default:
                         // do nothing if reason is Removed
@@ -457,7 +458,7 @@ namespace System.Web.Caching {
                 CacheItemUpdateCallback onUpdateCallback) {
 
             if (dependencies == null && absoluteExpiration == Cache.NoAbsoluteExpiration && slidingExpiration == Cache.NoSlidingExpiration) {
-                throw new ArgumentException(SR.GetString(SR.Invalid_Parameters_To_Insert));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_Parameters_To_Insert));
             }
             if (onUpdateCallback == null) {
                 throw new ArgumentNullException("onUpdateCallback");
@@ -520,13 +521,15 @@ namespace System.Web.Caching {
 
         public long EffectivePrivateBytesLimit {
             get {
-                return AspNetMemoryMonitor.ProcessPrivateBytesLimit;
+                return -1;
+                //return AspNetMemoryMonitor.ProcessPrivateBytesLimit;
             }
         }
 
         public long EffectivePercentagePhysicalMemoryLimit {
             get {
-                return AspNetMemoryMonitor.PhysicalMemoryPercentageLimit;
+                return -1;
+                //return AspNetMemoryMonitor.PhysicalMemoryPercentageLimit;
             }
         }
     }

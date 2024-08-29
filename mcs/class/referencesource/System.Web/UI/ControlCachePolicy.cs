@@ -20,6 +20,7 @@ using System.Web.UI.WebControls;
 using System.Web.Caching;
 using System.Security.Permissions;
 
+
 public sealed class ControlCachePolicy {
 
     private static ControlCachePolicy _cachePolicyStub = new ControlCachePolicy();
@@ -44,13 +45,13 @@ public sealed class ControlCachePolicy {
         // If it's not being cached, the CachePolicy can't be used
         if (_pcc == null) {
             throw new HttpException(
-                SR.GetString(SR.UC_not_cached));
+                System.Web.SR.GetString(System.Web.SR.UC_not_cached));
         }
 
         // Make sure it's not being used too late
         if (_pcc.ControlState >= ControlState.PreRendered) {
             throw new HttpException(
-                SR.GetString(SR.UCCachePolicy_unavailable));
+                System.Web.SR.GetString(System.Web.SR.UCCachePolicy_unavailable));
         }
     }
 

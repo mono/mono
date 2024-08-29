@@ -21,7 +21,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.TableSectionStyle_Visible),
+        WebSysDescription(System.Web.SR.TableSectionStyle_Visible),
         NotifyParentProperty(true)
         ]
         public bool Visible {

@@ -23,6 +23,7 @@
               slidingExpiration="[true|false]" - Should the forms-authentication-cookie and ticket be re-issued if they are about to expire
               defaultUrl="string" - Page to redirect to after login, if none has been specified
               cookieless="[UseCookies|UseUri|AutoDetect|UseDeviceProfile]" - Use Cookies or the URL path to store the forms authentication ticket
+              cookieSameSite="[None|Lax|Strict|-1]" - Set SameSite cookie header to the given value, or omit the header for the auth cookie entirely.
               domain="string" - Domain of the cookie
             -->
             <forms
@@ -35,7 +36,8 @@
                     slidingExpiration="true"
                     defaultUrl="default.aspx"
                     cookieless="UseDeviceProfile"
-                    enableCrossAppRedirects="false" >
+                    enableCrossAppRedirects="false"
+                    cookieSameSite="Lax" >
 
                 <!--
                 credentials Attributes:
@@ -88,6 +90,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     public sealed class FormsAuthenticationConfiguration : ConfigurationElement {
         private static readonly ConfigurationElementProperty s_elemProperty = 
@@ -183,6 +186,12 @@ namespace System.Web.Configuration {
                                         TicketCompatibilityMode.Framework20,
                                         ConfigurationPropertyOptions.None);
 
+        private static readonly ConfigurationProperty _propCookieSameSite = 
+            new ConfigurationProperty("cookieSameSite", 
+                                        typeof(SameSiteMode), 
+                                        SameSiteMode.Lax, 
+                                        ConfigurationPropertyOptions.None);
+
         static FormsAuthenticationConfiguration() {
             // Property initialization
             _properties = new ConfigurationPropertyCollection();
@@ -199,12 +208,13 @@ namespace System.Web.Configuration {
             _properties.Add(_propDomain);
             _properties.Add(_propEnableCrossAppRedirects);
             _properties.Add(_propTicketCompatibilityMode);
+            _properties.Add(_propCookieSameSite);
         }
 
         public FormsAuthenticationConfiguration() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -364,7 +374,17 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override ConfigurationElementProperty ElementProperty {
+        [ConfigurationProperty("cookieSameSite")]
+        public SameSiteMode CookieSameSite {
+            get {
+                return (SameSiteMode)base[_propCookieSameSite];
+            }
+            set {
+                base[_propCookieSameSite] = value;
+            }
+        }
+
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -376,16 +396,16 @@ namespace System.Web.Configuration {
 
             FormsAuthenticationConfiguration elem = (FormsAuthenticationConfiguration)value;
 
-            if (StringUtil.StringStartsWith(elem.LoginUrl, "\\\\") || 
+            if (System.Web.Util.StringUtil.StringStartsWith(elem.LoginUrl, "\\\\") || 
                 (elem.LoginUrl.Length > 1 && elem.LoginUrl[1] == ':')) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Auth_bad_url), 
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Auth_bad_url), 
                     elem.ElementInformation.Properties["loginUrl"].Source, 
                     elem.ElementInformation.Properties["loginUrl"].LineNumber);
             }
 
-            if (StringUtil.StringStartsWith(elem.DefaultUrl, "\\\\") || 
+            if (System.Web.Util.StringUtil.StringStartsWith(elem.DefaultUrl, "\\\\") || 
                 (elem.DefaultUrl.Length > 1 && elem.DefaultUrl[1] == ':')) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Auth_bad_url), 
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Auth_bad_url), 
                     elem.ElementInformation.Properties["defaultUrl"].Source, 
                     elem.ElementInformation.Properties["defaultUrl"].LineNumber);
             }

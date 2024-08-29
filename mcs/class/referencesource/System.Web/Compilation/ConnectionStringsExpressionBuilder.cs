@@ -11,6 +11,7 @@ namespace System.Web.Compilation {
     using System.Configuration;
     using System.Globalization;
     using System.Web.UI;
+    
 
 
     [ExpressionPrefix("ConnectionStrings")]
@@ -81,7 +82,7 @@ namespace System.Web.Compilation {
         public static string GetConnectionStringProviderName(string connectionStringName) {
             ConnectionStringSettings setting = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (setting == null) {
-                throw new InvalidOperationException(SR.GetString(SR.Connection_string_not_found, connectionStringName));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, connectionStringName));
             }
             return setting.ProviderName;
         }
@@ -89,7 +90,7 @@ namespace System.Web.Compilation {
         public static string GetConnectionString(string connectionStringName) {
             ConnectionStringSettings setting = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (setting == null) {
-                throw new InvalidOperationException(SR.GetString(SR.Connection_string_not_found, connectionStringName));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, connectionStringName));
             }
             return setting.ConnectionString;
         }

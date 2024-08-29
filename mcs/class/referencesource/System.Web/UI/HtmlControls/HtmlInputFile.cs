@@ -20,6 +20,7 @@ namespace System.Web.UI.HtmlControls {
     using System.Web;
     using System.Web.UI;
     using System.Security.Permissions;
+    
 
 
 /// <devdoc>
@@ -169,7 +170,7 @@ namespace System.Web.UI.HtmlControls {
                 // rendering behavior and since we're always returning the posted file's
                 // filename, we don't want to get into a situation where the user
                 // sets a value and does not get back that value.
-                throw new NotSupportedException(SR.GetString(SR.Value_Set_Not_Supported, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Value_Set_Not_Supported, this.GetType().Name));
             }
         }
 

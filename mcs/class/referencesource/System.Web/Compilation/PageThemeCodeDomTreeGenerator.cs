@@ -17,6 +17,7 @@ using System.Web.UI;
 using System.Web.Util;
 using Debug=System.Web.Util.Debug;
 
+
 namespace System.Web.Compilation {
 
     internal class PageThemeCodeDomTreeGenerator : BaseTemplateCodeDomTreeGenerator {
@@ -206,19 +207,19 @@ namespace System.Web.Compilation {
             if (fControlSkin && !(builder is DataBoundLiteralControlBuilder)) {
 
                 Type ctrlType = builder.ControlType;
-                Debug.Assert(typeof(Control).IsAssignableFrom(ctrlType));
-                Debug.Assert(ThemeableAttribute.IsTypeThemeable(ctrlType));
+                System.Web.Util.Debug.Assert(typeof(Control).IsAssignableFrom(ctrlType));
+                System.Web.Util.Debug.Assert(ThemeableAttribute.IsTypeThemeable(ctrlType));
 
                 string skinID = builder.SkinID;
                 object skinKey = PageTheme.CreateSkinKey(builder.ControlType, skinID);
 
                 if (_controlSkinTypeNameCollection.Contains(skinKey)) {
                     if (String.IsNullOrEmpty(skinID)) {
-                        throw new HttpParseException(SR.GetString(SR.Page_theme_default_theme_already_defined,
+                        throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Page_theme_default_theme_already_defined,
                             builder.ControlType.FullName), null, builder.VirtualPath, null, builder.Line);
                     }
                     else {
-                        throw new HttpParseException(SR.GetString(SR.Page_theme_skinID_already_defined, skinID),
+                        throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.Page_theme_skinID_already_defined, skinID),
                             null, builder.VirtualPath, null, builder.Line);
                     }
                 }
@@ -277,18 +278,18 @@ namespace System.Web.Compilation {
                         SimplePropertyEntry spse = (SimplePropertyEntry)pse;
 
                         string strValue = (string)spse.Value;
-                        if (UrlPath.IsRelativeUrl(strValue) && !UrlPath.IsAppRelativePath(strValue)) {
-                            spse.Value = UrlPath.MakeVirtualPathAppRelative(UrlPath.Combine(_themeParser.VirtualDirPath.VirtualPathString, strValue));
+                        if (System.Web.Util.UrlPath.IsRelativeUrl(strValue) && !System.Web.Util.UrlPath.IsAppRelativePath(strValue)) {
+                            spse.Value = System.Web.Util.UrlPath.MakeVirtualPathAppRelative(System.Web.Util.UrlPath.Combine(_themeParser.VirtualDirPath.VirtualPathString, strValue));
                         }
                     }
                     else {
-                        Debug.Assert(pse is ComplexPropertyEntry);
+                        System.Web.Util.Debug.Assert(pse is ComplexPropertyEntry);
                         ComplexPropertyEntry cpe = (ComplexPropertyEntry)pse;
                         StringPropertyBuilder builder = (StringPropertyBuilder)cpe.Builder;
 
                         string strValue = (string)builder.BuildObject();
-                        if (UrlPath.IsRelativeUrl(strValue) && !UrlPath.IsAppRelativePath(strValue)) {
-                            cpe.Builder = new StringPropertyBuilder(UrlPath.MakeVirtualPathAppRelative(UrlPath.Combine(_themeParser.VirtualDirPath.VirtualPathString, strValue)));
+                        if (System.Web.Util.UrlPath.IsRelativeUrl(strValue) && !System.Web.Util.UrlPath.IsAppRelativePath(strValue)) {
+                            cpe.Builder = new StringPropertyBuilder(System.Web.Util.UrlPath.MakeVirtualPathAppRelative(System.Web.Util.UrlPath.Combine(_themeParser.VirtualDirPath.VirtualPathString, strValue)));
                         }
                     }
                 }

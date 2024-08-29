@@ -14,6 +14,7 @@ namespace System.Web.Configuration {
     using System.Text;
     using System.Web.Util;
     using System.Security.Permissions;
+    
 
     [ConfigurationCollection(typeof(ProfilePropertySettings))]
     public class ProfilePropertySettingsCollection : ConfigurationElementCollection {
@@ -24,7 +25,7 @@ namespace System.Web.Configuration {
             _properties = new ConfigurationPropertyCollection();
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -48,13 +49,13 @@ namespace System.Web.Configuration {
         protected override bool OnDeserializeUnrecognizedElement(String elementName, XmlReader reader) {
             if (!AllowClear) {
                 if (elementName == "clear") {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Clear_not_valid), reader);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Clear_not_valid), reader);
 
                 }
             }
 
             if (elementName == "group") {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Nested_group_not_valid), reader);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Nested_group_not_valid), reader);
             }
 
             return base.OnDeserializeUnrecognizedElement(elementName, reader);
@@ -63,7 +64,7 @@ namespace System.Web.Configuration {
         // public properties
         public String[] AllKeys {
             get {
-                return StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
+                return System.Web.Util.StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
             }
         }
 

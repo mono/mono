@@ -19,6 +19,7 @@ namespace System.Web.Configuration {
     using System.Web.Compilation;
     using System.Web.Hosting;
     using System.Security.Permissions;
+    
 
     public abstract class HttpCapabilitiesProvider {
         public abstract HttpBrowserCapabilities GetBrowserCapabilities(HttpRequest request);
@@ -143,7 +144,7 @@ namespace System.Web.Configuration {
             _rule = null;
             _cachetime = TimeSpan.FromSeconds(60); // one minute default expiry
             _variables = new Hashtable();
-            _resultType = typeof(HttpCapabilitiesBase);
+            _resultType = typeof(HttpBrowserCapabilities);
         }
 
         //
@@ -202,7 +203,7 @@ namespace System.Web.Configuration {
 
             if ( userAgent == null )
             {
-                throw new HttpException(SR.GetString(SR.Invalid_client_target, clientTarget));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_client_target, clientTarget));
             }
 
             return userAgent;
@@ -264,7 +265,7 @@ namespace System.Web.Configuration {
             string userAgentCacheKey = userAgent;
 
             // Use the shorten userAgent as the cache key.
-            Debug.Assert(UserAgentCacheKeyLength != 0);
+            System.Web.Util.Debug.Assert(UserAgentCacheKeyLength != 0);
             // Trim the useragent string based on <browserCaps> config
             if (userAgentCacheKey != null && userAgentCacheKey.Length > UserAgentCacheKeyLength) {
                 userAgentCacheKey = userAgentCacheKey.Substring(0, UserAgentCacheKeyLength);
@@ -320,8 +321,6 @@ namespace System.Web.Configuration {
             IDictionaryEnumerator de = _variables.GetEnumerator();
             StringBuilder sb = new StringBuilder(_cacheKeyPrefix);
 
-            InternalSecurityPermissions.AspNetHostingPermissionLevelLow.Assert();
-
             while (de.MoveNext()) {
                 string key = (string)de.Key;
                 string value;
@@ -337,9 +336,7 @@ namespace System.Web.Configuration {
                     sb.Append(value);
                 }    
             }
-
-            CodeAccessPermission.RevertAssert();
-
+            
             sb.Append(BrowserCapabilitiesFactoryBase.GetBrowserCapKey(BrowserCapFactory.InternalGetMatchedHeaders(), request));
             string fullCacheKey = sb.ToString();
 

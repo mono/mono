@@ -22,6 +22,7 @@ namespace System.Web.Hosting {
     using System.Security.Permissions;
     
 
+
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
     /// </devdoc>
@@ -114,7 +115,7 @@ namespace System.Web.Hosting {
         /// </devdoc>
         [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)] // DevDiv #180492
         public void StartProcessing() {
-            Debug.Trace("ISAPIRuntime", "StartProcessing");
+            System.Web.Util.Debug.Trace("ISAPIRuntime", "StartProcessing");
         }
 
         void IISAPIRuntime2.StartProcessing() {
@@ -127,7 +128,7 @@ namespace System.Web.Hosting {
         /// </devdoc>
         [SecurityPermission(SecurityAction.LinkDemand, Unrestricted = true)] // DevDiv #180492
         public void StopProcessing() {
-            Debug.Trace("ISAPIRuntime", "StopProcessing");
+            System.Web.Util.Debug.Trace("ISAPIRuntime", "StopProcessing");
             HostingEnvironment.UnregisterObject(this);
         }
 
@@ -163,7 +164,7 @@ namespace System.Web.Hosting {
                 String adPath = HttpRuntime.AppDomainAppPathInternal;                
                 
                 if (adPath == null ||
-                    StringUtil.EqualsIgnoreCase(wrPath, adPath)) {
+                    System.Web.Util.StringUtil.EqualsIgnoreCase(wrPath, adPath)) {
                     
                     HttpRuntime.ProcessRequestNoDemand(wr);
                     return 0;
@@ -171,7 +172,7 @@ namespace System.Web.Hosting {
                 else {
                     // need to restart app domain
                     HttpRuntime.ShutdownAppDomain(ApplicationShutdownReason.PhysicalApplicationPathChanged,
-                                                  SR.GetString(SR.Hosting_Phys_Path_Changed,
+                                                  System.Web.SR.GetString(System.Web.SR.Hosting_Phys_Path_Changed,
                                                                                    adPath,
                                                                                    wrPath));
                     return 1;
@@ -237,12 +238,12 @@ namespace System.Web.Hosting {
             try {
                 String appId = HttpRuntime.AppDomainAppId;
                 if (appId != null ) {
-                    Debug.Trace("ISAPIRuntime", "Calling UnsafeNativeMethods.AppDomainRestart appId=" + appId);
+                    System.Web.Util.Debug.Trace("ISAPIRuntime", "Calling UnsafeNativeMethods.AppDomainRestart appId=" + appId);
 
                     UnsafeNativeMethods.AppDomainRestart(appId);
                 }
 
-                HttpRuntime.AddAppDomainTraceMessage(SR.GetString(SR.App_Domain_Restart));
+                HttpRuntime.AddAppDomainTraceMessage(System.Web.SR.GetString(System.Web.SR.App_Domain_Restart));
             }
             catch {
             }

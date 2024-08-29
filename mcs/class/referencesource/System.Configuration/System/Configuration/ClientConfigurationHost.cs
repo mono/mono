@@ -454,6 +454,8 @@ namespace System.Configuration {
 
         [SecurityPermission(SecurityAction.Assert, ControlEvidence=true)]
         public override void GetRestrictedPermissions(IInternalConfigRecord configRecord, out PermissionSet permissionSet, out bool isHostReady) {
+
+#if (!MONO) || (MONO && !FEATURE_PAL)   
             // Get the stream name as a URL
             string url;
             bool isFile = IsFile(configRecord.StreamName);
@@ -479,7 +481,10 @@ namespace System.Configuration {
 
             // Get the resulting permission set.
             permissionSet = SecurityManager.GetStandardSandbox(evidence);
-
+#else          
+            // We're not really worried about all this sandboxing...
+            permissionSet = new PermissionSet(PermissionState.Unrestricted);
+#endif
             // Client host is always ready to return permissions.
             isHostReady = true;
         }

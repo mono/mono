@@ -28,6 +28,7 @@ namespace System.Web.Security
     using System.Diagnostics;
     using System.IO;
     using System.Runtime.InteropServices;
+    
 
     /// <devdoc>
     ///    <para>[To be supplied.]</para>
@@ -43,7 +44,7 @@ namespace System.Web.Security
             set {
                 if (_AppName != value) {
                     if ( value.Length > 256 )
-                        throw new ProviderException( SR.GetString(SR.Provider_application_name_too_long)  );
+                        throw new ProviderException( System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long)  );
                     _AppName = value;
                     _InitAppDone = false;
                 }
@@ -74,15 +75,14 @@ namespace System.Web.Security
         //////////////////////////////////////////////////////////////////////
 
         public override void Initialize(string name, NameValueCollection config)
-        {
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
+        {            
             if (String.IsNullOrEmpty(name))
                 name = "AuthorizationStoreRoleProvider";
             if (config == null)
                throw new ArgumentNullException("config");
            if (string.IsNullOrEmpty(config["description"])) {
                config.Remove("description");
-               config.Add("description", SR.GetString(SR.RoleAuthStoreProvider_description));
+               config.Add("description", System.Web.SR.GetString(System.Web.SR.RoleAuthStoreProvider_description));
            }
             base.Initialize(name, config);
 
@@ -94,15 +94,15 @@ namespace System.Web.Security
 
             _ConnectionString = config["connectionStringName"];
             if (_ConnectionString == null || _ConnectionString.Length < 1)
-                throw new ProviderException(SR.GetString(SR.Connection_name_not_specified));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Connection_name_not_specified));
             ConnectionStringsSection sec1 = null;
             sec1 = RuntimeConfig.GetAppConfig().ConnectionStrings;
             ConnectionStringSettings connObj = sec1.ConnectionStrings[_ConnectionString];
             if (connObj == null)
-                throw new ProviderException(SR.GetString(SR.Connection_string_not_found, _ConnectionString));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, _ConnectionString));
 
             if (string.IsNullOrEmpty(connObj.ConnectionString))
-                throw new ProviderException(SR.GetString(SR.Connection_string_not_found, _ConnectionString));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, _ConnectionString));
 
             _ConnectionString = connObj.ConnectionString;
             _AppName = config["applicationName"];
@@ -111,7 +111,7 @@ namespace System.Web.Security
 
             if( _AppName.Length > 256 )
             {
-                throw new ProviderException(SR.GetString(SR.Provider_application_name_too_long));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long));
             }
 
             config.Remove("connectionStringName");
@@ -122,7 +122,7 @@ namespace System.Web.Security
             {
                 string attribUnrecognized = config.GetKey(0);
                 if (!String.IsNullOrEmpty(attribUnrecognized))
-                    throw new ProviderException(SR.GetString(SR.Provider_unrecognized_attribute, attribUnrecognized));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unrecognized_attribute, attribUnrecognized));
             }
         }
 
@@ -159,8 +159,7 @@ namespace System.Web.Security
         //////////////////////////////////////////////////////////////////////
 
         public override void CreateRole(string roleName)
-        {
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Medium, SR.API_not_supported_at_this_level);
+        {            
             SecUtility.CheckParameter(ref roleName, true, true, true, 0, "roleName");
             InitApp();
             object[] args = new object[2];
@@ -190,8 +189,7 @@ namespace System.Web.Security
         //////////////////////////////////////////////////////////////////////
 
         public override bool DeleteRole(string roleName, bool throwOnPopulatedRole)
-        {
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Medium, SR.API_not_supported_at_this_level);
+        {            
             SecUtility.CheckParameter(ref roleName, true, true, true, 0, "roleName");
             InitApp();
             if (throwOnPopulatedRole)
@@ -207,7 +205,7 @@ namespace System.Web.Security
                 }
 
                 if (users.Length != 0)
-                    throw new ProviderException(SR.GetString(SR.Role_is_not_empty));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Role_is_not_empty));
             }
 
             object[] args = new object[2];
@@ -255,8 +253,7 @@ namespace System.Web.Security
         //////////////////////////////////////////////////////////////////////
 
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
-        {
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Medium, SR.API_not_supported_at_this_level);
+        {            
             SecUtility.CheckArrayParameter(ref roleNames,
                                             true,
                                             true,
@@ -310,8 +307,7 @@ namespace System.Web.Security
         //////////////////////////////////////////////////////////////////////
 
         public override void RemoveUsersFromRoles(string[] userNames, string[] roleNames)
-        {
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Medium, SR.API_not_supported_at_this_level);
+        {            
             SecUtility.CheckArrayParameter(ref roleNames,
                                             true,
                                             true,
@@ -387,25 +383,10 @@ namespace System.Web.Security
             StringCollection userNameCollection = new StringCollection();
 
             try
-            {
-                if ( HostingEnvironment.IsHosted && _XmlFileName != null )
-                {
-                    InternalSecurityPermissions.Unrestricted.Assert();
-                }
-
-                try
-                {
-                    IEnumerable allUsers = (IEnumerable)memberNames;
-                    foreach (object objUserName in allUsers)
-                        userNameCollection.Add((string)objUserName);
-                }
-                finally
-                {
-                    if( HostingEnvironment.IsHosted && _XmlFileName != null )
-                    {
-                        CodeAccessPermission.RevertAssert();
-                    }
-                }
+            {                                
+                IEnumerable allUsers = (IEnumerable)memberNames;
+                foreach (object objUserName in allUsers)
+                    userNameCollection.Add((string)objUserName);                
             }
             catch
             {
@@ -428,28 +409,13 @@ namespace System.Web.Security
             StringCollection roleNameCollection = new StringCollection();
 
             try
-            {
-                if( HostingEnvironment.IsHosted && _XmlFileName != null )
+            {                
+                IEnumerable allRoles = (IEnumerable)objAllRoles;
+                foreach (object role in allRoles)
                 {
-                    InternalSecurityPermissions.Unrestricted.Assert();
-                }
-
-                try
-                {
-                    IEnumerable allRoles = (IEnumerable)objAllRoles;
-                    foreach (object role in allRoles)
-                    {
-                        string name = (string)CallProperty(role, "Name", null);
-                        roleNameCollection.Add(name);
-                    }
-                }
-                finally
-                {
-                    if( HostingEnvironment.IsHosted && _XmlFileName != null )
-                    {
-                        CodeAccessPermission.RevertAssert();
-                    }
-                }
+                    string name = (string)CallProperty(role, "Name", null);
+                    roleNameCollection.Add(name);
+                }                
             }
             catch
             {
@@ -564,8 +530,8 @@ namespace System.Web.Security
                                 HttpRuntime.CheckFilePermission( fileName, false );
                             }
 
-                            if (!FileUtil.FileExists(fileName)) {
-                                throw new FileNotFoundException(SR.GetString(SR.AuthStore_policy_file_not_found,
+                            if (!System.Web.Util.FileUtil.FileExists(fileName)) {
+                                throw new FileNotFoundException(System.Web.SR.GetString(System.Web.SR.AuthStore_policy_file_not_found,
                                                 HttpRuntime.GetSafePath(fileName)));
                             }
 
@@ -590,7 +556,7 @@ namespace System.Web.Security
                             HttpContext context = HttpContext.Current;
                             if (context == null)
                             {
-                                throw new ProviderException(SR.GetString(SR.AuthStoreNotInstalled_Title), e);
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.AuthStoreNotInstalled_Title), e);
                             }
 
                             context.Response.Clear();
@@ -621,14 +587,14 @@ namespace System.Web.Security
                             _ObjAzApplication = CallMethod(_ObjAzAuthorizationStoreClass, "OpenApplication", args);
                         }
                         if (_ObjAzApplication == null)
-                            throw new ProviderException(SR.GetString(SR.AuthStore_Application_not_found));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.AuthStore_Application_not_found));
                         _ObjAzScope = null;
                         if (!string.IsNullOrEmpty(_ScopeName)) {
                             args[0] = _ScopeName;
                             args[1] = null;
                             _ObjAzScope = CallMethod(_ObjAzApplication, "OpenScope", args);
                             if (_ObjAzScope == null)
-                                throw new ProviderException(SR.GetString(SR.AuthStore_Scope_not_found));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.AuthStore_Scope_not_found));
                         }
                         _LastUpdateCacheDate = DateTime.Now;
                         _InitAppDone = true;
@@ -648,14 +614,14 @@ namespace System.Web.Security
             {
                 HttpContext context = HttpContext.Current;
                 if (context != null && context.User != null && context.User.Identity != null && context.User.Identity is WindowsIdentity &&
-                     StringUtil.EqualsIgnoreCase(userName, context.User.Identity.Name))
+                     System.Web.Util.StringUtil.EqualsIgnoreCase(userName, context.User.Identity.Name))
                 {
                     return ((WindowsIdentity)context.User.Identity).Token;
                 }
             }
             IPrincipal user = Thread.CurrentPrincipal;
             if (user != null && user.Identity != null && user.Identity is WindowsIdentity &&
-                    StringUtil.EqualsIgnoreCase(userName, user.Identity.Name))
+                    System.Web.Util.StringUtil.EqualsIgnoreCase(userName, user.Identity.Name))
             {
                 return ((WindowsIdentity)user.Identity).Token;
             }
@@ -728,31 +694,17 @@ namespace System.Web.Security
                 return false;
 
             try
-            {
-                if( HostingEnvironment.IsHosted && _XmlFileName != null )
+            {                                
+                IEnumerable allRoles = (IEnumerable)objAllRoles;
+
+                foreach (object objRoleName in allRoles)
                 {
-                    InternalSecurityPermissions.Unrestricted.Assert();
+                    string strRoleName = (string)objRoleName;
+                    if (strRoleName != null && System.Web.Util.StringUtil.EqualsIgnoreCase(strRoleName, roleName))
+                        return true;
                 }
 
-                try
-                {
-                    IEnumerable allRoles = (IEnumerable)objAllRoles;
-
-                    foreach (object objRoleName in allRoles)
-                    {
-                        string strRoleName = (string)objRoleName;
-                        if (strRoleName != null && StringUtil.EqualsIgnoreCase(strRoleName, roleName))
-                            return true;
-                    }
-                    return false;
-                }
-                finally
-                {
-                    if( HostingEnvironment.IsHosted && _XmlFileName != null )
-                    {
-                        CodeAccessPermission.RevertAssert();
-                    }
-                }
+                return false;                
             }
             catch
             {
@@ -775,29 +727,14 @@ namespace System.Web.Security
             StringCollection roleNameCollection = new StringCollection();
 
             try
-            {
-                if( HostingEnvironment.IsHosted && _XmlFileName != null )
+            {                
+                IEnumerable allRoles = (IEnumerable)objAllRoles;
+                foreach (object objRoleName in allRoles)
                 {
-                    InternalSecurityPermissions.Unrestricted.Assert();
-                }
-
-                try
-                {
-                    IEnumerable allRoles = (IEnumerable)objAllRoles;
-                    foreach (object objRoleName in allRoles)
-                    {
-                        string strRoleName = (string)objRoleName;
-                        if (strRoleName != null)
-                            roleNameCollection.Add(strRoleName);
-                    }
-                }
-                finally
-                {
-                if( HostingEnvironment.IsHosted && _XmlFileName != null )
-                    {
-                        CodeAccessPermission.RevertAssert();
-                    }
-                }
+                    string strRoleName = (string)objRoleName;
+                    if (strRoleName != null)
+                        roleNameCollection.Add(strRoleName);
+                }                
             }
             catch
             {
@@ -863,7 +800,7 @@ namespace System.Web.Security
         {
             get
             {
-                return SR.GetString(SR.AuthStoreNotInstalled_Title) ;
+                return System.Web.SR.GetString(System.Web.SR.AuthStoreNotInstalled_Title) ;
             }
         }
 
@@ -871,7 +808,7 @@ namespace System.Web.Security
         {
             get
             {
-                return SR.GetString(SR.AuthStoreNotInstalled_Description) ;
+                return System.Web.SR.GetString(System.Web.SR.AuthStoreNotInstalled_Description) ;
             }
         }
 

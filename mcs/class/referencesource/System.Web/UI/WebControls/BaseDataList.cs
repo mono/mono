@@ -13,6 +13,7 @@ namespace System.Web.UI.WebControls {
     using System.Web;
     using System.Web.UI;
     using System.Web.Util;
+    
 
     /// <devdoc>
     /// <para>Serves as the abstract base class for the <see cref='System.Web.UI.WebControls.DataList'/> and <see cref='System.Web.UI.WebControls.DataGrid'/>
@@ -47,7 +48,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Localizable(true),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.DataControls_Caption)
+        WebSysDescription(System.Web.SR.DataControls_Caption)
         ]
         public virtual string Caption {
             get {
@@ -63,7 +64,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(TableCaptionAlign.NotSet),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.WebControl_CaptionAlign)
+        WebSysDescription(System.Web.SR.WebControl_CaptionAlign)
         ]
         public virtual TableCaptionAlign CaptionAlign {
             get {
@@ -86,7 +87,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(-1),
-        WebSysDescription(SR.BaseDataList_CellPadding)
+        WebSysDescription(System.Web.SR.BaseDataList_CellPadding)
         ]
         public virtual int CellPadding {
             get {
@@ -108,7 +109,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(0),
-        WebSysDescription(SR.BaseDataList_CellSpacing)
+        WebSysDescription(System.Web.SR.BaseDataList_CellSpacing)
         ]
         public virtual int CellSpacing {
             get {
@@ -136,7 +137,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.BaseDataList_DataKeys)
+        WebSysDescription(System.Web.SR.BaseDataList_DataKeys)
         ]
         public DataKeyCollection DataKeys {
             get {
@@ -170,7 +171,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataList_DataKeyField)
+        WebSysDescription(System.Web.SR.BaseDataList_DataKeyField)
         ]
         public virtual string DataKeyField {
             get {
@@ -191,7 +192,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataList_DataMember)
+        WebSysDescription(System.Web.SR.BaseDataList_DataMember)
         ]
         public string DataMember {
             get {
@@ -218,7 +219,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataBoundControl_DataSource),
+        WebSysDescription(System.Web.SR.BaseDataBoundControl_DataSource),
         ]
         public virtual object DataSource {
             get {
@@ -230,7 +231,7 @@ namespace System.Web.UI.WebControls {
                     OnDataPropertyChanged();
                 }
                 else {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_DataSource_Type, ID));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_DataSource_Type, ID));
                 }
             }
         }
@@ -247,7 +248,7 @@ namespace System.Web.UI.WebControls {
         IDReferenceProperty(typeof(DataSourceControl)),
         Themeable(false),
         WebCategory("Data"),
-        WebSysDescription(SR.BaseDataBoundControl_DataSourceID)
+        WebSysDescription(System.Web.SR.BaseDataBoundControl_DataSourceID)
         ]
         public virtual string DataSourceID {
             get {
@@ -270,7 +271,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(GridLines.Both),
-        WebSysDescription(SR.DataControls_GridLines)
+        WebSysDescription(System.Web.SR.DataControls_GridLines)
         ]
         public virtual GridLines GridLines {
             get {
@@ -292,7 +293,7 @@ namespace System.Web.UI.WebControls {
         [
         Category("Layout"),
         DefaultValue(HorizontalAlign.NotSet),
-        WebSysDescription(SR.WebControl_HorizontalAlign)
+        WebSysDescription(System.Web.SR.WebControl_HorizontalAlign)
         ]
         public virtual HorizontalAlign HorizontalAlign {
             get {
@@ -348,7 +349,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(false),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.Table_UseAccessibleHeader)
+        WebSysDescription(System.Web.SR.Table_UseAccessibleHeader)
         ]
         public virtual bool UseAccessibleHeader {
             get {
@@ -366,7 +367,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.BaseDataList_OnSelectedIndexChanged)
+        WebSysDescription(System.Web.SR.BaseDataList_OnSelectedIndexChanged)
         ]
         public event EventHandler SelectedIndexChanged {
             add {
@@ -412,11 +413,11 @@ namespace System.Web.UI.WebControls {
                 // Try to find a DataSource control with the ID specified in DataSourceID
                 Control control = DataBoundControlHelper.FindControl(this, dataSourceID);
                 if (control == null) {
-                    throw new HttpException(SR.GetString(SR.DataControl_DataSourceDoesntExist, ID, dataSourceID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControl_DataSourceDoesntExist, ID, dataSourceID));
                 }
                 ds = control as IDataSource;
                 if (ds == null) {
-                    throw new HttpException(SR.GetString(SR.DataControl_DataSourceIDMustBeDataControl, ID, dataSourceID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControl_DataSourceIDMustBeDataControl, ID, dataSourceID));
                 }
             }
 
@@ -427,14 +428,14 @@ namespace System.Web.UI.WebControls {
             else {
                 // Ensure that both DataSourceID as well as DataSource are not set at the same time
                 if (DataSource != null) {
-                    throw new InvalidOperationException(SR.GetString(SR.DataControl_MultipleDataSources, ID));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_MultipleDataSources, ID));
                 }
             }
 
             // IDataSource was found, extract the appropriate view and return it
             DataSourceView newView = ds.GetView(DataMember);
             if (newView == null) {
-                throw new InvalidOperationException(SR.GetString(SR.DataControl_ViewNotFound, ID));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataControl_ViewNotFound, ID));
             }
 
             _currentViewIsFromDataSourceID = IsBoundUsingDataSourceID;
@@ -510,7 +511,7 @@ namespace System.Web.UI.WebControls {
         protected virtual IEnumerable GetData() {
             ConnectToDataSourceView();
 
-            Debug.Assert(_currentViewValid);
+            System.Web.Util.Debug.Assert(_currentViewValid);
 
             if (_currentView != null) {
                 return _currentView.ExecuteSelect(SelectArguments);
@@ -556,7 +557,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         protected virtual void OnDataPropertyChanged() {
             if (_throwOnDataPropertyChange) {
-                throw new HttpException(SR.GetString(SR.DataBoundControl_InvalidDataPropertyChange, ID));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundControl_InvalidDataPropertyChange, ID));
             }
             
             if (_inited) {

@@ -60,7 +60,7 @@ namespace System.Web.Configuration
                 return String.Compare(xType.ToString(), yType.ToString(), StringComparison.Ordinal);
             }
     
-            Debug.Trace("RuleInfoComparer", "xType=" + xType.ToString() +
+            System.Web.Util.Debug.Trace("RuleInfoComparer", "xType=" + xType.ToString() +
                 "; yType=" + yType.ToString() + "; res=" + res);
             
             return res;

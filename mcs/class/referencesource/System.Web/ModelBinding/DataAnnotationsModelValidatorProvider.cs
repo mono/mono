@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Threading;
 using System.Web.Globalization;
 
+
     // A factory for validators based on ValidationAttribute
     public delegate ModelValidator DataAnnotationsModelValidationFactory(ModelMetadata metadata, ModelBindingExecutionContext context, ValidationAttribute attribute);
 
@@ -169,7 +170,7 @@ using System.Web.Globalization;
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.DataAnnotationsModelValidatorProvider_ConstructorRequirements),
+                        System.Web.SR.GetString(System.Web.SR.DataAnnotationsModelValidatorProvider_ConstructorRequirements),
                         adapterType.FullName,
                         typeof(ModelMetadata).FullName,
                         typeof(ModelBindingExecutionContext).FullName,
@@ -190,7 +191,7 @@ using System.Web.Globalization;
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.Common_TypeMustDriveFromType),
+                        System.Web.SR.GetString(System.Web.SR.Common_TypeMustDriveFromType),
                         adapterType.FullName,
                         typeof(ModelValidator).FullName
                     ),
@@ -207,7 +208,7 @@ using System.Web.Globalization;
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.Common_TypeMustDriveFromType),
+                        System.Web.SR.GetString(System.Web.SR.Common_TypeMustDriveFromType),
                         attributeType.FullName,
                         typeof(ValidationAttribute).FullName
                     ),
@@ -299,7 +300,7 @@ using System.Web.Globalization;
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.DataAnnotationsModelValidatorProvider_ValidatableConstructorRequirements),
+                        System.Web.SR.GetString(System.Web.SR.DataAnnotationsModelValidatorProvider_ValidatableConstructorRequirements),
                         adapterType.FullName,
                         typeof(ModelMetadata).FullName,
                         typeof(ModelBindingExecutionContext).FullName
@@ -319,7 +320,7 @@ using System.Web.Globalization;
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.Common_TypeMustDriveFromType),
+                        System.Web.SR.GetString(System.Web.SR.Common_TypeMustDriveFromType),
                         adapterType.FullName,
                         typeof(ModelValidator).FullName
                     ),
@@ -335,7 +336,7 @@ using System.Web.Globalization;
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.Common_TypeMustDriveFromType),
+                        System.Web.SR.GetString(System.Web.SR.Common_TypeMustDriveFromType),
                         modelType.FullName,
                         typeof(IValidatableObject).FullName
                     ),

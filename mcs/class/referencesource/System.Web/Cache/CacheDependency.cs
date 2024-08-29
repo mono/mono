@@ -25,6 +25,7 @@ namespace System.Web.Caching {
     using System.Collections.ObjectModel;
     using System.Runtime.Caching;
 #endif
+    
 
 
     /// <devdoc>
@@ -88,7 +89,7 @@ namespace System.Web.Caching {
 
         // creates an empty dependency which is used only by s_dependencyEmpty
         private CacheDependency(int bogus) {
-            Debug.Assert(s_dependencyEmpty == null, "s_dependencyEmpty == null");
+            System.Web.Util.Debug.Assert(s_dependencyEmpty == null, "s_dependencyEmpty == null");
         }
 
 
@@ -199,7 +200,7 @@ namespace System.Web.Caching {
 
 #if USE_MEMORY_CACHE
         void OnChangedCallback(object state) {
-            Debug.Trace("CacheDependencyFileChange", "OnChangedCallback fired");
+            System.Web.Util.Debug.Trace("CacheDependencyFileChange", "OnChangedCallback fired");
             NotifyDependencyChanged(this, EventArgs.Empty);            
         }
 
@@ -286,7 +287,7 @@ namespace System.Web.Caching {
                     _bits[CHANGED] = true;
                 }
                 if (_bits[WANTS_DISPOSE] || _bits[CHANGED]) {
-                    Debug.Trace("CacheDependencyInit", "WANTS_DISPOSE or CHANGED.  InitForMemoryCache calling DisposeInternal");
+                    System.Web.Util.Debug.Trace("CacheDependencyInit", "WANTS_DISPOSE or CHANGED.  InitForMemoryCache calling DisposeInternal");
                     DisposeInternal();
                 }
                 dispose = false;
@@ -294,7 +295,7 @@ namespace System.Web.Caching {
             finally {
                 if (dispose) {
                     _bits[BASE_INIT] = true;
-                    Debug.Trace("CacheDependencyInit", "\n\nERROR in CacheDependency.InitForMemoryCache, calling DisposeInternal");
+                    System.Web.Util.Debug.Trace("CacheDependencyInit", "\n\nERROR in CacheDependency.InitForMemoryCache, calling DisposeInternal");
                     DisposeInternal();
                 }
             }
@@ -368,7 +369,7 @@ namespace System.Web.Caching {
                 }
                 else {
                     if (dependency.GetType() != s_dependencyEmpty.GetType()) {
-                        throw new ArgumentException(SR.GetString(SR.Invalid_Dependency_Type));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_Dependency_Type));
                     }
 
                     // Copy the parts of the dependency we need before
@@ -482,10 +483,10 @@ namespace System.Web.Caching {
                                 utcNow = DateTime.UtcNow;
                             }
                             
-                            Debug.Trace("CacheDependencyInit", "file=" + f + "; utcStart=" + utcStart + "; utcLastWrite=" + utcLastWrite);
+                            System.Web.Util.Debug.Trace("CacheDependencyInit", "file=" + f + "; utcStart=" + utcStart + "; utcLastWrite=" + utcLastWrite);
                             if (utcLastWrite >= utcStart &&
                                 !(utcLastWrite - utcNow > FUTURE_FILETIME_BUFFER)) {   // See VSWhidbey 400917
-                                Debug.Trace("CacheDependencyInit", "changes occurred since start time for file " + f);
+                                System.Web.Util.Debug.Trace("CacheDependencyInit", "changes occurred since start time for file " + f);
                                 _bits[CHANGED] = true;
                                 break;
                             }
@@ -526,14 +527,14 @@ namespace System.Web.Caching {
 
                             if (lastUpdated > utcStart) {  // Cache item has been updated since start, consider changed
 #if DBG
-                                Debug.Trace("CacheDependencyInit", "Changes occurred to entry since start time:" + k);
+                                System.Web.Util.Debug.Trace("CacheDependencyInit", "Changes occurred to entry since start time:" + k);
 #endif
                                 _bits[CHANGED] = true;
                                 break;
                             }
                         }
                         else {
-                            Debug.Trace("CacheDependencyInit", "Cache item not found to create dependency on:" + k);
+                            System.Web.Util.Debug.Trace("CacheDependencyInit", "Cache item not found to create dependency on:" + k);
                             _bits[CHANGED] = true;
                             break;
                         }
@@ -556,7 +557,7 @@ namespace System.Web.Caching {
                     DisposeInternal();
                 }
 
-                Debug.Assert(_objNotify == null, "_objNotify == null");
+                System.Web.Util.Debug.Assert(_objNotify == null, "_objNotify == null");
             }
             catch {
                 // derived constructor will not execute due to the throw,
@@ -705,15 +706,16 @@ namespace System.Web.Caching {
         }
 
         public void KeepDependenciesAlive() {
-            if (_entries != null) {
+            object l_entries = _entries;
+            if (l_entries != null) {
                 // update the last access time of every cache item that depends on this dependency
-                DepCacheInfo oneEntry = _entries as DepCacheInfo;
+                DepCacheInfo oneEntry = l_entries as DepCacheInfo;
                 if (oneEntry != null) {
                     oneEntry._cacheStore.Get(oneEntry._key);
                     return;
                 }
 
-                foreach (DepCacheInfo entry in (DepCacheInfo[])_entries) {
+                foreach (DepCacheInfo entry in (DepCacheInfo[])l_entries) {
                     if (entry != null) {
                         object item = entry._cacheStore.Get(entry._key);
                     }
@@ -725,7 +727,7 @@ namespace System.Web.Caching {
         ///    <para>Add an Action to handle notifying interested party in changes to this dependency.</para>
         /// </devdoc>
         public void SetCacheDependencyChanged(Action<Object, EventArgs> dependencyChangedAction) {
-            Debug.Assert(_objNotify == null, "_objNotify == null");
+            System.Web.Util.Debug.Assert(_objNotify == null, "_objNotify == null");
 
             // Set this bit just in case our derived ctor forgot to call FinishInit()
             _bits[DERIVED_INIT] = true;
@@ -810,7 +812,7 @@ namespace System.Web.Caching {
 
         public virtual string GetUniqueID() {
 #if DBG
-            Debug.Assert(_isUniqueIDInitialized == true, "_isUniqueIDInitialized == true");
+            System.Web.Util.Debug.Assert(_isUniqueIDInitialized == true, "_isUniqueIDInitialized == true");
 #endif
             return _uniqueID;
         }
@@ -826,7 +828,7 @@ namespace System.Web.Caching {
 
                 Action<Object, EventArgs> action = _objNotify as Action<Object, EventArgs>;
                 if (action != null && !_bits[BASE_DISPOSED]) {
-                    Debug.Trace("CacheDependencyNotifyDependencyChanged", "change occurred");
+                    System.Web.Util.Debug.Trace("CacheDependencyNotifyDependencyChanged", "change occurred");
                     action(sender, e);
                 }
 
@@ -845,7 +847,7 @@ namespace System.Web.Caching {
         // FileChange is called when a file we are monitoring has changed.
         //
         void FileChange(Object sender, FileChangeEvent e) {
-            Debug.Trace("CacheDependencyFileChange", "FileChange file=" + e.FileName + ";Action=" + e.Action);
+            System.Web.Util.Debug.Trace("CacheDependencyFileChange", "FileChange file=" + e.FileName + ";Action=" + e.Action);
             NotifyDependencyChanged(sender, e);
         }
 
@@ -972,7 +974,7 @@ namespace System.Web.Caching {
                 }
 
                 if (!d.TakeOwnership()) {
-                    throw new InvalidOperationException(SR.GetString(SR.Cache_dependency_used_more_that_once));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cache_dependency_used_more_that_once));
                 }            }
 
             // add dependencies, and check if any have changed

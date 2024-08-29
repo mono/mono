@@ -15,6 +15,7 @@ namespace System.Web.Configuration {
     using System.Web.Hosting;
     using System.Web.Caching;
     using Microsoft.Win32;
+    
 
     class MetabaseServerConfig : IServerConfig, IConfigMapPath, IConfigMapPath2 {
         private const string    DEFAULT_SITEID = "1";
@@ -54,7 +55,7 @@ namespace System.Web.Configuration {
         }
 
         string IServerConfig.GetSiteNameFromSiteID(string siteID) {
-            if (StringUtil.EqualsIgnoreCase(siteID, DEFAULT_SITEID))
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(siteID, DEFAULT_SITEID))
                 return _defaultSiteName;
 
             string siteName;
@@ -121,8 +122,8 @@ namespace System.Web.Configuration {
 
         void IConfigMapPath.ResolveSiteArgument(string siteArgument, out string siteName, out string siteID) {
             if (    String.IsNullOrEmpty(siteArgument) ||
-                    StringUtil.EqualsIgnoreCase(siteArgument, DEFAULT_SITEID) ||
-                    StringUtil.EqualsIgnoreCase(siteArgument, _defaultSiteName)) {
+                    System.Web.Util.StringUtil.EqualsIgnoreCase(siteArgument, DEFAULT_SITEID) ||
+                    System.Web.Util.StringUtil.EqualsIgnoreCase(siteArgument, _defaultSiteName)) {
 
                 siteName = _defaultSiteName;
                 siteID = DEFAULT_SITEID;
@@ -169,7 +170,7 @@ namespace System.Web.Configuration {
                 return VirtualPath.RootVirtualPath;
 
             string rootAboPath = GetRootAppIDFromSiteID(siteID);
-            if (StringUtil.EqualsIgnoreCase(rootAboPath, appAboPath)) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(rootAboPath, appAboPath)) {
                 return VirtualPath.RootVirtualPath;
             }
 
@@ -197,12 +198,12 @@ namespace System.Web.Configuration {
             // ensure extra '\\' in the physical path if the virtual path had extra '/'
             // and the other way -- no extra '\\' in physical if virtual didn't have it.
             if (path.HasTrailingSlash) {
-                if (!UrlPath.PathEndsWithExtraSlash(result) && !UrlPath.PathIsDriveRoot(result)) {
+                if (!System.Web.Util.UrlPath.PathEndsWithExtraSlash(result) && !System.Web.Util.UrlPath.PathIsDriveRoot(result)) {
                     result = result + "\\";
                 }
             }
             else {
-                if (UrlPath.PathEndsWithExtraSlash(result) && !UrlPath.PathIsDriveRoot(result)) {
+                if (System.Web.Util.UrlPath.PathEndsWithExtraSlash(result) && !System.Web.Util.UrlPath.PathIsDriveRoot(result)) {
                     result = result.Substring(0, result.Length - 1);
                 }
             }
@@ -252,7 +253,7 @@ namespace System.Web.Configuration {
                             VirtualPath vParent = path.Parent;
                             if (vParent != null) {
                                 string parentPath = vParent.VirtualPathString;
-                                if (parentPath.Length > 1 && StringUtil.StringEndsWith(parentPath, '/')) { // Trim the extra trailing / if there is one
+                                if (parentPath.Length > 1 && System.Web.Util.StringUtil.StringEndsWith(parentPath, '/')) { // Trim the extra trailing / if there is one
                                     vParent = VirtualPath.Create(parentPath.Substring(0, parentPath.Length - 1));
                                 }
                                 try {
@@ -282,11 +283,11 @@ namespace System.Web.Configuration {
 
                             // Throw if the resulting physical path is not canonical, to prevent potential
                             // security issues (VSWhidbey 418125)
-                            if (FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
+                            if (System.Web.Util.FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
                                 if (HttpRuntime.IsMapPathRelaxed) {
                                     physicalPath = HttpRuntime.GetRelaxedMapPathResult(null);
                                 } else {
-                                    throw new HttpException(SR.GetString(SR.Cannot_map_path, path));
+                                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_map_path, path));
                                 }
                             }
 
@@ -386,7 +387,7 @@ namespace System.Web.Configuration {
             for (;;) {
                 sb = new StringBuilder(bufSize);
                 r = UnsafeNativeMethods.IsapiAppHostMapPath(appID, path, sb, sb.Capacity);
-                Debug.Trace("MapPath", "IsapiAppHostMapPath(" + path + ") returns " + r);
+                System.Web.Util.Debug.Trace("MapPath", "IsapiAppHostMapPath(" + path + ") returns " + r);
 
                 if (r == -2) {
                     // insufficient buffer
@@ -400,8 +401,8 @@ namespace System.Web.Configuration {
             if (r == -1) {
                 // special case access denied error
                 throw new HostingEnvironmentException(
-                    SR.GetString(SR.Cannot_access_mappath_title),
-                    SR.GetString(SR.Cannot_access_mappath_details));
+                    System.Web.SR.GetString(System.Web.SR.Cannot_access_mappath_title),
+                    System.Web.SR.GetString(System.Web.SR.Cannot_access_mappath_details));
             }
 
             string physicalPath;

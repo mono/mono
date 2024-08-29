@@ -543,7 +543,7 @@ namespace System.Web.Services.Protocols {
         internal static HashAlgorithm HashAlgorithm {
             get {
                 if (hash == null) {
-                    hash = SHA1.Create();
+                    hash = SHA256.Create();
                 }
                 return hash;
             }

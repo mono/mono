@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls {
                 return AllowReturnInternal;
             }
             set {
-                throw new InvalidOperationException(SR.GetString(SR.CreateUserWizardStep_AllowReturnCannotBeSet));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CreateUserWizardStep_AllowReturnCannotBeSet));
             }
         }
 
@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls {
                     base.Owner = value;
                 }
                 else {
-                    throw new HttpException(SR.GetString(SR.CreateUserWizardStep_OnlyAllowedInCreateUserWizard));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.CreateUserWizardStep_OnlyAllowedInCreateUserWizard));
                 }
             }
         }
@@ -60,12 +60,12 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Localizable(true),
-        WebSysDefaultValue(SR.CreateUserWizard_DefaultCreateUserTitleText),
+        WebSysDefaultValue(System.Web.SR.CreateUserWizard_DefaultCreateUserTitleText),
         ]
         public override string Title {
             get {
                 string title = TitleInternal;
-                return (title != null) ? title : SR.GetString(SR.CreateUserWizard_DefaultCreateUserTitleText);
+                return (title != null) ? title : System.Web.SR.GetString(System.Web.SR.CreateUserWizard_DefaultCreateUserTitleText);
             }
             set {
                 base.Title = value;
@@ -84,7 +84,7 @@ namespace System.Web.UI.WebControls {
                 return base.StepType;
             }
             set {
-                throw new InvalidOperationException(SR.GetString(SR.CreateUserWizardStep_StepTypeCannotBeSet));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CreateUserWizardStep_StepTypeCannotBeSet));
             }
         }
     }

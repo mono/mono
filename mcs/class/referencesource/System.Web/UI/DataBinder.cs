@@ -86,7 +86,7 @@ using System.Web.Util;
         /// <devdoc>
         /// </devdoc>
         private static object Eval(object container, string[] expressionParts) {
-            Debug.Assert((expressionParts != null) && (expressionParts.Length != 0),
+            System.Web.Util.Debug.Assert((expressionParts != null) && (expressionParts.Length != 0),
                          "invalid expressionParts parameter");
 
             object prop;
@@ -174,7 +174,7 @@ using System.Web.Util;
                 prop = pd.GetValue(container);
             }
             else {
-                throw new HttpException(SR.GetString(SR.DataBinder_Prop_Not_Found, container.GetType().FullName, propName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBinder_Prop_Not_Found, container.GetType().FullName, propName));
             }
 
             return prop;
@@ -218,7 +218,7 @@ using System.Web.Util;
 
             if ((indexExprStart < 0) || (indexExprEnd < 0) ||
                 (indexExprEnd == indexExprStart + 1)) {
-                throw new ArgumentException(SR.GetString(SR.DataBinder_Invalid_Indexed_Expr, expr));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.DataBinder_Invalid_Indexed_Expr, expr));
             }
 
             string propName = null;
@@ -253,7 +253,7 @@ using System.Web.Util;
             }
 
             if (indexValue == null) {
-                throw new ArgumentException(SR.GetString(SR.DataBinder_Invalid_Indexed_Expr, expr));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.DataBinder_Invalid_Indexed_Expr, expr));
             }
 
             object collectionProp = null;
@@ -279,7 +279,7 @@ using System.Web.Util;
                         prop = propInfo.GetValue(collectionProp, new object[] { indexValue });
                     }
                     else {
-                        throw new ArgumentException(SR.GetString(SR.DataBinder_No_Indexed_Accessor, collectionProp.GetType().FullName));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.DataBinder_No_Indexed_Accessor, collectionProp.GetType().FullName));
                     }
                 }
             }

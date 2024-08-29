@@ -37,9 +37,7 @@ namespace DbLinqTest
     [TestFixture]
     public class BinaryTest
     {
-        // XXX: oddly, MSDN documents that while ArgumentNullException is 
-        //      thrown, that may change in the future.  Why would this change?
-        [Test, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void Constructor_ValueNull()
         {
             new Binary(null);

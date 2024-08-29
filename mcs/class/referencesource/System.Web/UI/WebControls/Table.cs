@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.Table_BackImageUrl)
+        WebSysDescription(System.Web.SR.Table_BackImageUrl)
         ]
         public virtual string BackImageUrl {
             get {
@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Localizable(true),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.Table_Caption)
+        WebSysDescription(System.Web.SR.Table_Caption)
         ]
         public virtual string Caption {
             get {
@@ -82,7 +82,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(TableCaptionAlign.NotSet),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.WebControl_CaptionAlign)
+        WebSysDescription(System.Web.SR.WebControl_CaptionAlign)
         ]
         public virtual TableCaptionAlign CaptionAlign {
             get {
@@ -107,7 +107,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(-1),
-        WebSysDescription(SR.Table_CellPadding)
+        WebSysDescription(System.Web.SR.Table_CellPadding)
         ]
         public virtual int CellPadding {
             get {
@@ -130,7 +130,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(-1),
-        WebSysDescription(SR.Table_CellSpacing)
+        WebSysDescription(System.Web.SR.Table_CellSpacing)
         ]
         public virtual int CellSpacing {
             get {
@@ -152,7 +152,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(GridLines.None),
-        WebSysDescription(SR.Table_GridLines)
+        WebSysDescription(System.Web.SR.Table_GridLines)
         ]
         public virtual GridLines GridLines {
             get {
@@ -182,7 +182,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(HorizontalAlign.NotSet),
-        WebSysDescription(SR.Table_HorizontalAlign)
+        WebSysDescription(System.Web.SR.Table_HorizontalAlign)
         ]
         public virtual HorizontalAlign HorizontalAlign {
             get {
@@ -208,7 +208,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         MergableProperty(false),
-        WebSysDescription(SR.Table_Rows),
+        WebSysDescription(System.Web.SR.Table_Rows),
         PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public virtual TableRowCollection Rows {
@@ -339,7 +339,7 @@ namespace System.Web.UI.WebControls {
                     foreach (TableRow row in rows) {
                         if (row.TableSection < currentSection) {
                             // throw if table sections aren't in order
-                            throw new HttpException(SR.GetString(SR.Table_SectionsMustBeInOrder, ID));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Table_SectionsMustBeInOrder, ID));
                         }
                         if (currentSection < row.TableSection || (row.TableSection == TableRowSection.TableHeader && !openedTag)) {
                             if (openedTag) {
@@ -393,7 +393,7 @@ namespace System.Web.UI.WebControls {
                 if (child is TableRow)
                     base.Add(child);
                 else
-                    throw new ArgumentException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "Table", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "Table", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
             }
 
 
@@ -405,7 +405,7 @@ namespace System.Web.UI.WebControls {
                 if (child is TableRow)
                     base.AddAt(index, child);
                 else
-                    throw new ArgumentException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "Table", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "Table", child.GetType().Name.ToString(CultureInfo.InvariantCulture))); // throw an exception here
             }
         } // class RowControlCollection
     } // class Table

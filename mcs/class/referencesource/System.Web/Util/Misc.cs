@@ -38,6 +38,7 @@ namespace System.Web.Util {
         [SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.Int32.ToString(System.IFormatProvider)",
             Justification = "This is the proper culture for writing to the event log.")]
         internal static void WriteUnhandledExceptionToEventLog(AppDomain appDomain, Exception exception) {
+#if !MONO
             if (appDomain == null || exception == null) {
                 return;
             }
@@ -50,7 +51,7 @@ namespace System.Web.Util {
                     appId = appDomain.FriendlyName;
                 }
                 string pid = SafeNativeMethods.GetCurrentProcessId().ToString(CultureInfo.InstalledUICulture);
-                string description = SR.Resources.GetString(SR.Unhandled_Exception, CultureInfo.InstalledUICulture);
+                string description = System.Web.SR.Resources.GetString(System.Web.SR.Unhandled_Exception, CultureInfo.InstalledUICulture);
                 Misc.ReportUnhandledException(exception, new string[5] {description, APPLICATION_ID, appId, PROCESS_ID, pid});
             }
             catch {
@@ -61,10 +62,11 @@ namespace System.Web.Util {
                     imperContext.Undo();
                 }
             }
+#endif
         }
 
         internal static void ReportUnhandledException(Exception e, String[] strings) {
-            UnsafeNativeMethods.ReportUnhandledException(FormatExceptionMessage(e, strings));
+            //UnsafeNativeMethods.ReportUnhandledException(FormatExceptionMessage(e, strings));
         }
 
         internal static String FormatExceptionMessage(Exception e, String[] strings) {
@@ -100,7 +102,7 @@ namespace System.Web.Util {
         internal unsafe static void CopyMemory(IntPtr src, int srcOffset, IntPtr dest, int destOffset, int size) {
             byte *s = ((byte*)src) + srcOffset;
             byte *d = ((byte*)dest) + destOffset;
-            StringUtil.memcpyimpl(s, d, size);
+            System.Web.Util.StringUtil.memcpyimpl(s, d, size);
         }
 
         internal static void ThrowIfFailedHr(int hresult) {

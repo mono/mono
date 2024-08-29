@@ -1,0 +1,1532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Style_ErrorMessageTitle" xml:space="preserve">
+    <value>Styles Editor</value>
+  </data>
+  <data name="StylesEditorDialog_DeleteStyleCaption" xml:space="preserve">
+    <value>Confirm Style Deletion</value>
+  </data>
+  <data name="MobileWebFormDesigner_MessageBoxTitle" xml:space="preserve">
+    <value>Mobile Internet Designer</value>
+  </data>
+  <data name="Form_OnActivate" xml:space="preserve">
+    <value>Raises an event when the form becomes active.</value>
+  </data>
+  <data name="ListGeneralPage_SelectTypeCheckBox" xml:space="preserve">
+    <value>CheckBox</value>
+  </data>
+  <data name="EditableTreeList_AddDescription" xml:space="preserve">
+    <value>Add a new item to the list.</value>
+  </data>
+  <data name="CompareValidator_Type" xml:space="preserve">
+    <value>Data type of values for comparison.</value>
+  </data>
+  <data name="ObjectList_DetailsCommandText" xml:space="preserve">
+    <value>Text for the link to details view.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_Method" xml:space="preserve">
+    <value>&amp;Method:</value>
+  </data>
+  <data name="ObjectListFieldsPage_FieldListGroupLabel" xml:space="preserve">
+    <value>Field list</value>
+  </data>
+  <data name="PagedControl_OnLoadItems" xml:space="preserve">
+    <value>Raises an event when the control uses custom paging and requests more data.</value>
+  </data>
+  <data name="ObjectListCommandsPage_DefaultCommandCaption" xml:space="preserve">
+    <value>&amp;Default command:</value>
+  </data>
+  <data name="Stylesheet_EditBtnCaption" xml:space="preserve">
+    <value>E&amp;dit...</value>
+  </data>
+  <data name="DeviceFilterNode_DefaultFilterName" xml:space="preserve">
+    <value>DeviceFilter</value>
+  </data>
+  <data name="DevCapSect_UnrecognizedTag" xml:space="preserve">
+    <value>Unrecognized tag '{0}'.</value>
+  </data>
+  <data name="UrlPath_CannotExitUpTopDirectory" xml:space="preserve">
+    <value>Cannot use a leading '..' to refer to locations outside the root directory.</value>
+  </data>
+  <data name="MobileControl_SettingGenericChoiceDescription" xml:space="preserve">
+    <value>Select the device filters to use for property overrides.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_NewDeviceFilter" xml:space="preserve">
+    <value>&amp;New Device Filter</value>
+  </data>
+  <data name="Style_Alignment" xml:space="preserve">
+    <value>Horizontal alignment of the control.</value>
+  </data>
+  <data name="ControlAdapter_PhoneCallLabel" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="ListItemsPage_ItemsAsLinksCaption" xml:space="preserve">
+    <value>&amp;Render list items as hyperlinks</value>
+  </data>
+  <data name="Command_CommandArgument" xml:space="preserve">
+    <value>The argument associated with the command.</value>
+  </data>
+  <data name="EditableTreeList_MoveDownName" xml:space="preserve">
+    <value>Move Down</value>
+  </data>
+  <data name="ListGeneralPage_SelectTypeRadio" xml:space="preserve">
+    <value>Radio</value>
+  </data>
+  <data name="ControlAdapter_NextLabel" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="TextBox_Size" xml:space="preserve">
+    <value>The expected character length of the input.</value>
+  </data>
+  <data name="MobileControlsSectionHandler_UnknownElementName" xml:space="preserve">
+    <value>Unknown element name - {0} expected.</value>
+  </data>
+  <data name="MobileControlsSectionHandler_CircularReference" xml:space="preserve">
+    <value>The device configuration '{0}' contains a circular reference</value>
+  </data>
+  <data name="MobileErrorInfo_CompilationErrorMiscTitle" xml:space="preserve">
+    <value>Compiler Error Message</value>
+  </data>
+  <data name="StylesEditorDialog_DuplicateStyleException" xml:space="preserve">
+    <value>StylesEditorDialog cannot edit a style sheet with multiple styles declared which share the same name.</value>
+  </data>
+  <data name="StyleSheet_MustContainID" xml:space="preserve">
+    <value>Style elements must contain a 'Name' attribute.</value>
+  </data>
+  <data name="MobileErrorInfo_ParserErrorDescription" xml:space="preserve">
+    <value>An error occurred during the parsing of a resource required to service this request. Please review the following specific parse error details and modify your source file appropriately.</value>
+  </data>
+  <data name="Command_OnItemCommand" xml:space="preserve">
+    <value>Raises an event when the user activates the command. The event is bubbled up to parent controls.</value>
+  </data>
+  <data name="PagedControl_ItemCount" xml:space="preserve">
+    <value>Number of items to render in the control. The value '0' indicates automatic pagination.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_Equality" xml:space="preserve">
+    <value>Equality &amp;Comparison</value>
+  </data>
+  <data name="MobileErrorInfo_CompilationErrorType" xml:space="preserve">
+    <value>Compilation Error</value>
+  </data>
+  <data name="ObjectListGeneralPage_BackCommandTextCaption" xml:space="preserve">
+    <value>&amp;BackCommandText:</value>
+  </data>
+  <data name="ObjectList_FieldNotFound" xml:space="preserve">
+    <value>Field {0} not found</value>
+  </data>
+  <data name="Calendar_OnSelectionChanged" xml:space="preserve">
+    <value>Raises an event when the user changes the selection.</value>
+  </data>
+  <data name="StyleSheet_DuplicateStyleNamesMessage" xml:space="preserve">
+    <value>This style sheet contains multiple styles which have the following names: {0}. Each style must have a unique 'Name' attribute.</value>
+  </data>
+  <data name="ObjectListGeneralPage_PagingGroupLabel" xml:space="preserve">
+    <value>Paging</value>
+  </data>
+  <data name="ControlAdapter_BackLabel" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="MobileControl_AppliedDeviceFiltersDescription" xml:space="preserve">
+    <value>The collection of device filters you can use to customize this control.</value>
+  </data>
+  <data name="List_DataSource" xml:space="preserve">
+    <value>Data source that populates items in the list.</value>
+  </data>
+  <data name="DeviceFilter_NoChoice" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="ListItemsPage_ItemListGroupLabel" xml:space="preserve">
+    <value>Item list</value>
+  </data>
+  <data name="StyleSheet_DefaultMessage" xml:space="preserve">
+    <value>Right-click and choose the Edit Styles command to define styles.</value>
+  </data>
+  <data name="StyleSheetRefUrlEditor_Caption" xml:space="preserve">
+    <value>Select ASCX File</value>
+  </data>
+  <data name="ListGeneralPage_DecorationNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="UrlPath_PhysicalPathNotAllowed" xml:space="preserve">
+    <value>'{0}' is a physical path, which is not allowed here</value>
+  </data>
+  <data name="Form_PropertyNotAccessible" xml:space="preserve">
+    <value>The '{0}' property is not accessible for the Form.</value>
+  </data>
+  <data name="ErrorFormatterPage_ServerError" xml:space="preserve">
+    <value>Server Error in {0}</value>
+  </data>
+  <data name="ObjectListFieldsPage_NoneComboEntry" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="ObjectList_BackCommandText" xml:space="preserve">
+    <value>Text for back link in details view.</value>
+  </data>
+  <data name="Category_Behavior" xml:space="preserve">
+    <value>Behavior</value>
+  </data>
+  <data name="Style_Name" xml:space="preserve">
+    <value>Name of the style.</value>
+  </data>
+  <data name="Style_Font" xml:space="preserve">
+    <value>Font for text within the control.</value>
+  </data>
+  <data name="Style_ReferenceCauseCircularLoop" xml:space="preserve">
+    <value>This reference creates a circular loop. Please choose another style reference.</value>
+  </data>
+  <data name="PropertyBuilderVerb" xml:space="preserve">
+    <value>Property &amp;Builder...</value>
+  </data>
+  <data name="DataSourceHelper_DataSourceWithoutDataMember" xml:space="preserve">
+    <value>{0} without data member</value>
+  </data>
+  <data name="AppliedDeviceFiltersDialog_Title" xml:space="preserve">
+    <value>Applied Device Filters</value>
+  </data>
+  <data name="MobileErrorInfo_ParserErrorType" xml:space="preserve">
+    <value>Parser Error</value>
+  </data>
+  <data name="StyleSheet_PropNotSet" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="RangeValidator_RangeOverlap" xml:space="preserve">
+    <value>The MaximumValue {0} cannot be less than the MinimumValue {1} of {2}.</value>
+  </data>
+  <data name="ObjectListFieldsPage_VisibleCaption" xml:space="preserve">
+    <value>&amp;Visible</value>
+  </data>
+  <data name="Toolbox_TabName" xml:space="preserve">
+    <value>Mobile Web Forms</value>
+  </data>
+  <data name="StyleSheet_StylesEditorVerb" xml:space="preserve">
+    <value>Edit Sty&amp;les...</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_Argument" xml:space="preserve">
+    <value>&amp;Argument:</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_UnnamedFilter" xml:space="preserve">
+    <value>A device filter name cannot be empty. Please type a name.</value>
+  </data>
+  <data name="DevCapSect_MustSpecify" xml:space="preserve">
+    <value>You must specify either a filter name and comparison value (e.g., &lt;filter name="capability" compare="capabilityName" argument="argument"/&gt;) or a type and method (e.g., &lt;filter name="capability" type="typeName" method="methodName"/&gt;).</value>
+  </data>
+  <data name="GenericDialog_CloseBtnCaption" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="EditableTreeList_MoveDownDescription" xml:space="preserve">
+    <value>Move the selected item down in the list</value>
+  </data>
+  <data name="List_DataTextField" xml:space="preserve">
+    <value>Specifies which property of a databound item to use to determine the item's text property.</value>
+  </data>
+  <data name="BaseValidator_Display" xml:space="preserve">
+    <value>Appearance of the validator.</value>
+  </data>
+  <data name="DeviceSpecific_OnlyChoiceElementsAllowed" xml:space="preserve">
+    <value>Only Choice elements are allowed in a DeviceSpecific element.</value>
+  </data>
+  <data name="AppliedDeviceFiltersDialog_AppliedDeviceFilters" xml:space="preserve">
+    <value>A&amp;pplied Device Filters:</value>
+  </data>
+  <data name="List_Decoration" xml:space="preserve">
+    <value>List format used for the items.</value>
+  </data>
+  <data name="ControlAdapter_InvalidDefaultLabel" xml:space="preserve">
+    <value>The default label ID specified is invalid.</value>
+  </data>
+  <data name="ErrorFormatterPage_MiscErrorMessage" xml:space="preserve">
+    <value>{0}: {1}</value>
+  </data>
+  <data name="RangeValidator_MaximumValue" xml:space="preserve">
+    <value>Maximum value for the control being validated.</value>
+  </data>
+  <data name="MobileControlsSectionHandler_TypeNotFound" xml:space="preserve">
+    <value>Type '{0}' used as {1} not found.</value>
+  </data>
+  <data name="Style_UnregisteredProperty" xml:space="preserve">
+    <value>Unregistered property: {0}</value>
+  </data>
+  <data name="SelectionList_SelectType" xml:space="preserve">
+    <value>The type of selection list.</value>
+  </data>
+  <data name="Calendar_SelectionMode" xml:space="preserve">
+    <value>Determines whether days, weeks, and months are selectable.</value>
+  </data>
+  <data name="ValidationSummary_ErrorMessage" xml:space="preserve">
+    <value>Error message {0}.</value>
+  </data>
+  <data name="IndividualDeviceConfig_ControlWithIncorrectPageAdapter" xml:space="preserve">
+    <value>Control '{0}' is not registered with device with page adapter '{1}'.</value>
+  </data>
+  <data name="AppliedDeviceFiltersDialog_DuplicateChoices" xml:space="preserve">
+    <value>The following filters have been applied multiple times with the same argument: '{0}'.  Please remove the duplicate filters or change their arguments.</value>
+  </data>
+  <data name="Form_PropertyNotSettable" xml:space="preserve">
+    <value>The '{0}' property is not settable on the Form.</value>
+  </data>
+  <data name="SelectionList_OnSelectedIndexChanged" xml:space="preserve">
+    <value>Raises an event when the user changes a selection.</value>
+  </data>
+  <data name="ObjectListFieldsPage_PropertiesGroupLabel" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_WebConfigParsingError" xml:space="preserve">
+    <value>The following error was encountered while attempting to parse this project's Web.config file:
+
+{0}
+
+Please correct this condition in the Web.config file.</value>
+  </data>
+  <data name="StyleSheet_PropertyNotSettable" xml:space="preserve">
+    <value>The following style sheet property is not settable: '{0}'</value>
+  </data>
+  <data name="ListGeneralPage_SelectTypeListBox" xml:space="preserve">
+    <value>ListBox</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_TypeGl" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="WebConfig_FileLoadException" xml:space="preserve">
+    <value>An error occurred when attempting to read the Web.config file.</value>
+  </data>
+  <data name="MobilePage_FormNotFound" xml:space="preserve">
+    <value>Form not found: '{0}'</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_DeviceFilters" xml:space="preserve">
+    <value>Device &amp;Filters:</value>
+  </data>
+  <data name="MobileControlsSectionHandler_DeviceConfigNotFound" xml:space="preserve">
+    <value>The following device configuration is not found: '{0}'</value>
+  </data>
+  <data name="ObjectListCommandsPage_EmptyNameError" xml:space="preserve">
+    <value>A command name cannot be empty. Please type a name.</value>
+  </data>
+  <data name="PhoneCall_AlternateFormat" xml:space="preserve">
+    <value>Text format that appears for devices that cannot make phone calls.</value>
+  </data>
+  <data name="StyleSheet_PropertyNotAccessible" xml:space="preserve">
+    <value>The following style sheet property is not accessible: '{0}'</value>
+  </data>
+  <data name="ObjectList_Commands" xml:space="preserve">
+    <value>Collection of commands for each item in the list.</value>
+  </data>
+  <data name="ObjectList_MoreText" xml:space="preserve">
+    <value>Text for the link to more details and commands.</value>
+  </data>
+  <data name="PhoneCall_EmptyPhoneNumber" xml:space="preserve">
+    <value>The property PhoneNumber of the following PhoneCall control cannot be empty: '{0}'</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_DuplicateName" xml:space="preserve">
+    <value>The following device filter already exists: '{0}'. Please choose another name.</value>
+  </data>
+  <data name="ImageUrlPicker_ImageFilter" xml:space="preserve">
+    <value>Image Files(*.gif;*.jpg;*.jpeg;*.bmp;*.wmf;*.png;*.wbmp)|*.gif;*.jpg;*.jpeg;*.bmp;*.wmf;*.png;*.wbmp|All Files(*.*)|*.*|</value>
+  </data>
+  <data name="StyleSheet_SettingGenericStyleChoiceDescription" xml:space="preserve">
+    <value>For each style, select the device filters to use for this style sheet's templates and property overrides.</value>
+  </data>
+  <data name="DataSourceHelper_MissingDataMember" xml:space="preserve">
+    <value>Missing data member '{0}'</value>
+  </data>
+  <data name="DevCapSect_EmptyClass" xml:space="preserve">
+    <value>The type attribute cannot be null or an empty string.</value>
+  </data>
+  <data name="TemplatingOptionsDialog_Title" xml:space="preserve">
+    <value>Templating Options</value>
+  </data>
+  <data name="ObjectListGeneralPage_DetailsCommandTextCaption" xml:space="preserve">
+    <value>De&amp;tailsCommandText:</value>
+  </data>
+  <data name="DeviceSpecificChoice_CantFindFilter" xml:space="preserve">
+    <value>Can find neither a device capability named '{0}' nor a public non-static method on the page named '{0}' that returns a System.Boolean and takes System.Web.Mobile.MobileCapabilities and System.String as arguments.</value>
+  </data>
+  <data name="Image_Coverage" xml:space="preserve">
+    <value>Percentage of the screen area the image should use.</value>
+  </data>
+  <data name="ListGeneralPage_SelectTypeDropDown" xml:space="preserve">
+    <value>DropDown</value>
+  </data>
+  <data name="MobileControl_InvalidAccessKey" xml:space="preserve">
+    <value>The following AccessKey property must be 0-9, # or *: '{0}'</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_DuplicateNames" xml:space="preserve">
+    <value>This action could not be completed because multiple device filters that share the same name exist in this project's Web.config file.  Please correct these duplicate filter definitions in the Web.config file.</value>
+  </data>
+  <data name="ObjectList_OnShowItemCommands" xml:space="preserve">
+    <value>Raises an event before showing the set of commands for an item.</value>
+  </data>
+  <data name="CompareValidator_ControlToCompare" xml:space="preserve">
+    <value>ID of the control to compare to.</value>
+  </data>
+  <data name="TemplatingOptionsDialog_EditBtnCaption" xml:space="preserve">
+    <value>&amp;Edit...</value>
+  </data>
+  <data name="DevCapSect_ComparisonAlreadySpecified" xml:space="preserve">
+    <value>A comparison has already been specified. You need not specify a method attribute.</value>
+  </data>
+  <data name="DeviceSpecificChoice_OverridingPropertyNotFound" xml:space="preserve">
+    <value>Property '{0}' to override not found.</value>
+  </data>
+  <data name="ListGeneralPage_DecorationBulleted" xml:space="preserve">
+    <value>Bulleted</value>
+  </data>
+  <data name="Calendar_ShowDayHeader" xml:space="preserve">
+    <value>True if showing days of week header.</value>
+  </data>
+  <data name="ObjectList_MustBeInDetailsModeToGetDetails" xml:space="preserve">
+    <value>Cannot access the Details property unless the ViewMode property is first set to ObjectListViewMode.Details.</value>
+  </data>
+  <data name="MobileControl_StrictlyFormPanelContainmentErrorMessage" xml:space="preserve">
+    <value>This control must be placed in a Form or Panel control. Please move or delete this control.</value>
+  </data>
+  <data name="Form_Title" xml:space="preserve">
+    <value>The title used to identify the form.</value>
+  </data>
+  <data name="SelectionList_OutOfRange" xml:space="preserve">
+    <value>Unexpected value {0}.  The value of SelectedIndex must be at least -1 and less than the number of items.</value>
+  </data>
+  <data name="Calendar_SelectedDate" xml:space="preserve">
+    <value>The currently selected date.</value>
+  </data>
+  <data name="Category_DeviceSpecific" xml:space="preserve">
+    <value>Device Specific</value>
+  </data>
+  <data name="ObjectListGeneralPage_TableFieldsSelectedListLabel" xml:space="preserve">
+    <value>&amp;Selected Fields:</value>
+  </data>
+  <data name="ObjectListGeneralPage_UnboundComboEntry" xml:space="preserve">
+    <value>(Unbound)</value>
+  </data>
+  <data name="Style_Reference" xml:space="preserve">
+    <value>Reference to another style to inherit from.</value>
+  </data>
+  <data name="ObjectListGeneralPage_LabelFieldCaption" xml:space="preserve">
+    <value>&amp;LabelField:</value>
+  </data>
+  <data name="AdRotator_KeywordFilter" xml:space="preserve">
+    <value>Keyword for limiting selection of advertisements.</value>
+  </data>
+  <data name="MobileControl_InnerTextCannotContainTags" xml:space="preserve">
+    <value>The control with id {1} contains tags in its inner text.  A {0} control cannot contain tags in its inner text.</value>
+  </data>
+  <data name="ObjectListGeneralPage_Title" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="MobileControl_DefaultErrorMessage" xml:space="preserve">
+    <value>An internal error occurred.</value>
+  </data>
+  <data name="ObjectList_OnItemDataBind" xml:space="preserve">
+    <value>Raises an event after an item is bound to a data source.</value>
+  </data>
+  <data name="Form_InvalidSubControlType" xml:space="preserve">
+    <value>'{0}' cannot be a top-level form element.</value>
+  </data>
+  <data name="TextBox_Numeric" xml:space="preserve">
+    <value>Whether the input is restricted to numeric values.</value>
+  </data>
+  <data name="UnsettableComboBox_NotSetCompactText" xml:space="preserve">
+    <value>NotSet</value>
+  </data>
+  <data name="DeviceSpecificChoice_InvalidPropertyOverride" xml:space="preserve">
+    <value>Invalid property override: '{0}'</value>
+  </data>
+  <data name="BaseTemplatedMobileComponentEditor_TemplateModeErrorTitle" xml:space="preserve">
+    <value>Property Builder</value>
+  </data>
+  <data name="EditableTreeList_DeleteName" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TemplateableDesigner_SettingGenericChoiceDescription" xml:space="preserve">
+    <value>Select the device filters to use for this control's templates and property overrides.</value>
+  </data>
+  <data name="Security_ReturnUrlCannotBeAbsolute" xml:space="preserve">
+    <value>The ReturnUrl value "{0}" is invalid because it is absolute.</value>
+  </data>
+  <data name="StylesEditorDialog_DeleteStyleMessage" xml:space="preserve">
+    <value>This will remove any templates and property overrides associated with this style.
+Are you sure you want to continue?</value>
+  </data>
+  <data name="Command_OnClick" xml:space="preserve">
+    <value>Raises an event when the user activates the command.</value>
+  </data>
+  <data name="Style_StyleNotFoundOnGenericUserControl" xml:space="preserve">
+    <value>Style not found: {0}.  Note that Styles will never be found on a System.Web.UI.UserControl.  Use System.Web.UI.MobileControls.MobileUserControl instead.</value>
+  </data>
+  <data name="MobileControl_NoCustomAttributes" xml:space="preserve">
+    <value>Cannot set custom attributes on mobile controls in this page.  Custom attributes specified are: {0}.</value>
+  </data>
+  <data name="DevCapSect_UnableAddDelegate" xml:space="preserve">
+    <value>Delegate '{0}' cannot be added because of the following error: '{1}'.</value>
+  </data>
+  <data name="Style_Wrapping" xml:space="preserve">
+    <value>Wrapping behavior of text in the control.</value>
+  </data>
+  <data name="Image_SoftkeyLabel" xml:space="preserve">
+    <value>Label used for the image when rendered on a softkey. Only applies to devices that support softkeys.</value>
+  </data>
+  <data name="EditableTreeList_AddName" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="PropertyOverridesDialog_DuplicateChoices" xml:space="preserve">
+    <value>The following filters have been applied multiple times with the same argument: '{0}'.  Please remove the duplicate filters in the Applied Device Filters dialog before editing property overrides.</value>
+  </data>
+  <data name="BaseValidator_ControlNotFound" xml:space="preserve">
+    <value>Unable to find control with the id '{0}' referenced by the {1} property of the control '{2}'.</value>
+  </data>
+  <data name="MobileControl_InnerTextCannotContainTagsDesigner" xml:space="preserve">
+    <value>This control cannot contain tags in its inner text.</value>
+  </data>
+  <data name="ValidationSummary_FormToValidate" xml:space="preserve">
+    <value>ID of the form to validate.</value>
+  </data>
+  <data name="TextBox_Password" xml:space="preserve">
+    <value>Whether the input is hidden.</value>
+  </data>
+  <data name="ObjectListGeneralPage_PrivateDataSourceMessage" xml:space="preserve">
+    <value>{0} is marked as private member.</value>
+  </data>
+  <data name="StylesEditorDialog_SampleCaption" xml:space="preserve">
+    <value>Sample:</value>
+  </data>
+  <data name="ListGeneralPage_AppearanceGroupLabel" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="ObjectList_CannotSetViewModeWithNoSelectedItem" xml:space="preserve">
+    <value>To set the ViewMode to Commands or Details, you must first select an item.</value>
+  </data>
+  <data name="BaseValidator_BadControlType" xml:space="preserve">
+    <value>The control with the id '{0}', referenced by the '{1}' property of the control '{2}', cannot be validated.</value>
+  </data>
+  <data name="BaseValidator_ControlToValidateBlank" xml:space="preserve">
+    <value>The ControlToValidate property of '{0}' cannot be blank.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_TypeTxt" xml:space="preserve">
+    <value>&amp;Type:</value>
+  </data>
+  <data name="RangeValidator_Type" xml:space="preserve">
+    <value>Data type of values for comparison.</value>
+  </data>
+  <data name="Category_Appearance" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="MobileControl_MustBeInForm" xml:space="preserve">
+    <value>The control with id {0} of type {1} must be contained within a Form.</value>
+  </data>
+  <data name="ControlAdapter_GoLabel" xml:space="preserve">
+    <value>Go</value>
+  </data>
+  <data name="StyleSheet_SettingTemplatingStyleChoiceDescription" xml:space="preserve">
+    <value>For each style, select the device filters to use for this stylesheet's templates.</value>
+  </data>
+  <data name="TemplateFrame_ContentTemplate" xml:space="preserve">
+    <value>&amp;Content Template</value>
+  </data>
+  <data name="EditableTreeList_DeleteDescription" xml:space="preserve">
+    <value>Delete the selected item from the list</value>
+  </data>
+  <data name="StylesEditorDialog_AvailableStylesCaption" xml:space="preserve">
+    <value>Style &amp;Types:</value>
+  </data>
+  <data name="ListItemsPage_DefaultItemText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="ListGeneralPage_SelectTypeMultiSelectListBox" xml:space="preserve">
+    <value>MultiSelectListBox</value>
+  </data>
+  <data name="AdRotator_AdCreated" xml:space="preserve">
+    <value>Raises an event after an advertisement is retrieved from the AdvertisementFile.</value>
+  </data>
+  <data name="MSHTMLHost_Not_Implemented" xml:space="preserve">
+    <value>Not Implemented</value>
+  </data>
+  <data name="MobileControl_TopPageContainmentErrorMessage" xml:space="preserve">
+    <value>This control must be placed directly on the page. Please move or delete this control.</value>
+  </data>
+  <data name="Control_AccessKey" xml:space="preserve">
+    <value>The access key used to give focus to the control on i-mode phones, using the directkey function.</value>
+  </data>
+  <data name="ListGeneralPage_DataSourceCaption" xml:space="preserve">
+    <value>&amp;DataSource:</value>
+  </data>
+  <data name="GenericDialog_OKBtnCaption" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="MobileControl_BackColor" xml:space="preserve">
+    <value>Background color of the control.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_Compare" xml:space="preserve">
+    <value>C&amp;ompare:</value>
+  </data>
+  <data name="PhoneCall_InvalidPhoneNumberFormat" xml:space="preserve">
+    <value>The value of the '{0}' property is not in a correct format: '{1}'</value>
+  </data>
+  <data name="List_Items" xml:space="preserve">
+    <value>Collection of items in the list.</value>
+  </data>
+  <data name="Panel_Paginate" xml:space="preserve">
+    <value>Whether the contents can be divided into pages.</value>
+  </data>
+  <data name="ControlAdapter_OptionsLabel" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Image_NavigateUrl" xml:space="preserve">
+    <value>The URL or Form to navigate to.</value>
+  </data>
+  <data name="ObjectListCommandsPage_PropertiesGroupLabel" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_Attributes" xml:space="preserve">
+    <value>Attributes</value>
+  </data>
+  <data name="TemplatingOptionsDialog_SchemaCaption" xml:space="preserve">
+    <value>Mar&amp;kup Schema:</value>
+  </data>
+  <data name="PagerStyle_PreviousPageText_DefaultValue" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="ObjectListCommandsPage_Title" xml:space="preserve">
+    <value>Commands</value>
+  </data>
+  <data name="Form_OnPaginated" xml:space="preserve">
+    <value>Raises an event after the form is paginated.</value>
+  </data>
+  <data name="TemplatingOptionsDialog_FilterCaption" xml:space="preserve">
+    <value>Applied Device &amp;Filter:</value>
+  </data>
+  <data name="MobileControl_DeviceSpecificPropsDescription" xml:space="preserve">
+    <value>The collection of property overrides associated with this control.</value>
+  </data>
+  <data name="PagerStyle_NextPageText" xml:space="preserve">
+    <value>Label for the link to the next page.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_IllegalDefaultName" xml:space="preserve">
+    <value>You cannot create a device filter named '(Default)'. This name is reserved for the default filter. Please choose another name.</value>
+  </data>
+  <data name="ObjectListCommandsPage_TextCaption" xml:space="preserve">
+    <value>&amp;Text:</value>
+  </data>
+  <data name="AdRotator_AdvertisementFile" xml:space="preserve">
+    <value>XML file that contains advertisements.</value>
+  </data>
+  <data name="List_DataValueField" xml:space="preserve">
+    <value>Specifies which property of a databound item to use to determine the item's value property.</value>
+  </data>
+  <data name="ObjectListFieldsPage_DefaultFieldName" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="PropertyOverridesDialog_InvalidPropertyValue" xml:space="preserve">
+    <value>'{0}' is an invalid value for the following property: '{1}'.  This property has been reset to its default value.</value>
+  </data>
+  <data name="RegularExpressionValidator_ValidationExpression" xml:space="preserve">
+    <value>Regular expression to determine validity.</value>
+  </data>
+  <data name="MobileControlsSectionHandler_CantCreateMethodOnClass" xml:space="preserve">
+    <value>Unable to find suitable predicate method '{0}' on class '{1}'</value>
+  </data>
+  <data name="ListItemsPage_NewItemCaption" xml:space="preserve">
+    <value>&amp;Create New Item</value>
+  </data>
+  <data name="ObjectListFieldsPage_NewFieldBtnCaption" xml:space="preserve">
+    <value>&amp;Create New Field</value>
+  </data>
+  <data name="PagedControl_ItemsPerPage" xml:space="preserve">
+    <value>Number of items to render in each page of the control. The value '0' indicates default pagination.</value>
+  </data>
+  <data name="MobileControlBuilder_StyleMustBeInStyleSheet" xml:space="preserve">
+    <value>Styles must be defined in a StyleSheet.</value>
+  </data>
+  <data name="GenericDialog_CancelBtnCaption" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="TemplateableDesigner_SettingTemplatingChoiceDescription" xml:space="preserve">
+    <value>Select the device filters to use for this control's templates.</value>
+  </data>
+  <data name="StyleSheet_RefCycleErrorMessage" xml:space="preserve">
+    <value>A circular reference is present: {0}. Please correct this problem.</value>
+  </data>
+  <data name="StylesEditorDialog_DefinedStylesCaption" xml:space="preserve">
+    <value>&amp;Defined Styles:</value>
+  </data>
+  <data name="TextBox_MaxLength" xml:space="preserve">
+    <value>The maximum number of characters that can be entered.</value>
+  </data>
+  <data name="ObjectListCommandsPage_NewCommandBtnCaption" xml:space="preserve">
+    <value>&amp;Create New Command</value>
+  </data>
+  <data name="BaseValidator_ControlToValidate" xml:space="preserve">
+    <value>ID of the control to validate.</value>
+  </data>
+  <data name="ObjectListFieldsPage_AutoGenerateFieldsCaption" xml:space="preserve">
+    <value>Create &amp;fields automatically at run time</value>
+  </data>
+  <data name="PhoneCall_PhoneNumber" xml:space="preserve">
+    <value>The phone number to dial for devices that can make phone calls.</value>
+  </data>
+  <data name="PhoneCall_SoftkeyLabel" xml:space="preserve">
+    <value>Label used for the phone call when rendered on a softkey. Only applies to devices that support softkeys.</value>
+  </data>
+  <data name="MobileWebFormDesigner_NonMobileControlCreatedWarning" xml:space="preserve">
+    <value>Non-mobile controls are permitted only inside templates.
+Please delete this control or move it into a template.</value>
+  </data>
+  <data name="DevCapSect_NoCapabilityEval" xml:space="preserve">
+    <value>Could not create capability evaluator for method '{0}' because of the following error: '{1}'.</value>
+  </data>
+  <data name="DeviceSpecific_DefaultMessage" xml:space="preserve">
+    <value>Right-click and select the Templating Options command to apply device filters.</value>
+  </data>
+  <data name="ListGeneralPage_SelectTypeCaption" xml:space="preserve">
+    <value>&amp;SelectType:</value>
+  </data>
+  <data name="MobileControl_StyleReference" xml:space="preserve">
+    <value>Style that this control uses.</value>
+  </data>
+  <data name="PagerStyle_PageLabel" xml:space="preserve">
+    <value>Label for current page.</value>
+  </data>
+  <data name="ObjectListField_DataFieldNotFound" xml:space="preserve">
+    <value>The DataField '{0}' does not exist in the source data.  Specify a different DataField property, or remove the field.</value>
+  </data>
+  <data name="Category_Navigation" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="StyleSheet_DuplicateName" xml:space="preserve">
+    <value>Duplicate Style elements named {0} found within a style sheet.</value>
+  </data>
+  <data name="StyleSheet_TemplateStyleDescription" xml:space="preserve">
+    <value>The style used for the templating of this control.</value>
+  </data>
+  <data name="Style_BackColor" xml:space="preserve">
+    <value>Background color of the control.</value>
+  </data>
+  <data name="StylesEditorDialog_EmptyName" xml:space="preserve">
+    <value>A style name cannot be empty. Please type a name.</value>
+  </data>
+  <data name="RTL" xml:space="preserve">
+    <value>RTL_False</value>
+  </data>
+  <data name="MobileControl_MobilePageErrorMessage" xml:space="preserve">
+    <value>This control only works in pages of type MobilePage.</value>
+  </data>
+  <data name="MarkupSchema_cHTML10" xml:space="preserve">
+    <value>http://schemas.microsoft.com/mobile/chtml10template</value>
+  </data>
+  <data name="UrlPath_PathMustBeRooted" xml:space="preserve">
+    <value>Path must be rooted.</value>
+  </data>
+  <data name="DeviceSpecific_DuplicateWarningMessage" xml:space="preserve">
+    <value>Only one DeviceSpecific control is allowed in this container. Please remove all extra DeviceSpecific controls.</value>
+  </data>
+  <data name="ObjectList_LabelField" xml:space="preserve">
+    <value>Field in the data source to use for a compact representation of the items in list view.</value>
+  </data>
+  <data name="BaseTemplatedMobileComponentEditor_TemplateModeErrorMessage" xml:space="preserve">
+    <value>The control does not support property editing while it is in template editing mode. You must complete template editing before using the Property Builder.</value>
+  </data>
+  <data name="TemplateableDesigner_TemplateChoiceDescription" xml:space="preserve">
+    <value>Identifies the device filter used to display or edit this control's templates.</value>
+  </data>
+  <data name="ObjectList_LabelStyle" xml:space="preserve">
+    <value>The style applied to the header label.</value>
+  </data>
+  <data name="BaseValidator_ErrorMessage" xml:space="preserve">
+    <value>Message to display when validation fails.</value>
+  </data>
+  <data name="Theme_Not_Supported_On_MobileControls" xml:space="preserve">
+    <value>The 'Theme' feature is not supported on mobile controls.</value>
+  </data>
+  <data name="Form_PagerStyle" xml:space="preserve">
+    <value>The styles used for pagination properties in the control.</value>
+  </data>
+  <data name="Form_NestedForms" xml:space="preserve">
+    <value>Forms cannot be nested.  Found Form with ID '{0}' inside Form with ID '{1}'.</value>
+  </data>
+  <data name="StyleSheet_NoStyleSheetInExternalFile" xml:space="preserve">
+    <value>External file does not contain a style sheet control.</value>
+  </data>
+  <data name="ValidationSummary_HeaderText" xml:space="preserve">
+    <value>Header text that appears in the summary.</value>
+  </data>
+  <data name="ObjectListGeneralPage_TableFieldsGroupLabel" xml:space="preserve">
+    <value>TableFields</value>
+  </data>
+  <data name="TemplateFrame_SeparatorTemplate" xml:space="preserve">
+    <value>&amp;Separator Template</value>
+  </data>
+  <data name="MobileControl_Font" xml:space="preserve">
+    <value>Font that this control uses.</value>
+  </data>
+  <data name="UrlPath_EmptyPathHasNoDirectory" xml:space="preserve">
+    <value>Empty path has no directory.</value>
+  </data>
+  <data name="MobileControl_Alignment" xml:space="preserve">
+    <value>Horizontal alignment of the control.</value>
+  </data>
+  <data name="ObjectListFieldsPage_ErrorMessageTitle" xml:space="preserve">
+    <value>Fields Editor Page</value>
+  </data>
+  <data name="ListItemsPage_ItemCaption" xml:space="preserve">
+    <value>Item &amp;Text:</value>
+  </data>
+  <data name="Validator_ValueBadType" xml:space="preserve">
+    <value>The {1} property of the control with id {2} is set to the value {0}, which cannot be converted to the required type {3}. Use a legal value.</value>
+  </data>
+  <data name="MobileControl_TextCannotContainNewlines" xml:space="preserve">
+    <value>The control with id {1} contains newline characters in its inner text.  A {0} control cannot contain newline characters in its inner text.</value>
+  </data>
+  <data name="MobCap_CantFindCapability" xml:space="preserve">
+    <value>Cannot find a capability named '{0}'.</value>
+  </data>
+  <data name="ObjectList_Fields" xml:space="preserve">
+    <value>Collection of fields representing the items in details view.</value>
+  </data>
+  <data name="AppliedDeviceFiltersDialog_ApplyDeviceFilter" xml:space="preserve">
+    <value>&amp;Add To List</value>
+  </data>
+  <data name="ControlAdapter_PreviousLabel" xml:space="preserve">
+    <value>Prev</value>
+  </data>
+  <data name="GenericDialog_HelpBtnCaption" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="SessionViewState_InvalidSessionStateHistory" xml:space="preserve">
+    <value>Invalid value for session state history.</value>
+  </data>
+  <data name="MobileWebFormDesigner_NonMobileControlOnPageWarning" xml:space="preserve">
+    <value>Non-mobile controls are permitted only inside templates.
+Please delete these controls or move them into templates.</value>
+  </data>
+  <data name="MobilePage_RequiresSessionState" xml:space="preserve">
+    <value>The page needs to save viewstate, but session state is disabled or readonly. Enable session state, or disable viewstate for the page.</value>
+  </data>
+  <data name="TemplatingOptionsDialog_CHTMLSchemaFriendly" xml:space="preserve">
+    <value>Mobile cHTML 1.0 Template</value>
+  </data>
+  <data name="MarkupSchema_HTML32" xml:space="preserve">
+    <value>http://schemas.microsoft.com/mobile/html32template</value>
+  </data>
+  <data name="ListItemsPage_ItemSelectedCaption" xml:space="preserve">
+    <value>&amp;Selected</value>
+  </data>
+  <data name="AdRotator_ImageKey" xml:space="preserve">
+    <value>XML element name that specifies which image URL to retrieve.</value>
+  </data>
+  <data name="ObjectListGeneralPage_NoneComboEntry" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="MobileTypeNameConverter_TypeNotResolved" xml:space="preserve">
+    <value>The type '{0}' cannot be resolved. Please verify the spelling is correct or that the full type name is provided.</value>
+  </data>
+  <data name="FontInfo_Italic" xml:space="preserve">
+    <value>Italic setting for the font.</value>
+  </data>
+  <data name="List_ItemsAsLinks" xml:space="preserve">
+    <value>Whether the items in the list should be interpreted as hyperlinks.</value>
+  </data>
+  <data name="MobileControl_Wrapping" xml:space="preserve">
+    <value>The wrapping behavior of text in the control.</value>
+  </data>
+  <data name="DeviceFilter_DefaultChoice" xml:space="preserve">
+    <value>(Default)</value>
+  </data>
+  <data name="AppliedDeviceFiltersDialog_Argument" xml:space="preserve">
+    <value>A&amp;rgument:</value>
+  </data>
+  <data name="ListGeneralPage_NoneComboEntry" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="ValidationSummary_InvalidFormToValidate" xml:space="preserve">
+    <value>The form with id {0}, referenced by the ValidationSummary control '{1}', does not exist. Change the FormToValidate property to a valid form.</value>
+  </data>
+  <data name="DevCapSect_NoTypeInfo" xml:space="preserve">
+    <value>Unable to get type information for type '{0}'. Specify a valid type.</value>
+  </data>
+  <data name="ObjectList_OnItemCommand" xml:space="preserve">
+    <value>Raises an event when the user selects a command associated with the item.</value>
+  </data>
+  <data name="Category_Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="MobileListItemCollection_ViewStateManagementError" xml:space="preserve">
+    <value>Viewstate management error</value>
+  </data>
+  <data name="ListItemsPage_Title" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="IndividualDeviceConfig_TypeMustSupportInterface" xml:space="preserve">
+    <value>The type '{0}' is not a valid device adapter, because it does not implement the interface '{1}'.  Use another type, or modify the type to implement the interface.</value>
+  </data>
+  <data name="RangeValidator_MinimumValue" xml:space="preserve">
+    <value>Minimum value of the control being validated.</value>
+  </data>
+  <data name="ObjectList_CommandStyle" xml:space="preserve">
+    <value>The style applied to the commands in the list.</value>
+  </data>
+  <data name="MobilePage_AtLeastOneFormInPage" xml:space="preserve">
+    <value>Page must contain at least one Form.</value>
+  </data>
+  <data name="PagerStyle_PreviousPageText" xml:space="preserve">
+    <value>Label for the link to the previous page.</value>
+  </data>
+  <data name="Form_Method" xml:space="preserve">
+    <value>The method used to submit the form to the server.</value>
+  </data>
+  <data name="Style_ForeColor" xml:space="preserve">
+    <value>Color of the text within the control.</value>
+  </data>
+  <data name="ListGeneralPage_RowsCaption" xml:space="preserve">
+    <value>&amp;Rows:</value>
+  </data>
+  <data name="DeviceSpecificChoice_OverridingPropertyTypeCast" xml:space="preserve">
+    <value>Property '{0}' cannot be converted from text.</value>
+  </data>
+  <data name="EditableTreeList_MoveUpName" xml:space="preserve">
+    <value>Move Up</value>
+  </data>
+  <data name="StylesEditorDialog_StylePropertiesGroupLabel" xml:space="preserve">
+    <value>Style Properties</value>
+  </data>
+  <data name="Command_Format" xml:space="preserve">
+    <value>The visual appearance of the control.</value>
+  </data>
+  <data name="MobileControl_InfiniteTemplateRecursion" xml:space="preserve">
+    <value>A circular reference was detected in a template.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_WebConfigMissingOnOpen" xml:space="preserve">
+    <value>Before you can create Device Filters you must add a Web.config file to this project.</value>
+  </data>
+  <data name="PagedControl_ItemsPerPageCantBeNegative" xml:space="preserve">
+    <value>ItemsPerPage cannot be negative: {0}</value>
+  </data>
+  <data name="Calendar_FirstDayOfWeek" xml:space="preserve">
+    <value>The day of the week that appears first.</value>
+  </data>
+  <data name="GenericDialog_Edit" xml:space="preserve">
+    <value>&amp;Edit...</value>
+  </data>
+  <data name="ListGeneralPage_DecorationNumbered" xml:space="preserve">
+    <value>Numbered</value>
+  </data>
+  <data name="ObjectList_DataSource" xml:space="preserve">
+    <value>Data source that populates items in the list.</value>
+  </data>
+  <data name="Style_NameChangeCauseCircularLoop" xml:space="preserve">
+    <value>This name change creates a circular loop. Please choose another name.</value>
+  </data>
+  <data name="MobilePage_InvalidApplicationUrl" xml:space="preserve">
+    <value>Invalid application URL - {0}</value>
+  </data>
+  <data name="ListGeneralPage_ItemCountCaption" xml:space="preserve">
+    <value>Item&amp;Count:</value>
+  </data>
+  <data name="ObjectList_SelectedIndexTooSmall" xml:space="preserve">
+    <value>The SelectedIndex property cannot be set to less than -1: '{0}'.</value>
+  </data>
+  <data name="DeviceSpecificChoice_OverridingPropertyNotDeclarable" xml:space="preserve">
+    <value>Property '{0}' is not declarable, and cannot be overridden.</value>
+  </data>
+  <data name="EditableTreeList_Rename" xml:space="preserve">
+    <value>&amp;Rename</value>
+  </data>
+  <data name="MobileControlsSectionHandler_NotAssignable" xml:space="preserve">
+    <value>'{0}' is not assignable to '{1}'</value>
+  </data>
+  <data name="Command_SoftkeyLabel" xml:space="preserve">
+    <value>Label used for the command when rendered on a softkey. Only applies to devices that support softkeys.</value>
+  </data>
+  <data name="StyleSheet_DuplicateWarningMessage" xml:space="preserve">
+    <value>You can specify only one style sheet per page. Please remove all extra style sheets.</value>
+  </data>
+  <data name="TemplateFrame_IllFormedWarning" xml:space="preserve">
+    <value>This template is not well formed. Switch to HTML view to edit the content.</value>
+  </data>
+  <data name="PhoneCall_AlternateUrl" xml:space="preserve">
+    <value>The target URL for devices that cannot make phone calls.</value>
+  </data>
+  <data name="ObjectListCommandsPage_DataGroupLabel" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="ObjectListGeneralPage_DataSourceCaption" xml:space="preserve">
+    <value>&amp;DataSource:</value>
+  </data>
+  <data name="ConfigSect_InvalidIntegerAttr" xml:space="preserve">
+    <value>Invalid integer attribute '{0}'.</value>
+  </data>
+  <data name="ConfigSect_MissingValue" xml:space="preserve">
+    <value>Attribute '{0}' must have a value.</value>
+  </data>
+  <data name="ObjectList_MustBeInListModeToClearSelectedIndex" xml:space="preserve">
+    <value>To set the SelectedIndex to -1, the ViewMode property must first be set to ObjectListViewMode.List.</value>
+  </data>
+  <data name="TextView_Text" xml:space="preserve">
+    <value>Text that appears in the control.</value>
+  </data>
+  <data name="ListGeneralPage_DataGroupLabel" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="ControlsConfig_NoDeviceConfigRegistered" xml:space="preserve">
+    <value>No mobile controls device configuration was registered for the requesting device.  User agent string is '{0}'.</value>
+  </data>
+  <data name="StylesEditorDialog_DuplicateStyleNames" xml:space="preserve">
+    <value>This action could not be completed because there are multiple styles defined in this style sheet that share the same name.  Please first correct this problem in the HTML view.</value>
+  </data>
+  <data name="ObjectListCommandsPage_CommandListGroupLabel" xml:space="preserve">
+    <value>Command list</value>
+  </data>
+  <data name="MobileErrorInfo_Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ControlAdapter_LinkLabel" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="FactoryGenerator_Error_FactoryInterface" xml:space="preserve">
+    <value>An error has occurred in FactoryGenerator.  The return type is not correctly defined.</value>
+  </data>
+  <data name="CompareValidator_BadCompareControl" xml:space="preserve">
+    <value>Control '{0}' cannot have the same value '{1}' for both ControlToValidate and ControlToCompare.</value>
+  </data>
+  <data name="Form_InvalidControlToPaginateForm" xml:space="preserve">
+    <value>ControlToPaginate must be inside the active form.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_Evaluator" xml:space="preserve">
+    <value>Evaluator &amp;Delegate</value>
+  </data>
+  <data name="MobileControl_NoMultipleDeviceSpecifics" xml:space="preserve">
+    <value>You can specify only one DeviceSpecific element per control.</value>
+  </data>
+  <data name="PagerStyle_NextPageText_DefaultValue" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="TextBox_NotNegativeNumber" xml:space="preserve">
+    <value>must be greater than or equal to zero.</value>
+  </data>
+  <data name="Style_DuplicateName" xml:space="preserve">
+    <value>A style with that name already exists. Please choose another name.</value>
+  </data>
+  <data name="ListGeneralPage_UnboundComboEntry" xml:space="preserve">
+    <value>(Unbound)</value>
+  </data>
+  <data name="ImageUrlPicker_ImageCaption" xml:space="preserve">
+    <value>Select Image</value>
+  </data>
+  <data name="Style_EmptyName" xml:space="preserve">
+    <value>A style name cannot be empty.</value>
+  </data>
+  <data name="AppliedDeviceFiltersDialog_DefaultFilterAlreadyApplied" xml:space="preserve">
+    <value>The default filter may only be applied once.</value>
+  </data>
+  <data name="MobileControlsSectionHandler_DuplicatedDeviceName" xml:space="preserve">
+    <value>The following device adapter set is already registered: '{0}'</value>
+  </data>
+  <data name="Form_Action" xml:space="preserve">
+    <value>The URL to which the form should be submitted.</value>
+  </data>
+  <data name="ObjectListCommandsPage_CommandNameCaption" xml:space="preserve">
+    <value>Command &amp;Name:</value>
+  </data>
+  <data name="MobileErrorInfo_SourceObject" xml:space="preserve">
+    <value>Source Object</value>
+  </data>
+  <data name="ListGeneralPage_PrivateMemberCaption" xml:space="preserve">
+    <value>The DataSource's modifier must be changed to public before you can select it.</value>
+  </data>
+  <data name="WebConfig_FileNotFoundException" xml:space="preserve">
+    <value>No Web.config file exists in this project's directory.</value>
+  </data>
+  <data name="ValidationSummary_BackLabel" xml:space="preserve">
+    <value>Label for the link that returns to the offending form.</value>
+  </data>
+  <data name="NavigateUrlConverter_SelectURITarget" xml:space="preserve">
+    <value>(Select URL...)</value>
+  </data>
+  <data name="PropertyOverridesDialog_AppliedDeviceFilters" xml:space="preserve">
+    <value>&amp;Applied Device Filter:</value>
+  </data>
+  <data name="MobileControl_NonHtmlSchemaErrorMessage" xml:space="preserve">
+    <value>You can edit only HTML-based templates in Design view. Switch to HTML view to edit the template contents.</value>
+  </data>
+  <data name="ObjectList_OnItemSelect" xml:space="preserve">
+    <value>Raises an event when the user selects an item in the list view.</value>
+  </data>
+  <data name="MobileRedirect_RedirectNotAllowed" xml:space="preserve">
+    <value>Calling Response.Redirect on a postback can have unpredictable results on mobile devices and gateways. Use RedirectToMobilePage method instead.</value>
+  </data>
+  <data name="Form_OnDeactivate" xml:space="preserve">
+    <value>Raises an event when a previously active form becomes inactive.</value>
+  </data>
+  <data name="MobCap_DelegateNameNoValue" xml:space="preserve">
+    <value>delegateName must have a value.</value>
+  </data>
+  <data name="MobileControl_UserControlWarningMessage" xml:space="preserve">
+    <value>This control is not supported in Design view when placed inside a Web User Control, use Mobile User Control instead.</value>
+  </data>
+  <data name="Category_Paging" xml:space="preserve">
+    <value>Paging</value>
+  </data>
+  <data name="DevCapSect_ExtraCompareDelegator" xml:space="preserve">
+    <value>An evaluator delegate has already been specified.  A compare attribute is not necessary.</value>
+  </data>
+  <data name="StylesEditorDialog_StyleListGroupLabel" xml:space="preserve">
+    <value>Style List</value>
+  </data>
+  <data name="MobileControl_FormPanelContainmentErrorMessage" xml:space="preserve">
+    <value>This control must be placed in a Form or Panel control, or within a template. Please move or delete this control.</value>
+  </data>
+  <data name="ListGeneralPage_PagingGroupLabel" xml:space="preserve">
+    <value>Paging</value>
+  </data>
+  <data name="ObjectListFieldsPage_EmptyNameError" xml:space="preserve">
+    <value>A field name cannot be empty. Please type a name.</value>
+  </data>
+  <data name="Category_Style" xml:space="preserve">
+    <value>Style</value>
+  </data>
+  <data name="StylesEditorDialog_AddBtnCation" xml:space="preserve">
+    <value>&gt;</value>
+  </data>
+  <data name="TemplatingOptionsDialog_HTMLSchemaFriendly" xml:space="preserve">
+    <value>Mobile HTML 3.2 Template</value>
+  </data>
+  <data name="MobileControl_BreakAfter" xml:space="preserve">
+    <value>Whether to add a line break after the control at run time.</value>
+  </data>
+  <data name="Input_Title" xml:space="preserve">
+    <value>The title shown above the input area on devices that support it.</value>
+  </data>
+  <data name="ObjectList_TableFields" xml:space="preserve">
+    <value>Fields in the data source to use for an expanded representation of the items in list view.</value>
+  </data>
+  <data name="DeviceSpecific_PropNotSet" xml:space="preserve">
+    <value>(None)</value>
+  </data>
+  <data name="Calendar_VisibleDate" xml:space="preserve">
+    <value>The month that appears.</value>
+  </data>
+  <data name="StylesEditorDialog_PreviewText" xml:space="preserve">
+    <value>AaBbYyZz</value>
+  </data>
+  <data name="SessionViewState_ExpiredOrCookieless" xml:space="preserve">
+    <value>The page requires session state that is no longer available. Either the session has expired, the client did not send a valid session cookie, or the session state history size is too small. Try increasing the history size or session expiry limit.</value>
+  </data>
+  <data name="Image_AutoFormat" xml:space="preserve">
+    <value>Whether the source image should be auto-formatted to match device capabilities.</value>
+  </data>
+  <data name="ObjectListField_DataBoundText" xml:space="preserve">
+    <value>DataBound</value>
+  </data>
+  <data name="Category_Data" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="AdRotator_NavigateUrlKey" xml:space="preserve">
+    <value>XML element name that specifies which advertisement Web page URL to retrieve.</value>
+  </data>
+  <data name="Command_CommandName" xml:space="preserve">
+    <value>The name associated with the command.</value>
+  </data>
+  <data name="StyleSheet_TemplateEditingMessage" xml:space="preserve">
+    <value>Right-click and choose the Edit Styles command to define styles. Use the Edit Template command to edit templates for the current style and device filter.</value>
+  </data>
+  <data name="ControlAdapter_OKLabel" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="FontInfo_Bold" xml:space="preserve">
+    <value>Bold setting for the font.</value>
+  </data>
+  <data name="FontInfo_Name" xml:space="preserve">
+    <value>The preferred font for the control.</value>
+  </data>
+  <data name="FontInfo_Size" xml:space="preserve">
+    <value>The relative size of the font.</value>
+  </data>
+  <data name="AppliedDeviceFiltersDialog_AvailableDeviceFilters" xml:space="preserve">
+    <value>A&amp;vailable Device Filters:</value>
+  </data>
+  <data name="DeviceSpecificChoice_PropertyNotAnAttribute" xml:space="preserve">
+    <value>Specified property is not an attribute.</value>
+  </data>
+  <data name="StyleSheet_StyleAlreadyOwned" xml:space="preserve">
+    <value>Attempting to insert Style named '{0}' into style sheet even though it's already in another style sheet named '{1}'.  Only one style sheet can own a given Style.</value>
+  </data>
+  <data name="ListGeneralPage_DecorationCaption" xml:space="preserve">
+    <value>Deco&amp;ration:</value>
+  </data>
+  <data name="Link_NavigateUrl" xml:space="preserve">
+    <value>The URL or Form to link to.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_InvalidFilter" xml:space="preserve">
+    <value>The following device filters are not valid as specified:
+
+{0}
+
+Equality Comparison device filters must have a defined Compare property.  Evaluator Delegate device filters must have defined Type and Method properties.  Please correct these filters.</value>
+  </data>
+  <data name="TemplateFrame_HeaderFooterTemplates" xml:space="preserve">
+    <value>&amp;Header and Footer Templates</value>
+  </data>
+  <data name="TextBox_OnTextChanged" xml:space="preserve">
+    <value>Raises an event after the user changes the text property. The event occurs only after a postback to the server.</value>
+  </data>
+  <data name="UnsettableComboBox_NotSetText" xml:space="preserve">
+    <value>&lt;Not Set&gt;</value>
+  </data>
+  <data name="List_OnItemDataBind" xml:space="preserve">
+    <value>Raises an event after an item has been databound.</value>
+  </data>
+  <data name="CompareValidator_Operator" xml:space="preserve">
+    <value>Comparison operation to apply to values.</value>
+  </data>
+  <data name="ObjectListFieldsPage_TitleCaption" xml:space="preserve">
+    <value>&amp;Title:</value>
+  </data>
+  <data name="TemplateFrame_ItemTemplates" xml:space="preserve">
+    <value>&amp;Item Templates</value>
+  </data>
+  <data name="ListGeneralPage_Title" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ObjectListGeneralPage_TableFieldsAvailableListLabel" xml:space="preserve">
+    <value>A&amp;vailable Fields:</value>
+  </data>
+  <data name="List_DataMember" xml:space="preserve">
+    <value>Table used for binding when a DataSet is used as the data source.</value>
+  </data>
+  <data name="MobileErrorInfo_ParserErrorMiscTitle" xml:space="preserve">
+    <value>Parser Error Message</value>
+  </data>
+  <data name="ConfigSect_InvalidBooleanAttr" xml:space="preserve">
+    <value>Invalid boolean attribute '{0}'.</value>
+  </data>
+  <data name="StyleSheet_InvalidStyleName" xml:space="preserve">
+    <value>Attempting to set Style named '{0}' into style sheet key '{1}'.  These values must match.</value>
+  </data>
+  <data name="ObjectListFieldsPage_DataFieldCaption" xml:space="preserve">
+    <value>&amp;DataField:</value>
+  </data>
+  <data name="MobileControl_NoTemplatesDefined" xml:space="preserve">
+    <value>Cannot create templated UI because no templates are defined.</value>
+  </data>
+  <data name="ObjectList_SelectedIndexTooBig" xml:space="preserve">
+    <value>SelectedIndex must be less than the item count.  SelectedIndex is being set to {0}, but the item count is {1}.  </value>
+  </data>
+  <data name="ConfigSect_UnknownAttr" xml:space="preserve">
+    <value>Unexpected attribute '{0}'.</value>
+  </data>
+  <data name="ObjectList_ItemTitle" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="ObjectListFieldsPage_DataFormatStringCaption" xml:space="preserve">
+    <value>DataFormat&amp;String:</value>
+  </data>
+  <data name="Image_ImageUrl" xml:space="preserve">
+    <value>The URL of the image to be rendered.</value>
+  </data>
+  <data name="ListItemsPage_ItemValueCaption" xml:space="preserve">
+    <value>&amp;Value:</value>
+  </data>
+  <data name="StyleSheetRefUrlEditor_Filter" xml:space="preserve">
+    <value>ASCX Files(*.ascx)|*.ascx|</value>
+  </data>
+  <data name="LiteralTextParser_InvalidTagFormat" xml:space="preserve">
+    <value>The text contains a tag with invalid syntax.  Specify tags that use correct syntax.</value>
+  </data>
+  <data name="StylesEditorDialog_TypeCaption" xml:space="preserve">
+    <value>T&amp;ype:</value>
+  </data>
+  <data name="Image_AlternateText" xml:space="preserve">
+    <value>The alternate text displayed when the image cannot be rendered.</value>
+  </data>
+  <data name="ListGeneralPage_PrivateMemberMessage" xml:space="preserve">
+    <value>{0} is marked as private member.</value>
+  </data>
+  <data name="ObjectListGeneralPage_DataMemberCaption" xml:space="preserve">
+    <value>Data&amp;Member:</value>
+  </data>
+  <data name="ObjectListGeneralPage_AppearanceGroupLabel" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Command_CausesValidation" xml:space="preserve">
+    <value>Whether to invoke validation on the form when activated.</value>
+  </data>
+  <data name="ObjectListGeneralPage_DataGroupLabel" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="ObjectList_MustHaveOneOrMoreFields" xml:space="preserve">
+    <value>Must have one or more fields to databind.  (Application may have autogenerated fields from an empty DataSource.  To clear items, set DataSource to null.)</value>
+  </data>
+  <data name="Calendar_CalendarEntryText" xml:space="preserve">
+    <value>Text for the link that provides date selection. This link is only used when a series of steps is needed.</value>
+  </data>
+  <data name="ObjectList_DefaultCommand" xml:space="preserve">
+    <value>Command raised when an item is selected in list view.</value>
+  </data>
+  <data name="TemplateableDesigner_SetTemplatesFilterVerb" xml:space="preserve">
+    <value>Templating &amp;Options...</value>
+  </data>
+  <data name="SelectionList_Rows" xml:space="preserve">
+    <value>The number of visible rows to render.</value>
+  </data>
+  <data name="Style_CircularReference" xml:space="preserve">
+    <value>The following style contains a circular reference: '{0}'</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_Title" xml:space="preserve">
+    <value>Device Filter Editor</value>
+  </data>
+  <data name="ConfigSect_UnrecognizedXML" xml:space="preserve">
+    <value>Unrecognized XML.</value>
+  </data>
+  <data name="ObjectListGeneralPage_MoreTextCaption" xml:space="preserve">
+    <value>M&amp;oreText:</value>
+  </data>
+  <data name="PropertyOverridesDialog_Title" xml:space="preserve">
+    <value>Property Overrides</value>
+  </data>
+  <data name="Style_StyleNotFound" xml:space="preserve">
+    <value>Style not found: {0}</value>
+  </data>
+  <data name="EditableTreeList_MoveUpDescription" xml:space="preserve">
+    <value>Move the selected item up in the list</value>
+  </data>
+  <data name="UrlPicker_DefaultCaption" xml:space="preserve">
+    <value>Select URL</value>
+  </data>
+  <data name="Feature_Not_Supported_On_MobilePage" xml:space="preserve">
+    <value>The '{0}' feature is not supported on a mobile page.</value>
+  </data>
+  <data name="ObjectListFieldsPage_FieldNameCaption" xml:space="preserve">
+    <value>Field &amp;Name:</value>
+  </data>
+  <data name="MobileTypeNameConverter_UnsupportedValueType" xml:space="preserve">
+    <value>The converter cannot convert value '{0}' with type '{1}'.</value>
+  </data>
+  <data name="ConfigSect_MissingAttr" xml:space="preserve">
+    <value>Required attribute '{0}' is missing.</value>
+  </data>
+  <data name="StyleSheet_LoopReference" xml:space="preserve">
+    <value>The following style sheet contains a circular reference to an external style sheet: '{0}'</value>
+  </data>
+  <data name="PropertyOverridesDialog_NotICloneable" xml:space="preserve">
+    <value>'{0}' uses ExpandableObjectConverter, but type '{1}' does not implement ICloneable.</value>
+  </data>
+  <data name="ObjectList_AutoGenerateFields" xml:space="preserve">
+    <value>Whether the fields are generated automatically at run time based on the associated data source.</value>
+  </data>
+  <data name="RequiredFieldValidator_InitialValue" xml:space="preserve">
+    <value>Initial value of the field to validate.</value>
+  </data>
+  <data name="SelectionList_AdapterNotHandlingLoadPostData" xml:space="preserve">
+    <value>Device adapter must handle LoadPostData for SelectionList.</value>
+  </data>
+  <data name="StylesEditorDialog_Title" xml:space="preserve">
+    <value>Styles Editor</value>
+  </data>
+  <data name="ListGeneralPage_DataTextFieldCaption" xml:space="preserve">
+    <value>Data&amp;TextField:</value>
+  </data>
+  <data name="StylesEditorDialog_PropertiesCaption" xml:space="preserve">
+    <value>&amp;Properties:</value>
+  </data>
+  <data name="DeviceSpecific_TemplateEditingMessage" xml:space="preserve">
+    <value>Right-click and select a set of templates to edit their device-specific content.</value>
+  </data>
+  <data name="MobileControl_MustBeInMobilePage" xml:space="preserve">
+    <value>MobileControl must be contained within a MobilePage: {0}</value>
+  </data>
+  <data name="ListGeneralPage_ItemsPerPageCaption" xml:space="preserve">
+    <value>ItemsPer&amp;Page:</value>
+  </data>
+  <data name="ObjectListCommandsPage_ErrorMessageTitle" xml:space="preserve">
+    <value>Commands Editor Page</value>
+  </data>
+  <data name="DevCapSect_ExtraArgumentDelegator" xml:space="preserve">
+    <value>An evaluator delegate has already been specified.  An argument attribute is not necessary.</value>
+  </data>
+  <data name="ErrorFormatterPage_File" xml:space="preserve">
+    <value>File: {0}</value>
+  </data>
+  <data name="ErrorFormatterPage_Line" xml:space="preserve">
+    <value>Line: {0}</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_Header" xml:space="preserve">
+    <value>Create device filters for control templating and property overrides in this application.  These filters are stored in the Web.config management file.</value>
+  </data>
+  <data name="StyleSheet_StylesCaption" xml:space="preserve">
+    <value>St&amp;yle:</value>
+  </data>
+  <data name="ListGeneralPage_DataMemberCaption" xml:space="preserve">
+    <value>Data&amp;Member:</value>
+  </data>
+  <data name="StyleSheet_ReferencePath" xml:space="preserve">
+    <value>Relative file path to a user control containing a StyleSheet control.</value>
+  </data>
+  <data name="DevFiltDict_FoundLoop" xml:space="preserve">
+    <value>The filter '{0}' is already directly or indirectly dependent on the filter '{1}'. Construct your filters to avoid loops.</value>
+  </data>
+  <data name="ObjectListFieldsPage_Title" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="Link_SoftkeyLabel" xml:space="preserve">
+    <value>Label used for the link when rendered on a softkey. Only used on devices that support softkeys.</value>
+  </data>
+  <data name="ListGeneralPage_DataValueFieldCaption" xml:space="preserve">
+    <value>Data&amp;ValueField:</value>
+  </data>
+  <data name="MobileControlBuilder_ControlMustBeTopLevelOfPage" xml:space="preserve">
+    <value>{0} must be defined at the top level of a page.</value>
+  </data>
+  <data name="ObjectListCommandsPage_DefaultCommandName" xml:space="preserve">
+    <value>Command</value>
+  </data>
+  <data name="ControlAdapter_MoreLabel" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="DeviceSpecificChoice_ChoiceOnlyExistInDeviceSpecific" xml:space="preserve">
+    <value>Choice elements can only exist in a DeviceSpecific element.</value>
+  </data>
+  <data name="CustomValidator_OnServerValidate" xml:space="preserve">
+    <value>Called to perform validation on the server.</value>
+  </data>
+  <data name="UrlPicker_DefaultFilter" xml:space="preserve">
+    <value>All Files(*.*)|*.*|</value>
+  </data>
+  <data name="List_OnItemCommand" xml:space="preserve">
+    <value>Raises an event when an individual list item generates an event as a result of a user action.</value>
+  </data>
+  <data name="TextControl_Text" xml:space="preserve">
+    <value>Text that appears in the control.</value>
+  </data>
+  <data name="PagedControl_ItemCountCantBeNegative" xml:space="preserve">
+    <value>ItemCount cannot be negative: {0}</value>
+  </data>
+  <data name="MobileErrorInfo_CompilationErrorDescription" xml:space="preserve">
+    <value>An error occurred during the compilation of a resource required to service this request. Please review the following specific error details and modify your source code appropriately.</value>
+  </data>
+  <data name="AppliedDeviceFiltersDialog_AssociatedItemsWillBeLost" xml:space="preserve">
+    <value>Any templates and property overrides associated with this device filter will be lost. Are you sure you want to continue?</value>
+  </data>
+  <data name="CompareValidator_ValueToCompare" xml:space="preserve">
+    <value>Value to compare to.</value>
+  </data>
+  <data name="DeviceFilterEditorDialog_WebConfigMissing" xml:space="preserve">
+    <value>The action could not be completed because this project's Web.config file has been deleted or renamed.</value>
+  </data>
+  <data name="PropertyOverridesDialog_DeviceSpecificProperties" xml:space="preserve">
+    <value>Device-Specific &amp;Properties:</value>
+  </data>
+</root>

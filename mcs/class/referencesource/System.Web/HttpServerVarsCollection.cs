@@ -21,6 +21,7 @@ namespace System.Web {
     using System.Web.Hosting;
     using System.Web.Util;
     
+    
     internal class HttpServerVarsCollection : HttpValueCollection {
         private bool _populated;
         private HttpRequest _request;
@@ -36,7 +37,7 @@ namespace System.Web {
             _request = request;
             _populated = false;
 
-            Debug.Assert( _request != null );
+            System.Web.Util.Debug.Assert( _request != null );
         }
 
         [SuppressMessage("Microsoft.Usage", "CA2236:CallBaseClassMethodsOnISerializableTypes",
@@ -109,42 +110,42 @@ namespace System.Web {
                 switch (name[0]) {
                     case 'A':
                     case 'a':
-                        if (StringUtil.EqualsIgnoreCase(name, "AUTH_TYPE"))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "AUTH_TYPE"))
                             return _request.CalcDynamicServerVariable(DynamicServerVariable.AUTH_TYPE);
-                        else if (StringUtil.EqualsIgnoreCase(name, "AUTH_USER"))
+                        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "AUTH_USER"))
                             return _request.CalcDynamicServerVariable(DynamicServerVariable.AUTH_USER);
                         break;
                     case 'H':
                     case 'h':
-                        if (StringUtil.EqualsIgnoreCase(name, "HTTP_USER_AGENT"))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "HTTP_USER_AGENT"))
                             return _request.UserAgent;
                         break;
                     case 'Q':
                     case 'q':
-                        if (StringUtil.EqualsIgnoreCase(name, "QUERY_STRING"))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "QUERY_STRING"))
                             return _request.QueryStringText;
                         break;
                     case 'P':
                     case 'p':
-                        if (StringUtil.EqualsIgnoreCase(name, "PATH_INFO"))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "PATH_INFO"))
                             return _request.Path;
-                        else if (StringUtil.EqualsIgnoreCase(name, "PATH_TRANSLATED"))
+                        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "PATH_TRANSLATED"))
                             return _request.PhysicalPath;
                         break;
                     case 'R':
                     case 'r':
-                        if (StringUtil.EqualsIgnoreCase(name, "REQUEST_METHOD"))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "REQUEST_METHOD"))
                             return _request.HttpMethod;
-                        else if (StringUtil.EqualsIgnoreCase(name, "REMOTE_USER"))
+                        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "REMOTE_USER"))
                             return _request.CalcDynamicServerVariable(DynamicServerVariable.AUTH_USER);
-                        else if (StringUtil.EqualsIgnoreCase(name, "REMOTE_HOST"))
+                        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "REMOTE_HOST"))
                             return _request.UserHostName;
-                        else if (StringUtil.EqualsIgnoreCase(name, "REMOTE_ADDRESS"))
+                        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "REMOTE_ADDRESS"))
                             return _request.UserHostAddress;
                         break;
                     case 'S':
                     case 's':
-                        if (StringUtil.EqualsIgnoreCase(name, "SCRIPT_NAME"))
+                        if (System.Web.Util.StringUtil.EqualsIgnoreCase(name, "SCRIPT_NAME"))
                             return _request.FilePath;
                         break;
                 }
@@ -211,8 +212,7 @@ namespace System.Web {
             String s = Get(name);
             return(s != null) ? new String[1] { s} : null;
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.High)]
+        
         public override void Set(String name, String value) {
             if (_iis7workerRequest == null) {
                 throw new PlatformNotSupportedException();
@@ -237,7 +237,7 @@ namespace System.Web {
         }
 
         private void SynchronizeHeader(String name, String value) {
-            if (StringUtil.StringStartsWith(name, "HTTP_"))
+            if (System.Web.Util.StringUtil.StringStartsWith(name, "HTTP_"))
             {
                 // update managed copy of header
                 string headerName = name.Substring("HTTP_".Length);
@@ -282,8 +282,8 @@ namespace System.Web {
 
         // updates managed copy of server variable with current value from native header block
         private void SetServerVariableManagedOnly(String name, String value) {
-            Debug.Assert(name != null);
-            Debug.Assert(value != null);
+            System.Web.Util.Debug.Assert(name != null);
+            System.Web.Util.Debug.Assert(value != null);
 
             // populate in order to identify dynamic variables
             Populate();
@@ -291,15 +291,14 @@ namespace System.Web {
             // dynamic server variables cannot be modified
             HttpServerVarsCollectionEntry entry = (HttpServerVarsCollectionEntry) BaseGet(name);
             if (entry != null && entry.IsDynamic) {
-                throw new HttpException(SR.GetString(SR.Server_variable_cannot_be_modified));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Server_variable_cannot_be_modified));
             }
 
             InvalidateCachedArrays();            
             // this will update an existing entry, or create one if it's new
             BaseSet(name, new HttpServerVarsCollectionEntry(name, value));
         }
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.High)]
+        
         public override void Remove(String name) {
             if (_iis7workerRequest == null) {
                 throw new PlatformNotSupportedException();

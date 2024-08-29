@@ -18,6 +18,7 @@ namespace System.Web.Management {
     using System.Threading;
     using System.Web.DataAccess;
     using System.Web.Util;
+    
 
     ////////////
     // Events
@@ -41,7 +42,7 @@ namespace System.Web.Management {
 
         public override void Initialize(string name, NameValueCollection config) {
 
-            Debug.Trace("SqlWebEventProvider", "Initializing: name=" + name);
+            System.Web.Util.Debug.Trace("SqlWebEventProvider", "Initializing: name=" + name);
             _SchemaVersionCheck = 0;
             string  temp = null;
 
@@ -49,24 +50,24 @@ namespace System.Web.Management {
             ProviderUtil.GetAndRemoveStringAttribute(config, "connectionString", name, ref _sqlConnectionString);
             if (!String.IsNullOrEmpty(temp)) {
                 if (!String.IsNullOrEmpty(_sqlConnectionString)) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Only_one_connection_string_allowed));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Only_one_connection_string_allowed));
                 }
 
                 _sqlConnectionString = SqlConnectionHelper.GetConnectionString(temp, true, true);
                 if (_sqlConnectionString == null || _sqlConnectionString.Length < 1) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Connection_string_not_found, temp));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, temp));
                 }
             }
             else {
                 // If a connection string is specified explicitly, verify that its not using integrated security
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(_sqlConnectionString);
                 if (builder.IntegratedSecurity) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Cannot_use_integrated_security));
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Cannot_use_integrated_security));
                 }
             }
 
             if (String.IsNullOrEmpty(_sqlConnectionString)) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Must_specify_connection_string_or_name, temp));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Must_specify_connection_string_or_name, temp));
             }
 
 
@@ -75,7 +76,7 @@ namespace System.Web.Management {
                 _maxEventDetailsLength = NO_LIMIT;
             }
             else if (_maxEventDetailsLength > SQL_MAX_NTEXT_SIZE) {
-                throw new ConfigurationErrorsException(SR.GetString(SR.Invalid_max_event_details_length, name, _maxEventDetailsLength.ToString(CultureInfo.CurrentCulture)));
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Invalid_max_event_details_length, name, _maxEventDetailsLength.ToString(CultureInfo.CurrentCulture)));
             }
 
             ProviderUtil.GetAndRemovePositiveAttribute(config, "commandTimeout", name, ref _commandTimeout);
@@ -90,7 +91,7 @@ namespace System.Web.Management {
         }
         
         public override void ProcessEventFlush(WebEventBufferFlushInfo flushInfo) {
-            Debug.Trace("SqlWebEventProvider", "EventBufferFlush called: " + 
+            System.Web.Util.Debug.Trace("SqlWebEventProvider", "EventBufferFlush called: " + 
                 "NotificationType=" + flushInfo.NotificationType +
                 ", NotificationSequence=" + flushInfo.NotificationSequence + 
                 ", Events.Count=" + flushInfo.Events.Count);
@@ -200,7 +201,7 @@ namespace System.Web.Management {
 
                     if (eventsDiscardedByBuffer != 0) {
                         WebBaseEvent infoEvent = new WebBaseEvent(
-                            SR.GetString(SR.Sql_webevent_provider_events_dropped,
+                            System.Web.SR.GetString(System.Web.SR.Sql_webevent_provider_events_dropped,
                                 eventsDiscardedByBuffer.ToString(CultureInfo.InstalledUICulture),
                                 lastNotificationUtc.ToString("r", CultureInfo.InstalledUICulture)),
                                 null,
@@ -218,7 +219,7 @@ namespace System.Web.Management {
                 }
 #if DBG
                 catch (Exception e) {
-                    Debug.Trace("SqlWebEventProvider", "ExecuteNonQuery failed: " + e);
+                    System.Web.Util.Debug.Trace("SqlWebEventProvider", "ExecuteNonQuery failed: " + e);
                     throw;
                 }
 #endif
@@ -255,7 +256,7 @@ namespace System.Web.Management {
                 base.ProcessEvent(eventRaised);
             }
             else {
-                Debug.Trace("SqlWebEventProvider", "Writing event to SQL: event=" + eventRaised.GetType().Name);
+                System.Web.Util.Debug.Trace("SqlWebEventProvider", "Writing event to SQL: event=" + eventRaised.GetType().Name);
                 WriteToSQL(new WebBaseEventCollection(eventRaised), 0, new DateTime(0));
             }
         }

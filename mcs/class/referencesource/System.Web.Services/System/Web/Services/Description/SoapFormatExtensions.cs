@@ -42,7 +42,11 @@ namespace System.Web.Services.Description {
         public static XmlSchema Schema {
             get {
                 if (schema == null) {
-                    schema = XmlSchema.Read(new StringReader(Schemas.Soap), null);
+                    using (XmlTextReader reader = new XmlTextReader(new StringReader(Schemas.Soap)))
+                    {
+                        reader.DtdProcessing = DtdProcessing.Ignore;
+                        schema = XmlSchema.Read(reader, null);
+                    }
                 }
                 return schema;
             }

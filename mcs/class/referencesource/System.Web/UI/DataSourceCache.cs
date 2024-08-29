@@ -8,6 +8,7 @@ namespace System.Web.UI {
     using System.ComponentModel;
     using System.Web.Caching;
     using System.Web.Util;
+    
 
 
     internal class DataSourceCache : IStateManager {
@@ -32,7 +33,7 @@ namespace System.Web.UI {
             }
             set {
                 if (value < 0) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.DataSourceCache_InvalidDuration));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.DataSourceCache_InvalidDuration));
                 }
                 ViewState["Duration"] = value;
             }
@@ -67,7 +68,7 @@ namespace System.Web.UI {
             }
             set {
                 if (value < DataSourceCacheExpiry.Absolute || value > DataSourceCacheExpiry.Sliding) {
-                    throw new ArgumentOutOfRangeException(SR.GetString(SR.DataSourceCache_InvalidExpiryPolicy));
+                    throw new ArgumentOutOfRangeException(System.Web.SR.GetString(System.Web.SR.DataSourceCache_InvalidExpiryPolicy));
                 }
                 ViewState["ExpirationPolicy"] = value;
             }
@@ -81,7 +82,7 @@ namespace System.Web.UI {
         [
         DefaultValue(""),
         NotifyParentProperty(true),
-        WebSysDescription(SR.DataSourceCache_KeyDependency),
+        WebSysDescription(System.Web.SR.DataSourceCache_KeyDependency),
         ]
         public virtual string KeyDependency {
             get {
@@ -127,10 +128,10 @@ namespace System.Web.UI {
                 throw new ArgumentNullException("key");
             }
 
-            Debug.Assert(key.StartsWith(CacheInternal.PrefixDataSourceControl, StringComparison.Ordinal), "All keys passed in should start with the prefix specified in CacheInternal.PrefixDataSourceControl.");
+            System.Web.Util.Debug.Assert(key.StartsWith(CacheInternal.PrefixDataSourceControl, StringComparison.Ordinal), "All keys passed in should start with the prefix specified in CacheInternal.PrefixDataSourceControl.");
 
             if (!Enabled) {
-                throw new InvalidOperationException(SR.GetString(SR.DataSourceCache_CacheMustBeEnabled));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataSourceCache_CacheMustBeEnabled));
             }
 
             HttpRuntime.Cache.InternalCache.Remove(key);
@@ -145,10 +146,10 @@ namespace System.Web.UI {
                 throw new ArgumentNullException("key");
             }
 
-            Debug.Assert(key.StartsWith(CacheInternal.PrefixDataSourceControl, StringComparison.Ordinal), "All keys passed in should start with the prefix specified in CacheInternal.PrefixDataSourceControl.");
+            System.Web.Util.Debug.Assert(key.StartsWith(CacheInternal.PrefixDataSourceControl, StringComparison.Ordinal), "All keys passed in should start with the prefix specified in CacheInternal.PrefixDataSourceControl.");
 
             if (!Enabled) {
-                throw new InvalidOperationException(SR.GetString(SR.DataSourceCache_CacheMustBeEnabled));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataSourceCache_CacheMustBeEnabled));
             }
 
             return HttpRuntime.Cache.InternalCache.Get(key);
@@ -194,10 +195,10 @@ namespace System.Web.UI {
                 throw new ArgumentNullException("key");
             }
 
-            Debug.Assert(key.StartsWith(CacheInternal.PrefixDataSourceControl, StringComparison.Ordinal), "All keys passed in should start with the prefix specified in CacheInternal.PrefixDataSourceControl.");
+            System.Web.Util.Debug.Assert(key.StartsWith(CacheInternal.PrefixDataSourceControl, StringComparison.Ordinal), "All keys passed in should start with the prefix specified in CacheInternal.PrefixDataSourceControl.");
 
             if (!Enabled) {
-                throw new InvalidOperationException(SR.GetString(SR.DataSourceCache_CacheMustBeEnabled));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DataSourceCache_CacheMustBeEnabled));
             }
 
             DateTime utcAbsoluteExpiryTime = Cache.NoAbsoluteExpiration;

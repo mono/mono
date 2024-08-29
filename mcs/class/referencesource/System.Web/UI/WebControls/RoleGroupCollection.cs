@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls {
         protected override void OnValidate(object value) {
             base.OnValidate(value);
             if (!(value is RoleGroup)) {
-                throw new ArgumentException(SR.GetString(SR.RoleGroupCollection_InvalidType), "value");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.RoleGroupCollection_InvalidType), "value");
             }
         }
 

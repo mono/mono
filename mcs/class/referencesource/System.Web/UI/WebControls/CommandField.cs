@@ -11,6 +11,7 @@ namespace System.Web.UI.WebControls {
     using System.ComponentModel;
     using System.Drawing.Design;
     using System.Globalization;
+    
 
     /// <devdoc>
     /// <para>Creates a special field with buttons for <see langword='Edit'/>,
@@ -31,7 +32,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.CommandField_CancelImageUrl),
+        WebSysDescription(System.Web.SR.CommandField_CancelImageUrl),
         UrlProperty()
         ]
         public virtual string CancelImageUrl {
@@ -58,13 +59,13 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         Localizable(true),
-        WebSysDefaultValue(SR.CommandField_DefaultCancelCaption),
-        WebSysDescription(SR.CommandField_CancelText)
+        WebSysDefaultValue(System.Web.SR.CommandField_DefaultCancelCaption),
+        WebSysDescription(System.Web.SR.CommandField_CancelText)
         ]
         public virtual string CancelText {
             get {
                 object text = ViewState["CancelText"];
-                return text == null ? SR.GetString(SR.CommandField_DefaultCancelCaption) : (string)text;
+                return text == null ? System.Web.SR.GetString(System.Web.SR.CommandField_DefaultCancelCaption) : (string)text;
             }
             set {
                 if (!String.Equals(value, ViewState["CancelText"])) {
@@ -78,7 +79,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.ButtonFieldBase_CausesValidation)
+        WebSysDescription(System.Web.SR.ButtonFieldBase_CausesValidation)
         ]
         public override bool CausesValidation {
             get {
@@ -98,7 +99,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.CommandField_DeleteImageUrl),
+        WebSysDescription(System.Web.SR.CommandField_DeleteImageUrl),
         UrlProperty()
         ]
         public virtual string DeleteImageUrl {
@@ -125,13 +126,13 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         Localizable(true),
-        WebSysDefaultValue(SR.CommandField_DefaultDeleteCaption),
-        WebSysDescription(SR.CommandField_DeleteText)
+        WebSysDefaultValue(System.Web.SR.CommandField_DefaultDeleteCaption),
+        WebSysDescription(System.Web.SR.CommandField_DeleteText)
         ]
         public virtual string DeleteText {
             get {
                 object text = ViewState["DeleteText"];
-                return text == null ? SR.GetString(SR.CommandField_DefaultDeleteCaption) : (string)text;
+                return text == null ? System.Web.SR.GetString(System.Web.SR.CommandField_DefaultDeleteCaption) : (string)text;
             }
             set {
                 if (!String.Equals(value, ViewState["DeleteText"])) {
@@ -146,7 +147,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.CommandField_EditImageUrl),
+        WebSysDescription(System.Web.SR.CommandField_EditImageUrl),
         UrlProperty()
         ]
         public virtual string EditImageUrl {
@@ -173,13 +174,13 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         Localizable(true),
-        WebSysDefaultValue(SR.CommandField_DefaultEditCaption),
-        WebSysDescription(SR.CommandField_EditText)
+        WebSysDefaultValue(System.Web.SR.CommandField_DefaultEditCaption),
+        WebSysDescription(System.Web.SR.CommandField_EditText)
         ]
         public virtual string EditText {
             get {
                 object text = ViewState["EditText"];
-                return text == null ? SR.GetString(SR.CommandField_DefaultEditCaption) : (string)text;
+                return text == null ? System.Web.SR.GetString(System.Web.SR.CommandField_DefaultEditCaption) : (string)text;
             }
             set {
                 if (!String.Equals(value, ViewState["EditText"])) {
@@ -194,7 +195,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.CommandField_InsertImageUrl),
+        WebSysDescription(System.Web.SR.CommandField_InsertImageUrl),
         UrlProperty()
         ]
         public virtual string InsertImageUrl {
@@ -221,13 +222,13 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         Localizable(true),
-        WebSysDefaultValue(SR.CommandField_DefaultInsertCaption),
-        WebSysDescription(SR.CommandField_InsertText)
+        WebSysDefaultValue(System.Web.SR.CommandField_DefaultInsertCaption),
+        WebSysDescription(System.Web.SR.CommandField_InsertText)
         ]
         public virtual string InsertText {
             get {
                 object text = ViewState["InsertText"];
-                return text == null ? SR.GetString(SR.CommandField_DefaultInsertCaption) : (string)text;
+                return text == null ? System.Web.SR.GetString(System.Web.SR.CommandField_DefaultInsertCaption) : (string)text;
             }
             set {
                 if (!String.Equals(value, ViewState["InsertText"])) {
@@ -242,7 +243,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.CommandField_NewImageUrl),
+        WebSysDescription(System.Web.SR.CommandField_NewImageUrl),
         UrlProperty()
         ]
         public virtual string NewImageUrl {
@@ -269,13 +270,13 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         Localizable(true),
-        WebSysDefaultValue(SR.CommandField_DefaultNewCaption),
-        WebSysDescription(SR.CommandField_NewText)
+        WebSysDefaultValue(System.Web.SR.CommandField_DefaultNewCaption),
+        WebSysDescription(System.Web.SR.CommandField_NewText)
         ]
         public virtual string NewText {
             get {
                 object text = ViewState["NewText"];
-                return text == null ? SR.GetString(SR.CommandField_DefaultNewCaption) : (string)text;
+                return text == null ? System.Web.SR.GetString(System.Web.SR.CommandField_DefaultNewCaption) : (string)text;
             }
             set {
                 if (!String.Equals(value, ViewState["NewText"])) {
@@ -290,7 +291,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.CommandField_SelectImageUrl),
+        WebSysDescription(System.Web.SR.CommandField_SelectImageUrl),
         UrlProperty()
         ]
         public virtual string SelectImageUrl {
@@ -317,13 +318,13 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         Localizable(true),
-        WebSysDefaultValue(SR.CommandField_DefaultSelectCaption),
-        WebSysDescription(SR.CommandField_SelectText)
+        WebSysDefaultValue(System.Web.SR.CommandField_DefaultSelectCaption),
+        WebSysDescription(System.Web.SR.CommandField_SelectText)
         ]
         public virtual string SelectText {
             get {
                 object text = ViewState["SelectText"];
-                return text == null ? SR.GetString(SR.CommandField_DefaultSelectCaption) : (string)text;
+                return text == null ? System.Web.SR.GetString(System.Web.SR.CommandField_DefaultSelectCaption) : (string)text;
             }
             set {
                 if (!String.Equals(value, ViewState["SelectText"])) {
@@ -337,7 +338,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.CommandField_ShowCancelButton)
+        WebSysDescription(System.Web.SR.CommandField_ShowCancelButton)
         ]
         public virtual bool ShowCancelButton {
             get {
@@ -360,7 +361,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.CommandField_ShowDeleteButton)
+        WebSysDescription(System.Web.SR.CommandField_ShowDeleteButton)
         ]
         public virtual bool ShowDeleteButton {
             get {
@@ -383,7 +384,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.CommandField_ShowEditButton)
+        WebSysDescription(System.Web.SR.CommandField_ShowEditButton)
         ]
         public virtual bool ShowEditButton {
             get {
@@ -406,7 +407,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.CommandField_ShowSelectButton)
+        WebSysDescription(System.Web.SR.CommandField_ShowSelectButton)
         ]
         public virtual bool ShowSelectButton {
             get {
@@ -429,7 +430,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.CommandField_ShowInsertButton)
+        WebSysDescription(System.Web.SR.CommandField_ShowInsertButton)
         ]
         public virtual bool ShowInsertButton {
             get {
@@ -453,7 +454,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.CommandField_UpdateImageUrl),
+        WebSysDescription(System.Web.SR.CommandField_UpdateImageUrl),
         UrlProperty()
         ]
         public virtual string UpdateImageUrl {
@@ -480,13 +481,13 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         Localizable(true),
-        WebSysDefaultValue(SR.CommandField_DefaultUpdateCaption),
-        WebSysDescription(SR.CommandField_UpdateText)
+        WebSysDefaultValue(System.Web.SR.CommandField_DefaultUpdateCaption),
+        WebSysDescription(System.Web.SR.CommandField_UpdateText)
         ]
         public virtual string UpdateText {
             get {
                 object text = ViewState["UpdateText"];
-                return text == null ? SR.GetString(SR.CommandField_DefaultUpdateCaption) : (string)text;
+                return text == null ? System.Web.SR.GetString(System.Web.SR.CommandField_DefaultUpdateCaption) : (string)text;
             }
             set {
                 if (!String.Equals(value, ViewState["UpdateText"])) {
@@ -653,7 +654,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         public override void ValidateSupportsCallback() {
             if (ShowSelectButton) {
-                throw new NotSupportedException(SR.GetString(SR.CommandField_CallbacksNotSupported, Control.ID));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.CommandField_CallbacksNotSupported, Control.ID));
             }
         }
     }

@@ -39,7 +39,7 @@ namespace MonoTests.System.Web.UI.WebControls {
   [TestFixture]
   public class CompositeControlTest {
   	class Poker : CompositeControl {
-		protected internal override void CreateChildControls ()
+		protected override void CreateChildControls ()
 		{
 			Controls.Clear ();
 

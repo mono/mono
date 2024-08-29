@@ -102,7 +102,7 @@ namespace MonoTests.System.Web.Hosting {
 		public void GetFileHash1 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			Assert.IsNull (dummy.GetFileHash (null, null));
+			Assert.IsNull (dummy.GetFileHash ((string)null, null));
 		}
 
 		[Test]
@@ -123,7 +123,7 @@ namespace MonoTests.System.Web.Hosting {
 		public void GetCacheDependency1 ()
 		{
 			DummyVPP dummy = new DummyVPP ();
-			Assert.IsNull (dummy.GetCacheDependency (null, null, DateTime.UtcNow));
+			Assert.IsNull (dummy.GetCacheDependency ((string)null, null, DateTime.UtcNow));
 		}
 
 		[Test]

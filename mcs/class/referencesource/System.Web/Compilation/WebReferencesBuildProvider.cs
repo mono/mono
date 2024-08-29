@@ -55,7 +55,7 @@ internal class WebReferencesBuildProvider: BuildProvider {
         // e.g "/MyApp/Application_WebReferences/Foo/Bar"
         string currentWebRefDirVirtualPath = _vdir.VirtualPath;
 
-        Debug.Assert(StringUtil.StringStartsWithIgnoreCase(
+        System.Web.Util.Debug.Assert(System.Web.Util.StringUtil.StringStartsWithIgnoreCase(
             currentWebRefDirVirtualPath, rootWebRefDirVirtualPath.VirtualPathString));
 
         string ns;
@@ -66,8 +66,8 @@ internal class WebReferencesBuildProvider: BuildProvider {
         }
         else {
             // e.g. "Foo/Bar"
-            Debug.Assert(rootWebRefDirVirtualPath.HasTrailingSlash);
-            currentWebRefDirVirtualPath = UrlPath.RemoveSlashFromPathIfNeeded(currentWebRefDirVirtualPath);
+            System.Web.Util.Debug.Assert(rootWebRefDirVirtualPath.HasTrailingSlash);
+            currentWebRefDirVirtualPath = System.Web.Util.UrlPath.RemoveSlashFromPathIfNeeded(currentWebRefDirVirtualPath);
             currentWebRefDirVirtualPath = currentWebRefDirVirtualPath.Substring(
                 rootWebRefDirVirtualPath.VirtualPathString.Length);
 
@@ -94,7 +94,7 @@ internal class WebReferencesBuildProvider: BuildProvider {
         // Go through all the discomap in the directory
         foreach (VirtualFile child in _vdir.Files) {
 
-            string extension = UrlPath.GetExtension(child.VirtualPath);
+            string extension = System.Web.Util.UrlPath.GetExtension(child.VirtualPath);
             extension = extension.ToLower(CultureInfo.InvariantCulture);
 
             if (extension == ".discomap") {
@@ -112,7 +112,7 @@ internal class WebReferencesBuildProvider: BuildProvider {
 
                 // 
 
-                string fileName = System.IO.Path.ChangeExtension(UrlPath.GetFileName(child.VirtualPath), null);
+                string fileName = System.IO.Path.ChangeExtension(System.Web.Util.UrlPath.GetFileName(child.VirtualPath), null);
                 string appSetttingUrlKey = ns + "." + fileName;
 
                 WebReference web = new WebReference(client.Documents, codeNamespace, webRefTemp.ProtocolName, appSetttingUrlKey, null);

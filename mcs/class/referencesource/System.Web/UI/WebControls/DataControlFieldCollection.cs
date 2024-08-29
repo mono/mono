@@ -102,7 +102,7 @@ namespace System.Web.UI.WebControls {
                  case 6:
                      return new TemplateField();
                  default:
-                     throw new ArgumentOutOfRangeException(SR.GetString(SR.DataControlFieldCollection_InvalidTypeIndex));
+                     throw new ArgumentOutOfRangeException(System.Web.SR.GetString(System.Web.SR.DataControlFieldCollection_InvalidTypeIndex));
             }        
         }
 
@@ -184,7 +184,7 @@ namespace System.Web.UI.WebControls {
         protected override void OnValidate(object o) {
             base.OnValidate(o);
             if (!(o is DataControlField))
-                throw new ArgumentException(SR.GetString(SR.DataControlFieldCollection_InvalidType));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.DataControlFieldCollection_InvalidType));
         }
 
 

@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Data"),
-        WebSysDescription(SR.Binding_DataMember),
+        WebSysDescription(System.Web.SR.Binding_DataMember),
         ]
         public string DataMember {
             get {
@@ -51,7 +51,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(-1),
         TypeConverter("System.Web.UI.Design.WebControls.TreeNodeBindingDepthConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Data"),
-        WebSysDescription(SR.MenuItemBinding_Depth),
+        WebSysDescription(System.Web.SR.MenuItemBinding_Depth),
         ]
         public int Depth {
             get {
@@ -68,7 +68,7 @@ namespace System.Web.UI.WebControls {
 
         [DefaultValue(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_Enabled)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_Enabled)]
         public bool Enabled {
             get {
                 object o = ViewState["Enabled"];
@@ -83,7 +83,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_EnabledField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_EnabledField),
         ]
         public string EnabledField {
             get {
@@ -102,7 +102,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("Databindings")]
-        [WebSysDescription(SR.MenuItemBinding_FormatString)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_FormatString)]
         public string FormatString {
             get {
                 object s = ViewState["FormatString"];
@@ -124,7 +124,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_ImageUrl)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_ImageUrl)]
         public string ImageUrl {
             get {
                 object s = ViewState["ImageUrl"];
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_ImageUrlField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_ImageUrlField),
         ]
         public string ImageUrlField {
             get {
@@ -167,7 +167,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_NavigateUrl)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_NavigateUrl)]
         public string NavigateUrl {
             get {
                 object s = ViewState["NavigateUrl"];
@@ -185,7 +185,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_NavigateUrlField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_NavigateUrlField),
         ]
         public string NavigateUrlField {
             get {
@@ -206,7 +206,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_PopOutImageUrl)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_PopOutImageUrl)]
         public string PopOutImageUrl {
             get {
                 object s = ViewState["PopOutImageUrl"];
@@ -224,7 +224,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_PopOutImageUrlField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_PopOutImageUrlField),
         ]
         public string PopOutImageUrlField {
             get {
@@ -243,7 +243,7 @@ namespace System.Web.UI.WebControls {
 
         [DefaultValue(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_Selectable)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_Selectable)]
         public bool Selectable {
             get {
                 object o = ViewState["Selectable"];
@@ -258,7 +258,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_SelectableField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_SelectableField),
         ]
         public string SelectableField {
             get {
@@ -274,7 +274,7 @@ namespace System.Web.UI.WebControls {
         [Editor("System.Web.UI.Design.UrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor))]
         [UrlProperty()]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_SeparatorImageUrl)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_SeparatorImageUrl)]
         public string SeparatorImageUrl {
             get {
                 object s = ViewState["SeparatorImageUrl"];
@@ -292,7 +292,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_SeparatorImageUrlField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_SeparatorImageUrlField),
         ]
         public string SeparatorImageUrlField {
             get {
@@ -315,7 +315,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [DefaultValue("")]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_Target)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_Target)]
         public string Target {
             get {
                 object s = ViewState["Target"];
@@ -333,7 +333,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_TargetField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_TargetField),
         ]
         public string TargetField {
             get {
@@ -357,7 +357,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_Text)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_Text)]
         public string Text {
             get {
                 object s = ViewState["Text"];
@@ -382,7 +382,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_TextField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_TextField),
         ]
         public string TextField {
             get {
@@ -404,7 +404,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_ToolTip)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_ToolTip)]
         public string ToolTip {
             get {
                 object s = ViewState["ToolTip"];
@@ -426,7 +426,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_ToolTipField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_ToolTipField),
         ]
         public string ToolTipField {
             get {
@@ -450,7 +450,7 @@ namespace System.Web.UI.WebControls {
         [DefaultValue("")]
         [Localizable(true)]
         [WebCategory("DefaultProperties")]
-        [WebSysDescription(SR.MenuItemBinding_Value)]
+        [WebSysDescription(System.Web.SR.MenuItemBinding_Value)]
         public string Value {
             get {
                 object s = ViewState["Value"];
@@ -475,7 +475,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign),
         WebCategory("Databindings"),
-        WebSysDescription(SR.MenuItemBinding_ValueField),
+        WebSysDescription(System.Web.SR.MenuItemBinding_ValueField),
         ]
         public string ValueField {
             get {
@@ -512,7 +512,7 @@ namespace System.Web.UI.WebControls {
 
         public override string ToString() {
             return (String.IsNullOrEmpty(DataMember) ?
-                    SR.GetString(SR.TreeNodeBinding_EmptyBindingText) :
+                    System.Web.SR.GetString(System.Web.SR.TreeNodeBinding_EmptyBindingText) :
                     DataMember);
         }
 

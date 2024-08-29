@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MonoTests.Common
 {
-	class FooWithToString
+	public class FooWithToString
 	{
 		public string Column1 { get; set; }
 

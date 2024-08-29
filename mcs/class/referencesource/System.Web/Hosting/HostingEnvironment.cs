@@ -34,6 +34,7 @@ namespace System.Web.Hosting {
     using System.Web.Util;
     using System.Web.WebSockets;
     using Microsoft.Win32;
+    
 
     [Flags]
     internal enum HostingEnvironmentFlags {
@@ -61,7 +62,7 @@ namespace System.Web.Hosting {
         public string PrecompilationTargetPhysicalDirectory {
             get { return _precompTargetPhysicalDir; }
             set {
-                _precompTargetPhysicalDir = FileUtil.FixUpPhysicalDirectory(value);
+                _precompTargetPhysicalDir = System.Web.Util.FileUtil.FixUpPhysicalDirectory(value);
             }
         }
 
@@ -95,6 +96,11 @@ namespace System.Web.Hosting {
         }
     }
 
+    // When FEATURE_PAL is enabled, we should look at how we can enable similar settings
+    // re: CPUs, threads, etc. 
+    //
+    // As of right now, it's just returning the bare bones - perf is not yet a real 
+    // concern.
     public sealed class HostingEnvironment : MarshalByRefObject {
 
         private static HostingEnvironment _theHostingEnvironment;
@@ -180,7 +186,7 @@ namespace System.Web.Hosting {
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         public HostingEnvironment() {
             if (_theHostingEnvironment != null)
-                throw new InvalidOperationException(SR.GetString(SR.Only_1_HostEnv));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Only_1_HostEnv));
 
             // remember singleton HostingEnvironment in a static
             _theHostingEnvironment = this;
@@ -230,7 +236,7 @@ namespace System.Web.Hosting {
         }
 
         private void OnAppDomainUnload(Object unusedObject, EventArgs unusedEventArgs) {
-            Debug.Trace("PipelineRuntime", "HE.OnAppDomainUnload");
+            System.Web.Util.Debug.Trace("PipelineRuntime", "HE.OnAppDomainUnload");
 
             Thread.GetDomain().DomainUnload -= _onAppDomainUnload;
 
@@ -319,7 +325,7 @@ namespace System.Web.Hosting {
             if (appHost is ISAPIApplicationHost && !ServerConfig.UseMetabase) {
                 string rootWebConfigPath = ((ISAPIApplicationHost)appHost).ResolveRootWebConfigPath();
                 if (!String.IsNullOrEmpty(rootWebConfigPath)) {
-                    Debug.Assert(File.Exists(rootWebConfigPath), "File.Exists(rootWebConfigPath)");
+                    System.Web.Util.Debug.Assert(File.Exists(rootWebConfigPath), "File.Exists(rootWebConfigPath)");
                     HttpConfigurationSystem.RootWebConfigurationFilePath = rootWebConfigPath;
                 }
 
@@ -453,6 +459,13 @@ namespace System.Web.Hosting {
         }
 
         private void GetApplicationIdentity() {
+#if (MONO || FEATURE_PAL)
+            try {
+                _appIdentityToken = _configToken;
+                _appIdentityTokenSet = true;
+            }
+            catch{}
+#else
             // if the explicit impersonation is set, use it instead of UNC identity
             try {
                 IdentitySection c = RuntimeConfig.GetAppConfig().Identity;
@@ -467,6 +480,7 @@ namespace System.Web.Hosting {
             }
             catch {
             }
+#endif
         }
 
         private static void SetClrQuirksSwitches(KeyValuePair<string, bool>[] switches) {
@@ -541,11 +555,11 @@ namespace System.Web.Hosting {
         }
 
         private void InitiateShutdownWorkItemCallback(Object state /*not used*/) {
-            Debug.Trace("HostingEnvironmentShutdown", "Shutting down: appId=" + _appId);
+            System.Web.Util.Debug.Trace("HostingEnvironmentShutdown", "Shutting down: appId=" + _appId);
 
             // no registered objects -- shutdown
             if (_registeredObjects.Count == 0) {
-                Debug.Trace("HostingEnvironmentShutdown", "No registered objects");
+                System.Web.Util.Debug.Trace("HostingEnvironmentShutdown", "No registered objects");
                 ShutdownThisAppDomainOnce();
                 return;
             }
@@ -555,7 +569,7 @@ namespace System.Web.Hosting {
 
             // no registered objects -- shutdown now
             if (_registeredObjects.Count == 0) {
-                Debug.Trace("HostingEnvironmentShutdown", "All registered objects gone after Stop(false)");
+                System.Web.Util.Debug.Trace("HostingEnvironmentShutdown", "All registered objects gone after Stop(false)");
                 ShutdownThisAppDomainOnce();
                 return;
             }
@@ -566,27 +580,27 @@ namespace System.Web.Hosting {
             if (hostEnvConfig != null) {
                 shutdownTimeoutSeconds = (int) hostEnvConfig.ShutdownTimeout.TotalSeconds;
             }
-            Debug.Trace("HostingEnvironmentShutdown", "Waiting for " + shutdownTimeoutSeconds + " sec...");
+            System.Web.Util.Debug.Trace("HostingEnvironmentShutdown", "Waiting for " + shutdownTimeoutSeconds + " sec...");
 
             DateTime waitUntil = DateTime.UtcNow.AddSeconds(shutdownTimeoutSeconds);
             while (_registeredObjects.Count > 0 && DateTime.UtcNow < waitUntil) {
                 Thread.Sleep(100);
             }
 
-            Debug.Trace("HostingEnvironmentShutdown", "Shutdown timeout (" + shutdownTimeoutSeconds + " sec) expired");
+            System.Web.Util.Debug.Trace("HostingEnvironmentShutdown", "Shutdown timeout (" + shutdownTimeoutSeconds + " sec) expired");
 
             // call Stop on all registered objects with immediate = true
             StopRegisteredObjects(true);
 
             // no registered objects -- shutdown now
             if (_registeredObjects.Count == 0) {
-                Debug.Trace("HostingEnvironmentShutdown", "All registered objects gone after Stop(true)");
+                System.Web.Util.Debug.Trace("HostingEnvironmentShutdown", "All registered objects gone after Stop(true)");
                 ShutdownThisAppDomainOnce();
                 return;
             }
 
             // shutdown regardless
-            Debug.Trace("HostingEnvironmentShutdown", "Forced shutdown: " + _registeredObjects.Count + " registered objects left");
+            System.Web.Util.Debug.Trace("HostingEnvironmentShutdown", "Forced shutdown: " + _registeredObjects.Count + " registered objects left");
             _registeredObjects = new Hashtable();
             ShutdownThisAppDomainOnce();
         }
@@ -596,7 +610,7 @@ namespace System.Web.Hosting {
 #if DBG
             try {
 #endif
-            Debug.Trace("AppManager", "HostingEnvironment.InitiateShutdownInternal appId=" + _appId);
+            System.Web.Util.Debug.Trace("AppManager", "HostingEnvironment.InitiateShutdownInternal appId=" + _appId);
 
             bool proceed = false;
 
@@ -617,14 +631,8 @@ namespace System.Web.Hosting {
             HttpRuntime.SetShutdownReason(ApplicationShutdownReason.HostingEnvironment, "HostingEnvironment initiated shutdown");
 
             // Avoid calling Environment.StackTrace if we are in the ClientBuildManager (Dev10 bug 824659)
-            if (!BuildManagerHost.InClientBuildManager) {
-                new EnvironmentPermission(PermissionState.Unrestricted).Assert();
-                try {
-                    _shutDownStack = Environment.StackTrace;
-                }
-                finally {
-                    CodeAccessPermission.RevertAssert();
-                }
+            if (!BuildManagerHost.InClientBuildManager) {                                
+                _shutDownStack = Environment.StackTrace;                
             }
 
             // waitChangeNotification need not be honored in ClientBuildManager (Dev11 bug 264894)
@@ -654,7 +662,7 @@ namespace System.Web.Hosting {
         // makes it easy to locate when looking at a stack dump.
         [MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
         private static void HandleExceptionFromInitiateShutdownInternal(Exception ex) {
-            Debug.Break();
+            System.Web.Util.Debug.Break();
         }
 #endif
 
@@ -682,11 +690,11 @@ namespace System.Web.Hosting {
                 return;
 
             if (_appManager != null) {
-                Debug.Trace("AppManager", "Removing HostingEnvironment from AppManager table, appId=" + _appId);
+                System.Web.Util.Debug.Trace("AppManager", "Removing HostingEnvironment from AppManager table, appId=" + _appId);
                 _appManager.HostingEnvironmentShutdownInitiated(_appId, this);
             }
 #if DBG
-            Debug.Trace("FileChangesMonitorIgnoreSubdirChange", 
+            System.Web.Util.Debug.Trace("FileChangesMonitorIgnoreSubdirChange", 
                         "*** REMOVE APPMANAGER TABLE" + DateTime.Now.ToString("hh:mm:ss.fff", CultureInfo.InvariantCulture) 
                         + ": _appId=" + _appId);
 #endif
@@ -707,7 +715,7 @@ namespace System.Web.Hosting {
             if (!proceed)
                 return;
 
-            Debug.Trace("AppManager", "HostingEnvironment - shutting down AppDomain, appId=" + _appId);
+            System.Web.Util.Debug.Trace("AppManager", "HostingEnvironment - shutting down AppDomain, appId=" + _appId);
 
             // stop the timer used for idle timeout
             if (_idleTimeoutMonitor != null) {
@@ -729,7 +737,7 @@ namespace System.Web.Hosting {
             _shutdownInProgress = false;
 
             HttpRuntime.ShutdownAppDomainWithStackTrace(ApplicationShutdownReason.HostingEnvironment,
-                                                        SR.GetString(SR.Hosting_Env_Restart),
+                                                        System.Web.SR.GetString(System.Web.SR.Hosting_Env_Restart),
                                                         _shutDownStack);
         }
 
@@ -765,7 +773,7 @@ namespace System.Web.Hosting {
             }
 
             if (exists && failIfExists) {
-                throw new InvalidOperationException(SR.GetString(SR.Wellknown_object_already_exists, key));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Wellknown_object_already_exists, key));
             }
 
             return new ObjectHandle(obj);
@@ -931,15 +939,8 @@ namespace System.Web.Hosting {
                     if (_siteName == null) {
                         String s = null;
 
-                        if (_appHost != null) {
-                            // 
-                            InternalSecurityPermissions.Unrestricted.Assert();
-                            try {
-                                s = _appHost.GetSiteName();
-                            }
-                            finally {
-                                CodeAccessPermission.RevertAssert();
-                            }
+                        if (_appHost != null) {                                                        
+                            s = _appHost.GetSiteName();                            
                         }
 
                         if (s == null)
@@ -961,15 +962,8 @@ namespace System.Web.Hosting {
                     if (_siteID == null) {
                         String s = null;
 
-                        if (_appHost != null) {
-                            // 
-                            InternalSecurityPermissions.Unrestricted.Assert();
-                            try {
-                                s = _appHost.GetSiteID();
-                            }
-                            finally {
-                                CodeAccessPermission.RevertAssert();
-                            }
+                        if (_appHost != null) {                            
+                            s = _appHost.GetSiteID();                            
                         }
 
                         if (s == null)
@@ -1046,7 +1040,7 @@ namespace System.Web.Hosting {
         {
             string result = null;
 
-            Debug.Assert(virtualPath != null);
+            System.Web.Util.Debug.Assert(virtualPath != null);
 
             virtualPath.FailIfRelativePath();
 
@@ -1054,65 +1048,64 @@ namespace System.Web.Hosting {
 
             if (String.CompareOrdinal(reqpath.VirtualPathString, _appVirtualPath.VirtualPathString) == 0) {
                 // for application path don't need to call app host
-                Debug.Trace("MapPath", reqpath  +" is the app path");
+                System.Web.Util.Debug.Trace("MapPath", reqpath  +" is the app path");
                 result = _appPhysicalPath;
             }
             else {
-                using (new ProcessImpersonationContext()) {
-                    // If there is a mapping for this virtual path in the call context, use it
-                    result = GetVirtualPathToFileMapping(reqpath);
+               
+                // If there is a mapping for this virtual path in the call context, use it
+                result = GetVirtualPathToFileMapping(reqpath);
 
-                    if (result == null) {
-                        // call host's mappath
-                        if (_configMapPath == null) {
-                            Debug.Trace("MapPath", "Missing _configMapPath");
-                            throw new InvalidOperationException(SR.GetString(SR.Cannot_map_path, reqpath));
-                        }
-                        Debug.Trace("MapPath", "call ConfigMapPath (" + reqpath + ")");
-
-                        // see if the IConfigMapPath provider implements the interface
-                        // with VirtualPath
-                        try {
-                            if (null != _configMapPath2) {
-                                result = _configMapPath2.MapPath(GetSiteID(), reqpath);
-                            }
-                            else {
-                                result = _configMapPath.MapPath(GetSiteID(), reqpath.VirtualPathString);
-                            }
-                            if (HttpRuntime.IsMapPathRelaxed)
-                                result = HttpRuntime.GetRelaxedMapPathResult(result);
-                        } catch {
-                            if (HttpRuntime.IsMapPathRelaxed)
-                                result = HttpRuntime.GetRelaxedMapPathResult(null);
-                            else
-                                throw;
-                        }
+                if (result == null) {
+                    // call host's mappath
+                    if (_configMapPath == null) {
+                        System.Web.Util.Debug.Trace("MapPath", "Missing _configMapPath");
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cannot_map_path, reqpath));
                     }
-                }
+                    System.Web.Util.Debug.Trace("MapPath", "call ConfigMapPath (" + reqpath + ")");
+
+                    // see if the IConfigMapPath provider implements the interface
+                    // with VirtualPath
+                    try {
+                        if (null != _configMapPath2) {
+                            result = _configMapPath2.MapPath(GetSiteID(), reqpath);
+                        }
+                        else {
+                            result = _configMapPath.MapPath(GetSiteID(), reqpath.VirtualPathString);
+                        }
+                        if (HttpRuntime.IsMapPathRelaxed)
+                            result = HttpRuntime.GetRelaxedMapPathResult(result);
+                    } catch {
+                        if (HttpRuntime.IsMapPathRelaxed)
+                            result = HttpRuntime.GetRelaxedMapPathResult(null);
+                        else
+                            throw;
+                    }
+                }   
             }
 
             if (String.IsNullOrEmpty(result)) {
-                Debug.Trace("MapPath", "null Result");
+                System.Web.Util.Debug.Trace("MapPath", "null Result");
                 if (!permitNull) {
                     if (HttpRuntime.IsMapPathRelaxed)
                         result = HttpRuntime.GetRelaxedMapPathResult(null);
                     else
-                        throw new InvalidOperationException(SR.GetString(SR.Cannot_map_path, reqpath));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cannot_map_path, reqpath));
                 }
             }
             else {
                 // ensure extra '\\' in the physical path if the virtual path had extra '/'
                 // and the other way -- no extra '\\' in physical if virtual didn't have it.
                 if (virtualPath.HasTrailingSlash) {
-                    if (!UrlPath.PathEndsWithExtraSlash(result) && !UrlPath.PathIsDriveRoot(result))
+                    if (!System.Web.Util.UrlPath.PathEndsWithExtraSlash(result) && !System.Web.Util.UrlPath.PathIsDriveRoot(result))
                         result = result + "\\";
                 }
                 else {
-                    if (UrlPath.PathEndsWithExtraSlash(result) && !UrlPath.PathIsDriveRoot(result))
+                    if (System.Web.Util.UrlPath.PathEndsWithExtraSlash(result) && !System.Web.Util.UrlPath.PathIsDriveRoot(result))
                         result = result.Substring(0, result.Length - 1);
                 }
 
-                Debug.Trace("MapPath", "    result=" + result);
+                System.Web.Util.Debug.Trace("MapPath", "    result=" + result);
             }
 
             return result;
@@ -1184,7 +1177,7 @@ namespace System.Web.Hosting {
         }
 
         private void QueueBackgroundWorkItemInternal(Func<CancellationToken, Task> workItem) {
-            Debug.Assert(workItem != null);
+            System.Web.Util.Debug.Assert(workItem != null);
 
             BackgroundWorkScheduler scheduler = Volatile.Read(ref _backgroundWorkScheduler);
 
@@ -1252,6 +1245,12 @@ namespace System.Web.Hosting {
         internal static bool IsUnderIIS6Process {
             get {
                 return VersionInfo.ExeName == "w3wp";
+            }
+        }
+
+        internal static bool IsUnderIISExpressProcess {
+            get {
+                return VersionInfo.ExeName == "iiexpress";
             }
         }
 
@@ -1330,8 +1329,7 @@ namespace System.Web.Hosting {
             get {
                 if (_theHostingEnvironment == null)
                     return null;
-
-                InternalSecurityPermissions.AspNetHostingPermissionLevelHigh.Demand();
+                
                 return _theHostingEnvironment._appId;
             }
         }
@@ -1387,8 +1385,7 @@ namespace System.Web.Hosting {
             get {
                 if (_theHostingEnvironment == null)
                     return null;
-
-                InternalSecurityPermissions.AspNetHostingPermissionLevelMedium.Demand();
+                
                 return _theHostingEnvironment.GetSiteName();
             }
         }
@@ -1457,12 +1454,12 @@ namespace System.Web.Hosting {
                         if (cacheConfig != null && cacheConfig.DefaultProvider != null && !String.IsNullOrWhiteSpace(cacheConfig.DefaultProvider)) {
                             ProviderSettingsCollection cacheProviders = cacheConfig.Providers;
                             if (cacheProviders == null || cacheProviders.Count < 1) {
-                                throw new ProviderException(SR.GetString(SR.Def_provider_not_found));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Def_provider_not_found));
                             }
 
                             ProviderSettings cacheProviderSettings = cacheProviders[cacheConfig.DefaultProvider];
                             if (cacheProviderSettings == null) {
-                                throw new ProviderException(SR.GetString(SR.Def_provider_not_found));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Def_provider_not_found));
                             }
 
                             NameValueCollection settings = cacheProviderSettings.Parameters;
@@ -1647,13 +1644,13 @@ namespace System.Web.Hosting {
         }
 
         internal static string MapPathInternal(VirtualPath virtualPath, VirtualPath baseVirtualDir, bool allowCrossAppMapping) {
-            Debug.Assert(baseVirtualDir != null, "baseVirtualDir != null");
+            System.Web.Util.Debug.Assert(baseVirtualDir != null, "baseVirtualDir != null");
 
             // Combine it with the base and reduce
             virtualPath = baseVirtualDir.Combine(virtualPath);
 
             if (!allowCrossAppMapping && !virtualPath.IsWithinAppRoot)
-                throw new ArgumentException(SR.GetString(SR.Cross_app_not_allowed, virtualPath));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Cross_app_not_allowed, virtualPath));
 
             return MapPathInternal(virtualPath);
         }
@@ -1673,11 +1670,11 @@ namespace System.Web.Hosting {
                     }
                 }
                 else {
-                    if (StringUtil.EqualsIgnoreCase(appPath, path)) {
+                    if (System.Web.Util.StringUtil.EqualsIgnoreCase(appPath, path)) {
                         pathLevel = WebApplicationLevel.AtApplication;
                     }
                     else if (path.Length > appPath.Length && path[appPath.Length] == '/' &&
-                        StringUtil.StringStartsWithIgnoreCase(path, appPath)) {
+                        System.Web.Util.StringUtil.StringStartsWithIgnoreCase(path, appPath)) {
 
                         pathLevel = WebApplicationLevel.BelowApplication;
                     }
@@ -1734,7 +1731,7 @@ namespace System.Web.Hosting {
         // impersonate as configured for a given path
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
         public static IDisposable Impersonate(IntPtr userToken, String virtualPath) {
-            virtualPath = UrlPath.MakeVirtualPathAppAbsoluteReduceAndCheck(virtualPath);
+            virtualPath = System.Web.Util.UrlPath.MakeVirtualPathAppAbsoluteReduceAndCheck(virtualPath);
 
             if (_theHostingEnvironment == null) {
                 return Impersonate(userToken);
@@ -1763,7 +1760,7 @@ namespace System.Web.Hosting {
         }
 
         public static IDisposable SetCultures(string virtualPath) {
-            virtualPath = UrlPath.MakeVirtualPathAppAbsoluteReduceAndCheck(virtualPath);
+            virtualPath = System.Web.Util.UrlPath.MakeVirtualPathAppAbsoluteReduceAndCheck(virtualPath);
             return SetCultures(RuntimeConfig.GetConfig(virtualPath).Globalization);
         }
 
@@ -1914,24 +1911,33 @@ namespace System.Web.Hosting {
         public static int MaxConcurrentRequestsPerCPU {
             get {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
+#if (!MONO || !FEATURE_PAL)
                 return UnsafeIISMethods.MgdGetMaxConcurrentRequestsPerCPU();
+#else
+                return 1;
+#endif
             }
             [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
             set {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
+
+#if (!MONO || !FEATURE_PAL)
                 int hr = UnsafeIISMethods.MgdSetMaxConcurrentRequestsPerCPU(value);
+#else
+                int hr = 0;
+#endif
                 switch (hr) {
-                    case HResults.S_FALSE:
+                    case System.Web.Util.HResults.S_FALSE:
                         // Because "maxConcurrentRequestsPerCPU" is currently zero, we cannot set the value, since that would
                         // enable the feature, which can only be done via configuration.
-                        throw new InvalidOperationException(SR.GetString(SR.Queue_limit_is_zero, "maxConcurrentRequestsPerCPU"));
-                    case HResults.E_INVALIDARG:
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Queue_limit_is_zero, "maxConcurrentRequestsPerCPU"));
+                    case System.Web.Util.HResults.E_INVALIDARG:
                         // The value must be greater than zero.  A value of zero would disable the feature, but this can only be done via configuration.
-                        throw new ArgumentException(SR.GetString(SR.Invalid_queue_limit));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_queue_limit));
                 }
             }
         }
@@ -1941,24 +1947,33 @@ namespace System.Web.Hosting {
         public static int MaxConcurrentThreadsPerCPU {
             get {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
+#if (!MONO || !FEATURE_PAL)
                 return UnsafeIISMethods.MgdGetMaxConcurrentThreadsPerCPU();
+#else
+                return 1;
+#endif
             }
             [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
             set {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
+
+#if (!MONO || !FEATURE_PAL)
                 int hr = UnsafeIISMethods.MgdSetMaxConcurrentThreadsPerCPU(value);
+#else
+                int hr = 0;
+#endif
                 switch (hr) {
-                    case HResults.S_FALSE:
+                    case System.Web.Util.HResults.S_FALSE:
                         // Because "maxConcurrentThreadsPerCPU" is currently zero, we cannot set the value, since that would
                         // enable the feature, which can only be done via configuration.
-                        throw new InvalidOperationException(SR.GetString(SR.Queue_limit_is_zero, "maxConcurrentThreadsPerCPU"));
-                    case HResults.E_INVALIDARG:
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Queue_limit_is_zero, "maxConcurrentThreadsPerCPU"));
+                    case System.Web.Util.HResults.E_INVALIDARG:
                         // The value must be greater than zero.  A value of zero would disable the feature, but this can only be done via configuration.
-                        throw new ArgumentException(SR.GetString(SR.Invalid_queue_limit));
+                        throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_queue_limit));
                 }
             }
         }

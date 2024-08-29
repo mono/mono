@@ -81,7 +81,7 @@ namespace MonoTests.Common
 
         public override string GetRawUrl ()
         {
-            return "GetRawUrl";
+            return "/GetRawUrl";
         }
 
         public override string GetHttpVerbName ()

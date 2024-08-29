@@ -6,8 +6,7 @@ using System.Web.Caching;
 using System.Web.Compilation;
 
 namespace System.Web.Caching {
-    [Serializable]
-    [AspNetHostingPermission(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Unrestricted)]
+    [Serializable]    
     public class SubstitutionResponseElement: ResponseElement {
         [NonSerialized]
         private  HttpResponseSubstitutionCallback _callback;

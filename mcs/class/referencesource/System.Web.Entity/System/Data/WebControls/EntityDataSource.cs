@@ -25,7 +25,6 @@ using System.Data.Objects.DataClasses;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Security.Permissions;
 using System.Drawing;
 using System.Text;
@@ -38,7 +37,7 @@ namespace System.Web.UI.WebControls
     [
     DefaultEvent("Selecting"),
     DefaultProperty("EntitySetName"),
-    Designer("System.Web.UI.Design.WebControls.EntityDataSourceDesigner, " + AssemblyRef.SystemWebEntityDesign),
+    //Designer("System.Web.UI.Design.WebControls.EntityDataSourceDesigner, " + AssemblyRef.SystemWebEntityDesign),
     ParseChildren(true),
     PersistChildren(false),
     ResourceDescription(WebControlsRes.EntityDataSource_Description),

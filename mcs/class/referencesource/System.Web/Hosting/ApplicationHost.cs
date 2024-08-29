@@ -16,6 +16,7 @@ namespace System.Web.Hosting {
     using System.Web.Configuration;
     using System.Web.Util;
     using System.Security.Permissions;
+    
 
 
     /// <devdoc>
@@ -39,17 +40,17 @@ namespace System.Web.Hosting {
         public static Object CreateApplicationHost(Type hostType, String virtualDir, String physicalDir) {
 #if !FEATURE_PAL // FEATURE_PAL does not require PlatformID.Win32NT
             if (Environment.OSVersion.Platform != PlatformID.Win32NT)
-                throw new PlatformNotSupportedException(SR.GetString(SR.RequiresNT));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.RequiresNT));
 #else // !FEATURE_PAL
             // FEATURE_PAL
 #endif // !FEATURE_PAL
 
-            if (!StringUtil.StringEndsWith(physicalDir, Path.DirectorySeparatorChar))
+            if (!System.Web.Util.StringUtil.StringEndsWith(physicalDir, Path.DirectorySeparatorChar))
                 physicalDir = physicalDir + Path.DirectorySeparatorChar;
 
             ApplicationManager appManager = ApplicationManager.GetApplicationManager();
 
-            String appId = StringUtil.GetNonRandomizedHashCode(String.Concat(virtualDir, physicalDir)).ToString("x");
+            String appId = System.Web.Util.StringUtil.GetNonRandomizedHashCode(String.Concat(virtualDir, physicalDir)).ToString("x");
 
 
             ObjectHandle h = appManager.CreateInstanceInNewWorkerAppDomain(

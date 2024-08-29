@@ -16,6 +16,7 @@ namespace System.Web.Management {
     using System.Security.Permissions;
     using System.IO;
     using System.Runtime.InteropServices.ComTypes;
+    
 
     [ComImport, Guid("c84f668a-cc3f-11d7-b79e-505054503030"), System.Runtime.InteropServices.InterfaceTypeAttribute(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsIUnknown)]
     public interface IRegiisUtility {
@@ -74,12 +75,12 @@ namespace System.Web.Management {
                 if (doReg != 0)
                 {
                     if (!rs.RegisterAssembly(webAssembly, AssemblyRegistrationFlags.None))
-                        exception = Marshal.StringToBSTR((new Exception(SR.GetString(SR.Unable_To_Register_Assembly, webAssembly.FullName))).ToString());
+                        exception = Marshal.StringToBSTR((new Exception(System.Web.SR.GetString(System.Web.SR.Unable_To_Register_Assembly, webAssembly.FullName))).ToString());
                 }
                 else
                 {
                     if (!rs.UnregisterAssembly(webAssembly))
-                        exception = Marshal.StringToBSTR((new Exception(SR.GetString(SR.Unable_To_UnRegister_Assembly, webAssembly.FullName))).ToString());
+                        exception = Marshal.StringToBSTR((new Exception(System.Web.SR.GetString(System.Web.SR.Unable_To_UnRegister_Assembly, webAssembly.FullName))).ToString());
                 }
             }
             catch (Exception e) {
@@ -102,7 +103,7 @@ namespace System.Web.Management {
                 if (doReg != 0)
                 {
                     if (!rs.RegisterAssembly(webAssembly, AssemblyRegistrationFlags.None))
-                        exception = Marshal.StringToBSTR((new Exception(SR.GetString(SR.Unable_To_Register_Assembly, webAssembly.FullName))).ToString());
+                        exception = Marshal.StringToBSTR((new Exception(System.Web.SR.GetString(System.Web.SR.Unable_To_Register_Assembly, webAssembly.FullName))).ToString());
                     TypeLibConverter converter = new TypeLibConverter();
                     ConversionEventSink eventHandler = new ConversionEventSink();
 
@@ -113,7 +114,7 @@ namespace System.Web.Management {
                 {
                     // Consider deleting tlb file
                     if (!rs.UnregisterAssembly(webAssembly))
-                        exception = Marshal.StringToBSTR((new Exception(SR.GetString(SR.Unable_To_UnRegister_Assembly, webAssembly.FullName))).ToString());
+                        exception = Marshal.StringToBSTR((new Exception(System.Web.SR.GetString(System.Web.SR.Unable_To_UnRegister_Assembly, webAssembly.FullName))).ToString());
 
                     try {
                         File.Delete(System.IO.Path.Combine(binaryDirectory, "AspNetMMCExt.tlb"));
@@ -188,7 +189,7 @@ namespace System.Web.Management {
                 } else if ((options & DO_RSA_ACL_KEY_ADD) != 0 || (options &  DO_RSA_ACL_KEY_DEL) != 0)  {
                     DoKeyAclChange(firstArgument, secondArgument, cspOrLocation, options);
                 } else {
-                    exception = Marshal.StringToBSTR(SR.GetString(SR.Command_not_recognized));
+                    exception = Marshal.StringToBSTR(System.Web.SR.GetString(System.Web.SR.Command_not_recognized));
                 }
             } catch (Exception e) {
                 StringBuilder   sb = new StringBuilder();
@@ -229,7 +230,7 @@ namespace System.Web.Management {
             Configuration           config;
             ConfigurationSection    section = GetConfigSection(configSection, appPath, site, location, useMachineConfig, out config);
             if (section == null) // Throw an error that the section was not found.
-                throw new Exception(SR.GetString(SR.Configuration_Section_not_found, configSection));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Configuration_Section_not_found, configSection));
             section.SectionInformation.ProtectSection(providerName);
             config.Save();
         }
@@ -238,7 +239,7 @@ namespace System.Web.Management {
             Configuration config;
             ConfigurationSection section = GetConfigSection(configSection, appPath, site, location, useMachineConfig, out config);
             if (section == null) // Throw an error that the section was not found.
-                throw new Exception(SR.GetString(SR.Configuration_Section_not_found, configSection));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Configuration_Section_not_found, configSection));
             section.SectionInformation.UnprotectSection();
             config.Save();
         }
@@ -247,7 +248,7 @@ namespace System.Web.Management {
             Configuration           config;
             ConfigurationSection    section = GetConfigSectionFile(configSection, dirName, out config);
             if (section == null) // Throw an error that the section was not found.
-                throw new Exception(SR.GetString(SR.Configuration_Section_not_found, configSection));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Configuration_Section_not_found, configSection));
             section.SectionInformation.ProtectSection(providerName);
             config.Save();
         }
@@ -256,7 +257,7 @@ namespace System.Web.Management {
             Configuration config;
             ConfigurationSection section = GetConfigSectionFile(configSection, dirName, out config);
             if (section == null) // Throw an error that the section was not found.
-                throw new Exception(SR.GetString(SR.Configuration_Section_not_found, configSection));
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Configuration_Section_not_found, configSection));
             section.SectionInformation.UnprotectSection();
             config.Save();
         }
@@ -268,7 +269,7 @@ namespace System.Web.Management {
                 if (!Path.IsPathRooted(dirName))
                     dirName = Path.Combine(Environment.CurrentDirectory, dirName);
                 if (!Directory.Exists(dirName))
-                    throw new Exception(SR.GetString(SR.Configuration_for_physical_path_not_found, dirName));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.Configuration_for_physical_path_not_found, dirName));
             }
             WebConfigurationFileMap fileMap = new WebConfigurationFileMap();
             string appVPath = dirName.Replace('\\', '/');
@@ -281,7 +282,7 @@ namespace System.Web.Management {
                 config = WebConfigurationManager.OpenMappedWebConfiguration(fileMap, appVPath);
             }
             catch (Exception e) {
-                throw new Exception(SR.GetString(SR.Configuration_for_physical_path_not_found, dirName), e);
+                throw new Exception(System.Web.SR.GetString(System.Web.SR.Configuration_for_physical_path_not_found, dirName), e);
             }
 
             return config.GetSection(configSection);
@@ -292,7 +293,7 @@ namespace System.Web.Management {
             if (string.IsNullOrEmpty(appPath)) {
                 appPath = null;
             } else {
-                Debug.Assert(appPath.StartsWith("/", StringComparison.Ordinal), "This check is done in main.cxx in regiis");
+                System.Web.Util.Debug.Assert(appPath.StartsWith("/", StringComparison.Ordinal), "This check is done in main.cxx in regiis");
             }
 
             if (string.IsNullOrEmpty(location))
@@ -306,11 +307,11 @@ namespace System.Web.Management {
             }
             catch (Exception e) {
                 if (useMachineConfig) {
-                    throw new Exception(SR.GetString(SR.Configuration_for_machine_config_not_found), e);
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.Configuration_for_machine_config_not_found), e);
                 }
                 else {
-                    throw new Exception(SR.GetString(SR.Configuration_for_path_not_found, appPath, 
-                                String.IsNullOrEmpty(site) ? SR.GetString(SR.DefaultSiteName) : site), e);
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.Configuration_for_path_not_found, appPath, 
+                                String.IsNullOrEmpty(site) ? System.Web.SR.GetString(System.Web.SR.DefaultSiteName) : site), e);
                 }
             }
 
@@ -326,7 +327,7 @@ namespace System.Web.Management {
             uint returnHR = (uint)UnsafeNativeMethods.DoesKeyContainerExist(containerName, csp, ((options & DO_RSA_PKU) == 0) ? 1 : 0);
             switch (returnHR) {
                 case 0:
-                    throw new Exception(SR.GetString(SR.RSA_Key_Container_already_exists));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.RSA_Key_Container_already_exists));
                 case 0x80090016: // Not found -- create it
                     RsaProtectedConfigurationProvider rsaProv = CreateRSAProvider(containerName, csp, options);
                     try {
@@ -337,7 +338,7 @@ namespace System.Web.Management {
                     }
                     return;
                 case 0x80070005:
-                    throw new Exception(SR.GetString(SR.RSA_Key_Container_access_denied));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.RSA_Key_Container_access_denied));
                 default:
                     Marshal.ThrowExceptionForHR((int)returnHR);
                     return;
@@ -420,9 +421,9 @@ namespace System.Web.Management {
                 case 0:
                     return; // success!
                 case 0x80090016:
-                    throw new Exception(SR.GetString(SR.RSA_Key_Container_not_found));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.RSA_Key_Container_not_found));
                 case 0x80070005:
-                    throw new Exception(SR.GetString(SR.RSA_Key_Container_access_denied));
+                    throw new Exception(System.Web.SR.GetString(System.Web.SR.RSA_Key_Container_access_denied));
                 default:
                     Marshal.ThrowExceptionForHR((int)returnHR);
                     return;

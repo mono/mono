@@ -19,7 +19,7 @@ namespace System.Web.Configuration {
     using System.Web.UI;
     using System.Web.Util;
     using System.Xml;
-
+    
     
     //
     // Uses IIS 7 native config
@@ -47,6 +47,7 @@ namespace System.Web.Configuration {
 
         [SuppressMessage("Microsoft.Security", "CA2122:DoNotIndirectlyExposeMethodsWithLinkDemands", Justification = "Private constructor used to make a singleton instance.")]
         ProcessHostServerConfig() {
+#if (!MONO || !FEATURE_PAL)
             if (null == HostingEnvironment.SupportFunctions) {
                 ProcessHostConfigUtils.InitStandaloneConfig();
             }
@@ -54,7 +55,7 @@ namespace System.Web.Configuration {
                 IProcessHostSupportFunctions fns = HostingEnvironment.SupportFunctions;
                 if (null != fns ) {
                     IntPtr configSystem = fns.GetNativeConfigurationSystem();
-                    Debug.Assert(IntPtr.Zero != configSystem, "null != configSystem");
+                    System.Web.Util.Debug.Assert(IntPtr.Zero != configSystem, "null != configSystem");
 
                     if (IntPtr.Zero != configSystem) {
                         // won't fail if valid pointer
@@ -67,13 +68,16 @@ namespace System.Web.Configuration {
             if (_siteNameForCurrentApplication == null) {
                 _siteNameForCurrentApplication = ProcessHostConfigUtils.GetSiteNameFromId(ProcessHostConfigUtils.DEFAULT_SITE_ID_UINT);
             }
+#else
+            ProcessHostConfigUtils.InitStandaloneConfig();
+#endif
         }
         
         string IServerConfig.GetSiteNameFromSiteID(string siteID) {
             uint siteIDValue;
 
             if (!UInt32.TryParse(siteID, out siteIDValue)) {
-                Debug.Assert(false, "siteID is not numeric");
+                System.Web.Util.Debug.Assert(false, "siteID is not numeric");
                 return String.Empty;
             }
 
@@ -84,8 +88,8 @@ namespace System.Web.Configuration {
         string IServerConfig.MapPath(IApplicationHost appHost, VirtualPath path) {
             string siteName = (appHost == null) ? _siteNameForCurrentApplication : appHost.GetSiteName();
             string physicalPath = ProcessHostConfigUtils.MapPathActual(siteName, path);
-            if (FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
-                throw new InvalidOperationException(SR.GetString(SR.Cannot_map_path, path.VirtualPathString));
+            if (System.Web.Util.FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cannot_map_path, path.VirtualPathString));
             }
             return physicalPath;
         }
@@ -94,6 +98,9 @@ namespace System.Web.Configuration {
             // WOS 1956227: PERF: inactive applications on the web server degrade Working Set by 10%
             // It is very expensive to get a list of subdirs not in the application if there are a lot of applications,
             // so instead, use ProcessHostServerConfig.IsWithinApp to check if a particular path is in the app.
+#if (MONO || FEATURE_PAL)
+            throw new NotSupportedException();
+#else
             if (inApp == false) {
                 throw new NotSupportedException();
             }
@@ -109,9 +116,9 @@ namespace System.Web.Configuration {
                 int count = 0;
                 int result = UnsafeIISMethods.MgdGetAppCollection(IntPtr.Zero, _siteNameForCurrentApplication, vpath, out pBstr, out cBstr, out pAppCollection, out count);
                 if (result < 0 || pBstr == IntPtr.Zero) {
-                    throw new InvalidOperationException(SR.GetString(SR.Cant_Enumerate_NativeDirs, result));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cant_Enumerate_NativeDirs, result));
                 }
-                string appRoot = StringUtil.StringFromWCharPtr(pBstr, cBstr);
+                string appRoot = System.Web.Util.StringUtil.StringFromWCharPtr(pBstr, cBstr);
                 Marshal.FreeBSTR(pBstr);
                 pBstr = IntPtr.Zero;
                 cBstr = 0;
@@ -127,10 +134,10 @@ namespace System.Web.Configuration {
                 for (uint index = 0; index < count; index++) {
                     result = UnsafeIISMethods.MgdGetNextVPath(pAppCollection, index, out pBstr, out cBstr);
                     if (result < 0 || pBstr == IntPtr.Zero) {
-                        throw new InvalidOperationException(SR.GetString(SR.Cant_Enumerate_NativeDirs, result));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cant_Enumerate_NativeDirs, result));
                     }
                     // if cBstr = 1, then pBstr = "/" and can be ignored
-                    string subVdir = (cBstr > 1) ? StringUtil.StringFromWCharPtr(pBstr, cBstr) : null;
+                    string subVdir = (cBstr > 1) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstr, cBstr) : null;
                     Marshal.FreeBSTR(pBstr);
                     pBstr = IntPtr.Zero;
                     cBstr = 0;
@@ -142,7 +149,7 @@ namespace System.Web.Configuration {
                                 dirList[dirListCount++] = subVdir.Substring(1);
                             }
                         }
-                        else if (StringUtil.EqualsIgnoreCase(appRootRelativePath, 0, subVdir, 0, appRootRelativePath.Length)) {
+                        else if (System.Web.Util.StringUtil.EqualsIgnoreCase(appRootRelativePath, 0, subVdir, 0, appRootRelativePath.Length)) {
                             int nextSlashIndex = subVdir.IndexOf('/', 1 + appRootRelativePath.Length);
                             if (nextSlashIndex > -1) {
                                 dirList[dirListCount++] = subVdir.Substring(appRootRelativePath.Length + 1, nextSlashIndex - appRootRelativePath.Length);
@@ -173,10 +180,15 @@ namespace System.Web.Configuration {
                 }
             }
             return subdirs;
+#endif
         }
 
         bool IServerConfig2.IsWithinApp(string virtualPath) {
+#if (!MONO || !FEATURE_PAL)
             return UnsafeIISMethods.MgdIsWithinApp(IntPtr.Zero, _siteNameForCurrentApplication, HttpRuntime.AppDomainAppVirtualPathString, virtualPath);
+#else
+            return false;
+#endif
         }
 
         bool IServerConfig.GetUncUser(IApplicationHost appHost, VirtualPath path, out string username, out string password) {
@@ -189,6 +201,7 @@ namespace System.Web.Configuration {
             IntPtr pBstrPassword = IntPtr.Zero;
             int cBstrPassword = 0;
 
+#if (!MONO || !FEATURE_PAL)
             try {
                 int result = UnsafeIISMethods.MgdGetVrPathCreds( IntPtr.Zero,
                                                                  appHost.GetSiteName(),
@@ -198,8 +211,8 @@ namespace System.Web.Configuration {
                                                                  out pBstrPassword,
                                                                  out cBstrPassword);
                 if (result == 0) {
-                    username = (cBstrUserName > 0) ? StringUtil.StringFromWCharPtr(pBstrUserName, cBstrUserName) : null;
-                    password = (cBstrPassword > 0) ? StringUtil.StringFromWCharPtr(pBstrPassword, cBstrPassword) : null;
+                    username = (cBstrUserName > 0) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstrUserName, cBstrUserName) : null;
+                    password = (cBstrPassword > 0) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstrPassword, cBstrPassword) : null;
                     foundCreds = (!String.IsNullOrEmpty(username) && !String.IsNullOrEmpty(password));
                 }
             }
@@ -211,6 +224,7 @@ namespace System.Web.Configuration {
                     Marshal.FreeBSTR(pBstrPassword);
                 }
             }
+#endif
 
             return foundCreds;
         }
@@ -218,12 +232,14 @@ namespace System.Web.Configuration {
         long IServerConfig.GetW3WPMemoryLimitInKB() {
             long limit = 0;
 
+#if (!MONO || !FEATURE_PAL)
             int result = UnsafeIISMethods.MgdGetMemoryLimitKB( out limit );
             if (result < 0)
                 return 0;
+#endif
 
             return limit;
-        }        
+        }
     }
 }
 

@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Color), ""),
-        WebSysDescription(SR.Style_BackColor),
+        WebSysDescription(System.Web.SR.Style_BackColor),
         NotifyParentProperty(true),
         TypeConverterAttribute(typeof(WebColorConverter))
         ]
@@ -123,7 +123,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Color), ""),
-        WebSysDescription(SR.Style_BorderColor),
+        WebSysDescription(System.Web.SR.Style_BorderColor),
         NotifyParentProperty(true),
         TypeConverterAttribute(typeof(WebColorConverter))
         ]
@@ -149,7 +149,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.Style_BorderWidth),
+        WebSysDescription(System.Web.SR.Style_BorderWidth),
         NotifyParentProperty(true)
         ]
         public Unit BorderWidth {
@@ -161,7 +161,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if ((value.Type == UnitType.Percentage) || (value.Value < 0)) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.Style_InvalidBorderWidth));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.Style_InvalidBorderWidth));
                 }
                 ViewState["BorderWidth"] = value;
                 SetBit(PROP_BORDERWIDTH);
@@ -176,7 +176,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(BorderStyle.NotSet),
-        WebSysDescription(SR.Style_BorderStyle),
+        WebSysDescription(System.Web.SR.Style_BorderStyle),
         NotifyParentProperty(true)
         ]
         public BorderStyle BorderStyle {
@@ -202,7 +202,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Style_CSSClass),
+        WebSysDescription(System.Web.SR.Style_CSSClass),
         NotifyParentProperty(true),
         CssClassProperty()
         ]
@@ -226,7 +226,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Appearance"),
-        WebSysDescription(SR.Style_Font),
+        WebSysDescription(System.Web.SR.Style_Font),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         NotifyParentProperty(true)
         ]
@@ -249,7 +249,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(typeof(Color), ""),
-        WebSysDescription(SR.Style_ForeColor),
+        WebSysDescription(System.Web.SR.Style_ForeColor),
         NotifyParentProperty(true),
         TypeConverterAttribute(typeof(WebColorConverter))
         ]
@@ -275,7 +275,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.Style_Height),
+        WebSysDescription(System.Web.SR.Style_Height),
         NotifyParentProperty(true)
         ]
         public Unit Height {
@@ -287,7 +287,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value.Value < 0) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.Style_InvalidHeight));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.Style_InvalidHeight));
                 }
                 ViewState["Height"] = value;
                 SetBit(PROP_HEIGHT);
@@ -367,7 +367,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Layout"),
         DefaultValue(typeof(Unit), ""),
-        WebSysDescription(SR.Style_Width),
+        WebSysDescription(System.Web.SR.Style_Width),
         NotifyParentProperty(true)
         ]
         public Unit Width {
@@ -379,7 +379,7 @@ namespace System.Web.UI.WebControls {
             }
             set {
                 if (value.Value < 0) {
-                    throw new ArgumentOutOfRangeException("value", SR.GetString(SR.Style_InvalidWidth));
+                    throw new ArgumentOutOfRangeException("value", System.Web.SR.GetString(System.Web.SR.Style_InvalidWidth));
                 }
                 ViewState["Width"] = value;
                 SetBit(PROP_WIDTH);
@@ -450,7 +450,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         public virtual void CopyFrom(Style s) {
             if (RegisteredCssClass.Length != 0) {
-                throw new InvalidOperationException(SR.GetString(SR.Style_RegisteredStylesAreReadOnly));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Style_RegisteredStylesAreReadOnly));
             }
 
             if (s != null && !s.IsEmpty) {
@@ -717,7 +717,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         public virtual void MergeWith(Style s) {
             if (RegisteredCssClass.Length != 0) {
-                throw new InvalidOperationException(SR.GetString(SR.Style_RegisteredStylesAreReadOnly));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Style_RegisteredStylesAreReadOnly));
             }
 
             if (s == null || s.IsEmpty)

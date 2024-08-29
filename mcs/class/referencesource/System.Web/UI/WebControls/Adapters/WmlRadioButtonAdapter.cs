@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls.Adapters {
         }
 
         private RadioButtonGroup GetGroupByName(string groupName) {
-            Debug.Assert(RadioButtonGroups.Contains(groupName), "Attemping to get group name without procesing group");
+            System.Web.Util.Debug.Assert(RadioButtonGroups.Contains(groupName), "Attemping to get group name without procesing group");
             return RadioButtonGroups[groupName] as RadioButtonGroup;
         }
 
@@ -180,7 +180,7 @@ namespace System.Web.UI.WebControls.Adapters {
             if (!String.IsNullOrEmpty(selButtonID)) {
 
                 // Check if this radio button is now checked
-                if (StringUtil.EqualsIgnoreCase(selButtonID, Control.UniqueID)) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(selButtonID, Control.UniqueID)) {
 
                     if (Control.Checked == false) {
                         Control.Checked = true;

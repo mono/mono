@@ -18,8 +18,6 @@ using System.Web.Compilation;
 using System.Web.Util;
 using System.Security.Permissions;
 
-[AspNetHostingPermission(SecurityAction.LinkDemand, Level=AspNetHostingPermissionLevel.Medium)]
-[AspNetHostingPermission(SecurityAction.InheritanceDemand, Level=AspNetHostingPermissionLevel.Medium)]
 public abstract class PageParserFilter {
 
     private VirtualPath _virtualPath;
@@ -53,7 +51,7 @@ public abstract class PageParserFilter {
     internal void InitializeInternal(VirtualPath virtualPath, TemplateParser parser) {
 
         _parser = parser;
-        Debug.Assert(_virtualPath == null);
+        System.Web.Util.Debug.Assert(_virtualPath == null);
         _virtualPath = virtualPath;
 
         Initialize();
@@ -75,7 +73,7 @@ public abstract class PageParserFilter {
 
     // Informs the filter that the parsing of the page is complete
     public virtual void ParseComplete(ControlBuilder rootBuilder) {
-        Debug.Assert(_virtualPath != null);
+        System.Web.Util.Debug.Assert(_virtualPath != null);
     }
 
     // Allows the filter to return the compilation mode for the page.
@@ -182,7 +180,7 @@ public abstract class PageParserFilter {
 
         // Fail if the limit has been reached
         if (_currentControlCount > _numberOfControlsAllowed) {
-            throw new HttpException(SR.GetString(SR.Too_many_controls, _numberOfControlsAllowed.ToString(CultureInfo.CurrentCulture)));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Too_many_controls, _numberOfControlsAllowed.ToString(CultureInfo.CurrentCulture)));
         }
     }
 
@@ -198,7 +196,7 @@ public abstract class PageParserFilter {
 
         // Fail if the limit has been reached
         if (_currentDependenciesCount > _dependenciesAllowed) {
-            throw new HttpException(SR.GetString(SR.Too_many_dependencies, VirtualPath,
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Too_many_dependencies, VirtualPath,
                 _dependenciesAllowed.ToString(CultureInfo.CurrentCulture)));
         }
     }
@@ -215,7 +213,7 @@ public abstract class PageParserFilter {
 
         // Fail if the limit has been reached
         if (_currentDirectDependenciesCount > _directDependenciesAllowed) {
-            throw new HttpException(SR.GetString(SR.Too_many_direct_dependencies, VirtualPath,
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Too_many_direct_dependencies, VirtualPath,
                 _directDependenciesAllowed.ToString(CultureInfo.CurrentCulture)));
         }
     }

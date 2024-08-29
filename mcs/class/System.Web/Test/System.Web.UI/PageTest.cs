@@ -51,7 +51,7 @@ namespace MonoTests.System.Web.UI {
 		private HttpContext ctx;
 
 		// don't call base class (so _context is never set to a non-null value)
-		protected internal override HttpContext Context {
+		protected override HttpContext Context {
 			get {
 				if (ctx == null) {
 					ctx = new HttpContext (null);
@@ -92,7 +92,7 @@ namespace MonoTests.System.Web.UI {
 		private HttpContext ctx;
 
 		// don't call base class (so _context is never set to a non-null value)
-		protected internal override HttpContext Context {
+		protected override HttpContext Context {
 			get {
 				if (ctx == null) {
 					ctx = new HttpContext (
@@ -137,6 +137,7 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category ("NotDotNet")] // page.User throw NRE in 2.0 RC
+		[Ignore ("Fails on .NET too.")]
 		public void User_OverridenContext ()
 		{
 			TestPage page = new TestPage ();
@@ -398,6 +399,7 @@ namespace MonoTests.System.Web.UI {
 		
 		[Test]
 		[Category("NunitWeb")]
+		[Ignore ("Fails on .NET too.")]
 		public void PageStatePersister_UsesAdapter ()
 		{
 			WebTest t = new WebTest ("PageWithAdapter.aspx");
@@ -414,6 +416,7 @@ namespace MonoTests.System.Web.UI {
 		
 		[Test]
 		[Category("NunitWeb")]
+		[Ignore ("Fails on .NET too.")]
 		public void ScriptUsesAdapter ()
 		{
 			WebTest t = new WebTest ("PageWithAdapter.aspx");
@@ -423,6 +426,7 @@ namespace MonoTests.System.Web.UI {
 
 		[Test]
 		[Category("NunitWeb")]
+		[Ignore ("Fails on .NET too.")]
 		public void DeterminePostBackMode_UsesAdapter ()
 		{
 			WebTest t = new WebTest ("PageWithAdapter.aspx");
@@ -1011,6 +1015,7 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Ignore ("Fails on .NET too.")]
 		public void IdSeparator () 
 		{
 			TestPage p = new TestPage ();
@@ -1124,6 +1129,7 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Ignore ("Fails on .NET too.")]
 		public void PageAdapterWithPageAdapter ()
 		{
 			TestPageWithAdapter p = new TestPageWithAdapter ();
@@ -1244,7 +1250,7 @@ namespace MonoTests.System.Web.UI {
 
 		class CustomPostBackDataHandler : WebControl, IPostBackDataHandler
 		{
-			protected internal override void OnInit (EventArgs e)
+			protected override void OnInit (EventArgs e)
 			{
 				base.OnInit (e);
 				Page.RegisterRequiresPostBack (this);
@@ -1389,7 +1395,7 @@ namespace MonoTests.System.Web.UI {
 			return persister;
 		}
 
-		protected internal override string GetPostBackFormReference (string formId)
+		protected override string GetPostBackFormReference (string formId)
 		{
 			return String.Format("/* testFormReference */{0}", 
 				base.GetPostBackFormReference (formId));

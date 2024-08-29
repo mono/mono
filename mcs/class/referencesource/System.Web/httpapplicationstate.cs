@@ -334,7 +334,7 @@ namespace System.Web {
         ///    </para>
         /// </devdoc>
         public void Lock() {
-            _lock.AcquireWrite();
+                _lock.AcquireWrite();
         }
 
 
@@ -366,21 +366,21 @@ namespace System.Web {
         }
 
         internal override void AcquireRead() {
-            int currentThreadId = SafeNativeMethods.GetCurrentThreadId();
+            int currentThreadId = Thread.CurrentThread.ManagedThreadId;
 
             if (_threadId != currentThreadId)
                 base.AcquireRead();  // only if no write lock
         }
 
         internal override void ReleaseRead() {
-            int currentThreadId = SafeNativeMethods.GetCurrentThreadId();
+            int currentThreadId = Thread.CurrentThread.ManagedThreadId;
 
             if (_threadId != currentThreadId)
                 base.ReleaseRead();  // only if no write lock
         }
 
         internal override void AcquireWrite() {
-            int currentThreadId = SafeNativeMethods.GetCurrentThreadId();
+            int currentThreadId = Thread.CurrentThread.ManagedThreadId;
 
             if (_threadId == currentThreadId) {
                 _recursionCount++;
@@ -393,7 +393,7 @@ namespace System.Web {
         }
 
         internal override void ReleaseWrite() {
-            int currentThreadId = SafeNativeMethods.GetCurrentThreadId();
+            int currentThreadId = Thread.CurrentThread.ManagedThreadId;
 
             if (_threadId == currentThreadId) {
                 if (--_recursionCount == 0) {
@@ -408,7 +408,7 @@ namespace System.Web {
         //
 
         internal void EnsureReleaseWrite() {
-            int currentThreadId = SafeNativeMethods.GetCurrentThreadId();
+            int currentThreadId = Thread.CurrentThread.ManagedThreadId;
 
             if (_threadId == currentThreadId) {
                 _threadId = 0;

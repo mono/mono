@@ -130,7 +130,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return base.LoadPostData (postDataKey, postCollection);
 		}
 
-		protected internal override void OnLoad (EventArgs e)
+		protected override void OnLoad (EventArgs e)
 		{
 			if (this.Page.IsPostBack) {
 				if (WebTest.CurrentTest.UserData == null) {

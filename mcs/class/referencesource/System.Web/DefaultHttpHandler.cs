@@ -14,6 +14,7 @@ namespace System.Web {
     using System.Web.Util;    
     using System.Security.Permissions;
     
+    
     public class DefaultHttpHandler : IHttpAsyncHandler {
 
         private HttpContext _context;
@@ -50,7 +51,7 @@ namespace System.Web {
         }
 
         internal static bool IsClassicAspRequest(String filePath) {
-            return StringUtil.StringEndsWithIgnoreCase(filePath, ".asp");
+            return System.Web.Util.StringUtil.StringEndsWithIgnoreCase(filePath, ".asp");
         }
 
         [FileIOPermission(SecurityAction.Assert, Unrestricted = true)]
@@ -62,7 +63,7 @@ namespace System.Web {
 
            // DDB 168193: DefaultHttpHandler is obsolate in integrated mode
            if (HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Method_Not_Supported_By_Iis_Integrated_Mode, "DefaultHttpHandler.BeginProcessRequest"));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Method_Not_Supported_By_Iis_Integrated_Mode, "DefaultHttpHandler.BeginProcessRequest"));
            }
 
             _context = context;
@@ -93,12 +94,12 @@ namespace System.Web {
 
                 // refuse POST requests
                 if (request.HttpVerb == HttpVerb.POST) {
-                    throw new HttpException(405, SR.GetString(SR.Method_not_allowed, request.HttpMethod, request.Path));
+                    throw new HttpException(405, System.Web.SR.GetString(System.Web.SR.Method_not_allowed, request.HttpMethod, request.Path));
                 }
 
                 // refuse .asp requests
                 if (IsClassicAspRequest(request.FilePath)) {
-                    throw new HttpException(403, SR.GetString(SR.Path_forbidden, request.Path));
+                    throw new HttpException(403, System.Web.SR.GetString(System.Web.SR.Path_forbidden, request.Path));
                 }
 
                 // default to static file handler
@@ -119,7 +120,7 @@ namespace System.Web {
 
         public virtual void ProcessRequest(HttpContext context) {
             // this handler should never be called synchronously
-            throw new InvalidOperationException(SR.GetString(SR.Cannot_call_defaulthttphandler_sync));
+            throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cannot_call_defaulthttphandler_sync));
         }
 
         public virtual bool IsReusable {

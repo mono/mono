@@ -17,6 +17,7 @@ namespace System.Web.UI.Adapters {
     using System.Web.UI.WebControls;
     using System.Web.Util;
     using System.Collections;
+    
 
         public class WmlPageAdapter : PageAdapter {
 
@@ -123,7 +124,7 @@ namespace System.Web.UI.Adapters {
             if (collection == null) {
                 return null;
             }
-            if (!StringUtil.EqualsIgnoreCase((string)Browser["requiresSpecialViewStateEncoding"], "true")) {
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase((string)Browser["requiresSpecialViewStateEncoding"], "true")) {
                 return collection;
             }
 
@@ -215,10 +216,10 @@ namespace System.Web.UI.Adapters {
         protected internal override void Render(HtmlTextWriter writer) {
             WmlTextWriter wmlWriter = (WmlTextWriter) writer;
             if (Page.Form == null) {
-                throw new HttpException(SR.GetString(SR.PageAdapter_MustHaveFormRunatServer));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.PageAdapter_MustHaveFormRunatServer));
             }
             if (Page.HasRenderDelegate()) {
-                throw new HttpException(SR.GetString(SR.PageAdapter_RenderDelegateMustBeInServerForm));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.PageAdapter_RenderDelegateMustBeInServerForm));
             }
             if (RequiresUTF8ContentEncoding()) {
                 Page.Response.ContentEncoding = _utf8Encoding;
@@ -322,7 +323,7 @@ namespace System.Web.UI.Adapters {
 
         //     Renders the cache expiry as a header or meta element.
         private void RenderCacheExpiry(WmlTextWriter writer) {
-            if (!StringUtil.EqualsIgnoreCase(Browser["SupportsCacheControlMetaTag"], "false")) {
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase(Browser["SupportsCacheControlMetaTag"], "false")) {
                 writer.Write(_cacheExpiry);
             }
             else {
@@ -376,7 +377,7 @@ namespace System.Web.UI.Adapters {
         //     Render the method attribute of a go action.
         private void RenderFormMethodAttribute(WmlTextWriter writer, string method) {
             // Method defaults to get in WML, so write it if it's not.
-            if (StringUtil.EqualsIgnoreCase(method, "post")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(method, "post")) {
                 writer.WriteAttribute("method", "post");
             }
         }
@@ -397,7 +398,7 @@ namespace System.Web.UI.Adapters {
             else {
                 writer.Write("$(");
                 writer.Write(_postUrlVarName);
-                if (!StringUtil.EqualsIgnoreCase((string)Browser["requiresNoescapedPostUrl"], "false")) {
+                if (!System.Web.Util.StringUtil.EqualsIgnoreCase((string)Browser["requiresNoescapedPostUrl"], "false")) {
                     writer.Write(":noescape");
                 }
                 writer.Write(")");
@@ -444,7 +445,7 @@ namespace System.Web.UI.Adapters {
             writer.Write("?");
             // UNDONE: MMIT IPageAdapter.PersistCookielessData NYI
             // if(Page.Adapter.PersistCookielessData && Browser["canRenderOneventAndPrevElementsTogether"] != "false")
-            if (!StringUtil.EqualsIgnoreCase((string)Browser["canRenderOneventAndPrevElementsTogether"], "false")) {
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase((string)Browser["canRenderOneventAndPrevElementsTogether"], "false")) {
                 queryString = writer.ReplaceFormsCookieWithVariable(queryString);
             }
             writer.WriteEncodedText(queryString);
@@ -775,7 +776,7 @@ namespace System.Web.UI.Adapters {
             // Whidbey 19653 transform space as newline.  If we are at the top of the form (before the leading p),
             // don't need literal text -it won't be rendered. Similarly, if we are setting a pending p, no need to writeline.
             else if (!setPendingP && !writer.TopOfForm) {
-                Debug.Assert(!isEmpty, "Empty text.  Should have returned before this point.");
+                System.Web.Util.Debug.Assert(!isEmpty, "Empty text.  Should have returned before this point.");
                 writer.WriteLine();
             }
 
@@ -788,7 +789,7 @@ namespace System.Web.UI.Adapters {
             writer.Write(_headerBegin);
             String charset = Page.Response.Charset;
             if (charset != null && charset.Length > 0 &&
-                !StringUtil.EqualsIgnoreCase(charset, "utf-8")) {
+                !System.Web.Util.StringUtil.EqualsIgnoreCase(charset, "utf-8")) {
                 writer.Write(String.Format(_headerEncoding, charset));
             }
             writer.Write(_headerEnd);

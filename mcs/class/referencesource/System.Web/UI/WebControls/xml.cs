@@ -154,7 +154,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Browsable(false),
-        WebSysDescription(SR.Xml_Document),
+        WebSysDescription(System.Web.SR.Xml_Document),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
         Obsolete("The recommended alternative is the XPathNavigator property. Create a System.Xml.XPath.XPathDocument and call CreateNavigator() to create an XPathNavigator. http://go.microsoft.com/fwlink/?linkid=14202"),
         ]
@@ -180,7 +180,7 @@ namespace System.Web.UI.WebControls {
         [
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
-        WebSysDescription(SR.Xml_DocumentContent)
+        WebSysDescription(System.Web.SR.Xml_DocumentContent)
         ]
         public String DocumentContent {
             get {
@@ -207,7 +207,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(""),
         Editor("System.Web.UI.Design.XmlUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
         UrlProperty(),
-        WebSysDescription(SR.Xml_DocumentSource)
+        WebSysDescription(System.Web.SR.Xml_DocumentSource)
         ]
         public String DocumentSource {
             get {
@@ -232,7 +232,7 @@ namespace System.Web.UI.WebControls {
                 return false;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -246,7 +246,7 @@ namespace System.Web.UI.WebControls {
                 return String.Empty;
             }
             set {
-                throw new NotSupportedException(SR.GetString(SR.NoThemingSupport, this.GetType().Name));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoThemingSupport, this.GetType().Name));
             }
         }
 
@@ -256,7 +256,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Browsable(false),
-        WebSysDescription(SR.Xml_Transform),
+        WebSysDescription(System.Web.SR.Xml_Transform),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
 #pragma warning disable 0618    // To avoid deprecation warning
@@ -280,7 +280,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Browsable(false),
-        WebSysDescription(SR.Xml_TransformArgumentList),
+        WebSysDescription(System.Web.SR.Xml_TransformArgumentList),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public XsltArgumentList TransformArgumentList {
@@ -300,7 +300,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.XslUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescription(SR.Xml_TransformSource),
+        WebSysDescription(System.Web.SR.Xml_TransformSource),
         ]
         public String TransformSource {
             get {
@@ -317,7 +317,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         Browsable(false),
-        WebSysDescription(SR.Xml_XPathNavigator),
+        WebSysDescription(System.Web.SR.Xml_XPathNavigator),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
         public XPathNavigator XPathNavigator {
@@ -349,7 +349,7 @@ namespace System.Web.UI.WebControls {
                 }
             }
             else {
-                throw new HttpException(SR.GetString(SR.Cannot_Have_Children_Of_Type, "Xml", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_Have_Children_Of_Type, "Xml", obj.GetType().Name.ToString(CultureInfo.InvariantCulture)));
             }
         }
 
@@ -371,7 +371,7 @@ namespace System.Web.UI.WebControls {
         EditorBrowsable(EditorBrowsableState.Never),
         ]
         public override void Focus() {
-            throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
         }
 
         [SecurityPermission(SecurityAction.Demand, Unrestricted = true)]
@@ -410,7 +410,7 @@ namespace System.Web.UI.WebControls {
             object xform = cacheInternal.Get(key);
 
             if (xform == null) {
-                Debug.Trace("XmlControl", "Xsl Transform not found in cache (" + _transformSource + ")");
+                System.Web.Util.Debug.Trace("XmlControl", "Xsl Transform not found in cache (" + _transformSource + ")");
 
                 // Get the stream, and open the doc
                 CacheDependency dependency;
@@ -442,7 +442,7 @@ namespace System.Web.UI.WebControls {
                 }
             }
             else {
-                Debug.Trace("XmlControl", "XslTransform found in cache (" + _transformSource + ")");
+                System.Web.Util.Debug.Trace("XmlControl", "XslTransform found in cache (" + _transformSource + ")");
 
                 _compiledTransform = xform as XslCompiledTransform;
                 if (_compiledTransform == null) {
@@ -455,7 +455,7 @@ namespace System.Web.UI.WebControls {
 
         private void LoadXmlDocument() {
 
-            Debug.Assert(_xpathDocument == null && _document == null && _xpathNavigator == null);
+            System.Web.Util.Debug.Assert(_xpathDocument == null && _document == null && _xpathNavigator == null);
 
             if (!String.IsNullOrEmpty(_documentContent)) {
                 _document = XmlUtils.CreateXmlDocumentFromContent(_documentContent);
@@ -474,7 +474,7 @@ namespace System.Web.UI.WebControls {
             _document = (XmlDocument) cacheInternal.Get(key);
 
             if (_document == null) {
-                Debug.Trace("XmlControl", "XmlDocument not found in cache (" + _documentSource + ")");
+                System.Web.Util.Debug.Trace("XmlControl", "XmlDocument not found in cache (" + _documentSource + ")");
 
                 CacheDependency dependency;
                 using (Stream stream = OpenFileAndGetDependency(null, physicalPath, out dependency)) {
@@ -485,7 +485,7 @@ namespace System.Web.UI.WebControls {
                 }
             }
             else {
-                Debug.Trace("XmlControl", "XmlDocument found in cache (" + _documentSource + ")");
+                System.Web.Util.Debug.Trace("XmlControl", "XmlDocument found in cache (" + _documentSource + ")");
             }
 
             // 
@@ -497,7 +497,7 @@ namespace System.Web.UI.WebControls {
 
         private void LoadXPathDocument() {
 
-            Debug.Assert(_xpathDocument == null && _document == null && _xpathNavigator == null);
+            System.Web.Util.Debug.Assert(_xpathDocument == null && _document == null && _xpathNavigator == null);
 
             if (!String.IsNullOrEmpty(_documentContent)) {
                 _xpathDocument = XmlUtils.CreateXPathDocumentFromContent(_documentContent);
@@ -518,7 +518,7 @@ namespace System.Web.UI.WebControls {
 
             _xpathDocument = (XPathDocument)cacheInternal.Get(key);
             if (_xpathDocument == null) {
-                Debug.Trace("XmlControl", "XPathDocument not found in cache (" + _documentSource + ")");
+                System.Web.Util.Debug.Trace("XmlControl", "XPathDocument not found in cache (" + _documentSource + ")");
 
                 // Get the stream, and open the doc
                 CacheDependency dependency;
@@ -539,7 +539,7 @@ namespace System.Web.UI.WebControls {
                 }
             }
             else {
-                Debug.Trace("XmlControl", "XPathDocument found in cache (" + _documentSource + ")");
+                System.Web.Util.Debug.Trace("XmlControl", "XPathDocument found in cache (" + _documentSource + ")");
             }
         }
 

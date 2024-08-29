@@ -65,6 +65,7 @@ Common/FooNoPrimaryColumns.cs
 Common/FooNoScaffold.cs
 Common/FooReadOnly.cs
 Common/FooSettableDefaults.cs
+Common/FooUser.cs
 Common/FooWithDefaults.cs
 Common/FooWithMetadataType.cs
 Common/FooWithToString.cs

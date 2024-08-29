@@ -18,6 +18,7 @@ namespace System.Web.UI.HtmlControls {
     using System.Web;
     using System.Web.UI;
     using System.Security.Permissions;
+    
 
 
 /// <devdoc>
@@ -132,7 +133,7 @@ namespace System.Web.UI.HtmlControls {
 
         [
         WebCategory("Action"),
-        WebSysDescription(SR.Control_OnServerCheckChanged)
+        WebSysDescription(System.Web.SR.Control_OnServerCheckChanged)
         ]
         public event EventHandler ServerChange {
             add {

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="argumentTypeName" xml:space="preserve">
+    <value>Value is not the name of an existing type.</value>
+  </data>
+  <data name="cantBeCalledAfterDispose" xml:space="preserve">
+    <value>Can't be called after dispose.</value>
+  </data>
+  <data name="componentCantSetIdAfterAddedToApp" xml:space="preserve">
+    <value>The id property of a component can't be set after it's been added to the Application object.</value>
+  </data>
+  <data name="behaviorDuplicateName" xml:space="preserve">
+    <value>A behavior with name '{0}' already exists or it is the name of an existing property on the target element.</value>
+  </data>
+  <data name="notATypeName" xml:space="preserve">
+    <value>Value is not a valid type name.</value>
+  </data>
+  <data name="elementNotFound" xml:space="preserve">
+    <value>An element with id '{0}' could not be found.</value>
+  </data>
+  <data name="stateMustBeStringDictionary" xml:space="preserve">
+    <value>The state object can only have null and string fields.</value>
+  </data>
+  <data name="boolTrueOrFalse" xml:space="preserve">
+    <value>Value must be 'true' or 'false'.</value>
+  </data>
+  <data name="scriptLoadFailedNoHead" xml:space="preserve">
+    <value>ScriptLoader requires pages to contain a &lt;head&gt; element.</value>
+  </data>
+  <data name="stringFormatInvalid" xml:space="preserve">
+    <value>The format string is invalid.</value>
+  </data>
+  <data name="referenceNotFound" xml:space="preserve">
+    <value>Component '{0}' was not found.</value>
+  </data>
+  <data name="enumReservedName" xml:space="preserve">
+    <value>'{0}' is a reserved name that can't be used as an enum value name.</value>
+  </data>
+  <data name="circularParentChain" xml:space="preserve">
+    <value>The chain of control parents can't have circular references.</value>
+  </data>
+  <data name="namespaceContainsNonObject" xml:space="preserve">
+    <value>Object {0} already exists and is not an object.</value>
+  </data>
+  <data name="undefinedEvent" xml:space="preserve">
+    <value>'{0}' is not an event.</value>
+  </data>
+  <data name="propertyUndefined" xml:space="preserve">
+    <value>'{0}' is not a property or an existing field.</value>
+  </data>
+  <data name="observableConflict" xml:space="preserve">
+    <value>Object already contains a member with the name '{0}'.</value>
+  </data>
+  <data name="historyCannotEnableHistory" xml:space="preserve">
+    <value>Cannot set enableHistory after initialization.</value>
+  </data>
+  <data name="eventHandlerInvalid" xml:space="preserve">
+    <value>Handler was not added through the Sys.UI.DomEvent.addHandler method.</value>
+  </data>
+  <data name="scriptLoadFailedDebug" xml:space="preserve">
+    <value>The script '{0}' failed to load. Check for:
+ Inaccessible path.
+ Script errors. (IE) Enable 'Display a notification about every script error' under advanced settings.</value>
+  </data>
+  <data name="propertyNotWritable" xml:space="preserve">
+    <value>'{0}' is not a writable property.</value>
+  </data>
+  <data name="enumInvalidValueName" xml:space="preserve">
+    <value>'{0}' is not a valid name for an enum value.</value>
+  </data>
+  <data name="controlAlreadyDefined" xml:space="preserve">
+    <value>A control is already associated with the element.</value>
+  </data>
+  <data name="addHandlerCantBeUsedForError" xml:space="preserve">
+    <value>Can't add a handler for the error event using this method. Please set the window.onerror property instead.</value>
+  </data>
+  <data name="cantAddNonFunctionhandler" xml:space="preserve">
+    <value>Can't add a handler that is not a function.</value>
+  </data>
+  <data name="invalidNameSpace" xml:space="preserve">
+    <value>Value is not a valid namespace identifier.</value>
+  </data>
+  <data name="notAnInterface" xml:space="preserve">
+    <value>Value is not a valid interface.</value>
+  </data>
+  <data name="eventHandlerNotFunction" xml:space="preserve">
+    <value>Handler must be a function.</value>
+  </data>
+  <data name="propertyNotAnArray" xml:space="preserve">
+    <value>'{0}' is not an Array property.</value>
+  </data>
+  <data name="namespaceContainsClass" xml:space="preserve">
+    <value>Object {0} already exists as a class, enum, or interface.</value>
+  </data>
+  <data name="typeRegisteredTwice" xml:space="preserve">
+    <value>Type {0} has already been registered. The type may be defined multiple times or the script file that defines it may have already been loaded. A possible cause is a change of settings during a partial update.</value>
+  </data>
+  <data name="cantSetNameAfterInit" xml:space="preserve">
+    <value>The name property can't be set on this object after initialization.</value>
+  </data>
+  <data name="historyMissingFrame" xml:space="preserve">
+    <value>For the history feature to work in IE, the page must have an iFrame element with id '__historyFrame' pointed to a page that gets its title from the 'title' query string parameter and calls Sys.Application._onIFrameLoad() on the parent window. This can be done by setting EnableHistory to true on ScriptManager.</value>
+  </data>
+  <data name="appDuplicateComponent" xml:space="preserve">
+    <value>Two components with the same id '{0}' can't be added to the application.</value>
+  </data>
+  <data name="historyCannotAddHistoryPointWithHistoryDisabled" xml:space="preserve">
+    <value>A history point can only be added if enableHistory is set to true.</value>
+  </data>
+  <data name="baseNotAClass" xml:space="preserve">
+    <value>Value is not a class.</value>
+  </data>
+  <data name="expectedElementOrId" xml:space="preserve">
+    <value>Value must be a DOM element or DOM element Id.</value>
+  </data>
+  <data name="methodNotFound" xml:space="preserve">
+    <value>No method found with name '{0}'.</value>
+  </data>
+  <data name="arrayParseBadFormat" xml:space="preserve">
+    <value>Value must be a valid string representation for an array. It must start with a '[' and end with a ']'.</value>
+  </data>
+  <data name="stateFieldNameInvalid" xml:space="preserve">
+    <value>State field names must not contain any '=' characters.</value>
+  </data>
+  <data name="cantSetId" xml:space="preserve">
+    <value>The id property can't be set on this object.</value>
+  </data>
+  <data name="stringFormatBraceMismatch" xml:space="preserve">
+    <value>The format string contains an unmatched opening or closing brace.</value>
+  </data>
+  <data name="enumValueNotInteger" xml:space="preserve">
+    <value>An enumeration definition can only contain integer values.</value>
+  </data>
+  <data name="propertyNullOrUndefined" xml:space="preserve">
+    <value>Cannot set the properties of '{0}' because it returned a null value.</value>
+  </data>
+  <data name="argumentDomNode" xml:space="preserve">
+    <value>Value must be a DOM element or a text node.</value>
+  </data>
+  <data name="componentCantSetIdTwice" xml:space="preserve">
+    <value>The id property of a component can't be set more than once.</value>
+  </data>
+  <data name="createComponentOnDom" xml:space="preserve">
+    <value>Value must be null for Components that are not Controls or Behaviors.</value>
+  </data>
+  <data name="createNotComponent" xml:space="preserve">
+    <value>{0} does not derive from Sys.Component.</value>
+  </data>
+  <data name="createNoDom" xml:space="preserve">
+    <value>Value must not be null for Controls and Behaviors.</value>
+  </data>
+  <data name="cantAddWithoutId" xml:space="preserve">
+    <value>Can't add a component that doesn't have an id.</value>
+  </data>
+  <data name="urlTooLong" xml:space="preserve">
+    <value>The history state must be small enough to not make the url larger than {0} characters.</value>
+  </data>
+  <data name="notObservable" xml:space="preserve">
+    <value>Instances of type '{0}' cannot be observed.</value>
+  </data>
+  <data name="badTypeName" xml:space="preserve">
+    <value>Value is not the name of the type being registered or the name is a reserved word.</value>
+  </data>
+</root>

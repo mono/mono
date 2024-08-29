@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         UrlProperty(),
-        WebSysDescription(SR.Panel_BackImageUrl)
+        WebSysDescription(System.Web.SR.Panel_BackImageUrl)
         ]
         public virtual string BackImageUrl {
             get {
@@ -77,7 +77,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Panel_Direction)
+        WebSysDescription(System.Web.SR.Panel_Direction)
         ]
         public virtual ContentDirection Direction {
             get {
@@ -102,7 +102,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Panel_HorizontalAlign)
+        WebSysDescription(System.Web.SR.Panel_HorizontalAlign)
         ]
         public virtual HorizontalAlign HorizontalAlign {
             get {
@@ -127,7 +127,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Panel_ScrollBars)
+        WebSysDescription(System.Web.SR.Panel_ScrollBars)
         ]
         public virtual ScrollBars ScrollBars {
             get {
@@ -153,7 +153,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.Panel_Wrap)
+        WebSysDescription(System.Web.SR.Panel_Wrap)
         ]
         public virtual bool Wrap {
             get {

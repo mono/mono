@@ -38,7 +38,7 @@ public sealed class CompilerType {
 
     internal CompilerType(Type codeDomProviderType, CompilerParameters compilParams) {
 
-        Debug.Assert(codeDomProviderType != null);
+        System.Web.Util.Debug.Assert(codeDomProviderType != null);
         _codeDomProviderType = codeDomProviderType;
 
         if (compilParams == null)

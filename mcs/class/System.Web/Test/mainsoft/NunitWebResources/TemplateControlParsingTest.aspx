@@ -1,5 +1,5 @@
 <%@ Page Language="C#" %>
-<%@ Register Assembly="System.Web_test" Namespace="MyTemplateControls" TagPrefix="mc" %>
+<%@ Register Assembly="net_4_x_System.Web_test" Namespace="MyTemplateControls" TagPrefix="mc" %>
 <script runat="server">
   void TemplateControl2_ItemCreated (TestTemplateControl sender, TestTemplateItemEventArgs args)
   {

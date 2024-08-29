@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(4),
-        WebSysDescription(SR.ListBox_Rows)
+        WebSysDescription(System.Web.SR.ListBox_Rows)
         ]
         public virtual int Rows {
             get {
@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(ListSelectionMode.Single),
-        WebSysDescription(SR.ListBox_SelectionMode)
+        WebSysDescription(System.Web.SR.ListBox_SelectionMode)
         ]
         public virtual ListSelectionMode SelectionMode {
             get {

@@ -101,7 +101,7 @@ namespace System.Data.Linq {
 
             internal override void AppendInsertText(TrackedObject item, StringBuilder appendTo) {
                 if (item.Type.Table.InsertMethod != null) {
-                    appendTo.Append(Strings.InsertCallbackComment);
+                    appendTo.Append(SR.InsertCallbackComment);
                 }
                 else {
                     Expression cmd = this.GetInsertCommand(item);
@@ -154,7 +154,7 @@ namespace System.Data.Linq {
 
             internal override void AppendUpdateText(TrackedObject item, StringBuilder appendTo) {
                 if (item.Type.Table.UpdateMethod != null) {
-                    appendTo.Append(Strings.UpdateCallbackComment);
+                    appendTo.Append(SR.UpdateCallbackComment);
                 }
                 else {
                     Expression cmd = this.GetUpdateCommand(item);
@@ -195,7 +195,7 @@ namespace System.Data.Linq {
 
             internal override void AppendDeleteText(TrackedObject item, StringBuilder appendTo) {
                 if (item.Type.Table.DeleteMethod != null) {
-                    appendTo.Append(Strings.DeleteCallbackComment);
+                    appendTo.Append(SR.DeleteCallbackComment);
                 }
                 else {
                     Expression cmd = this.GetDeleteCommand(item);

@@ -16,6 +16,7 @@ namespace System.Web.Configuration {
     using System.ComponentModel;
     using System.Web.Util;
     using System.Security.Permissions;
+    
 
     /*         <!--
         processModel Attributes:
@@ -257,7 +258,7 @@ namespace System.Web.Configuration {
         public ProcessModelSection() {
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -600,7 +601,7 @@ namespace System.Web.Configuration {
             }
         }
 
-        protected override ConfigurationElementProperty ElementProperty {
+        protected internal override ConfigurationElementProperty ElementProperty {
             get {
                 return s_elemProperty;
             }
@@ -619,14 +620,14 @@ namespace System.Web.Configuration {
             }
             catch {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_non_zero_hexadecimal_attribute, "cpuMask"),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_non_zero_hexadecimal_attribute, "cpuMask"),
                     elem.ElementInformation.Properties["cpuMask"].Source,
                     elem.ElementInformation.Properties["cpuMask"].LineNumber);
             }
 
             if (val == 0) {
                 throw new ConfigurationErrorsException(
-                    SR.GetString(SR.Invalid_non_zero_hexadecimal_attribute, "cpuMask"),
+                    System.Web.SR.GetString(System.Web.SR.Invalid_non_zero_hexadecimal_attribute, "cpuMask"),
                     elem.ElementInformation.Properties["cpuMask"].Source,
                     elem.ElementInformation.Properties["cpuMask"].LineNumber);
             }

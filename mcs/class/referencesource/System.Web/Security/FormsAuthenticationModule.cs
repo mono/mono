@@ -22,6 +22,7 @@ namespace System.Web.Security {
     using System.Security.Principal;
     using System.Security.Permissions;
     using System.Web.Management;
+    
 
     public sealed class FormsAuthenticationModule : IHttpModule {
 
@@ -170,6 +171,7 @@ namespace System.Web.Security {
                     cookie.HttpOnly = true;
                     if (FormsAuthentication.CookieDomain != null)
                         cookie.Domain = FormsAuthentication.CookieDomain;
+                    cookie.SameSite = FormsAuthentication.CookieSameSite;
                     e.Context.Response.Cookies.Remove(cookie.Name);
                     e.Context.Response.Cookies.Add(cookie);
                 }
@@ -271,7 +273,7 @@ namespace System.Web.Security {
             ////////////////////////////////////////////////////////////
             // Step 3: Check if we have a valid url to the login-page
             if (loginUrl == null || loginUrl.Length <= 0)
-                throw new HttpException(SR.GetString(SR.Auth_Invalid_Login_Url));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Auth_Invalid_Login_Url));
 
 
             ////////////////////////////////////////////////////////////
@@ -433,7 +435,7 @@ namespace System.Web.Security {
                     }
 
                     if (FormsAuthentication.RequireSSL && !context.Request.IsSecureConnection) // Bad scenario: valid ticket over non-SSL
-                        throw new HttpException(SR.GetString(SR.Connection_not_secure_creating_secure_cookie));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Connection_not_secure_creating_secure_cookie));
 
                     ////////////////////////////////////////////////////////////
                     // Step 4: Create the cookie/URI value
@@ -457,6 +459,7 @@ namespace System.Web.Security {
                         cookie.Secure = FormsAuthentication.RequireSSL;
                         if (FormsAuthentication.CookieDomain != null)
                             cookie.Domain = FormsAuthentication.CookieDomain;
+                        cookie.SameSite = FormsAuthentication.CookieSameSite;
                         context.Response.Cookies.Remove(cookie.Name);
                         context.Response.Cookies.Add(cookie);
                     }
@@ -480,7 +483,7 @@ namespace System.Web.Security {
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
         private static void Trace(String str) {
-            Debug.Trace("cookieauth", str);
+            System.Web.Util.Debug.Trace("cookieauth", str);
         }
     }
 }

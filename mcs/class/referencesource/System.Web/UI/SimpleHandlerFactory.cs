@@ -27,7 +27,7 @@ internal class SimpleHandlerFactory : IHttpHandlerFactory2 {
         string virtualPath, string path) {
 
         // This should never get called
-        //Debug.Assert(false);
+        //System.Web.Util.Debug.Assert(false);
 
         return ((IHttpHandlerFactory2)this).GetHandler(context, requestType,
             VirtualPath.CreateNonRelative(virtualPath), path);

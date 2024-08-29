@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// <copyright file="Debug.cs" company="Microsoft">
+// <copyright file="System.Web.Util.Debug.cs" company="Microsoft">
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>                                                                
 //------------------------------------------------------------------------------
@@ -905,7 +905,7 @@ A=Exit process R=Debug I=Continue";
         //
         // This method should NOT be used when code wants to conditionally
         // validate an object and have a failed validation caught in an assert.
-        // Use Debug.Validate(tagName, obj) for that purpose.
+        // Use System.Web.Util.Debug.Validate(tagName, obj) for that purpose.
         //
         [System.Diagnostics.Conditional("DBG")]
         [ResourceExposure(ResourceScope.None)]
@@ -964,14 +964,14 @@ A=Exit process R=Debug I=Continue";
                                     && (   s_tableAlwaysValidate[tagName] != null 
                                            ||  IsTagEnabled(tagName))))) {
                 try {
-                    Debug.Validate(obj);
+                    System.Web.Util.Debug.Validate(obj);
                 }
                 catch (Exception e) {
-                    Debug.Assert(false, "Validate failed: " + e.InnerException.Message);
+                    System.Web.Util.Debug.Assert(false, "Validate failed: " + e.InnerException.Message);
                 }
 #pragma warning disable 1058
                 catch {
-                    Debug.Assert(false, "Validate failed.  Non-CLS compliant exception caught.");
+                    System.Web.Util.Debug.Assert(false, "Validate failed.  Non-CLS compliant exception caught.");
                 }
 #pragma warning restore 1058
             }
@@ -989,7 +989,7 @@ A=Exit process R=Debug I=Continue";
         // GetDescription to get the description of the item it points to.
         //
         // This method should NOT be used when you want to conditionally
-        // dump an object. Use Debug.Dump instead.
+        // dump an object. Use System.Web.Util.Debug.Dump instead.
         //
         // @param obj      The object to call DebugDescription on. May be null.
         // @param indent   A prefix for each line in the description. This is used
@@ -1060,7 +1060,7 @@ A=Exit process R=Debug I=Continue";
 
                     if (traceTag != null) {
                         description = GetDescription(obj, string.Empty);
-                        Debug.Trace(traceTag, "Dump\n" + description);
+                        System.Web.Util.Debug.Trace(traceTag, "Dump\n" + description);
                     }
                 }
             }

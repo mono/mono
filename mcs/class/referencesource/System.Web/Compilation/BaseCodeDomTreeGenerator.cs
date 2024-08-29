@@ -42,6 +42,7 @@ using System.Web.Hosting;
 using System.Web.Profile;
 using System.Web.Configuration;
 using System.Globalization;
+using System.Linq;
 
 
 internal abstract class BaseCodeDomTreeGenerator {
@@ -55,11 +56,12 @@ internal abstract class BaseCodeDomTreeGenerator {
     protected StringResourceBuilder _stringResourceBuilder;
     protected bool _usingVJSCompiler;
     private static IDictionary _generatedColumnOffsetDictionary;
+    private CodeMemberMethod _initMethod;
 
     private VirtualPath _virtualPath;
 
     // The constructors
-    protected CodeConstructor _ctor;
+    private CodeConstructor _ctor;
 
     protected CodeTypeReferenceExpression _classTypeExpr;
 
@@ -72,6 +74,8 @@ internal abstract class BaseCodeDomTreeGenerator {
 
     private const string _dummyVariable = "__dummyVar";
     private const int _defaultColumnOffset = 4;
+
+    private const string InitMethodName = "__Init";
 
     private TemplateParser _parser;
     TemplateParser Parser { get { return _parser; } }
@@ -87,6 +91,7 @@ internal abstract class BaseCodeDomTreeGenerator {
     private int _pragmaIdGenerator=1;
 
     private static bool _urlLinePragmas;
+    private bool _initMethodSet;
 
     static BaseCodeDomTreeGenerator() {
         CompilationSection config = MTConfigUtil.GetCompilationAppConfig();
@@ -116,7 +121,7 @@ internal abstract class BaseCodeDomTreeGenerator {
     internal /*public*/ CodeCompileUnit GetCodeDomTree(CodeDomProvider codeDomProvider,
         StringResourceBuilder stringResourceBuilder, VirtualPath virtualPath) {
 
-        Debug.Assert(_codeDomProvider == null && _stringResourceBuilder == null);
+        System.Web.Util.Debug.Assert(_codeDomProvider == null && _stringResourceBuilder == null);
 
         _codeDomProvider = codeDomProvider;
         _stringResourceBuilder = stringResourceBuilder;
@@ -156,11 +161,11 @@ internal abstract class BaseCodeDomTreeGenerator {
     protected BaseCodeDomTreeGenerator(TemplateParser parser) {
         _parser = parser;
 
-        Debug.Assert(Parser.BaseType != null);
+        System.Web.Util.Debug.Assert(Parser.BaseType != null);
     }
 
     protected void ApplyEditorBrowsableCustomAttribute(CodeTypeMember member) {
-        Debug.Assert(_designerMode, "This method should only be used in design mode.");
+        System.Web.Util.Debug.Assert(_designerMode, "This method should only be used in design mode.");
 
         // Generate EditorBrowsableAttribute to hide the generated methods from the tool
         // [EditorBrowsable(EditorBrowsableState.Never)]
@@ -188,7 +193,7 @@ internal abstract class BaseCodeDomTreeGenerator {
         // Prepend the class name with the directory path within the app (DevDiv 42063)
         string appRelVirtualDir = _virtualPath.Parent.AppRelativeVirtualPathStringOrNull;
         if (appRelVirtualDir != null) {
-            Debug.Assert(UrlPath.IsAppRelativePath(appRelVirtualDir));
+            System.Web.Util.Debug.Assert(System.Web.Util.UrlPath.IsAppRelativePath(appRelVirtualDir));
             className = appRelVirtualDir.Substring(2) + className;
         }
 
@@ -201,7 +206,7 @@ internal abstract class BaseCodeDomTreeGenerator {
         // If it's the same as the base type name, prepend it with an underscore to prevent
         // a compile error.
         string baseTypeName = Parser.BaseTypeName != null ? Parser.BaseTypeName : Parser.BaseType.Name;
-        if (StringUtil.EqualsIgnoreCase(className, baseTypeName)) {
+        if (System.Web.Util.StringUtil.EqualsIgnoreCase(className, baseTypeName)) {
             className = "_" + className;
         }
 
@@ -239,7 +244,7 @@ internal abstract class BaseCodeDomTreeGenerator {
 
         if (Parser.BaseTypeName != null) {
 
-            Debug.Assert(Parser.CodeFileVirtualPath != null);
+            System.Web.Util.Debug.Assert(Parser.CodeFileVirtualPath != null);
 
             // This is the case where the page has a CodeFile attribute
 
@@ -341,10 +346,59 @@ internal abstract class BaseCodeDomTreeGenerator {
             _ctor = new CodeConstructor();
             AddDebuggerNonUserCodeAttribute(_ctor);
             _sourceDataClass.Members.Add(_ctor);
+            _ctor.Attributes &= ~MemberAttributes.AccessMask;
+            _ctor.Attributes |= MemberAttributes.Public;
             BuildDefaultConstructor();
         }
 
         return true;
+    }
+
+    private void SetInitMethod() {
+        Debug.Assert(_ctor != null);
+        Debug.Assert(Parser.BaseType != null);
+
+         if (BinaryCompatibility.Current.TargetsAtLeastFramework472 &&
+            Parser.BaseType.GetConstructors(BindingFlags.Instance | BindingFlags.Public).Any(c => c.GetParameters().Length > 0)) {
+
+             // Create __Init method
+            var method = new CodeMemberMethod();
+            AddDebuggerNonUserCodeAttribute(method);
+            method.Name = InitMethodName;
+            method.Attributes = MemberAttributes.Private | MemberAttributes.Final;
+            method.ReturnType = new CodeTypeReference(typeof(void));
+
+             if (Parser.BaseType.GetConstructor(Type.EmptyTypes) != null) {
+                // Invoke __init in default c-tor
+                _ctor.Statements.Add(CreateInitInvoke());
+            }
+            else {
+                // if base type doesn't have default constructor, the generated child class should not have either
+                _sourceDataClass.Members.Remove(_ctor);
+            }
+
+             _sourceDataClass.Members.Add(method);
+            _initMethod = method;
+        }
+    }
+
+     protected CodeMemberMethod InitMethod {
+        get {
+            if (!_initMethodSet) {
+                SetInitMethod();
+                _initMethodSet = true;
+            }
+
+             return _initMethod ?? _ctor;
+        }
+    }
+
+     protected static CodeMethodInvokeExpression CreateInitInvoke() { 
+        var invoke = new CodeMethodInvokeExpression();
+        invoke.Method.TargetObject = new CodeThisReferenceExpression();
+        invoke.Method.MethodName = InitMethodName;
+
+         return invoke;
     }
 
     /*
@@ -383,9 +437,6 @@ internal abstract class BaseCodeDomTreeGenerator {
      */
     protected virtual void BuildDefaultConstructor() {
 
-        _ctor.Attributes &= ~MemberAttributes.AccessMask;
-        _ctor.Attributes |= MemberAttributes.Public;
-
         // private static bool __initialized;
         CodeMemberField initializedField = new CodeMemberField(typeof(bool), initializedFieldName);
         initializedField.Attributes |= MemberAttributes.Static;
@@ -401,7 +452,7 @@ internal abstract class BaseCodeDomTreeGenerator {
                                                 CodeBinaryOperatorType.ValueEquality,
                                                 new CodePrimitiveExpression(false));
 
-        this.BuildInitStatements(initializedCondition.TrueStatements, _ctor.Statements);
+        this.BuildInitStatements(initializedCondition.TrueStatements, InitMethod.Statements);
 
         initializedCondition.TrueStatements.Add(new CodeAssignStatement(
                                                     new CodeFieldReferenceExpression(
@@ -410,7 +461,7 @@ internal abstract class BaseCodeDomTreeGenerator {
                                                     new CodePrimitiveExpression(true)));
 
         // i.e. __intialized = true;
-        _ctor.Statements.Add(initializedCondition);
+        InitMethod.Statements.Add(initializedCondition);
     }
 
     /*
@@ -595,7 +646,7 @@ internal abstract class BaseCodeDomTreeGenerator {
 
 
             Type declaredType = entry.DeclaredType;
-            Debug.Assert(!Util.IsLateBoundComClassicType(declaredType));
+            System.Web.Util.Debug.Assert(!Util.IsLateBoundComClassicType(declaredType));
 
             if (useApplicationState) {
                 // for application state use property that does caching in a member
@@ -818,7 +869,7 @@ internal abstract class BaseCodeDomTreeGenerator {
 
         string pragmaFile = null;
 
-        if (UrlPath.IsAbsolutePhysicalPath(virtualPath)) {
+        if (System.Web.Util.UrlPath.IsAbsolutePhysicalPath(virtualPath)) {
 
             // Due to config system limitations, we can end up with virtualPath
             // actually being a physical path.  If that's the case, just use it as is.

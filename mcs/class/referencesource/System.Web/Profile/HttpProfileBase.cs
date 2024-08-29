@@ -27,6 +27,7 @@ namespace System.Web.Profile {
     using System.Runtime.Serialization;
     using System.Runtime.Serialization.Formatters.Binary;
     using System.Security;
+    
 
     public class ProfileBase : SettingsBase {
         //////////////////////////////////////////////////////////////////////////
@@ -71,7 +72,7 @@ namespace System.Web.Profile {
                 if (p != null) {
                     bool fAllowAnonymous = (bool)p.Attributes["AllowAnonymous"];
                     if (!fAllowAnonymous)
-                        throw new ProviderException(SR.GetString(SR.Profile_anonoymous_not_allowed_to_set_property));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Profile_anonoymous_not_allowed_to_set_property));
                 }
             }
 
@@ -88,10 +89,10 @@ namespace System.Web.Profile {
             if (grp == null) {
                 Type t = BuildManager.GetProfileType();
                 if (t == null)
-                    throw new ProviderException(SR.GetString(SR.Profile_group_not_found, groupName));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Profile_group_not_found, groupName));
                 t = t.Assembly.GetType("ProfileGroup" + groupName, false);
                 if (t == null)
-                    throw new ProviderException(SR.GetString(SR.Profile_group_not_found, groupName));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Profile_group_not_found, groupName));
 
                 grp = (ProfileGroupBase)Activator.CreateInstance(t);
                 grp.Init(this, groupName);
@@ -102,7 +103,7 @@ namespace System.Web.Profile {
 
         public ProfileBase() {
             if (!ProfileManager.Enabled)
-                throw new ProviderException(SR.GetString(SR.Profile_not_enabled));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Profile_not_enabled));
             if (!s_Initialized)
                 InitializeStatic();
         }
@@ -113,7 +114,7 @@ namespace System.Web.Profile {
             else
                 _UserName = username;
             //if (string.IsNullOrEmpty(_UserName))
-            //    throw new ArgumentException(SR.GetString(SR.Membership_InvalidUserName), "username");
+            //    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Membership_InvalidUserName), "username");
             SettingsContext sc = new SettingsContext();
             sc.Add("UserName", _UserName);
             sc.Add("IsAuthenticated", isAuthenticated);
@@ -182,7 +183,7 @@ namespace System.Web.Profile {
 
         static public ProfileBase Create(string username, bool isAuthenticated) {
             if (!ProfileManager.Enabled)
-                throw new ProviderException(SR.GetString(SR.Profile_not_enabled));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Profile_not_enabled));
             InitializeStatic();
             if (s_SingletonInstance != null)
                 return s_SingletonInstance;
@@ -193,7 +194,7 @@ namespace System.Web.Profile {
                     return s_SingletonInstance;
                 }
             }
-            HttpRuntime.CheckAspNetHostingPermission(AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
+            
             return CreateMyInstance(username, isAuthenticated);
         }
 
@@ -225,7 +226,7 @@ namespace System.Web.Profile {
 
                 if (!typeof(ProfileBase).IsAssignableFrom(t)) {
                     ProfileSection config = MTConfigUtil.GetProfileAppConfig();
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_profile_base_type), null, config.ElementInformation.Properties["inherits"].Source, config.ElementInformation.Properties["inherit"].LineNumber);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_profile_base_type), null, config.ElementInformation.Properties["inherits"].Source, config.ElementInformation.Properties["inherit"].LineNumber);
                 }
                 return t;
             }
@@ -248,7 +249,7 @@ namespace System.Web.Profile {
                 if (t == null)
                     return inheritsType;
                 if (!typeof(ProfileBase).IsAssignableFrom(t))
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Wrong_profile_base_type), null, config.ElementInformation.Properties["inherits"].Source, config.ElementInformation.Properties["inherit"].LineNumber);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Wrong_profile_base_type), null, config.ElementInformation.Properties["inherits"].Source, config.ElementInformation.Properties["inherit"].LineNumber);
                 return t.AssemblyQualifiedName;
             }
         }
@@ -388,12 +389,11 @@ namespace System.Web.Profile {
                     ProfileSection config = MTConfigUtil.GetProfileAppConfig();
                     bool fAnonEnabled = (HostingEnvironment.IsHosted ? AnonymousIdentificationModule.Enabled : true);
                     Type baseType = ProfileBase.InheritsFromType;
-                    bool hasLowTrust = HttpRuntime.HasAspNetHostingPermission(AspNetHostingPermissionLevel.Low);
-
+                    
                     s_Properties = new SettingsPropertyCollection();
 
                     // Step 0: Add all dynamic profile properties set programatically during PreAppStart
-                    ProfileBase.AddPropertySettingsFromConfig(baseType, fAnonEnabled, hasLowTrust, ProfileManager.DynamicProfileProperties, null);
+                    ProfileBase.AddPropertySettingsFromConfig(baseType, fAnonEnabled, true, ProfileManager.DynamicProfileProperties, null);
 
                     //////////////////////////////////////////////////////////////////////
                     // Step 1: Add Properties from the base class (if not ProfileBase)
@@ -411,7 +411,7 @@ namespace System.Web.Profile {
                         foreach (PropertyInfo prop in props) {
                             if (baseProperties[prop.Name] == null) { //not in the base class
 
-                                ProfileProvider prov = hasLowTrust ? ProfileManager.Provider : null;
+                                ProfileProvider prov = ProfileManager.Provider;
                                 bool readOnly = false;
                                 SettingsSerializeAs serializeAs = SettingsSerializeAs.ProviderSpecific;
                                 string defaultValue = String.Empty;
@@ -429,7 +429,7 @@ namespace System.Web.Profile {
                                     else if (attrib is SettingsAllowAnonymousAttribute) {
                                         allowAnonymous = ((SettingsAllowAnonymousAttribute)attrib).Allow;
                                         if (!fAnonEnabled && allowAnonymous)
-                                            throw new ConfigurationErrorsException(SR.GetString(SR.Annoymous_id_module_not_enabled, prop.Name), config.ElementInformation.Properties["inherits"].Source, config.ElementInformation.Properties["inherits"].LineNumber);
+                                            throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Annoymous_id_module_not_enabled, prop.Name), config.ElementInformation.Properties["inherits"].Source, config.ElementInformation.Properties["inherits"].LineNumber);
                                     }
                                     else if (attrib is System.ComponentModel.ReadOnlyAttribute) {
                                         readOnly = ((System.ComponentModel.ReadOnlyAttribute)attrib).IsReadOnly;
@@ -440,10 +440,10 @@ namespace System.Web.Profile {
                                     else if (attrib is CustomProviderDataAttribute) {
                                         customData = ((CustomProviderDataAttribute)attrib).CustomProviderData;
                                     }
-                                    else if (hasLowTrust && attrib is ProfileProviderAttribute) {
+                                    else if (attrib is ProfileProviderAttribute) {
                                         prov = ProfileManager.Providers[((ProfileProviderAttribute)attrib).ProviderName];
                                         if (prov == null)
-                                            throw new ConfigurationErrorsException(SR.GetString(SR.Profile_provider_not_found, ((ProfileProviderAttribute)attrib).ProviderName), config.ElementInformation.Properties["inherits"].Source, config.ElementInformation.Properties["inherits"].LineNumber);
+                                            throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Profile_provider_not_found, ((ProfileProviderAttribute)attrib).ProviderName), config.ElementInformation.Properties["inherits"].Source, config.ElementInformation.Properties["inherits"].LineNumber);
                                     }
                                 }
                                 //////////////////////////////////////////////////////////////////////
@@ -462,9 +462,9 @@ namespace System.Web.Profile {
                     //////////////////////////////////////////////////////////////////////
                     // Step 6: Add all properties from config
                     if (config.PropertySettings != null) {
-                        AddPropertySettingsFromConfig(baseType, fAnonEnabled, hasLowTrust, config.PropertySettings, null);
+                        AddPropertySettingsFromConfig(baseType, fAnonEnabled, true, config.PropertySettings, null);
                         foreach (ProfileGroupSettings pgs in config.PropertySettings.GroupSettings) {
-                            AddPropertySettingsFromConfig(baseType, fAnonEnabled, hasLowTrust, pgs.PropertySettings, pgs.Name);
+                            AddPropertySettingsFromConfig(baseType, fAnonEnabled, true, pgs.PropertySettings, pgs.Name);
                         }
                     }
                 }
@@ -489,7 +489,7 @@ namespace System.Web.Profile {
             foreach (ProfilePropertySettings pps in settingsCollection) {
                 string name = (groupName != null) ? (groupName + "." + pps.Name) : pps.Name;
                 if (baseType != typeof(ProfileBase) && s_Properties[name] != null)
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Profile_property_already_added), null, pps.ElementInformation.Properties["name"].Source, pps.ElementInformation.Properties["name"].LineNumber);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Profile_property_already_added), null, pps.ElementInformation.Properties["name"].Source, pps.ElementInformation.Properties["name"].LineNumber);
 
                 try {
                     if (pps.TypeInternal == null) {
@@ -497,12 +497,12 @@ namespace System.Web.Profile {
                     }
                 }
                 catch (Exception e) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Profile_could_not_create_type, e.Message), e, pps.ElementInformation.Properties["type"].Source, pps.ElementInformation.Properties["type"].LineNumber);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Profile_could_not_create_type, e.Message), e, pps.ElementInformation.Properties["type"].Source, pps.ElementInformation.Properties["type"].LineNumber);
                 }
                 if (!fAnonEnabled) {
                     bool fAllowAnonymous = pps.AllowAnonymous;
                     if (fAllowAnonymous)
-                        throw new ConfigurationErrorsException(SR.GetString(SR.Annoymous_id_module_not_enabled, pps.Name), pps.ElementInformation.Properties["allowAnonymous"].Source, pps.ElementInformation.Properties["allowAnonymous"].LineNumber);
+                        throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Annoymous_id_module_not_enabled, pps.Name), pps.ElementInformation.Properties["allowAnonymous"].Source, pps.ElementInformation.Properties["allowAnonymous"].LineNumber);
                 }
                 if (hasLowTrust) {
                     SetProviderForProperty(pps);
@@ -513,7 +513,7 @@ namespace System.Web.Profile {
                 // Providers that use NetDataContractSerialzier do not require Serializable attributes any longer, only enforce this for the SqlProfileProvider
                 bool requireSerializationCheck = pps.ProviderInternal == null || pps.ProviderInternal.GetType() == typeof(SqlProfileProvider);
                 if (requireSerializationCheck && pps.SerializeAs == SerializationMode.Binary && !pps.TypeInternal.IsSerializable) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Property_not_serializable, pps.Name), pps.ElementInformation.Properties["serializeAs"].Source, pps.ElementInformation.Properties["serializeAs"].LineNumber);
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Property_not_serializable, pps.Name), pps.ElementInformation.Properties["serializeAs"].Source, pps.ElementInformation.Properties["serializeAs"].LineNumber);
                 }
 
                 SettingsAttributeDictionary settings = new SettingsAttributeDictionary();
@@ -538,7 +538,7 @@ namespace System.Web.Profile {
 
             // Provider not found?
             if (pps.ProviderInternal == null)
-                throw new ConfigurationErrorsException(SR.GetString(SR.Profile_provider_not_found, pps.Provider), pps.ElementInformation.Properties["provider"].Source, pps.ElementInformation.Properties["provider"].LineNumber);
+                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Profile_provider_not_found, pps.Provider), pps.ElementInformation.Properties["provider"].Source, pps.ElementInformation.Properties["provider"].LineNumber);
         }
 
         //////////////////////////////////////////////////////////////////////

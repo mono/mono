@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -678,9 +678,12 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
 		SRDescription("DescriptionAttributeUrl"),
 		DefaultValue(""),
+#if !FEATURE_PAL
+        Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base),
+#endif
 #if !Microsoft_CONTROL
-		PersistenceMode(PersistenceMode.Attribute),
-        Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base)
+		PersistenceMode(PersistenceMode.Attribute)
+        
 #endif
 		]
 		public string Url

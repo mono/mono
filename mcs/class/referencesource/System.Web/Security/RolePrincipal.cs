@@ -29,6 +29,7 @@ namespace System.Web.Security {
     using System.Web.Hosting;
     using System.Web.Security.Cryptography;
     using System.Web.Util;
+    
 
     [Serializable]
     public class RolePrincipal : ClaimsPrincipal, ISerializable    
@@ -65,11 +66,11 @@ namespace System.Web.Security {
                 throw new ArgumentNullException( "identity" );
 
             if( providerName == null)
-                throw new ArgumentException( SR.GetString(SR.Role_provider_name_invalid) , "providerName" );
+                throw new ArgumentException( System.Web.SR.GetString(System.Web.SR.Role_provider_name_invalid) , "providerName" );
 
             _ProviderName = providerName;
             if (Roles.Providers[providerName] == null)
-                throw new ArgumentException(SR.GetString(SR.Role_provider_name_invalid), "providerName");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Role_provider_name_invalid), "providerName");
 
             _Identity = identity;
             Init();
@@ -84,11 +85,11 @@ namespace System.Web.Security {
                 throw new ArgumentNullException( "encryptedTicket" );
 
             if( providerName == null)
-                throw new ArgumentException( SR.GetString(SR.Role_provider_name_invalid) , "providerName" );
+                throw new ArgumentException( System.Web.SR.GetString(System.Web.SR.Role_provider_name_invalid) , "providerName" );
 
             _ProviderName = providerName;
             if (Roles.Providers[_ProviderName] == null)
-                throw new ArgumentException(SR.GetString(SR.Role_provider_name_invalid), "providerName");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Role_provider_name_invalid), "providerName");
             _Identity = identity;
             if (identity.IsAuthenticated)
                 InitFromEncryptedTicket(encryptedTicket);
@@ -119,9 +120,9 @@ namespace System.Web.Security {
             }
             if (rp == null)
                 goto Exit;
-            if (!StringUtil.EqualsIgnoreCase(rp._Username, _Identity.Name))
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase(rp._Username, _Identity.Name))
                 goto Exit;
-            if (!StringUtil.EqualsIgnoreCase(rp._ProviderName, _ProviderName))
+            if (!System.Web.Util.StringUtil.EqualsIgnoreCase(rp._ProviderName, _ProviderName))
                 goto Exit;
             if (DateTime.UtcNow > rp._ExpireDate)
                 goto Exit;
@@ -292,7 +293,7 @@ namespace System.Web.Security {
         public string[] GetRoles()
         {
             if (_Identity == null)
-                throw new ProviderException(SR.GetString(SR.Role_Principal_not_fully_constructed));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Role_Principal_not_fully_constructed));
 
             if (!_Identity.IsAuthenticated)
                 return new string[0];
@@ -324,7 +325,7 @@ namespace System.Web.Security {
         public override bool IsInRole(string role)
         {
             if (_Identity == null)
-                throw new ProviderException(SR.GetString(SR.Role_Principal_not_fully_constructed));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Role_Principal_not_fully_constructed));
 
             if (!_Identity.IsAuthenticated || role == null)
                 return false;

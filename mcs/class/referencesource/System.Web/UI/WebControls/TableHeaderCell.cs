@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Accessibility"),
         DefaultValue(""),
-        WebSysDescription(SR.TableHeaderCell_AbbreviatedText)
+        WebSysDescription(System.Web.SR.TableHeaderCell_AbbreviatedText)
         ]
         public virtual string AbbreviatedText {
             get {
@@ -63,7 +63,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Accessibility"),
         DefaultValue(TableHeaderScope.NotSet),
-        WebSysDescription(SR.TableHeaderCell_Scope)
+        WebSysDescription(System.Web.SR.TableHeaderCell_Scope)
         ]
         public virtual TableHeaderScope Scope {
             get {
@@ -85,7 +85,7 @@ namespace System.Web.UI.WebControls {
         DefaultValue(null),
         TypeConverterAttribute(typeof(StringArrayConverter)),
         WebCategory("Accessibility"),
-        WebSysDescription(SR.TableHeaderCell_CategoryText)
+        WebSysDescription(System.Web.SR.TableHeaderCell_CategoryText)
         ]
         public virtual string[] CategoryText {
             get {

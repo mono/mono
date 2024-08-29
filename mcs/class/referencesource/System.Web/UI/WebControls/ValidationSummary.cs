@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ValidationSummaryDisplayMode.BulletList),
-        WebSysDescription(SR.ValidationSummary_DisplayMode)
+        WebSysDescription(System.Web.SR.ValidationSummary_DisplayMode)
         ]
         public ValidationSummaryDisplayMode DisplayMode {
             get {
@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(true),
-        WebSysDescription(SR.ValidationSummary_EnableClientScript)
+        WebSysDescription(System.Web.SR.ValidationSummary_EnableClientScript)
         ]
         public bool EnableClientScript {
             get {
@@ -89,7 +89,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(true),
-        WebSysDescription(SR.ValidationSummary_ShowValidationErrors)
+        WebSysDescription(System.Web.SR.ValidationSummary_ShowValidationErrors)
         ]
         public bool ShowValidationErrors {
             get {
@@ -109,7 +109,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(true),
-        WebSysDescription(SR.ValidationSummary_ShowModelStateErrors)
+        WebSysDescription(System.Web.SR.ValidationSummary_ShowModelStateErrors)
         ]
         public bool ShowModelStateErrors {
             get {
@@ -147,7 +147,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescription(SR.ValidationSummary_HeaderText)
+        WebSysDescription(System.Web.SR.ValidationSummary_HeaderText)
         ]
         public string HeaderText {
             get {
@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(false),
-        WebSysDescription(SR.ValidationSummary_ShowMessageBox)
+        WebSysDescription(System.Web.SR.ValidationSummary_ShowMessageBox)
         ]
         public bool ShowMessageBox {
             get {
@@ -192,7 +192,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(true),
-        WebSysDescription(SR.ValidationSummary_ShowSummary)
+        WebSysDescription(System.Web.SR.ValidationSummary_ShowSummary)
         ]
         public bool ShowSummary {
             get {
@@ -209,7 +209,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Behavior"),
         Themeable(false),
         DefaultValue(""),
-        WebSysDescription(SR.ValidationSummary_ValidationGroup)
+        WebSysDescription(System.Web.SR.ValidationSummary_ValidationGroup)
         ]
         public virtual string ValidationGroup {
             get {
@@ -275,7 +275,7 @@ namespace System.Web.UI.WebControls {
                             errorDescriptions.Add(String.Copy(val.ErrorMessage));
                         }
                         else {
-                            Debug.Assert(true, "Not all messages were found!");
+                            System.Web.Util.Debug.Assert(true, "Not all messages were found!");
                         }
                     }
                 }
@@ -379,8 +379,8 @@ namespace System.Web.UI.WebControls {
             if (DesignMode) {
                 // Dummy Error state
                 errorDescriptions = new string [] {
-                    SR.GetString(SR.ValSummary_error_message_1),
-                    SR.GetString(SR.ValSummary_error_message_2),
+                    System.Web.SR.GetString(System.Web.SR.ValSummary_error_message_1),
+                    System.Web.SR.GetString(System.Web.SR.ValSummary_error_message_2),
                 };
                 displayContents = true;
                 renderUplevel = false;
@@ -446,7 +446,7 @@ namespace System.Web.UI.WebControls {
                         break;
 
                     default:
-                        Debug.Fail("Invalid DisplayMode!");
+                        System.Web.Util.Debug.Fail("Invalid DisplayMode!");
                         goto
                     case ValidationSummaryDisplayMode.BulletList;
                 }
@@ -457,7 +457,7 @@ namespace System.Web.UI.WebControls {
                 if (errorDescriptions != null) {
                     writer.Write(first);
                     for (int i = 0; i < errorDescriptions.Length; i++) {
-                        Debug.Assert(errorDescriptions[i] != null && errorDescriptions[i].Length > 0, "Bad Error Messages");
+                        System.Web.Util.Debug.Assert(errorDescriptions[i] != null && errorDescriptions[i].Length > 0, "Bad Error Messages");
                         writer.Write(pre);
                         writer.Write(errorDescriptions[i]);
                         WriteBreakIfPresent(writer, post);

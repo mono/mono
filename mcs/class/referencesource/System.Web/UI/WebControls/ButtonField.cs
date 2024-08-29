@@ -12,7 +12,7 @@ namespace System.Web.UI.WebControls {
     using System.Drawing.Design;
     using System.Globalization;
     using System.Web.Util;
-
+    
 
     /// <devdoc>
     /// <para>Creates a field with a set of <see cref='System.Web.UI.WebControls.Button'/>
@@ -37,7 +37,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.WebControl_CommandName)
+        WebSysDescriptionAttribute(System.Web.SR.WebControl_CommandName)
         ]
         public virtual string CommandName {
             get {
@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.ButtonField_DataTextField),
+        WebSysDescriptionAttribute(System.Web.SR.ButtonField_DataTextField),
         TypeConverter("System.Web.UI.Design.DataSourceViewSchemaConverter, " + AssemblyRef.SystemDesign)
         ]
         public virtual string DataTextField {
@@ -88,7 +88,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.ButtonField_DataTextFormatString)
+        WebSysDescriptionAttribute(System.Web.SR.ButtonField_DataTextFormatString)
         ]
         public virtual string DataTextFormatString {
             get {
@@ -110,7 +110,7 @@ namespace System.Web.UI.WebControls {
         WebCategory("Appearance"),
         DefaultValue(""),
         Editor("System.Web.UI.Design.ImageUrlEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-        WebSysDescriptionAttribute(SR.ButtonField_ImageUrl),
+        WebSysDescriptionAttribute(System.Web.SR.ButtonField_ImageUrl),
         UrlProperty()
         ]
         public virtual string ImageUrl {
@@ -138,7 +138,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.ButtonField_Text)
+        WebSysDescriptionAttribute(System.Web.SR.ButtonField_Text)
         ]
         public virtual string Text {
             get {
@@ -267,7 +267,7 @@ namespace System.Web.UI.WebControls {
         /// <devdoc>
         /// </devdoc>
         private void OnDataBindField(object sender, EventArgs e) {
-            Debug.Assert(DataTextField.Length != 0, "Shouldn't be DataBinding without a DataTextField");
+            System.Web.Util.Debug.Assert(DataTextField.Length != 0, "Shouldn't be DataBinding without a DataTextField");
 
             Control boundControl = (Control)sender;
             Control controlContainer = boundControl.NamingContainer;
@@ -275,14 +275,14 @@ namespace System.Web.UI.WebControls {
             object dataItem = null;
 
             if (controlContainer == null) {
-                throw new HttpException(SR.GetString(SR.DataControlField_NoContainer));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataControlField_NoContainer));
             }
 
             // Get the DataItem from the container
             dataItem = DataBinder.GetDataItem(controlContainer);
 
             if (dataItem == null && !DesignMode) {
-                throw new HttpException(SR.GetString(SR.DataItem_Not_Found));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataItem_Not_Found));
             }
 
            if (textFieldDesc == null && dataItem != null) {
@@ -290,7 +290,7 @@ namespace System.Web.UI.WebControls {
 
                 textFieldDesc = TypeDescriptor.GetProperties(dataItem).Find(dataField, true);
                 if ((textFieldDesc == null) && !DesignMode) {
-                    throw new HttpException(SR.GetString(SR.Field_Not_Found, dataField));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, dataField));
                 }
             }
 
@@ -299,11 +299,11 @@ namespace System.Web.UI.WebControls {
                 dataValue = FormatDataTextValue(data);
             }
             else {
-                Debug.Assert(DesignMode == true);
-                dataValue = SR.GetString(SR.Sample_Databound_Text);
+                System.Web.Util.Debug.Assert(DesignMode == true);
+                dataValue = System.Web.SR.GetString(System.Web.SR.Sample_Databound_Text);
             }
 
-            Debug.Assert(boundControl is IButtonControl, "Expected the bound control to be an IButtonControl");
+            System.Web.Util.Debug.Assert(boundControl is IButtonControl, "Expected the bound control to be an IButtonControl");
             ((IButtonControl)boundControl).Text = dataValue;
         }
 

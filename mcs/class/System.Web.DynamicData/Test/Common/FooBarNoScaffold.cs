@@ -10,7 +10,7 @@ using MonoTests.ModelProviders;
 namespace MonoTests.Common
 {
 	[ScaffoldTable (false)]
-	class FooBarNoScaffold
+	public class FooBarNoScaffold
 	{
 		public string Column1 { get; set; }
 

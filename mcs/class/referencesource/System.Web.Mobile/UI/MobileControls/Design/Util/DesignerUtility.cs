@@ -75,8 +75,12 @@ namespace System.Web.UI.Design.MobileControls.Util
         // NOTE: Throws CheckoutException.Canceled if user cancels checkout.
         internal static void EnsureFileCheckedOut(ISite site, String fileName)
         {
+#if (MONO || FEATURE_PAL) 
+            Type serviceType = null;
+#else
             Type serviceType = Type.GetType("Microsoft.VisualStudio.Shell.VsCheckoutService, " + AssemblyRef.MicrosoftVisualStudio);
 
+#endif
             // Do nothing if service cannot be found.
             if (serviceType == null) {
 //                Debug.Fail("type Microsoft.VisualStudio.Shell.VsCheckoutService cannot be found in DesignerUtility.EnsureFileCheckedOut.");

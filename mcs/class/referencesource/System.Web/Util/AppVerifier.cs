@@ -19,30 +19,30 @@
         // It's possible that multiple error codes might get mapped to the same description string.
         // This can happen if there might be multiple ways for a single problem to manifest itself.
         private static readonly Dictionary<AppVerifierErrorCode, string> _errorStringMappings = new Dictionary<AppVerifierErrorCode, string>() {
-            { AppVerifierErrorCode.HttpApplicationInstanceWasNull, SR.AppVerifier_Errors_HttpApplicationInstanceWasNull },
-            { AppVerifierErrorCode.BeginHandlerDelegateWasNull, SR.AppVerifier_Errors_BeginHandlerDelegateWasNull },
-            { AppVerifierErrorCode.AsyncCallbackInvokedMultipleTimes, SR.AppVerifier_Errors_AsyncCallbackInvokedMultipleTimes },
-            { AppVerifierErrorCode.AsyncCallbackInvokedWithNullParameter, SR.AppVerifier_Errors_AsyncCallbackInvokedWithNullParameter },
-            { AppVerifierErrorCode.AsyncCallbackGivenAsyncResultWhichWasNotCompleted, SR.AppVerifier_Errors_AsyncCallbackGivenAsyncResultWhichWasNotCompleted },
-            { AppVerifierErrorCode.AsyncCallbackInvokedSynchronouslyButAsyncResultWasNotMarkedCompletedSynchronously, SR.AppVerifier_Errors_AsyncCallbackInvokedSynchronouslyButAsyncResultWasNotMarkedCompletedSynchronously },
-            { AppVerifierErrorCode.AsyncCallbackInvokedAsynchronouslyButAsyncResultWasMarkedCompletedSynchronously, SR.AppVerifier_Errors_AsyncCallbackInvokedAsynchronouslyButAsyncResultWasMarkedCompletedSynchronously },
-            { AppVerifierErrorCode.AsyncCallbackInvokedWithUnexpectedAsyncResultInstance, SR.AppVerifier_Errors_AsyncCallbackInvokedWithUnexpectedAsyncResultInstance },
-            { AppVerifierErrorCode.AsyncCallbackInvokedAsynchronouslyThenBeginHandlerThrew, SR.AppVerifier_Errors_AsyncCallbackInvokedEvenThoughBeginHandlerThrew },
-            { AppVerifierErrorCode.BeginHandlerThrewThenAsyncCallbackInvokedAsynchronously, SR.AppVerifier_Errors_AsyncCallbackInvokedEvenThoughBeginHandlerThrew },
-            { AppVerifierErrorCode.AsyncCallbackInvokedSynchronouslyThenBeginHandlerThrew, SR.AppVerifier_Errors_AsyncCallbackInvokedEvenThoughBeginHandlerThrew },
-            { AppVerifierErrorCode.AsyncCallbackInvokedWithUnexpectedAsyncResultAsyncState, SR.AppVerifier_Errors_AsyncCallbackInvokedWithUnexpectedAsyncResultAsyncState },
-            { AppVerifierErrorCode.AsyncCallbackCalledAfterHttpApplicationReassigned, SR.AppVerifier_Errors_AsyncCallbackCalledAfterHttpApplicationReassigned },
-            { AppVerifierErrorCode.BeginHandlerReturnedNull, SR.AppVerifier_Errors_BeginHandlerReturnedNull },
-            { AppVerifierErrorCode.BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButWhichWasNotCompleted, SR.AppVerifier_Errors_BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButWhichWasNotCompleted },
-            { AppVerifierErrorCode.BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButAsyncCallbackNeverCalled, SR.AppVerifier_Errors_BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButAsyncCallbackNeverCalled },
-            { AppVerifierErrorCode.BeginHandlerReturnedUnexpectedAsyncResultInstance, SR.AppVerifier_Errors_AsyncCallbackInvokedWithUnexpectedAsyncResultInstance },
-            { AppVerifierErrorCode.BeginHandlerReturnedUnexpectedAsyncResultAsyncState, SR.AppVerifier_Errors_BeginHandlerReturnedUnexpectedAsyncResultAsyncState },
-            { AppVerifierErrorCode.SyncContextSendOrPostCalledAfterRequestCompleted, SR.AppVerifier_Errors_SyncContextSendOrPostCalledAfterRequestCompleted },
-            { AppVerifierErrorCode.SyncContextSendOrPostCalledBetweenNotifications, SR.AppVerifier_Errors_SyncContextSendOrPostCalledBetweenNotifications },
-            { AppVerifierErrorCode.SyncContextPostCalledInNestedNotification, SR.AppVerifier_Errors_SyncContextPostCalledInNestedNotification },
-            { AppVerifierErrorCode.RequestNotificationCompletedSynchronouslyWithNotificationContextPending, SR.AppVerifier_Errors_RequestNotificationCompletedSynchronouslyWithNotificationContextPending },
-            { AppVerifierErrorCode.NotificationContextHasChangedAfterSynchronouslyProcessingNotification, SR.AppVerifier_Errors_NotificationContextHasChangedAfterSynchronouslyProcessingNotification },
-            { AppVerifierErrorCode.PendingProcessRequestNotificationStatusAfterCompletingNestedNotification, SR.AppVerifier_Errors_PendingProcessRequestNotificationStatusAfterCompletingNestedNotification },
+            { AppVerifierErrorCode.HttpApplicationInstanceWasNull, System.Web.SR.AppVerifier_Errors_HttpApplicationInstanceWasNull },
+            { AppVerifierErrorCode.BeginHandlerDelegateWasNull, System.Web.SR.AppVerifier_Errors_BeginHandlerDelegateWasNull },
+            { AppVerifierErrorCode.AsyncCallbackInvokedMultipleTimes, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedMultipleTimes },
+            { AppVerifierErrorCode.AsyncCallbackInvokedWithNullParameter, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedWithNullParameter },
+            { AppVerifierErrorCode.AsyncCallbackGivenAsyncResultWhichWasNotCompleted, System.Web.SR.AppVerifier_Errors_AsyncCallbackGivenAsyncResultWhichWasNotCompleted },
+            { AppVerifierErrorCode.AsyncCallbackInvokedSynchronouslyButAsyncResultWasNotMarkedCompletedSynchronously, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedSynchronouslyButAsyncResultWasNotMarkedCompletedSynchronously },
+            { AppVerifierErrorCode.AsyncCallbackInvokedAsynchronouslyButAsyncResultWasMarkedCompletedSynchronously, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedAsynchronouslyButAsyncResultWasMarkedCompletedSynchronously },
+            { AppVerifierErrorCode.AsyncCallbackInvokedWithUnexpectedAsyncResultInstance, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedWithUnexpectedAsyncResultInstance },
+            { AppVerifierErrorCode.AsyncCallbackInvokedAsynchronouslyThenBeginHandlerThrew, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedEvenThoughBeginHandlerThrew },
+            { AppVerifierErrorCode.BeginHandlerThrewThenAsyncCallbackInvokedAsynchronously, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedEvenThoughBeginHandlerThrew },
+            { AppVerifierErrorCode.AsyncCallbackInvokedSynchronouslyThenBeginHandlerThrew, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedEvenThoughBeginHandlerThrew },
+            { AppVerifierErrorCode.AsyncCallbackInvokedWithUnexpectedAsyncResultAsyncState, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedWithUnexpectedAsyncResultAsyncState },
+            { AppVerifierErrorCode.AsyncCallbackCalledAfterHttpApplicationReassigned, System.Web.SR.AppVerifier_Errors_AsyncCallbackCalledAfterHttpApplicationReassigned },
+            { AppVerifierErrorCode.BeginHandlerReturnedNull, System.Web.SR.AppVerifier_Errors_BeginHandlerReturnedNull },
+            { AppVerifierErrorCode.BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButWhichWasNotCompleted, System.Web.SR.AppVerifier_Errors_BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButWhichWasNotCompleted },
+            { AppVerifierErrorCode.BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButAsyncCallbackNeverCalled, System.Web.SR.AppVerifier_Errors_BeginHandlerReturnedAsyncResultMarkedCompletedSynchronouslyButAsyncCallbackNeverCalled },
+            { AppVerifierErrorCode.BeginHandlerReturnedUnexpectedAsyncResultInstance, System.Web.SR.AppVerifier_Errors_AsyncCallbackInvokedWithUnexpectedAsyncResultInstance },
+            { AppVerifierErrorCode.BeginHandlerReturnedUnexpectedAsyncResultAsyncState, System.Web.SR.AppVerifier_Errors_BeginHandlerReturnedUnexpectedAsyncResultAsyncState },
+            { AppVerifierErrorCode.SyncContextSendOrPostCalledAfterRequestCompleted, System.Web.SR.AppVerifier_Errors_SyncContextSendOrPostCalledAfterRequestCompleted },
+            { AppVerifierErrorCode.SyncContextSendOrPostCalledBetweenNotifications, System.Web.SR.AppVerifier_Errors_SyncContextSendOrPostCalledBetweenNotifications },
+            { AppVerifierErrorCode.SyncContextPostCalledInNestedNotification, System.Web.SR.AppVerifier_Errors_SyncContextPostCalledInNestedNotification },
+            { AppVerifierErrorCode.RequestNotificationCompletedSynchronouslyWithNotificationContextPending, System.Web.SR.AppVerifier_Errors_RequestNotificationCompletedSynchronouslyWithNotificationContextPending },
+            { AppVerifierErrorCode.NotificationContextHasChangedAfterSynchronouslyProcessingNotification, System.Web.SR.AppVerifier_Errors_NotificationContextHasChangedAfterSynchronouslyProcessingNotification },
+            { AppVerifierErrorCode.PendingProcessRequestNotificationStatusAfterCompletingNestedNotification, System.Web.SR.AppVerifier_Errors_PendingProcessRequestNotificationStatusAfterCompletingNestedNotification },
         };
 
         // Provides an option for different wrappers to specify whether to collect the call stacks traces
@@ -227,35 +227,35 @@
 
                         // header
                         StringBuilder errorString = new StringBuilder();
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_Title));
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_Subtitle));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_Title));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_Subtitle));
                         errorString.AppendLine();
 
                         // basic info (about the assert)
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_URL, requestUrl));
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_ErrorCode, (int)errorCode));
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_Description, GetLocalizedDescriptionStringForError(errorCode)));
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_ThreadInfo, assertInvocationInfo.ThreadId, assertInvocationInfo.Timestamp.ToLocalTime()));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_URL, requestUrl));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_ErrorCode, (int)errorCode));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_Description, GetLocalizedDescriptionStringForError(errorCode)));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_ThreadInfo, assertInvocationInfo.ThreadId, assertInvocationInfo.Timestamp.ToLocalTime()));
                         errorString.AppendLine(assertInvocationInfo.StackTrace.ToString());
 
                         // Begin* method info
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_BeginMethodInfo_EntryMethod, PrettyPrintDelegate(originalDelegate)));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BeginMethodInfo_EntryMethod, PrettyPrintDelegate(originalDelegate)));
                         if (currentNotification != null) {
-                            errorString.AppendLine(FormatErrorString(SR.AppVerifier_BeginMethodInfo_RequestNotification_Integrated, currentNotification, isPostNotification));
+                            errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BeginMethodInfo_RequestNotification_Integrated, currentNotification, isPostNotification));
                         }
                         else {
-                            errorString.AppendLine(FormatErrorString(SR.AppVerifier_BeginMethodInfo_RequestNotification_NotIntegrated));
+                            errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BeginMethodInfo_RequestNotification_NotIntegrated));
                         }
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_BeginMethodInfo_CurrentHandler, httpHandlerType));
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_BeginMethodInfo_ThreadInfo, beginHandlerInvocationInfo.ThreadId, beginHandlerInvocationInfo.Timestamp.ToLocalTime()));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BeginMethodInfo_CurrentHandler, httpHandlerType));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BeginMethodInfo_ThreadInfo, beginHandlerInvocationInfo.ThreadId, beginHandlerInvocationInfo.Timestamp.ToLocalTime()));
                         errorString.AppendLine(beginHandlerInvocationInfo.StackTrace.ToString());
 
                         // AsyncCallback info
                         int totalAsyncInvocationCount;
                         InvocationInfo firstAsyncInvocation = asyncCallbackInvocationHelper.GetFirstInvocationInfo(out totalAsyncInvocationCount);
-                        errorString.AppendLine(FormatErrorString(SR.AppVerifier_AsyncCallbackInfo_InvocationCount, totalAsyncInvocationCount));
+                        errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_AsyncCallbackInfo_InvocationCount, totalAsyncInvocationCount));
                         if (firstAsyncInvocation != null) {
-                            errorString.AppendLine(FormatErrorString(SR.AppVerifier_AsyncCallbackInfo_FirstInvocation_ThreadInfo, firstAsyncInvocation.ThreadId, firstAsyncInvocation.Timestamp.ToLocalTime()));
+                            errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_AsyncCallbackInfo_FirstInvocation_ThreadInfo, firstAsyncInvocation.ThreadId, firstAsyncInvocation.Timestamp.ToLocalTime()));
                             errorString.AppendLine(firstAsyncInvocation.StackTrace.ToString());
                         }
 
@@ -557,7 +557,7 @@
             }
 
             AppendAdditionalInfoDelegate appendCurrentNotificationInfo = (errorString) => {
-                errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_NotificationInfo, currentNotification, isPostNotification, isReentry));
+                errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_NotificationInfo, currentNotification, isPostNotification, isReentry));
             };
 
             AssertDelegate assert = GetAssertDelegateImpl(requestUrl, errorHandler, appendAdditionalInfoDelegate: appendCurrentNotificationInfo);
@@ -605,15 +605,15 @@
 
                     // header
                     StringBuilder errorString = new StringBuilder();
-                    errorString.AppendLine(FormatErrorString(SR.AppVerifier_Title));
-                    errorString.AppendLine(FormatErrorString(SR.AppVerifier_Subtitle));
+                    errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_Title));
+                    errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_Subtitle));
                     errorString.AppendLine();
 
                     // basic info (about the assert)
-                    errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_URL, requestUrl));
-                    errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_ErrorCode, (int)errorCode));
-                    errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_Description, GetLocalizedDescriptionStringForError(errorCode)));
-                    errorString.AppendLine(FormatErrorString(SR.AppVerifier_BasicInfo_ThreadInfo, assertInvocationInfo.ThreadId, assertInvocationInfo.Timestamp.ToLocalTime()));
+                    errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_URL, requestUrl));
+                    errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_ErrorCode, (int)errorCode));
+                    errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_Description, GetLocalizedDescriptionStringForError(errorCode)));
+                    errorString.AppendLine(FormatErrorString(System.Web.SR.AppVerifier_BasicInfo_ThreadInfo, assertInvocationInfo.ThreadId, assertInvocationInfo.Timestamp.ToLocalTime()));
 
                     // append additional info if needed
                     if (appendAdditionalInfoDelegate != null) {
@@ -693,7 +693,7 @@
         [SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", MessageId = "System.String.Format(System.IFormatProvider,System.String,System.Object[])",
             Justification = "Matches culture specified in Misc.WriteUnhandledExceptionToEventLog.")]
         internal static string FormatErrorString(string name, params object[] args) {
-            return String.Format(CultureInfo.InstalledUICulture, SR.Resources.GetString(name, CultureInfo.InstalledUICulture), args);
+            return String.Format(CultureInfo.InstalledUICulture, System.Web.SR.Resources.GetString(name, CultureInfo.InstalledUICulture), args);
         }
 
         // contains a counter and invocation information for an AsyncCallback delegate

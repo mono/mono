@@ -142,7 +142,7 @@ namespace System.Web.UI.WebControls {
         Themeable(false),
         Filterable(false),
         PersistenceMode(PersistenceMode.InnerProperty),
-        WebSysDescription(SR.LoginView_RoleGroups)
+        WebSysDescription(System.Web.SR.LoginView_RoleGroups)
         ]
         public virtual RoleGroupCollection RoleGroups {
             get {
@@ -179,7 +179,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.LoginView_ViewChanged)
+        WebSysDescription(System.Web.SR.LoginView_ViewChanged)
         ]
         public event EventHandler ViewChanged {
             add {
@@ -197,7 +197,7 @@ namespace System.Web.UI.WebControls {
         /// </devdoc>
         [
         WebCategory("Action"),
-        WebSysDescription(SR.LoginView_ViewChanging)
+        WebSysDescription(System.Web.SR.LoginView_ViewChanging)
         ]
         public event EventHandler ViewChanging {
             add {
@@ -251,7 +251,7 @@ namespace System.Web.UI.WebControls {
         EditorBrowsable(EditorBrowsableState.Never),
         ]
         public override void Focus() {
-            throw new NotSupportedException(SR.GetString(SR.NoFocusSupport, this.GetType().Name));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.NoFocusSupport, this.GetType().Name));
         }
 
         /// <devdoc>

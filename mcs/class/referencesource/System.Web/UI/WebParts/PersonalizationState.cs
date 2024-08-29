@@ -91,7 +91,7 @@ namespace System.Web.UI.WebControls.WebParts {
             }
 
             if (_webPartManager.WebParts.Contains(webPart) == false) {
-                throw new ArgumentException(SR.GetString(SR.UnknownWebPart), "webPart");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.UnknownWebPart), "webPart");
             }
         }
     }

@@ -27,6 +27,7 @@ namespace System.Web.Security {
     using System.Web.Hosting;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    
 
 
 
@@ -64,7 +65,7 @@ namespace System.Web.Security {
             VirtualPath vPath = VirtualPath.Create(virtualPath);
 
             if (!vPath.IsWithinAppRoot)
-                throw new ArgumentException(SR.GetString(SR.Virtual_path_outside_application_not_supported), "virtualPath");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Virtual_path_outside_application_not_supported), "virtualPath");
 
             if (!s_EnabledDetermined) {
                 if (HttpRuntime.UseIntegratedPipeline) {
@@ -174,19 +175,19 @@ namespace System.Web.Security {
                     pathData = context.GetConfigurationPathData();
                     // as a perf optimization, we cache results for annoymous access
                     //  to CachedPathData.PhysicalPath, and avoid doing the full check
-                    if (!StringUtil.EqualsIgnoreCase(fileName, pathData.PhysicalPath)) {
+                    if (!System.Web.Util.StringUtil.EqualsIgnoreCase(fileName, pathData.PhysicalPath)) {
                         // set to null so we don't attempt to update it after the full check below
                         pathData = null;
                     }
                     else {
                         if (pathData.AnonymousAccessAllowed) { // fast path when everyone has access
-                            Debug.Trace("FAM", "IsUserAllowedToFile: pathData.AnonymousAccessAllowed");
+                            System.Web.Util.Debug.Trace("FAM", "IsUserAllowedToFile: pathData.AnonymousAccessAllowed");
                             return true;
                         }
                         if (pathData.AnonymousAccessChecked && isAnonymousUser) { // fast path for anonymous user
                             // another thread could be modifying CachedPathData, so return the 
                             // value of AnonymousAccessAllowed instead of assuming it is false
-                            Debug.Trace("FAM", "IsUserAllowedToFile: pathData.AnonymousAccessChecked && isAnonymousUser");
+                            System.Web.Util.Debug.Trace("FAM", "IsUserAllowedToFile: pathData.AnonymousAccessChecked && isAnonymousUser");
                             return pathData.AnonymousAccessAllowed;
                         }
                     }
@@ -204,11 +205,11 @@ namespace System.Web.Security {
             bool fAllowed;
             if (iAccess == 1) { // iff it's a GET or POST or HEAD or OPTIONs verb, we can cache the result
                 if (oSecDesc._AnonymousAccessChecked && isAnonymousUser) {
-                    Debug.Trace("FAM", "IsUserAllowedToFile: oSecDesc._AnonymousAccessChecked && isAnonymousUser");
+                    System.Web.Util.Debug.Trace("FAM", "IsUserAllowedToFile: oSecDesc._AnonymousAccessChecked && isAnonymousUser");
                     fAllowed = oSecDesc._AnonymousAccess;
                 }
                 else {
-                    Debug.Trace("FAM", "IsUserAllowedToFile: calling oSecDesc.IsAccessAllowed with iAccess == 1");
+                    System.Web.Util.Debug.Trace("FAM", "IsUserAllowedToFile: calling oSecDesc.IsAccessAllowed with iAccess == 1");
                     fAllowed = oSecDesc.IsAccessAllowed(context.WorkerRequest.GetUserToken(), iAccess);
                 }
 
@@ -221,13 +222,13 @@ namespace System.Web.Security {
                 // Note that if CachedPathData.Exists is false, then it does not have a dependency on the file path,
                 // and won't be expunged if the file changes.
                 if (pathData != null && pathData.Exists && oSecDesc._AnonymousAccessChecked) {
-                    Debug.Trace("FAM", "IsUserAllowedToFile: updating pathData");
+                    System.Web.Util.Debug.Trace("FAM", "IsUserAllowedToFile: updating pathData");
                     pathData.AnonymousAccessAllowed = oSecDesc._AnonymousAccess;
                     pathData.AnonymousAccessChecked = true;
                 }
             } 
             else {
-                Debug.Trace("FAM", "IsUserAllowedToFile: calling oSecDesc.IsAccessAllowed with iAccess != 1");
+                System.Web.Util.Debug.Trace("FAM", "IsUserAllowedToFile: calling oSecDesc.IsAccessAllowed with iAccess != 1");
                 fAllowed = oSecDesc.IsAccessAllowed(context.WorkerRequest.GetUserToken(), iAccess); // don't cache this anywhere
             }
 
@@ -258,13 +259,13 @@ namespace System.Web.Security {
 
             // If it's not present in the cache, then create it and add to the cache
             if (oSecDesc == null) {
-                Debug.Trace("FAM", "GetFileSecurityDescriptorWrapper: cache miss for " + fileName);
+                System.Web.Util.Debug.Trace("FAM", "GetFileSecurityDescriptorWrapper: cache miss for " + fileName);
                 oSecDesc = new FileSecurityDescriptorWrapper(fileName);
                 string cacheDependencyPath = oSecDesc.GetCacheDependencyPath();
                 if (cacheDependencyPath != null) {
                     // Add it to the cache: ignore failures, since a different thread may have added it or the file doesn't exist
                     try {
-                        Debug.Trace("FAM", "GetFileSecurityDescriptorWrapper: inserting into cache with dependency on " + cacheDependencyPath);
+                        System.Web.Util.Debug.Trace("FAM", "GetFileSecurityDescriptorWrapper: inserting into cache with dependency on " + cacheDependencyPath);
                         CacheDependency dependency = new CacheDependency(0, cacheDependencyPath);
                         TimeSpan slidingExp = CachedPathData.UrlMetadataSlidingExpiration;
                         HttpRuntime.Cache.InternalCache.Insert(oCacheKey, oSecDesc, new CacheInsertOptions() {
@@ -273,7 +274,7 @@ namespace System.Web.Security {
                                                                                     OnRemovedCallback = new CacheItemRemovedCallback(oSecDesc.OnCacheItemRemoved)
                                                                                 });
                     } catch (Exception e){
-                        Debug.Trace("internal", e.ToString());
+                        System.Web.Util.Debug.Trace("internal", e.ToString());
                         freeDescriptor = true;
                     }
                 }
@@ -335,7 +336,7 @@ namespace System.Web.Security {
         /////////////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////////////
         internal FileSecurityDescriptorWrapper(String strFile) {
-            _FileName = FileUtil.RemoveTrailingDirectoryBackSlash(strFile);
+            _FileName = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(strFile);
             _securityDescriptor = UnsafeNativeMethods.GetFileSecurityDescriptor(_FileName);
         }
 
@@ -435,24 +436,24 @@ namespace System.Web.Security {
         internal string GetCacheDependencyPath() {
             // if security descriptor is invalid, we cannot cache it
             if (_securityDescriptor == UnsafeNativeMethods.INVALID_HANDLE_VALUE) {
-                Debug.Trace("FAM", "GetCacheDependencyPath: invalid security descriptor");
+                System.Web.Util.Debug.Trace("FAM", "GetCacheDependencyPath: invalid security descriptor");
                 return null;
             }
             // if security descriptor is valid (file exists), cache it with a dependency on the file name
             if (_securityDescriptor != IntPtr.Zero) {
-                Debug.Trace("FAM", "GetCacheDependencyPath: valid security descriptor");
+                System.Web.Util.Debug.Trace("FAM", "GetCacheDependencyPath: valid security descriptor");
                 return _FileName;
             }
             // file does not exist, but if it's path is beneath the app root, we will cache it and
             // use the first existing directory as the cache depenedency path
-            string existingDir = FileUtil.GetFirstExistingDirectory(AppRoot, _FileName);
+            string existingDir = System.Web.Util.FileUtil.GetFirstExistingDirectory(AppRoot, _FileName);
 
 #if DBG
             if (existingDir != null) {
-                Debug.Trace("FAM", "GetCacheDependencyPath: beneath app root");
+                System.Web.Util.Debug.Trace("FAM", "GetCacheDependencyPath: beneath app root");
             }
             else {
-                Debug.Trace("FAM", "GetCacheDependencyPath: not beneath app root");
+                System.Web.Util.Debug.Trace("FAM", "GetCacheDependencyPath: not beneath app root");
             }
 #endif
             return existingDir;
@@ -466,7 +467,7 @@ namespace System.Web.Security {
                 if (appRoot == null) {
                     InternalSecurityPermissions.AppPathDiscovery.Assert();
                     appRoot = Path.GetFullPath(HttpRuntime.AppDomainAppPathInternal);
-                    appRoot = FileUtil.RemoveTrailingDirectoryBackSlash(appRoot);
+                    appRoot = System.Web.Util.FileUtil.RemoveTrailingDirectoryBackSlash(appRoot);
                 }
                 return appRoot;
             }
@@ -499,19 +500,19 @@ namespace System.Web.Security {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.Assess_Denied_Title);}
+            get { return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Title);}
             //get { return "Access Denied Error";}
         }
 
         protected override string Description {
             get {
-                return SR.GetString(SR.Assess_Denied_Description3);
+                return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Description3);
                 //return "An error occurred while accessing the resources required to serve this request. &nbsp; This typically happens if you do not have permissions to view the file you are trying to access.";
             }
         }
 
         protected override string MiscSectionTitle {
-            get { return SR.GetString(SR.Assess_Denied_Section_Title3); }
+            get { return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Section_Title3); }
             //get { return "Error message 401.3";}
         }
 
@@ -519,10 +520,10 @@ namespace System.Web.Security {
             get {
                 string miscContent;
                 if (_strFile.Length > 0)
-                    miscContent = SR.GetString(SR.Assess_Denied_Misc_Content3, HttpRuntime.GetSafePath(_strFile));
+                    miscContent = System.Web.SR.GetString(System.Web.SR.Assess_Denied_Misc_Content3, HttpRuntime.GetSafePath(_strFile));
                 //return "Access is denied due to NT ACLs on the requested file. Ask the web server's administrator to give you access to "+ _strFile + ".";
                 else
-                    miscContent = SR.GetString(SR.Assess_Denied_Misc_Content3_2);
+                    miscContent = System.Web.SR.GetString(System.Web.SR.Assess_Denied_Misc_Content3_2);
 
                 AdaptiveMiscContent.Add(miscContent);
                 return miscContent;

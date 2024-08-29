@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -1791,7 +1791,9 @@ namespace System.Web.UI.DataVisualization.Charting
 	[
 	SRDescription("DescriptionAttributeDataPoint_DataPoint"),
 	DefaultProperty("YValues"),
+#if !FEATURE_PAL
     TypeConverter(Editors.DataPointConverter.Convertor)
+#endif
 	]
 #if ASPPERM_35
 	[AspNetHostingPermission(System.Security.Permissions.SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -2721,7 +2723,9 @@ namespace System.Web.UI.DataVisualization.Charting
 			PersistenceMode(PersistenceMode.Attribute),
 #endif
 			TypeConverter(typeof(DoubleArrayConverter)),
+#if !FEATURE_PAL
 			Editor(typeof(UITypeEditor), typeof(UITypeEditor)),
+#endif
 			RefreshProperties(RefreshProperties.All),
 			SerializationVisibilityAttribute(SerializationVisibility.Attribute)
 		]
@@ -2809,7 +2813,9 @@ namespace System.Web.UI.DataVisualization.Charting
 	[
 	SRDescription("DescriptionAttributeDataPointCustomProperties_DataPointCustomProperties"),
 	DefaultProperty("LabelStyle"),
+#if !FEATURE_PAL
     TypeConverter(Editors.DataPointCustomPropertiesConverter.Convertor)
+#endif
     ]
 #if Microsoft_CONTROL
 	public class DataPointCustomProperties : ChartNamedElement
@@ -3244,7 +3250,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		/// The text of the data point label.
 		/// </summary>
 		[
+#if !FEATURE_PAL
         Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -3305,7 +3313,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeMisc"),
 		Bindable(true),
 		SRDescription("DescriptionAttributeAxisLabel"),
+#if !FEATURE_PAL
 		Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -3480,7 +3490,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
 		SRDescription("DescriptionAttributeColor4"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -3542,7 +3554,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
         SRDescription("DescriptionAttributeBorderColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -3699,7 +3713,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeAppearance"),
 		Bindable(true),
         SRDescription("DescriptionAttributeBackImage"),
+#if !FEATURE_PAL
         Editor(Editors.ImageValueEditor.Editor, Editors.ImageValueEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -3816,7 +3832,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		NotifyParentPropertyAttribute(true),
         SRDescription("DescriptionAttributeImageTransparentColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -3923,7 +3941,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
+#if !FEATURE_PAL
         Editor(Editors.GradientEditor.Editor, Editors.GradientEditor.Base)
+#endif
 		]
 		public GradientStyle BackGradientStyle
 		{
@@ -3973,7 +3993,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
         SRDescription("DescriptionAttributeBackSecondaryColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -4028,7 +4050,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
+#if !FEATURE_PAL
         Editor(Editors.HatchStyleEditor.Editor, Editors.HatchStyleEditor.Base)
+#endif
 		]
 		public ChartHatchStyle BackHatchStyle
 		{
@@ -4129,7 +4153,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
 		SRDescription("DescriptionAttributeFontColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -4240,7 +4266,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
+#if !FEATURE_PAL
         Editor(Editors.MarkerStyleEditor.Editor, Editors.MarkerStyleEditor.Base),
+#endif
 		RefreshProperties(RefreshProperties.All)
 		]
 		public MarkerStyle MarkerStyle
@@ -4348,7 +4376,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeMarker"),
 		Bindable(true),
         SRDescription("DescriptionAttributeMarkerImage"),
+#if !FEATURE_PAL
         Editor(Editors.ImageValueEditor.Editor, Editors.ImageValueEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -4408,7 +4438,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
         SRDescription("DescriptionAttributeImageTransparentColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -4462,7 +4494,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
 		SRDescription("DescriptionAttributeMarkerColor3"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -4516,7 +4550,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
 		SRDescription("DescriptionAttributeMarkerBorderColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -4787,7 +4823,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeMapArea"),
 		Bindable(true),
         SRDescription("DescriptionAttributeToolTip"),
+#if !FEATURE_PAL
         Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 #if !Microsoft_CONTROL
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute)
@@ -4851,7 +4889,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(""),
 #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
         Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base)
+#endif
 #endif
 		]
 		public string Url
@@ -4902,7 +4942,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRDescription("DescriptionAttributeMapAreaAttributes"),
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
 		Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base)
+#endif
 		]
 		public string MapAreaAttributes
 		{
@@ -4949,7 +4991,9 @@ namespace System.Web.UI.DataVisualization.Charting
         [DefaultValue("")]
         [SRCategory(SR.Keys.CategoryAttributeMapArea)]
         [SRDescription(SR.Keys.DescriptionAttributePostBackValue)]
+#if !FEATURE_PAL
         [Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base)]
+#endif
         public string PostBackValue 
         { 
             get
@@ -5065,7 +5109,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeLegend"),
 		Bindable(true),
 		SRDescription("DescriptionAttributeLegendText"),
+#if !FEATURE_PAL
 		Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute)
@@ -5117,7 +5163,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeLegend"),
 		Bindable(true),
 		SRDescription("DescriptionAttributeLegendToolTip"),
+#if !FEATURE_PAL
         Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute)
@@ -5179,7 +5227,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
         SRDescription("DescriptionAttributeLabelBackColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif 
         DefaultValue(typeof(Color), ""),
 #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
@@ -5232,7 +5282,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
         SRDescription("DescriptionAttributeBorderColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
         DefaultValue(typeof(Color), ""),
 #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
@@ -5392,7 +5444,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRCategory("CategoryAttributeLabel"),
 		Bindable(true),
 		SRDescription("DescriptionAttributeLabelToolTip"),
+#if !FEATURE_PAL
         Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute)
@@ -5456,7 +5510,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRDescription("DescriptionAttributeLegendUrl"),
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
         Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base),
+#endif
         SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")
         ]
 		public string LegendUrl
@@ -5510,7 +5566,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRDescription("DescriptionAttributeMapAreaAttributes"),
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
         Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base)
+#endif
 		]
 		public string LegendMapAreaAttributes
 		{
@@ -5558,7 +5616,9 @@ namespace System.Web.UI.DataVisualization.Charting
         [DefaultValue("")]
 		[SRCategory("CategoryAttributeLegend")]
         [SRDescription(SR.Keys.DescriptionAttributePostBackValue)]
+#if !FEATURE_PAL
         [Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base)]
+#endif
         public string LegendPostBackValue
         {
             get
@@ -5612,7 +5672,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRDescription("DescriptionAttributeUrl"),
 		DefaultValue(""),
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
         Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base),
+#endif
         SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")
 		]
 		public string LabelUrl
@@ -5713,7 +5775,9 @@ namespace System.Web.UI.DataVisualization.Charting
         [DefaultValue("")]
         [SRCategory("CategoryAttributeLabel")]
         [SRDescription(SR.Keys.DescriptionAttributePostBackValue)]
+#if !FEATURE_PAL
         [Editor(Editors.KeywordsStringEditor.Editor, Editors.KeywordsStringEditor.Base)]
+#endif
         public string LabelPostBackValue
         {
             get

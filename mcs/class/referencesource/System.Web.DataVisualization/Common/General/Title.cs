@@ -1,6 +1,6 @@
 //-------------------------------------------------------------
-// <copyright company=’Microsoft Corporation’>
-//   Copyright © Microsoft Corporation. All Rights Reserved.
+// <copyright company=ï¿½Microsoft Corporationï¿½>
+//   Copyright ï¿½ Microsoft Corporation. All Rights Reserved.
 // </copyright>
 //-------------------------------------------------------------
 // @owner=alexgor, deliant
@@ -622,7 +622,9 @@ namespace System.Web.UI.DataVisualization.Charting
         SRDescription("DescriptionAttributeBackColor"),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -650,7 +652,9 @@ namespace System.Web.UI.DataVisualization.Charting
         SRDescription("DescriptionAttributeBorderColor"),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -732,7 +736,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		Bindable(true),
 		DefaultValue(""),
         SRDescription("DescriptionAttributeBackImage"),
+#if !FEATURE_PAL
         Editor(Editors.ImageValueEditor.Editor, Editors.ImageValueEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
@@ -787,7 +793,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		NotifyParentPropertyAttribute(true),
         SRDescription("DescriptionAttributeImageTransparentColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -852,7 +860,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
+#if !FEATURE_PAL
         Editor(Editors.GradientEditor.Editor, Editors.GradientEditor.Base)
+#endif
 		]
 		public GradientStyle BackGradientStyle
 		{
@@ -888,7 +898,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		NotifyParentPropertyAttribute(true),
         SRDescription("DescriptionAttributeBackSecondaryColor"),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -927,7 +939,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
 		#endif
+#if !FEATURE_PAL
         Editor(Editors.HatchStyleEditor.Editor, Editors.HatchStyleEditor.Base)
+#endif
 		]
 		public ChartHatchStyle BackHatchStyle
 		{
@@ -978,7 +992,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		SRDescription("DescriptionAttributeTitle_Color"),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -1084,7 +1100,9 @@ namespace System.Web.UI.DataVisualization.Charting
         SRDescription("DescriptionAttributeShadowColor"),
 		NotifyParentPropertyAttribute(true),
         TypeConverter(typeof(ColorConverter)),
+#if !FEATURE_PAL
         Editor(Editors.ChartColorEditor.Editor, Editors.ChartColorEditor.Base),
+#endif
 		#if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute)
 		#endif
@@ -1143,7 +1161,9 @@ namespace System.Web.UI.DataVisualization.Charting
 		DefaultValue(""),
 #if !Microsoft_CONTROL
 		PersistenceMode(PersistenceMode.Attribute),
+#if !FEATURE_PAL
         Editor(Editors.UrlValueEditor.Editor, Editors.UrlValueEditor.Base)
+#endif
 #endif
 		]
 		public string Url

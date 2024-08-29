@@ -11,16 +11,16 @@ namespace System.Web {
     using System.Runtime.Serialization.Formatters;
     using System.Threading;
     using System.Security.Permissions;
+    
 
     public class ProcessModelInfo {
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.High)]
+        
         static public ProcessInfo    GetCurrentProcessInfo() {
             HttpContext context = HttpContext.Current;
             if (context == null || context.WorkerRequest == null || 
                 !(context.WorkerRequest is System.Web.Hosting.ISAPIWorkerRequestOutOfProc))
             {
-                throw new HttpException(SR.GetString(SR.Process_information_not_available));                
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Process_information_not_available));                
             }
 
             int     dwReqExecuted = 0;
@@ -34,7 +34,7 @@ namespace System.Web {
                     ref tmCreateTime, ref pid);
 
             if (iRet < 0)
-                throw new HttpException(SR.GetString(SR.Process_information_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Process_information_not_available));
 
             DateTime startTime = DateTime.FromFileTime(tmCreateTime);
             TimeSpan age = DateTime.Now.Subtract(startTime);
@@ -42,15 +42,13 @@ namespace System.Web {
             return new ProcessInfo(startTime, age, pid, dwReqExecuted, 
                                    ProcessStatus.Alive, ProcessShutdownReason.None, mem);
         }
-
-
-        [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.High)]
+        
         static public ProcessInfo[]  GetHistory(int numRecords) {
             HttpContext context = HttpContext.Current;
             if (context == null || context.WorkerRequest == null || 
                 !(context.WorkerRequest is System.Web.Hosting.ISAPIWorkerRequestOutOfProc))
             {
-                throw new HttpException(SR.GetString(SR.Process_information_not_available));                
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Process_information_not_available));                
             }
 
             if (numRecords < 1)
@@ -67,7 +65,7 @@ namespace System.Web {
 
             int iRows = UnsafeNativeMethods.PMGetHistoryTable (numRecords, dwPID, dwExed, dwPend, dwExei, dwReas, mem, tmCrea, tmDeat);
             if (iRows < 0)
-                throw new HttpException(SR.GetString(SR.Process_information_not_available));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Process_information_not_available));
 
             ProcessInfo[] ret = new ProcessInfo[iRows];
             for (int iter=0; iter<iRows; iter++) {

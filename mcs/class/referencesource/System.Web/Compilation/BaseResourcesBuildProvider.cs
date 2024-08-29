@@ -24,6 +24,7 @@ using System.Web.UI;
 using System.Web.Util;
 using Util=System.Web.UI.Util;
 
+
 /// Base class for BuildProviders that generate resources
 [BuildProviderAppliesTo(BuildProviderAppliesTo.Resources)]
 internal abstract class BaseResourcesBuildProvider : BuildProvider {
@@ -91,7 +92,7 @@ internal abstract class BaseResourcesBuildProvider : BuildProvider {
         if (_ns == null) {
             // In the case where we don't generate code, just name the resource file
             // after the virtual file
-            resourceFileName = UrlPath.GetFileNameWithoutExtension(VirtualPath) + ".resources";
+            resourceFileName = System.Web.Util.UrlPath.GetFileNameWithoutExtension(VirtualPath) + ".resources";
         }
         else if (_cultureName == null) {
             // Name the resource file after the generated class, since that's what the
@@ -123,7 +124,7 @@ internal abstract class BaseResourcesBuildProvider : BuildProvider {
                 // This throws an ArgumentException if the resource file name was already added.
                 // Catch the situation, and give a better error message (VSWhidbey 87110)
 
-                throw new HttpException(SR.GetString(SR.Duplicate_Resource_File, VirtualPath));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Duplicate_Resource_File, VirtualPath));
             }
 
             // Create an output stream from the .resource file

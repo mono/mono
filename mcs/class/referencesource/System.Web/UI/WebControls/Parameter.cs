@@ -114,7 +114,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(DbType.Object),
         WebCategory("Parameter"),
-        WebSysDescription(SR.Parameter_DbType),
+        WebSysDescription(System.Web.SR.Parameter_DbType),
         ]
         public DbType DbType {
             get {
@@ -141,7 +141,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(null),
         WebCategory("Parameter"),
-        WebSysDescription(SR.Parameter_DefaultValue),
+        WebSysDescription(System.Web.SR.Parameter_DefaultValue),
         ]
         public string DefaultValue {
             get {
@@ -163,7 +163,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(ParameterDirection.Input),
         WebCategory("Parameter"),
-        WebSysDescription(SR.Parameter_Direction),
+        WebSysDescription(System.Web.SR.Parameter_Direction),
         ]
         public ParameterDirection Direction {
             get {
@@ -187,7 +187,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(""),
         WebCategory("Parameter"),
-        WebSysDescription(SR.Parameter_Name),
+        WebSysDescription(System.Web.SR.Parameter_Name),
         ]
         public string Name {
             get {
@@ -222,7 +222,7 @@ namespace System.Web.UI.WebControls {
                 return ConvertTypeCodeToDbType(Type);
             }
             if (Type != TypeCode.Empty) {
-                throw new InvalidOperationException(SR.GetString(SR.Parameter_TypeNotSupported, Name));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Parameter_TypeNotSupported, Name));
             }
             return dbType;
         }
@@ -233,7 +233,7 @@ namespace System.Web.UI.WebControls {
                 return GetValue(value, DefaultValue, Type, ConvertEmptyStringToNull, ignoreNullableTypeChanges);
             }
             if (Type != TypeCode.Empty) {
-                throw new InvalidOperationException(SR.GetString(SR.Parameter_TypeNotSupported, Name));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Parameter_TypeNotSupported, Name));
             }
             return GetValue(value, DefaultValue, dbType, ConvertEmptyStringToNull, ignoreNullableTypeChanges);
         }
@@ -277,7 +277,7 @@ namespace System.Web.UI.WebControls {
                 return new Guid(value.ToString());
             }
 
-            Debug.Fail("Should never reach this point.");
+            System.Web.Util.Debug.Fail("Should never reach this point.");
             return null;
         }
 
@@ -335,7 +335,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(0),
         WebCategory("Parameter"),
-        WebSysDescription(SR.Parameter_Size),
+        WebSysDescription(System.Web.SR.Parameter_Size),
         ]
         public int Size {
             get {
@@ -359,7 +359,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(TypeCode.Empty),
         WebCategory("Parameter"),
-        WebSysDescription(SR.Parameter_Type),
+        WebSysDescription(System.Web.SR.Parameter_Type),
         ]
         public TypeCode Type {
             get {
@@ -388,7 +388,7 @@ namespace System.Web.UI.WebControls {
         [
         DefaultValue(true),
         WebCategory("Parameter"),
-        WebSysDescription(SR.Parameter_ConvertEmptyStringToNull),
+        WebSysDescription(System.Web.SR.Parameter_ConvertEmptyStringToNull),
         ]
         public bool ConvertEmptyStringToNull {
             get {

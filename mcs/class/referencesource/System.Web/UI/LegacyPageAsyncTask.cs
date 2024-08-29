@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.Util;
 
+
 // Represents an asynchronous task that uses the old asynchronous patterns and the legacy synchronization systems
 
 internal sealed class LegacyPageAsyncTask {
@@ -84,19 +85,19 @@ internal sealed class LegacyPageAsyncTask {
     }
 
     internal void Start(LegacyPageAsyncTaskManager manager, Object source, EventArgs args) {
-        Debug.Assert(!_started);
+        System.Web.Util.Debug.Assert(!_started);
 
         _taskManager = manager;
         _completionCallback = new AsyncCallback(this.OnAsyncTaskCompletion);
         _started = true;
 
-        Debug.Trace("Async", "Start task");
+        System.Web.Util.Debug.Trace("Async", "Start task");
 
         try {
             IAsyncResult ar = _beginHandler(source, args, _completionCallback, _state);
 
             if (ar == null) {
-                throw new InvalidOperationException(SR.GetString(SR.Async_null_asyncresult));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Async_null_asyncresult));
             }
 
             if (_asyncResult == null) {
@@ -105,7 +106,7 @@ internal sealed class LegacyPageAsyncTask {
             }
         }
         catch (Exception e) {
-            Debug.Trace("Async", "Task failed to start");
+            System.Web.Util.Debug.Trace("Async", "Task failed to start");
 
             _error = e;
             _completed = true;
@@ -117,7 +118,7 @@ internal sealed class LegacyPageAsyncTask {
     }
 
     private void OnAsyncTaskCompletion(IAsyncResult ar) {
-        Debug.Trace("Async", "Task completed, CompletedSynchronously=" + ar.CompletedSynchronously);
+        System.Web.Util.Debug.Trace("Async", "Task completed, CompletedSynchronously=" + ar.CompletedSynchronously);
 
         if (_asyncResult == null) {
             // _asyncResult could be null if the code not yet returned from begin method
@@ -128,7 +129,7 @@ internal sealed class LegacyPageAsyncTask {
     }
 
     internal void ForceTimeout(bool syncCaller) {
-        Debug.Trace("Async", "Task timed out");
+        System.Web.Util.Debug.Trace("Async", "Task timed out");
         CompleteTask(true /*timedOut*/, syncCaller /*syncTimeoutCaller*/);
     }
 

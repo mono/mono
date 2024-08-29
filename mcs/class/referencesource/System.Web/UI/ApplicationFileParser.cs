@@ -20,6 +20,7 @@ using System.Web.Compilation;
 using Debug=System.Web.Util.Debug;
 
 
+
 /*
  * Parser for global.asax files
  */
@@ -45,7 +46,7 @@ internal sealed class ApplicationFileParser : TemplateParser {
         // Check for invalid scopes
         if (scope == ObjectTagScope.Page) {
             throw new HttpException(
-                SR.GetString(SR.Page_scope_in_global_asax));
+                System.Web.SR.GetString(System.Web.SR.Page_scope_in_global_asax));
         }
     }
 }

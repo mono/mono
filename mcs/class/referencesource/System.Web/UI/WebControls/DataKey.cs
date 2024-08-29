@@ -108,7 +108,7 @@ namespace System.Web.UI.WebControls {
                     if (state != null) {
                         ArrayList stateArrayList = state as ArrayList;
                         if (stateArrayList == null) {
-                            throw new HttpException(SR.GetString(SR.ViewState_InvalidViewState));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                         }
                         OrderedDictionaryStateHelper.LoadViewState(_keyTable, stateArrayList);
                     }

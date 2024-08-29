@@ -4,6 +4,7 @@
     using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
+    
 
     // This class provides a good implementation of ModelMetadataProvider for people who will be
     // using traditional classes with properties. It uses the buddy class support from
@@ -42,7 +43,7 @@
                 throw new ArgumentNullException("containerType");
             }
             if (String.IsNullOrEmpty(propertyName)) {
-                throw new ArgumentException(SR.GetString(SR.Common_NullOrEmpty), "propertyName");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Common_NullOrEmpty), "propertyName");
             }
 
             ICustomTypeDescriptor typeDescriptor = GetTypeDescriptor(containerType);
@@ -51,7 +52,7 @@
                 throw new ArgumentException(
                     String.Format(
                         CultureInfo.CurrentCulture,
-                        SR.GetString(SR.Common_PropertyNotFound),
+                        System.Web.SR.GetString(System.Web.SR.Common_PropertyNotFound),
                         containerType.FullName, propertyName));
             }
 

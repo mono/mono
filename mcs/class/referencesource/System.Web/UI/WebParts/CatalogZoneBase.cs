@@ -55,7 +55,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.CatalogZoneBase_AddVerb),
+        WebSysDescription(System.Web.SR.CatalogZoneBase_AddVerb),
         ]
         public virtual WebPartVerb AddVerb {
             get {
@@ -104,7 +104,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     if (!DesignMode) {
                         foreach (CatalogPart catalogPart in catalogParts) {
                             if (String.IsNullOrEmpty(catalogPart.ID)) {
-                                throw new InvalidOperationException(SR.GetString(SR.CatalogZoneBase_NoCatalogPartID));
+                                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.CatalogZoneBase_NoCatalogPartID));
                             }
                         }
                     }
@@ -125,7 +125,7 @@ namespace System.Web.UI.WebControls.WebParts {
         NotifyParentProperty(true),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Verbs"),
-        WebSysDescription(SR.CatalogZoneBase_CloseVerb),
+        WebSysDescription(System.Web.SR.CatalogZoneBase_CloseVerb),
         ]
         public virtual WebPartVerb CloseVerb {
             get {
@@ -142,14 +142,14 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.CatalogZoneBase_DefaultEmptyZoneText)
+        WebSysDefaultValue(System.Web.SR.CatalogZoneBase_DefaultEmptyZoneText)
         ]
         public override string EmptyZoneText {
             // Must look at viewstate directly instead of the property in the base class,
             // so we can distinguish between an unset property and a property set to String.Empty.
             get {
                 string s = (string)ViewState["EmptyZoneText"];
-                return((s == null) ? SR.GetString(SR.CatalogZoneBase_DefaultEmptyZoneText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.CatalogZoneBase_DefaultEmptyZoneText) : s);
             }
             set {
                 ViewState["EmptyZoneText"] = value;
@@ -157,12 +157,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.CatalogZoneBase_HeaderText),
+        WebSysDefaultValue(System.Web.SR.CatalogZoneBase_HeaderText),
         ]
         public override string HeaderText {
             get {
                 string s = (string)ViewState["HeaderText"];
-                return((s == null) ? SR.GetString(SR.CatalogZoneBase_HeaderText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.CatalogZoneBase_HeaderText) : s);
             }
             set {
                 ViewState["HeaderText"] = value;
@@ -170,12 +170,12 @@ namespace System.Web.UI.WebControls.WebParts {
         }
 
         [
-        WebSysDefaultValue(SR.CatalogZoneBase_InstructionText),
+        WebSysDefaultValue(System.Web.SR.CatalogZoneBase_InstructionText),
         ]
         public override string InstructionText {
             get {
                 string s = (string)ViewState["InstructionText"];
-                return((s == null) ? SR.GetString(SR.CatalogZoneBase_InstructionText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.CatalogZoneBase_InstructionText) : s);
             }
             set {
                 ViewState["InstructionText"] = value;
@@ -188,7 +188,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.CatalogZoneBase_PartLinkStyle),
+        WebSysDescription(System.Web.SR.CatalogZoneBase_PartLinkStyle),
         ]
         public Style PartLinkStyle {
             get {
@@ -207,7 +207,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DefaultValue(""),
         Themeable(false),
         WebCategory("Behavior"),
-        WebSysDescription(SR.CatalogZoneBase_SelectedCatalogPartID),
+        WebSysDescription(System.Web.SR.CatalogZoneBase_SelectedCatalogPartID),
         ]
         public string SelectedCatalogPartID {
             get {
@@ -254,14 +254,14 @@ namespace System.Web.UI.WebControls.WebParts {
 
         [
         Localizable(true),
-        WebSysDefaultValue(SR.CatalogZoneBase_DefaultSelectTargetZoneText),
+        WebSysDefaultValue(System.Web.SR.CatalogZoneBase_DefaultSelectTargetZoneText),
         WebCategory("Behavior"),
-        WebSysDescription(SR.CatalogZoneBase_SelectTargetZoneText),
+        WebSysDescription(System.Web.SR.CatalogZoneBase_SelectTargetZoneText),
         ]
         public virtual string SelectTargetZoneText {
             get {
                 string s = (string)ViewState["SelectTargetZoneText"];
-                return((s == null) ? SR.GetString(SR.CatalogZoneBase_DefaultSelectTargetZoneText) : s);
+                return((s == null) ? System.Web.SR.GetString(System.Web.SR.CatalogZoneBase_DefaultSelectTargetZoneText) : s);
             }
             set {
                 ViewState["SelectTargetZoneText"] = value;
@@ -274,7 +274,7 @@ namespace System.Web.UI.WebControls.WebParts {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         WebCategory("Styles"),
-        WebSysDescription(SR.CatalogZoneBase_SelectedPartLinkStyle),
+        WebSysDescription(System.Web.SR.CatalogZoneBase_SelectedPartLinkStyle),
         ]
         public Style SelectedPartLinkStyle {
             get {
@@ -292,7 +292,7 @@ namespace System.Web.UI.WebControls.WebParts {
         [
         DefaultValue(true),
         WebCategory("Behavior"),
-        WebSysDescription(SR.CatalogZoneBase_ShowCatalogIcons),
+        WebSysDescription(System.Web.SR.CatalogZoneBase_ShowCatalogIcons),
         ]
         public virtual bool ShowCatalogIcons {
             get {
@@ -357,7 +357,7 @@ namespace System.Web.UI.WebControls.WebParts {
                 }
 
                 // WebPartManager is checked for null in AddWebParts()
-                Debug.Assert(WebPartManager != null);
+                System.Web.Util.Debug.Assert(WebPartManager != null);
                 // Add new parts to the top of the Zone, so the user will see them without scrolling the page
                 WebPartManager.AddWebPart(part, targetZone, 0);
             }
@@ -409,7 +409,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[])savedState;
                 if (myState.Length != controlStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.Invalid_ControlState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_ControlState));
                 }
 
                 base.LoadControlState(myState[baseIndex]);
@@ -443,7 +443,7 @@ namespace System.Web.UI.WebControls.WebParts {
             else {
                 object[] myState = (object[]) savedState;
                 if (myState.Length != viewStateArrayLength) {
-                    throw new ArgumentException(SR.GetString(SR.ViewState_InvalidViewState));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ViewState_InvalidViewState));
                 }
 
                 base.LoadViewState(myState[baseIndex]);
@@ -466,7 +466,7 @@ namespace System.Web.UI.WebControls.WebParts {
             base.OnInit(e);
 
             Page page = Page;
-            Debug.Assert(page != null);
+            System.Web.Util.Debug.Assert(page != null);
             if (page != null) {
                 page.RegisterRequiresControlState(this);
             }
@@ -603,12 +603,12 @@ namespace System.Web.UI.WebControls.WebParts {
                     label.RenderControl(writer);
                 }
                 else {
-                    Debug.Assert(!String.IsNullOrEmpty(catalogPart.ID));
+                    System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(catalogPart.ID));
                     string eventArgument = selectEventArgument + ID_SEPARATOR + catalogPart.ID;
 
                     ZoneLinkButton linkButton = new ZoneLinkButton(this, eventArgument);
                     linkButton.Text = text;
-                    linkButton.ToolTip = SR.GetString(SR.CatalogZoneBase_SelectCatalogPart, displayTitle);
+                    linkButton.ToolTip = System.Web.SR.GetString(System.Web.SR.CatalogZoneBase_SelectCatalogPart, displayTitle);
                     linkButton.Page = Page;
                     linkButton.ApplyStyle(PartLinkStyle);
                     linkButton.RenderControl(writer);
@@ -651,13 +651,13 @@ namespace System.Web.UI.WebControls.WebParts {
             // Populate the DropDownList
             if (DesignMode) {
                 // Add sample zone to dropdown
-                zonesDropDownList.Items.Add(SR.GetString(SR.Zone_SampleHeaderText));
+                zonesDropDownList.Items.Add(System.Web.SR.GetString(System.Web.SR.Zone_SampleHeaderText));
             }
             else {
                 if (WebPartManager != null && WebPartManager.Zones != null) {
                     foreach (WebPartZoneBase zone in WebPartManager.Zones) {
                         if (zone.AllowLayoutChange) {
-                            Debug.Assert(!String.IsNullOrEmpty(zone.ID));
+                            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(zone.ID));
                             ListItem item = new ListItem(zone.DisplayTitle, zone.ID);
                             if (String.Equals(zone.ID, _selectedZoneID, StringComparison.OrdinalIgnoreCase)) {
                                 item.Selected = true;

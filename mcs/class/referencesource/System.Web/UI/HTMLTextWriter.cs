@@ -16,6 +16,7 @@ namespace System.Web.UI {
     using System.Security.Permissions;
     using System.Web.UI.WebControls;
     using System.Web.Util;
+    
 
     public class HtmlTextWriter : TextWriter {
         private Layout _currentLayout = new Layout(HorizontalAlign.NotSet, true /* wrap */);
@@ -309,7 +310,7 @@ namespace System.Web.UI {
                 return indentLevel;
             }
             set {
-                Debug.Assert(value >= 0, "Bogus Indent... probably caused by mismatched Indent++ and Indent--");
+                System.Web.Util.Debug.Assert(value >= 0, "Bogus Indent... probably caused by mismatched Indent++ and Indent--");
                 if (value < 0) {
                     value = 0;
                 }
@@ -693,7 +694,7 @@ namespace System.Web.UI {
                 _tagName = value;
                 _tagKey = GetTagKey(_tagName);
                 _tagIndex = (int) _tagKey;
-                Debug.Assert(_tagIndex >= 0 && _tagIndex < _tagNameLookupArray.Length);
+                System.Web.Util.Debug.Assert(_tagIndex >= 0 && _tagIndex < _tagNameLookupArray.Length);
             }
         }
 
@@ -813,7 +814,7 @@ namespace System.Web.UI {
         protected string EncodeUrl(string url) {
             // VSWhidbey 454348: escaped spaces in UNC share paths don't work in IE, so
             // we're not going to encode if it's a share.
-            if (!UrlPath.IsUncSharePath(url)) {
+            if (!System.Web.Util.UrlPath.IsUncSharePath(url)) {
                 return HttpUtility.UrlPathEncode(url);
             }
             return url;
@@ -916,7 +917,7 @@ namespace System.Web.UI {
 
         protected string PopEndTag() {
             if (_endTagCount <= 0) {
-                throw new InvalidOperationException(SR.GetString(SR.HTMLTextWriterUnbalancedPop));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.HTMLTextWriterUnbalancedPop));
             }
             _endTagCount--;
             TagKey = _endTags[_endTagCount].tagKey;

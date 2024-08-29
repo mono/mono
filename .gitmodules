@@ -24,6 +24,7 @@
 	path = external/nunit-lite
 	url = https://github.com/mono/NUnitLite.git
 [submodule "external/nuget-buildtasks"]
+	branch = "dev"
 	path = external/nuget-buildtasks
 	url = https://github.com/mono/NuGet.BuildTasks
 [submodule "external/cecil-legacy"]

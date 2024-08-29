@@ -20,7 +20,9 @@ using System.Web.Util;
 namespace System.Web.UI.WebControls {
 
     [DefaultProperty("SelectedValue")]
+#if !MONO
     [Designer("System.Web.UI.Design.WebControls.ListViewDesigner, " + AssemblyRef.SystemWebExtensionsDesign)]
+#endif
     [ControlValueProperty("SelectedValue")]
     [DefaultEvent("SelectedIndexChanged")]
     [SupportsEventValidation]
@@ -322,7 +324,9 @@ namespace System.Web.UI.WebControls {
 
         [
         DefaultValue(null),
+#if !MONO
         Editor("System.Web.UI.Design.WebControls.DataFieldEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
+#endif
         Category("Data"),
         ResourceDescription("ListView_DataKeyNames"),
         SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",

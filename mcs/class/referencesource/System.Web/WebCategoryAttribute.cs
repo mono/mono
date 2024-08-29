@@ -49,11 +49,11 @@ namespace System.Web {
         protected override string GetLocalizedString(string value) {
             string localizedValue = base.GetLocalizedString(value);
             if (localizedValue == null) {
-                localizedValue = (string)SR.GetString("Category_" + value);
+                localizedValue = (string)System.Web.SR.GetString("Category_" + value);
             }
             // This attribute is internal, and we should never have a missing resource string.
             //
-            Debug.Assert(localizedValue != null, "All WebForms category attributes should have localized strings.  Category '" + value + "' not found.");
+            System.Web.Util.Debug.Assert(localizedValue != null, "All WebForms category attributes should have localized strings.  Category '" + value + "' not found.");
             return localizedValue;
         }
     }

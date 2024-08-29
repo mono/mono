@@ -13,6 +13,7 @@ namespace System.Web.UI.WebControls {
     using System.Web;
     using System.Web.UI;
     using System.Web.Util;
+    
 
 
     /// <devdoc>
@@ -39,7 +40,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Appearance"),
         DefaultValue(ButtonColumnType.LinkButton),
-        WebSysDescriptionAttribute(SR.ButtonColumn_ButtonType)
+        WebSysDescriptionAttribute(System.Web.SR.ButtonColumn_ButtonType)
         ]
         public virtual ButtonColumnType ButtonType {
             get {
@@ -60,7 +61,7 @@ namespace System.Web.UI.WebControls {
 
         [
         DefaultValue(false),
-        WebSysDescriptionAttribute(SR.ButtonColumn_CausesValidation)
+        WebSysDescriptionAttribute(System.Web.SR.ButtonColumn_CausesValidation)
         ]
         public virtual bool CausesValidation {
             get {
@@ -84,7 +85,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Behavior"),
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.WebControl_CommandName)
+        WebSysDescriptionAttribute(System.Web.SR.WebControl_CommandName)
         ]
         public virtual string CommandName {
             get {
@@ -107,7 +108,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.ButtonColumn_DataTextField)
+        WebSysDescriptionAttribute(System.Web.SR.ButtonColumn_DataTextField)
         ]
         public virtual string DataTextField {
             get {
@@ -130,7 +131,7 @@ namespace System.Web.UI.WebControls {
         [
         WebCategory("Data"),
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.ButtonColumn_DataTextFormatString)
+        WebSysDescriptionAttribute(System.Web.SR.ButtonColumn_DataTextFormatString)
         ]
         public virtual string DataTextFormatString {
             get {
@@ -154,7 +155,7 @@ namespace System.Web.UI.WebControls {
         Localizable(true),
         WebCategory("Appearance"),
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.ButtonColumn_Text)
+        WebSysDescriptionAttribute(System.Web.SR.ButtonColumn_Text)
         ]
         public virtual string Text {
             get {
@@ -172,7 +173,7 @@ namespace System.Web.UI.WebControls {
 
         [
         DefaultValue(""),
-        WebSysDescriptionAttribute(SR.ButtonColumn_ValidationGroup)
+        WebSysDescriptionAttribute(System.Web.SR.ButtonColumn_ValidationGroup)
         ]
         public virtual string ValidationGroup {
             get {
@@ -258,7 +259,7 @@ namespace System.Web.UI.WebControls {
         /// <devdoc>
         /// </devdoc>
         private void OnDataBindColumn(object sender, EventArgs e) {
-            Debug.Assert(DataTextField.Length != 0, "Shouldn't be DataBinding without a DataTextField");
+            System.Web.Util.Debug.Assert(DataTextField.Length != 0, "Shouldn't be DataBinding without a DataTextField");
 
             Control boundControl = (Control)sender;
             DataGridItem item = (DataGridItem)boundControl.NamingContainer;
@@ -269,7 +270,7 @@ namespace System.Web.UI.WebControls {
 
                 textFieldDesc = TypeDescriptor.GetProperties(dataItem).Find(dataField, true);
                 if ((textFieldDesc == null) && !DesignMode) {
-                    throw new HttpException(SR.GetString(SR.Field_Not_Found, dataField));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Field_Not_Found, dataField));
                 }
             }
 
@@ -280,15 +281,15 @@ namespace System.Web.UI.WebControls {
                 dataValue = FormatDataTextValue(data);
             }
             else {
-                Debug.Assert(DesignMode == true);
-                dataValue = SR.GetString(SR.Sample_Databound_Text);
+                System.Web.Util.Debug.Assert(DesignMode == true);
+                dataValue = System.Web.SR.GetString(System.Web.SR.Sample_Databound_Text);
             }
 
             if (boundControl is LinkButton) {
                 ((LinkButton)boundControl).Text = dataValue;
             }
             else {
-                Debug.Assert(boundControl is Button, "Expected the bound control to be a Button");
+                System.Web.Util.Debug.Assert(boundControl is Button, "Expected the bound control to be a Button");
                 ((Button)boundControl).Text = dataValue;
             }
         }

@@ -87,7 +87,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     return _connectionPointType;
                 }
                 else {
-                    throw new InvalidOperationException(SR.GetString(SR.ConnectionConsumerAttribute_InvalidConnectionPointType, _connectionPointType.Name));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ConnectionConsumerAttribute_InvalidConnectionPointType, _connectionPointType.Name));
                 }
             }
         }

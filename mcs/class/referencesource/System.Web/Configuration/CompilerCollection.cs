@@ -21,6 +21,7 @@ namespace System.Web.Configuration {
     using System.Web.Util;
     using System.ComponentModel;
     using System.Security.Permissions;
+    
 
     [ConfigurationCollection(typeof(Compiler), AddItemName = "compiler",
      CollectionType = ConfigurationElementCollectionType.BasicMap)]
@@ -32,7 +33,7 @@ namespace System.Web.Configuration {
             _properties = new ConfigurationPropertyCollection();
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -45,7 +46,7 @@ namespace System.Web.Configuration {
         // public properties
         public string[] AllKeys {
             get {
-                return StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
+                return System.Web.Util.StringUtil.ObjectArrayToStringArray(BaseGetAllKeys());
             }
         }
         
@@ -61,7 +62,7 @@ namespace System.Web.Configuration {
             }
             //            set
             //            {
-            //                throw new ConfigurationErrorsException(SR.GetString(SR.Config_read_only_section_cannot_be_set, "CompilerCollection"));
+            //                throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_read_only_section_cannot_be_set, "CompilerCollection"));
             //                if (BaseGet(index) != null)
             //                    BaseRemoveAt(index);
             //                BaseAdd(index,value);

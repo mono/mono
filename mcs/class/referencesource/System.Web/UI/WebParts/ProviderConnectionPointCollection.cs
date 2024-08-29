@@ -25,11 +25,11 @@ namespace System.Web.UI.WebControls.WebParts {
             _ids = new HybridDictionary(connectionPoints.Count, true /* caseInsensitive */);
             foreach (object obj in connectionPoints) {
                 if (obj == null) {
-                    throw new ArgumentException(SR.GetString(SR.Collection_CantAddNull), "connectionPoints");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_CantAddNull), "connectionPoints");
                 }
                 ProviderConnectionPoint point = obj as ProviderConnectionPoint;
                 if (point == null) {
-                    throw new ArgumentException(SR.GetString(SR.Collection_InvalidType, "ProviderConnectionPoint"),
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Collection_InvalidType, "ProviderConnectionPoint"),
                                                 "connectionPoints");
                 }
                 string id = point.ID;
@@ -38,7 +38,7 @@ namespace System.Web.UI.WebControls.WebParts {
                     _ids.Add(id, point);
                 }
                 else {
-                    throw new ArgumentException(SR.GetString(SR.WebPart_Collection_DuplicateID, "ProviderConnectionPoint", id), "connectionPoints");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.WebPart_Collection_DuplicateID, "ProviderConnectionPoint", id), "connectionPoints");
                 }
             }
         }

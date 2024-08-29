@@ -62,7 +62,7 @@ namespace System.Web.UI {
                 return true;
             }
             if ((obj != null) && (obj is ToolboxDataAttribute)) {
-                return(StringUtil.EqualsIgnoreCase(((ToolboxDataAttribute)obj).Data, data));
+                return(System.Web.Util.StringUtil.EqualsIgnoreCase(((ToolboxDataAttribute)obj).Data, data));
             }
 
             return false;

@@ -198,12 +198,12 @@ namespace System.Web {
                 // remeber header
                 String header = line.Substring(0, ic);
 
-                if (StringUtil.EqualsIgnoreCase(header, "Content-Disposition")) {
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(header, "Content-Disposition")) {
                     // parse name and filename
                     _partName     = ExtractValueFromContentDispositionHeader(line, ic+1, "name");
                     _partFilename = ExtractValueFromContentDispositionHeader(line, ic+1, "filename");
                 }
-                else if (StringUtil.EqualsIgnoreCase(header, "Content-Type")) {
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(header, "Content-Type")) {
                     _partContentType = line.Substring(ic+1).Trim();
                 }
             }

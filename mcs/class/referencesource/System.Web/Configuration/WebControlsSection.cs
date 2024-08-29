@@ -37,13 +37,13 @@ namespace System.Web.Configuration {
             _properties.Add(_propClientScriptsLocation);
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
         }
 
-        protected override object GetRuntimeObject() {
+        protected internal override object GetRuntimeObject() {
             // Legacy section returned a Hashtable and people are depenant on that implimentation.
             Hashtable runtimeHashTable = new Hashtable();
             foreach (ConfigurationProperty prop in Properties) {

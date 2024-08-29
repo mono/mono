@@ -123,7 +123,7 @@ namespace Samples.AspNet.CS.Controls
             }
         }
 
-        protected internal override void RenderContents(HtmlTextWriter writer)
+        protected override void RenderContents(HtmlTextWriter writer)
         {
             writer.RenderBeginTag(HtmlTextWriterTag.Table);
 

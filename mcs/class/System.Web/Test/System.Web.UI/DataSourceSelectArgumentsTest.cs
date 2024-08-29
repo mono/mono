@@ -70,11 +70,11 @@ namespace MonoCasTests.System.Web.UI
 				}
 			}
 
-			protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments) {
+			protected override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments) {
 				throw new Exception ("The method or operation is not implemented.");
 			}
 
-			protected internal override void RaiseUnsupportedCapabilityError (DataSourceCapabilities capability) {
+			protected override void RaiseUnsupportedCapabilityError (DataSourceCapabilities capability) {
 				RaiseUnsupportedCapabilityErrorCalled = true;
 				DataSourceCapabilities = capability;
 			}

@@ -51,7 +51,7 @@ namespace System.Web.Configuration {
             base[_propUserAgent] = userAgent;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }

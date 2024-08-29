@@ -22,6 +22,7 @@ namespace System.Web.UI {
     using System.Web.UI.HtmlControls;
     using System.Web.UI.WebControls;
     using System.Web.Util;
+    
 
     /// <devdoc>
     /// Implementation of a generic control builder used by all controls and child objects
@@ -99,8 +100,8 @@ namespace System.Web.UI {
 
                 Type ctrlType = NamingContainerBuilder.ControlType;
 
-                Debug.Assert(ctrlType != null, "Control type is null.");
-                Debug.Assert(typeof(INamingContainer).IsAssignableFrom(ctrlType), String.Format(CultureInfo.InvariantCulture, "NamingContainerBuilder.Control type {0} is not an INamingContainer", ctrlType.FullName));
+                System.Web.Util.Debug.Assert(ctrlType != null, "Control type is null.");
+                System.Web.Util.Debug.Assert(typeof(INamingContainer).IsAssignableFrom(ctrlType), String.Format(CultureInfo.InvariantCulture, "NamingContainerBuilder.Control type {0} is not an INamingContainer", ctrlType.FullName));
 
                 // Recursively lookup if the NamingContainerBuilder.ControlType is an INonBindingContainer
                 if (typeof(INonBindingContainer).IsAssignableFrom(ctrlType)) {
@@ -117,8 +118,8 @@ namespace System.Web.UI {
 
                     Type ctrlType = NamingContainerBuilder.ControlType;
 
-                    Debug.Assert(ctrlType != null, "Control type is null.");
-                    Debug.Assert(typeof(INamingContainer).IsAssignableFrom(ctrlType), String.Format(CultureInfo.InvariantCulture, "NamingContainerBuilder.Control type {0} is not an INamingContainer", ctrlType.FullName));
+                    System.Web.Util.Debug.Assert(ctrlType != null, "Control type is null.");
+                    System.Web.Util.Debug.Assert(typeof(INamingContainer).IsAssignableFrom(ctrlType), String.Format(CultureInfo.InvariantCulture, "NamingContainerBuilder.Control type {0} is not an INamingContainer", ctrlType.FullName));
 
                     // Recursively lookup if the NamingContainerBuilder.ControlType is an INonBindingContainer
                     if (typeof(INonBindingContainer).IsAssignableFrom(ctrlType)) {
@@ -137,7 +138,7 @@ namespace System.Web.UI {
             get {
                 ControlBuilder bindingContainerBuilder = BindingContainerBuilder;
                 if (bindingContainerBuilder != null) {
-                    Debug.Assert(bindingContainerBuilder is TemplateBuilder, "Assert failure in ControlBuilder class, there's a scenario where BindingContainerBuilder is not a TemplateBuilder, is someone asking for ModelType out of a Data Binding Context??");
+                    System.Web.Util.Debug.Assert(bindingContainerBuilder is TemplateBuilder, "Assert failure in ControlBuilder class, there's a scenario where BindingContainerBuilder is not a TemplateBuilder, is someone asking for ModelType out of a Data Binding Context??");
                     if (bindingContainerBuilder.BindingContainerBuilder != null) {
                         return (from object propertyEntry in bindingContainerBuilder.BindingContainerBuilder.SimplePropertyEntriesInternal
                                 let simplePropertyEntry = propertyEntry as SimplePropertyEntry
@@ -574,7 +575,7 @@ namespace System.Web.UI {
             get {
                 if (_parseTimeData == null) {
                     if (IsNoCompile) {
-                        throw new InvalidOperationException(SR.GetString(SR.ControlBuilder_ParseTimeDataNotAvailable));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_ParseTimeDataNotAvailable));
                     }
 
                     _parseTimeData = new ControlBuilderParseTimeData();
@@ -690,7 +691,7 @@ namespace System.Web.UI {
             string expression, ExpressionBuilder expressionBuilder, object parsedExpressionData, bool generated, string fieldName, 
             string formatString, bool twoWayBound, bool encode, int line = 0, int column = 0) {
 
-            Debug.Assert(!String.IsNullOrEmpty(name));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(name));
 
             string controlID = ParseTimeData.ID;
 
@@ -701,18 +702,18 @@ namespace System.Web.UI {
                 // This is a databinding entry
                 if (String.IsNullOrEmpty(controlID)) {
                     if (CompilationMode == CompilationMode.Never) {
-                        throw new HttpException(SR.GetString(SR.NoCompileBinding_requires_ID, _controlType.Name, fieldName));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.NoCompileBinding_requires_ID, _controlType.Name, fieldName));
                     }
                     if (twoWayBound) {
-                        throw new HttpException(SR.GetString(SR.TwoWayBinding_requires_ID, _controlType.Name, fieldName));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.TwoWayBinding_requires_ID, _controlType.Name, fieldName));
                     }
                 }
 
-                Debug.Assert(ControlType != null, "ControlType should not be null if we're adding a property entry");
+                System.Web.Util.Debug.Assert(ControlType != null, "ControlType should not be null if we're adding a property entry");
                 // We only support databindings on objects that have an event named "DataBinding"
                 if (!flags[controlTypeIsControl]) {
                     if (TargetFrameworkUtil.GetEvent(ControlType, "DataBinding") == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.ControlBuilder_DatabindingRequiresEvent, _controlType.FullName));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_DatabindingRequiresEvent, _controlType.FullName));
                     }
                 }
             }
@@ -723,7 +724,7 @@ namespace System.Web.UI {
                 }
             }
 
-            Debug.Assert(!(String.IsNullOrEmpty(expressionPrefix) ^ (expressionBuilder == null)), "expressionBuilder should be non-null iff expressionPrefix is non-empty");
+            System.Web.Util.Debug.Assert(!(String.IsNullOrEmpty(expressionPrefix) ^ (expressionBuilder == null)), "expressionBuilder should be non-null iff expressionPrefix is non-empty");
 
             // Set up a BoundPropertyEntry since we know this is an expression
             BoundPropertyEntry entry = new BoundPropertyEntry();
@@ -757,7 +758,7 @@ namespace System.Web.UI {
                     if (!String.IsNullOrEmpty(entry.Filter)) {
                         fullPropertyName = entry.Filter + ":" + fullPropertyName;
                     }
-                    throw new InvalidOperationException(SR.GetString(SR.ControlBuilder_CannotHaveMultipleBoundEntries, fullPropertyName, ControlType));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_CannotHaveMultipleBoundEntries, fullPropertyName, ControlType));
                 }
             }
 
@@ -803,7 +804,7 @@ namespace System.Web.UI {
 
                     if (propInfo.GetSetMethod() == null) {
                         if (!SupportsAttributes) {
-                            throw new HttpException(SR.GetString(SR.Property_readonly, name));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Property_readonly, name));
                         }
                         else {
                             // If the property is readonly, fall back to using SetAttribute
@@ -824,18 +825,18 @@ namespace System.Web.UI {
                 }
                 else {
                     // If it's a field, just grab the type
-                    Debug.Assert(memberInfo is FieldInfo);
+                    System.Web.Util.Debug.Assert(memberInfo is FieldInfo);
                     entry.Type = ((FieldInfo)memberInfo).FieldType;
                 }
             }
                 // If we didn't find a member, we need to use the IAttributeAccessor
             else {
                 if (!SupportsAttributes) {
-                    throw new HttpException(SR.GetString(SR.Type_doesnt_have_property, _controlType.FullName, name));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Type_doesnt_have_property, _controlType.FullName, name));
                 }
                 else {
                     if (entry.TwoWayBound) {
-                        throw new InvalidOperationException(SR.GetString(SR.ControlBuilder_TwoWayBindingNonProperty, name, ControlType.Name));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_TwoWayBindingNonProperty, name, ControlType.Name));
                     }
                     entry.Name = name;
                     entry.UseSetAttribute = true;
@@ -852,7 +853,7 @@ namespace System.Web.UI {
                 if (Util.IsWhiteSpaceString(entry.Expression)) {
 
                     throw new HttpException(
-                        SR.GetString(SR.Empty_expression));
+                        System.Web.SR.GetString(System.Web.SR.Empty_expression));
                 }
             }
         }
@@ -882,8 +883,8 @@ namespace System.Web.UI {
             }
             */
 
-            Debug.Assert(!String.IsNullOrEmpty(name));
-            Debug.Assert(builder != null);
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(name));
+            System.Web.Util.Debug.Assert(builder != null);
 
             // Look for a MemberInfo
             string objectModelName = String.Empty;
@@ -912,14 +913,14 @@ namespace System.Web.UI {
                     memberType = propInfo.PropertyType;
                 }
                 else {
-                    Debug.Assert(memberInfo is FieldInfo);
+                    System.Web.Util.Debug.Assert(memberInfo is FieldInfo);
                     memberType = ((FieldInfo)memberInfo).FieldType;
                 }
 
                 entry.Type = memberType;
             }
             else {
-                throw new HttpException(SR.GetString(SR.Type_doesnt_have_property, _controlType.FullName, name));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Type_doesnt_have_property, _controlType.FullName, name));
             }
 
             // Add the entry to the complex entries
@@ -936,7 +937,7 @@ namespace System.Web.UI {
             if (String.Equals(entry.Name, "ID", StringComparison.OrdinalIgnoreCase) &&
                 flags[controlTypeIsControl] &&
                 !(entry is SimplePropertyEntry)) {
-                throw new HttpException(SR.GetString(SR.ControlBuilder_IDMustUseAttribute));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_IDMustUseAttribute));
             }
 
             // Remember the item index to perform a stable sort.
@@ -951,7 +952,7 @@ namespace System.Web.UI {
         //
         //// </devdoc>
         private void AddProperty(string filter, string name, string value, bool mainDirectiveMode) {
-            Debug.Assert(!String.IsNullOrEmpty(name));
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(name));
 
             //Second check is a hack to make the intellisense work with strongly typed controls. Existence of ModelType property
             //should force creation of code to make the intellisense to work, so far this is the only property
@@ -971,7 +972,7 @@ namespace System.Web.UI {
 
                     // Make sure there isn't filter for skinID property.
                     if (!String.IsNullOrEmpty(filter)) {
-                        throw new InvalidOperationException(SR.GetString(SR.Illegal_Device, BaseTemplateCodeDomTreeGenerator.skinIDPropertyName));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Illegal_Device, BaseTemplateCodeDomTreeGenerator.skinIDPropertyName));
                     }
 
                     SkinID = value;
@@ -1001,7 +1002,7 @@ namespace System.Web.UI {
                     if (propInfo.GetSetMethod() == null) {
                         if (!SupportsAttributes) {
                             // If it doesn't support attributes, throw an exception
-                            throw new HttpException(SR.GetString(SR.Property_readonly, name));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Property_readonly, name));
                         }
                         else {
                             // Otherwise, use the attribute accessor
@@ -1016,7 +1017,7 @@ namespace System.Web.UI {
                     memberType = propInfo.PropertyType;
                 }
                 else {
-                    Debug.Assert(memberInfo is FieldInfo);
+                    System.Web.Util.Debug.Assert(memberInfo is FieldInfo);
                     memberType = ((FieldInfo)memberInfo).FieldType;
                 }
 
@@ -1034,7 +1035,7 @@ namespace System.Web.UI {
                         if (attrs.Length > 0) {
                             string url = objectValue.ToString();
                             // Do not combine the url if it's apprelative, let controls resolve the url.
-                            if (UrlPath.IsRelativeUrl(url) && !UrlPath.IsAppRelativePath(url)) {
+                            if (System.Web.Util.UrlPath.IsRelativeUrl(url) && !System.Web.Util.UrlPath.IsAppRelativePath(url)) {
                                 objectValue = themeParser.ThemePhysicalPath + url;
                             }
                         }
@@ -1046,7 +1047,7 @@ namespace System.Web.UI {
 
                     if (memberType.IsEnum) {
                         if (objectValue == null) {
-                            throw new HttpException(SR.GetString(SR.Invalid_enum_value, value, name, entry.Type.FullName));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_enum_value, value, name, entry.Type.FullName));
                         }
 
                         entry.PersistedValue = Enum.Format(memberType, objectValue, "G");
@@ -1065,24 +1066,24 @@ namespace System.Web.UI {
                 bool foundEvent = false;
 
                 // Check if the property is actually an event handler
-                if (StringUtil.StringStartsWithIgnoreCase(name, "on")) {
+                if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(name, "on")) {
                     string eventName = name.Substring(2);
                     EventDescriptor eventDesc = EventDescriptors.Find(eventName, true);
 
                     if (eventDesc != null) {
                         if (InPageTheme) {
-                            throw new HttpException(SR.GetString(SR.Property_theme_disabled, eventName, ControlType.FullName));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Property_theme_disabled, eventName, ControlType.FullName));
                         }
 
                         if (value != null)
                             value = value.Trim();
 
                         if (String.IsNullOrEmpty(value)) {
-                            throw new HttpException(SR.GetString(SR.Event_handler_cant_be_empty, name));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Event_handler_cant_be_empty, name));
                         }
 
                         if (filter.Length > 0) {
-                            throw new HttpException(SR.GetString(SR.Events_cant_be_filtered, filter, name));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Events_cant_be_filtered, filter, name));
                         }
 
                         foundEvent = true;
@@ -1107,10 +1108,10 @@ namespace System.Web.UI {
                     // Allow the designer filter expandos for simple attributes
                     if (!SupportsAttributes && (filter != DesignerFilter)) {
                         if (_controlType != null) {
-                            throw new HttpException(SR.GetString(SR.Type_doesnt_have_property, _controlType.FullName, name));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Type_doesnt_have_property, _controlType.FullName, name));
                         }
                         else {
-                            throw new HttpException(SR.GetString(SR.Property_doesnt_have_property, TagName, name));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Property_doesnt_have_property, TagName, name));
                         }
                     }
 
@@ -1138,8 +1139,8 @@ namespace System.Web.UI {
             }
             */
 
-            Debug.Assert(!String.IsNullOrEmpty(name));
-            Debug.Assert(builder != null);
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(name));
+            System.Web.Util.Debug.Assert(builder != null);
 
             // Look for a MemberInfo
             string objectModelName = String.Empty;
@@ -1169,7 +1170,7 @@ namespace System.Web.UI {
 
                     if (templateAttrib != null) {
                         if (!typeof(INamingContainer).IsAssignableFrom(templateAttrib.ContainerType)) {
-                            throw new HttpException(SR.GetString(SR.Invalid_template_container, name, templateAttrib.ContainerType.FullName));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_template_container, name, templateAttrib.ContainerType.FullName));
                         }
 
                         // If it had one, make sure the builder knows what type it is
@@ -1179,14 +1180,14 @@ namespace System.Web.UI {
                     entry.Type = propInfo.PropertyType;
                 }
                 else {
-                    Debug.Assert(memberInfo is FieldInfo);
+                    System.Web.Util.Debug.Assert(memberInfo is FieldInfo);
                     memberType = ((FieldInfo)memberInfo).FieldType;
                 }
 
                 entry.Type = memberType;
             }
             else {
-                throw new HttpException(SR.GetString(SR.Type_doesnt_have_property, _controlType.FullName, name));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Type_doesnt_have_property, _controlType.FullName, name));
             }
 
             // Add it to the template entries
@@ -1238,12 +1239,12 @@ namespace System.Web.UI {
                 if (FChildrenAsProperties) {
                     // Throw a better error message if the content start with the '<' char.
                     if (s.StartsWith("<", StringComparison.OrdinalIgnoreCase)) {
-                        throw new HttpException(SR.GetString(SR.Literal_content_not_match_property, _controlType.FullName, s));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Literal_content_not_match_property, _controlType.FullName, s));
                     }
                 }
 
                 if (s.Length != 0) {
-                    throw new HttpException(SR.GetString(SR.Literal_content_not_allowed, _controlType.FullName, s));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Literal_content_not_allowed, _controlType.FullName, s));
                 }
 
                 return;
@@ -1269,7 +1270,7 @@ namespace System.Web.UI {
             }
 
             if (dataBoundBuilder != null) {
-                Debug.Assert(!InDesigner, "!InDesigner");
+                System.Web.Util.Debug.Assert(!InDesigner, "!InDesigner");
                 dataBoundBuilder.AddLiteralString(s);
             }
             else {
@@ -1287,7 +1288,7 @@ namespace System.Web.UI {
             if (FChildrenAsProperties) {
                 // Don't allow code blocks when properties are expected (ASURT 97838)
                 if (subBuilder is CodeBlockBuilder) {
-                    throw new HttpException(SR.GetString(SR.Code_not_supported_on_not_controls));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Code_not_supported_on_not_controls));
                 }
 
                 // If there is a default property, delegate to its builder
@@ -1340,7 +1341,7 @@ namespace System.Web.UI {
             if (codeBlockBuilder != null) {
                 // Don't allow code blocks inside non-control tags (ASURT 76719)
                 if (ControlType != null && !flags[controlTypeIsControl]) {
-                    throw new HttpException(SR.GetString(SR.Code_not_supported_on_not_controls));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Code_not_supported_on_not_controls));
                 }
 
                 // Is it a databinding expression?  <%# ... %>
@@ -1357,7 +1358,7 @@ namespace System.Web.UI {
                         }
 
                         if (currentBuilder != null && currentBuilder.ParentBuilder != null && currentBuilder is TemplateBuilder) {
-                            throw new HttpException(SR.GetString(SR.DataBoundLiterals_cant_bind));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.DataBoundLiterals_cant_bind));
                         }
                     }
 
@@ -1416,7 +1417,7 @@ namespace System.Web.UI {
             }
 
             if (FIsNonParserAccessor) {
-                throw new HttpException(SR.GetString(SR.Children_not_supported_on_not_controls));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Children_not_supported_on_not_controls));
             }
 
             AddSubBuilder(subBuilder);
@@ -1456,7 +1457,7 @@ namespace System.Web.UI {
                                     code = "<%#" + (cbb.IsEncoded ? ":" : "") + cbb.Content + "%>";
                                     break;
                                 default:
-                                    Debug.Fail("Invalid value for CodeBlockType enum");
+                                    System.Web.Util.Debug.Fail("Invalid value for CodeBlockType enum");
                                     code = null;
                                     break;
                             }
@@ -1470,7 +1471,7 @@ namespace System.Web.UI {
                     else {
                         ControlBuilder controlBuilder = (ControlBuilder)cur;
 
-                        Debug.Assert(controlBuilder.ServiceProvider == null);
+                        System.Web.Util.Debug.Assert(controlBuilder.ServiceProvider == null);
                         controlBuilder.SetServiceProvider(ServiceProvider);
                         try {
                             childObj = controlBuilder.BuildObject(flags[applyTheme]);
@@ -1482,7 +1483,7 @@ namespace System.Web.UI {
                                 if (uc != null) {
                                     Control parent = parentObj as Control;
 
-                                    Debug.Assert(parent != null);
+                                    System.Web.Util.Debug.Assert(parent != null);
                                     uc.InitializeAsUserControl(parent.Page);
                                 }
                             }
@@ -1491,8 +1492,8 @@ namespace System.Web.UI {
                         }
                     }
 
-                    Debug.Assert(childObj != null);
-                    Debug.Assert(typeof(IParserAccessor).IsAssignableFrom(parentObj.GetType()));
+                    System.Web.Util.Debug.Assert(childObj != null);
+                    System.Web.Util.Debug.Assert(typeof(IParserAccessor).IsAssignableFrom(parentObj.GetType()));
                     ((IParserAccessor)parentObj).AddParsedSubObject(childObj);
                 }
             }
@@ -1516,7 +1517,7 @@ namespace System.Web.UI {
 
         internal object BuildObjectInternal() {
             // Can't assert these anymore since we've discarded this information by the time we call this method
-            // Debug.Assert(InDesigner || CompilationMode == CompilationMode.Never, "Expected to be in designer mode.");
+            // System.Web.Util.Debug.Assert(InDesigner || CompilationMode == CompilationMode.Never, "Expected to be in designer mode.");
             // Since getting the ConstructorNeedsTagAttribute is very expensive, cache
             // the result in a flag
             if (!flags[needsTagAttributeComputed]) {
@@ -1566,7 +1567,7 @@ namespace System.Web.UI {
 
             // Assert here so we know our own code is never passing in a plain IDictionary
             // System.Web.Mobile does this, so we don't assert
-            // Debug.Assert(false);
+            // System.Web.Util.Debug.Assert(false);
             ParsedAttributeCollection newAttribs = new ParsedAttributeCollection();
 
             foreach (DictionaryEntry entry in attribs) {
@@ -1594,8 +1595,8 @@ namespace System.Web.UI {
                             object[] attrs = TargetFrameworkUtil.GetCustomAttributes(ControlType, typeof(ParseChildrenAttribute), /*inherit*/ true);
 
                             pca = (ParseChildrenAttribute)attrs[0];
-                            Debug.Assert(pca != null);
-                            throw new HttpException(SR.GetString(SR.Cant_use_default_items_and_filtered_collection, _controlType.FullName, pca.DefaultProperty));
+                            System.Web.Util.Debug.Assert(pca != null);
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_use_default_items_and_filtered_collection, _controlType.FullName, pca.DefaultProperty));
                         }
 
                         // Can't use the default property builder anymore since we have filtered collections
@@ -1688,7 +1689,7 @@ namespace System.Web.UI {
                         factory = s_controlBuilderFactoryGenerator.CreateFactory(cba.BuilderType);
                     }
                     else {
-                        Debug.Assert(false, "The type " + cba.BuilderType.Name + " should be made public for better performance.");
+                        System.Web.Util.Debug.Assert(false, "The type " + cba.BuilderType.Name + " should be made public for better performance.");
 #endif // DONTUSEFACTORYGENERATOR
 
                         // It's not public, so we must stick with slower reflection
@@ -1715,7 +1716,7 @@ namespace System.Web.UI {
             object[] attrs = TargetFrameworkUtil.GetCustomAttributes(controlType, typeof(ControlBuilderAttribute), /*inherit*/ true);
 
             if ((attrs != null) && (attrs.Length > 0)) {
-                Debug.Assert(attrs[0] is ControlBuilderAttribute);
+                System.Web.Util.Debug.Assert(attrs[0] is ControlBuilderAttribute);
                 cba = (ControlBuilderAttribute)attrs[0];
             }
 
@@ -1723,14 +1724,14 @@ namespace System.Web.UI {
         }
 
         private ControlBuilder GetChildPropertyBuilder(string tagName, IDictionary attribs, ref Type childType, TemplateParser templateParser, bool defaultProperty) {
-            Debug.Assert(FChildrenAsProperties, "ChildrenAsProperties");
+            System.Web.Util.Debug.Assert(FChildrenAsProperties, "ChildrenAsProperties");
 
             // Parse the device filter if any
             // The child is supposed to be a property, so look for it
             PropertyInfo pInfo = TargetFrameworkUtil.GetProperty(_controlType, tagName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.IgnoreCase);
 
             if (pInfo == null) {
-                throw new HttpException(SR.GetString(SR.Type_doesnt_have_property, _controlType.FullName, tagName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Type_doesnt_have_property, _controlType.FullName, tagName));
             }
 
             // Get its type
@@ -1751,7 +1752,7 @@ namespace System.Web.UI {
                 object[] containerAttrs = pInfo.GetCustomAttributes(typeof(TemplateContainerAttribute), /*inherits*/ false);
 
                 if ((containerAttrs != null) && (containerAttrs.Length > 0)) {
-                    Debug.Assert(containerAttrs[0] is TemplateContainerAttribute);
+                    System.Web.Util.Debug.Assert(containerAttrs[0] is TemplateContainerAttribute);
                     useBindableTemplate = (((TemplateContainerAttribute)containerAttrs[0]).BindingDirection == BindingDirection.TwoWay);
                 }
 
@@ -1779,7 +1780,7 @@ namespace System.Web.UI {
                 if (((persistenceAttr == null) || (persistenceAttr.Mode == PersistenceMode.Attribute)) && !defaultProperty) {
                     // If the property is supposed to be declared as an attribute on a control tag, throw if it was declared as an inner property
                     // We don't throw if we are simply building the DefaultPropertyBuilder.
-                    throw new HttpException(SR.GetString(SR.ControlBuilder_CannotHaveComplexString, _controlType.FullName, tagName));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_CannotHaveComplexString, _controlType.FullName, tagName));
                 }
                 builder = new StringPropertyBuilder();
             }
@@ -1891,7 +1892,7 @@ namespace System.Web.UI {
         /// </devdoc>
         public virtual void Init(TemplateParser parser, ControlBuilder parentBuilder, Type type, string tagName, string id, IDictionary attribs) {
 #if DEBUG
-            Debug.Assert(!_initCalled, "ControlBuilder.Init() should never be called more than once on the same ControlBuilder.");
+            System.Web.Util.Debug.Assert(!_initCalled, "ControlBuilder.Init() should never be called more than once on the same ControlBuilder.");
             _initCalled = true;
 #endif
             if (parser != null && parser.ControlBuilderInterceptor != null) {
@@ -1935,7 +1936,7 @@ namespace System.Web.UI {
                         // Create a builder for the default prop
                         // Default property is always the default filter
                         ParseTimeData.DefaultPropertyBuilder = CreateChildBuilder(String.Empty, pca.DefaultProperty, null/*attribs*/, parser, null, null /*id*/, Line, VirtualPath, ref subType, true /*defaultProperty*/);
-                        Debug.Assert(DefaultPropertyBuilder != null, pca.DefaultProperty);
+                        System.Web.Util.Debug.Assert(DefaultPropertyBuilder != null, pca.DefaultProperty);
                     }
                 }
 
@@ -1965,7 +1966,7 @@ namespace System.Web.UI {
                 if (builder != null && 
                     builder.ControlType == ControlType && 
                     String.Equals(builder.SkinID, SkinID, StringComparison.OrdinalIgnoreCase)) {
-                        throw new InvalidOperationException(SR.GetString(SR.Cannot_set_recursive_skin, builder.ControlType.Name));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cannot_set_recursive_skin, builder.ControlType.Name));
                 }
             }
         }
@@ -1985,7 +1986,7 @@ namespace System.Web.UI {
                 object[] attrs = TargetFrameworkUtil.GetCustomAttributes(controlType, typeof(ParseChildrenAttribute), /*inherit*/ true);
 
                 if ((attrs != null) && (attrs.Length > 0)) {
-                    Debug.Assert(attrs[0] is ParseChildrenAttribute);
+                    System.Web.Util.Debug.Assert(attrs[0] is ParseChildrenAttribute);
                     pca = (ParseChildrenAttribute)attrs[0];
                 }
 
@@ -2067,7 +2068,7 @@ namespace System.Web.UI {
         /// </devdoc>
         internal virtual void InitObject(object obj) {
             // Can't assert these anymore since we've discarded this information by the time we call this method
-            // Debug.Assert(InDesigner || CompilationMode == CompilationMode.Never, "Expected to be in designer mode.");
+            // System.Web.Util.Debug.Assert(InDesigner || CompilationMode == CompilationMode.Never, "Expected to be in designer mode.");
             // Make sure we initialize the property entries in the right order
             EnsureEntriesSorted();
 
@@ -2160,7 +2161,7 @@ namespace System.Web.UI {
                     PropertyMapper.SetMappedPropertyValue(obj, entry.Name, entry.Value, InDesigner);
                 }
                 catch (Exception e) {
-                    throw new HttpException(SR.GetString(SR.Cannot_set_property, entry.PersistedValue, entry.Name), e);
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_property, entry.PersistedValue, entry.Name), e);
                 }
             }
         }
@@ -2173,10 +2174,10 @@ namespace System.Web.UI {
             foreach (ComplexPropertyEntry entry in ComplexPropertyEntries) {
                 try {
                     ControlBuilder controlBuilder = ((ComplexPropertyEntry)entry).Builder;
-                    Debug.Assert(((ComplexPropertyEntry)entry).IsCollectionItem, "The entry should be a collection entry, instead it's a " + entry.GetType());
+                    System.Web.Util.Debug.Assert(((ComplexPropertyEntry)entry).IsCollectionItem, "The entry should be a collection entry, instead it's a " + entry.GetType());
                     object objValue;
 
-                    Debug.Assert(controlBuilder.ServiceProvider == null);
+                    System.Web.Util.Debug.Assert(controlBuilder.ServiceProvider == null);
                     controlBuilder.SetServiceProvider(ServiceProvider);
                     try {
                         objValue = controlBuilder.BuildObject(flags[applyTheme]);
@@ -2188,12 +2189,12 @@ namespace System.Web.UI {
                     parameters[0] = objValue;
                     MethodInfo methodInfo = ControlType.GetMethod("Add", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { objValue.GetType() }, null);
                     if (methodInfo == null) {
-                        throw new InvalidOperationException(SR.GetString(SR.ControlBuilder_CollectionHasNoAddMethod, TagName));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_CollectionHasNoAddMethod, TagName));
                     }
                     Util.InvokeMethod(methodInfo, obj, parameters);
                 }
                 catch (Exception ex) {
-                    throw new HttpException(SR.GetString(SR.Cannot_add_value_not_collection, TagName, ex.Message), ex);
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_add_value_not_collection, TagName, ex.Message), ex);
                 }
             }
         }
@@ -2232,14 +2233,14 @@ namespace System.Web.UI {
                         }
                     }
                     catch (Exception e) {
-                        throw new HttpException(SR.GetString(SR.Cannot_init, entry.Name, e.Message), e);
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_init, entry.Name, e.Message), e);
                     }
                 }
                 else {
                     try {
                         ControlBuilder controlBuilder = entry.Builder;
 
-                        Debug.Assert(controlBuilder.ServiceProvider == null);
+                        System.Web.Util.Debug.Assert(controlBuilder.ServiceProvider == null);
                         object objectValue = null;
                         controlBuilder.SetServiceProvider(ServiceProvider);
                         try {
@@ -2253,7 +2254,7 @@ namespace System.Web.UI {
                         FastPropertyAccessor.SetProperty(obj, entry.Name, objectValue, InDesigner);
                     }
                     catch (Exception e) {
-                        throw new HttpException(SR.GetString(SR.Cannot_set_property, TagName, entry.Name), e);
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_property, TagName, entry.Name), e);
                     }
                 }
             }
@@ -2312,7 +2313,7 @@ namespace System.Web.UI {
             else {
                 if (!String.IsNullOrEmpty(expressionPrefix)) {
                     ExpressionBuilder eb = entry.ExpressionBuilder;
-                    Debug.Assert(eb != null, "Did not expect null expression builder");
+                    System.Web.Util.Debug.Assert(eb != null, "Did not expect null expression builder");
                     if (eb.SupportsEvaluate) {
                         string name = entry.Name;
 
@@ -2331,7 +2332,7 @@ namespace System.Web.UI {
 
                         if (entry.UseSetAttribute) {
                             if (attributeAccessor == null) {
-                                Debug.Assert(obj is IAttributeAccessor);
+                                System.Web.Util.Debug.Assert(obj is IAttributeAccessor);
                                 attributeAccessor = (IAttributeAccessor)obj;
                             }
 
@@ -2342,12 +2343,12 @@ namespace System.Web.UI {
                                 PropertyMapper.SetMappedPropertyValue(obj, name, value, InDesigner);
                             }
                             catch (Exception e) {
-                                throw new HttpException(SR.GetString(SR.Cannot_set_property, entry.ExpressionPrefix + ":" + entry.Expression, name), e);
+                                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_property, entry.ExpressionPrefix + ":" + entry.Expression, name), e);
                             }
                         }
                     }
                     else {
-                        Debug.Fail("Got a ExpressionBuilder that does not support Evaluate in a non-compiled page");
+                        System.Web.Util.Debug.Fail("Got a ExpressionBuilder that does not support Evaluate in a non-compiled page");
                     }
                 }
                 else {
@@ -2379,8 +2380,8 @@ namespace System.Web.UI {
                 entries = BoundPropertyEntries;
             }
             else {
-                Debug.Assert(ServiceProvider == null);
-                Debug.Assert(TemplateControl != null, "TemplateControl should not be null in no-compile pages. We need it for the FilterResolutionService.");
+                System.Web.Util.Debug.Assert(ServiceProvider == null);
+                System.Web.Util.Debug.Assert(TemplateControl != null, "TemplateControl should not be null in no-compile pages. We need it for the FilterResolutionService.");
 
                 ServiceContainer container = new ServiceContainer();
                 container.AddService(typeof(IFilterResolutionService), TemplateControl);
@@ -2405,12 +2406,12 @@ namespace System.Web.UI {
                 if (!entry.IsDataBindingEntry)
                     continue;
 
-                Debug.Assert(!entry.UseSetAttribute, "Two-way binding is not supported on expandos - this should have been prevented in ControlBuilder");
+                System.Web.Util.Debug.Assert(!entry.UseSetAttribute, "Two-way binding is not supported on expandos - this should have been prevented in ControlBuilder");
 
                 if (firstEntry) {
                     firstEntry = false;
 
-                    Debug.Assert(entry.ControlType.IsInstanceOfType(sender), "The DataBinding event sender was not of type " + entry.ControlType.Name);
+                    System.Web.Util.Debug.Assert(entry.ControlType.IsInstanceOfType(sender), "The DataBinding event sender was not of type " + entry.ControlType.Name);
                     if (_bindingContainerDescriptor == null) {
                         _bindingContainerDescriptor = TargetFrameworkUtil.GetProperties(typeof(Control))["BindingContainer"];
                     }
@@ -2467,7 +2468,7 @@ namespace System.Web.UI {
                 try {
                     ControlBuilder controlBuilder = ((TemplatePropertyEntry)entry).Builder;
 
-                    Debug.Assert(controlBuilder.ServiceProvider == null);
+                    System.Web.Util.Debug.Assert(controlBuilder.ServiceProvider == null);
                     controlBuilder.SetServiceProvider(ServiceProvider);
                     try {
                         parameters[0] = controlBuilder.BuildObject(flags[applyTheme]);
@@ -2478,11 +2479,11 @@ namespace System.Web.UI {
 
                     MethodInfo methodInfo = entry.PropertyInfo.GetSetMethod();
 
-                    Debug.Assert(methodInfo != null);
+                    System.Web.Util.Debug.Assert(methodInfo != null);
                     Util.InvokeMethod(methodInfo, obj, parameters);
                 }
                 catch (Exception e) {
-                    throw new HttpException(SR.GetString(SR.Cannot_set_property, TagName, entry.Name), e);
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_set_property, TagName, entry.Name), e);
                 }
             }
         }
@@ -2698,11 +2699,11 @@ namespace System.Web.UI {
 
                     if (!isBindItemStatement) {
                         if (!(match = bindParametersRegex.Match(paramString, 0)).Success) {
-                            throw new HttpException(SR.GetString(SR.BadlyFormattedBind));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.BadlyFormattedBind));
                         }
                     }
                     else if (!(match = bindItemParametersRegex.Match(paramString, 0)).Success) {
-                        throw new HttpException(SR.GetString(SR.BadlyFormattedBindItem));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.BadlyFormattedBindItem));
                     }
 
                     string fieldName = match.Groups["fieldName"].Value;
@@ -2715,7 +2716,7 @@ namespace System.Web.UI {
 
                     if (formatString.Length > 0) {
                         if (!(match = formatStringRegex.Match(formatString, 0)).Success) {
-                            throw new HttpException(SR.GetString(SR.BadlyFormattedBind));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.BadlyFormattedBind));
                         }
                     }
 
@@ -2743,7 +2744,7 @@ namespace System.Web.UI {
             }
             else if ((match = expressionBuilderRegex.Match(attribvalue, 0)).Success) {
                 if (InPageTheme) {
-                    throw new HttpParseException(SR.GetString(SR.ControlBuilder_ExpressionsNotAllowedInThemes));
+                    throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_ExpressionsNotAllowedInThemes));
                 }
 
                 // Don't process expression builders during updatable precomp, because we're only
@@ -2755,16 +2756,16 @@ namespace System.Web.UI {
 
                 int indexOfColon = code.IndexOf(':');
                 if (indexOfColon == -1) {
-                    throw new HttpParseException(SR.GetString(SR.InvalidExpressionSyntax, attribvalue));
+                    throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.InvalidExpressionSyntax, attribvalue));
                 }
 
                 string expressionPrefix = code.Substring(0, indexOfColon).Trim();
                 string expressionCode = code.Substring(indexOfColon + 1).Trim();
                 if (expressionPrefix.Length == 0) {
-                    throw new HttpParseException(SR.GetString(SR.MissingExpressionPrefix, attribvalue));
+                    throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.MissingExpressionPrefix, attribvalue));
                 }
                 if (expressionCode.Length == 0) {
-                    throw new HttpParseException(SR.GetString(SR.MissingExpressionValue, attribvalue));
+                    throw new HttpParseException(System.Web.SR.GetString(System.Web.SR.MissingExpressionValue, attribvalue));
                 }
 
                 // If it's a non compiled page, fail if the expressiom builder has SupportsEvaluate==false
@@ -2772,7 +2773,7 @@ namespace System.Web.UI {
                 if (CompilationMode == CompilationMode.Never) {
                     expressionBuilder = ExpressionBuilder.GetExpressionBuilder(expressionPrefix, Parser.CurrentVirtualPath);
                     if ((expressionBuilder != null) && !expressionBuilder.SupportsEvaluate) {
-                        throw new InvalidOperationException(SR.GetString(SR.Cannot_evaluate_expression, expressionPrefix + ":" + expressionCode));
+                        throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Cannot_evaluate_expression, expressionPrefix + ":" + expressionCode));
                     }
                 }
 
@@ -2820,12 +2821,12 @@ namespace System.Web.UI {
             if (localize != null) {
                 // Depending on the control type, don't allow meta:localize (e.g. ITemplate case) (VSWhidbey 276398, 454894)
                 if (!IsValidForImplicitLocalization()) {
-                    throw new InvalidOperationException(SR.GetString(SR.meta_localize_notallowed, TagName));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.meta_localize_notallowed, TagName));
                 }
 
                 bool parseResult;
                 if (!Boolean.TryParse(localize, out parseResult)) {
-                    throw new HttpException(SR.GetString(SR.ControlBuilder_InvalidLocalizeValue, localize));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.ControlBuilder_InvalidLocalizeValue, localize));
                 }
                 ParseTimeData.Localize = parseResult;
             }
@@ -2844,19 +2845,19 @@ namespace System.Web.UI {
 
             // Depending on the control type, don't allow meta:reskey (e.g. ITemplate case) (VSWhidbey 276398, 454894)
             if (!IsValidForImplicitLocalization()) {
-                throw new InvalidOperationException(SR.GetString(SR.meta_reskey_notallowed, TagName));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.meta_reskey_notallowed, TagName));
             }
-            Debug.Assert(_controlType != null, "If we get here then the tag type must be either an ICollection or a Control, so how can it be null?");
+            System.Web.Util.Debug.Assert(_controlType != null, "If we get here then the tag type must be either an ICollection or a Control, so how can it be null?");
 
             // Restrict resource keys the same way as we restrict ID's (VSWhidbey 256438)
             if (!System.CodeDom.Compiler.CodeGenerator.IsValidLanguageIndependentIdentifier(keyPrefix)) {
-                throw new HttpException(SR.GetString(SR.Invalid_resourcekey, keyPrefix));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Invalid_resourcekey, keyPrefix));
             }
 
             if (!ParseTimeData.Localize) {
                 // If we have a key prefix (from meta:resourcekey) but we also have
                 // meta:localize=false, we throw.
-                throw new HttpException(SR.GetString(SR.meta_localize_error));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.meta_localize_error));
             }
 
             ParseTimeData.ResourceKeyPrefix = keyPrefix;
@@ -3023,7 +3024,7 @@ namespace System.Web.UI {
         internal virtual void SetParentBuilder(ControlBuilder parentBuilder) {
             ParseTimeData.ParentBuilder = parentBuilder;
             if ((ParseTimeData.FirstNonThemableProperty != null) && (parentBuilder is FileLevelPageThemeBuilder)) {
-                throw new InvalidOperationException(SR.GetString(SR.Property_theme_disabled, ParseTimeData.FirstNonThemableProperty.Name, ControlType.FullName));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Property_theme_disabled, ParseTimeData.FirstNonThemableProperty.Name, ControlType.FullName));
             }
         }
 
@@ -3031,7 +3032,7 @@ namespace System.Web.UI {
         public string GetResourceKey() {
 
             // This should only be used in the designer
-            Debug.Assert(InDesigner);
+            System.Web.Util.Debug.Assert(InDesigner);
 
             return ParseTimeData.ResourceKeyPrefix;
         }
@@ -3040,7 +3041,7 @@ namespace System.Web.UI {
         public void SetResourceKey(string resourceKey) {
 
             // This should only be used in the designer
-            Debug.Assert(InDesigner);
+            System.Web.Util.Debug.Assert(InDesigner);
 
             SimplePropertyEntry entry = new SimplePropertyEntry();
             entry.Filter = "meta";
@@ -3104,13 +3105,13 @@ namespace System.Web.UI {
                     // If it's an HtmlControl, check the HtmlControlPersistableAttribute to see if the property is persistable
                     if (IsHtmlControl) {
                         if (propDesc.Attributes.Contains(HtmlControlPersistableAttribute.No)) {
-                            throw new HttpException(SR.GetString(SR.Property_Not_Persistable, propDesc.Name));
+                            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Property_Not_Persistable, propDesc.Name));
                         }
                     }
                     // Otherwise, if we're not using the attribute accessor, we're not processing the main directive
                     // check if the property is persistable
                     else if (!usingSetAttribute && !mainDirectiveMode && propDesc.Attributes.Contains(DesignerSerializationVisibilityAttribute.Hidden)) {
-                        throw new HttpException(SR.GetString(SR.Property_Not_Persistable, propDesc.Name));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Property_Not_Persistable, propDesc.Name));
                     }
                 }
 
@@ -3120,7 +3121,7 @@ namespace System.Web.UI {
 
                 // Make sure the property is filterable if there is a filter
                 if (!FilterableAttribute.IsPropertyFilterable(propDesc) && !String.IsNullOrEmpty(filter)) {
-                    throw new InvalidOperationException(SR.GetString(SR.Illegal_Device, propDesc.Name));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Illegal_Device, propDesc.Name));
                 }
 
                 if (InPageTheme && (ParseTimeData.FirstNonThemableProperty == null)) {
@@ -3130,7 +3131,7 @@ namespace System.Web.UI {
                         if (attr != null && !attr.Themeable) {
                             if (this.ParentBuilder != null) {
                                 if (ParentBuilder is FileLevelPageThemeBuilder) {
-                                    throw new InvalidOperationException(SR.GetString(SR.Property_theme_disabled, propDesc.Name, ControlType.FullName));
+                                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Property_theme_disabled, propDesc.Name, ControlType.FullName));
                                 }
                             }
                             else {
@@ -3277,8 +3278,8 @@ namespace System.Web.UI {
                     return -1;
                 }
 
-                Debug.Assert(o1 is PropertyEntry);
-                Debug.Assert(o2 is PropertyEntry);
+                System.Web.Util.Debug.Assert(o1 is PropertyEntry);
+                System.Web.Util.Debug.Assert(o2 is PropertyEntry);
 
                 PropertyEntry entry1 = (PropertyEntry)o1;
                 PropertyEntry entry2 = (PropertyEntry)o2;

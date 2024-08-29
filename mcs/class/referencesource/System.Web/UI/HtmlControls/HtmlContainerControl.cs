@@ -12,6 +12,7 @@ namespace System.Web.UI.HtmlControls {
     using System.IO;
     using System.Web.UI;
     using System.Security.Permissions;
+    
 
 /*
  *  A control representing an intrinsic Html tag.
@@ -76,7 +77,7 @@ namespace System.Web.UI.HtmlControls {
                     if (Controls.Count == 0)
                         return String.Empty;
 
-                    throw new HttpException(SR.GetString(SR.Inner_Content_not_literal, ID));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Inner_Content_not_literal, ID));
                 }
             }
 

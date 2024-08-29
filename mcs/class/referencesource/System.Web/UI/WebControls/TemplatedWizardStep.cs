@@ -34,7 +34,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(Wizard)),
-        WebSysDescription(SR.TemplatedWizardStep_ContentTemplate)
+        WebSysDescription(System.Web.SR.TemplatedWizardStep_ContentTemplate)
         ]
         public virtual ITemplate ContentTemplate {
             get {
@@ -69,7 +69,7 @@ namespace System.Web.UI.WebControls {
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
         PersistenceMode(PersistenceMode.InnerProperty),
         TemplateContainer(typeof(Wizard)),
-        WebSysDescription(SR.TemplatedWizardStep_CustomNavigationTemplate)
+        WebSysDescription(System.Web.SR.TemplatedWizardStep_CustomNavigationTemplate)
         ]
         public virtual ITemplate CustomNavigationTemplate {
             get {

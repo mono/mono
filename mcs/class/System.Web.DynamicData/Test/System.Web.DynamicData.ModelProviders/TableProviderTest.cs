@@ -95,6 +95,7 @@ namespace MonoTests.System.Web.DynamicData.ModelProviders
 	public class TableProviderTest
 	{
 		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void TableProvider_Constructor()
 		{
 			var tp = new MyTableProvider(null);

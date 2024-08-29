@@ -12,6 +12,7 @@ namespace System.Web.Configuration {
     using System.Text;
     using System.Web.Security.AntiXss;
     using System.Web.Util;
+    
 
     public sealed class HttpRuntimeSection : ConfigurationSection {
 #if !FEATURE_PAL // FEATURE_PAL-specific timeout values
@@ -358,7 +359,7 @@ namespace System.Web.Configuration {
             _RequestLengthDiskThresholdBytes = -1;
         }
 
-        protected override ConfigurationPropertyCollection Properties {
+        protected internal override ConfigurationPropertyCollection Properties {
             get {
                 return _properties;
             }
@@ -421,7 +422,7 @@ namespace System.Web.Configuration {
             }
             set {
                 if (value < RequestLengthDiskThreshold) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_max_request_length_smaller_than_max_request_length_disk_threshold),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_max_request_length_smaller_than_max_request_length_disk_threshold),
                          ElementInformation.Properties[_propMaxRequestLength.Name].Source,
                          ElementInformation.Properties[_propMaxRequestLength.Name].LineNumber);
                 }
@@ -437,7 +438,7 @@ namespace System.Web.Configuration {
             }
             set {
                 if (value > MaxRequestLength) {
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_max_request_length_disk_threshold_exceeds_max_request_length),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_max_request_length_disk_threshold_exceeds_max_request_length),
                          ElementInformation.Properties[_propRequestLengthDiskThreshold.Name].Source,
                          ElementInformation.Properties[_propRequestLengthDiskThreshold.Name].LineNumber);
                 }
@@ -565,7 +566,7 @@ namespace System.Web.Configuration {
                 if (!Version.TryParse(targetFramework, out version)) {
                     // if this doesn't parse as a valid Version object, throw an exception containing the erroneous line in config
                     PropertyInformation targetFrameworkPropInfo = ElementInformation.Properties["targetFramework"];
-                    throw new ConfigurationErrorsException(SR.GetString(SR.HttpRuntimeSection_TargetFramework_Invalid),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.HttpRuntimeSection_TargetFramework_Invalid),
                         filename: targetFrameworkPropInfo.Source,
                         line: targetFrameworkPropInfo.LineNumber);
                 }
@@ -824,7 +825,7 @@ namespace System.Web.Configuration {
                 }
 
                 if (_RequestPathInvalidCharactersArray == null) { // failed to construct invalid chars
-                    throw new ConfigurationErrorsException(SR.GetString(SR.Config_property_generic),
+                    throw new ConfigurationErrorsException(System.Web.SR.GetString(System.Web.SR.Config_property_generic),
                                                            ElementInformation.Properties[_propRequestPathInvalidCharacters.Name].Source,
                                                            ElementInformation.Properties[_propRequestPathInvalidCharacters.Name].LineNumber);
                 }
@@ -874,7 +875,7 @@ namespace System.Web.Configuration {
 
         // This is called as the last step of the deserialization process before the newly created section is seen by the consumer.
         // We can use it to change defaults on-the-fly.
-        protected override void SetReadOnly() {
+        protected internal override void SetReadOnly() {
             // Unless overridden, set <httpRuntime requestValidationMode="4.5" />
             ConfigUtil.SetFX45DefaultValue(this, _propRequestValidationMode, VersionUtil.Framework45);
 

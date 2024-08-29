@@ -38,7 +38,7 @@ namespace System.Web {
             get {
                 if (!replaced) {
                     replaced = true;
-                    DescriptionValue = SR.GetString(base.Description);                
+                    DescriptionValue = System.Web.SR.GetString(base.Description);                
                 }
                 return base.Description;
             }

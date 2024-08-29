@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Appearance"),
             DefaultValue(false),
-            WebSysDescription(SR.FontInfo_Bold),
+            WebSysDescription(System.Web.SR.FontInfo_Bold),
             NotifyParentProperty(true)
         ]
         public bool Bold {
@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Appearance"),
             DefaultValue(false),
-            WebSysDescription(SR.FontInfo_Italic),
+            WebSysDescription(System.Web.SR.FontInfo_Italic),
             NotifyParentProperty(true)
         ]
         public bool Italic {
@@ -83,11 +83,11 @@ namespace System.Web.UI.WebControls {
         ///    <para>Indicates the name of the font.</para>
         /// </devdoc>
         [
-            Editor("System.Drawing.Design.FontNameEditor, " + AssemblyRef.SystemDrawingDesign, typeof(UITypeEditor)),
+            //Editor("System.Drawing.Design.FontNameEditor, " + AssemblyRef.SystemDrawingDesign, typeof(UITypeEditor)),
             TypeConverterAttribute(typeof(FontConverter.FontNameConverter)),
             WebCategory("Appearance"),
             DefaultValue(""),
-            WebSysDescription(SR.FontInfo_Name),
+            WebSysDescription(System.Web.SR.FontInfo_Name),
             NotifyParentProperty(true),
             RefreshProperties(RefreshProperties.Repaint),
             DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -119,7 +119,7 @@ namespace System.Web.UI.WebControls {
             TypeConverterAttribute(typeof(FontNamesConverter)),
             WebCategory("Appearance"),
             Editor("System.Windows.Forms.Design.StringArrayEditor, " + AssemblyRef.SystemDesign, typeof(UITypeEditor)),
-            WebSysDescription(SR.FontInfo_Names),
+            WebSysDescription(System.Web.SR.FontInfo_Names),
             RefreshProperties(RefreshProperties.Repaint),
             NotifyParentProperty(true)
         ]
@@ -145,7 +145,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Appearance"),
             DefaultValue(false),
-            WebSysDescription(SR.FontInfo_Overline),
+            WebSysDescription(System.Web.SR.FontInfo_Overline),
             NotifyParentProperty(true)
         ]
         public bool Overline {
@@ -177,7 +177,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Appearance"),
             DefaultValue(typeof(FontUnit), ""),
-            WebSysDescription(SR.FontInfo_Size),
+            WebSysDescription(System.Web.SR.FontInfo_Size),
             NotifyParentProperty(true),
             RefreshProperties(RefreshProperties.Repaint)
         ]
@@ -204,7 +204,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Appearance"),
             DefaultValue(false),
-            WebSysDescription(SR.FontInfo_Strikeout),
+            WebSysDescription(System.Web.SR.FontInfo_Strikeout),
             NotifyParentProperty(true)
         ]
         public bool Strikeout {
@@ -227,7 +227,7 @@ namespace System.Web.UI.WebControls {
         [
             WebCategory("Appearance"),
             DefaultValue(false),
-            WebSysDescription(SR.FontInfo_Underline),
+            WebSysDescription(System.Web.SR.FontInfo_Underline),
             NotifyParentProperty(true)
         ]
         public bool Underline {

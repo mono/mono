@@ -23,6 +23,7 @@ namespace System.Web.Configuration {
     using System.Configuration;
     using System.Globalization;
     using System.Web.Management;
+    
 
     /////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////
@@ -43,20 +44,20 @@ namespace System.Web.Configuration {
         }
 
         protected override string ErrorTitle {
-            get { return SR.GetString(SR.Assess_Denied_Title);}
+            get { return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Title);}
             // "Access Denied
         }
 
         protected override string Description {
             get {
-                return SR.GetString(SR.Assess_Denied_Description2);
+                return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Description2);
                 //"An error occurred while accessing the resources required to serve this request. &nbsp; This typically happens when the web server is not configured to give you access to the requested URL.";
             }
         }
 
         protected override string MiscSectionTitle {
             get {
-                return SR.GetString(SR.Assess_Denied_Section_Title2);
+                return System.Web.SR.GetString(System.Web.SR.Assess_Denied_Section_Title2);
                 //return "Error message 401.2";
             }
         }
@@ -64,7 +65,7 @@ namespace System.Web.Configuration {
         protected override string MiscSectionContent {
             get {
                 // VSWhidbey 493720: Do Html encode to preserve space characters
-                string miscContent = HttpUtility.FormatPlainTextAsHtml(SR.GetString(SR.Assess_Denied_Misc_Content2));
+                string miscContent = HttpUtility.FormatPlainTextAsHtml(System.Web.SR.GetString(System.Web.SR.Assess_Denied_Misc_Content2));
                 AdaptiveMiscContent.Add(miscContent);
                 return miscContent;
                 //return "Access denied due to the web server's configuration. Ask the web server's administrator for help.";

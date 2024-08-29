@@ -17,11 +17,13 @@ namespace System.Web.UI {
 
     [
     DefaultProperty("TargetControlID"),
-    Designer("System.Web.UI.Design.ExtenderControlDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+#if !MONO
+    //Designer("System.Web.UI.Design.ExtenderControlDesigner, " + AssemblyRef.SystemWebExtensionsDesign),
+    //ToolboxItem("System.Web.UI.Design.ExtenderControlToolboxItem, " + AssemblyRef.SystemWebExtensionsDesign),
+#endif
     NonVisualControl(),
     ParseChildren(true),
-    PersistChildren(false),
-    ToolboxItem("System.Web.UI.Design.ExtenderControlToolboxItem, " + AssemblyRef.SystemWebExtensionsDesign),
+    PersistChildren(false),    
     ]
     public abstract class ExtenderControl : Control, IExtenderControl {
         private string _targetControlID;

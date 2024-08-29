@@ -79,7 +79,7 @@ namespace System.Web.Util {
 
             _methodToOverride = factoryInterface.GetMethod("CreateInstance", new Type[0]);
             if (_methodToOverride.ReturnType != _returnedType) {
-                throw new ArgumentException(SR.GetString(SR.FactoryInterface));
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.FactoryInterface));
             }
 
             // This will be needed later, when building the dynamic class.
@@ -95,12 +95,12 @@ namespace System.Web.Util {
             }
 
             if (!(type.IsPublic || type.IsNestedPublic)) {
-                throw new InvalidOperationException(SR.GetString(SR.FactoryGenerator_TypeNotPublic, type.Name));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.FactoryGenerator_TypeNotPublic, type.Name));
             }
 
             ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
             if (constructor == null) {
-                throw new InvalidOperationException(SR.GetString(SR.FactoryGenerator_TypeHasNoParameterlessConstructor, type.Name));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.FactoryGenerator_TypeHasNoParameterlessConstructor, type.Name));
             }
         }
 
@@ -174,7 +174,7 @@ namespace System.Web.Util {
         }
 
         internal IWebObjectFactory CreateFactory(Type type) {
-            Debug.Trace("FactoryGenerator", "Creating generator for type " + type.FullName);
+            System.Web.Util.Debug.Trace("FactoryGenerator", "Creating generator for type " + type.FullName);
 
             Type factoryType = GetFactoryTypeWithAssert(type);
 

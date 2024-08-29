@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="keyfile_help" xml:space="preserve">
+    <value>The physical path to the strong name key file.</value>
+  </data>
+  <data name="x_help" xml:space="preserve">
+    <value>The virtual path of a directory that should be excluded from precompilation. This switch can be used multiple times.</value>
+  </data>
+  <data name="errorstack_help" xml:space="preserve">
+    <value>Shows extra debugging information that can help debug certain conditions.</value>
+  </data>
+  <data name="invalid_keyfile" xml:space="preserve">
+    <value>The keyfile '{0}' cannot be found.</value>
+  </data>
+  <data name="unknown_switch" xml:space="preserve">
+    <value>Unknown switch: '{0}'.</value>
+  </data>
+  <data name="unexpected_param" xml:space="preserve">
+    <value>Unexpected parameter: '{0}'.</value>
+  </data>
+  <data name="copyright" xml:space="preserve">
+    <value>Copyright (C) Microsoft Corporation. All rights reserved.</value>
+  </data>
+  <data name="aptca_help" xml:space="preserve">
+    <value>If specified, the strong-name assembly will allow partially trusted callers.</value>
+  </data>
+  <data name="_sep01_" xml:space="preserve">
+    <value>sep</value>
+  </data>
+  <data name="short_usage_text" xml:space="preserve">
+    <value>Run 'aspnet_compiler -?' for a list of valid options.</value>
+  </data>
+  <data name="questionmark_help" xml:space="preserve">
+    <value>Prints this help text.</value>
+  </data>
+  <data name="targetDir_help" xml:space="preserve">
+    <value>The physical path to which the application is compiled. If not specified, the application is precompiled in-place.</value>
+  </data>
+  <data name="missing_arg" xml:space="preserve">
+    <value>The '{0}' switch needs to be followed by an argument.</value>
+  </data>
+  <data name="bad_mdpath" xml:space="preserve">
+    <value>'{0}' is not a well formed IIS metabase path.</value>
+  </data>
+  <data name="keycontainer_help" xml:space="preserve">
+    <value>Specifies a strong name key container.</value>
+  </data>
+  <data name="Strongname_failure" xml:space="preserve">
+    <value>Strong name verification failure, can not load file or assembly '{0}'. If the assembly is delay-signed, make sure verification is skipped for the public key token.</value>
+  </data>
+  <data name="invalid_aptca" xml:space="preserve">
+    <value>The -aptca switch can only be used if keyfile or keycontainer is specified.</value>
+  </data>
+  <data name="invalid_vpath" xml:space="preserve">
+    <value>'{0}' is not a valid virtual path.</value>
+  </data>
+  <data name="usage" xml:space="preserve">
+    <value>Usage:</value>
+  </data>
+  <data name="delaysign_help" xml:space="preserve">
+    <value>If specified, the assembly is not fully signed when created. </value>
+  </data>
+  <data name="need_m_or_v" xml:space="preserve">
+    <value>Either -m or -v must be specified (but not both).</value>
+  </data>
+  <data name="brand_text" xml:space="preserve">
+    <value>Microsoft (R) ASP.NET Compilation Tool version {0}</value>
+  </data>
+  <data name="flag_requires_target" xml:space="preserve">
+    <value>The -{0} switch can only be used if a targetDir is specified.</value>
+  </data>
+  <data name="dir_not_exist" xml:space="preserve">
+    <value>The directory '{0}' doesn't exist.</value>
+  </data>
+  <data name="header_text" xml:space="preserve">
+    <value>Utility to precompile an ASP.NET application</value>
+  </data>
+  <data name="example1" xml:space="preserve">
+    <value>The following two commands are equivalent, and rely on the IIS metabase. The compiled application is deployed to c:\MyTarget:</value>
+  </data>
+  <data name="example3" xml:space="preserve">
+    <value>The following command does *not* rely on the IIS metabase, as it explicitly specifies the physical source directory of the application:</value>
+  </data>
+  <data name="example2" xml:space="preserve">
+    <value>The following command compiles the application /MyApp in-place. The effect is that no more compilations will be needed when HTTP requests are sent to it:</value>
+  </data>
+  <data name="examples" xml:space="preserve">
+    <value>Examples:</value>
+  </data>
+  <data name="d_help" xml:space="preserve">
+    <value>If specified, the debug information is emitted during compilation.</value>
+  </data>
+  <data name="no_m_and_p" xml:space="preserve">
+    <value>The -m and -p switches cannot both be used.</value>
+  </data>
+  <data name="f_help" xml:space="preserve">
+    <value>Overwrites the target directory if it already exists. Existing contents are lost.</value>
+  </data>
+  <data name="m_help" xml:space="preserve">
+    <value>The full IIS metabase path of the application. This switch cannot be combined with the -v or -p switches.</value>
+  </data>
+  <data name="c_help" xml:space="preserve">
+    <value>If specified, the precompiled application is fully rebuilt. Any previously compiled components will be re-compiled. This option is always enabled when targetDir is specified.</value>
+  </data>
+  <data name="nologo_help" xml:space="preserve">
+    <value>Suppress compiler copyright message.</value>
+  </data>
+  <data name="invalid_delaysign" xml:space="preserve">
+    <value>The -delaysign switch can only be used if keyfile or keycontainer is specified.</value>
+  </data>
+  <data name="fixednames_help" xml:space="preserve">
+    <value>If specified, the compiled assemblies will be given fixed names.</value>
+  </data>
+  <data name="u_help" xml:space="preserve">
+    <value>If specified, the precompiled application is updatable.</value>
+  </data>
+  <data name="p_help" xml:space="preserve">
+    <value>The physical path of the application to be compiled. If -p is missing, the IIS metabase is used to locate the app. This switch must be combined with -v.</value>
+  </data>
+  <data name="invalid_path" xml:space="preserve">
+    <value>'{0}' is not a valid path.</value>
+  </data>
+  <data name="v_help" xml:space="preserve">
+    <value>The virtual path of the application to be compiled (e.g. "/MyApp"). If -p is specified, the physical path is used to locate the application. Otherwise, the IIS metabase is used, and the application is assumed to be in the default site (under "/LM/W3SVC/1/Root"). This switch cannot be combined with the -m switch.</value>
+  </data>
+</root>

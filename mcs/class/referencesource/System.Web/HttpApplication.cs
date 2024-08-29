@@ -35,8 +35,11 @@ namespace System.Web {
     using System.Web.SessionState;
     using System.Web.UI;
     using System.Web.Util;
-    using IIS = System.Web.Hosting.UnsafeIISMethods;
+    
 
+#if (!MONO || !FEATURE_PAL)
+    using IIS = System.Web.Hosting.UnsafeIISMethods;
+#endif
 
     //
     // Async EventHandler support
@@ -226,7 +229,7 @@ namespace System.Web {
         private void ThrowIfEventBindingDisallowed() {
             if (HttpRuntime.UseIntegratedPipeline && _initSpecialCompleted && _initInternalCompleted) {
                 // throw if we're using the integrated pipeline and both InitSpecial and InitInternal have completed.
-                throw new InvalidOperationException(SR.GetString(SR.Event_Binding_Disallowed));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Event_Binding_Disallowed));
             }
         }
 
@@ -234,7 +237,7 @@ namespace System.Web {
             get {
                 if (_moduleContainers == null) {
 
-                    Debug.Assert(_moduleIndexMap != null && _moduleIndexMap.Count > 0, "_moduleIndexMap != null && _moduleIndexMap.Count > 0");
+                    System.Web.Util.Debug.Assert(_moduleIndexMap != null && _moduleIndexMap.Count > 0, "_moduleIndexMap != null && _moduleIndexMap.Count > 0");
 
                     // At this point, all modules have been registered with IIS via RegisterIntegratedEvent.
                     // Now we need to create a container for each module and add execution steps.
@@ -358,7 +361,7 @@ namespace System.Web {
                     request = _context.Request;
 
                 if (request == null)
-                    throw new HttpException(SR.GetString(SR.Request_not_available));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Request_not_available));
 
                 return request;
             }
@@ -382,7 +385,7 @@ namespace System.Web {
                     response = _context.Response;
 
                 if (response == null)
-                    throw new HttpException(SR.GetString(SR.Response_not_available));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Response_not_available));
 
                 return response;
             }
@@ -408,7 +411,7 @@ namespace System.Web {
                     session = _context.Session;
 
                 if (session == null)
-                    throw new HttpException(SR.GetString(SR.Session_not_available));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Session_not_available));
 
                 return session;
             }
@@ -427,7 +430,7 @@ namespace System.Web {
         ]
         public HttpApplicationState Application {
             get {
-                Debug.Assert(_state != null);  // app state always available
+                System.Web.Util.Debug.Assert(_state != null);  // app state always available
                 return _state;
             }
         }
@@ -460,7 +463,7 @@ namespace System.Web {
         public IPrincipal User {
             get {
                 if (_context == null)
-                    throw new HttpException(SR.GetString(SR.User_not_available));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.User_not_available));
 
                 return _context.User;
             }
@@ -477,8 +480,7 @@ namespace System.Web {
         Browsable(false),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
         ]
-        public HttpModuleCollection Modules {
-            [AspNetHostingPermission(SecurityAction.Demand, Level=AspNetHostingPermissionLevel.High)]
+        public HttpModuleCollection Modules {            
             get {
                 if (_moduleCollection == null)
                     _moduleCollection = new HttpModuleCollection();
@@ -568,12 +570,12 @@ namespace System.Web {
         // The SendResponse notification also acquires the lock when it enters managed code and 
         // releases the lock when it leaves.
         internal void AcquireNotifcationContextLock(ref bool locked) {
-            Debug.Assert(HttpRuntime.UseIntegratedPipeline, "HttpRuntime.UseIntegratedPipeline");
+            System.Web.Util.Debug.Assert(HttpRuntime.UseIntegratedPipeline, "HttpRuntime.UseIntegratedPipeline");
             Monitor.Enter(_stepManager, ref locked);
         }
 
         internal void ReleaseNotifcationContextLock() {
-            Debug.Assert(HttpRuntime.UseIntegratedPipeline, "HttpRuntime.UseIntegratedPipeline");
+            System.Web.Util.Debug.Assert(HttpRuntime.UseIntegratedPipeline, "HttpRuntime.UseIntegratedPipeline");
             Monitor.Exit(_stepManager);
         }
 
@@ -698,13 +700,13 @@ namespace System.Web {
             int moduleIndex = (int)value;
 
 #if DBG
-            Debug.Trace("PipelineRuntime", "GetModuleContainer: moduleName=" + moduleName + ", index=" + moduleIndex.ToString(CultureInfo.InvariantCulture) + "\r\n");
-            Debug.Assert(moduleIndex >= 0 && moduleIndex < ModuleContainers.Length, "moduleIndex >= 0 && moduleIndex < ModuleContainers.Length");
+            System.Web.Util.Debug.Trace("PipelineRuntime", "GetModuleContainer: moduleName=" + moduleName + ", index=" + moduleIndex.ToString(CultureInfo.InvariantCulture) + "\r\n");
+            System.Web.Util.Debug.Assert(moduleIndex >= 0 && moduleIndex < ModuleContainers.Length, "moduleIndex >= 0 && moduleIndex < ModuleContainers.Length");
 #endif
 
             PipelineModuleStepContainer container = ModuleContainers[moduleIndex];
 
-            Debug.Assert(container != null, "container != null");
+            System.Web.Util.Debug.Assert(container != null, "container != null");
 
             return container;
         }
@@ -850,13 +852,13 @@ namespace System.Web {
         public event EventHandler MapRequestHandler {
             add {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
                 AddSyncEventHookup(EventMapRequestHandler, value, RequestNotification.MapRequestHandler);
             }
             remove {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
                 RemoveSyncEventHookup(EventMapRequestHandler, value, RequestNotification.MapRequestHandler);
             }
@@ -926,13 +928,13 @@ namespace System.Web {
         public event EventHandler LogRequest {
             add {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
                 AddSyncEventHookup(EventLogRequest, value, RequestNotification.LogRequest);
             }
             remove {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
                 RemoveSyncEventHookup(EventLogRequest, value, RequestNotification.LogRequest);
             }
@@ -941,13 +943,13 @@ namespace System.Web {
         public event EventHandler PostLogRequest {
             add {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
                 AddSyncEventHookup(EventPostLogRequest, value, RequestNotification.LogRequest, true);
             }
             remove {
                 if (!HttpRuntime.UseIntegratedPipeline) {
-                    throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                    throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
                 }
                 RemoveSyncEventHookup(EventPostLogRequest, value, RequestNotification.LogRequest, true);
             }
@@ -1059,14 +1061,14 @@ namespace System.Web {
 
         public void AddOnMapRequestHandlerAsync(BeginEventHandler bh, EndEventHandler eh) {
             if (!HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
             AddOnMapRequestHandlerAsync(bh, eh, null);
         }
 
         public void AddOnMapRequestHandlerAsync(BeginEventHandler beginHandler, EndEventHandler endHandler, Object state) {
             if (!HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
             AsyncEvents.AddHandler(EventMapRequestHandler, beginHandler, endHandler, state,
                                    RequestNotification.MapRequestHandler, false, this);
@@ -1155,14 +1157,14 @@ namespace System.Web {
 
         public void AddOnLogRequestAsync(BeginEventHandler bh, EndEventHandler eh) {
             if (!HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
             AddOnLogRequestAsync(bh, eh, null);
         }
 
         public void AddOnLogRequestAsync(BeginEventHandler beginHandler, EndEventHandler endHandler, Object state) {
             if (!HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
             AsyncEvents.AddHandler(EventLogRequest, beginHandler, endHandler, state,
                                    RequestNotification.LogRequest, false, this);
@@ -1170,14 +1172,14 @@ namespace System.Web {
 
         public void AddOnPostLogRequestAsync(BeginEventHandler bh, EndEventHandler eh) {
             if (!HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
             AddOnPostLogRequestAsync(bh, eh, null);
         }
 
         public void AddOnPostLogRequestAsync(BeginEventHandler beginHandler, EndEventHandler endHandler, Object state) {
             if (!HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
             AsyncEvents.AddHandler(EventPostLogRequest, beginHandler, endHandler, state,
                                    RequestNotification.LogRequest, true, this);
@@ -1282,6 +1284,7 @@ namespace System.Web {
         internal IHttpHandler MapIntegratedHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, bool useAppConfig, bool convertNativeStaticFileModule) {
             IHttpHandler handler = null;
 
+#if (!MONO || !FEATURE_PAL)
             using (new ApplicationImpersonationContext()) {
                 string type;
 
@@ -1294,7 +1297,7 @@ namespace System.Web {
                     int index = vpath.LastIndexOf('/');
                     index++;
                     if (index != 0 && index < vpath.Length) {
-                        vpath = UrlPath.SimpleCombine(HttpRuntime.AppDomainAppVirtualPathString, vpath.Substring(index));
+                        vpath = System.Web.Util.UrlPath.SimpleCombine(HttpRuntime.AppDomainAppVirtualPathString, vpath.Substring(index));
                     }
                     else {
                         vpath = HttpRuntime.AppDomainAppVirtualPathString;
@@ -1311,7 +1314,7 @@ namespace System.Web {
                 if (type == null) {
                     PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_NOT_FOUND);
                     PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_FAILED);
-                    throw new HttpException(SR.GetString(SR.Http_handler_not_found_for_request_type, requestType));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Http_handler_not_found_for_request_type, requestType));
                 }
 
                 // if it's a native type, don't go any further
@@ -1349,6 +1352,7 @@ namespace System.Web {
                     _handlerRecycleList = new ArrayList();
                 _handlerRecycleList.Add(new HandlerWithFactory(handler, factory));
             }
+#endif
 
             return handler;
         }
@@ -1356,66 +1360,65 @@ namespace System.Web {
         internal IHttpHandler MapHttpHandler(HttpContext context, String requestType, VirtualPath path, String pathTranslated, bool useAppConfig) {
             // Don't use remap handler when HttpServerUtility.Execute called
             IHttpHandler handler = (context.ServerExecuteDepth == 0) ? context.RemapHandlerInstance : null;
-
-            using (new ApplicationImpersonationContext()) {
-                // Use remap handler if possible
-                if (handler != null){
-                    return handler;
-                }
-
-                // Map new handler
-                HttpHandlerAction mapping = GetHandlerMapping(context, requestType, path, useAppConfig);
-
-                // If a page developer has removed the default mappings with <httpHandlers><clear>
-                // without replacing them then we need to give a more descriptive error than
-                // a null parameter exception.
-                if (mapping == null) {
-                    PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_NOT_FOUND);
-                    PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_FAILED);
-                    throw new HttpException(SR.GetString(SR.Http_handler_not_found_for_request_type, requestType));
-                }
-
-                // Get factory from the mapping
-                IHttpHandlerFactory factory = GetFactory(mapping);
-
-
-                // Get factory from the mapping
-                try {
-                    // Check if it supports the more efficient GetHandler call that can avoid
-                    // a VirtualPath object creation.
-                    IHttpHandlerFactory2 factory2 = factory as IHttpHandlerFactory2;
-
-                    if (factory2 != null) {
-                        handler = factory2.GetHandler(context, requestType, path, pathTranslated);
-                    }
-                    else {
-                        handler = factory.GetHandler(context, requestType, path.VirtualPathString, pathTranslated);
-                    }
-                }
-                catch (FileNotFoundException e) {
-                    if (HttpRuntime.HasPathDiscoveryPermission(pathTranslated))
-                        throw new HttpException(404, null, e);
-                    else
-                        throw new HttpException(404, null);
-                }
-                catch (DirectoryNotFoundException e) {
-                    if (HttpRuntime.HasPathDiscoveryPermission(pathTranslated))
-                        throw new HttpException(404, null, e);
-                    else
-                        throw new HttpException(404, null);
-                }
-                catch (PathTooLongException e) {
-                    if (HttpRuntime.HasPathDiscoveryPermission(pathTranslated))
-                        throw new HttpException(414, null, e);
-                    else
-                        throw new HttpException(414, null);
-                }
-
-                // Remember for recycling
-                if (_handlerRecycleList == null)
-                    _handlerRecycleList = new ArrayList();
-                _handlerRecycleList.Add(new HandlerWithFactory(handler, factory));
+            
+            // Use remap handler if possible
+            if (handler != null){
+                return handler;
             }
+
+            // Map new handler
+            HttpHandlerAction mapping = GetHandlerMapping(context, requestType, path, useAppConfig);
+
+            // If a page developer has removed the default mappings with <httpHandlers><clear>
+            // without replacing them then we need to give a more descriptive error than
+            // a null parameter exception.
+            if (mapping == null) {
+                //PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_NOT_FOUND);
+                //PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_FAILED);
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Http_handler_not_found_for_request_type, requestType));
+            }
+
+            // Get factory from the mapping
+            IHttpHandlerFactory factory = GetFactory(mapping);
+
+
+            // Get factory from the mapping
+            try {
+                // Check if it supports the more efficient GetHandler call that can avoid
+                // a VirtualPath object creation.
+                IHttpHandlerFactory2 factory2 = factory as IHttpHandlerFactory2;
+
+                if (factory2 != null) {
+                    handler = factory2.GetHandler(context, requestType, path, pathTranslated);
+                }
+                else {
+                    handler = factory.GetHandler(context, requestType, path.VirtualPathString, pathTranslated);
+                }
+            }
+            catch (FileNotFoundException e) {
+                if (HttpRuntime.HasPathDiscoveryPermission(pathTranslated))
+                    throw new HttpException(404, null, e);
+                else
+                    throw new HttpException(404, null);
+            }
+            catch (DirectoryNotFoundException e) {
+                if (HttpRuntime.HasPathDiscoveryPermission(pathTranslated))
+                    throw new HttpException(404, null, e);
+                else
+                    throw new HttpException(404, null);
+            }
+            catch (PathTooLongException e) {
+                if (HttpRuntime.HasPathDiscoveryPermission(pathTranslated))
+                    throw new HttpException(414, null, e);
+                else
+                    throw new HttpException(414, null);
+            }
+
+            // Remember for recycling
+            if (_handlerRecycleList == null)
+                _handlerRecycleList = new ArrayList();
+            _handlerRecycleList.Add(new HandlerWithFactory(handler, factory));
+            
 
             return handler;
         }
@@ -1426,7 +1429,7 @@ namespace System.Web {
         /// </devdoc>
         public virtual string GetVaryByCustomString(HttpContext context, string custom) {
 
-            if (StringUtil.EqualsIgnoreCase(custom, "browser")) {
+            if (System.Web.Util.StringUtil.EqualsIgnoreCase(custom, "browser")) {
                 return context.Request.Browser.Type;
             }
 
@@ -1505,7 +1508,7 @@ namespace System.Web {
 
         /// <internalonly/>
         void IHttpHandler.ProcessRequest(HttpContext context) {
-            throw new HttpException(SR.GetString(SR.Sync_not_supported));
+            throw new HttpException(System.Web.SR.GetString(System.Web.SR.Sync_not_supported));
         }
 
 
@@ -1524,7 +1527,7 @@ namespace System.Web {
                 method.Invoke(this, new Object[0]);
             }
             else {
-                Debug.Assert(paramCount == 2);
+                System.Web.Util.Debug.Assert(paramCount == 2);
 
                 method.Invoke(this, new Object[2] { eventSource, eventArgs });
             }
@@ -1545,50 +1548,49 @@ namespace System.Web {
             _lastError = null;
 
             using (new DisposableHttpContextWrapper(context)) {
-                using (new ApplicationImpersonationContext()) {
-                    try {
-                        // set culture on the current thread
-                        SetAppLevelCulture();
-                        InvokeMethodWithAssert(method, paramCount, eventSource, eventArgs);
-                    }
-                    catch (Exception e) {
-                        // dereference reflection invocation exceptions
-                        Exception eActual;
-                        if (e is TargetInvocationException)
-                            eActual = e.InnerException;
-                        else
-                            eActual = e;
-
-                        RecordError(eActual);
-
-                        if (context == null) {
-                            try {
-                                WebBaseEvent.RaiseRuntimeError(eActual, this);
-                            }
-                            catch {
-                            }
-                        }
-
-                    }
-                    finally {
-
-                        // this thread should not be locking app state
-                        if (_state != null)
-                            _state.EnsureUnLock();
-
-                        // restore culture
-                        RestoreAppLevelCulture();
-
-                        if (HttpRuntime.UseIntegratedPipeline && _context != null) {
-                            _context.HideRequestResponse = false;
-                        }
-                        _hideRequestResponse = false;
-                        _context = null;
-                        _session = null;
-                        _lastError = null;
-                        _appEvent = null;
-                    }
+                try {
+                    // set culture on the current thread
+                    SetAppLevelCulture();
+                    InvokeMethodWithAssert(method, paramCount, eventSource, eventArgs);
                 }
+                catch (Exception e) {
+                    // dereference reflection invocation exceptions
+                    Exception eActual;
+                    if (e is TargetInvocationException)
+                        eActual = e.InnerException;
+                    else
+                        eActual = e;
+
+                    RecordError(eActual);
+
+                    if (context == null) {
+                        try {
+                            WebBaseEvent.RaiseRuntimeError(eActual, this);
+                        }
+                        catch {
+                        }
+                    }
+
+                }
+                finally {
+
+                    // this thread should not be locking app state
+                    if (_state != null)
+                        _state.EnsureUnLock();
+
+                    // restore culture
+                    RestoreAppLevelCulture();
+
+                    if (HttpRuntime.UseIntegratedPipeline && _context != null) {
+                        _context.HideRequestResponse = false;
+                    }
+                    _hideRequestResponse = false;
+                    _context = null;
+                    _session = null;
+                    _lastError = null;
+                    _appEvent = null;
+                }
+                
             }
         }
 
@@ -1624,7 +1626,7 @@ namespace System.Web {
         //
 
         internal void InitInternal(HttpContext context, HttpApplicationState state, MethodInfo[] handlers) {
-            Debug.Assert(context != null, "context != null");
+            System.Web.Util.Debug.Assert(context != null, "context != null");
 
             // Remember state
             _state = state;
@@ -1646,8 +1648,8 @@ namespace System.Web {
                         // Build module list from config
                         if (HttpRuntime.UseIntegratedPipeline) {
 
-                            Debug.Assert(_moduleConfigInfo != null, "_moduleConfigInfo != null");
-                            Debug.Assert(_moduleConfigInfo.Count >= 0, "_moduleConfigInfo.Count >= 0");
+                            System.Web.Util.Debug.Assert(_moduleConfigInfo != null, "_moduleConfigInfo != null");
+                            System.Web.Util.Debug.Assert(_moduleConfigInfo.Count >= 0, "_moduleConfigInfo.Count >= 0");
 
                             try {
                                 context.HideRequestResponse = true;
@@ -1663,7 +1665,7 @@ namespace System.Web {
                             InitModules();
 
                             // this is used exclusively for integrated mode
-                            Debug.Assert(null == _moduleContainers, "null == _moduleContainers");
+                            System.Web.Util.Debug.Assert(null == _moduleContainers, "null == _moduleContainers");
                         }
 
                         // Hookup event handlers via reflection
@@ -1753,14 +1755,13 @@ namespace System.Web {
                 // if we're doing integrated pipeline wireup, then appContext is non-null and we need to init modules and register event subscriptions with IIS
                 if (appContext != IntPtr.Zero) {
                     // 1694356: app_offline.htm and <httpRuntime enabled=/> require that we make this check here for integrated mode
-                    using (new ApplicationImpersonationContext()) {
-                        HttpRuntime.CheckApplicationEnabled();
-                    }
-
+                    
+                    HttpRuntime.CheckApplicationEnabled();
+                    
                     // retrieve app level culture
                     InitAppLevelCulture();
 
-                    Debug.Trace("PipelineRuntime", "InitSpecial for " + appContext.ToString() + "\n");
+                    System.Web.Util.Debug.Trace("PipelineRuntime", "InitSpecial for " + appContext.ToString() + "\n");
                     RegisterEventSubscriptionsWithIIS(appContext, context, handlers);
                 }
                 else {
@@ -1882,7 +1883,7 @@ namespace System.Web {
                 // Find target for method
                 Object target = null;
 
-                if (StringUtil.EqualsIgnoreCase(targetName, "Application"))
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(targetName, "Application"))
                     target = this;
                 else if (_moduleCollection != null)
                     target = _moduleCollection[targetName];
@@ -1897,7 +1898,7 @@ namespace System.Web {
 
                 EventDescriptor foundEvent = events.Find(eventName, true);
                 if (foundEvent == null
-                    && StringUtil.EqualsIgnoreCase(eventName.Substring(0, 2), "on")) {
+                    && System.Web.Util.StringUtil.EqualsIgnoreCase(eventName.Substring(0, 2), "on")) {
 
                     eventName = eventName.Substring(2);
                     foundEvent = events.Find(eventName, true);
@@ -1906,7 +1907,7 @@ namespace System.Web {
                 MethodInfo addMethod = null;
                 if (foundEvent != null) {
                     EventInfo reflectionEvent = targetType.GetEvent(foundEvent.Name);
-                    Debug.Assert(reflectionEvent != null);
+                    System.Web.Util.Debug.Assert(reflectionEvent != null);
                     if (reflectionEvent != null) {
                         addMethod = reflectionEvent.GetAddMethod();
                     }
@@ -1962,7 +1963,7 @@ namespace System.Web {
 
                 if (eventName != null) {
                     if (_pipelineEventMasks.ContainsKey(eventName)) {
-                        if (!StringUtil.StringStartsWith(eventName, "Post")) {
+                        if (!System.Web.Util.StringUtil.StringStartsWith(eventName, "Post")) {
                             _appRequestNotifications |= _pipelineEventMasks[eventName];
                         }
                         else {
@@ -1980,6 +1981,7 @@ namespace System.Web {
                                              string moduleType,
                                              string modulePrecondition,
                                              bool useHighPriority) {
+#if (!MONO || !FEATURE_PAL)
 
             // lookup the modules event index, if it already exists
             // use it, otherwise, bump the global count
@@ -1995,8 +1997,8 @@ namespace System.Web {
             }
 
 #if DBG
-            Debug.Assert(moduleIndex >= 0, "moduleIndex >= 0");
-            Debug.Trace("PipelineRuntime", "RegisterIntegratedEvent:"
+            System.Web.Util.Debug.Assert(moduleIndex >= 0, "moduleIndex >= 0");
+            System.Web.Util.Debug.Trace("PipelineRuntime", "RegisterIntegratedEvent:"
                         + " module=" + moduleName
                         + ", index=" + moduleIndex.ToString(CultureInfo.InvariantCulture)
                         + ", rq_notify=" + requestNotifications
@@ -2014,8 +2016,9 @@ namespace System.Web {
                                                                        useHighPriority);
 
             if(result < 0) {
-                throw new HttpException(SR.GetString(SR.Failed_Pipeline_Subscription, moduleName));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.Failed_Pipeline_Subscription, moduleName));
             }
+#endif
         }
 
 
@@ -2154,12 +2157,12 @@ namespace System.Web {
             }
 
             if (!HttpRuntime.UseIntegratedPipeline) {
-                throw new PlatformNotSupportedException(SR.GetString(SR.Requires_Iis_Integrated_Mode));
+                throw new PlatformNotSupportedException(System.Web.SR.GetString(System.Web.SR.Requires_Iis_Integrated_Mode));
             }
 
             if (_initSpecialCompleted && _initInternalCompleted) {
                 //throw if both InitSpecial and InitInternal have completed.
-                throw new InvalidOperationException(SR.GetString(SR.OnExecuteRequestStep_Cannot_Be_Called));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.OnExecuteRequestStep_Cannot_Be_Called));
             }
 
             if (_stepInvoker == null) {
@@ -2220,11 +2223,6 @@ namespace System.Web {
                 catch (Exception e) {
                     error = e;
 
-                    // Since we will leave the context later, we need to remember if we are impersonating
-                    // before we lose that info - VSWhidbey 494476
-                    if (ImpersonationContext.CurrentThreadTokenExists) {
-                        e.Data[System.Web.Management.WebThreadInformation.IsImpersonatingKey] = String.Empty;
-                    }
                     // This might force ThreadAbortException to be thrown
                     // automatically, because we consumed an exception that was
                     // hiding ThreadAbortException behind it
@@ -2257,9 +2255,9 @@ namespace System.Web {
 
                     if (cancelException.Timeout) {
                         // Timed out
-                        error = new HttpException(SR.GetString(SR.Request_timed_out),
+                        error = new HttpException(System.Web.SR.GetString(System.Web.SR.Request_timed_out),
                                             null, WebEventCodes.RuntimeErrorRequestAbort);
-                        PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_TIMED_OUT);
+                        //PerfCounters.IncrementCounter(AppPerfCounter.REQUESTS_TIMED_OUT);
                     }
                     else {
                         // Response.End
@@ -2342,7 +2340,7 @@ namespace System.Web {
         }
 
         private void InitIntegratedModules() {
-            Debug.Assert(null != _moduleConfigInfo, "null != _moduleConfigInfo");
+            System.Web.Util.Debug.Assert(null != _moduleConfigInfo, "null != _moduleConfigInfo");
             _moduleCollection = BuildIntegratedModuleCollection(_moduleConfigInfo);
             InitModulesCommon();
         }
@@ -2389,7 +2387,7 @@ namespace System.Web {
                 RegisterModuleInternal(moduleType);
             }
             else {
-                throw new InvalidOperationException(SR.GetString(SR.DynamicModuleRegistrationOff));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.DynamicModuleRegistrationOff));
             }
         }
 
@@ -2457,11 +2455,11 @@ namespace System.Web {
                 ModuleConfigurationInfo moduleInfo = _moduleConfigInfo[i];
 
 #if DBG
-                Debug.Trace("PipelineRuntime", "RegisterEventSubscriptionsWithIIS: name=" + CurrentModuleCollectionKey
+                System.Web.Util.Debug.Trace("PipelineRuntime", "RegisterEventSubscriptionsWithIIS: name=" + CurrentModuleCollectionKey
                             + ", type=" + httpModule.GetType().FullName + "\n");
 
                 // make sure collections are in sync
-                Debug.Assert(moduleInfo.Name == _currentModuleCollectionKey, "moduleInfo.Name == _currentModuleCollectionKey");
+                System.Web.Util.Debug.Assert(moduleInfo.Name == _currentModuleCollectionKey, "moduleInfo.Name == _currentModuleCollectionKey");
 #endif
 
                 httpModule.Init(this);
@@ -2635,7 +2633,7 @@ namespace System.Web {
             string culture = globConfig.Culture;
             string uiCulture = globConfig.UICulture;
             if (!String.IsNullOrEmpty(culture)) {
-                if (StringUtil.StringStartsWithIgnoreCase(culture, AutoCulture)) {
+                if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(culture, AutoCulture)) {
                     _appLevelAutoCulture = true;
                     string appLevelCulture = GetFallbackCulture(culture);
                     if(appLevelCulture != null) {
@@ -2648,7 +2646,7 @@ namespace System.Web {
                 }
             }
             if (!String.IsNullOrEmpty(uiCulture)) {
-                if (StringUtil.StringStartsWithIgnoreCase(uiCulture, AutoCulture))
+                if (System.Web.Util.StringUtil.StringStartsWithIgnoreCase(uiCulture, AutoCulture))
                 {
                     _appLevelAutoUICulture = true;
                     string appLevelUICulture = GetFallbackCulture(uiCulture);
@@ -2726,7 +2724,7 @@ namespace System.Web {
         // Setup the asynchronous stuff and application variables
         // context for the entire deal is already rooted for native handler
         internal void AssignContext(HttpContext context) {
-            Debug.Assert(HttpRuntime.UseIntegratedPipeline, "HttpRuntime.UseIntegratedPipeline");
+            System.Web.Util.Debug.Assert(HttpRuntime.UseIntegratedPipeline, "HttpRuntime.UseIntegratedPipeline");
 
             if (null == _context) {
                 _stepManager.InitRequest();
@@ -2743,7 +2741,7 @@ namespace System.Web {
         }
 
         internal IAsyncResult BeginProcessRequestNotification(HttpContext context, AsyncCallback cb) {
-            Debug.Trace("PipelineRuntime", "BeginProcessRequestNotification");
+            System.Web.Util.Debug.Trace("PipelineRuntime", "BeginProcessRequestNotification");
 
             HttpAsyncResult result;
 
@@ -2789,12 +2787,15 @@ namespace System.Web {
                     _timeoutManagerInitialized = false;
                 }
 
-                if(HttpRuntime.EnablePrefetchOptimization && 
-                   HttpRuntime.InitializationException == null && 
-                   _context.FirstRequest && 
+#if (!MONO || !FEATURE_PAL)
+                if(HttpRuntime.EnablePrefetchOptimization &&
+                   HttpRuntime.InitializationException == null &&
+                   _context.FirstRequest &&
                    _context.Error == null) {
-                       UnsafeNativeMethods.EndPrefetchActivity((uint)StringUtil.GetNonRandomizedHashCode(HttpRuntime.AppDomainAppId));
+                       UnsafeNativeMethods.EndPrefetchActivity((uint)System.Web.Util.StringUtil.GetNonRandomizedHashCode(HttpRuntime.AppDomainAppId));
                 }
+#endif
+
             }
             RecycleHandlers();
             if (AsyncResult != null) {
@@ -2825,8 +2826,8 @@ namespace System.Web {
                 return;
             }
 
-            Debug.Assert(!String.IsNullOrEmpty(moduleName), "!String.IsNullOrEmpty(moduleName)");
-            Debug.Trace("PipelineRuntime", "AddEventMapping: for " + moduleName +
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(moduleName), "!String.IsNullOrEmpty(moduleName)");
+            System.Web.Util.Debug.Trace("PipelineRuntime", "AddEventMapping: for " + moduleName +
                         " for " + requestNotification + "\r\n" );
 
 
@@ -2847,6 +2848,7 @@ namespace System.Web {
         }
 
         private HttpModuleCollection GetModuleCollection(IntPtr appContext) {
+#if (!MONO || !FEATURE_PAL)
             if (_moduleConfigInfo != null) {
                 return BuildIntegratedModuleCollection(_moduleConfigInfo);
             }
@@ -2864,7 +2866,7 @@ namespace System.Web {
                 int count = 0;
                 int result = UnsafeIISMethods.MgdGetModuleCollection(IntPtr.Zero, appContext, out pModuleCollection, out count);
                 if (result < 0) {
-                    throw new HttpException(SR.GetString(SR.Cant_Read_Native_Modules, result.ToString("X8", CultureInfo.InvariantCulture)));
+                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_Read_Native_Modules, result.ToString("X8", CultureInfo.InvariantCulture)));
                 }
                 moduleList = new List<ModuleConfigurationInfo>(count);
 
@@ -2874,11 +2876,11 @@ namespace System.Web {
                                                                out pBstrModuleType, out cBstrModuleType,
                                                                out pBstrModulePrecondition, out cBstrModulePrecondition);
                     if (result < 0) {
-                        throw new HttpException(SR.GetString(SR.Cant_Read_Native_Modules, result.ToString("X8", CultureInfo.InvariantCulture)));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cant_Read_Native_Modules, result.ToString("X8", CultureInfo.InvariantCulture)));
                     }
-                    string moduleName = (cBstrModuleName > 0) ? StringUtil.StringFromWCharPtr(pBstrModuleName, cBstrModuleName) : null;
-                    string moduleType = (cBstrModuleType > 0) ? StringUtil.StringFromWCharPtr(pBstrModuleType, cBstrModuleType) : null;
-                    string modulePrecondition = (cBstrModulePrecondition > 0) ? StringUtil.StringFromWCharPtr(pBstrModulePrecondition, cBstrModulePrecondition) : String.Empty;
+                    string moduleName = (cBstrModuleName > 0) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstrModuleName, cBstrModuleName) : null;
+                    string moduleType = (cBstrModuleType > 0) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstrModuleType, cBstrModuleType) : null;
+                    string modulePrecondition = (cBstrModulePrecondition > 0) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstrModulePrecondition, cBstrModulePrecondition) : String.Empty;
                     Marshal.FreeBSTR(pBstrModuleName);
                     pBstrModuleName = IntPtr.Zero;
                     cBstrModuleName = 0;
@@ -2918,6 +2920,9 @@ namespace System.Web {
             _moduleConfigInfo = moduleList;
 
             return BuildIntegratedModuleCollection(_moduleConfigInfo);
+#else
+            return new HttpModuleCollection();
+#endif
         }
 
         // gets configuration for modules that have been added to the dynamic registry (integrated pipeline)
@@ -2931,7 +2936,7 @@ namespace System.Web {
 
             foreach(ModuleConfigurationInfo mod in moduleList) {
 #if DBG
-                Debug.Trace("NativeConfig", "Runtime module: " + mod.Name + " of type " + mod.Type + "\n");
+                System.Web.Util.Debug.Trace("NativeConfig", "Runtime module: " + mod.Name + " of type " + mod.Type + "\n");
 #endif
                 ModulesEntry currentModule = new ModulesEntry(mod.Name, mod.Type, "type", null);
 
@@ -3129,7 +3134,7 @@ namespace System.Web {
                 // we should invoke the End* method on the same thread that invoked this callback, as some
                 // applications use TLS instead of the IAsyncResult object itself to convey state information.
 
-                Debug.Trace("PipelineRuntime", "AsyncStep.OnAsyncEventCompletion");
+                System.Web.Util.Debug.Trace("PipelineRuntime", "AsyncStep.OnAsyncEventCompletion");
                 HttpContext context = _application.Context;
                 Exception error = null;
 
@@ -3317,7 +3322,7 @@ namespace System.Web {
                     configType = wr.ReMapHandlerAndGetHandlerTypeString(context, request.Path, out handlerExists);
                     if (!handlerExists) {
                         // WOS 1973590: When RewritePath is used with missing handler in Integrated Mode,an empty response 200 is returned instead of 404
-                        throw new HttpException(404, SR.GetString(SR.Http_handler_not_found_for_request_type, request.RequestType));
+                        throw new HttpException(404, System.Web.SR.GetString(System.Web.SR.Http_handler_not_found_for_request_type, request.RequestType));
                     }
                 }
                 else {
@@ -3391,7 +3396,7 @@ namespace System.Web {
                     request.FilePathObject,
                     request.PhysicalPathInternal,
                     false /*useAppConfig*/);
-                Debug.Assert(context.ConfigurationPath == context.Request.FilePathObject, "context.ConfigurationPath (" +
+                System.Web.Util.Debug.Assert(context.ConfigurationPath == context.Request.FilePathObject, "context.ConfigurationPath (" +
                              context.ConfigurationPath + ") != context.Request.FilePath (" + context.Request.FilePath + ")");
 
                 if (EtwTrace.IsTraceEnabled(EtwTraceLevel.Verbose, EtwTraceFlags.Infrastructure)) EtwTrace.Trace(EtwTraceType.ETW_TYPE_MAPHANDLER_LEAVE, context.WorkerRequest);
@@ -3532,8 +3537,8 @@ namespace System.Web {
                     IIS7WorkerRequest wr = context.WorkerRequest as IIS7WorkerRequest;
                     if (wr != null && wr.IsHandlerExecutionDenied()) {
                         _sync = true;
-                        HttpException error = new HttpException(403, SR.GetString(SR.Handler_access_denied));
-                        error.SetFormatter(new PageForbiddenErrorFormatter(context.Request.Path, SR.GetString(SR.Handler_access_denied)));
+                        HttpException error = new HttpException(403, System.Web.SR.GetString(System.Web.SR.Handler_access_denied));
+                        error.SetFormatter(new PageForbiddenErrorFormatter(context.Request.Path, System.Web.SR.GetString(System.Web.SR.Handler_access_denied)));
                         throw error;
                     }
                 }
@@ -3876,7 +3881,7 @@ namespace System.Web {
                 ThreadContext threadContext = null;
                 AspNetSynchronizationContextBase syncContext = context.SyncContext;
 
-                Debug.Trace("Async", "HttpApplication.ResumeSteps");
+                System.Web.Util.Debug.Trace("Async", "HttpApplication.ResumeSteps");
 
                 try {
                     if (appInstanceConsumersCounter != null) {
@@ -4001,7 +4006,7 @@ namespace System.Web {
             }
 
             internal override void BuildSteps(WaitCallback stepCallback) {
-                Debug.Trace("PipelineRuntime", "BuildSteps");
+                System.Web.Util.Debug.Trace("PipelineRuntime", "BuildSteps");
                 //ArrayList steps = new ArrayList();
                 HttpApplication app = _application;
 
@@ -4068,6 +4073,7 @@ namespace System.Web {
             // This attribute prevents undesirable 'just-my-code' debugging behavior (VSWhidbey 404406/VSWhidbey 609188)
             [System.Diagnostics.DebuggerStepperBoundaryAttribute]
             internal override void ResumeSteps(Exception error) {
+#if (!MONO || !FEATURE_PAL)
                 HttpContext context = _application.Context;
                 IIS7WorkerRequest wr = context.WorkerRequest as IIS7WorkerRequest;
                 AspNetSynchronizationContextBase syncContext = context.SyncContext;
@@ -4129,7 +4135,7 @@ namespace System.Web {
 
                             for (; ; ) {
 #if DBG
-                                Debug.Trace("PipelineRuntime", "ResumeSteps: CurrentModuleEventIndex=" + context.CurrentModuleEventIndex);
+                                System.Web.Util.Debug.Trace("PipelineRuntime", "ResumeSteps: CurrentModuleEventIndex=" + context.CurrentModuleEventIndex);
 #endif
 
                                 // check and record errors into the HttpContext
@@ -4218,7 +4224,7 @@ namespace System.Web {
                                 error = _application.ExecuteStep(step, ref stepCompletedSynchronously);
 
 #if DBG
-                                Debug.Trace("PipelineRuntime", "ResumeSteps: notification=" + context.CurrentNotification.ToString()
+                                System.Web.Util.Debug.Trace("PipelineRuntime", "ResumeSteps: notification=" + context.CurrentNotification.ToString()
                                             + ", isPost=" + context.IsPostNotification
                                             + ", step=" + step.GetType().FullName
                                             + ", completedSync=" + stepCompletedSynchronously
@@ -4287,7 +4293,7 @@ namespace System.Web {
                                     }
                                 }
                                 else if (isSynchronousCompletion) {
-                                    Debug.Assert(needToDisassociateThreadContext == true, "needToDisassociateThreadContext MUST BE true");
+                                    System.Web.Util.Debug.Assert(needToDisassociateThreadContext == true, "needToDisassociateThreadContext MUST BE true");
                                     // this is a sync completion on an IIS thread
                                     threadContext.Synchronize();
                                     // get ready to call IndicateCompletion
@@ -4303,7 +4309,7 @@ namespace System.Web {
                                     threadContext.UndoImpersonationContext();
                                 }
                                 else {
-                                    Debug.Assert(needToDisassociateThreadContext == true, "needToDisassociateThreadContext MUST BE true");
+                                    System.Web.Util.Debug.Assert(needToDisassociateThreadContext == true, "needToDisassociateThreadContext MUST BE true");
                                     // We're not in a call to IndicateCompletion.  We're either returning pending or
                                     // we're in an async completion, and therefore we must clean-up the thread state. Impersonation is reverted
                                     threadContext.DisassociateFromCurrentThread();
@@ -4333,6 +4339,7 @@ namespace System.Web {
                         }
                     }
                 }
+#endif //!FEATURE_PAL
             }
             
             private Exception ValidateHelper(HttpContext context) {
@@ -4393,7 +4400,7 @@ namespace System.Web {
                     return false; // IExecutionStep.Execute should call ResumeSteps
                 }
 
-                Debug.Assert(originalState == ASYNC_STATE_BEGIN_UNWOUND, "Unexpected state.");
+                System.Web.Util.Debug.Assert(originalState == ASYNC_STATE_BEGIN_UNWOUND, "Unexpected state.");
                 _error = null; // to prevent long-lived exception object; write doesn't need to be volatile since nobody reads this field anyway in this case
                 return true; // this thread should call ResumeSteps
             }
@@ -4415,7 +4422,7 @@ namespace System.Web {
                     // We'll let the thread that invokes the callback call the End* method.
                 }
                 else {
-                    Debug.Assert(originalState == ASYNC_STATE_CALLBACK_COMPLETED, "Unexpected state.");
+                    System.Web.Util.Debug.Assert(originalState == ASYNC_STATE_CALLBACK_COMPLETED, "Unexpected state.");
 
                     // The operation completed, and the callback already invoked the End* method.
                     // The only thing we need to do is to report to our caller that the operation completed synchronously
@@ -4456,7 +4463,7 @@ namespace System.Web {
             }
 
             public void Invoke(Action executionStep) {
-                Debug.Assert(executionStep != null);
+                System.Web.Util.Debug.Assert(executionStep != null);
 
                 // Call the chained nextStep.
                 // The ExecutionStep is garuanteed to execute in HttpApplication,

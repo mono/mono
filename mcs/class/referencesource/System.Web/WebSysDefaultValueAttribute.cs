@@ -33,7 +33,7 @@ namespace System.Web {
                     _localized = true;
                     string baseValue = (string)base.Value;
                     if (!String.IsNullOrEmpty(baseValue)) {
-                        object value = SR.GetString(baseValue);
+                        object value = System.Web.SR.GetString(baseValue);
                         if (_type != null) {
                             try {
                                 value = TypeDescriptor.GetConverter(_type).ConvertFromInvariantString((string) value);

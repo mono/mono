@@ -232,7 +232,7 @@ namespace System.Configuration.Internal {
         //   FALSE - Move Failed
         private bool AttemptMove( string Source, string Target ) {
             bool MoveSuccessful = false;
-
+#if (!MONO) || (MONO && !FEATURE_PAL) 
             if ( IsWinNT ) {
 
                 // We can only call this when we have kernel32.dll
@@ -242,6 +242,7 @@ namespace System.Configuration.Internal {
                                      UnsafeNativeMethods.MOVEFILE_REPLACE_EXISTING );
             }
             else {
+#endif
 
                 try {
                     // VSWhidbey 548017:
@@ -255,9 +256,9 @@ namespace System.Configuration.Internal {
                     
                     MoveSuccessful = false;
                 }
-                
+#if (!MONO) || (MONO && !FEATURE_PAL) 
             }
-
+#endif
             return MoveSuccessful;
         }
         

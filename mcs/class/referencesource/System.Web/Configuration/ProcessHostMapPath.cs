@@ -17,6 +17,7 @@ namespace System.Web.Configuration {
     using System.Web.UI;
     using System.Web.Util;
     using System.Xml;
+    
 
     //
     // Uses IIS 7 native config
@@ -43,18 +44,19 @@ namespace System.Web.Configuration {
                 _functions = Misc.CreateLocalSupportFunctions(functions);
             }
 
+#if (!MONO || !FEATURE_PAL)
             // proactive set the config functions for
             // webengine in case this is a TCP init path
             if (null != _functions ) {
                IntPtr configSystem = _functions.GetNativeConfigurationSystem();
-               Debug.Assert(IntPtr.Zero != configSystem, "null != configSystem");
-
+               System.Web.Util.Debug.Assert(IntPtr.Zero != configSystem, "null != configSystem");
                if (IntPtr.Zero != configSystem) {
                    // won't fail if valid pointer
                    // no cleanup needed, we don't own instance
                    UnsafeIISMethods.MgdSetNativeConfiguration(configSystem);
                 }
             }
+#endif
         }
 
         string IConfigMapPath.GetMachineConfigFilename() {
@@ -71,10 +73,10 @@ namespace System.Web.Configuration {
             if (String.IsNullOrEmpty(rootWeb)) {
                 rootWeb = HttpConfigurationSystem.RootWebConfigurationFilePath;
             }
-            Debug.Trace("MapPath", "ProcHostMP.GetRootWebConfigFilename = " +
+            System.Web.Util.Debug.Trace("MapPath", "ProcHostMP.GetRootWebConfigFilename = " +
                     rootWeb);
 
-            Debug.Assert(!String.IsNullOrEmpty(rootWeb), "rootWeb != null or empty");
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(rootWeb), "rootWeb != null or empty");
 
             return rootWeb;
         }
@@ -88,7 +90,7 @@ namespace System.Web.Configuration {
                 baseName = null;
             }
 
-            Debug.Trace("MapPath", "ProcHostMP.GetPathConfigFilename(" + siteID + ", " + path + ")\n" +
+            System.Web.Util.Debug.Trace("MapPath", "ProcHostMP.GetPathConfigFilename(" + siteID + ", " + path + ")\n" +
                     " result = " + directory + " and " + baseName + "\n");
         }
 
@@ -108,19 +110,19 @@ namespace System.Web.Configuration {
 
 
         void IConfigMapPath.GetDefaultSiteNameAndID(out string siteName, out string siteID) {
-            Debug.Trace("MapPath", "ProcHostMP.GetDefaultSiteNameAndID\n");
+            System.Web.Util.Debug.Trace("MapPath", "ProcHostMP.GetDefaultSiteNameAndID\n");
             siteID = ProcessHostConfigUtils.DEFAULT_SITE_ID_STRING;
             siteName = ProcessHostConfigUtils.GetSiteNameFromId(ProcessHostConfigUtils.DEFAULT_SITE_ID_UINT);
         }
 
 
         void IConfigMapPath.ResolveSiteArgument(string siteArgument, out string siteName, out string siteID) {
-            Debug.Trace("MapPath", "ProcHostMP.ResolveSiteArgument(" + siteArgument + ")\n");
+            System.Web.Util.Debug.Trace("MapPath", "ProcHostMP.ResolveSiteArgument(" + siteArgument + ")\n");
 
 
             if (    String.IsNullOrEmpty(siteArgument) ||
-                    StringUtil.EqualsIgnoreCase(siteArgument, ProcessHostConfigUtils.DEFAULT_SITE_ID_STRING) ||
-                    StringUtil.EqualsIgnoreCase(siteArgument, ProcessHostConfigUtils.GetSiteNameFromId(ProcessHostConfigUtils.DEFAULT_SITE_ID_UINT))) {
+                    System.Web.Util.StringUtil.EqualsIgnoreCase(siteArgument, ProcessHostConfigUtils.DEFAULT_SITE_ID_STRING) ||
+                    System.Web.Util.StringUtil.EqualsIgnoreCase(siteArgument, ProcessHostConfigUtils.GetSiteNameFromId(ProcessHostConfigUtils.DEFAULT_SITE_ID_UINT))) {
 
                 siteName = ProcessHostConfigUtils.GetSiteNameFromId(ProcessHostConfigUtils.DEFAULT_SITE_ID_UINT);
                 siteID = ProcessHostConfigUtils.DEFAULT_SITE_ID_STRING;
@@ -137,6 +139,7 @@ namespace System.Web.Configuration {
                         resolvedName = ProcessHostConfigUtils.GetSiteNameFromId(id);
                     }
                 }
+#if (!MONO || !FEATURE_PAL)
                 // try to resolve the string
                 else {
                     uint id = UnsafeIISMethods.MgdResolveSiteName(IntPtr.Zero, siteArgument);
@@ -146,6 +149,7 @@ namespace System.Web.Configuration {
                         return;
                     }
                 }
+#endif
 
                 if (!String.IsNullOrEmpty(resolvedName)) {
                     siteName = resolvedName;
@@ -157,11 +161,11 @@ namespace System.Web.Configuration {
                 }
             }
 
-            Debug.Assert(!String.IsNullOrEmpty(siteName), "!String.IsNullOrEmpty(siteName), siteArg=" + siteArgument);
+            System.Web.Util.Debug.Assert(!String.IsNullOrEmpty(siteName), "!String.IsNullOrEmpty(siteName), siteArg=" + siteArgument);
         }
 
         private string MapPathWorker(string siteID, VirtualPath path) {
-            Debug.Trace("MapPath", "ProcHostMP.MapPath(" + siteID + ", " + path + ")\n");
+            System.Web.Util.Debug.Trace("MapPath", "ProcHostMP.MapPath(" + siteID + ", " + path + ")\n");
             return MapPathCaching(siteID, path);
         }
 
@@ -185,7 +189,7 @@ namespace System.Web.Configuration {
         }
 
         VirtualPath GetAppPathForPathWorker(string siteID, VirtualPath path) {
-            Debug.Trace("MapPath", "ProcHostMP.GetAppPathForPath(" + siteID + ", " + path.VirtualPathString + ")\n");
+            System.Web.Util.Debug.Trace("MapPath", "ProcHostMP.GetAppPathForPath(" + siteID + ", " + path.VirtualPathString + ")\n");
 
             uint siteValue  = 0;
             if (!UInt32.TryParse(siteID, out siteValue)) {
@@ -194,16 +198,19 @@ namespace System.Web.Configuration {
 
             IntPtr pBstr = IntPtr.Zero;
             int cBstr = 0;
-            string appPath;
+            string appPath = null;
+
+#if (!MONO || !FEATURE_PAL)
             try {
                 int result = UnsafeIISMethods.MgdGetAppPathForPath(IntPtr.Zero, siteValue, path.VirtualPathString, out pBstr, out cBstr);
-                appPath = (result == 0 && cBstr > 0) ? StringUtil.StringFromWCharPtr(pBstr, cBstr) : null;
+                appPath = (result == 0 && cBstr > 0) ? System.Web.Util.StringUtil.StringFromWCharPtr(pBstr, cBstr) : null;
             }
             finally {
                 if (pBstr != IntPtr.Zero) {
                     Marshal.FreeBSTR(pBstr);
                 }
             }
+#endif
 
             return (appPath != null) ? VirtualPath.Create(appPath) : VirtualPath.RootVirtualPath;
         }
@@ -249,7 +256,7 @@ namespace System.Web.Configuration {
                             VirtualPath vParent = path.Parent;
                             if (vParent != null) {
                                 string parentPath = vParent.VirtualPathString;
-                                if (parentPath.Length > 1 && StringUtil.StringEndsWith(parentPath, '/')) { // Trim the extra trailing / if there is one
+                                if (parentPath.Length > 1 && System.Web.Util.StringUtil.StringEndsWith(parentPath, '/')) { // Trim the extra trailing / if there is one
                                     vParent = VirtualPath.Create(parentPath.Substring(0, parentPath.Length - 1));
                                 }
                                 try {
@@ -284,11 +291,11 @@ namespace System.Web.Configuration {
                                 physicalPath = HttpRuntime.GetRelaxedMapPathResult(physicalPath);
                             }
 
-                            if (FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
+                            if (System.Web.Util.FileUtil.IsSuspiciousPhysicalPath(physicalPath)) {
                                 if (HttpRuntime.IsMapPathRelaxed) {
                                     physicalPath = HttpRuntime.GetRelaxedMapPathResult(null);
                                 } else {
-                                    throw new HttpException(SR.GetString(SR.Cannot_map_path, path));
+                                    throw new HttpException(System.Web.SR.GetString(System.Web.SR.Cannot_map_path, path));
                                 }
                             }
 
@@ -326,12 +333,12 @@ namespace System.Web.Configuration {
             // ensure extra '\\' in the physical path if the virtual path had extra '/'
             // and the other way -- no extra '\\' in physical if virtual didn't have it.
             if (path.HasTrailingSlash) {
-                if (!UrlPath.PathEndsWithExtraSlash(result)) {
+                if (!System.Web.Util.UrlPath.PathEndsWithExtraSlash(result)) {
                     result = result + "\\";
                 }
             }
             else {
-                if (UrlPath.PathEndsWithExtraSlash(result)) {
+                if (System.Web.Util.UrlPath.PathEndsWithExtraSlash(result)) {
                     result = result.Substring(0, result.Length - 1);
                 }
             }

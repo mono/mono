@@ -20,6 +20,7 @@ namespace System.Web.Hosting {
     using System.Web;
     using System.Web.Configuration;
     using System.Web.Util;
+    
 
 
     [ComImport, Guid("0ccd465e-3114-4ca3-ad50-cea561307e93"), InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
@@ -342,8 +343,8 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[]
-                                                  { SR.GetString(SR.Cant_Create_Process_Host)});
-                    Debug.Trace("internal", "ProcessHost::ctor failed with " + e.GetType().FullName + ": " + e.Message + "\r\n" + e.StackTrace);
+                                                  { System.Web.SR.GetString(System.Web.SR.Cant_Create_Process_Host)});
+                    System.Web.Util.Debug.Trace("internal", "ProcessHost::ctor failed with " + e.GetType().FullName + ": " + e.Message + "\r\n" + e.StackTrace);
                 }
                 throw;
             }
@@ -401,7 +402,7 @@ namespace System.Web.Hosting {
                 // get app domaoin protocol handler type from config
                 ProtocolElement configEntry = ProtocolsConfig.Protocols[protocolId];
                 if (configEntry == null)
-                    throw new ArgumentException(SR.GetString(SR.Unknown_protocol_id, protocolId));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Unknown_protocol_id, protocolId));
 
                     t = ValidateAndGetType( configEntry,
                                        configEntry.AppDomainHandlerType,
@@ -411,7 +412,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Invalid_AppDomain_Prot_Type)} );
+                                              System.Web.SR.GetString(System.Web.SR.Invalid_AppDomain_Prot_Type)} );
                 }
             }
 
@@ -461,7 +462,7 @@ namespace System.Web.Hosting {
                 // validate protocol id
                 ProtocolElement configEntry = ProtocolsConfig.Protocols[protocolId];
                 if (configEntry == null)
-                    throw new ArgumentException(SR.GetString(SR.Unknown_protocol_id, protocolId));
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Unknown_protocol_id, protocolId));
 
                 ProcessProtocolHandler protocolHandler = null;
                 Type                   protocolHandlerType = null;
@@ -490,7 +491,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Invalid_Process_Prot_Type)} );
+                                              System.Web.SR.GetString(System.Web.SR.Invalid_Process_Prot_Type)} );
                 }
                 throw;
             }
@@ -516,7 +517,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_Stop_Listener_Channel)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_Stop_Listener_Channel)} );
                 }
                 throw;
             }
@@ -546,7 +547,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_Stop_Process_Prot)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_Stop_Process_Prot)} );
                 }
                 throw;
             }
@@ -598,14 +599,14 @@ namespace System.Web.Hosting {
                         ((IRegisteredObject)shim).Stop(true);
                     }
                     else {
-                        throw new HttpException(SR.GetString(SR.Failure_Create_Listener_Shim));
+                        throw new HttpException(System.Web.SR.GetString(System.Web.SR.Failure_Create_Listener_Shim));
                     }
                 }
             }
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_Start_AppDomain_Listener)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_Start_AppDomain_Listener)} );
                 }
                 throw;
             }
@@ -638,7 +639,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_Stop_AppDomain_Listener)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_Stop_AppDomain_Listener)} );
                 }
                 throw;
             }
@@ -671,7 +672,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_Stop_AppDomain_Protocol)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_Stop_AppDomain_Protocol)} );
                 }
                 throw;
             }
@@ -685,7 +686,7 @@ namespace System.Web.Hosting {
                 if (appPath == null)
                     throw new ArgumentNullException("appPath");
 
-                Debug.Assert(_functions != null, "_functions != null");
+                System.Web.Util.Debug.Assert(_functions != null, "_functions != null");
 
                 runtimeInterface = null;
 
@@ -704,7 +705,7 @@ namespace System.Web.Hosting {
                     appPath = file.FullName;
                 }
 
-                if (!StringUtil.StringEndsWith(appPath, '\\')) {
+                if (!System.Web.Util.StringUtil.StringEndsWith(appPath, '\\')) {
                     appPath = appPath + "\\";
                 }
 
@@ -753,7 +754,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_Start_Integrated_App)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_Start_Integrated_App)} );
                 }
                 throw;
             }
@@ -768,7 +769,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_Stop_Integrated_App)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_Stop_Integrated_App)} );
                 }
                 throw;
             }
@@ -813,7 +814,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_Shutdown_ProcessHost), e.ToString()} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_Shutdown_ProcessHost), e.ToString()} );
                 }
                 throw;
             }
@@ -842,7 +843,7 @@ namespace System.Web.Hosting {
         }
 
         ICustomRuntimeRegistrationToken ICustomRuntimeManager.Register(ICustomRuntime customRuntime) {
-            Debug.Assert(customRuntime != null);
+            System.Web.Util.Debug.Assert(customRuntime != null);
             return _customRuntimeManager.Register(customRuntime);
         }
 
@@ -859,7 +860,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_AppDomain_Enum)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_AppDomain_Enum)} );
                 }
                 throw;
             }
@@ -875,7 +876,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_PMH_Idle)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_PMH_Idle)} );
                 }
                 throw;
             }
@@ -892,7 +893,7 @@ namespace System.Web.Hosting {
             catch (Exception e) {
                 using (new ProcessImpersonationContext()) {
                     Misc.ReportUnhandledException(e, new string[] {
-                                              SR.GetString(SR.Failure_PMH_Ping)} );
+                                              System.Web.SR.GetString(System.Web.SR.Failure_PMH_Ping)} );
                 }
                 throw;
             }
@@ -924,11 +925,11 @@ namespace System.Web.Hosting {
                 //
                 // make sure physical app path ends with '\\' and virtual does not
                 //
-                if (!StringUtil.StringEndsWith(physicalPath, '\\')) {
+                if (!System.Web.Util.StringUtil.StringEndsWith(physicalPath, '\\')) {
                     physicalPath = physicalPath + "\\";
                 }
 
-                Debug.Assert( !String.IsNullOrEmpty(physicalPath), "!String.IsNullOrEmpty(physicalPath)");
+                System.Web.Util.Debug.Assert( !String.IsNullOrEmpty(physicalPath), "!String.IsNullOrEmpty(physicalPath)");
                 appPath = physicalPath;
             }
 
@@ -954,7 +955,7 @@ namespace System.Web.Hosting {
 
             // Do not allow setting PreloadUtil again if it has already has been set
             if (_preloadUtil != null) {
-                throw new InvalidOperationException(SR.GetString(SR.Failure_ApplicationPreloadUtil_Already_Set));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.Failure_ApplicationPreloadUtil_Already_Set));
             }
 
             _preloadUtil = applicationPreloadUtil;
@@ -963,15 +964,15 @@ namespace System.Web.Hosting {
         public void SetApplicationPreloadState(string context, string appId, bool enabled) {
             // Check params
             if (String.IsNullOrEmpty(context)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("context");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("context");
             }
             if (String.IsNullOrEmpty(appId)) {
-                throw ExceptionUtil.ParameterNullOrEmpty("appId");
+                throw System.Web.Util.ExceptionUtil.ParameterNullOrEmpty("appId");
             }
 
             // _preloadUtil must be not null if we have an application preload enabled
             if (enabled && _preloadUtil == null) {
-                throw new ArgumentException(SR.GetString(SR.Invalid_Enabled_Preload_Parameter), "enabled");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Invalid_Enabled_Preload_Parameter), "enabled");
             }
 
             LockableAppDomainContext ac = _appManager.GetLockableAppDomainContext(appId);
@@ -986,6 +987,7 @@ namespace System.Web.Hosting {
 
         internal static void PreloadApplicationIfNotShuttingdown (string appId, LockableAppDomainContext ac) {
             // If GL_STOP_LISTENING wasn't triggered, the reset is likely due to a configuration change.
+#if (!MONO || !FEATURE_PAL)
             if (ProcessHost.DefaultHost != null && !UnsafeIISMethods.MgdIsAppPoolShuttingDown()) {
                 // Start the new app on another thread instead of hijacking the current app unloading thread
                 ThreadPool.QueueUserWorkItem(new WaitCallback(delegate(object o) {
@@ -1001,11 +1003,12 @@ namespace System.Web.Hosting {
                                 HResults.E_FAIL,
                                 Misc.FormatExceptionMessage(
                                     e, new string[] { 
-                                        SR.GetString(SR.Failure_Preload_Application_Initialization)}));
+                                        System.Web.SR.GetString(System.Web.SR.Failure_Preload_Application_Initialization)}));
                         }
                     }
                 }));
             }
+#endif
         }
 
         // New for Dev10. 
@@ -1100,10 +1103,10 @@ namespace System.Web.Hosting {
                 if (appInitEx != null) {
                     ReportApplicationPreloadFailureWithAssert(
                         ac.PreloadContext,
-                        HResults.E_FAIL,
+                        System.Web.Util.HResults.E_FAIL,
                         Misc.FormatExceptionMessage(
                             appInitEx, new string[] { 
-                                SR.GetString(SR.Failure_Preload_Application_Initialization)} ));
+                                System.Web.SR.GetString(System.Web.SR.Failure_Preload_Application_Initialization)} ));
 
                     // we must throw if preload fails because we cannot allow the normal
                     // startup path to continue and attempt to create a HostingEnvironment
@@ -1118,10 +1121,10 @@ namespace System.Web.Hosting {
                     // report errors
                     ReportApplicationPreloadFailureWithAssert(
                         ac.PreloadContext,
-                        HResults.E_FAIL,
+                        System.Web.Util.HResults.E_FAIL,
                         Misc.FormatExceptionMessage(
                             e, new string[] {
-                                SR.GetString(SR.Failure_Calling_Preload_Provider)} ).ToString());
+                                System.Web.SR.GetString(System.Web.SR.Failure_Calling_Preload_Provider)} ).ToString());
 
                     throw;
                 }
@@ -1158,7 +1161,7 @@ namespace System.Web.Hosting {
         private sealed class SimpleProcessResumeCallbackDispatcher : IProcessResumeCallback {
             private readonly Action _callback;
             public SimpleProcessResumeCallbackDispatcher(Action callback) {
-                Debug.Assert(callback != null);
+                System.Web.Util.Debug.Assert(callback != null);
                 _callback = callback;
             }
 
@@ -1255,7 +1258,7 @@ namespace System.Web.Hosting {
                 return ex.ToString();
             } else {
                 // Should never hit this case, but just in case, return a dummy value.
-                Debug.Fail("The provided HRESULT should've represented a failure.");
+                System.Web.Util.Debug.Fail("The provided HRESULT should've represented a failure.");
                 return String.Empty;
             }
         }
@@ -1302,10 +1305,15 @@ namespace System.Web.Hosting {
             }
 
             public string GetTrustLevel(string appConfigMetabasePath) {
+#if (!MONO || !FEATURE_PAL)
                 object retVal;
+
                 int hr = UnsafeIISMethods.MgdGetConfigProperty(appConfigMetabasePath, "system.web/trust", "level", out retVal);
                 Marshal.ThrowExceptionForHR(hr);
                 return (string)retVal;
+#else
+                return null;
+#endif
             }
 
             public string MapPath(string relativePath) {
@@ -1322,12 +1330,12 @@ namespace System.Web.Hosting {
 
         // this should run in an Hosted app domain (not in the default domain)
         internal void StartListenerChannel( AppDomainProtocolHandler handler, IListenerChannelCallback listenerCallback ) {
-            Debug.Assert( HostingEnvironment.IsHosted, "HostingEnvironment.IsHosted" );
-            Debug.Assert( null != handler, "null != handler" );
+            System.Web.Util.Debug.Assert( HostingEnvironment.IsHosted, "HostingEnvironment.IsHosted" );
+            System.Web.Util.Debug.Assert( null != handler, "null != handler" );
 
             IListenerChannelCallback unwrappedProxy = MarshalComProxy(listenerCallback);
 
-            Debug.Assert(null != unwrappedProxy, "null != unwrappedProxy");
+            System.Web.Util.Debug.Assert(null != unwrappedProxy, "null != unwrappedProxy");
             if (null != unwrappedProxy && null != handler) {
                 handler.StartListenerChannel(unwrappedProxy);
             }

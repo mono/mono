@@ -30,6 +30,7 @@ namespace System.Web.Security
     using  System.Configuration.Provider;
     using  System.Web.Management;
     
+    
     public enum ActiveDirectoryConnectionProtection
     {
         None		= 0,
@@ -141,13 +142,13 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return appName;
             }
             set
             {
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_Setting_ApplicationName_not_supported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_Setting_ApplicationName_not_supported));
             }
         }
 
@@ -156,7 +157,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return directoryInfo.ConnectionProtection;
             }
@@ -180,7 +181,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return enablePasswordRetrieval;
              }
@@ -191,7 +192,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return enablePasswordReset;
             }
@@ -202,7 +203,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return enableSearchMethods;
             }
@@ -213,7 +214,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return requiresQuestionAndAnswer;
             }
@@ -224,7 +225,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return requiresUniqueEmail;
             }
@@ -235,7 +236,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return maxInvalidPasswordAttempts;
             }
@@ -246,7 +247,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return passwordAttemptWindow;
             }
@@ -257,7 +258,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return passwordAnswerAttemptLockoutDuration;
             }
@@ -268,7 +269,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return minRequiredPasswordLength;
             }
@@ -279,7 +280,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return minRequiredNonalphanumericCharacters;
             }
@@ -290,7 +291,7 @@ namespace System.Web.Security
             get
             {
                 if (!initialized)
-                    throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                    throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
                 return passwordStrengthRegularExpression;
             }
@@ -306,10 +307,7 @@ namespace System.Web.Security
         [DirectoryServicesPermission(SecurityAction.Demand, Unrestricted=true)]
         [DirectoryServicesPermission(SecurityAction.InheritanceDemand, Unrestricted=true)]
         public override void Initialize(string name, NameValueCollection config)
-        {
-            if (System.Web.Hosting.HostingEnvironment.IsHosted)
-                HttpRuntime.CheckAspNetHostingPermission (AspNetHostingPermissionLevel.Low, SR.Feature_not_supported_at_this_level);
-
+        {            
             if (initialized)
                 return;
 
@@ -322,7 +320,7 @@ namespace System.Web.Security
             if (string.IsNullOrEmpty(config["description"]))
             {
                 config.Remove("description");
-                config.Add("description", SR.GetString(SR.ADMembership_Description));
+                config.Add("description", System.Web.SR.GetString(System.Web.SR.ADMembership_Description));
             }
 
             base.Initialize(name, config);
@@ -333,15 +331,15 @@ namespace System.Web.Security
                 appName = SecUtility.GetDefaultAppName();
 
             if( appName.Length > 256 )
-                throw new ProviderException(SR.GetString(SR.Provider_application_name_too_long));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_application_name_too_long));
 
             string temp = config["connectionStringName"];
             if (String.IsNullOrEmpty(temp))
-                throw new ProviderException(SR.GetString(SR.Connection_name_not_specified));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Connection_name_not_specified));
 
             adConnectionString = GetConnectionString(temp, true);
             if (String.IsNullOrEmpty(adConnectionString))
-                throw new ProviderException(SR.GetString(SR.Connection_string_not_found, temp));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, temp));
 
             //
             // Get the provider specific configuration settings
@@ -355,7 +353,7 @@ namespace System.Web.Security
             {
                 if ((String.Compare(connProtection, "Secure", StringComparison.Ordinal) != 0) &&
                     (String.Compare(connProtection, "None", StringComparison.Ordinal) != 0))
-                    throw new ProviderException(SR.GetString(SR.ADMembership_InvalidConnectionProtection, connProtection));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_InvalidConnectionProtection, connProtection));
             }
 
             //
@@ -365,14 +363,14 @@ namespace System.Web.Security
             //
             string username = config["connectionUsername"];
             if (username != null && username.Length == 0)
-                throw new ProviderException(SR.GetString(SR.ADMembership_Connection_username_must_not_be_empty));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Connection_username_must_not_be_empty));
 
             string password = config["connectionPassword"];
             if (password != null && password.Length == 0)
-                throw new ProviderException(SR.GetString(SR.ADMembership_Connection_password_must_not_be_empty));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Connection_password_must_not_be_empty));
 
             if ((username != null && password == null) || (password != null && username == null))
-                throw new ProviderException(SR.GetString(SR.ADMembership_Username_and_password_reqd));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Username_and_password_reqd));
 
             NetworkCredential credential = new NetworkCredential(username, password);
 
@@ -409,7 +407,7 @@ namespace System.Web.Security
                 passwordStrengthRegularExpression = string.Empty;
             }
             if (minRequiredNonalphanumericCharacters > minRequiredPasswordLength)
-                throw new HttpException(SR.GetString(SR.MinRequiredNonalphanumericCharacters_can_not_be_more_than_MinRequiredPasswordLength));
+                throw new HttpException(System.Web.SR.GetString(System.Web.SR.MinRequiredNonalphanumericCharacters_can_not_be_more_than_MinRequiredPasswordLength));
 
 
             using (new ApplicationImpersonationContext())
@@ -469,7 +467,7 @@ namespace System.Web.Security
                     }
                 }
                 attributesInUse.Add(attributeMapUsername, null);
-                if (StringUtil.EqualsIgnoreCase(attributeMapUsername, "sAMAccountName"))
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(attributeMapUsername, "sAMAccountName"))
                 {
                     usernameIsSAMAccountName = true;
                     usernameIsUPN = false;
@@ -500,7 +498,7 @@ namespace System.Web.Security
                     // AD membership provider does not support password reset without question and answer
                     //
                     if (!requiresQuestionAndAnswer)
-                        throw new ProviderException(SR.GetString(SR.ADMembership_PasswordReset_without_question_not_supported));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_PasswordReset_without_question_not_supported));
 
                     //
                     // Other password reset related attributes
@@ -526,7 +524,7 @@ namespace System.Web.Security
 
                     if (attributeMapFailedPasswordAnswerCount == null || attributeMapFailedPasswordAnswerTime == null ||
                             attributeMapFailedPasswordAnswerLockoutTime == null)
-                        throw new ProviderException(SR.GetString(SR.ADMembership_BadPasswordAnswerMappings_not_specified));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_BadPasswordAnswerMappings_not_specified));
                 }
 
                 //
@@ -556,7 +554,7 @@ namespace System.Web.Security
                     // We also need to check that the password question and answer attributes are mapped
                     //
                     if (attributeMapPasswordQuestion == null || attributeMapPasswordAnswer == null)
-                        throw new ProviderException(SR.GetString(SR.ADMembership_PasswordQuestionAnswerMapping_not_specified));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_PasswordQuestionAnswerMapping_not_specified));
                 }
 
                 //
@@ -628,7 +626,7 @@ namespace System.Web.Security
             {
                 string attribUnrecognized = config.GetKey(0);
                 if (!String.IsNullOrEmpty(attribUnrecognized))
-                    throw new ProviderException(SR.GetString(SR.Provider_unrecognized_attribute, attribUnrecognized));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Provider_unrecognized_attribute, attribUnrecognized));
             }
 
             initialized = true;
@@ -650,16 +648,16 @@ namespace System.Web.Security
             MembershipUser user = null;
 
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             if (providerUserKey != null)
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_Setting_UserId_not_supported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_Setting_UserId_not_supported));
 
             if ((passwordQuestion != null) && (attributeMapPasswordQuestion == null))
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_PasswordQ_not_supported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_PasswordQ_not_supported));
 
             if ((passwordAnswer != null) && (attributeMapPasswordAnswer == null))
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_PasswordA_not_supported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_PasswordA_not_supported));
 
             if(!SecUtility.ValidateParameter(ref username, true, true, true, maxUsernameLengthForCreation))
             {
@@ -970,7 +968,7 @@ namespace System.Web.Security
                             // so we will provide a clearer exception
                             //
                             else if ((errorCode == unchecked((int) 0x8000500d) && (directoryInfo.DirectoryType == DirectoryType.ADAM)))
-                                throw new ProviderException(SR.GetString(SR.ADMembership_No_secure_conn_for_password));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_No_secure_conn_for_password));
                             else
                                 throw;
                         }
@@ -1014,16 +1012,16 @@ namespace System.Web.Security
                                                         string newPasswordAnswer)
         {
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             //
             // if there are no mappings for password question and answer, we should throw a NotSupportedException
             //
             if ((newPasswordQuestion != null) && (attributeMapPasswordQuestion == null))
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_PasswordQ_not_supported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_PasswordQ_not_supported));
 
             if ((newPasswordAnswer != null) && (attributeMapPasswordAnswer == null))
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_PasswordA_not_supported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_PasswordA_not_supported));
 
 
             CheckUserName( ref username, maxUsernameLength, "username" );
@@ -1047,7 +1045,7 @@ namespace System.Web.Security
 
                 // check length of encoded password answer
                 if (maxPasswordAnswerLength > 0 && encodedPasswordAnswer.Length > maxPasswordAnswerLength)
-                    throw new ArgumentException(SR.GetString(SR.ADMembership_Parameter_too_long, "newPasswordAnswer"), "newPasswordAnswer");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ADMembership_Parameter_too_long, "newPasswordAnswer"), "newPasswordAnswer");
             }
             else
                 encodedPasswordAnswer = newPasswordAnswer;
@@ -1184,7 +1182,7 @@ namespace System.Web.Security
             //
             // ADMembership Provider does not support password retrieval
             //
-            throw new NotSupportedException(SR.GetString(SR.ADMembership_PasswordRetrieval_not_supported_AD));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_PasswordRetrieval_not_supported_AD));
         }
 
         [DirectoryServicesPermission(SecurityAction.Assert, Unrestricted=true)]
@@ -1195,7 +1193,7 @@ namespace System.Web.Security
                                                         string newPassword)
         {
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             CheckUserName(ref username, maxUsernameLength, "username" );
 
@@ -1205,7 +1203,7 @@ namespace System.Web.Security
 
             if( newPassword.Length < MinRequiredPasswordLength )
             {
-                throw new ArgumentException(SR.GetString(SR.Password_too_short,
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Password_too_short,
                               "newPassword",
                               MinRequiredPasswordLength.ToString(CultureInfo.InvariantCulture)));
             }
@@ -1222,7 +1220,7 @@ namespace System.Web.Security
 
             if( count < MinRequiredNonAlphanumericCharacters )
             {
-                throw new ArgumentException(SR.GetString(SR.Password_need_more_non_alpha_numeric_chars,
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Password_need_more_non_alpha_numeric_chars,
                               "newPassword",
                               MinRequiredNonAlphanumericCharacters.ToString(CultureInfo.InvariantCulture)));
             }
@@ -1231,7 +1229,7 @@ namespace System.Web.Security
             {
                 if( !RegexUtil.IsMatch( newPassword, PasswordStrengthRegularExpression, RegexOptions.None, passwordStrengthRegexTimeout ) )
                 {
-                    throw new ArgumentException(SR.GetString(SR.Password_does_not_match_regular_expression,
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Password_does_not_match_regular_expression,
                                                              "newPassword"));
                 }
             }
@@ -1244,7 +1242,7 @@ namespace System.Web.Security
                 if(e.FailureInformation != null)
                     throw e.FailureInformation;
                 else
-                    throw new ArgumentException(SR.GetString(SR.Membership_Custom_Password_Validation_Failure), "newPassword");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Membership_Custom_Password_Validation_Failure), "newPassword");
             }
 
             try
@@ -1350,14 +1348,14 @@ namespace System.Web.Security
                             // MembershipPasswordException
                             //
                             if ((errorCode == unchecked((int) 0x800708c5)) || (errorCode == unchecked((int) 0x8007202f))  || (errorCode == unchecked((int) 0x8007052d)) || (errorCode == unchecked((int) 0x8007052f)))
-                                throw new MembershipPasswordException(SR.GetString(SR.Membership_InvalidPassword), ce);
+                                throw new MembershipPasswordException(System.Web.SR.GetString(System.Web.SR.Membership_InvalidPassword), ce);
                             //
                             // if the target is ADAM and the exception is due to property not found, this indicates that a secure
                             // connection could not be setup for changing the password and ADSI is falling back to kerberos which does not work for ADAM
                             // so we will provide a clearer exception
                             //
                             else if ((errorCode == unchecked((int) 0x8000500d) && (directoryInfo.DirectoryType == DirectoryType.ADAM)))
-                                throw new ProviderException(SR.GetString(SR.ADMembership_No_secure_conn_for_password));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_No_secure_conn_for_password));
                             else
                                 throw;
                         }
@@ -1409,10 +1407,10 @@ namespace System.Web.Security
             string newPassword = null;
 
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             if (!EnablePasswordReset)
-                throw new NotSupportedException(SR.GetString(SR.Not_configured_to_support_password_resets));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.Not_configured_to_support_password_resets));
 
             CheckUserName(ref username, maxUsernameLength, "username");
 
@@ -1439,19 +1437,19 @@ namespace System.Web.Security
                     // user does not exist, throw exception
                     //
                     if (user == null)
-                        throw new ProviderException(SR.GetString(SR.Membership_UserNotFound));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Membership_UserNotFound));
 
                     //
                     // if user is locked, throw an exception
                     //
                     if (user.IsLockedOut)
-                        throw new MembershipPasswordException(SR.GetString(SR.Membership_AccountLockOut));
+                        throw new MembershipPasswordException(System.Web.SR.GetString(System.Web.SR.Membership_AccountLockOut));
 
                     string storedPasswordAnswer = Decrypt((string) PropertyManager.GetPropertyValue(userEntry, attributeMapPasswordAnswer));
-                    if (!StringUtil.EqualsIgnoreCase(passwordAnswer, storedPasswordAnswer))
+                    if (!System.Web.Util.StringUtil.EqualsIgnoreCase(passwordAnswer, storedPasswordAnswer))
                     {
                         UpdateBadPasswordAnswerAttributes(userEntry);
-                        throw new MembershipPasswordException(SR.GetString(SR.Membership_WrongAnswer));
+                        throw new MembershipPasswordException(System.Web.SR.GetString(System.Web.SR.Membership_WrongAnswer));
                     }
                     else
                     {
@@ -1474,7 +1472,7 @@ namespace System.Web.Security
                         if(e.FailureInformation != null)
                             throw e.FailureInformation;
                         else
-                            throw new ProviderException(SR.GetString(SR.Membership_Custom_Password_Validation_Failure));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Membership_Custom_Password_Validation_Failure));
                     }
 
                     userEntry.Invoke("SetPassword", new object[]{ newPassword });
@@ -1492,14 +1490,14 @@ namespace System.Web.Security
                         // ProviderException
                         //
                         if ((errorCode == unchecked((int) 0x800708c5)) || (errorCode == unchecked((int) 0x8007202f))  || (errorCode == unchecked((int) 0x8007052d)) || (errorCode == unchecked((int) 0x8007052f)))
-                            throw new ProviderException(SR.GetString(SR.ADMembership_Generated_password_not_complex), ce);
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Generated_password_not_complex), ce);
                         //
                         // if the target is ADAM and the exception is due to property not found, this indicates that a secure
                         // connection could not be setup for changing the password and ADSI is falling back to kerberos which does not work for ADAM
                         // so we will provide a clearer exception
                         //
                         if ((errorCode == unchecked((int) 0x8000500d) && (directoryInfo.DirectoryType == DirectoryType.ADAM)))
-                            throw new ProviderException(SR.GetString(SR.ADMembership_No_secure_conn_for_password));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_No_secure_conn_for_password));
                         else
                             throw;
                     }
@@ -1533,7 +1531,7 @@ namespace System.Web.Security
         public override bool UnlockUser(string username)
         {
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             CheckUserName( ref username, maxUsernameLength, "username" );
 
@@ -1598,7 +1596,7 @@ namespace System.Web.Security
             bool isApprovedModified = true;
 
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             if( user == null )
             {
@@ -1627,10 +1625,10 @@ namespace System.Web.Security
             if (commentModified && user.Comment != null)
             {
                 if (user.Comment.Length == 0)
-                    throw new ArgumentException(SR.GetString(SR.Parameter_can_not_be_empty, "Comment"), "Comment");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_can_not_be_empty, "Comment"), "Comment");
 
                 if (maxCommentLength > 0 && user.Comment.Length > maxCommentLength)
-                    throw new ArgumentException(SR.GetString(SR.Parameter_too_long, "Comment", maxCommentLength.ToString(CultureInfo.InvariantCulture)), "Comment");
+                    throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_too_long, "Comment", maxCommentLength.ToString(CultureInfo.InvariantCulture)), "Comment");
             }
 
             try
@@ -1648,7 +1646,7 @@ namespace System.Web.Security
                     userEntry = FindUserEntry(containerEntry, "(" + attributeMapUsername + "=" + GetEscapedFilterValue(user.UserName) + ")");
 
                     if (userEntry == null)
-                        throw new ProviderException(SR.GetString(SR.Membership_UserNotFound));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Membership_UserNotFound));
 
                     if (!((emailModified) || (commentModified) || (isApprovedModified)))
                         // nothing has been modified
@@ -1669,7 +1667,7 @@ namespace System.Web.Security
                         else
                         {
                             if (RequiresUniqueEmail && !IsEmailUnique(null, user.UserName, email, true /* existing */))
-                                throw new ProviderException(SR.GetString(SR.Membership_DuplicateEmail));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Membership_DuplicateEmail));
 
                             userEntry.Properties[attributeMapEmail].Value = email;
                         }
@@ -1770,7 +1768,7 @@ namespace System.Web.Security
         private bool ValidateUserCore(string username, string password)
         {
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             if(!SecUtility.ValidateParameter(ref username, true, true, true, maxUsernameLength))
             {
@@ -1897,7 +1895,7 @@ namespace System.Web.Security
             MembershipUser user = null;
 
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             if( providerUserKey == null )
             {
@@ -1906,7 +1904,7 @@ namespace System.Web.Security
 
             if ( !( providerUserKey is SecurityIdentifier) )
             {
-                throw new ArgumentException( SR.GetString(SR.ADMembership_InvalidProviderUserKey) , "providerUserKey" );
+                throw new ArgumentException( System.Web.SR.GetString(System.Web.SR.ADMembership_InvalidProviderUserKey) , "providerUserKey" );
             }
 
             try
@@ -1960,7 +1958,7 @@ namespace System.Web.Security
             MembershipUser user = null;
 
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             CheckUserName(ref username, maxUsernameLength, "username" );
 
@@ -2001,7 +1999,7 @@ namespace System.Web.Security
         public override string GetUserNameByEmail(string email)
         {
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             SecUtility.CheckParameter(ref email, false, true, false, maxEmailLength,  "email");
 
@@ -2045,7 +2043,7 @@ namespace System.Web.Security
                             if (RequiresUniqueEmail)
                             {
                                 // there is a duplicate entry, so we need to throw an ProviderException
-                                throw new ProviderException(SR.GetString(SR.Membership_more_than_one_user_with_email));
+                                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Membership_more_than_one_user_with_email));
                             }
                             else
                                 // we should never get here
@@ -2078,7 +2076,7 @@ namespace System.Web.Security
         {
 
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             CheckUserName(ref username, maxUsernameLength, "username");
 
@@ -2168,7 +2166,7 @@ namespace System.Web.Security
             //
             // ADMembershipProvider does not support the notion of online users
             //
-            throw new NotSupportedException(SR.GetString(SR.ADMembership_OnlineUsers_not_supported));
+            throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_OnlineUsers_not_supported));
         }
 
         [DirectoryServicesPermission(SecurityAction.Assert, Unrestricted=true)]
@@ -2180,21 +2178,21 @@ namespace System.Web.Security
                                                         out int totalRecords)
         {
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             if (!EnableSearchMethods)
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_Provider_SearchMethods_not_supported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_SearchMethods_not_supported));
 
             SecUtility.CheckParameter( ref usernameToMatch, true, true, true, maxUsernameLength, "usernameToMatch" );
 
             if ( pageIndex < 0 )
-                throw new ArgumentException(SR.GetString(SR.PageIndex_bad), "pageIndex");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_bad), "pageIndex");
             if ( pageSize < 1 )
-                throw new ArgumentException(SR.GetString(SR.PageSize_bad), "pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageSize_bad), "pageSize");
 
             long upperBound = (long)pageIndex * pageSize + pageSize - 1;
             if ( upperBound > Int32.MaxValue )
-                throw new ArgumentException(SR.GetString(SR.PageIndex_PageSize_bad), "pageIndex and pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_PageSize_bad), "pageIndex and pageSize");
 
             try
             {
@@ -2228,21 +2226,21 @@ namespace System.Web.Security
         public override MembershipUserCollection FindUsersByEmail(string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
         {
             if (!initialized)
-                throw new InvalidOperationException(SR.GetString(SR.ADMembership_Provider_not_initialized));
+                throw new InvalidOperationException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_not_initialized));
 
             if (!EnableSearchMethods)
-                throw new NotSupportedException(SR.GetString(SR.ADMembership_Provider_SearchMethods_not_supported));
+                throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_Provider_SearchMethods_not_supported));
 
             SecUtility.CheckParameter(ref emailToMatch, false, true, false, maxEmailLength, "emailToMatch");
 
             if ( pageIndex < 0 )
-                throw new ArgumentException(SR.GetString(SR.PageIndex_bad), "pageIndex");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_bad), "pageIndex");
             if ( pageSize < 1 )
-                throw new ArgumentException(SR.GetString(SR.PageSize_bad), "pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageSize_bad), "pageSize");
 
             long upperBound = (long)pageIndex * pageSize + pageSize - 1;
             if ( upperBound > Int32.MaxValue )
-                throw new ArgumentException(SR.GetString(SR.PageIndex_PageSize_bad), "pageIndex and pageSize");
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.PageIndex_PageSize_bad), "pageIndex and pageSize");
 
             try
             {
@@ -2366,7 +2364,7 @@ namespace System.Web.Security
 
         private DirectoryEntry FindUserEntry(DirectoryEntry containerEntry, string filter, System.DirectoryServices.SearchScope searchScope, bool retrieveSAMAccountName, out string sAMAccountName)
         {
-            Debug.Assert(containerEntry != null);
+            System.Web.Util.Debug.Assert(containerEntry != null);
             DirectorySearcher searcher = new DirectorySearcher(containerEntry);
 
             searcher.SearchScope = searchScope;
@@ -2407,7 +2405,7 @@ namespace System.Web.Security
 
         private MembershipUser FindUser(DirectoryEntry containerEntry, string filter, System.DirectoryServices.SearchScope searchScope,  bool retrieveSAMAccountName, out DirectoryEntry userEntry, out bool resetBadPasswordAnswerAttributes, out string sAMAccountName)
         {
-            Debug.Assert(containerEntry != null);
+            System.Web.Util.Debug.Assert(containerEntry != null);
             MembershipUser user = null;
             DirectorySearcher searcher = new DirectorySearcher(containerEntry);
 
@@ -2475,7 +2473,7 @@ namespace System.Web.Security
 
         private MembershipUserCollection FindUsers(DirectoryEntry containerEntry, string filter, string sortKey, int pageIndex, int pageSize, out int totalRecords)
         {
-            Debug.Assert(containerEntry != null);
+            System.Web.Util.Debug.Assert(containerEntry != null);
             MembershipUserCollection col = new MembershipUserCollection();
             int lastOffset = (pageIndex + 1) * pageSize;
             int startOffset = lastOffset -pageSize + 1;
@@ -2568,10 +2566,10 @@ namespace System.Web.Security
             passwordAnswer = passwordAnswer.Trim();
 
             if (passwordAnswer.Length < 1)
-                throw new ArgumentException(SR.GetString(SR.Parameter_can_not_be_empty, paramName), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_can_not_be_empty, paramName), paramName);
 
             if (maxSize > 0 && passwordAnswer.Length > maxSize)
-                throw new ArgumentException(SR.GetString(SR.ADMembership_Parameter_too_long, paramName), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ADMembership_Parameter_too_long, paramName), paramName);
         }
 
         private bool ValidatePassword(string password, int maxSize)
@@ -2594,10 +2592,10 @@ namespace System.Web.Security
                 throw new ArgumentNullException(paramName);
 
             if (password.Trim().Length < 1)
-                throw new ArgumentException(SR.GetString(SR.Parameter_can_not_be_empty, paramName), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_can_not_be_empty, paramName), paramName);
 
             if (maxSize > 0 && password.Length > maxSize)
-                throw new ArgumentException(SR.GetString(SR.Parameter_too_long, paramName, maxSize.ToString(CultureInfo.InvariantCulture)), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.Parameter_too_long, paramName, maxSize.ToString(CultureInfo.InvariantCulture)), paramName);
         }
 
         private void CheckUserName(ref string username, int maxSize, string paramName)
@@ -2608,7 +2606,7 @@ namespace System.Web.Security
             // if username is mapped to UPN, it should not contain '\'
             //
             if (usernameIsUPN && (username.IndexOf('\\') != -1))
-                throw new ArgumentException(SR.GetString(SR.ADMembership_UPN_contains_backslash, paramName), paramName);
+                throw new ArgumentException(System.Web.SR.GetString(System.Web.SR.ADMembership_UPN_contains_backslash, paramName), paramName);
         }
 
         private int GetDomainControllerLevel(string serverName)
@@ -3037,7 +3035,7 @@ namespace System.Web.Security
                         //
                         if (!((directoryInfo.Port == DirectoryInformation.SSL_PORT) &&
                             (directoryInfo.ConnectionProtection == ActiveDirectoryConnectionProtection.Ssl)))
-                            throw new ProviderException(SR.GetString(SR.ADMembership_unable_to_set_password_port));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_unable_to_set_password_port));
                     }
                     else
                         throw;
@@ -3135,7 +3133,7 @@ namespace System.Web.Security
                 //
                 // No connection string by the specified name
                 //
-                throw new ProviderException(SR.GetString(SR.Connection_string_not_found, connectionStringName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.Connection_string_not_found, connectionStringName));
             }
 
             return connObj.ConnectionString;
@@ -3152,7 +3150,7 @@ namespace System.Web.Security
             sValue = sValue.Trim();
 
             if (sValue.Length == 0)
-                throw new ProviderException(SR.GetString(SR.ADMembership_Schema_mappings_must_not_be_empty, valueName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Schema_mappings_must_not_be_empty, valueName));
 
             return GetValidatedSchemaMapping(valueName, sValue, out maxLength);
         }
@@ -3167,17 +3165,17 @@ namespace System.Web.Security
                     // username can only be mapped to "sAMAccountName", "userPrincipalName"
                     //
 
-                    if ((!StringUtil.EqualsIgnoreCase(attributeName, "sAMAccountName"))
-                        && (!StringUtil.EqualsIgnoreCase(attributeName, "userPrincipalName")))
-                        throw new ProviderException(SR.GetString(SR.ADMembership_Username_mapping_invalid));
+                    if ((!System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "sAMAccountName"))
+                        && (!System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "userPrincipalName")))
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Username_mapping_invalid));
                 }
                 else
                 {
                     //
                     // for ADAM, username can only be mapped to "userPrincipalName"
                     //
-                    if (!StringUtil.EqualsIgnoreCase(attributeName, "userPrincipalName"))
-                        throw new ProviderException(SR.GetString(SR.ADMembership_Username_mapping_invalid_ADAM));
+                    if (!System.Web.Util.StringUtil.EqualsIgnoreCase(attributeName, "userPrincipalName"))
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Username_mapping_invalid_ADAM));
 
                 }
             }
@@ -3187,13 +3185,13 @@ namespace System.Web.Security
                 // ensure that we are not already using this attribute
                 //
                 if (attributesInUse.Contains(attributeName))
-                    throw new ProviderException(SR.GetString(SR.ADMembership_mapping_not_unique, valueName, attributeName));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_mapping_not_unique, valueName, attributeName));
 
                 //
                 // ensure that the attribute exists on the user object
                 //
                 if (!userObjectAttributes.Contains(attributeName))
-                    throw new ProviderException(SR.GetString(SR.ADMembership_MappedAttribute_does_not_exist_on_user, attributeName, valueName));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_MappedAttribute_does_not_exist_on_user, attributeName, valueName));
             }
 
             try
@@ -3211,14 +3209,14 @@ namespace System.Web.Security
                 //
                 // check that the syntax is as per the syntaxes table
                 //
-                if (!StringUtil.EqualsIgnoreCase(syntax, (string) syntaxes[valueName]))
-                    throw new ProviderException(SR.GetString(SR.ADMembership_Wrong_syntax, valueName, (string) syntaxes[valueName]));
+                if (!System.Web.Util.StringUtil.EqualsIgnoreCase(syntax, (string) syntaxes[valueName]))
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Wrong_syntax, valueName, (string) syntaxes[valueName]));
 
                 //
                 // if the type is "DirectoryString", then set the maxLength value if any
                 //
                 maxLength = -1;
-                if (StringUtil.EqualsIgnoreCase(syntax, "DirectoryString"))
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(syntax, "DirectoryString"))
                 {
                     try
                     {
@@ -3244,14 +3242,14 @@ namespace System.Web.Security
                     bool isMultiValued = (bool) propertyEntry.InvokeGet("MultiValued");
 
                     if (isMultiValued)
-                        throw new ProviderException(SR.GetString(SR.ADMembership_attribute_not_single_valued, valueName));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_attribute_not_single_valued, valueName));
                 }
 
             }
             catch (COMException e)
             {
                 if (e.ErrorCode == unchecked((int) 0x80005000))
-                    throw new ProviderException(SR.GetString(SR.ADMembership_MappedAttribute_does_not_exist, attributeName, valueName), e);
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_MappedAttribute_does_not_exist, attributeName, valueName), e);
                 else
                     throw;
             }
@@ -3395,7 +3393,7 @@ namespace System.Web.Security
         private string Encrypt(string clearTextString)
         {
             // we should never be getting null input here
-            Debug.Assert(clearTextString != null);
+            System.Web.Util.Debug.Assert(clearTextString != null);
 
             byte[] bIn = Encoding.Unicode.GetBytes(clearTextString);
 
@@ -3412,7 +3410,7 @@ namespace System.Web.Security
         private string Decrypt(string encryptedString)
         {
             // we should never be getting null input here
-            Debug.Assert(encryptedString != null);
+            System.Web.Util.Debug.Assert(encryptedString != null);
 
             byte[] bEncryptedData = Convert.FromBase64String(encryptedString);
 
@@ -3488,14 +3486,14 @@ namespace System.Web.Security
             this.serverSearchTimeout = serverSearchTimeout;
             this.timeUnit = timeUnit;
 
-            Debug.Assert(adspath != null);
-            Debug.Assert(adspath.Length > 0);
+            System.Web.Util.Debug.Assert(adspath != null);
+            System.Web.Util.Debug.Assert(adspath.Length > 0);
 
             //
             // Provider must be LDAP
             //
             if (!(adspath.StartsWith("LDAP", StringComparison.Ordinal)))
-                throw new ProviderException(SR.GetString(SR.ADMembership_OnlyLdap_supported));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_OnlyLdap_supported));
 
             //
             // Parse out the server/domain information
@@ -3508,7 +3506,7 @@ namespace System.Web.Security
             catch (COMException e)
             {
                 if (e.ErrorCode == unchecked((int) 0x80005000))
-                    throw new ProviderException(SR.GetString(SR.ADMembership_invalid_path));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_invalid_path));
                 else
                     throw;
             }
@@ -3521,11 +3519,11 @@ namespace System.Web.Security
             catch (COMException e)
             {
                 if (e.ErrorCode == unchecked((int) 0x80005000))
-                    throw new ProviderException(SR.GetString(SR.ADMembership_ServerlessADsPath_not_supported));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_ServerlessADsPath_not_supported));
                 else
                     throw;
             }
-            Debug.Assert(serverName != null);
+            System.Web.Util.Debug.Assert(serverName != null);
 
             creationContainerDN = containerDN = pathCracker.Retrieve(NativeComInterfaces.ADS_FORMAT_X500_DN);
 
@@ -3539,7 +3537,7 @@ namespace System.Web.Security
 
                 serverName = tempStr.Substring(0, index);
 
-                Debug.Assert(tempStr.Length > index);
+                System.Web.Util.Debug.Assert(tempStr.Length > index);
                 port = Int32.Parse(tempStr.Substring(index + 1), NumberFormatInfo.InvariantInfo);
                 portSpecified = true;
             }
@@ -3645,7 +3643,7 @@ namespace System.Web.Security
                     }
                     catch (COMException e)
                     {
-                        throw new ProviderException(SR.GetString(SR.ADMembership_Secure_connection_not_established, e.Message), e);
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Secure_connection_not_established, e.Message), e);
                     }
                 }
             }
@@ -3661,7 +3659,7 @@ namespace System.Web.Security
                 // simple bind)
                 //
                 if (IsDefaultCredential())
-                    throw new NotSupportedException(SR.GetString(SR.ADMembership_Default_Creds_not_supported));
+                    throw new NotSupportedException(System.Web.SR.GetString(System.Web.SR.ADMembership_Default_Creds_not_supported));
 
                 // simple bind
                 authenticationType = GetAuthenticationTypes(connectionProtection, CredentialsType.NonWindows);
@@ -3685,13 +3683,13 @@ namespace System.Web.Security
             // because ADAM does not support secure authentication for ADAM users.
             //
             if ((directoryType == DirectoryType.ADAM) && (this.connectionProtection == ActiveDirectoryConnectionProtection.SignAndSeal))
-                throw new ProviderException(SR.GetString(SR.ADMembership_Ssl_connection_not_established));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Ssl_connection_not_established));
 
             //
             // for AD, we need to block the GC ports
             //
             if ((directoryType == DirectoryType.AD) && ((port == GC_PORT) || (port == GC_SSL_PORT)))
-                throw new ProviderException(SR.GetString(SR.ADMembership_GCPortsNotSupported));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_GCPortsNotSupported));
 
             //
             // if container dn is null, we need to get the default naming context
@@ -3703,7 +3701,7 @@ namespace System.Web.Security
                 {
                     containerDN = (string)rootdse.Properties["defaultNamingContext"].Value;
                     if (containerDN == null)
-                        throw new ProviderException(SR.GetString(SR.ADMembership_DefContainer_not_specified));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_DefContainer_not_specified));
 
                     //
                     // we will create users in the default users container, check that it exists
@@ -3718,7 +3716,7 @@ namespace System.Web.Security
                     catch (COMException ce)
                     {
                         if (ce.ErrorCode == unchecked((int) 0x80072030))
-                            throw new ProviderException(SR.GetString(SR.ADMembership_DefContainer_does_not_exist));
+                            throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_DefContainer_does_not_exist));
                         else
                             throw;
                     }
@@ -3726,7 +3724,7 @@ namespace System.Web.Security
                 else
                 {
                     // container must be specified for ADAM
-                    throw new ProviderException(SR.GetString(SR.ADMembership_Container_must_be_specified));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Container_must_be_specified));
                 }
             }
             else
@@ -3743,7 +3741,7 @@ namespace System.Web.Security
                 catch (COMException ce)
                 {
                     if (ce.ErrorCode == unchecked((int) 0x80072030))
-                        throw new ProviderException(SR.GetString(SR.ADMembership_Container_does_not_exist));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Container_does_not_exist));
                     else
                         throw;
                 }
@@ -3780,7 +3778,7 @@ namespace System.Web.Security
                 {
                     response = (SearchResponse) tempConnection.SendRequest(request);
                     if (response.ResultCode == ResultCode.Referral || response.ResultCode ==  ResultCode.NoSuchObject)
-                        throw new ProviderException(SR.GetString(SR.ADMembership_Container_does_not_exist));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Container_does_not_exist));
                     else if (response.ResultCode != ResultCode.Success)
                         throw new ProviderException(response.ErrorMessage);
                 }
@@ -3788,7 +3786,7 @@ namespace System.Web.Security
                 {
                     SearchResponse errorResponse = (SearchResponse) oe.Response;
                     if (errorResponse.ResultCode == ResultCode.NoSuchObject)
-                        throw new ProviderException(SR.GetString(SR.ADMembership_Container_does_not_exist));
+                        throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Container_does_not_exist));
                     else throw;
                 }
 
@@ -3797,7 +3795,7 @@ namespace System.Web.Security
                 //
                 DirectoryAttribute objectClass = response.Entries[0].Attributes["objectClass"];
                 if (!ContainerIsSuperiorOfUser(objectClass))
-                    throw new ProviderException(SR.GetString(SR.ADMembership_Container_not_superior));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Container_not_superior));
 
                 //
                 // Determine whether concurrent bind is supported
@@ -3940,7 +3938,7 @@ namespace System.Web.Security
                 catch (ActiveDirectoryObjectNotFoundException)
                 {
                     // we were unable to contact the domain or server
-                    throw new ProviderException(SR.GetString(SR.ADMembership_unable_to_contact_domain));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_unable_to_contact_domain));
                 }
             }
         }
@@ -3984,7 +3982,7 @@ namespace System.Web.Security
             //
             // provider and server information
             //
-            Debug.Assert(serverName != null);
+            System.Web.Util.Debug.Assert(serverName != null);
             path = "LDAP://" + serverName;
 
             //
@@ -3996,7 +3994,7 @@ namespace System.Web.Security
             //
             // DN of the object
             //
-            Debug.Assert(dn != null);
+            System.Web.Util.Debug.Assert(dn != null);
             NativeComInterfaces.IAdsPathname pathCracker = (NativeComInterfaces.IAdsPathname) new NativeComInterfaces.Pathname();
             pathCracker.Set(dn, NativeComInterfaces.ADS_SETTYPE_DN);
             pathCracker.EscapedMode = NativeComInterfaces.ADS_ESCAPEDMODE_ON;
@@ -4131,7 +4129,7 @@ namespace System.Web.Security
         {
             bool result = false;
 
-            Debug.Assert(ldapConnection != null);
+            System.Web.Util.Debug.Assert(ldapConnection != null);
 
             //
             // supportedExtension is a constructed attribute so we need to search and load that attribute explicitly
@@ -4149,7 +4147,7 @@ namespace System.Web.Security
 
             foreach (string supportedExtension in response.Entries[0].Attributes["supportedExtension"].GetValues(typeof(string)))
             {
-                if (StringUtil.EqualsIgnoreCase(supportedExtension, LDAP_SERVER_FAST_BIND_OID))
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(supportedExtension, LDAP_SERVER_FAST_BIND_OID))
                 {
                     result = true;
                     break;
@@ -4183,7 +4181,7 @@ namespace System.Web.Security
             }
 
             if (partitionName == null)
-                throw new ProviderException(SR.GetString(SR.ADMembership_No_ADAM_Partition));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_No_ADAM_Partition));
 
             return partitionName;
         }
@@ -4290,12 +4288,12 @@ namespace System.Web.Security
 
             foreach (string supportedCapability in rootdse.Properties["supportedCapabilities"])
             {
-                if (StringUtil.EqualsIgnoreCase(supportedCapability, LDAP_CAP_ACTIVE_DIRECTORY_ADAM_OID))
+                if (System.Web.Util.StringUtil.EqualsIgnoreCase(supportedCapability, LDAP_CAP_ACTIVE_DIRECTORY_ADAM_OID))
                 {
                     directoryType = DirectoryType.ADAM;
                     break;
                 }
-                else if (StringUtil.EqualsIgnoreCase(supportedCapability, LDAP_CAP_ACTIVE_DIRECTORY_OID))
+                else if (System.Web.Util.StringUtil.EqualsIgnoreCase(supportedCapability, LDAP_CAP_ACTIVE_DIRECTORY_OID))
                 {
                     directoryType = DirectoryType.AD;
                     break;
@@ -4303,7 +4301,7 @@ namespace System.Web.Security
             }
 
             if (directoryType == DirectoryType.Unknown)
-                throw new ProviderException(SR.GetString(SR.ADMembership_Valid_Targets));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Valid_Targets));
 
             return directoryType;
         }
@@ -4333,9 +4331,9 @@ namespace System.Web.Security
                     DomainControllerInfo domainControllerInfo = new DomainControllerInfo();
                     Marshal.PtrToStructure(pDomainControllerInfo, domainControllerInfo);
 
-                    Debug.Assert(domainControllerInfo != null);
-                    Debug.Assert(domainControllerInfo.DomainControllerName != null);
-                    Debug.Assert(domainControllerInfo.DomainControllerName.Length > 2);
+                    System.Web.Util.Debug.Assert(domainControllerInfo != null);
+                    System.Web.Util.Debug.Assert(domainControllerInfo.DomainControllerName != null);
+                    System.Web.Util.Debug.Assert(domainControllerInfo.DomainControllerName.Length > 2);
 
                     // domain controller name is in the format "\\server", so we need to strip the back slashes
                     pdc = domainControllerInfo.DomainControllerName.Substring(2);
@@ -4401,7 +4399,7 @@ namespace System.Web.Security
                 errorMsg = sb.ToString(0, result);
             }
             else {
-                errorMsg = SR.GetString(SR.ADMembership_Unknown_Error, string.Format(CultureInfo.InvariantCulture, "{0}", errorCode));
+                errorMsg = System.Web.SR.GetString(System.Web.SR.ADMembership_Unknown_Error, string.Format(CultureInfo.InvariantCulture, "{0}", errorCode));
             }
 
             return errorMsg;
@@ -4414,15 +4412,15 @@ namespace System.Web.Security
         public static object GetPropertyValue(DirectoryEntry directoryEntry, string propertyName)
         {
 
-            Debug.Assert(directoryEntry != null, "PropertyManager::GetPropertyValue - directoryEntry is null");
-            Debug.Assert(propertyName != null, "PropertyManager::GetPropertyValue - propertyName is null");
+            System.Web.Util.Debug.Assert(directoryEntry != null, "PropertyManager::GetPropertyValue - directoryEntry is null");
+            System.Web.Util.Debug.Assert(propertyName != null, "PropertyManager::GetPropertyValue - propertyName is null");
 
             if (directoryEntry.Properties[propertyName].Count == 0)
             {
                 if (directoryEntry.Properties["distinguishedName"].Count != 0)
-                    throw new ProviderException(SR.GetString(SR.ADMembership_Property_not_found_on_object, propertyName, (string) directoryEntry.Properties["distinguishedName"].Value ));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Property_not_found_on_object, propertyName, (string) directoryEntry.Properties["distinguishedName"].Value ));
                 else
-                    throw new ProviderException(SR.GetString(SR.ADMembership_Property_not_found, propertyName));
+                    throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Property_not_found, propertyName));
             }
 
             return directoryEntry.Properties[propertyName].Value;
@@ -4431,14 +4429,14 @@ namespace System.Web.Security
         public static object GetSearchResultPropertyValue(SearchResult res, string propertyName)
         {
 
-            Debug.Assert(res != null, "PropertyManager::GetSearchResultPropertyValue - res is null");
-            Debug.Assert(propertyName != null, "PropertyManager::GetSearchResultPropertyValue - propertyName is null");
+            System.Web.Util.Debug.Assert(res != null, "PropertyManager::GetSearchResultPropertyValue - res is null");
+            System.Web.Util.Debug.Assert(propertyName != null, "PropertyManager::GetSearchResultPropertyValue - propertyName is null");
 
             ResultPropertyValueCollection propertyValues = null;
 
             propertyValues = res.Properties[propertyName];
             if ((propertyValues == null) || (propertyValues.Count < 1))
-                throw new ProviderException(SR.GetString(SR.ADMembership_Property_not_found,  propertyName));
+                throw new ProviderException(System.Web.SR.GetString(System.Web.SR.ADMembership_Property_not_found,  propertyName));
 
             return propertyValues[0];
         }
