@@ -2456,6 +2456,7 @@ namespace System.Windows.Forms {
 					}
 
 					// We didn't find a match or we wouldn't be here
+					XFree(list);
 					return new Size(smallest, smallest);
 
 				} else {
