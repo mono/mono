@@ -3150,7 +3150,7 @@ mono_emit_marshal (EmitMarshalContext *m, int argnum, MonoType *t,
 	case MONO_TYPE_CLASS:
 	case MONO_TYPE_OBJECT:
 #if !defined(DISABLE_COM)
-		if (spec && spec->native == MONO_NATIVE_STRUCT)
+		if (spec ? spec->native == MONO_NATIVE_STRUCT : mono_class_from_mono_type_internal (t) == mono_defaults.object_class)
 			return get_marshal_cb ()->emit_marshal_variant (m, argnum, t, spec, conv_arg, conv_arg_type, action);
 #endif
 
