@@ -31,6 +31,7 @@
 ./System.Web.Handlers/ScriptResourceHandler.cs
 ./System.Web.Query.Dynamic/DynamicClass.cs
 ./System.Web.Query.Dynamic/ParseException.cs
+../referencesource/System.Web.Extensions/Resources/AtlasWeb.Designer.cs
 ./System.Web.Script.Serialization/JavaScriptConverter.cs
 ./System.Web.Script.Serialization/JavaScriptSerializer.cs
 ./System.Web.Script.Serialization/JavaScriptTypeResolver.cs
@@ -70,6 +71,7 @@
 ./System.Web.UI/RegisteredHiddenField.cs
 ./System.Web.UI/RegisteredScript.cs
 ./System.Web.UI/RegisteredScriptType.cs
+../referencesource/System.Web.Extensions/ui/ResourceDescriptionAttribute.cs
 ./System.Web.UI/ScriptBehaviorDescriptor.cs
 ./System.Web.UI/ScriptComponentDescriptor.cs
 ./System.Web.UI/ScriptControl.cs
