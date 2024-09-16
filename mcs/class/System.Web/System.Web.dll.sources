@@ -237,6 +237,7 @@ System.Web.Configuration_2.0/ProvidersHelper.cs
 System.Web.Configuration_2.0/RegexWorker.cs
 System.Web.Configuration_2.0/RoleManagerSection.cs
 System.Web.Configuration_2.0/RootProfilePropertySettingsCollection.cs
+System.Web.Configuration_2.0/RuntimeConfig.cs
 System.Web.Configuration_2.0/RuleSettings.cs
 System.Web.Configuration_2.0/RuleSettingsCollection.cs
 ../referencesource/System.Web/Configuration/SerializationMode.cs
