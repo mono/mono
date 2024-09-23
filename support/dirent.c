@@ -94,6 +94,10 @@ gint32
 Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *entry, void **result)
 {
 	struct dirent *_entry = malloc (sizeof (struct dirent) + MPH_PATH_MAX + 1);
+	if (_entry == NULL) {
+		return ENOMEM;
+	}
+
 	int r;
 
 	r = readdir_r (dirp, _entry, (struct dirent**) result);
