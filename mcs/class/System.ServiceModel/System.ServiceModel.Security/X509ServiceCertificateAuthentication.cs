@@ -35,7 +35,7 @@ using System.IdentityModel.Selectors;
 namespace System.ServiceModel.Security
 {
 	[MonoTODO]
-	public class X509ServiceCertificateAuthentication
+	public sealed class X509ServiceCertificateAuthentication
 	{
 		public X509ServiceCertificateAuthentication ()
 		{

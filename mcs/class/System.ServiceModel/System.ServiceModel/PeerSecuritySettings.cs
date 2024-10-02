@@ -11,7 +11,7 @@ using System;
 
 namespace System.ServiceModel
 {
-	public class PeerSecuritySettings
+	public sealed class PeerSecuritySettings
 	{
 		SecurityMode mode;
 		

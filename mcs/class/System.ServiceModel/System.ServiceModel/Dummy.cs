@@ -2,7 +2,7 @@ using System.ServiceModel.Channels;
 
 namespace System.ServiceModel
 {
-	public class PeerHopCountAttribute { }
+	public sealed class PeerHopCountAttribute { }
 }
 
 namespace System.ServiceModel.Activation.Configuration
@@ -12,7 +12,7 @@ namespace System.ServiceModel.Activation.Configuration
 
 namespace System.ServiceModel.Channels
 {
-	public class PrivacyNoticeBindingElementImporter { }
-	public class UseManagedPresentationBindingElementImporter { }
+	public sealed class PrivacyNoticeBindingElementImporter { }
+	public sealed class UseManagedPresentationBindingElementImporter { }
 	public class XmlSerializerImportOptions { }
 }

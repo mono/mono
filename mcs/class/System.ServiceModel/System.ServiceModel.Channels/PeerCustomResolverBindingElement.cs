@@ -37,7 +37,7 @@ using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
-	public class PeerCustomResolverBindingElement : PeerResolverBindingElement
+	public sealed class PeerCustomResolverBindingElement : PeerResolverBindingElement
 	{
 		public PeerCustomResolverBindingElement ()
 		{
