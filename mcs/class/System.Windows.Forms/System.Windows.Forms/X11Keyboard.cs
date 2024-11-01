@@ -40,7 +40,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
-	public enum XLookupStatus
+	internal enum XLookupStatus
 	{
 		XBufferOverflow = -1,
 		XLookupNone = 1,
