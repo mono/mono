@@ -95,6 +95,7 @@ gint32           get_bytes_in_buffer (int fd, gboolean input);
 gboolean         is_baud_rate_legal (int baud_rate);
 int              setup_baud_rate (int baud_rate, gboolean *custom_baud_rate);
 gboolean         set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStopBits stopBits, MonoHandshake handshake);
+int              set_attributes_custom_speed (int fd, speed_t baud_rate, struct termios *tio);
 MonoSerialSignal get_signals (int fd, gint32 *error);
 gint32           set_signal (int fd, MonoSerialSignal signal, gboolean value);
 int              breakprop (int fd);
@@ -399,51 +400,64 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	if (custom_baud_rate == FALSE) {
 		if (cfsetospeed (&newtio, baud_rate) < 0 || cfsetispeed (&newtio, baud_rate) < 0)
 			return FALSE;
-	} else {
-#if __linux__ || defined(HAVE_IOKIT)
 
-		/* On Linux to set a custom baud rate, we must set the
-		 * "standard" baud_rate to 38400.   On Apple we set it purely
-		 * so that tcsetattr has something to use (and report back later), but
-		 * the Apple specific API is still opaque to these APIs, see:
-		 * https://developer.apple.com/library/mac/samplecode/SerialPortSample/Listings/SerialPortSample_SerialPortSample_c.html#//apple_ref/doc/uid/DTS10000454-SerialPortSample_SerialPortSample_c-DontLinkElementID_4
-		 */
-		if (cfsetospeed (&newtio, B38400) < 0 || cfsetispeed (&newtio, B38400) < 0)
+		if (tcsetattr (fd, TCSANOW, &newtio) < 0)
 			return FALSE;
-#endif
+
+		return TRUE;
 	}
+
+#if defined(HAVE_IOKIT)
+	/* On Apple we set it purely
+	 * so that tcsetattr has something to use (and report back later), but
+	 * the Apple specific API is still opaque to these APIs, see:
+	 * https://developer.apple.com/library/mac/samplecode/SerialPortSample/Listings/SerialPortSample_SerialPortSample_c.html#//apple_ref/doc/uid/DTS10000454-SerialPortSample_SerialPortSample_c-DontLinkElementID_4
+	 */
+	if (cfsetospeed (&newtio, B38400) < 0 || cfsetispeed (&newtio, B38400) < 0)
+		return FALSE;
 
 	if (tcsetattr (fd, TCSANOW, &newtio) < 0)
 		return FALSE;
 
-	if (custom_baud_rate == TRUE){
-#if defined(HAVE_LINUX_SERIAL_H)
-		struct serial_struct ser;
-
-		if (ioctl (fd, TIOCGSERIAL, &ser) < 0)
-		{
-			return FALSE;
-		}
-
-		ser.custom_divisor = ser.baud_base / baud_rate;
-		ser.flags &= ~ASYNC_SPD_MASK;
-		ser.flags |= ASYNC_SPD_CUST;
-
-		if (ioctl (fd, TIOCSSERIAL, &ser) < 0)
-		{
-			return FALSE;
-		}
-#elif defined(HAVE_IOKIT)
-		speed_t speed = baud_rate;
-		if (ioctl(fd, IOSSIOSPEED, &speed) == -1)
-			return FALSE;
-#else
-		/* Don't know how to set custom baud rate on this platform. */
+	speed_t speed = baud_rate;
+	if (ioctl(fd, IOSSIOSPEED, &speed) == -1)
 		return FALSE;
-#endif
-	}
 
 	return TRUE;
+#else
+	/* can't implement here due to header conflicts */
+	int res = set_attributes_custom_speed (fd, baud_rate, &newtio);
+
+	if (res == 1)
+		return TRUE;
+
+#if defined(TIOCGSERIAL) && defined(TIOCSSERIAL)
+	/* fallback to old implementation */
+
+	struct serial_struct ser;
+
+	if (cfsetospeed (&newtio, B38400) < 0 || cfsetispeed (&newtio, B38400) < 0)
+		return FALSE;
+
+	if (tcsetattr (fd, TCSANOW, &newtio) < 0)
+		return FALSE;
+
+	if (ioctl (fd, TIOCGSERIAL, &ser) < 0)
+		return FALSE;
+
+	ser.custom_divisor = ser.baud_base / baud_rate;
+	ser.flags &= ~ASYNC_SPD_MASK;
+	ser.flags |= ASYNC_SPD_CUST;
+
+	if (ioctl (fd, TIOCSSERIAL, &ser) < 0)
+		return FALSE;
+
+	return TRUE;
+#endif
+
+	/* Don't know how to set custom baud rate */
+	return FALSE;
+#endif
 }
 
 
