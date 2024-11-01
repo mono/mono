@@ -46,7 +46,7 @@ namespace Mono
 			}
 
 			SeqPointInfo seqPointInfo = null;
-			if (!sfData.IsILOffset && sfData.Aotid != null)
+			if (!sfData.IsILOffset && !string.IsNullOrEmpty (sfData.Aotid))
 				seqPointInfo = GetOrCreateSeqPointInfo (sfData.Aotid);
 
 
