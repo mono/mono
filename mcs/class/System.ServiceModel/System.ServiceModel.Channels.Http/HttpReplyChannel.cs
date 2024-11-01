@@ -206,6 +206,14 @@ namespace System.ServiceModel.Channels.Http
 
 				return null;
 			}
+			
+			if (ctxi.Request.ContentLength64 == 0) {
+				ctxi.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+				ctxi.Response.StatusDescription = "Request without body.";
+				ctxi.Close ();
+				
+				return null;
+			}
 
 			// FIXME: supply maxSizeOfHeaders.
 			int maxSizeOfHeaders = 0x10000;
