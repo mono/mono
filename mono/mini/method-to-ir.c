@@ -5034,6 +5034,30 @@ ensure_method_is_allowed_to_call_method (MonoCompile *cfg, MonoMethod *caller, M
 		emit_throw_exception (cfg, ex);
 }
 
+static void
+ensure_type_is_valid (MonoCompile *cfg, MonoType *type)
+{
+	ERROR_DECL(unboxed_error);
+	mono_error_set_for_type_exceptions (unboxed_error, type);
+	if (!is_ok(unboxed_error))
+	{
+		MonoException *ex = mono_error_convert_to_exception (unboxed_error);
+		emit_throw_exception (cfg, ex);
+	}
+}
+
+static void
+ensure_method_is_valid (MonoCompile *cfg, MonoMethod *method)
+{
+	ERROR_DECL(unboxed_error);
+	mono_error_set_for_method_exceptions (unboxed_error, method);
+	if (!is_ok(unboxed_error))
+	{
+		MonoException *ex = mono_error_convert_to_exception (unboxed_error);
+		emit_throw_exception (cfg, ex);
+	}
+}
+
 static guchar*
 il_read_op (guchar *ip, guchar *end, guchar first_byte, MonoOpcodeEnum desired_il_op)
 // If ip is desired_il_op, return the next ip, else NULL.
@@ -7378,6 +7402,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (!mono_class_init_internal (cmethod->klass))
 					TYPE_LOAD_ERROR (cmethod->klass);
 
+			ensure_method_is_valid (cfg, cmethod);
+
 			fsig = mono_method_signature_internal (cmethod);
 			if (!fsig)
 				LOAD_ERROR;
@@ -8826,6 +8852,7 @@ calli_end:
 			MonoInst this_ins;
 			MonoInst *alloc;
 			MonoInst *vtable_arg = NULL;
+			unsigned int top;
 
 			cmethod = mini_get_method (cfg, method, token, NULL, generic_context);
 			CHECK_CFG_ERROR;
@@ -8862,6 +8889,14 @@ calli_end:
 			if (cfg->gshared && cmethod && cmethod->klass != method->klass && mono_class_is_ginst (cmethod->klass) && mono_method_is_generic_sharable (cmethod, TRUE) && mono_class_needs_cctor_run (cmethod->klass, method)) {
 				emit_class_init (cfg, cmethod->klass);
 				CHECK_TYPELOAD (cmethod->klass);
+			}
+
+			if (mono_class_is_ginst (cmethod->klass))
+			{
+				gpointer iter = NULL;
+				MonoClassField *field;
+				while ((field = mono_class_get_fields_internal (cmethod->klass, &iter)))
+					ensure_type_is_valid (cfg, mono_field_get_type (field));
 			}
 
 			/*
@@ -9423,6 +9458,7 @@ calli_end:
 			*/
 
 			ftype = mono_field_get_type_internal (field);
+			ensure_type_is_valid (cfg, ftype);
 
 			/*
 			 * LDFLD etc. is usable on static fields as well, so convert those cases to
