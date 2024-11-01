@@ -596,19 +596,19 @@ MonoObject *
 mono_delegate_end_invoke (MonoDelegate *delegate, gpointer *params);
 
 MonoMarshalNative
-mono_marshal_get_string_encoding (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
+mono_marshal_get_string_encoding (EmitMarshalContext *m, MonoMarshalSpec *spec);
 
 MonoMarshalConv
-mono_marshal_get_string_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
+mono_marshal_get_string_to_ptr_conv (EmitMarshalContext *m, MonoMarshalSpec *spec);
 
 MonoMarshalConv
-mono_marshal_get_stringbuilder_to_ptr_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
+mono_marshal_get_stringbuilder_to_ptr_conv (EmitMarshalContext *m, MonoMarshalSpec *spec);
 
 MonoMarshalConv
-mono_marshal_get_ptr_to_stringbuilder_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec, gboolean *need_free);
+mono_marshal_get_ptr_to_stringbuilder_conv (EmitMarshalContext *m, MonoMarshalSpec *spec, gboolean *need_free);
 
 MonoMarshalConv
-mono_marshal_get_ptr_to_string_conv (MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec, gboolean *need_free);
+mono_marshal_get_ptr_to_string_conv (EmitMarshalContext *m, MonoMarshalSpec *spec, gboolean *need_free);
 
 MonoType*
 mono_marshal_boolean_conv_in_get_local_type (MonoMarshalSpec *spec, guint8 *ldc_op /*out*/);
@@ -620,7 +620,7 @@ gboolean
 mono_pinvoke_is_unicode (MonoMethodPInvoke *piinfo);
 
 gboolean
-mono_marshal_need_free (MonoType *t, MonoMethodPInvoke *piinfo, MonoMarshalSpec *spec);
+mono_marshal_need_free (MonoType *t, EmitMarshalContext *m, MonoMarshalSpec *spec);
 
 ICALL_EXTERN_C
 MonoObject* mono_marshal_get_type_object (MonoClass *klass);
