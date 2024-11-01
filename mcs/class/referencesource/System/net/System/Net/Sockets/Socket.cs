@@ -152,9 +152,9 @@ namespace System.Net.Sockets {
             s_LoggingEnabled = Logging.On;
             if(s_LoggingEnabled)Logging.Enter(Logging.Sockets, this, "Socket", addressFamily);
             InitializeSockets();
+            int error = (int) SocketError.Success;
 
 #if MONO
-            int error;
             m_Handle = new SafeSocketHandle (Socket_icall (addressFamily, socketType, protocolType, out error), true);
 #else
             m_Handle = SafeCloseSocket.CreateWSASocket(
@@ -162,6 +162,10 @@ namespace System.Net.Sockets {
                     socketType,
                     protocolType);
 #endif
+
+            if (error != (int) SocketError.Success) {
+               throw new SocketException (error);
+            }
 
             if (m_Handle.IsInvalid) {
                 //
