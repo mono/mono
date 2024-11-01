@@ -144,6 +144,10 @@ namespace System.Runtime.Serialization
             get { return ignoreExtensionDataObject; }
         }
 
+        internal bool HasDataContractResolver {
+            get { return dataContractResolver != null; }
+        }
+
         protected DataContractResolver DataContractResolver
         {
             get { return dataContractResolver; }
