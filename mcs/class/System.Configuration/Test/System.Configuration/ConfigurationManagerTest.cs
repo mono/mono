@@ -48,6 +48,33 @@ namespace MonoTests.System.Configuration {
 		private string originalCurrentDir;
 		private string tempFolder;
 
+		[SettingsProviderAttribute(typeof(LocalFileSettingsProvider))]
+		private class TestSettingsLocal : ApplicationSettingsBase
+		{
+			[UserScopedSetting()]
+			[DefaultSettingValue("0")]
+			public int TestValue
+			{
+				get { return ((int)this["TestValue"]); }
+				set { this["TestValue"] = (int)value; }
+			}
+			public TestSettingsLocal(int val) { TestValue = val; }
+		}
+
+		[SettingsProviderAttribute(typeof(LocalFileSettingsProvider))]
+		private class TestSettingsRoaming : ApplicationSettingsBase
+		{
+			[UserScopedSetting()]
+			[SettingsManageabilityAttribute(SettingsManageability.Roaming)]
+			[DefaultSettingValue("0")]
+			public int TestValue
+			{
+				get { return ((int)this["TestValue"]); }
+				set { this["TestValue"] = (int)value; }
+			}
+			public TestSettingsRoaming(int val) { TestValue = val; }
+		}
+
 		[SetUp]
 		public void SetUp ()
 		{
@@ -157,6 +184,25 @@ namespace MonoTests.System.Configuration {
 
 			FileInfo fi = new FileInfo (config.FilePath);
 			Assert.AreEqual ("user.config", fi.Name);
+
+			string product_dir = Path.GetDirectoryName(Path.GetDirectoryName(config.FilePath));
+			string test_dir = Path.GetDirectoryName(product_dir);
+
+			if (Directory.Exists(product_dir))
+			{
+				Console.WriteLine("product directory exists, skipping test");
+				return;
+			}
+			bool test_dir_existed = Directory.Exists(test_dir);
+
+			var settings = new TestSettingsRoaming(42);
+			settings.Save();
+			Assert.IsTrue (File.Exists(config.FilePath));
+
+			// cleanup
+			Directory.Delete(product_dir, true);
+			if (!test_dir_existed)
+				Directory.Delete(test_dir);
 		}
 
 		[Test]
@@ -167,6 +213,25 @@ namespace MonoTests.System.Configuration {
 
 			FileInfo fi = new FileInfo (config.FilePath);
 			Assert.AreEqual ("user.config", fi.Name);
+
+			string product_dir = Path.GetDirectoryName(Path.GetDirectoryName(config.FilePath));
+			string test_dir = Path.GetDirectoryName(product_dir);
+
+			if (Directory.Exists(product_dir))
+			{
+				Console.WriteLine("product directory exists, skipping test");
+				return;
+			}
+			bool test_dir_existed = Directory.Exists(test_dir);
+
+			var settings = new TestSettingsLocal(42);
+			settings.Save();
+			Assert.IsTrue (File.Exists(config.FilePath));
+
+			// cleanup
+			Directory.Delete(product_dir, true);
+			if (!test_dir_existed)
+				Directory.Delete(test_dir);
 		}
 
 		[Test] // OpenExeConfiguration (String)

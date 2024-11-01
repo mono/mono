@@ -89,13 +89,12 @@ namespace System.Configuration
 		private static string[] ProductVersion;
 
 		// whether to include parts in the folder name or not:
-		private static bool isVersionMajor = false;	// 0x0001	major version
-		private static bool isVersionMinor = false;	// 0x0002	minor version
-		private static bool isVersionBuild = false;	// 0x0004	build version
-		private static bool isVersionRevision = false;	// 0x0008	revision
+		private static bool isVersionMajor = true;	// 0x0001	major version
+		private static bool isVersionMinor = true;	// 0x0002	minor version
+		private static bool isVersionBuild = true;	// 0x0004	build version
+		private static bool isVersionRevision = true;	// 0x0008	revision
 		private static bool isCompany = true;		// 0x0010	corporate name
 		private static bool isProduct = true;		// 0x0020	product name
-		private static bool isEvidence = false;		// 0x0040	evidence hash
 
 		private static bool userDefine = false;		// 0x8000	ignore all above and use user definition
 
@@ -235,13 +234,6 @@ namespace System.Configuration
 			set { isCompany = value; }
 		}
 
-		// whether the path to include evidence hash.
-		public static bool IsEvidence
-		{
-			get { return isEvidence; }
-			set { isEvidence = value; }
-		}
-
 		// AssemblyCompanyAttribute->Namespace->"Program"
 		private static string GetCompanyName ()
 		{
@@ -270,9 +262,10 @@ namespace System.Configuration
 			if (assembly == null)
 				assembly = Assembly.GetCallingAssembly ();
 
+			object [] attrs = assembly.GetCustomAttributes (typeof (AssemblyProductAttribute), false);
 			byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
 			return String.Format ("{0}_{1}_{2}",
-				AppDomain.CurrentDomain.FriendlyName,
+				(attrs != null && attrs.Length > 0) ? ((AssemblyProductAttribute)attrs[0]).Product : AppDomain.CurrentDomain.FriendlyName,
 				pkt != null && pkt.Length > 0 ? "StrongName" : "Url",
 				GetEvidenceHash());
 		}
@@ -302,6 +295,14 @@ namespace System.Configuration
 				assembly = Assembly.GetCallingAssembly ();
 			if (assembly == null)
 				return string.Empty;
+
+			object [] attrs = assembly.GetCustomAttributes (typeof (AssemblyInformationalVersionAttribute), false);
+			if (attrs != null && attrs.Length > 0)
+				return ((AssemblyInformationalVersionAttribute)attrs[0]).InformationalVersion;
+
+			attrs = assembly.GetCustomAttributes (typeof (AssemblyFileVersionAttribute), false);
+			if (attrs != null && attrs.Length > 0)
+				return ((AssemblyFileVersionAttribute)attrs[0]).Version;
 
 			return assembly.GetName ().Version.ToString ();
 		}
@@ -336,16 +337,6 @@ namespace System.Configuration
 			}
 
 			if (isProduct) {
-				if (isEvidence) {
-					Assembly assembly = Assembly.GetEntryAssembly ();
-					if (assembly == null)
-						assembly = Assembly.GetCallingAssembly ();
-					byte [] pkt = assembly.GetName ().GetPublicKeyToken ();
-					ProductName = String.Format ("{0}_{1}_{2}",
-						ProductName,
-						pkt != null ? "StrongName" : "Url",
-						GetEvidenceHash());
-				}
 				userRoamingPath = Path.Combine (userRoamingPath, ProductName);
 				userLocalPath = Path.Combine (userLocalPath, ProductName);
 				
