@@ -32,7 +32,7 @@ namespace System.DirectoryServices.Protocols
 {
 	public enum SearchOption
 	{
-		DomainScope,
+		DomainScope = 1,
 		PhantomRoot
 	}
 }
