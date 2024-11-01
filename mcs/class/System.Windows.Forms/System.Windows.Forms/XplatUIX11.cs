@@ -2530,6 +2530,9 @@ namespace System.Windows.Forms {
 				return new Rectangle(0, 0, width, height);
 
 			failsafe:
+				if (prop != IntPtr.Zero)
+					XFree (prop);
+
 				XWindowAttributes	attributes=new XWindowAttributes();
 
 				lock (XlibLock) {
