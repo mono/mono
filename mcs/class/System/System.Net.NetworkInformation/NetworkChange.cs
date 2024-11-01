@@ -59,7 +59,7 @@ namespace System.Net.NetworkInformation {
 		bool HasRegisteredEvents { get; }
 	}
 
-	public sealed class NetworkChange {
+	public class NetworkChange {
 		static INetworkChange networkChange;
 
 		public static event NetworkAddressChangedEventHandler NetworkAddressChanged {
