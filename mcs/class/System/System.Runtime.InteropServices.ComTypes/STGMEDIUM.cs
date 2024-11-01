@@ -34,10 +34,10 @@ namespace System.Runtime.InteropServices.ComTypes
 {
 	public struct STGMEDIUM
 	{
-		[MarshalAs (UnmanagedType.IUnknown)]
-		public Object pUnkForRelease;
 		public TYMED tymed;
 		public IntPtr unionmember;
+		[MarshalAs (UnmanagedType.IUnknown)]
+		public Object pUnkForRelease;
 	}
 }
 

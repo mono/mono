@@ -39,15 +39,15 @@ namespace System.Runtime.InteropServices.ComTypes
 	public interface IAdviseSink
 	{
 		[PreserveSig]
-		void OnClose ();
-		[PreserveSig]
 		void OnDataChange ([In] ref FORMATETC format, [In] ref STGMEDIUM stgmedium);
+		[PreserveSig]
+		void OnViewChange (int aspect, int index);
 		[PreserveSig]
 		void OnRename (IMoniker moniker);
 		[PreserveSig]
 		void OnSave ();
 		[PreserveSig]
-		void OnViewChange (int aspect, int index);
+		void OnClose ();
 	}
 }
 
