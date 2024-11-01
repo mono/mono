@@ -198,37 +198,37 @@ namespace System.IO.Packaging
 
 			XmlNode node;
 			if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:category", manager)) != null)
-				category = node.InnerXml;
+				category = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:contentStatus", manager)) != null)
-				contentStatus = node.InnerXml;
+				contentStatus = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:contentType", manager)) != null)
-				contentType = node.InnerXml;
+				contentType = node.InnerText;
 			if ((node = doc.SelectSingleNode ("prop:coreProperties/dcterms:created", manager)) != null)
-				created = DateTime.Parse (node.InnerXml);
+				created = DateTime.Parse (node.InnerText);
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:creator", manager)) != null)
-				creator = node.InnerXml;
+				creator = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:description", manager)) != null)
-				description = node.InnerXml;
+				description = node.InnerText;
 			if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:identifier", manager)) != null)
-				identifier = node.InnerXml;
+				identifier = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:keywords", manager)) != null)
-				keywords = node.InnerXml;
+				keywords = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:language", manager)) != null)
-				language = node.InnerXml;
+				language = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:lastModifiedBy", manager)) != null)
-				lastModifiedBy = node.InnerXml;
+				lastModifiedBy = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:lastPrinted", manager)) != null)
-				lastPrinted = DateTime.Parse (node.InnerXml);
+				lastPrinted = DateTime.Parse (node.InnerText);
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dcterms:modified", manager)) != null)
-				modified = DateTime.Parse (node.InnerXml);
+				modified = DateTime.Parse (node.InnerText);
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:revision", manager)) != null)
-				revision = node.InnerXml;
+				revision = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:subject", manager)) != null)
-				subject = node.InnerXml;
+				subject = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/dc:title", manager)) != null)
-				title = node.InnerXml;
+				title = node.InnerText;
             if ((node = doc.SelectSingleNode ("prop:coreProperties/prop:version", manager)) != null)
-				version = node.InnerXml;
+				version = node.InnerText;
 		}
 
 		internal override void WriteTo(XmlTextWriter writer)
@@ -251,11 +251,11 @@ namespace System.IO.Packaging
 
 			// Create the children
 			if (Category != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "category", NSPackageProperties)).InnerXml = Category;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "category", NSPackageProperties)).InnerText = Category;
 			if (ContentStatus != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentStatus", NSPackageProperties)).InnerXml = ContentStatus;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentStatus", NSPackageProperties)).InnerText = ContentStatus;
 			if (ContentType != null)
-			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentType", NSPackageProperties)).InnerXml = ContentType;
+			coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "contentType", NSPackageProperties)).InnerText = ContentType;
 			if (Created.HasValue)
 			{
 				XmlAttribute att = doc.CreateAttribute ("xsi", "type", NSXsi);
@@ -263,34 +263,34 @@ namespace System.IO.Packaging
 				
 				XmlNode created = coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "created", NSDcTerms));
 				created.Attributes.Append (att);
-				created.InnerXml = Created.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
+				created.InnerText = Created.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
 			}
 			if (Creator != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "creator", NSDc)).InnerXml = Creator;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "creator", NSDc)).InnerText = Creator;
 			if (Description != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "description", NSDc)).InnerXml = Description;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "description", NSDc)).InnerText = Description;
 			if (Identifier != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "identifier", NSDc)).InnerXml = Identifier;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "identifier", NSDc)).InnerText = Identifier;
 			if (Keywords != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "keywords", NSPackageProperties)).InnerXml = Keywords;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "keywords", NSPackageProperties)).InnerText = Keywords;
 			if (Language != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "language", NSDc)).InnerXml = Language;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "language", NSDc)).InnerText = Language;
 			if (LastModifiedBy != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastModifiedBy", NSPackageProperties)).InnerXml = LastModifiedBy;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastModifiedBy", NSPackageProperties)).InnerText = LastModifiedBy;
 			if (LastPrinted.HasValue)
 			{
 				XmlNode lastPrinted = coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "lastPrinted", NSPackageProperties));
 
-				lastPrinted.InnerXml = LastPrinted.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z"; 
+				lastPrinted.InnerText = LastPrinted.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z"; 
 			}
 			if (Revision != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "revision", NSPackageProperties)).InnerXml = Revision;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "revision", NSPackageProperties)).InnerText = Revision;
 			if (Subject != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "subject", NSDc)).InnerXml = Subject;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "subject", NSDc)).InnerText = Subject;
 			if (Title != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "title", NSDc)).InnerXml = Title;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dc", "title", NSDc)).InnerText = Title;
 			if (Version != null)
-				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "version", NSPackageProperties)).InnerXml = Version;
+				coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "version", NSPackageProperties)).InnerText = Version;
 
 			if (Modified.HasValue)
 			{
@@ -299,7 +299,7 @@ namespace System.IO.Packaging
 				
 				XmlNode modified = coreProperties.AppendChild (doc.CreateNode (XmlNodeType.Element, "dcterms", "modified", NSDcTerms));
 				modified.Attributes.Append (att);
-				modified.InnerXml = Modified.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
+				modified.InnerText = Modified.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss") + "Z";
 			}
 			
 			doc.WriteContentTo (writer);
