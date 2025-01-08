@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Bugs in .NET Framework 4.x-compatible versions of Mono
+    url: https://gitlab.winehq.org/mono/mono#reporting-bugs
+    about: For mono 6.12 or older on mobile and desktop platforms
   - name: Mono runtime or class libraries in .NET 5 or later
     url: https://github.com/dotnet/runtime/issues/new/choose
     about: Beginning in .NET 5, Mono is now a part of the dotnet/runtime repository.  Please report issues with runtime crashes, AOT compilation, etc in .NET 5 or later in the runtime repo.
