@@ -1,0 +1,35 @@
+name: mono
+adopt-info: mono
+summary: Mono is a software platform
+description: |
+  Mono is a software platform designed to allow developers to easily create cross platform applications. It is an open source implementation of Microsoft's .NET Framework based on the ECMA standards for C# and the Common Language Runtime.
+license: MIT
+base: core20
+grade: stable
+confinement: strict
+
+apps:
+  mono:
+    command: usr/bin/mono
+    plugs:
+      - home
+      
+parts:
+  mono:
+    source: https://github.com/mono/mono
+    source-type: git
+    plugin: autotools
+    autotools-configure-parameters:
+      - --prefix=/usr/   
+    build-packages:
+      - autoconf 
+      - libtool-bin
+      - build-essential 
+      - gettext 
+      - cmake 
+      - python3 
+      - curl
+      
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version "$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)"

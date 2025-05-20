@@ -38,6 +38,8 @@ Join us on [Discord](https://aka.ms/dotnet-discord) in the `#monovm` channel:
 
 Public CI: [![Azure Pipelines](https://dev.azure.com/dnceng/public/_apis/build/status/mono/mono-ci?branchName=main)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=952&branchName=main)
 
+[![🧪 Snap Builds](https://github.com/kz6fittycent/mono/actions/workflows/test-snap-can-build.yml/badge.svg)](https://github.com/kz6fittycent/mono/actions/workflows/test-snap-can-build.yml)
+
 Legacy Jenkins CI (no longer available publicly):
 
 | OS           | Architecture       | Status                       |
@@ -132,6 +134,15 @@ You can now install mono with: `make install`
 You can verify your installation by using the mono-test-install
 script, it can diagnose some common problems with Mono's install.
 Failure to follow these steps may result in a broken installation. 
+
+
+[![mono](https://snapcraft.io//mono/badge.svg)](https://snapcraft.io/mono)
+
+Install the Snap:
+-----------------
+
+    sudo snap install mono
+
 
 Using Mono
 ==========
