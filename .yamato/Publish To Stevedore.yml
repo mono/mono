@@ -9,9 +9,10 @@ dependencies:
   - .yamato/Collate Builds.yml
   
 commands:
-  - curl -sSo StevedoreUpload.exe "$STEVEDORE_UPLOAD_TOOL_URL"
+  - curl -sSo StevedoreUpload "$STEVEDORE_UPLOAD_TOOL_LINUX_X64_URL"
+  - chmod +x StevedoreUpload
   - mv collectedbuilds/builds.tar.zst collectedbuilds/MonoBleedingEdge.tar.zst
-  - mono StevedoreUpload.exe --repo=unity-internal --version-len=8 --version="$GIT_REVISION" collectedbuilds/MonoBleedingEdge.tar.zst
+  - ./StevedoreUpload --repo=unity-internal --version-len=8 --version="$GIT_REVISION" collectedbuilds/MonoBleedingEdge.tar.zst
 
 artifacts: 
   stevedore:
