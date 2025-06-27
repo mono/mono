@@ -10,7 +10,8 @@ dependencies:
   
 commands:
   - curl -sSo StevedoreUpload.exe "$STEVEDORE_UPLOAD_TOOL_URL"
-  - mono StevedoreUpload.exe --repo=unity-internal --version-len=8 --version="$GIT_REVISION" stevedore/MonoBleedingEdge.7z
+  - mv collectedbuilds/builds.tar.zst collectedbuilds/MonoBleedingEdge.tar.zst
+  - mono StevedoreUpload.exe --repo=unity-internal --version-len=8 --version="$GIT_REVISION" collectedbuilds/MonoBleedingEdge.tar.zst
 
 artifacts: 
   stevedore:
