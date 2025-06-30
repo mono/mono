@@ -12,6 +12,7 @@ commands:
   - curl -sSo StevedoreUpload "$STEVEDORE_UPLOAD_TOOL_LINUX_X64_URL"
   - chmod +x StevedoreUpload
   - mv collectedbuilds/builds.tar.zst collectedbuilds/MonoBleedingEdge.tar.zst
+  - .yamato/scripts/generate_artifactid.sh collectedbuilds/MonoBleedingEdge.tar.zst
   - ./StevedoreUpload --repo=unity-internal --version-len=8 --version="$GIT_REVISION" collectedbuilds/MonoBleedingEdge.tar.zst
 
 artifacts: 
