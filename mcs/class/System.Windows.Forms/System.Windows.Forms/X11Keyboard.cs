@@ -122,6 +122,29 @@ namespace System.Windows.Forms {
 			if (initialized)
 				return;
 
+			DoLayoutInitialization();
+			SetupXIM ();
+			initialized = true;
+		}
+
+		/// <summary>
+		/// Forces a re-detection of the X11 keyboard layout and rebuilds the internal
+		/// key conversion tables. This is necessary to fix issues where the initial layout
+		/// detected at application startup is incorrect (e.g., with BÉPO layout).
+		/// This method should be called after the main window is created and visible.
+		/// </summary>
+		public void ReloadKeyboardLayout ()
+		{
+			DoLayoutInitialization ();
+		}
+		
+		/// <summary>
+		/// Performs the actual layout detection and builds the key conversion arrays.
+		/// Extracted into a separate method so it can be called for both initial setup
+		/// and subsequent reloads.
+		/// </summary>
+		private void DoLayoutInitialization ()
+		{
 			KeyboardLayouts layouts = new KeyboardLayouts ();
 			KeyboardLayout layout = DetectLayout (layouts);
 			lcid = layout.Lcid;
