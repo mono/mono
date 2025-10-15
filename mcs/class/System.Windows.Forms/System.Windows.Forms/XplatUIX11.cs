@@ -3044,6 +3044,10 @@ namespace System.Windows.Forms {
 				if (!(Control.FromHandle(hwnd.Handle) is Form))
 					SendMessage(hwnd.Handle, Msg.WM_SHOWWINDOW, (IntPtr)1, IntPtr.Zero);
 			}
+			
+			// After the window is created and mapped, re-check the keyboard layout.
+			// This fixes issues where the initial layout detection is incorrect.
+			Keyboard.ReloadKeyboardLayout();
 
 			return hwnd.zombie ? IntPtr.Zero : hwnd.Handle;
 		}
