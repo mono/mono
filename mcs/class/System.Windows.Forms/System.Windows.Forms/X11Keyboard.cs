@@ -424,7 +424,7 @@ namespace System.Windows.Forms {
 			XEvent e = new XEvent ();
 			e.AnyEvent.type = XEventName.KeyPress;
 			e.KeyEvent.display = display;
-			e.KeyEvent.keycode = 0;
+			e.KeyEvent.keycode = scan & 0xFF;
 			e.KeyEvent.state = 0;
 
 			if ((key_state_table [(int) VirtualKeys.VK_SHIFT] & 0x80) != 0) {
@@ -445,13 +445,19 @@ namespace System.Windows.Forms {
 
 			e.KeyEvent.state |= AltGrMask;
 
-			if ((vkey >= (int) VirtualKeys.VK_NUMPAD0) && (vkey <= (int) VirtualKeys.VK_NUMPAD9))
+			if (e.KeyEvent.keycode != 0) {
+				int event_vkey = EventToVkey (e) & 0xFF;
+				if (event_vkey != vkey && vkey != (int) VirtualKeys.VK_NONAME)
+					e.KeyEvent.keycode = 0;
+			}
+
+			if (e.KeyEvent.keycode == 0 && (vkey >= (int) VirtualKeys.VK_NUMPAD0) && (vkey <= (int) VirtualKeys.VK_NUMPAD9))
 				e.KeyEvent.keycode = XKeysymToKeycode (display, vkey - (int) VirtualKeys.VK_NUMPAD0 + (int) KeypadKeys.XK_KP_0);
 
-			if (vkey == (int) VirtualKeys.VK_DECIMAL)
+			if (e.KeyEvent.keycode == 0 && vkey == (int) VirtualKeys.VK_DECIMAL)
 				e.KeyEvent.keycode = XKeysymToKeycode (display, (int) KeypadKeys.XK_KP_Decimal);
 			
-			if (vkey == (int) VirtualKeys.VK_SEPARATOR)
+			if (e.KeyEvent.keycode == 0 && vkey == (int) VirtualKeys.VK_SEPARATOR)
 				e.KeyEvent.keycode = XKeysymToKeycode(display, (int) KeypadKeys.XK_KP_Separator);
 
 			for (int keyc = min_keycode; (keyc <= max_keycode) && (e.KeyEvent.keycode == 0); keyc++) {
